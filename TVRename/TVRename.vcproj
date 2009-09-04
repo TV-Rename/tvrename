@@ -70,6 +70,7 @@
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
+				KeyFile="..\TVRenameKeyPair.snk"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -146,6 +147,7 @@
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
+				KeyFile=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -223,6 +225,7 @@
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
+				KeyFile="..\TVRenameKeyPair.snk"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -279,8 +282,18 @@
 			MinFrameworkVersion="131072"
 		/>
 		<AssemblyReference
-			RelativePath="..\Libs\Ionic.Utils.Zip.dll"
+			RelativePath="..\..\Libs\DotNetZipLib\Ionic.Utils.Zip.dll"
 			AssemblyName="Ionic.Utils.Zip, Version=1.5.2.1, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL"
+			MinFrameworkVersion="131072"
+		/>
+		<AssemblyReference
+			RelativePath="..\..\Libs\SourceGrid4.21\SourceGrid.dll"
+			AssemblyName="SourceGrid, Version=4.21.3441.17573, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL"
+			MinFrameworkVersion="131072"
+		/>
+		<AssemblyReference
+			RelativePath="..\..\Libs\SourceGrid4.21\SourceGrid.Extensions.dll"
+			AssemblyName="SourceGrid.Extensions, Version=4.21.3441.17574, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
 	</References>
@@ -290,6 +303,16 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\ActorsGrid.h"
+				FileType="3"
+				>
+				<File
+					RelativePath=".\ActorsGrid.resx"
+					SubType="Designer"
+					>
+				</File>
+			</File>
 			<File
 				RelativePath=".\AddEditSearchEngine.h"
 				FileType="3"
@@ -337,6 +360,10 @@
 					SubType="Designer"
 					>
 				</File>
+			</File>
+			<File
+				RelativePath=".\AIOItems.h"
+				>
 			</File>
 			<File
 				RelativePath=".\BT.h"
@@ -397,6 +424,10 @@
 				</File>
 			</File>
 			<File
+				RelativePath=".\DirCache.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DownloadProgress.h"
 				FileType="3"
 				>
@@ -417,6 +448,16 @@
 				</File>
 			</File>
 			<File
+				RelativePath=".\FolderMonitor.h"
+				FileType="3"
+				>
+				<File
+					RelativePath=".\FolderMonitor.resx"
+					SubType="Designer"
+					>
+				</File>
+			</File>
+			<File
 				RelativePath=".\FolderMonitorProgress.h"
 				FileType="3"
 				>
@@ -431,8 +472,14 @@
 				>
 			</File>
 			<File
-				RelativePath=".\MissingEpisode.h"
+				RelativePath=".\IgnoreEdit.h"
+				FileType="3"
 				>
+				<File
+					RelativePath=".\IgnoreEdit.resx"
+					SubType="Designer"
+					>
+				</File>
 			</File>
 			<File
 				RelativePath=".\MissingFolderAction.h"
@@ -440,6 +487,16 @@
 				>
 				<File
 					RelativePath=".\MissingFolderAction.resx"
+					SubType="Designer"
+					>
+				</File>
+			</File>
+			<File
+				RelativePath=".\MyListView.h"
+				FileType="4"
+				>
+				<File
+					RelativePath=".\MyListView.resx"
 					SubType="Designer"
 					>
 				</File>
@@ -455,18 +512,14 @@
 				</File>
 			</File>
 			<File
-				RelativePath=".\PreferredLanguage.h"
+				RelativePath=".\RecoverXML.h"
 				FileType="3"
 				>
 				<File
-					RelativePath=".\PreferredLanguage.resx"
+					RelativePath=".\RecoverXML.resx"
 					SubType="Designer"
 					>
 				</File>
-			</File>
-			<File
-				RelativePath=".\RenameItem.h"
-				>
 			</File>
 			<File
 				RelativePath=".\resource.h"
@@ -475,6 +528,16 @@
 			<File
 				RelativePath=".\RSS.h"
 				>
+			</File>
+			<File
+				RelativePath=".\ScanProgress.h"
+				FileType="3"
+				>
+				<File
+					RelativePath=".\ScanProgress.resx"
+					SubType="Designer"
+					>
+				</File>
 			</File>
 			<File
 				RelativePath=".\Searchers.h"
@@ -543,6 +606,16 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TorrentMatch.h"
+				FileType="3"
+				>
+				<File
+					RelativePath=".\TorrentMatch.resx"
+					SubType="Designer"
+					>
+				</File>
+			</File>
+			<File
 				RelativePath=".\TVDoc.h"
 				>
 			</File>
@@ -601,6 +674,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\ActorsGrid.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\AddEditSearchEngine.cpp"
 				>
 			</File>
@@ -610,6 +687,10 @@
 			</File>
 			<File
 				RelativePath=".\AddModifyRule.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AIOItems.cpp"
 				>
 			</File>
 			<File
@@ -653,11 +734,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FolderMonitor.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\FolderMonitorProgress.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\MissingEpisode.cpp"
+				RelativePath=".\IgnoreEdit.cpp"
 				>
 			</File>
 			<File
@@ -665,19 +750,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MyListView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Preferences.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\PreferredLanguage.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\RenameItem.cpp"
+				RelativePath=".\RecoverXML.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\RSS.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ScanProgress.cpp"
 				>
 			</File>
 			<File
@@ -738,6 +827,10 @@
 			</File>
 			<File
 				RelativePath=".\TheTVDBCodeFinder.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TorrentMatch.cpp"
 				>
 			</File>
 			<File

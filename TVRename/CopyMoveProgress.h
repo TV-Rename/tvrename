@@ -1,8 +1,7 @@
 #pragma once
 
-#include "RenameItem.h"
-#include "MissingEpisode.h"
 #include "Statistics.h"
+#include "AIOItems.h"
 
 using namespace System;
 using namespace System::ComponentModel;
@@ -11,7 +10,6 @@ using namespace System::Windows::Forms;
 using namespace System::Data;
 using namespace System::Drawing;
 using namespace System::IO;
-
 
 namespace TVRename {
 	enum CopyMoveResult { kCopyMoveOk, kUserCancelled, kFileError, kAlreadyExists };
@@ -29,31 +27,24 @@ namespace TVRename {
 	/// </summary>
 	public ref class CopyMoveProgress : public System::Windows::Forms::Form
 	{
-		BinaryReader ^msr;
-		BinaryWriter ^msw;
-		array<Byte>^DataArray;
 		CopyMoveResult &Result;
-		String ^mErrorText;
-		RCList ^mSources, ^ErrorFiles;
-		MissingEpisodeList ^MissingList;
+		// String ^mErrorText;
+		AIOList ^mToDo;
+		//RCList ^mSources, ^ErrorFiles;
+		//MissingEpisodeList ^MissingList;
 		int mCurrentNum;
 		TVRenameStats ^mStats;
+		System::Threading::Thread ^mCopyThread;
+		TVDoc ^mDoc;
 
 
 	private: System::Windows::Forms::ProgressBar^  pbDiskSpace;
-
 	private: System::Windows::Forms::Label^  label4;
-
-
 	private: System::Windows::Forms::Label^  txtDiskSpace;
 	private: System::Windows::Forms::Label^  txtTotal;
 	private: System::Windows::Forms::Label^  txtFile;
 	private: System::Windows::Forms::Timer^  copyTimer;
 	private: System::Windows::Forms::CheckBox^  cbPause;
-
-
-			 System::Threading::Thread ^mCopyThread;
-
 
 	public: delegate void CopyDoneHandler();
 	public: delegate void PercentHandler(int one, int two, int num);
@@ -68,69 +59,68 @@ namespace TVRename {
 	public: event CopyDoneHandler ^CopyDone;
 	public: event PercentHandler ^Percent;
 	public: event FilenameHandler ^Filename;
-
+			/*
 			String ^ErrorText() 
 			{ 
-				String ^t = mErrorText;
+			String ^t = mErrorText;
 
-				if (t->Length > 0) // last char will be an extra \r we don't really want
-					t->Remove(mErrorText->Length-1);
+			if (t->Length > 0) // last char will be an extra \r we don't really want
+			t->Remove(mErrorText->Length-1);
 
-				return t;
+			return t;
 			}
-			RCList ^ErrFiles() { return ErrorFiles; }
+			*/
+			//			RCList ^ErrFiles() { return ErrorFiles; }
 
 	public:
-		CopyMoveProgress(RCList ^list, CopyMoveResult &res, MissingEpisodeList ^mel, TVRenameStats ^stats) :
-		Result(res),
-			mSources(list),
-			MissingList(mel),
-			mStats(stats)
-		{
-			InitializeComponent();
-			copyTimer->Start();
+		CopyMoveProgress(TVDoc ^doc, AIOList ^todo, CopyMoveResult &res, TVRenameStats ^stats) :
+		  Result(res),
+			  mDoc(doc),
+			  mToDo(todo),
+			  mStats(stats)
+		  {
+			  InitializeComponent();
+			  copyTimer->Start();
 
-			mCurrentNum = -1;
-			//mLastPct = -1;
-			mErrorText = "";
-			ErrorFiles = gcnew RCList();
+			  mCurrentNum = -1;
+			  //mLastPct = -1;
+			  //			mErrorText = "";
+			  //			ErrorFiles = gcnew RCList();
 
-			DataArray = gcnew array<Byte>(kArrayLength);
+			  this->CopyDone += gcnew CopyDoneHandler(this, &CopyMoveProgress::CopyDoneFunc);
+			  this->Percent += gcnew PercentHandler(this, &CopyMoveProgress::SetPercentages);
+			  this->Filename += gcnew FilenameHandler(this, &CopyMoveProgress::SetFilename);
+		  }
 
-			this->CopyDone += gcnew CopyDoneHandler(this, &CopyMoveProgress::CopyDoneFunc);
-			this->Percent += gcnew PercentHandler(this, &CopyMoveProgress::SetPercentages);
-			this->Filename += gcnew FilenameHandler(this, &CopyMoveProgress::SetFilename);
-		}
+		  void SetFilename(String ^filename)
+		  {
+			  txtFilename->Text = filename;
+		  }
+		  void SetPercentages(int file, int group, int currentNum)
+		  {
+			  mCurrentNum = currentNum;
+			  //mPct = group;
 
-		void SetFilename(String ^filename)
-		{
-			txtFilename->Text = filename;
-		}
-		void SetPercentages(int file, int group, int currentNum)
-		{
-			mCurrentNum = currentNum;
-			//mPct = group;
+			  if (file > 1000)
+				  file = 1000;
+			  if (group > 1000)
+				  group = 1000;
+			  if (file < 0)
+				  file = 0;
+			  if (group < 0)
+				  group = 0;
 
-                        if (file > 1000)
-                            file = 1000;
-                        if (group > 1000)
-                            group = 1000;
-                        if (file < 0)
-                            file = 0;
-                        if (group < 0)
-                            group = 0;
+			  txtFile->Text = (file/10).ToString() + "% Done";
+			  txtTotal->Text = (group/10).ToString() + "% Done";
 
-			txtFile->Text = (file/10).ToString() + "% Done";
-			txtTotal->Text = (group/10).ToString() + "% Done";
-
-			pbFile->Value = file;
-			pbGroup->Value = group;
-			pbFile->Update();
-			pbGroup->Update();
-			txtFile->Update();
-			txtTotal->Update();
-			Update();
-		}
+			  pbFile->Value = file;
+			  pbGroup->Value = group;
+			  pbFile->Update();
+			  pbGroup->Update();
+			  txtFile->Update();
+			  txtTotal->Update();
+			  Update();
+		  }
 
 
 	protected:
@@ -343,7 +333,7 @@ namespace TVRename {
 			this->ShowInTaskbar = false;
 			this->SizeGripStyle = System::Windows::Forms::SizeGripStyle::Hide;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
-			this->Text = L"File Operation Progress";
+			this->Text = L"Progress";
 			this->Load += gcnew System::EventHandler(this, &CopyMoveProgress::CopyMoveProgress_Load);
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -359,16 +349,48 @@ namespace TVRename {
 				 }
 				 else
 				 {
-					 RCItem  ^rci = mSources[mCurrentNum];
-					 String ^toFolder = rci->ToFolder;
-					 if (Regex::Match(toFolder, "^[A-Za-z]:\\\\")->Success)
-					 {
-						 System::IO::DriveInfo ^di = gcnew System::IO::DriveInfo(DirectoryInfo(toFolder).Root->ToString());
-						 int pct = (int)((1000*di->TotalFreeSpace) / di->TotalSize);
-						 pbDiskSpace->Value = 1000-pct;
-						 txtDiskSpace->Text = ((int)((double)di->TotalFreeSpace/1024.0/1024.0/1024.0 + 0.5)).ToString() + " GB free";
-					 }
+					 bool ok = false;
+					 AIOItem ^aio = mToDo[mCurrentNum];
+					 DirectoryInfo ^toWhere = nullptr;
+
+					 if (aio->Type == AIOType::kCopyMoveRename)
+						 toWhere = safe_cast<AIOCopyMoveRename ^>(aio)->To->Directory;
+					 else if (aio->Type == AIOType::kDownload)
+						 toWhere = safe_cast<AIODownload ^>(aio)->Destination->Directory;
+					 else if (aio->Type == AIOType::kRSS)
+						 toWhere = FileInfo(safe_cast<AIORSS ^>(aio)->TheFileNoExt).Directory;
+					 else if (aio->Type == AIOType::kNFO)
+						 toWhere = safe_cast<AIONFO ^>(aio)->Where->Directory;
+
+					 DirectoryInfo ^toRoot = nullptr;
+					 if (toWhere->Name->StartsWith("\\\\"))
+						 toRoot = nullptr;
 					 else
+						 toRoot = toWhere->Root;
+
+					 if (toRoot != nullptr)
+					 {
+						 System::IO::DriveInfo ^di;
+						 try
+						 {
+							 // try to get root of drive
+							 di = gcnew System::IO::DriveInfo(toRoot->ToString());
+						 }
+						 catch (System::ArgumentException ^)
+						 {
+							 di = nullptr;
+						 }
+
+						 if (di != nullptr)
+						 {
+							 int pct = (int)((1000*di->TotalFreeSpace) / di->TotalSize);
+							 pbDiskSpace->Value = 1000-pct;
+							 txtDiskSpace->Text = ((int)((double)di->TotalFreeSpace/1024.0/1024.0/1024.0 + 0.5)).ToString() + " GB free";
+							 ok = true;
+						 }
+					 }
+
+					 if (!ok)
 					 {
 						 txtDiskSpace->Text = "Unknown";
 						 pbDiskSpace->Value = 0;
@@ -380,235 +402,235 @@ namespace TVRename {
 				 txtDiskSpace->Update();
 			 }
 
-			 bool ContinueAfterError()
+			 static String ^TempFor(FileInfo ^f)
 			 {
-				 return true;
+				 return f->FullName+".tvrenametemp";
 			 }
 
-			 void RemoveFromML(RCItem ^rci)
-			 {
-				 if ((MissingList == nullptr) || (rci->TheEpisode == nullptr))
-					 return;
-
-				 for each (MissingEpisode ^me in MissingList)
-				 {
-					 if (me == rci->TheEpisode)
-					 {
-						 MissingList->Remove(me);
-						 break;
-					 }
-				 }
-
-			 }
 			 void CopyMachine()
 			 {
+				 array<Byte>^dataArray = gcnew array<Byte>(kArrayLength);
+				 BinaryReader ^msr;
+				 BinaryWriter ^msw;
 
 				 long long totalSize = 0;
 				 long long totalCopiedSoFar = 0;
 
-
 				 totalSize = 0;
 				 totalCopiedSoFar = 0;
 
-				 for (int j=0;j<mSources->Count;j++)
-					 //if (mSources[j]->Enabled())
-						 totalSize += mSources[j]->FileSize();
+				 int nfoCount = 0;
+				 int downloadCount = 0;
 
-				 for (int i=0;i<mSources->Count;i++)
+				 for (int i=0;i<mToDo->Count;i++)
+				 {
+					 if (mToDo[i]->Type == AIOType::kCopyMoveRename)
+						 totalSize += safe_cast<AIOCopyMoveRename ^>(mToDo[i])->FileSize();
+					 else if (mToDo[i]->Type == AIOType::kNFO)
+						 nfoCount++;
+					 else if (mToDo[i]->Type == AIOType::kDownload)
+						 downloadCount++;
+					 else if (mToDo[i]->Type == AIOType::kRSS)
+						 downloadCount++;
+				 }
+
+				 int extrasCount = nfoCount+downloadCount;
+				 long long sizePerExtra = 1;
+				 if ((extrasCount > 0) && (totalSize != 0))					 
+				   sizePerExtra = totalSize/(10*extrasCount);
+				 if (sizePerExtra == 0)
+					 sizePerExtra = 1;
+				 totalSize += sizePerExtra * extrasCount;
+
+				 int extrasDone = 0;
+
+				 for (int i=0;i<mToDo->Count;i++)
 				 {
 					 while (cbPause->Checked)
 						 System::Threading::Thread::Sleep(100);
 
-					 RCItem  ^rci = mSources[i];
-					 //if (!rci->Enabled())
-						// continue;
+					 AIOItem ^aio1 = mToDo[i];
 
-					 // txtFilename->Text = rci->GetToName();
-					 array<Object^>^args = gcnew array<Object^>(1);
-					 args[0] = gcnew String(rci->ToName);
-
-					 this->BeginInvoke(gcnew FilenameHandler(this, &CopyMoveProgress::SetFilename), args);
-
-					 long long thisFileSize;
-					 thisFileSize = rci->FileSize();
-
-                                         System::Security::AccessControl::FileSecurity ^security = nullptr;
-                                         try 
-                                         {
-                                           security = FileInfo(rci->FullFromName()).GetAccessControl();
-                                         }
-                                         catch (...)
-                                         {
-                                         }
-
-					 if ( ((rci->Operation == rcMove)||(rci->Operation == rcRename)) && // move or rename
-						 (rci->FullFromName()->Substring(0,3)->ToLower() == rci->FullToName()->Substring(0,3)->ToLower()) ) // same device
+					 if ((aio1->Type == AIOType::kRSS) || (aio1->Type == AIOType::kRSS) || (aio1->Type == AIOType::kDownload))
 					 {
-						 // ask the OS to do it for us, since its easy and quick!
-						 try {
-							 if (rci->FullFromName()->ToLower() == rci->FullToName()->ToLower())
-							 {
-								 // XP won't actually do a rename if its only a case difference
-								 String ^tempName = rci->FullToName()+".tvrenametemp";
-								 File::Move(rci->FullFromName(),tempName);
-								 File::Move(tempName, rci->FullToName());
-							 }
-							 else
-								 File::Move(rci->FullFromName(),rci->FullToName());
+						 array<Object^>^args = gcnew array<Object^>(1);
+						 args[0] = gcnew String(aio1->FilenameForProgress());
+						 this->BeginInvoke(gcnew FilenameHandler(this, &CopyMoveProgress::SetFilename), args);
 
-							 RemoveFromML(rci);
-							 if (rci->Operation == rcMove)  mStats->FilesMoved++;
-							 if (rci->Operation == rcRename)  mStats->FilesRenamed++;
-						 }
-						 catch (System::Exception ^e)
-						 {
-							 mErrorText += e->Message+"\r";
-							 rci->LastError = e->Message;
-							 ErrorFiles->Add(rci);
-							 if (!ContinueAfterError())
-							 {
-								 for (int k=i+1;k<mSources->Count;k++)
-									 ErrorFiles->Add(mSources[k]); // also add what was skipped
+						 array<Object^>^args2 = gcnew array<Object^>(3);
+						 args2[0] = gcnew int((extrasCount != 0) ? (int)(1000*extrasDone/extrasCount) : 0);
+						 args2[1] = gcnew int((totalSize != 0) ? (int)(1000*totalCopiedSoFar/totalSize) : 50);
+						 args2[2] = gcnew int(i);
 
-								 this->BeginInvoke(gcnew CopyDoneHandler(this, &CopyMoveProgress::CopyDoneFunc), nullptr);
-								 return;
-							 }
-							 totalCopiedSoFar += thisFileSize;
-						 }
+						 this->BeginInvoke(gcnew PercentHandler(this, &CopyMoveProgress::SetPercentages), args2);
+
+						 aio1->Action(mDoc);
+						 extrasDone++;
+						 totalCopiedSoFar += sizePerExtra;
 					 }
-					 else
+					 else if (aio1->Type == AIOType::kCopyMoveRename)
 					 {
-						 // do it ourself!
-						 try {
-							 long long thisFileCopied = 0;
-							 msr = nullptr;
-							 msw = nullptr;
+						 AIOCopyMoveRename ^aio = safe_cast<AIOCopyMoveRename ^>(aio1);
+						 aio->HasError = false;
+						 aio->ErrorText = "";
 
-							 String ^from = rci->FullFromName();
-							 String ^to = rci->FullToName();
+						 array<Object^>^args = gcnew array<Object^>(1);
+						 args[0] = gcnew String(aio->FilenameForProgress());
+						 this->BeginInvoke(gcnew FilenameHandler(this, &CopyMoveProgress::SetFilename), args);
 
-							 msr = gcnew BinaryReader(gcnew FileStream(from, FileMode::Open));
-							 String ^tempName = to+".tvrenametemp";
-							 if (File::Exists(tempName))
-								 File::Delete(tempName);
-							 msw = gcnew BinaryWriter(gcnew FileStream(tempName, FileMode::CreateNew));
+						 long long thisFileSize;
+						 thisFileSize = aio->FileSize();
 
-							 int n = 0;
+						 System::Security::AccessControl::FileSecurity ^security = nullptr;
+						 try 
+						 {
+							 security = aio->From->GetAccessControl();
+						 }
+						 catch (...)
+						 {
+						 }
 
-							 do {
-								 n = msr->Read(DataArray, 0, kArrayLength);
-								 if (n)
+						 if ( aio->IsMoveRename() && // move or rename
+							 (aio->From->Directory->Root->FullName->ToLower() == aio->To->Directory->Root->FullName->ToLower())) // same device ... TODO: UNC paths?
+						 {
+							 // ask the OS to do it for us, since it's easy and quick!
+							 try {
+								 if (Same(aio->From, aio->To))
 								 {
-									 msw->Write(DataArray, 0, n);
+									 // XP won't actually do a rename if its only a case difference
+									 String ^tempName = TempFor(aio->To);
+									 aio->From->MoveTo(tempName);
+									 FileInfo(tempName).MoveTo(aio->To->FullName);
 								 }
-								 totalCopiedSoFar += n;
-								 thisFileCopied += n;
+								 else
+									 aio->From->MoveTo(aio->To->FullName);
 
-								 array<Object^>^args = gcnew array<Object^>(3);
-								 args[0] = gcnew int((thisFileSize != 0) ? (int)(1000*thisFileCopied/thisFileSize) : 50);
-								 args[1] = gcnew int((totalSize != 0) ? (int)(1000*totalCopiedSoFar/totalSize) : 50);
-								 args[2] = gcnew int(i);
+								 aio->Done = true;
 
-								 this->BeginInvoke(gcnew PercentHandler(this, &CopyMoveProgress::SetPercentages), args);
-
-								 while (cbPause->Checked)
-									 System::Threading::Thread::Sleep(100);
-							 } while (n != 0);
-
-							 msr->Close();
-							 msw->Close();
-
-							 // rename temp version to final name
-							 if (FileInfo(to).Exists)
-								 FileInfo(to).Delete(); // outta ma way!
-							 FileInfo(tempName).MoveTo(to);
-
-							 // if that was a move/rename, delete the source
-							 if ((rci->Operation == rcMove)||(rci->Operation == rcRename))
-								 File::Delete(rci->FullFromName());
-
-							 if (rci->Operation == rcMove)  mStats->FilesMoved++;
-							 if (rci->Operation == rcRename)  mStats->FilesRenamed++;
-							 if (rci->Operation == rcCopy)  mStats->FilesCopied++;
-
-							 RemoveFromML(rci);
-						 } // try
-						 catch (IOException ^e)
-						 {
-							 mErrorText += e->Message+"\r";
-                                                         rci->LastError = e->Message;
-
-							 Result = kAlreadyExists;
-							 if (msw != nullptr)
-								 msw->Close();
-							 if (msr != nullptr)
-								 msr->Close();
-                                                       
-                                                         ErrorFiles->Add(rci); 
-
-                                                         if (!ContinueAfterError())
+								 Diagnostics::Debug::Assert( (aio->Operation == AIOCopyMoveRename::Op::Move) || (aio->Operation == AIOCopyMoveRename::Op::Rename) );
+								 if (aio->Operation == AIOCopyMoveRename::Op::Move)  mStats->FilesMoved++;
+								 else if (aio->Operation == AIOCopyMoveRename::Op::Rename)  mStats->FilesRenamed++;
+							 }
+							 catch (System::Exception ^e)
 							 {
-								 for (int k=i+1;k<mSources->Count;k++)
-                                                                     ErrorFiles->Add(mSources[k]); // what was skipped
+								 aio->Done = true;
+								 aio->HasError = true;
+								 aio->ErrorText = e->Message;
+								 totalCopiedSoFar += thisFileSize;
+							 }
+						 }
+						 else
+						 {
+							 // do it ourself!
+							 try {
+								 long long thisFileCopied = 0;
+								 msr = nullptr;
+								 msw = nullptr;
+
+								 msr = gcnew BinaryReader(gcnew FileStream(aio->From->FullName, FileMode::Open));
+								 String ^tempName = TempFor(aio->To);
+								 if (FileInfo(tempName).Exists)
+									 FileInfo(tempName).Delete();
+
+								 msw = gcnew BinaryWriter(gcnew FileStream(tempName, FileMode::CreateNew));
+
+								 int n = 0;
+
+								 do {
+									 n = msr->Read(dataArray, 0, kArrayLength);
+									 if (n)
+										 msw->Write(dataArray, 0, n);
+									 totalCopiedSoFar += n;
+									 thisFileCopied += n;
+
+									 array<Object^>^args = gcnew array<Object^>(3);
+									 args[0] = gcnew int((thisFileSize != 0) ? (int)(1000*thisFileCopied/thisFileSize) : 50);
+									 args[1] = gcnew int((totalSize != 0) ? (int)(1000*totalCopiedSoFar/totalSize) : 50);
+									 args[2] = gcnew int(i);
+
+									 this->BeginInvoke(gcnew PercentHandler(this, &CopyMoveProgress::SetPercentages), args);
+
+									 while (cbPause->Checked)
+										 System::Threading::Thread::Sleep(100);
+								 } while (n != 0);
+
+								 msr->Close();
+								 msw->Close();
+
+								 // rename temp version to final name
+								 if (aio->To->Exists)
+									 aio->To->Delete(); // outta ma way!
+								 FileInfo(tempName).MoveTo(aio->To->FullName);
+
+								 // if that was a move/rename, delete the source
+								 if (aio->IsMoveRename())
+									 aio->From->Delete();
+
+								 if (aio->Operation == AIOCopyMoveRename::Op::Move)  mStats->FilesMoved++;
+								 else if (aio->Operation == AIOCopyMoveRename::Op::Rename)  mStats->FilesRenamed++;
+								 else if (aio->Operation == AIOCopyMoveRename::Op::Copy)  mStats->FilesCopied++;
+
+								 aio->Done = true;
+							 } // try
+							 catch (IOException ^e)
+							 {
+								 aio->Done = true;
+								 aio->HasError = true;
+								 aio->ErrorText = e->Message;
+
+								 Result = kAlreadyExists;
+								 if (msw != nullptr)
+									 msw->Close();
+								 if (msr != nullptr)
+									 msr->Close();
+
+								 totalCopiedSoFar += thisFileSize;
+							 }
+							 catch (System::Threading::ThreadAbortException ^)
+							 {
+								 Result = kUserCancelled;
+								 //for (int k=i;k<mSources->Count;k++)
+								 // ErrorFiles->Add(mSources[k]); // what was skipped
+
+								 if (msw != nullptr)
+								 {
+									 msw->Close();
+									 String ^tempName = TempFor(aio->To);
+									 if (File::Exists(tempName))
+										 File::Delete(tempName);
+								 }
+								 if (msr != nullptr)
+									 msr->Close();
 								 this->BeginInvoke(gcnew CopyDoneHandler(this, &CopyMoveProgress::CopyDoneFunc), nullptr);
 								 return;
 							 }
+							 catch (System::Exception ^e)
+							 {
+								 Result = kFileError;
+								 aio->HasError = true;
+								 aio->ErrorText = e->Message;
+								 if (msw != nullptr)
+								 {
+									 msw->Close();
+									 if (FileInfo(TempFor(aio->To)).Exists)
+										 FileInfo(TempFor(aio->To)).Delete();
+								 }
+								 if (msr != nullptr)
+									 msr->Close();
 
-							 totalCopiedSoFar += thisFileSize;
-						 }
-						 catch (System::Threading::ThreadAbortException ^)
+								 totalCopiedSoFar += thisFileSize;
+							 }
+						 } // do it ourself
+						 try 
 						 {
-							 Result = kUserCancelled;
-							 for (int k=i;k<mSources->Count;k++)
-								 ErrorFiles->Add(mSources[k]); // what was skipped
-
-							 if (msw != nullptr)
-							 {
-								 msw->Close();
-								 if (File::Exists(rci->FullToName()+".tvrenametemp"))
-									 File::Delete(rci->FullToName()+".tvrenametemp");
-							 }
-							 if (msr != nullptr)
-								 msr->Close();
-							 this->BeginInvoke(gcnew CopyDoneHandler(this, &CopyMoveProgress::CopyDoneFunc), nullptr);
-							 return;
+							 if (security != nullptr)
+								 aio->To->SetAccessControl(security);
 						 }
-						 catch (System::Exception ^e)
+						 catch (...)
 						 {
-							 mErrorText += "Error on file " + rci->FullToName()+"\r";
-
-							 Result = kFileError;
-                                                         rci->LastError = e->Message;
-							 if (msw != nullptr)
-							 {
-								 msw->Close();
-								 if (File::Exists(rci->FullToName()+".tvrenametemp"))
-									 File::Delete(rci->FullToName()+".tvrenametemp");
-							 }
-							 if (msr != nullptr)
-								 msr->Close();
-
-                                                         ErrorFiles->Add(rci); 
-
-							 if (!ContinueAfterError())
-							 {
-								 for (int k=i;k<mSources->Count;k++)
-									 ErrorFiles->Add(mSources[k]); // what was skipped
-								 this->BeginInvoke(gcnew CopyDoneHandler(this, &CopyMoveProgress::CopyDoneFunc), nullptr);
-								 return;
-							 }
-							 totalCopiedSoFar += thisFileSize;
-
 						 }
-					 } // do it ourself
-                                         try 
-                                         {
-                                            if (security != nullptr)
-                                                FileInfo(rci->FullToName()).SetAccessControl(security);
-                                         }
-                                         catch (...)
-                                         {
-                                         }
+					 } // if copymoverename
+
 				 }// for each source
 
 				 Result = kCopyMoveOk;
@@ -625,7 +647,7 @@ namespace TVRename {
 			 {
 
 				 mCopyThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &CopyMoveProgress::CopyMachine));
-                                 mCopyThread->Name = "Copy Thread";
+				 mCopyThread->Name = "Copy Thread";
 				 mCopyThread->Start();
 			 }
 

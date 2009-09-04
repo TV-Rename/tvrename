@@ -28,7 +28,7 @@ Var STARTMENU_FOLDER
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
 ;General
-OutFile "TVRename2.1.x.exe"
+OutFile "TVRename2.2.x.exe"
 
 ;Folder selection page
 InstallDir "$PROGRAMFILES\${DEF_INSTALL_DIR}"
@@ -64,6 +64,11 @@ Section "TVRename" SecTVRename
   SetOutPath "$INSTDIR"
   File "..\..\Release\TVRename.exe"
   File "..\..\Release\Ionic.Utils.Zip.dll"
+  File "..\..\Release\DevAge.Core.dll"
+  File "..\..\Release\DevAge.Windows.Forms.dll"
+  File "..\..\Release\log4net.dll"
+  File "..\..\Release\SourceGrid.dll"
+  File "..\..\Release\SourceGrid.Extensions.dll"
 
 ;  ReadRegStr $R0 HKCU "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" "AppData"
 ;  Detailprint $R0
@@ -72,6 +77,7 @@ Section "TVRename" SecTVRename
 
   createdirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
   createShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk" "$INSTDIR\TVRename.exe"
+  createShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk" "$INSTDIR\TVRename.exe" /recover
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe"
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -96,9 +102,15 @@ Section "Uninstall"
   ; Uninstall chart stuff
   Delete "$INSTDIR\TVRename.exe"
   Delete "$INSTDIR\Ionic.Utils.Zip.dll"
+  Delete "$INSTDIR\DevAge.Core.dll"
+  Delete "$INSTDIR\DevAge.Windows.Forms.dll"
+  Delete "$INSTDIR\log4net.dll"
+  Delete "$INSTDIR\SourceGrid.dll"
+  Delete "$INSTDIR\SourceGrid.Extensions.dll"  
   Delete "$INSTDIR\Uninstall.exe"
   RmDir "$INSTDIR"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk"
+  Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk"
   RmDir "$SMPROGRAMS\$STARTMENU_FOLDER"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REGUNINSTKEY}"

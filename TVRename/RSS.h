@@ -27,23 +27,6 @@ namespace TVRename
         }
     };
 
-    ref class MissingEpisode;
-
-    public ref class RSSMissingItem
-    {
-    public:
-        RSSItem ^RSS;
-        MissingEpisode ^Episode;
-
-        RSSMissingItem(RSSItem ^rss, MissingEpisode ^ep)
-        {
-            RSS = rss;
-            Episode = ep;
-        }
-    };
-
-    typedef System::Collections::Generic::List<RSSMissingItem ^> RSSMissingItemList;
-
     public ref class RSSItemList : public System::Collections::Generic::List<RSSItem ^>
     {
     private:
@@ -130,6 +113,28 @@ namespace TVRename
 
 
     };
+
+
+	
+    // ref class MissingEpisode;
+/*
+    public ref class RSSMissingItem      ------------> becomes AIORSS
+    {
+    public:
+        RSSItem ^RSS;
+        MissingEpisode ^Episode;
+
+        RSSMissingItem(RSSItem ^rss, MissingEpisode ^ep)
+        {
+            RSS = rss;
+            Episode = ep;
+        }
+    };
+
+    typedef System::Collections::Generic::List<RSSMissingItem ^> RSSMissingItemList;
+*/
+
+
 
 } // namespace
 

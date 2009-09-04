@@ -23,12 +23,17 @@ namespace TVRename
                 title = r->ReadElementContentAsString();
             else if (r->Name == "description")
                 description = r->ReadElementContentAsString();
-            else if (r->Name == "link")
+			else if ((r->Name == "link") && (String::IsNullOrEmpty(link)))
                 link = r->ReadElementContentAsString();
+			else if ((r->Name == "enclosure") && (r->GetAttribute("type") == "application/x-bittorrent"))
+			{
+				link = r->GetAttribute("url");
+				r->ReadOuterXml();
+			}
             else 
                 r->ReadOuterXml();
         }
-        if ((title == "") || (link == ""))
+        if ((String::IsNullOrEmpty(title)) || (String::IsNullOrEmpty(link)))
             return false;
 
         int season = -1, episode = -1;

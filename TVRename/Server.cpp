@@ -93,7 +93,7 @@ namespace TVRename {
 									}
 									else
 									{
-										if (getLine != "") // this line is blank, and we have a GET line saved
+										if (!String::IsNullOrEmpty(getLine)) // this line is blank, and we have a GET line saved
 										{
 											
 										String ^res = ProcessLine(getLine, doc);

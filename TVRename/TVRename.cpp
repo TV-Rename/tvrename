@@ -44,7 +44,9 @@ int main(array<System::String ^> ^args)
 	try 
     {
 #endif
-      Application::Run(gcnew UI(args));
+
+		Application::Run(gcnew UI(args));
+
 #ifndef NOMUTEX
 	  GC::KeepAlive(mutex);
 #endif

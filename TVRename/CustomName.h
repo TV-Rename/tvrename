@@ -49,10 +49,6 @@ namespace TVRename
             return res;
         }
 
-        CustomName(int n) // old NStyle naming styles
-        {
-        }
-
         CustomName(CustomName ^O)
         {
             StyleString = O->StyleString;
@@ -68,13 +64,20 @@ namespace TVRename
             StyleString = DefaultStyle();
         }
 
-        String ^NameFor(ProcessedEpisode ^pe)
+        String ^NameForExt(ProcessedEpisode ^pe, String ^extension)
         {
-            return NameFor(pe, StyleString);
+			String ^r = NameForNoExt(pe, StyleString);
+			if (!String::IsNullOrEmpty(extension))
+			{
+				if (!extension->StartsWith("."))
+					r += ".";
+				r += extension;
+			}
+            return r;
         }
 
         static StringList ^Tags();
-        static String ^NameFor(ProcessedEpisode ^pe, String ^styleString);
+	static String ^NameForNoExt(ProcessedEpisode ^pe, String ^styleString);
     };
 
 

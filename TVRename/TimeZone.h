@@ -38,8 +38,10 @@ using namespace System;
 
 	public ref class TZMagic
 	{
+	private: TZMagic()
+			 {
+			 }
 	public:
-
 		static array<Byte>^ GetTZ(String ^name)
 		{
 			// HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\Eastern Standard Time
@@ -78,7 +80,7 @@ using namespace System;
                     // e.g. 3PM,NZST -> 1PM (if this computer's local time is in AEST)
                     int thisYear = DateTime::Now.Year;
 
-                    TimeSpan ^ourUTCdiff = TimeZone::CurrentTimeZone->GetUtcOffset(DateTime::Now);
+                    // TimeSpan ^ourUTCdiff = TimeZone::CurrentTimeZone->GetUtcOffset(DateTime::Now);
 
                     // some timezones don't observe any DST.  the changeover dates seem to be all zeroes in that case.
                     bool theyHaveDST = ! (
@@ -120,8 +122,19 @@ using namespace System;
 		}
 
 
+		static unsigned long Epoch()
+		{
+			return (unsigned long)(DateTime::UtcNow.Subtract(DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
+		}		
+		static unsigned long Epoch(DateTime ^dt)
+		{
+			DateTime ^uni = dt->ToUniversalTime();
+			unsigned long r = (unsigned long)(uni->Subtract(DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
+			return r;
+		}		
 
 	};
 
+	
 
 }

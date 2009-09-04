@@ -29,7 +29,7 @@ namespace TVRename
 
         filename = filename->Replace("."," "); // turn dots into spaces
 
-        if ((showNameHint == nullptr) || (showNameHint == ""))
+        if ((showNameHint == nullptr) || (String::IsNullOrEmpty(showNameHint)))
             return filename;
 
         bool nameIsNumber = (Regex::Match(showNameHint,"^[0-9]+$")->Success);

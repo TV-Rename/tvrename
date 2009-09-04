@@ -2,89 +2,60 @@
 
 namespace TVRename
 {
-    using namespace System::IO;
-    using namespace System;
-    using namespace System::Windows::Forms;
-    using namespace System::Text::RegularExpressions;
+	using namespace System::IO;
+	using namespace System;
+	using namespace System::Windows::Forms;
+	using namespace System::Text::RegularExpressions;
 
-    public delegate void SetProgressDelegate(int percent);
+	public delegate void SetProgressDelegate(int percent);
 
-    typedef System::Collections::Generic::List<System::String ^> StringList;
+	typedef System::Collections::Generic::List<System::String ^> StringList;
 
-    static System::Drawing::Color WarningColor() 
-    { 
-        return System::Drawing::Color::FromArgb(static_cast<System::Int32>(
-            static_cast<System::Byte>(255)), 
-            static_cast<System::Int32>(static_cast<System::Byte>(210)), 
-            static_cast<System::Int32>(static_cast<System::Byte>(210))); 
-    }
+	static System::Drawing::Color WarningColor() 
+	{ 
+		return System::Drawing::Color::FromArgb(static_cast<System::Int32>(
+			static_cast<System::Byte>(255)), 
+			static_cast<System::Int32>(static_cast<System::Byte>(210)), 
+			static_cast<System::Int32>(static_cast<System::Byte>(210))); 
+	}
 
-    typedef System::Collections::Generic::List<System::IO::FileInfo ^> FileList;
-    typedef System::Collections::Generic::List<Int64> FileLengths;
+	typedef System::Collections::Generic::List<System::IO::FileInfo ^> FileList;
 
-    static void GetFileLengths(FileList ^files, FileLengths ^lengths)
-    {
-        for each (FileInfo ^f in files)
-            lengths->Add(f->Length);
-    }
-    static void BuildDirCache(FileList ^files, String ^folder, bool subFolders)
-    {
-        if (!DirectoryInfo(folder).Exists)
-        {
-            System::Windows::Forms::DialogResult res = MessageBox::Show("The search folder \"" + folder + " does not exist.\n",
-                "Folder does not exist",MessageBoxButtons::OK, MessageBoxIcon::Warning);
-        }
+	static String ^SimplifyName(String ^n)
+	{
+		n = n->ToLower();
+		n = n->Replace("the","");
+		n = n->Replace("'","");
+		n = n->Replace("&","");
+		n = n->Replace("and","");
+		n = n->Replace("!","");
+		n = Regex::Replace(n, "[_\\W]+"," ");
+		return n;
+	}
 
-        try {
-            if (folder->Length >= 248)
-            {
-                MessageBox::Show("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder,
-                    "Path name too long",
-                    MessageBoxButtons::OK,
-                    MessageBoxIcon::Warning);
-                return;
-            }
+	static bool Same(FileInfo ^a, FileInfo ^b)
+	{
+		return String::Compare(a->FullName, b->FullName, true) == 0; // true->ignore case
+	}
 
-            DirectoryInfo ^di = gcnew DirectoryInfo(folder);
-            if (!di->Exists)
-                return;
+	static bool Same(DirectoryInfo ^a, DirectoryInfo ^b)
+	{
+		String ^n1 = a->FullName;
+		String ^n2 = b->FullName;
+		if (!n1->EndsWith("\\"))
+			n1 = n1 + "\\";
+		if (!n2->EndsWith("\\"))
+			n2 = n2 + "\\";
 
-            //                DirectorySecurity ^ds = di->GetAccessControl();
-
-            array<FileInfo ^> ^f2 = di->GetFiles();
-            for (int i=0;i<f2->Length;i++)
-            {
-                if ((f2[i]->Name->Length + folder->Length) >= 260)
-                {
-                    MessageBox::Show("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + f2[i]->Name + " in " + folder,
-                        "File+Path name too long",
-                        MessageBoxButtons::OK,
-                        MessageBoxIcon::Warning);
-                }
-                else
-                    files->Add(f2[i]);
-            }
-
-            if (subFolders)
-            {
-                array<DirectoryInfo ^> ^dirs = di->GetDirectories();
-                for (int i=0;i<dirs->Length;i++)
-                    BuildDirCache(files, dirs[i]->FullName, subFolders);
-            }
-        }
-        catch (...)
-        {
-        }
-    }
-        static String ^SimplifyName(String ^n)
-        {
-            n = n->ToLower();
-            n = n->Replace("the","");
-            n = n->Replace("'","");
-			n = n->Replace("&","");
-			n = n->Replace("and","");
-            n = Regex::Replace(n, "[_\\W]+"," ");
-            return n;
-        }
+		return String::Compare(n1, n2, true) == 0; // true->ignore case
+	}
+	static FileInfo ^FileInFolder(String ^dir, String ^fn)
+	{
+		return gcnew FileInfo(String::Concat(dir, dir->EndsWith("\\")?"":"\\", fn));
+	}
+	static FileInfo ^FileInFolder(DirectoryInfo ^di, String ^fn)
+	{
+		return FileInFolder(di->FullName, fn);
+	}
 
 }

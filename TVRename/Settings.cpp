@@ -25,7 +25,7 @@ String ^TVSettings::BTSearchURL(ProcessedEpisode ^epi)
             String ^s2 = s->Name + " " + seas + ep;
             s2 = s2->Replace(" ","+");
             //url = url->Replace("!", s2);
-            return CustomName::NameFor(epi, url);
+            return CustomName::NameForNoExt(epi, url);
         }
 
 

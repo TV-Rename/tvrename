@@ -1,6 +1,5 @@
 #pragma once
 
-//#include "RenameItem.h"
 #include "TheTVDB.h"
 #include "ShowRule.h"
 #include "Settings.h"
@@ -55,7 +54,16 @@ namespace TVRename
                 SI = si;
             }
 
-            static int EPNumberSorter( ProcessedEpisode^ e1, ProcessedEpisode^ e2 )
+			String ^NumsAsString()
+			{
+				if (EpNum == EpNum2)
+					return EpNum.ToString();
+				else
+					return EpNum.ToString() + "-" + EpNum2.ToString();
+			}
+
+			[System::Diagnostics::CodeAnalysis::SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")] 			// used for Sort() on a list of ProcessedEpisodes, so can't pass in Episode class
+			static int EPNumberSorter( ProcessedEpisode^ e1, ProcessedEpisode^ e2 )
             {
                 int ep1 = e1->EpNum;
                 int ep2 = e2->EpNum;
@@ -63,7 +71,8 @@ namespace TVRename
                 return ep1-ep2;
             }
 
-            static int DVDOrderSorter( ProcessedEpisode^ e1, ProcessedEpisode^ e2 )
+			[System::Diagnostics::CodeAnalysis::SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")] 			// used for Sort() on a list of ProcessedEpisodes, so can't pass in Episode class
+			static int DVDOrderSorter( ProcessedEpisode^ e1, ProcessedEpisode^ e2 )
             {
                 int ep1 = e1->EpNum;
                 int ep2 = e2->EpNum;
@@ -74,7 +83,7 @@ namespace TVRename
                 {
                     String ^n1 = e1->Items[key];
                     String ^n2 = e2->Items[key];
-                    if ((n1 != "") && (n2 != ""))
+                    if ((!String::IsNullOrEmpty(n1)) && (!String::IsNullOrEmpty(n2)))
                     {
                         try 
                         {
@@ -139,7 +148,7 @@ namespace TVRename
                 SeriesInfo ^ser = TheSeries();
                 if (ser != nullptr)
                     return ser->Name;
-                return "<Error: "+TVDBCode.ToString()+ " not in thetvdb>";
+                return "<"+TVDBCode.ToString()+ " not downloaded>";
             }
             void SetDefaults(TheTVDB ^db)
             {
@@ -191,7 +200,7 @@ namespace TVRename
             {
                 bool leadingZero = settings->LeadingZeroOnSeason || PadSeasonToTwoDigits;
                 String ^r = AutoAdd_FolderBase;
-                if (r == "")
+                if (String::IsNullOrEmpty(r))
                     return "";
 
                 if (!r->EndsWith("\\"))
@@ -375,6 +384,8 @@ namespace TVRename
                         ForceCheckAll = reader->ReadElementContentAsBoolean();
                     else if (reader->Name == "PadSeasonToTwoDigits")
                         PadSeasonToTwoDigits = reader->ReadElementContentAsBoolean();
+					else if (reader->Name == "UseSequentialMatch")
+						UseSequentialMatch = reader->ReadElementContentAsBoolean();
                     else if (reader->Name == "IgnoreSeasons")
                     {
                         if (!reader->IsEmptyElement)
@@ -444,18 +455,30 @@ namespace TVRename
                 return pel;
             }
 
-            FolderLocationDict ^AllFolderLocations(TVSettings ^settings)
+			FolderLocationDict ^AllFolderLocations(TVSettings ^settings)
+			{
+				return AllFolderLocations(settings, true);
+			}
+			String ^TTS(String ^s) // trim trailing slash
+			{
+				return s->TrimEnd('\\');
+			}
+            FolderLocationDict ^AllFolderLocations(TVSettings ^settings, bool manualToo)
             {
                 FolderLocationDict ^fld = gcnew FolderLocationDict();
                 
-                for each (KeyValuePair<int, StringList ^> ^kvp in ManualFolderLocations)
-                {
-                    fld[kvp->Key] = gcnew StringList();
-                    for each (String ^s in kvp->Value)
-                        fld[kvp->Key]->Add(s);
-                }
+				if (manualToo)
+				{
+					for each (KeyValuePair<int, StringList ^> ^kvp in ManualFolderLocations)
+					{
+						if (!fld->ContainsKey(kvp->Key))
+							fld[kvp->Key] = gcnew StringList();
+						for each (String ^s in kvp->Value)
+							fld[kvp->Key]->Add(TTS(s));
+					}
+				}
 
-                if (AutoAddNewSeasons && (AutoAdd_FolderBase != ""))
+                if (AutoAddNewSeasons && (!String::IsNullOrEmpty(AutoAdd_FolderBase)))
                 {
                     int highestThereIs = -1;
                     for each (KeyValuePair<int , ProcessedEpisodeList ^> ^kvp in SeasonEpisodes)
@@ -468,12 +491,12 @@ namespace TVRename
                             continue;
 
 						String ^newName = AutoFolderNameForSeason(i, settings);
-						if ((newName != "") && (DirectoryInfo(newName).Exists))
+						if ((!String::IsNullOrEmpty(newName)) && (DirectoryInfo(newName).Exists))
 						{
 							if (!fld->ContainsKey(i))
 								fld[i] = gcnew StringList();
 							if (!fld[i]->Contains(newName))
-								fld[i]->Add(newName);
+								fld[i]->Add(TTS(newName));
                         }
                     }
                 }
