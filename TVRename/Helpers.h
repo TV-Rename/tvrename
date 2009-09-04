@@ -7,6 +7,8 @@ namespace TVRename
     using namespace System::Windows::Forms;
     using namespace System::Text::RegularExpressions;
 
+    public delegate void SetProgressDelegate(int percent);
+
     typedef System::Collections::Generic::List<System::String ^> StringList;
 
     static System::Drawing::Color WarningColor() 
@@ -79,6 +81,8 @@ namespace TVRename
             n = n->ToLower();
             n = n->Replace("the","");
             n = n->Replace("'","");
+			n = n->Replace("&","");
+			n = n->Replace("and","");
             n = Regex::Replace(n, "[_\\W]+"," ");
             return n;
         }

@@ -121,13 +121,6 @@
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="bnChooseSite.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAC9JREFUOE9jYBgF
-        VA+B/0ATCWGCluIzgKBmmAJshhCtGZshJGtGNoRszaMa6RUCAOFhGOjwmHuBAAAAAElFTkSuQmCC
-</value>
-  </data>
   <data name="bnWTWChooseSite.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
@@ -154,6 +147,13 @@
         A7sDeQNsA7gD8gP8A+wD3wP3A8oDwQPLA/kP/waAD/8DgAPAEv9sAAz/A+wD2wPIA9UD5gPNBtQD/Bj/
         A8ADgAPACf8DwAOAFf9sAEL/CYADwAaAA8AV/2wARf8JwAOAA8AY/2wAAUIBTQE+BwABPgMAASgDAAFI
         AwABDQMAAQEBAAEBBQABnBcAA/+dAAs=
+</value>
+  </data>
+  <data name="bnChooseSite.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAC9JREFUOE9jYBgF
+        VA+B/0ATCWGCluIzgKBmmAJshhCtGZshJGtGNoRszaMa6RUCAOFhGOjwmHuBAAAAAElFTkSuQmCC
 </value>
   </data>
   <metadata name="openFile.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -210,6 +210,9 @@
   </metadata>
   <metadata name="tmrShowUpcomingPopup.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>475, 54</value>
+  </metadata>
+  <metadata name="quickTimer.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>652, 54</value>
   </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>107</value>

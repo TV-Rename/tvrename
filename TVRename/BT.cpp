@@ -465,7 +465,7 @@ namespace TVRename
         TreeView ^_tvTree, 
         ListView ^results,
         RCList ^_renameList,
-        ProgressBar ^_pbProgress,
+        SetProgressDelegate ^_prog,
         int action,
         String ^_secondFolder,
         MissingEpisodeList ^missingList,
@@ -478,7 +478,7 @@ namespace TVRename
         tvTree = _tvTree;
         Results = results;
         renameList = _renameList;
-        pbProgress = _pbProgress;
+        SetProg = _prog;
         Action = action;
         secondFolder = _secondFolder;
 
@@ -494,8 +494,8 @@ namespace TVRename
 
     bool BTProcessor::Go()
     {
-        if (pbProgress != nullptr)
-            pbProgress->Value = 0;
+        if (SetProg != nullptr)
+            SetProg->Invoke(0);
 
         if (folder == "") 
             return false;
@@ -637,10 +637,8 @@ namespace TVRename
             // list of dictionaries
             for (int i=0;i<fileList->Items->Count;i++)
             {
-                if (pbProgress != nullptr)
-                {
-                    pbProgress->Value = 100*i/fileList->Items->Count;
-                }
+                if (SetProg != nullptr)
+                    SetProg->Invoke(100*i/fileList->Items->Count);
                 if (fileList->Items[i]->Type != kDictionary)
                     return false;
 
@@ -722,8 +720,8 @@ namespace TVRename
         if (Altered && UsingResumeDat && !(Action & actTestMode))
             WriteResumeDat();
 
-        if (pbProgress != nullptr)
-            pbProgress->Value = 0;
+        if (SetProg != nullptr)
+            SetProg->Invoke(0);
 
         return true;
     }

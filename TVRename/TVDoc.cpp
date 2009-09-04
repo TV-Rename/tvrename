@@ -91,6 +91,8 @@ namespace TVRename
 
         for each (FilenameProcessorRE ^re in rexps)
         {
+			if (!re->Enabled)
+				continue;
             try
             {
                 Match ^m = Regex::Match(re->UseFullPath ? fullPath:filename, re->RE, RegexOptions::IgnoreCase);

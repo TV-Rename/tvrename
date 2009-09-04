@@ -69,8 +69,6 @@ namespace TVRename {
 	public: event PercentHandler ^Percent;
 	public: event FilenameHandler ^Filename;
 
-			System::Windows::Forms::ProgressBar ^mProgress;
-
 			String ^ErrorText() 
 			{ 
 				String ^t = mErrorText;
@@ -83,12 +81,9 @@ namespace TVRename {
 			RCList ^ErrFiles() { return ErrorFiles; }
 
 	public:
-		CopyMoveProgress(RCList ^list, CopyMoveResult &res, System::Windows::Forms::ProgressBar ^pbProgress,
-			MissingEpisodeList ^mel,
-			TVRenameStats ^stats) :
+		CopyMoveProgress(RCList ^list, CopyMoveResult &res, MissingEpisodeList ^mel, TVRenameStats ^stats) :
 		Result(res),
 			mSources(list),
-			mProgress(pbProgress),
 			MissingList(mel),
 			mStats(stats)
 		{
@@ -130,7 +125,6 @@ namespace TVRename {
 
 			pbFile->Value = file;
 			pbGroup->Value = group;
-			mProgress->Value = group/10;
 			pbFile->Update();
 			pbGroup->Update();
 			txtFile->Update();
@@ -469,7 +463,7 @@ namespace TVRename {
 						 catch (System::Exception ^e)
 						 {
 							 mErrorText += e->Message+"\r";
-                                                         rci->LastError = e->Message;
+							 rci->LastError = e->Message;
 							 ErrorFiles->Add(rci);
 							 if (!ContinueAfterError())
 							 {

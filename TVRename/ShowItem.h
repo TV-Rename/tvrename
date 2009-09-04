@@ -467,12 +467,13 @@ namespace TVRename
                         if (IgnoreSeasons->Contains(i))
                             continue;
 
-                        String ^newName = AutoFolderNameForSeason(i, settings);
-                        if ((newName != "") && (DirectoryInfo(newName).Exists))
-                        {
-                            if (!fld->ContainsKey(i))
-                              fld[i] = gcnew StringList();
-                            fld[i]->Add(newName);
+						String ^newName = AutoFolderNameForSeason(i, settings);
+						if ((newName != "") && (DirectoryInfo(newName).Exists))
+						{
+							if (!fld->ContainsKey(i))
+								fld[i] = gcnew StringList();
+							if (!fld[i]->Contains(newName))
+								fld[i]->Add(newName);
                         }
                     }
                 }

@@ -291,7 +291,7 @@ namespace TVRename {
                 lvi->Text = fn;
 
                 bool ok = false, ok1 = false, ok2 = false;
-                if (fn->Length < 100)
+                if (fn->Length < 255)
                 {
                     int seas, ep;
                     ok = mDoc->FindSeasEp(gcnew FileInfo(fn+".avi"), &seas, &ep, pe->SI->ShowName());
