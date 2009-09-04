@@ -2,6 +2,8 @@
 #include "BugReport.h"
 
 #include "Version.h"
+#include "TVDoc.h"
+#include "UI.h"
 
 namespace TVRename
 {
@@ -15,7 +17,9 @@ namespace TVRename
         txt += "Subject: TVRename bug report" + "\r\n";
         txt += "\r\n";
         txt += "TVRename version: " + DisplayVersionString() + "\r\n";
-        txt += "Experimental features: " + (IncludeExperimentalStuff() ? "On" : "Off") + "\r\n";
+        txt += "Experimental features: " + (UI::IncludeExperimentalStuff() ? "On" : "Off") + "\r\n";
+        txt += "UserAppDataPath is " + System::Windows::Forms::Application::UserAppDataPath + "\r\n";
+        txt += "EpGuidePath is " + UI::EpGuidePath() + "\r\n";
         txt += "\r\n";
         txt += "==== Brief Description ====" + "\r\n";
         txt += txtDesc1->Text + "\r\n";
@@ -50,6 +54,13 @@ namespace TVRename
             txt += "\r\n";
         }
 
+        if (cbFOScan->Checked || cbFolderScan->Checked)
+		{
+			txt += "==== Filename processors ====\r\n";
+			for each (FilenameProcessorRE ^s in mDoc->Settings->FNPRegexs)
+				txt += (s->Enabled ? "Enabled":"Disabled") + " \""+s->RE+"\" "+(s->UseFullPath?"(FullPath)":"")+"\r\n";
+			txt += "\r\n";
+		}
 
         if (cbFOScan->Checked)
         {
@@ -63,8 +74,8 @@ namespace TVRename
             {
                 int seas, ep;
                 bool r = mDoc->FindSeasEp(fi, &seas, &ep, nullptr);
-                bool useful = mDoc->Settings->UsefulExtension(fi->Extension);
-                txt += fi->FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?"Y":"N")+")" + "\r\n";
+                bool useful = mDoc->Settings->UsefulExtension(fi->Extension,false);
+                txt += fi->FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?fi->Extension:"-")+")" + "\r\n";
             }
             txt += "\r\n";
         }
@@ -86,8 +97,6 @@ namespace TVRename
                     {
                         txt += si->TVDBCode + " : " + si->ShowName() + " : S" + snum.ToString() + "\r\n";
                         txt += "Folder: " + folder;
-                        //if (fi->IsActive)
-                        //{
                         txt += "\r\n";
                         FileList ^files = gcnew FileList;
                         if (DirectoryInfo(folder).Exists)
@@ -96,8 +105,8 @@ namespace TVRename
                         {
                             int seas, ep;
                             bool r = mDoc->FindSeasEp(fi, &seas, &ep, si->ShowName());
-                            bool useful = mDoc->Settings->UsefulExtension(fi->Extension);
-                            txt += fi->FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?"Y":"N")+")" + "\r\n";
+                            bool useful = mDoc->Settings->UsefulExtension(fi->Extension,false);
+                            txt += fi->FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?fi->Extension:"-")+")" + "\r\n";
                         }
                         txt += "\r\n";
                     }

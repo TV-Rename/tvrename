@@ -15,6 +15,7 @@
 #include "DownloadProgress.h"
 #include "MissingFolderAction.h"
 #include "RSS.h"
+#include "Helpers.h"
 
 namespace TVRename {
     using namespace System;
@@ -33,11 +34,12 @@ namespace TVRename {
     public ref class TVDoc
     {
     private:
+		array<System::String ^> ^Args; // command line arguments
         TVRenameStats ^mStats;
         bool mDirty;
         ShowItemList ^ShowItems;
 
-        System::Threading::Thread ^mDownloaderThread;
+        Thread ^mDownloaderThread;
         bool DownloadOK;
 
         TheTVDB ^mTVDB;
@@ -47,6 +49,8 @@ namespace TVRename {
         bool DownloadStopOnError;
         int DownloadPct;
         int DownloadsRemaining;
+		Semaphore ^WorkerSemaphore;
+		Generic::List<Thread ^> ^Workers;
 
         TheTVDB ^GetTVDB(bool lock, String ^whoFor)
         {
@@ -72,8 +76,13 @@ namespace TVRename {
         RSSMissingItemList ^RSSMissingList;
 
     public:
-        TVDoc()
+        TVDoc(array<System::String ^> ^args)
         {
+			Args = args;
+			
+			Workers = nullptr;
+			WorkerSemaphore = nullptr;
+
             RSSMissingList = nullptr;
             mTVDB = gcnew TheTVDB();
             mStats = gcnew TVRenameStats();
@@ -102,6 +111,20 @@ namespace TVRename {
         {
             StopBGDownloadThread();
         }
+
+		array<String ^> ^GetArgs()
+		{
+			return Args;
+		}
+
+		bool HasArg(String ^which)
+		{
+			for each (String ^s in Args)
+				if (s->ToLower() == which->ToLower())
+					return true;
+			return false;
+		}
+
 
     private: void LockShowItems()
         {
@@ -170,7 +193,7 @@ namespace TVRename {
         }
         void StartServer()
         {
-        mServerThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &TVDoc::WebServer));
+        mServerThread = gcnew Thread(gcnew ThreadStart(this, &TVDoc::WebServer));
         mServerThread->Name = "Web Server";
         mServerThread->Start();
         }
@@ -187,57 +210,64 @@ namespace TVRename {
 
 
 
-        void DoCopyMoving(System::Windows::Forms::ProgressBar ^pbProgress)
+        void DoCopyMoving()
         {
-            CopyMoveList = ProcessRCList(pbProgress, CopyMoveList);
+            CopyMoveList = ProcessRCList(CopyMoveList);
         }
 
 
-        void DoRenaming(System::Windows::Forms::ProgressBar ^pbProgress)
+        void DoRenaming()
         {
-            RenameList = ProcessRCList(pbProgress, RenameList);
+            RenameList = ProcessRCList(RenameList);
         }
 
-        RCList ^ProcessRCList(System::Windows::Forms::ProgressBar ^pbProgress, RCList ^list)
+        RCList ^ProcessRCList(RCList ^list)
         {
             int c = 0;
-            pbProgress->Value = 0;
 
             CopyMoveResult res;
-            CopyMoveProgress ^cmp = gcnew CopyMoveProgress(list, res, pbProgress, MissingEpisodes, Stats());
+            CopyMoveProgress ^cmp = gcnew CopyMoveProgress(list, res, MissingEpisodes, Stats());
             cmp->ShowDialog();
 
             if ((res != kCopyMoveOk) && (res != kUserCancelled))
                 MessageBox::Show(cmp->ErrorText(), "Errors", MessageBoxButtons::OK, MessageBoxIcon::Exclamation);
 
             //mMDI->UpdateRenamingWindow();
-            pbProgress->Value = 0;
             RCList ^errFiles = cmp->ErrFiles();
             cmp = nullptr;
             return errFiles;
         }
 
-        void DoRenameCheck(System::Windows::Forms::ProgressBar ^pbProgress)
+        void DoRenameCheck(SetProgressDelegate ^prog, ShowItem ^specific)
         {
             Stats()->RenameChecksDone++;
 
-            if (!DoDownloadsFG(pbProgress))
+            if (!DoDownloadsFG())
                 return;
 
             RenameList->Clear();
 
-            pbProgress->Value = 0;
+            prog->Invoke(0);
             //lvStatus->Items->Clear();
             int c = 0;
             int totalN = 0;
 
             LockShowItems();
 
-            for each (ShowItem ^si in ShowItems)
+						ShowItemList ^showlist;
+			if (specific != nullptr)
+			{
+				showlist = gcnew ShowItemList();
+				showlist->Add(specific);
+			}
+			else
+				showlist = ShowItems;
+
+            for each (ShowItem ^si in showlist)
                 if (si->DoRename)
                     totalN += si->SeasonEpisodes->Count;
 
-            for each (ShowItem ^si in ShowItems)
+            for each (ShowItem ^si in showlist)
             {
                 if (!si->DoRename)
                     continue;
@@ -247,8 +277,7 @@ namespace TVRename {
 
                 c += si->SeasonEpisodes->Count;
 
-                pbProgress->Value = 100*(c+1) / (totalN+1); // +1 to always have a bit of activity in the bar when we're working
-                pbProgress->Update();
+				prog->Invoke(100*(c+1) / (totalN+1)); // +1 to always have a bit of activity in the bar when we're working
 
                 BuildRenameList(si, RenameList);
             }
@@ -258,7 +287,13 @@ namespace TVRename {
 
             UnlockShowItems();
 
-            pbProgress->Value = 0;
+			if (specific != nullptr)
+			{
+				if (Settings->ExportRenamingXML)
+					ExportRenamingXML(Settings->ExportRenamingXMLTo);
+			}
+
+            prog->Invoke(0);
         }
 
         void BuildRenameList(ShowItem ^si, RCList ^rl)
@@ -298,7 +333,7 @@ namespace TVRename {
                     {
                         int seas, ep;
 
-                        if (!Settings->UsefulExtension(fiTemp->Extension))
+                        if (!Settings->UsefulExtension(fiTemp->Extension, true))
                             continue; // move on
 
                         if (FindSeasEp(fiTemp, &seas, &ep, si->ShowName()))
@@ -332,42 +367,58 @@ namespace TVRename {
             }
         }
 
-        void DoMissingCheck(System::Windows::Forms::ProgressBar ^pbProgress)
+        void DoMissingCheck(SetProgressDelegate ^prog, ShowItem ^specific)
         {
             Stats()->MissingChecksDone++;
             mStats->NS_NumberOfEpisodes = 0;
 
-            if (!DoDownloadsFG(pbProgress))
+            if (!DoDownloadsFG())
                 return;
 
             MissingEpisodes->Clear();
 
-            pbProgress->Value = 0;
+            prog->Invoke(0);
             //lvStatus->Items->Clear();
             int c = 0;
             int totalN = 0;
             LockShowItems();
 
-            for each (ShowItem ^si in ShowItems)
-                if (si->DoMissingCheck)
-                    totalN += si->AllFolderLocations(Settings)->Count;
+			ShowItemList ^showlist;
+			if (specific != nullptr)
+			{
+				showlist = gcnew ShowItemList();
+				showlist->Add(specific);
+			}
+			else
+				showlist = ShowItems;
 
-            for each (ShowItem ^si in ShowItems)
+			for each (ShowItem ^si in showlist)
+				if (si->DoMissingCheck)
+					totalN += si->AllFolderLocations(Settings)->Count;
+
+            for each (ShowItem ^si in showlist)
             {
                 if (!si->DoMissingCheck)
                     continue; // skip
 
-                pbProgress->Value = 100*(c+1) / (totalN+1); // +1 to always have a bit of activity in the bar when we're working
+                prog->Invoke(100*(c+1) / (totalN+1)); // +1 to always have a bit of activity in the bar when we're working
 
                 c += si->AllFolderLocations(Settings)->Count;
-                pbProgress->Update();
 
                 if (!UpToDateCheck(si))
                     break;
             }
             UnlockShowItems();
 
-            pbProgress->Value = 0;
+			if (specific != nullptr)
+			{
+				if (Settings->ExportMissingCSV)
+					ExportMissingCSV(Settings->ExportMissingCSVTo);
+				if (Settings->ExportMissingXML)
+					ExportMissingXML(Settings->ExportMissingXMLTo);
+			}
+
+            prog->Invoke(0);
         }
 
         void SetSearcher(int n)
@@ -467,7 +518,7 @@ namespace TVRename {
         bool ProcessTorrent(String ^torrent, 
             String ^folder, 
             TreeView ^tvTree, 
-            ProgressBar ^pbProgress,
+            SetProgressDelegate ^prog,
             int action,
             String ^secondLocation)
         {
@@ -497,7 +548,7 @@ namespace TVRename {
                 theList = RenameList;
 
             BTProcessor ^btp = gcnew BTProcessor();
-            btp->Setup(torrent, folder, tvTree, nullptr, theList, pbProgress, action, secondLocation, nullptr, Settings->FNPRegexs);
+            btp->Setup(torrent, folder, tvTree, nullptr, theList, prog, action, secondLocation, nullptr, Settings->FNPRegexs);
             bool r = btp->Go();
             return r;
         }
@@ -507,6 +558,8 @@ namespace TVRename {
         {
             for each (Replacement ^R in Settings->Replacements)
                 fn = fn->Replace(R->This, R->That);
+			if (Settings->ForceLowercaseFilenames)
+				fn = fn->ToLower();
             return fn;
         }
 
@@ -534,8 +587,12 @@ namespace TVRename {
 
                 try
                 {
-                    if (!Settings->UsefulExtension(file->Extension)) // not a usefile file extension
+                    if (!Settings->UsefulExtension(file->Extension, false)) // not a usefile file extension
                         continue;
+					if (Settings->IgnoreSamples && 
+						file->Name->ToLower()->Contains("sample") && 
+						((file->Length/1024/1024) < Settings->SampleFileMaxSizeMB) )
+						continue;
 
                     String ^simplifiedfname = SimplifyName(file->DirectoryName+"\\"+file->Name);
 
@@ -606,7 +663,10 @@ namespace TVRename {
                     cli::array<FileInfo ^> ^flist = sfdi->GetFiles(basename+".*");
                     for each (FileInfo ^fi in flist)
                     {
-                        String ^newName = fi->Name->Replace(basename,toname);//toname + fi->Extension;
+						// do case insensitive replace
+						String ^n = fi->Name;
+						int p = n->ToUpper()->IndexOf(basename->ToUpper());
+                        String ^newName = n->Substring(0, p) + toname + n->Substring(p + basename->Length);
                         if (Settings->RenameTxtToSub)
                         {
                             if (newName->EndsWith(".txt"))
@@ -661,7 +721,7 @@ namespace TVRename {
             }
         }
 
-        void LookForMissingEps(System::Windows::Forms::ProgressBar ^pbProgress, bool leaveOriginals)
+        void LookForMissingEps(SetProgressDelegate ^prog, bool leaveOriginals)
         {
             // for each ep we have noticed as being missing
             // look through the monitored folders for it
@@ -669,6 +729,7 @@ namespace TVRename {
             Stats()->FindAndOrganisesDone++;
 
             CopyMoveList->Clear();
+			prog->Invoke(0);
 
             int totalN = MissingEpisodes->Count + SearchFolders->Count;
             int c = 0;
@@ -676,20 +737,20 @@ namespace TVRename {
             FileList ^files = gcnew FileList;
             for (int k=0;k<SearchFolders->Count;k++)
             {
-                pbProgress->Value = 100*(++c) / (totalN+1);
+                prog->Invoke(100*(++c) / (totalN+1));
                 BuildDirCache(files, SearchFolders[k], true);
             }
 
             for (int j=0;j<MissingEpisodes->Count;j++)
             {
-                pbProgress->Value = 100*(++c) / (totalN+1);
+                prog->Invoke(100*(++c) / (totalN+1));
                 FindMissingEp(files, MissingEpisodes[j]);
             }
 
             if (Settings->KeepTogether)
                 KeepTogether(CopyMoveList);
 
-            pbProgress->Value = 0;
+            prog->Invoke(0);
 
             if (!leaveOriginals)
             {
@@ -716,10 +777,48 @@ namespace TVRename {
             //    }
 
             //}
+
+
+			if (Settings->ExportFOXML)
+				ExportFOXML(Settings->ExportFOXMLTo);
         }
 
 
         // -----------------------------------------------------------------------------
+
+
+		void GetThread(Object ^codeIn)
+		{
+			Diagnostics::Debug::Assert(WorkerSemaphore != nullptr);
+
+			WorkerSemaphore->WaitOne(); // don't start until we're allowed to
+
+			int code = safe_cast<int>(codeIn);
+
+			Diagnostics::Debug::Print("  Downloading " + code);
+			bool r = GetTVDB(false,"")->EnsureUpdated(code);
+			Diagnostics::Debug::Print("  Finished " + code);
+			if (!r)
+			{
+				DownloadOK = false;
+				if (DownloadStopOnError)
+					DownloadDone = true;
+			}
+			WorkerSemaphore->Release(1);
+		}
+
+		void WaitForAllThreadsAndTidyUp()
+		{
+			if (Workers != nullptr)
+			{
+				for each (Thread ^t in Workers)
+					if (t->IsAlive)
+						t->Join();
+			}
+
+			Workers = nullptr;
+			WorkerSemaphore = nullptr;
+		}
 
         void Downloader()
         {
@@ -751,23 +850,39 @@ namespace TVRename {
                     codes->Add(si->TVDBCode);
                 UnlockShowItems();
 
+				int numWorkers = Settings->ParallelDownloads;
+				Workers = gcnew Generic::List<Thread ^>();
+
+				WorkerSemaphore = gcnew Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
+
                 for each (int code in codes)
                 {
                     DownloadPct = 100*(n+1)/(n2+1);
                     DownloadsRemaining = n2-n;
                     n++;
 
-                    bool r = GetTVDB(false,"")->EnsureUpdated(code);
+					int avail = -1;
+				
+					WorkerSemaphore->WaitOne(); // blocks until there is an available slot
+					Thread ^t = gcnew Thread(gcnew ParameterizedThreadStart(this, &TVDoc::GetThread));
+					Workers->Add(t);
+					t->Name = "GetThread:" + code.ToString();
+					t->Start(code); // will grab the semaphore as soon as we make it avialable
+					int n = WorkerSemaphore->Release(1); // release our hold on the semaphore, so that worker can grab it
+					Diagnostics::Debug::Print("Started " + code + " pool has " + n + " free");
+					Thread::Sleep(0); // allow the other thread a chance to run and grab
 
-                    if (!r)
-                    {
-                        DownloadOK = false;
-                        if (DownloadStopOnError)
-                            DownloadDone = true;
-                        return;
-                    }
+					// tidy up any finished workers
+					for (int i=Workers->Count-1;i>=0;i--)
+					  if (!Workers[i]->IsAlive)
+						  Workers->RemoveAt(i); // remove dead worker
+
+					if (DownloadDone)
+						break;
                 }
 
+				WaitForAllThreadsAndTidyUp();
+	
                 GetTVDB(false,"")->UpdatesDoneOK();
                 DownloadDone = true;
                 DownloadOK = true;
@@ -794,41 +909,57 @@ namespace TVRename {
             DownloadPct = 0;
             DownloadDone = false;
             DownloadOK = true;
-            mDownloaderThread = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(this, &TVDoc::Downloader));
+            mDownloaderThread = gcnew Thread(gcnew ThreadStart(this, &TVDoc::Downloader));
             mDownloaderThread->Name = "Downloader";
             mDownloaderThread->Start();
         }
+
+		void WaitForBGDownloadDone()
+		{
+			if ((mDownloaderThread != nullptr) && (mDownloaderThread->IsAlive))
+			  mDownloaderThread->Join();
+			mDownloaderThread = nullptr;
+		}
 
         void StopBGDownloadThread()
         {
             if (mDownloaderThread != nullptr)
             {
-                mDownloaderThread->Abort();
-                mDownloaderThread = nullptr;
+				if (Workers != nullptr)
+				{
+					for each (Thread ^t in Workers)
+						t->Abort();
+				}
+
+				WaitForAllThreadsAndTidyUp();
+
+				if (mDownloaderThread->IsAlive)
+				{
+					mDownloaderThread->Abort();
+					mDownloaderThread = nullptr;
+				}
             }
         }
 
-        bool DoDownloadsFG(System::Windows::Forms::ProgressBar ^pbProgress)
+        bool DoDownloadsFG()
         {
             if (Settings->OfflineMode)
             	return true; // don't do internet in offline mode!
 
-            pbProgress->Value = 0;
-            
             StartBGDownloadThread(true);
 
-            int delay1 = 50; // half a second
-            while ((delay1--) && (!DownloadDone))
-                Threading::Thread::Sleep(10);
+			const int delayStep = 100;
+            int count = 1000/delayStep; // one second
+            while ((count--) && (!DownloadDone))
+                Threading::Thread::Sleep(delayStep);
 
-            if (!DownloadDone) // downloading still going on, so time to show the dialog
+            if (!DownloadDone && !HasArg("/hide")) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
                 DownloadProgress ^dp = gcnew DownloadProgress(this);
                 ::DialogResult dr = dp->ShowDialog();
             }
 
-            while (!DownloadDone)
-                Threading::Thread::Sleep(100);
+            WaitForBGDownloadDone();
 
             GetTVDB(false,"")->SaveCache();
 
@@ -897,9 +1028,9 @@ namespace TVRename {
             TVDoc::SysOpen(Settings->BTSearchURL(ep));
         }
 
-        void DoWhenToWatch(System::Windows::Forms::ProgressBar ^pbProgress, bool cachedOnly, bool suppressErrors)
+        void DoWhenToWatch(bool cachedOnly, bool suppressErrors)
         {
-            if (!cachedOnly && !DoDownloadsFG(pbProgress))
+            if (!cachedOnly && !DoDownloadsFG())
             {
                 return;
             }
@@ -954,7 +1085,7 @@ namespace TVRename {
                 {
                     int seasFound, epFound;
 
-                    if (!Settings->UsefulExtension(fiTemp->Extension))
+                    if (!Settings->UsefulExtension(fiTemp->Extension, false))
                         continue; // move on
 
                     if (FindSeasEp(fiTemp, &seasFound, &epFound, si->ShowName()))
@@ -1014,6 +1145,9 @@ namespace TVRename {
                 if (flocs->ContainsKey(snum))
                     folders = flocs[snum];
 
+				if ((folders->Count == 0) && (!si->AutoAddNewSeasons))
+					continue; // no folders defined or found, autoadd off, so onto the next
+
                 if (folders->Count == 0)
                 {
                     // no folders defined for this season, and autoadd didn't find any, so suggest the autoadd folder name instead
@@ -1045,33 +1179,52 @@ namespace TVRename {
                             String ^sn = si->ShowName();
                             String ^text = snum.ToString() + " of " + si->MaxSeason().ToString();
                             String ^theFolder = folder;
+							String ^otherFolder = nullptr;
 
-                            MissingFolderAction ^mfa = gcnew MissingFolderAction(sn, text, theFolder);
-                            mfa->ShowDialog();
-                            if (mfa->Result == kfaCancel)
+							int whatToDo = kfaNotSet;
+
+							if (HasArg("/createmissing"))
+								whatToDo = kfaCreate;
+							else if (HasArg("/ignoremissing"))
+								whatToDo = kfaIgnoreOnce;
+							
+
+							if (HasArg("/hide") && (whatToDo == kfaNotSet))
+								whatToDo = kfaIgnoreOnce; // default in /hide mode is to ignore
+
+							if (whatToDo == kfaNotSet)
+							{
+								// no command line guidance, so ask the user
+								MissingFolderAction ^mfa = gcnew MissingFolderAction(sn, text, theFolder);
+								mfa->ShowDialog();
+								whatToDo = mfa->Result;
+								otherFolder = mfa->FolderName;
+							}
+
+                            if (whatToDo == kfaCancel)
                                 return false;
-                            else if (mfa->Result == kfaCreate)
+                            else if (whatToDo == kfaCreate)
                             {
                                 Directory::CreateDirectory(folder);
                                 goAgain = true;
                             }
-                            else if (mfa->Result == kfaIgnoreAlways)
+                            else if (whatToDo == kfaIgnoreAlways)
                             {
                                 nextSeas = true;
                                 si->IgnoreSeasons->Add(snum);
                                 SetDirty();
                                 break;
                             }
-                            else if (mfa->Result == kfaIgnoreOnce)
+                            else if (whatToDo == kfaIgnoreOnce)
                             {
                                 nextSeas = true;
                                 break;
                             }
-                            else if (mfa->Result == kfaRetry)
+                            else if (whatToDo == kfaRetry)
                                 goAgain = true;
-                            else if (mfa->Result == kfaDifferentFolder)
+                            else if (whatToDo == kfaDifferentFolder)
                             {
-                                folder = mfa->FolderName;
+                                folder = otherFolder;
                                 di = gcnew DirectoryInfo(folder);
                                 goAgain = !di->Exists;
                                 if (di->Exists && (si->AutoFolderNameForSeason(snum, Settings)->ToLower() != folder->ToLower()))
@@ -1099,7 +1252,7 @@ namespace TVRename {
                     {
                         int seas, ep;
 
-                        if (!Settings->UsefulExtension(fiTemp->Extension))
+                        if (!Settings->UsefulExtension(fiTemp->Extension, false))
                             continue; // move on
 
                         if (FindSeasEp(fiTemp, &seas, &ep, si->ShowName()))
@@ -1384,7 +1537,7 @@ namespace TVRename {
                     {
                         if ((n1 < ec) && (n1 >= 0) &&
                             (n2 < ec) && (n2 >= 0) )
-                            eis->RemoveRange(n1,n2-n1);
+                            eis->RemoveRange(n1,1+n2-n1);
                         else if ((n1 < ec) && (n1 >= 0) && (n2 == -1))
                             eis->RemoveAt(n1);
                         break;
@@ -1410,8 +1563,8 @@ namespace TVRename {
                             {
                                 ProcessedEpisode ^pe2 = gcnew ProcessedEpisode(ei, si);
                                 pe2->Name = nameBase + " (Part " + (i+1).ToString() + ")";
-                                pe2->EpNum = 0;
-                                pe2->EpNum2 = 0;
+                                pe2->EpNum = -2;
+                                pe2->EpNum2 = -2;
                                 eis->Insert(n1+i, pe2);
                             }
                         }
@@ -1443,11 +1596,11 @@ namespace TVRename {
 
                             ProcessedEpisode ^pe2 = gcnew ProcessedEpisode(oldFirstEI, si);
                             pe2->Name = ((txt == "") ? combinedName : txt);
-                            pe2->EpNum = 0;
+                            pe2->EpNum = -2;
                             if (sr->DoWhatNow == kMerge)
-                                pe2->EpNum2 = 0 + n2-n1;
+                                pe2->EpNum2 = -2 + n2-n1;
                             else
-                                pe2->EpNum2 = 0;
+                                pe2->EpNum2 = -2;
 
                             pe2->Overview = combinedSummary;
                             eis->Insert(n1, pe2);
@@ -1471,8 +1624,8 @@ namespace TVRename {
                             ProcessedEpisode ^t = eis[n1];
                             ProcessedEpisode ^n = gcnew ProcessedEpisode(t->TheSeries, t->TheSeason, si);
                             n->Name = txt;
-                            n->EpNum = 0;
-                            n->EpNum2 = 0;
+                            n->EpNum = -2;
+                            n->EpNum2 = -2;
                             eis->Insert(n1, n);
                             break;
                         }
@@ -1492,9 +1645,13 @@ namespace TVRename {
 
         static void Renumber(ProcessedEpisodeList ^eis)
         {
+			if (!eis->Count)
+				return; // nothing to do
+
             // renumber 
             // pay attention to specials etc.
-            int n = 1;
+			int n = (eis[0]->EpNum == 0) ? 0 : 1;
+
             for (int i=0;i<eis->Count;i++)
                 if (eis[i]->EpNum != -1) // is -1 if its a special or other ignored ep
                 {
@@ -1786,7 +1943,7 @@ namespace TVRename {
                 return false;
             }
         }
-        void SaveMissingListCSV(String ^filename)
+        void ExportMissingCSV(String ^filename)
         {
             TextWriter ^f = gcnew StreamWriter(filename);
             String ^line;
@@ -1794,12 +1951,13 @@ namespace TVRename {
             f->WriteLine(line);
             for each (MissingEpisode ^me in MissingEpisodes)
             {
+				DateTime ^dt = me->GetAirDateDT(true);
                 String ^line = "\"" + me->TheSeries->Name + "\"" + "," + 
                     me->SeasonNumber + "," + me->EpNum + 
                     ((me->EpNum != me->EpNum2) ? "-"+me->EpNum2 : "") +
                     "," +
                     "\"" + me->Name + "\"" + "," +
-                    me->GetAirDateDT(true)->ToString("G") + "," +
+					((dt != nullptr) ? dt->ToString("G") : "") + "," +
                     "\"" + me->WhereItBelongs + "\"" + "," +
                     "\"" + FilenameFriendly(Settings->NamingStyle->NameFor(me)) + "\"" + "," +
                     me->SeriesID;
@@ -1809,62 +1967,125 @@ namespace TVRename {
             }
             f->Close();
         }
-        void SaveMissingListXML(String ^filename)
-        {
-            MessageBox::Show("Sorry, this hasn't been implemented yet.","Not available");
-            return;
+		void ExportRCXML(String ^name, String ^filename, RCList ^list)
+		{
+			XmlWriterSettings ^settings = gcnew XmlWriterSettings();
+			settings->Indent = true;
+			settings->NewLineOnAttributes = true;
+			XmlWriter ^writer = XmlWriter::Create(filename, settings);
 
-            /*
-            XmlWriterSettings ^settings = gcnew XmlWriterSettings();
-            settings->Indent = true;
-            settings->NewLineOnAttributes = true;
-            XmlWriter ^writer = XmlWriter::Create(filename, settings);
+			writer->WriteStartDocument();
+			writer->WriteStartElement("TVRename");
+			writer->WriteStartAttribute("Version");
+			writer->WriteValue("2.1");
+			writer->WriteEndAttribute(); // version
+			writer->WriteStartElement(name);
 
-            writer->WriteStartDocument();
-            writer->WriteStartElement("TVRename");
-            writer->WriteStartAttribute("Version");
-            writer->WriteValue("2.0");
-            writer->WriteEndAttribute(); // version
-            writer->WriteStartElement("MissingItems");
 
-            for each (MissingEpisode ^me in MissingEpisodes)
-            {
-            writer->WriteStartElement("MissingItem");
-            writer->WriteStartElement("ShowName");
-            writer->WriteValue(me->GetEPInfo()->GetShowItem()->GetShowName());
-            writer->WriteEndElement();
-            writer->WriteStartElement("Season");
-            writer->WriteValue(me->GetEPInfo()->GetShowItem()->GetSeasonNumber());
-            writer->WriteEndElement();
-            writer->WriteStartElement("Episode");
-            String ^epl = me->GetEPInfo()->GetEpisode1().ToString();
-            if (me->GetEPInfo()->GetEpisode1() != me->GetEPInfo()->GetEpisode2())
-            epl += "-"+me->GetEPInfo()->GetEpisode2().ToString();
-            writer->WriteValue(epl);
-            writer->WriteEndElement();
-            writer->WriteStartElement("EpisodeName");
-            writer->WriteValue(me->GetEPInfo()->GetName());
-            writer->WriteEndElement();
-            writer->WriteStartElement("AirDate");
-            writer->WriteValue(me->GetEPInfo()->GetAirDateDT());
-            writer->WriteEndElement();
-            writer->WriteStartElement("Folder");
-            writer->WriteValue(me->GetFolderItem()->Folder);
-            writer->WriteEndElement();
-            writer->WriteStartElement("NiceName");
-            writer->WriteValue(me->GetEPInfo()->NameInStyle(me->GetFolderItem()->GetNamingStyle(), true, Settings));
-            writer->WriteEndElement();
-            writer->WriteStartElement("tv.comcode");
-            writer->WriteValue( me->GetFolderItem()->GetTVcomCode());
-            writer->WriteEndElement();
-            writer->WriteEndElement(); // MissingItem
-            }
+			for each (RCItem ^r in list)
+			{
+				writer->WriteStartElement("Item");
 
-            writer->WriteEndElement(); // MissingItems
-            writer->WriteEndElement(); // tvrename
-            writer->WriteEndDocument();
-            writer->Close();
-            */
+				writer->WriteStartElement("Operation");
+				writer->WriteValue(r->GetOperationName());
+				writer->WriteEndElement();
+				writer->WriteStartElement("FromFolder");
+				writer->WriteValue(r->FromFolder);
+				writer->WriteEndElement();
+				writer->WriteStartElement("FromName");
+				writer->WriteValue(r->FromName);
+				writer->WriteEndElement();
+				writer->WriteStartElement("ToFolder");
+				writer->WriteValue(r->ToFolder);
+				writer->WriteEndElement();
+				writer->WriteStartElement("ToName");
+				writer->WriteValue(r->ToName);
+				writer->WriteEndElement();
+				writer->WriteStartElement("ShowName");
+				writer->WriteValue(r->ShowName);
+				writer->WriteEndElement();	
+				writer->WriteStartElement("Season");
+				if (r->TheEpisode != nullptr)
+					writer->WriteValue(r->TheEpisode->SeasonNumber);
+				writer->WriteEndElement();
+				writer->WriteStartElement("EpNum");
+				if (r->TheEpisode != nullptr)
+					writer->WriteValue(r->TheEpisode->EpNum);
+				writer->WriteEndElement();
+				writer->WriteStartElement("EpNum2");
+				if ((r->TheEpisode != nullptr) && (r->TheEpisode->EpNum != r->TheEpisode->EpNum2) )
+					writer->WriteValue(r->TheEpisode->EpNum2);
+				writer->WriteEndElement();
+
+				writer->WriteEndElement(); //Item
+			}
+
+			writer->WriteEndElement(); // "name"
+			writer->WriteEndElement(); // tvrename
+			writer->WriteEndDocument();
+			writer->Close();
+		}
+		void ExportRenamingXML(String ^filename)
+		{
+			ExportRCXML("Renaming", filename, RenameList);
+		}
+		void ExportFOXML(String ^filename)
+		{
+			ExportRCXML("FindingAndOrganising", filename, CopyMoveList);
+		}
+        void ExportMissingXML(String ^filename)
+		{
+			XmlWriterSettings ^settings = gcnew XmlWriterSettings();
+			settings->Indent = true;
+			settings->NewLineOnAttributes = true;
+			XmlWriter ^writer = XmlWriter::Create(filename, settings);
+
+			writer->WriteStartDocument();
+			writer->WriteStartElement("TVRename");
+			writer->WriteStartAttribute("Version");
+			writer->WriteValue("2.1");
+			writer->WriteEndAttribute(); // version
+			writer->WriteStartElement("MissingItems");
+
+			for each (MissingEpisode ^me in MissingEpisodes)
+			{
+				writer->WriteStartElement("MissingItem");
+				writer->WriteStartElement("ShowName");
+				writer->WriteValue(me->SI->ShowName());
+				writer->WriteEndElement();
+				writer->WriteStartElement("Season");
+				writer->WriteValue(me->Season);
+				writer->WriteEndElement();
+				writer->WriteStartElement("Episode");
+				String ^epl = me->EpNum.ToString();
+				if (me->EpNum != me->EpNum2)
+					epl += "-"+me->EpNum2.ToString();
+				writer->WriteValue(epl);
+				writer->WriteEndElement();
+				writer->WriteStartElement("EpisodeName");
+				writer->WriteValue(me->Name);
+				writer->WriteEndElement();
+				writer->WriteStartElement("AirDate");
+				DateTime ^dt = me->GetAirDateDT(true);
+				if (dt != nullptr)
+					writer->WriteValue(dt);
+				writer->WriteEndElement();
+				writer->WriteStartElement("Folder");
+				writer->WriteValue(me->WhereItBelongs);
+				writer->WriteEndElement();
+				writer->WriteStartElement("NiceName");
+				writer->WriteValue(FilenameFriendly(Settings->NamingStyle->NameFor(me)));
+				writer->WriteEndElement();
+				writer->WriteStartElement("thetvdbID");
+				writer->WriteValue( me->SI->TVDBCode);
+				writer->WriteEndElement();
+				writer->WriteEndElement(); // MissingItem
+			}
+
+			writer->WriteEndElement(); // MissingItems
+			writer->WriteEndElement(); // tvrename
+			writer->WriteEndDocument();
+			writer->Close();
         }
 
         bool GenerateUpcomingXML(MemoryStream ^str, ProcessedEpisodeList ^elist)
@@ -1963,7 +2184,7 @@ namespace TVRename {
             {
                 for each (RSSItem ^rss in RSSList)
                 {
-                    if ( ((SimplifyName(rss->ShowName) == SimplifyName(me->TheSeries->Name)) ||
+                    if ( ((SimplifyName(rss->ShowName)->Contains(SimplifyName(me->SI->ShowName()))) ||
                           ((rss->ShowName == "") && (SimplifyName(rss->Title)->Contains(SimplifyName(me->TheSeries->Name))))) &&
                           (rss->Season == me->Season) && (rss->Episode == me->EpNum) )
                     {

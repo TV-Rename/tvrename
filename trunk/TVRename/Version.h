@@ -4,18 +4,21 @@
 
 namespace TVRename
 {
-    static bool IncludeExperimentalStuff()
-    {
-#ifdef DEBUG
-        return true;
-#else
-        return false; // *********************
-#endif
-    }
-
     static String ^DisplayVersionString() 
     {
-        return "2.1.0";
+		String ^v = "2.1.1a6";
+
+
+#ifdef MONOSTUFF
+        return v + " (Mono)";
+#else
+		return v;
+#endif
     }
+	
+	static bool ForceExperimentalOn()
+	{
+		return true; // ************************
+	}
 }
 

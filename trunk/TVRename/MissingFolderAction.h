@@ -19,7 +19,7 @@ namespace TVRename {
     ///          the designers will not be able to interact properly with localized
     ///          resources associated with this form.
     /// </summary>
-    enum FAResult { kfaRetry, kfaCancel, kfaCreate, kfaIgnoreOnce, kfaIgnoreAlways, kfaDifferentFolder };
+    enum FAResult { kfaNotSet, kfaRetry, kfaCancel, kfaCreate, kfaIgnoreOnce, kfaIgnoreAlways, kfaDifferentFolder };
 
     public ref class MissingFolderAction : public System::Windows::Forms::Form
     {

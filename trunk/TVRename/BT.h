@@ -484,7 +484,7 @@ public:
    //TextBox ^status;
    ListView ^Results;
    RCList ^renameList;
-   ProgressBar ^pbProgress;
+   SetProgressDelegate ^SetProg;
    String ^secondFolder; // resume.dat location, or where to copy/move to
    bool Altered;
    MissingEpisodeList ^MissingList;
@@ -599,7 +599,7 @@ public:
 	      TreeView ^tvTree, 
 	      ListView ^results,
 	      RCList ^renameList,
-	      ProgressBar ^pbProgress,
+	      SetProgressDelegate ^prog,
 	      int action,
 	      String ^secondFolder,
               MissingEpisodeList ^missingList,

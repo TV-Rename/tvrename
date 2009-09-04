@@ -62,7 +62,24 @@ namespace TVRename {
     
     public ref class Episode
     {
-    public:
+	private:
+		String ^mName;
+
+	public:
+		property String ^Name
+		{
+			String ^get()
+			{
+				if ((mName == nullptr) || (mName == ""))
+					return "Episode " + EpNum.ToString();
+				else
+					return mName;
+			}
+			void set(String ^s)
+			{
+				mName = s;
+			}
+		}
         int EpisodeID;
         int EpNum;
         int SeriesID;
@@ -70,7 +87,6 @@ namespace TVRename {
         DateTime ^FirstAired;
         int Srv_LastUpdated;
         String ^Overview;
-        String ^Name;
         StringDict ^Items; // other fields we don't specifically grab
 
         int ReadSeasonNum; // only use after loading to attach to the correct season!
@@ -79,6 +95,12 @@ namespace TVRename {
         SeriesInfo ^TheSeries;
 
         bool Dirty;
+
+
+		bool SameAs(Episode ^o)
+		{
+			return ( EpisodeID == o->EpisodeID );
+		}
 
         String ^GetItem(String ^which)
         {
@@ -141,11 +163,6 @@ namespace TVRename {
                 else
                     return -1;
             }
-        }
-
-        virtual String ^ToString() override
-        {
-            return "S" + SeasonNumber + "E" + EpNum + " (" + SeriesID+ "," + EpisodeID + "), Aired " + (FirstAired != nullptr ? FirstAired->ToString("yyyy-MM-dd") : "") + ", " + Name;
         }
 
         System::DateTime ^GetAirDateDT(bool correct);
@@ -548,10 +565,12 @@ namespace TVRename {
     public:
         int SeriesID;
         int EpisodeID;
+		bool Done;
 
         ExtraEp(int series, int episode) :
         SeriesID(series),
-            EpisodeID(episode)
+            EpisodeID(episode),
+			Done(false)
         {
         }
     };
@@ -561,6 +580,7 @@ namespace TVRename {
     private:
         int Srv_Time; // only update this after a 100% successful download
         int New_Srv_Time; 
+		Generic::List<int> ForceReloadOn;
         //System::Threading::Mutex ^Lock;
 
         Collections::Generic::List<String ^> ^WhoHasLock;
@@ -568,7 +588,17 @@ namespace TVRename {
     private:
         SeriesDict ^Series; // TODO: make this private or a property.  have online/offline state that controls auto downloading of needed info.
         ExtraEpList ^ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
+		int EEuse;
 
+		void LockEE()
+		{
+			Monitor::Enter(ExtraEpisodes);
+		}
+
+		void UnlockEE()
+		{
+			Monitor::Exit(ExtraEpisodes);
+		}
     public:
         String ^LastError;
         bool Connected;
@@ -625,6 +655,7 @@ namespace TVRename {
 
         TheTVDB()
         {
+			EEuse = 0;
             LastError = "";
             WhoHasLock = gcnew Collections::Generic::List<String ^>;
             LanguagePriorityList = gcnew LanguageListType();
@@ -764,9 +795,9 @@ namespace TVRename {
                  return Connected;
              }
 
-             private: array<unsigned char> ^GetPageZIP(String ^url, String ^extractFile, bool useKey)
+             private: array<unsigned char> ^GetPageZIP(String ^url, String ^extractFile, bool useKey, bool forceReload)
              {
-                 array<unsigned char> ^zipped = GetPage(url, useKey, tmZIP);
+                 array<unsigned char> ^zipped = GetPage(url, useKey, tmZIP, forceReload);
                  
                  if (zipped == nullptr)
                      return nullptr;
@@ -792,7 +823,7 @@ namespace TVRename {
                  return r;
              }
 
-             array<unsigned char> ^GetPage(String ^url, bool useKey, typeMaskBits mirrorType)
+             array<unsigned char> ^GetPage(String ^url, bool useKey, typeMaskBits mirrorType, bool forceReload)
              {
                  String ^mirr = "";
                  switch (mirrorType)
@@ -821,6 +852,9 @@ namespace TVRename {
                  //wr->KeepAlive = false;
 
                  System::Net::WebClient ^wc = gcnew System::Net::WebClient();
+				 
+				 if (forceReload)
+				   wc->CachePolicy = gcnew System::Net::Cache::RequestCachePolicy(System::Net::Cache::RequestCacheLevel::Reload);
 
                  try {
                      array<unsigned char> ^r = wc->DownloadData(theURL);
@@ -857,7 +891,10 @@ namespace TVRename {
                 String ^name = Series[id]->Name;
                 Series->Remove(id);
                 if (makePlaceholder)
+				{
                     MakePlaceholderSeries(id, name);
+					ForceReloadOn.Add(id);
+				}
             }
             Unlock("ForgetShow");
         }
@@ -866,7 +903,7 @@ namespace TVRename {
         {
             Say("TheTVDB Languages");
 
-            array<unsigned char> ^p = GetPage("languages.xml", true, tmMainSite);
+            array<unsigned char> ^p = GetPage("languages.xml", true, tmMainSite, false);
             if (p == nullptr)
                 return false;;
             MemoryStream ^ms = gcnew MemoryStream(p);
@@ -938,7 +975,7 @@ namespace TVRename {
             Generic::List<String ^> ^BannerMirrorList = gcnew Generic::List<String ^>;
             Generic::List<String ^> ^ZIPMirrorList = gcnew Generic::List<String ^>;
 
-            array<unsigned char> ^p = GetPage("mirrors.xml", true, tmMainSite);
+            array<unsigned char> ^p = GetPage("mirrors.xml", true, tmMainSite, false);
             if (p == nullptr)
                 return false;;
             MemoryStream ^ms = gcnew MemoryStream(p);
@@ -1042,7 +1079,6 @@ namespace TVRename {
                                 theTime = e->Srv_LastUpdated;
                     }
                 }
-
             }
 
             // anything with a srv_lastupdated of 0 should be marked as dirty
@@ -1061,12 +1097,18 @@ namespace TVRename {
             }
 
             if (theTime == 0)
+			{
+				Say("");
                 return true; // that's it for now
+			}
 
             unsigned long epoch = (unsigned long)(DateTime::UtcNow.Subtract(DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
             int seconds = epoch - theTime;
             if (seconds < 3540) // 59 minutes
+			{
+				Say("");
                 return true;
+			}
 
             String ^timePeriod = "";
 
@@ -1083,7 +1125,10 @@ namespace TVRename {
 
 
             if (!Connected && !Connect())
-                return false;
+			{
+				Say("");
+				return false;
+			}
 
 
             if (timePeriod != "all")
@@ -1095,15 +1140,18 @@ namespace TVRename {
             // day, week, month, all
 
             String ^udf = "updates_"+timePeriod;
-            array<unsigned char> ^p = GetPageZIP("updates/"+udf+".zip",udf+".xml", true);
+            array<unsigned char> ^p = GetPageZIP("updates/"+udf+".zip",udf+".xml", true, false);
             if (p == nullptr)
-                return false;
-
+			{
+				Say("");
+				return false;
+			}
             //BinaryWriter ^fs = gcnew BinaryWriter(gcnew FileStream("c:\\temp\\ud.xml", FileMode::Create));
             //fs->Write(p, 0, p->Length);
             //fs->Close();
 
             MemoryStream ^ms = gcnew MemoryStream(p);
+			Say("");
 
             return ProcessUpdateList(ms);
         }
@@ -1207,8 +1255,9 @@ namespace TVRename {
                                     if (!found)
                                     {
                                         // must be a new episode
+										LockEE();
                                         ExtraEpisodes->Add(gcnew ExtraEp(serID, epID));
-
+										UnlockEE();
                                     }
                                 }
                             }
@@ -1395,8 +1444,14 @@ namespace TVRename {
                 return "en";
         }
 
+		bool DoWeForceReloadFor(int code)
+		{
+			return ForceReloadOn.Contains(code) || !Series->ContainsKey(code);
+		}
+
         SeriesInfo ^DownloadSeriesNow(int code, bool episodesToo, bool forceEnglish)
         {
+			bool forceReload = ForceReloadOn.Contains(code);
             String ^txt = "";
             if (Series->ContainsKey(code))
                 txt = Series[code]->Name;
@@ -1413,7 +1468,7 @@ namespace TVRename {
             String ^url = episodesToo ? "series/"+code.ToString()+"/all/"+lang+".zip" :
                 "series/"+code.ToString()+"/"+lang+".xml";
 
-            array<unsigned char> ^p = episodesToo ? GetPageZIP(url, lang+".xml", true) : GetPage(url, true, tmXML);
+            array<unsigned char> ^p = episodesToo ? GetPageZIP(url, lang+".xml", true, forceReload) : GetPage(url, true, tmXML, forceReload);
             if (p == nullptr)
                 return nullptr;
 
@@ -1421,10 +1476,14 @@ namespace TVRename {
 
             ProcessTVDBResponse(ms);
 
+			ForceReloadOn.Remove(code);
+
             return (Series->ContainsKey(code)) ? Series[code] : nullptr;
         }
         bool DownloadEpisodeNow(int seriesID, int episodeID)
         {
+			bool forceReload = ForceReloadOn.Contains(seriesID);
+
             String ^txt = "";
             if (Series->ContainsKey(seriesID))
             {
@@ -1441,7 +1500,7 @@ namespace TVRename {
 
             String ^url = "episodes/"+episodeID.ToString()+"/"+PreferredLanguage(seriesID)+".xml";
 
-            array<unsigned char> ^p = GetPage(url, true, tmXML);
+            array<unsigned char> ^p = GetPage(url, true, tmXML, forceReload);
             
             if (p == nullptr)
                 return false;
@@ -1476,16 +1535,25 @@ namespace TVRename {
                 Season ^seas = kvp->Value;
                 for each (Episode ^e in seas->Episodes)
                     if (e->Dirty)
+					{
+						LockEE();
                         ExtraEpisodes->Add(gcnew ExtraEp(e->SeriesID, e->EpisodeID));
+						UnlockEE();
+					}
             }
 
+			LockEE();
             for each (ExtraEp ^ee in ExtraEpisodes)
-                if (ee->SeriesID == code)
+			{
+                if ((ee->SeriesID == code) && (!ee->Done))
+				{
                     ok = DownloadEpisodeNow(ee->SeriesID, ee->EpisodeID) && ok;
+					ee->Done = true;
+				}
+			}
+			UnlockEE();
 
-            for (int i=ExtraEpisodes->Count - 1;i>=0;i--)
-                if (ExtraEpisodes[i]->SeriesID == code)
-                    ExtraEpisodes->RemoveAt(i);
+			ForceReloadOn.Remove(code);
 
             return ok;
         }
@@ -1500,8 +1568,9 @@ namespace TVRename {
                 DownloadSeriesNow(int::Parse(text),false, false);
 
             // but, the number could also be a name, so continue searching as usual
+			text = text->Replace("."," ");
 
-            array<unsigned char> ^p = GetPage("GetSeries.php?seriesname="+text+"&language=all",false, tmXML);
+            array<unsigned char> ^p = GetPage("GetSeries.php?seriesname="+text+"&language=all",false, tmXML, true);
 
             if (p == nullptr)
                 return;

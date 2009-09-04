@@ -38,13 +38,13 @@ int main(array<System::String ^> ^args)
     }
 #endif
 
-	// Create the main window and run it
+    // Create the main window and run it
 
 #ifndef _DEBUG
 	try 
     {
 #endif
-      Application::Run(gcnew UI());
+      Application::Run(gcnew UI(args));
 #ifndef NOMUTEX
 	  GC::KeepAlive(mutex);
 #endif
@@ -61,3 +61,48 @@ int main(array<System::String ^> ^args)
 
     return 0;
 }
+
+#ifdef MONOSTUFF
+
+#pragma warning(disable:4483)
+
+// Also: Go to project properties, Linker, Input, Ignore all default libraries: On
+//
+//
+// TODO: Write code for functions that MoMA points out
+//
+//
+// TODO: Figure out what should be in the bodies of these fuctions, OR figure out
+// how to avoid them being called.
+//
+//
+
+void __clrcall __identifier(".cctor")()
+{
+}
+
+int __clrcall ___CxxExceptionFilter(void *, void *, int, void *)
+{
+	return 0;
+}
+
+int __clrcall ___CxxRegisterExceptionObject(void *, void *)
+{
+	return 0;
+}
+
+int __clrcall ___CxxDetectRethrow(void *)
+{
+	return 0;
+}
+
+int __clrcall ___CxxQueryExceptionSize(void)
+{
+	return 0;
+}
+
+void __clrcall ___CxxUnregisterExceptionObject(void *,int)
+{
+}
+
+#endif

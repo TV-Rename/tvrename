@@ -53,12 +53,12 @@ namespace TVRename
             }
 
             if (pe->EpNum2 == pe->EpNum)
-                name = Regex::Replace(name, "\\[.*?\\]",""); // remove optional parts
-            else
-            {
-                name = name->Replace("[","");
-                name = name->Replace("]","");
-            }
+				name = Regex::Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]","$1"); // remove optional parts
+			else
+				name = Regex::Replace(name, "([^\\\\])\\[(.*?[^\\\\])\\]","$1$2"); // remove just the brackets
+
+			name = name->Replace("\\[","[");
+			name = name->Replace("\\]","]");
 
             return name;
         }

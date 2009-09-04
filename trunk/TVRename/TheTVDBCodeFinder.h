@@ -199,6 +199,7 @@ namespace TVRename {
                  lvMatches->BeginUpdate();
 
                  String ^what = txtFindThis->Text;
+				 what = what->Replace("."," ");
 
                  lvMatches->Items->Clear();
                  if (what != "")
