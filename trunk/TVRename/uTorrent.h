@@ -1,7 +1,5 @@
 #pragma once
 
-#include "RenameItem.h"
-#include "MissingEpisode.h"
 #include "bt.h"
 #include "TVDoc.h"
 
@@ -34,6 +32,7 @@ namespace TVRename {
 	private: System::Windows::Forms::Label^  lbDPMatch;
 	private: System::Windows::Forms::Label^  lbDPMissing;
 	private: System::IO::FileSystemWatcher^  watcher;
+	private: System::Windows::Forms::FolderBrowserDialog^  folderBrowser;
 
 
 			 TVDoc ^mDoc;
@@ -46,19 +45,20 @@ namespace TVRename {
 			SetProg = progdel;
 
 			InitializeComponent();
-			
+
 			watcher->Error += gcnew ErrorEventHandler(this, &uTorrent::WatcherError);
 
+			bool en = false;
+			for each (AIOItem ^i in mDoc->TheAIOList)
+				if (i->Type == AIOType::kMissing)
+				{
+					en = true;
+					break;
+				}
+				cbUTMatchMissing->Enabled = en;
+				EnableDisable();
 
-			cbUTMatchMissing->Enabled = mDoc->MissingEpisodes->Count > 0;
-			EnableDisable();
-
-			FileInfo ^f = gcnew FileInfo(System::Windows::Forms::Application::UserAppDataPath+"\\..\\..\\..\\uTorrent\\resume.dat");
-			if (f->Exists)
-			{
-				txtUTresumedatFolder->Text = f->Directory->FullName;
 				bnUTRefresh_Click(nullptr,nullptr);
-			}
 		}
 
 	protected:
@@ -73,7 +73,7 @@ namespace TVRename {
 			}
 		}
 
-	private: System::Windows::Forms::Button^  bnUTHelp;
+
 	private: System::Windows::Forms::CheckBox^  cbUTSetPrio;
 	private: System::Windows::Forms::CheckBox^  cbUTMatchMissing;
 	private: System::Windows::Forms::CheckBox^  cbUTUseHashing;
@@ -84,12 +84,12 @@ namespace TVRename {
 	private: System::Windows::Forms::Button^  bnUTRefresh;
 	private: System::Windows::Forms::Button^  bnUTAll;
 	private: System::Windows::Forms::Button^  bnUTBrowseSearchFolder;
-	private: System::Windows::Forms::Button^  bnUTBrowseResumeDat;
+
 	private: System::Windows::Forms::TextBox^  txtUTSearchFolder;
 	private: System::Windows::Forms::Label^  label15;
 	private: System::Windows::Forms::Label^  label13;
-	private: System::Windows::Forms::TextBox^  txtUTresumedatFolder;
-	private: System::Windows::Forms::Label^  label12;
+
+
 	private: System::Windows::Forms::Label^  label11;
 	private: System::Windows::Forms::CheckedListBox^  lbUTTorrents;
 	private: System::Windows::Forms::ListView^  lvUTResults;
@@ -115,7 +115,6 @@ namespace TVRename {
 		void InitializeComponent(void)
 		{
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(uTorrent::typeid));
-			this->bnUTBrowseResumeDat = (gcnew System::Windows::Forms::Button());
 			this->bnUTBrowseSearchFolder = (gcnew System::Windows::Forms::Button());
 			this->bnUTAll = (gcnew System::Windows::Forms::Button());
 			this->bnUTRefresh = (gcnew System::Windows::Forms::Button());
@@ -126,11 +125,8 @@ namespace TVRename {
 			this->cbUTUseHashing = (gcnew System::Windows::Forms::CheckBox());
 			this->cbUTMatchMissing = (gcnew System::Windows::Forms::CheckBox());
 			this->cbUTSetPrio = (gcnew System::Windows::Forms::CheckBox());
-			this->bnUTHelp = (gcnew System::Windows::Forms::Button());
 			this->lbUTTorrents = (gcnew System::Windows::Forms::CheckedListBox());
 			this->label11 = (gcnew System::Windows::Forms::Label());
-			this->label12 = (gcnew System::Windows::Forms::Label());
-			this->txtUTresumedatFolder = (gcnew System::Windows::Forms::TextBox());
 			this->label13 = (gcnew System::Windows::Forms::Label());
 			this->label15 = (gcnew System::Windows::Forms::Label());
 			this->txtUTSearchFolder = (gcnew System::Windows::Forms::TextBox());
@@ -144,18 +140,9 @@ namespace TVRename {
 			this->lbDPMatch = (gcnew System::Windows::Forms::Label());
 			this->lbDPMissing = (gcnew System::Windows::Forms::Label());
 			this->watcher = (gcnew System::IO::FileSystemWatcher());
+			this->folderBrowser = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->watcher))->BeginInit();
 			this->SuspendLayout();
-			// 
-			// bnUTBrowseResumeDat
-			// 
-			this->bnUTBrowseResumeDat->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Right));
-			this->bnUTBrowseResumeDat->Location = System::Drawing::Point(735, 3);
-			this->bnUTBrowseResumeDat->Name = L"bnUTBrowseResumeDat";
-			this->bnUTBrowseResumeDat->Size = System::Drawing::Size(75, 23);
-			this->bnUTBrowseResumeDat->TabIndex = 2;
-			this->bnUTBrowseResumeDat->Text = L"&Browse...";
-			this->bnUTBrowseResumeDat->UseVisualStyleBackColor = true;
 			// 
 			// bnUTBrowseSearchFolder
 			// 
@@ -166,6 +153,7 @@ namespace TVRename {
 			this->bnUTBrowseSearchFolder->TabIndex = 10;
 			this->bnUTBrowseSearchFolder->Text = L"B&rowse...";
 			this->bnUTBrowseSearchFolder->UseVisualStyleBackColor = true;
+			this->bnUTBrowseSearchFolder->Click += gcnew System::EventHandler(this, &uTorrent::bnUTBrowseSearchFolder_Click);
 			// 
 			// bnUTAll
 			// 
@@ -268,17 +256,6 @@ namespace TVRename {
 			this->cbUTSetPrio->UseVisualStyleBackColor = true;
 			this->cbUTSetPrio->CheckedChanged += gcnew System::EventHandler(this, &uTorrent::cbUTSetPrio_CheckedChanged);
 			// 
-			// bnUTHelp
-			// 
-			this->bnUTHelp->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((System::Windows::Forms::AnchorStyles::Bottom | System::Windows::Forms::AnchorStyles::Right));
-			this->bnUTHelp->Location = System::Drawing::Point(816, 559);
-			this->bnUTHelp->Name = L"bnUTHelp";
-			this->bnUTHelp->Size = System::Drawing::Size(75, 23);
-			this->bnUTHelp->TabIndex = 19;
-			this->bnUTHelp->Text = L"Help";
-			this->bnUTHelp->UseVisualStyleBackColor = true;
-			this->bnUTHelp->Click += gcnew System::EventHandler(this, &uTorrent::bnUTHelp_Click);
-			// 
 			// lbUTTorrents
 			// 
 			this->lbUTTorrents->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
@@ -300,25 +277,6 @@ namespace TVRename {
 			this->label11->Size = System::Drawing::Size(84, 13);
 			this->label11->TabIndex = 4;
 			this->label11->Text = L"Choose &torrents:";
-			// 
-			// label12
-			// 
-			this->label12->AutoSize = true;
-			this->label12->Location = System::Drawing::Point(12, 9);
-			this->label12->Name = L"label12";
-			this->label12->Size = System::Drawing::Size(105, 13);
-			this->label12->TabIndex = 0;
-			this->label12->Text = L"µTorrent resume.&dat:";
-			// 
-			// txtUTresumedatFolder
-			// 
-			this->txtUTresumedatFolder->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Left) 
-				| System::Windows::Forms::AnchorStyles::Right));
-			this->txtUTresumedatFolder->Location = System::Drawing::Point(123, 6);
-			this->txtUTresumedatFolder->Name = L"txtUTresumedatFolder";
-			this->txtUTresumedatFolder->Size = System::Drawing::Size(606, 20);
-			this->txtUTresumedatFolder->TabIndex = 1;
-			this->txtUTresumedatFolder->TextChanged += gcnew System::EventHandler(this, &uTorrent::txtUTresumedatFolder_TextChanged);
 			// 
 			// label13
 			// 
@@ -427,6 +385,10 @@ namespace TVRename {
 			this->watcher->Created += gcnew System::IO::FileSystemEventHandler(this, &uTorrent::watcher_Created);
 			this->watcher->Changed += gcnew System::IO::FileSystemEventHandler(this, &uTorrent::watcher_Changed);
 			// 
+			// folderBrowser
+			// 
+			this->folderBrowser->ShowNewFolderButton = false;
+			// 
 			// uTorrent
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -435,7 +397,6 @@ namespace TVRename {
 			this->ClientSize = System::Drawing::Size(903, 623);
 			this->Controls->Add(this->bnClose);
 			this->Controls->Add(this->lvUTResults);
-			this->Controls->Add(this->bnUTHelp);
 			this->Controls->Add(this->cbUTSetPrio);
 			this->Controls->Add(this->cbUTMatchMissing);
 			this->Controls->Add(this->cbUTUseHashing);
@@ -446,18 +407,16 @@ namespace TVRename {
 			this->Controls->Add(this->bnUTRefresh);
 			this->Controls->Add(this->bnUTAll);
 			this->Controls->Add(this->bnUTBrowseSearchFolder);
-			this->Controls->Add(this->bnUTBrowseResumeDat);
 			this->Controls->Add(this->txtUTSearchFolder);
 			this->Controls->Add(this->label15);
 			this->Controls->Add(this->lbDPMissing);
 			this->Controls->Add(this->lbDPMatch);
 			this->Controls->Add(this->label13);
-			this->Controls->Add(this->txtUTresumedatFolder);
-			this->Controls->Add(this->label12);
 			this->Controls->Add(this->label11);
 			this->Controls->Add(this->lbUTTorrents);
 			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
 			this->Name = L"uTorrent";
+			this->ShowInTaskbar = false;
 			this->StartPosition = System::Windows::Forms::FormStartPosition::CenterParent;
 			this->Text = L"TVRename - µTorrent";
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->watcher))->EndInit();
@@ -489,34 +448,38 @@ namespace TVRename {
 			 {
 				 UTSelectNone();
 			 }
-			 void AddUTStatusLine(String ^s)
+			 bool CheckResumeDatPath()
 			 {
-				 //txtUTStatus->Text += "\r\n"+s;
-				 //txtUTStatus->SelectionStart = txtUTStatus->Text->Length;
-				 //txtUTStatus->ScrollToCaret();
-				 //txtUTStatus->Update();
+				 if (String::IsNullOrEmpty(mDoc->Settings->ResumeDatPath) || !File::Exists(mDoc->Settings->ResumeDatPath))
+				 {
+					 MessageBox::Show("Please set the resume.dat path in Preferences before using this feature","µTorrent",MessageBoxButtons::OK);
+					 return false;
+				 }
+				 return true;
 			 }
+
 			 void RefreshResumeDat()
 			 {
+				 if (!CheckResumeDatPath())
+					 return;
+
 				 Generic::List<String ^> ^checkedItems = gcnew Generic::List<String ^>;
 				 for each (String ^torrent in lbUTTorrents->CheckedItems)
 					 checkedItems->Add(torrent);
 
 				 lbUTTorrents->Items->Clear();
 				 // open resume.dat file, fill checked list box with torrents available to choose from
-				 String ^file = txtUTresumedatFolder->Text+"\\resume.dat";
+
+				 String ^file = mDoc->Settings->ResumeDatPath;
 				 if (!File::Exists(file))
 				 {
-					 AddUTStatusLine(file+" does not exist.");
 					 return;
 				 }
 				 BTFile ^resumeDat = BEncodeLoader::Load(file);
 				 if (resumeDat == nullptr)
 				 {
-					 AddUTStatusLine("Error loading "+file);
 					 return;
 				 }
-				 AddUTStatusLine("Loaded resume.dat");
 				 BTDictionary ^dict = resumeDat->GetDict();
 				 for (int i=0;i<dict->Items->Count;i++)
 				 {
@@ -528,7 +491,6 @@ namespace TVRename {
 							 lbUTTorrents->Items->Add(d2->Key);
 					 }
 				 }
-				 AddUTStatusLine("Found "+lbUTTorrents->Items->Count.ToString()+" torrents");
 
 				 for each (String ^torrent in checkedItems)
 					 for (int i=0;i<lbUTTorrents->Items->Count;i++)
@@ -537,56 +499,48 @@ namespace TVRename {
 			 }
 	private: System::Void bnUTGo_Click(System::Object^  sender, System::EventArgs^  e) 
 			 {
+				 if (!CheckResumeDatPath())
+					 return;
+
 				 String ^searchFolder = txtUTSearchFolder->Text;
-				 String ^resumeDatFolder = txtUTresumedatFolder->Text;
-				 String ^resumeDatFile = resumeDatFolder + "\\resume.dat";
+				 String ^resumeDatFile = mDoc->Settings->ResumeDatPath;
 				 bool testMode = chkUTTest->Checked;
 
 				 if (!File::Exists(resumeDatFile))
-				 {
-					 AddUTStatusLine("couldn't find "+resumeDatFile);
 					 return;
-				 }
-				 AddUTStatusLine("");
-				 if (testMode)
-					 AddUTStatusLine("******** Test mode : No changes will be made to resume.dat ********");
-				 else
-					 if (!CheckUTorrentClosed())
-						 return;
 
+				 if (!testMode && !CheckUTorrentClosed())
+					 return;
+/*
 				 int action = actNone;
 				 if (chkUTSearchSubfolders->Checked)
 					 action |=  actSearchSubfolders;
-				 if (cbUTUseHashing->Checked)
-					 action |= actHashSearch;
-				 if (cbUTSetPrio->Checked)
-					 action |= actSetPrios;
-				 if (testMode)
-					 action |= actTestMode;
-				 if (cbUTMatchMissing->Checked)
-					 action |= actMatchMissing;
+
+
 
 				 if ( (action & (actRename | actCopy | actMatchMissing | actHashSearch)) == 0 )
 					 return;
+*/
 
 				 lvUTResults->Items->Clear();
-				 AddUTStatusLine("Using "+resumeDatFile);
 
-				 BTProcessor ^btp = gcnew BTProcessor();
+				 BTResume ^btp = gcnew BTResume(SetProg, resumeDatFile);
+
+				 StringList ^sl = gcnew StringList();
 
 				 for each (String ^torrent in lbUTTorrents->CheckedItems)
-				 {
-					 AddUTStatusLine("");
-					 AddUTStatusLine("Processing "+ torrent);
-					 btp->Setup(torrent, searchFolder, nullptr, lvUTResults, nullptr, SetProg,
-						 action, resumeDatFolder, mDoc->MissingEpisodes, mDoc->Settings->FNPRegexs);
-					 btp->Go();
-				 }
-				 AddUTStatusLine(btp->CacheStats());
+					 sl->Add(torrent);
+
+				 btp->DoWork(sl, searchFolder, lvUTResults, 
+					 cbUTUseHashing->Checked,
+					 cbUTMatchMissing->Checked,
+					 cbUTSetPrio->Checked,
+					 testMode,
+					 chkUTSearchSubfolders->Checked,
+					 mDoc->TheAIOList, mDoc->Settings->FNPRegexs);
+				 
 				 if (!testMode)
 					 RestartUTorrent();
-				 else
-					 AddUTStatusLine("******** Test mode : No changes will be made to resume.dat ********");
 			 }
 	private: System::Void cbUTUseHashing_CheckedChanged(System::Object^  sender, System::EventArgs^  e) 
 			 {
@@ -603,33 +557,16 @@ namespace TVRename {
 				 lbDPMissing->Enabled = cbUTSetPrio->Checked && cbUTMatchMissing->Checked;
 
 			 }
-	private: System::Void bnUTHelp_Click(System::Object^  sender, System::EventArgs^  e) 
-			 {
-				 MessageBox::Show("- Select the folder containing µTorrent's \"resume.dat\" file.\r\n" \
-					 "- Select the torrents you want to operate on.\r\n" \
-					 "- \"Use Hashes\" will search through your media collection to find files that match those inside the torrents.\r\n" \
-					 "  - Choose the folder that has the completed files in it (or the root of a tree to search).\r\n" \
-					 "  - \"Search subfolders\" will do a recursive search from the search folder.\r\n" \
-					 "  - \"Set download priority\" will set missing files to \"Skip\", and found files to \"Normal\",\r\n" \
-					 "- \"Match missing\" will compare files in the rorrents, to what it currently in your \"Missing List\"\r\n" \
-					 "  - \"Set download priority\" will set missing files to download, and others off.\r\n" \
-					 "- Turn on \"Test\" to show what would happen, but not make any changes to resume.dat.\r\n" \
-					 "- Click \"Go\".\r\n" \
-					 "- If not in test mode, quit and restart µTorrent when instructed.\r\n" \
-					 "- You will need to do a \"Force Check\" in µTorrent on any torrents that now have completed files.",
-					 "TVRename µTorrent",
-					 MessageBoxButtons::OK);
-			 }
 
-			 bool CheckUTorrentClosed()
+			 static bool CheckUTorrentClosed()
 			 {
 				 ::DialogResult dr = MessageBox::Show("Make sure µTorrent is not running, then click OK.","TVRename",MessageBoxButtons::OKCancel,MessageBoxIcon::Warning);
 				 return (dr == ::DialogResult::OK);
 			 }
 
-			 bool RestartUTorrent()
+			 static bool RestartUTorrent()
 			 {
-				 ::DialogResult dr = MessageBox::Show("You may now restart µTorrent.","TVRename",MessageBoxButtons::OK,MessageBoxIcon::Warning);
+				 MessageBox::Show("You may now restart µTorrent.","TVRename",MessageBoxButtons::OK,MessageBoxIcon::Warning);
 				 return true;
 			 }
 
@@ -666,24 +603,32 @@ namespace TVRename {
 				 }
 			 }
 
-	private: System::Void txtUTresumedatFolder_TextChanged(System::Object^  sender, System::EventArgs^  e) 
+	private: System::Void txtResumeDatFolder_TextChanged(System::Object^  sender, System::EventArgs^  e) 
 			 {
 				 StartWatching();
 			 }
 			 void StartWatching()
 			 {
-				 String ^p = txtUTresumedatFolder->Text;
-				 bool en = DirectoryInfo(p).Exists;
-				 if (en)
+				 FileInfo ^f = gcnew FileInfo(mDoc->Settings->ResumeDatPath);
+				 if (f->Exists)
 				 {
-					 watcher->Path = p;
+					 watcher->Path = f->Directory->Name;
 					 watcher->Filter = "resume.dat";
+					 watcher->EnableRaisingEvents = true;
 				 }
-				 watcher->EnableRaisingEvents = en;
+				 else
+					 watcher->EnableRaisingEvents = false;
 			 }
 	private: System::Void watcher_Created(System::Object^  sender, System::IO::FileSystemEventArgs^  e) 
 			 {
 				 RefreshResumeDat();
 			 }
-};
+	private: System::Void bnUTBrowseSearchFolder_Click(System::Object^  sender, System::EventArgs^  e) 
+			 {
+				 folderBrowser->SelectedPath = txtUTSearchFolder->Text;
+
+				 if (folderBrowser->ShowDialog() == System::Windows::Forms::DialogResult::OK)
+					 txtUTSearchFolder->Text = folderBrowser->SelectedPath;
+			 }
+	};
 }

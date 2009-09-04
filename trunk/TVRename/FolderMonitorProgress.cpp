@@ -4,9 +4,9 @@
 
 namespace TVRename
 {
-    FolderMonitorProgress::FolderMonitorProgress(UI ^theui)
+    FolderMonitorProgress::FolderMonitorProgress(FolderMonitor ^thefm)
   {
-      mUI = theui;
+      mFM = thefm;
 
     InitializeComponent();
   }
@@ -14,11 +14,11 @@ namespace TVRename
   System::Void FolderMonitorProgress::bnCancel_Click(System::Object^  sender, System::EventArgs^  e) 
   {
     this->DialogResult = ::DialogResult::Abort;
-    mUI->FMPStopNow = true;
+    mFM->FMPStopNow = true;
   }
   System::Void FolderMonitorProgress::timer1_Tick(System::Object^  sender, System::EventArgs^  e) 
              {
-                 if (mUI->FMPStopNow)
+                 if (mFM->FMPStopNow)
                      this->Close();
              }
 

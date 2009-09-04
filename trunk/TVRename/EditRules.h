@@ -454,7 +454,7 @@ private: System::Void bnCancel_Click(System::Object^  sender, System::EventArgs^
              lbEpsPreview->BeginUpdate();
              lbEpsPreview->Items->Clear();
              for each (ProcessedEpisode ^pe in pel)
-                 lbEpsPreview->Items->Add(NameStyle->NameFor(pe));
+                 lbEpsPreview->Items->Add(NameStyle->NameForExt(pe,nullptr));
              lbEpsPreview->EndUpdate();
          }
 };

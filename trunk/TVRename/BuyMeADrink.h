@@ -163,8 +163,6 @@ namespace TVRename {
              {
                double amount = 5.00; // default amount
 
-               CultureInfo ^ci = CultureInfo::InstalledUICulture;
-               
                try 
                {
                  String ^s = Regex::Replace(comboBox1->Text, "\\$", "");

@@ -66,16 +66,16 @@ namespace TVRename
         {
             txt += "==== Finding & Organising Directory Scan ====" + "\r\n";
             txt += "\r\n";
-            FileList ^files = gcnew FileList;
+            DirCache ^files = gcnew DirCache();
             for each (String ^efi in mDoc->SearchFolders)
-                BuildDirCache(files, efi, true);
+                BuildDirCache(nullptr,0,0,files, efi, true, mDoc->Settings);
 
-            for each (FileInfo ^fi in files)
+            for each (DirCacheEntry ^fi in files)
             {
                 int seas, ep;
-                bool r = mDoc->FindSeasEp(fi, &seas, &ep, nullptr);
-                bool useful = mDoc->Settings->UsefulExtension(fi->Extension,false);
-                txt += fi->FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?fi->Extension:"-")+")" + "\r\n";
+                bool r = mDoc->FindSeasEp(fi->TheFile, &seas, &ep, nullptr);
+                bool useful = fi->HasUsefulExtension_NotOthersToo;
+                txt += fi->TheFile->FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?fi->TheFile->Extension:"-")+")" + "\r\n";
             }
             txt += "\r\n";
         }
@@ -98,15 +98,15 @@ namespace TVRename
                         txt += si->TVDBCode + " : " + si->ShowName() + " : S" + snum.ToString() + "\r\n";
                         txt += "Folder: " + folder;
                         txt += "\r\n";
-                        FileList ^files = gcnew FileList;
+                        DirCache ^files = gcnew DirCache();
                         if (DirectoryInfo(folder).Exists)
-                            BuildDirCache(files, folder, true);
-                        for each (FileInfo ^fi in files)
+                            BuildDirCache(nullptr,0,0,files, folder, true, mDoc->Settings);
+                        for each (DirCacheEntry ^fi in files)
                         {
                             int seas, ep;
-                            bool r = mDoc->FindSeasEp(fi, &seas, &ep, si->ShowName());
-                            bool useful = mDoc->Settings->UsefulExtension(fi->Extension,false);
-                            txt += fi->FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?fi->Extension:"-")+")" + "\r\n";
+                            bool r = mDoc->FindSeasEp(fi->TheFile, &seas, &ep, si->ShowName());
+                            bool useful = fi->HasUsefulExtension_NotOthersToo;
+                            txt += fi->TheFile->FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?fi->TheFile->Extension:"-")+")" + "\r\n";
                         }
                         txt += "\r\n";
                     }

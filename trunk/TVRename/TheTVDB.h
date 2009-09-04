@@ -13,6 +13,7 @@ using namespace System::Text::RegularExpressions;
 using namespace Ionic::Utils::Zip;
 using namespace System::Net;
 using namespace System::Threading;
+using namespace System::Windows::Forms;
 
 using Collections::Generic::KeyValuePair;
 
@@ -70,7 +71,7 @@ namespace TVRename {
 		{
 			String ^get()
 			{
-				if ((mName == nullptr) || (mName == ""))
+				if ((mName == nullptr) || (String::IsNullOrEmpty(mName)))
 					return "Episode " + EpNum.ToString();
 				else
 					return mName;
@@ -85,7 +86,7 @@ namespace TVRename {
         int SeriesID;
         int SeasonID;
         DateTime ^FirstAired;
-        int Srv_LastUpdated;
+        __int64 Srv_LastUpdated;
         String ^Overview;
         StringDict ^Items; // other fields we don't specifically grab
 
@@ -261,67 +262,7 @@ namespace TVRename {
             writer->WriteEndElement();
         }
 
-        Episode(SeriesInfo ^ser, Season ^seas, XmlReader ^r)
-        {
-            // <Episode>
-            //  <id>...</id>
-            //  blah blah
-            // </Episode>
-
-            SetDefaults(ser, seas);
-
-            r->Read();
-            if (r->Name != "Episode")
-                return;
-
-            r->Read();
-            while (!r->EOF)
-            {
-                if ((r->Name == "Episode") && (!r->IsStartElement()))
-                    break;
-                if (r->Name == "id")
-                    EpisodeID = r->ReadElementContentAsInt();
-                if (r->Name == "seriesid")
-                    SeriesID = r->ReadElementContentAsInt();  // thetvdb series id
-                if (r->Name == "seasonid")
-                    SeasonID = r->ReadElementContentAsInt();
-                else if (r->Name == "EpisodeNumber")
-                    EpNum = r->ReadElementContentAsInt();
-                else if (r->Name == "SeasonNumber")
-                    ReadSeasonNum = r->ReadElementContentAsInt();
-                else if (r->Name == "lastupdated")
-                    Srv_LastUpdated = r->ReadElementContentAsInt();
-                else if (r->Name == "Overview")
-                    Overview = ReadStringFixQuotesAndSpaces(r);
-                else if (r->Name == "EpisodeName")
-                    Name = ReadStringFixQuotesAndSpaces(r);
-                else if (r->Name == "FirstAired")
-                {
-                    try 
-                    {
-                        FirstAired = DateTime::ParseExact(r->ReadElementContentAsString(),"yyyy-MM-dd",
-                            gcnew System::Globalization::CultureInfo(""));
-                    }
-                    catch (...)
-                    {
-                        FirstAired = nullptr;
-                    }
-                }					
-                else
-                {
-                    if ((r->IsEmptyElement) || !r->IsStartElement())
-                        r->ReadOuterXml();
-                    else
-                    {
-                        XmlReader ^r2 = r->ReadSubtree();
-                        r2->Read();
-                        String ^name = r2->Name;
-                        Items[name] = r2->ReadElementContentAsString();
-                        r->Read();
-                    }
-                }
-            }
-        }
+        Episode(SeriesInfo ^ser, Season ^seas, XmlReader ^r);
     };
 
     public ref class SeriesInfo
@@ -334,7 +275,7 @@ namespace TVRename {
         {
             String ^tzstr = TimeZone;
 
-            if (tzstr == "")
+            if (String::IsNullOrEmpty(tzstr))
                 tzstr = TZMagic::DefaultTZ();
 
             TZIBytes = TZMagic::GetTZ(tzstr);
@@ -361,13 +302,14 @@ namespace TVRename {
 
     public:
         int TVDBCode;
-        int Srv_LastUpdated;
+        __int64 Srv_LastUpdated;
         String ^Name;
 
         StringDict ^Items; // e.g. Overview, Banner, Poster, etc.
         DateTime ^AirsTime;
         SeasonDict ^Seasons;
         String ^Language;
+		DateTime ^FirstAired;
 
         bool Dirty; // set to true if local info is known to be older than whats on the server
 
@@ -413,7 +355,7 @@ namespace TVRename {
 
         int LanguagePriority(LanguageListType ^languages)
         {
-            if (Language == "")
+            if (String::IsNullOrEmpty(Language))
                 return 999999;
             int r = languages->IndexOf(Language); // -1 for not found
             return (r == -1) ? 999999 : r;
@@ -432,12 +374,12 @@ namespace TVRename {
 
             // take the best bits of "o"
             // "o" is always newer/better than us, if there is a choice
-            if ((o->Name != "") && betterLanguage)
+            if ((!String::IsNullOrEmpty(o->Name)) && betterLanguage)
                 Name = o->Name;
             Items->Clear();
             for each (KeyValuePair<String ^, String ^> ^kvp in o->Items)
             {
-                if ((kvp->Value != "") || betterLanguage)
+                if ((!String::IsNullOrEmpty(kvp->Value)) || betterLanguage)
                     Items[kvp->Key] = kvp->Value;
             }
             if (o->AirsTime != nullptr)
@@ -470,51 +412,81 @@ namespace TVRename {
             // ...
             //</Data>
 
-            r->Read();
-            if (r->Name != "Series")
-                return;
+			try
+			{
+				r->Read();
+				if (r->Name != "Series")
+					return;
 
-            r->Read();
-            while (!r->EOF)
-            {
+				r->Read();
+				while (!r->EOF)
+				{
 
-                if ((r->Name == "Series") && (!r->IsStartElement()))
-                    break;
-                if (r->Name == "id")
-                    TVDBCode = r->ReadElementContentAsInt();
-                else if (r->Name == "SeriesName")
-                    Name = ReadStringFixQuotesAndSpaces(r);
-                else if (r->Name == "lastupdated")
-                    Srv_LastUpdated = r->ReadElementContentAsInt();
-                else if ((r->Name == "Language") || (r->Name == "language"))
-                    Language = r->ReadElementContentAsString();
-                else if (r->Name == "TimeZone")
-                    TimeZone = r->ReadElementContentAsString();
-                else if (r->Name == "Airs_Time")
-                {
-                    AirsTime = DateTime::Parse("20:00");
+					if ((r->Name == "Series") && (!r->IsStartElement()))
+						break;
+					if (r->Name == "id")
+						TVDBCode = r->ReadElementContentAsInt();
+					else if (r->Name == "SeriesName")
+						Name = ReadStringFixQuotesAndSpaces(r);
+					else if (r->Name == "lastupdated")
+						Srv_LastUpdated = r->ReadElementContentAsLong();
+					else if ((r->Name == "Language") || (r->Name == "language"))
+						Language = r->ReadElementContentAsString();
+					else if (r->Name == "TimeZone")
+						TimeZone = r->ReadElementContentAsString();
+					else if (r->Name == "Airs_Time")
+					{
+						AirsTime = DateTime::Parse("20:00");
 
-                    try 
-                    {
-                        String ^theTime = r->ReadElementContentAsString();
-                        if (theTime != "")
-                        {
-                            Items["Airs_Time"] = theTime;                        
-                            AirsTime = DateTime::Parse(theTime);
-                        }
-                    }
-                    catch (FormatException ^)
-                    {
-                    }
-                }
-                else 
-                {
-                    String ^name = r->Name;
-                    Items[name] = r->ReadElementContentAsString();
-                }
-                //   r->ReadOuterXml(); // skip
-            }
+						try 
+						{
+							String ^theTime = r->ReadElementContentAsString();
+							if (!String::IsNullOrEmpty(theTime))
+							{
+								Items["Airs_Time"] = theTime;                        
+								AirsTime = DateTime::Parse(theTime);
+							}
+						}
+						catch (FormatException ^)
+						{
+						}
+					}
+					else if (r->Name == "FirstAired")
+					{
+						try 
+						{
+							FirstAired = DateTime::ParseExact(r->ReadElementContentAsString(),"yyyy-MM-dd",
+								gcnew System::Globalization::CultureInfo(""));
+						}
+						catch (...)
+						{
+							FirstAired = nullptr;
+						}
+					}
+					else 
+					{
+						String ^name = r->Name;
+						Items[name] = r->ReadElementContentAsString();
+					}
+					//   r->ReadOuterXml(); // skip
+				} // while
+			} // try
+				catch (XmlException ^e)
+				{
+					String ^message = "Error processing data from TheTVDB for a show.";
+					if (TVDBCode != -1)
+						message += "\r\nTheTVDB Code: "+TVDBCode.ToString();
+					if (!String::IsNullOrEmpty(Name))
+						message += "\r\nName: "+Name;
+					if (!String::IsNullOrEmpty(Language))
+						message += "\r\nLanguage: \""+Language+"\"";
+
+					message += "\r\n"+e->Message;
+
+					MessageBox::Show(message,"TVRename",MessageBoxButtons::OK, MessageBoxIcon::Error);
+				}
         } // LoadXml
+
         void WriteXml(XmlWriter ^writer)
         {
             writer->WriteStartElement("Series");
@@ -528,7 +500,7 @@ namespace TVRename {
             writer->WriteEndElement();
 
             writer->WriteStartElement("lastupdated");
-            writer->WriteValue(Srv_LastUpdated);
+            writer->WriteValue((__int64)Srv_LastUpdated);
             writer->WriteEndElement();
 
             writer->WriteStartElement("Language");
@@ -544,6 +516,13 @@ namespace TVRename {
             writer->WriteStartElement("TimeZone");
             writer->WriteValue(TimeZone);
             writer->WriteEndElement();
+
+			if (FirstAired != nullptr)
+			{
+				writer->WriteStartElement("FirstAired");
+				writer->WriteValue(FirstAired->ToString("yyyy-MM-dd"));
+				writer->WriteEndElement();
+			}
 
             writer->WriteEndElement(); // series
         }
@@ -578,8 +557,8 @@ namespace TVRename {
     public ref class TheTVDB
     {
     private:
-        int Srv_Time; // only update this after a 100% successful download
-        int New_Srv_Time; 
+        __int64 Srv_Time; // only update this after a 100% successful download
+        __int64 New_Srv_Time; 
 		Generic::List<int> ForceReloadOn;
         //System::Threading::Mutex ^Lock;
 
@@ -588,7 +567,6 @@ namespace TVRename {
     private:
         SeriesDict ^Series; // TODO: make this private or a property.  have online/offline state that controls auto downloading of needed info.
         ExtraEpList ^ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
-		int EEuse;
 
 		void LockEE()
 		{
@@ -608,6 +586,8 @@ namespace TVRename {
         String ^XMLMirror;	
         String ^BannerMirror;
         String ^ZIPMirror;
+		bool LoadOK;
+		String ^LoadErr;
 
         bool HasSeries(int id)
         {
@@ -625,17 +605,17 @@ namespace TVRename {
             return Series;
         }
 
-        void GetLock(String ^whoFor)
+        static void GetLock(String ^whoFor)
         {
             return;
-            Diagnostics::Debug::Print("Lock Series for " + whoFor);
+            /*Diagnostics::Debug::Print("Lock Series for " + whoFor);
             Monitor::Enter(Series);
-            WhoHasLock->Add(whoFor);
+            WhoHasLock->Add(whoFor);*/
         }
-        void Unlock(String ^whoFor)
+        static void Unlock(String ^whoFor)
         {
             return;
-            int n = WhoHasLock->Count - 1;
+            /*int n = WhoHasLock->Count - 1;
             String ^whoHad = WhoHasLock[n];
 #if defined(DEBUG)
             Diagnostics::Debug::Assert(whoFor == whoHad);
@@ -643,7 +623,7 @@ namespace TVRename {
             Diagnostics::Debug::Print("Unlock series ("+whoFor+")");
             WhoHasLock->RemoveAt(n);
 
-            Monitor::Exit(Series);
+            Monitor::Exit(Series);*/
         }
     private:
 
@@ -653,9 +633,8 @@ namespace TVRename {
         }
     public:
 
-        TheTVDB()
+        TheTVDB(FileInfo ^from)
         {
-			EEuse = 0;
             LastError = "";
             WhoHasLock = gcnew Collections::Generic::List<String ^>;
             LanguagePriorityList = gcnew LanguageListType();
@@ -673,20 +652,40 @@ namespace TVRename {
             Series = gcnew SeriesDict();
             New_Srv_Time = Srv_Time = 0;
 
-            LoadCache();
+			LoadOK = LoadCache(from);
         }
 
-        void LoadCache()
+        bool LoadCache(FileInfo ^from)
         {
-            String ^fn = System::Windows::Forms::Application::UserAppDataPath+"\\TheTVDB.xml";
+			if (from == nullptr)
+				from = gcnew FileInfo(System::Windows::Forms::Application::UserAppDataPath+"\\TheTVDB.xml");
 
-            if (!FileInfo(fn).Exists)
-                return;
+            if (!from->Exists)
+                return true; // that's ok
 
-            FileStream ^fs = gcnew FileStream(fn, FileMode::Open);
-            ProcessTVDBResponse(fs);
-            fs->Close();
-            UpdatesDoneOK();
+			bool r = false;
+			FileStream ^fs = nullptr;
+			try
+			{
+				fs = from->Open(FileMode::Open);
+				bool r = ProcessTVDBResponse(fs);
+				fs->Close();
+				fs = nullptr;
+				if (r)
+					UpdatesDoneOK();
+				return r;
+			}
+			catch (Exception ^e)
+			{
+				LoadErr = from->Name + " : " + e->Message;
+
+				if (fs != nullptr)
+				   fs->Close();
+
+				fs = nullptr;
+
+				return false;
+			}
         }
 
         void UpdatesDoneOK()
@@ -804,17 +803,17 @@ namespace TVRename {
 
                  MemoryStream ^ms = gcnew MemoryStream(zipped);
                  MemoryStream ^theFile = gcnew MemoryStream();
-                 try 
-                 {
+                 //try 
+                 //{
                      ZipFile ^zf = ZipFile::Read(ms);
                      zf->Extract(extractFile, theFile);
                      Diagnostics::Debug::Print("Downloaded " + url + ", " + ms->Length + " bytes became " + theFile->Length);
-                 }
-                 catch (Exception ^e)
-                 {
-                     LastError = CurrentDLTask + " : " + e->Message;
-                     return nullptr;
-                 }
+                 //}
+				 //catch (Exception ^e)
+                 //{
+                 //    LastError = CurrentDLTask + " : " + e->Message;
+                 //    return nullptr;
+                 //}
 
                  // ZipFile allocates more buffer than is needed, so we need to resize the array before returning it
                  array<unsigned char> ^r = theFile->GetBuffer();
@@ -823,7 +822,7 @@ namespace TVRename {
                  return r;
              }
 
-             array<unsigned char> ^GetPage(String ^url, bool useKey, typeMaskBits mirrorType, bool forceReload)
+			 public: array<unsigned char> ^GetPage(String ^url, bool useKey, typeMaskBits mirrorType, bool forceReload)
              {
                  String ^mirr = "";
                  switch (mirrorType)
@@ -844,7 +843,17 @@ namespace TVRename {
                  if (url->StartsWith("/"))
                      url = url->Substring(1);
 
-                 String ^theURL = mirr+"/api/"+(useKey ? "5FEC454623154441" : "")+"/"+url;
+				 if (!mirr->EndsWith("/"))
+					 mirr += "/";
+
+                 String ^theURL = mirr;
+				 if (mirrorType != tmBanner)
+					 theURL += "api/";
+				 else
+					 theURL += "banners/";
+				 if (useKey)
+					 theURL += "5FEC454623154441/";
+				 theURL += url;
 
                  //HttpWebRequest ^wr = dynamic_cast<HttpWebRequest ^>(HttpWebRequest::Create(theURL));
                  //wr->Timeout = 10000; // 10 seconds
@@ -868,7 +877,7 @@ namespace TVRename {
 
                      return r;
                  }
-                 catch (Exception ^e)
+                 catch (WebException ^e)
                  {
                      LastError = CurrentDLTask + " : " + e->Message;
                      return nullptr;
@@ -946,7 +955,7 @@ namespace TVRename {
                 {
                     if (r->Name == "Language" && !r->IsStartElement())
                     {
-                        if ((ID != -1) && (name != "") && (abbrev != ""))
+                        if ((ID != -1) && (!String::IsNullOrEmpty(name)) && (!String::IsNullOrEmpty(abbrev)))
                             LanguageList[abbrev] = name;
                         break; // end of language whatsit
                     }
@@ -1016,7 +1025,7 @@ namespace TVRename {
                 {
                     if (r->Name == "Mirror" && !r->IsStartElement())
                     {
-                        if ((ID != -1) && (mirrorPath != "") && (typeMask != -1))
+                        if ((ID != -1) && (!String::IsNullOrEmpty(mirrorPath)) && (typeMask != -1))
                         {
                             if (typeMask & tmXML)
                                 XMLMirrorList->Add(mirrorPath);
@@ -1059,7 +1068,15 @@ namespace TVRename {
         bool GetUpdates()
         {
             Say("Updates list");
-            int theTime = Srv_Time;
+
+			
+			if (!Connected && !Connect())
+			{
+				Say("");
+				return false;
+			}
+
+            __int64 theTime = Srv_Time;
 
             if (theTime == 0)
             {
@@ -1102,8 +1119,7 @@ namespace TVRename {
                 return true; // that's it for now
 			}
 
-            unsigned long epoch = (unsigned long)(DateTime::UtcNow.Subtract(DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
-            int seconds = epoch - theTime;
+			__int64 seconds = TZMagic::Epoch() - theTime;
             if (seconds < 3540) // 59 minutes
 			{
 				Say("");
@@ -1122,13 +1138,6 @@ namespace TVRename {
                 timePeriod = "month";
             else
                 timePeriod = "all";
-
-
-            if (!Connected && !Connect())
-			{
-				Say("");
-				return false;
-			}
 
 
             if (timePeriod != "all")
@@ -1156,14 +1165,14 @@ namespace TVRename {
             return ProcessUpdateList(ms);
         }
 
-        bool ProcessUpdateList(MemoryStream ^ms)
+        bool ProcessUpdateList(Stream ^str)
         {
             // if updatetime > localtime for item, then remove it, so it will be downloaded later
 
             XmlReaderSettings ^settings = gcnew XmlReaderSettings();
             settings->IgnoreComments = true;
             settings->IgnoreWhitespace = true;
-            XmlReader ^reader = XmlReader::Create(ms, settings);
+            XmlReader ^reader = XmlReader::Create(str, settings);
             reader->Read();
 
             if (reader->Name != "xml")
@@ -1302,7 +1311,7 @@ namespace TVRename {
             return true;
         }
 
-        void ProcessTVDBResponse(Stream ^ms)
+        bool ProcessTVDBResponse(Stream ^str)
         {
             // Will have one or more series, and episodes
             // all wrapped in <Data> </Data>
@@ -1327,93 +1336,107 @@ namespace TVRename {
 
             GetLock("ProcessTVDBResponse");
 
-            XmlReaderSettings ^settings = gcnew XmlReaderSettings();
-            settings->IgnoreComments = true;
-            settings->IgnoreWhitespace = true;
-            XmlReader ^r = XmlReader::Create(ms, settings);
+			try
+			{
+				XmlReaderSettings ^settings = gcnew XmlReaderSettings();
+				settings->IgnoreComments = true;
+				settings->IgnoreWhitespace = true;
+				XmlReader ^r = XmlReader::Create(str, settings);
 
-            r->Read();
+				r->Read();
 
-            while (!r->EOF)
-            {
-                if ((r->Name == "Data") && !r->IsStartElement())
-                    break; // that's it.
-                if (r->Name == "Series")
-                {
-                    // The <series> returned by GetSeries have
-                    // less info than other results from
-                    // thetvdb.com, so we need to smartly merge
-                    // in a <Series> if we already have some/all
-                    // info on it (depending on which one came
-                    // first).
+				while (!r->EOF)
+				{
+					if ((r->Name == "Data") && !r->IsStartElement())
+						break; // that's it.
+					if (r->Name == "Series")
+					{
+						// The <series> returned by GetSeries have
+						// less info than other results from
+						// thetvdb.com, so we need to smartly merge
+						// in a <Series> if we already have some/all
+						// info on it (depending on which one came
+						// first).
 
-                    SeriesInfo ^si = gcnew SeriesInfo(r->ReadSubtree());
-                    if (Series->ContainsKey(si->TVDBCode))
-                        Series[si->TVDBCode]->Merge(si, LanguagePriorityList);
-                    else
-                        Series[si->TVDBCode] = si;
-                    r->Read();
-                }
-                else if (r->Name == "Episode")
-                {
-                    Episode ^e = gcnew Episode(nullptr, nullptr, r->ReadSubtree());
-                    if (e->OK())
-                    {
-                        if (!Series->ContainsKey(e->SeriesID))
-                        {
-                            throw gcnew Exception("Can't find the series to add the episode to (TheTVDB).");
-                        }
-                        SeriesInfo ^ser = Series[e->SeriesID];
-                        Season ^seas = ser->GetOrAddSeason(e->ReadSeasonNum,e->SeasonID);
+						SeriesInfo ^si = gcnew SeriesInfo(r->ReadSubtree());
+						if (Series->ContainsKey(si->TVDBCode))
+							Series[si->TVDBCode]->Merge(si, LanguagePriorityList);
+						else
+							Series[si->TVDBCode] = si;
+						r->Read();
+					}
+					else if (r->Name == "Episode")
+					{
+						Episode ^e = gcnew Episode(nullptr, nullptr, r->ReadSubtree());
+						if (e->OK())
+						{
+							if (!Series->ContainsKey(e->SeriesID))
+							{
+								throw gcnew Exception("Can't find the series to add the episode to (TheTVDB).");
+							}
+							SeriesInfo ^ser = Series[e->SeriesID];
+							Season ^seas = ser->GetOrAddSeason(e->ReadSeasonNum,e->SeasonID);
 
-                        bool added = false;
-                        for (int i=0;i<seas->Episodes->Count;i++)
-                        {
-                            Episode ^ep = seas->Episodes[i];
-                            if (ep->EpisodeID == e->EpisodeID)
-                            {
-                                seas->Episodes[i] = e;
-                                added = true;
-                                break;
-                            }
-                        }
-                        if (!added)
-                            seas->Episodes->Add(e);
-                        e->SetSeriesSeason(ser, seas);
-                    }
-                    r->Read();
-                }
-                else if (r->Name == "xml")
-                    r->Read();
-                else if (r->Name == "Data")
-                {
-                    String ^time = r->GetAttribute("time");
-                    if (time != nullptr)
-                        New_Srv_Time = int::Parse(time);
-                    
-                    String ^lp = r->GetAttribute("TVRename_LanguagePriority");
-                    if (lp != nullptr)
-                    {
-                        LanguagePriorityList->Clear();
+							bool added = false;
+							for (int i=0;i<seas->Episodes->Count;i++)
+							{
+								Episode ^ep = seas->Episodes[i];
+								if (ep->EpisodeID == e->EpisodeID)
+								{
+									seas->Episodes[i] = e;
+									added = true;
+									break;
+								}
+							}
+							if (!added)
+								seas->Episodes->Add(e);
+							e->SetSeriesSeason(ser, seas);
+						}
+						r->Read();
+					}
+					else if (r->Name == "xml")
+						r->Read();
+					else if (r->Name == "Data")
+					{
+						String ^time = r->GetAttribute("time");
+						if (time != nullptr)
+							New_Srv_Time = int::Parse(time);
 
-                        for each (String ^s in lp->Split(' '))
-                        {
-                            if (s != "")
-                              LanguagePriorityList->Add(s);
-                        }
-                    }
+						String ^lp = r->GetAttribute("TVRename_LanguagePriority");
+						if (lp != nullptr)
+						{
+							LanguagePriorityList->Clear();
 
-                    r->Read();
-                }
-                else
-                    r->ReadOuterXml();
-            }
-            Unlock("ProcessTVDBResponse");
+							for each (String ^s in lp->Split(' '))
+							{
+								if (!String::IsNullOrEmpty(s))
+									LanguagePriorityList->Add(s);
+							}
+						}
+
+						r->Read();
+					}
+					else
+						r->ReadOuterXml();
+				}
+			}
+			catch (XmlException ^e)
+			{
+				String ^message = "Error processing data from TheTVDB (top level).";
+				message += "\r\n"+e->Message;
+				MessageBox::Show(message,"TVRename",MessageBoxButtons::OK, MessageBoxIcon::Error);
+				return false;
+			}
+			finally
+			{
+				Unlock("ProcessTVDBResponse");
+			}
+			return true;
         }
 
         String ^PreferredLanguage(int seriesID)
         {
-            if (!Series->ContainsKey(seriesID) || (Series[seriesID]->Language == ""))
+            if (!Series->ContainsKey(seriesID) || (String::IsNullOrEmpty(Series[seriesID]->Language)))
             {
                 // new series we don't know about, or don't have any language info
                 SeriesInfo ^ser = DownloadSeriesNow(seriesID, false, true); // pretend we want "en", download overview
@@ -1434,7 +1457,7 @@ namespace TVRename {
             }
             // and we have a language recorded for it
             SeriesInfo ^ser = Series[seriesID];
-            if (ser->Language != "")
+            if (!String::IsNullOrEmpty(ser->Language))
                 return ser->Language; // return that language
 
             // otherwise, try for the user's top rated language
@@ -1449,6 +1472,11 @@ namespace TVRename {
 			return ForceReloadOn.Contains(code) || !Series->ContainsKey(code);
 		}
 
+		String ^BuildURL(bool episodesToo, int code, String ^lang)
+		{
+			return episodesToo ? "series/"+code.ToString()+"/all/"+lang+".zip" :
+				"series/"+code.ToString()+"/"+lang+".xml";
+		}
         SeriesInfo ^DownloadSeriesNow(int code, bool episodesToo, bool forceEnglish)
         {
 			bool forceReload = ForceReloadOn.Contains(code);
@@ -1463,11 +1491,9 @@ namespace TVRename {
                 txt += " Overview";
             Say(txt);
 
+
             String ^lang = forceEnglish ? "en" : PreferredLanguage(code);
-
-            String ^url = episodesToo ? "series/"+code.ToString()+"/all/"+lang+".zip" :
-                "series/"+code.ToString()+"/"+lang+".xml";
-
+            String ^url = BuildURL(episodesToo, code, lang);
             array<unsigned char> ^p = episodesToo ? GetPageZIP(url, lang+".xml", true, forceReload) : GetPage(url, true, tmXML, forceReload);
             if (p == nullptr)
                 return nullptr;
@@ -1507,13 +1533,11 @@ namespace TVRename {
 
             MemoryStream ^ms = gcnew MemoryStream(p);
 
-            ProcessTVDBResponse(ms);
-
-            return true;
+            return ProcessTVDBResponse(ms);
         }
         SeriesInfo ^MakePlaceholderSeries(int code, String ^name)
         {
-            if (name == "")
+            if (String::IsNullOrEmpty(name))
                 name = "";
             Series[code] = gcnew SeriesInfo(name, code);
             Series[code]->Dirty = true;

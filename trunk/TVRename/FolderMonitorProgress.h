@@ -9,7 +9,7 @@ using namespace System::Drawing;
 
 
 namespace TVRename {
-    ref class UI;
+    ref class FolderMonitor;
 
     public ref class FolderMonitorProgress : public System::Windows::Forms::Form
     {
@@ -94,12 +94,12 @@ namespace TVRename {
         }
 #pragma endregion
 
-        UI ^mUI;
+        FolderMonitor ^mFM;
         public:
             bool StopNow;
 
          public:
-             FolderMonitorProgress(UI ^theui);
+             FolderMonitorProgress(FolderMonitor ^thefm);
              System::Void bnCancel_Click(System::Object^  sender, System::EventArgs^  e) ;
 
 

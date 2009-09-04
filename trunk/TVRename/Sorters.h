@@ -1,6 +1,5 @@
 #pragma once
 
-#include "MissingEpisode.h"
 #include "ShowItem.h"
 
 namespace TVRename {
@@ -28,12 +27,14 @@ namespace TVRename {
       col = column;
     }
 
-    virtual int Compare( Object^ x, Object^ y )
+    virtual int Compare( Object^ xx, Object^ yy )
     {
-      return String::Compare( (dynamic_cast<ListViewItem^>(x))->SubItems[ col ]->Text,
-        (dynamic_cast<ListViewItem^>(y))->SubItems[ col ]->Text );
+		ListViewItem ^x = dynamic_cast<ListViewItem^>(xx);
+		ListViewItem ^y = dynamic_cast<ListViewItem^>(yy);
+      return String::Compare( x->SubItems[ col ]->Text, y->SubItems[ col ]->Text );
     }
   };
+  /*
   ref class TimeToNextSorter: public IComparer
   {
   private:
@@ -64,22 +65,14 @@ namespace TVRename {
       }
     }
   };
+	*/
 
 
   ref class DateSorterWTW: public IComparer
   {
-  private:
-    int col;
-
   public:
     DateSorterWTW()
     {
-      col = 0;
-    }
-
-    DateSorterWTW( int column )
-    {
-      col = column;
     }
 
     virtual int Compare( Object^ x, Object^ y )
@@ -106,7 +99,8 @@ namespace TVRename {
       return d1->CompareTo(d2);
     }
   };
-
+/*
+was for missinglist
     ref class DateSorterML: public IComparer
   {
   private:
@@ -154,7 +148,7 @@ namespace TVRename {
           return 1;
     }
   };
-
+*/
   ref class DaySorter: public IComparer
   {
   private:
@@ -220,9 +214,9 @@ ref class NumberAsTextSorter: public IComparer
       int one,two;
       String ^s1 = dynamic_cast<ListViewItem^>(x)->SubItems[ col ]->Text;
       String ^s2 = dynamic_cast<ListViewItem^>(y)->SubItems[ col ]->Text;
-      if (s1 == "")
+      if (String::IsNullOrEmpty(s1))
         s1 = "-1";
-      if (s2 == "")
+      if (String::IsNullOrEmpty(s2))
         s2 = "-1";
       
       try
@@ -247,17 +241,17 @@ ref class NumberAsTextSorter: public IComparer
   };
 
 
-  ref class RCItem;
+  //ref class RCItem;
 
-  public ref class MoveAndCopySorter: public Collections::Generic::IComparer<RCItem ^>
-  {
-  public:
-    MoveAndCopySorter()
-    {
-    }
+  //public ref class MoveAndCopySorter: public Collections::Generic::IComparer<RCItem ^>
+  //{
+  //public:
+  //  MoveAndCopySorter()
+  //  {
+  //  }
 
-    virtual int Compare( RCItem ^ xx, RCItem^ yy );
-  };
+  //  virtual int Compare( RCItem ^ xx, RCItem^ yy );
+  //};
 
 
 }

@@ -16,7 +16,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("TVRename")];
 [assembly:AssemblyProductAttribute("TVRename")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c) 2007-2008")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) 2007-2009")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 [assembly:AssemblyInformationalVersion ("2.1")];
@@ -39,3 +39,7 @@ using namespace System::Security::Permissions;
 [assembly:CLSCompliantAttribute(true)];
 
 [assembly:SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
+
+[assembly:System::Resources::NeutralResourcesLanguageAttribute("en-AU")];
+// this fixes FxCop's CatchNonClsCompliantExceptionsInGeneralHandlers
+[assembly:System::Runtime::CompilerServices::RuntimeCompatibilityAttribute(WrapNonExceptionThrows = true)];

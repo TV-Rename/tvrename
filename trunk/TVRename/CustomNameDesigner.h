@@ -60,14 +60,14 @@ namespace TVRename {
             {
                 String ^txt = s;
                 if (pe != nullptr)
-                    txt += " - " + CustomName::NameFor(pe, s);
+                    txt += " - " + CustomName::NameForNoExt(pe, s);
                 cbTags->Items->Add(txt);
             }
 
             for each (String ^s in CustomName::Presets())
             {
                 if (pe != nullptr)
-                    cbPresets->Items->Add(CustomName::NameFor(pe, s));
+                    cbPresets->Items->Add(CustomName::NameForNoExt(pe, s));
                 else
                     cbPresets->Items->Add(s);
             }
@@ -287,7 +287,7 @@ namespace TVRename {
             for each (ProcessedEpisode ^pe in Eps)
             {
                 ListViewItem ^lvi = gcnew ListViewItem();
-                String ^fn = mDoc->FilenameFriendly(CN->NameFor(pe));
+                String ^fn = mDoc->FilenameFriendly(CN->NameForExt(pe,nullptr));
                 lvi->Text = fn;
 
                 bool ok = false, ok1 = false, ok2 = false;

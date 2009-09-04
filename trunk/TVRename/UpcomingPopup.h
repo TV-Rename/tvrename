@@ -155,7 +155,6 @@ namespace TVRename {
                lvUpcoming->Items->Clear();
 
                const int kN = 5;
-               String ^txt = "";
 
                ProcessedEpisodeList ^next5 = mDoc->NextNShows(kN, 9999);
 
@@ -167,7 +166,7 @@ namespace TVRename {
                    lvi->Text = ei->HowLong();
                    lvi->SubItems->Add(ei->DayOfWeek());
                    lvi->SubItems->Add(ei->TimeOfDay());
-                   lvi->SubItems->Add(mDoc->Settings->NamingStyle->NameFor(ei));
+                   lvi->SubItems->Add(mDoc->Settings->NamingStyle->NameForExt(ei,nullptr));
                    lvUpcoming->Items->Add(lvi);
                  }
 				 if (lvUpcoming->Items->Count > 0)

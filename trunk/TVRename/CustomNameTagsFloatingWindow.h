@@ -32,7 +32,7 @@ namespace TVRename {
                 {
                     String ^txt = s;
                     if (pe != nullptr)
-                        txt += " - " + CustomName::NameFor(pe, s);
+                        txt += " - " + CustomName::NameForNoExt(pe, s);
 
                     label1->Text += txt + "\r\n";
                 }

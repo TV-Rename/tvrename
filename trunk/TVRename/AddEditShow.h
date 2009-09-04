@@ -30,7 +30,6 @@ namespace TVRename {
         TheTVDB ^mTVDB;
         TheTVDBCodeFinder ^mTCCF;
         //bool mShowNameBlank;
-        bool mInternalChange;
 
     public: 
         String ^TimeZone;
@@ -73,8 +72,7 @@ namespace TVRename {
 
     public:
         AddEditShow(ShowItem ^si, TheTVDB ^db, String ^timezone) :
-          mSI(si),
-              mInternalChange(false)
+          mSI(si)
           {
               mTVDB = db;
               InitializeComponent();
@@ -122,7 +120,7 @@ namespace TVRename {
               chkPadTwoDigits->Checked = si->PadSeasonToTwoDigits;
               SetRightNumberOfHashes();
 
-              TimeZone = (timezone != "") ? timezone : TZMagic::DefaultTZ();
+              TimeZone = (!String::IsNullOrEmpty(timezone)) ? timezone : TZMagic::DefaultTZ();
               cbTimeZone->Text = TimeZone;
               chkDVDOrder->Checked = si->DVDOrder;
               chkForceCheckAll->Checked = si->ForceCheckAll;
@@ -752,7 +750,7 @@ namespace TVRename {
              }
     private: System::Void bnBrowse_Click(System::Object^  sender, System::EventArgs^  e) 
              {
-                 if (txtBaseFolder->Text != "")
+                 if (!String::IsNullOrEmpty(txtBaseFolder->Text))
                      folderBrowser->SelectedPath = txtBaseFolder->Text;
 
                  if (folderBrowser->ShowDialog() == System::Windows::Forms::DialogResult::OK)
@@ -794,12 +792,12 @@ namespace TVRename {
     private: System::Void txtSeasonNumber_TextChanged(System::Object^  sender, System::EventArgs^  e) 
              {
                  bool isNumber = Regex::Match(txtSeasonNumber->Text,"^[0-9]+$")->Success;
-                 bnAdd->Enabled = isNumber && (txtSeasonNumber->Text != "");
+                 bnAdd->Enabled = isNumber && (!String::IsNullOrEmpty(txtSeasonNumber->Text));
              }
     private: System::Void txtFolder_TextChanged(System::Object^  sender, System::EventArgs^  e) 
              {
                  bool ok = true;
-                 if (txtFolder->Text != "")
+                 if (!String::IsNullOrEmpty(txtFolder->Text))
                  {
                      try
                      {

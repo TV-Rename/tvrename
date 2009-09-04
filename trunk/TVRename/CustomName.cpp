@@ -25,7 +25,7 @@ namespace TVRename
             return res;
         }
 
-        String ^CustomName::NameFor(ProcessedEpisode ^pe, String ^styleString)
+        String ^CustomName::NameForNoExt(ProcessedEpisode ^pe, String ^styleString)
         {
             String ^name = gcnew String(styleString);
             
