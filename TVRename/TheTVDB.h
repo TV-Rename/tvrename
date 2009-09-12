@@ -572,6 +572,7 @@ namespace TVRename {
         Collections::Generic::List<String ^> ^WhoHasLock;
 
     private:
+		FileInfo ^CacheFile;
         SeriesDict ^Series; // TODO: make this private or a property.  have online/offline state that controls auto downloading of needed info.
         ExtraEpList ^ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
 
@@ -640,8 +641,11 @@ namespace TVRename {
         }
     public:
 
-        TheTVDB(FileInfo ^from)
+        TheTVDB(FileInfo ^loadFrom, FileInfo ^cacheFile)
         {
+			Diagnostics::Debug::Assert(cacheFile != nullptr);
+			CacheFile = cacheFile;
+
             LastError = "";
             WhoHasLock = gcnew Collections::Generic::List<String ^>;
             LanguagePriorityList = gcnew LanguageListType();
@@ -659,22 +663,19 @@ namespace TVRename {
             Series = gcnew SeriesDict();
             New_Srv_Time = Srv_Time = 0;
 
-			LoadOK = LoadCache(from);
+			LoadOK = (loadFrom == nullptr) || LoadCache(loadFrom);
         }
 
-        bool LoadCache(FileInfo ^from)
+        bool LoadCache(FileInfo ^loadFrom)
         {
-			if (from == nullptr)
-				from = gcnew FileInfo(System::Windows::Forms::Application::UserAppDataPath+"\\TheTVDB.xml");
-
-            if (!from->Exists)
+            if ((loadFrom == nullptr) || !loadFrom->Exists)
                 return true; // that's ok
 
 			bool r = false;
 			FileStream ^fs = nullptr;
 			try
 			{
-				fs = from->Open(FileMode::Open);
+				fs = loadFrom->Open(FileMode::Open);
 				bool r = ProcessTVDBResponse(fs);
 				fs->Close();
 				fs = nullptr;
@@ -684,7 +685,7 @@ namespace TVRename {
 			}
 			catch (Exception ^e)
 			{
-				LoadErr = from->Name + " : " + e->Message;
+				LoadErr = loadFrom->Name + " : " + e->Message;
 
 				if (fs != nullptr)
 				   fs->Close();
@@ -705,32 +706,32 @@ namespace TVRename {
         void SaveCache()
         {
             GetLock("SaveCache");
-            String ^fname = System::Windows::Forms::Application::UserAppDataPath+"\\TheTVDB.xml";
+            //String ^fname = System::Windows::Forms::Application::UserAppDataPath+"\\TheTVDB.xml";
 
-            if (File::Exists(fname))
+            if (CacheFile->Exists)
             {
                 double hours = 999.9;
-                if (File::Exists(fname+".0"))
+                if (File::Exists(CacheFile->FullName+".0"))
                 {
                     // see when the last rotate was, and only rotate if its been at least an hour since the last save
-                    DateTime ^dt = FileInfo(fname+".0").LastWriteTime;
+                    DateTime ^dt = FileInfo(CacheFile->FullName+".0").LastWriteTime;
                     hours = DateTime::Now.Subtract(*dt).TotalHours;
                 }
                 if (hours >= 24.0) // rotate the save file daily
                 {
                     for (int i=8;i>=0;i--)
                     {
-                        String ^fn = fname + "." + i.ToString();
+                        String ^fn = CacheFile->FullName + "." + i.ToString();
                         if (File::Exists(fn))
                         {
-                            String ^fn2 = fname + "." + (i+1).ToString();
+                            String ^fn2 = CacheFile->FullName + "." + (i+1).ToString();
                             if (File::Exists(fn2))
                                 File::Delete(fn2);
                             File::Move(fn, fn2);
                         }
                     }
 
-                    File::Copy(fname, fname+".0");
+                    File::Copy(CacheFile->FullName, CacheFile->FullName+".0");
                 }
             }
 
@@ -739,7 +740,7 @@ namespace TVRename {
             XmlWriterSettings ^settings = gcnew XmlWriterSettings();
             settings->Indent = true;
             settings->NewLineOnAttributes = true;
-            XmlWriter ^writer = XmlWriter::Create(fname, settings);
+            XmlWriter ^writer = XmlWriter::Create(CacheFile->FullName, settings);
             writer->WriteStartDocument();
             writer->WriteStartElement("Data");
             writer->WriteStartAttribute("time");
@@ -801,6 +802,13 @@ namespace TVRename {
                  return Connected;
              }
 
+				public: String ^BuildURL(bool episodesToo, int code, String ^lang)
+				{
+					return episodesToo ? "series/"+code.ToString()+"/all/"+lang+".zip" :
+						"series/"+code.ToString()+"/"+lang+".xml";
+				}
+
+
              private: array<unsigned char> ^GetPageZIP(String ^url, String ^extractFile, bool useKey, bool forceReload)
              {
                  array<unsigned char> ^zipped = GetPage(url, useKey, tmZIP, forceReload);
@@ -828,6 +836,10 @@ namespace TVRename {
 
                  return r;
              }
+			  static String ^APIKey()
+			  {
+				  return "5FEC454623154441"; // tvrename's API key on thetvdb.com
+			  }
 
 			 public: array<unsigned char> ^GetPage(String ^url, bool useKey, typeMaskBits mirrorType, bool forceReload)
              {
@@ -859,7 +871,7 @@ namespace TVRename {
 				 else
 					 theURL += "banners/";
 				 if (useKey)
-					 theURL += "5FEC454623154441/";
+					 theURL += APIKey()+"/";
 				 theURL += url;
 
                  //HttpWebRequest ^wr = dynamic_cast<HttpWebRequest ^>(HttpWebRequest::Create(theURL));
@@ -1479,11 +1491,6 @@ namespace TVRename {
 			return ForceReloadOn.Contains(code) || !Series->ContainsKey(code);
 		}
 
-		String ^BuildURL(bool episodesToo, int code, String ^lang)
-		{
-			return episodesToo ? "series/"+code.ToString()+"/all/"+lang+".zip" :
-				"series/"+code.ToString()+"/"+lang+".xml";
-		}
         SeriesInfo ^DownloadSeriesNow(int code, bool episodesToo, bool forceEnglish)
         {
 			bool forceReload = ForceReloadOn.Contains(code);

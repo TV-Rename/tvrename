@@ -1385,9 +1385,6 @@ namespace TVRename {
 	public:
 		UI(array<System::String ^> ^args)
 		{        
-			FileInfo ^tvdbOverride = nullptr;
-			FileInfo ^settingsOverride = nullptr;
-
 			bool ok = true;
 			String ^hint = "";
 
@@ -1396,25 +1393,33 @@ namespace TVRename {
 				ok = false; // force recover dialog
 				hint = "Recover manually requested.";
 			}
-			do 
+
+			FileInfo ^tvdbFile = TVDoc::TVDBFile();
+			FileInfo ^settingsFile  = TVDoc::TVDocSettingsFile();
+
+			do // loop until no problems loading settings & tvdb cache files
 			{
-				if (!ok)
+				if (!ok) // something went wrong last time around, ask the user what to do
 				{
 					RecoverXML ^rec = gcnew RecoverXML(hint);
 					if (rec->ShowDialog() == ::DialogResult::OK)
 				 {
-					 tvdbOverride = rec->DBFile;
-					 settingsOverride = rec->SettingsFile;
+					 tvdbFile = rec->DBFile;
+					 settingsFile = rec->SettingsFile;
 				 }
+					else
+						Environment::Exit(1);
 				}
 
-				mDoc = gcnew TVDoc(args, settingsOverride, tvdbOverride);
+				// try loading using current settings files
+				mDoc = gcnew TVDoc(args, settingsFile, tvdbFile);
 
 				if (!ok)
 					mDoc->SetDirty();
 
 				ok = mDoc->LoadOK;
-				if (!mDoc->LoadOK)
+				
+				if (!ok)
 				{
 					hint = "";
 					if (!String::IsNullOrEmpty(mDoc->LoadErr))
