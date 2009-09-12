@@ -70,7 +70,7 @@
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
-				KeyFile="..\TVRenameKeyPair.snk"
+				KeyFile=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -225,7 +225,7 @@
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
-				KeyFile="..\TVRenameKeyPair.snk"
+				KeyFile=""
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -282,18 +282,13 @@
 			MinFrameworkVersion="131072"
 		/>
 		<AssemblyReference
-			RelativePath="..\..\Libs\DotNetZipLib\Ionic.Utils.Zip.dll"
+			RelativePath="..\Libs\Ionic.Utils.Zip.dll"
 			AssemblyName="Ionic.Utils.Zip, Version=1.5.2.1, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
 		<AssemblyReference
-			RelativePath="..\..\Libs\SourceGrid4.21\SourceGrid.dll"
+			RelativePath="..\Libs\SourceGrid.dll"
 			AssemblyName="SourceGrid, Version=4.21.3441.17573, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL"
-			MinFrameworkVersion="131072"
-		/>
-		<AssemblyReference
-			RelativePath="..\..\Libs\SourceGrid4.21\SourceGrid.Extensions.dll"
-			AssemblyName="SourceGrid.Extensions, Version=4.21.3441.17574, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
 	</References>
