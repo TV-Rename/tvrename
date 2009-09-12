@@ -39,6 +39,7 @@ namespace TVRename {
 		FileInfo ^SettingsFile;
 	private: System::Windows::Forms::Label^  lbHint;
 	private: System::Windows::Forms::TableLayoutPanel^  tableLayoutPanel2;
+	private: System::Windows::Forms::Button^  bnCancel;
 	public: 
 		FileInfo ^DBFile;
 
@@ -103,6 +104,7 @@ namespace TVRename {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->lbHint = (gcnew System::Windows::Forms::Label());
 			this->tableLayoutPanel2 = (gcnew System::Windows::Forms::TableLayoutPanel());
+			this->bnCancel = (gcnew System::Windows::Forms::Button());
 			this->tableLayoutPanel1->SuspendLayout();
 			this->panel2->SuspendLayout();
 			this->panel1->SuspendLayout();
@@ -112,7 +114,7 @@ namespace TVRename {
 			// bnOK
 			// 
 			this->bnOK->Anchor = System::Windows::Forms::AnchorStyles::Bottom;
-			this->bnOK->Location = System::Drawing::Point(254, 366);
+			this->bnOK->Location = System::Drawing::Point(173, 366);
 			this->bnOK->Name = L"bnOK";
 			this->bnOK->Size = System::Drawing::Size(75, 23);
 			this->bnOK->TabIndex = 0;
@@ -142,7 +144,7 @@ namespace TVRename {
 			this->tableLayoutPanel1->Controls->Add(this->panel2, 1, 0);
 			this->tableLayoutPanel1->Controls->Add(this->panel1, 0, 0);
 			this->tableLayoutPanel1->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->tableLayoutPanel1->Location = System::Drawing::Point(3, 68);
+			this->tableLayoutPanel1->Location = System::Drawing::Point(3, 55);
 			this->tableLayoutPanel1->Name = L"tableLayoutPanel1";
 			this->tableLayoutPanel1->RowCount = 1;
 			this->tableLayoutPanel1->RowStyles->Add((gcnew System::Windows::Forms::RowStyle(System::Windows::Forms::SizeType::Percent, 50)));
@@ -203,7 +205,7 @@ namespace TVRename {
 			// 
 			this->label3->AutoSize = true;
 			this->label3->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->label3->Location = System::Drawing::Point(3, 26);
+			this->label3->Location = System::Drawing::Point(3, 13);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(321, 39);
 			this->label3->TabIndex = 1;
@@ -218,7 +220,7 @@ namespace TVRename {
 				static_cast<System::Byte>(0)));
 			this->lbHint->Location = System::Drawing::Point(3, 0);
 			this->lbHint->Name = L"lbHint";
-			this->lbHint->Size = System::Drawing::Size(321, 26);
+			this->lbHint->Size = System::Drawing::Size(321, 13);
 			this->lbHint->TabIndex = 0;
 			this->lbHint->Text = L"<< Error Description >>";
 			// 
@@ -239,12 +241,23 @@ namespace TVRename {
 			this->tableLayoutPanel2->Size = System::Drawing::Size(327, 348);
 			this->tableLayoutPanel2->TabIndex = 4;
 			// 
+			// bnCancel
+			// 
+			this->bnCancel->Location = System::Drawing::Point(254, 366);
+			this->bnCancel->Name = L"bnCancel";
+			this->bnCancel->Size = System::Drawing::Size(75, 23);
+			this->bnCancel->TabIndex = 5;
+			this->bnCancel->Text = L"Cancel";
+			this->bnCancel->UseVisualStyleBackColor = true;
+			this->bnCancel->Click += gcnew System::EventHandler(this, &RecoverXML::bnCancel_Click);
+			// 
 			// RecoverXML
 			// 
 			this->AcceptButton = this->bnOK;
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(350, 396);
+			this->Controls->Add(this->bnCancel);
 			this->Controls->Add(this->tableLayoutPanel2);
 			this->Controls->Add(this->bnOK);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedDialog;
@@ -269,12 +282,15 @@ namespace TVRename {
 				 SettingsList = DirectoryInfo(System::Windows::Forms::Application::UserAppDataPath).GetFiles("TVRenameSettings.xml*");
 				 DBList = DirectoryInfo(System::Windows::Forms::Application::UserAppDataPath).GetFiles("TheTVDB.xml*");
 
+				 lbSettings->Items->Add("Default settings");
 				 if ((SettingsList != nullptr) && SettingsList->Length)
 				 {
 					 for each (FileInfo ^fi in SettingsList)
 						 lbSettings->Items->Add(fi->LastWriteTime.ToString("g"));
 					 lbSettings->SelectedIndex = 0;
 				 }
+
+				 lbDB->Items->Add("None");
 				 if ((DBList != nullptr) && DBList->Length)
 				 {
 					 for each (FileInfo ^fi in DBList)
@@ -285,17 +301,25 @@ namespace TVRename {
 			 }
 private: System::Void bnOK_Click(System::Object^  sender, System::EventArgs^  e) 
 		 {
+			 // we added a 'none' item at the top of the list, so adjust for that
+
 			 int n = lbDB->SelectedIndex;
 			 if (n == -1)
 				 n = 0;
-			 DBFile = DBList[n];
+			 DBFile = (n == 0) ? nullptr : DBList[n-1];
+			 
 			 n = lbSettings->SelectedIndex;
 			 if (n == -1)
 				 n = 0;
-			 SettingsFile = SettingsList[n];
+			 SettingsFile = (n == 0) ? nullptr : SettingsList[n];
+
 			 this->DialogResult = ::DialogResult::OK;
 			 this->Close();
-
+		 }
+private: System::Void bnCancel_Click(System::Object^  sender, System::EventArgs^  e) 
+		 {
+			 this->DialogResult = ::DialogResult::Cancel;
+			 this->Close();
 		 }
 };
 }

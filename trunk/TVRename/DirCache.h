@@ -44,14 +44,20 @@ namespace TVRename
 			return n;
 		if (folder->Length >= 248)
 			return n;
-		DirectoryInfo ^di = gcnew DirectoryInfo(folder);
-		n = di->GetFiles()->Length;
-
-		if (subFolders)
+		try
 		{
-			array<DirectoryInfo ^> ^dirs = di->GetDirectories();
-			for each (DirectoryInfo ^di in dirs)
-				n += CountFiles(di->FullName, subFolders);
+			DirectoryInfo ^di = gcnew DirectoryInfo(folder);
+			n = di->GetFiles()->Length;
+
+			if (subFolders)
+			{
+				array<DirectoryInfo ^> ^dirs = di->GetDirectories();
+				for each (DirectoryInfo ^di in dirs)
+					n += CountFiles(di->FullName, subFolders);
+			}
+		}
+		catch (UnauthorizedAccessException ^)
+		{
 		}
 		return n;
 	}
@@ -106,6 +112,9 @@ namespace TVRename
 				for each (DirectoryInfo ^di in dirs)
 					filesDone = BuildDirCache(prog,filesDone,totalFiles,fileCache, di->FullName, subFolders, theSettings);
 			}
+		}
+		catch (UnauthorizedAccessException ^)
+		{
 		}
 		catch (...)
 		{

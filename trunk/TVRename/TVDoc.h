@@ -90,7 +90,16 @@ namespace TVRename {
 		String ^LoadErr;
 
 	public:
-		TVDoc(array<System::String ^> ^args, FileInfo ^settingsFileOverride, FileInfo ^tvdbOverride)
+		static FileInfo ^TVDBFile()
+		{
+			return gcnew FileInfo(System::Windows::Forms::Application::UserAppDataPath+"\\TheTVDB.xml");
+		}
+		static FileInfo ^TVDocSettingsFile()
+		{
+			return gcnew FileInfo(System::Windows::Forms::Application::UserAppDataPath+"\\TVRenameSettings.xml");
+		}
+
+		TVDoc(array<System::String ^> ^args, FileInfo ^settingsFile, FileInfo ^tvdbFile)
 		{
 			Args = args;
 			Ignore = gcnew IgnoreList();
@@ -98,7 +107,7 @@ namespace TVRename {
 			Workers = nullptr;
 			WorkerSemaphore = nullptr;
 
-			mTVDB = gcnew TheTVDB(tvdbOverride);
+			mTVDB = gcnew TheTVDB(tvdbFile, TVDBFile());
 
 			mStats = gcnew TVRenameStats();
 			mDirty = false;
@@ -118,7 +127,8 @@ namespace TVRename {
 			AIOCancel = false;
 			ScanProgDlg = nullptr;
 
-			LoadOK = LoadXMLSettings(settingsFileOverride) && mTVDB->LoadOK;
+			LoadOK = ((settingsFile == nullptr) || LoadXMLSettings(settingsFile)) && mTVDB->LoadOK;
+
 			//    StartServer();
 		}
 
@@ -433,6 +443,16 @@ namespace TVRename {
 				Settings->TheSearchers->SetToNumber(n);
 				SetDirty();
 			}
+			bool FolderIsSubfolderOf(String ^thisOne, String ^ofThat)
+			{
+				// need terminating slash, otherwise "c:\abc def" will match "c:\abc"
+				thisOne += "\\";
+				ofThat += "\\";
+				int l = ofThat->Length;
+				return ((thisOne->Length >= l) && 
+					(thisOne->Substring(0,l)->ToLower() == ofThat->ToLower()));
+
+			}
 
 			void CheckFolder(DirectoryInfo ^di, AddItemList ^addList) // check a monitored folder for new shows
 			{
@@ -464,33 +484,32 @@ namespace TVRename {
 					bool bzzt = false;
 					for each (ShowItem ^si in ShowItems)
 					{
-						if (si->AutoAddNewSeasons && (!String::IsNullOrEmpty(si->AutoAdd_FolderBase)))
+						if (si->AutoAddNewSeasons && 
+							!String::IsNullOrEmpty(si->AutoAdd_FolderBase) &&
+							FolderIsSubfolderOf(theFolder, si->AutoAdd_FolderBase) )
 						{
-							int l = si->AutoAdd_FolderBase->Length;
-							if ((theFolder->Length >= l) && (theFolder->Substring(0,l)->ToLower() == si->AutoAdd_FolderBase->ToLower()))
-							{
-								bzzt = true;
-								break;
-							}
+							// we're looking at a folder that is a subfolder of an existing show
+							bzzt = true;
+							break;
 						}
-						if (!bzzt)
+
+						if (bzzt)
+							break;
+
+						FolderLocationDict ^afl = si->AllFolderLocations(Settings);
+						for each (KeyValuePair<int, StringList ^> ^kvp in afl)
 						{
-							FolderLocationDict ^afl = si->AllFolderLocations(Settings);
-							for each (KeyValuePair<int, StringList ^> ^kvp in afl)
+							for each (String ^folder in kvp->Value)
 							{
-								for each (String ^folder in kvp->Value)
+								if (theFolder->ToLower() == folder->ToLower())
 								{
-									if (theFolder->ToLower() == folder->ToLower())
-									{
-										bzzt = true;
-										break;
-									}
-									if (bzzt)
-										break;
+									bzzt = true;
+									break;
 								}
 							}
 						}
-						else
+
+						if (bzzt)
 							break;
 					} // for each showitem
 					if (!bzzt)
@@ -498,7 +517,7 @@ namespace TVRename {
 						// ....its good!
 						addList->Add(gcnew AddItem(di2->FullName, hasSeasonFolders ? kfmFolderPerSeason : kfmFlat, -1));
 					}
-				}
+				} // for each directory
 			}
 
 			void CheckMonitoredFolders()
@@ -1682,7 +1701,7 @@ namespace TVRename {
 				writer->WriteEndElement();
 			}
 
-			public: static void Rotate(String ^filenameBase)
+	public: static void Rotate(String ^filenameBase)
 			{
 				if (File::Exists(filenameBase))
 				{
@@ -1705,13 +1724,13 @@ namespace TVRename {
 			void WriteXMLSettings()
 			{
 				// backup old settings before writing new ones
-				String ^filenameBase = System::Windows::Forms::Application::UserAppDataPath+"\\TVRenameSettings.xml";
-				Rotate(filenameBase);
+				
+				Rotate(TVDocSettingsFile()->FullName);
 
 				XmlWriterSettings ^settings = gcnew XmlWriterSettings();
 				settings->Indent = true;
 				settings->NewLineOnAttributes = true;
-				XmlWriter ^writer = XmlWriter::Create(filenameBase, settings);
+				XmlWriter ^writer = XmlWriter::Create(TVDocSettingsFile()->FullName, settings);
 
 				writer->WriteStartDocument();
 				writer->WriteStartElement("TVRename");
@@ -1773,14 +1792,15 @@ namespace TVRename {
 
 			bool LoadXMLSettings(FileInfo ^from)
 			{
+				if (from == nullptr)
+					return true;
+
 				try
 				{
 					XmlReaderSettings ^settings = gcnew XmlReaderSettings();
 					settings->IgnoreComments = true;
 					settings->IgnoreWhitespace = true;
 
-					if (from == nullptr)
-						from = gcnew FileInfo(System::Windows::Forms::Application::UserAppDataPath+"\\TVRenameSettings.xml");
 
 					if (!from->Exists)
 					{
@@ -2150,8 +2170,8 @@ namespace TVRename {
 			bool SimplifyAndCheckFilename(String ^filename, String ^showname, bool simplifyfilename, bool simplifyshowname)
 			{
 				return Regex::Match(simplifyfilename ? SimplifyName(filename) : filename,
-					                "\\b"+(simplifyshowname ? SimplifyName(showname) : showname )+"\\b",
-									RegexOptions::IgnoreCase)->Success;
+					"\\b"+(simplifyshowname ? SimplifyName(showname) : showname )+"\\b",
+					RegexOptions::IgnoreCase)->Success;
 			}
 
 			void CheckAgainstuTorrent(SetProgressDelegate ^prog)
@@ -2249,7 +2269,7 @@ namespace TVRename {
 					for each (RSSItem ^rss in RSSList)
 					{
 						if ( ( SimplifyAndCheckFilename(rss->ShowName, simpleShowName, true, false) ||
-                               (String::IsNullOrEmpty(rss->ShowName) && SimplifyAndCheckFilename(rss->Title, simpleSeriesName, true, false) ) ) && 
+							(String::IsNullOrEmpty(rss->ShowName) && SimplifyAndCheckFilename(rss->Title, simpleSeriesName, true, false) ) ) && 
 							(rss->Season == pe->SeasonNumber) && (rss->Episode == pe->EpNum) )
 						{
 							newItems->Add(gcnew AIORSS(rss, aio->TheFileNoExt, pe));
@@ -2265,7 +2285,7 @@ namespace TVRename {
 				prog->Invoke(100);
 			}
 
-			
+
 
 
 			void AIOFolderJPGCheck(SetProgressDelegate ^prog, ShowItem ^specific)
@@ -2367,7 +2387,7 @@ namespace TVRename {
 
 			void AIOGo(SetProgressDelegate ^prog, ShowItem ^specific)
 			{
-				if (!CheckAllFoldersExist(specific))
+				if (Settings->MissingCheck && !CheckAllFoldersExist(specific)) // only check for folders existing for missing check
 					return;
 
 				if (!DoDownloadsFG())
@@ -2628,7 +2648,7 @@ namespace TVRename {
 				ScanProgDlg->Done();
 			}
 
-			
+
 
 
 			static String ^SEFinderSimplifyFilename(String ^name, String ^showNameHint);
