@@ -111,8 +111,10 @@ namespace TVRename
                     if (p >= leftMostPos)
                         continue;
 
-                    *seas = int::Parse(m->Groups["s"]->ToString());
-                    *ep = int::Parse(m->Groups["e"]->ToString());
+                    if (!int::TryParse(m->Groups["s"]->ToString(), *seas))
+						*seas = -1;
+                    if (!int::TryParse(m->Groups["e"]->ToString(), *ep))
+						*ep = -1;
                                         
                     leftMostPos = p;
                 }

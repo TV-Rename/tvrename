@@ -802,10 +802,12 @@ namespace TVRename {
                  return Connected;
              }
 
-				public: String ^BuildURL(bool episodesToo, int code, String ^lang)
+				public: String ^BuildURL(bool withHttpAndKey, bool episodesToo, int code, String ^lang)
 				{
-					return episodesToo ? "series/"+code.ToString()+"/all/"+lang+".zip" :
+					String ^r = withHttpAndKey ? "http://thetvdb.com/api/"+APIKey()+"/" : "";
+					r += episodesToo ? "series/"+code.ToString()+"/all/"+lang+".zip" :
 						"series/"+code.ToString()+"/"+lang+".xml";
+					return r;
 				}
 
 
@@ -1507,7 +1509,7 @@ namespace TVRename {
 
 
             String ^lang = forceEnglish ? "en" : PreferredLanguage(code);
-            String ^url = BuildURL(episodesToo, code, lang);
+            String ^url = BuildURL(false, episodesToo, code, lang);
             array<unsigned char> ^p = episodesToo ? GetPageZIP(url, lang+".xml", true, forceReload) : GetPage(url, true, tmXML, forceReload);
             if (p == nullptr)
                 return nullptr;
