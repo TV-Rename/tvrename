@@ -599,7 +599,7 @@ namespace TVRename
 				writer->WriteEndElement();
 
 				writer->WriteStartElement("episodeguideurl");
-				writer->WriteValue(SI->TVDB->BuildURL(true, SI->TVDBCode, SI->TVDB->PreferredLanguage(SI->TVDBCode)));
+				writer->WriteValue(SI->TVDB->BuildURL(true, true, SI->TVDBCode, SI->TVDB->PreferredLanguage(SI->TVDBCode)));
 				writer->WriteEndElement();
 
 				WriteInfo(writer, SI, "Overview", "plot");

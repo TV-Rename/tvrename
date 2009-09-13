@@ -1171,8 +1171,11 @@ namespace TVRename {
 
 				FileInfo ^tvshownfo = FileInFolder(si->AutoAdd_FolderBase, "tvshow.nfo");
 
-				if (!tvshownfo->Exists ||
-					(si->TheSeries()->Srv_LastUpdated > TZMagic::Epoch(tvshownfo->LastWriteTime)))
+				bool needUpdate = !tvshownfo->Exists ||
+					(si->TheSeries()->Srv_LastUpdated > TZMagic::Epoch(tvshownfo->LastWriteTime));
+				// was it written before we fixed the bug in <episodeguideurl> ?
+				needUpdate = needUpdate || (tvshownfo->LastWriteTime.ToUniversalTime().CompareTo(DateTime(2009,9,13,7,30,0,0, DateTimeKind::Utc)) < 0);
+				if (needUpdate)
 					TheAIOList->Add(gcnew AIONFO(tvshownfo, si));
 			}
 

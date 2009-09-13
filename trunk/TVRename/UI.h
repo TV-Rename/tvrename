@@ -44,6 +44,7 @@ namespace TVRename {
 		kVisitTVDBSeries, kScanSpecificSeries, kWhenToWatchSeries, 
 		kForceRefreshSeries, kBTSearchFor,
 		kAIOIgnore, kAIOBrowseForFile, kAIOAction, kAIODelete,
+		kAIOIgnoreSeason,
 		kWatchBase = 1000,
 		kOpenFolderBase = 2000 };
 
@@ -2934,6 +2935,26 @@ namespace TVRename {
 				case kAIOIgnore:
 					IgnoreSelected();
 					break;
+				case kAIOIgnoreSeason:
+					{
+						// add this season to ignore list for the show selected
+						int snum = mLastAIOClicked->PE->SeasonNumber;
+
+						if (!mLastAIOClicked->PE->SI->IgnoreSeasons->Contains(snum))
+							mLastAIOClicked->PE->SI->IgnoreSeasons->Add(snum);
+
+						// remove all other episodes from this season from aio list
+						AIOList ^remove = gcnew AIOList();
+						for each (AIOItem ^aio in mDoc->TheAIOList)
+							if ((aio->PE != nullptr) && (aio->PE->SeasonNumber == snum))
+								remove->Add(aio);
+						for each (AIOItem ^aio in remove)
+							mDoc->TheAIOList->Remove(aio);
+
+						mLastAIOClicked = nullptr;
+						FillAIOList();
+						break;
+					}
 				case kAIODelete:
 					AIODeleteSelected();
 					break;
@@ -3887,6 +3908,8 @@ namespace TVRename {
 				 }
 
 				 tsi = gcnew ToolStripMenuItem("Ignore Selected");     tsi->Tag = (int)kAIOIgnore; showRightClickMenu->Items->Add(tsi);
+				 
+				 tsi = gcnew ToolStripMenuItem("Ignore Entire Season");     tsi->Tag = (int)kAIOIgnoreSeason; showRightClickMenu->Items->Add(tsi);
 
 				 tsi = gcnew ToolStripMenuItem("Remove Selected");     tsi->Tag = (int)kAIODelete; showRightClickMenu->Items->Add(tsi);
 
