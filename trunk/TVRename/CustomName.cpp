@@ -32,16 +32,24 @@ namespace TVRename
             return res;
         }
 
-        String ^CustomName::NameForNoExt(ProcessedEpisode ^pe, String ^styleString)
+        String ^CustomName::NameForNoExt(ProcessedEpisode ^pe, String ^styleString, bool urlEncode)
         {
             String ^name = gcnew String(styleString);
-            
-            name = name->Replace("{ShowName}",pe->SI->ShowName());
+
+			String ^showname = pe->SI->ShowName();
+			String ^epname = pe->Name;
+			if (urlEncode)
+			{
+				showname = System::Web::HttpUtility::UrlEncode(showname);
+				epname = System::Web::HttpUtility::UrlEncode(epname);
+			}
+
+            name = name->Replace("{ShowName}",showname);
             name = name->Replace("{Season}",pe->SeasonNumber.ToString());
             name = name->Replace("{Season:2}",pe->SeasonNumber.ToString("00"));
             name = name->Replace("{Episode}",pe->EpNum.ToString("00"));
             name = name->Replace("{Episode2}",pe->EpNum2.ToString("00"));
-            name = name->Replace("{EpisodeName}",pe->Name);
+            name = name->Replace("{EpisodeName}",epname);
             name = name->Replace("{Number}",pe->OverallNumber.ToString());
             name = name->Replace("{Number:2}",pe->OverallNumber.ToString("00"));
             name = name->Replace("{Number:3}",pe->OverallNumber.ToString("000"));
@@ -50,13 +58,19 @@ namespace TVRename
             {
                 name = name->Replace("{ShortDate}",dt->ToString("d"));
                 name = name->Replace("{LongDate}",dt->ToString("D"));
-                name = name->Replace("{YMDDate}",dt->ToString("yyyy/MM/dd"));
+				String ^ymd = dt->ToString("yyyy/MM/dd");
+				if (urlEncode)
+					ymd = System::Web::HttpUtility::UrlEncode(ymd);
+                name = name->Replace("{YMDDate}",ymd);
             }
             else
             {
                 name = name->Replace("{ShortDate}","---");
                 name = name->Replace("{LongDate}","------");
-                name = name->Replace("{YMDDate}","----/--/--");
+				String ^ymd = "----/--/--";
+				if (urlEncode)
+					ymd = System::Web::HttpUtility::UrlEncode(ymd);
+                name = name->Replace("{YMDDate}",ymd);
             }
 
             if (pe->EpNum2 == pe->EpNum)

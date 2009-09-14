@@ -84,7 +84,12 @@ namespace TVRename
         }
 
         static StringList ^Tags();
-	static String ^NameForNoExt(ProcessedEpisode ^pe, String ^styleString);
+		static String ^NameForNoExt(ProcessedEpisode ^pe, String ^styleString)
+		{
+			return NameForNoExt(pe, styleString, false);
+		}
+
+	static String ^NameForNoExt(ProcessedEpisode ^pe, String ^styleString, bool urlEncode);
     };
 
 

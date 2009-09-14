@@ -26,13 +26,7 @@ String ^TVSettings::BTSearchURL(ProcessedEpisode ^epi)
                 return "";
 
             String ^url = TheSearchers->CurrentSearchURL();
-            String ^seas = epi->SeasonNumber.ToString();
-            int e = epi->EpNum;
-            String ^ep = (e > 0) ? (" " + e.ToString()) : "";
-            String ^s2 = s->Name + " " + seas + ep;
-            s2 = s2->Replace(" ","+");
-            //url = url->Replace("!", s2);
-            return CustomName::NameForNoExt(epi, url);
+            return CustomName::NameForNoExt(epi, url, true);
         }
 
 
