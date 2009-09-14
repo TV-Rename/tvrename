@@ -291,6 +291,11 @@
 			AssemblyName="SourceGrid, Version=4.21.3441.17573, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL"
 			MinFrameworkVersion="131072"
 		/>
+		<AssemblyReference
+			RelativePath="System.Web.dll"
+			AssemblyName="System.Web, Version=2.0.0.0, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=IA64"
+			MinFrameworkVersion="131072"
+		/>
 	</References>
 	<Files>
 		<Filter

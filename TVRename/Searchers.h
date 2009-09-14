@@ -53,7 +53,7 @@ namespace TVRename {
       Add("diwana.org","http://diwana.org/browse.php?search={ShowName}+{Season}+{Episode}&cat=0");
       Add("IP Torrents","http://iptorrents.com/browse.php?incldead=0&search={ShowName}+{Season}+{Episode}&cat=0");
       Add("ISO Hunt","http://isohunt.com/torrents/?ihq={ShowName}+{Season}+{Episode}");
-      Add("Mininova","http://www.mininova.org/search/{ShowName}+{Season}+{Episode}/8"); // "/8" for tv shows only
+      Add("Mininova","http://www.mininova.org/search/?search={ShowName}+{Season}+{Episode}/8"); // "/8" for tv shows only
       Add("Pirate Bay","http://thepiratebay.org/search.php?q={ShowName}+{Season}+{Episode}");
       Add("torrentz.com","http://www.torrentz.com/search?q={ShowName}+{Season}+{Episode}");
       Add("NewzLeech","http://www.newzleech.com/usenet/?group=&minage=&age=&min=min&max=max&q={ShowName}+{Season}+{Episode}&mode=usenet&adv=");
