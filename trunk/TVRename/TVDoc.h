@@ -979,14 +979,14 @@ namespace TVRename {
 					if (Workers != nullptr)
 					{
 						for each (Thread ^t in Workers)
-							t->Abort();
+							t->Interrupt();
 					}
 
 					WaitForAllThreadsAndTidyUp();
 
 					if (mDownloaderThread->IsAlive)
 					{
-						mDownloaderThread->Abort();
+						mDownloaderThread->Interrupt();
 						mDownloaderThread = nullptr;
 					}
 				}
@@ -2411,9 +2411,12 @@ namespace TVRename {
 				aioWork->Start(specific);
 
 				if (ScanProgDlg->ShowDialog() == ::DialogResult::Cancel)
+				{
 					AIOCancel = true;
-
-				aioWork->Join();
+				    aioWork->Interrupt();
+				}
+				else
+					aioWork->Join();
 
 				ScanProgDlg = nullptr;
 			}
