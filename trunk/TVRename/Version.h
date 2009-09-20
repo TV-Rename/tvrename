@@ -13,7 +13,7 @@ namespace TVRename
 {
     static String ^DisplayVersionString() 
     {
-		String ^v = "2.2.0a6";
+		String ^v = "2.2.0a7";
 
 
 #ifdef MONOSTUFF
