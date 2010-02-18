@@ -138,9 +138,9 @@ namespace TVRename
 			Grid1.RowsCount = r + 1;
 
 			Grid1[r, 0] = new SourceGrid.Cells.CheckBox(null, true);
-			Grid1[r, 1] = new SourceGrid.Cells.Cell("", (new string("")).GetType());
+			Grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
 			Grid1[r, 2] = new SourceGrid.Cells.CheckBox(null, false);
-			Grid1[r, 3] = new SourceGrid.Cells.Cell("", (new string("")).GetType());
+			Grid1[r, 3] = new SourceGrid.Cells.Cell("", typeof(string));
 
 			ChangedCont changed = new ChangedCont(this);
 			for (int c =0;c<4;c++)
@@ -174,9 +174,9 @@ namespace TVRename
 			foreach (FilenameProcessorRE re in list)
 			{
 				Grid1[i, 0] = new SourceGrid.Cells.CheckBox(null, re.Enabled);
-				Grid1[i, 1] = new SourceGrid.Cells.Cell(re.RE, (new string("")).GetType());
+				Grid1[i, 1] = new SourceGrid.Cells.Cell(re.RE, typeof(string));
 				Grid1[i, 2] = new SourceGrid.Cells.CheckBox(null, re.UseFullPath);
-				Grid1[i, 3] = new SourceGrid.Cells.Cell(re.Notes, (new string("")).GetType());
+				Grid1[i, 3] = new SourceGrid.Cells.Cell(re.Notes, typeof(string));
 
 				ChangedCont changed = new ChangedCont(this);
 
@@ -503,7 +503,7 @@ namespace TVRename
 				 lvPreview.Items.Clear();
 				 if ((string.IsNullOrEmpty(txtFolder.Text)) || (!DirectoryInfo(txtFolder.Text).Exists))
 				 {
-					 txtFolder.BackColor = WarningColor();
+					 txtFolder.BackColor = Helpers.WarningColor();
 					 return;
 				 }
 				 else
@@ -553,7 +553,7 @@ namespace TVRename
 					 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
 					 lvi.SubItems.Add((ep == -1) ? "-" : ep.ToString());
 					 if (!r)
-						 lvi.BackColor = WarningColor();
+						 lvi.BackColor = Helpers.WarningColor();
 					 lvPreview.Items.Add(lvi);
 				 }
 				 lvPreview.EndUpdate();

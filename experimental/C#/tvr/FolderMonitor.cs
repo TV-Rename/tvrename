@@ -1106,7 +1106,7 @@ namespace TVRename
 				 if (!string.IsNullOrEmpty(ai.ShowName))
 				 {
 					 TheTVDB db = mDoc.GetTVDB(true,"GuessAI");
-					 foreach (KeyValuePair<int, SeriesInfo > ser in db.GetSeriesDict())
+					 foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo > ser in db.GetSeriesDict())
 					 {
 						 string s;
 						 s = ser.Value.Name.ToLower();

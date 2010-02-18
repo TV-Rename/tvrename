@@ -216,7 +216,7 @@ namespace TVRename
 					 }
 
 					 mTVDB.GetLock("DoFind");
-					 foreach (KeyValuePair<int, SeriesInfo> kvp in mTVDB.GetSeriesDict())
+					 foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in mTVDB.GetSeriesDict())
 					 {
 						 int num = kvp.Key;
 						 string show = kvp.Value.Name;

@@ -145,7 +145,7 @@ namespace TVRename
 				  first = false;
 			  }
 
-			  foreach (KeyValuePair<int, StringList > kvp in si.ManualFolderLocations)
+			  foreach (System.Collections.Generic.KeyValuePair<int, StringList > kvp in si.ManualFolderLocations)
 			  {
 				  foreach (string s in kvp.Value)
 				  {
@@ -804,7 +804,7 @@ namespace TVRename
 				 if (ok)
 					 txtFolder.BackColor = System.Drawing.SystemColors.Window;
 				 else
-					 txtFolder.BackColor = WarningColor();
+					 txtFolder.BackColor = Helpers.WarningColor();
 
 			 }
 	private void chkCustomShowName_CheckedChanged(object sender, System.EventArgs e)

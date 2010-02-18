@@ -85,7 +85,7 @@ namespace TVRename
 //			
 			//			RCList ^ErrFiles() { return ErrorFiles; }
 
-		public CopyMoveProgress(TVDoc doc, System.Collections.Generic.List<AIOItem > todo, ref CopyMoveResult res, TVRenameStats stats)
+		public CopyMoveProgress(TVDoc doc, System.Collections.Generic.List<AIOItem > todo, out CopyMoveResult res, TVRenameStats stats)
 		  {
 			Result = res;
 			mDoc = doc;
@@ -512,7 +512,7 @@ namespace TVRename
 
 								 aio.Done = true;
 
-								 Diagnostics.Debug.Assert((aio.Operation == AIOCopyMoveRename.Op.Move) || (aio.Operation == AIOCopyMoveRename.Op.Rename));
+								 System.Diagnostics.Debug.Assert((aio.Operation == AIOCopyMoveRename.Op.Move) || (aio.Operation == AIOCopyMoveRename.Op.Rename));
 								 if (aio.Operation == AIOCopyMoveRename.Op.Move)
 									 mStats.FilesMoved++;
 								 else if (aio.Operation == AIOCopyMoveRename.Op.Rename)

@@ -1,6 +1,6 @@
-public static class GlobalMembersVersion
+public static class Version
 {
-		internal static string DisplayVersionString()
+		public static string DisplayVersionString()
 		{
 			string v = "2.2.0a8";
 
@@ -12,7 +12,7 @@ public static class GlobalMembersVersion
 	#endif
 		}
 
-		internal static bool ForceExperimentalOn()
+		public static bool ForceExperimentalOn()
 		{
 			return true; // ************************
 		}

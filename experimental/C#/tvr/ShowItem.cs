@@ -145,13 +145,13 @@ namespace TVRename
 			public void SetDefaults(TheTVDB db)
 			{
 				TVDB = db;
-				ManualFolderLocations = new GlobalMembersShowItem.Generic.Dictionary<int, System.Collections.Generic.List<string > >();
-				IgnoreSeasons = new GlobalMembersShowItem.Generic.List<int>();
+				ManualFolderLocations = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > >();
+				IgnoreSeasons = new System.Collections.Generic.List<int>();
 				UseCustomShowName = false;
 				CustomShowName = "";
 				UseSequentialMatch = false;
-				SeasonRules = new GlobalMembersShowItem.Generic.Dictionary<int, GlobalMembersShowItem.Generic.List<ShowRule > >();
-				SeasonEpisodes = new GlobalMembersShowItem.Generic.Dictionary<int, GlobalMembersShowItem.Generic.List<ProcessedEpisode > >();
+				SeasonRules = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule > >();
+				SeasonEpisodes = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ProcessedEpisode > >();
 				ShowNextAirdate = true;
 				TVDBCode = -1;
 				//                WhichSeasons = gcnew Generic::List<int>;
@@ -170,7 +170,7 @@ namespace TVRename
 			//Generic::List<int> ^WhichSeasons()
 			//{
 			//    Generic::List<int> ^r = gcnew Generic::List<int>();
-			//    for each (KeyValuePair<int, ProcessedEpisodeList ^> ^kvp in SeasonEpisodes)
+			//    for each (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList ^> ^kvp in SeasonEpisodes)
 			//        r->Add(kvp->Key);
 			//    return r;
 			//}
@@ -216,7 +216,7 @@ namespace TVRename
 			public int MaxSeason()
 			{
 				int max = 0;
-				foreach (KeyValuePair<int, GlobalMembersShowItem.Generic.List<ProcessedEpisode > > kvp in SeasonEpisodes)
+				foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in SeasonEpisodes)
 					if (kvp.Key > max)
 						max = kvp.Key;
 				return max;
@@ -287,7 +287,7 @@ namespace TVRename
 				}
 				writer.WriteEndElement();
 
-				foreach (KeyValuePair<int, GlobalMembersShowItem.Generic.List<ShowRule > > kvp in SeasonRules)
+				foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ShowRule > > kvp in SeasonRules)
 				{
 					if (kvp.Value.Count > 0)
 					{
@@ -302,7 +302,7 @@ namespace TVRename
 						writer.WriteEndElement(); // Rules
 					}
 				}
-				foreach (KeyValuePair<int, System.Collections.Generic.List<string > > kvp in ManualFolderLocations)
+				foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in ManualFolderLocations)
 				{
 					if (kvp.Value.Count > 0)
 					{
@@ -398,7 +398,7 @@ namespace TVRename
 						if (!reader.IsEmptyElement)
 						{
 							int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-							SeasonRules[snum] = new GlobalMembersShowItem.Generic.List<ShowRule >();
+							SeasonRules[snum] = new System.Collections.Generic.List<ShowRule >();
 							reader.Read();
 							while (reader.Name != "Rules")
 							{
@@ -441,7 +441,7 @@ namespace TVRename
 
 			public static System.Collections.Generic.List<ProcessedEpisode > ProcessedListFromEpisodes(System.Collections.Generic.List<Episode > el, ShowItem si)
 			{
-				GlobalMembersShowItem.Generic.List<ProcessedEpisode > pel = new GlobalMembersShowItem.Generic.List<ProcessedEpisode >();
+				System.Collections.Generic.List<ProcessedEpisode > pel = new System.Collections.Generic.List<ProcessedEpisode >();
 				foreach (Episode e in el)
 					pel.Add(new ProcessedEpisode(e, si));
 				return pel;
@@ -457,23 +457,23 @@ namespace TVRename
 			}
 			public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > AllFolderLocations(TVSettings settings, bool manualToo)
 			{
-				GlobalMembersShowItem.Generic.Dictionary<int, System.Collections.Generic.List<string > > fld = new GlobalMembersShowItem.Generic.Dictionary<int, System.Collections.Generic.List<string > >();
+				System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > fld = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > >();
 
 				if (manualToo)
 				{
-					foreach (KeyValuePair<int, System.Collections.Generic.List<string > > kvp in ManualFolderLocations)
+					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in ManualFolderLocations)
 					{
 						if (!fld.ContainsKey(kvp.Key))
 							fld[kvp.Key] = new System.Collections.Generic.List<string >();
 						foreach (string s in kvp.Value)
-							fld[kvp.Key].AddTTS(s);
+							fld[kvp.Key].Add(TTS(s));
 					}
 				}
 
 				if (AutoAddNewSeasons && (!string.IsNullOrEmpty(AutoAdd_FolderBase)))
 				{
 					int highestThereIs = -1;
-					foreach (KeyValuePair<int, GlobalMembersShowItem.Generic.List<ProcessedEpisode > > kvp in SeasonEpisodes)
+					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in SeasonEpisodes)
 						if (kvp.Key > highestThereIs)
 							highestThereIs = kvp.Key;
 
@@ -483,12 +483,12 @@ namespace TVRename
 							continue;
 
 						string newName = AutoFolderNameForSeason(i, settings);
-						if ((!string.IsNullOrEmpty(newName)) && (DirectoryInfo(newName).Exists))
+						if ((!string.IsNullOrEmpty(newName)) && (Directory.Exists(newName)))
 						{
 							if (!fld.ContainsKey(i))
 								fld[i] = new System.Collections.Generic.List<string >();
 							if (!fld[i].Contains(newName))
-								fld[i].AddTTS(newName);
+								fld[i].Add(TTS(newName));
 						}
 					}
 				}
@@ -497,12 +497,18 @@ namespace TVRename
 
 			}
 
-
+            public static int CompareShowItemNames(ShowItem one, ShowItem two)
+            {
+                string ones = one.ShowName(); // + " " +one->SeasonNumber.ToString("D3");
+                string twos = two.ShowName(); // + " " +two->SeasonNumber.ToString("D3");
+                return ones.CompareTo(twos);
+            }
 		} // ShowItem
 
         public class ShowItemList : System.Collections.Generic.List<ShowItem>
         {
         }
+    			
 
 
 } // namespace

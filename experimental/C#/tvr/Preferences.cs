@@ -13,6 +13,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
+using System.IO;
 
 
 namespace TVRename
@@ -49,7 +50,7 @@ namespace TVRename
 	private System.Windows.Forms.RadioButton rbFolderFanArt;
 	private System.Windows.Forms.RadioButton rbFolderPoster;
 	private System.Windows.Forms.RadioButton rbFolderBanner;
-    private System.Collections.Generic.List<string> LangList;
+    private StringList LangList;
 
 		public Preferences(TVDoc doc, bool goToScanOpts)
 		{
@@ -635,7 +636,7 @@ namespace TVRename
 			this.tabPage1.Controls.Add(this.txtWTWDays);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = System.Windows.Forms.Padding(3);
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage1.Size = new System.Drawing.Size(415, 395);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "General";
@@ -698,7 +699,7 @@ namespace TVRename
 			this.tabPage2.Controls.Add(this.cbLeadingZero);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Padding = System.Windows.Forms.Padding(3);
+			this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage2.Size = new System.Drawing.Size(415, 395);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "Files and Folders";
@@ -794,7 +795,7 @@ namespace TVRename
 			this.tabPage3.Controls.Add(this.groupBox2);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Padding = System.Windows.Forms.Padding(3);
+			this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage3.Size = new System.Drawing.Size(415, 395);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "Automatic Export";
@@ -1033,7 +1034,7 @@ namespace TVRename
 			this.tpScanOptions.Controls.Add(this.cbSearchLocally);
 			this.tpScanOptions.Location = new System.Drawing.Point(4, 22);
 			this.tpScanOptions.Name = "tpScanOptions";
-			this.tpScanOptions.Padding = System.Windows.Forms.Padding(3);
+			this.tpScanOptions.Padding = new System.Windows.Forms.Padding(3);
 			this.tpScanOptions.Size = new System.Drawing.Size(415, 395);
 			this.tpScanOptions.TabIndex = 6;
 			this.tpScanOptions.Text = "Scan Options";
@@ -1157,7 +1158,7 @@ namespace TVRename
 			this.tabPage5.Controls.Add(this.label25);
 			this.tabPage5.Location = new System.Drawing.Point(4, 22);
 			this.tabPage5.Name = "tabPage5";
-			this.tabPage5.Padding = System.Windows.Forms.Padding(3);
+			this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage5.Size = new System.Drawing.Size(415, 395);
 			this.tabPage5.TabIndex = 4;
 			this.tabPage5.Text = "RSS / µTorrent";
@@ -1291,7 +1292,7 @@ namespace TVRename
 			this.tabPage6.Controls.Add(this.label24);
 			this.tabPage6.Location = new System.Drawing.Point(4, 22);
 			this.tabPage6.Name = "tabPage6";
-			this.tabPage6.Padding = System.Windows.Forms.Padding(3);
+			this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage6.Size = new System.Drawing.Size(415, 395);
 			this.tabPage6.TabIndex = 5;
 			this.tabPage6.Text = "Languages";
@@ -1880,8 +1881,8 @@ namespace TVRename
 
 				 int r = ReplacementsGrid.RowsCount;
 				 ReplacementsGrid.RowsCount = r + 1;
-				 ReplacementsGrid[r, 0] = new SourceGrid.Cells.Cell(from, (new string("")).GetType());
-				 ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, (new string("")).GetType());
+				 ReplacementsGrid[r, 0] = new SourceGrid.Cells.Cell(from, typeof(string));
+                 ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
 				 ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
 				 if (!string.IsNullOrEmpty(from) && (TVSettings.CompulsoryReplacements().IndexOf(from) != -1))
 				 {
@@ -1926,7 +1927,7 @@ namespace TVRename
 			 {
 				 int r = RSSGrid.RowsCount;
 				 RSSGrid.RowsCount = r + 1;
-				 RSSGrid[r, 0] = new SourceGrid.Cells.Cell(text, (new string("")).GetType());
+				 RSSGrid[r, 0] = new SourceGrid.Cells.Cell(text, typeof(string));
 			 }
 
 	private void bnRSSAdd_Click(object sender, System.EventArgs e)
@@ -1937,7 +1938,7 @@ namespace TVRename
 			 {
 				 // multiselection is off, so we can cheat...
 				 int[] rowsIndex = RSSGrid.Selection.GetSelectionRegion().GetRowsIndex();
-				 if (rowsIndex.Length)
+				 if (rowsIndex.Length > 0)
 					 RSSGrid.Rows.Remove(rowsIndex[0]);
 			 }
 	private void bnRSSGo_Click(object sender, System.EventArgs e)
@@ -1945,7 +1946,7 @@ namespace TVRename
 				 // multiselection is off, so we can cheat...
 				 int[] rowsIndex = RSSGrid.Selection.GetSelectionRegion().GetRowsIndex();
 
-				 if (rowsIndex.Length)
+				 if (rowsIndex.Length > 0)
 					 TVDoc.SysOpen((string)(RSSGrid[rowsIndex[0],0].Value));
 			 }
 	private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
@@ -1966,13 +1967,13 @@ namespace TVRename
 
 				 // make our list
 				 // add already prioritised items (that still exist)
-				 LangList = new System.Collections.Generic.List<string >();
+				 LangList = new StringList();
 				 foreach (string s in db.LanguagePriorityList)
 					 if (db.LanguageList.ContainsKey(s))
 						 LangList.Add(s);
 
 				 // add items that haven't been prioritised
-				 foreach (KeyValuePair<string , string > k in db.LanguageList)
+				 foreach (System.Collections.Generic.KeyValuePair<string , string > k in db.LanguageList)
 					 if (!LangList.Contains(k.Key))
 						 LangList.Add(k.Key);
 				 db.Unlock("Preferences-SL");
@@ -2045,7 +2046,7 @@ namespace TVRename
 			 {
 				 // multiselection is off, so we can cheat...
 				 int[] rowsIndex = ReplacementsGrid.Selection.GetSelectionRegion().GetRowsIndex();
-				 if (rowsIndex.Length)
+				 if (rowsIndex.Length > 0)
 				 {
 					 // don't delete compulsory items
 					 int n = rowsIndex[0];

@@ -16,7 +16,7 @@ namespace TVRename
         public DirCacheEntry(FileInfo f, TVSettings theSettings)
         {
             TheFile = f;
-            SimplifiedFullName = SimplifyName(f.FullName);
+            SimplifiedFullName = Helpers.SimplifyName(f.FullName);
             LowerName = f.Name.ToLower();
             Length = f.Length;
             if (theSettings != null)
@@ -32,7 +32,7 @@ public static class DirCache
 		public static int CountFiles(string folder, bool subFolders)
 		{
 			int n = 0;
-			if (!DirectoryInfo(folder).Exists)
+			if (!Directory.Exists(folder))
 				return n;
 			if (folder.Length >= 248)
 				return n;
@@ -58,7 +58,7 @@ public static class DirCache
 		{
 			int filesDone = initialCount;
 
-			if (!DirectoryInfo(folder).Exists)
+			if (!Directory.Exists(folder))
 			{
 				System.Windows.Forms.DialogResult res = MessageBox.Show("The search folder \"" + folder + " does not exist.\n", "Folder does not exist",MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}

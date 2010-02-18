@@ -9,6 +9,8 @@ using System.Threading;
 using System.Net;
 using System.IO.Compression;
 using System.Xml;
+using System.Text.RegularExpressions;
+
 //
 // Main website for TVRename is http://tvrename.com
 //
@@ -27,7 +29,7 @@ namespace TVRename
 		private string[] Args; // command line arguments
 		private TVRenameStats mStats;
 		private bool mDirty;
-		private static System.Collections.Generic.List<ShowItem > ShowItems;
+		private static ShowItemList ShowItems;
 
 		private Thread mDownloaderThread;
 		private bool DownloadOK;
@@ -97,7 +99,7 @@ namespace TVRename
 			MonitorFolders = new System.Collections.Generic.List<string >();
 			IgnoreFolders = new System.Collections.Generic.List<string >();
 			SearchFolders = new System.Collections.Generic.List<string >();
-			ShowItems = new System.Collections.Generic.List<ShowItem >();
+			ShowItems = new ShowItemList();
 			AddItems = new System.Collections.Generic.List<AddItem >();
 
 			DownloadDone = true;
@@ -130,23 +132,22 @@ namespace TVRename
 		}
 
 
-	private static void LockShowItems()
+	private void LockShowItems()
 			 {
 				 return;
-//C++ TO C# CONVERTER TODO TASK: C# does not allow setting or comparing #define constants:
-#if DEBUG
+/*#if DEBUG
 				 System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(1);
 				 System.Diagnostics.StackFrame sf = st.GetFrame(0);
 				 string msg = sf.GetMethod().DeclaringType.FullName + "::" + sf.GetMethod().Name;
 				 System.Diagnostics.Debug.Print("LockShowItems " + msg);
 #endif
-
 				 Monitor.Enter(ShowItems);
-			 }
-	public static void UnlockShowItems()
+        */
+             }
+	public void UnlockShowItems()
 			{
 				return;
-//C++ TO C# CONVERTER TODO TASK: C# does not allow setting or comparing #define constants:
+        /*
 #if DEBUG
 				System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(1);
 				System.Diagnostics.StackFrame sf = st.GetFrame(0);
@@ -155,6 +156,7 @@ namespace TVRename
 #endif
 
 				Monitor.Exit(ShowItems);
+         */
 			}
 
 	public TVRenameStats Stats()
@@ -166,7 +168,7 @@ namespace TVRename
 				LockShowItems();
 				foreach (ShowItem si in ShowItems)
 				{
-					foreach (KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > k in si.SeasonEpisodes)
+					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > k in si.SeasonEpisodes)
 						mStats.NS_NumberOfEpisodesExpected += k.Value.Count;
 					mStats.NS_NumberOfSeasons += si.SeasonEpisodes.Count;
 				}
@@ -182,12 +184,12 @@ namespace TVRename
 			{
 				return mDirty;
 			}
-			public System.Collections.Generic.List<ShowItem > GetShowItems(bool @lock)
+            public ShowItemList GetShowItems(bool lockThem)
 			{
-				if (@lock)
+				if (lockThem)
 					LockShowItems();
 
-				ShowItems.Sort(new Comparison<ShowItem>(CompareShowItemNames));
+				ShowItems.Sort(new Comparison<ShowItem>(ShowItem.CompareShowItemNames));
 				return ShowItems;
 			}
 			public ShowItem GetShowItem(int id)
@@ -241,10 +243,10 @@ namespace TVRename
 
 				LockShowItems();
 
-				Generic.List<ShowItem > showlist;
+				System.Collections.Generic.List<ShowItem > showlist;
 				if (specific != null)
 				{
-					showlist = new System.Collections.Generic.List<ShowItem >();
+					showlist = new ShowItemList();
 					showlist.Add(specific);
 				}
 				else
@@ -293,7 +295,7 @@ namespace TVRename
 				int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
 				si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
 				foreach (int snum in numbers)
-					//for each (KeyValuePair<int, ProcessedEpisodeList ^> ^kvp in si->SeasonEpisodes)
+					//for each (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList ^> ^kvp in si->SeasonEpisodes)
 				{
 					//int snum = kvp->Key;
 					if ((si.IgnoreSeasons.Contains(snum)) || (!si.AllFolderLocations(Settings).ContainsKey(snum)))
@@ -303,7 +305,7 @@ namespace TVRename
 					if ((snum == 0) && (si.CountSpecials))
 						continue; // skip specials
 
-					Collections.Generic.List<string > folders = si.AllFolderLocations(Settings)[snum];
+					System.Collections.Generic.List<string > folders = si.AllFolderLocations(Settings)[snum];
 					foreach (string folder in folders)
 					{
 						// generate new filename info
@@ -331,7 +333,7 @@ namespace TVRename
 							if (!Settings.UsefulExtension(fiTemp.Extension, true))
 								continue; // move on
 
-							if (FindSeasEp(fiTemp, ref seas, ref ep, si.ShowName()))
+							if (FindSeasEp(fiTemp, out seas, out ep, si.ShowName()))
 							{
 								// see if we have an epinfo for this one
 								if (seas == -1)
@@ -347,7 +349,7 @@ namespace TVRename
 
 										if (nname != fiTemp.Name)
 										{
-											TheAIOList.Add(new AIOCopyMoveRename(AIOCopyMoveRename.Op.Rename, fiTemp, FileInFolder(folder, nname), pe));
+											TheAIOList.Add(new AIOCopyMoveRename(AIOCopyMoveRename.Op.Rename, fiTemp, Helpers.FileInFolder(folder, nname), pe));
 										}
 										break;
 									}
@@ -371,11 +373,11 @@ namespace TVRename
 				int totalN = 0;
 				LockShowItems();
 
-				Generic.List<ShowItem > showlist;
+				System.Collections.Generic.List<ShowItem > showlist;
 				if (specific != null)
 				{
 					CheckAllFoldersExist(specific);
-					showlist = new System.Collections.Generic.List<ShowItem >();
+					showlist = new ShowItemList();
 					showlist.Add(specific);
 				}
 				else
@@ -473,8 +475,8 @@ namespace TVRename
 						if (bzzt)
 							break;
 
-						Generic.Dictionary<int, System.Collections.Generic.List<string > > afl = si.AllFolderLocations(Settings);
-						foreach (KeyValuePair<int, System.Collections.Generic.List<string > > kvp in afl)
+						System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > afl = si.AllFolderLocations(Settings);
+						foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in afl)
 						{
 							foreach (string folder in kvp.Value)
 							{
@@ -536,7 +538,7 @@ namespace TVRename
 				Stats().TorrentsMatched++;
 
 				BTFileRenamer btp = new BTFileRenamer(prog);
-				Generic.List<AIOItem > newList = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > newList = new System.Collections.Generic.List<AIOItem >();
 				bool r = btp.RenameFilesOnDiskToMatchTorrent(torrent, folder, tvTree, newList, prog, copyNotMove, copyDest);
 
 				foreach (AIOItem i in newList)
@@ -572,7 +574,7 @@ namespace TVRename
 
 				// TODO: find a 'best match', or use first ?
 
-				showname = SimplifyName(showname);
+				showname = Helpers.SimplifyName(showname);
 
 				foreach (DirCacheEntry dce in files)
 				{
@@ -596,7 +598,7 @@ namespace TVRename
 							int epF;
 							// String ^fn = file->Name;
 
-							if ((FindSeasEp(dce.TheFile, ref seasF, ref epF, me.PE.TheSeries.Name) && (seasF == season) && (epF == epnum)) || (me.PE.SI.UseSequentialMatch && MatchesSequentialNumber(dce.TheFile.Name, seasF, epF, me.PE) && (seasF == season) && (epF == epnum)))
+							if ((FindSeasEp(dce.TheFile, out seasF, out epF, me.PE.TheSeries.Name) && (seasF == season) && (epF == epnum)) || (me.PE.SI.UseSequentialMatch && MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.PE) && (seasF == season) && (epF == epnum)))
 							{
 								addTo.Add(new AIOCopyMoveRename(whichOp, dce.TheFile, new FileInfo(me.TheFileNoExt+dce.TheFile.Extension), me.PE));
 								return true;
@@ -631,7 +633,7 @@ namespace TVRename
 				// for each of the items in rcl, do the same copy/move if for other items with the same
 				// base name, but different extensions
 
-				Generic.List<AIOItem > extras = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > extras = new System.Collections.Generic.List<AIOItem >();
 
 				foreach (AIOItem aio1 in aiolist)
 				{
@@ -661,7 +663,7 @@ namespace TVRename
 							if ((Settings.RenameTxtToSub) && (newName.EndsWith(".txt")))
 								newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-							AIOCopyMoveRename newitem = new AIOCopyMoveRename(aio.Operation, fi, FileInFolder(aio.To.Directory, newName), aio.PE);
+							AIOCopyMoveRename newitem = new AIOCopyMoveRename(aio.Operation, fi, Helpers.FileInFolder(aio.To.Directory, newName), aio.PE);
 
 							// check this item isn't already in our to-do list
 							bool doNotAdd = false;
@@ -670,7 +672,7 @@ namespace TVRename
 								if (ai2.Type != AIOType.kCopyMoveRename)
 									continue;
 
-								if ((AIOCopyMoveRename)(ai2).SameSource(newitem))
+								if (((AIOCopyMoveRename)(ai2)).SameSource(newitem))
 								{
 									doNotAdd = true;
 									break;
@@ -718,22 +720,22 @@ namespace TVRename
 
 				prog.Invoke(0);
 
-				Generic.List<AIOItem > newList = new System.Collections.Generic.List<AIOItem >();
-				Generic.List<AIOItem > toRemove = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > newList = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > toRemove = new System.Collections.Generic.List<AIOItem >();
 
 				int fileCount = 0;
 				foreach (string s in SearchFolders)
-					fileCount += CountFiles(s, true);
+					fileCount += DirCache.CountFiles(s, true);
 
 				int c = 0;
 
-				Collections.Generic.List<DirCacheEntry > files = new System.Collections.Generic.List<DirCacheEntry >();
+				System.Collections.Generic.List<DirCacheEntry > files = new System.Collections.Generic.List<DirCacheEntry >();
 				for (int k =0;k<SearchFolders.Count;k++)
 				{
 					if (AIOCancel)
 						return;
 
-					c = BuildDirCache(prog, c, fileCount, files, SearchFolders[k], true, Settings);
+                    c = DirCache.BuildDirCache(prog, c, fileCount, files, SearchFolders[k], true, Settings);
 				}
 
 				c = 0;
@@ -782,7 +784,7 @@ namespace TVRename
 						{
 							AIOCopyMoveRename a1 = (AIOCopyMoveRename)(newList[i]);
 							AIOCopyMoveRename a2 = (AIOCopyMoveRename)(newList[i+1]);
-							if (!Same(a1.From, a2.From))
+							if (!Helpers.Same(a1.From, a2.From))
 								a1.Operation = AIOCopyMoveRename.Op.Move;
 						}
 					}
@@ -804,15 +806,15 @@ namespace TVRename
 
 			public void GetThread(Object codeIn)
 			{
-				Diagnostics.Debug.Assert(WorkerSemaphore != null);
+				System.Diagnostics.Debug.Assert(WorkerSemaphore != null);
 
 				WorkerSemaphore.WaitOne(); // don't start until we're allowed to
 
 				int code = (int)(codeIn);
 
-				Diagnostics.Debug.Print("  Downloading " + code);
+				System.Diagnostics.Debug.Print("  Downloading " + code);
 				bool r = GetTVDB(false, "").EnsureUpdated(code);
-				Diagnostics.Debug.Print("  Finished " + code);
+				System.Diagnostics.Debug.Print("  Finished " + code);
 				if (!r)
 				{
 					DownloadOK = false;
@@ -859,7 +861,7 @@ namespace TVRename
 
 					int n2 = ShowItems.Count;
 					int n = 0;
-					Generic.List<int> codes = new System.Collections.Generic.List<int>();
+					System.Collections.Generic.List<int> codes = new System.Collections.Generic.List<int>();
 					LockShowItems();
 					foreach (ShowItem si in ShowItems)
 						codes.Add(si.TVDBCode);
@@ -870,29 +872,29 @@ namespace TVRename
 
 					WorkerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
 
-					foreach (int code in codes)
-					{
-						DownloadPct = 100*(n+1)/(n2+1);
-						DownloadsRemaining = n2-n;
-						n++;
+                    foreach (int code in codes)
+                    {
+                        DownloadPct = 100 * (n + 1) / (n2 + 1);
+                        DownloadsRemaining = n2 - n;
+                        n++;
 
-						WorkerSemaphore.WaitOne(); // blocks until there is an available slot
-						Thread t = new Thread(new ParameterizedThreadStart(this, TVDoc.GetThread));
-						Workers.Add(t);
-						t.Name = "GetThread:" + code.ToString();
-						t.Start(code); // will grab the semaphore as soon as we make it avialable
-						int n = WorkerSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
-						Diagnostics.Debug.Print("Started " + code + " pool has " + n + " free");
-						Thread.Sleep(0); // allow the other thread a chance to run and grab
+                        WorkerSemaphore.WaitOne(); // blocks until there is an available slot
+                        Thread t = new Thread(new ParameterizedThreadStart(this.GetThread));
+                        Workers.Add(t);
+                        t.Name = "GetThread:" + code.ToString();
+                        t.Start(code); // will grab the semaphore as soon as we make it avialable
+                        int nfr = WorkerSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
+                        System.Diagnostics.Debug.Print("Started " + code + " pool has " + nfr + " free");
+                        Thread.Sleep(0); // allow the other thread a chance to run and grab
 
-						// tidy up any finished workers
-						for (int i =Workers.Count-1;i>=0;i--)
-							if (!Workers[i].IsAlive)
-								Workers.RemoveAt(i); // remove dead worker
+                        // tidy up any finished workers
+                        for (int i = Workers.Count - 1; i >= 0; i--)
+                            if (!Workers[i].IsAlive)
+                                Workers.RemoveAt(i); // remove dead worker
 
-						if (DownloadDone)
-							break;
-					}
+                        if (DownloadDone)
+                            break;
+                    }
 
 					WaitForAllThreadsAndTidyUp();
 
@@ -907,10 +909,6 @@ namespace TVRename
 					DownloadOK = false;
 					return;
 				}
-
-				DownloadOK = false;
-				DownloadDone = true;
-				return;
 			}
 
 
@@ -922,7 +920,7 @@ namespace TVRename
 				DownloadPct = 0;
 				DownloadDone = false;
 				DownloadOK = true;
-				mDownloaderThread = new Thread(new ThreadStart(this, TVDoc.Downloader));
+				mDownloaderThread = new Thread(new ThreadStart(this.Downloader));
 				mDownloaderThread.Name = "Downloader";
 				mDownloaderThread.Start();
 			}
@@ -963,8 +961,8 @@ namespace TVRename
 
 				const int delayStep = 100;
 				int count = 1000/delayStep; // one second
-				while ((count--) && (!DownloadDone))
-					Threading.Thread.Sleep(delayStep);
+				while ((count-- > 0) && (!DownloadDone))
+					System.Threading.Thread.Sleep(delayStep);
 
 				if (!DownloadDone && !HasArg("/hide")) // downloading still going on, so time to show the dialog if we're not in /hide mode
 				{
@@ -1008,9 +1006,9 @@ namespace TVRename
 			{
 				// remove any shows from thetvdb that aren't in My Shows
 				TheTVDB db = GetTVDB(true, "TidyTVDB");
-				Generic.List<int> removeList = new System.Collections.Generic.List<int>();
+				System.Collections.Generic.List<int> removeList = new System.Collections.Generic.List<int>();
 
-				foreach (KeyValuePair<int, SeriesInfo> kvp in mTVDB.GetSeriesDict())
+				foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in mTVDB.GetSeriesDict())
 				{
 					bool found = false;
 					foreach (ShowItem si in ShowItems)
@@ -1093,7 +1091,7 @@ namespace TVRename
 						if (!Settings.UsefulExtension(fiTemp.Extension, false))
 							continue; // move on
 
-						if (FindSeasEp(fiTemp, ref seasFound, ref epFound, si.ShowName()))
+						if (FindSeasEp(fiTemp, out seasFound, out epFound, si.ShowName()))
 						{
 							if (seasFound == -1)
 								seasFound = seasWanted;
@@ -1132,11 +1130,11 @@ namespace TVRename
 				if (si.AllFolderLocations(Settings).Count == 0) // no seasons enabled
 					return;
 
-				FileInfo tvshownfo = FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
+				FileInfo tvshownfo = Helpers.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
 
 				bool needUpdate = !tvshownfo.Exists || (si.TheSeries().Srv_LastUpdated > TZMagic.Epoch(tvshownfo.LastWriteTime));
 				// was it written before we fixed the bug in <episodeguideurl> ?
-				needUpdate = needUpdate || (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(DateTime(2009,9,13,7,30,0,0, DateTimeKind.Utc)) < 0);
+				needUpdate = needUpdate || (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009,9,13,7,30,0,0, DateTimeKind.Utc)) < 0);
 				if (needUpdate)
 					TheAIOList.Add(new AIONFO(tvshownfo, si));
 			}
@@ -1151,7 +1149,7 @@ namespace TVRename
 				if (!si.DoMissingCheck)
 					return true;
 
-				Generic.Dictionary<int, System.Collections.Generic.List<string > > flocs = si.AllFolderLocations(Settings);
+				System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > flocs = si.AllFolderLocations(Settings);
 
 				if (Settings.NFOs)
 					TVShowNFOCheck(si);
@@ -1169,7 +1167,7 @@ namespace TVRename
 					if ((snum == 0) && (si.CountSpecials))
 						continue; // no specials season, they're merged into the seasons themselves
 
-					Collections.Generic.List<string > folders = new System.Collections.Generic.List<string >();
+					System.Collections.Generic.List<string > folders = new System.Collections.Generic.List<string >();
 
 					if (flocs.ContainsKey(snum))
 						folders = flocs[snum];
@@ -1186,9 +1184,9 @@ namespace TVRename
 						FileInfo[]fi = di.GetFiles();
 
 						// make up a list of all the epsiodes in this season that we have locally
-						Generic.List<FileInfo > localEps = new System.Collections.Generic.List<FileInfo >();
+						System.Collections.Generic.List<FileInfo > localEps = new System.Collections.Generic.List<FileInfo >();
 
-						Generic.List<ProcessedEpisode > eps = si.SeasonEpisodes[snum];
+						System.Collections.Generic.List<ProcessedEpisode > eps = si.SeasonEpisodes[snum];
 
 						foreach (FileInfo fiTemp in fi)
 						{
@@ -1201,7 +1199,7 @@ namespace TVRename
 							if (!Settings.UsefulExtension(fiTemp.Extension, false))
 								continue; // move on
 
-							if (FindSeasEp(fiTemp, ref seas, ref ep, si.ShowName()))
+							if (FindSeasEp(fiTemp, out seas, out ep, si.ShowName()))
 							{
 								if (seas == -1)
 									seas = snum;
@@ -1250,27 +1248,27 @@ namespace TVRename
 							}
 							else
 							{
-								FileInfo fi = localEps[n];
+								FileInfo filo = localEps[n];
 								// do NFO and thumbnail checks if needed
 								if (Settings.EpImgs)
 								{
 									string ban = pe.GetItem("filename");
 									if (!string.IsNullOrEmpty(ban))
 									{
-										string fn = fi.Name;
-										fn = fn.Substring(0, fn.Length - fi.Extension.Length);
+                                        string fn = filo.Name;
+                                        fn = fn.Substring(0, fn.Length - filo.Extension.Length);
 										fn += ".tbn";
-										FileInfo img = FileInFolder(fi.Directory,fn);
+                                        FileInfo img = Helpers.FileInFolder(filo.Directory, fn);
 										if (!img.Exists)
 											TheAIOList.Add(new AIODownload(si, pe, img, ban));
 									}
 								}
 								if (Settings.NFOs)
 								{
-									string fn = fi.Name;
-									fn = fn.Substring(0, fn.Length - fi.Extension.Length);
+                                    string fn = filo.Name;
+                                    fn = fn.Substring(0, fn.Length - filo.Extension.Length);
 									fn += ".nfo";
-									FileInfo nfo = FileInFolder(fi.Directory, fn);
+                                    FileInfo nfo = Helpers.FileInFolder(filo.Directory, fn);
 
 									if (!nfo.Exists || (pe.Srv_LastUpdated > TZMagic.Epoch(nfo.LastWriteTime)))
 										TheAIOList.Add(new AIONFO(nfo, pe));
@@ -1306,15 +1304,15 @@ namespace TVRename
 					return false; // TODO: warn user
 
 				bool r = true;
-				foreach (KeyValuePair<int, Season > kvp in ser.Seasons)
+				foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp in ser.Seasons)
 				{
-					Generic.List<ProcessedEpisode > pel = GenerateEpisodes(si, ser, kvp.Key, true);
+					System.Collections.Generic.List<ProcessedEpisode > pel = GenerateEpisodes(si, ser, kvp.Key, true);
 					si.SeasonEpisodes[kvp.Key] = pel;
 					if (pel == null)
 						r = false;
 				}
 
-				Generic.List<int> theKeys = new System.Collections.Generic.List<int>();
+				System.Collections.Generic.List<int> theKeys = new System.Collections.Generic.List<int>();
 				// now, go through and number them all sequentially
 				foreach (int snum in ser.Seasons.Keys)
 					theKeys.Add(snum);
@@ -1341,7 +1339,7 @@ namespace TVRename
 
 			public static System.Collections.Generic.List<ProcessedEpisode > GenerateEpisodes(ShowItem si, SeriesInfo ser, int snum, bool applyRules)
 			{
-				Generic.List<ProcessedEpisode > eis = new System.Collections.Generic.List<ProcessedEpisode >();
+				System.Collections.Generic.List<ProcessedEpisode > eis = new System.Collections.Generic.List<ProcessedEpisode >();
 
 				if ((ser == null) || !ser.Seasons.ContainsKey(snum))
 					return null; // todo.. something?
@@ -1373,12 +1371,12 @@ namespace TVRename
 							string epstr = ep.Items["airsbefore_episode"];
 							if ((string.IsNullOrEmpty(seasstr)) || (string.IsNullOrEmpty(epstr)))
 								continue;
-							int seas = int.Parse(seasstr);
-							if (seas != snum)
+							int sease = int.Parse(seasstr);
+							if (sease != snum)
 								continue;
 							int epnum = int.Parse(epstr);
 							for (int i =0;i<eis.Count;i++)
-								if ((eis[i].SeasonNumber == seas) && (eis[i].EpNum == epnum))
+								if ((eis[i].SeasonNumber == sease) && (eis[i].EpNum == epnum))
 								{
 									ProcessedEpisode pe = new ProcessedEpisode(ep, si);
 									pe.TheSeason = eis[i].TheSeason;
@@ -1389,18 +1387,18 @@ namespace TVRename
 						}
 					}
 					// renumber to allow for specials
-					int epnum = 1;
+					int epnumr = 1;
 					for (int j =0;j<eis.Count;j++)
 					{
-						eis[j].EpNum2 = epnum + (eis[j].EpNum2 - eis[j].EpNum);
-						eis[j].EpNum = epnum;
-						epnum++;
+						eis[j].EpNum2 = epnumr + (eis[j].EpNum2 - eis[j].EpNum);
+						eis[j].EpNum = epnumr;
+						epnumr++;
 					}
 				}
 
 				if (applyRules)
 				{
-					Generic.List<ShowRule > rules = si.RulesForSeason(snum);
+					System.Collections.Generic.List<ShowRule > rules = si.RulesForSeason(snum);
 					if (rules != null)
 						ApplyRules(eis, rules, si);
 				}
@@ -1559,7 +1557,7 @@ namespace TVRename
 
 			public static void Renumber(System.Collections.Generic.List<ProcessedEpisode > eis)
 			{
-				if (!eis.Count)
+				if (eis.Count == 0)
 					return; // nothing to do
 
 				// renumber 
@@ -1584,7 +1582,7 @@ namespace TVRename
 
 				string sp = ai.Folder;
 				string seasonFinder = ".*season[ _\\.]+([0-9]+).*";
-				if (Regex.Matches(sp,seasonFinder,RegexOptions.IgnoreCase).Count)
+				if (Regex.Matches(sp,seasonFinder,RegexOptions.IgnoreCase).Count > 0)
 				{
 					// String ^s = Regex::Replace(sp, seasonFinder, "$1",RegexOptions::IgnoreCase);
 					try
@@ -1606,18 +1604,18 @@ namespace TVRename
 			public System.Collections.Generic.List<ProcessedEpisode > NextNShows(int nshows, int ndays)
 			{
 				DateTime notBefore = DateTime.Now;
-				Generic.List<ProcessedEpisode > found = new System.Collections.Generic.List<ProcessedEpisode >();
+				System.Collections.Generic.List<ProcessedEpisode > found = new System.Collections.Generic.List<ProcessedEpisode >();
 
 				LockShowItems();
 				for (int i =0;i<nshows;i++)
 				{
 					ProcessedEpisode nextAfterThat = null;
-					TimeSpan howClose = null;
+					TimeSpan howClose = TimeSpan.MaxValue;
 					foreach (ShowItem si in GetShowItems(false))
 					{
 						if (!si.ShowNextAirdate)
 							continue;
-						foreach (KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > v in si.SeasonEpisodes)
+						foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > v in si.SeasonEpisodes)
 						{
 							if (si.IgnoreSeasons.Contains(v.Key))
 								continue; // ignore this season
@@ -1631,9 +1629,9 @@ namespace TVRename
 								if ((dt == null) || (dt == DateTime.MaxValue))
 									continue;
 
-								TimeSpan ts = (dt.Subtract(*notBefore));
+								TimeSpan ts = dt.Subtract(notBefore);
 								TimeSpan timeUntil = dt.Subtract(DateTime.Now);
-								if (((howClose == null) || (ts.CompareTo(howClose) <= 0) && (ts.TotalHours >= 0)) && (ts.TotalHours >= 0) && (timeUntil.TotalDays <= ndays))
+                                if (((howClose == TimeSpan.MaxValue) || (ts.CompareTo(howClose) <= 0) && (ts.TotalHours >= 0)) && (ts.TotalHours >= 0) && (timeUntil.TotalDays <= ndays))
 								{
 									howClose = ts;
 									nextAfterThat = ei;
@@ -1729,7 +1727,7 @@ namespace TVRename
 
 			public static System.Collections.Generic.List<string > ReadStringsFromXml(XmlReader reader, string elementName, string stringName)
 			{
-				Collections.Generic.List<string > r = new System.Collections.Generic.List<string >();
+				System.Collections.Generic.List<string > r = new System.Collections.Generic.List<string >();
 
 				if (reader.Name != elementName)
 					return r; // uhoh
@@ -2051,7 +2049,7 @@ namespace TVRename
 					XmlWriterSettings settings = new XmlWriterSettings();
 					settings.Indent = true;
 					settings.NewLineOnAttributes = true;
-					settings.Encoding = Encoding.ASCII;
+					settings.Encoding = System.Text.Encoding.ASCII;
 					XmlWriter writer = XmlWriter.Create(str, settings);
 
 					writer.WriteStartDocument();
@@ -2131,7 +2129,7 @@ namespace TVRename
 			// see if showname is somewhere in filename
 			public bool SimplifyAndCheckFilename(string filename, string showname, bool simplifyfilename, bool simplifyshowname)
 			{
-				return Regex.Match(simplifyfilename ? SimplifyName(filename) : filename, "\\b"+(simplifyshowname ? SimplifyName(showname) : showname)+"\\b", RegexOptions.IgnoreCase).Success;
+				return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b"+(simplifyshowname ? Helpers.SimplifyName(showname) : showname)+"\\b", RegexOptions.IgnoreCase).Success;
 			}
 
 			public void CheckAgainstuTorrent(SetProgressDelegate prog)
@@ -2145,10 +2143,10 @@ namespace TVRename
 				if (!btr.LoadResumeDat())
 					return;
 
-				Generic.List<TorrentEntry > downloading = btr.AllFilesBeingDownloaded();
+				System.Collections.Generic.List<TorrentEntry > downloading = btr.AllFilesBeingDownloaded();
 
-				Generic.List<AIOItem > newList = new System.Collections.Generic.List<AIOItem >();
-				Generic.List<AIOItem > toRemove = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > newList = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > toRemove = new System.Collections.Generic.List<AIOItem >();
 				int c = TheAIOList.Count + 2;
 				int n = 1;
 				prog.Invoke(100 *n/c);
@@ -2165,7 +2163,7 @@ namespace TVRename
 
 					AIOMissing aio = (AIOMissing)(aio1);
 
-					string showname = SimplifyName(aio.PE.SI.ShowName());
+					string showname = Helpers.SimplifyName(aio.PE.SI.ShowName());
 
 					foreach (TorrentEntry te in downloading)
 					{
@@ -2173,13 +2171,13 @@ namespace TVRename
 						if (!Settings.UsefulExtension(file.Extension, false)) // not a usefile file extension
 							continue;
 
-						// String ^simplifiedfname = SimplifyName(file->FullName);
+						// String ^simplifiedfname = Helpers.SimplifyName(file->FullName);
 
 						if (SimplifyAndCheckFilename(file.FullName, showname, true, false)) // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
 						{
 							int seasF;
 							int epF;
-							if (FindSeasEp(file, ref seasF, ref epF, aio.PE.TheSeries.Name) && (seasF == aio.PE.SeasonNumber) && (epF == aio.PE.EpNum))
+							if (FindSeasEp(file, out seasF, out epF, aio.PE.TheSeries.Name) && (seasF == aio.PE.SeasonNumber) && (epF == aio.PE.EpNum))
 							{
 								toRemove.Add(aio1);
 								newList.Add(new AIOuTorrenting(te, aio.PE, aio.TheFileNoExt));
@@ -2207,8 +2205,8 @@ namespace TVRename
 				foreach (string s in Settings.RSSURLs)
 					RSSList.DownloadRSS(s, Settings.FNPRegexs);
 
-				Generic.List<AIOItem > newItems = new System.Collections.Generic.List<AIOItem >();
-				Generic.List<AIOItem > toRemove = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > newItems = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > toRemove = new System.Collections.Generic.List<AIOItem >();
 
 				foreach (AIOItem aio1 in TheAIOList)
 				{
@@ -2224,8 +2222,8 @@ namespace TVRename
 					AIOMissing aio = (AIOMissing)(aio1);
 
 					ProcessedEpisode pe = aio.PE;
-					string simpleShowName = SimplifyName(pe.SI.ShowName());
-					string simpleSeriesName = SimplifyName(pe.TheSeries.Name);
+					string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName());
+					string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
 
 					foreach (RSSItem rss in RSSList)
 					{
@@ -2262,7 +2260,7 @@ namespace TVRename
 				else
 					totalN = 1;
 
-				Collections.Generic.List<string > doneFolders = new System.Collections.Generic.List<string >();
+				System.Collections.Generic.List<string > doneFolders = new System.Collections.Generic.List<string >();
 
 				foreach (ShowItem si in ShowItems)
 				{
@@ -2278,29 +2276,29 @@ namespace TVRename
 					prog.Invoke(100*(c+1) / (totalN+1)); // +1 to always have a bit of activity in the bar when we're working
 					c += si.AllFolderLocations(Settings).Count;
 
-					if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && si.AllFolderLocations(Settings, false).Count)
+					if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(Settings, false).Count > 0))
 					{
 						// folder base is set, and not all seasons ignored
-						FileInfo fi = FileInFolder(si.AutoAdd_FolderBase, "folder.jpg");
+						FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "folder.jpg");
 						if (!fi.Exists)
 							TheAIOList.Add(new AIODownload(si, null, fi, si.TheSeries().GetItem(Settings.ItemForFolderJpg())));
 						doneFolders.Add(si.AutoAdd_FolderBase);
 					}
 
 
-					foreach (KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
+					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
 					{
 						int snum = kvp.Key;
 						if ((si.IgnoreSeasons.Contains(kvp.Key)) || (!si.AllFolderLocations(Settings).ContainsKey(snum)))
 							continue; // ignore/skip this season
-						Collections.Generic.List<string > folders = si.AllFolderLocations(Settings)[snum];
+						System.Collections.Generic.List<string > folders = si.AllFolderLocations(Settings)[snum];
 						foreach (string folder in folders)
 						{
 							if (doneFolders.Contains(folder)) // some folders may come up multiple times
 								continue;
 							doneFolders.Add(folder);
 
-							FileInfo fi = FileInFolder(folder,"folder.jpg");
+							FileInfo fi = Helpers.FileInFolder(folder,"folder.jpg");
 							if (!fi.Exists)
 								TheAIOList.Add(new AIODownload(si, null, fi, si.TheSeries().GetItem(Settings.ItemForFolderJpg())));
 						}
@@ -2316,8 +2314,8 @@ namespace TVRename
 				// first pass to CopyMoveProgress
 				// then, fire Action(TVDoc ^doc) on whatever is left (!Done)
 
-				CopyMoveResult res;
-				CopyMoveProgress cmp = new CopyMoveProgress(this, theList, res, Stats());
+                CopyMoveResult res;
+				CopyMoveProgress cmp = new CopyMoveProgress(this, theList, out res, Stats());
 				cmp.ShowDialog();
 
 				prog.Invoke(0);
@@ -2352,7 +2350,7 @@ namespace TVRename
 				if (!DoDownloadsFG())
 					return;
 
-				Thread aioWork = new Thread(new ParameterizedThreadStart(this, TVDoc.AIOGoWorker));
+				Thread aioWork = new Thread(new ParameterizedThreadStart(this.AIOGoWorker));
 				aioWork.Name = "AIOGo";
 
 				AIOCancel = false;
@@ -2378,11 +2376,11 @@ namespace TVRename
 				// return false if user cancels
 
 				LockShowItems();
-				Generic.List<ShowItem > showlist;
+				System.Collections.Generic.List<ShowItem > showlist;
 
 				if (specific != null)
 				{
-					showlist = new System.Collections.Generic.List<ShowItem >();
+					showlist = new ShowItemList();
 					showlist.Add(specific);
 				}
 				else
@@ -2393,7 +2391,7 @@ namespace TVRename
 					if (!si.DoMissingCheck && !si.DoRename)
 						continue; // skip
 
-					Generic.Dictionary<int, System.Collections.Generic.List<string > > flocs = si.AllFolderLocations(Settings);
+					System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > flocs = si.AllFolderLocations(Settings);
 
 
 					// TODO: this is a duplicate of code in UpToDateCheck
@@ -2410,7 +2408,7 @@ namespace TVRename
 						if ((snum == 0) && (si.CountSpecials))
 							continue; // no specials season, they're merged into the seasons themselves
 
-						Collections.Generic.List<string > folders = new System.Collections.Generic.List<string >();
+						System.Collections.Generic.List<string > folders = new System.Collections.Generic.List<string >();
 
 						if (flocs.ContainsKey(snum))
 							folders = flocs[snum];
@@ -2424,12 +2422,12 @@ namespace TVRename
 							folders.Add(si.AutoFolderNameForSeason(snum, Settings));
 						}
 
-						foreach (string folder in folders)
+						foreach (string folderFE in folders)
 						{
+                            String folder = folderFE;
 
 							// generate new filename info
 							bool goAgain = false;
-							bool nextSeas = false;
 							DirectoryInfo di = null;
 							do
 							{
@@ -2452,18 +2450,18 @@ namespace TVRename
 									string theFolder = folder;
 									string otherFolder = null;
 
-									int whatToDo = (int)FAResult.kfaNotSet;
+									FAResult whatToDo = FAResult.kfaNotSet;
 
 									if (HasArg("/createmissing"))
-										whatToDo = (int)FAResult.kfaCreate;
+										whatToDo = FAResult.kfaCreate;
 									else if (HasArg("/ignoremissing"))
-										whatToDo = (int)FAResult.kfaIgnoreOnce;
+										whatToDo = FAResult.kfaIgnoreOnce;
 
 
-									if (HasArg("/hide") && (whatToDo == (int)FAResult.kfaNotSet))
-										whatToDo = (int)FAResult.kfaIgnoreOnce; // default in /hide mode is to ignore
+									if (HasArg("/hide") && (whatToDo == FAResult.kfaNotSet))
+										whatToDo = FAResult.kfaIgnoreOnce; // default in /hide mode is to ignore
 
-									if (whatToDo == (int)FAResult.kfaNotSet)
+									if (whatToDo == FAResult.kfaNotSet)
 									{
 										// no command line guidance, so ask the user
 										// 									MissingFolderAction ^mfa = gcnew MissingFolderAction(sn, text, theFolder);
@@ -2478,31 +2476,29 @@ namespace TVRename
 										otherFolder = mfa.FolderName;
 									}
 
-									if (whatToDo == (int)FAResult.kfaCancel)
+									if (whatToDo == FAResult.kfaCancel)
 									{
 										UnlockShowItems();
 										return false;
 									}
-									else if (whatToDo == (int)FAResult.kfaCreate)
+									else if (whatToDo == FAResult.kfaCreate)
 									{
 										Directory.CreateDirectory(folder);
 										goAgain = true;
 									}
-									else if (whatToDo == (int)FAResult.kfaIgnoreAlways)
+									else if (whatToDo == FAResult.kfaIgnoreAlways)
 									{
-										nextSeas = true;
 										si.IgnoreSeasons.Add(snum);
 										SetDirty();
 										break;
 									}
-									else if (whatToDo == (int)FAResult.kfaIgnoreOnce)
+									else if (whatToDo == FAResult.kfaIgnoreOnce)
 									{
-										nextSeas = true;
 										break;
 									}
-									else if (whatToDo == (int)FAResult.kfaRetry)
+									else if (whatToDo == FAResult.kfaRetry)
 										goAgain = true;
-									else if (whatToDo == (int)FAResult.kfaDifferentFolder)
+									else if (whatToDo == FAResult.kfaDifferentFolder)
 									{
 										folder = otherFolder;
 										di = new DirectoryInfo(folder);
@@ -2529,7 +2525,7 @@ namespace TVRename
 
 			public void RemoveIgnored()
 			{
-				Generic.List<AIOItem > toRemove = new System.Collections.Generic.List<AIOItem >();
+				System.Collections.Generic.List<AIOItem > toRemove = new System.Collections.Generic.List<AIOItem >();
 				foreach (AIOItem aio in TheAIOList)
 				{
 					foreach (IgnoreItem ii in Ignore)
@@ -2556,7 +2552,7 @@ namespace TVRename
 
 				if (Settings.RenameCheck)
 				{
-					DoRenameCheck(new SetProgressDelegate(ScanProgDlg, ScanProgress.RenameProg), specific);
+                    DoRenameCheck(ScanProgDlg.RenameProg, specific);
 					RemoveIgnored();
 				}
 
@@ -2565,7 +2561,7 @@ namespace TVRename
 					if (AIOCancel)
 						return;
 
-					DoMissingCheck(new SetProgressDelegate(ScanProgDlg, ScanProgress.MissingProg), specific);
+					DoMissingCheck(ScanProgDlg.MissingProg, specific);
 					RemoveIgnored();
 
 					if (AIOCancel)
@@ -2573,7 +2569,7 @@ namespace TVRename
 
 					if (Settings.SearchLocally && MissingItemsInList(TheAIOList))
 					{
-						LookForMissingEps(new SetProgressDelegate(ScanProgDlg, ScanProgress.LocalSearchProg));
+						LookForMissingEps(ScanProgDlg.LocalSearchProg);
 						RemoveIgnored();
 					}
 
@@ -2582,7 +2578,7 @@ namespace TVRename
 
 					if (Settings.CheckuTorrent && MissingItemsInList(TheAIOList))
 					{
-						CheckAgainstuTorrent(new SetProgressDelegate(ScanProgDlg, ScanProgress.uTorrentProg));
+						CheckAgainstuTorrent(ScanProgDlg.uTorrentProg);
 						RemoveIgnored();
 					}
 
@@ -2591,14 +2587,14 @@ namespace TVRename
 
 					if (Settings.SearchRSS && MissingItemsInList(TheAIOList))
 					{
-						RSSSearch(new SetProgressDelegate(ScanProgDlg, ScanProgress.RSSProg));
+						RSSSearch(ScanProgDlg.RSSProg);
 						RemoveIgnored();
 					}
 				}
 				if (AIOCancel)
 					return;
 				if (Settings.FolderJpg)
-					AIOFolderJPGCheck(new SetProgressDelegate(ScanProgDlg, ScanProgress.FolderThumbsProg), specific);
+					AIOFolderJPGCheck(ScanProgDlg.FolderThumbsProg, specific);
 				// NFO and Episode images are done inside Missing Check
 
 				// sort AIO list by type
@@ -2609,16 +2605,117 @@ namespace TVRename
 
 
 
+            public bool MatchesSequentialNumber(string filename, ref int seas, ref int ep, ProcessedEpisode pe)
+            {
+                if (pe.OverallNumber == -1)
+                    return false;
 
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//			static string SEFinderSimplifyFilename(string name, string showNameHint);
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//			static bool MatchesSequentialNumber(string filename, ref int seas, ref int ep, ProcessedEpisode pe);
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//			bool FindSeasEp(FileInfo fi, ref int seas, ref int ep, string showNameHint);
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//			static bool FindSeasEp(FileInfo fi, ref int seas, ref int ep, string showNameHint, Generic::List<FilenameProcessorRE > rexps);
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//			static bool FindSeasEp(string directory, string filename, ref int seas, ref int ep, string showNameHint, Generic::List<FilenameProcessorRE > rexps);
+                string num = pe.OverallNumber.ToString();
+
+                bool found = Regex.Match("X" + filename + "X", "[^0-9]0*" + num + "[^0-9]").Success; // need to pad to let it match non-numbers at start and end
+                if (found)
+                {
+                    seas = pe.SeasonNumber;
+                    ep = pe.EpNum;
+                }
+                return found;
+            }
+            static public string SEFinderSimplifyFilename(string filename, string showNameHint)
+            {
+                // Look at showNameHint and try to remove the first occurance of it from filename
+                // This is very helpful if the showname has a >= 4 digit number in it, as that
+                // would trigger the 1302 -> 13,02 matcher
+                // Also, shows like "24" can cause confusion
+
+                filename = filename.Replace(".", " "); // turn dots into spaces
+
+                if ((showNameHint == null) || (string.IsNullOrEmpty(showNameHint)))
+                    return filename;
+
+                bool nameIsNumber = (Regex.Match(showNameHint, "^[0-9]+$").Success);
+
+                int p = filename.IndexOf(showNameHint);
+
+                if (p == 0)
+                {
+                    filename = filename.Remove(0, showNameHint.Length);
+                    return filename;
+                }
+
+                if (nameIsNumber) // e.g. "24", or easy exact match of show name at start of filename
+                    return filename;
+
+                foreach (Match m in Regex.Matches(showNameHint, "(?:^|[^a-z]|\\b)([0-9]{3,})")) // find >= 3 digit numbers in show name
+                {
+                    if (m.Groups.Count > 1) // just in case
+                    {
+                        string number = m.Groups[1].Value;
+                        filename = Regex.Replace(filename, "(^|\\W)" + number + "\\b", ""); // remove any occurances of that number in the filename
+                    }
+                }
+
+
+                return filename;
+            }
+            public bool FindSeasEp(FileInfo fi, out int seas, out int ep, string showNameHint)
+            {
+                return FindSeasEp(fi, out seas, out ep, showNameHint, Settings.FNPRegexs);
+            }
+            public bool FindSeasEp(FileInfo fi, out int seas, out int ep, string showNameHint, FNPRegexList rexps)
+            {
+                string filename = fi.Name;
+                int l = filename.Length;
+                int le = fi.Extension.Length;
+                filename = filename.Substring(0, l - le);
+                return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, showNameHint, rexps);
+            }
+            static public bool FindSeasEp(string directory, string filename, out int seas, out int ep, string showNameHint, FNPRegexList rexps)
+            {
+                seas = ep = -1;
+
+                filename = SEFinderSimplifyFilename(filename, showNameHint);
+
+                string fullPath = directory + "\\" + filename; // construct full path with sanitised filename
+
+                if ((filename.Length > 256) || (fullPath.Length > 256))
+                    return false;
+
+                int leftMostPos = filename.Length;
+
+                filename = filename.ToLower() + " ";
+                fullPath = fullPath.ToLower() + " ";
+
+                foreach (FilenameProcessorRE re in rexps)
+                {
+                    if (!re.Enabled)
+                        continue;
+                    try
+                    {
+                        Match m = Regex.Match(re.UseFullPath ? fullPath : filename, re.RE, RegexOptions.IgnoreCase);
+                        if (m.Success)
+                        {
+                            int adj = re.UseFullPath ? (fullPath.Length - filename.Length) : 0;
+
+                            int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index) - adj;
+                            if (p >= leftMostPos)
+                                continue;
+
+                            if (!int.TryParse(m.Groups["s"].ToString(), out seas))
+                                seas = -1;
+                            if (!int.TryParse(m.Groups["e"].ToString(), out ep))
+                                ep = -1;
+
+                            leftMostPos = p;
+                        }
+                    }
+                    catch (FormatException)
+                    {
+                    }
+                }
+
+                return ((seas != -1) || (ep != -1));
+            }
+
+
 	} // class TVDoc
 } // namespace

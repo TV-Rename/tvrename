@@ -184,7 +184,7 @@ namespace TVRename
 			lvi.SubItems.Add(BannerPath);
 
 			if (string.IsNullOrEmpty(BannerPath))
-				lvi.BackColor = WarningColor();
+				lvi.BackColor = Helpers.WarningColor();
 
 			lvi.SubItems.Add(Destination.Name);
 
@@ -466,8 +466,37 @@ namespace TVRename
 			return lvi;
 		}
 
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//		override bool Action(TVDoc doc);
+        override public bool Action(TVDoc doc)
+        {
+            System.Net.WebClient wc = new System.Net.WebClient();
+            try
+            {
+                byte[] r = wc.DownloadData(RSS.URL);
+                if ((r == null) || (r.Length == 0))
+                {
+                    HasError = true;
+                    ErrorText = "No data downloaded";
+                }
+
+                string saveTemp = Path.GetTempPath() + "\\" + doc.FilenameFriendly(RSS.Title);
+                if (FileInfo(saveTemp).Extension.ToLower() != "torrent")
+                    saveTemp += ".torrent";
+                File.WriteAllBytes(saveTemp, r);
+
+                System.Diagnostics.Process.Start(doc.Settings.uTorrentPath, "/directory \"" + FileInfo(TheFileNoExt).Directory.FullName + "\" \"" + saveTemp + "\"");
+
+                HasError = false;
+            }
+            catch (Exception e)
+            {
+                ErrorText = e.Message;
+                HasError = true;
+            }
+            Done = true;
+
+            return !HasError;
+        }
+
 	}
 
 
@@ -742,7 +771,7 @@ namespace TVRename
             lvi.SubItems.Add(BannerPath);
 
             if (string.IsNullOrEmpty(BannerPath))
-                lvi.BackColor = WarningColor();
+                lvi.BackColor = Helpers.WarningColor();
 
             lvi.SubItems.Add(Destination.Name);
 
@@ -823,7 +852,7 @@ namespace TVRename
 					else
 						return (xx.DesiredLocationNoExt).CompareTo(yy.DesiredLocationNoExt);
 				}
-				Diagnostics.Debug.Fail("Unknown type in AIOItem::Compare"); // uhoh
+				System.Diagnostics.Debug.Fail("Unknown type in AIOItem::Compare"); // uhoh
 				return 1;
 			}
 			else
@@ -860,7 +889,7 @@ namespace TVRename
 			NFO = new System.Collections.Generic.List<AIONFO >();
 			FlatList = new System.Collections.Generic.List<AIOItem >();
 
-			Generic.List<ListViewItem > sel = new System.Collections.Generic.List<ListViewItem >();
+			System.Collections.Generic.List<ListViewItem > sel = new System.Collections.Generic.List<ListViewItem >();
 			if (@checked)
 			{
 				ListView.CheckedListViewItemCollection ss = lv.CheckedItems;

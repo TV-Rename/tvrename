@@ -53,7 +53,7 @@ namespace TVRename
         }
         public static FileInfo FileInFolder(DirectoryInfo di, string fn)
         {
-            return FileInFolder(di.FullName, fn);
+            return Helpers.FileInFolder(di.FullName, fn);
         }
     }
 }

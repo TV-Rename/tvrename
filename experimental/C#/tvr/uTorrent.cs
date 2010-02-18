@@ -448,7 +448,7 @@ namespace TVRename
 				 if (!CheckResumeDatPath())
 					 return;
 
-                 System.Collections.Generic.List<string> checkedItems = new System.Collections.Generic.List<string>();
+                 StringList checkedItems = new StringList();
 				 foreach (string torrent in lbUTTorrents.CheckedItems)
 					 checkedItems.Add(torrent);
 

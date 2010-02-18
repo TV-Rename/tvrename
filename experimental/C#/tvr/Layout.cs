@@ -6,19 +6,20 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 //
 
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
 namespace TVRename
 {
+    public enum WindowID { kUnknown = 0, kMDI = 1, kWatchFolders = 2, kUpcoming = 3, kRename = 4, kMonitorFolders = 5, kTorrentMatch = 6, kEPFinder = 7 };
 
-  //enum { kUnknown = 0, kMDI = 1, kWatchFolders = 2, kUpcoming = 3, kRename = 4, kMonitorFolders = 5, kTorrentMatch = 6, kEPFinder = 7 };
 
   public class LayoutInfo
   {
-	public System.Collections.Generic.List<int> mColWidths;
-	public int mWindowID;
+      public System.Collections.Generic.List<int> mColWidths;
+    public WindowID mWindowID;
 	public bool mMaximised;
 	public Size mSize;
 	public Point mLocation;
@@ -26,11 +27,11 @@ namespace TVRename
 
 	public LayoutInfo()
 	{
-	  mColWidths = new Generic.List<int>();
-	  mWindowID = kUnknown;
+	  mColWidths = new System.Collections.Generic.List<int>();
+      mWindowID = WindowID.kUnknown;
 	  mMaximised = false;
-	  mSize = Size(-1,-1);
-	  mLocation = Point(-1,-1);
+	  mSize = new Size(-1,-1);
+	  mLocation = new Point(-1,-1);
 	  mLocked = true;
 	 }
 
@@ -50,7 +51,7 @@ namespace TVRename
 
 	public void Save(StreamWriter sw)
 	{
-	  sw.WriteLine("WindowID="+mWindowID);
+	  sw.WriteLine("WindowID="+(int)mWindowID);
 	  sw.WriteLine("Maximised=" + (mMaximised?"1":"0"));
 	  if (!mMaximised)
 	  {
@@ -79,10 +80,9 @@ namespace TVRename
 		  l1 = l1.Substring(p+1);
 		  if (what == "ColWidths")
 		  {
-			int c = 0;
 			while ((p = l1.IndexOf(' ')) != -1)
 			{
-			  int n = Convert.ToInt32(l1.Substring(0,p));
+			  int n = int.Parse(l1.Substring(0,p));
 			  l1 = l1.Substring(p+1);
 			  mColWidths.Add(n);
 			}
@@ -94,21 +94,21 @@ namespace TVRename
 		  else if (what == "Size")
 		  {
 			p = l1.IndexOf(' ');
-			int x = Convert.ToInt32(l1.Substring(0,p));
-			int y = Convert.ToInt32(l1.Substring(p+1));
+			int x = int.Parse(l1.Substring(0,p));
+			int y = int.Parse(l1.Substring(p+1));
 			mSize = new System.Drawing.Size(x,y);
 		  }
 		  else if (what == "Location")
 		  {
 			p = l1.IndexOf(' ');
-			int x = Convert.ToInt32(l1.Substring(0,p));
-			int y = Convert.ToInt32(l1.Substring(p+1));
-			mLocation = Point(x,y);
+			int x = int.Parse(l1.Substring(0,p));
+			int y = int.Parse(l1.Substring(p+1));
+			mLocation = new Point(x,y);
 		  }
 		  else if (what == "WindowID")
 		  {
-			int n = Convert.ToInt32(l1);
-			mWindowID = n;
+			int n = int.Parse(l1);
+			mWindowID = (WindowID)n;
 		  }
 		}
 	  }
@@ -143,9 +143,9 @@ namespace TVRename
 	{
 	  if (f != null)
 	  {
-		if (mSize != Size(-1,-1))
+		if (mSize != new Size(-1,-1))
 		  f.Size = mSize;
-		if (mLocation != Point(-1,-1))
+		if (mLocation != new Point(-1,-1))
 		  f.Location = mLocation;
 		f.WindowState = mMaximised ? FormWindowState.Maximized : FormWindowState.Normal;
 
@@ -169,7 +169,7 @@ namespace TVRename
 	  Load();
 	}
 
-	public LayoutInfo Get(int id)
+	public LayoutInfo Get(WindowID id)
 	{
 	  for (int i =0;i<mLayouts.Count;i++)
 		if (mLayouts[i].mWindowID == id)

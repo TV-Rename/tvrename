@@ -15,12 +15,15 @@ using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
 using System.Xml;
+using System.Threading;
+using System.IO;
+
+
 
 namespace TVRename
 {
 	// right click commands
-//C++ TO C# CONVERTER NOTE: Enums must be named in C#, so the following enum has been named AnonymousEnum:
-	public enum AnonymousEnum: int
+	public enum RightClickCommands
 	{
 		kEpisodeGuideForShow = 1,
 		kVisitTVDBEpisode,
@@ -584,7 +587,7 @@ namespace TVRename
 			this.tbMyShows.Controls.Add(this.bnMyShowsAdd);
 			this.tbMyShows.Location = new System.Drawing.Point(4, 22);
 			this.tbMyShows.Name = "tbMyShows";
-			this.tbMyShows.Padding = System.Windows.Forms.Padding(3);
+			this.tbMyShows.Padding = new System.Windows.Forms.Padding(3);
 			this.tbMyShows.Size = new System.Drawing.Size(923, 507);
 			this.tbMyShows.TabIndex = 9;
 			this.tbMyShows.Text = "My Shows";
@@ -709,7 +712,7 @@ namespace TVRename
 			this.tbAllInOne.Controls.Add(this.bnAIOCheck);
 			this.tbAllInOne.Location = new System.Drawing.Point(4, 22);
 			this.tbAllInOne.Name = "tbAllInOne";
-			this.tbAllInOne.Padding = System.Windows.Forms.Padding(3);
+			this.tbAllInOne.Padding = new System.Windows.Forms.Padding(3);
 			this.tbAllInOne.Size = new System.Drawing.Size(923, 507);
 			this.tbAllInOne.TabIndex = 11;
 			this.tbAllInOne.Text = "Scan";
@@ -1302,11 +1305,11 @@ namespace TVRename
 
 		protected void MoreBusy()
 		{
-			Interlocked.Increment(Busy);
+			Interlocked.Increment(ref Busy);
 		}
 		protected void LessBusy()
 		{
-			Interlocked.Decrement(Busy);
+			Interlocked.Decrement(ref Busy);
 		}
 
 	private static bool IsDebug()
@@ -1320,7 +1323,7 @@ namespace TVRename
 
 	private void HideStuff()
 			 {
-				 if (IncludeExperimentalStuff() || IsDebug() || ForceExperimentalOn())
+                 if (IncludeExperimentalStuff() || IsDebug() || Version.ForceExperimentalOn())
 				 {
 					 // debug stuff
 					 // DirectoryInfo di(System::Windows::Forms::Application::UserAppDataPath+"\\..\\..\\..\\uTorrent");
@@ -1405,7 +1408,7 @@ namespace TVRename
 				// silently fail, doesn't matter too much
 			}
 
-			SetProgress = new SetProgressDelegate(this, UI.SetProgressActual);
+            SetProgress += SetProgressActual;
 
 			lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
 
@@ -1418,7 +1421,7 @@ namespace TVRename
 
 			HideStuff();
 
-			this.Text = this.Text + " " + DisplayVersionString();
+			this.Text = this.Text + " " + Version.DisplayVersionString();
 
 			FillShowLists();
 			UpdateSearchButton();
@@ -1592,7 +1595,7 @@ namespace TVRename
 			settings.IgnoreWhitespace = true;
 
 			string fn = System.Windows.Forms.Application.UserAppDataPath+"\\Layout.xml";
-			if (!FileInfo(fn).Exists)
+			if (!File.Exists(fn))
 				return true;
 
 			XmlReader reader = XmlReader.Create(fn, settings);
@@ -1631,7 +1634,7 @@ namespace TVRename
 						{
 							int x = int.Parse(reader.GetAttribute("X"));
 							int y = int.Parse(reader.GetAttribute("Y"));
-							this.Location = Point(x,y);
+							this.Location = new Point(x,y);
 							reader.Read();
 						}
 						else if (reader.Name == "Maximized")
@@ -1764,11 +1767,11 @@ namespace TVRename
 
 		private void ChooseSiteMenu(int n)
 		{
-			Windows.Forms.ContextMenuStrip sm = BuildSearchMenu();
+			ContextMenuStrip sm = BuildSearchMenu();
 			if (n == 1)
-				sm.Show(bnWTWChooseSite,Point(0,0));
+				sm.Show(bnWTWChooseSite,new Point(0,0));
 			else if (n == 0)
-				sm.Show(bnAIOWhichSearch,Point(0,0));
+				sm.Show(bnAIOWhichSearch,new Point(0,0));
 		}
 
 		private void bnWTWChooseSite_Click(object sender, System.EventArgs e)
@@ -1786,16 +1789,16 @@ namespace TVRename
 			Season currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
 			ShowItem currentSI = TreeNodeToShowItem(MyShowTree.SelectedNode);
 
-			Generic.List<ShowItem > expanded = new System.Collections.Generic.List<ShowItem >();
+			ShowItemList expanded = new ShowItemList();
 			foreach (TreeNode n in MyShowTree.Nodes)
 				if (n.IsExpanded)
-					expanded.AddTreeNodeToShowItem(n);
+					expanded.Add(TreeNodeToShowItem(n));
 
 			MyShowTree.BeginUpdate();
 
 			MyShowTree.Nodes.Clear();
 
-			Generic.List<ShowItem > sil = mDoc.GetShowItems(true);
+            System.Collections.Generic.List<ShowItem> sil = mDoc.GetShowItems(true);
 			foreach (ShowItem si in sil)
 			{
 				TreeNode tvn = AddShowItemToTree(si);
@@ -1856,14 +1859,14 @@ namespace TVRename
 			Season seas = n.Tag as Season;
 			if (seas != null)
 			{
-				if (seas.Episodes.Count)
+				if (seas.Episodes.Count> 0)
 				{
 					int tvdbcode = seas.TheSeries.TVDBCode;
-					foreach (ShowItem si in mDoc.GetShowItems(true))
-						if (si.TVDBCode == tvdbcode)
+					foreach (ShowItem si2 in mDoc.GetShowItems(true))
+						if (si2.TVDBCode == tvdbcode)
 						{
 							mDoc.UnlockShowItems();
-							return si;
+							return si2;
 						}
 						mDoc.UnlockShowItems();
 				}
@@ -1901,7 +1904,7 @@ namespace TVRename
 			if (seas != null)
 			{
 				// we have a TVDB season, but need to find the equiavlent one in our local processed episode collection
-				if (seas.Episodes.Count)
+				if (seas.Episodes.Count > 0)
 				{
 					int tvdbcode = seas.TheSeries.TVDBCode;
 					foreach (ShowItem si in mDoc.GetShowItems(true))
@@ -1950,7 +1953,7 @@ namespace TVRename
 
 			string body = "";
 
-			Collections.Generic.List<string > skip = new System.Collections.Generic.List<string >();
+			System.Collections.Generic.List<string > skip = new System.Collections.Generic.List<string >();
 			skip.Add("Actors");
 			skip.Add("banner");
 			skip.Add("Overview");
@@ -1967,8 +1970,8 @@ namespace TVRename
 
 				Season s = ser.Seasons[snum];
 
-				Generic.List<ProcessedEpisode > eis = null;
-				int snum = s.SeasonNumber;
+				System.Collections.Generic.List<ProcessedEpisode > eis = null;
+				// int snum = s.SeasonNumber;
 				if (si.SeasonEpisodes.ContainsKey(snum))
 					eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
 				else
@@ -2006,7 +2009,7 @@ namespace TVRename
 					}
 
 					DateTime dt = ei.GetAirDateDT(true);
-					if ((dt != null) && (dt.CompareTo(DateTime.MaxValue)))
+					if ((dt != null) && (dt.CompareTo(DateTime.MaxValue) != 0))
 						body += "<p>" + ei.GetAirDateDT(true).ToShortDateString() + " (" + ei.HowLong() + ")";
 
 					body += "<p><p>";
@@ -2067,13 +2070,13 @@ namespace TVRename
 					}
 				}
 
-				bool first = true;
-				foreach (KeyValuePair<string , string > kvp in ser.Items)
+				bool firstInfo = true;
+				foreach (System.Collections.Generic.KeyValuePair<string , string > kvp in ser.Items)
 				{
-					if (first)
+                    if (firstInfo)
 					{
 						body += "<h2>Information<table border=0>";
-						first = false;
+                        firstInfo = false;
 					}
 					if (!skip.Contains(kvp.Key))
 					{
@@ -2085,7 +2088,7 @@ namespace TVRename
 							body += "<tr><td width=120px>"+kvp.Key+"</td><td>" + kvp.Value +"</td></tr>";
 					}
 				}
-				if (!first)
+                if (!firstInfo)
 					body += "</table>";
 
 			}
@@ -2192,7 +2195,7 @@ namespace TVRename
 				lvWhenToWatch.Groups[0].Header = "Aired in the last " + dd.ToString() + " day" + ((dd == 1) ? "":"s");
 
 				// try to maintain selections if we can
-				Generic.List<ProcessedEpisode > selections = new System.Collections.Generic.List<ProcessedEpisode >();
+                System.Collections.Generic.List<ProcessedEpisode> selections = new System.Collections.Generic.List<ProcessedEpisode>();
 				foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
 					selections.Add((ProcessedEpisode)(lvi.Tag));
 
@@ -2202,31 +2205,31 @@ namespace TVRename
 
 				lvWhenToWatch.Items.Clear();
 
-				Generic.List<DateTime> bolded = new System.Collections.Generic.List<DateTime>();
+                System.Collections.Generic.List<DateTime> bolded = new System.Collections.Generic.List<DateTime>();
 
 				foreach (ShowItem si in mDoc.GetShowItems(true))
 				{
 					if (!si.ShowNextAirdate)
 						continue;
 
-					foreach (KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
+					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
 					{
 						if (si.IgnoreSeasons.Contains(kvp.Key))
 							continue; // ignore this season
 
-						Generic.List<ProcessedEpisode > eis = kvp.Value;
+                        System.Collections.Generic.List<ProcessedEpisode> eis = kvp.Value;
 
 						bool nextToAirFound = false;
 
 						foreach (ProcessedEpisode ei in eis)
 						{
 							DateTime dt = ei.GetAirDateDT(true);
-							if ((dt != null) && (dt.CompareTo(DateTime.MaxValue)))
+							if ((dt != null) && (dt.CompareTo(DateTime.MaxValue) != 0))
 							{
 								TimeSpan ts = dt.Subtract(DateTime.Now);
 								if (ts.TotalHours >= (-24 *dd)) // in the future (or fairly recent)
 								{
-									bolded.Add(*dt);
+									bolded.Add(dt);
 									if ((ts.TotalHours >= 0) && (!nextToAirFound))
 									{
 										nextToAirFound = true;
@@ -2316,8 +2319,9 @@ namespace TVRename
 				txtWhenToWatchSynopsis.Text = ei.Overview;
 
 				mInternalChange++;
-				calCalendar.SelectionStart = *ei.GetAirDateDT(true);
-				calCalendar.SelectionEnd = *ei.GetAirDateDT(true);
+                DateTime dt = ei.GetAirDateDT(true);
+                calCalendar.SelectionStart = dt;
+                calCalendar.SelectionEnd = dt;
 				mInternalChange--;
 
 				if (mDoc.Settings.AutoSelectShowInMyShows)
@@ -2354,7 +2358,7 @@ namespace TVRename
 					ListViewItem lvi = lvWhenToWatch.Items[i];
 					ProcessedEpisode ei = (ProcessedEpisode)(lvi.Tag);
 					DateTime dt2 = ei.GetAirDateDT(true);
-					double h = dt2.Subtractdt.TotalHours;
+					double h = dt2.Subtract(dt).TotalHours;
 					if ((h >= 0) && (h < 24.0))
 					{
 						lvi.Selected = true;
@@ -2397,7 +2401,7 @@ namespace TVRename
 			public void UpdateToolstripWTW()
 			{
 				// update toolstrip text too
-				Generic.List<ProcessedEpisode > next1 = mDoc.NextNShows(1, 36500);
+				System.Collections.Generic.List<ProcessedEpisode > next1 = mDoc.NextNShows(1, 36500);
 
 				tsNextShowTxt.Text = "Next airing: ";
 				if ((next1 != null) && (next1.Count >= 1))
@@ -2420,12 +2424,12 @@ namespace TVRename
 					return; // don't intercept
 				if (url.EndsWith("tvrenameepguide.html"))
 					return; // don't intercept
-				if (!url.CompareTo("about:blank"))
+				if (url.CompareTo("about:blank") == 0)
 					return; // don't intercept about:blank
 				if (url == QuickStartGuide())
 					return; // let the quickstartguide be shown
 
-				if ((!url.Substring(0,7).CompareTo(new string("http://"))) || (!url.Substring(0,7).CompareTo(new string("file://"))))
+				if ((url.Substring(0,7).CompareTo("http://") == 0) || (url.Substring(0,7).CompareTo("file://") == 0))
 				{
 					e.Cancel = true;
 					TVDoc.SysOpen(e.Url.AbsoluteUri);
@@ -2516,7 +2520,7 @@ namespace TVRename
 						addSep = false;
 					}
 					tsi = new ToolStripMenuItem("Episode Guide");
-					tsi.Tag = (int)AnonymousEnum.kEpisodeGuideForShow;
+					tsi.Tag = (int)RightClickCommands.kEpisodeGuideForShow;
 					showRightClickMenu.Items.Add(tsi);
 				}
 
@@ -2528,7 +2532,7 @@ namespace TVRename
 						addSep = false;
 					}
 					tsi = new ToolStripMenuItem("Visit thetvdb.com");
-					tsi.Tag = (int)AnonymousEnum.kVisitTVDBEpisode;
+					tsi.Tag = (int)RightClickCommands.kVisitTVDBEpisode;
 					showRightClickMenu.Items.Add(tsi);
 				}
 				else if (seas != null)
@@ -2539,7 +2543,7 @@ namespace TVRename
 						addSep = false;
 					}
 					tsi = new ToolStripMenuItem("Visit thetvdb.com");
-					tsi.Tag = (int)AnonymousEnum.kVisitTVDBSeason;
+					tsi.Tag = (int)RightClickCommands.kVisitTVDBSeason;
 					showRightClickMenu.Items.Add(tsi);
 				}
 				else if (si != null)
@@ -2550,7 +2554,7 @@ namespace TVRename
 						addSep = false;
 					}
 					tsi = new ToolStripMenuItem("Visit thetvdb.com");
-					tsi.Tag = (int)AnonymousEnum.kVisitTVDBSeries;
+					tsi.Tag = (int)RightClickCommands.kVisitTVDBSeries;
 					showRightClickMenu.Items.Add(tsi);
 				}
 
@@ -2567,16 +2571,16 @@ namespace TVRename
 				if (si != null)
 				{
 					tsi = new ToolStripMenuItem("Force Refresh");
-					tsi.Tag = (int)AnonymousEnum.kForceRefreshSeries;
+					tsi.Tag = (int)RightClickCommands.kForceRefreshSeries;
 					showRightClickMenu.Items.Add(tsi);
 					ToolStripSeparator tss = new ToolStripSeparator();
 					showRightClickMenu.Items.Add(tss);
 					tsi = new ToolStripMenuItem("Scan");
-					tsi.Tag = (int)AnonymousEnum.kScanSpecificSeries;
+					tsi.Tag = (int)RightClickCommands.kScanSpecificSeries;
 					showRightClickMenu.Items.Add(tsi);
 					//tsi = gcnew ToolStripMenuItem("Renaming Check");     tsi->Tag = (int)kRenamingCheckSeries; showRightClickMenu->Items->Add(tsi);
 					tsi = new ToolStripMenuItem("When to Watch");
-					tsi.Tag = (int)AnonymousEnum.kWhenToWatchSeries;
+					tsi.Tag = (int)RightClickCommands.kWhenToWatchSeries;
 					showRightClickMenu.Items.Add(tsi);
 				}
 
@@ -2585,7 +2589,7 @@ namespace TVRename
 					System.Collections.Generic.List<System.IO.FileInfo > fl = mDoc.FindEpOnDisk(ep);
 					if (fl != null)
 					{
-						if (fl.Count)
+						if (fl.Count>0)
 						{
 							ToolStripSeparator tss = new ToolStripSeparator();
 							showRightClickMenu.Items.Add(tss);
@@ -2595,7 +2599,7 @@ namespace TVRename
 							{
 								mLastFL.Add(fi);
 								tsi = new ToolStripMenuItem("Watch: "+fi.FullName);
-								tsi.Tag = (int)AnonymousEnum.kWatchBase + n;
+								tsi.Tag = (int)RightClickCommands.kWatchBase + n;
 								showRightClickMenu.Items.Add(tsi);
 							}
 						}
@@ -2605,9 +2609,9 @@ namespace TVRename
 				{
 					// for each episode in season, find it on disk
 					bool first = true;
-					foreach (ProcessedEpisode ep in si.SeasonEpisodes[seas.SeasonNumber])
+					foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
 					{
-						System.Collections.Generic.List<System.IO.FileInfo > fl = mDoc.FindEpOnDisk(ep);
+						System.Collections.Generic.List<System.IO.FileInfo > fl = mDoc.FindEpOnDisk(epds);
 						if ((fl != null) && (fl.Count > 0))
 						{
 							if (first)
@@ -2622,7 +2626,7 @@ namespace TVRename
 							{
 								mLastFL.Add(fi);
 								tsi = new ToolStripMenuItem("Watch: "+fi.FullName);
-								tsi.Tag = (int)AnonymousEnum.kWatchBase + n;
+								tsi.Tag = (int)RightClickCommands.kWatchBase + n;
 								showRightClickMenu.Items.Add(tsi);
 							}
 						}
@@ -2636,7 +2640,7 @@ namespace TVRename
 				Season seas = mLastSeasonClicked;
 				ProcessedEpisode ep = mLastEpClicked;
 				ToolStripMenuItem tsi;
-				Generic.List<string > added = new System.Collections.Generic.List<string >();
+				System.Collections.Generic.List<string > added = new System.Collections.Generic.List<string >();
 
 				if (ep != null)
 				{
@@ -2646,7 +2650,7 @@ namespace TVRename
 						bool first = true;
 						foreach (string folder in ep.SI.AllFolderLocations(mDoc.Settings)[ep.SeasonNumber])
 						{
-							if ((!string.IsNullOrEmpty(folder)) && DirectoryInfo(folder).Exists)
+							if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder))
 							{
 								if (first)
 								{
@@ -2658,7 +2662,7 @@ namespace TVRename
 								tsi = new ToolStripMenuItem("Open: "+folder);
 								added.Add(folder);
 								mFoldersToOpen.Add(folder);
-								tsi.Tag = (int)AnonymousEnum.kOpenFolderBase+n;
+								tsi.Tag = (int)RightClickCommands.kOpenFolderBase+n;
 								n++;
 								showRightClickMenu.Items.Add(tsi);
 							}
@@ -2671,7 +2675,7 @@ namespace TVRename
 					bool first = true;
 					foreach (string folder in si.AllFolderLocations(mDoc.Settings)[seas.SeasonNumber])
 					{
-						if ((!string.IsNullOrEmpty(folder)) && DirectoryInfo(folder).Exists && !added.Contains(folder))
+						if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
 						{
 							added.Add(folder); // don't show the same folder more than once
 							if (first)
@@ -2683,7 +2687,7 @@ namespace TVRename
 
 							tsi = new ToolStripMenuItem("Open: "+folder);
 							mFoldersToOpen.Add(folder);
-							tsi.Tag = (int)AnonymousEnum.kOpenFolderBase+n;
+							tsi.Tag = (int)RightClickCommands.kOpenFolderBase+n;
 							n++;
 							showRightClickMenu.Items.Add(tsi);
 						}
@@ -2694,11 +2698,11 @@ namespace TVRename
 					int n = mFoldersToOpen.Count;
 					bool first = true;
 
-					foreach (KeyValuePair<int, System.Collections.Generic.List<string > > kvp in si.AllFolderLocations(mDoc.Settings))
+					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in si.AllFolderLocations(mDoc.Settings))
 					{
 						foreach (string folder in kvp.Value)
 						{
-							if ((!string.IsNullOrEmpty(folder)) && DirectoryInfo(folder).Exists && !added.Contains(folder))
+							if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
 							{
 								added.Add(folder); // don't show the same folder more than once
 								if (first)
@@ -2710,7 +2714,7 @@ namespace TVRename
 
 								tsi = new ToolStripMenuItem("Open: "+folder);
 								mFoldersToOpen.Add(folder);
-								tsi.Tag = (int)AnonymousEnum.kOpenFolderBase+n;
+								tsi.Tag = (int)RightClickCommands.kOpenFolderBase+n;
 								n++;
 								showRightClickMenu.Items.Add(tsi);
 							}
@@ -2726,7 +2730,7 @@ namespace TVRename
 					foreach (AIOItem aio in lvr.FlatList)
 					{
 						string folder = aio.TargetFolder();
-						if (!string.IsNullOrEmpty(folder) && DirectoryInfo(folder).Exists && !added.Contains(folder))
+						if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
 						{
 							added.Add(folder); // don't show the same folder more than once
 							if (first)
@@ -2738,7 +2742,7 @@ namespace TVRename
 
 							tsi = new ToolStripMenuItem("Open: "+folder);
 							mFoldersToOpen.Add(folder);
-							tsi.Tag = (int)AnonymousEnum.kOpenFolderBase+n;
+							tsi.Tag = (int)RightClickCommands.kOpenFolderBase+n;
 							n++;
 							showRightClickMenu.Items.Add(tsi);
 						}
@@ -2756,39 +2760,39 @@ namespace TVRename
 				MenuShowAndEpisodes();
 				MenuFolders(null);
 
-				showRightClickMenu.Show(*pt);
+				showRightClickMenu.Show(pt);
 			}
 			public void showRightClickMenu_ItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
 			{
 				showRightClickMenu.Close();
-				int n = (int)(e.ClickedItem.Tag);
+                RightClickCommands n = (RightClickCommands)e.ClickedItem.Tag;
 				switch (n)
 				{
-				case AnonymousEnum.kEpisodeGuideForShow: // epguide
+				case RightClickCommands.kEpisodeGuideForShow: // epguide
 					if (mLastEpClicked != null)
 						GotoEpguideFor(mLastEpClicked, true);
 					else
 						GotoEpguideFor(mLastShowClicked, true);
 					break;
 
-				case AnonymousEnum.kVisitTVDBEpisode: // thetvdb.com
+				case RightClickCommands.kVisitTVDBEpisode: // thetvdb.com
 					{
 						TVDBFor(mLastEpClicked);
 						break;
 					}
 
-				case AnonymousEnum.kVisitTVDBSeason:
+				case RightClickCommands.kVisitTVDBSeason:
 					{
 						TVDBFor(mLastSeasonClicked);
 						break;
 					}
 
-				case AnonymousEnum.kVisitTVDBSeries:
+				case RightClickCommands.kVisitTVDBSeries:
 					{
 						TVDBFor(mLastShowClicked);
 						break;
 					}
-				case AnonymousEnum.kScanSpecificSeries:
+				case RightClickCommands.kScanSpecificSeries:
 					{
 						if (mLastShowClicked != null)
 						{
@@ -2810,7 +2814,7 @@ namespace TVRename
 //					RenamingCheckSpecific(mLastShowClicked);
 //					break;
 //					}
-				case AnonymousEnum.kWhenToWatchSeries: // when to watch
+				case RightClickCommands.kWhenToWatchSeries: // when to watch
 					{
 						int code = -1;
 						if (mLastEpClicked != null)
@@ -2836,10 +2840,10 @@ namespace TVRename
 						}
 						break;
 					}
-				case AnonymousEnum.kForceRefreshSeries:
+				case RightClickCommands.kForceRefreshSeries:
 					ForceRefresh(mLastShowClicked);
 					break;
-				case AnonymousEnum.kBTSearchFor:
+				case RightClickCommands.kBTSearchFor:
 					{
 						foreach (ListViewItem lvi in lvAIO.SelectedItems)
 						{
@@ -2849,10 +2853,10 @@ namespace TVRename
 						}
 					}
 					break;
-				case AnonymousEnum.kAIOAction:
+				case RightClickCommands.kAIOAction:
 					AIOAction(false);
 					break;
-				case AnonymousEnum.kAIOBrowseForFile:
+				case RightClickCommands.kAIOBrowseForFile:
 					{
 						AIOMissing mi = (AIOMissing)(mLastAIOClicked);
 						if (mi != null)
@@ -2873,10 +2877,10 @@ namespace TVRename
 
 						break;
 					}
-				case AnonymousEnum.kAIOIgnore:
+				case RightClickCommands.kAIOIgnore:
 					IgnoreSelected();
 					break;
-				case AnonymousEnum.kAIOIgnoreSeason:
+				case RightClickCommands.kAIOIgnoreSeason:
 					{
 						// add this season to ignore list for the show selected
 						int snum = mLastAIOClicked.PE.SeasonNumber;
@@ -2885,7 +2889,7 @@ namespace TVRename
 							mLastAIOClicked.PE.SI.IgnoreSeasons.Add(snum);
 
 						// remove all other episodes from this season from aio list
-						Generic.List<AIOItem > remove = new System.Collections.Generic.List<AIOItem >();
+						System.Collections.Generic.List<AIOItem > remove = new System.Collections.Generic.List<AIOItem >();
 						foreach (AIOItem aio in mDoc.TheAIOList)
 							if ((aio.PE != null) && (aio.PE.SeasonNumber == snum))
 								remove.Add(aio);
@@ -2896,33 +2900,33 @@ namespace TVRename
 						FillAIOList();
 						break;
 					}
-				case AnonymousEnum.kAIODelete:
+				case RightClickCommands.kAIODelete:
 					AIODeleteSelected();
 					break;
 				default:
 					{
-						if ((n >= AnonymousEnum.kWatchBase) && (n < AnonymousEnum.kOpenFolderBase))
+						if ((n >= RightClickCommands.kWatchBase) && (n < RightClickCommands.kOpenFolderBase))
 						{
-							int wn = n - AnonymousEnum.kWatchBase;
+							int wn = n - RightClickCommands.kWatchBase;
 							if ((mLastFL != null) && (wn >= 0) && (wn < mLastFL.Count))
 								TVDoc.SysOpen(mLastFL[wn].FullName);
 						}
-						else if (n >= AnonymousEnum.kOpenFolderBase)
+						else if (n >= RightClickCommands.kOpenFolderBase)
 						{
-							int fnum = n - AnonymousEnum.kOpenFolderBase;
+							int fnum = n - RightClickCommands.kOpenFolderBase;
 
 							if (fnum < mFoldersToOpen.Count)
 							{
 								string folder = mFoldersToOpen[fnum];
 
-								if (DirectoryInfo(folder).Exists)
+								if (Directory.Exists(folder))
 									TVDoc.SysOpen(folder);
 							}
 							return;
 						}
 						else
 						{
-							Diagnostics.Debug.Fail("Unknown right-click action " + n.ToString());
+							System.Diagnostics.Debug.Fail("Unknown right-click action " + n.ToString());
 						}
 						break;
 					}
@@ -2963,7 +2967,7 @@ namespace TVRename
 				tsi.Tag = n++;
 				folderRightClickMenu.Items.Add(tsi);
 
-				folderRightClickMenu.Show(*pt);
+				folderRightClickMenu.Show(pt);
 			}
 
 			public void lvWhenToWatch_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -2973,7 +2977,7 @@ namespace TVRename
 				if (lvWhenToWatch.SelectedItems.Count == 0)
 					return;
 
-				Point pt = lvWhenToWatch.PointToScreen(Point(e.X, e.Y));
+				Point pt = lvWhenToWatch.PointToScreen(new Point(e.X, e.Y));
 				ProcessedEpisode ei = (ProcessedEpisode)(lvWhenToWatch.SelectedItems[0].Tag);
 				RightClickOnShow(ei, pt);
 			}
@@ -3184,7 +3188,7 @@ namespace TVRename
 
 				if (ser != null)
 				{
-					Generic.List<int> theKeys = new System.Collections.Generic.List<int>();
+					System.Collections.Generic.List<int> theKeys = new System.Collections.Generic.List<int>();
 					// now, go through and number them all sequentially
 					foreach (int snum in ser.Seasons.Keys)
 						theKeys.Add(snum);
@@ -3338,10 +3342,10 @@ namespace TVRename
 					 return;
 				 }
 
-				 ShowItem si = TreeNodeToShowItem(n);
-				 if (si != null)
+				 ShowItem si2 = TreeNodeToShowItem(n);
+				 if (si2 != null)
 				 {
-					 EditShow(si);
+					 EditShow(si2);
 					 return;
 				 }
 			 }
@@ -3441,14 +3445,14 @@ namespace TVRename
 				 System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > afl = si.AllFolderLocations(mDoc.Settings);
 				 int[] keys = new int[afl.Count];
 				 afl.Keys.CopyTo(keys, 0);
-				 if ((seas == null) && (keys.Length))
+				 if ((seas == null) && (keys.Length > 0))
 				 {
 					 string f = si.AutoAdd_FolderBase;
 					 if (string.IsNullOrEmpty(f))
 					 {
-						 int n = keys[0];
-						 if (afl[n].Count)
-							 f = afl[n][0];
+						 int n2 = keys[0];
+						 if (afl[n2].Count > 0)
+							 f = afl[n2][0];
 					 }
 					 if (!string.IsNullOrEmpty(f))
 					 {
@@ -3466,7 +3470,7 @@ namespace TVRename
 				 if ((seas != null) && (afl.ContainsKey(seas.SeasonNumber)))
 				 {
 					 foreach (string folder in afl[seas.SeasonNumber])
-						 if (DirectoryInfo(folder).Exists)
+						 if (Directory.Exists(folder))
 						 {
 							 TVDoc.SysOpen(folder);
 							 return;
@@ -3474,7 +3478,7 @@ namespace TVRename
 				 }
 				 try
 				 {
-					 if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (DirectoryInfo(si.AutoAdd_FolderBase).Exists))
+					 if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (Directory.Exists(si.AutoAdd_FolderBase)))
 						 TVDoc.SysOpen(si.AutoAdd_FolderBase);
 				 }
 				 catch
@@ -3489,7 +3493,7 @@ namespace TVRename
 
 				 MyShowTree.SelectedNode = MyShowTree.GetNodeAt(e.X, e.Y);
 
-				 Point pt = MyShowTree.PointToScreen(Point(e.X, e.Y));
+				 Point pt = MyShowTree.PointToScreen(new Point(e.X, e.Y));
 				 TreeNode n = MyShowTree.SelectedNode;
 
 				 if (n == null)
@@ -3523,7 +3527,7 @@ namespace TVRename
 				 {
 					 foreach (ShowItem si in mDoc.GetShowItems(true))
 					 {
-						 foreach (KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
+						 foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
 						 {
 							 pel = kvp.Value;
 							 break;
@@ -3550,7 +3554,7 @@ namespace TVRename
 			 {
 				 System.Collections.Generic.List<ProcessedEpisode > pel = CurrentlySelectedPEL();
 
-				 AddEditSearchEngine aese = new AddEditSearchEngine(mDoc.GetSearchers(), ((pel != null) && (pel.Count)) ? pel[0] : null);
+				 AddEditSearchEngine aese = new AddEditSearchEngine(mDoc.GetSearchers(), ((pel != null) && (pel.Count > 0)) ? pel[0] : null);
 				 DialogResult dr = aese.ShowDialog();
 				 if (dr ==DialogResult.OK)
 				 {
@@ -3566,11 +3570,11 @@ namespace TVRename
 
 				 if (currentSI != null)
 				 {
-					 foreach (KeyValuePair<int, System.Collections.Generic.List<string > > kvp in currentSI.AllFolderLocations(mDoc.Settings))
+					 foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in currentSI.AllFolderLocations(mDoc.Settings))
 					 {
 						 foreach (string folder in kvp.Value)
 						 {
-							 if ((!string.IsNullOrEmpty(folder)) && DirectoryInfo(folder).Exists)
+							 if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder))
 							 {
 								 theFolder = folder;
 								 break;
@@ -3594,7 +3598,7 @@ namespace TVRename
 			 }
 	private void actorsToolStripMenuItem_Click(object sender, System.EventArgs e)
 			 {
-				 ActorsGrid(mDoc).ShowDialog();
+				 new ActorsGrid(mDoc).ShowDialog();
 			 }
 	private void quickTimer_Tick(object sender, System.EventArgs e)
 			 {
@@ -3684,7 +3688,7 @@ namespace TVRename
 				 lvi.Tag = aio;
 
 				 const int kErrCol = 8;
-				 Diagnostics.Debug.Assert(lvi.SubItems.Count <= kErrCol);
+				 System.Diagnostics.Debug.Assert(lvi.SubItems.Count <= kErrCol);
 
 				 while (lvi.SubItems.Count < kErrCol)
 					 lvi.SubItems.Add(""); // pad our way to the error column
@@ -3693,14 +3697,14 @@ namespace TVRename
 				 {
 
 					 lvi.SubItems.Add(aio.ErrorText); // error text
-					 lvi.BackColor = WarningColor();
+					 lvi.BackColor = Helpers.WarningColor();
 					 if ((aio.Type == AIOType.kMissing) || (aio.Type == AIOType.kuTorrenting))
 						 lvi.Checked = false;
 				 }
 				 else
 					 lvi.SubItems.Add("");
 
-				 Diagnostics.Debug.Assert(lvi.SubItems.Count == lvAIO.Columns.Count);
+				 System.Diagnostics.Debug.Assert(lvi.SubItems.Count == lvAIO.Columns.Count);
 
 				 e.Item = lvi;
 			 }
@@ -3728,13 +3732,13 @@ namespace TVRename
 							 lvi.ImageIndex = n;
 
 						 const int kErrCol = 8;
-						 Diagnostics.Debug.Assert(lvi.SubItems.Count <= kErrCol);
+						 System.Diagnostics.Debug.Assert(lvi.SubItems.Count <= kErrCol);
 						 if (aio.HasError)
 						 {
 							 while (lvi.SubItems.Count < kErrCol)
 								 lvi.SubItems.Add(""); // pad our way to the error column
 							 lvi.SubItems.Add(aio.ErrorText); // error text
-							 lvi.BackColor = WarningColor();
+							 lvi.BackColor = Helpers.WarningColor();
 							 if ((aio.Type == AIOType.kMissing) || (aio.Type == AIOType.kuTorrenting))
 								 lvi.Checked = false;
 						 }
@@ -3839,10 +3843,10 @@ namespace TVRename
 				 // build the right click menu for the _selected_ items, and types of items
 				 LVResults lvr = new LVResults(lvAIO, false);
 
-				 if (!lvr.Count)
+				 if (lvr.Count == 0)
 					 return; // nothing selected
 
-				 Point pt = lvAIO.PointToScreen(Point(e.X, e.Y));
+				 Point pt = lvAIO.PointToScreen(new Point(e.X, e.Y));
 
 				 showRightClickMenu.Items.Clear();
 
@@ -3851,20 +3855,20 @@ namespace TVRename
 				 if (lvr.Count > lvr.Missing.Count) // not just missing selected
 				 {
 					 tsi = new ToolStripMenuItem("Action Selected");
-					 tsi.Tag = (int)AnonymousEnum.kAIOAction;
+					 tsi.Tag = (int)RightClickCommands.kAIOAction;
 					 showRightClickMenu.Items.Add(tsi);
 				 }
 
 				 tsi = new ToolStripMenuItem("Ignore Selected");
-				 tsi.Tag = (int)AnonymousEnum.kAIOIgnore;
+				 tsi.Tag = (int)RightClickCommands.kAIOIgnore;
 				 showRightClickMenu.Items.Add(tsi);
 
 				 tsi = new ToolStripMenuItem("Ignore Entire Season");
-				 tsi.Tag = (int)AnonymousEnum.kAIOIgnoreSeason;
+				 tsi.Tag = (int)RightClickCommands.kAIOIgnoreSeason;
 				 showRightClickMenu.Items.Add(tsi);
 
 				 tsi = new ToolStripMenuItem("Remove Selected");
-				 tsi.Tag = (int)AnonymousEnum.kAIODelete;
+				 tsi.Tag = (int)RightClickCommands.kAIODelete;
 				 showRightClickMenu.Items.Add(tsi);
 
 				 if (lvr.Count == lvr.Missing.Count) // only missing items selected?
@@ -3872,13 +3876,13 @@ namespace TVRename
 					 showRightClickMenu.Items.Add(new ToolStripSeparator());
 
 					 tsi = new ToolStripMenuItem("BT Search");
-					 tsi.Tag = (int)AnonymousEnum.kBTSearchFor;
+					 tsi.Tag = (int)RightClickCommands.kBTSearchFor;
 					 showRightClickMenu.Items.Add(tsi);
 
 					 if (lvr.Count == 1) // only one selected
 					 {
 						 tsi = new ToolStripMenuItem("Browse For...");
-						 tsi.Tag = (int)AnonymousEnum.kAIOBrowseForFile;
+						 tsi.Tag = (int)RightClickCommands.kAIOBrowseForFile;
 						 showRightClickMenu.Items.Add(tsi);
 					 }
 				 }
@@ -3886,20 +3890,20 @@ namespace TVRename
 				 MenuGuideAndTVDB(true);
 				 MenuFolders(lvr);
 
-				 showRightClickMenu.Show(*pt);
+				 showRightClickMenu.Show(pt);
 			 }
 	private void lvAIO_SelectedIndexChanged(object sender, System.EventArgs e)
 			 {
 				 LVResults lvr = new LVResults(lvAIO, false);
 
-				 if (!lvr.Count)
+				 if (lvr.Count == 0)
 				 {
 					 // disable everything
 					 bnAIOBTSearch.Enabled = false;
 					 return;
 				 }
 
-				 if (lvr.Download.Count)
+				 if (lvr.Download.Count > 0)
 					 bnAIOBTSearch.Enabled = false;
 				 else
 					 bnAIOBTSearch.Enabled = true;
@@ -3965,7 +3969,7 @@ namespace TVRename
 				 foreach (ListViewItem lvi in lvAIO.Items)
 				 {
 					 AIOItem i = (AIOItem)(lvi.Tag);
-					 if ((i != null) && (i.Type == AIOType.kCopyMoveRename) && ((AIOCopyMoveRename)(i).Operation == AIOCopyMoveRename.Op.Rename))
+					 if ((i != null) && (i.Type == AIOType.kCopyMoveRename) && (((AIOCopyMoveRename)i).Operation == AIOCopyMoveRename.Op.Rename))
 						 lvi.Checked = some ? false : true;
 				 }
 			 }
@@ -3976,7 +3980,7 @@ namespace TVRename
 				 foreach (ListViewItem lvi in lvAIO.Items)
 				 {
 					 AIOItem i = (AIOItem)(lvi.Tag);
-					 if ((i != null) && (i.Type == AIOType.kCopyMoveRename) && ((AIOCopyMoveRename)(i).Operation != AIOCopyMoveRename.Op.Rename))
+					 if ((i != null) && (i.Type == AIOType.kCopyMoveRename) && (((AIOCopyMoveRename)i).Operation != AIOCopyMoveRename.Op.Rename))
 						 lvi.Checked = some ? false : true;
 				 }
 			 }
@@ -4029,7 +4033,7 @@ namespace TVRename
 	private void lvAIO_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
 			 {
 				 // double-click on an item will search for missing, do nothing (for now) for anything else
-				 foreach (AIOMissing miss in LVResults(lvAIO, false).Missing)
+				 foreach (AIOMissing miss in new LVResults(lvAIO, false).Missing)
 					 if (miss.PE != null)
 						 mDoc.DoBTSearch(miss.PE);
 			 }
@@ -4037,7 +4041,7 @@ namespace TVRename
 			 {
 				 LVResults lvr = new LVResults(lvAIO, false);
 
-				 if (!lvr.Count)
+				 if (lvr.Count == 0)
 					 return;
 
 				 foreach (AIOItem i in lvr.FlatList)

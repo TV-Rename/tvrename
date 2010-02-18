@@ -12,7 +12,7 @@ public static class GlobalMembersTVRename
 
 
     [STAThread]
-	static void Main()
+	static int Main(string[] args)
 	{
 		// Enabling Windows XP visual effects before any controls are created
 		Application.EnableVisualStyles();
@@ -26,7 +26,7 @@ public static class GlobalMembersTVRename
 
 		bool requestInitialOwnership = true;
 		bool createdNew = false;
-		mutex = new System.Threading.Mutex(requestInitialOwnership, mutexName, createdNew);
+		mutex = new System.Threading.Mutex(requestInitialOwnership, mutexName, out createdNew);
 		if (!createdNew)
 		{
 		  // we're already running

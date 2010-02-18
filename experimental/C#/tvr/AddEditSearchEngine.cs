@@ -105,8 +105,8 @@ namespace TVRename
 			int r = Grid1.RowsCount;
 			Grid1.RowsCount = r + 1;
 
-			Grid1[r, 0] = new SourceGrid.Cells.Cell("", (new string("")).GetType());
-			Grid1[r, 1] = new SourceGrid.Cells.Cell("", (new string("")).GetType());
+			Grid1[r, 0] = new SourceGrid.Cells.Cell("", typeof(string));
+			Grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
 		}
 
 		/// <summary>
@@ -239,13 +239,13 @@ namespace TVRename
 	private void bnAdd_Click(object sender, System.EventArgs e)
 			 {
 				 AddNewRow();
-				 Grid1.Selection.Focus(SourceGrid.Position(Grid1.RowsCount-1,1), true);
+				 Grid1.Selection.Focus(new SourceGrid.Position(Grid1.RowsCount-1,1), true);
 			 }
 	private void bnDelete_Click(object sender, System.EventArgs e)
 			 {
 				 // multiselection is off, so we can cheat...
 				 int[] rowsIndex = Grid1.Selection.GetSelectionRegion().GetRowsIndex();
-				 if (rowsIndex.Length)
+				 if (rowsIndex.Length > 0)
 					 Grid1.Rows.Remove(rowsIndex[0]);
 			 }
 	private void bnOK_Click(object sender, System.EventArgs e)

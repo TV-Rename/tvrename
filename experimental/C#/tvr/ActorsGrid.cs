@@ -611,7 +611,7 @@ namespace TVRename
 			// Dictionary<String^, StringList ^> ^whoInWhat = gcnew Dictionary<String^, StringList ^>;
 			TheTVDB db = mDoc.GetTVDB(true,"Actors");
 			TheData = new DataArr(db.GetSeriesDict().Count);
-			foreach (KeyValuePair<int, SeriesInfo > ser in db.GetSeriesDict())
+			foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo > ser in db.GetSeriesDict())
 			{
 				SeriesInfo si = ser.Value;
 				string actors = si.GetItem("Actors");
@@ -625,7 +625,7 @@ namespace TVRename
 
 				if (cbGuestStars.Checked)
 				{
-					foreach (KeyValuePair<int, Season > kvp in si.Seasons)
+					foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp in si.Seasons)
 					{
 						foreach (Episode ep in kvp.Value.Episodes)
 						{

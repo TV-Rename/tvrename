@@ -32,8 +32,13 @@ namespace TVRename
 	{
 		private TVDoc mDoc;
 
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//	  DownloadProgress(TVDoc doc);
+
+        public DownloadProgress(TVDoc doc)
+        {
+            InitializeComponent();
+
+            mDoc = doc;
+        }
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -132,16 +137,30 @@ namespace TVRename
 
 				}
 #endregion
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//	void bnCancel_Click(object sender, System::EventArgs e);
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//void tmrUpdate_Tick(object sender, System::EventArgs e);
+        private void bnCancel_Click(object sender, System.EventArgs e)
+        {
+            tmrUpdate.Stop();
+            mDoc.StopBGDownloadThread();
+            this.DialogResult = DialogResult.Abort;
+        }
+        private void tmrUpdate_Tick(object sender, System.EventArgs e)
+        {
+            if (mDoc.DownloadDone)
+                Close();
+            else
+                UpdateStuff();
+        }
+
 private void DownloadProgress_Load(object sender, System.EventArgs e)
 		 {
 			 //UpdateStuff();
 		 }
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//	  void UpdateStuff();
+private void UpdateStuff()
+{
+    txtCurrent.Text = mDoc.GetTVDB(false, "").CurrentDLTask;
+    pbProgressBar.Value = mDoc.DownloadPct;
+}
+
 }
 
 }

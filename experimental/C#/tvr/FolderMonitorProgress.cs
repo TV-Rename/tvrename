@@ -96,14 +96,25 @@ namespace TVRename
 		private FolderMonitor mFM;
 			public bool StopNow;
 
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//			 FolderMonitorProgress(FolderMonitor thefm);
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//			 void bnCancel_Click(object sender, System::EventArgs e);
+            public FolderMonitorProgress(FolderMonitor thefm)
+            {
+                mFM = thefm;
+
+                InitializeComponent();
+            }
+            public void bnCancel_Click(object sender, System.EventArgs e)
+            {
+                this.DialogResult = DialogResult.Abort;
+                mFM.FMPStopNow = true;
+            }
 
 
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//	void timer1_Tick(object sender, System::EventArgs e);
+            private void timer1_Tick(object sender, System.EventArgs e)
+            {
+                if (mFM.FMPStopNow)
+                    this.Close();
+            }
+
 	}
 
 }

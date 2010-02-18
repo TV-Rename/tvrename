@@ -15,7 +15,7 @@ namespace TVRename
   public class Searchers
   {
 	private System.Collections.Generic.List<string > mNames;
-    private System.Collections.Generic.List<string> mURLs;
+    private StringList mURLs;
 
 	public string CurrentSearch;
 
@@ -41,8 +41,8 @@ namespace TVRename
 
 	public Searchers()
 	{
-	  mNames = new Generic.List<string >();
-      mURLs = new Generic.List<string>();
+	  mNames = new StringList();
+      mURLs = new StringList();
 	  CurrentSearch = "";
 
 	  Add("Area07", "http://www.area07.net/browse.php?search={ShowName}+{Season}+{Episode}&cat=4");
@@ -62,8 +62,8 @@ namespace TVRename
 	}
 	public Searchers(XmlReader reader)
 	{
-        mNames = new Generic.List<string>();
-		mURLs = new Generic.List<string >();
+        mNames = new StringList();
+		mURLs = new StringList();
 		CurrentSearch = "";
 
 		reader.Read();

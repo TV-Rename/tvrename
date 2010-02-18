@@ -68,7 +68,10 @@ namespace TVRename
 
 		public static bool BytesToTZI(Byte[] mTZIBytes, TZI tz)
 		{
-//C++ TO C# CONVERTER TODO TASK: Pointer arithmetic is detected on this variable, so pointers on this variable are left unchanged.
+            //TODO
+            return false;
+            /*
+            //C++ TO C# CONVERTER TODO TASK: Pointer arithmetic is detected on this variable, so pointers on this variable are left unchanged.
 			char *p = (char)(tz);
 			if (mTZIBytes.Length != sizeof(TZI))
 				return false;
@@ -77,11 +80,14 @@ namespace TVRename
 				*p++= mTZIBytes[i];
 
 			return true;
+             */
 		}
 
 
 		public static DateTime AdjustTZTimeToOurs(DateTime dt, TZI tz) // set tz to 0 to not correct for timezone
 		{
+            return dt;
+            /* TODO
 					if ((tz == 0) || (dt == null))
 						return dt;
 
@@ -102,7 +108,7 @@ namespace TVRename
 						DateTime theirDSTEnd = new DateTime(thisYear,tz.standardDate.wMonth,tz.standardDate.wDay, tz.standardDate.wHour,tz.standardDate.wMinute,tz.standardDate.wSecond);
 
 						if (theirDSTEnd.CompareTo(theirDSTStart) < 0)
-							theirDSTStart -= TimeSpan(365,0,0,0,0);
+							theirDSTStart -= new TimeSpan(365,0,0,0,0);
 
 						if (themNow.CompareTo(theirDSTStart) > 0)
 							themNow = themNow.AddMinutes(-tz.daylightBias);
@@ -114,17 +120,18 @@ namespace TVRename
 
 					return dt.Add(tweakTime);
 					;
+             */
 		}
 
 
 		public static uint Epoch()
 		{
-			return (uint)(DateTime.UtcNow.Subtract(DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
+			return (uint)(DateTime.UtcNow.Subtract(new DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
 		}
 		public static uint Epoch(DateTime dt)
 		{
 			DateTime uni = dt.ToUniversalTime();
-			uint r = (uint)(uni.Subtract(DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
+			uint r = (uint)(uni.Subtract(new DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
 			return r;
 		}
 

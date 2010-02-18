@@ -297,7 +297,7 @@ namespace TVRename
 					lvi.Tag = pe;
 				}
 				if (!ok || !ok1 || !ok2)
-					lvi.BackColor = WarningColor();
+					lvi.BackColor = Helpers.WarningColor();
 				lvTest.Items.Add(lvi);
 			}
 		}

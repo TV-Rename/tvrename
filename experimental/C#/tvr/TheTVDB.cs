@@ -62,8 +62,14 @@ namespace TVRename
 		public int SeasonNumber;
 		public int SeasonID;
 
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//		Season(SeriesInfo theSeries, int number, int seasonid);
+        public Season(SeriesInfo theSeries, int number, int seasonid)
+        {
+            TheSeries = theSeries;
+            SeasonNumber = number;
+            SeasonID = seasonid;
+            Episodes = new Generic.List<Episode>();
+        }
+
 	}
 
 	public class SeasonComparer : System.Collections.Generic.IComparer<Season>
@@ -139,7 +145,7 @@ namespace TVRename
 			EpisodeID = -1;
 			SeriesID = -1;
 			EpNum = -1;
-			FirstAired = null;
+			FirstAired = DateTime.MinValue;
 			Srv_LastUpdated = -1;
 			Dirty = false;
 		}
@@ -159,7 +165,7 @@ namespace TVRename
 			Dirty = O.Dirty;
 
 			Items = new System.Collections.Generic.Dictionary<string , string>();
-			foreach (KeyValuePair<string , string> i in O.Items)
+			foreach (System.Collections.Generic.KeyValuePair<string , string> i in O.Items)
 				Items.Add(i.Key, i.Value);
 		}
 
@@ -174,13 +180,26 @@ namespace TVRename
 			}
 		}
 
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//		System::DateTime GetAirDateDT(bool correct);
+        public System.DateTime GetAirDateDT(bool correct)
+        {
+            if (FirstAired == DateTime.MinValue)
+                return DateTime.MinValue;
+
+            DateTime dt = (TheSeries.AirsTime != DateTime.MinValue) ? new DateTime(FirstAired.Year, FirstAired.Month, FirstAired.Day, TheSeries.AirsTime.Hour, TheSeries.AirsTime.Minute, 0, 0) : new DateTime(FirstAired.Year, FirstAired.Month, FirstAired.Day, 20, 0, 0, 0);
+
+            if (!correct)
+                return dt;
+
+            // do timezone adjustment
+            return TZMagic.AdjustTZTimeToOurs(dt, TheSeries.GetTZI());
+        }
+
+
 
 		public string HowLong()
 		{
 			DateTime dt = GetAirDateDT(true);
-			if (dt == null)
+            if (dt == null) // TODO ***  compare to DateTime.MinValue, and everywhere else too!!!
 				return "";
 
 			TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
@@ -198,8 +217,6 @@ namespace TVRename
 				else
 					return System.Math.Round(ts.TotalMinutes).ToString()+"min";
 			}
-			return "";
-
 		}
 
 		public string DayOfWeek()
@@ -260,7 +277,7 @@ namespace TVRename
 				writer.WriteEndElement();
 			}
 
-			foreach (KeyValuePair<string , string > kvp in Items)
+			foreach (System.Collections.Generic.KeyValuePair<string , string > kvp in Items)
 			{
 				writer.WriteStartElement(kvp.Key);
 				writer.WriteValue(kvp.Value);
@@ -271,8 +288,86 @@ namespace TVRename
 			writer.WriteEndElement();
 		}
 
-//C++ TO C# CONVERTER TODO TASK: The implementation of the following method could not be found:
-//		Episode(SeriesInfo ser, Season seas, XmlReader r);
+        public Episode(SeriesInfo ser, Season seas, XmlReader r)
+        {
+            // <Episode>
+            //  <id>...</id>
+            //  blah blah
+            // </Episode>
+
+            try
+            {
+                SetDefaults(ser, seas);
+
+                r.Read();
+                if (r.Name != "Episode")
+                    return;
+
+                r.Read();
+                while (!r.EOF)
+                {
+                    if ((r.Name == "Episode") && (!r.IsStartElement()))
+                        break;
+                    if (r.Name == "id")
+                        EpisodeID = r.ReadElementContentAsInt();
+                    if (r.Name == "seriesid")
+                        SeriesID = r.ReadElementContentAsInt(); // thetvdb series id
+                    if (r.Name == "seasonid")
+                        SeasonID = r.ReadElementContentAsInt();
+                    else if (r.Name == "EpisodeNumber")
+                        EpNum = r.ReadElementContentAsInt();
+                    else if (r.Name == "SeasonNumber")
+                        ReadSeasonNum = r.ReadElementContentAsInt();
+                    else if (r.Name == "lastupdated")
+                        Srv_LastUpdated = r.ReadElementContentAsInt();
+                    else if (r.Name == "Overview")
+                        Overview = GlobalMembersTheTVDB.ReadStringFixQuotesAndSpaces(r);
+                    else if (r.Name == "EpisodeName")
+                        Name = GlobalMembersTheTVDB.ReadStringFixQuotesAndSpaces(r);
+                    else if (r.Name == "FirstAired")
+                    {
+                        try
+                        {
+                            FirstAired = DateTime.ParseExact(r.ReadElementContentAsString(), "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                        }
+                        catch
+                        {
+                            FirstAired = DateTime.MinValue;
+                        }
+                    }
+                    else
+                    {
+                        if ((r.IsEmptyElement) || !r.IsStartElement())
+                            r.ReadOuterXml();
+                        else
+                        {
+                            XmlReader r2 = r.ReadSubtree();
+                            r2.Read();
+                            string name = r2.Name;
+                            Items[name] = r2.ReadElementContentAsString();
+                            r.Read();
+                        }
+                    }
+                }
+            }
+            catch (XmlException e)
+            {
+                string message = "Error processing data from TheTVDB for an episode.";
+                if (SeriesID != -1)
+                    message += "\r\nSeries ID: " + SeriesID;
+                if (EpisodeID != -1)
+                    message += "\r\nEpisode ID: " + EpisodeID.ToString();
+                if (EpNum != -1)
+                    message += "\r\nEpisode Number: " + EpNum.ToString();
+                if (!string.IsNullOrEmpty(Name))
+                    message += "\r\nName: " + Name;
+
+                message += "\r\n" + e.Message;
+
+                MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        } // episode constructor
+
 	}
 
 	public class SeriesInfo
@@ -387,7 +482,7 @@ namespace TVRename
 			if ((!string.IsNullOrEmpty(o.Name)) && betterLanguage)
 				Name = o.Name;
 			Items.Clear();
-			foreach (KeyValuePair<string , string > kvp in o.Items)
+			foreach (System.Collections.Generic.KeyValuePair<string , string > kvp in o.Items)
 			{
 				if ((!string.IsNullOrEmpty(kvp.Value)) || betterLanguage)
 					Items[kvp.Key] = kvp.Value;
@@ -516,7 +611,7 @@ namespace TVRename
 			writer.WriteValue(Language);
 			writer.WriteEndElement();
 
-			foreach (KeyValuePair<string , string > kvp in Items)
+			foreach (System.Collections.Generic.KeyValuePair<string , string > kvp in Items)
 			{
 				writer.WriteStartElement(kvp.Key);
 				writer.WriteValue(kvp.Value);
@@ -611,22 +706,22 @@ namespace TVRename
 			return Series;
 		}
 
-		public static void GetLock(string whoFor)
+		public void GetLock(string whoFor)
 		{
 			return;
-//            Diagnostics::Debug::Print("Lock Series for " + whoFor);
+//            System.Diagnostics::Debug::Print("Lock Series for " + whoFor);
 //            Monitor::Enter(Series);
 //            WhoHasLock->Add(whoFor);
 		}
-		public static void Unlock(string whoFor)
+		public void Unlock(string whoFor)
 		{
 			return;
 //            int n = WhoHasLock->Count - 1;
 //            String ^whoHad = WhoHasLock[n];
 //#if defined(DEBUG)
-//            Diagnostics::Debug::Assert(whoFor == whoHad);
+//            System.Diagnostics::Debug::Assert(whoFor == whoHad);
 //#endif
-//            Diagnostics::Debug::Print("Unlock series ("+whoFor+")");
+//            System.Diagnostics::Debug::Print("Unlock series ("+whoFor+")");
 //            WhoHasLock->RemoveAt(n);
 //
 //            Monitor::Exit(Series);
@@ -639,7 +734,7 @@ namespace TVRename
 
 		public TheTVDB(FileInfo loadFrom, FileInfo cacheFile)
 		{
-			Diagnostics.Debug.Assert(cacheFile != null);
+			System.Diagnostics.Debug.Assert(cacheFile != null);
 			CacheFile = cacheFile;
 
 			LastError = "";
@@ -751,12 +846,12 @@ namespace TVRename
 			writer.WriteEndAttribute();
 
 
-			foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
+			foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
 			{
 				if (kvp.Value.Srv_LastUpdated != 0)
 				{
 					kvp.Value.WriteXml(writer);
-					foreach (KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
+					foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
 					{
 						Season seas = kvp2.Value;
 						foreach (Episode e in seas.Episodes)
@@ -775,9 +870,9 @@ namespace TVRename
 		public Episode FindEpisodeByID(int id)
 		{
 			GetLock("FindEpisodeByID");
-			foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
+			foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
 			{
-				foreach (KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
+				foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
 				{
 					Season seas = kvp2.Value;
 					foreach (Episode e in seas.Episodes)
@@ -819,7 +914,7 @@ namespace TVRename
 				 //{
 					 ZipFile zf = ZipFile.Read(ms);
 					 zf.Extract(extractFile, theFile);
-					 Diagnostics.Debug.Print("Downloaded " + url + ", " + ms.Length + " bytes became " + theFile.Length);
+					 System.Diagnostics.Debug.Print("Downloaded " + url + ", " + ms.Length + " bytes became " + theFile.Length);
 				 //}
 				 //catch (Exception ^e)
 				 //{
@@ -892,7 +987,7 @@ namespace TVRename
 					 //str->Read(r, 0, (int)str->Length);
 
 					 if (!url.EndsWith(".zip"))
-						 Diagnostics.Debug.Print("Downloaded " + url + ", " + r.Length + " bytes");
+						 System.Diagnostics.Debug.Print("Downloaded " + url + ", " + r.Length + " bytes");
 
 					 return r;
 				 }
@@ -999,9 +1094,9 @@ namespace TVRename
 			// get mirror list
 			Say("TheTVDB Mirrors");
 
-			Generic.List<string > XMLMirrorList = new System.Collections.Generic.List<string >();
-			Generic.List<string > BannerMirrorList = new System.Collections.Generic.List<string >();
-			Generic.List<string > ZIPMirrorList = new System.Collections.Generic.List<string >();
+			System.Collections.Generic.List<string > XMLMirrorList = new System.Collections.Generic.List<string >();
+			System.Collections.Generic.List<string > BannerMirrorList = new System.Collections.Generic.List<string >();
+			System.Collections.Generic.List<string > ZIPMirrorList = new System.Collections.Generic.List<string >();
 
 			byte[] p = GetPage("mirrors.xml", true, typeMaskBits.tmMainSite, false);
 			if (p == null)
@@ -1102,12 +1197,12 @@ namespace TVRename
 			{
 				// we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
 				// This will only happen the first time we do an update, so a false _all update isn't too bad.
-				foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
+				foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
 				{
 					SeriesInfo ser = kvp.Value;
 					if ((theTime == 0) || ((ser.Srv_LastUpdated != 0) && (ser.Srv_LastUpdated < theTime)))
 						theTime = ser.Srv_LastUpdated;
-					foreach (KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
+					foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
 					{
 						Season seas = kvp2.Value;
 
@@ -1120,12 +1215,12 @@ namespace TVRename
 
 			// anything with a srv_lastupdated of 0 should be marked as dirty
 			// typically, this'll be placeholder series
-			foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
+			foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
 			{
 				SeriesInfo ser = kvp.Value;
 				if ((ser.Srv_LastUpdated == 0) || (ser.Seasons.Count == 0))
 					ser.Dirty = true;
-				foreach (KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
+				foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
 				{
 					foreach (Episode ep in kvp2.Value.Episodes)
 						if (ep.Srv_LastUpdated == 0)
@@ -1266,7 +1361,7 @@ namespace TVRename
 								if (Series.ContainsKey(serID))
 								{
 									bool found = false;
-									foreach (KeyValuePair<int, Season > kvp2 in Series[serID].Seasons)
+									foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp2 in Series[serID].Seasons)
 									{
 										Season seas = kvp2.Value;
 
@@ -1308,11 +1403,11 @@ namespace TVRename
 			} // reader EOF
 
 			// if more than 30% of a show's episodes are marked as dirty, just download the entire show again
-			foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
+			foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
 			{
 			   int totaleps = 0;
 			   int totaldirty = 0;
-			   foreach (KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
+			   foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp2 in kvp.Value.Seasons)
 					foreach (Episode ep in kvp2.Value.Episodes)
 					{
 						if (ep.Dirty)
@@ -1472,7 +1567,7 @@ namespace TVRename
 
 			if (!Series.ContainsKey(seriesID))
 			{
-				Diagnostics.Debug.Assert(Series.ContainsKey(seriesID));
+				System.Diagnostics.Debug.Assert(Series.ContainsKey(seriesID));
 				return "en"; // really shouldn't happen!
 			}
 			// and we have a language recorded for it
@@ -1569,7 +1664,7 @@ namespace TVRename
 			if (Series[code].Dirty)
 				ok = (DownloadSeriesNow(code, false, false) != null) && ok;
 
-			foreach (KeyValuePair<int, Season > kvp in Series[code].Seasons)
+			foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp in Series[code].Seasons)
 			{
 				Season seas = kvp.Value;
 				foreach (Episode e in seas.Episodes)
@@ -1642,7 +1737,7 @@ namespace TVRename
 			DateTime mostSoonAfterToday = new DateTime(0);
 
 			SeriesInfo ser = Series[code];
-			foreach (KeyValuePair<int, Season > kvp2 in ser.Seasons)
+			foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp2 in ser.Seasons)
 			{
 				Season s = kvp2.Value;
 

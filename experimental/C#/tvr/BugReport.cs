@@ -436,7 +436,7 @@ namespace TVRename
 
 			foreach (ShowItem si in mDoc.GetShowItems(true))
 			{
-				foreach (KeyValuePair<int, ProcessedEpisodeList > kvp in si.SeasonEpisodes)
+				foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > kvp in si.SeasonEpisodes)
 				{
 					int snum = kvp.Key;
 					if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations(mDoc.Settings).ContainsKey(snum))
@@ -449,7 +449,7 @@ namespace TVRename
 						txt += "Folder: " + folder;
 						txt += "\r\n";
 						DirCache files = new DirCache();
-						if (DirectoryInfo(folder).Exists)
+						if (Directory.Exists(folder))
 							BuildDirCache(null,0,0,files, folder, true, mDoc.Settings);
 						foreach (DirCacheEntry fi in files)
 						{
