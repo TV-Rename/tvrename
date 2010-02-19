@@ -47,22 +47,12 @@ namespace TVRename
 //	ref class ExtraEp;
 
 
-    public class typeMaskBits // defined by thetvdb
+    public enum typeMaskBits // defined by thetvdb
     {
-        public const int tmMainSite = 0,
+        tmMainSite = 0,
         tmXML = 1,
         tmBanner = 2,
-        tmZIP = 4;
-
-        static public implicit operator typeMaskBits(int b)
-        {
-            return (typeMaskBits)b;
-        }
-
-        static public implicit operator int(typeMaskBits b)
-        {
-            return (int)b;
-        }
+        tmZIP = 4
     }
 
 	public class Season
@@ -1153,11 +1143,11 @@ namespace TVRename
 					{
 						if ((ID != -1) && (!string.IsNullOrEmpty(mirrorPath)) && (typeMask != -1))
 						{
-							if ((typeMask & typeMaskBits.tmXML) != 0)
+							if ((typeMask & (int)typeMaskBits.tmXML) != 0)
 								XMLMirrorList.Add(mirrorPath);
-                            if ((typeMask & typeMaskBits.tmBanner) != 0)
+                            if ((typeMask & (int)typeMaskBits.tmBanner) != 0)
 								BannerMirrorList.Add(mirrorPath);
-                            if ((typeMask & typeMaskBits.tmZIP) != 0)
+                            if ((typeMask & (int)typeMaskBits.tmZIP) != 0)
 								ZIPMirrorList.Add(mirrorPath);
 						}
 						break; // end of mirror whatsit

@@ -1310,10 +1310,10 @@ namespace TVRename
 
 	private static bool IsDebug()
 			 {
-#if ! _DEBUG
-				 return false;
-#else
+#if DEBUG
 				 return true;
+#else
+				 return false;
 #endif
 			 }
 

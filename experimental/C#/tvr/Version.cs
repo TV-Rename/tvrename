@@ -6,7 +6,7 @@ public static class Version
 
 
 	#if DEBUG
-			return v + " (Debug)";
+			return v + " (C# Debug)";
 	#else
 			return v;
 	#endif
