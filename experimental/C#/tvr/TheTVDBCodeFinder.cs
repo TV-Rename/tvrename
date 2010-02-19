@@ -232,7 +232,7 @@ namespace TVRename
 							 lvi.Text = num.ToString();
 							 lvi.SubItems.Add(show);
 							 if (kvp.Value.FirstAired != null)
-								lvi.SubItems.Add(kvp.Value.FirstAired.Year.ToString());
+                                 lvi.SubItems.Add(kvp.Value.FirstAired.Value.Year.ToString());
 							 else
 								 lvi.SubItems.Add("");
 

@@ -20,7 +20,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
-
+using System.IO;
 
 namespace TVRename
 {
@@ -452,14 +452,14 @@ namespace TVRename
 	private void bnAdd_Click(object sender, System.EventArgs e)
 			 {
 				 AddNewRow();
-				 Grid1.Selection.Focus(SourceGrid.Position(Grid1.RowsCount-1,1), true);
+				 Grid1.Selection.Focus(new SourceGrid.Position(Grid1.RowsCount-1,1), true);
 				 StartTimer();
 			 }
 	private void bnDelete_Click(object sender, System.EventArgs e)
 			 {
 				 // multiselection is off, so we can cheat...
 				 int[] rowsIndex = Grid1.Selection.GetSelectionRegion().GetRowsIndex();
-				 if (rowsIndex.Length)
+				 if (rowsIndex.Length > 0)
 					 Grid1.Rows.Remove(rowsIndex[0]);
 
 				 StartTimer();
@@ -501,7 +501,7 @@ namespace TVRename
 			 private void FillPreview()
 			 {
 				 lvPreview.Items.Clear();
-				 if ((string.IsNullOrEmpty(txtFolder.Text)) || (!DirectoryInfo(txtFolder.Text).Exists))
+				 if ((string.IsNullOrEmpty(txtFolder.Text)) || (!Directory.Exists(txtFolder.Text)))
 				 {
 					 txtFolder.BackColor = Helpers.WarningColor();
 					 return;

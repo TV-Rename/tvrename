@@ -416,7 +416,7 @@ namespace TVRename
 			txt += "==== Finding & Organising Directory Scan ====" + "\r\n";
 			txt += "\r\n";
 
-            System.Collections.Generic.List<DirCacheEntry> files;
+            DirCacheList files = new DirCacheList();
 			foreach (string efi in mDoc.SearchFolders)
 				DirCache.BuildDirCache(null,0,0,files, efi, true, mDoc.Settings);
 
@@ -449,14 +449,14 @@ namespace TVRename
 						txt += si.TVDBCode + " : " + si.ShowName() + " : S" + snum.ToString() + "\r\n";
 						txt += "Folder: " + folder;
 						txt += "\r\n";
-						DirCache files = new DirCache();
+						DirCacheList files = new DirCacheList();
 						if (Directory.Exists(folder))
-							BuildDirCache(null,0,0,files, folder, true, mDoc.Settings);
+							DirCache.BuildDirCache(null,0,0,files, folder, true, mDoc.Settings);
 						foreach (DirCacheEntry fi in files)
 						{
 							int seas;
 							int ep;
-							bool r = mDoc.FindSeasEp(fi.TheFile, seas, ep, si.ShowName());
+							bool r = mDoc.FindSeasEp(fi.TheFile, out seas, out ep, si.ShowName());
 							bool useful = fi.HasUsefulExtension_NotOthersToo;
 							txt += fi.TheFile.FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?fi.TheFile.Extension:"-")+")" + "\r\n";
 						}

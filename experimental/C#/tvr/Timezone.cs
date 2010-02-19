@@ -66,8 +66,9 @@ namespace TVRename
 			return "Eastern Standard Time";
 		}
 
-		public static bool BytesToTZI(Byte[] mTZIBytes, TZI tz)
+		public static bool BytesToTZI(Byte[] mTZIBytes, out TZI tz)
 		{
+            tz = new TZI();
             //TODO
             return false;
             /*

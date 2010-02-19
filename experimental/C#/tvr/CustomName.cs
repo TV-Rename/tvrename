@@ -128,9 +128,10 @@ namespace TVRename
             name = name.Replace("{Number}", pe.OverallNumber.ToString());
             name = name.Replace("{Number:2}", pe.OverallNumber.ToString("00"));
             name = name.Replace("{Number:3}", pe.OverallNumber.ToString("000"));
-            DateTime dt = pe.GetAirDateDT(false);
-            if (dt != null)
+            DateTime? airdt = pe.GetAirDateDT(false);
+            if (airdt != null)
             {
+                DateTime dt = (DateTime)airdt;
                 name = name.Replace("{ShortDate}", dt.ToString("d"));
                 name = name.Replace("{LongDate}", dt.ToString("D"));
                 string ymd = dt.ToString("yyyy/MM/dd");

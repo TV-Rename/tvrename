@@ -2004,9 +2004,9 @@ namespace TVRename
 							body += " <A HREF=\"file://" + fi.FullName +"\" class=\"search\">Watch</A>";
 					}
 
-					DateTime dt = ei.GetAirDateDT(true);
-					if ((dt != null) && (dt.CompareTo(DateTime.MaxValue) != 0))
-						body += "<p>" + ei.GetAirDateDT(true).ToShortDateString() + " (" + ei.HowLong() + ")";
+					DateTime? dt = ei.GetAirDateDT(true);
+					if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+						body += "<p>" + dt.Value.ToShortDateString() + " (" + ei.HowLong() + ")";
 
 					body += "<p><p>";
 
@@ -2191,7 +2191,7 @@ namespace TVRename
 				lvWhenToWatch.Groups[0].Header = "Aired in the last " + dd.ToString() + " day" + ((dd == 1) ? "":"s");
 
 				// try to maintain selections if we can
-                System.Collections.Generic.List<ProcessedEpisode> selections = new System.Collections.Generic.List<ProcessedEpisode>();
+                ProcessedEpisodeList selections = new ProcessedEpisodeList();
 				foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
 					selections.Add((ProcessedEpisode)(lvi.Tag));
 
@@ -2213,19 +2213,19 @@ namespace TVRename
 						if (si.IgnoreSeasons.Contains(kvp.Key))
 							continue; // ignore this season
 
-                        System.Collections.Generic.List<ProcessedEpisode> eis = kvp.Value;
+                        ProcessedEpisodeList eis = kvp.Value;
 
 						bool nextToAirFound = false;
 
 						foreach (ProcessedEpisode ei in eis)
 						{
-							DateTime dt = ei.GetAirDateDT(true);
-							if ((dt != null) && (dt.CompareTo(DateTime.MaxValue) != 0))
+							DateTime? dt = ei.GetAirDateDT(true);
+							if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
 							{
-								TimeSpan ts = dt.Subtract(DateTime.Now);
+								TimeSpan ts = dt.Value.Subtract(DateTime.Now);
 								if (ts.TotalHours >= (-24 *dd)) // in the future (or fairly recent)
 								{
-									bolded.Add(dt);
+                                    bolded.Add(dt.Value);
 									if ((ts.TotalHours >= 0) && (!nextToAirFound))
 									{
 										nextToAirFound = true;
@@ -2315,10 +2315,13 @@ namespace TVRename
 				txtWhenToWatchSynopsis.Text = ei.Overview;
 
 				mInternalChange++;
-                DateTime dt = ei.GetAirDateDT(true);
-                calCalendar.SelectionStart = dt;
-                calCalendar.SelectionEnd = dt;
-				mInternalChange--;
+                DateTime? dt = ei.GetAirDateDT(true);
+                if (dt != null)
+                {
+                    calCalendar.SelectionStart = (DateTime)dt;
+                    calCalendar.SelectionEnd = (DateTime)dt;
+                }
+                mInternalChange--;
 
 				if (mDoc.Settings.AutoSelectShowInMyShows)
 					GotoEpguideFor(ei, false);
@@ -2353,17 +2356,20 @@ namespace TVRename
 				{
 					ListViewItem lvi = lvWhenToWatch.Items[i];
 					ProcessedEpisode ei = (ProcessedEpisode)(lvi.Tag);
-					DateTime dt2 = ei.GetAirDateDT(true);
-					double h = dt2.Subtract(dt).TotalHours;
-					if ((h >= 0) && (h < 24.0))
-					{
-						lvi.Selected = true;
-						if (first)
-						{
-							lvi.EnsureVisible();
-							first = false;
-						}
-					}
+					DateTime? dt2 = ei.GetAirDateDT(true);
+                    if (dt2 != null)
+                    {
+                        double h = dt2.Value.Subtract(dt).TotalHours;
+                        if ((h >= 0) && (h < 24.0))
+                        {
+                            lvi.Selected = true;
+                            if (first)
+                            {
+                                lvi.EnsureVisible();
+                                first = false;
+                            }
+                        }
+                    }
 				}
 				lvWhenToWatch.Focus();
 			}
@@ -3217,7 +3223,13 @@ namespace TVRename
 				//       1 = this week
 				//       2 = future / unknown
 
-				DateTime dt = pe.GetAirDateDT(true);
+                DateTime? airdt = pe.GetAirDateDT(true);
+                if (airdt == null)
+                {
+                    // TODO: something!
+                    return;
+                }
+                DateTime dt = (DateTime)airdt;
 
 				double ttn = (dt.Subtract(DateTime.Now)).TotalHours;
 
@@ -3244,7 +3256,8 @@ namespace TVRename
 				lvi.SubItems[n++].Text = pe.Name;
 
 				// icon..
-				if (pe.GetAirDateDT(true).CompareTo(DateTime.Now) < 0) // has aired
+
+				if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
 				{
 					System.Collections.Generic.List<System.IO.FileInfo > fl = mDoc.FindEpOnDisk(pe);
 					if ((fl != null) && (fl.Count > 0))
@@ -3510,7 +3523,7 @@ namespace TVRename
 			 {
 				 ShowQuickStartGuide();
 			 }
-    private System.Collections.Generic.List<ProcessedEpisode> CurrentlySelectedPEL()
+    private ProcessedEpisodeList CurrentlySelectedPEL()
 			 {
 				 Season currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
 				 ShowItem currentSI = TreeNodeToShowItem(MyShowTree.SelectedNode);

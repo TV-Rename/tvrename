@@ -171,9 +171,9 @@ namespace TVRename
 
 			if (PE != null)
 			{
-				DateTime dt = PE.GetAirDateDT(true);
-				if ((dt != null) && (dt.CompareTo(DateTime.MaxValue)))
-					lvi.SubItems.Add(PE.GetAirDateDT(true).ToShortDateString());
+				DateTime? dt = PE.GetAirDateDT(true);
+				if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+					lvi.SubItems.Add(dt.Value.ToShortDateString());
 				else
 					lvi.SubItems.Add("");
 			}
@@ -197,7 +197,7 @@ namespace TVRename
 
 		public override bool Action(TVDoc doc)
 		{
-			byte[] theData = SI.TVDB.GetPage(BannerPath, false, TVRename.tmBanner, false);
+			byte[] theData = SI.TVDB.GetPage(BannerPath, false, typeMaskBits.tmBanner, false);
 			if (theData == null)
 			{
 				ErrorText = "Unable to download " + BannerPath;
@@ -278,9 +278,9 @@ namespace TVRename
 				lvi.Text = PE.TheSeries.Name;
 				lvi.SubItems.Add(PE.SeasonNumber.ToString());
 				lvi.SubItems.Add(PE.NumsAsString());
-				DateTime dt = PE.GetAirDateDT(true);
-				if ((dt != null) && (dt.CompareTo(DateTime.MaxValue)))
-					lvi.SubItems.Add(PE.GetAirDateDT(true).ToShortDateString());
+				DateTime? dt = PE.GetAirDateDT(true);
+				if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+					lvi.SubItems.Add(dt.Value.ToShortDateString());
 				else
 					lvi.SubItems.Add("");
 			}
@@ -303,11 +303,11 @@ namespace TVRename
 
 		public bool SameSource(AIOCopyMoveRename o)
 		{
-			return (Same(From,o.From));
+			return (Helpers.Same(From,o.From));
 		}
 		public bool SameAs2(AIOCopyMoveRename o)
 		{
-			return ((Operation == o.Operation) && Same(From,o.From) && Same(To,o.To));
+			return ((Operation == o.Operation) && Helpers.Same(From,o.From) && Helpers.Same(To,o.To));
 		}
 		public override bool SameAs(AIOItem o)
 		{
@@ -352,7 +352,7 @@ namespace TVRename
 			if (string.IsNullOrEmpty(TheFileNoExt))
 				return null;
 			else
-				return FileInfo(TheFileNoExt).DirectoryName;
+				return new FileInfo(TheFileNoExt).DirectoryName;
 		}
 		public override string FilenameForProgress()
 		{
@@ -383,14 +383,15 @@ namespace TVRename
 			lvi.SubItems.Add(PE.SeasonNumber.ToString());
 			lvi.SubItems.Add(PE.NumsAsString());
 
-			DateTime dt = PE.GetAirDateDT(true);
-			if ((dt != null) && (dt.CompareTo(DateTime.MaxValue)))
-				lvi.SubItems.Add(PE.GetAirDateDT(true).ToShortDateString());
+			DateTime? dt = PE.GetAirDateDT(true);
+			if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
+				lvi.SubItems.Add(dt.Value.ToShortDateString());
 			else
 				lvi.SubItems.Add("");
 
-			lvi.SubItems.Add(FileInfo(TheFileNoExt).DirectoryName);
-			lvi.SubItems.Add(FileInfo(TheFileNoExt).Name);
+            FileInfo fi = new FileInfo(TheFileNoExt);
+			lvi.SubItems.Add(fi.DirectoryName);
+			lvi.SubItems.Add(fi.Name);
 
 			lvi.Tag = this;
 			lvi.Group = lv.Groups[0];
@@ -425,7 +426,7 @@ namespace TVRename
 			if (string.IsNullOrEmpty(TheFileNoExt))
 				return null;
 			else
-				return FileInfo(TheFileNoExt).DirectoryName;
+				return new FileInfo(TheFileNoExt).DirectoryName;
 		}
 		public override string FilenameForProgress()
 		{
@@ -450,9 +451,9 @@ namespace TVRename
 			lvi.Text = PE.SI.ShowName();
 			lvi.SubItems.Add(PE.SeasonNumber.ToString());
 			lvi.SubItems.Add(PE.NumsAsString());
-			DateTime dt = PE.GetAirDateDT(true);
-			if ((dt != null) && (dt.CompareTo(DateTime.MaxValue)))
-				lvi.SubItems.Add(PE.GetAirDateDT(true).ToShortDateString());
+			DateTime? dt = PE.GetAirDateDT(true);
+			if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+				lvi.SubItems.Add(dt.Value.ToShortDateString());
 			else
 				lvi.SubItems.Add("");
 
@@ -479,11 +480,11 @@ namespace TVRename
                 }
 
                 string saveTemp = Path.GetTempPath() + "\\" + doc.FilenameFriendly(RSS.Title);
-                if (FileInfo(saveTemp).Extension.ToLower() != "torrent")
+                if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
                     saveTemp += ".torrent";
                 File.WriteAllBytes(saveTemp, r);
 
-                System.Diagnostics.Process.Start(doc.Settings.uTorrentPath, "/directory \"" + FileInfo(TheFileNoExt).Directory.FullName + "\" \"" + saveTemp + "\"");
+                System.Diagnostics.Process.Start(doc.Settings.uTorrentPath, "/directory \"" + (new FileInfo(TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
 
                 HasError = false;
             }
@@ -556,9 +557,9 @@ namespace TVRename
 				lvi.Text = PE.SI.ShowName();
 				lvi.SubItems.Add(PE.SeasonNumber.ToString());
 				lvi.SubItems.Add(PE.NumsAsString());
-				DateTime dt = PE.GetAirDateDT(true);
-				if ((dt != null) && (dt.CompareTo(DateTime.MaxValue)))
-					lvi.SubItems.Add(PE.GetAirDateDT(true).ToShortDateString());
+				DateTime ?dt = PE.GetAirDateDT(true);
+				if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
+					lvi.SubItems.Add(dt.Value.ToShortDateString());
 				else
 					lvi.SubItems.Add("");
 			}
@@ -616,7 +617,7 @@ namespace TVRename
 				writer.WriteEndElement();
 				writer.WriteStartElement("aired");
 				if (PE.FirstAired != null)
-					writer.WriteValue(PE.FirstAired.ToString("yyyy-MM-dd"));
+					writer.WriteValue(PE.FirstAired.Value.ToString("yyyy-MM-dd"));
 				writer.WriteEndElement();
 				writer.WriteEndElement(); // episodedetails
 			}
@@ -653,7 +654,6 @@ namespace TVRename
 				string actors = SI.TheSeries().GetItem("Actors");
 				if (!string.IsNullOrEmpty(actors))
 				{
-					bool first = true;
 					foreach (string aa in actors.Split('|'))
 					{
 						if (!string.IsNullOrEmpty(aa))
@@ -729,7 +729,7 @@ namespace TVRename
 			if (string.IsNullOrEmpty(Entry.DownloadingTo))
 				return null;
 			else
-				return FileInfo(Entry.DownloadingTo).DirectoryName;
+				return new FileInfo(Entry.DownloadingTo).DirectoryName;
 		}
 		public override string FilenameForProgress()
 		{
@@ -748,37 +748,29 @@ namespace TVRename
 			return 2;
 		}
 
+
         public override ListViewItem GetLVI(ListView lv)
         {
             ListViewItem lvi = new ListViewItem();
 
-            lvi.Text = SI.ShowName();
-            lvi.SubItems.Add(PE != null ? PE.SeasonNumber.ToString() : "");
-            lvi.SubItems.Add(PE != null ? PE.NumsAsString() : "");
-
-            if (PE != null)
-            {
-                DateTime dt = PE.GetAirDateDT(true);
-                if ((dt != null) && (dt.CompareTo(DateTime.MaxValue)))
-                    lvi.SubItems.Add(PE.GetAirDateDT(true).ToShortDateString());
-                else
-                    lvi.SubItems.Add("");
-            }
+            lvi.Text = PE.SI.ShowName();
+            lvi.SubItems.Add(PE.SeasonNumber.ToString());
+            lvi.SubItems.Add(PE.NumsAsString());
+            DateTime? dt = PE.GetAirDateDT(true);
+            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                lvi.SubItems.Add(dt.Value.ToShortDateString());
             else
                 lvi.SubItems.Add("");
 
-            lvi.SubItems.Add(Destination.DirectoryName);
-            lvi.SubItems.Add(BannerPath);
+            lvi.SubItems.Add(Entry.TorrentFile);
+            lvi.SubItems.Add(Entry.DownloadingTo);
+            int p = Entry.PercentDone;
+            lvi.SubItems.Add(p == -1 ? "" : Entry.PercentDone.ToString() + "% Complete");
 
-            if (string.IsNullOrEmpty(BannerPath))
-                lvi.BackColor = Helpers.WarningColor();
-
-            lvi.SubItems.Add(Destination.Name);
-
+            lvi.Group = lv.Groups[7];
             lvi.Tag = this;
-            lvi.Group = lv.Groups[5]; // download image
-            // lv->Items->Add(lvi);
 
+            //	lv->Items->Add(lvi);
             return lvi;
         }
 
@@ -908,7 +900,7 @@ namespace TVRename
 			if (sel.Count == 0)
 				return;
 
-			AIOType t = (AIOItem)(sel[0].Tag).Type;
+			AIOType t = ((AIOItem)(sel[0].Tag)).Type;
 
 			AllSame = true;
 			foreach (ListViewItem lvi in sel)

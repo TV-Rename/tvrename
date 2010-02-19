@@ -341,37 +341,36 @@ namespace TVRename
 			 {
 				 switch (mRule.DoWhatNow)
 				 {
-				 case kRename:
+                     case RuleAction.kRename:
 					 rbRename.Checked = true;
 					 break;
 
-				 case kCollapse:
+				 case RuleAction.kCollapse:
 					 rbCollapse.Checked = true;
 					 break;
 
-				 case kRemove:
+				 case RuleAction.kRemove:
 					 rbRemove.Checked = true;
 					 break;
 
-				 case kSwap:
+				 case RuleAction.kSwap:
 					 rbSwap.Checked = true;
 					 break;
 
-				 case kMerge:
+				 case RuleAction.kMerge:
 					 rbMerge.Checked = true;
 					 break;
 
-				 case kSplit:
+				 case RuleAction.kSplit:
 					 rbSplit.Checked = true;
 					 break;
 
-				 case kInsert:
+				 case RuleAction.kInsert:
 					 rbInsert.Checked = true;
 					 break;
 
 				 default:
-//C++ TO C# CONVERTER TODO TASK: C# does not allow fall-through from a non-empty 'case':
-				 case kIgnoreEp:
+				 case RuleAction.kIgnoreEp:
 					 rbIgnore.Checked = true;
 					 break;
 				 }
@@ -468,24 +467,24 @@ namespace TVRename
 			 }
 	private void bnOK_Click(object sender, System.EventArgs e)
 			 {
-				 RuleAction dwn;
+                 RuleAction dwn = RuleAction.kIgnoreEp;
 
 				 if (rbIgnore.Checked)
-					 dwn = kIgnoreEp;
+					 dwn = RuleAction.kIgnoreEp;
 				 else if (rbSwap.Checked)
-					 dwn = kSwap;
+					 dwn = RuleAction.kSwap;
 				 else if (rbMerge.Checked)
-					 dwn = kMerge;
+					 dwn = RuleAction.kMerge;
 				 else if (rbInsert.Checked)
-					 dwn = kInsert;
+					 dwn = RuleAction.kInsert;
 				 else if (rbRemove.Checked)
-					 dwn = kRemove;
+					 dwn = RuleAction.kRemove;
 				 else if (rbCollapse.Checked)
-					 dwn = kCollapse;
+					 dwn = RuleAction.kCollapse;
 				 else if (rbRename.Checked)
-					 dwn = kRename;
+					 dwn = RuleAction.kRename;
 				 else if (rbSplit.Checked)
-					 dwn = kSplit;
+					 dwn = RuleAction.kSplit;
 
 				 mRule.DoWhatNow = dwn;
 				 mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : "";

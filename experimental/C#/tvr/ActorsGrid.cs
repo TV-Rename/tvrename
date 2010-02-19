@@ -22,7 +22,6 @@ using System.Data;
 using System.Drawing;
 using System.Collections.Generic;
 using SourceGrid;
-//using Drawing.Imaging;
 
 namespace TVRename
 {
@@ -81,9 +80,9 @@ namespace TVRename
 						Data[r,c2] = Data[r,c1];
 						Data[r,c1] = t;
 					}
-					string t = Cols[c1];
+					string t2 = Cols[c1];
 					Cols[c1] = Cols[c2];
-					Cols[c2] = t;
+					Cols[c2] = t2;
 				}
 				public void SwapRows(int r1, int r2)
 				{
@@ -93,9 +92,9 @@ namespace TVRename
 						Data[r2,c] = Data[r1,c];
 						Data[r1,c] = t;
 					}
-					string t = Rows[r1];
+					string t2 = Rows[r1];
 					Rows[r1] = Rows[r2];
-					Rows[r2] = t;
+					Rows[r2] = t2;
 				}
 				public int RowScore(int r, bool[] onlyCols)
 				{
@@ -247,10 +246,10 @@ namespace TVRename
 						Data[r, 0] = t;
 					}
 
-					string t = Cols[n];
+					string t2 = Cols[n];
 					for (int c =n;c>0;c--)
 						Cols[c] = Cols[c-1];
-					Cols[0] = t;
+					Cols[0] = t2;
 				}
 				public void MoveRowToTop(string row)
 				{
@@ -266,10 +265,10 @@ namespace TVRename
 						Data[0, c] = t;
 					}
 
-					string t = Rows[n];
+					string t2 = Rows[n];
 					for (int r =n;r>0;r--)
 						Rows[r] = Rows[r-1];
-					Rows[0] = t;
+					Rows[0] = t2;
 				}
 				public void SortRows(bool score) // false->name
 				{
@@ -616,9 +615,9 @@ namespace TVRename
 				SeriesInfo si = ser.Value;
 				string actors = si.GetItem("Actors");
 				if (!string.IsNullOrEmpty(actors))
-					foreach (string aa in actors.Split('|'))
+					foreach (string act in actors.Split('|'))
 					{
-						aa = aa.Trim();
+                        string aa = act.Trim();
 						if (!string.IsNullOrEmpty(aa))
 							TheData.Set(si.Name, aa, new DataArr.ArrData(true, true));
 					}
@@ -632,9 +631,9 @@ namespace TVRename
 							string guest = ep.GetItem("GuestStars");
 
 							if (!string.IsNullOrEmpty(guest))
-								foreach (string aa in guest.Split('|'))
+								foreach (string g in guest.Split('|'))
 								{
-									aa = aa.Trim();
+                                    string aa = g.Trim();
 									if (!string.IsNullOrEmpty(aa))
 										TheData.Set(si.Name, aa, new DataArr.ArrData(true, false));
 								}
@@ -735,7 +734,7 @@ namespace TVRename
 			rowTitleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
 
 			SourceGrid.Cells.Views.Cell colTitleModel = new SourceGrid.Cells.Views.Cell();
-			colTitleModel.ElementText = new RotatedText(-90.0);
+			colTitleModel.ElementText = new RotatedText(-90.0f);
 			colTitleModel.BackColor = Color.SteelBlue;
 			colTitleModel.ForeColor = Color.White;
 			colTitleModel.TextAlignment = DevAge.Drawing.ContentAlignment.BottomCenter;
@@ -811,16 +810,17 @@ namespace TVRename
 			grid1[0,totalCol].View = colTitleModel;
 			grid1[0,totalCol].AddController(new SortRowsByCountEvent(this));
 
+            SourceGrid.Cells.RowHeader rh = null;
 			for (int r =0;r<TheData.DataR;r++)
 			{
-				SourceGrid.Cells.RowHeader rh = new SourceGrid.Cells.RowHeader(TheData.Rows[r]);
+				rh = new SourceGrid.Cells.RowHeader(TheData.Rows[r]);
 				rh.ResizeEnabled = false;
 
 				grid1[r+1,0] = rh;
 				grid1[r+1,0].AddController(new SideClickEvent(this, TheData.Rows[r]));
 			}
 
-			SourceGrid.Cells.RowHeader rh = new SourceGrid.Cells.RowHeader("Totals");
+			rh = new SourceGrid.Cells.RowHeader("Totals");
 			rh.ResizeEnabled = false;
 			grid1[TheData.DataR+1,0] = rh;
 			grid1[TheData.DataR+1,0].AddController(new SortColsByCountEvent(this));
@@ -842,10 +842,10 @@ namespace TVRename
 			}
 
 			for (int c =0;c<TheData.DataC;c++)
-				grid1[rows-1,c+1] = new SourceGrid.Cells.CellTheData.ColScore(c);
+				grid1[rows-1,c+1] = new SourceGrid.Cells.Cell(TheData.ColScore(c));
 
 			for (int r =0;r<TheData.DataR;r++)
-				grid1[r+1,cols-1] = new SourceGrid.Cells.CellTheData.RowScore(r, null);
+				grid1[r+1,cols-1] = new SourceGrid.Cells.Cell(TheData.RowScore(r, null));
 
 			grid1[TheData.DataR+1,TheData.DataC+1] = new SourceGrid.Cells.Cell("");
 
@@ -869,7 +869,7 @@ namespace TVRename
 
 				 SourceGrid.Exporter.Image image = new SourceGrid.Exporter.Image();
 				 Bitmap b = image.Export(grid1, grid1.CompleteRange);
-				 b.Save(saveFile.FileName, Imaging.ImageFormat.Png);
+				 b.Save(saveFile.FileName, System.Drawing.Imaging.ImageFormat.Png);
 			 }
 			 private void DoSort()
 			 {

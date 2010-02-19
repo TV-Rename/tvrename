@@ -441,7 +441,7 @@ namespace TVRename
 
 			public static ProcessedEpisodeList ProcessedListFromEpisodes(System.Collections.Generic.List<Episode > el, ShowItem si)
 			{
-				ProcessedEpisodeList pel = new System.Collections.Generic.List<ProcessedEpisode >();
+				ProcessedEpisodeList pel = new ProcessedEpisodeList();
 				foreach (Episode e in el)
 					pel.Add(new ProcessedEpisode(e, si));
 				return pel;

@@ -460,7 +460,8 @@ namespace TVRename
 				 {
 					 return;
 				 }
-				 BTFile resumeDat = BEncodeLoader.Load(file);
+                 BEncodeLoader bel = new BEncodeLoader();
+				 BTFile resumeDat = bel.Load(file);
 				 if (resumeDat == null)
 				 {
 					 return;
@@ -469,10 +470,10 @@ namespace TVRename
 				 for (int i =0;i<dict.Items.Count;i++)
 				 {
 					 BTItem it = dict.Items[i];
-					 if (it.Type == AnonymousEnum.kDictionaryItem)
+					 if (it.Type == BTChunk.kDictionaryItem)
 					 {
 						 BTDictionaryItem d2 = (BTDictionaryItem)(it);
-						 if ((d2.Key != ".fileguard") && (d2.Data.Type == AnonymousEnum.kDictionary))
+                         if ((d2.Key != ".fileguard") && (d2.Data.Type == BTChunk.kDictionary))
 							 lbUTTorrents.Items.Add(d2.Key);
 					 }
 				 }
@@ -511,12 +512,14 @@ namespace TVRename
 
 				 BTResume btp = new BTResume(SetProg, resumeDatFile);
 
-				 System.Collections.Generic.List<string > sl = new System.Collections.Generic.List<string >();
+                 StringList sl = new StringList();
 
 				 foreach (string torrent in lbUTTorrents.CheckedItems)
 					 sl.Add(torrent);
 
-				 btp.DoWork(sl, searchFolder, lvUTResults, cbUTUseHashing.Checked, cbUTMatchMissing.Checked, cbUTSetPrio.Checked, testMode, chkUTSearchSubfolders.Checked, mDoc.TheAIOList, mDoc.Settings.FNPRegexs);
+				 btp.DoWork(sl, searchFolder, lvUTResults, cbUTUseHashing.Checked, cbUTMatchMissing.Checked, 
+                     cbUTSetPrio.Checked, testMode, chkUTSearchSubfolders.Checked, 
+                     mDoc.TheAIOList, mDoc.Settings.FNPRegexs);
 
 				 if (!testMode)
 					 RestartUTorrent();
@@ -577,7 +580,7 @@ namespace TVRename
 					 }
 					 catch
 					 {
-						 Threading.Thread.Sleep(500);
+						 System.Threading.Thread.Sleep(500);
 					 }
 				 }
 			 }

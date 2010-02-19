@@ -286,7 +286,7 @@ namespace TVRename
 				{
 					int seas;
 					int ep;
-					ok = mDoc.FindSeasEp(new FileInfo(fn+".avi"), seas, ep, pe.SI.ShowName());
+					ok = mDoc.FindSeasEp(new FileInfo(fn+".avi"), out seas, out ep, pe.SI.ShowName());
 					ok1 = ok && (seas == pe.SeasonNumber);
 					ok2 = ok && (ep == pe.EpNum);
 					string pre1 = ok1 ? "" : "* ";

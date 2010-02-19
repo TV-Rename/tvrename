@@ -98,7 +98,7 @@ namespace TVRename
 				_keyCheck = true;
 			}
 			else
-				ListView.OnKeyDown(e);
+				base.OnKeyDown(e);
 		}
 		protected override void OnKeyUp(KeyEventArgs e)
 		{

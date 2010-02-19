@@ -564,7 +564,7 @@ namespace TVRename
 
 			// consider each of files, see if it is suitable for series "ser" and episode "epi"
 			// if so, add a rcitem for copy to "fi"
-			public bool FindMissingEp(System.Collections.Generic.List<DirCacheEntry > files, AIOMissing me, System.Collections.Generic.List<AIOItem > addTo, AIOCopyMoveRename.Op whichOp)
+			public bool FindMissingEp(DirCacheList files, AIOMissing me, System.Collections.Generic.List<AIOItem > addTo, AIOCopyMoveRename.Op whichOp)
 			{
 				string showname = me.PE.SI.ShowName();
 				int season = me.PE.SeasonNumber;
@@ -729,7 +729,7 @@ namespace TVRename
 
 				int c = 0;
 
-				System.Collections.Generic.List<DirCacheEntry > files = new System.Collections.Generic.List<DirCacheEntry >();
+				DirCacheList files = new DirCacheList();
 				for (int k =0;k<SearchFolders.Count;k++)
 				{
 					if (AIOCancel)
@@ -1233,9 +1233,9 @@ namespace TVRename
 							int n = pe.EpNum;
 							if ((n >= localEps.Count) || (localEps[n] == null)) // not here locally
 							{
-								DateTime dt = pe.GetAirDateDT(true);
+								DateTime? dt = pe.GetAirDateDT(true);
 
-								bool notFuture = (dt != null) && (dt.CompareTo(today) < 0); // isn't an episode yet to be aired
+								bool notFuture = (dt != null) && (dt.Value.CompareTo(today) < 0); // isn't an episode yet to be aired
 								bool anyAirdates = HasAnyAirdates(si, snum);
 								bool lastSeasAirdates = (snum > 1) ? HasAnyAirdates(si, snum-1) : true; // this might be a new season, so check the last one as well
 								if (si.ForceCheckAll || (!(anyAirdates || lastSeasAirdates)) || notFuture) // not in the future (i.e. its aired)
@@ -1339,7 +1339,7 @@ namespace TVRename
 
 			public static ProcessedEpisodeList GenerateEpisodes(ShowItem si, SeriesInfo ser, int snum, bool applyRules)
 			{
-				ProcessedEpisodeList eis = new System.Collections.Generic.List<ProcessedEpisode >();
+				ProcessedEpisodeList eis = new ProcessedEpisodeList();
 
 				if ((ser == null) || !ser.Seasons.ContainsKey(snum))
 					return null; // todo.. something?
@@ -1604,7 +1604,7 @@ namespace TVRename
 			public ProcessedEpisodeList NextNShows(int nshows, int ndays)
 			{
 				DateTime notBefore = DateTime.Now;
-				ProcessedEpisodeList found = new System.Collections.Generic.List<ProcessedEpisode >();
+				ProcessedEpisodeList found = new ProcessedEpisodeList();
 
 				LockShowItems();
 				for (int i =0;i<nshows;i++)
@@ -1625,9 +1625,11 @@ namespace TVRename
 								if (found.Contains(ei))
 									continue;
 
-								DateTime dt = ei.GetAirDateDT(true);
-								if ((dt == null) || (dt == DateTime.MaxValue))
+								DateTime?airdt = ei.GetAirDateDT(true);
+
+                                if ((airdt == null) || (airdt == DateTime.MaxValue))
 									continue;
+                                DateTime dt = (DateTime)airdt;
 
 								TimeSpan ts = dt.Subtract(notBefore);
 								TimeSpan timeUntil = dt.Subtract(DateTime.Now);
@@ -1641,7 +1643,9 @@ namespace TVRename
 					}
 					if (nextAfterThat == null)
 						return found;
-					notBefore = nextAfterThat.GetAirDateDT(true);
+
+                    DateTime? nextdt = nextAfterThat.GetAirDateDT(true);
+                    notBefore = (DateTime)nextdt;
 					found.Add(nextAfterThat);
 				}
 				UnlockShowItems();
@@ -2083,9 +2087,9 @@ namespace TVRename
 						writer.WriteValue(niceName + "<br/>" + ei.Overview);
 						writer.WriteEndElement();
 						writer.WriteStartElement("pubDate");
-						DateTime DT = ei.GetAirDateDT(true);
-						if (DT != null)
-							writer.WriteValue(DT.ToString("r"));
+						DateTime? dt = ei.GetAirDateDT(true);
+						if (dt != null)
+							writer.WriteValue(dt.Value.ToString("r"));
 						writer.WriteEndElement();
 						writer.WriteEndElement(); // item
 					}

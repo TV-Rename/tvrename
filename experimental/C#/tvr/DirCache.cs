@@ -26,9 +26,13 @@ namespace TVRename
             }
         }
     }
-
+    public class DirCacheList : System.Collections.Generic.List<DirCacheEntry>
+    {
+    }
 public class DirCache
 {
+   
+
 		public static int CountFiles(string folder, bool subFolders)
 		{
 			int n = 0;
@@ -54,7 +58,7 @@ public class DirCache
 			return n;
 		}
 
-		public static int BuildDirCache(SetProgressDelegate prog, int initialCount, int totalFiles, System.Collections.Generic.List<DirCacheEntry > fileCache, string folder, bool subFolders, TVSettings theSettings)
+		public static int BuildDirCache(SetProgressDelegate prog, int initialCount, int totalFiles, DirCacheList fileCache, string folder, bool subFolders, TVSettings theSettings)
 		{
 			int filesDone = initialCount;
 

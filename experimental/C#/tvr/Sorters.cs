@@ -80,8 +80,8 @@ namespace TVRename
 
 	public virtual int Compare(Object x, Object y)
 	{
-	  DateTime d1;
-	  DateTime d2;
+	  DateTime? d1;
+	  DateTime? d2;
 
 	  try
 	  {
@@ -101,7 +101,13 @@ namespace TVRename
 		d2 = DateTime.Now;
 	  }
 
-	  return d1.CompareTo(d2);
+      if ((d1 == null) && (d2 == null))
+          return 0;
+      else if (d1 == null)
+          return -1;
+      else if (d2 == null)
+          return 1;
+	  return d1.Value.CompareTo(d2.Value);
 	}
   }
 //

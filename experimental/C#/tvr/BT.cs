@@ -640,7 +640,7 @@ namespace TVRename
         protected int CacheHits;
         protected string FileCacheIsFor;
         protected bool FileCacheWithSubFolders;
-        protected System.Collections.Generic.List<DirCacheEntry> FileCache;
+        protected DirCacheList FileCache;
         protected bool DoHashChecking;
 
 
@@ -735,7 +735,7 @@ namespace TVRename
         {
             if ((FileCache == null) || (FileCacheIsFor == null) || (FileCacheIsFor != folder) || (FileCacheWithSubFolders != subFolders))
             {
-                FileCache = new System.Collections.Generic.List<DirCacheEntry>();
+                FileCache = new DirCacheList();
                 DirCache.BuildDirCache(null, 0, 0, FileCache, folder, subFolders, null);
                 FileCacheIsFor = folder;
                 FileCacheWithSubFolders = subFolders;

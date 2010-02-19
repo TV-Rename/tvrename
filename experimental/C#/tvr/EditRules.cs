@@ -432,7 +432,7 @@ private void bnCancel_Click(object sender, System.EventArgs e)
 		 }
 		 private void FillPreview()
 		 {
-			 ProcessedEpisodeList pel = new System.Collections.Generic.List<ProcessedEpisode >();
+			 ProcessedEpisodeList pel = new ProcessedEpisodeList();
 
 			 if (mOriginalEps != null)
 			 {

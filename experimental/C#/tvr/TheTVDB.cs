@@ -47,13 +47,23 @@ namespace TVRename
 //	ref class ExtraEp;
 
 
-	public enum typeMaskBits: int // defined by thetvdb
-	{
-		tmMainSite = 0,
-		tmXML = 1,
-		tmBanner = 2,
-		tmZIP = 4
-	}
+    public class typeMaskBits // defined by thetvdb
+    {
+        public const int tmMainSite = 0,
+        tmXML = 1,
+        tmBanner = 2,
+        tmZIP = 4;
+
+        static public implicit operator typeMaskBits(int b)
+        {
+            return (typeMaskBits)b;
+        }
+
+        static public implicit operator int(typeMaskBits b)
+        {
+            return (int)b;
+        }
+    }
 
 	public class Season
 	{
@@ -67,7 +77,7 @@ namespace TVRename
             TheSeries = theSeries;
             SeasonNumber = number;
             SeasonID = seasonid;
-            Episodes = new Generic.List<Episode>();
+            Episodes = new System.Collections.Generic.List<Episode>();
         }
 
 	}
@@ -103,7 +113,7 @@ namespace TVRename
 		public int EpNum;
 		public int SeriesID;
 		public int SeasonID;
-		public DateTime FirstAired;
+		public DateTime? FirstAired;
 		public long Srv_LastUpdated;
 		public string Overview;
 		public System.Collections.Generic.Dictionary<string , string> Items; // other fields we don't specifically grab
@@ -145,7 +155,7 @@ namespace TVRename
 			EpisodeID = -1;
 			SeriesID = -1;
 			EpNum = -1;
-			FirstAired = DateTime.MinValue;
+			FirstAired = null;
 			Srv_LastUpdated = -1;
 			Dirty = false;
 		}
@@ -180,12 +190,15 @@ namespace TVRename
 			}
 		}
 
-        public System.DateTime GetAirDateDT(bool correct)
+        public System.DateTime? GetAirDateDT(bool correct)
         {
-            if (FirstAired == DateTime.MinValue)
-                return DateTime.MinValue;
+            if (FirstAired == null)
+                return null;
 
-            DateTime dt = (TheSeries.AirsTime != DateTime.MinValue) ? new DateTime(FirstAired.Year, FirstAired.Month, FirstAired.Day, TheSeries.AirsTime.Hour, TheSeries.AirsTime.Minute, 0, 0) : new DateTime(FirstAired.Year, FirstAired.Month, FirstAired.Day, 20, 0, 0, 0);
+            DateTime fa = (DateTime)FirstAired;
+            DateTime? airs = TheSeries.AirsTime;
+
+            DateTime dt = new DateTime(fa.Year, fa.Month, fa.Day, (airs != null) ? airs.Value.Hour : 20, (airs != null) ? airs.Value.Minute : 0, 0, 0);
 
             if (!correct)
                 return dt;
@@ -198,9 +211,10 @@ namespace TVRename
 
 		public string HowLong()
 		{
-			DateTime dt = GetAirDateDT(true);
-            if (dt == null) // TODO ***  compare to DateTime.MinValue, and everywhere else too!!!
+			DateTime? airsdt = GetAirDateDT(true);
+            if (airsdt == null)
 				return "";
+            DateTime dt = (DateTime)airsdt;
 
 			TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
 			if (ts.TotalHours < 0)
@@ -221,14 +235,14 @@ namespace TVRename
 
 		public string DayOfWeek()
 		{
-			DateTime dt = GetAirDateDT(true);
-			return dt.ToString("ddd");
+			DateTime? dt = GetAirDateDT(true);
+			return (dt != null) ? dt.Value.ToString("ddd") : "-";
 		}
 
 		public string TimeOfDay()
 		{
-			DateTime dt = GetAirDateDT(true);
-			return dt.ToString("t");
+            DateTime? dt = GetAirDateDT(true);
+            return (dt != null) ? dt.Value.ToString("t") : "-";
 		}
 
 		public Episode(SeriesInfo ser, Season seas)
@@ -273,7 +287,7 @@ namespace TVRename
 			if (FirstAired != null)
 			{
 				writer.WriteStartElement("FirstAired");
-				writer.WriteValue(FirstAired.ToString("yyyy-MM-dd"));
+				writer.WriteValue(FirstAired.Value.ToString("yyyy-MM-dd"));
 				writer.WriteEndElement();
 			}
 
@@ -332,7 +346,7 @@ namespace TVRename
                         }
                         catch
                         {
-                            FirstAired = DateTime.MinValue;
+                            FirstAired = null;
                         }
                     }
                     else
@@ -373,7 +387,7 @@ namespace TVRename
 	public class SeriesInfo
 	{
 		private string LastFiguredTZ;
-		private Byte[][] Byte;
+        private Byte[] TZIBytes;
 
 		private void FigureOutTZI()
 		{
@@ -387,22 +401,20 @@ namespace TVRename
 			LastFiguredTZ = tzstr;
 		}
 
-//C++ TO C# CONVERTER NOTE: This was formerly a static local variable declaration (not allowed in C#):
-		private TZI sTZ;
 		public TZI GetTZI()
 		{
-//C++ TO C# CONVERTER NOTE: This static local variable declaration (not allowed in C#) has been moved just prior to the method:
-//			static TZI sTZ;
+            TZI tz;
+
 			if (LastFiguredTZ != TimeZone)
 				FigureOutTZI();
 
 			if (TZIBytes == null)
-				return false;
+				return null;
 
-            if (TZMagic.BytesToTZI(TZIBytes, sTZ))
-				return sTZ;
+            if (TZMagic.BytesToTZI(TZIBytes, out tz))
+				return tz;
 			else
-				return 0; // TODO: warn user
+				return null; // TODO: warn user
 		}
 
 
@@ -411,10 +423,10 @@ namespace TVRename
 		public string Name;
 
 		public System.Collections.Generic.Dictionary<string , string> Items; // e.g. Overview, Banner, Poster, etc.
-		public DateTime AirsTime;
+		public DateTime? AirsTime;
 		public System.Collections.Generic.Dictionary<int, Season > Seasons;
 		public string Language;
-		public DateTime FirstAired;
+		public DateTime? FirstAired;
 
 		public bool Dirty; // set to true if local info is known to be older than whats on the server
 
@@ -624,7 +636,7 @@ namespace TVRename
 			if (FirstAired != null)
 			{
 				writer.WriteStartElement("FirstAired");
-				writer.WriteValue(FirstAired.ToString("yyyy-MM-dd"));
+                writer.WriteValue(FirstAired.Value.ToString("yyyy-MM-dd"));
 				writer.WriteEndElement();
 			}
 
@@ -762,7 +774,6 @@ namespace TVRename
 			if ((loadFrom == null) || !loadFrom.Exists)
 				return true; // that's ok
 
-			bool r = false;
 			FileStream fs = null;
 			try
 			{
@@ -805,8 +816,8 @@ namespace TVRename
 				if (File.Exists(CacheFile.FullName+".0"))
 				{
 					// see when the last rotate was, and only rotate if its been at least an hour since the last save
-					DateTime dt = FileInfo(CacheFile.FullName+".0").LastWriteTime;
-					hours = DateTime.Now.Subtractdt.TotalHours;
+					DateTime dt = File.GetLastWriteTime(CacheFile.FullName+".0");
+					hours = DateTime.Now.Subtract(dt).TotalHours;
 				}
 				if (hours >= 24.0) // rotate the save file daily
 				{
@@ -924,7 +935,7 @@ namespace TVRename
 
 				 // ZipFile allocates more buffer than is needed, so we need to resize the array before returning it
 				 byte[] r = theFile.GetBuffer();
-				 Array.Resize(r, (int)theFile.Length);
+				 Array.Resize(ref r, (int)theFile.Length);
 
 				 return r;
 			 }
@@ -1142,11 +1153,11 @@ namespace TVRename
 					{
 						if ((ID != -1) && (!string.IsNullOrEmpty(mirrorPath)) && (typeMask != -1))
 						{
-							if (typeMask & typeMaskBits.tmXML)
+							if ((typeMask & typeMaskBits.tmXML) != 0)
 								XMLMirrorList.Add(mirrorPath);
-							if (typeMask & typeMaskBits.tmBanner)
+                            if ((typeMask & typeMaskBits.tmBanner) != 0)
 								BannerMirrorList.Add(mirrorPath);
-							if (typeMask & typeMaskBits.tmZIP)
+                            if ((typeMask & typeMaskBits.tmZIP) != 0)
 								ZIPMirrorList.Add(mirrorPath);
 						}
 						break; // end of mirror whatsit
@@ -1166,16 +1177,16 @@ namespace TVRename
 
 			// choose a random mirror to use
 			int c = 0;
-			Random r = new Random((Int32)DateTime.Now.Ticks & 0xFFFFFFFF);
+			Random ra = new Random((int)DateTime.Now.Ticks);
 			c = ZIPMirrorList.Count;
 			if (c != 0)
-				ZIPMirror = ZIPMirrorList[r.Next(0,c-1)];
+				ZIPMirror = ZIPMirrorList[ra.Next(0,c-1)];
 			c = XMLMirrorList.Count;
 			if (c != 0)
-				XMLMirror = XMLMirrorList[r.Next(0,c-1)];
+				XMLMirror = XMLMirrorList[ra.Next(0,c-1)];
 			c = BannerMirrorList.Count;
 			if (c != 0)
-				BannerMirror = BannerMirrorList[r.Next(0,c-1)];
+				BannerMirror = BannerMirrorList[ra.Next(0,c-1)];
 
 			return true;
 		}
@@ -1571,9 +1582,9 @@ namespace TVRename
 				return "en"; // really shouldn't happen!
 			}
 			// and we have a language recorded for it
-			SeriesInfo ser = Series[seriesID];
-			if (!string.IsNullOrEmpty(ser.Language))
-				return ser.Language; // return that language
+			SeriesInfo serl = Series[seriesID];
+			if (!string.IsNullOrEmpty(serl.Language))
+				return serl.Language; // return that language
 
 			// otherwise, try for the user's top rated language
 			if (LanguagePriorityList.Count > 0)
@@ -1743,10 +1754,11 @@ namespace TVRename
 
 				foreach (Episode e in s.Episodes)
 				{
-					DateTime dt = e.GetAirDateDT(true);
-					if (dt != null)
+					DateTime? adt = e.GetAirDateDT(true);
+					if (adt != null)
 					{
-						if ((dt.CompareTo(today) > 0) && ((mostSoonAfterToday.CompareTo(DateTime(0)) == 0) || (dt.CompareTo(mostSoonAfterToday) < 0)))
+                        DateTime dt = (DateTime)adt;
+						if ((dt.CompareTo(today) > 0) && ((mostSoonAfterToday.CompareTo(new DateTime(0)) == 0) || (dt.CompareTo(mostSoonAfterToday) < 0)))
 						{
 							mostSoonAfterToday = dt;
 							next = e;
