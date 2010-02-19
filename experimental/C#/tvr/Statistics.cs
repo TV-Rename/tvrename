@@ -52,7 +52,7 @@ namespace TVRename
 			settings.IgnoreWhitespace = true;
 
 			string fn = System.Windows.Forms.Application.UserAppDataPath+"\\Statistics.xml";
-			if (!FileInfo(fn).Exists)
+			if (!File.Exists(fn))
 				return true;
 
 			XmlReader reader = XmlReader.Create(fn, settings);

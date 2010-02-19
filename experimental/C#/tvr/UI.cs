@@ -128,7 +128,7 @@ namespace TVRename
 		protected Season mLastSeasonClicked;
 		protected AIOItem mLastAIOClicked;
 		protected ShowItem mLastShowClicked;
-		protected System.Collections.Generic.List<string > mFoldersToOpen;
+		protected StringList mFoldersToOpen;
 		protected System.Collections.Generic.List<System.IO.FileInfo > mLastFL;
 		protected string mLastFolderClicked;
 
@@ -1390,7 +1390,7 @@ namespace TVRename
 			mLastAIOClicked = null;
 
 			mInternalChange = 0;
-			mFoldersToOpen = new System.Collections.Generic.List<string >();
+			mFoldersToOpen = new StringList();
 
 			InitializeComponent();
 
@@ -1949,7 +1949,7 @@ namespace TVRename
 
 			string body = "";
 
-			System.Collections.Generic.List<string > skip = new System.Collections.Generic.List<string >();
+			StringList skip = new StringList();
 			skip.Add("Actors");
 			skip.Add("banner");
 			skip.Add("Overview");
@@ -2642,7 +2642,7 @@ namespace TVRename
 				Season seas = mLastSeasonClicked;
 				ProcessedEpisode ep = mLastEpClicked;
 				ToolStripMenuItem tsi;
-				System.Collections.Generic.List<string > added = new System.Collections.Generic.List<string >();
+				StringList added = new StringList();
 
 				if (ep != null)
 				{
@@ -2700,7 +2700,7 @@ namespace TVRename
 					int n = mFoldersToOpen.Count;
 					bool first = true;
 
-					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in si.AllFolderLocations(mDoc.Settings))
+					foreach (System.Collections.Generic.KeyValuePair<int, StringList > kvp in si.AllFolderLocations(mDoc.Settings))
 					{
 						foreach (string folder in kvp.Value)
 						{
@@ -2755,7 +2755,7 @@ namespace TVRename
 			public void BuildRightClickMenu(Point pt)
 			{
 				showRightClickMenu.Items.Clear();
-				mFoldersToOpen = new System.Collections.Generic.List<string >();
+				mFoldersToOpen = new StringList();
 				mLastFL = new System.Collections.Generic.List<System.IO.FileInfo >();
 
 				MenuGuideAndTVDB(false);
@@ -3451,7 +3451,7 @@ namespace TVRename
 					 return;
 
 				 Season seas = TreeNodeToSeason(n);
-				 System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > afl = si.AllFolderLocations(mDoc.Settings);
+				 System.Collections.Generic.Dictionary<int, StringList > afl = si.AllFolderLocations(mDoc.Settings);
 				 int[] keys = new int[afl.Count];
 				 afl.Keys.CopyTo(keys, 0);
 				 if ((seas == null) && (keys.Length > 0))
@@ -3579,7 +3579,7 @@ namespace TVRename
 
 				 if (currentSI != null)
 				 {
-					 foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in currentSI.AllFolderLocations(mDoc.Settings))
+					 foreach (System.Collections.Generic.KeyValuePair<int, StringList > kvp in currentSI.AllFolderLocations(mDoc.Settings))
 					 {
 						 foreach (string folder in kvp.Value)
 						 {
@@ -3923,7 +3923,7 @@ namespace TVRename
 				 mLastAIOClicked = null;
 
 				 showRightClickMenu.Items.Clear();
-				 mFoldersToOpen = new System.Collections.Generic.List<string >();
+				 mFoldersToOpen = new StringList();
 				 mLastFL = new System.Collections.Generic.List<System.IO.FileInfo >();
 
 				 if ((lvr.Count == 1) && (lvAIO.FocusedItem != null) && (lvAIO.FocusedItem.Tag != null))

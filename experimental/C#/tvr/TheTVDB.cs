@@ -470,7 +470,7 @@ namespace TVRename
 			Language = "";
 		}
 
-		public int LanguagePriority(System.Collections.Generic.List<string > languages)
+		public int LanguagePriority(StringList languages)
 		{
 			if (string.IsNullOrEmpty(Language))
 				return 999999;
@@ -478,7 +478,7 @@ namespace TVRename
 			return (r == -1) ? 999999 : r;
 		}
 
-		public void Merge(SeriesInfo o, System.Collections.Generic.List<string > languages)
+		public void Merge(SeriesInfo o, StringList languages)
 		{
 			if (o.TVDBCode != TVDBCode)
 				return; // that's not us!
@@ -676,7 +676,7 @@ namespace TVRename
 		private System.Collections.Generic.List<int> ForceReloadOn;
 		//System::Threading::Mutex ^Lock;
 
-		private System.Collections.Generic.List<string > WhoHasLock;
+		private StringList WhoHasLock;
 
 		private FileInfo CacheFile;
 		private System.Collections.Generic.Dictionary <int, SeriesInfo > Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
@@ -693,7 +693,7 @@ namespace TVRename
 		}
 		public string LastError;
 		public bool Connected;
-		public System.Collections.Generic.List<string > LanguagePriorityList;
+		public StringList LanguagePriorityList;
 		public System.Collections.Generic.Dictionary<string , string> LanguageList;
 		public string CurrentDLTask;
 		public string XMLMirror;
@@ -750,8 +750,8 @@ namespace TVRename
 			CacheFile = cacheFile;
 
 			LastError = "";
-			WhoHasLock = new System.Collections.Generic.List<string >();
-			LanguagePriorityList = new System.Collections.Generic.List<string >();
+			WhoHasLock = new StringList();
+			LanguagePriorityList = new StringList();
 			LanguagePriorityList.Add("en");
 			Connected = false;
 			ExtraEpisodes = new System.Collections.Generic.List<ExtraEp >();
@@ -1105,9 +1105,9 @@ namespace TVRename
 			// get mirror list
 			Say("TheTVDB Mirrors");
 
-			System.Collections.Generic.List<string > XMLMirrorList = new System.Collections.Generic.List<string >();
-			System.Collections.Generic.List<string > BannerMirrorList = new System.Collections.Generic.List<string >();
-			System.Collections.Generic.List<string > ZIPMirrorList = new System.Collections.Generic.List<string >();
+			StringList XMLMirrorList = new StringList();
+			StringList BannerMirrorList = new StringList();
+			StringList ZIPMirrorList = new StringList();
 
 			byte[] p = GetPage("mirrors.xml", true, typeMaskBits.tmMainSite, false);
 			if (p == null)

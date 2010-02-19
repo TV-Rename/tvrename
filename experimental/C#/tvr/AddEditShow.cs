@@ -21,6 +21,7 @@ using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
 using Microsoft.Win32;
+using System.Text.RegularExpressions;
 
 //            this->txtCustomShowName->TextChanged += gcnew System::EventHandler(this, &AddEditShow::txtCustomShowName_TextChanged);
 
@@ -760,7 +761,7 @@ namespace TVRename
 			 }
 	private void bnRemove_Click(object sender, System.EventArgs e)
 			 {
-				 if (lvSeasonFolders.SelectedItems.Count)
+				 if (lvSeasonFolders.SelectedItems.Count > 0)
 					 foreach (ListViewItem lvi in lvSeasonFolders.SelectedItems)
 						 lvSeasonFolders.Items.Remove(lvi);
 			 }
@@ -795,7 +796,7 @@ namespace TVRename
 				 {
 					 try
 					 {
-						 ok = DirectoryInfo(txtFolder.Text).Exists;
+						 ok = System.IO.Directory.Exists(txtFolder.Text);
 					 }
 					 catch
 					 {

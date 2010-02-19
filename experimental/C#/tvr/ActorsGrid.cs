@@ -59,14 +59,14 @@ namespace TVRename
 				public int AllocC;
 				public int DataR;
 				public int DataC;
-				public System.Collections.Generic.List<string > Rows;
-				public System.Collections.Generic.List<string > Cols;
+				public StringList Rows;
+				public StringList Cols;
 				public ArrData[,] Data;
 
 				public DataArr(int rowCountPreAlloc)
 				{
-					Rows = new System.Collections.Generic.List<string >();
-					Cols = new System.Collections.Generic.List<string >();
+					Rows = new StringList();
+					Cols = new StringList();
 					AllocR = rowCountPreAlloc;
 					AllocC = rowCountPreAlloc *10;
 					Data = new ArrData[AllocR, AllocC];

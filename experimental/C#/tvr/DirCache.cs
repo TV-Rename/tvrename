@@ -1,6 +1,6 @@
 using System.IO;
 using System;
-
+using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -48,8 +48,8 @@ public class DirCache
 				if (subFolders)
 				{
 					DirectoryInfo[] dirs = di.GetDirectories();
-					foreach (DirectoryInfo di in dirs)
-						n += CountFiles(di.FullName, subFolders);
+					foreach (DirectoryInfo di2 in dirs)
+						n += CountFiles(di2.FullName, subFolders);
 				}
 			}
 			catch (UnauthorizedAccessException )

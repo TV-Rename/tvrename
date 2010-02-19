@@ -63,9 +63,9 @@ namespace TVRename
 		public System.Collections.Generic.List<IgnoreItem > Ignore;
 		public System.Collections.Generic.List<AddItem > AddItems;
 		public TVSettings Settings;
-		public System.Collections.Generic.List<string > MonitorFolders;
-		public System.Collections.Generic.List<string > IgnoreFolders;
-		public System.Collections.Generic.List<string > SearchFolders;
+		public StringList MonitorFolders;
+		public StringList IgnoreFolders;
+		public StringList SearchFolders;
 		public RSSItemList RSSList;
 
 		public bool LoadOK;
@@ -96,9 +96,9 @@ namespace TVRename
 
 			Settings = new TVSettings();
 
-			MonitorFolders = new System.Collections.Generic.List<string >();
-			IgnoreFolders = new System.Collections.Generic.List<string >();
-			SearchFolders = new System.Collections.Generic.List<string >();
+			MonitorFolders = new StringList();
+			IgnoreFolders = new StringList();
+			SearchFolders = new StringList();
 			ShowItems = new ShowItemList();
 			AddItems = new System.Collections.Generic.List<AddItem >();
 
@@ -305,7 +305,7 @@ namespace TVRename
 					if ((snum == 0) && (si.CountSpecials))
 						continue; // skip specials
 
-					System.Collections.Generic.List<string > folders = si.AllFolderLocations(Settings)[snum];
+					StringList folders = si.AllFolderLocations(Settings)[snum];
 					foreach (string folder in folders)
 					{
 						// generate new filename info
@@ -475,8 +475,8 @@ namespace TVRename
 						if (bzzt)
 							break;
 
-						System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > afl = si.AllFolderLocations(Settings);
-						foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in afl)
+						System.Collections.Generic.Dictionary<int, StringList > afl = si.AllFolderLocations(Settings);
+						foreach (System.Collections.Generic.KeyValuePair<int, StringList > kvp in afl)
 						{
 							foreach (string folder in kvp.Value)
 							{
@@ -1149,7 +1149,7 @@ namespace TVRename
 				if (!si.DoMissingCheck)
 					return true;
 
-				System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > flocs = si.AllFolderLocations(Settings);
+				System.Collections.Generic.Dictionary<int, StringList > flocs = si.AllFolderLocations(Settings);
 
 				if (Settings.NFOs)
 					TVShowNFOCheck(si);
@@ -1167,7 +1167,7 @@ namespace TVRename
 					if ((snum == 0) && (si.CountSpecials))
 						continue; // no specials season, they're merged into the seasons themselves
 
-					System.Collections.Generic.List<string > folders = new System.Collections.Generic.List<string >();
+					StringList folders = new StringList();
 
 					if (flocs.ContainsKey(snum))
 						folders = flocs[snum];
@@ -1653,7 +1653,7 @@ namespace TVRename
 				return found;
 			}
 
-			public static void WriteStringsToXml(System.Collections.Generic.List<string > strings, XmlWriter writer, string elementName, string stringName)
+			public static void WriteStringsToXml(StringList strings, XmlWriter writer, string elementName, string stringName)
 			{
 				writer.WriteStartElement(elementName);
 				foreach (string ss in strings)
@@ -1729,9 +1729,9 @@ namespace TVRename
 
 			}
 
-			public static System.Collections.Generic.List<string > ReadStringsFromXml(XmlReader reader, string elementName, string stringName)
+			public static StringList ReadStringsFromXml(XmlReader reader, string elementName, string stringName)
 			{
-				System.Collections.Generic.List<string > r = new System.Collections.Generic.List<string >();
+				StringList r = new StringList();
 
 				if (reader.Name != elementName)
 					return r; // uhoh
@@ -2264,7 +2264,7 @@ namespace TVRename
 				else
 					totalN = 1;
 
-				System.Collections.Generic.List<string > doneFolders = new System.Collections.Generic.List<string >();
+				StringList doneFolders = new StringList();
 
 				foreach (ShowItem si in ShowItems)
 				{
@@ -2295,7 +2295,7 @@ namespace TVRename
 						int snum = kvp.Key;
 						if ((si.IgnoreSeasons.Contains(kvp.Key)) || (!si.AllFolderLocations(Settings).ContainsKey(snum)))
 							continue; // ignore/skip this season
-						System.Collections.Generic.List<string > folders = si.AllFolderLocations(Settings)[snum];
+						StringList folders = si.AllFolderLocations(Settings)[snum];
 						foreach (string folder in folders)
 						{
 							if (doneFolders.Contains(folder)) // some folders may come up multiple times
@@ -2394,7 +2394,7 @@ namespace TVRename
 					if (!si.DoMissingCheck && !si.DoRename)
 						continue; // skip
 
-					System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > flocs = si.AllFolderLocations(Settings);
+					System.Collections.Generic.Dictionary<int, StringList > flocs = si.AllFolderLocations(Settings);
 
 
 					// TODO: this is a duplicate of code in UpToDateCheck
@@ -2411,7 +2411,7 @@ namespace TVRename
 						if ((snum == 0) && (si.CountSpecials))
 							continue; // no specials season, they're merged into the seasons themselves
 
-						System.Collections.Generic.List<string > folders = new System.Collections.Generic.List<string >();
+						StringList folders = new StringList();
 
 						if (flocs.ContainsKey(snum))
 							folders = flocs[snum];
@@ -2509,7 +2509,7 @@ namespace TVRename
 										if (di.Exists && (si.AutoFolderNameForSeason(snum, Settings).ToLower() != folder.ToLower()))
 										{
 											if (!si.ManualFolderLocations.ContainsKey(snum))
-												si.ManualFolderLocations[snum] = new System.Collections.Generic.List<string >();
+												si.ManualFolderLocations[snum] = new StringList();
 											si.ManualFolderLocations[snum].Add(folder);
 											SetDirty();
 										}
@@ -2664,7 +2664,7 @@ namespace TVRename
             {
                 return FindSeasEp(fi, out seas, out ep, showNameHint, Settings.FNPRegexs);
             }
-            public bool FindSeasEp(FileInfo fi, out int seas, out int ep, string showNameHint, FNPRegexList rexps)
+            static public bool FindSeasEp(FileInfo fi, out int seas, out int ep, string showNameHint, FNPRegexList rexps)
             {
                 string filename = fi.Name;
                 int l = filename.Length;

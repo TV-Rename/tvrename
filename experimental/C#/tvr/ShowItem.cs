@@ -118,7 +118,7 @@ namespace TVRename
 			public string AutoAdd_SeasonFolderName; // TODO: use magical renaming tokens here
 			public bool AutoAdd_FolderPerSeason;
 
-			public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > ManualFolderLocations;
+			public System.Collections.Generic.Dictionary<int, StringList > ManualFolderLocations;
 
 			public bool UseSequentialMatch;
 			public bool DoRename;
@@ -145,7 +145,7 @@ namespace TVRename
 			public void SetDefaults(TheTVDB db)
 			{
 				TVDB = db;
-				ManualFolderLocations = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > >();
+				ManualFolderLocations = new System.Collections.Generic.Dictionary<int, StringList >();
 				IgnoreSeasons = new System.Collections.Generic.List<int>();
 				UseCustomShowName = false;
 				CustomShowName = "";
@@ -154,7 +154,7 @@ namespace TVRename
 				SeasonEpisodes = new System.Collections.Generic.Dictionary<int, ProcessedEpisodeList >();
 				ShowNextAirdate = true;
 				TVDBCode = -1;
-				//                WhichSeasons = gcnew Generic.List<int>;
+				//                WhichSeasons = gcnew System.Collections.Generic.List<int>;
 				//                NamingStyle = (int)NStyle.DefaultStyle();
 				AutoAddNewSeasons = true;
 				PadSeasonToTwoDigits = false;
@@ -169,7 +169,7 @@ namespace TVRename
 			}
 			//Generic.List<int>WhichSeasons()
 			//{
-			//    Generic.List<int>r = gcnew Generic.List<int>();
+			//    System.Collections.Generic.List<int>r = gcnew System.Collections.Generic.List<int>();
 			//    for each (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList>kvp in SeasonEpisodes)
 			//        r->Add(kvp->Key);
 			//    return r;
@@ -302,7 +302,7 @@ namespace TVRename
 						writer.WriteEndElement(); // Rules
 					}
 				}
-				foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in ManualFolderLocations)
+				foreach (System.Collections.Generic.KeyValuePair<int, StringList > kvp in ManualFolderLocations)
 				{
 					if (kvp.Value.Count > 0)
 					{
@@ -416,7 +416,7 @@ namespace TVRename
 						if (!reader.IsEmptyElement)
 						{
 							int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-							ManualFolderLocations[snum] = new System.Collections.Generic.List<string >();
+							ManualFolderLocations[snum] = new StringList();
 							reader.Read();
 							while (reader.Name != "SeasonFolders")
 							{
@@ -447,7 +447,7 @@ namespace TVRename
 				return pel;
 			}
 
-			public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > AllFolderLocations(TVSettings settings)
+			public System.Collections.Generic.Dictionary<int, StringList > AllFolderLocations(TVSettings settings)
 			{
 				return AllFolderLocations(settings, true);
 			}
@@ -455,16 +455,16 @@ namespace TVRename
 			{
 				return s.TrimEnd('\\');
 			}
-			public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > AllFolderLocations(TVSettings settings, bool manualToo)
+			public System.Collections.Generic.Dictionary<int, StringList > AllFolderLocations(TVSettings settings, bool manualToo)
 			{
-				System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > > fld = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string > >();
+				System.Collections.Generic.Dictionary<int, StringList > fld = new System.Collections.Generic.Dictionary<int, StringList >();
 
 				if (manualToo)
 				{
-					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<string > > kvp in ManualFolderLocations)
+					foreach (System.Collections.Generic.KeyValuePair<int, StringList > kvp in ManualFolderLocations)
 					{
 						if (!fld.ContainsKey(kvp.Key))
-							fld[kvp.Key] = new System.Collections.Generic.List<string >();
+							fld[kvp.Key] = new StringList();
 						foreach (string s in kvp.Value)
 							fld[kvp.Key].Add(TTS(s));
 					}
@@ -486,7 +486,7 @@ namespace TVRename
 						if ((!string.IsNullOrEmpty(newName)) && (Directory.Exists(newName)))
 						{
 							if (!fld.ContainsKey(i))
-								fld[i] = new System.Collections.Generic.List<string >();
+								fld[i] = new StringList();
 							if (!fld[i].Contains(newName))
 								fld[i].Add(TTS(newName));
 						}

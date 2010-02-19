@@ -13,6 +13,9 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
+using System.IO;
+using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace TVRename
 {
@@ -759,7 +762,7 @@ namespace TVRename
 				 FMPUpto = "";
 				 FMPPercent = 0;
 
-				 Thread fmpshower = new Thread(new ThreadStart(this, FolderMonitor.FMPShower));
+				 Thread fmpshower = new Thread(new ThreadStart(this.FMPShower));
 				 fmpshower.Name = "Folder Monitor Progress";
 				 fmpshower.Start();
 
@@ -771,7 +774,7 @@ namespace TVRename
 					 if (ai.TheSeries == null)
 					 {
 						 // do search using folder name
-						 mDoc.GuessShowName(ai);
+						 TVDoc.GuessShowName(ai);
 						 if (!string.IsNullOrEmpty(ai.ShowName))
 						 {
 							 FMPUpto = ai.ShowName;
@@ -818,7 +821,7 @@ namespace TVRename
 
 			 private void bnFMIgnoreAllNewFolders_Click(object sender, System.EventArgs e)
 			 {
-				 System.Windows.Forms.DialogResult dr = MessageBox.Show("Add everything in this list to the ignore list?", "Ignore All", Windows.Forms.MessageBoxButtons.OKCancel, Windows.Forms.MessageBoxIcon.Exclamation);
+				 System.Windows.Forms.DialogResult dr = MessageBox.Show("Add everything in this list to the ignore list?", "Ignore All", MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
 
 				 if (dr != System.Windows.Forms.DialogResult.OK)
 					 return;
@@ -872,7 +875,7 @@ namespace TVRename
 						 if (di.Exists)
 						 {
 							 // keep next line sync'd with ProcessAddItems, etc.
-							 bool hasSeasonFolders = DirectoryInfo(path).GetDirectories("*Season *").Length > 0; // todo - use non specific word
+							 bool hasSeasonFolders = Directory.GetDirectories(path, "*Season *").Length > 0; // todo - use non specific word
 							 AddItem ai = new AddItem(path, hasSeasonFolders ? FolderModeEnum.kfmFolderPerSeason : FolderModeEnum.kfmFlat, -1);
 							 GuessAI(ai);
 							 mDoc.AddItems.Add(ai);
@@ -948,7 +951,7 @@ namespace TVRename
 			 }
 			 private void FillFMNewShowList(bool keepSel)
 			 {
-				 Generic.List<int> sel = new Generic.List<int>();
+                 System.Collections.Generic.List<int> sel = new System.Collections.Generic.List<int>();
 				 if (keepSel)
 					 foreach (int i in lvFMNewShows.SelectedIndices)
 						 sel.Add(i);
@@ -1010,7 +1013,7 @@ namespace TVRename
 				 if (res != System.Windows.Forms.DialogResult.Yes)
 					 return;
 
-				 Generic.List<AddItem > toAdd = new Generic.List<AddItem >();
+				 System.Collections.Generic.List<AddItem > toAdd = new System.Collections.Generic.List<AddItem >();
 				 foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
 				 {
 					 AddItem ai = (AddItem)(lvi.Tag);
@@ -1066,7 +1069,7 @@ namespace TVRename
 						 found.AutoAdd_FolderPerSeason = ai.FolderMode == FolderModeEnum.kfmFolderPerSeason;
 						 string foldername = "Season ";
 
-						 foreach (DirectoryInfo di in DirectoryInfo(ai.Folder).GetDirectories("*Season *"))
+						 foreach (DirectoryInfo di in new DirectoryInfo(ai.Folder).GetDirectories("*Season *"))
 						 {
 							 string s = di.FullName;
 							 string f = ai.Folder;
@@ -1087,7 +1090,7 @@ namespace TVRename
 					 if ((ai.FolderMode == FolderModeEnum.kfmSpecificSeason) && (ai.SpecificSeason != -1))
 					 {
 						 if (!found.ManualFolderLocations.ContainsKey(ai.SpecificSeason))
-							 found.ManualFolderLocations[ai.SpecificSeason] = new System.Collections.Generic.List<string >();
+							 found.ManualFolderLocations[ai.SpecificSeason] = new StringList();
 						 found.ManualFolderLocations[ai.SpecificSeason].Add(ai.Folder);
 					 }
 
@@ -1102,7 +1105,7 @@ namespace TVRename
 
 			 private void GuessAI(AddItem ai)
 			 {
-				 mDoc.GuessShowName(ai);
+				 TVDoc.GuessShowName(ai);
 				 if (!string.IsNullOrEmpty(ai.ShowName))
 				 {
 					 TheTVDB db = mDoc.GetTVDB(true,"GuessAI");

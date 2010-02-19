@@ -14,7 +14,7 @@ namespace TVRename
 
   public class Searchers
   {
-	private System.Collections.Generic.List<string > mNames;
+	private StringList mNames;
     private StringList mURLs;
 
 	public string CurrentSearch;

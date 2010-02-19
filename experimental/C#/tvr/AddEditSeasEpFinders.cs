@@ -528,7 +528,7 @@ namespace TVRename
 				 else
 				 {
 					 int[] rowsIndex = Grid1.Selection.GetSelectionRegion().GetRowsIndex();
-					 if (!rowsIndex.Length)
+					 if (rowsIndex.Length == 0)
 						 return;
 
 					 FilenameProcessorRE re2 = REForRow(rowsIndex[0]);
@@ -539,7 +539,8 @@ namespace TVRename
 				 }
 
 				 lvPreview.BeginUpdate();
-				 foreach (FileInfo fi in DirectoryInfo(txtFolder.Text).GetFiles())
+                 DirectoryInfo d = new DirectoryInfo(txtFolder.Text);
+				 foreach (FileInfo fi in d.GetFiles())
 				 {
 					 int seas;
 					 int ep;
@@ -547,7 +548,7 @@ namespace TVRename
 					 if (!TheSettings.UsefulExtension(fi.Extension,true))
 						 continue; // move on
 
-					 bool r = TVDoc.FindSeasEp(fi, seas, ep, cbShowList.Text, rel);
+					 bool r = TVDoc.FindSeasEp(fi, out seas, out ep, cbShowList.Text, rel);
 					 ListViewItem lvi = new ListViewItem();
 					 lvi.Text = fi.Name;
 					 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
