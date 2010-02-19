@@ -150,7 +150,7 @@ namespace TVRename
 
 			   const int kN = 5;
 
-			   System.Collections.Generic.List<ProcessedEpisode > next5 = mDoc.NextNShows(kN, 9999);
+			   ProcessedEpisodeList next5 = mDoc.NextNShows(kN, 9999);
 
 			   if (next5 != null)
 			   {

@@ -264,6 +264,8 @@ namespace TVRename
             FileInfo f2 = new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
             if (f2.Exists)
                 ResumeDatPath = f2.FullName;
+            else
+                ResumeDatPath = "";
 
             SearchRSS = false;
             EpImgs = false;

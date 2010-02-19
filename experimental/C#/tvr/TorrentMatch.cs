@@ -13,7 +13,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
-
+using System.IO;
 
 namespace TVRename
 {

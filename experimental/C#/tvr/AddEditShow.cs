@@ -20,7 +20,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
-
+using Microsoft.Win32;
 
 //            this->txtCustomShowName->TextChanged += gcnew System::EventHandler(this, &AddEditShow::txtCustomShowName_TextChanged);
 

@@ -38,11 +38,11 @@ namespace TVRename
 			//
 
 			label1.Text = "If this program has saved you time, and you use it regularly, then please consider buying me a drink to say thanks!\r\r" + "Type in (or choose) an amount, then hit the button to go to Paypal.";
-			comboBox1.Items.Add("$"+(double)1.ToString(".00"));
-			comboBox1.Items.Add("$"+(double)2.ToString(".00"));
-			comboBox1.Items.Add("$"+(double)5.ToString(".00"));
-			comboBox1.Items.Add("$"+(double)10.ToString(".00"));
-			comboBox1.Items.Add("$"+(double)20.ToString(".00"));
+			comboBox1.Items.Add("$"+((double)1).ToString(".00"));
+			comboBox1.Items.Add("$"+((double)2).ToString(".00"));
+			comboBox1.Items.Add("$"+((double)5).ToString(".00"));
+			comboBox1.Items.Add("$"+((double)10).ToString(".00"));
+			comboBox1.Items.Add("$"+((double)20).ToString(".00"));
 
 			comboBox2.Items.Add("AUD");
 			comboBox2.Items.Add("USD");

@@ -32,10 +32,10 @@ namespace TVRename
 		private System.Collections.Generic.List<ShowRule > WorkingRuleSet;
 		private ShowItem mSI;
 		private int mSeasonNumber;
-		private System.Collections.Generic.List<ProcessedEpisode > mOriginalEps;
+		private ProcessedEpisodeList mOriginalEps;
 		private CustomName NameStyle;
 
-		public EditRules(ShowItem si, System.Collections.Generic.List<ProcessedEpisode > originalEpList, int seasonNumber, CustomName style)
+		public EditRules(ShowItem si, ProcessedEpisodeList originalEpList, int seasonNumber, CustomName style)
 		{
 			NameStyle = style;
 			InitializeComponent();
@@ -432,7 +432,7 @@ private void bnCancel_Click(object sender, System.EventArgs e)
 		 }
 		 private void FillPreview()
 		 {
-			 System.Collections.Generic.List<ProcessedEpisode > pel = new System.Collections.Generic.List<ProcessedEpisode >();
+			 ProcessedEpisodeList pel = new System.Collections.Generic.List<ProcessedEpisode >();
 
 			 if (mOriginalEps != null)
 			 {

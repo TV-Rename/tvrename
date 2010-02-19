@@ -27,7 +27,7 @@ namespace TVRename
         }
     }
 
-public static class DirCache
+public class DirCache
 {
 		public static int CountFiles(string folder, bool subFolders)
 		{
@@ -95,8 +95,8 @@ public static class DirCache
 				if (subFolders)
 				{
 					DirectoryInfo[] dirs = di.GetDirectories();
-					foreach (DirectoryInfo di in dirs)
-						filesDone = BuildDirCache(prog,filesDone,totalFiles,fileCache, di.FullName, subFolders, theSettings);
+					foreach (DirectoryInfo di2 in dirs)
+						filesDone = BuildDirCache(prog,filesDone,totalFiles,fileCache, di2.FullName, subFolders, theSettings);
 				}
 			}
 			catch (UnauthorizedAccessException )

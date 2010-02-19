@@ -1087,7 +1087,7 @@ namespace TVRename
 					 if ((ai.FolderMode == FolderModeEnum.kfmSpecificSeason) && (ai.SpecificSeason != -1))
 					 {
 						 if (!found.ManualFolderLocations.ContainsKey(ai.SpecificSeason))
-							 found.ManualFolderLocations[ai.SpecificSeason] = new Collections.Generic.List<string >();
+							 found.ManualFolderLocations[ai.SpecificSeason] = new System.Collections.Generic.List<string >();
 						 found.ManualFolderLocations[ai.SpecificSeason].Add(ai.Folder);
 					 }
 

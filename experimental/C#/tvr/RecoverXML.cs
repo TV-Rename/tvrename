@@ -255,11 +255,11 @@ namespace TVRename
 #endregion
 	private void RecoverXML_Load(object sender, System.EventArgs e)
 			 {
-				 SettingsList = DirectoryInfo(System.Windows.Forms.Application.UserAppDataPath).GetFiles("TVRenameSettings.xml*");
-				 DBList = DirectoryInfo(System.Windows.Forms.Application.UserAppDataPath).GetFiles("TheTVDB.xml*");
+				 SettingsList = new DirectoryInfo(System.Windows.Forms.Application.UserAppDataPath).GetFiles("TVRenameSettings.xml*");
+				 DBList = new DirectoryInfo(System.Windows.Forms.Application.UserAppDataPath).GetFiles("TheTVDB.xml*");
 
 				 lbSettings.Items.Add("Default settings");
-				 if ((SettingsList != null) && SettingsList.Length)
+				 if ((SettingsList != null) && SettingsList.Length > 0)
 				 {
 					 foreach (FileInfo fi in SettingsList)
 						 lbSettings.Items.Add(fi.LastWriteTime.ToString("g"));
@@ -267,7 +267,7 @@ namespace TVRename
 				 }
 
 				 lbDB.Items.Add("None");
-				 if ((DBList != null) && DBList.Length)
+				 if ((DBList != null) && DBList.Length>0)
 				 {
 					 foreach (FileInfo fi in DBList)
 						 lbDB.Items.Add(fi.LastWriteTime.ToString("g"));

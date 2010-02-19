@@ -20,7 +20,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
-
+using System.IO;
 
 namespace TVRename
 {
@@ -364,7 +364,7 @@ namespace TVRename
 		txt += "From: " + txtName.Text + " <" + txtEmail.Text + ">" + "\r\n";
 		txt += "Subject: TVRename bug report" + "\r\n";
 		txt += "\r\n";
-		txt += "TVRename version: " + DisplayVersionString() + "\r\n";
+		txt += "TVRename version: " + Version.DisplayVersionString() + "\r\n";
 		txt += "Experimental features: " + (UI.IncludeExperimentalStuff() ? "On" : "Off") + "\r\n";
 		txt += "UserAppDataPath is " + System.Windows.Forms.Application.UserAppDataPath + "\r\n";
 		txt += "EpGuidePath is " + UI.EpGuidePath() + "\r\n";
@@ -415,15 +415,16 @@ namespace TVRename
 		{
 			txt += "==== Finding & Organising Directory Scan ====" + "\r\n";
 			txt += "\r\n";
-			DirCache files = new DirCache();
+
+            System.Collections.Generic.List<DirCacheEntry> files;
 			foreach (string efi in mDoc.SearchFolders)
-				BuildDirCache(null,0,0,files, efi, true, mDoc.Settings);
+				DirCache.BuildDirCache(null,0,0,files, efi, true, mDoc.Settings);
 
 			foreach (DirCacheEntry fi in files)
 			{
 				int seas;
 				int ep;
-				bool r = mDoc.FindSeasEp(fi.TheFile, seas, ep, null);
+				bool r = mDoc.FindSeasEp(fi.TheFile, out seas, out ep, null);
 				bool useful = fi.HasUsefulExtension_NotOthersToo;
 				txt += fi.TheFile.FullName + " ("+(r?"OK":"No")+" " + seas.ToString()+","+ep.ToString()+" "+(useful?fi.TheFile.Extension:"-")+")" + "\r\n";
 			}
@@ -436,7 +437,7 @@ namespace TVRename
 
 			foreach (ShowItem si in mDoc.GetShowItems(true))
 			{
-				foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > kvp in si.SeasonEpisodes)
+				foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
 				{
 					int snum = kvp.Key;
 					if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations(mDoc.Settings).ContainsKey(snum))

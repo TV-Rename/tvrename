@@ -109,7 +109,7 @@ namespace TVRename
 			public bool UseCustomShowName;
 			public string CustomShowName;
 			public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule > > SeasonRules;
-			public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ProcessedEpisode > > SeasonEpisodes; // built up by applying rules.
+            public System.Collections.Generic.Dictionary<int, ProcessedEpisodeList> SeasonEpisodes; // built up by applying rules.
 			public bool ShowNextAirdate;
 			public int TVDBCode;
 
@@ -151,11 +151,11 @@ namespace TVRename
 				CustomShowName = "";
 				UseSequentialMatch = false;
 				SeasonRules = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule > >();
-				SeasonEpisodes = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ProcessedEpisode > >();
+				SeasonEpisodes = new System.Collections.Generic.Dictionary<int, ProcessedEpisodeList >();
 				ShowNextAirdate = true;
 				TVDBCode = -1;
-				//                WhichSeasons = gcnew Generic::List<int>;
-				//                NamingStyle = (int)NStyle::DefaultStyle();
+				//                WhichSeasons = gcnew Generic.List<int>;
+				//                NamingStyle = (int)NStyle.DefaultStyle();
 				AutoAddNewSeasons = true;
 				PadSeasonToTwoDigits = false;
 				AutoAdd_FolderBase = "";
@@ -167,10 +167,10 @@ namespace TVRename
 				DVDOrder = false;
 				ForceCheckAll = false;
 			}
-			//Generic::List<int> ^WhichSeasons()
+			//Generic.List<int>WhichSeasons()
 			//{
-			//    Generic::List<int> ^r = gcnew Generic::List<int>();
-			//    for each (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList ^> ^kvp in SeasonEpisodes)
+			//    Generic.List<int>r = gcnew Generic.List<int>();
+			//    for each (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList>kvp in SeasonEpisodes)
 			//        r->Add(kvp->Key);
 			//    return r;
 			//}
@@ -216,16 +216,16 @@ namespace TVRename
 			public int MaxSeason()
 			{
 				int max = 0;
-				foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in SeasonEpisodes)
+				foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > kvp in SeasonEpisodes)
 					if (kvp.Key > max)
 						max = kvp.Key;
 				return max;
 			}
 
-			//String ^NiceName(int season)
+			//StringNiceName(int season)
 			//{
 			//    // something like "Simpsons (S3)"
-			//    return String::Concat(ShowName," (S",season,")");
+			//    return String.Concat(ShowName," (S",season,")");
 			//}
 
 			public void WriteXMLSettings(XmlWriter writer)
@@ -439,9 +439,9 @@ namespace TVRename
 
 
 
-			public static System.Collections.Generic.List<ProcessedEpisode > ProcessedListFromEpisodes(System.Collections.Generic.List<Episode > el, ShowItem si)
+			public static ProcessedEpisodeList ProcessedListFromEpisodes(System.Collections.Generic.List<Episode > el, ShowItem si)
 			{
-				System.Collections.Generic.List<ProcessedEpisode > pel = new System.Collections.Generic.List<ProcessedEpisode >();
+				ProcessedEpisodeList pel = new System.Collections.Generic.List<ProcessedEpisode >();
 				foreach (Episode e in el)
 					pel.Add(new ProcessedEpisode(e, si));
 				return pel;
@@ -473,7 +473,7 @@ namespace TVRename
 				if (AutoAddNewSeasons && (!string.IsNullOrEmpty(AutoAdd_FolderBase)))
 				{
 					int highestThereIs = -1;
-					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in SeasonEpisodes)
+					foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > kvp in SeasonEpisodes)
 						if (kvp.Key > highestThereIs)
 							highestThereIs = kvp.Key;
 
@@ -508,6 +508,22 @@ namespace TVRename
         public class ShowItemList : System.Collections.Generic.List<ShowItem>
         {
         }
+
+        public class ProcessedEpisodeList : System.Collections.Generic.List<ProcessedEpisode>
+        {
+        }
+
+        public class EpisodeDict : System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>
+        {
+        } // dictionary by season #
+
+        public class IgnoreSeasonList : System.Collections.Generic.List<int>
+        {
+        }
+        public class FolderLocationDict : System.Collections.Generic.Dictionary<int, StringList>
+        {
+        }
+
     			
 
 

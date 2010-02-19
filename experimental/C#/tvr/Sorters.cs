@@ -85,7 +85,7 @@ namespace TVRename
 
 	  try
 	  {
-		d1 = (Episode)(x as ListViewItem.Tag).GetAirDateDT(true);
+		d1 = ((Episode)((x as ListViewItem).Tag)).GetAirDateDT(true);
 	  }
 	  catch
 	  {
@@ -94,7 +94,7 @@ namespace TVRename
 
 	  try
 	  {
-		d2 = (Episode)(y as ListViewItem.Tag).GetAirDateDT(true);
+		d2 = ((Episode)((y as ListViewItem).Tag)).GetAirDateDT(true);
 	  }
 	  catch
 	  {
@@ -183,9 +183,9 @@ namespace TVRename
 
 		for (int i =0;i<7;i++)
 		{
-		  if (now+TimeSpan(i,0,0,0).ToString("ddd") == t1)
+		  if ((now+new TimeSpan(i,0,0,0)).ToString("ddd") == t1)
 			d1 = i;
-		   if (now+TimeSpan(i,0,0,0).ToString("ddd") == t2)
+		   if ((now+new TimeSpan(i,0,0,0)).ToString("ddd") == t2)
 			d2 = i;
 		}
 	  }
@@ -215,8 +215,8 @@ public class NumberAsTextSorter: IComparer
 	{
 	  int one;
 	  int two;
-	  string s1 = (x as ListViewItem.SubItems)[col].Text;
-	  string s2 = (y as ListViewItem.SubItems)[col].Text;
+	  string s1 = ((x as ListViewItem).SubItems)[col].Text;
+	  string s2 = ((y as ListViewItem).SubItems)[col].Text;
 	  if (string.IsNullOrEmpty(s1))
 		s1 = "-1";
 	  if (string.IsNullOrEmpty(s2))

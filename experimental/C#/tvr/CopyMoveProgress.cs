@@ -38,7 +38,7 @@ namespace TVRename
 	{
 		public const int kArrayLength = 256 *1024;
 
-        private CopyMoveResult Result;
+        public CopyMoveResult Result;
 		// String ^mErrorText;
 		private System.Collections.Generic.List<AIOItem > mToDo;
 		//RCList ^mSources, ^ErrorFiles;
@@ -85,9 +85,8 @@ namespace TVRename
 //			
 			//			RCList ^ErrFiles() { return ErrorFiles; }
 
-		public CopyMoveProgress(TVDoc doc, System.Collections.Generic.List<AIOItem > todo, out CopyMoveResult res, TVRenameStats stats)
+		public CopyMoveProgress(TVDoc doc, System.Collections.Generic.List<AIOItem > todo, TVRenameStats stats)
 		  {
-			Result = res;
 			mDoc = doc;
 			mToDo = todo;
 			mStats = stats;

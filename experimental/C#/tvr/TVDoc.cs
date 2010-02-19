@@ -168,7 +168,7 @@ namespace TVRename
 				LockShowItems();
 				foreach (ShowItem si in ShowItems)
 				{
-					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > k in si.SeasonEpisodes)
+					foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > k in si.SeasonEpisodes)
 						mStats.NS_NumberOfEpisodesExpected += k.Value.Count;
 					mStats.NS_NumberOfSeasons += si.SeasonEpisodes.Count;
 				}
@@ -1186,7 +1186,7 @@ namespace TVRename
 						// make up a list of all the epsiodes in this season that we have locally
 						System.Collections.Generic.List<FileInfo > localEps = new System.Collections.Generic.List<FileInfo >();
 
-						System.Collections.Generic.List<ProcessedEpisode > eps = si.SeasonEpisodes[snum];
+						ProcessedEpisodeList eps = si.SeasonEpisodes[snum];
 
 						foreach (FileInfo fiTemp in fi)
 						{
@@ -1306,7 +1306,7 @@ namespace TVRename
 				bool r = true;
 				foreach (System.Collections.Generic.KeyValuePair<int, Season > kvp in ser.Seasons)
 				{
-					System.Collections.Generic.List<ProcessedEpisode > pel = GenerateEpisodes(si, ser, kvp.Key, true);
+					ProcessedEpisodeList pel = GenerateEpisodes(si, ser, kvp.Key, true);
 					si.SeasonEpisodes[kvp.Key] = pel;
 					if (pel == null)
 						r = false;
@@ -1337,9 +1337,9 @@ namespace TVRename
 				return r;
 			}
 
-			public static System.Collections.Generic.List<ProcessedEpisode > GenerateEpisodes(ShowItem si, SeriesInfo ser, int snum, bool applyRules)
+			public static ProcessedEpisodeList GenerateEpisodes(ShowItem si, SeriesInfo ser, int snum, bool applyRules)
 			{
-				System.Collections.Generic.List<ProcessedEpisode > eis = new System.Collections.Generic.List<ProcessedEpisode >();
+				ProcessedEpisodeList eis = new System.Collections.Generic.List<ProcessedEpisode >();
 
 				if ((ser == null) || !ser.Seasons.ContainsKey(snum))
 					return null; // todo.. something?
@@ -1407,7 +1407,7 @@ namespace TVRename
 			}
 
 
-			public static void ApplyRules(System.Collections.Generic.List<ProcessedEpisode > eis, System.Collections.Generic.List<ShowRule > rules, ShowItem si)
+			public static void ApplyRules(ProcessedEpisodeList eis, System.Collections.Generic.List<ShowRule > rules, ShowItem si)
 			{
 				foreach (ShowRule sr in rules)
 				{
@@ -1555,7 +1555,7 @@ namespace TVRename
 			}
 
 
-			public static void Renumber(System.Collections.Generic.List<ProcessedEpisode > eis)
+			public static void Renumber(ProcessedEpisodeList eis)
 			{
 				if (eis.Count == 0)
 					return; // nothing to do
@@ -1601,10 +1601,10 @@ namespace TVRename
 				ai.ShowName = showName;
 			}
 
-			public System.Collections.Generic.List<ProcessedEpisode > NextNShows(int nshows, int ndays)
+			public ProcessedEpisodeList NextNShows(int nshows, int ndays)
 			{
 				DateTime notBefore = DateTime.Now;
-				System.Collections.Generic.List<ProcessedEpisode > found = new System.Collections.Generic.List<ProcessedEpisode >();
+				ProcessedEpisodeList found = new System.Collections.Generic.List<ProcessedEpisode >();
 
 				LockShowItems();
 				for (int i =0;i<nshows;i++)
@@ -1615,7 +1615,7 @@ namespace TVRename
 					{
 						if (!si.ShowNextAirdate)
 							continue;
-						foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > v in si.SeasonEpisodes)
+						foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > v in si.SeasonEpisodes)
 						{
 							if (si.IgnoreSeasons.Contains(v.Key))
 								continue; // ignore this season
@@ -2039,7 +2039,7 @@ namespace TVRename
 //			writer->Close();
 //			}
 //			
-			public bool GenerateUpcomingXML(Stream str, System.Collections.Generic.List<ProcessedEpisode > elist)
+			public bool GenerateUpcomingXML(Stream str, ProcessedEpisodeList elist)
 			{
 				if (elist == null)
 					return false;
@@ -2286,7 +2286,7 @@ namespace TVRename
 					}
 
 
-					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
+					foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > kvp in si.SeasonEpisodes)
 					{
 						int snum = kvp.Key;
 						if ((si.IgnoreSeasons.Contains(kvp.Key)) || (!si.AllFolderLocations(Settings).ContainsKey(snum)))
@@ -2314,8 +2314,7 @@ namespace TVRename
 				// first pass to CopyMoveProgress
 				// then, fire Action(TVDoc ^doc) on whatever is left (!Done)
 
-                CopyMoveResult res;
-				CopyMoveProgress cmp = new CopyMoveProgress(this, theList, out res, Stats());
+				CopyMoveProgress cmp = new CopyMoveProgress(this, theList, Stats());
 				cmp.ShowDialog();
 
 				prog.Invoke(0);

@@ -13,7 +13,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Data;
 using System.Drawing;
-
+using System.IO;
 
 namespace TVRename
 {
@@ -28,11 +28,11 @@ namespace TVRename
 	/// </summary>
 	public class CustomNameDesigner : System.Windows.Forms.Form
 	{
-		private System.Collections.Generic.List<ProcessedEpisode > Eps;
+		private ProcessedEpisodeList Eps;
 		private CustomName CN;
 		private TVDoc mDoc;
 
-		public CustomNameDesigner(System.Collections.Generic.List<ProcessedEpisode > pel, CustomName cn, TVDoc doc)
+		public CustomNameDesigner(ProcessedEpisodeList pel, CustomName cn, TVDoc doc)
 		{
 			Eps = pel;
 			CN = cn;
@@ -54,7 +54,7 @@ namespace TVRename
 			cbPresets.Items.Clear();
 			ProcessedEpisode pe = null;
 			if (lvTest.SelectedItems.Count == 0)
-				pe = ((Eps != null) && (Eps.Count)) ? Eps[0] : null;
+				pe = ((Eps != null) && (Eps.Count>0)) ? Eps[0] : null;
 			else
 				pe = (ProcessedEpisode)(lvTest.SelectedItems[0].Tag);
 

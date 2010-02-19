@@ -6,8 +6,6 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 //
 
-//#include "Server.h"
-
 using System;
 using System.ComponentModel;
 using System.Collections;
@@ -17,8 +15,6 @@ using System.Drawing;
 using System.Xml;
 using System.Threading;
 using System.IO;
-
-
 
 namespace TVRename
 {
@@ -60,7 +56,7 @@ namespace TVRename
 	private System.Windows.Forms.Button bnAIOCheck;
 
 
-	private TVRename.MyListView lvAIO;
+	private MyListView lvAIO;
 
 
 
@@ -1970,7 +1966,7 @@ namespace TVRename
 
 				Season s = ser.Seasons[snum];
 
-				System.Collections.Generic.List<ProcessedEpisode > eis = null;
+				ProcessedEpisodeList eis = null;
 				// int snum = s.SeasonNumber;
 				if (si.SeasonEpisodes.ContainsKey(snum))
 					eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
@@ -2212,7 +2208,7 @@ namespace TVRename
 					if (!si.ShowNextAirdate)
 						continue;
 
-					foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
+					foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > kvp in si.SeasonEpisodes)
 					{
 						if (si.IgnoreSeasons.Contains(kvp.Key))
 							continue; // ignore this season
@@ -2401,7 +2397,7 @@ namespace TVRename
 			public void UpdateToolstripWTW()
 			{
 				// update toolstrip text too
-				System.Collections.Generic.List<ProcessedEpisode > next1 = mDoc.NextNShows(1, 36500);
+				ProcessedEpisodeList next1 = mDoc.NextNShows(1, 36500);
 
 				tsNextShowTxt.Text = "Next airing: ";
 				if ((next1 != null) && (next1.Count >= 1))
@@ -3356,7 +3352,7 @@ namespace TVRename
 
 				 TheTVDB db = mDoc.GetTVDB(true,"EditSeason");
 				 SeriesInfo ser = db.GetSeries(si.TVDBCode);
-				 System.Collections.Generic.List<ProcessedEpisode > pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
+				 ProcessedEpisodeList pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
 
 				 EditRules er = new EditRules(si, pel, seasnum, mDoc.Settings.NamingStyle);
 				 System.Windows.Forms.DialogResult dr = er.ShowDialog();
@@ -3520,14 +3516,14 @@ namespace TVRename
 				 ShowItem currentSI = TreeNodeToShowItem(MyShowTree.SelectedNode);
 
 				 int snum = (currentSeas != null) ? currentSeas.SeasonNumber : 1;
-				 System.Collections.Generic.List<ProcessedEpisode > pel = null;
+				 ProcessedEpisodeList pel = null;
 				 if ((currentSI != null) && (currentSI.SeasonEpisodes.ContainsKey(snum)))
 					 pel = currentSI.SeasonEpisodes[snum];
 				 else
 				 {
 					 foreach (ShowItem si in mDoc.GetShowItems(true))
 					 {
-						 foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ProcessedEpisode > > kvp in si.SeasonEpisodes)
+						 foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList > kvp in si.SeasonEpisodes)
 						 {
 							 pel = kvp.Value;
 							 break;
@@ -3552,7 +3548,7 @@ namespace TVRename
 			 }
 	private void searchEnginesToolStripMenuItem_Click(object sender, System.EventArgs e)
 			 {
-				 System.Collections.Generic.List<ProcessedEpisode > pel = CurrentlySelectedPEL();
+				 ProcessedEpisodeList pel = CurrentlySelectedPEL();
 
 				 AddEditSearchEngine aese = new AddEditSearchEngine(mDoc.GetSearchers(), ((pel != null) && (pel.Count > 0)) ? pel[0] : null);
 				 DialogResult dr = aese.ShowDialog();
