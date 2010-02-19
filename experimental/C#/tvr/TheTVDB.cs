@@ -182,7 +182,7 @@ namespace TVRename
                 return dt;
 
             // do timezone adjustment
-            return TZMagic.AdjustTZTimeToOurs(dt, TheSeries.GetTZI());
+            return TZMagic.AdjustTZTimeToLocalTime(dt, TheSeries.GetTZI());
         }
 
 
@@ -364,7 +364,7 @@ namespace TVRename
     public class SeriesInfo
     {
         private string LastFiguredTZ;
-        private Byte[] TZIBytes;
+        private TZI SeriesTZI;
 
         private void FigureOutTZI()
         {
@@ -373,25 +373,17 @@ namespace TVRename
             if (string.IsNullOrEmpty(tzstr))
                 tzstr = TZMagic.DefaultTZ();
 
-            Byte[] TZIBytes = TZMagic.GetTZ(tzstr);
-
+            SeriesTZI = TZMagic.GetTZI(tzstr);
             LastFiguredTZ = tzstr;
         }
 
         public TZI GetTZI()
         {
-            TZI tz;
-
-            if (LastFiguredTZ != TimeZone)
+            // we cache the timezone info, as the fetching is a bit slow, and we do this a lot
+            if (LastFiguredTZ != TimeZone) 
                 FigureOutTZI();
 
-            if (TZIBytes == null)
-                return null;
-
-            if (TZMagic.BytesToTZI(TZIBytes, out tz))
-                return tz;
-            else
-                return null; // TODO: warn user
+            return SeriesTZI;
         }
 
 
