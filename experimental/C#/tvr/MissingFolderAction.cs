@@ -77,11 +77,6 @@ namespace TVRename
 	private System.Windows.Forms.Button bnBrowse;
 	private System.Windows.Forms.FolderBrowserDialog folderBrowser;
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components;
-
 #region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify

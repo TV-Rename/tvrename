@@ -40,15 +40,6 @@ namespace TVRename
 			_menuCheck = false;
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components;
-
 #region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
@@ -71,9 +62,7 @@ namespace TVRename
 		}
 		protected override void OnItemCheck(ItemCheckEventArgs ice)
 		{
-//C++ TO C# CONVERTER NOTE: Embedded comments are not maintained by C++ to C# Converter
-//ORIGINAL LINE: if (!_menuCheck && !_keyCheck && ( false == _checkEnable /*|| (!_keyCheck && _checkEnable && SelectedItems->Count > 1)*/))
-			if (!_menuCheck && !_keyCheck && (false == _checkEnable))
+            if (!_menuCheck && !_keyCheck && (false == _checkEnable)) //  || (!_keyCheck && _checkEnable && SelectedItems->Count > 1)
 			{
 				ice.NewValue = ice.CurrentValue;
 				return;

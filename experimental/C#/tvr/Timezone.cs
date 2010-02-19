@@ -11,63 +11,63 @@ using System;
 namespace TVRename
 {
 
-	////////////////////////////////////////////////////////////////////////////
-	// Timezone magic
+    ////////////////////////////////////////////////////////////////////////////
+    // Timezone magic
 
-//C++ TO C# CONVERTER TODO TASK: There is no equivalent to most C++ 'pragma' directives in C#:
-//#pragma pack(push,1)
-	public class SYSTEMTIME
-	{
-		public short wYear;
-		public short wMonth;
-		public short wDayOfWeek;
-		public short wDay;
-		public short wHour;
-		public short wMinute;
-		public short wSecond;
-		public short wMilliseconds;
-	}
-//C++ TO C# CONVERTER TODO TASK: There is no equivalent to most C++ 'pragma' directives in C#:
-//#pragma pack(pop)
+    //C++ TO C# CONVERTER TODO TASK: There is no equivalent to most C++ 'pragma' directives in C#:
+    //#pragma pack(push,1)
+    public class SYSTEMTIME
+    {
+        public short wYear;
+        public short wMonth;
+        public short wDayOfWeek;
+        public short wDay;
+        public short wHour;
+        public short wMinute;
+        public short wSecond;
+        public short wMilliseconds;
+    }
+    //C++ TO C# CONVERTER TODO TASK: There is no equivalent to most C++ 'pragma' directives in C#:
+    //#pragma pack(pop)
 
-//C++ TO C# CONVERTER TODO TASK: There is no equivalent to most C++ 'pragma' directives in C#:
-//#pragma pack(push,1)
-	public class TZI
-	{
-		public int bias;
-		public int standardBias;
-		public int daylightBias;
-		public SYSTEMTIME standardDate = new SYSTEMTIME();
-		public SYSTEMTIME daylightDate = new SYSTEMTIME();
-	}
-//C++ TO C# CONVERTER TODO TASK: There is no equivalent to most C++ 'pragma' directives in C#:
-//#pragma pack(pop)
+    //C++ TO C# CONVERTER TODO TASK: There is no equivalent to most C++ 'pragma' directives in C#:
+    //#pragma pack(push,1)
+    public class TZI
+    {
+        public int bias;
+        public int standardBias;
+        public int daylightBias;
+        public SYSTEMTIME standardDate = new SYSTEMTIME();
+        public SYSTEMTIME daylightDate = new SYSTEMTIME();
+    }
+    //C++ TO C# CONVERTER TODO TASK: There is no equivalent to most C++ 'pragma' directives in C#:
+    //#pragma pack(pop)
 
 
 
-	public class TZMagic
-	{
-	private TZMagic()
-			 {
-			 }
-		public static Byte[] GetTZ(string name)
-		{
-			// HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\Eastern Standard Time
-			RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones\\" + name);
+    public class TZMagic
+    {
+        private TZMagic()
+        {
+        }
+        public static Byte[] GetTZ(string name)
+        {
+            // HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\Eastern Standard Time
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones\\" + name);
 
-			if (rk == null)
-				return null;
-			else
-				return (Byte[])rk.GetValue("TZI");
-		}
+            if (rk == null)
+                return null;
+            else
+                return (Byte[])rk.GetValue("TZI");
+        }
 
-		public static string DefaultTZ()
-		{
-			return "Eastern Standard Time";
-		}
+        public static string DefaultTZ()
+        {
+            return "Eastern Standard Time";
+        }
 
-		public static bool BytesToTZI(Byte[] mTZIBytes, out TZI tz)
-		{
+        public static bool BytesToTZI(Byte[] mTZIBytes, out TZI tz)
+        {
             tz = new TZI();
             //TODO
             return false;
@@ -82,11 +82,11 @@ namespace TVRename
 
 			return true;
              */
-		}
+        }
 
 
-		public static DateTime AdjustTZTimeToOurs(DateTime dt, TZI tz) // set tz to 0 to not correct for timezone
-		{
+        public static DateTime AdjustTZTimeToOurs(DateTime dt, TZI tz) // set tz to 0 to not correct for timezone
+        {
             return dt;
             /* TODO
 					if ((tz == 0) || (dt == null))
@@ -122,21 +122,21 @@ namespace TVRename
 					return dt.Add(tweakTime);
 					;
              */
-		}
+        }
 
 
-		public static uint Epoch()
-		{
-			return (uint)(DateTime.UtcNow.Subtract(new DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
-		}
-		public static uint Epoch(DateTime dt)
-		{
-			DateTime uni = dt.ToUniversalTime();
-			uint r = (uint)(uni.Subtract(new DateTime(1970,1,1,0,0,0,0)).TotalSeconds);
-			return r;
-		}
+        public static uint Epoch()
+        {
+            return (uint)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+        }
+        public static uint Epoch(DateTime dt)
+        {
+            DateTime uni = dt.ToUniversalTime();
+            uint r = (uint)(uni.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            return r;
+        }
 
-	}
+    }
 
 
 

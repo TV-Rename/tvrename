@@ -16,9 +16,6 @@ using System.Drawing;
 
 namespace TVRename
 {
-//C++ TO C# CONVERTER NOTE: C# has no need of forward class declarations:
-//	ref class FolderMonitor;
-
 	public class FolderMonitorProgress : System.Windows.Forms.Form
 	{
 		/// <summary>

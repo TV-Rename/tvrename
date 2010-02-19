@@ -12,9 +12,6 @@ using System.Text.RegularExpressions;
 
 namespace TVRename
 {
-    //C++ TO C# CONVERTER NOTE: C# has no need of forward class declarations:
-    //	ref class ProcessedEpisode;
-
     public class CustomName
     {
         public string StyleString;

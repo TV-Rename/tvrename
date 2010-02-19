@@ -238,9 +238,9 @@ namespace TVRename
 
         public BTDictionary()
             : base(BTChunk.kDictionary)
-								{
-									Items = new System.Collections.Generic.List<BTDictionaryItem >();
-								}
+        {
+            Items = new System.Collections.Generic.List<BTDictionaryItem>();
+        }
         public override string AsText()
         {
             string r = "Dictionary=[";
@@ -300,9 +300,9 @@ namespace TVRename
 
         public BTList()
             : base(BTChunk.kList)
-									{
-                                        Items = new System.Collections.Generic.List<BTItem>();
-									}
+        {
+            Items = new System.Collections.Generic.List<BTItem>();
+        }
 
         public override string AsText()
         {
@@ -371,9 +371,9 @@ namespace TVRename
         public System.Collections.Generic.List<BTItem> Items;
 
         public BTFile()
-										{
-                                            Items = new System.Collections.Generic.List<BTItem>();
-										}
+        {
+            Items = new System.Collections.Generic.List<BTItem>();
+        }
 
         public StringList AllFilesInTorrent()
         {
@@ -855,7 +855,7 @@ namespace TVRename
                     FinishedTorrentEntry(torrentFile, i, fileName.AsString());
 
                     int sizeInPieces = (int)(fileSize / pieceSize);
-                    if (fileSize % pieceSize !=0)
+                    if (fileSize % pieceSize != 0)
                         sizeInPieces++; // another partial piece
 
                     lastPieceLeftover = (lastPieceLeftover + (Int32)((sizeInPieces * pieceSize) - fileSize)) % pieceSize;
@@ -908,7 +908,7 @@ namespace TVRename
 
         //    String ^secondFolder; // resume.dat location, or where to copy/move to
 
-        override public bool NewTorrentEntry(string torrentFile, int numberInTorrent)  
+        override public bool NewTorrentEntry(string torrentFile, int numberInTorrent)
         {
             return true;
         }
@@ -1411,7 +1411,7 @@ namespace TVRename
 
         }
 
-       
+
 
         public static string RemoveUT(string s)
         {

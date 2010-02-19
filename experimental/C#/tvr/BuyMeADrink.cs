@@ -51,19 +51,11 @@ namespace TVRename
 			comboBox2.SelectedIndex = 0;
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
 	private System.Windows.Forms.Label label1;
 	private System.Windows.Forms.Button button1;
 	private System.Windows.Forms.Button bnClose;
 	private System.Windows.Forms.ComboBox comboBox1;
 	private System.Windows.Forms.ComboBox comboBox2;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components;
 
 #region Windows Form Designer generated code
 		/// <summary>

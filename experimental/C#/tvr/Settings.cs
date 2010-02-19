@@ -13,52 +13,39 @@ using System;
 
 namespace TVRename
 {
+    public class Replacement
+    {
+        public string This;
+        public string That;
+        public bool CaseInsensitive;
 
-//C++ TO C# CONVERTER NOTE: C# has no need of forward class declarations:
-//	ref class ProcessedEpisode;
+        public Replacement(string a, string b, bool insens)
+        {
+            if (b == null)
+                b = "";
+            This = a;
+            That = b;
+            CaseInsensitive = insens;
+        }
+    }
 
-	public class Replacement
-	{
-		public string This;
-		public string That;
-		public bool CaseInsensitive;
+    public class FilenameProcessorRE
+    {
+        public bool Enabled;
+        public string RE;
+        public bool UseFullPath;
+        public string Notes;
 
-		public Replacement(string a, string b, bool insens)
-		{
-			if (b == null)
-				b = "";
-			This = a;
-			That = b;
-			CaseInsensitive = insens;
-		}
-	}
+        public FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
+        {
+            Enabled = enabled;
+            RE = re;
+            UseFullPath = useFullPath;
+            Notes = notes;
+        }
+    }
 
-
-//C++ TO C# CONVERTER NOTE: Enums must be named in C#, so the following enum has been named AnonymousEnum:
-	public enum AnonymousEnum4: int
-	{
-		reSeasonEp,
-		reEpSeason,
-		reUsingPathSeasonEp
-	}
-
-	public class FilenameProcessorRE
-	{
-		public bool Enabled;
-		public string RE;
-		public bool UseFullPath;
-		public string Notes;
-
-		public FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
-		{
-			Enabled = enabled;
-			RE = re;
-			UseFullPath = useFullPath;
-			Notes = notes;
-		}
-	}
-
-	public class  FNPRegexList : System.Collections.Generic.List<FilenameProcessorRE>  
+    public class FNPRegexList : System.Collections.Generic.List<FilenameProcessorRE>
     {
     }
 

@@ -28,185 +28,70 @@ using System.Text.RegularExpressions;
 namespace TVRename
 {
 
-	/// <summary>
-	/// Summary for AddEditShow
-	///
-	/// WARNING: If you change the name of this class, you will need to change the
-	///          'Resource File Name' property for the managed resource compiler tool
-	///          associated with all .resx files this class depends on.  Otherwise,
-	///          the designers will not be able to interact properly with localized
-	///          resources associated with this form.
-	/// </summary>
-	public class AddEditShow : System.Windows.Forms.Form
-	{
-		private ShowItem mSI;
-		private TheTVDB mTVDB;
-		private TheTVDBCodeFinder mTCCF;
-		//bool mShowNameBlank;
-
-		public string TimeZone;
+    /// <summary>
+    /// Summary for AddEditShow
+    ///
+    /// WARNING: If you change the name of this class, you will need to change the
+    ///          'Resource File Name' property for the managed resource compiler tool
+    ///          associated with all .resx files this class depends on.  Otherwise,
+    ///          the designers will not be able to interact properly with localized
+    ///          resources associated with this form.
+    /// </summary>
+    public class AddEditShow : System.Windows.Forms.Form
+    {
+        private ShowItem mSI;
+        private TheTVDB mTVDB;
+        private TheTVDBCodeFinder mTCCF;
+        public string TimeZone;
 
 
-	private System.Windows.Forms.Panel pnlCF;
-	private System.Windows.Forms.Label label3;
-	private System.Windows.Forms.CheckBox chkFolderPerSeason;
-	private System.Windows.Forms.TextBox txtSeasonFolderName;
-	private System.Windows.Forms.Label txtHash;
-
-	private System.Windows.Forms.TextBox txtBaseFolder;
-	private System.Windows.Forms.Button bnBrowse;
-	private System.Windows.Forms.CheckBox chkAutoFolders;
-	private System.Windows.Forms.CheckBox cbDoRenaming;
-	private System.Windows.Forms.CheckBox cbDoMissingCheck;
-	private System.Windows.Forms.CheckBox chkThumbnailsAndStuff;
-	private System.Windows.Forms.FolderBrowserDialog folderBrowser;
-	private System.Windows.Forms.Label label5;
-	private System.Windows.Forms.CheckBox chkDVDOrder;
-	private System.Windows.Forms.CheckBox chkForceCheckAll;
-	private System.Windows.Forms.GroupBox gbAutoFolders;
-	private System.Windows.Forms.ListView lvSeasonFolders;
-	private System.Windows.Forms.ColumnHeader columnHeader1;
-	private System.Windows.Forms.ColumnHeader columnHeader2;
-	private System.Windows.Forms.TextBox txtSeasonNumber;
-	private System.Windows.Forms.TextBox txtFolder;
-	private System.Windows.Forms.Button bnBrowseFolder;
-	private System.Windows.Forms.Button bnAdd;
-	private System.Windows.Forms.Button bnRemove;
-	private System.Windows.Forms.Label label1;
-	private System.Windows.Forms.Label label7;
-	private System.Windows.Forms.GroupBox groupBox1;
-	private System.Windows.Forms.CheckBox cbSequentialMatching;
-	private System.Windows.Forms.CheckBox chkCustomShowName;
-	private System.Windows.Forms.CheckBox chkPadTwoDigits;
-
-	private System.Windows.Forms.TextBox txtIgnoreSeasons;
-
-
-		public AddEditShow(ShowItem si, TheTVDB db, string timezone)
-		  {
-			mSI = si;
-			  mTVDB = db;
-			  InitializeComponent();
-
-			  cbTimeZone.BeginUpdate();
-			  cbTimeZone.Items.Clear();
-
-			  RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones");
-			  string[] skn = rk.GetSubKeyNames();
-
-			  for (int i =0;i<skn.Length;i++)
-				  cbTimeZone.Items.Add(skn[i]);
-
-			  cbTimeZone.EndUpdate();
+        private System.Windows.Forms.Panel pnlCF;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox chkFolderPerSeason;
+        private System.Windows.Forms.TextBox txtSeasonFolderName;
+        private System.Windows.Forms.Label txtHash;
+        private System.Windows.Forms.TextBox txtBaseFolder;
+        private System.Windows.Forms.Button bnBrowse;
+        private System.Windows.Forms.CheckBox chkAutoFolders;
+        private System.Windows.Forms.CheckBox cbDoRenaming;
+        private System.Windows.Forms.CheckBox cbDoMissingCheck;
+        private System.Windows.Forms.CheckBox chkThumbnailsAndStuff;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowser;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox chkDVDOrder;
+        private System.Windows.Forms.CheckBox chkForceCheckAll;
+        private System.Windows.Forms.GroupBox gbAutoFolders;
+        private System.Windows.Forms.ListView lvSeasonFolders;
+        private System.Windows.Forms.ColumnHeader columnHeader1;
+        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.TextBox txtSeasonNumber;
+        private System.Windows.Forms.TextBox txtFolder;
+        private System.Windows.Forms.Button bnBrowseFolder;
+        private System.Windows.Forms.Button bnAdd;
+        private System.Windows.Forms.Button bnRemove;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox cbSequentialMatching;
+        private System.Windows.Forms.CheckBox chkCustomShowName;
+        private System.Windows.Forms.CheckBox chkPadTwoDigits;
+        private System.Windows.Forms.TextBox txtIgnoreSeasons;
+        private System.Windows.Forms.TextBox txtCustomShowName;
+        private System.Windows.Forms.ComboBox cbTimeZone;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button bnCancel;
+        private System.Windows.Forms.Button buttonOK;
+        private System.Windows.Forms.CheckBox chkSpecialsCount;
+        private System.Windows.Forms.CheckBox chkShowNextAirdate;
 
 
-			  mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "", mTVDB);
-			  mTCCF.Dock = DockStyle.Fill;
-			  //mTCCF->SelectionChanged += gcnew System::EventHandler(this, &AddEditShow::lvMatches_ItemSelectionChanged);
-
-			  pnlCF.SuspendLayout();
-			  pnlCF.Controls.Add(mTCCF);
-			  pnlCF.ResumeLayout();
-
-			  chkCustomShowName.Checked = si.UseCustomShowName;
-			  if (chkCustomShowName.Checked)
-				  txtCustomShowName.Text = si.CustomShowName;
-			  chkCustomShowName_CheckedChanged(null, null);
-
-			  cbSequentialMatching.Checked = si.UseSequentialMatch;
-			  chkShowNextAirdate.Checked = si.ShowNextAirdate;
-			  chkSpecialsCount.Checked = si.CountSpecials;
-			  chkFolderPerSeason.Checked = si.AutoAdd_FolderPerSeason;
-			  txtSeasonFolderName.Text = si.AutoAdd_SeasonFolderName;
-			  txtBaseFolder.Text = si.AutoAdd_FolderBase;
-			  chkAutoFolders.Checked = si.AutoAddNewSeasons;
-			  chkAutoFolders_CheckedChanged(null, null);
-			  chkFolderPerSeason_CheckedChanged(null, null);
-
-			  chkThumbnailsAndStuff.Checked = false; // TODO
-			  cbDoRenaming.Checked = si.DoRename;
-			  cbDoMissingCheck.Checked = si.DoMissingCheck;
-			  cbDoMissingCheck_CheckedChanged(null, null);
-
-			  chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
-			  SetRightNumberOfHashes();
-
-			  TimeZone = (!string.IsNullOrEmpty(timezone)) ? timezone : TZMagic.DefaultTZ();
-			  cbTimeZone.Text = TimeZone;
-			  chkDVDOrder.Checked = si.DVDOrder;
-			  chkForceCheckAll.Checked = si.ForceCheckAll;
-
-			  bool first = true;
-			  si.IgnoreSeasons.Sort();
-			  foreach (int i in si.IgnoreSeasons)
-			  {
-				  if (!first)
-					  txtIgnoreSeasons.Text += " ";
-				  txtIgnoreSeasons.Text += i.ToString();
-				  first = false;
-			  }
-
-			  foreach (System.Collections.Generic.KeyValuePair<int, StringList > kvp in si.ManualFolderLocations)
-			  {
-				  foreach (string s in kvp.Value)
-				  {
-					  ListViewItem lvi = new ListViewItem();
-					  lvi.Text = kvp.Key.ToString();
-					  lvi.SubItems.Add(s);
-
-					  lvSeasonFolders.Items.Add(lvi);
-				  }
-			  }
-			  lvSeasonFolders.Sort();
-
-			  txtSeasonNumber_TextChanged(null, null);
-			  txtFolder_TextChanged(null, null);
-
-		  }
-
-
-
-
-	private System.Windows.Forms.TextBox txtCustomShowName;
-
-	private System.Windows.Forms.ComboBox cbTimeZone;
-	private System.Windows.Forms.Label label6;
-
-
-
-
-	private System.Windows.Forms.Button bnCancel;
-	private System.Windows.Forms.Button buttonOK;
-
-	private System.Windows.Forms.CheckBox chkSpecialsCount;
-
-
-
-	private System.Windows.Forms.CheckBox chkShowNextAirdate;
-
-
-
-
-
-
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components;
-
-
-
-		// ShowItemRuleSet ^mWorkingRuleSet;
-
-
-#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
+        #region Windows Form Designer generated code
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddEditShow));
             this.txtCustomShowName = new System.Windows.Forms.TextBox();
             this.cbTimeZone = new System.Windows.Forms.ComboBox();
@@ -655,172 +540,255 @@ namespace TVRename
             this.ResumeLayout(false);
             this.PerformLayout();
 
-		}
+        }
 
-#endregion
-	private void buttonOK_Click(object sender, System.EventArgs e)
-			 {
-				 if (!OKToClose())
-				 {
-					 this.DialogResult =DialogResult.None;
-					 return;
-				 }
+        #endregion
 
-				 SetmSI();
-				 this.DialogResult = System.Windows.Forms.DialogResult.OK;
-				 Close();
-			 }
+        public AddEditShow(ShowItem si, TheTVDB db, string timezone)
+        {
+            mSI = si;
+            mTVDB = db;
+            InitializeComponent();
 
+            cbTimeZone.BeginUpdate();
+            cbTimeZone.Items.Clear();
 
-			 private bool OKToClose()
-			 {
-				 if (!mTVDB.HasSeries(mTCCF.SelectedCode()))
-				 {
-					 DialogResult dr =MessageBox.Show("tvdb code unknown, close anyway?","TVRename Add/Edit Show",MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-					 if (dr ==DialogResult.No)
-						 return false;
-				 }
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones");
+            string[] skn = rk.GetSubKeyNames();
 
-				 return true;
-			 }
+            for (int i = 0; i < skn.Length; i++)
+                cbTimeZone.Items.Add(skn[i]);
 
-			 private void SetmSI()
-			 {
-				 int code = mTCCF.SelectedCode();
-
-				 string tz = (cbTimeZone.SelectedItem != null) ? cbTimeZone.SelectedItem.ToString() : "";
-
-				 mSI.CustomShowName = txtCustomShowName.Text;
-				 mSI.UseCustomShowName = chkCustomShowName.Checked;
-				 TimeZone = tz; //TODO: move to somewhere else. make timezone manager for tvdb?
-				 mSI.ShowNextAirdate = chkShowNextAirdate.Checked;
-				 mSI.PadSeasonToTwoDigits = chkPadTwoDigits.Checked;
-				 mSI.TVDBCode = code;
-				 //todo mSI->SeasonNumber = seasnum;
-				 mSI.CountSpecials = chkSpecialsCount.Checked;
-				 //                                 mSI->Rules = mWorkingRuleSet;  // TODO
-				 mSI.DoRename = cbDoRenaming.Checked;
-				 mSI.DoMissingCheck = cbDoMissingCheck.Checked;
-
-				 mSI.AutoAddNewSeasons = chkAutoFolders.Checked;
-				 mSI.AutoAdd_FolderPerSeason = chkFolderPerSeason.Checked;
-				 mSI.AutoAdd_SeasonFolderName = txtSeasonFolderName.Text;
-				 mSI.AutoAdd_FolderBase = txtBaseFolder.Text;
-
-				 mSI.DVDOrder = chkDVDOrder.Checked;
-				 mSI.ForceCheckAll = chkForceCheckAll.Checked;
-				 mSI.UseSequentialMatch = cbSequentialMatching.Checked;
-
-				 string slist = txtIgnoreSeasons.Text;
-				 mSI.IgnoreSeasons.Clear();
-				 foreach (Match match in Regex.Matches(slist, "\\b[0-9]+\\b"))
-					 mSI.IgnoreSeasons.Add(int.Parse(match.Value));
-
-				 mSI.ManualFolderLocations.Clear();
-				 foreach (ListViewItem lvi in lvSeasonFolders.Items)
-				 {
-					 try
-					 {
-						 int seas = int.Parse(lvi.Text);
-						 if (!mSI.ManualFolderLocations.ContainsKey(seas))
-							 mSI.ManualFolderLocations.Add(seas, new StringList());
-
-						 mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
-					 }
-					 catch
-					 {
-					 }
-				 }
-			 }
+            cbTimeZone.EndUpdate();
 
 
-	private void bnCancel_Click(object sender, System.EventArgs e)
-			 {
-				 Close();
-			 }
-	private void chkFolderPerSeason_CheckedChanged(object sender, System.EventArgs e)
-			 {
-				 txtSeasonFolderName.Enabled = chkFolderPerSeason.Checked;
-			 }
-	private void bnBrowse_Click(object sender, System.EventArgs e)
-			 {
-				 if (!string.IsNullOrEmpty(txtBaseFolder.Text))
-					 folderBrowser.SelectedPath = txtBaseFolder.Text;
+            mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "", mTVDB);
+            mTCCF.Dock = DockStyle.Fill;
+            //mTCCF->SelectionChanged += gcnew System::EventHandler(this, &AddEditShow::lvMatches_ItemSelectionChanged);
 
-				 if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-					 txtBaseFolder.Text = folderBrowser.SelectedPath;
-			 }
-	private void chkAutoFolders_CheckedChanged(object sender, System.EventArgs e)
-			 {
-				 gbAutoFolders.Enabled = chkAutoFolders.Checked;
-			 }
-	private void cbDoMissingCheck_CheckedChanged(object sender, System.EventArgs e)
-			 {
-				 chkForceCheckAll.Enabled = cbDoMissingCheck.Checked;
-			 }
-	private void bnRemove_Click(object sender, System.EventArgs e)
-			 {
-				 if (lvSeasonFolders.SelectedItems.Count > 0)
-					 foreach (ListViewItem lvi in lvSeasonFolders.SelectedItems)
-						 lvSeasonFolders.Items.Remove(lvi);
-			 }
-	private void bnAdd_Click(object sender, System.EventArgs e)
-			 {
-				 ListViewItem lvi = new ListViewItem();
-				 lvi.Text = txtSeasonNumber.Text;
-				 lvi.SubItems.Add(txtFolder.Text);
+            pnlCF.SuspendLayout();
+            pnlCF.Controls.Add(mTCCF);
+            pnlCF.ResumeLayout();
 
-				 lvSeasonFolders.Items.Add(lvi);
+            chkCustomShowName.Checked = si.UseCustomShowName;
+            if (chkCustomShowName.Checked)
+                txtCustomShowName.Text = si.CustomShowName;
+            chkCustomShowName_CheckedChanged(null, null);
 
-				 txtSeasonNumber.Text = "";
-				 txtFolder.Text = "";
+            cbSequentialMatching.Checked = si.UseSequentialMatch;
+            chkShowNextAirdate.Checked = si.ShowNextAirdate;
+            chkSpecialsCount.Checked = si.CountSpecials;
+            chkFolderPerSeason.Checked = si.AutoAdd_FolderPerSeason;
+            txtSeasonFolderName.Text = si.AutoAdd_SeasonFolderName;
+            txtBaseFolder.Text = si.AutoAdd_FolderBase;
+            chkAutoFolders.Checked = si.AutoAddNewSeasons;
+            chkAutoFolders_CheckedChanged(null, null);
+            chkFolderPerSeason_CheckedChanged(null, null);
 
-				 lvSeasonFolders.Sort();
-			 }
-	private void bnBrowseFolder_Click(object sender, System.EventArgs e)
-			 {
-				 folderBrowser.SelectedPath = txtFolder.Text;
-				 if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-					 txtFolder.Text = folderBrowser.SelectedPath;
-			 }
-	private void txtSeasonNumber_TextChanged(object sender, System.EventArgs e)
-			 {
-				 bool isNumber = Regex.Match(txtSeasonNumber.Text,"^[0-9]+$").Success;
-				 bnAdd.Enabled = isNumber && (!string.IsNullOrEmpty(txtSeasonNumber.Text));
-			 }
-	private void txtFolder_TextChanged(object sender, System.EventArgs e)
-			 {
-				 bool ok = true;
-				 if (!string.IsNullOrEmpty(txtFolder.Text))
-				 {
-					 try
-					 {
-						 ok = System.IO.Directory.Exists(txtFolder.Text);
-					 }
-					 catch
-					 {
-					 }
-				 }
-				 if (ok)
-					 txtFolder.BackColor = System.Drawing.SystemColors.Window;
-				 else
-					 txtFolder.BackColor = Helpers.WarningColor();
+            chkThumbnailsAndStuff.Checked = false; // TODO
+            cbDoRenaming.Checked = si.DoRename;
+            cbDoMissingCheck.Checked = si.DoMissingCheck;
+            cbDoMissingCheck_CheckedChanged(null, null);
 
-			 }
-	private void chkCustomShowName_CheckedChanged(object sender, System.EventArgs e)
-			 {
-				 txtCustomShowName.Enabled = chkCustomShowName.Checked;
-			 }
-private void chkPadTwoDigits_CheckedChanged(object sender, System.EventArgs e)
-		 {
-			 SetRightNumberOfHashes();
-		 }
+            chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
+            SetRightNumberOfHashes();
 
-		 private void SetRightNumberOfHashes()
-		 {
-				 txtHash.Text = chkPadTwoDigits.Checked ? "##" : "#";
-		 }
-}
+            TimeZone = (!string.IsNullOrEmpty(timezone)) ? timezone : TZMagic.DefaultTZ();
+            cbTimeZone.Text = TimeZone;
+            chkDVDOrder.Checked = si.DVDOrder;
+            chkForceCheckAll.Checked = si.ForceCheckAll;
+
+            bool first = true;
+            si.IgnoreSeasons.Sort();
+            foreach (int i in si.IgnoreSeasons)
+            {
+                if (!first)
+                    txtIgnoreSeasons.Text += " ";
+                txtIgnoreSeasons.Text += i.ToString();
+                first = false;
+            }
+
+            foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.ManualFolderLocations)
+            {
+                foreach (string s in kvp.Value)
+                {
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = kvp.Key.ToString();
+                    lvi.SubItems.Add(s);
+
+                    lvSeasonFolders.Items.Add(lvi);
+                }
+            }
+            lvSeasonFolders.Sort();
+
+            txtSeasonNumber_TextChanged(null, null);
+            txtFolder_TextChanged(null, null);
+
+        }
+
+        private void buttonOK_Click(object sender, System.EventArgs e)
+        {
+            if (!OKToClose())
+            {
+                this.DialogResult = DialogResult.None;
+                return;
+            }
+
+            SetmSI();
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            Close();
+        }
+
+
+        private bool OKToClose()
+        {
+            if (!mTVDB.HasSeries(mTCCF.SelectedCode()))
+            {
+                DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (dr == DialogResult.No)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void SetmSI()
+        {
+            int code = mTCCF.SelectedCode();
+
+            string tz = (cbTimeZone.SelectedItem != null) ? cbTimeZone.SelectedItem.ToString() : "";
+
+            mSI.CustomShowName = txtCustomShowName.Text;
+            mSI.UseCustomShowName = chkCustomShowName.Checked;
+            TimeZone = tz; //TODO: move to somewhere else. make timezone manager for tvdb?
+            mSI.ShowNextAirdate = chkShowNextAirdate.Checked;
+            mSI.PadSeasonToTwoDigits = chkPadTwoDigits.Checked;
+            mSI.TVDBCode = code;
+            //todo mSI->SeasonNumber = seasnum;
+            mSI.CountSpecials = chkSpecialsCount.Checked;
+            //                                 mSI->Rules = mWorkingRuleSet;  // TODO
+            mSI.DoRename = cbDoRenaming.Checked;
+            mSI.DoMissingCheck = cbDoMissingCheck.Checked;
+
+            mSI.AutoAddNewSeasons = chkAutoFolders.Checked;
+            mSI.AutoAdd_FolderPerSeason = chkFolderPerSeason.Checked;
+            mSI.AutoAdd_SeasonFolderName = txtSeasonFolderName.Text;
+            mSI.AutoAdd_FolderBase = txtBaseFolder.Text;
+
+            mSI.DVDOrder = chkDVDOrder.Checked;
+            mSI.ForceCheckAll = chkForceCheckAll.Checked;
+            mSI.UseSequentialMatch = cbSequentialMatching.Checked;
+
+            string slist = txtIgnoreSeasons.Text;
+            mSI.IgnoreSeasons.Clear();
+            foreach (Match match in Regex.Matches(slist, "\\b[0-9]+\\b"))
+                mSI.IgnoreSeasons.Add(int.Parse(match.Value));
+
+            mSI.ManualFolderLocations.Clear();
+            foreach (ListViewItem lvi in lvSeasonFolders.Items)
+            {
+                try
+                {
+                    int seas = int.Parse(lvi.Text);
+                    if (!mSI.ManualFolderLocations.ContainsKey(seas))
+                        mSI.ManualFolderLocations.Add(seas, new StringList());
+
+                    mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
+                }
+                catch
+                {
+                }
+            }
+        }
+
+
+        private void bnCancel_Click(object sender, System.EventArgs e)
+        {
+            Close();
+        }
+        private void chkFolderPerSeason_CheckedChanged(object sender, System.EventArgs e)
+        {
+            txtSeasonFolderName.Enabled = chkFolderPerSeason.Checked;
+        }
+        private void bnBrowse_Click(object sender, System.EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(txtBaseFolder.Text))
+                folderBrowser.SelectedPath = txtBaseFolder.Text;
+
+            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                txtBaseFolder.Text = folderBrowser.SelectedPath;
+        }
+        private void chkAutoFolders_CheckedChanged(object sender, System.EventArgs e)
+        {
+            gbAutoFolders.Enabled = chkAutoFolders.Checked;
+        }
+        private void cbDoMissingCheck_CheckedChanged(object sender, System.EventArgs e)
+        {
+            chkForceCheckAll.Enabled = cbDoMissingCheck.Checked;
+        }
+        private void bnRemove_Click(object sender, System.EventArgs e)
+        {
+            if (lvSeasonFolders.SelectedItems.Count > 0)
+                foreach (ListViewItem lvi in lvSeasonFolders.SelectedItems)
+                    lvSeasonFolders.Items.Remove(lvi);
+        }
+        private void bnAdd_Click(object sender, System.EventArgs e)
+        {
+            ListViewItem lvi = new ListViewItem();
+            lvi.Text = txtSeasonNumber.Text;
+            lvi.SubItems.Add(txtFolder.Text);
+
+            lvSeasonFolders.Items.Add(lvi);
+
+            txtSeasonNumber.Text = "";
+            txtFolder.Text = "";
+
+            lvSeasonFolders.Sort();
+        }
+        private void bnBrowseFolder_Click(object sender, System.EventArgs e)
+        {
+            folderBrowser.SelectedPath = txtFolder.Text;
+            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                txtFolder.Text = folderBrowser.SelectedPath;
+        }
+        private void txtSeasonNumber_TextChanged(object sender, System.EventArgs e)
+        {
+            bool isNumber = Regex.Match(txtSeasonNumber.Text, "^[0-9]+$").Success;
+            bnAdd.Enabled = isNumber && (!string.IsNullOrEmpty(txtSeasonNumber.Text));
+        }
+        private void txtFolder_TextChanged(object sender, System.EventArgs e)
+        {
+            bool ok = true;
+            if (!string.IsNullOrEmpty(txtFolder.Text))
+            {
+                try
+                {
+                    ok = System.IO.Directory.Exists(txtFolder.Text);
+                }
+                catch
+                {
+                }
+            }
+            if (ok)
+                txtFolder.BackColor = System.Drawing.SystemColors.Window;
+            else
+                txtFolder.BackColor = Helpers.WarningColor();
+
+        }
+        private void chkCustomShowName_CheckedChanged(object sender, System.EventArgs e)
+        {
+            txtCustomShowName.Enabled = chkCustomShowName.Checked;
+        }
+        private void chkPadTwoDigits_CheckedChanged(object sender, System.EventArgs e)
+        {
+            SetRightNumberOfHashes();
+        }
+
+        private void SetRightNumberOfHashes()
+        {
+            txtHash.Text = chkPadTwoDigits.Checked ? "##" : "#";
+        }
+    }
 }
 
 

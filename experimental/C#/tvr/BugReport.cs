@@ -84,11 +84,6 @@ namespace TVRename
 	private System.Windows.Forms.Button bnCopy;
 
 
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components;
-
 #region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
