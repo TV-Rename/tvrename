@@ -9,7 +9,7 @@ using System.Resources;
 [assembly: AssemblyTitle("TVRename")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("http://tvrename.com")]
+[assembly: AssemblyCompany("TVRename")]
 [assembly: AssemblyProduct("TVRename")]
 [assembly: AssemblyCopyright("Copyright © 2007-2010")]
 [assembly: AssemblyTrademark("")]
