@@ -2533,7 +2533,7 @@ namespace TVRename
 				{
 					foreach (IgnoreItem ii in Ignore)
 					{
-						if (ii == aio.GetIgnore())
+						if (ii.SameFileAs(aio.GetIgnore()))
 						{
 							toRemove.Add(aio);
 							break;

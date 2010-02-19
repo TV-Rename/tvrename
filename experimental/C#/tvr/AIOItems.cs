@@ -40,20 +40,13 @@ namespace TVRename
 		{
 			FileAndPath = fileAndPath;
 		}
-        /*
-         * TODO
-         * 
-        public static bool operator !=(IgnoreItem ImpliedObject, IgnoreItem o)
-        {
-            return !(this == o);
-        }
-		public static bool operator ==(IgnoreItem ImpliedObject, IgnoreItem o)
+ 
+		public bool SameFileAs(IgnoreItem o)
 		{
 			if (string.IsNullOrEmpty(FileAndPath) || string.IsNullOrEmpty(o.FileAndPath))
 				return false;
 			return FileAndPath == o.FileAndPath;
 		}
-*/
 
 		public void Write(XmlWriter writer)
 		{

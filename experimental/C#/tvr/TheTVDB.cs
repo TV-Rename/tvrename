@@ -757,6 +757,8 @@ namespace TVRename
 			New_Srv_Time = Srv_Time = 0;
 
 			LoadOK = (loadFrom == null) || LoadCache(loadFrom);
+
+            ForceReloadOn = new System.Collections.Generic.List<int>();            
 		}
 
 		public bool LoadCache(FileInfo loadFrom)
@@ -1688,7 +1690,7 @@ namespace TVRename
 			}
 			UnlockEE();
 
-			ForceReloadOn.Remove(code);
+            ForceReloadOn.Remove(code);
 
 			return ok;
 		}
