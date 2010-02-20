@@ -1,16 +1,3 @@
-using System;
-using System.ComponentModel;
-using System.Collections;
-using System.Windows.Forms;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Threading;
-using System.Net;
-using System.IO.Compression;
-using System.Xml;
-using System.Text.RegularExpressions;
-
 //
 // Main website for TVRename is http://tvrename.com
 //
@@ -19,11 +6,15 @@ using System.Text.RegularExpressions;
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 //
 
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
+using System.Xml;
 
 namespace TVRename
 {
-
-
     public class TVDoc
     {
         private string[] Args; // command line arguments
@@ -42,23 +33,8 @@ namespace TVRename
         public int DownloadsRemaining;
         public Semaphore WorkerSemaphore;
         public System.Collections.Generic.List<Thread> Workers;
-
-        public TheTVDB GetTVDB(bool @lock, string whoFor)
-        {
-            if (@lock)
-            {
-                if (string.IsNullOrEmpty(whoFor))
-                    whoFor = "unknown";
-
-                mTVDB.GetLock("GetTVDB : " + whoFor);
-            }
-            return mTVDB;
-        }
-
         public ScanProgress ScanProgDlg;
         public bool AIOCancel;
-
-
         public System.Collections.Generic.List<AIOItem> TheAIOList;
         public System.Collections.Generic.List<IgnoreItem> Ignore;
         public System.Collections.Generic.List<AddItem> AddItems;
@@ -67,9 +43,20 @@ namespace TVRename
         public StringList IgnoreFolders;
         public StringList SearchFolders;
         public RSSItemList RSSList;
-
         public bool LoadOK;
         public string LoadErr;
+
+        public TheTVDB GetTVDB(bool lockDB, string whoFor)
+        {
+            if (lockDB)
+            {
+                if (string.IsNullOrEmpty(whoFor))
+                    whoFor = "unknown";
+
+                mTVDB.GetLock("GetTVDB : " + whoFor);
+            }
+            return mTVDB;
+        }
 
         public static FileInfo TVDBFile()
         {
@@ -230,195 +217,195 @@ namespace TVRename
         //			}
         //			
 
-        public void DoRenameCheck(SetProgressDelegate prog, ShowItem specific)
-        {
-            Stats().RenameChecksDone++;
+        // public void DoRenameCheck(SetProgressDelegate prog, ShowItem specific)
+        // {
+        //     Stats().RenameChecksDone++;
 
-            // RenameList->Clear();
+        //     // RenameList->Clear();
 
-            prog.Invoke(0);
-            //lvStatus->Items->Clear();
-            int c = 0;
-            int totalN = 0;
+        //     prog.Invoke(0);
+        //     //lvStatus->Items->Clear();
+        //     int c = 0;
+        //     int totalN = 0;
 
-            LockShowItems();
+        //     LockShowItems();
 
-            System.Collections.Generic.List<ShowItem> showlist;
-            if (specific != null)
-            {
-                showlist = new ShowItemList();
-                showlist.Add(specific);
-            }
-            else
-                showlist = ShowItems;
+        //     System.Collections.Generic.List<ShowItem> showlist;
+        //     if (specific != null)
+        //     {
+        //         showlist = new ShowItemList();
+        //         showlist.Add(specific);
+        //     }
+        //     else
+        //         showlist = ShowItems;
 
-            foreach (ShowItem si in showlist)
-                if (si.DoRename)
-                    totalN += si.SeasonEpisodes.Count;
+        //     foreach (ShowItem si in showlist)
+        //         if (si.DoRename)
+        //             totalN += si.SeasonEpisodes.Count;
 
-            foreach (ShowItem si in showlist)
-            {
-                if (AIOCancel)
-                {
-                    UnlockShowItems();
-                    return;
-                }
-                if (!si.DoRename)
-                    continue;
+        //     foreach (ShowItem si in showlist)
+        //     {
+        //         if (AIOCancel)
+        //         {
+        //             UnlockShowItems();
+        //             return;
+        //         }
+        //         if (!si.DoRename)
+        //             continue;
 
-                if (si.AllFolderLocations(Settings).Count == 0)
-                    continue; // skip
+        //         if (si.AllFolderLocations(Settings).Count == 0)
+        //             continue; // skip
 
-                c += si.SeasonEpisodes.Count;
+        //         c += si.SeasonEpisodes.Count;
 
-                prog.Invoke(100 * (c + 1) / (totalN + 1)); // +1 to always have a bit of activity in the bar when we're working
+        //         prog.Invoke(100 * (c + 1) / (totalN + 1)); // +1 to always have a bit of activity in the bar when we're working
 
-                DoRenamesFor(si);
-            }
+        //         DoRenamesFor(si);
+        //     }
 
-            if (Settings.KeepTogether)
-                KeepTogether(TheAIOList);
+        //     if (Settings.KeepTogether)
+        //         KeepTogether(TheAIOList);
 
-            UnlockShowItems();
+        //     UnlockShowItems();
 
-            if (specific == null)
-            {
-                //				if (Settings->ExportRenamingXML)
-                //					ExportRenamingXML(Settings->ExportRenamingXMLTo);
-            }
+        //     if (specific == null)
+        //     {
+        //         //				if (Settings->ExportRenamingXML)
+        //         //					ExportRenamingXML(Settings->ExportRenamingXMLTo);
+        //     }
 
-            prog.Invoke(100);
-        }
+        //     prog.Invoke(100);
+        // }
 
-        public void DoRenamesFor(ShowItem si)
-        {
-            int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-            si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-            foreach (int snum in numbers)
-            //for each (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList ^> ^kvp in si->SeasonEpisodes)
-            {
-                //int snum = kvp->Key;
-                if ((si.IgnoreSeasons.Contains(snum)) || (!si.AllFolderLocations(Settings).ContainsKey(snum)))
-                    continue; // ignore/skip this season
+        // public void DoRenamesFor(ShowItem si)
+        // {
+        //     int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
+        //     si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
+        //     foreach (int snum in numbers)
+        //     //for each (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList ^> ^kvp in si->SeasonEpisodes)
+        //     {
+        //         //int snum = kvp->Key;
+        //         if ((si.IgnoreSeasons.Contains(snum)) || (!si.AllFolderLocations(Settings).ContainsKey(snum)))
+        //             continue; // ignore/skip this season
 
-                // Season ^seas = kvp->Value;
-                if ((snum == 0) && (si.CountSpecials))
-                    continue; // skip specials
+        //         // Season ^seas = kvp->Value;
+        //         if ((snum == 0) && (si.CountSpecials))
+        //             continue; // skip specials
 
-                StringList folders = si.AllFolderLocations(Settings)[snum];
-                foreach (string folder in folders)
-                {
-                    // generate new filename info
-                    DirectoryInfo di;
-                    try
-                    {
-                        di = new DirectoryInfo(folder);
-                    }
-                    catch
-                    {
-                        return;
-                    }
+        //         StringList folders = si.AllFolderLocations(Settings)[snum];
+        //         foreach (string folder in folders)
+        //         {
+        //             // generate new filename info
+        //             DirectoryInfo di;
+        //             try
+        //             {
+        //                 di = new DirectoryInfo(folder);
+        //             }
+        //             catch
+        //             {
+        //                 return;
+        //             }
 
-                    if (!di.Exists)
-                        return; // we don't care. a missing check will pick up missing folders if necessary.
+        //             if (!di.Exists)
+        //                 return; // we don't care. a missing check will pick up missing folders if necessary.
 
-                    FileInfo[] fi = di.GetFiles();
+        //             FileInfo[] fi = di.GetFiles();
 
-                    // fill renameItems
-                    foreach (FileInfo fiTemp in fi)
-                    {
-                        int seas;
-                        int ep;
+        //             // fill renameItems
+        //             foreach (FileInfo fiTemp in fi)
+        //             {
+        //                 int seas;
+        //                 int ep;
 
-                        if (!Settings.UsefulExtension(fiTemp.Extension, true))
-                            continue; // move on
+        //                 if (!Settings.UsefulExtension(fiTemp.Extension, true))
+        //                     continue; // move on
 
-                        if (FindSeasEp(fiTemp, out seas, out ep, si.ShowName()))
-                        {
-                            // see if we have an epinfo for this one
-                            if (seas == -1)
-                                seas = snum;
+        //                 if (FindSeasEp(fiTemp, out seas, out ep, si.ShowName()))
+        //                 {
+        //                     // see if we have an epinfo for this one
+        //                     if (seas == -1)
+        //                         seas = snum;
 
-                            foreach (ProcessedEpisode pe in si.SeasonEpisodes[snum])
-                            {
-                                if ((pe.EpNum == ep) && (pe.SeasonNumber == seas))
-                                {
-                                    //SeriesInfo ^ser = GetTVDB(false, "")->GetSeries(si->TVDBCode);
+        //                     foreach (ProcessedEpisode pe in si.SeasonEpisodes[snum])
+        //                     {
+        //                         if ((pe.EpNum == ep) && (pe.SeasonNumber == seas))
+        //                         {
+        //                             //SeriesInfo ^ser = GetTVDB(false, "")->GetSeries(si->TVDBCode);
 
-                                    string nname = FilenameFriendly(Settings.NamingStyle.NameForExt(pe, fiTemp.Extension));
+        //                             string nname = FilenameFriendly(Settings.NamingStyle.NameForExt(pe, fiTemp.Extension));
 
-                                    if (nname != fiTemp.Name)
-                                    {
-                                        TheAIOList.Add(new AIOCopyMoveRename(AIOCopyMoveRename.Op.Rename, fiTemp, Helpers.FileInFolder(folder, nname), pe));
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //                             if (nname != fiTemp.Name)
+        //                             {
+        //                                 TheAIOList.Add(new AIOCopyMoveRename(AIOCopyMoveRename.Op.Rename, fiTemp, Helpers.FileInFolder(folder, nname), pe));
+        //                             }
+        //                             break;
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
-        public void DoMissingCheck(SetProgressDelegate prog, ShowItem specific)
-        {
-            Stats().MissingChecksDone++;
-            mStats.NS_NumberOfEpisodes = 0;
+        // public void DoMissingCheck(SetProgressDelegate prog, ShowItem specific)
+        // {
+        //     Stats().MissingChecksDone++;
+        //     mStats.NS_NumberOfEpisodes = 0;
 
-            // MissingEpisodes->Clear();
+        //     // MissingEpisodes->Clear();
 
-            prog.Invoke(0);
-            //lvStatus->Items->Clear();
-            int c = 0;
-            int totalN = 0;
-            LockShowItems();
+        //     prog.Invoke(0);
+        //     //lvStatus->Items->Clear();
+        //     int c = 0;
+        //     int totalN = 0;
+        //     LockShowItems();
 
-            System.Collections.Generic.List<ShowItem> showlist;
-            if (specific != null)
-            {
-                CheckAllFoldersExist(specific);
-                showlist = new ShowItemList();
-                showlist.Add(specific);
-            }
-            else
-                showlist = ShowItems;
+        //     System.Collections.Generic.List<ShowItem> showlist;
+        //     if (specific != null)
+        //     {
+        //         CheckAllFoldersExist(specific);
+        //         showlist = new ShowItemList();
+        //         showlist.Add(specific);
+        //     }
+        //     else
+        //         showlist = ShowItems;
 
-            foreach (ShowItem si in showlist)
-                if (si.DoMissingCheck)
-                    totalN += si.AllFolderLocations(Settings).Count;
+        //     foreach (ShowItem si in showlist)
+        //         if (si.DoMissingCheck)
+        //             totalN += si.AllFolderLocations(Settings).Count;
 
-            foreach (ShowItem si in showlist)
-            {
-                if (AIOCancel)
-                {
-                    UnlockShowItems();
-                    return;
-                }
+        //     foreach (ShowItem si in showlist)
+        //     {
+        //         if (AIOCancel)
+        //         {
+        //             UnlockShowItems();
+        //             return;
+        //         }
 
-                if (!si.DoMissingCheck)
-                    continue; // skip
+        //         if (!si.DoMissingCheck)
+        //             continue; // skip
 
-                prog.Invoke(100 * (c + 1) / (totalN + 1)); // +1 to always have a bit of activity in the bar when we're working
+        //         prog.Invoke(100 * (c + 1) / (totalN + 1)); // +1 to always have a bit of activity in the bar when we're working
 
-                c += si.AllFolderLocations(Settings).Count;
+        //         c += si.AllFolderLocations(Settings).Count;
 
-                if (!UpToDateCheck(si))
-                    break;
-            }
-            UnlockShowItems();
+        //         if (!UpToDateCheck(si))
+        //             break;
+        //     }
+        //     UnlockShowItems();
 
-            if (specific == null)
-            {
-                //                    
-                //					if (Settings->ExportMissingCSV)
-                //					ExportMissingCSV(Settings->ExportMissingCSVTo);
-                //					if (Settings->ExportMissingXML)
-                //					ExportMissingXML(Settings->ExportMissingXMLTo);
-                //					
-            }
+        //     if (specific == null)
+        //     {
+        //         //                    
+        //         //					if (Settings->ExportMissingCSV)
+        //         //					ExportMissingCSV(Settings->ExportMissingCSVTo);
+        //         //					if (Settings->ExportMissingXML)
+        //         //					ExportMissingXML(Settings->ExportMissingXMLTo);
+        //         //					
+        //     }
 
-            prog.Invoke(100);
-        }
+        //     prog.Invoke(100);
+        // }
 
         public void SetSearcher(int n)
         {
@@ -1153,7 +1140,6 @@ namespace TVRename
         public bool UpToDateCheck(ShowItem si)
         {
             int maxEpNum = 0;
-            int missingCount = -1;
 
             if (!si.DoMissingCheck)
                 return true;
@@ -1186,7 +1172,8 @@ namespace TVRename
                 {
                     DirectoryInfo di = new DirectoryInfo(folder);
                     if (!di.Exists)
-                        continue; // Skip non-existant folders, previous call to CheckAllFoldersExist will have made any wanted
+                        continue; // Skip non-existent folders, previous call to CheckAllFoldersExist 
+                    // will have made any that the user wants
 
                     FileInfo[] fi = di.GetFiles();
 
@@ -1224,7 +1211,6 @@ namespace TVRename
 
                     // now look at EPInfos and see if we're up to date or not
                     DateTime today = DateTime.Now;
-                    missingCount = 0;
 
                     TheTVDB db = GetTVDB(true, "UpToDateCheck");
                     foreach (ProcessedEpisode pe in eps)
@@ -1236,7 +1222,6 @@ namespace TVRename
                         }
 
 
-                        bool ok = true;
                         int n = pe.EpNum;
                         if ((n >= localEps.Count) || (localEps[n] == null)) // not here locally
                         {
@@ -1249,12 +1234,12 @@ namespace TVRename
                             {
                                 // then add it as officially missing
                                 TheAIOList.Add(new AIOMissing(pe, folder + "\\" + FilenameFriendly(Settings.NamingStyle.NameForExt(pe, null))));
-                                missingCount++;
-                                ok = false;
                             }
                         }
                         else
                         {
+                            mStats.NS_NumberOfEpisodes++;
+                     
                             FileInfo filo = localEps[n];
                             // do NFO and thumbnail checks if needed
                             if (Settings.EpImgs)
@@ -1281,9 +1266,6 @@ namespace TVRename
                                     TheAIOList.Add(new AIONFO(nfo, pe));
                             }
                         }
-
-                        if (ok)
-                            mStats.NS_NumberOfEpisodes++;
                     }
                     db.Unlock("UpToDateCheck");
 
@@ -2256,69 +2238,77 @@ namespace TVRename
 
 
 
-        public void AIOFolderJPGCheck(SetProgressDelegate prog, ShowItem specific)
-        {
-            prog.Invoke(0);
-            int c = 0;
-            int totalN = 0;
-            LockShowItems();
+        // public void AIOFolderJPGCheck(SetProgressDelegate prog, ShowItem specific)
+        // {
+        //     prog.Invoke(0);
+        //     int c = 0;
+        //     int totalN = 0;
+        //     LockShowItems();
 
-            if (specific == null)
-            {
-                foreach (ShowItem si in ShowItems)
-                    totalN += si.AllFolderLocations(Settings).Count;
-            }
-            else
-                totalN = 1;
+        //     if (specific == null)
+        //     {
+        //         foreach (ShowItem si in ShowItems)
+        //             totalN += si.AllFolderLocations(Settings).Count;
+        //     }
+        //     else
+        //         totalN = 1;
 
-            StringList doneFolders = new StringList();
+        //     StringList doneFolders = new StringList();
 
-            foreach (ShowItem si in ShowItems)
-            {
-                if (AIOCancel)
-                {
-                    UnlockShowItems();
-                    return;
-                }
+        //     foreach (ShowItem si in ShowItems)
+        //     {
+        //         if (AIOCancel)
+        //         {
+        //             UnlockShowItems();
+        //             return;
+        //         }
 
-                if ((specific != null) && (si != specific))
-                    continue;
+        //         if ((specific != null) && (si != specific))
+        //             continue;
 
-                prog.Invoke(100 * (c + 1) / (totalN + 1)); // +1 to always have a bit of activity in the bar when we're working
-                c += si.AllFolderLocations(Settings).Count;
+        //         prog.Invoke(100 * (c + 1) / (totalN + 1)); // +1 to always have a bit of activity in the bar when we're working
+        //         c += si.AllFolderLocations(Settings).Count;
 
-                if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(Settings, false).Count > 0))
-                {
-                    // folder base is set, and not all seasons ignored
-                    FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "folder.jpg");
-                    if (!fi.Exists)
-                        TheAIOList.Add(new AIODownload(si, null, fi, si.TheSeries().GetItem(Settings.ItemForFolderJpg())));
-                    doneFolders.Add(si.AutoAdd_FolderBase);
-                }
+        //         if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(Settings, false).Count > 0))
+        //         {
+        //             // folder base is set, and not all seasons ignored
+        //             FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "folder.jpg");
+        //             if (!fi.Exists)
+        //             {
+        //                 string bannerPath = si.TheSeries().GetItem(Settings.ItemForFolderJpg());
+        //                 if (!string.IsNullOrEmpty(bannerPath))
+        //                   TheAIOList.Add(new AIODownload(si, null, fi, bannerPath));
+        //             }
+        //             doneFolders.Add(si.AutoAdd_FolderBase);
+        //         }
 
 
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
-                {
-                    int snum = kvp.Key;
-                    if ((si.IgnoreSeasons.Contains(kvp.Key)) || (!si.AllFolderLocations(Settings).ContainsKey(snum)))
-                        continue; // ignore/skip this season
-                    StringList folders = si.AllFolderLocations(Settings)[snum];
-                    foreach (string folder in folders)
-                    {
-                        if (doneFolders.Contains(folder)) // some folders may come up multiple times
-                            continue;
-                        doneFolders.Add(folder);
+        //         foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
+        //         {
+        //             int snum = kvp.Key;
+        //             if ((si.IgnoreSeasons.Contains(kvp.Key)) || (!si.AllFolderLocations(Settings).ContainsKey(snum)))
+        //                 continue; // ignore/skip this season
+        //             StringList folders = si.AllFolderLocations(Settings)[snum];
+        //             foreach (string folder in folders)
+        //             {
+        //                 if (doneFolders.Contains(folder)) // some folders may come up multiple times
+        //                     continue;
+        //                 doneFolders.Add(folder);
 
-                        FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
-                        if (!fi.Exists)
-                            TheAIOList.Add(new AIODownload(si, null, fi, si.TheSeries().GetItem(Settings.ItemForFolderJpg())));
-                    }
-                }
+        //                 FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
+        //                 if (!fi.Exists)
+        //                  {
+        //                 string bannerPath = si.TheSeries().GetItem(Settings.ItemForFolderJpg());
+        //                 if (!string.IsNullOrEmpty(bannerPath))
+        //                     TheAIOList.Add(new AIODownload(si, null, fi, bannerPath));
+        //                 }
+        //             }
+        //         }
 
-            }
-            UnlockShowItems();
-            prog.Invoke(100);
-        }
+        //     }
+        //     UnlockShowItems();
+        //     prog.Invoke(100);
+        // }
 
         public void AIOAction(SetProgressDelegate prog, System.Collections.Generic.List<AIOItem> theList)
         {
@@ -2360,8 +2350,9 @@ namespace TVRename
             if (!DoDownloadsFG())
                 return;
 
+            //Thread aioWork = new Thread(new ParameterizedThreadStart(this.AIOGoWorker));
             Thread aioWork = new Thread(new ParameterizedThreadStart(this.AIOGoWorker));
-            aioWork.Name = "AIOGo";
+            aioWork.Name = "AIOGoWorker";
 
             AIOCancel = false;
 
@@ -2549,6 +2540,268 @@ namespace TVRename
                 TheAIOList.Remove(aio);
         }
 
+        public void RenameAndMissingCheck(SetProgressDelegate prog, ShowItem specific)
+        {
+            while ((ScanProgDlg == null) || (!ScanProgDlg.Ready))
+                Thread.Sleep(10); // wait for thread to create the dialog
+
+            TheAIOList = new System.Collections.Generic.List<AIOItem>();
+
+
+            //int totalEps = 0;
+
+            LockShowItems();
+
+            System.Collections.Generic.List<ShowItem> showlist;
+            if (specific != null)
+            {
+                showlist = new ShowItemList();
+                showlist.Add(specific);
+            }
+            else
+                showlist = ShowItems;
+
+            //foreach (ShowItem si in showlist)
+            //  if (si.DoRename)
+            //    totalEps += si.SeasonEpisodes.Count;
+
+            if (Settings.RenameCheck)
+                Stats().RenameChecksDone++;
+
+            if (Settings.MissingCheck)
+                Stats().MissingChecksDone++;
+
+            prog.Invoke(0);
+
+            int c = 0;
+            foreach (ShowItem si in showlist)
+            {
+                if (AIOCancel)
+                    return;
+                c++;
+
+                prog.Invoke(100 * c / showlist.Count);
+
+                if (si.AllFolderLocations(Settings).Count == 0) // no folders defined for this show
+                    continue;		// so, nothing to do.
+
+                // for each tv show, optionally write a tvshow.nfo file
+
+                if (Settings.NFOs && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(Settings).Count > 0))
+                {
+                    FileInfo tvshownfo = Helpers.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
+
+                    bool needUpdate = !tvshownfo.Exists || (si.TheSeries().Srv_LastUpdated > TZMagic.Epoch(tvshownfo.LastWriteTime));
+                    // was it written before we fixed the bug in <episodeguideurl> ?
+                    needUpdate = needUpdate || (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
+                    if (needUpdate)
+                        TheAIOList.Add(new AIONFO(tvshownfo, si));
+                }
+
+
+                // process each folder for each season...
+
+                int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
+                si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
+                System.Collections.Generic.Dictionary<int, StringList> allFolders = si.AllFolderLocations(Settings);
+
+                foreach (int snum in numbers)
+                {
+                    if (AIOCancel)
+                        return;
+
+                    if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
+                        continue; // ignore/skip this season
+
+                    if ((snum == 0) && (si.CountSpecials))
+                        continue; // don't process the specials season, as they're merged into the seasons themselves
+
+                    // all the folders for this particular season
+                    StringList folders = allFolders[snum];
+
+                    bool folderNotDefined = (folders.Count == 0);
+                    if (folderNotDefined && (Settings.MissingCheck && !si.AutoAddNewSeasons) || !Settings.MissingCheck)
+                        continue; // folder for the season is not defined, and we're not auto-adding it
+
+                    ProcessedEpisodeList eps = si.SeasonEpisodes[snum];
+                    int maxEpisodeNumber = 0;
+                    foreach (ProcessedEpisode episode in eps)
+                        if (episode.EpNum > maxEpisodeNumber)
+                            maxEpisodeNumber = episode.EpNum;
+
+                    StringList doneFolderJPG = new StringList();
+                    if (Settings.FolderJpg)
+                      {
+                        // main image for the folder itself
+
+                        // base folder:
+                        if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(Settings, false).Count > 0))
+                          {
+                            FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "folder.jpg");
+                            if (!fi.Exists)
+                              {
+                                string bannerPath = si.TheSeries().GetItem(Settings.ItemForFolderJpg());
+                                if (!string.IsNullOrEmpty(bannerPath))
+                                  TheAIOList.Add(new AIODownload(si, null, fi, bannerPath));
+                              }
+                            doneFolderJPG.Add(si.AutoAdd_FolderBase);
+                          }
+                      }
+
+
+
+                    foreach (string folder in folders)
+                    {
+                        if (AIOCancel)
+                            return;
+
+                        // generate new filename info
+                        DirectoryInfo di;
+                        try
+                        {
+                            di = new DirectoryInfo(folder);
+                        }
+                        catch
+                        {
+                            continue; // TODO: show an error?
+                        }
+
+
+                        bool renCheck = Settings.RenameCheck && si.DoRename && di.Exists; // renaming check needs the folder to exist
+                        bool missCheck = Settings.MissingCheck && si.DoMissingCheck;
+
+                        if (Settings.FolderJpg)
+                          {
+                            // season folders JPGs
+                      
+                            if (doneFolderJPG.Contains(folder)) // some folders may come up multiple times
+                              continue;
+                            doneFolderJPG.Add(folder);
+
+                            FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
+                            if (!fi.Exists)
+                              {
+                                string bannerPath = si.TheSeries().GetItem(Settings.ItemForFolderJpg());
+                                if (!string.IsNullOrEmpty(bannerPath))
+                                  TheAIOList.Add(new AIODownload(si, null, fi, bannerPath));
+                              }
+                          }
+
+                        FileInfo[] files = di.GetFiles(); // all the files in the folder
+                        FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
+
+                        int maxEpNumFound = 0;
+
+                        foreach (FileInfo fi in files)
+                        {
+                            if (AIOCancel)
+                                return;
+
+                            int seasNum;
+                            int epNum;
+
+                            if (!FindSeasEp(fi, out seasNum, out epNum, si.ShowName()))
+                                continue; // can't find season & episode, so this file is of no interest to us
+
+                            if (seasNum == -1)
+                                seasNum = snum;
+
+                            int epIdx = eps.FindIndex(x => ((x.EpNum == epNum) && (x.SeasonNumber == seasNum)));
+                            if (epIdx == -1)
+                                continue; // season+episode number don't correspond to any episode we know of from thetvdb
+
+                            ProcessedEpisode ep = eps[epIdx];
+                            
+                            FileInfo actualFile = fi;
+
+                            if (renCheck && Settings.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
+                            {
+                                string newname = FilenameFriendly(Settings.NamingStyle.NameForExt(ep, fi.Extension));
+                                if (newname != actualFile.Name)
+                                {
+                                    actualFile = Helpers.FileInFolder(folder, newname); // rename updates the filename
+                                    TheAIOList.Add(new AIOCopyMoveRename(AIOCopyMoveRename.Op.Rename,
+                                                                         fi,
+                                                                         actualFile,
+                                                                         ep));
+                                }
+                            }
+                            if (missCheck) // == MISSING CHECK part 1/2 ==
+                            {
+                                // first pass of missing check is to tally up the episodes we do have
+                                localEps[epNum] = actualFile;
+                                if (epNum > maxEpNumFound)
+                                    maxEpNumFound = epNum;
+                            }
+
+                        } // foreach file in folder
+
+                        if (missCheck) // == MISSING CHECK part 2/2 (includes NFO and Thumbnails) ==
+                        {
+                            // second part of missing check is to see what is missing!
+
+                            // look at the offical list of episodes, and look to see if we have any gaps
+
+                            DateTime today = DateTime.Now;
+                            TheTVDB db = GetTVDB(true, "UpToDateCheck");
+                            foreach (ProcessedEpisode dbep in eps)
+                            {
+                                if ((dbep.EpNum > maxEpNumFound) || (localEps[dbep.EpNum] == null)) // not here locally
+                                {
+                                    DateTime? dt = dbep.GetAirDateDT(true);
+
+                                    bool notFuture = (dt != null) && (dt.Value.CompareTo(today) < 0); // isn't an episode yet to be aired
+                                    bool anyAirdates = HasAnyAirdates(si, snum);
+                                    bool lastSeasAirdates = (snum > 1) ? HasAnyAirdates(si, snum - 1) : true; // this might be a new season, so check the last one as well
+                                    if (si.ForceCheckAll || (!(anyAirdates || lastSeasAirdates)) || notFuture) // not in the future (i.e. its aired)
+                                    {
+                                        // then add it as officially missing
+                                        TheAIOList.Add(new AIOMissing(dbep, folder + "\\" + FilenameFriendly(Settings.NamingStyle.NameForExt(dbep, null))));
+                                    }
+                                }
+                                else
+                                {
+                                    // the file is here
+                                    mStats.NS_NumberOfEpisodes++;
+
+                                    // do NFO and thumbnail checks if required
+                                    FileInfo filo = localEps[dbep.EpNum]; // filename (or future filename) of the file
+
+                                    if (Settings.EpImgs)
+                                    {
+                                        string ban = dbep.GetItem("filename");
+                                        if (!string.IsNullOrEmpty(ban))
+                                        {
+                                            string fn = filo.Name;
+                                            fn = fn.Substring(0, fn.Length - filo.Extension.Length);
+                                            fn += ".tbn";
+                                            FileInfo img = Helpers.FileInFolder(filo.Directory, fn);
+                                            if (!img.Exists)
+                                                TheAIOList.Add(new AIODownload(si, dbep, img, ban));
+                                        }
+                                    }
+                                    if (Settings.NFOs)
+                                    {
+                                        string fn = filo.Name;
+                                        fn = fn.Substring(0, fn.Length - filo.Extension.Length);
+                                        fn += ".nfo";
+                                        FileInfo nfo = Helpers.FileInFolder(filo.Directory, fn);
+
+                                        if (!nfo.Exists || (dbep.Srv_LastUpdated > TZMagic.Epoch(nfo.LastWriteTime)))
+                                            TheAIOList.Add(new AIONFO(nfo, dbep));
+                                    }
+                                }
+                            } // up to date check, for each episode in thetvdb
+                            db.Unlock("UpToDateCheck");
+                        } // if doing missing check
+                    } // for each folder for this season of this show
+                } // for each season of this show
+            } // for each show
+
+            UnlockShowItems();
+            RemoveIgnored();
+        }
+
         public void AIOGoWorker(Object o)
         {
             ShowItem specific = (ShowItem)(o);
@@ -2558,22 +2811,15 @@ namespace TVRename
 
             TheAIOList = new System.Collections.Generic.List<AIOItem>();
 
-            if (Settings.RenameCheck)
-            {
-                DoRenameCheck(ScanProgDlg.RenameProg, specific);
-                RemoveIgnored();
-            }
+            if (Settings.RenameCheck || Settings.MissingCheck)
+              RenameAndMissingCheck(ScanProgDlg.MediaLibProg, specific);
 
             if (Settings.MissingCheck)
             {
                 if (AIOCancel)
                     return;
 
-                DoMissingCheck(ScanProgDlg.MissingProg, specific);
-                RemoveIgnored();
-
-                if (AIOCancel)
-                    return;
+                // have a look around for any missing episodes
 
                 if (Settings.SearchLocally && MissingItemsInList(TheAIOList))
                 {
@@ -2601,9 +2847,9 @@ namespace TVRename
             }
             if (AIOCancel)
                 return;
-            if (Settings.FolderJpg)
-                AIOFolderJPGCheck(ScanProgDlg.FolderThumbsProg, specific);
-            // NFO and Episode images are done inside Missing Check
+            
+            //if (Settings.FolderJpg)
+                // AIOFolderJPGCheck(ScanProgDlg.FolderThumbsProg, specific);
 
             // sort AIO list by type
             TheAIOList.Sort(new AIOSorter());
