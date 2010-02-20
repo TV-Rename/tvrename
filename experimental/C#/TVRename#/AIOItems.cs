@@ -864,10 +864,19 @@ namespace TVRename
         public System.Collections.Generic.List<AIODownload> Download;
         public System.Collections.Generic.List<AIONFO> NFO;
         public System.Collections.Generic.List<AIOItem> FlatList;
-        public bool AllSame;
+        public bool AllSameType;
         public int Count;
 
+        public enum WhichResults { Checked, Selected, All };
         public LVResults(ListView lv, bool @checked) // if not checked, then selected items
+        {
+            Go(lv, @checked ? WhichResults.Checked : WhichResults.Selected);
+        }
+        public LVResults(ListView lv, WhichResults which)
+        {
+            Go(lv, which);
+        }
+        public void Go(ListView lv, WhichResults which)
         {
             uTorrenting = new System.Collections.Generic.List<AIOuTorrenting>();
             Missing = new System.Collections.Generic.List<AIOMissing>();
@@ -879,19 +888,24 @@ namespace TVRename
             FlatList = new System.Collections.Generic.List<AIOItem>();
 
             System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
-            if (@checked)
+            if (which == WhichResults.Checked)
             {
                 ListView.CheckedListViewItemCollection ss = lv.CheckedItems;
                 foreach (ListViewItem lvi in ss)
                     sel.Add(lvi);
             }
-            else
+            else if (which == WhichResults.Selected)
             {
                 ListView.SelectedListViewItemCollection ss = lv.SelectedItems;
                 foreach (ListViewItem lvi in ss)
                     sel.Add(lvi);
             }
-
+            else // all
+            {
+                foreach (ListViewItem lvi in lv.Items)
+                    sel.Add(lvi);
+            }
+            
             Count = sel.Count;
 
             if (sel.Count == 0)
@@ -899,14 +913,17 @@ namespace TVRename
 
             AIOType t = ((AIOItem)(sel[0].Tag)).Type;
 
-            AllSame = true;
+            AllSameType = true;
             foreach (ListViewItem lvi in sel)
             {
+                if (lvi == null)
+                    continue;
+
                 AIOItem aio = (AIOItem)(lvi.Tag);
                 FlatList.Add(aio);
                 AIOType t2 = aio.Type;
                 if (t2 != t)
-                    AllSame = false;
+                    AllSameType = false;
 
                 switch (t2)
                 {

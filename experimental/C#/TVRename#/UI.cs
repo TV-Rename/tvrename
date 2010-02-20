@@ -84,28 +84,15 @@ namespace TVRename
         private System.Windows.Forms.Button bnAIOBTSearch;
         private System.Windows.Forms.Button bnAIOIgnore;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button bnAIODownloads;
-
-        private System.Windows.Forms.Button bnAIORSS;
-
-        private System.Windows.Forms.Button bnAIOCopyMove;
-
-        private System.Windows.Forms.Button bnAIORename;
-
-
-
-
-
-
-
-
-
-
-        private System.Windows.Forms.Button bnAIOAllNone;
-        private System.Windows.Forms.Button bnAIONFO;
         private System.Windows.Forms.Button bnAIOOptions;
         private System.Windows.Forms.Button bnRemoveSel;
         private System.Windows.Forms.ToolStripMenuItem ignoreListToolStripMenuItem;
+        private CheckBox cbNFO;
+        private CheckBox cbDownload;
+        private CheckBox cbRSS;
+        private CheckBox cbCopyMove;
+        private CheckBox cbRename;
+        private CheckBox cbAll;
 
 
 
@@ -118,6 +105,7 @@ namespace TVRename
             return ExperimentalFeatures;
         }
 
+        protected bool InternalCheckChange;
         protected TVDoc mDoc;
         protected System.Drawing.Size mLastNonMaximizedSize;
         protected Point mLastNonMaximizedLocation;
@@ -221,126 +209,126 @@ namespace TVRename
         /// </summary>
         public void InitializeComponent()
         {
-            this.components = (new System.ComponentModel.Container());
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(UI)));
-            System.Windows.Forms.ListViewGroup listViewGroup13 = (new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup14 = (new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup15 = (new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup16 = (new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup17 = (new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup18 = (new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup19 = (new System.Windows.Forms.ListViewGroup("NFO File", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup20 = (new System.Windows.Forms.ListViewGroup("Downloading In µTorrent", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup1 = (new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup2 = (new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup3 = (new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left));
-            System.Windows.Forms.ListViewGroup listViewGroup4 = (new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left));
-            this.menuStrip1 = (new System.Windows.Forms.MenuStrip());
-            this.fileToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.exportToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.saveToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolStripSeparator1 = (new System.Windows.Forms.ToolStripSeparator());
-            this.exitToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.optionsToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.offlineOperationToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.backgroundDownloadToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolStripSeparator2 = (new System.Windows.Forms.ToolStripSeparator());
-            this.preferencesToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.filenameTemplateEditorToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.searchEnginesToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.filenameProcessorsToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolsToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.flushCacheToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.backgroundDownloadNowToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolStripSeparator3 = (new System.Windows.Forms.ToolStripSeparator());
-            this.folderMonitorToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.actorsToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.toolStripSeparator4 = (new System.Windows.Forms.ToolStripSeparator());
-            this.torrentMatchToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.uTorrentToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.helpToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.bugReportToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.buyMeADrinkToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.visitWebsiteToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.quickstartGuideToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.statisticsToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
-            this.tabControl1 = (new System.Windows.Forms.TabControl());
-            this.tbMyShows = (new System.Windows.Forms.TabPage());
-            this.bnMyShowsCollapse = (new System.Windows.Forms.Button());
-            this.bnMyShowsVisitTVDB = (new System.Windows.Forms.Button());
-            this.bnMyShowsOpenFolder = (new System.Windows.Forms.Button());
-            this.bnMyShowsRefresh = (new System.Windows.Forms.Button());
-            this.epGuideHTML = (new System.Windows.Forms.WebBrowser());
-            this.MyShowTree = (new System.Windows.Forms.TreeView());
-            this.bnMyShowsDelete = (new System.Windows.Forms.Button());
-            this.bnMyShowsEdit = (new System.Windows.Forms.Button());
-            this.bnMyShowsAdd = (new System.Windows.Forms.Button());
-            this.tbAllInOne = (new System.Windows.Forms.TabPage());
-            this.bnAIOOptions = (new System.Windows.Forms.Button());
-            this.label1 = (new System.Windows.Forms.Label());
-            this.bnAIONFO = (new System.Windows.Forms.Button());
-            this.bnAIODownloads = (new System.Windows.Forms.Button());
-            this.bnAIORSS = (new System.Windows.Forms.Button());
-            this.bnAIOCopyMove = (new System.Windows.Forms.Button());
-            this.bnAIORename = (new System.Windows.Forms.Button());
-            this.bnAIOAllNone = (new System.Windows.Forms.Button());
-            this.bnRemoveSel = (new System.Windows.Forms.Button());
-            this.bnAIOIgnore = (new System.Windows.Forms.Button());
-            this.bnAIOWhichSearch = (new System.Windows.Forms.Button());
-            this.bnAIOBTSearch = (new System.Windows.Forms.Button());
-            this.lvAIO = (new TVRename.MyListView());
-            this.columnHeader48 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader49 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader51 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader52 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader53 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader54 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader55 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader56 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader58 = (new System.Windows.Forms.ColumnHeader());
-            this.ilIcons = (new System.Windows.Forms.ImageList(this.components));
-            this.bnAIOAction = (new System.Windows.Forms.Button());
-            this.bnAIOCheck = (new System.Windows.Forms.Button());
-            this.tbWTW = (new System.Windows.Forms.TabPage());
-            this.bnWTWChooseSite = (new System.Windows.Forms.Button());
-            this.bnWTWBTSearch = (new System.Windows.Forms.Button());
-            this.bnWhenToWatchCheck = (new System.Windows.Forms.Button());
-            this.txtWhenToWatchSynopsis = (new System.Windows.Forms.TextBox());
-            this.calCalendar = (new System.Windows.Forms.MonthCalendar());
-            this.lvWhenToWatch = (new System.Windows.Forms.ListView());
-            this.columnHeader29 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader30 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader31 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader32 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader36 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader33 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader34 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader35 = (new System.Windows.Forms.ColumnHeader());
-            this.tableLayoutPanel2 = (new System.Windows.Forms.TableLayoutPanel());
-            this.pbProgressBarx = (new System.Windows.Forms.ProgressBar());
-            this.txtDLStatusLabel = (new System.Windows.Forms.Label());
-            this.tsNextShowTxt = (new System.Windows.Forms.Label());
-            this.columnHeader5 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader6 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader7 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader8 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader25 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader26 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader27 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader28 = (new System.Windows.Forms.ColumnHeader());
-            this.openFile = (new System.Windows.Forms.OpenFileDialog());
-            this.folderBrowser = (new System.Windows.Forms.FolderBrowserDialog());
-            this.menuSearchSites = (new System.Windows.Forms.ContextMenuStrip(this.components));
-            this.refreshWTWTimer = (new System.Windows.Forms.Timer(this.components));
-            this.notifyIcon1 = (new System.Windows.Forms.NotifyIcon(this.components));
-            this.showRightClickMenu = (new System.Windows.Forms.ContextMenuStrip(this.components));
-            this.folderRightClickMenu = (new System.Windows.Forms.ContextMenuStrip(this.components));
-            this.statusTimer = (new System.Windows.Forms.Timer(this.components));
-            this.BGDownloadTimer = (new System.Windows.Forms.Timer(this.components));
-            this.saveFile = (new System.Windows.Forms.SaveFileDialog());
-            this.tmrShowUpcomingPopup = (new System.Windows.Forms.Timer(this.components));
-            this.quickTimer = (new System.Windows.Forms.Timer(this.components));
-            this.ignoreListToolStripMenuItem = (new System.Windows.Forms.ToolStripMenuItem());
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("NFO File", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Downloading In µTorrent", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.offlineOperationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundDownloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ignoreListToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filenameTemplateEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.searchEnginesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filenameProcessorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.flushCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundDownloadNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.folderMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.actorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.torrentMatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uTorrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bugReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buyMeADrinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.visitWebsiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.quickstartGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tbMyShows = new System.Windows.Forms.TabPage();
+            this.bnMyShowsCollapse = new System.Windows.Forms.Button();
+            this.bnMyShowsVisitTVDB = new System.Windows.Forms.Button();
+            this.bnMyShowsOpenFolder = new System.Windows.Forms.Button();
+            this.bnMyShowsRefresh = new System.Windows.Forms.Button();
+            this.epGuideHTML = new System.Windows.Forms.WebBrowser();
+            this.MyShowTree = new System.Windows.Forms.TreeView();
+            this.bnMyShowsDelete = new System.Windows.Forms.Button();
+            this.bnMyShowsEdit = new System.Windows.Forms.Button();
+            this.bnMyShowsAdd = new System.Windows.Forms.Button();
+            this.tbAllInOne = new System.Windows.Forms.TabPage();
+            this.cbNFO = new System.Windows.Forms.CheckBox();
+            this.cbDownload = new System.Windows.Forms.CheckBox();
+            this.cbRSS = new System.Windows.Forms.CheckBox();
+            this.cbCopyMove = new System.Windows.Forms.CheckBox();
+            this.cbRename = new System.Windows.Forms.CheckBox();
+            this.cbAll = new System.Windows.Forms.CheckBox();
+            this.bnAIOOptions = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.bnRemoveSel = new System.Windows.Forms.Button();
+            this.bnAIOIgnore = new System.Windows.Forms.Button();
+            this.bnAIOWhichSearch = new System.Windows.Forms.Button();
+            this.bnAIOBTSearch = new System.Windows.Forms.Button();
+            this.lvAIO = new TVRename.MyListView();
+            this.columnHeader48 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader49 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader51 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader52 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader53 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader54 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader55 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader56 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader58 = new System.Windows.Forms.ColumnHeader();
+            this.ilIcons = new System.Windows.Forms.ImageList(this.components);
+            this.bnAIOAction = new System.Windows.Forms.Button();
+            this.bnAIOCheck = new System.Windows.Forms.Button();
+            this.tbWTW = new System.Windows.Forms.TabPage();
+            this.bnWTWChooseSite = new System.Windows.Forms.Button();
+            this.bnWTWBTSearch = new System.Windows.Forms.Button();
+            this.bnWhenToWatchCheck = new System.Windows.Forms.Button();
+            this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
+            this.calCalendar = new System.Windows.Forms.MonthCalendar();
+            this.lvWhenToWatch = new System.Windows.Forms.ListView();
+            this.columnHeader29 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader30 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader31 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader32 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader36 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader33 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader34 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader35 = new System.Windows.Forms.ColumnHeader();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.pbProgressBarx = new System.Windows.Forms.ProgressBar();
+            this.txtDLStatusLabel = new System.Windows.Forms.Label();
+            this.tsNextShowTxt = new System.Windows.Forms.Label();
+            this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader6 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader7 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader25 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader26 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader27 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader28 = new System.Windows.Forms.ColumnHeader();
+            this.openFile = new System.Windows.Forms.OpenFileDialog();
+            this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
+            this.menuSearchSites = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.refreshWTWTimer = new System.Windows.Forms.Timer(this.components);
+            this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+            this.showRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.folderRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.statusTimer = new System.Windows.Forms.Timer(this.components);
+            this.BGDownloadTimer = new System.Windows.Forms.Timer(this.components);
+            this.saveFile = new System.Windows.Forms.SaveFileDialog();
+            this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
+            this.quickTimer = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -351,7 +339,11 @@ namespace TVRename
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[4] { this.fileToolStripMenuItem, this.optionsToolStripMenuItem, this.toolsToolStripMenuItem, this.helpToolStripMenuItem });
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.optionsToolStripMenuItem,
+            this.toolsToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(931, 24);
@@ -360,103 +352,133 @@ namespace TVRename
             // 
             // fileToolStripMenuItem
             // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[4] { this.exportToolStripMenuItem, this.saveToolStripMenuItem, this.toolStripSeparator1, this.exitToolStripMenuItem });
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4));
+            this.fileToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(35, 20);
             this.fileToolStripMenuItem.Text = "&File";
             // 
             // exportToolStripMenuItem
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
-            this.exportToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E));
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.exportToolStripMenuItem.Text = "&Export";
-            this.exportToolStripMenuItem.Click += new System.EventHandler(exportToolStripMenuItem_Click);
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.saveToolStripMenuItem.Text = "&Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(saveToolStripMenuItem_Click);
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(152, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[8] { this.offlineOperationToolStripMenuItem, this.backgroundDownloadToolStripMenuItem, this.toolStripSeparator2, this.preferencesToolStripMenuItem, this.ignoreListToolStripMenuItem, this.filenameTemplateEditorToolStripMenuItem, this.searchEnginesToolStripMenuItem, this.filenameProcessorsToolStripMenuItem });
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.offlineOperationToolStripMenuItem,
+            this.backgroundDownloadToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.preferencesToolStripMenuItem,
+            this.ignoreListToolStripMenuItem,
+            this.filenameTemplateEditorToolStripMenuItem,
+            this.searchEnginesToolStripMenuItem,
+            this.filenameProcessorsToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O));
+            this.optionsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
             this.optionsToolStripMenuItem.Text = "&Options";
             // 
             // offlineOperationToolStripMenuItem
             // 
             this.offlineOperationToolStripMenuItem.Name = "offlineOperationToolStripMenuItem";
-            this.offlineOperationToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.offlineOperationToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.offlineOperationToolStripMenuItem.Text = "&Offline Operation";
-            this.offlineOperationToolStripMenuItem.ToolTipText = "If you turn this on, TVRename will only use data it has locally, without downloading anything.";
-            this.offlineOperationToolStripMenuItem.Click += new System.EventHandler(offlineOperationToolStripMenuItem_Click);
+            this.offlineOperationToolStripMenuItem.ToolTipText = "If you turn this on, TVRename will only use data it has locally, without download" +
+                "ing anything.";
+            this.offlineOperationToolStripMenuItem.Click += new System.EventHandler(this.offlineOperationToolStripMenuItem_Click);
             // 
             // backgroundDownloadToolStripMenuItem
             // 
             this.backgroundDownloadToolStripMenuItem.Name = "backgroundDownloadToolStripMenuItem";
-            this.backgroundDownloadToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.backgroundDownloadToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.backgroundDownloadToolStripMenuItem.Text = "Automatic &Background Download";
-            this.backgroundDownloadToolStripMenuItem.ToolTipText = "Turn this on to let TVRename automatically download thetvdb.com data in the backrground";
-            this.backgroundDownloadToolStripMenuItem.Click += new System.EventHandler(backgroundDownloadToolStripMenuItem_Click);
+            this.backgroundDownloadToolStripMenuItem.ToolTipText = "Turn this on to let TVRename automatically download thetvdb.com data in the backr" +
+                "ground";
+            this.backgroundDownloadToolStripMenuItem.Click += new System.EventHandler(this.backgroundDownloadToolStripMenuItem_Click);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(229, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(240, 6);
             // 
             // preferencesToolStripMenuItem
             // 
             this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-            this.preferencesToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P));
-            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.preferencesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
+            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.preferencesToolStripMenuItem.Text = "&Preferences";
-            this.preferencesToolStripMenuItem.Click += new System.EventHandler(preferencesToolStripMenuItem_Click);
+            this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
+            // 
+            // ignoreListToolStripMenuItem
+            // 
+            this.ignoreListToolStripMenuItem.Name = "ignoreListToolStripMenuItem";
+            this.ignoreListToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
+            this.ignoreListToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.ignoreListToolStripMenuItem.Text = "&Ignore List";
+            this.ignoreListToolStripMenuItem.Click += new System.EventHandler(this.ignoreListToolStripMenuItem_Click);
             // 
             // filenameTemplateEditorToolStripMenuItem
             // 
             this.filenameTemplateEditorToolStripMenuItem.Name = "filenameTemplateEditorToolStripMenuItem";
-            this.filenameTemplateEditorToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T));
-            this.filenameTemplateEditorToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.filenameTemplateEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
+            this.filenameTemplateEditorToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.filenameTemplateEditorToolStripMenuItem.Text = "&Filename Template Editor";
-            this.filenameTemplateEditorToolStripMenuItem.Click += new System.EventHandler(filenameTemplateEditorToolStripMenuItem_Click);
+            this.filenameTemplateEditorToolStripMenuItem.Click += new System.EventHandler(this.filenameTemplateEditorToolStripMenuItem_Click);
             // 
             // searchEnginesToolStripMenuItem
             // 
             this.searchEnginesToolStripMenuItem.Name = "searchEnginesToolStripMenuItem";
-            this.searchEnginesToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.searchEnginesToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.searchEnginesToolStripMenuItem.Text = "&Search Engines";
-            this.searchEnginesToolStripMenuItem.Click += new System.EventHandler(searchEnginesToolStripMenuItem_Click);
+            this.searchEnginesToolStripMenuItem.Click += new System.EventHandler(this.searchEnginesToolStripMenuItem_Click);
             // 
             // filenameProcessorsToolStripMenuItem
             // 
             this.filenameProcessorsToolStripMenuItem.Name = "filenameProcessorsToolStripMenuItem";
-            this.filenameProcessorsToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            this.filenameProcessorsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
             this.filenameProcessorsToolStripMenuItem.Text = "File&name Processors";
-            this.filenameProcessorsToolStripMenuItem.Click += new System.EventHandler(filenameProcessorsToolStripMenuItem_Click);
+            this.filenameProcessorsToolStripMenuItem.Click += new System.EventHandler(this.filenameProcessorsToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[8] { this.flushCacheToolStripMenuItem, this.backgroundDownloadNowToolStripMenuItem, this.toolStripSeparator3, this.folderMonitorToolStripMenuItem, this.actorsToolStripMenuItem, this.toolStripSeparator4, this.torrentMatchToolStripMenuItem, this.uTorrentToolStripMenuItem });
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.flushCacheToolStripMenuItem,
+            this.backgroundDownloadNowToolStripMenuItem,
+            this.toolStripSeparator3,
+            this.folderMonitorToolStripMenuItem,
+            this.actorsToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.torrentMatchToolStripMenuItem,
+            this.uTorrentToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -464,59 +486,64 @@ namespace TVRename
             // flushCacheToolStripMenuItem
             // 
             this.flushCacheToolStripMenuItem.Name = "flushCacheToolStripMenuItem";
-            this.flushCacheToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.flushCacheToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.flushCacheToolStripMenuItem.Text = "&Flush Cache";
-            this.flushCacheToolStripMenuItem.Click += new System.EventHandler(flushCacheToolStripMenuItem_Click);
+            this.flushCacheToolStripMenuItem.Click += new System.EventHandler(this.flushCacheToolStripMenuItem_Click);
             // 
             // backgroundDownloadNowToolStripMenuItem
             // 
             this.backgroundDownloadNowToolStripMenuItem.Name = "backgroundDownloadNowToolStripMenuItem";
-            this.backgroundDownloadNowToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B));
-            this.backgroundDownloadNowToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.backgroundDownloadNowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.backgroundDownloadNowToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.backgroundDownloadNowToolStripMenuItem.Text = "&Background Download Now";
-            this.backgroundDownloadNowToolStripMenuItem.Click += new System.EventHandler(backgroundDownloadNowToolStripMenuItem_Click);
+            this.backgroundDownloadNowToolStripMenuItem.Click += new System.EventHandler(this.backgroundDownloadNowToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(239, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(250, 6);
             // 
             // folderMonitorToolStripMenuItem
             // 
             this.folderMonitorToolStripMenuItem.Name = "folderMonitorToolStripMenuItem";
-            this.folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.folderMonitorToolStripMenuItem.Text = "Folder &Monitor";
-            this.folderMonitorToolStripMenuItem.Click += new System.EventHandler(folderMonitorToolStripMenuItem_Click);
+            this.folderMonitorToolStripMenuItem.Click += new System.EventHandler(this.folderMonitorToolStripMenuItem_Click);
             // 
             // actorsToolStripMenuItem
             // 
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.actorsToolStripMenuItem.Text = "&Actors Grid";
-            this.actorsToolStripMenuItem.Click += new System.EventHandler(actorsToolStripMenuItem_Click);
+            this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(239, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(250, 6);
             // 
             // torrentMatchToolStripMenuItem
             // 
             this.torrentMatchToolStripMenuItem.Name = "torrentMatchToolStripMenuItem";
-            this.torrentMatchToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.torrentMatchToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.torrentMatchToolStripMenuItem.Text = "&Torrent Match";
-            this.torrentMatchToolStripMenuItem.Click += new System.EventHandler(torrentMatchToolStripMenuItem_Click);
+            this.torrentMatchToolStripMenuItem.Click += new System.EventHandler(this.torrentMatchToolStripMenuItem_Click);
             // 
             // uTorrentToolStripMenuItem
             // 
             this.uTorrentToolStripMenuItem.Name = "uTorrentToolStripMenuItem";
-            this.uTorrentToolStripMenuItem.Size = new System.Drawing.Size(242, 22);
+            this.uTorrentToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             this.uTorrentToolStripMenuItem.Text = "&uTorrent Save To";
-            this.uTorrentToolStripMenuItem.Click += new System.EventHandler(uTorrentToolStripMenuItem_Click);
+            this.uTorrentToolStripMenuItem.Click += new System.EventHandler(this.uTorrentToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[5] { this.bugReportToolStripMenuItem, this.buyMeADrinkToolStripMenuItem, this.visitWebsiteToolStripMenuItem, this.quickstartGuideToolStripMenuItem, this.statisticsToolStripMenuItem });
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.bugReportToolStripMenuItem,
+            this.buyMeADrinkToolStripMenuItem,
+            this.visitWebsiteToolStripMenuItem,
+            this.quickstartGuideToolStripMenuItem,
+            this.statisticsToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.helpToolStripMenuItem.Text = "&Help";
@@ -524,41 +551,43 @@ namespace TVRename
             // bugReportToolStripMenuItem
             // 
             this.bugReportToolStripMenuItem.Name = "bugReportToolStripMenuItem";
-            this.bugReportToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.bugReportToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.bugReportToolStripMenuItem.Text = "Bug &Report";
-            this.bugReportToolStripMenuItem.Click += new System.EventHandler(bugReportToolStripMenuItem_Click);
+            this.bugReportToolStripMenuItem.Click += new System.EventHandler(this.bugReportToolStripMenuItem_Click);
             // 
             // buyMeADrinkToolStripMenuItem
             // 
             this.buyMeADrinkToolStripMenuItem.Name = "buyMeADrinkToolStripMenuItem";
-            this.buyMeADrinkToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.buyMeADrinkToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.buyMeADrinkToolStripMenuItem.Text = "&Buy Me A Drink";
-            this.buyMeADrinkToolStripMenuItem.Click += new System.EventHandler(buyMeADrinkToolStripMenuItem_Click);
+            this.buyMeADrinkToolStripMenuItem.Click += new System.EventHandler(this.buyMeADrinkToolStripMenuItem_Click);
             // 
             // visitWebsiteToolStripMenuItem
             // 
             this.visitWebsiteToolStripMenuItem.Name = "visitWebsiteToolStripMenuItem";
-            this.visitWebsiteToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.visitWebsiteToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.visitWebsiteToolStripMenuItem.Text = "&Visit Website";
-            this.visitWebsiteToolStripMenuItem.Click += new System.EventHandler(visitWebsiteToolStripMenuItem_Click);
+            this.visitWebsiteToolStripMenuItem.Click += new System.EventHandler(this.visitWebsiteToolStripMenuItem_Click);
             // 
             // quickstartGuideToolStripMenuItem
             // 
             this.quickstartGuideToolStripMenuItem.Name = "quickstartGuideToolStripMenuItem";
-            this.quickstartGuideToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.quickstartGuideToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.quickstartGuideToolStripMenuItem.Text = "&Quickstart Guide";
-            this.quickstartGuideToolStripMenuItem.Click += new System.EventHandler(quickstartGuideToolStripMenuItem_Click);
+            this.quickstartGuideToolStripMenuItem.Click += new System.EventHandler(this.quickstartGuideToolStripMenuItem_Click);
             // 
             // statisticsToolStripMenuItem
             // 
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(153, 22);
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics";
-            this.statisticsToolStripMenuItem.Click += new System.EventHandler(statisticsToolStripMenuItem_Click);
+            this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tbMyShows);
             this.tabControl1.Controls.Add(this.tbAllInOne);
             this.tabControl1.Controls.Add(this.tbWTW);
@@ -567,8 +596,8 @@ namespace TVRename
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(931, 533);
             this.tabControl1.TabIndex = 0;
-            this.tabControl1.DoubleClick += new System.EventHandler(tabControl1_DoubleClick);
-            this.tabControl1.SelectedIndexChanged += new System.EventHandler(tabControl1_SelectedIndexChanged);
+            this.tabControl1.DoubleClick += new System.EventHandler(this.tabControl1_DoubleClick);
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
             // tbMyShows
             // 
@@ -591,114 +620,117 @@ namespace TVRename
             // 
             // bnMyShowsCollapse
             // 
-            this.bnMyShowsCollapse.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnMyShowsCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsCollapse.Location = new System.Drawing.Point(251, 480);
             this.bnMyShowsCollapse.Name = "bnMyShowsCollapse";
             this.bnMyShowsCollapse.Size = new System.Drawing.Size(22, 23);
             this.bnMyShowsCollapse.TabIndex = 4;
             this.bnMyShowsCollapse.Text = "-";
             this.bnMyShowsCollapse.UseVisualStyleBackColor = true;
-            this.bnMyShowsCollapse.Click += new System.EventHandler(bnMyShowsCollapse_Click);
+            this.bnMyShowsCollapse.Click += new System.EventHandler(this.bnMyShowsCollapse_Click);
             // 
             // bnMyShowsVisitTVDB
             // 
-            this.bnMyShowsVisitTVDB.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnMyShowsVisitTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsVisitTVDB.Location = new System.Drawing.Point(506, 480);
             this.bnMyShowsVisitTVDB.Name = "bnMyShowsVisitTVDB";
             this.bnMyShowsVisitTVDB.Size = new System.Drawing.Size(75, 23);
             this.bnMyShowsVisitTVDB.TabIndex = 7;
             this.bnMyShowsVisitTVDB.Text = "&Visit TVDB";
             this.bnMyShowsVisitTVDB.UseVisualStyleBackColor = true;
-            this.bnMyShowsVisitTVDB.Click += new System.EventHandler(bnMyShowsVisitTVDB_Click);
+            this.bnMyShowsVisitTVDB.Click += new System.EventHandler(this.bnMyShowsVisitTVDB_Click);
             // 
             // bnMyShowsOpenFolder
             // 
-            this.bnMyShowsOpenFolder.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnMyShowsOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsOpenFolder.Location = new System.Drawing.Point(425, 480);
             this.bnMyShowsOpenFolder.Name = "bnMyShowsOpenFolder";
             this.bnMyShowsOpenFolder.Size = new System.Drawing.Size(75, 23);
             this.bnMyShowsOpenFolder.TabIndex = 6;
             this.bnMyShowsOpenFolder.Text = "&Open";
             this.bnMyShowsOpenFolder.UseVisualStyleBackColor = true;
-            this.bnMyShowsOpenFolder.Click += new System.EventHandler(bnMyShowsOpenFolder_Click);
+            this.bnMyShowsOpenFolder.Click += new System.EventHandler(this.bnMyShowsOpenFolder_Click);
             // 
             // bnMyShowsRefresh
             // 
-            this.bnMyShowsRefresh.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnMyShowsRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsRefresh.Location = new System.Drawing.Point(331, 480);
             this.bnMyShowsRefresh.Name = "bnMyShowsRefresh";
             this.bnMyShowsRefresh.Size = new System.Drawing.Size(75, 23);
             this.bnMyShowsRefresh.TabIndex = 5;
             this.bnMyShowsRefresh.Text = "&Refresh";
             this.bnMyShowsRefresh.UseVisualStyleBackColor = true;
-            this.bnMyShowsRefresh.Click += new System.EventHandler(bnMyShowsRefresh_Click);
+            this.bnMyShowsRefresh.Click += new System.EventHandler(this.bnMyShowsRefresh_Click);
             // 
             // epGuideHTML
             // 
             this.epGuideHTML.AllowWebBrowserDrop = false;
-            this.epGuideHTML.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.epGuideHTML.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.epGuideHTML.Location = new System.Drawing.Point(279, 6);
             this.epGuideHTML.MinimumSize = new System.Drawing.Size(20, 20);
             this.epGuideHTML.Name = "epGuideHTML";
             this.epGuideHTML.Size = new System.Drawing.Size(644, 468);
             this.epGuideHTML.TabIndex = 6;
             this.epGuideHTML.WebBrowserShortcutsEnabled = false;
-            this.epGuideHTML.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(epGuideHTML_Navigating);
+            this.epGuideHTML.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.epGuideHTML_Navigating);
             // 
             // MyShowTree
             // 
-            this.MyShowTree.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left));
+            this.MyShowTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
             this.MyShowTree.HideSelection = false;
             this.MyShowTree.Location = new System.Drawing.Point(3, 6);
             this.MyShowTree.Name = "MyShowTree";
             this.MyShowTree.Size = new System.Drawing.Size(270, 468);
             this.MyShowTree.TabIndex = 0;
-            this.MyShowTree.MouseClick += new System.Windows.Forms.MouseEventHandler(MyShowTree_MouseClick);
-            this.MyShowTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(MyShowTree_AfterSelect);
+            this.MyShowTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyShowTree_MouseClick);
+            this.MyShowTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyShowTree_AfterSelect);
             // 
             // bnMyShowsDelete
             // 
-            this.bnMyShowsDelete.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnMyShowsDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsDelete.Location = new System.Drawing.Point(170, 480);
             this.bnMyShowsDelete.Name = "bnMyShowsDelete";
             this.bnMyShowsDelete.Size = new System.Drawing.Size(75, 23);
             this.bnMyShowsDelete.TabIndex = 3;
             this.bnMyShowsDelete.Text = "&Delete";
             this.bnMyShowsDelete.UseVisualStyleBackColor = true;
-            this.bnMyShowsDelete.Click += new System.EventHandler(bnMyShowsDelete_Click);
+            this.bnMyShowsDelete.Click += new System.EventHandler(this.bnMyShowsDelete_Click);
             // 
             // bnMyShowsEdit
             // 
-            this.bnMyShowsEdit.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnMyShowsEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsEdit.Location = new System.Drawing.Point(89, 480);
             this.bnMyShowsEdit.Name = "bnMyShowsEdit";
             this.bnMyShowsEdit.Size = new System.Drawing.Size(75, 23);
             this.bnMyShowsEdit.TabIndex = 2;
             this.bnMyShowsEdit.Text = "&Edit";
             this.bnMyShowsEdit.UseVisualStyleBackColor = true;
-            this.bnMyShowsEdit.Click += new System.EventHandler(bnMyShowsEdit_Click);
+            this.bnMyShowsEdit.Click += new System.EventHandler(this.bnMyShowsEdit_Click);
             // 
             // bnMyShowsAdd
             // 
-            this.bnMyShowsAdd.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnMyShowsAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsAdd.Location = new System.Drawing.Point(8, 480);
             this.bnMyShowsAdd.Name = "bnMyShowsAdd";
             this.bnMyShowsAdd.Size = new System.Drawing.Size(75, 23);
             this.bnMyShowsAdd.TabIndex = 1;
             this.bnMyShowsAdd.Text = "&Add";
             this.bnMyShowsAdd.UseVisualStyleBackColor = true;
-            this.bnMyShowsAdd.Click += new System.EventHandler(bnMyShowsAdd_Click);
+            this.bnMyShowsAdd.Click += new System.EventHandler(this.bnMyShowsAdd_Click);
             // 
             // tbAllInOne
             // 
+            this.tbAllInOne.Controls.Add(this.cbNFO);
+            this.tbAllInOne.Controls.Add(this.cbDownload);
+            this.tbAllInOne.Controls.Add(this.cbRSS);
+            this.tbAllInOne.Controls.Add(this.cbCopyMove);
+            this.tbAllInOne.Controls.Add(this.cbRename);
+            this.tbAllInOne.Controls.Add(this.cbAll);
             this.tbAllInOne.Controls.Add(this.bnAIOOptions);
             this.tbAllInOne.Controls.Add(this.label1);
-            this.tbAllInOne.Controls.Add(this.bnAIONFO);
-            this.tbAllInOne.Controls.Add(this.bnAIODownloads);
-            this.tbAllInOne.Controls.Add(this.bnAIORSS);
-            this.tbAllInOne.Controls.Add(this.bnAIOCopyMove);
-            this.tbAllInOne.Controls.Add(this.bnAIORename);
-            this.tbAllInOne.Controls.Add(this.bnAIOAllNone);
             this.tbAllInOne.Controls.Add(this.bnRemoveSel);
             this.tbAllInOne.Controls.Add(this.bnAIOIgnore);
             this.tbAllInOne.Controls.Add(this.bnAIOWhichSearch);
@@ -714,6 +746,84 @@ namespace TVRename
             this.tbAllInOne.Text = "Scan";
             this.tbAllInOne.UseVisualStyleBackColor = true;
             // 
+            // cbNFO
+            // 
+            this.cbNFO.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbNFO.AutoSize = true;
+            this.cbNFO.Location = new System.Drawing.Point(864, 481);
+            this.cbNFO.Name = "cbNFO";
+            this.cbNFO.Size = new System.Drawing.Size(48, 17);
+            this.cbNFO.TabIndex = 9;
+            this.cbNFO.Text = "NFO";
+            this.cbNFO.ThreeState = true;
+            this.cbNFO.UseVisualStyleBackColor = true;
+            this.cbNFO.Click += new System.EventHandler(this.cbAIODownloads_Click);
+            // 
+            // cbDownload
+            // 
+            this.cbDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbDownload.AutoSize = true;
+            this.cbDownload.Location = new System.Drawing.Point(784, 481);
+            this.cbDownload.Name = "cbDownload";
+            this.cbDownload.Size = new System.Drawing.Size(74, 17);
+            this.cbDownload.TabIndex = 9;
+            this.cbDownload.Text = "Download";
+            this.cbDownload.ThreeState = true;
+            this.cbDownload.UseVisualStyleBackColor = true;
+            this.cbDownload.Click += new System.EventHandler(this.cbAIODownloads_Click);
+            // 
+            // cbRSS
+            // 
+            this.cbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbRSS.AutoSize = true;
+            this.cbRSS.Location = new System.Drawing.Point(730, 481);
+            this.cbRSS.Name = "cbRSS";
+            this.cbRSS.Size = new System.Drawing.Size(48, 17);
+            this.cbRSS.TabIndex = 9;
+            this.cbRSS.Text = "RSS";
+            this.cbRSS.ThreeState = true;
+            this.cbRSS.UseVisualStyleBackColor = true;
+            this.cbRSS.Click += new System.EventHandler(this.cbAIORSS_Click);
+            // 
+            // cbCopyMove
+            // 
+            this.cbCopyMove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbCopyMove.AutoSize = true;
+            this.cbCopyMove.Location = new System.Drawing.Point(642, 481);
+            this.cbCopyMove.Name = "cbCopyMove";
+            this.cbCopyMove.Size = new System.Drawing.Size(82, 17);
+            this.cbCopyMove.TabIndex = 9;
+            this.cbCopyMove.Text = "Copy/Move";
+            this.cbCopyMove.ThreeState = true;
+            this.cbCopyMove.UseVisualStyleBackColor = true;
+            this.cbCopyMove.Click += new System.EventHandler(this.cbAIOCopyMove_Click);
+            // 
+            // cbRename
+            // 
+            this.cbRename.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbRename.AutoSize = true;
+            this.cbRename.Location = new System.Drawing.Point(570, 481);
+            this.cbRename.Name = "cbRename";
+            this.cbRename.Size = new System.Drawing.Size(66, 17);
+            this.cbRename.TabIndex = 9;
+            this.cbRename.Text = "Rename";
+            this.cbRename.ThreeState = true;
+            this.cbRename.UseVisualStyleBackColor = true;
+            this.cbRename.Click += new System.EventHandler(this.cbAIORename_Click);
+            // 
+            // cbAll
+            // 
+            this.cbAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbAll.AutoSize = true;
+            this.cbAll.Location = new System.Drawing.Point(527, 481);
+            this.cbAll.Name = "cbAll";
+            this.cbAll.Size = new System.Drawing.Size(37, 17);
+            this.cbAll.TabIndex = 9;
+            this.cbAll.Text = "All";
+            this.cbAll.ThreeState = true;
+            this.cbAll.UseVisualStyleBackColor = true;
+            this.cbAll.Click += new System.EventHandler(this.cbAIOAllNone_Click);
+            // 
             // bnAIOOptions
             // 
             this.bnAIOOptions.Location = new System.Drawing.Point(89, 6);
@@ -722,151 +832,104 @@ namespace TVRename
             this.bnAIOOptions.TabIndex = 8;
             this.bnAIOOptions.Text = "&Options...";
             this.bnAIOOptions.UseVisualStyleBackColor = true;
-            this.bnAIOOptions.Click += new System.EventHandler(bnAIOOptions_Click);
+            this.bnAIOOptions.Click += new System.EventHandler(this.bnAIOOptions_Click);
             // 
             // label1
             // 
-            this.label1.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(393, 482);
+            this.label1.Location = new System.Drawing.Point(480, 482);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 13);
             this.label1.TabIndex = 7;
             this.label1.Text = "Check:";
             // 
-            // bnAIONFO
-            // 
-            this.bnAIONFO.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.bnAIONFO.Location = new System.Drawing.Point(845, 477);
-            this.bnAIONFO.Name = "bnAIONFO";
-            this.bnAIONFO.Size = new System.Drawing.Size(75, 23);
-            this.bnAIONFO.TabIndex = 6;
-            this.bnAIONFO.Text = "NFO";
-            this.bnAIONFO.UseVisualStyleBackColor = true;
-            this.bnAIONFO.Click += new System.EventHandler(bnAIONFO_Click);
-            // 
-            // bnAIODownloads
-            // 
-            this.bnAIODownloads.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.bnAIODownloads.Location = new System.Drawing.Point(764, 477);
-            this.bnAIODownloads.Name = "bnAIODownloads";
-            this.bnAIODownloads.Size = new System.Drawing.Size(75, 23);
-            this.bnAIODownloads.TabIndex = 6;
-            this.bnAIODownloads.Text = "Downloads";
-            this.bnAIODownloads.UseVisualStyleBackColor = true;
-            this.bnAIODownloads.Click += new System.EventHandler(bnAIODownloads_Click);
-            // 
-            // bnAIORSS
-            // 
-            this.bnAIORSS.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.bnAIORSS.Location = new System.Drawing.Point(683, 477);
-            this.bnAIORSS.Name = "bnAIORSS";
-            this.bnAIORSS.Size = new System.Drawing.Size(75, 23);
-            this.bnAIORSS.TabIndex = 6;
-            this.bnAIORSS.Text = "RSS";
-            this.bnAIORSS.UseVisualStyleBackColor = true;
-            this.bnAIORSS.Click += new System.EventHandler(bnAIORSS_Click);
-            // 
-            // bnAIOCopyMove
-            // 
-            this.bnAIOCopyMove.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.bnAIOCopyMove.Location = new System.Drawing.Point(602, 477);
-            this.bnAIOCopyMove.Name = "bnAIOCopyMove";
-            this.bnAIOCopyMove.Size = new System.Drawing.Size(75, 23);
-            this.bnAIOCopyMove.TabIndex = 6;
-            this.bnAIOCopyMove.Text = "Copy/Move";
-            this.bnAIOCopyMove.UseVisualStyleBackColor = true;
-            this.bnAIOCopyMove.Click += new System.EventHandler(bnAIOCopyMove_Click);
-            // 
-            // bnAIORename
-            // 
-            this.bnAIORename.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.bnAIORename.Location = new System.Drawing.Point(521, 477);
-            this.bnAIORename.Name = "bnAIORename";
-            this.bnAIORename.Size = new System.Drawing.Size(75, 23);
-            this.bnAIORename.TabIndex = 6;
-            this.bnAIORename.Text = "Rename";
-            this.bnAIORename.UseVisualStyleBackColor = true;
-            this.bnAIORename.Click += new System.EventHandler(bnAIORename_Click);
-            // 
-            // bnAIOAllNone
-            // 
-            this.bnAIOAllNone.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.bnAIOAllNone.Location = new System.Drawing.Point(440, 477);
-            this.bnAIOAllNone.Name = "bnAIOAllNone";
-            this.bnAIOAllNone.Size = new System.Drawing.Size(75, 23);
-            this.bnAIOAllNone.TabIndex = 6;
-            this.bnAIOAllNone.Text = "All/None";
-            this.bnAIOAllNone.UseVisualStyleBackColor = true;
-            this.bnAIOAllNone.Click += new System.EventHandler(bnAIOAllNone_Click);
-            // 
             // bnRemoveSel
             // 
-            this.bnRemoveSel.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnRemoveSel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnRemoveSel.Location = new System.Drawing.Point(269, 477);
             this.bnRemoveSel.Name = "bnRemoveSel";
             this.bnRemoveSel.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveSel.TabIndex = 5;
             this.bnRemoveSel.Text = "&Remove Sel";
             this.bnRemoveSel.UseVisualStyleBackColor = true;
-            this.bnRemoveSel.Click += new System.EventHandler(bnRemoveSel_Click);
+            this.bnRemoveSel.Click += new System.EventHandler(this.bnRemoveSel_Click);
             // 
             // bnAIOIgnore
             // 
-            this.bnAIOIgnore.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnAIOIgnore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAIOIgnore.Location = new System.Drawing.Point(188, 477);
             this.bnAIOIgnore.Name = "bnAIOIgnore";
             this.bnAIOIgnore.Size = new System.Drawing.Size(75, 23);
             this.bnAIOIgnore.TabIndex = 5;
             this.bnAIOIgnore.Text = "&Ignore Sel";
             this.bnAIOIgnore.UseVisualStyleBackColor = true;
-            this.bnAIOIgnore.Click += new System.EventHandler(bnAIOIgnore_Click);
+            this.bnAIOIgnore.Click += new System.EventHandler(this.cbAIOIgnore_Click);
             // 
             // bnAIOWhichSearch
             // 
-            this.bnAIOWhichSearch.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnAIOWhichSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAIOWhichSearch.Image = ((System.Drawing.Image)(resources.GetObject("bnAIOWhichSearch.Image")));
             this.bnAIOWhichSearch.Location = new System.Drawing.Point(161, 477);
             this.bnAIOWhichSearch.Name = "bnAIOWhichSearch";
             this.bnAIOWhichSearch.Size = new System.Drawing.Size(19, 23);
             this.bnAIOWhichSearch.TabIndex = 4;
             this.bnAIOWhichSearch.UseVisualStyleBackColor = true;
-            this.bnAIOWhichSearch.Click += new System.EventHandler(bnAIOWhichSearch_Click);
+            this.bnAIOWhichSearch.Click += new System.EventHandler(this.bnAIOWhichSearch_Click);
             // 
             // bnAIOBTSearch
             // 
-            this.bnAIOBTSearch.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnAIOBTSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAIOBTSearch.Location = new System.Drawing.Point(87, 477);
             this.bnAIOBTSearch.Name = "bnAIOBTSearch";
             this.bnAIOBTSearch.Size = new System.Drawing.Size(75, 23);
             this.bnAIOBTSearch.TabIndex = 3;
             this.bnAIOBTSearch.Text = "BT S&earch";
             this.bnAIOBTSearch.UseVisualStyleBackColor = true;
-            this.bnAIOBTSearch.Click += new System.EventHandler(bnAIOBTSearch_Click);
+            this.bnAIOBTSearch.Click += new System.EventHandler(this.bnAIOBTSearch_Click);
             // 
             // lvAIO
             // 
-            this.lvAIO.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.lvAIO.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.lvAIO.CheckBoxes = true;
-            this.lvAIO.Columns.AddRange(new System.Windows.Forms.ColumnHeader[9] { this.columnHeader48, this.columnHeader49, this.columnHeader51, this.columnHeader52, this.columnHeader53, this.columnHeader54, this.columnHeader55, this.columnHeader56, this.columnHeader58 });
+            this.lvAIO.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader48,
+            this.columnHeader49,
+            this.columnHeader51,
+            this.columnHeader52,
+            this.columnHeader53,
+            this.columnHeader54,
+            this.columnHeader55,
+            this.columnHeader56,
+            this.columnHeader58});
             this.lvAIO.FullRowSelect = true;
-            listViewGroup13.Header = "Missing";
-            listViewGroup13.Name = "lvgAIOMissing";
-            listViewGroup14.Header = "Rename";
-            listViewGroup14.Name = "lvgAIORename";
-            listViewGroup15.Header = "Copy";
-            listViewGroup15.Name = "lvgAIOCopy";
-            listViewGroup16.Header = "Move";
-            listViewGroup16.Name = "lvgAIOMove";
-            listViewGroup17.Header = "Download RSS";
-            listViewGroup17.Name = "lvgAIODownloadRSS";
-            listViewGroup18.Header = "Download";
-            listViewGroup18.Name = "lvgAIODownload";
-            listViewGroup19.Header = "NFO File";
-            listViewGroup19.Name = "lvgAIONFO";
-            listViewGroup20.Header = "Downloading In µTorrent";
-            listViewGroup20.Name = "lngInuTorrent";
-            this.lvAIO.Groups.AddRange(new System.Windows.Forms.ListViewGroup[8] { listViewGroup13, listViewGroup14, listViewGroup15, listViewGroup16, listViewGroup17, listViewGroup18, listViewGroup19, listViewGroup20 });
+            listViewGroup1.Header = "Missing";
+            listViewGroup1.Name = "lvgAIOMissing";
+            listViewGroup2.Header = "Rename";
+            listViewGroup2.Name = "lvgAIORename";
+            listViewGroup3.Header = "Copy";
+            listViewGroup3.Name = "lvgAIOCopy";
+            listViewGroup4.Header = "Move";
+            listViewGroup4.Name = "lvgAIOMove";
+            listViewGroup5.Header = "Download RSS";
+            listViewGroup5.Name = "lvgAIODownloadRSS";
+            listViewGroup6.Header = "Download";
+            listViewGroup6.Name = "lvgAIODownload";
+            listViewGroup7.Header = "NFO File";
+            listViewGroup7.Name = "lvgAIONFO";
+            listViewGroup8.Header = "Downloading In µTorrent";
+            listViewGroup8.Name = "lngInuTorrent";
+            this.lvAIO.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4,
+            listViewGroup5,
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8});
             this.lvAIO.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvAIO.HideSelection = false;
             this.lvAIO.Location = new System.Drawing.Point(0, 35);
@@ -877,12 +940,13 @@ namespace TVRename
             this.lvAIO.TabIndex = 2;
             this.lvAIO.UseCompatibleStateImageBehavior = false;
             this.lvAIO.View = System.Windows.Forms.View.Details;
-            this.lvAIO.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(lvAIO_MouseDoubleClick);
-            this.lvAIO.MouseClick += new System.Windows.Forms.MouseEventHandler(lvAIO_MouseClick);
-            this.lvAIO.SelectedIndexChanged += new System.EventHandler(lvAIO_SelectedIndexChanged);
-            this.lvAIO.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(lvAIO_ItemCheck);
-            this.lvAIO.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(lvAIO_RetrieveVirtualItem);
-            this.lvAIO.KeyDown += new System.Windows.Forms.KeyEventHandler(lvAIO_KeyDown);
+            this.lvAIO.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvAIO_MouseDoubleClick);
+            this.lvAIO.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvAIO_ItemChecked);
+            this.lvAIO.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvAIO_MouseClick);
+            this.lvAIO.SelectedIndexChanged += new System.EventHandler(this.lvAIO_SelectedIndexChanged);
+            this.lvAIO.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvAIO_ItemCheck);
+            this.lvAIO.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.lvAIO_RetrieveVirtualItem);
+            this.lvAIO.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvAIO_KeyDown);
             // 
             // columnHeader48
             // 
@@ -944,13 +1008,13 @@ namespace TVRename
             // 
             // bnAIOAction
             // 
-            this.bnAIOAction.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnAIOAction.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnAIOAction.Location = new System.Drawing.Point(6, 477);
             this.bnAIOAction.Name = "bnAIOAction";
             this.bnAIOAction.Size = new System.Drawing.Size(75, 23);
             this.bnAIOAction.TabIndex = 0;
             this.bnAIOAction.Text = "&Do Checked";
-            this.bnAIOAction.Click += new System.EventHandler(bnAIOAction_Click);
+            this.bnAIOAction.Click += new System.EventHandler(this.bnAIOAction_Click);
             // 
             // bnAIOCheck
             // 
@@ -960,7 +1024,7 @@ namespace TVRename
             this.bnAIOCheck.TabIndex = 0;
             this.bnAIOCheck.Text = "&Scan";
             this.bnAIOCheck.UseVisualStyleBackColor = true;
-            this.bnAIOCheck.Click += new System.EventHandler(bnAIOCheck_Click);
+            this.bnAIOCheck.Click += new System.EventHandler(this.bnAIOCheck_Click);
             // 
             // tbWTW
             // 
@@ -985,7 +1049,7 @@ namespace TVRename
             this.bnWTWChooseSite.Size = new System.Drawing.Size(19, 23);
             this.bnWTWChooseSite.TabIndex = 2;
             this.bnWTWChooseSite.UseVisualStyleBackColor = true;
-            this.bnWTWChooseSite.Click += new System.EventHandler(bnWTWChooseSite_Click);
+            this.bnWTWChooseSite.Click += new System.EventHandler(this.bnWTWChooseSite_Click);
             // 
             // bnWTWBTSearch
             // 
@@ -995,7 +1059,7 @@ namespace TVRename
             this.bnWTWBTSearch.TabIndex = 1;
             this.bnWTWBTSearch.Text = "BT &Search";
             this.bnWTWBTSearch.UseVisualStyleBackColor = true;
-            this.bnWTWBTSearch.Click += new System.EventHandler(bnWTWBTSearch_Click);
+            this.bnWTWBTSearch.Click += new System.EventHandler(this.bnWTWBTSearch_Click);
             // 
             // bnWhenToWatchCheck
             // 
@@ -1005,12 +1069,13 @@ namespace TVRename
             this.bnWhenToWatchCheck.TabIndex = 0;
             this.bnWhenToWatchCheck.Text = "&Refresh";
             this.bnWhenToWatchCheck.UseVisualStyleBackColor = true;
-            this.bnWhenToWatchCheck.Click += new System.EventHandler(bnWhenToWatchCheck_Click);
+            this.bnWhenToWatchCheck.Click += new System.EventHandler(this.bnWhenToWatchCheck_Click);
             // 
             // txtWhenToWatchSynopsis
             // 
-            this.txtWhenToWatchSynopsis.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.txtWhenToWatchSynopsis.Font = (new System.Drawing.Font("Microsoft Sans Serif", 10, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, (System.Byte)(0)));
+            this.txtWhenToWatchSynopsis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtWhenToWatchSynopsis.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtWhenToWatchSynopsis.Location = new System.Drawing.Point(0, 352);
             this.txtWhenToWatchSynopsis.Multiline = true;
             this.txtWhenToWatchSynopsis.Name = "txtWhenToWatchSynopsis";
@@ -1021,30 +1086,44 @@ namespace TVRename
             // 
             // calCalendar
             // 
-            this.calCalendar.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.calCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.calCalendar.FirstDayOfWeek = System.Windows.Forms.Day.Sunday;
             this.calCalendar.Location = new System.Drawing.Point(745, 352);
             this.calCalendar.MaxSelectionCount = 1;
             this.calCalendar.Name = "calCalendar";
             this.calCalendar.TabIndex = 5;
-            this.calCalendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(calCalendar_DateSelected);
+            this.calCalendar.DateSelected += new System.Windows.Forms.DateRangeEventHandler(this.calCalendar_DateSelected);
             // 
             // lvWhenToWatch
             // 
-            this.lvWhenToWatch.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.lvWhenToWatch.Columns.AddRange(new System.Windows.Forms.ColumnHeader[8] { this.columnHeader29, this.columnHeader30, this.columnHeader31, this.columnHeader32, this.columnHeader36, this.columnHeader33, this.columnHeader34, this.columnHeader35 });
+            this.lvWhenToWatch.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvWhenToWatch.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader29,
+            this.columnHeader30,
+            this.columnHeader31,
+            this.columnHeader32,
+            this.columnHeader36,
+            this.columnHeader33,
+            this.columnHeader34,
+            this.columnHeader35});
             this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup1.Header = "Recently Aired";
-            listViewGroup1.Name = "justPassed";
-            listViewGroup2.Header = "Next 7 Days";
-            listViewGroup2.Name = "next7days";
-            listViewGroup2.Tag = "1";
-            listViewGroup3.Header = "Later";
-            listViewGroup3.Name = "later";
-            listViewGroup3.Tag = "2";
-            listViewGroup4.Header = "Future Episodes";
-            listViewGroup4.Name = "futureEps";
-            this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[4] { listViewGroup1, listViewGroup2, listViewGroup3, listViewGroup4 });
+            listViewGroup9.Header = "Recently Aired";
+            listViewGroup9.Name = "justPassed";
+            listViewGroup10.Header = "Next 7 Days";
+            listViewGroup10.Name = "next7days";
+            listViewGroup10.Tag = "1";
+            listViewGroup11.Header = "Later";
+            listViewGroup11.Name = "later";
+            listViewGroup11.Tag = "2";
+            listViewGroup12.Header = "Future Episodes";
+            listViewGroup12.Name = "futureEps";
+            this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup9,
+            listViewGroup10,
+            listViewGroup11,
+            listViewGroup12});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -1054,10 +1133,10 @@ namespace TVRename
             this.lvWhenToWatch.TabIndex = 3;
             this.lvWhenToWatch.UseCompatibleStateImageBehavior = false;
             this.lvWhenToWatch.View = System.Windows.Forms.View.Details;
-            this.lvWhenToWatch.MouseClick += new System.Windows.Forms.MouseEventHandler(lvWhenToWatch_MouseClick);
-            this.lvWhenToWatch.SelectedIndexChanged += new System.EventHandler(lvWhenToWatch_Click);
-            this.lvWhenToWatch.DoubleClick += new System.EventHandler(lvWhenToWatch_DoubleClick);
-            this.lvWhenToWatch.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(lvWhenToWatch_ColumnClick);
+            this.lvWhenToWatch.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvWhenToWatch_MouseClick);
+            this.lvWhenToWatch.SelectedIndexChanged += new System.EventHandler(this.lvWhenToWatch_Click);
+            this.lvWhenToWatch.DoubleClick += new System.EventHandler(this.lvWhenToWatch_DoubleClick);
+            this.lvWhenToWatch.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvWhenToWatch_ColumnClick);
             // 
             // columnHeader29
             // 
@@ -1100,11 +1179,12 @@ namespace TVRename
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel2.ColumnCount = 3;
-            this.tableLayoutPanel2.ColumnStyles.Add((new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45)));
-            this.tableLayoutPanel2.ColumnStyles.Add((new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40)));
-            this.tableLayoutPanel2.ColumnStyles.Add((new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15)));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 45F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15F));
             this.tableLayoutPanel2.Controls.Add(this.pbProgressBarx, 2, 0);
             this.tableLayoutPanel2.Controls.Add(this.txtDLStatusLabel, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.tsNextShowTxt, 0, 0);
@@ -1112,13 +1192,14 @@ namespace TVRename
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 559);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add((new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100)));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(919, 19);
             this.tableLayoutPanel2.TabIndex = 9;
             // 
             // pbProgressBarx
             // 
-            this.pbProgressBarx.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.pbProgressBarx.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.pbProgressBarx.Location = new System.Drawing.Point(783, 3);
             this.pbProgressBarx.Name = "pbProgressBarx";
             this.pbProgressBarx.Size = new System.Drawing.Size(133, 13);
@@ -1128,7 +1209,8 @@ namespace TVRename
             // 
             // txtDLStatusLabel
             // 
-            this.txtDLStatusLabel.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtDLStatusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.txtDLStatusLabel.Location = new System.Drawing.Point(416, 6);
             this.txtDLStatusLabel.Name = "txtDLStatusLabel";
             this.txtDLStatusLabel.Size = new System.Drawing.Size(361, 13);
@@ -1138,7 +1220,8 @@ namespace TVRename
             // 
             // tsNextShowTxt
             // 
-            this.tsNextShowTxt.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.tsNextShowTxt.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tsNextShowTxt.Location = new System.Drawing.Point(3, 6);
             this.tsNextShowTxt.Name = "tsNextShowTxt";
             this.tsNextShowTxt.Size = new System.Drawing.Size(407, 13);
@@ -1198,13 +1281,13 @@ namespace TVRename
             this.menuSearchSites.Name = "menuSearchSites";
             this.menuSearchSites.ShowImageMargin = false;
             this.menuSearchSites.Size = new System.Drawing.Size(36, 4);
-            this.menuSearchSites.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(menuSearchSites_ItemClicked);
+            this.menuSearchSites.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.menuSearchSites_ItemClicked);
             // 
             // refreshWTWTimer
             // 
             this.refreshWTWTimer.Enabled = true;
             this.refreshWTWTimer.Interval = 600000;
-            this.refreshWTWTimer.Tick += new System.EventHandler(refreshWTWTimer_Tick);
+            this.refreshWTWTimer.Tick += new System.EventHandler(this.refreshWTWTimer_Tick);
             // 
             // notifyIcon1
             // 
@@ -1212,56 +1295,48 @@ namespace TVRename
             this.notifyIcon1.BalloonTipTitle = "TV Rename 2.1";
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "TV Rename 2.1";
-            this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(notifyIcon1_Click);
-            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(notifyIcon1_DoubleClick);
+            this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_Click);
+            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_DoubleClick);
             // 
             // showRightClickMenu
             // 
             this.showRightClickMenu.Name = "menuSearchSites";
             this.showRightClickMenu.ShowImageMargin = false;
             this.showRightClickMenu.Size = new System.Drawing.Size(36, 4);
-            this.showRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(showRightClickMenu_ItemClicked);
+            this.showRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.showRightClickMenu_ItemClicked);
             // 
             // folderRightClickMenu
             // 
             this.folderRightClickMenu.Name = "folderRightClickMenu";
             this.folderRightClickMenu.ShowImageMargin = false;
             this.folderRightClickMenu.Size = new System.Drawing.Size(36, 4);
-            this.folderRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(folderRightClickMenu_ItemClicked);
+            this.folderRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.folderRightClickMenu_ItemClicked);
             // 
             // statusTimer
             // 
             this.statusTimer.Enabled = true;
             this.statusTimer.Interval = 250;
-            this.statusTimer.Tick += new System.EventHandler(statusTimer_Tick);
+            this.statusTimer.Tick += new System.EventHandler(this.statusTimer_Tick);
             // 
             // BGDownloadTimer
             // 
             this.BGDownloadTimer.Enabled = true;
             this.BGDownloadTimer.Interval = 10000;
-            this.BGDownloadTimer.Tick += new System.EventHandler(BGDownloadTimer_Tick);
+            this.BGDownloadTimer.Tick += new System.EventHandler(this.BGDownloadTimer_Tick);
             // 
             // tmrShowUpcomingPopup
             // 
             this.tmrShowUpcomingPopup.Interval = 250;
-            this.tmrShowUpcomingPopup.Tick += new System.EventHandler(tmrShowUpcomingPopup_Tick);
+            this.tmrShowUpcomingPopup.Tick += new System.EventHandler(this.tmrShowUpcomingPopup_Tick);
             // 
             // quickTimer
             // 
             this.quickTimer.Interval = 1;
-            this.quickTimer.Tick += new System.EventHandler(quickTimer_Tick);
-            // 
-            // ignoreListToolStripMenuItem
-            // 
-            this.ignoreListToolStripMenuItem.Name = "ignoreListToolStripMenuItem";
-            this.ignoreListToolStripMenuItem.ShortcutKeys = (System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I));
-            this.ignoreListToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
-            this.ignoreListToolStripMenuItem.Text = "&Ignore List";
-            this.ignoreListToolStripMenuItem.Click += new System.EventHandler(ignoreListToolStripMenuItem_Click);
+            this.quickTimer.Tick += new System.EventHandler(this.quickTimer_Tick);
             // 
             // UI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(931, 582);
             this.Controls.Add(this.tableLayoutPanel2);
@@ -1274,11 +1349,11 @@ namespace TVRename
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "TV Rename";
-            this.Load += new System.EventHandler(UI_Load);
-            this.SizeChanged += new System.EventHandler(UI_SizeChanged);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(UI_FormClosing);
-            this.LocationChanged += new System.EventHandler(UI_LocationChanged);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(UI_KeyDown);
+            this.Load += new System.EventHandler(this.UI_Load);
+            this.SizeChanged += new System.EventHandler(this.UI_SizeChanged);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UI_FormClosing);
+            this.LocationChanged += new System.EventHandler(this.UI_LocationChanged);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.UI_KeyDown);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.tabControl1.ResumeLayout(false);
@@ -1337,6 +1412,8 @@ namespace TVRename
         {
             bool ok = true;
             string hint = "";
+            
+            InternalCheckChange = false;
 
             if ((args.Length == 1) && (args[0].ToLower() == "/recover"))
             {
@@ -3718,6 +3795,8 @@ namespace TVRename
 
         private void FillAIOList()
         {
+            InternalCheckChange = true;
+
             if (lvAIO.VirtualMode)
             {
                 lvAIO.VirtualListSize = mDoc.TheAIOList.Count;
@@ -3752,6 +3831,8 @@ namespace TVRename
                 }
                 lvAIO.EndUpdate();
             }
+            InternalCheckChange = false;
+            UpdateAIOCheckboxes();
 
             // do nice totals for each group
             int missingCount = 0;
@@ -3806,8 +3887,6 @@ namespace TVRename
             lvAIO.Groups[5].Header = "Download (" + downloadCount.ToString() + " " + itemitems(downloadCount) + ")";
             lvAIO.Groups[6].Header = "NFO File (" + nfoCount.ToString() + " " + itemitems(nfoCount) + ")";
             lvAIO.Groups[7].Header = "Downloading In µTorrent (" + utCount.ToString() + " " + itemitems(utCount) + ")";
-
-
         }
 
         private void bnAIOAction_Click(object sender, System.EventArgs e)
@@ -3958,72 +4037,162 @@ namespace TVRename
             if (e.KeyCode == Keys.Delete)
                 AIODeleteSelected();
         }
-        private void bnAIOIgnore_Click(object sender, System.EventArgs e)
+        private void cbAIOIgnore_Click(object sender, System.EventArgs e)
         {
             IgnoreSelected();
         }
-        private void bnAIOAllNone_Click(object sender, System.EventArgs e)
+        void UpdateAIOCheckboxes()
         {
-            LVResults lvr = new LVResults(lvAIO, true);
-            bool some = lvr.Count > 0;
-            foreach (ListViewItem lvi in lvAIO.Items)
-                lvi.Checked = some ? false : true;
+            if (InternalCheckChange)
+                return;
+
+            LVResults all = new LVResults(lvAIO, LVResults.WhichResults.All);
+            LVResults chk = new LVResults(lvAIO, LVResults.WhichResults.Checked);
+
+            if (all.Rename.Count == 0)
+                cbRename.CheckState = CheckState.Unchecked;
+            else
+                cbRename.CheckState = (chk.Rename.Count == all.Rename.Count) ? CheckState.Checked : CheckState.Indeterminate;
+
+            if (chk.CopyMove.Count == 0)
+                cbCopyMove.CheckState = CheckState.Unchecked;
+            else
+                cbCopyMove.CheckState = (chk.CopyMove.Count == all.CopyMove.Count) ? CheckState.Checked : CheckState.Indeterminate;
+
+            if (chk.RSS.Count == 0)
+                cbRSS.CheckState = CheckState.Unchecked;
+            else
+              cbRSS.CheckState = (chk.RSS.Count == all.RSS.Count) ? CheckState.Checked : CheckState.Indeterminate;
+
+            if (chk.Download.Count == 0)
+                cbDownload.CheckState = CheckState.Unchecked;
+            else
+                cbDownload.CheckState = (chk.Download.Count == all.Download.Count) ? CheckState.Checked : CheckState.Indeterminate;
+
+            if (chk.NFO.Count == 0)
+                cbNFO.CheckState = CheckState.Unchecked;
+            else
+              cbNFO.CheckState = (chk.NFO.Count == all.NFO.Count) ? CheckState.Checked : CheckState.Indeterminate;
+
+            int total1 = all.Rename.Count + all.CopyMove.Count + all.RSS.Count + all.Download.Count + all.NFO.Count;
+            int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.RSS.Count + chk.Download.Count + chk.NFO.Count;
+            
+            if (total2 == 0)
+                cbAll.CheckState = CheckState.Unchecked;
+            else
+                cbAll.CheckState = (total2 == total1) ? CheckState.Checked : CheckState.Indeterminate;
+
         }
-        private void bnAIORename_Click(object sender, System.EventArgs e)
+        private void cbAIOAllNone_Click(object sender, System.EventArgs e)
         {
+            CheckState cs = cbAll.CheckState;
+            if (cs == CheckState.Indeterminate)
+            {
+                cbAll.CheckState = CheckState.Unchecked;
+                cs = CheckState.Unchecked;
+            }
+
+            InternalCheckChange = true;
             LVResults lvr = new LVResults(lvAIO, true);
-            bool some = lvr.Rename.Count > 0;
+            foreach (ListViewItem lvi in lvAIO.Items)
+                lvi.Checked = cs == CheckState.Checked;
+            InternalCheckChange = false;
+        }
+        private void cbAIORename_Click(object sender, System.EventArgs e)
+        {
+            CheckState cs = cbRename.CheckState;
+            if (cs == CheckState.Indeterminate)
+            {
+                cbRename.CheckState = CheckState.Unchecked;
+                cs = CheckState.Unchecked;
+            }
+
+            LVResults lvr = new LVResults(lvAIO, true);
+            InternalCheckChange = true;
             foreach (ListViewItem lvi in lvAIO.Items)
             {
                 AIOItem i = (AIOItem)(lvi.Tag);
                 if ((i != null) && (i.Type == AIOType.kCopyMoveRename) && (((AIOCopyMoveRename)i).Operation == AIOCopyMoveRename.Op.Rename))
-                    lvi.Checked = some ? false : true;
+                    lvi.Checked = cs == CheckState.Checked;
             }
+            InternalCheckChange = false;
         }
-        private void bnAIOCopyMove_Click(object sender, System.EventArgs e)
+        private void cbAIOCopyMove_Click(object sender, System.EventArgs e)
         {
+            CheckState cs = cbCopyMove.CheckState;
+            if (cs == CheckState.Indeterminate)
+            {
+                cbCopyMove.CheckState = CheckState.Unchecked;
+                cs = CheckState.Unchecked;
+            }
+
             LVResults lvr = new LVResults(lvAIO, true);
-            bool some = lvr.CopyMove.Count > 0;
+            InternalCheckChange = true;
             foreach (ListViewItem lvi in lvAIO.Items)
             {
                 AIOItem i = (AIOItem)(lvi.Tag);
                 if ((i != null) && (i.Type == AIOType.kCopyMoveRename) && (((AIOCopyMoveRename)i).Operation != AIOCopyMoveRename.Op.Rename))
-                    lvi.Checked = some ? false : true;
+                    lvi.Checked = cs == CheckState.Checked;
             }
+            InternalCheckChange = false;
         }
-        private void bnAIONFO_Click(object sender, System.EventArgs e)
+        private void cbAIONFO_Click(object sender, System.EventArgs e)
         {
+            CheckState cs = cbNFO.CheckState;
+            if (cs == CheckState.Indeterminate)
+            {
+                cbNFO.CheckState = CheckState.Unchecked;
+                cs = CheckState.Unchecked;
+            }
+
             LVResults lvr = new LVResults(lvAIO, true);
-            bool some = lvr.NFO.Count > 0;
+            InternalCheckChange = true;
             foreach (ListViewItem lvi in lvAIO.Items)
             {
                 AIOItem i = (AIOItem)(lvi.Tag);
                 if ((i != null) && (i.Type == AIOType.kNFO))
-                    lvi.Checked = some ? false : true;
+                    lvi.Checked = cs == CheckState.Checked;
             }
+            InternalCheckChange = false;
         }
 
-        private void bnAIORSS_Click(object sender, System.EventArgs e)
+        private void cbAIORSS_Click(object sender, System.EventArgs e)
         {
+            CheckState cs = cbRSS.CheckState;
+            if (cs == CheckState.Indeterminate)
+            {
+                cbRSS.CheckState = CheckState.Unchecked;
+                cs = CheckState.Unchecked;
+            }
+
             LVResults lvr = new LVResults(lvAIO, true);
-            bool some = lvr.RSS.Count > 0;
+            InternalCheckChange = true;
             foreach (ListViewItem lvi in lvAIO.Items)
             {
                 AIOItem i = (AIOItem)(lvi.Tag);
                 if ((i != null) && (i.Type == AIOType.kRSS))
-                    lvi.Checked = some ? false : true;
+                    lvi.Checked = cs == CheckState.Checked;
             }
+            InternalCheckChange = false;
         }
-        private void bnAIODownloads_Click(object sender, System.EventArgs e)
+        private void cbAIODownloads_Click(object sender, System.EventArgs e)
         {
+            CheckState cs = cbDownload.CheckState;
+            if (cs == CheckState.Indeterminate)
+            {
+                cbDownload.CheckState = CheckState.Unchecked;
+                cs = CheckState.Unchecked;
+            }
+
             LVResults lvr = new LVResults(lvAIO, true);
-            bool some = lvr.Download.Count > 0;
+            InternalCheckChange = true;
             foreach (ListViewItem lvi in lvAIO.Items)
             {
                 AIOItem i = (AIOItem)(lvi.Tag);
                 if ((i != null) && (i.Type == AIOType.kDownload))
-                    lvi.Checked = some ? false : true;
+                    lvi.Checked = cs == CheckState.Checked;
             }
+            InternalCheckChange = false;
         }
         private void lvAIO_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
         {
@@ -4085,5 +4254,11 @@ namespace TVRename
             IgnoreEdit ie = new IgnoreEdit(mDoc);
             ie.ShowDialog();
         }
+
+        private void lvAIO_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            UpdateAIOCheckboxes();
+        }
+
     } // UI class
 } // namespace
