@@ -267,7 +267,8 @@ namespace TVRename
         }
         private void lvMatches_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            this.SelectionChanged(sender, e);
+            if (SelectionChanged != null)
+              this.SelectionChanged(sender, e);
         }
         private void txtFindThis_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
