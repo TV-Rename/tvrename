@@ -766,7 +766,7 @@ namespace TVRename
         public void SaveCache()
         {
             GetLock("SaveCache");
-            //String ^fname = System::Windows::Forms::Application::UserAppDataPath+"\\TheTVDB.xml";
+            //String ^fname = System::Windows::Forms::Application::UserAppDataPath+System.IO.Path.DirectorySeparatorChar.ToString()+"TheTVDB.xml";
 
             if (CacheFile.Exists)
             {

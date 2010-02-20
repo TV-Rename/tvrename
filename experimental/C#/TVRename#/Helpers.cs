@@ -50,16 +50,16 @@ namespace TVRename
         {
             string n1 = a.FullName;
             string n2 = b.FullName;
-            if (!n1.EndsWith("\\"))
-                n1 = n1 + "\\";
-            if (!n2.EndsWith("\\"))
-                n2 = n2 + "\\";
+            if (!n1.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+                n1 = n1 + System.IO.Path.DirectorySeparatorChar.ToString();
+            if (!n2.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+                n2 = n2 + System.IO.Path.DirectorySeparatorChar.ToString();
 
             return string.Compare(n1, n2, true) == 0; // true->ignore case
         }
         public static FileInfo FileInFolder(string dir, string fn)
         {
-            return new FileInfo(string.Concat(dir, dir.EndsWith("\\") ? "" : "\\", fn));
+            return new FileInfo(string.Concat(dir, dir.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ? "" : System.IO.Path.DirectorySeparatorChar.ToString(), fn));
         }
         public static FileInfo FileInFolder(DirectoryInfo di, string fn)
         {

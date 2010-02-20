@@ -1667,7 +1667,7 @@ namespace TVRename
             settings.IgnoreComments = true;
             settings.IgnoreWhitespace = true;
 
-            string fn = System.Windows.Forms.Application.UserAppDataPath + "\\Layout.xml";
+            string fn = System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar.ToString()+"Layout.xml";
             if (!File.Exists(fn))
                 return true;
 
@@ -1735,7 +1735,7 @@ namespace TVRename
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
-            XmlWriter writer = XmlWriter.Create(System.Windows.Forms.Application.UserAppDataPath + "\\Layout.xml", settings);
+            XmlWriter writer = XmlWriter.Create(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar.ToString()+"Layout.xml", settings);
 
             writer.WriteStartDocument();
             writer.WriteStartElement("TVRename");

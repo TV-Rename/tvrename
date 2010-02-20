@@ -195,8 +195,8 @@ namespace TVRename
             if (string.IsNullOrEmpty(r))
                 return "";
 
-            if (!r.EndsWith("\\"))
-                r += "\\";
+            if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+                r += System.IO.Path.DirectorySeparatorChar.ToString();
             if (AutoAdd_FolderPerSeason)
             {
                 if (n == 0)
@@ -453,7 +453,7 @@ namespace TVRename
         }
         public string TTS(string s) // trim trailing slash
         {
-            return s.TrimEnd('\\');
+            return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
         public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(TVSettings settings, bool manualToo)
         {

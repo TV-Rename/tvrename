@@ -1068,8 +1068,8 @@ namespace TVRename
 						 {
 							 string s = di.FullName;
 							 string f = ai.Folder;
-							 if (!f.EndsWith("\\"))
-								 f = f + "\\";
+							 if (!f.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+								 f = f + System.IO.Path.DirectorySeparatorChar.ToString();
 							 f = Regex.Escape(f);
 							 s = Regex.Replace(s, f+"(.*Season ).*", "$1",RegexOptions.IgnoreCase);
 							 if (!string.IsNullOrEmpty(s))

@@ -74,8 +74,25 @@ namespace TVRename
 
     public static class TZMagic
     {
+        public static string[] ZoneNames()
+        {
+            if (Version.OnMono())
+            {
+                // need a mono version of this function
+                return new string[0];
+            }
+
+            RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones");
+            return rk.GetSubKeyNames();
+        }
+
         public static TZI GetTZI(string name)
         {
+            if (Version.OnMono())
+            {
+                // need a mono version of this function
+                return null;
+            }
             // HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\Eastern Standard Time
             RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones\\" + name);
 
@@ -94,6 +111,12 @@ namespace TVRename
         {
             if ((theirTZI == null) || (dt == null))
                 return dt;
+
+            if (Version.OnMono())
+            {
+                // need a mono version of this function
+                return dt;
+            }
 
             // take a DateTime in a foreign timezone (tz), and return it in ours
             // e.g. 3PM,NZST -> 1PM (if this computer's local time is in AEST)

@@ -60,11 +60,11 @@ namespace TVRename
 
         public static FileInfo TVDBFile()
         {
-            return new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\TheTVDB.xml");
+            return new FileInfo(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar.ToString()+"TheTVDB.xml");
         }
         public static FileInfo TVDocSettingsFile()
         {
-            return new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\TVRenameSettings.xml");
+            return new FileInfo(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar.ToString()+"TVRenameSettings.xml");
         }
 
         public TVDoc(string[] args, FileInfo settingsFile, FileInfo tvdbFile)
@@ -222,8 +222,8 @@ namespace TVRename
         public bool FolderIsSubfolderOf(string thisOne, string ofThat)
         {
             // need terminating slash, otherwise "c:\abc def" will match "c:\abc"
-            thisOne += "\\";
-            ofThat += "\\";
+            thisOne += System.IO.Path.DirectorySeparatorChar.ToString();
+            ofThat += System.IO.Path.DirectorySeparatorChar.ToString();
             int l = ofThat.Length;
             return ((thisOne.Length >= l) && (thisOne.Substring(0, l).ToLower() == ofThat.ToLower()));
 
@@ -1040,7 +1040,7 @@ namespace TVRename
                             if (si.ForceCheckAll || (!(anyAirdates || lastSeasAirdates)) || notFuture) // not in the future (i.e. its aired)
                             {
                                 // then add it as officially missing
-                                TheAIOList.Add(new AIOMissing(pe, folder + "\\" + FilenameFriendly(Settings.NamingStyle.NameForExt(pe, null))));
+                                TheAIOList.Add(new AIOMissing(pe, folder + System.IO.Path.DirectorySeparatorChar.ToString() + FilenameFriendly(Settings.NamingStyle.NameForExt(pe, null))));
                             }
                         }
                         else
@@ -1392,7 +1392,7 @@ namespace TVRename
                 }
             }
             // assume last folder element is the show name
-            showName = sp.Substring(sp.LastIndexOf("\\") + 1);
+            showName = sp.Substring(sp.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString()) + 1);
 
             ai.ShowName = showName;
         }
@@ -2488,7 +2488,7 @@ namespace TVRename
                                     if (si.ForceCheckAll || (!(anyAirdates || lastSeasAirdates)) || notFuture) // not in the future (i.e. its aired)
                                     {
                                         // then add it as officially missing
-                                        TheAIOList.Add(new AIOMissing(dbep, folder + "\\" + FilenameFriendly(Settings.NamingStyle.NameForExt(dbep, null))));
+                                        TheAIOList.Add(new AIOMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar.ToString() + FilenameFriendly(Settings.NamingStyle.NameForExt(dbep, null))));
                                     }
                                 }
                                 else
@@ -2661,7 +2661,7 @@ namespace TVRename
 
             filename = SEFinderSimplifyFilename(filename, showNameHint);
 
-            string fullPath = directory + "\\" + filename; // construct full path with sanitised filename
+            string fullPath = directory + System.IO.Path.DirectorySeparatorChar.ToString() + filename; // construct full path with sanitised filename
 
             if ((filename.Length > 256) || (fullPath.Length > 256))
                 return false;

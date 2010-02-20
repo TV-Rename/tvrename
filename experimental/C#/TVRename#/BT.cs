@@ -1428,7 +1428,7 @@ namespace TVRename
             if (Results == null)
                 return;
 
-            int p = torrent.LastIndexOf("\\");
+            int p = torrent.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString());
             if (p != -1)
                 torrent = torrent.Substring(p + 1);
             ListViewItem lvi = new ListViewItem(type);

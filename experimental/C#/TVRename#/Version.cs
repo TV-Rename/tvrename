@@ -6,22 +6,33 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 //
 
-public static class Version
+namespace TVRename
 {
-    public static string DisplayVersionString()
+    public static class Version
     {
-        string v = "2.2.0a8";
+        private static bool? OnMonoCached = null;
+        public static bool OnMono()
+        {
+            if (!OnMonoCached.HasValue)
+                OnMonoCached = System.Type.GetType("Mono.Runtime") != null;
+            return OnMonoCached.Value;
+        }
 
-
+        public static string DisplayVersionString()
+        {
+            string v = "2.2.0a8";
 #if DEBUG
         return v + " (C# Debug)";
 #else
-			return v;
+            return v;
 #endif
-    }
+        }
 
-    public static bool ForceExperimentalOn()
-    {
-        return true; // ************************
+        public static bool ForceExperimentalOn()
+        {
+            return true; // ************************
+        }
+
+
     }
-}
+} // namespace

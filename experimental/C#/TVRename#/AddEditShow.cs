@@ -14,14 +14,8 @@
 //
 
 
-using System;
-using System.ComponentModel;
-using System.Collections;
-using System.Windows.Forms;
-using System.Data;
-using System.Drawing;
-using Microsoft.Win32;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 //            this->txtCustomShowName->TextChanged += gcnew System::EventHandler(this, &AddEditShow::txtCustomShowName_TextChanged);
 
@@ -553,11 +547,8 @@ namespace TVRename
             cbTimeZone.BeginUpdate();
             cbTimeZone.Items.Clear();
 
-            RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones");
-            string[] skn = rk.GetSubKeyNames();
-
-            for (int i = 0; i < skn.Length; i++)
-                cbTimeZone.Items.Add(skn[i]);
+            foreach (string s in TZMagic.ZoneNames())
+                cbTimeZone.Items.Add(s);
 
             cbTimeZone.EndUpdate();
 
