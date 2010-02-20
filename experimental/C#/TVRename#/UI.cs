@@ -1292,9 +1292,9 @@ namespace TVRename
             // notifyIcon1
             // 
             this.notifyIcon1.BalloonTipText = "TV Rename is t3h r0x0r";
-            this.notifyIcon1.BalloonTipTitle = "TV Rename 2.1";
+            this.notifyIcon1.BalloonTipTitle = "TV Rename";
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-            this.notifyIcon1.Text = "TV Rename 2.1";
+            this.notifyIcon1.Text = "TV Rename";
             this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_Click);
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_DoubleClick);
             // 
