@@ -757,7 +757,7 @@ namespace TVRename
             this.cbNFO.Text = "NFO";
             this.cbNFO.ThreeState = true;
             this.cbNFO.UseVisualStyleBackColor = true;
-            this.cbNFO.Click += new System.EventHandler(this.cbAIODownloads_Click);
+            this.cbNFO.Click += new System.EventHandler(this.cbAIONFO_Click);
             // 
             // cbDownload
             // 
