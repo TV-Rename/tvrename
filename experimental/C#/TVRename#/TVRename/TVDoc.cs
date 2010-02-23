@@ -527,13 +527,13 @@ namespace TVRename
 
             int c = 0;
 
-            DirCacheList files = new DirCacheList();
+            DirCacheList dirCache = new DirCacheList();
             for (int k = 0; k < SearchFolders.Count; k++)
             {
                 if (ActionCancel)
                     return;
 
-                c = DirCache.BuildDirCache(prog, c, fileCount, files, SearchFolders[k], true, Settings);
+                DirCache.BuildDirCache(prog, c, fileCount, dirCache, SearchFolders[k], true, Settings);
             }
 
             c = 0;
@@ -546,7 +546,7 @@ namespace TVRename
                 prog.Invoke(50 + 50 * (++c) / (totalN + 1)); // second 50% of progress bar
 
                 if (Action1.Type == ActionType.kMissing)
-                    if (FindMissingEp(files, (ActionMissing)(Action1), newList, ActionCopyMoveRename.Op.Copy))
+                    if (FindMissingEp(dirCache, (ActionMissing)(Action1), newList, ActionCopyMoveRename.Op.Copy))
                         toRemove.Add(Action1);
             }
 
@@ -2087,7 +2087,7 @@ namespace TVRename
                 return;
 
             //Thread ActionWork = new Thread(new ParameterizedThreadStart(this.ActionGoWorker));
-            Thread ActionWork = new Thread(new ParameterizedThreadStart(this.ActionGoWorker));
+            Thread ActionWork = new Thread(new ParameterizedThreadStart(this.ScanWorker));
             ActionWork.Name = "ActionGoWorker";
 
             ActionCancel = false;
@@ -2283,7 +2283,6 @@ namespace TVRename
 
             TheActionList = new System.Collections.Generic.List<ActionItem>();
 
-
             //int totalEps = 0;
 
             LockShowItems();
@@ -2384,8 +2383,6 @@ namespace TVRename
                           }
                       }
 
-
-
                     foreach (string folder in folders)
                     {
                         if (ActionCancel)
@@ -2407,21 +2404,22 @@ namespace TVRename
                         bool missCheck = Settings.MissingCheck && si.DoMissingCheck;
 
                         if (Settings.FolderJpg)
-                          {
+                        {
                             // season folders JPGs
-                      
-                            if (doneFolderJPG.Contains(folder)) // some folders may come up multiple times
-                              continue;
-                            doneFolderJPG.Add(folder);
 
-                            FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
-                            if (!fi.Exists)
-                              {
-                                string bannerPath = si.TheSeries().GetItem(Settings.ItemForFolderJpg());
-                                if (!string.IsNullOrEmpty(bannerPath))
-                                  TheActionList.Add(new ActionDownload(si, null, fi, bannerPath));
-                              }
-                          }
+                            if (!doneFolderJPG.Contains(folder)) // some folders may come up multiple times
+                            {
+                                doneFolderJPG.Add(folder);
+
+                                FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
+                                if (!fi.Exists)
+                                {
+                                    string bannerPath = si.TheSeries().GetItem(Settings.ItemForFolderJpg());
+                                    if (!string.IsNullOrEmpty(bannerPath))
+                                        TheActionList.Add(new ActionDownload(si, null, fi, bannerPath));
+                                }
+                            }
+                        }
 
                         FileInfo[] files = di.GetFiles(); // all the files in the folder
                         FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
@@ -2556,7 +2554,7 @@ namespace TVRename
             RemoveIgnored();
         }
 
-        public void ActionGoWorker(Object o)
+        public void ScanWorker(Object o)
         {
             ShowItem specific = (ShowItem)(o);
 

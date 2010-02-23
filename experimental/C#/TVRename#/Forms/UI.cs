@@ -106,7 +106,7 @@ namespace TVRename
 
         protected ProcessedEpisode mLastEpClicked;
         protected Season mLastSeasonClicked;
-        protected ActionItem mLastActionClicked;
+        protected System.Collections.Generic.List<ActionItem> mLastActionsClicked;
         protected ShowItem mLastShowClicked;
         protected StringList mFoldersToOpen;
         protected System.Collections.Generic.List<System.IO.FileInfo> mLastFL;
@@ -1438,7 +1438,7 @@ namespace TVRename
             mLastFolderClicked = null;
             mLastSeasonClicked = null;
             mLastShowClicked = null;
-            mLastActionClicked = null;
+            mLastActionsClicked = null;
 
             mInternalChange = 0;
             mFoldersToOpen = new StringList();
@@ -2535,7 +2535,7 @@ namespace TVRename
             mLastShowClicked = si;
             mLastEpClicked = null;
             mLastSeasonClicked = null;
-            mLastActionClicked = null;
+            mLastActionsClicked = null;
             BuildRightClickMenu(pt);
 
         }
@@ -2544,7 +2544,7 @@ namespace TVRename
             mLastShowClicked = mDoc.GetShowItem(seas.TheSeries.TVDBCode);
             mLastEpClicked = null;
             mLastSeasonClicked = seas;
-            mLastActionClicked = null;
+            mLastActionsClicked = null;
             BuildRightClickMenu(pt);
         }
         public void RightClickOnShow(ProcessedEpisode ep, Point pt)
@@ -2552,7 +2552,7 @@ namespace TVRename
             mLastEpClicked = ep;
             mLastShowClicked = ep != null ? ep.SI : null;
             mLastSeasonClicked = ep != null ? ep.TheSeason : null;
-            mLastActionClicked = null;
+            mLastActionsClicked = null;
             BuildRightClickMenu(pt);
         }
 
@@ -2909,21 +2909,25 @@ namespace TVRename
                     break;
                 case RightClickCommands.kActionBrowseForFile:
                     {
-                        ActionMissing mi = (ActionMissing)(mLastActionClicked);
-                        if (mi != null)
+                        if ((mLastActionsClicked != null) && (mLastActionsClicked.Count > 0))
                         {
-                            // browse for mLastActionClicked
-                            openFile.Filter = "Video Files|" + mDoc.Settings.GetVideoExtensionsString().Replace(".", "*.") + "|All Files (*.*)|*.*";
-                            if (openFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                            ActionMissing mi = (ActionMissing)mLastActionsClicked[0];
+                            if (mi != null)
                             {
-                                // make new ActionItem for copying/moving to specified location
-                                FileInfo from = new FileInfo(openFile.FileName);
-                                mDoc.TheActionList.Add(new ActionCopyMoveRename(mDoc.Settings.LeaveOriginals ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Move, from, new FileInfo(mi.TheFileNoExt + from.Extension), mi.PE));
-                                // and remove old Missing item
-                                mDoc.TheActionList.Remove(mLastActionClicked);
-                                mLastActionClicked = null;
-                                FillActionList();
+                                // browse for mLastActionClicked
+                                openFile.Filter = "Video Files|" + mDoc.Settings.GetVideoExtensionsString().Replace(".", "*.") + "|All Files (*.*)|*.*";
+                                
+                                if (openFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                {
+                                    // make new ActionItem for copying/moving to specified location
+                                    FileInfo from = new FileInfo(openFile.FileName);
+                                    mDoc.TheActionList.Add(new ActionCopyMoveRename(mDoc.Settings.LeaveOriginals ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Move, from, new FileInfo(mi.TheFileNoExt + from.Extension), mi.PE));
+                                    // and remove old Missing item
+                                    mDoc.TheActionList.Remove(mi);
+                                }
                             }
+                            mLastActionsClicked = null;
+                            FillActionList();
                         }
 
                         break;
@@ -2933,21 +2937,27 @@ namespace TVRename
                     break;
                 case RightClickCommands.kActionIgnoreSeason:
                     {
-                        // add this season to ignore list for the show selected
-                        int snum = mLastActionClicked.PE.SeasonNumber;
+                        // add season to ignore list for each show selected
+                        if ((mLastActionsClicked != null) && (mLastActionsClicked.Count > 0))
+                        {
+                            foreach (ActionItem ai in mLastActionsClicked)
+                            {
+                                int snum = ai.PE.SeasonNumber;
 
-                        if (!mLastActionClicked.PE.SI.IgnoreSeasons.Contains(snum))
-                            mLastActionClicked.PE.SI.IgnoreSeasons.Add(snum);
+                                if (!ai.PE.SI.IgnoreSeasons.Contains(snum))
+                                    ai.PE.SI.IgnoreSeasons.Add(snum);
 
-                        // remove all other episodes from this season from Action list
-                        System.Collections.Generic.List<ActionItem> remove = new System.Collections.Generic.List<ActionItem>();
-                        foreach (ActionItem Action in mDoc.TheActionList)
-                            if ((Action.PE != null) && (Action.PE.SeasonNumber == snum))
-                                remove.Add(Action);
-                        foreach (ActionItem Action in remove)
-                            mDoc.TheActionList.Remove(Action);
-
-                        mLastActionClicked = null;
+                                // remove all other episodes of this season from the Action list
+                                System.Collections.Generic.List<ActionItem> remove = new System.Collections.Generic.List<ActionItem>();
+                                foreach (ActionItem Action in mDoc.TheActionList)
+                                    if ((Action.PE != null) && (Action.PE.SeasonNumber == snum))
+                                        remove.Add(Action);
+                                foreach (ActionItem Action in remove)
+                                    mDoc.TheActionList.Remove(Action);
+                            }
+                            
+                        }
+                        mLastActionsClicked = null;
                         FillActionList();
                         break;
                     }
@@ -3969,16 +3979,20 @@ namespace TVRename
             mLastShowClicked = null;
             mLastEpClicked = null;
             mLastSeasonClicked = null;
-            mLastActionClicked = null;
+            mLastActionsClicked = null;
 
             showRightClickMenu.Items.Clear();
             mFoldersToOpen = new StringList();
             mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
 
+            mLastActionsClicked = new System.Collections.Generic.List<ActionItem>();
+            
+            foreach (ActionItem ai in lvr.FlatList)
+                mLastActionsClicked.Add(ai);
+
             if ((lvr.Count == 1) && (lvAction.FocusedItem != null) && (lvAction.FocusedItem.Tag != null))
             {
                 ActionItem Action = (ActionItem)(lvAction.FocusedItem.Tag);
-                mLastActionClicked = Action;
 
                 mLastEpClicked = Action.PE;
                 if (Action.PE != null)
