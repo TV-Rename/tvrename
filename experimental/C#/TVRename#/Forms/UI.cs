@@ -4035,7 +4035,7 @@ namespace TVRename
             LVResults all = new LVResults(lvAction, LVResults.WhichResults.All);
             LVResults chk = new LVResults(lvAction, LVResults.WhichResults.Checked);
 
-            if (all.Rename.Count == 0)
+            if (chk.Rename.Count == 0)
                 cbRename.CheckState = CheckState.Unchecked;
             else
                 cbRename.CheckState = (chk.Rename.Count == all.Rename.Count) ? CheckState.Checked : CheckState.Indeterminate;
@@ -4083,6 +4083,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvAction.Items)
                 lvi.Checked = cs == CheckState.Checked;
             InternalCheckChange = false;
+            UpdateActionCheckboxes();
         }
         private void cbActionRename_Click(object sender, System.EventArgs e)
         {
@@ -4102,6 +4103,7 @@ namespace TVRename
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
+            UpdateActionCheckboxes();
         }
         private void cbActionCopyMove_Click(object sender, System.EventArgs e)
         {
@@ -4121,6 +4123,7 @@ namespace TVRename
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
+            UpdateActionCheckboxes();
         }
         private void cbActionNFO_Click(object sender, System.EventArgs e)
         {
@@ -4140,6 +4143,7 @@ namespace TVRename
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
+            UpdateActionCheckboxes();
         }
 
         private void cbActionRSS_Click(object sender, System.EventArgs e)
@@ -4160,6 +4164,7 @@ namespace TVRename
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
+            UpdateActionCheckboxes();
         }
         private void cbActionDownloads_Click(object sender, System.EventArgs e)
         {
@@ -4179,6 +4184,7 @@ namespace TVRename
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
+            UpdateActionCheckboxes();
         }
         private void lvAction_ItemCheck(object sender, System.Windows.Forms.ItemCheckEventArgs e)
         {
