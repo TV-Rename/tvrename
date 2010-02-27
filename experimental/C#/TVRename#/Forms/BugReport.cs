@@ -410,11 +410,11 @@ namespace TVRename
 			txt += "==== Finding & Organising Directory Scan ====" + "\r\n";
 			txt += "\r\n";
 
-            DirCacheList files = new DirCacheList();
-			foreach (string efi in mDoc.SearchFolders)
-				DirCache.BuildDirCache(null,0,0,files, efi, true, mDoc.Settings);
+            DirCache dirC = new DirCache();
+            foreach (string efi in mDoc.SearchFolders)
+                dirC.AddFolder(null, 0, 0, efi, true, mDoc.Settings);
 
-			foreach (DirCacheEntry fi in files)
+			foreach (DirCacheEntry fi in dirC)
 			{
 				int seas;
 				int ep;
@@ -443,9 +443,9 @@ namespace TVRename
 						txt += si.TVDBCode + " : " + si.ShowName() + " : S" + snum.ToString() + "\r\n";
 						txt += "Folder: " + folder;
 						txt += "\r\n";
-						DirCacheList files = new DirCacheList();
-						if (Directory.Exists(folder))
-							DirCache.BuildDirCache(null,0,0,files, folder, true, mDoc.Settings);
+                        DirCache files = new DirCache();
+                        if (Directory.Exists(folder))
+                            files.AddFolder(null, 0, 0, folder, true, mDoc.Settings);
 						foreach (DirCacheEntry fi in files)
 						{
 							int seas;

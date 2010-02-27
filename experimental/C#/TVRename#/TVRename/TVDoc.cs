@@ -362,7 +362,7 @@ namespace TVRename
 
         // consider each of files, see if it is suitable for series "ser" and episode "epi"
         // if so, add a rcitem for copy to "fi"
-        public bool FindMissingEp(DirCacheList files, ActionMissing me, System.Collections.Generic.List<ActionItem> addTo, ActionCopyMoveRename.Op whichOp)
+        public bool FindMissingEp(DirCache dirCache, ActionMissing me, System.Collections.Generic.List<ActionItem> addTo, ActionCopyMoveRename.Op whichOp)
         {
             string showname = me.PE.SI.ShowName();
             int season = me.PE.SeasonNumber;
@@ -374,7 +374,7 @@ namespace TVRename
 
             showname = Helpers.SimplifyName(showname);
 
-            foreach (DirCacheEntry dce in files)
+            foreach (DirCacheEntry dce in dirCache)
             {
                 if (ActionCancel)
                     return true;
@@ -398,7 +398,12 @@ namespace TVRename
 
                         if ((FindSeasEp(dce.TheFile, out seasF, out epF, me.PE.TheSeries.Name) && (seasF == season) && (epF == epnum)) || (me.PE.SI.UseSequentialMatch && MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.PE) && (seasF == season) && (epF == epnum)))
                         {
-                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, new FileInfo(me.TheFileNoExt + dce.TheFile.Extension), me.PE));
+                            FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
+                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.PE));
+
+                            // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+                            ThumbnailAndNFOCheck(me.PE, fi, addTo);
+
                             return true;
                         }
                     }
@@ -527,13 +532,13 @@ namespace TVRename
 
             int c = 0;
 
-            DirCacheList dirCache = new DirCacheList();
-            for (int k = 0; k < SearchFolders.Count; k++)
+            DirCache dirCache = new DirCache();
+            foreach (String s in SearchFolders)
             {
                 if (ActionCancel)
                     return;
 
-                DirCache.BuildDirCache(prog, c, fileCount, dirCache, SearchFolders[k], true, Settings);
+                c = dirCache.AddFolder(prog, c, fileCount, s, true, Settings);
             }
 
             c = 0;
@@ -2518,30 +2523,8 @@ namespace TVRename
 
                                     // do NFO and thumbnail checks if required
                                     FileInfo filo = localEps[dbep.EpNum]; // filename (or future filename) of the file
-
-                                    if (Settings.EpImgs)
-                                    {
-                                        string ban = dbep.GetItem("filename");
-                                        if (!string.IsNullOrEmpty(ban))
-                                        {
-                                            string fn = filo.Name;
-                                            fn = fn.Substring(0, fn.Length - filo.Extension.Length);
-                                            fn += ".tbn";
-                                            FileInfo img = Helpers.FileInFolder(filo.Directory, fn);
-                                            if (!img.Exists)
-                                                TheActionList.Add(new ActionDownload(si, dbep, img, ban));
-                                        }
-                                    }
-                                    if (Settings.NFOs)
-                                    {
-                                        string fn = filo.Name;
-                                        fn = fn.Substring(0, fn.Length - filo.Extension.Length);
-                                        fn += ".nfo";
-                                        FileInfo nfo = Helpers.FileInFolder(filo.Directory, fn);
-
-                                        if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))
-                                            TheActionList.Add(new ActionNFO(nfo, dbep));
-                                    }
+                                    
+                                    ThumbnailAndNFOCheck(dbep, filo, TheActionList);
                                 }
                             } // up to date check, for each episode in thetvdb
                             db.Unlock("UpToDateCheck");
@@ -2552,6 +2535,33 @@ namespace TVRename
 
             UnlockShowItems();
             RemoveIgnored();
+        }
+
+        void ThumbnailAndNFOCheck(ProcessedEpisode dbep, FileInfo filo, System.Collections.Generic.List<ActionItem> addTo)
+        {
+            if (Settings.EpImgs)
+            {
+                string ban = dbep.GetItem("filename");
+                if (!string.IsNullOrEmpty(ban))
+                {
+                    string fn = filo.Name;
+                    fn = fn.Substring(0, fn.Length - filo.Extension.Length);
+                    fn += ".tbn";
+                    FileInfo img = Helpers.FileInFolder(filo.Directory, fn);
+                    if (!img.Exists)
+                        addTo.Add(new ActionDownload(dbep.SI, dbep, img, ban));
+                }
+            }
+            if (Settings.NFOs)
+            {
+                string fn = filo.Name;
+                fn = fn.Substring(0, fn.Length - filo.Extension.Length);
+                fn += ".nfo";
+                FileInfo nfo = Helpers.FileInFolder(filo.Directory, fn);
+
+                if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))
+                    addTo.Add(new ActionNFO(nfo, dbep));
+            }
         }
 
         public void ScanWorker(Object o)

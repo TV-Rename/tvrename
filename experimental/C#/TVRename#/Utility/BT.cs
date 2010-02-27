@@ -637,7 +637,7 @@ namespace TVRename
         protected int CacheHits;
         protected string FileCacheIsFor;
         protected bool FileCacheWithSubFolders;
-        protected DirCacheList FileCache;
+        protected DirCache FileCache;
         protected bool DoHashChecking;
 
 
@@ -658,10 +658,11 @@ namespace TVRename
             if (whereInFile < 0)
                 return null;
 
-            for (int i = 0; i < FileCache.Count; i++)
+            foreach (DirCacheEntry dc in FileCache)
+            //for (int i = 0; i < FileCache.Cache.Count; i++)
             {
-                FileInfo fiTemp = FileCache[i].TheFile;
-                Int64 flen = FileCache[i].Length;
+                FileInfo fiTemp = dc.TheFile;
+                Int64 flen = dc.Length;
 
                 if ((flen != fileSize) || (flen < (whereInFile + pieceSize))) // this file is wrong size || too small
                     continue;
@@ -732,8 +733,7 @@ namespace TVRename
         {
             if ((FileCache == null) || (FileCacheIsFor == null) || (FileCacheIsFor != folder) || (FileCacheWithSubFolders != subFolders))
             {
-                FileCache = new DirCacheList();
-                DirCache.BuildDirCache(null, 0, 0, FileCache, folder, subFolders, null);
+                FileCache = new DirCache(null, folder, subFolders, null);
                 FileCacheIsFor = folder;
                 FileCacheWithSubFolders = subFolders;
 

@@ -40,11 +40,7 @@ namespace TVRename
         }
     }
 
-    public class DirCacheList : System.Collections.Generic.List<DirCacheEntry>
-    {
-    }
-    
-    public static class DirCache
+    public class DirCache : System.Collections.Generic.List<DirCacheEntry>
     {
         public static int CountFiles(string folder, bool subFolders)
         {
@@ -71,7 +67,19 @@ namespace TVRename
             return n;
         }
 
-        public static int BuildDirCache(SetProgressDelegate prog, int initialCount, int totalFiles, DirCacheList fileCache, string folder, bool subFolders, TVSettings theSettings)
+        public DirCache()
+        {
+        }
+        public DirCache(SetProgressDelegate prog, string folder, bool subFolders, TVSettings theSettings)
+        {
+            BuildDirCache(prog, 0, 0, folder, subFolders, theSettings);
+        }
+        public int AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders, TVSettings theSettings)
+        {
+            return BuildDirCache(prog, initialCount, totalFiles, folder, subFolders, theSettings);
+        }
+
+        private int BuildDirCache(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders, TVSettings theSettings)
         {
             int filesDone = initialCount;
 
@@ -104,8 +112,8 @@ namespace TVRename
                         MessageBox.Show("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder, "File+Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                     else
-                        fileCache.Add(new DirCacheEntry(ff, theSettings));
-                    if (prog != null)
+                        this.Add(new DirCacheEntry(ff, theSettings));
+                    if ((prog != null) && (totalFiles != 0))
                         prog.Invoke(100 * (filesDone) / totalFiles);
                 }
 
@@ -113,7 +121,7 @@ namespace TVRename
                 {
                     DirectoryInfo[] dirs = di.GetDirectories();
                     foreach (DirectoryInfo di2 in dirs)
-                        filesDone = BuildDirCache(prog, filesDone, totalFiles, fileCache, di2.FullName, subFolders, theSettings);
+                        filesDone = BuildDirCache(prog, filesDone, totalFiles, di2.FullName, subFolders, theSettings);
                 }
             }
             catch (UnauthorizedAccessException)
