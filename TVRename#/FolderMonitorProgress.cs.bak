@@ -1,0 +1,40 @@
+//
+// Main website for TVRename is http://tvrename.com
+//
+// Source code available at http://code.google.com/p/tvrename/
+//
+// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+//
+
+namespace TVRename
+{
+//C++ TO C# CONVERTER WARNING: The declaration of the following method implementation was not found:
+//ORIGINAL LINE: FolderMonitorProgress::FolderMonitorProgress(FolderMonitor ^thefm)
+
+//C++ TO C# CONVERTER WARNING: The declaration of the following method implementation was not found:
+//ORIGINAL LINE: void FolderMonitorProgress::bnCancel_Click(object^ sender, System::EventArgs^ e)
+//C++ TO C# CONVERTER WARNING: The declaration of the following method implementation was not found:
+//ORIGINAL LINE: void FolderMonitorProgress::timer1_Tick(object^ sender, System::EventArgs^ e)
+
+}
+
+
+public class FolderMonitorProgress
+{
+	public FolderMonitorProgress(FolderMonitor thefm)
+  {
+	  mFM = thefm;
+
+	InitializeComponent();
+  }
+  public void bnCancel_Click(object sender, System.EventArgs e)
+  {
+	this.DialogResult =DialogResult.Abort;
+	mFM.FMPStopNow = true;
+  }
+  public void timer1_Tick(object sender, System.EventArgs e)
+			 {
+				 if (mFM.FMPStopNow)
+					 this.Close();
+			 }
+}
