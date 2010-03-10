@@ -67,6 +67,7 @@ Section "TVRename" SecTVRename
   File "..\TVRename#\bin\Release\DevAge.Windows.Forms.dll"
   File "..\TVRename#\bin\Release\SourceGrid.dll"
   File "..\TVRename#\bin\Release\SourceGrid.Extensions.dll"
+  File "..\TVRename#\bin\Release\log4net.dll"
 
 ;  ReadRegStr $R0 HKCU "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" "AppData"
 ;  Detailprint $R0
@@ -105,6 +106,7 @@ Section "Uninstall"
   Delete "$INSTDIR\SourceGrid.dll"
   Delete "$INSTDIR\SourceGrid.Extensions.dll"  
   Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\log4net.dll"
   RmDir "$INSTDIR"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk"
