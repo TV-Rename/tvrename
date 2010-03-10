@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2FFF6A6D-6094-47FF-AB34-E04E644F8F9C}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TVRename</RootNamespace>
+    <AssemblyName>TVRename</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>App\app.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevAge.Core, Version=4.11.3441.17573, Culture=neutral, PublicKeyToken=faad465d84242dbf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\DevAge.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="DevAge.Windows.Forms, Version=4.11.3441.17573, Culture=neutral, PublicKeyToken=faad465d84242dbf, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\DevAge.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Utils.Zip, Version=1.5.2.1, Culture=neutral, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\Ionic.Utils.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="SourceGrid, Version=4.21.3441.17573, Culture=neutral, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\SourceGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="SourceGrid.Extensions, Version=4.21.3441.17574, Culture=neutral, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Libs\SourceGrid.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Forms\ActorsGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddEditSearchEngine.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddEditSeasEpFinders.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddEditShow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TVRename\FolderMonitorItem.cs" />
+    <Compile Include="Forms\AddModifyRule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TVRename\ActionItems.cs" />
+    <Compile Include="Utility\BT.cs" />
+    <Compile Include="Forms\BugReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BuyMeADrink.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CopyMoveProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\CustomName.cs" />
+    <Compile Include="Forms\CustomNameDesigner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CustomNameTagsFloatingWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utility\DirCache.cs" />
+    <Compile Include="Forms\DownloadProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EditRules.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FolderMonitor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FolderMonitorProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utility\Helpers.cs" />
+    <Compile Include="Forms\IgnoreEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\Layout.cs" />
+    <Compile Include="Forms\MissingFolderAction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Custom Controls\MyListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\Preferences.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\ActorsGrid.resx">
+      <DependentUpon>ActorsGrid.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddEditSearchEngine.resx">
+      <DependentUpon>AddEditSearchEngine.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddEditSeasEpFinders.resx">
+      <DependentUpon>AddEditSeasEpFinders.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddEditShow.resx">
+      <DependentUpon>AddEditShow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddModifyRule.resx">
+      <DependentUpon>AddModifyRule.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BugReport.resx">
+      <DependentUpon>BugReport.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\BuyMeADrink.resx">
+      <DependentUpon>BuyMeADrink.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CopyMoveProgress.resx">
+      <DependentUpon>CopyMoveProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CustomNameDesigner.resx">
+      <DependentUpon>CustomNameDesigner.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CustomNameTagsFloatingWindow.resx">
+      <DependentUpon>CustomNameTagsFloatingWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DownloadProgress.resx">
+      <DependentUpon>DownloadProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EditRules.resx">
+      <DependentUpon>EditRules.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FolderMonitor.resx">
+      <DependentUpon>FolderMonitor.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FolderMonitorProgress.resx">
+      <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\IgnoreEdit.resx">
+      <DependentUpon>IgnoreEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MissingFolderAction.resx">
+      <DependentUpon>MissingFolderAction.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Custom Controls\MyListView.resx">
+      <DependentUpon>MyListView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Preferences.resx">
+      <DependentUpon>Preferences.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\RecoverXML.resx">
+      <DependentUpon>RecoverXML.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ScanProgress.resx">
+      <DependentUpon>ScanProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ShowControl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ShowException.resx">
+      <DependentUpon>ShowException.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\StatsWindow.resx">
+      <DependentUpon>StatsWindow.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Custom Controls\TheTVDBCodeFinder.resx">
+      <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TorrentMatch.resx">
+      <DependentUpon>TorrentMatch.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UI.resx">
+      <DependentUpon>UI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UpcomingPopup.resx">
+      <DependentUpon>UpcomingPopup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\uTorrent.resx">
+      <DependentUpon>uTorrent.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Forms\RecoverXML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utility\RSS.cs" />
+    <Compile Include="Forms\ScanProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\Searchers.cs" />
+    <Compile Include="App\Server.cs" />
+    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Forms\ShowException.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Settings\ShowsAndEpisodes.cs" />
+    <Compile Include="Settings\ShowRule.cs" />
+    <Compile Include="Utility\Sorters.cs" />
+    <Compile Include="Settings\Statistics.cs" />
+    <Compile Include="Forms\StatsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utility\TheTVDB.cs" />
+    <Compile Include="Custom Controls\TheTVDBCodeFinder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Utility\Timezone.cs" />
+    <Compile Include="Forms\TorrentMatch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TVRename\TVDoc.cs" />
+    <Compile Include="App\Program.cs" />
+    <Compile Include="Forms\UI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UpcomingPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\uTorrent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="App\Version.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App\app.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
