@@ -600,7 +600,7 @@ namespace TVRename {
 
 				// TODO: find a 'best match', or use first ?
 
-				showname = SimplifyName(showname);
+				showname = Helpers.SimplifyName(showname);
 
 				for each (DirCacheEntry ^dce in files)
 				{
@@ -2172,8 +2172,8 @@ namespace TVRename {
 			// see if showname is somewhere in filename
 			bool SimplifyAndCheckFilename(String ^filename, String ^showname, bool simplifyfilename, bool simplifyshowname)
 			{
-				return Regex::Match(simplifyfilename ? SimplifyName(filename) : filename,
-					"\\b"+(simplifyshowname ? SimplifyName(showname) : showname )+"\\b",
+				return Regex::Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename,
+					"\\b"+(simplifyshowname ? Helpers.SimplifyName(showname) : showname )+"\\b",
 					RegexOptions::IgnoreCase)->Success;
 			}
 
@@ -2208,7 +2208,7 @@ namespace TVRename {
 
 					AIOMissing ^aio = safe_cast<AIOMissing ^>(aio1);
 
-					String ^showname = SimplifyName(aio->PE->SI->ShowName());
+					String ^showname = Helpers.SimplifyName(aio->PE->SI->ShowName());
 
 					for each (TorrentEntry ^te in downloading)
 					{
@@ -2216,7 +2216,7 @@ namespace TVRename {
 						if (!Settings->UsefulExtension(file->Extension, false)) // not a usefile file extension
 							continue;
 
-						// String ^simplifiedfname = SimplifyName(file->FullName);
+						// String ^simplifiedfname = Helpers.SimplifyName(file->FullName);
 
 						if (SimplifyAndCheckFilename(file->FullName, showname, true, false)) // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
 						{
@@ -2266,8 +2266,8 @@ namespace TVRename {
 					AIOMissing ^aio = safe_cast<AIOMissing ^>(aio1);
 
 					ProcessedEpisode ^pe = aio->PE;
-					String ^simpleShowName = SimplifyName(pe->SI->ShowName());
-					String ^simpleSeriesName = SimplifyName(pe->TheSeries->Name);
+					String ^simpleShowName = Helpers.SimplifyName(pe->SI->ShowName());
+					String ^simpleSeriesName = Helpers.SimplifyName(pe->TheSeries->Name);
 
 					for each (RSSItem ^rss in RSSList)
 					{
