@@ -251,6 +251,7 @@ namespace TVRename
             this.txtBaseFolder.Name = "txtBaseFolder";
             this.txtBaseFolder.Size = new System.Drawing.Size(170, 20);
             this.txtBaseFolder.TabIndex = 23;
+            this.txtBaseFolder.Click += new System.EventHandler(this.bnBrowse_Click);
             // 
             // bnBrowse
             // 
@@ -260,6 +261,7 @@ namespace TVRename
             this.bnBrowse.TabIndex = 24;
             this.bnBrowse.Text = "&Browse...";
             this.bnBrowse.UseVisualStyleBackColor = true;
+            this.bnBrowse.Click += new System.EventHandler(this.bnBrowse_Click);
             // 
             // chkAutoFolders
             // 
