@@ -13,7 +13,7 @@ SetCompressor /solid lzma
 Name "${PRODUCTNAME}"
 
 BrandingText /TRIMLEFT " "
-!define MUI_ICON "..\TVRename#\app.ico"
+!define MUI_ICON "..\TVRename#\App\app.ico"
 !define MUI_UNICON "uninstall.ico"
 
 !include "MUI.nsh"
