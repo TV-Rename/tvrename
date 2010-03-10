@@ -23,7 +23,7 @@ namespace TVRename
 
         public static string DisplayVersionString()
         {
-            string v = "2.2.0a8";
+            string v = "2.2.0a9";
 #if DEBUG
         return v + " (C# Debug)";
 #else
