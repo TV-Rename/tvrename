@@ -255,6 +255,8 @@ namespace TVRename {
 			FileInfo ^f = gcnew FileInfo(System::Windows::Forms::Application::UserAppDataPath+"\\..\\..\\..\\uTorrent\\resume.dat");
 			if (f->Exists)
 				ResumeDatPath = f->FullName;
+			else
+				ResumeDatPath = "";
 
 			SearchRSS = false;
 			EpImgs = false;
