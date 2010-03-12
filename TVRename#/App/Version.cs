@@ -23,6 +23,9 @@ namespace TVRename
 
         public static string DisplayVersionString()
         {
+            // all versions while developing are marked (dev)
+            // only remove for final release build for upload
+            // to site.
             string v = "2.2.0a10 (dev)";
 #if DEBUG
         return v + " ** Debug Build **";
