@@ -9,8 +9,6 @@
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
 
-// TODO: store data in the DirCache class, rather than having it as a static class and passing a List<> in.
-
 using System.IO;
 using System;
 using System.Windows.Forms;
