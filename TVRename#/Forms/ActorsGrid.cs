@@ -303,7 +303,7 @@ namespace TVRename
             }
         }
 
-        private class RotatedText : DevAge.Drawing.VisualElements.TextGDI
+        public class RotatedText : DevAge.Drawing.VisualElements.TextGDI
         {
             public RotatedText(float angle)
             {
