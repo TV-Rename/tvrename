@@ -77,6 +77,10 @@
     <Compile Include="Forms\AddEditShow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="TheTVDB\Episode.cs" />
+    <Compile Include="TheTVDB\ExtraEp.cs" />
+    <Compile Include="TheTVDB\Season.cs" />
+    <Compile Include="TheTVDB\SeriesInfo.cs" />
     <Compile Include="TVRename\FolderMonitorItem.cs" />
     <Compile Include="Forms\AddModifyRule.cs">
       <SubType>Form</SubType>
@@ -112,6 +116,7 @@
     <Compile Include="Forms\FolderMonitorProgress.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Utility\DirCacheEntry.cs" />
     <Compile Include="Utility\Helpers.cs" />
     <Compile Include="Forms\IgnoreEdit.cs">
       <SubType>Form</SubType>
@@ -277,7 +282,7 @@
     <Compile Include="Forms\StatsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Utility\TheTVDB.cs" />
+    <Compile Include="TheTVDB\TheTVDB.cs" />
     <Compile Include="Custom Controls\TheTVDBCodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>
