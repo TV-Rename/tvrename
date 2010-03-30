@@ -110,6 +110,27 @@
     <Compile Include="Forms\EditRules.Designer.cs">
       <DependentUpon>EditRules.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FolderMonitor.Designer.cs">
+      <DependentUpon>FolderMonitor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FolderMonitorProgress.Designer.cs">
+      <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\IgnoreEdit.Designer.cs">
+      <DependentUpon>IgnoreEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MissingFolderAction.Designer.cs">
+      <DependentUpon>MissingFolderAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Preferences.Designer.cs">
+      <DependentUpon>Preferences.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\RecoverXML.Designer.cs">
+      <DependentUpon>RecoverXML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ScanProgress.Designer.cs">
+      <DependentUpon>ScanProgress.cs</DependentUpon>
+    </Compile>
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
