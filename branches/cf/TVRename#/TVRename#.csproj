@@ -131,6 +131,24 @@
     <Compile Include="Forms\ScanProgress.Designer.cs">
       <DependentUpon>ScanProgress.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ShowException.Designer.cs">
+      <DependentUpon>ShowException.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StatsWindow.Designer.cs">
+      <DependentUpon>StatsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TorrentMatch.Designer.cs">
+      <DependentUpon>TorrentMatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UI.Designer.cs">
+      <DependentUpon>UI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UpcomingPopup.Designer.cs">
+      <DependentUpon>UpcomingPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\uTorrent.Designer.cs">
+      <DependentUpon>uTorrent.cs</DependentUpon>
+    </Compile>
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
