@@ -92,6 +92,24 @@
     <Compile Include="Forms\AddModifyRule.Designer.cs">
       <DependentUpon>AddModifyRule.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\BugReport.Designer.cs">
+      <DependentUpon>BugReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BuyMeADrink.Designer.cs">
+      <DependentUpon>BuyMeADrink.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CopyMoveProgress.Designer.cs">
+      <DependentUpon>CopyMoveProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CustomNameDesigner.Designer.cs">
+      <DependentUpon>CustomNameDesigner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DownloadProgress.Designer.cs">
+      <DependentUpon>DownloadProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EditRules.Designer.cs">
+      <DependentUpon>EditRules.cs</DependentUpon>
+    </Compile>
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
