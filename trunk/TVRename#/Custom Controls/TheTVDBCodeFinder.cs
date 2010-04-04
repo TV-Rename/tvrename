@@ -258,9 +258,12 @@ namespace TVRename
 
             //String ^url = "http://www.tv.com/search.php?stype=program&qs="+txtFindThis->Text+"&type=11&stype=search&tag=search%3Bbutton";
 
-            mTVDB.Search(txtFindThis.Text);
+            if (!String.IsNullOrEmpty(txtFindThis.Text))
+            {
+                mTVDB.Search(txtFindThis.Text);
 
-            DoFind(true);
+                DoFind(true);
+            }
         }
         private void lvMatches_SelectedIndexChanged(object sender, System.EventArgs e)
         {
