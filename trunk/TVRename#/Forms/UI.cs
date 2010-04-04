@@ -188,6 +188,7 @@ namespace TVRename
         private System.Windows.Forms.ToolStripMenuItem actorsToolStripMenuItem;
         private System.Windows.Forms.Timer quickTimer;
         private System.Windows.Forms.ToolStripMenuItem uTorrentToolStripMenuItem;
+        private ToolStripMenuItem showSummaryToolStripMenuItem;
         private System.ComponentModel.IContainer components;
         /// <summary>
         /// Required designer variable.
@@ -321,6 +322,7 @@ namespace TVRename
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
+            this.showSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -468,6 +470,7 @@ namespace TVRename
             this.toolStripSeparator3,
             this.folderMonitorToolStripMenuItem,
             this.actorsToolStripMenuItem,
+            this.showSummaryToolStripMenuItem,
             this.toolStripSeparator4,
             this.torrentMatchToolStripMenuItem,
             this.uTorrentToolStripMenuItem});
@@ -1325,6 +1328,13 @@ namespace TVRename
             // 
             this.quickTimer.Interval = 1;
             this.quickTimer.Tick += new System.EventHandler(this.quickTimer_Tick);
+            // 
+            // showSummaryToolStripMenuItem
+            // 
+            this.showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
+            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            this.showSummaryToolStripMenuItem.Text = "&Show Summary";
+            this.showSummaryToolStripMenuItem.Click += new System.EventHandler(this.showSummaryToolStripMenuItem_Click);
             // 
             // UI
             // 
@@ -4250,6 +4260,11 @@ namespace TVRename
         private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             UpdateActionCheckboxes();
+        }
+
+        private void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ShowSummary(mDoc).ShowDialog();
         }
 
     } // UI class

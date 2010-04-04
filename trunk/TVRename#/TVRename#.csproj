@@ -77,6 +77,12 @@
     <Compile Include="Forms\AddEditShow.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ShowSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ShowSummary.Designer.cs">
+      <DependentUpon>ShowSummary.cs</DependentUpon>
+    </Compile>
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
