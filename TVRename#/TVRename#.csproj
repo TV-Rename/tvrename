@@ -68,20 +68,86 @@
     <Compile Include="Forms\ActorsGrid.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\ActorsGrid.Designer.cs">
+      <DependentUpon>ActorsGrid.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\AddEditSearchEngine.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddEditSearchEngine.Designer.cs">
+      <DependentUpon>AddEditSearchEngine.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\AddEditSeasEpFinders.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Forms\AddEditSeasEpFinders.Designer.cs">
+      <DependentUpon>AddEditSeasEpFinders.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\AddEditShow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ShowSummary.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Forms\AddEditShow.Designer.cs">
+      <DependentUpon>AddEditShow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ShowSummary.Designer.cs">
-      <DependentUpon>ShowSummary.cs</DependentUpon>
+    <Compile Include="Forms\AddModifyRule.Designer.cs">
+      <DependentUpon>AddModifyRule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BugReport.Designer.cs">
+      <DependentUpon>BugReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\BuyMeADrink.Designer.cs">
+      <DependentUpon>BuyMeADrink.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CopyMoveProgress.Designer.cs">
+      <DependentUpon>CopyMoveProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CustomNameDesigner.Designer.cs">
+      <DependentUpon>CustomNameDesigner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DownloadProgress.Designer.cs">
+      <DependentUpon>DownloadProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\EditRules.Designer.cs">
+      <DependentUpon>EditRules.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FolderMonitor.Designer.cs">
+      <DependentUpon>FolderMonitor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FolderMonitorProgress.Designer.cs">
+      <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\IgnoreEdit.Designer.cs">
+      <DependentUpon>IgnoreEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MissingFolderAction.Designer.cs">
+      <DependentUpon>MissingFolderAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Preferences.Designer.cs">
+      <DependentUpon>Preferences.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\RecoverXML.Designer.cs">
+      <DependentUpon>RecoverXML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ScanProgress.Designer.cs">
+      <DependentUpon>ScanProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ShowException.Designer.cs">
+      <DependentUpon>ShowException.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\StatsWindow.Designer.cs">
+      <DependentUpon>StatsWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\TorrentMatch.Designer.cs">
+      <DependentUpon>TorrentMatch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UI.Designer.cs">
+      <DependentUpon>UI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\UpcomingPopup.Designer.cs">
+      <DependentUpon>UpcomingPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\uTorrent.Designer.cs">
+      <DependentUpon>uTorrent.cs</DependentUpon>
     </Compile>
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
