@@ -516,7 +516,7 @@ namespace TVRename
 
         private static string QuickStartGuide()
         {
-            return "http://tvrename.com/quickstart.html";
+            return "http://tvrename.com/quickstart-2.2.html";
         }
 
         private void ShowQuickStartGuide()

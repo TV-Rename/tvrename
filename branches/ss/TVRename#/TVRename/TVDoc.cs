@@ -237,14 +237,14 @@ namespace TVRename
                     continue;
                 }
 
-                if (!hasSeasonFolders)
-                    CheckFolder(di2, addList); // not a season folder.. recurse!
-
                 string theFolder = di2.FullName.ToLower();
 
                 // if its not in the ignore list
                 if (IgnoreFolders.Contains(theFolder))
                     continue;
+
+                if (!hasSeasonFolders)
+                    CheckFolder(di2, addList); // not a season folder.. recurse!
 
                 // ..and not already a folder for one of our shows
                 bool bzzt = false;
