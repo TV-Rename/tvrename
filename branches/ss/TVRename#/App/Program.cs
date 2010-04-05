@@ -13,6 +13,9 @@
 using System;
 using System.Windows.Forms;
 using TVRename;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
 
 public static class GlobalMembersTVRename
 {
@@ -24,16 +27,21 @@ public static class GlobalMembersTVRename
         Application.SetCompatibleTextRenderingDefault(false);
 
         // see if we're already running
-        string mutexName = "TVRenameMutex";
-
-        System.Threading.Mutex mutex = null;
-
-        bool requestInitialOwnership = true;
         bool createdNew = false;
-        mutex = new System.Threading.Mutex(requestInitialOwnership, mutexName, out createdNew);
+        System.Threading.Mutex mutex = new System.Threading.Mutex(true, "TVRenameMutex", out createdNew);
         if (!createdNew)
         {
             // we're already running
+            
+            // tell the already running copy to come to the foreground
+            IpcClientChannel clientChannel = new IpcClientChannel();
+            ChannelServices.RegisterChannel(clientChannel, true);
+
+            RemotingConfiguration.RegisterWellKnownClientType(typeof(IPCMethods), "ipc://TVRenameChannel/IPCMethods");
+
+            IPCMethods ui = new IPCMethods();
+            ui.BringToForeground();
+
             return 0;
         }
 

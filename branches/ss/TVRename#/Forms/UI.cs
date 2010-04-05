@@ -7,6 +7,9 @@
 //
 
 using System;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Xml;
@@ -46,31 +49,26 @@ namespace TVRename
     /// </summary>
     public partial class UI : Form
     {
+
+        public delegate void IPCBringToFrontDelegate();
+        public IPCBringToFrontDelegate IPCBringToForeground;
+        private IPCMethods IPC;
+
         public SetProgressDelegate SetProgress;
-
-       
-
         private MyListView lvAction;
-
-
-
-
-
         protected bool InternalCheckChange;
         protected TVDoc mDoc;
-        protected System.Drawing.Size mLastNonMaximizedSize;
+        protected Size mLastNonMaximizedSize;
         protected Point mLastNonMaximizedLocation;
         protected int mInternalChange;
         protected int Busy;
-
         protected ProcessedEpisode mLastEpClicked;
         protected Season mLastSeasonClicked;
         protected System.Collections.Generic.List<ActionItem> mLastActionsClicked;
         protected ShowItem mLastShowClicked;
         protected StringList mFoldersToOpen;
-        protected System.Collections.Generic.List<System.IO.FileInfo> mLastFL;
+        protected System.Collections.Generic.List<FileInfo> mLastFL;
         protected string mLastFolderClicked;
-
         
         public static int BGDLLongInterval()
         {
@@ -84,15 +82,6 @@ namespace TVRename
         protected void LessBusy()
         {
             Interlocked.Decrement(ref Busy);
-        }
-
-        private static bool IsDebug()
-        {
-#if DEBUG
-            return true;
-#else
-				 return false;
-#endif
         }
 
         public UI(string[] args)
@@ -156,6 +145,8 @@ namespace TVRename
 
             InitializeComponent();
 
+            SetupIPC();
+
             try
             {
                 LoadLayoutXML();
@@ -190,6 +181,26 @@ namespace TVRename
             if (t < tabControl1.TabCount)
                 tabControl1.SelectedIndex = mDoc.Settings.StartupTab;
             tabControl1_SelectedIndexChanged(null, null);
+        }
+
+        private void SetupIPC()
+        {
+            //Instantiate our server channel.
+            var channel = new IpcServerChannel("TVRenameChannel");
+
+            //Register the server channel.
+            ChannelServices.RegisterChannel(channel, true);
+
+            //Register this service type.
+            RemotingConfiguration.RegisterWellKnownServiceType(
+                typeof(IPCMethods),
+                "IPCMethods",
+                WellKnownObjectMode.Singleton);
+
+            IPCBringToForeground += this.ShowYourself;
+
+            IPC = new IPCMethods();
+            IPC.SetUI(this);
         }
 
         public void SetProgressActual(int p)
@@ -1210,14 +1221,19 @@ namespace TVRename
             UP.Show();
 
         }
-        public void notifyIcon1_DoubleClick(object sender, MouseEventArgs e)
+        public void ShowYourself()
         {
-            tmrShowUpcomingPopup.Stop();
             if (!mDoc.Settings.ShowInTaskbar)
                 this.Show();
             if (this.WindowState == FormWindowState.Minimized)
                 this.WindowState = FormWindowState.Normal;
             this.Activate();
+        }
+
+        public void notifyIcon1_DoubleClick(object sender, MouseEventArgs e)
+        {
+            tmrShowUpcomingPopup.Stop();
+            ShowYourself();
         }
         public void buyMeADrinkToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
