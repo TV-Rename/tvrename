@@ -1,58 +1,55 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
-// Keeps count of some statistics.
-
+// 
 using System.IO;
 using System.Xml;
+
+// Keeps count of some statistics.
 
 namespace TVRename
 {
     public class TVRenameStats
     {
+        public int AutoAddedShows;
+        public int FilesCopied;
         public int FilesMoved;
         public int FilesRenamed;
-        public int FilesCopied;
-        public int RenameChecksDone;
-        public int MissingChecksDone;
         public int FindAndOrganisesDone;
-        public int AutoAddedShows;
-        public int TorrentsMatched;
-
-        // these starts are generated on the fly, not saved:
-        // NS = not saved
-        public int NS_NumberOfShows;
-        public int NS_NumberOfSeasons;
+        public int MissingChecksDone;
         public int NS_NumberOfEpisodes;
         public int NS_NumberOfEpisodesExpected;
+        public int NS_NumberOfSeasons;
+        public int NS_NumberOfShows;
+        public int RenameChecksDone;
+        public int TorrentsMatched;
 
         public TVRenameStats()
         {
-            FilesMoved = 0;
-            FilesRenamed = 0;
-            FilesCopied = 0;
-            RenameChecksDone = 0;
-            MissingChecksDone = 0;
-            FindAndOrganisesDone = 0;
-            AutoAddedShows = 0;
-            TorrentsMatched = 0;
-            NS_NumberOfShows = 0;
-            NS_NumberOfSeasons = 0;
-            NS_NumberOfEpisodes = -1;
-            NS_NumberOfEpisodesExpected = 0;
+            this.FilesMoved = 0;
+            this.FilesRenamed = 0;
+            this.FilesCopied = 0;
+            this.RenameChecksDone = 0;
+            this.MissingChecksDone = 0;
+            this.FindAndOrganisesDone = 0;
+            this.AutoAddedShows = 0;
+            this.TorrentsMatched = 0;
+            this.NS_NumberOfShows = 0;
+            this.NS_NumberOfSeasons = 0;
+            this.NS_NumberOfEpisodes = -1;
+            this.NS_NumberOfEpisodesExpected = 0;
         }
+
         public bool Load()
         {
             XmlReaderSettings settings = new XmlReaderSettings();
             settings.IgnoreComments = true;
             settings.IgnoreWhitespace = true;
 
-            string fn = System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar.ToString()+"Statistics.xml";
+            string fn = System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "Statistics.xml";
             if (!File.Exists(fn))
                 return true;
 
@@ -75,65 +72,66 @@ namespace TVRename
                     break;
 
                 if (reader.Name == "FilesMoved")
-                    FilesMoved = reader.ReadElementContentAsInt();
+                    this.FilesMoved = reader.ReadElementContentAsInt();
                 else if (reader.Name == "FilesRenamed")
-                    FilesRenamed = reader.ReadElementContentAsInt();
+                    this.FilesRenamed = reader.ReadElementContentAsInt();
                 else if (reader.Name == "FilesCopied")
-                    FilesCopied = reader.ReadElementContentAsInt();
+                    this.FilesCopied = reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameChecksDone")
-                    RenameChecksDone = reader.ReadElementContentAsInt();
+                    this.RenameChecksDone = reader.ReadElementContentAsInt();
                 else if (reader.Name == "MissingChecksDone")
-                    MissingChecksDone = reader.ReadElementContentAsInt();
+                    this.MissingChecksDone = reader.ReadElementContentAsInt();
                 else if (reader.Name == "FindAndOrganisesDone")
-                    FindAndOrganisesDone = reader.ReadElementContentAsInt();
+                    this.FindAndOrganisesDone = reader.ReadElementContentAsInt();
                 else if (reader.Name == "AutoAddedShows")
-                    AutoAddedShows = reader.ReadElementContentAsInt();
+                    this.AutoAddedShows = reader.ReadElementContentAsInt();
                 else if (reader.Name == "TorrentsMatched")
-                    TorrentsMatched = reader.ReadElementContentAsInt();
+                    this.TorrentsMatched = reader.ReadElementContentAsInt();
             }
             reader.Close();
             return true;
         }
+
         public void Save()
         {
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
-            XmlWriter writer = XmlWriter.Create(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar.ToString()+"Statistics.xml", settings);
+            XmlWriter writer = XmlWriter.Create(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "Statistics.xml", settings);
 
             writer.WriteStartDocument();
             writer.WriteStartElement("Statistics");
 
             writer.WriteStartElement("FilesMoved");
-            writer.WriteValue(FilesMoved);
+            writer.WriteValue(this.FilesMoved);
             writer.WriteEndElement();
 
             writer.WriteStartElement("FilesRenamed");
-            writer.WriteValue(FilesRenamed);
+            writer.WriteValue(this.FilesRenamed);
             writer.WriteEndElement();
 
             writer.WriteStartElement("FilesCopied");
-            writer.WriteValue(FilesCopied);
+            writer.WriteValue(this.FilesCopied);
             writer.WriteEndElement();
 
             writer.WriteStartElement("RenameChecksDone");
-            writer.WriteValue(RenameChecksDone);
+            writer.WriteValue(this.RenameChecksDone);
             writer.WriteEndElement();
 
             writer.WriteStartElement("MissingChecksDone");
-            writer.WriteValue(MissingChecksDone);
+            writer.WriteValue(this.MissingChecksDone);
             writer.WriteEndElement();
 
             writer.WriteStartElement("FindAndOrganisesDone");
-            writer.WriteValue(FindAndOrganisesDone);
+            writer.WriteValue(this.FindAndOrganisesDone);
             writer.WriteEndElement();
 
             writer.WriteStartElement("AutoAddedShows");
-            writer.WriteValue(AutoAddedShows);
+            writer.WriteValue(this.AutoAddedShows);
             writer.WriteEndElement();
 
             writer.WriteStartElement("TorrentsMatched");
-            writer.WriteValue(TorrentsMatched);
+            writer.WriteValue(this.TorrentsMatched);
             writer.WriteEndElement();
 
             writer.WriteEndElement(); // statistics
@@ -141,5 +139,5 @@ namespace TVRename
             writer.WriteEndDocument();
             writer.Close();
         }
-    } // TVRenameStatistics
-} // namespace
+    }
+}

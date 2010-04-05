@@ -1,246 +1,252 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
-
-// Saves the widths of columns in a listview, and window position, for loading up with the
-// same layout next run.
-
+// 
 using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
+// Saves the widths of columns in a listview, and window position, for loading up with the
+// same layout next run.
+
 namespace TVRename
 {
-    public enum WindowID { kUnknown = 0, kMDI = 1, kWatchFolders = 2, kUpcoming = 3, kRename = 4, kMonitorFolders = 5, kTorrentMatch = 6, kEPFinder = 7 };
+    public enum WindowID
+    {
+        kUnknown = 0,
+        kMDI = 1,
+        kWatchFolders = 2,
+        kUpcoming = 3,
+        kRename = 4,
+        kMonitorFolders = 5,
+        kTorrentMatch = 6,
+        kEPFinder = 7
+    }
 
+    public class LayoutInfo
+    {
+        public System.Collections.Generic.List<int> mColWidths;
+        public Point mLocation;
+        public bool mLocked;
+        public bool mMaximised;
+        public Size mSize;
+        public WindowID mWindowID;
 
-  public class LayoutInfo
-  {
-      public System.Collections.Generic.List<int> mColWidths;
-    public WindowID mWindowID;
-	public bool mMaximised;
-	public Size mSize;
-	public Point mLocation;
-	public bool mLocked;
+        public LayoutInfo()
+        {
+            this.mColWidths = new System.Collections.Generic.List<int>();
+            this.mWindowID = WindowID.kUnknown;
+            this.mMaximised = false;
+            this.mSize = new Size(-1, -1);
+            this.mLocation = new Point(-1, -1);
+            this.mLocked = true;
+        }
 
-	public LayoutInfo()
-	{
-	  mColWidths = new System.Collections.Generic.List<int>();
-      mWindowID = WindowID.kUnknown;
-	  mMaximised = false;
-	  mSize = new Size(-1,-1);
-	  mLocation = new Point(-1,-1);
-	  mLocked = true;
-	 }
+        public bool Locked()
+        {
+            return this.mLocked;
+        }
 
-	public bool Locked()
-	{
-	  return mLocked;
-	}
+        public void Unlock()
+        {
+            this.mLocked = false;
+        }
 
-	public void Unlock()
-	{
-	  mLocked = false;
-	}
-	public void Lock()
-	{
-	  mLocked = true;
-	}
+        public void Lock()
+        {
+            this.mLocked = true;
+        }
 
-	public void Save(StreamWriter sw)
-	{
-	  sw.WriteLine("WindowID="+(int)mWindowID);
-	  sw.WriteLine("Maximised=" + (mMaximised?"1":"0"));
-	  if (!mMaximised)
-	  {
-		sw.WriteLine("Size=" + mSize.Width+" "+mSize.Height);
-		sw.WriteLine("Location=" + mLocation.X + " " + mLocation.Y);
-	  }
-	  sw.Write("ColWidths=");
-	  for (int i =0;i<mColWidths.Count;i++)
-		sw.Write(mColWidths[i] + " ");
-	  sw.WriteLine();
-	  sw.WriteLine("--");
-	}
+        public void Save(StreamWriter sw)
+        {
+            sw.WriteLine("WindowID=" + (int) this.mWindowID);
+            sw.WriteLine("Maximised=" + (this.mMaximised ? "1" : "0"));
+            if (!this.mMaximised)
+            {
+                sw.WriteLine("Size=" + this.mSize.Width + " " + this.mSize.Height);
+                sw.WriteLine("Location=" + this.mLocation.X + " " + this.mLocation.Y);
+            }
+            sw.Write("ColWidths=");
+            for (int i = 0; i < this.mColWidths.Count; i++)
+                sw.Write(this.mColWidths[i] + " ");
+            sw.WriteLine();
+            sw.WriteLine("--");
+        }
 
-	public bool Load(StreamReader sr)
-	{
-	  string l1;
-	  while ((l1 = sr.ReadLine()) != null)
-	  {
-		string what;
-		if (l1 == "--")
-		  return true;
-		int p = l1.IndexOf('=');
-		if (p != -1)
-		{
-		  what = l1.Substring(0,p);
-		  l1 = l1.Substring(p+1);
-		  if (what == "ColWidths")
-		  {
-			while ((p = l1.IndexOf(' ')) != -1)
-			{
-			  int n = int.Parse(l1.Substring(0,p));
-			  l1 = l1.Substring(p+1);
-			  mColWidths.Add(n);
-			}
-			}
-		  else if (what == "Maximised")
-		  {
-			mMaximised = l1 == "1";
-		  }
-		  else if (what == "Size")
-		  {
-			p = l1.IndexOf(' ');
-			int x = int.Parse(l1.Substring(0,p));
-			int y = int.Parse(l1.Substring(p+1));
-			mSize = new System.Drawing.Size(x,y);
-		  }
-		  else if (what == "Location")
-		  {
-			p = l1.IndexOf(' ');
-			int x = int.Parse(l1.Substring(0,p));
-			int y = int.Parse(l1.Substring(p+1));
-			mLocation = new Point(x,y);
-		  }
-		  else if (what == "WindowID")
-		  {
-			int n = int.Parse(l1);
-			mWindowID = (WindowID)n;
-		  }
-		}
-	  }
-	return false;
-	}
+        public bool Load(StreamReader sr)
+        {
+            string l1;
+            while ((l1 = sr.ReadLine()) != null)
+            {
+                string what;
+                if (l1 == "--")
+                    return true;
+                int p = l1.IndexOf('=');
+                if (p != -1)
+                {
+                    what = l1.Substring(0, p);
+                    l1 = l1.Substring(p + 1);
+                    if (what == "ColWidths")
+                    {
+                        while ((p = l1.IndexOf(' ')) != -1)
+                        {
+                            int n = int.Parse(l1.Substring(0, p));
+                            l1 = l1.Substring(p + 1);
+                            this.mColWidths.Add(n);
+                        }
+                    }
+                    else if (what == "Maximised")
+                        this.mMaximised = l1 == "1";
+                    else if (what == "Size")
+                    {
+                        p = l1.IndexOf(' ');
+                        int x = int.Parse(l1.Substring(0, p));
+                        int y = int.Parse(l1.Substring(p + 1));
+                        this.mSize = new System.Drawing.Size(x, y);
+                    }
+                    else if (what == "Location")
+                    {
+                        p = l1.IndexOf(' ');
+                        int x = int.Parse(l1.Substring(0, p));
+                        int y = int.Parse(l1.Substring(p + 1));
+                        this.mLocation = new Point(x, y);
+                    }
+                    else if (what == "WindowID")
+                    {
+                        int n = int.Parse(l1);
+                        this.mWindowID = (WindowID) n;
+                    }
+                }
+            }
+            return false;
+        }
 
-	public void SetFrom(Form f, ListView lv)
-	{
-	  if (mLocked)
-		return;
+        public void SetFrom(Form f, ListView lv)
+        {
+            if (this.mLocked)
+                return;
 
-	  mLocked = true;
+            this.mLocked = true;
 
-	  if (f != null)
-	  {
-		   mSize = f.Size;
-		   mLocation = f.Location;
-		   mMaximised = f.WindowState == FormWindowState.Maximized;
-	  }
+            if (f != null)
+            {
+                this.mSize = f.Size;
+                this.mLocation = f.Location;
+                this.mMaximised = f.WindowState == FormWindowState.Maximized;
+            }
 
-	  mColWidths.Clear();
-	  if (lv != null)
-	  {
-		   for (int i =0;i<lv.Columns.Count;i++)
-			 mColWidths.Add(lv.Columns[i].Width);
-	  }
+            this.mColWidths.Clear();
+            if (lv != null)
+            {
+                for (int i = 0; i < lv.Columns.Count; i++)
+                    this.mColWidths.Add(lv.Columns[i].Width);
+            }
 
-	  mLocked = false;
-	}
+            this.mLocked = false;
+        }
 
-	public void Fixup(Form f, ListView lv)
-	{
-	  if (f != null)
-	  {
-		if (mSize != new Size(-1,-1))
-		  f.Size = mSize;
-		if (mLocation != new Point(-1,-1))
-		  f.Location = mLocation;
-		f.WindowState = mMaximised ? FormWindowState.Maximized : FormWindowState.Normal;
+        public void Fixup(Form f, ListView lv)
+        {
+            if (f != null)
+            {
+                if (this.mSize != new Size(-1, -1))
+                    f.Size = this.mSize;
+                if (this.mLocation != new Point(-1, -1))
+                    f.Location = this.mLocation;
+                f.WindowState = this.mMaximised ? FormWindowState.Maximized : FormWindowState.Normal;
+            }
+            if (lv != null)
+            {
+                for (int i = 0; i < Math.Min(this.mColWidths.Count, lv.Columns.Count); i++)
+                    lv.Columns[i].Width = this.mColWidths[i];
+            }
+        }
+    }
 
-	  }
-	  if (lv != null)
-	  {
-		for (int i =0;i<Math.Min(mColWidths.Count,lv.Columns.Count);i++)
-		  lv.Columns[i].Width = mColWidths[i];
-	  }
-	}
-  }
+    public class Layout
+    {
+        private System.Collections.Generic.List<LayoutInfo> mLayouts;
 
+        public Layout()
+        {
+            this.mLayouts = new System.Collections.Generic.List<LayoutInfo>();
+            this.Load();
+        }
 
-  public class Layout
-  {
-      private System.Collections.Generic.List<LayoutInfo> mLayouts;
+        public LayoutInfo Get(WindowID id)
+        {
+            for (int i = 0; i < this.mLayouts.Count; i++)
+            {
+                if (this.mLayouts[i].mWindowID == id)
+                    return this.mLayouts[i];
+            }
+            LayoutInfo li = new LayoutInfo();
+            li.mWindowID = id;
+            this.mLayouts.Add(li);
+            return li;
+        }
 
-	public Layout()
-	{
-	  mLayouts = new System.Collections.Generic.List<LayoutInfo>();
-	  Load();
-	}
+        public void Save()
+        {
+            StreamWriter sw = new StreamWriter(System.Windows.Forms.Application.UserAppDataPath + "\\TVRenameLayout.dat");
+            sw.WriteLine("Version=2");
 
-	public LayoutInfo Get(WindowID id)
-	{
-	  for (int i =0;i<mLayouts.Count;i++)
-		if (mLayouts[i].mWindowID == id)
-		  return mLayouts[i];
-	  LayoutInfo li = new LayoutInfo();
-	  li.mWindowID = id;
-	  mLayouts.Add(li);
-	  return li;
-	}
+            for (int i = 0; i < this.mLayouts.Count; i++)
+                this.mLayouts[i].Save(sw);
 
-	public void Save()
-	{
-	  StreamWriter sw = new StreamWriter(System.Windows.Forms.Application.UserAppDataPath+"\\TVRenameLayout.dat");
-	  sw.WriteLine("Version=2");
+            sw.Close();
+        }
 
-	  for (int i =0;i<mLayouts.Count;i++)
-		mLayouts[i].Save(sw);
+        public void Load()
+        {
+            System.IO.StreamReader sr;
+            try
+            {
+                sr = new StreamReader(System.Windows.Forms.Application.UserAppDataPath + "\\TVRenameLayout.dat");
+            }
+            catch
+            {
+                return;
+            }
+            string l1;
+            l1 = sr.ReadLine();
+            if (l1 == null)
+                return;
 
-	  sw.Close();
+            string what;
+            int p = l1.IndexOf('=');
+            if (p == -1)
+                return;
 
-	}
+            what = l1.Substring(0, p);
+            l1 = l1.Substring(p + 1);
+            if ((what != "Version") && (l1 != "2"))
+                return;
 
-	public void Load()
-	{
-	  System.IO.StreamReader sr;
-	  try
-	  {
-		sr = new StreamReader(System.Windows.Forms.Application.UserAppDataPath+"\\TVRenameLayout.dat");
-	  }
-	  catch
-	  {
-		  return;
-	  }
-	  string l1;
-	  l1 = sr.ReadLine();
-	  if (l1 == null)
-		return;
+            for (;;)
+            {
+                LayoutInfo li = new LayoutInfo();
+                if (li.Load(sr))
+                {
+                    for (int i = 0; i < this.mLayouts.Count; i++)
+                    {
+                        if (this.mLayouts[i].mWindowID == li.mWindowID)
+                        {
+                            this.mLayouts.RemoveAt(i);
+                            break;
+                        }
+                    }
 
-	  string what;
-	  int p = l1.IndexOf('=');
-	  if (p == -1)
-		return;
-
-	  what = l1.Substring(0,p);
-	  l1 = l1.Substring(p+1);
-	  if ((what != "Version") && (l1 != "2"))
-		return;
-
-	  for (;;)
-	  {
-		LayoutInfo li = new LayoutInfo();
-		if (li.Load(sr))
-		{
-		  for (int i =0;i<mLayouts.Count;i++)
-			if (mLayouts[i].mWindowID == li.mWindowID)
-			{
-			  mLayouts.RemoveAt(i);
-			  break;
-			}
-
-		  mLayouts.Add(li);
-		}
-		else
-		  break;
-	  }
-	  sr.Close();
-	}
-  }
-
+                    this.mLayouts.Add(li);
+                }
+                else
+                    break;
+            }
+            sr.Close();
+        }
+    }
 }

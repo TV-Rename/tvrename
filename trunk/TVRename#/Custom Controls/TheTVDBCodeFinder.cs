@@ -1,58 +1,56 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
+// 
+using System;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
+using System.Collections.Generic;
 
 // Control for searching for a tvdb code, checking against local cache and
 // searching on thetvdb
 
-using System;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
-
 namespace TVRename
 {
-
     /// <summary>
     /// Summary for TheTVDBCodeFinder
     /// </summary>
-    public class TheTVDBCodeFinder : System.Windows.Forms.UserControl
+    public partial class TheTVDBCodeFinder : UserControl
     {
-        private TheTVDB mTVDB;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
         private bool mInternal;
-
-        public event EventHandler SelectionChanged;
+        private TheTVDB mTVDB;
 
         public TheTVDBCodeFinder(string initialHint, TheTVDB db)
         {
-            mInternal = false;
-            mTVDB = db;
+            this.mInternal = false;
+            this.mTVDB = db;
 
-            InitializeComponent();
+            this.InitializeComponent();
 
-            txtFindThis.Text = initialHint;
+            this.txtFindThis.Text = initialHint;
         }
+
+        public event EventHandler SelectionChanged;
 
         public void SetHint(string s)
         {
-            mInternal = true;
-            txtFindThis.Text = s;
-            mInternal = false;
-            DoFind(true);
+            this.mInternal = true;
+            this.txtFindThis.Text = s;
+            this.mInternal = false;
+            this.DoFind(true);
         }
 
         public int SelectedCode()
         {
             try
             {
-                if (lvMatches.SelectedItems.Count == 0)
-                    return int.Parse(txtFindThis.Text);
+                if (this.lvMatches.SelectedItems.Count == 0)
+                    return int.Parse(this.txtFindThis.Text);
 
-                return (int)(lvMatches.SelectedItems[0].Tag);
+                return (int) (this.lvMatches.SelectedItems[0].Tag);
             }
             catch
             {
@@ -60,139 +58,23 @@ namespace TVRename
             }
         }
 
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        private System.Windows.Forms.Label txtSearchStatus;
-        private System.Windows.Forms.Button bnGoSearch;
-        private System.Windows.Forms.TextBox txtFindThis;
-        private System.Windows.Forms.ListView lvMatches;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.Label label3;
-
-        #region Windows Form Designer generated code
-        /// <summary>
-        /// Required method for Designer support - do not modify
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
+        private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
-            this.txtSearchStatus = (new System.Windows.Forms.Label());
-            this.bnGoSearch = (new System.Windows.Forms.Button());
-            this.txtFindThis = (new System.Windows.Forms.TextBox());
-            this.lvMatches = (new System.Windows.Forms.ListView());
-            this.columnHeader1 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader2 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader3 = (new System.Windows.Forms.ColumnHeader());
-            this.label3 = (new System.Windows.Forms.Label());
-            this.SuspendLayout();
-            // 
-            // txtSearchStatus
-            // 
-            this.txtSearchStatus.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.txtSearchStatus.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.txtSearchStatus.Location = new System.Drawing.Point(2, 153);
-            this.txtSearchStatus.Name = "txtSearchStatus";
-            this.txtSearchStatus.Size = new System.Drawing.Size(397, 15);
-            this.txtSearchStatus.TabIndex = 9;
-            this.txtSearchStatus.Text = "                    ";
-            // 
-            // bnGoSearch
-            // 
-            this.bnGoSearch.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
-            this.bnGoSearch.Location = new System.Drawing.Point(324, -1);
-            this.bnGoSearch.Name = "bnGoSearch";
-            this.bnGoSearch.Size = new System.Drawing.Size(75, 23);
-            this.bnGoSearch.TabIndex = 7;
-            this.bnGoSearch.Text = "&Search";
-            this.bnGoSearch.UseVisualStyleBackColor = true;
-            this.bnGoSearch.Click += new System.EventHandler(bnGoSearch_Click);
-            // 
-            // txtFindThis
-            // 
-            this.txtFindThis.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.txtFindThis.Location = new System.Drawing.Point(90, 1);
-            this.txtFindThis.Name = "txtFindThis";
-            this.txtFindThis.Size = new System.Drawing.Size(228, 20);
-            this.txtFindThis.TabIndex = 6;
-            this.txtFindThis.TextChanged += new System.EventHandler(txtFindThis_TextChanged);
-            this.txtFindThis.KeyDown += new System.Windows.Forms.KeyEventHandler(txtFindThis_KeyDown);
-            // 
-            // lvMatches
-            // 
-            this.lvMatches.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.lvMatches.Columns.AddRange(new System.Windows.Forms.ColumnHeader[3] { this.columnHeader1, this.columnHeader2, this.columnHeader3 });
-            this.lvMatches.FullRowSelect = true;
-            this.lvMatches.HideSelection = false;
-            this.lvMatches.Location = new System.Drawing.Point(1, 27);
-            this.lvMatches.MultiSelect = false;
-            this.lvMatches.Name = "lvMatches";
-            this.lvMatches.ShowItemToolTips = true;
-            this.lvMatches.Size = new System.Drawing.Size(397, 123);
-            this.lvMatches.TabIndex = 8;
-            this.lvMatches.UseCompatibleStateImageBehavior = false;
-            this.lvMatches.View = System.Windows.Forms.View.Details;
-            this.lvMatches.SelectedIndexChanged += new System.EventHandler(lvMatches_SelectedIndexChanged);
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Code";
-            this.columnHeader1.Width = 44;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Show Name";
-            this.columnHeader2.Width = 268;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Year";
-            this.columnHeader3.Width = 49;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(-1, 4);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(85, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "TheTVDB &code:";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            // 
-            // TheTVDBCodeFinder
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.txtSearchStatus);
-            this.Controls.Add(this.bnGoSearch);
-            this.Controls.Add(this.txtFindThis);
-            this.Controls.Add(this.lvMatches);
-            this.Controls.Add(this.label3);
-            this.Name = "TheTVDBCodeFinder";
-            this.Size = new System.Drawing.Size(403, 170);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            if (!this.mInternal)
+                this.DoFind(false);
+        }
 
-        }
-        #endregion
-        private void txtFindThis_TextChanged(object sender, System.EventArgs e)
-        {
-            if (!mInternal)
-                DoFind(false);
-        }
         private void DoFind(bool chooseOnlyMatch)
         {
-            if (mInternal)
+            if (this.mInternal)
                 return;
 
-            lvMatches.BeginUpdate();
+            this.lvMatches.BeginUpdate();
 
-            string what = txtFindThis.Text;
+            string what = this.txtFindThis.Text;
             what = what.Replace(".", " ");
 
-            lvMatches.Items.Clear();
+            this.lvMatches.Items.Clear();
             if (!string.IsNullOrEmpty(what))
             {
                 what = what.ToLower();
@@ -207,12 +89,12 @@ namespace TVRename
                 {
                 }
 
-                mTVDB.GetLock("DoFind");
-                foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in mTVDB.GetSeriesDict())
+                this.mTVDB.GetLock("DoFind");
+                foreach (KeyValuePair<int, SeriesInfo> kvp in this.mTVDB.GetSeriesDict())
                 {
                     int num = kvp.Key;
                     string show = kvp.Value.Name;
-                    string s = num.ToString() + " " + show;
+                    string s = num + " " + show;
 
                     string simpleS = Regex.Replace(s.ToLower(), "[^\\w ]", "");
 
@@ -231,50 +113,53 @@ namespace TVRename
                         lvi.Tag = num;
                         if (numberMatch)
                             lvi.Selected = true;
-                        lvMatches.Items.Add(lvi);
+                        this.lvMatches.Items.Add(lvi);
                     }
                 }
-                mTVDB.Unlock("DoFind");
+                this.mTVDB.Unlock("DoFind");
 
-                if ((lvMatches.Items.Count == 1) && numeric)
-                    lvMatches.Items[0].Selected = true;
+                if ((this.lvMatches.Items.Count == 1) && numeric)
+                    this.lvMatches.Items[0].Selected = true;
 
-                int n = lvMatches.Items.Count;
-                txtSearchStatus.Text = "Found " + n + " show" + ((n != 1) ? "s" : "");
+                int n = this.lvMatches.Items.Count;
+                this.txtSearchStatus.Text = "Found " + n + " show" + ((n != 1) ? "s" : "");
             }
             else
-                txtSearchStatus.Text = "";
+                this.txtSearchStatus.Text = "";
 
-            lvMatches.EndUpdate();
+            this.lvMatches.EndUpdate();
 
-            if ((lvMatches.Items.Count == 1) && chooseOnlyMatch)
-                lvMatches.Items[0].Selected = true;
+            if ((this.lvMatches.Items.Count == 1) && chooseOnlyMatch)
+                this.lvMatches.Items[0].Selected = true;
         }
-        private void bnGoSearch_Click(object sender, System.EventArgs e)
+
+        private void bnGoSearch_Click(object sender, EventArgs e)
         {
             // search on thetvdb.com site
-            txtSearchStatus.Text = "Searching on TheTVDB.com";
-            txtSearchStatus.Update();
+            this.txtSearchStatus.Text = "Searching on TheTVDB.com";
+            this.txtSearchStatus.Update();
 
             //String ^url = "http://www.tv.com/search.php?stype=program&qs="+txtFindThis->Text+"&type=11&stype=search&tag=search%3Bbutton";
 
-            if (!String.IsNullOrEmpty(txtFindThis.Text))
+            if (!String.IsNullOrEmpty(this.txtFindThis.Text))
             {
-                mTVDB.Search(txtFindThis.Text);
+                this.mTVDB.Search(this.txtFindThis.Text);
 
-                DoFind(true);
+                this.DoFind(true);
             }
         }
-        private void lvMatches_SelectedIndexChanged(object sender, System.EventArgs e)
+
+        private void lvMatches_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (SelectionChanged != null)
-              this.SelectionChanged(sender, e);
+            if (this.SelectionChanged != null)
+                this.SelectionChanged(sender, e);
         }
-        private void txtFindThis_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+
+        private void txtFindThis_KeyDown(object sender, KeyEventArgs e)
         {
             if ((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
             {
-                bnGoSearch_Click(null, null);
+                this.bnGoSearch_Click(null, null);
                 e.Handled = true;
             }
         }
