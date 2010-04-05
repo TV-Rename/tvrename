@@ -1,11 +1,10 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
+// 
 using System;
 using System.Windows.Forms;
 using System.Xml;
@@ -14,122 +13,117 @@ namespace TVRename
 {
     public class SeriesInfo
     {
+        public DateTime? AirsTime;
+        public bool Dirty; // set to true if local info is known to be older than whats on the server
+        public DateTime? FirstAired;
+        public System.Collections.Generic.Dictionary<string, string> Items; // e.g. Overview, Banner, Poster, etc.
+        public string Language;
         private string LastFiguredTZ;
+        public string Name;
+
+        public System.Collections.Generic.Dictionary<int, Season> Seasons;
         private TimeZone SeriesTZ;
+
+        public string ShowTimeZone; // set for us by ShowItem
+        public long Srv_LastUpdated;
+        public int TVDBCode;
+
+        // note: "SeriesID" in a <Series> is the tv.com code,
+        // "seriesid" in an <Episode> is the tvdb code!
+
+        public SeriesInfo(string name, int id)
+        {
+            this.SetToDefauts();
+            this.Name = name;
+            this.TVDBCode = id;
+        }
+
+        public SeriesInfo(XmlReader r)
+        {
+            this.SetToDefauts();
+            this.LoadXml(r);
+        }
 
         private void FigureOutTimeZone()
         {
-            string tzstr = ShowTimeZone;
+            string tzstr = this.ShowTimeZone;
 
             if (string.IsNullOrEmpty(tzstr))
                 tzstr = TimeZone.DefaultTimeZone();
 
-            SeriesTZ = TimeZone.TimeZoneFor(tzstr);
+            this.SeriesTZ = TimeZone.TimeZoneFor(tzstr);
 
-            LastFiguredTZ = tzstr;
+            this.LastFiguredTZ = tzstr;
         }
 
         public TimeZone GetTimeZone()
         {
             // we cache the timezone info, as the fetching is a bit slow, and we do this a lot
-            if (LastFiguredTZ != ShowTimeZone) 
-                FigureOutTimeZone();
+            if (this.LastFiguredTZ != this.ShowTimeZone)
+                this.FigureOutTimeZone();
 
-            return SeriesTZ;
+            return this.SeriesTZ;
         }
-
-
-        public int TVDBCode;
-        public long Srv_LastUpdated;
-        public string Name;
-
-        public System.Collections.Generic.Dictionary<string, string> Items; // e.g. Overview, Banner, Poster, etc.
-        public DateTime? AirsTime;
-        public System.Collections.Generic.Dictionary<int, Season> Seasons;
-        public string Language;
-        public DateTime? FirstAired;
-
-        public bool Dirty; // set to true if local info is known to be older than whats on the server
-
-        public string ShowTimeZone; // set for us by ShowItem
-
-        // note: "SeriesID" in a <Series> is the tv.com code,
-        // "seriesid" in an <Episode> is the tvdb code!
 
         public string GetItem(string which)
         {
-            if (Items.ContainsKey(which))
-                return Items[which];
-            else
-                return "";
-        }
-
-        public SeriesInfo(string name, int id)
-        {
-            SetToDefauts();
-            Name = name;
-            TVDBCode = id;
-        }
-
-        public SeriesInfo(XmlReader r)
-        {
-            SetToDefauts();
-            LoadXml(r);
+            if (this.Items.ContainsKey(which))
+                return this.Items[which];
+            return "";
         }
 
         public void SetToDefauts()
         {
-            ShowTimeZone = TimeZone.DefaultTimeZone(); // default, is correct for most shows
-            LastFiguredTZ = "";
+            this.ShowTimeZone = TimeZone.DefaultTimeZone(); // default, is correct for most shows
+            this.LastFiguredTZ = "";
 
-            Items = new System.Collections.Generic.Dictionary<string, string>();
-            Seasons = new System.Collections.Generic.Dictionary<int, Season>();
-            Dirty = false;
-            Name = "";
-            AirsTime = null;
-            TVDBCode = -1;
-            Language = "";
+            this.Items = new System.Collections.Generic.Dictionary<string, string>();
+            this.Seasons = new System.Collections.Generic.Dictionary<int, Season>();
+            this.Dirty = false;
+            this.Name = "";
+            this.AirsTime = null;
+            this.TVDBCode = -1;
+            this.Language = "";
         }
 
         public int LanguagePriority(StringList languages)
         {
-            if (string.IsNullOrEmpty(Language))
+            if (string.IsNullOrEmpty(this.Language))
                 return 999999;
-            int r = languages.IndexOf(Language); // -1 for not found
+            int r = languages.IndexOf(this.Language); // -1 for not found
             return (r == -1) ? 999999 : r;
         }
 
         public void Merge(SeriesInfo o, StringList languages)
         {
-            if (o.TVDBCode != TVDBCode)
+            if (o.TVDBCode != this.TVDBCode)
                 return; // that's not us!
-            if (o.Srv_LastUpdated < Srv_LastUpdated)
+            if (o.Srv_LastUpdated < this.Srv_LastUpdated)
                 return; // older!?
 
-            bool betterLanguage = o.LanguagePriority(languages) < LanguagePriority(languages); // lower is better
+            bool betterLanguage = o.LanguagePriority(languages) < this.LanguagePriority(languages); // lower is better
 
-            Srv_LastUpdated = o.Srv_LastUpdated;
+            this.Srv_LastUpdated = o.Srv_LastUpdated;
 
             // take the best bits of "o"
             // "o" is always newer/better than us, if there is a choice
             if ((!string.IsNullOrEmpty(o.Name)) && betterLanguage)
-                Name = o.Name;
-            Items.Clear();
+                this.Name = o.Name;
+            this.Items.Clear();
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in o.Items)
             {
                 if ((!string.IsNullOrEmpty(kvp.Value)) || betterLanguage)
-                    Items[kvp.Key] = kvp.Value;
+                    this.Items[kvp.Key] = kvp.Value;
             }
             if (o.AirsTime != null)
-                AirsTime = o.AirsTime;
+                this.AirsTime = o.AirsTime;
             if ((o.Seasons != null) && (o.Seasons.Count != 0))
-                Seasons = o.Seasons;
+                this.Seasons = o.Seasons;
 
             if (betterLanguage)
-                Language = o.Language;
+                this.Language = o.Language;
 
-
-            Dirty = o.Dirty;
+            this.Dirty = o.Dirty;
         }
 
         public void LoadXml(XmlReader r)
@@ -159,30 +153,29 @@ namespace TVRename
                 r.Read();
                 while (!r.EOF)
                 {
-
                     if ((r.Name == "Series") && (!r.IsStartElement()))
                         break;
                     if (r.Name == "id")
-                        TVDBCode = r.ReadElementContentAsInt();
+                        this.TVDBCode = r.ReadElementContentAsInt();
                     else if (r.Name == "SeriesName")
-                        Name = Helpers.ReadStringFixQuotesAndSpaces(r);
+                        this.Name = Helpers.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "lastupdated")
-                        Srv_LastUpdated = r.ReadElementContentAsLong();
+                        this.Srv_LastUpdated = r.ReadElementContentAsLong();
                     else if ((r.Name == "Language") || (r.Name == "language"))
-                        Language = r.ReadElementContentAsString();
+                        this.Language = r.ReadElementContentAsString();
                     else if (r.Name == "TimeZone")
-                        ShowTimeZone = r.ReadElementContentAsString();
+                        this.ShowTimeZone = r.ReadElementContentAsString();
                     else if (r.Name == "Airs_Time")
                     {
-                        AirsTime = DateTime.Parse("20:00");
+                        this.AirsTime = DateTime.Parse("20:00");
 
                         try
                         {
                             string theTime = r.ReadElementContentAsString();
                             if (!string.IsNullOrEmpty(theTime))
                             {
-                                Items["Airs_Time"] = theTime;
-                                AirsTime = DateTime.Parse(theTime);
+                                this.Items["Airs_Time"] = theTime;
+                                this.AirsTime = DateTime.Parse(theTime);
                             }
                         }
                         catch (FormatException)
@@ -193,17 +186,17 @@ namespace TVRename
                     {
                         try
                         {
-                            FirstAired = DateTime.ParseExact(r.ReadElementContentAsString(), "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                            this.FirstAired = DateTime.ParseExact(r.ReadElementContentAsString(), "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
                         }
                         catch
                         {
-                            FirstAired = null;
+                            this.FirstAired = null;
                         }
                     }
                     else
                     {
                         string name = r.Name;
-                        Items[name] = r.ReadElementContentAsString();
+                        this.Items[name] = r.ReadElementContentAsString();
                     }
                     //   r->ReadOuterXml(); // skip
                 } // while
@@ -211,65 +204,68 @@ namespace TVRename
             catch (XmlException e)
             {
                 string message = "Error processing data from TheTVDB for a show.";
-                if (TVDBCode != -1)
-                    message += "\r\nTheTVDB Code: " + TVDBCode.ToString();
-                if (!string.IsNullOrEmpty(Name))
-                    message += "\r\nName: " + Name;
-                if (!string.IsNullOrEmpty(Language))
-                    message += "\r\nLanguage: \"" + Language + "\"";
+                if (this.TVDBCode != -1)
+                    message += "\r\nTheTVDB Code: " + this.TVDBCode;
+                if (!string.IsNullOrEmpty(this.Name))
+                    message += "\r\nName: " + this.Name;
+                if (!string.IsNullOrEmpty(this.Language))
+                    message += "\r\nLanguage: \"" + this.Language + "\"";
 
                 message += "\r\n" + e.Message;
 
                 MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        } // LoadXml
+        }
+
+        // LoadXml
 
         public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Series");
 
             writer.WriteStartElement("id");
-            writer.WriteValue(TVDBCode);
+            writer.WriteValue(this.TVDBCode);
             writer.WriteEndElement();
 
             writer.WriteStartElement("SeriesName");
-            writer.WriteValue(Name);
+            writer.WriteValue(this.Name);
             writer.WriteEndElement();
 
             writer.WriteStartElement("lastupdated");
-            writer.WriteValue((long)Srv_LastUpdated);
+            writer.WriteValue(this.Srv_LastUpdated);
             writer.WriteEndElement();
 
             writer.WriteStartElement("Language");
-            writer.WriteValue(Language);
+            writer.WriteValue(this.Language);
             writer.WriteEndElement();
 
-            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in Items)
+            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
             {
                 writer.WriteStartElement(kvp.Key);
                 writer.WriteValue(kvp.Value);
                 writer.WriteEndElement();
             }
             writer.WriteStartElement("TimeZone");
-            writer.WriteValue(ShowTimeZone);
+            writer.WriteValue(this.ShowTimeZone);
             writer.WriteEndElement();
 
-            if (FirstAired != null)
+            if (this.FirstAired != null)
             {
                 writer.WriteStartElement("FirstAired");
-                writer.WriteValue(FirstAired.Value.ToString("yyyy-MM-dd"));
+                writer.WriteValue(this.FirstAired.Value.ToString("yyyy-MM-dd"));
                 writer.WriteEndElement();
             }
 
             writer.WriteEndElement(); // series
         }
+
         public Season GetOrAddSeason(int num, int seasonID)
         {
-            if (Seasons.ContainsKey(num))
-                return Seasons[num];
+            if (this.Seasons.ContainsKey(num))
+                return this.Seasons[num];
 
             Season s = new Season(this, num, seasonID);
-            Seasons[num] = s;
+            this.Seasons[num] = s;
 
             return s;
         }

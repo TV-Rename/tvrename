@@ -65,6 +65,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Custom Controls\TheTVDBCodeFinder.Designer.cs">
+      <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ActorsGrid.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -103,6 +106,9 @@
     </Compile>
     <Compile Include="Forms\CustomNameDesigner.Designer.cs">
       <DependentUpon>CustomNameDesigner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\CustomNameTagsFloatingWindow.Designer.cs">
+      <DependentUpon>CustomNameTagsFloatingWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\DownloadProgress.Designer.cs">
       <DependentUpon>DownloadProgress.cs</DependentUpon>

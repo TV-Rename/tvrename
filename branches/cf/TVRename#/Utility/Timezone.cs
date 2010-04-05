@@ -1,19 +1,19 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
+// 
+using System;
+
+using Microsoft.Win32; // for RegistryKey
 
 // Do conversions between timezones, handling daylight savings time (summer time) at both ends.
 // Standard DateTime and DateTimeOffset classes in .NET 2.0 can't do this.
 //
 // If we were targeting .NET 3.5 or later, then we'd use System.Core.TimeZoneInfo and get rid of 
 // all this.
-
-using System;
-using Microsoft.Win32; // for RegistryKey
 
 namespace TVRename
 {
@@ -24,44 +24,12 @@ namespace TVRename
     public class TimeZone
     {
         // SysTime is based on the Win32 structure SYSTIME
-        public class SysTime
-        {
-            public short wYear;
-            public short wMonth;
-            public short wDayOfWeek;
-            public short wDay;
-            public short wHour;
-            public short wMinute;
-            public short wSecond;
-            public short wMilliseconds;
-
-            public SysTime(Byte[] bytes, int pos)
-            {
-                int y = bytes[pos + 0] + ((short)bytes[pos + 1] << 8);
-                int m = bytes[pos + 2] + ((short)bytes[pos + 3] << 8);
-                int dow = bytes[pos + 4] + ((short)bytes[pos + 5] << 8);
-                int day = bytes[pos + 6] + ((short)bytes[pos + 7] << 8);
-                int hr = bytes[pos + 8] + ((short)bytes[pos + 9] << 8);
-                int min = bytes[pos + 10] + ((short)bytes[pos + 11] << 8);
-                int sec = bytes[pos + 12] + ((short)bytes[pos + 13] << 8);
-                int msec = bytes[pos + 14] + ((short)bytes[pos + 15] << 8);
-
-                wYear = (short)y;
-                wMonth = (short)m;
-                wDayOfWeek = (short)dow;
-                wDay = (short)day;
-                wHour = (short)hr;
-                wMinute = (short)min;
-                wSecond = (short)sec;
-                wMilliseconds = (short)msec;
-            }
-        }
 
         public int Bias;
-        public int StandardBias;
         public int DaylightBias;
-        public SysTime StandardDate;
         public SysTime DaylightDate;
+        public int StandardBias;
+        public SysTime StandardDate;
 
         public TimeZone(Byte[] bytes)
         {
@@ -70,14 +38,14 @@ namespace TVRename
 #endif
             // decode bytes from a Win32 TIMEZONEINFO struct
 
-            Bias = bytes[0] + ((int)bytes[1] << 8) + ((int)bytes[2] << 16) + ((int)bytes[3] << 24);
-            StandardBias = bytes[4] + ((int)bytes[5] << 8) + ((int)bytes[6] << 16) + ((int)bytes[7] << 24);
-            DaylightBias = bytes[8] + ((int)bytes[9] << 8) + ((int)bytes[10] << 16) + ((int)bytes[11] << 24);
-            StandardDate = new SysTime(bytes, 12); // uses 16 bytes
-            DaylightDate = new SysTime(bytes, 28); // uses 16 bytes
+            this.Bias = bytes[0] + (bytes[1] << 8) + (bytes[2] << 16) + (bytes[3] << 24);
+            this.StandardBias = bytes[4] + (bytes[5] << 8) + (bytes[6] << 16) + (bytes[7] << 24);
+            this.DaylightBias = bytes[8] + (bytes[9] << 8) + (bytes[10] << 16) + (bytes[11] << 24);
+            this.StandardDate = new SysTime(bytes, 12); // uses 16 bytes
+            this.DaylightDate = new SysTime(bytes, 28); // uses 16 bytes
             // 28 + 16 = 44.  yay!
         }
-    
+
         public static string[] ZoneNames()
         {
             if (Version.OnMono())
@@ -103,7 +71,7 @@ namespace TVRename
             if (rk == null)
                 return null;
             else
-                return new TimeZone((Byte[])rk.GetValue("TZI"));
+                return new TimeZone((Byte[]) rk.GetValue("TZI"));
         }
 
         public static string DefaultTimeZone()
@@ -152,13 +120,51 @@ namespace TVRename
 
         public static uint Epoch() // unix epoch time for now (seconds since midnight 1 jan 1970 UTC)
         {
-            return (uint)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            return (uint) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
         }
+
         public static uint Epoch(DateTime dt)
         {
             DateTime uni = dt.ToUniversalTime();
-            uint r = (uint)(uni.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            uint r = (uint) (uni.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             return r;
         }
+
+        #region Nested type: SysTime
+
+        public class SysTime
+        {
+            public short wDay;
+            public short wDayOfWeek;
+            public short wHour;
+            public short wMilliseconds;
+            public short wMinute;
+            public short wMonth;
+            public short wSecond;
+            public short wYear;
+
+            public SysTime(Byte[] bytes, int pos)
+            {
+                int y = bytes[pos + 0] + (bytes[pos + 1] << 8);
+                int m = bytes[pos + 2] + (bytes[pos + 3] << 8);
+                int dow = bytes[pos + 4] + (bytes[pos + 5] << 8);
+                int day = bytes[pos + 6] + (bytes[pos + 7] << 8);
+                int hr = bytes[pos + 8] + (bytes[pos + 9] << 8);
+                int min = bytes[pos + 10] + (bytes[pos + 11] << 8);
+                int sec = bytes[pos + 12] + (bytes[pos + 13] << 8);
+                int msec = bytes[pos + 14] + (bytes[pos + 15] << 8);
+
+                this.wYear = (short) y;
+                this.wMonth = (short) m;
+                this.wDayOfWeek = (short) dow;
+                this.wDay = (short) day;
+                this.wHour = (short) hr;
+                this.wMinute = (short) min;
+                this.wSecond = (short) sec;
+                this.wMilliseconds = (short) msec;
+            }
+        }
+
+        #endregion
     }
 }

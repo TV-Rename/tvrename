@@ -1,19 +1,18 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
-// What version are we?
-// Are we running under Mono, rather than MS.NET ?
-
+// 
 namespace TVRename
 {
+    // What version are we?
+    // Are we running under Mono, rather than MS.NET ?
     public static class Version
     {
-        private static bool? OnMonoCached = null;
+        private static bool? OnMonoCached;
+
         public static bool OnMono()
         {
             if (!OnMonoCached.HasValue)
@@ -28,10 +27,10 @@ namespace TVRename
             // to site.
             string v = "2.2.0a10 (dev)";
 #if DEBUG
-        return v + " ** Debug Build **";
+            return v + " ** Debug Build **";
 #else
             return v;
 #endif
         }
     }
-} // namespace
+}

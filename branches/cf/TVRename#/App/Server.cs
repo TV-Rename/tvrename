@@ -1,49 +1,26 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
-
-// Start of code for putting an ical or "upcoming shows" server into tvrename itself, rather
-// than exporting to a file somewhere
-
+// 
 using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
+// Start of code for putting an ical or "upcoming shows" server into tvrename itself, rather
+// than exporting to a file somewhere
+
 namespace TVRename
 {
     public class TVRenameServer
     {
-        public string Err()
-        {
-            return "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>" + "<p>The requested URL was not found on this server.</p>" + "<hr><p>TVRename on localhost " + DateTime.Now.ToString("g") + "</p></body></html>";
-        }
-        public string ProcessLine(string line, TVDoc doc)
-        {
-            string[] parts = line.Split(' ');
-            if (parts.Length != 3)
-                return "";
-            else if (parts[0].ToUpper() != "GET")
-                return "";
-            else if (parts[1].EndsWith("/upcoming.xml"))
-            {
-                MemoryStream ms = new MemoryStream();
-                doc.GenerateUpcomingXML(ms, doc.NextNShows(doc.Settings.ExportRSSMaxShows, doc.Settings.ExportRSSMaxDays));
-                return System.Text.Encoding.ASCII.GetString(ms.ToArray());
-            }
-            else
-                return Err();
-
-        }
         public TVRenameServer(TVDoc doc)
         {
-            for (; ; )
+            for (;;)
             {
                 try
                 {
@@ -98,8 +75,7 @@ namespace TVRename
                                     {
                                         if (!string.IsNullOrEmpty(getLine)) // this line is blank, and we have a GET line saved
                                         {
-
-                                            string res = ProcessLine(getLine, doc);
+                                            string res = this.ProcessLine(getLine, doc);
                                             Byte[] msg = System.Text.Encoding.ASCII.GetBytes(res);
                                             stream.Write(msg, 0, msg.Length);
                                             getLine = "";
@@ -113,12 +89,8 @@ namespace TVRename
                                 else
                                     line += c;
                             }
-
                         }
                         client.Close(); // Shutdown and end connection
-
-
-
                     }
                 } // try
                 catch (SocketException e)
@@ -130,9 +102,29 @@ namespace TVRename
                     // time to stop
 
                     return; // we're outta here!
-
                 }
             } // loop forever
         }
+
+        public string Err()
+        {
+            return "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>" + "<p>The requested URL was not found on this server.</p>" + "<hr><p>TVRename on localhost " + DateTime.Now.ToString("g") + "</p></body></html>";
+        }
+
+        public string ProcessLine(string line, TVDoc doc)
+        {
+            string[] parts = line.Split(' ');
+            if (parts.Length != 3)
+                return "";
+            if (parts[0].ToUpper() != "GET")
+                return "";
+            if (parts[1].EndsWith("/upcoming.xml"))
+            {
+                MemoryStream ms = new MemoryStream();
+                doc.GenerateUpcomingXML(ms, doc.NextNShows(doc.Settings.ExportRSSMaxShows, doc.Settings.ExportRSSMaxDays));
+                return System.Text.Encoding.ASCII.GetString(ms.ToArray());
+            }
+            return this.Err();
+        }
     }
-} // namespace
+}

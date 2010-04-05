@@ -1,10 +1,13 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
+// 
+using System;
+using System.IO;
+using System.Xml;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -15,10 +18,6 @@
 // TODO: C++ to C# conversion stopped it using some of the typedefs, such as "IgnoreSeasonList".  (a) probably should
 // rename that to something more generic like IntegerList, and (b) then put it back into the classes & functions
 // that use it (e.g. ShowItem.IgnoreSeasons)
-
-using System;
-using System.IO;
-using System.Xml;
 
 namespace TVRename
 {
@@ -33,38 +32,39 @@ namespace TVRename
         public ProcessedEpisode(SeriesInfo ser, Season seas, ShowItem si)
             : base(ser, seas)
         {
-            NextToAir = false;
-            OverallNumber = -1;
-            Ignore = false;
-            EpNum2 = EpNum;
-            SI = si;
+            this.NextToAir = false;
+            this.OverallNumber = -1;
+            this.Ignore = false;
+            this.EpNum2 = this.EpNum;
+            this.SI = si;
         }
 
         public ProcessedEpisode(ProcessedEpisode O)
             : base(O)
         {
-            NextToAir = O.NextToAir;
-            EpNum2 = O.EpNum2;
-            Ignore = O.Ignore;
-            SI = O.SI;
-            OverallNumber = O.OverallNumber;
+            this.NextToAir = O.NextToAir;
+            this.EpNum2 = O.EpNum2;
+            this.Ignore = O.Ignore;
+            this.SI = O.SI;
+            this.OverallNumber = O.OverallNumber;
         }
+
         public ProcessedEpisode(Episode e, ShowItem si)
             : base(e)
         {
-            OverallNumber = -1;
-            NextToAir = false;
-            EpNum2 = EpNum;
-            Ignore = false;
-            SI = si;
+            this.OverallNumber = -1;
+            this.NextToAir = false;
+            this.EpNum2 = this.EpNum;
+            this.Ignore = false;
+            this.SI = si;
         }
 
         public string NumsAsString()
         {
-            if (EpNum == EpNum2)
-                return EpNum.ToString();
+            if (this.EpNum == this.EpNum2)
+                return this.EpNum.ToString();
             else
-                return EpNum.ToString() + "-" + EpNum2.ToString();
+                return this.EpNum + "-" + this.EpNum2;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
@@ -91,8 +91,8 @@ namespace TVRename
                 {
                     try
                     {
-                        int t1 = (int)(1000.0 * double.Parse(n1));
-                        int t2 = (int)(1000.0 * double.Parse(n2));
+                        int t1 = (int) (1000.0 * double.Parse(n1));
+                        int t2 = (int) (1000.0 * double.Parse(n2));
                         ep1 = t1;
                         ep2 = t2;
                     }
@@ -106,73 +106,186 @@ namespace TVRename
         }
     }
 
-
     //enum CheckType { checkNone = 0, checkAll = 1, checkRecent = 2}; // TODO: remove this, and make a list of seasons/eps to ignore
 
     public class ShowItem
     {
-        public TheTVDB TVDB;
-        public bool UseCustomShowName;
-        public string CustomShowName;
-        public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>> SeasonRules;
-        public System.Collections.Generic.Dictionary<int, ProcessedEpisodeList> SeasonEpisodes; // built up by applying rules.
-        public bool ShowNextAirdate;
-        public int TVDBCode;
-
         public bool AutoAddNewSeasons;
         public string AutoAdd_FolderBase; // TODO: use magical renaming tokens here
-        public string AutoAdd_SeasonFolderName; // TODO: use magical renaming tokens here
         public bool AutoAdd_FolderPerSeason;
+        public string AutoAdd_SeasonFolderName; // TODO: use magical renaming tokens here
 
-        public System.Collections.Generic.Dictionary<int, StringList> ManualFolderLocations;
-
-        public bool UseSequentialMatch;
-        public bool DoRename;
         public bool CountSpecials;
-        public bool DoMissingCheck;
-        public bool PadSeasonToTwoDigits;
-        public System.Collections.Generic.List<int> IgnoreSeasons;
+        public string CustomShowName;
         public bool DVDOrder; // sort by DVD order, not the default sort we get
+        public bool DoMissingCheck;
+        public bool DoRename;
         public bool ForceCheckAll;
+        public System.Collections.Generic.List<int> IgnoreSeasons;
+        public System.Collections.Generic.Dictionary<int, StringList> ManualFolderLocations;
+        public bool PadSeasonToTwoDigits;
+        public System.Collections.Generic.Dictionary<int, ProcessedEpisodeList> SeasonEpisodes; // built up by applying rules.
+        public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>> SeasonRules;
+        public bool ShowNextAirdate;
+        public TheTVDB TVDB;
+        public int TVDBCode;
+        public bool UseCustomShowName;
+        public bool UseSequentialMatch;
+
+        public ShowItem(TheTVDB db)
+        {
+            this.SetDefaults(db);
+        }
+
+        public ShowItem(TheTVDB db, XmlReader reader, TVSettings settings)
+        {
+            this.SetDefaults(db);
+
+            reader.Read();
+            if (reader.Name != "ShowItem")
+                return; // bail out
+
+            reader.Read();
+            while (!reader.EOF)
+            {
+                if ((reader.Name == "ShowItem") && !reader.IsStartElement())
+                    break; // all done
+
+                if (reader.Name == "ShowName")
+                {
+                    this.CustomShowName = reader.ReadElementContentAsString();
+                    this.UseCustomShowName = true;
+                }
+                if (reader.Name == "UseCustomShowName")
+                    this.UseCustomShowName = reader.ReadElementContentAsBoolean();
+                if (reader.Name == "CustomShowName")
+                    this.CustomShowName = reader.ReadElementContentAsString();
+                else if (reader.Name == "TVDBID")
+                    this.TVDBCode = reader.ReadElementContentAsInt();
+                else if (reader.Name == "CountSpecials")
+                    this.CountSpecials = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ShowNextAirdate")
+                    this.ShowNextAirdate = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "AutoAddNewSeasons")
+                    this.AutoAddNewSeasons = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "FolderBase")
+                    this.AutoAdd_FolderBase = reader.ReadElementContentAsString();
+                else if (reader.Name == "FolderPerSeason")
+                    this.AutoAdd_FolderPerSeason = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "SeasonFolderName")
+                    this.AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
+                else if (reader.Name == "DoRename")
+                    this.DoRename = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "DoMissingCheck")
+                    this.DoMissingCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "DVDOrder")
+                    this.DVDOrder = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ForceCheckAll")
+                    this.ForceCheckAll = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "PadSeasonToTwoDigits")
+                    this.PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "UseSequentialMatch")
+                    this.UseSequentialMatch = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "IgnoreSeasons")
+                {
+                    if (!reader.IsEmptyElement)
+                    {
+                        reader.Read();
+                        while (reader.Name != "IgnoreSeasons")
+                        {
+                            if (reader.Name == "Ignore")
+                                this.IgnoreSeasons.Add(reader.ReadElementContentAsInt());
+                            else
+                                reader.ReadOuterXml();
+                        }
+                    }
+                    reader.Read();
+                }
+                else if (reader.Name == "Rules")
+                {
+                    if (!reader.IsEmptyElement)
+                    {
+                        int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
+                        this.SeasonRules[snum] = new System.Collections.Generic.List<ShowRule>();
+                        reader.Read();
+                        while (reader.Name != "Rules")
+                        {
+                            if (reader.Name == "Rule")
+                            {
+                                this.SeasonRules[snum].Add(new ShowRule(reader.ReadSubtree()));
+                                reader.Read();
+                            }
+                        }
+                    }
+                    reader.Read();
+                }
+                else if (reader.Name == "SeasonFolders")
+                {
+                    if (!reader.IsEmptyElement)
+                    {
+                        int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
+                        this.ManualFolderLocations[snum] = new StringList();
+                        reader.Read();
+                        while (reader.Name != "SeasonFolders")
+                        {
+                            if ((reader.Name == "Folder") && reader.IsStartElement())
+                            {
+                                string ff = reader.GetAttribute("Location");
+                                if (this.AutoFolderNameForSeason(snum, settings) != ff)
+                                    this.ManualFolderLocations[snum].Add(ff);
+                            }
+                            reader.Read();
+                        }
+                    }
+                    reader.Read();
+                }
+
+                else
+                    reader.ReadOuterXml();
+            } // while
+        }
 
         public SeriesInfo TheSeries()
         {
-            return TVDB.GetSeries(TVDBCode);
+            return this.TVDB.GetSeries(this.TVDBCode);
         }
+
         public string ShowName()
         {
-            if (UseCustomShowName)
-                return CustomShowName;
-            SeriesInfo ser = TheSeries();
+            if (this.UseCustomShowName)
+                return this.CustomShowName;
+            SeriesInfo ser = this.TheSeries();
             if (ser != null)
                 return ser.Name;
-            return "<" + TVDBCode.ToString() + " not downloaded>";
+            return "<" + this.TVDBCode + " not downloaded>";
         }
+
         public void SetDefaults(TheTVDB db)
         {
-            TVDB = db;
-            ManualFolderLocations = new System.Collections.Generic.Dictionary<int, StringList>();
-            IgnoreSeasons = new System.Collections.Generic.List<int>();
-            UseCustomShowName = false;
-            CustomShowName = "";
-            UseSequentialMatch = false;
-            SeasonRules = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>>();
-            SeasonEpisodes = new System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>();
-            ShowNextAirdate = true;
-            TVDBCode = -1;
+            this.TVDB = db;
+            this.ManualFolderLocations = new System.Collections.Generic.Dictionary<int, StringList>();
+            this.IgnoreSeasons = new System.Collections.Generic.List<int>();
+            this.UseCustomShowName = false;
+            this.CustomShowName = "";
+            this.UseSequentialMatch = false;
+            this.SeasonRules = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>>();
+            this.SeasonEpisodes = new System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>();
+            this.ShowNextAirdate = true;
+            this.TVDBCode = -1;
             //                WhichSeasons = gcnew System.Collections.Generic.List<int>;
             //                NamingStyle = (int)NStyle.DefaultStyle();
-            AutoAddNewSeasons = true;
-            PadSeasonToTwoDigits = false;
-            AutoAdd_FolderBase = "";
-            AutoAdd_FolderPerSeason = true;
-            AutoAdd_SeasonFolderName = "Season ";
-            DoRename = true;
-            DoMissingCheck = true;
-            CountSpecials = false;
-            DVDOrder = false;
-            ForceCheckAll = false;
+            this.AutoAddNewSeasons = true;
+            this.PadSeasonToTwoDigits = false;
+            this.AutoAdd_FolderBase = "";
+            this.AutoAdd_FolderPerSeason = true;
+            this.AutoAdd_SeasonFolderName = "Season ";
+            this.DoRename = true;
+            this.DoMissingCheck = true;
+            this.CountSpecials = false;
+            this.DVDOrder = false;
+            this.ForceCheckAll = false;
         }
+
         //Generic.List<int>WhichSeasons()
         //{
         //    System.Collections.Generic.List<int>r = gcnew System.Collections.Generic.List<int>();
@@ -181,35 +294,30 @@ namespace TVRename
         //    return r;
         //}
 
-        public ShowItem(TheTVDB db)
-        {
-            SetDefaults(db);
-        }
-
         public System.Collections.Generic.List<ShowRule> RulesForSeason(int n)
         {
-            if (SeasonRules.ContainsKey(n))
-                return SeasonRules[n];
+            if (this.SeasonRules.ContainsKey(n))
+                return this.SeasonRules[n];
             else
                 return null;
         }
 
         public string AutoFolderNameForSeason(int n, TVSettings settings)
         {
-            bool leadingZero = settings.LeadingZeroOnSeason || PadSeasonToTwoDigits;
-            string r = AutoAdd_FolderBase;
+            bool leadingZero = settings.LeadingZeroOnSeason || this.PadSeasonToTwoDigits;
+            string r = this.AutoAdd_FolderBase;
             if (string.IsNullOrEmpty(r))
                 return "";
 
             if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
                 r += System.IO.Path.DirectorySeparatorChar.ToString();
-            if (AutoAdd_FolderPerSeason)
+            if (this.AutoAdd_FolderPerSeason)
             {
                 if (n == 0)
                     r += settings.SpecialsFolderName;
                 else
                 {
-                    r += AutoAdd_SeasonFolderName;
+                    r += this.AutoAdd_SeasonFolderName;
                     if ((n < 10) && leadingZero)
                         r += "0";
                     r += n.ToString();
@@ -218,13 +326,14 @@ namespace TVRename
             return r;
         }
 
-
         public int MaxSeason()
         {
             int max = 0;
-            foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in SeasonEpisodes)
+            foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in this.SeasonEpisodes)
+            {
                 if (kvp.Key > max)
                     max = kvp.Key;
+            }
             return max;
         }
 
@@ -239,53 +348,53 @@ namespace TVRename
             writer.WriteStartElement("ShowItem");
 
             writer.WriteStartElement("UseCustomShowName");
-            writer.WriteValue(UseCustomShowName);
+            writer.WriteValue(this.UseCustomShowName);
             writer.WriteEndElement();
             writer.WriteStartElement("CustomShowName");
-            writer.WriteValue(CustomShowName);
+            writer.WriteValue(this.CustomShowName);
             writer.WriteEndElement();
             writer.WriteStartElement("ShowNextAirdate");
-            writer.WriteValue(ShowNextAirdate);
+            writer.WriteValue(this.ShowNextAirdate);
             writer.WriteEndElement();
             writer.WriteStartElement("TVDBID");
-            writer.WriteValue(TVDBCode);
+            writer.WriteValue(this.TVDBCode);
             writer.WriteEndElement();
             writer.WriteStartElement("AutoAddNewSeasons");
-            writer.WriteValue(AutoAddNewSeasons);
+            writer.WriteValue(this.AutoAddNewSeasons);
             writer.WriteEndElement();
             writer.WriteStartElement("FolderBase");
-            writer.WriteValue(AutoAdd_FolderBase);
+            writer.WriteValue(this.AutoAdd_FolderBase);
             writer.WriteEndElement();
             writer.WriteStartElement("FolderPerSeason");
-            writer.WriteValue(AutoAdd_FolderPerSeason);
+            writer.WriteValue(this.AutoAdd_FolderPerSeason);
             writer.WriteEndElement();
             writer.WriteStartElement("SeasonFolderName");
-            writer.WriteValue(AutoAdd_SeasonFolderName);
+            writer.WriteValue(this.AutoAdd_SeasonFolderName);
             writer.WriteEndElement();
             writer.WriteStartElement("DoRename");
-            writer.WriteValue(DoRename);
+            writer.WriteValue(this.DoRename);
             writer.WriteEndElement();
             writer.WriteStartElement("DoMissingCheck");
-            writer.WriteValue(DoMissingCheck);
+            writer.WriteValue(this.DoMissingCheck);
             writer.WriteEndElement();
             writer.WriteStartElement("CountSpecials");
-            writer.WriteValue(CountSpecials);
+            writer.WriteValue(this.CountSpecials);
             writer.WriteEndElement();
             writer.WriteStartElement("DVDOrder");
-            writer.WriteValue(DVDOrder);
+            writer.WriteValue(this.DVDOrder);
             writer.WriteEndElement();
             writer.WriteStartElement("ForceCheckAll");
-            writer.WriteValue(ForceCheckAll);
+            writer.WriteValue(this.ForceCheckAll);
             writer.WriteEndElement();
             writer.WriteStartElement("UseSequentialMatch");
-            writer.WriteValue(UseSequentialMatch);
+            writer.WriteValue(this.UseSequentialMatch);
             writer.WriteEndElement();
             writer.WriteStartElement("PadSeasonToTwoDigits");
-            writer.WriteValue(PadSeasonToTwoDigits);
+            writer.WriteValue(this.PadSeasonToTwoDigits);
             writer.WriteEndElement();
 
             writer.WriteStartElement("IgnoreSeasons");
-            foreach (int i in IgnoreSeasons)
+            foreach (int i in this.IgnoreSeasons)
             {
                 writer.WriteStartElement("Ignore");
                 writer.WriteValue(i);
@@ -293,7 +402,7 @@ namespace TVRename
             }
             writer.WriteEndElement();
 
-            foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ShowRule>> kvp in SeasonRules)
+            foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ShowRule>> kvp in this.SeasonRules)
             {
                 if (kvp.Value.Count > 0)
                 {
@@ -308,7 +417,7 @@ namespace TVRename
                     writer.WriteEndElement(); // Rules
                 }
             }
-            foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in ManualFolderLocations)
+            foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in this.ManualFolderLocations)
             {
                 if (kvp.Value.Count > 0)
                 {
@@ -326,124 +435,12 @@ namespace TVRename
                         writer.WriteEndElement(); // Folder
                     }
 
-
-
                     writer.WriteEndElement(); // Rules
                 }
             }
 
             writer.WriteEndElement(); // ShowItem
         }
-
-        public ShowItem(TheTVDB db, XmlReader reader, TVSettings settings)
-        {
-            SetDefaults(db);
-
-            reader.Read();
-            if (reader.Name != "ShowItem")
-                return; // bail out
-
-            reader.Read();
-            while (!reader.EOF)
-            {
-                if ((reader.Name == "ShowItem") && !reader.IsStartElement())
-                    break; // all done
-
-                if (reader.Name == "ShowName")
-                {
-                    CustomShowName = reader.ReadElementContentAsString();
-                    UseCustomShowName = true;
-                }
-                if (reader.Name == "UseCustomShowName")
-                    UseCustomShowName = reader.ReadElementContentAsBoolean();
-                if (reader.Name == "CustomShowName")
-                    CustomShowName = reader.ReadElementContentAsString();
-                else if (reader.Name == "TVDBID")
-                    TVDBCode = reader.ReadElementContentAsInt();
-                else if (reader.Name == "CountSpecials")
-                    CountSpecials = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ShowNextAirdate")
-                    ShowNextAirdate = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "AutoAddNewSeasons")
-                    AutoAddNewSeasons = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "FolderBase")
-                    AutoAdd_FolderBase = reader.ReadElementContentAsString();
-                else if (reader.Name == "FolderPerSeason")
-                    AutoAdd_FolderPerSeason = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SeasonFolderName")
-                    AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
-                else if (reader.Name == "DoRename")
-                    DoRename = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "DoMissingCheck")
-                    DoMissingCheck = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "DVDOrder")
-                    DVDOrder = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ForceCheckAll")
-                    ForceCheckAll = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "PadSeasonToTwoDigits")
-                    PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "UseSequentialMatch")
-                    UseSequentialMatch = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "IgnoreSeasons")
-                {
-                    if (!reader.IsEmptyElement)
-                    {
-                        reader.Read();
-                        while (reader.Name != "IgnoreSeasons")
-                        {
-                            if (reader.Name == "Ignore")
-                                IgnoreSeasons.Add(reader.ReadElementContentAsInt());
-                            else
-                                reader.ReadOuterXml();
-                        }
-                    }
-                    reader.Read();
-                }
-                else if (reader.Name == "Rules")
-                {
-                    if (!reader.IsEmptyElement)
-                    {
-                        int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-                        SeasonRules[snum] = new System.Collections.Generic.List<ShowRule>();
-                        reader.Read();
-                        while (reader.Name != "Rules")
-                        {
-                            if (reader.Name == "Rule")
-                            {
-                                SeasonRules[snum].Add(new ShowRule(reader.ReadSubtree()));
-                                reader.Read();
-                            }
-                        }
-                    }
-                    reader.Read();
-                }
-                else if (reader.Name == "SeasonFolders")
-                {
-                    if (!reader.IsEmptyElement)
-                    {
-                        int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-                        ManualFolderLocations[snum] = new StringList();
-                        reader.Read();
-                        while (reader.Name != "SeasonFolders")
-                        {
-                            if ((reader.Name == "Folder") && reader.IsStartElement())
-                            {
-                                string ff = reader.GetAttribute("Location");
-                                if (AutoFolderNameForSeason(snum, settings) != ff)
-                                    ManualFolderLocations[snum].Add(ff);
-                            }
-                            reader.Read();
-                        }
-                    }
-                    reader.Read();
-                }
-
-                else
-                    reader.ReadOuterXml();
-            } // while
-        }
-
-
 
         public static ProcessedEpisodeList ProcessedListFromEpisodes(System.Collections.Generic.List<Episode> el, ShowItem si)
         {
@@ -455,52 +452,55 @@ namespace TVRename
 
         public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(TVSettings settings)
         {
-            return AllFolderLocations(settings, true);
+            return this.AllFolderLocations(settings, true);
         }
+
         public string TTS(string s) // trim trailing slash
         {
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
+
         public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(TVSettings settings, bool manualToo)
         {
             System.Collections.Generic.Dictionary<int, StringList> fld = new System.Collections.Generic.Dictionary<int, StringList>();
 
             if (manualToo)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in ManualFolderLocations)
+                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in this.ManualFolderLocations)
                 {
                     if (!fld.ContainsKey(kvp.Key))
                         fld[kvp.Key] = new StringList();
                     foreach (string s in kvp.Value)
-                        fld[kvp.Key].Add(TTS(s));
+                        fld[kvp.Key].Add(this.TTS(s));
                 }
             }
 
-            if (AutoAddNewSeasons && (!string.IsNullOrEmpty(AutoAdd_FolderBase)))
+            if (this.AutoAddNewSeasons && (!string.IsNullOrEmpty(this.AutoAdd_FolderBase)))
             {
                 int highestThereIs = -1;
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in SeasonEpisodes)
+                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in this.SeasonEpisodes)
+                {
                     if (kvp.Key > highestThereIs)
                         highestThereIs = kvp.Key;
+                }
 
                 for (int i = 0; i <= highestThereIs; i++) // start at 0 for specials season
                 {
-                    if (IgnoreSeasons.Contains(i))
+                    if (this.IgnoreSeasons.Contains(i))
                         continue;
 
-                    string newName = AutoFolderNameForSeason(i, settings);
+                    string newName = this.AutoFolderNameForSeason(i, settings);
                     if ((!string.IsNullOrEmpty(newName)) && (Directory.Exists(newName)))
                     {
                         if (!fld.ContainsKey(i))
                             fld[i] = new StringList();
                         if (!fld[i].Contains(newName))
-                            fld[i].Add(TTS(newName));
+                            fld[i].Add(this.TTS(newName));
                     }
                 }
             }
 
             return fld;
-
         }
 
         public static int CompareShowItemNames(ShowItem one, ShowItem two)
@@ -509,7 +509,9 @@ namespace TVRename
             string twos = two.ShowName(); // + " " +two->SeasonNumber.ToString("D3");
             return ones.CompareTo(twos);
         }
-    } // ShowItem
+    }
+
+    // ShowItem
 
     public class ShowItemList : System.Collections.Generic.List<ShowItem>
     {
@@ -521,16 +523,15 @@ namespace TVRename
 
     public class EpisodeDict : System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>
     {
-    } // dictionary by season #
+    }
+
+    // dictionary by season #
 
     public class IgnoreSeasonList : System.Collections.Generic.List<int>
     {
     }
+
     public class FolderLocationDict : System.Collections.Generic.Dictionary<int, StringList>
     {
     }
-
-
-
-
-} // namespace
+}

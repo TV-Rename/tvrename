@@ -1,15 +1,14 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
-// Helpful functions and classes
-
+// 
 using System.IO;
 using System.Text.RegularExpressions;
+
+// Helpful functions and classes
 
 namespace TVRename
 {
@@ -30,12 +29,10 @@ namespace TVRename
             return res;
         }
 
-
         public static System.Drawing.Color WarningColor()
         {
-            return System.Drawing.Color.FromArgb((System.Int32)((System.Byte)(255)), (System.Int32)((System.Byte)(210)), (System.Int32)((System.Byte)(210)));
+            return System.Drawing.Color.FromArgb(255, 210, 210);
         }
-
 
         public static string SimplifyName(string n)
         {
@@ -59,21 +56,21 @@ namespace TVRename
             string n1 = a.FullName;
             string n2 = b.FullName;
             if (!n1.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
-                n1 = n1 + System.IO.Path.DirectorySeparatorChar.ToString();
+                n1 = n1 + System.IO.Path.DirectorySeparatorChar;
             if (!n2.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
-                n2 = n2 + System.IO.Path.DirectorySeparatorChar.ToString();
+                n2 = n2 + System.IO.Path.DirectorySeparatorChar;
 
             return string.Compare(n1, n2, true) == 0; // true->ignore case
         }
+
         public static FileInfo FileInFolder(string dir, string fn)
         {
             return new FileInfo(string.Concat(dir, dir.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ? "" : System.IO.Path.DirectorySeparatorChar.ToString(), fn));
         }
+
         public static FileInfo FileInFolder(DirectoryInfo di, string fn)
         {
-            return Helpers.FileInFolder(di.FullName, fn);
+            return FileInFolder(di.FullName, fn);
         }
     }
 }
-
-

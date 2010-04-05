@@ -1,21 +1,35 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
-// This builds the filenames to rename to, for any given episode (or multi-episode episode)
-
+// 
 using System;
 using System.Text.RegularExpressions;
+
+// This builds the filenames to rename to, for any given episode (or multi-episode episode)
 
 namespace TVRename
 {
     public class CustomName
     {
         public string StyleString;
+
+        public CustomName(CustomName O)
+        {
+            this.StyleString = O.StyleString;
+        }
+
+        public CustomName(string s)
+        {
+            this.StyleString = s;
+        }
+
+        public CustomName()
+        {
+            this.StyleString = DefaultStyle();
+        }
 
         public static string DefaultStyle()
         {
@@ -52,24 +66,9 @@ namespace TVRename
             return res;
         }
 
-        public CustomName(CustomName O)
-        {
-            StyleString = O.StyleString;
-        }
-
-        public CustomName(string s)
-        {
-            StyleString = s;
-        }
-
-        public CustomName()
-        {
-            StyleString = DefaultStyle();
-        }
-
         public string NameForExt(ProcessedEpisode pe, string extension)
         {
-            string r = NameForNoExt(pe, StyleString);
+            string r = NameForNoExt(pe, this.StyleString);
             if (!string.IsNullOrEmpty(extension))
             {
                 if (!extension.StartsWith("."))
@@ -98,7 +97,6 @@ namespace TVRename
 
             return res;
         }
-
 
         public static string NameForNoExt(ProcessedEpisode pe, string styleString)
         {
@@ -129,7 +127,7 @@ namespace TVRename
             DateTime? airdt = pe.GetAirDateDT(false);
             if (airdt != null)
             {
-                DateTime dt = (DateTime)airdt;
+                DateTime dt = (DateTime) airdt;
                 name = name.Replace("{ShortDate}", dt.ToString("d"));
                 name = name.Replace("{LongDate}", dt.ToString("D"));
                 string ymd = dt.ToString("yyyy/MM/dd");
@@ -157,8 +155,5 @@ namespace TVRename
 
             return name;
         }
-
     }
-
-
-} // namespace
+}
