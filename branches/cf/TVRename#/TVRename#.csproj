@@ -159,11 +159,20 @@
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
     <Compile Include="TheTVDB\SeriesInfo.cs" />
+    <Compile Include="TVRename\ActionCopyMoveRename.cs" />
+    <Compile Include="TVRename\ActionDownload.cs" />
+    <Compile Include="TVRename\ActionItem.cs" />
+    <Compile Include="TVRename\ActionMissing.cs" />
+    <Compile Include="TVRename\ActionNFO.cs" />
+    <Compile Include="TVRename\ActionRSS.cs" />
+    <Compile Include="TVRename\ActionSorter.cs" />
+    <Compile Include="TVRename\ActionuTorrenting.cs" />
     <Compile Include="TVRename\FolderMonitorItem.cs" />
     <Compile Include="Forms\AddModifyRule.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TVRename\ActionItems.cs" />
+    <Compile Include="TVRename\IgnoreItem.cs" />
+    <Compile Include="TVRename\LVResults.cs" />
     <Compile Include="Utility\BT.cs" />
     <Compile Include="Forms\BugReport.cs">
       <SubType>Form</SubType>

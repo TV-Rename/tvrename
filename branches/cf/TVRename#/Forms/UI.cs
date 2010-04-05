@@ -3014,8 +3014,4 @@ namespace TVRename
             this.UpdateActionCheckboxes();
         }
     }
-
-    // UI class
 }
-
-// namespace

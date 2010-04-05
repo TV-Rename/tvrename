@@ -451,8 +451,4 @@ namespace TVRename
             this.txtFilename.Enabled = en;
         }
     }
-
-    // class
 }
-
-// namespace
