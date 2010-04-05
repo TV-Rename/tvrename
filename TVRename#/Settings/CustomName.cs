@@ -30,26 +30,26 @@ namespace TVRename
             // for now, this maps onto the presets
             if ((n >= 0) && (n < 9))
                 return Presets()[n];
-            else
-                return DefaultStyle();
+            
+            return DefaultStyle();
         }
 
         public static StringList Presets()
         {
-            StringList res = new StringList();
-
             // if _any_ of these are changed, you'll need to change the OldNStyle function, too.
-            res.Add("{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}");
-            res.Add("{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}");
-            res.Add("{ShowName} S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}");
-            res.Add("{Season}{Episode}[-{Season}{Episode2}] - {EpisodeName}");
-            res.Add("{Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}");
-            res.Add("S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}");
-            res.Add("E{Episode}[-E{Episode2}] - {EpisodeName}");
-            res.Add("{Episode}[-{Episode2}] - {ShowName} - 3 - {EpisodeName}");
-            res.Add("{Episode}[-{Episode2}] - {EpisodeName}");
-
-            return res;
+            return new StringList
+                                 {
+                                     "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
+                                     "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                     "{ShowName} S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                     "{Season}{Episode}[-{Season}{Episode2}] - {EpisodeName}",
+                                     "{Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
+                                     "S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                     "E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                     "{Episode}[-{Episode2}] - {ShowName} - 3 - {EpisodeName}",
+                                     "{Episode}[-{Episode2}] - {EpisodeName}",
+                                     "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
+                                 };
         }
 
         public CustomName(CustomName O)
@@ -81,22 +81,22 @@ namespace TVRename
 
         public static StringList Tags()
         {
-            StringList res = new StringList();
-
-            res.Add("{ShowName}");
-            res.Add("{Season}");
-            res.Add("{Season:2}");
-            res.Add("{Episode}");
-            res.Add("{Episode2}");
-            res.Add("{EpisodeName}");
-            res.Add("{Number}");
-            res.Add("{Number:2}");
-            res.Add("{Number:3}");
-            res.Add("{ShortDate}");
-            res.Add("{LongDate}");
-            res.Add("{YMDDate}");
-
-            return res;
+            return new StringList
+                                 {
+                                     "{ShowName}",
+                                     "{Season}",
+                                     "{Season:2}",
+                                     "{Episode}",
+                                     "{Episode2}",
+                                     "{EpisodeName}",
+                                     "{Number}",
+                                     "{Number:2}",
+                                     "{Number:3}",
+                                     "{ShortDate}",
+                                     "{LongDate}",
+                                     "{YMDDate}",
+                                     "{AllEpisodes}"
+                                 };
         }
 
 
@@ -107,7 +107,7 @@ namespace TVRename
 
         public static string NameForNoExt(ProcessedEpisode pe, String styleString, bool urlEncode)
         {
-            String name = styleString; // TODO: make copy instaed?
+            String name = styleString; // TODO: make copy instead?
 
             string showname = pe.SI.ShowName();
             string epname = pe.Name;
@@ -146,6 +146,11 @@ namespace TVRename
                     ymd = System.Web.HttpUtility.UrlEncode(ymd);
                 name = name.Replace("{YMDDate}", ymd);
             }
+
+            String allEps = "";
+            for (int i = pe.EpNum; i <= pe.EpNum2; i++)
+                allEps += "E" + i.ToString("00");
+            name = Regex.Replace(name, "{AllEpisodes}", allEps);
 
             if (pe.EpNum2 == pe.EpNum)
                 name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
