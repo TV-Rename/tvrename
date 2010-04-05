@@ -1,27 +1,26 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
+// 
+using System;
+using System.IO;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Ipc;
+using System.Windows.Forms;
+using TVRename;
 
 // Check the mutex that we're not already running, start the main UI, pass in commandline arguments
 
 // TODO: mutex stops you running a (future) command-line version if main UI version is already running
 
-using System;
-using System.Windows.Forms;
-using TVRename;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
-using System.IO;
-
 public static class GlobalMembersTVRename
 {
     [STAThread]
-    static int Main(string[] args)
+    private static int Main(string[] args)
     {
         // Enabling Windows XP visual effects before any controls are created
         Application.EnableVisualStyles();
