@@ -2550,8 +2550,6 @@ namespace TVRename
                 }
                 this.lvAction.EndUpdate();
             }
-            this.InternalCheckChange = false;
-            this.UpdateActionCheckboxes();
 
             // do nice totals for each group
             int missingCount = 0;
@@ -2606,6 +2604,10 @@ namespace TVRename
             this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + this.itemitems(downloadCount) + ")";
             this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + this.itemitems(nfoCount) + ")";
             this.lvAction.Groups[7].Header = "Downloading In µTorrent (" + utCount + " " + this.itemitems(utCount) + ")";
+
+            this.InternalCheckChange = false;
+
+            this.UpdateActionCheckboxes();
         }
 
         private void bnActionAction_Click(object sender, System.EventArgs e)
