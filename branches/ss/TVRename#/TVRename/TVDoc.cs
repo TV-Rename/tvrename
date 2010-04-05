@@ -21,7 +21,7 @@ namespace TVRename
 {
     public class TVDoc
     {
-        private string[] Args; // command line arguments
+        public CommandLineArgs Args;
         private TVRenameStats mStats;
         private bool mDirty;
         private static ShowItemList ShowItems;
@@ -71,15 +71,15 @@ namespace TVRename
             return new FileInfo(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar.ToString()+"TVRenameSettings.xml");
         }
 
-        public TVDoc(string[] args, FileInfo settingsFile, FileInfo tvdbFile)
+        public TVDoc(FileInfo settingsFile, TheTVDB tvdb, CommandLineArgs args)
         {
+            mTVDB = tvdb;
             Args = args;
+
             Ignore = new System.Collections.Generic.List<IgnoreItem>();
 
             Workers = null;
             WorkerSemaphore = null;
-
-            mTVDB = new TheTVDB(tvdbFile, TVDBFile());
 
             mStats = new TVRenameStats();
             mDirty = false;
@@ -107,19 +107,6 @@ namespace TVRename
         ~TVDoc()
         {
             StopBGDownloadThread();
-        }
-
-        public string[] GetArgs()
-        {
-            return Args;
-        }
-
-        public bool HasArg(string which)
-        {
-            foreach (string s in Args)
-                if (s.ToLower() == which.ToLower())
-                    return true;
-            return false;
         }
 
         private void LockShowItems()
@@ -776,7 +763,7 @@ namespace TVRename
             while ((count-- > 0) && (!DownloadDone))
                 System.Threading.Thread.Sleep(delayStep);
 
-            if (!DownloadDone && !HasArg("/hide")) // downloading still going on, so time to show the dialog if we're not in /hide mode
+            if (!DownloadDone && !Args.Hide) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
                 DownloadProgress dp = new DownloadProgress(this);
                 dp.ShowDialog();
@@ -2056,8 +2043,11 @@ namespace TVRename
             // first pass to CopyMoveProgress
             // then, fire Action(TVDoc ^doc) on whatever is left (!Done)
 
-            CopyMoveProgress cmp = new CopyMoveProgress(this, theList, Stats());
-            cmp.ShowDialog();
+            if (!Args.Hide)
+            {
+                CopyMoveProgress cmp = new CopyMoveProgress(this, theList, Stats());
+                cmp.ShowDialog();
+            }
 
             prog.Invoke(0);
             int c = 0;
@@ -2097,11 +2087,14 @@ namespace TVRename
 
             ActionCancel = false;
 
-            ScanProgDlg = new ScanProgress(Settings.RenameCheck, Settings.MissingCheck, Settings.MissingCheck && Settings.SearchLocally, Settings.MissingCheck && Settings.CheckuTorrent, Settings.MissingCheck && Settings.SearchRSS, Settings.FolderJpg);
+            if (!Args.Hide)
+                ScanProgDlg = new ScanProgress(Settings.RenameCheck, Settings.MissingCheck, Settings.MissingCheck && Settings.SearchLocally, Settings.MissingCheck && Settings.CheckuTorrent, Settings.MissingCheck && Settings.SearchRSS, Settings.FolderJpg);
+            else
+                ScanProgDlg = null;
 
             ActionWork.Start(specific);
 
-            if (ScanProgDlg.ShowDialog() == DialogResult.Cancel)
+            if ((ScanProgDlg != null) && (ScanProgDlg.ShowDialog() == DialogResult.Cancel))
             {
                 ActionCancel = true;
                 ActionWork.Interrupt();
@@ -2192,13 +2185,12 @@ namespace TVRename
 
                                 FAResult whatToDo = FAResult.kfaNotSet;
 
-                                if (HasArg("/createmissing"))
+                                if (Args.MissingFolder == CommandLineArgs.MissingFolderBehaviour.Create)
                                     whatToDo = FAResult.kfaCreate;
-                                else if (HasArg("/ignoremissing"))
+                                else if (Args.MissingFolder == CommandLineArgs.MissingFolderBehaviour.Ignore)
                                     whatToDo = FAResult.kfaIgnoreOnce;
 
-
-                                if (HasArg("/hide") && (whatToDo == FAResult.kfaNotSet))
+                                if (Args.Hide && (whatToDo == FAResult.kfaNotSet))
                                     whatToDo = FAResult.kfaIgnoreOnce; // default in /hide mode is to ignore
 
                                 if (whatToDo == FAResult.kfaNotSet)
@@ -2283,9 +2275,6 @@ namespace TVRename
 
         public void RenameAndMissingCheck(SetProgressDelegate prog, ShowItem specific)
         {
-            while ((ScanProgDlg == null) || (!ScanProgDlg.Ready))
-                Thread.Sleep(10); // wait for thread to create the dialog
-
             TheActionList = new System.Collections.Generic.List<ActionItem>();
 
             //int totalEps = 0;
@@ -2564,17 +2553,23 @@ namespace TVRename
             }
         }
 
+        public void NoProgress(int pct)
+        {
+        }
+
+
         public void ScanWorker(Object o)
         {
             ShowItem specific = (ShowItem)(o);
 
-            while ((ScanProgDlg == null) || (!ScanProgDlg.Ready))
+            while (!Args.Hide && ((ScanProgDlg == null) || (!ScanProgDlg.Ready)))
                 Thread.Sleep(10); // wait for thread to create the dialog
 
             TheActionList = new System.Collections.Generic.List<ActionItem>();
+            SetProgressDelegate noProgress = new SetProgressDelegate(NoProgress);
 
             if (Settings.RenameCheck || Settings.MissingCheck)
-              RenameAndMissingCheck(ScanProgDlg.MediaLibProg, specific);
+                RenameAndMissingCheck(ScanProgDlg == null ? noProgress : ScanProgDlg.MediaLibProg, specific);
 
             if (Settings.MissingCheck)
             {
@@ -2585,7 +2580,7 @@ namespace TVRename
 
                 if (Settings.SearchLocally && MissingItemsInList(TheActionList))
                 {
-                    LookForMissingEps(ScanProgDlg.LocalSearchProg);
+                    LookForMissingEps(ScanProgDlg == null ? noProgress : ScanProgDlg.LocalSearchProg);
                     RemoveIgnored();
                 }
 
@@ -2594,7 +2589,7 @@ namespace TVRename
 
                 if (Settings.CheckuTorrent && MissingItemsInList(TheActionList))
                 {
-                    CheckAgainstuTorrent(ScanProgDlg.uTorrentProg);
+                    CheckAgainstuTorrent(ScanProgDlg == null ? noProgress : ScanProgDlg.uTorrentProg);
                     RemoveIgnored();
                 }
 
@@ -2603,20 +2598,18 @@ namespace TVRename
 
                 if (Settings.SearchRSS && MissingItemsInList(TheActionList))
                 {
-                    RSSSearch(ScanProgDlg.RSSProg);
+                    RSSSearch(ScanProgDlg == null ? noProgress : ScanProgDlg.RSSProg);
                     RemoveIgnored();
                 }
             }
             if (ActionCancel)
                 return;
             
-            //if (Settings.FolderJpg)
-                // ActionFolderJPGCheck(ScanProgDlg.FolderThumbsProg, specific);
-
             // sort Action list by type
             TheActionList.Sort(new ActionSorter());
 
-            ScanProgDlg.Done();
+            if (ScanProgDlg != null)
+                ScanProgDlg.Done();
         }
 
 

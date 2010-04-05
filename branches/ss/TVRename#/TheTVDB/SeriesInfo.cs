@@ -221,6 +221,8 @@ namespace TVRename
                 message += "\r\n" + e.Message;
 
                 MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                throw new TVDBException(e.Message);
             }
         } // LoadXml
 

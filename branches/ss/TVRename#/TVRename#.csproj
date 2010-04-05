@@ -66,6 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\IPC.cs" />
     <Compile Include="Forms\ActorsGrid.cs">
       <SubType>Form</SubType>

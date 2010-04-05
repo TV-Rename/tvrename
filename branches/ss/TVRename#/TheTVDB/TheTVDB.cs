@@ -31,6 +31,15 @@ namespace TVRename
         tmZIP = 4
     }
 
+    class TVDBException : System.Exception
+    {
+        // Thrown if an error occurs in the XML when reading TheTVDB.xml
+        public TVDBException(String message)
+            : base(message)
+        {
+        }
+    }
+
     public class TheTVDB
     {
         private long Srv_Time; // only update this after a 100% successful download
@@ -914,7 +923,8 @@ namespace TVRename
                 string message = "Error processing data from TheTVDB (top level).";
                 message += "\r\n" + e.Message;
                 MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+
+                throw new TVDBException(e.Message);
             }
             finally
             {

@@ -50,8 +50,13 @@ namespace TVRename
     public partial class UI : Form
     {
 
-        public delegate void IPCBringToFrontDelegate();
-        public IPCBringToFrontDelegate IPCBringToForeground;
+        public delegate void IPCDelegate();
+
+        public IPCDelegate IPCBringToForeground;
+        public IPCDelegate IPCScan;
+        public IPCDelegate IPCDoAll;
+        public IPCDelegate IPCQuit;
+        
         private IPCMethods IPC;
 
         public SetProgressDelegate SetProgress;
@@ -84,55 +89,10 @@ namespace TVRename
             Interlocked.Decrement(ref Busy);
         }
 
-        public UI(string[] args)
+        public UI(TVDoc doc)
         {
-            bool ok = true;
-            string hint = "";
+            mDoc = doc;
             
-            InternalCheckChange = false;
-
-            if ((args.Length == 1) && (args[0].ToLower() == "/recover"))
-            {
-                ok = false; // force recover dialog
-                hint = "Recover manually requested.";
-            }
-
-            FileInfo tvdbFile = TVDoc.TVDBFile();
-            FileInfo settingsFile = TVDoc.TVDocSettingsFile();
-
-            do // loop until no problems loading settings & tvdb cache files
-            {
-                if (!ok) // something went wrong last time around, ask the user what to do
-                {
-                    RecoverXML rec = new RecoverXML(hint);
-                    if (rec.ShowDialog() == DialogResult.OK)
-                    {
-                        tvdbFile = rec.DBFile;
-                        settingsFile = rec.SettingsFile;
-                    }
-                    else
-                        Environment.Exit(1);
-                }
-
-                // try loading using current settings files
-                mDoc = new TVDoc(args, settingsFile, tvdbFile);
-
-                if (!ok)
-                    mDoc.SetDirty();
-
-                ok = mDoc.LoadOK;
-
-                if (!ok)
-                {
-                    hint = "";
-                    if (!string.IsNullOrEmpty(mDoc.LoadErr))
-                        hint += mDoc.LoadErr;
-                    string h2 = mDoc.GetTVDB(false, "Recover").LoadErr;
-                    if (!string.IsNullOrEmpty(h2))
-                        hint += "\r\n" + h2;
-                }
-            } while (!ok);
-
             Busy = 0;
             mLastEpClicked = null;
             mLastFolderClicked = null;
@@ -142,6 +102,8 @@ namespace TVRename
 
             mInternalChange = 0;
             mFoldersToOpen = new StringList();
+
+            InternalCheckChange = false;
 
             InitializeComponent();
 
@@ -160,7 +122,7 @@ namespace TVRename
 
             lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
 
-            if (mDoc.HasArg("/hide"))
+            if (mDoc.Args.Hide)
             {
                 this.WindowState = FormWindowState.Minimized;
                 this.Visible = false;
@@ -185,6 +147,11 @@ namespace TVRename
 
         private void SetupIPC()
         {
+            IPCBringToForeground += this.ShowYourself;
+            IPCScan += this.ScanAll;
+            IPCDoAll += this.ActionAll;
+            IPCQuit += this.Close;
+
             //Instantiate our server channel.
             var channel = new IpcServerChannel("TVRenameChannel");
 
@@ -197,10 +164,7 @@ namespace TVRename
                 "IPCMethods",
                 WellKnownObjectMode.Singleton);
 
-            IPCBringToForeground += this.ShowYourself;
-
-            IPC = new IPCMethods();
-            IPC.SetUI(this);
+            IPC = new IPCMethods(this, mDoc);
         }
 
         public void SetProgressActual(int p)
@@ -216,51 +180,15 @@ namespace TVRename
 
         public void ProcessArgs()
         {
-            bool quit = mDoc.HasArg("/quit");
+            // TODO: Unify command line handling between here and in Program.cs
 
-            if (mDoc.HasArg("/hide")) // /hide implies /quit
-                quit = true;
-
-            // process command line arguments, does not include application path
-            //array<String ^> ^args = mDoc->GetArgs();
-            //for (int i=0;i<args->Length;i++)
-            //{
-            //String ^arg = args[i]->ToLower();
-            //            
-            //			if (arg == "/missingcheck")
-            //			{
-            //			tabControl1->SelectedIndex = 2;
-            //			bnDoMissingCheck_Click(nullptr,nullptr);
-            //			}
-            //			else if (arg == "/exportmissingxml")
-            //			mDoc->ExportMissingXML(args[++i]);
-            //			else if (arg == "/exportmissingcsv")
-            //			mDoc->ExportMissingCSV(args[++i]);
-            //			else if (arg == "/renamingcheck")
-            //			{
-            //			tabControl1->SelectedIndex = 1;
-            //			bnRenameCheck_Click(nullptr,nullptr);
-            //			}
-            //			else if (arg == "/exportrenamingxml")
-            //			mDoc->ExportRenamingXML(args[++i]);
-            //			else if (arg == "/renamingdo")
-            //			bnRenameDoRenaming_Click(nullptr,nullptr);
-            //			else if (arg == "/fnocheck")
-            //			{
-            //			tabControl1->SelectedIndex = 2;
-            //			bnFindMissingStuff_Click(nullptr,nullptr);
-            //			}
-            //			else if (arg == "exportfnoxml")
-            //			mDoc->ExportFOXML(args[++i]);
-            //			else if (arg == "/fnodo")
-            //			bnDoMovingAndCopying_Click(nullptr,nullptr);
-            //			
-            //}
-
-            if (quit)
+            if (mDoc.Args.Scan || mDoc.Args.DoAll) // doall implies scan
+                ScanAll();
+            if (mDoc.Args.DoAll)
+                ActionAll();
+            if (mDoc.Args.Quit || mDoc.Args.Hide)
                 this.Close();
         }
-
 
         ~UI()
         {
@@ -287,7 +215,7 @@ namespace TVRename
 
         private void UI_Load(object sender, System.EventArgs e)
         {
-            this.ShowInTaskbar = mDoc.Settings.ShowInTaskbar && !mDoc.HasArg("/hide");
+            this.ShowInTaskbar = mDoc.Settings.ShowInTaskbar && !mDoc.Args.Hide;
 
             foreach (TabPage tp in tabControl1.TabPages) // grr! TODO: why does it go white?
                 tp.BackColor = System.Drawing.SystemColors.Control;
@@ -303,7 +231,6 @@ namespace TVRename
                 BGDownloadTimer.Start();
 
             quickTimer.Start();
-            //ProcessArgs();
         }
 
         private ListView ListViewByName(string name)
@@ -352,7 +279,7 @@ namespace TVRename
 
         private bool LoadLayoutXML()
         {
-            if (mDoc.HasArg("/hide"))
+            if (mDoc.Args.Hide)
                 return true;
 
             bool ok = true;
@@ -422,7 +349,7 @@ namespace TVRename
 
         private bool SaveLayoutXML()
         {
-            if (mDoc.HasArg("/hide"))
+            if (mDoc.Args.Hide)
                 return true;
 
             XmlWriterSettings settings = new XmlWriterSettings();
@@ -1940,7 +1867,7 @@ namespace TVRename
 
         public void ShowHideNotificationIcon()
         {
-            notifyIcon1.Visible = mDoc.Settings.NotificationAreaIcon && !mDoc.HasArg("/hide");
+            notifyIcon1.Visible = mDoc.Settings.NotificationAreaIcon && !mDoc.Args.Hide;
         }
         public void statisticsToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
@@ -2438,9 +2365,14 @@ namespace TVRename
         }
         private void bnActionCheck_Click(object sender, System.EventArgs e)
         {
-            Scan(null);
+            ScanAll();
         }
 
+        private void ScanAll()
+        {
+            tabControl1.SelectedTab = tbAllInOne;
+            Scan(null);
+        }
         private void Scan(ShowItem s)
         {
             MoreBusy();
@@ -2600,6 +2532,10 @@ namespace TVRename
         }
 
         private void bnActionAction_Click(object sender, System.EventArgs e)
+        {
+            ActionAction(true);
+        }
+        void ActionAll()
         {
             ActionAction(true);
         }
