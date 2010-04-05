@@ -1,16 +1,14 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
+// 
 using System.Windows.Forms;
 
 namespace TVRename
 {
-
     /// <summary>
     /// Summary for UpcomingPopup
     ///
@@ -26,8 +24,8 @@ namespace TVRename
 
         public UpcomingPopup(TVDoc doc)
         {
-            mDoc = doc;
-            InitializeComponent();
+            this.mDoc = doc;
+            this.InitializeComponent();
             //
             //TODO: Add the constructor code here
             //
@@ -40,7 +38,7 @@ namespace TVRename
             this.Left = screenWidth - this.Width;
             this.Top = screenHeight - this.Height;
 
-            FillSelf();
+            this.FillSelf();
         }
 
         private void TimerOfDeath_Tick(object sender, System.EventArgs e)
@@ -50,12 +48,12 @@ namespace TVRename
 
         private void FillSelf()
         {
-            lvUpcoming.BeginUpdate();
-            lvUpcoming.Items.Clear();
+            this.lvUpcoming.BeginUpdate();
+            this.lvUpcoming.Items.Clear();
 
             const int kN = 5;
 
-            ProcessedEpisodeList next5 = mDoc.NextNShows(kN, 9999);
+            ProcessedEpisodeList next5 = this.mDoc.NextNShows(kN, 9999);
 
             if (next5 != null)
             {
@@ -65,39 +63,39 @@ namespace TVRename
                     lvi.Text = ei.HowLong();
                     lvi.SubItems.Add(ei.DayOfWeek());
                     lvi.SubItems.Add(ei.TimeOfDay());
-                    lvi.SubItems.Add(mDoc.Settings.NamingStyle.NameForExt(ei, null));
-                    lvUpcoming.Items.Add(lvi);
+                    lvi.SubItems.Add(this.mDoc.Settings.NamingStyle.NameForExt(ei, null));
+                    this.lvUpcoming.Items.Add(lvi);
                 }
-                if (lvUpcoming.Items.Count > 0)
+                if (this.lvUpcoming.Items.Count > 0)
                 {
-                    int h1 = lvUpcoming.Items[0].GetBounds(ItemBoundsPortion.Entire).Height + 6;
-                    this.Height = (h1 * lvUpcoming.Items.Count);
+                    int h1 = this.lvUpcoming.Items[0].GetBounds(ItemBoundsPortion.Entire).Height + 6;
+                    this.Height = (h1 * this.lvUpcoming.Items.Count);
                 }
             }
 
             int w = 0;
-            for (int i = 0; i < lvUpcoming.Columns.Count; i++)
+            for (int i = 0; i < this.lvUpcoming.Columns.Count; i++)
             {
-                lvUpcoming.Columns[i].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                w += lvUpcoming.Columns[i].Width;
+                this.lvUpcoming.Columns[i].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                w += this.lvUpcoming.Columns[i].Width;
             }
 
-            lvUpcoming.Width = w;
-            lvUpcoming.SelectedIndices.Clear();
-            hiddenButton.Select();
+            this.lvUpcoming.Width = w;
+            this.lvUpcoming.SelectedIndices.Clear();
+            this.hiddenButton.Select();
 
-            lvUpcoming.EndUpdate();
+            this.lvUpcoming.EndUpdate();
         }
 
         private void lvUpcoming_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            lvUpcoming.SelectedIndices.Clear();
-            hiddenButton.Select();
+            this.lvUpcoming.SelectedIndices.Clear();
+            this.hiddenButton.Select();
         }
 
         private void lvUpcoming_Enter(object sender, System.EventArgs e)
         {
-            hiddenButton.Select();
+            this.hiddenButton.Select();
         }
     }
 }

@@ -1,20 +1,18 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
+// 
+using System.Xml;
 
 // Per-season sets of rules for manipulating episodes from thetvdb into multi-episode files,
 // removing, adding, swapping them around, etc.
 
-using System.Xml;
-
 namespace TVRename
 {
-    public enum RuleAction : int
+    public enum RuleAction
     {
         kRemove,
         kSwap,
@@ -35,18 +33,12 @@ namespace TVRename
 
         public ShowRule()
         {
-            SetToDefaults();
+            this.SetToDefaults();
         }
 
-        public void SetToDefaults()
-        {
-            DoWhatNow = RuleAction.kIgnoreEp;
-            First = Second = -1;
-            UserSuppliedText = "";
-        }
         public ShowRule(XmlReader reader)
         {
-            SetToDefaults();
+            this.SetToDefaults();
             reader.Read();
             while (reader.Name != "Rule")
                 return;
@@ -55,49 +47,54 @@ namespace TVRename
             while (reader.Name != "Rule")
             {
                 if (reader.Name == "DoWhatNow")
-                    DoWhatNow = (RuleAction)reader.ReadElementContentAsInt();
+                    this.DoWhatNow = (RuleAction) reader.ReadElementContentAsInt();
                 else if (reader.Name == "First")
-                    First = reader.ReadElementContentAsInt();
+                    this.First = reader.ReadElementContentAsInt();
                 else if (reader.Name == "Second")
-                    Second = reader.ReadElementContentAsInt();
+                    this.Second = reader.ReadElementContentAsInt();
                 else if (reader.Name == "Text")
-                    UserSuppliedText = reader.ReadElementContentAsString();
+                    this.UserSuppliedText = reader.ReadElementContentAsString();
                 else
                     reader.ReadOuterXml();
             }
         }
 
-
         public ShowRule(ShowRule O)
         {
-            DoWhatNow = O.DoWhatNow;
-            First = O.First;
-            Second = O.Second;
-            UserSuppliedText = O.UserSuppliedText;
+            this.DoWhatNow = O.DoWhatNow;
+            this.First = O.First;
+            this.Second = O.Second;
+            this.UserSuppliedText = O.UserSuppliedText;
         }
 
+        public void SetToDefaults()
+        {
+            this.DoWhatNow = RuleAction.kIgnoreEp;
+            this.First = this.Second = -1;
+            this.UserSuppliedText = "";
+        }
 
         public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("Rule");
             writer.WriteStartElement("DoWhatNow");
-            writer.WriteValue((int)DoWhatNow);
+            writer.WriteValue((int) this.DoWhatNow);
             writer.WriteEndElement();
             writer.WriteStartElement("First");
-            writer.WriteValue(First);
+            writer.WriteValue(this.First);
             writer.WriteEndElement();
             writer.WriteStartElement("Second");
-            writer.WriteValue(Second);
+            writer.WriteValue(this.Second);
             writer.WriteEndElement();
             writer.WriteStartElement("Text");
-            writer.WriteValue(UserSuppliedText);
+            writer.WriteValue(this.UserSuppliedText);
             writer.WriteEndElement();
             writer.WriteEndElement(); // ShowRule
         }
 
         public string ActionInWords()
         {
-            switch (DoWhatNow)
+            switch (this.DoWhatNow)
             {
                 case RuleAction.kIgnoreEp:
                     return "Ignore";
@@ -119,8 +116,5 @@ namespace TVRename
                     return "<Unknown>";
             }
         }
-
     }
-
-
-} // namepsace
+}

@@ -1,51 +1,47 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at http://code.google.com/p/tvrename/
+// 
+// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// 
 using System;
-using System.ComponentModel;
 using System.Collections;
 using System.Windows.Forms;
-using System.Data;
-using System.Drawing;
-using System.IO;
-//
-// Main website for TVRename is http://tvrename.com
-//
-// Source code available at http://code.google.com/p/tvrename/
-//
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
 
 // Sorting IComparer classes used by the ListViews in UI.cs
 
 namespace TVRename
 {
-
     public class TextSorter : IComparer
     {
         private int col;
 
         public TextSorter()
         {
-            col = 0;
+            this.col = 0;
         }
 
         public TextSorter(int column)
         {
-            col = column;
+            this.col = column;
         }
+
+        #region IComparer Members
 
         public virtual int Compare(Object xx, Object yy)
         {
             ListViewItem x = xx as ListViewItem;
             ListViewItem y = yy as ListViewItem;
-            return string.Compare(x.SubItems[col].Text, y.SubItems[col].Text);
+            return string.Compare(x.SubItems[this.col].Text, y.SubItems[this.col].Text);
         }
+
+        #endregion
     }
-  
 
     public class DateSorterWTW : IComparer
     {
-        public DateSorterWTW()
-        {
-        }
+        #region IComparer Members
 
         public virtual int Compare(Object x, Object y)
         {
@@ -54,7 +50,7 @@ namespace TVRename
 
             try
             {
-                d1 = ((Episode)((x as ListViewItem).Tag)).GetAirDateDT(true);
+                d1 = ((Episode) ((x as ListViewItem).Tag)).GetAirDateDT(true);
             }
             catch
             {
@@ -63,7 +59,7 @@ namespace TVRename
 
             try
             {
-                d2 = ((Episode)((y as ListViewItem).Tag)).GetAirDateDT(true);
+                d2 = ((Episode) ((y as ListViewItem).Tag)).GetAirDateDT(true);
             }
             catch
             {
@@ -72,38 +68,41 @@ namespace TVRename
 
             if ((d1 == null) && (d2 == null))
                 return 0;
-            else if (d1 == null)
+            if (d1 == null)
                 return -1;
-            else if (d2 == null)
+            if (d2 == null)
                 return 1;
             return d1.Value.CompareTo(d2.Value);
         }
+
+        #endregion
     }
-   
+
     public class DaySorter : IComparer
     {
         private int col;
 
         public DaySorter()
         {
-            col = 0;
+            this.col = 0;
         }
 
         public DaySorter(int column)
         {
-            col = column;
+            this.col = column;
         }
+
+        #region IComparer Members
 
         public virtual int Compare(Object x, Object y)
         {
             int d1 = 8;
             int d2 = 8;
 
-
             try
             {
-                string t1 = (x as ListViewItem).SubItems[col].Text;
-                string t2 = (y as ListViewItem).SubItems[col].Text;
+                string t1 = (x as ListViewItem).SubItems[this.col].Text;
+                string t2 = (y as ListViewItem).SubItems[this.col].Text;
 
                 DateTime now = DateTime.Now;
 
@@ -121,6 +120,8 @@ namespace TVRename
 
             return d1 - d2;
         }
+
+        #endregion
     }
 
     public class NumberAsTextSorter : IComparer
@@ -129,20 +130,22 @@ namespace TVRename
 
         public NumberAsTextSorter()
         {
-            col = 0;
+            this.col = 0;
         }
 
         public NumberAsTextSorter(int column)
         {
-            col = column;
+            this.col = column;
         }
+
+        #region IComparer Members
 
         public virtual int Compare(Object x, Object y)
         {
             int one;
             int two;
-            string s1 = ((x as ListViewItem).SubItems)[col].Text;
-            string s2 = ((y as ListViewItem).SubItems)[col].Text;
+            string s1 = ((x as ListViewItem).SubItems)[this.col].Text;
+            string s2 = ((y as ListViewItem).SubItems)[this.col].Text;
             if (string.IsNullOrEmpty(s1))
                 s1 = "-1";
             if (string.IsNullOrEmpty(s2))
@@ -150,7 +153,7 @@ namespace TVRename
 
             try
             {
-                one = System.Convert.ToInt32(s1);
+                one = Convert.ToInt32(s1);
             }
             catch
             {
@@ -158,7 +161,7 @@ namespace TVRename
             }
             try
             {
-                two = System.Convert.ToInt32(s2);
+                two = Convert.ToInt32(s2);
             }
             catch
             {
@@ -167,5 +170,7 @@ namespace TVRename
 
             return one - two;
         }
+
+        #endregion
     }
 }

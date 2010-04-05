@@ -1,17 +1,10 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
-
-// Talk to the TheTVDB web API, and get tv series info
-
-// Hierarchy is:
-//   TheTVDB -> Series (class SeriesInfo) -> Seasons (class Season) -> Episodes (class Episode)
-
+// 
 using System;
 using System.IO;
 using System.Net;
@@ -19,7 +12,13 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+
 using Ionic.Utils.Zip;
+
+// Talk to the TheTVDB web API, and get tv series info
+
+// Hierarchy is:
+//   TheTVDB -> Series (class SeriesInfo) -> Seasons (class Season) -> Episodes (class Episode)
 
 namespace TVRename
 {
@@ -31,53 +30,88 @@ namespace TVRename
         tmZIP = 4
     }
 
+    class TVDBException : System.Exception
+    {
+        // Thrown if an error occurs in the XML when reading TheTVDB.xml
+        public TVDBException(String message)
+            : base(message)
+        {
+        }
+    }
+
     public class TheTVDB
     {
-        private long Srv_Time; // only update this after a 100% successful download
-        private long New_Srv_Time;
-        private System.Collections.Generic.List<int> ForceReloadOn;
-        //System::Threading::Mutex ^Lock;
-
-        private StringList WhoHasLock;
-
+        public string BannerMirror;
         private FileInfo CacheFile;
-        private System.Collections.Generic.Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
+        public bool Connected;
+        public string CurrentDLTask;
         private System.Collections.Generic.List<ExtraEp> ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
+        private System.Collections.Generic.List<int> ForceReloadOn;
+        public System.Collections.Generic.Dictionary<string, string> LanguageList;
+        public StringList LanguagePriorityList;
+        public string LastError;
+        public string LoadErr;
+        public bool LoadOK;
+        private long New_Srv_Time;
+        private System.Collections.Generic.Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
+        private long Srv_Time; // only update this after a 100% successful download
+        private StringList WhoHasLock;
+        public string XMLMirror;
+        public string ZIPMirror;
+
+        public TheTVDB(FileInfo loadFrom, FileInfo cacheFile)
+        {
+            System.Diagnostics.Debug.Assert(cacheFile != null);
+            this.CacheFile = cacheFile;
+
+            this.LastError = "";
+            this.WhoHasLock = new StringList();
+            this.LanguagePriorityList = new StringList();
+            this.LanguagePriorityList.Add("en");
+            this.Connected = false;
+            this.ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
+
+            this.LanguageList = new System.Collections.Generic.Dictionary<string, string>();
+            this.LanguageList["en"] = "English";
+
+            this.XMLMirror = "http://thetvdb.com";
+            this.BannerMirror = "http://thetvdb.com";
+            this.ZIPMirror = "http://thetvdb.com";
+
+            this.Series = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
+            this.New_Srv_Time = this.Srv_Time = 0;
+
+            this.LoadOK = (loadFrom == null) || this.LoadCache(loadFrom);
+
+            this.ForceReloadOn = new System.Collections.Generic.List<int>();
+        }
 
         private void LockEE()
         {
-            Monitor.Enter(ExtraEpisodes);
+            Monitor.Enter(this.ExtraEpisodes);
         }
 
         private void UnlockEE()
         {
-            Monitor.Exit(ExtraEpisodes);
+            Monitor.Exit(this.ExtraEpisodes);
         }
-        public string LastError;
-        public bool Connected;
-        public StringList LanguagePriorityList;
-        public System.Collections.Generic.Dictionary<string, string> LanguageList;
-        public string CurrentDLTask;
-        public string XMLMirror;
-        public string BannerMirror;
-        public string ZIPMirror;
-        public bool LoadOK;
-        public string LoadErr;
 
         public bool HasSeries(int id)
         {
-            return Series.ContainsKey(id);
+            return this.Series.ContainsKey(id);
         }
+
         public SeriesInfo GetSeries(int id)
         {
-            if (!HasSeries(id))
+            if (!this.HasSeries(id))
                 return null;
-            
-            return Series[id];
+
+            return this.Series[id];
         }
+
         public System.Collections.Generic.Dictionary<int, SeriesInfo> GetSeriesDict()
         {
-            return Series;
+            return this.Series;
         }
 
         public void GetLock(string whoFor)
@@ -87,6 +121,7 @@ namespace TVRename
             //            Monitor::Enter(Series);
             //            WhoHasLock->Add(whoFor);
         }
+
         public void Unlock(string whoFor)
         {
             return;
@@ -103,34 +138,7 @@ namespace TVRename
 
         private void Say(string s)
         {
-            CurrentDLTask = s;
-        }
-
-        public TheTVDB(FileInfo loadFrom, FileInfo cacheFile)
-        {
-            System.Diagnostics.Debug.Assert(cacheFile != null);
-            CacheFile = cacheFile;
-
-            LastError = "";
-            WhoHasLock = new StringList();
-            LanguagePriorityList = new StringList();
-            LanguagePriorityList.Add("en");
-            Connected = false;
-            ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
-
-            LanguageList = new System.Collections.Generic.Dictionary<string, string>();
-            LanguageList["en"] = "English";
-
-            XMLMirror = "http://thetvdb.com";
-            BannerMirror = "http://thetvdb.com";
-            ZIPMirror = "http://thetvdb.com";
-
-            Series = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
-            New_Srv_Time = Srv_Time = 0;
-
-            LoadOK = (loadFrom == null) || LoadCache(loadFrom);
-
-            ForceReloadOn = new System.Collections.Generic.List<int>();
+            this.CurrentDLTask = s;
         }
 
         public bool LoadCache(FileInfo loadFrom)
@@ -142,16 +150,16 @@ namespace TVRename
             try
             {
                 fs = loadFrom.Open(FileMode.Open);
-                bool r = ProcessTVDBResponse(fs);
+                bool r = this.ProcessTVDBResponse(fs);
                 fs.Close();
                 fs = null;
                 if (r)
-                    UpdatesDoneOK();
+                    this.UpdatesDoneOK();
                 return r;
             }
             catch (Exception e)
             {
-                LoadErr = loadFrom.Name + " : " + e.Message;
+                this.LoadErr = loadFrom.Name + " : " + e.Message;
 
                 if (fs != null)
                     fs.Close();
@@ -166,38 +174,38 @@ namespace TVRename
         {
             // call when all downloading and updating is done.  updates local Srv_Time with the tentative
             // new_srv_time value.
-            Srv_Time = New_Srv_Time;
-
+            this.Srv_Time = this.New_Srv_Time;
         }
+
         public void SaveCache()
         {
-            GetLock("SaveCache");
+            this.GetLock("SaveCache");
             //String ^fname = System::Windows::Forms::Application::UserAppDataPath+System.IO.Path.DirectorySeparatorChar.ToString()+"TheTVDB.xml";
 
-            if (CacheFile.Exists)
+            if (this.CacheFile.Exists)
             {
                 double hours = 999.9;
-                if (File.Exists(CacheFile.FullName + ".0"))
+                if (File.Exists(this.CacheFile.FullName + ".0"))
                 {
                     // see when the last rotate was, and only rotate if its been at least an hour since the last save
-                    DateTime dt = File.GetLastWriteTime(CacheFile.FullName + ".0");
+                    DateTime dt = File.GetLastWriteTime(this.CacheFile.FullName + ".0");
                     hours = DateTime.Now.Subtract(dt).TotalHours;
                 }
                 if (hours >= 24.0) // rotate the save file daily
                 {
                     for (int i = 8; i >= 0; i--)
                     {
-                        string fn = CacheFile.FullName + "." + i.ToString();
+                        string fn = this.CacheFile.FullName + "." + i;
                         if (File.Exists(fn))
                         {
-                            string fn2 = CacheFile.FullName + "." + (i + 1).ToString();
+                            string fn2 = this.CacheFile.FullName + "." + (i + 1);
                             if (File.Exists(fn2))
                                 File.Delete(fn2);
                             File.Move(fn, fn2);
                         }
                     }
 
-                    File.Copy(CacheFile.FullName, CacheFile.FullName + ".0");
+                    File.Copy(this.CacheFile.FullName, this.CacheFile.FullName + ".0");
                 }
             }
 
@@ -206,22 +214,21 @@ namespace TVRename
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
-            XmlWriter writer = XmlWriter.Create(CacheFile.FullName, settings);
+            XmlWriter writer = XmlWriter.Create(this.CacheFile.FullName, settings);
             writer.WriteStartDocument();
             writer.WriteStartElement("Data");
             writer.WriteStartAttribute("time");
-            writer.WriteValue(Srv_Time);
+            writer.WriteValue(this.Srv_Time);
             writer.WriteEndAttribute();
 
             string lp = "";
-            foreach (string s in LanguagePriorityList)
+            foreach (string s in this.LanguagePriorityList)
                 lp += s + " ";
             writer.WriteStartAttribute("TVRename_LanguagePriority");
             writer.WriteValue(lp);
             writer.WriteEndAttribute();
 
-
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
             {
                 if (kvp.Value.Srv_LastUpdated != 0)
                 {
@@ -239,46 +246,47 @@ namespace TVRename
 
             writer.WriteEndDocument();
             writer.Close();
-            Unlock("SaveCache");
+            this.Unlock("SaveCache");
         }
 
         public Episode FindEpisodeByID(int id)
         {
-            GetLock("FindEpisodeByID");
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
+            this.GetLock("FindEpisodeByID");
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
             {
                 foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
                 {
                     Season seas = kvp2.Value;
                     foreach (Episode e in seas.Episodes)
+                    {
                         if (e.EpisodeID == id)
                         {
-                            Unlock("FindEpisodeByID");
+                            this.Unlock("FindEpisodeByID");
                             return e;
                         }
+                    }
                 }
             }
-            Unlock("FindEpisodeByID");
+            this.Unlock("FindEpisodeByID");
             return null;
         }
 
         public bool Connect()
         {
-            Connected = GetMirrors() && GetLanguages();
-            return Connected;
+            this.Connected = this.GetMirrors() && this.GetLanguages();
+            return this.Connected;
         }
 
         public string BuildURL(bool withHttpAndKey, bool episodesToo, int code, string lang)
         {
             string r = withHttpAndKey ? "http://thetvdb.com/api/" + APIKey() + "/" : "";
-            r += episodesToo ? "series/" + code.ToString() + "/all/" + lang + ".zip" : "series/" + code.ToString() + "/" + lang + ".xml";
+            r += episodesToo ? "series/" + code + "/all/" + lang + ".zip" : "series/" + code + "/" + lang + ".xml";
             return r;
         }
 
-
         private byte[] GetPageZIP(string url, string extractFile, bool useKey, bool forceReload)
         {
-            byte[] zipped = GetPage(url, useKey, typeMaskBits.tmZIP, forceReload);
+            byte[] zipped = this.GetPage(url, useKey, typeMaskBits.tmZIP, forceReload);
 
             if (zipped == null)
                 return null;
@@ -299,10 +307,11 @@ namespace TVRename
 
             // ZipFile allocates more buffer than is needed, so we need to resize the array before returning it
             byte[] r = theFile.GetBuffer();
-            Array.Resize(ref r, (int)theFile.Length);
+            Array.Resize(ref r, (int) theFile.Length);
 
             return r;
         }
+
         private static string APIKey()
         {
             return "5FEC454623154441"; // tvrename's API key on thetvdb.com
@@ -314,13 +323,13 @@ namespace TVRename
             switch (mirrorType)
             {
                 case typeMaskBits.tmXML:
-                    mirr = XMLMirror;
+                    mirr = this.XMLMirror;
                     break;
                 case typeMaskBits.tmBanner:
-                    mirr = BannerMirror;
+                    mirr = this.BannerMirror;
                     break;
                 case typeMaskBits.tmZIP:
-                    mirr = ZIPMirror;
+                    mirr = this.ZIPMirror;
                     break;
                 default:
                 case typeMaskBits.tmMainSite:
@@ -367,39 +376,41 @@ namespace TVRename
             }
             catch (WebException e)
             {
-                LastError = CurrentDLTask + " : " + e.Message;
+                this.LastError = this.CurrentDLTask + " : " + e.Message;
                 return null;
             }
         }
+
         public void ForgetEverything()
         {
-            GetLock("ForgetEverything");
-            Series.Clear();
-            Connected = false;
-            SaveCache();
-            Unlock("ForgetEverything");
+            this.GetLock("ForgetEverything");
+            this.Series.Clear();
+            this.Connected = false;
+            this.SaveCache();
+            this.Unlock("ForgetEverything");
         }
+
         public void ForgetShow(int id, bool makePlaceholder)
         {
-            GetLock("ForgetShow");
-            if (Series.ContainsKey(id))
+            this.GetLock("ForgetShow");
+            if (this.Series.ContainsKey(id))
             {
-                string name = Series[id].Name;
-                Series.Remove(id);
+                string name = this.Series[id].Name;
+                this.Series.Remove(id);
                 if (makePlaceholder)
                 {
-                    MakePlaceholderSeries(id, name);
-                    ForceReloadOn.Add(id);
+                    this.MakePlaceholderSeries(id, name);
+                    this.ForceReloadOn.Add(id);
                 }
             }
-            Unlock("ForgetShow");
+            this.Unlock("ForgetShow");
         }
 
         public bool GetLanguages()
         {
-            Say("TheTVDB Languages");
+            this.Say("TheTVDB Languages");
 
-            byte[] p = GetPage("languages.xml", true, typeMaskBits.tmMainSite, false);
+            byte[] p = this.GetPage("languages.xml", true, typeMaskBits.tmMainSite, false);
             if (p == null)
                 return false;
             ;
@@ -421,7 +432,7 @@ namespace TVRename
 
             reader.Read(); // move forward one
 
-            LanguageList.Clear();
+            this.LanguageList.Clear();
 
             while (!reader.EOF)
             {
@@ -444,7 +455,7 @@ namespace TVRename
                     if (r.Name == "Language" && !r.IsStartElement())
                     {
                         if ((ID != -1) && (!string.IsNullOrEmpty(name)) && (!string.IsNullOrEmpty(abbrev)))
-                            LanguageList[abbrev] = name;
+                            this.LanguageList[abbrev] = name;
                         break; // end of language whatsit
                     }
 
@@ -460,19 +471,18 @@ namespace TVRename
                 reader.Read(); // move forward one
             }
             return true;
-
         }
 
         public bool GetMirrors()
         {
             // get mirror list
-            Say("TheTVDB Mirrors");
+            this.Say("TheTVDB Mirrors");
 
             StringList XMLMirrorList = new StringList();
             StringList BannerMirrorList = new StringList();
             StringList ZIPMirrorList = new StringList();
 
-            byte[] p = GetPage("mirrors.xml", true, typeMaskBits.tmMainSite, false);
+            byte[] p = this.GetPage("mirrors.xml", true, typeMaskBits.tmMainSite, false);
             if (p == null)
                 return false;
             ;
@@ -516,11 +526,11 @@ namespace TVRename
                     {
                         if ((ID != -1) && (!string.IsNullOrEmpty(mirrorPath)) && (typeMask != -1))
                         {
-                            if ((typeMask & (int)typeMaskBits.tmXML) != 0)
+                            if ((typeMask & (int) typeMaskBits.tmXML) != 0)
                                 XMLMirrorList.Add(mirrorPath);
-                            if ((typeMask & (int)typeMaskBits.tmBanner) != 0)
+                            if ((typeMask & (int) typeMaskBits.tmBanner) != 0)
                                 BannerMirrorList.Add(mirrorPath);
-                            if ((typeMask & (int)typeMaskBits.tmZIP) != 0)
+                            if ((typeMask & (int) typeMaskBits.tmZIP) != 0)
                                 ZIPMirrorList.Add(mirrorPath);
                         }
                         break; // end of mirror whatsit
@@ -540,38 +550,37 @@ namespace TVRename
 
             // choose a random mirror to use
             int c = 0;
-            Random ra = new Random((int)DateTime.Now.Ticks);
+            Random ra = new Random((int) DateTime.Now.Ticks);
             c = ZIPMirrorList.Count;
             if (c != 0)
-                ZIPMirror = ZIPMirrorList[ra.Next(0, c - 1)];
+                this.ZIPMirror = ZIPMirrorList[ra.Next(0, c - 1)];
             c = XMLMirrorList.Count;
             if (c != 0)
-                XMLMirror = XMLMirrorList[ra.Next(0, c - 1)];
+                this.XMLMirror = XMLMirrorList[ra.Next(0, c - 1)];
             c = BannerMirrorList.Count;
             if (c != 0)
-                BannerMirror = BannerMirrorList[ra.Next(0, c - 1)];
+                this.BannerMirror = BannerMirrorList[ra.Next(0, c - 1)];
 
             return true;
         }
 
         public bool GetUpdates()
         {
-            Say("Updates list");
+            this.Say("Updates list");
 
-
-            if (!Connected && !Connect())
+            if (!this.Connected && !this.Connect())
             {
-                Say("");
+                this.Say("");
                 return false;
             }
 
-            long theTime = Srv_Time;
+            long theTime = this.Srv_Time;
 
             if (theTime == 0)
             {
                 // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
                 // This will only happen the first time we do an update, so a false _all update isn't too bad.
-                foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
+                foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
                 {
                     SeriesInfo ser = kvp.Value;
                     if ((theTime == 0) || ((ser.Srv_LastUpdated != 0) && (ser.Srv_LastUpdated < theTime)))
@@ -581,15 +590,17 @@ namespace TVRename
                         Season seas = kvp2.Value;
 
                         foreach (Episode e in seas.Episodes)
+                        {
                             if ((theTime == 0) || ((e.Srv_LastUpdated != 0) && (e.Srv_LastUpdated < theTime)))
                                 theTime = e.Srv_LastUpdated;
+                        }
                     }
                 }
             }
 
             // anything with a srv_lastupdated of 0 should be marked as dirty
             // typically, this'll be placeholder series
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
             {
                 SeriesInfo ser = kvp.Value;
                 if ((ser.Srv_LastUpdated == 0) || (ser.Seasons.Count == 0))
@@ -597,29 +608,31 @@ namespace TVRename
                 foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
                 {
                     foreach (Episode ep in kvp2.Value.Episodes)
+                    {
                         if (ep.Srv_LastUpdated == 0)
                             ep.Dirty = true;
+                    }
                 }
             }
 
             if (theTime == 0)
             {
-                Say("");
+                this.Say("");
                 return true; // that's it for now
             }
 
             long seconds = TimeZone.Epoch() - theTime;
             if (seconds < 3540) // 59 minutes
             {
-                Say("");
+                this.Say("");
                 return true;
             }
 
             string timePeriod = "";
 
-            int howLongDays = (int)(seconds / (60 * 60 * 24));
+            int howLongDays = (int) (seconds / (60 * 60 * 24));
 
-            if ((howLongDays < 1) || (Series.Count == 0))
+            if ((howLongDays < 1) || (this.Series.Count == 0))
                 timePeriod = "day";
             else if ((howLongDays >= 1) && (howLongDays < 7))
                 timePeriod = "week";
@@ -628,20 +641,19 @@ namespace TVRename
             else
                 timePeriod = "all";
 
-
             if (timePeriod != "all")
-                Say("Updates list for the " + timePeriod);
+                this.Say("Updates list for the " + timePeriod);
             else
-                Say("Updates list for everything");
+                this.Say("Updates list for everything");
 
             // http://thetvdb.com/api/5FEC454623154441/updates/updates_day.xml
             // day, week, month, all
 
             string udf = "updates_" + timePeriod;
-            byte[] p = GetPageZIP("updates/" + udf + ".zip", udf + ".xml", true, false);
+            byte[] p = this.GetPageZIP("updates/" + udf + ".zip", udf + ".xml", true, false);
             if (p == null)
             {
-                Say("");
+                this.Say("");
                 return false;
             }
             //BinaryWriter ^fs = gcnew BinaryWriter(gcnew FileStream("c:\\temp\\ud.xml", FileMode::Create));
@@ -649,9 +661,9 @@ namespace TVRename
             //fs->Close();
 
             MemoryStream ms = new MemoryStream(p);
-            Say("");
+            this.Say("");
 
-            return ProcessUpdateList(ms);
+            return this.ProcessUpdateList(ms);
         }
 
         public bool ProcessUpdateList(Stream str)
@@ -672,7 +684,7 @@ namespace TVRename
             if ((reader.Name != "Data") || (reader.AttributeCount != 1))
                 return false;
 
-            New_Srv_Time = int.Parse(reader.GetAttribute("time"));
+            this.New_Srv_Time = int.Parse(reader.GetAttribute("time"));
 
             // what follows is the last update time for a bunch of zero or more series, episodes, and banners
 
@@ -696,10 +708,10 @@ namespace TVRename
                         {
                             if ((ID != -1) && (time != -1))
                             {
-                                if (Series.ContainsKey(ID)) // this is a series we have
+                                if (this.Series.ContainsKey(ID)) // this is a series we have
                                 {
-                                    if (time > Series[ID].Srv_LastUpdated) // newer version on the server
-                                        Series[ID].Dirty = true; // mark as dirty, so it'll be fetched again later
+                                    if (time > this.Series[ID].Srv_LastUpdated) // newer version on the server
+                                        this.Series[ID].Dirty = true; // mark as dirty, so it'll be fetched again later
                                 }
                             }
                             break;
@@ -732,10 +744,10 @@ namespace TVRename
                         {
                             if ((serID != -1) && (time != -1) && (epID != -1))
                             {
-                                if (Series.ContainsKey(serID))
+                                if (this.Series.ContainsKey(serID))
                                 {
                                     bool found = false;
-                                    foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in Series[serID].Seasons)
+                                    foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in this.Series[serID].Seasons)
                                     {
                                         Season seas = kvp2.Value;
 
@@ -753,9 +765,9 @@ namespace TVRename
                                     if (!found)
                                     {
                                         // must be a new episode
-                                        LockEE();
-                                        ExtraEpisodes.Add(new ExtraEp(serID, epID));
-                                        UnlockEE();
+                                        this.LockEE();
+                                        this.ExtraEpisodes.Add(new ExtraEp(serID, epID));
+                                        this.UnlockEE();
                                     }
                                 }
                             }
@@ -777,25 +789,25 @@ namespace TVRename
             } // reader EOF
 
             // if more than 30% of a show's episodes are marked as dirty, just download the entire show again
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in Series)
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
             {
                 int totaleps = 0;
                 int totaldirty = 0;
                 foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                {
                     foreach (Episode ep in kvp2.Value.Episodes)
                     {
                         if (ep.Dirty)
                             totaldirty++;
                         totaleps++;
                     }
+                }
                 if (totaldirty >= totaleps / 3)
                 {
                     kvp.Value.Dirty = true;
                     kvp.Value.Seasons.Clear();
                 }
             }
-
-
 
             return true;
         }
@@ -804,7 +816,6 @@ namespace TVRename
         {
             // Will have one or more series, and episodes
             // all wrapped in <Data> </Data>
-
 
             // e.g.: 
             //<Data>
@@ -823,7 +834,7 @@ namespace TVRename
             // ...
             //</Data>
 
-            GetLock("ProcessTVDBResponse");
+            this.GetLock("ProcessTVDBResponse");
 
             try
             {
@@ -848,10 +859,10 @@ namespace TVRename
                         // first).
 
                         SeriesInfo si = new SeriesInfo(r.ReadSubtree());
-                        if (Series.ContainsKey(si.TVDBCode))
-                            Series[si.TVDBCode].Merge(si, LanguagePriorityList);
+                        if (this.Series.ContainsKey(si.TVDBCode))
+                            this.Series[si.TVDBCode].Merge(si, this.LanguagePriorityList);
                         else
-                            Series[si.TVDBCode] = si;
+                            this.Series[si.TVDBCode] = si;
                         r.Read();
                     }
                     else if (r.Name == "Episode")
@@ -859,11 +870,9 @@ namespace TVRename
                         Episode e = new Episode(null, null, r.ReadSubtree());
                         if (e.OK())
                         {
-                            if (!Series.ContainsKey(e.SeriesID))
-                            {
+                            if (!this.Series.ContainsKey(e.SeriesID))
                                 throw new Exception("Can't find the series to add the episode to (TheTVDB).");
-                            }
-                            SeriesInfo ser = Series[e.SeriesID];
+                            SeriesInfo ser = this.Series[e.SeriesID];
                             Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
 
                             bool added = false;
@@ -889,17 +898,17 @@ namespace TVRename
                     {
                         string time = r.GetAttribute("time");
                         if (time != null)
-                            New_Srv_Time = int.Parse(time);
+                            this.New_Srv_Time = int.Parse(time);
 
                         string lp = r.GetAttribute("TVRename_LanguagePriority");
                         if (lp != null)
                         {
-                            LanguagePriorityList.Clear();
+                            this.LanguagePriorityList.Clear();
 
                             foreach (string s in lp.Split(' '))
                             {
                                 if (!string.IsNullOrEmpty(s))
-                                    LanguagePriorityList.Add(s);
+                                    this.LanguagePriorityList.Add(s);
                             }
                         }
 
@@ -914,154 +923,158 @@ namespace TVRename
                 string message = "Error processing data from TheTVDB (top level).";
                 message += "\r\n" + e.Message;
                 MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+
+                throw new TVDBException(e.Message);
             }
             finally
             {
-                Unlock("ProcessTVDBResponse");
+                this.Unlock("ProcessTVDBResponse");
             }
             return true;
         }
 
         public string PreferredLanguage(int seriesID)
         {
-            if (!Series.ContainsKey(seriesID) || (string.IsNullOrEmpty(Series[seriesID].Language)))
+            if (!this.Series.ContainsKey(seriesID) || (string.IsNullOrEmpty(this.Series[seriesID].Language)))
             {
                 // new series we don't know about, or don't have any language info
-                SeriesInfo ser = DownloadSeriesNow(seriesID, false, true); // pretend we want "en", download overview
+                SeriesInfo ser = this.DownloadSeriesNow(seriesID, false, true); // pretend we want "en", download overview
                 if (ser == null)
                     return "en";
                 string name = ser.Name;
                 ser = null;
-                ForgetShow(seriesID, true);
+                this.ForgetShow(seriesID, true);
 
                 // using the name found, search (which gives all languages)
-                Search(name); // will find all languages available, and pick the "best"
+                this.Search(name); // will find all languages available, and pick the "best"
             }
 
-            if (!Series.ContainsKey(seriesID))
+            if (!this.Series.ContainsKey(seriesID))
             {
-                System.Diagnostics.Debug.Assert(Series.ContainsKey(seriesID));
+                System.Diagnostics.Debug.Assert(this.Series.ContainsKey(seriesID));
                 return "en"; // really shouldn't happen!
             }
             // and we have a language recorded for it
-            SeriesInfo serl = Series[seriesID];
+            SeriesInfo serl = this.Series[seriesID];
             if (!string.IsNullOrEmpty(serl.Language))
                 return serl.Language; // return that language
 
             // otherwise, try for the user's top rated language
-            if (LanguagePriorityList.Count > 0)
-                return (LanguagePriorityList[0]);
+            if (this.LanguagePriorityList.Count > 0)
+                return (this.LanguagePriorityList[0]);
             else
                 return "en";
         }
 
         public bool DoWeForceReloadFor(int code)
         {
-            return ForceReloadOn.Contains(code) || !Series.ContainsKey(code);
+            return this.ForceReloadOn.Contains(code) || !this.Series.ContainsKey(code);
         }
 
         public SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool forceEnglish)
         {
-            bool forceReload = ForceReloadOn.Contains(code);
+            bool forceReload = this.ForceReloadOn.Contains(code);
             string txt = "";
-            if (Series.ContainsKey(code))
-                txt = Series[code].Name;
+            if (this.Series.ContainsKey(code))
+                txt = this.Series[code].Name;
             else
-                txt = "Code " + code.ToString();
+                txt = "Code " + code;
             if (episodesToo)
                 txt += " (Everything)";
             else
                 txt += " Overview";
-            Say(txt);
+            this.Say(txt);
 
-
-            string lang = forceEnglish ? "en" : PreferredLanguage(code);
-            string url = BuildURL(false, episodesToo, code, lang);
-            byte[] p = episodesToo ? GetPageZIP(url, lang + ".xml", true, forceReload) : GetPage(url, true, typeMaskBits.tmXML, forceReload);
+            string lang = forceEnglish ? "en" : this.PreferredLanguage(code);
+            string url = this.BuildURL(false, episodesToo, code, lang);
+            byte[] p = episodesToo ? this.GetPageZIP(url, lang + ".xml", true, forceReload) : this.GetPage(url, true, typeMaskBits.tmXML, forceReload);
             if (p == null)
                 return null;
 
             MemoryStream ms = new MemoryStream(p);
 
-            ProcessTVDBResponse(ms);
+            this.ProcessTVDBResponse(ms);
 
-            ForceReloadOn.Remove(code);
+            this.ForceReloadOn.Remove(code);
 
-            return (Series.ContainsKey(code)) ? Series[code] : null;
+            return (this.Series.ContainsKey(code)) ? this.Series[code] : null;
         }
+
         public bool DownloadEpisodeNow(int seriesID, int episodeID)
         {
-            bool forceReload = ForceReloadOn.Contains(seriesID);
+            bool forceReload = this.ForceReloadOn.Contains(seriesID);
 
             string txt = "";
-            if (Series.ContainsKey(seriesID))
+            if (this.Series.ContainsKey(seriesID))
             {
-                Episode ep = FindEpisodeByID(episodeID);
+                Episode ep = this.FindEpisodeByID(episodeID);
                 string eptxt = "New Episode";
                 if ((ep != null) && (ep.TheSeason != null))
                     eptxt = string.Format("S{0:00}E{1:00}", ep.TheSeason.SeasonNumber, ep.EpNum);
 
-                txt = Series[seriesID].Name + " (" + eptxt + ")";
+                txt = this.Series[seriesID].Name + " (" + eptxt + ")";
             }
             else
                 return false; // shouldn't happen
-            Say(txt);
+            this.Say(txt);
 
-            string url = "episodes/" + episodeID.ToString() + "/" + PreferredLanguage(seriesID) + ".xml";
+            string url = "episodes/" + episodeID + "/" + this.PreferredLanguage(seriesID) + ".xml";
 
-            byte[] p = GetPage(url, true, typeMaskBits.tmXML, forceReload);
+            byte[] p = this.GetPage(url, true, typeMaskBits.tmXML, forceReload);
 
             if (p == null)
                 return false;
 
             MemoryStream ms = new MemoryStream(p);
 
-            return ProcessTVDBResponse(ms);
+            return this.ProcessTVDBResponse(ms);
         }
+
         public SeriesInfo MakePlaceholderSeries(int code, string name)
         {
             if (string.IsNullOrEmpty(name))
                 name = "";
-            Series[code] = new SeriesInfo(name, code);
-            Series[code].Dirty = true;
-            return Series[code];
+            this.Series[code] = new SeriesInfo(name, code);
+            this.Series[code].Dirty = true;
+            return this.Series[code];
         }
 
         public bool EnsureUpdated(int code)
         {
-            if (!Series.ContainsKey(code) || (Series[code].Seasons.Count == 0))
-                return DownloadSeriesNow(code, true, false) != null; // the whole lot!
+            if (!this.Series.ContainsKey(code) || (this.Series[code].Seasons.Count == 0))
+                return this.DownloadSeriesNow(code, true, false) != null; // the whole lot!
 
             bool ok = true;
 
-            if (Series[code].Dirty)
-                ok = (DownloadSeriesNow(code, false, false) != null) && ok;
+            if (this.Series[code].Dirty)
+                ok = (this.DownloadSeriesNow(code, false, false) != null) && ok;
 
-            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in Series[code].Seasons)
+            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in this.Series[code].Seasons)
             {
                 Season seas = kvp.Value;
                 foreach (Episode e in seas.Episodes)
+                {
                     if (e.Dirty)
                     {
-                        LockEE();
-                        ExtraEpisodes.Add(new ExtraEp(e.SeriesID, e.EpisodeID));
-                        UnlockEE();
+                        this.LockEE();
+                        this.ExtraEpisodes.Add(new ExtraEp(e.SeriesID, e.EpisodeID));
+                        this.UnlockEE();
                     }
+                }
             }
 
-            LockEE();
-            foreach (ExtraEp ee in ExtraEpisodes)
+            this.LockEE();
+            foreach (ExtraEp ee in this.ExtraEpisodes)
             {
                 if ((ee.SeriesID == code) && (!ee.Done))
                 {
-                    ok = DownloadEpisodeNow(ee.SeriesID, ee.EpisodeID) && ok;
+                    ok = this.DownloadEpisodeNow(ee.SeriesID, ee.EpisodeID) && ok;
                     ee.Done = true;
                 }
             }
-            UnlockEE();
+            this.UnlockEE();
 
-            ForceReloadOn.Remove(code);
+            this.ForceReloadOn.Remove(code);
 
             return ok;
         }
@@ -1073,44 +1086,43 @@ namespace TVRename
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
             if (isNumber)
-                DownloadSeriesNow(int.Parse(text), false, false);
+                this.DownloadSeriesNow(int.Parse(text), false, false);
 
             // but, the number could also be a name, so continue searching as usual
             text = text.Replace(".", " ");
 
-            byte[] p = GetPage("GetSeries.php?seriesname=" + text + "&language=all", false, typeMaskBits.tmXML, true);
+            byte[] p = this.GetPage("GetSeries.php?seriesname=" + text + "&language=all", false, typeMaskBits.tmXML, true);
 
             if (p == null)
                 return;
 
             MemoryStream ms = new MemoryStream(p);
 
-            ProcessTVDBResponse(ms);
+            this.ProcessTVDBResponse(ms);
         }
-
 
         public string WebsiteURL(int code, int seasid, bool summaryPage)
         {
             // Summary: http://www.thetvdb.com/?tab=series&id=75340&lid=7
             // Season 3: http://www.thetvdb.com/?tab=season&seriesid=75340&seasonid=28289&lid=7
 
-            if (summaryPage || (seasid <= 0) || !Series.ContainsKey(code))
-                return "http://www.thetvdb.com/?tab=series&id=" + code.ToString();
+            if (summaryPage || (seasid <= 0) || !this.Series.ContainsKey(code))
+                return "http://www.thetvdb.com/?tab=series&id=" + code;
             else
-                return "http://www.thetvdb.com/?tab=season&seriesid=" + code.ToString() + "&seasonid=" + seasid.ToString();
+                return "http://www.thetvdb.com/?tab=season&seriesid=" + code + "&seasonid=" + seasid;
         }
 
         // Next episode to air of a given show		
         public Episode NextAiring(int code)
         {
-            if (!Series.ContainsKey(code) || (Series[code].Seasons.Count == 0))
+            if (!this.Series.ContainsKey(code) || (this.Series[code].Seasons.Count == 0))
                 return null; // DownloadSeries(code, true);
 
             Episode next = null;
             DateTime today = DateTime.Now;
             DateTime mostSoonAfterToday = new DateTime(0);
 
-            SeriesInfo ser = Series[code];
+            SeriesInfo ser = this.Series[code];
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in ser.Seasons)
             {
                 Season s = kvp2.Value;
@@ -1120,7 +1132,7 @@ namespace TVRename
                     DateTime? adt = e.GetAirDateDT(true);
                     if (adt != null)
                     {
-                        DateTime dt = (DateTime)adt;
+                        DateTime dt = (DateTime) adt;
                         if ((dt.CompareTo(today) > 0) && ((mostSoonAfterToday.CompareTo(new DateTime(0)) == 0) || (dt.CompareTo(mostSoonAfterToday) < 0)))
                         {
                             mostSoonAfterToday = dt;
@@ -1132,7 +1144,5 @@ namespace TVRename
 
             return next;
         }
-
-
     }
 }

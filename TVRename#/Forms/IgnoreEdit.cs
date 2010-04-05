@@ -1,91 +1,88 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
+// 
 using System.Windows.Forms;
 
 namespace TVRename
 {
+    /// <summary>
+    /// Summary for IgnoreEdit
+    ///
+    /// WARNING: If you change the name of this class, you will need to change the
+    ///          'Resource File Name' property for the managed resource compiler tool
+    ///          associated with all .resx files this class depends on.  Otherwise,
+    ///          the designers will not be able to interact properly with localized
+    ///          resources associated with this form.
+    /// </summary>
+    public partial class IgnoreEdit : Form
+    {
+        private System.Collections.Generic.List<IgnoreItem> DisplayedSet;
+        private System.Collections.Generic.List<IgnoreItem> Ignore;
+        private TVDoc mDoc;
 
-	/// <summary>
-	/// Summary for IgnoreEdit
-	///
-	/// WARNING: If you change the name of this class, you will need to change the
-	///          'Resource File Name' property for the managed resource compiler tool
-	///          associated with all .resx files this class depends on.  Otherwise,
-	///          the designers will not be able to interact properly with localized
-	///          resources associated with this form.
-	/// </summary>
-	public partial class IgnoreEdit : Form
-	{
-		private TVDoc mDoc;
-		private System.Collections.Generic.List<IgnoreItem > Ignore;
-		private System.Collections.Generic.List<IgnoreItem > DisplayedSet;
+        public IgnoreEdit(TVDoc doc)
+        {
+            this.mDoc = doc;
+            this.Ignore = new System.Collections.Generic.List<IgnoreItem>();
 
+            foreach (IgnoreItem ii in this.mDoc.Ignore)
+                this.Ignore.Add(ii);
 
-		public IgnoreEdit(TVDoc doc)
-		{
-			mDoc = doc;
-			Ignore = new System.Collections.Generic.List<IgnoreItem >();
+            this.InitializeComponent();
 
-			foreach (IgnoreItem ii in mDoc.Ignore)
-				Ignore.Add(ii);
+            this.FillList();
+        }
 
-			InitializeComponent();
+        private void bnOK_Click(object sender, System.EventArgs e)
+        {
+            this.mDoc.Ignore = this.Ignore;
+            this.mDoc.SetDirty();
+            this.Close();
+        }
 
-			FillList();
-		}
-
-	    private void bnOK_Click(object sender, System.EventArgs e)
-		 {
-			 mDoc.Ignore = Ignore;
-			 mDoc.SetDirty();
-			 this.Close();
-		 }
-        
         private void bnRemove_Click(object sender, System.EventArgs e)
-		 {
-			 foreach (int i in lbItems.SelectedIndices)
-				 Ignore.Remove(DisplayedSet[i]);
-			 FillList();
-		 }
+        {
+            foreach (int i in this.lbItems.SelectedIndices)
+                this.Ignore.Remove(this.DisplayedSet[i]);
+            this.FillList();
+        }
 
-		 private void FillList()
-		 {
-			 lbItems.BeginUpdate();
-			 lbItems.Items.Clear();
+        private void FillList()
+        {
+            this.lbItems.BeginUpdate();
+            this.lbItems.Items.Clear();
 
-			 string f = txtFilter.Text.ToLower();
-			 bool all = string.IsNullOrEmpty(f);
+            string f = this.txtFilter.Text.ToLower();
+            bool all = string.IsNullOrEmpty(f);
 
-			 DisplayedSet = new System.Collections.Generic.List<IgnoreItem >();
+            this.DisplayedSet = new System.Collections.Generic.List<IgnoreItem>();
 
-			 foreach (IgnoreItem ii in Ignore)
-			 {
-				 string s = ii.FileAndPath;
-				 if (all || s.ToLower().Contains(f))
-				 {
-					 lbItems.Items.Add(s);
-					 DisplayedSet.Add(ii);
-				 }
-			 }
+            foreach (IgnoreItem ii in this.Ignore)
+            {
+                string s = ii.FileAndPath;
+                if (all || s.ToLower().Contains(f))
+                {
+                    this.lbItems.Items.Add(s);
+                    this.DisplayedSet.Add(ii);
+                }
+            }
 
-			 lbItems.EndUpdate();
-		 }
+            this.lbItems.EndUpdate();
+        }
 
         private void txtFilter_TextChanged(object sender, System.EventArgs e)
-		 {
-			 timer1.Start();
-		 }
+        {
+            this.timer1.Start();
+        }
 
         private void timer1_Tick(object sender, System.EventArgs e)
-		 {
-			 timer1.Stop();
-			 FillList();
-		 }
+        {
+            this.timer1.Stop();
+            this.FillList();
+        }
     }
 }
