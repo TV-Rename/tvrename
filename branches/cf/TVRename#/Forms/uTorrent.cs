@@ -1,17 +1,15 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
+// 
 using System.Windows.Forms;
 using System.IO;
 
 namespace TVRename
 {
-
     /// <summary>
     /// Summary for uTorrent
     ///
@@ -25,62 +23,63 @@ namespace TVRename
     {
         private SetProgressDelegate SetProg;
 
-        private System.IO.FileSystemWatcher watcher;
-
         private TVDoc mDoc;
+        private System.IO.FileSystemWatcher watcher;
 
         public uTorrent(TVDoc doc, SetProgressDelegate progdel)
         {
-            mDoc = doc;
-            SetProg = progdel;
+            this.mDoc = doc;
+            this.SetProg = progdel;
 
-            InitializeComponent();
+            this.InitializeComponent();
 
-            watcher.Error += new ErrorEventHandler(WatcherError);
+            this.watcher.Error += this.WatcherError;
 
             bool en = false;
-            foreach (ActionItem i in mDoc.TheActionList)
+            foreach (ActionItem i in this.mDoc.TheActionList)
+            {
                 if (i.Type == ActionType.kMissing)
                 {
                     en = true;
                     break;
                 }
-            cbUTMatchMissing.Enabled = en;
-            EnableDisable();
+            }
+            this.cbUTMatchMissing.Enabled = en;
+            this.EnableDisable();
 
-            bnUTRefresh_Click(null, null);
+            this.bnUTRefresh_Click(null, null);
         }
 
         private void bnUTRefresh_Click(object sender, System.EventArgs e)
         {
-            RefreshResumeDat();
+            this.RefreshResumeDat();
         }
 
         private void UTSelectNone()
         {
-            for (int i = 0; i < lbUTTorrents.Items.Count; i++)
-                lbUTTorrents.SetItemChecked(i, false);
+            for (int i = 0; i < this.lbUTTorrents.Items.Count; i++)
+                this.lbUTTorrents.SetItemChecked(i, false);
         }
 
         private void UTSelectAll()
         {
-            for (int i = 0; i < lbUTTorrents.Items.Count; i++)
-                lbUTTorrents.SetItemChecked(i, true);
+            for (int i = 0; i < this.lbUTTorrents.Items.Count; i++)
+                this.lbUTTorrents.SetItemChecked(i, true);
         }
 
         private void bnUTAll_Click(object sender, System.EventArgs e)
         {
-            UTSelectAll();
+            this.UTSelectAll();
         }
 
         private void bnUTNone_Click(object sender, System.EventArgs e)
         {
-            UTSelectNone();
+            this.UTSelectNone();
         }
 
         private bool CheckResumeDatPath()
         {
-            if (string.IsNullOrEmpty(mDoc.Settings.ResumeDatPath) || !File.Exists(mDoc.Settings.ResumeDatPath))
+            if (string.IsNullOrEmpty(this.mDoc.Settings.ResumeDatPath) || !File.Exists(this.mDoc.Settings.ResumeDatPath))
             {
                 MessageBox.Show("Please set the resume.dat path in Preferences before using this feature", "µTorrent", MessageBoxButtons.OK);
                 return false;
@@ -90,53 +89,53 @@ namespace TVRename
 
         private void RefreshResumeDat()
         {
-            if (!CheckResumeDatPath())
+            if (!this.CheckResumeDatPath())
                 return;
 
             StringList checkedItems = new StringList();
-            foreach (string torrent in lbUTTorrents.CheckedItems)
+            foreach (string torrent in this.lbUTTorrents.CheckedItems)
                 checkedItems.Add(torrent);
 
-            lbUTTorrents.Items.Clear();
+            this.lbUTTorrents.Items.Clear();
             // open resume.dat file, fill checked list box with torrents available to choose from
 
-            string file = mDoc.Settings.ResumeDatPath;
+            string file = this.mDoc.Settings.ResumeDatPath;
             if (!File.Exists(file))
-            {
                 return;
-            }
             BEncodeLoader bel = new BEncodeLoader();
             BTFile resumeDat = bel.Load(file);
             if (resumeDat == null)
-            {
                 return;
-            }
             BTDictionary dict = resumeDat.GetDict();
             for (int i = 0; i < dict.Items.Count; i++)
             {
                 BTItem it = dict.Items[i];
                 if (it.Type == BTChunk.kDictionaryItem)
                 {
-                    BTDictionaryItem d2 = (BTDictionaryItem)(it);
+                    BTDictionaryItem d2 = (BTDictionaryItem) (it);
                     if ((d2.Key != ".fileguard") && (d2.Data.Type == BTChunk.kDictionary))
-                        lbUTTorrents.Items.Add(d2.Key);
+                        this.lbUTTorrents.Items.Add(d2.Key);
                 }
             }
 
             foreach (string torrent in checkedItems)
-                for (int i = 0; i < lbUTTorrents.Items.Count; i++)
-                    if (lbUTTorrents.Items[i].ToString() == torrent)
-                        lbUTTorrents.SetItemChecked(i, true);
+            {
+                for (int i = 0; i < this.lbUTTorrents.Items.Count; i++)
+                {
+                    if (this.lbUTTorrents.Items[i].ToString() == torrent)
+                        this.lbUTTorrents.SetItemChecked(i, true);
+                }
+            }
         }
 
         private void bnUTGo_Click(object sender, System.EventArgs e)
         {
-            if (!CheckResumeDatPath())
+            if (!this.CheckResumeDatPath())
                 return;
 
-            string searchFolder = txtUTSearchFolder.Text;
-            string resumeDatFile = mDoc.Settings.ResumeDatPath;
-            bool testMode = chkUTTest.Checked;
+            string searchFolder = this.txtUTSearchFolder.Text;
+            string resumeDatFile = this.mDoc.Settings.ResumeDatPath;
+            bool testMode = this.chkUTTest.Checked;
 
             if (!File.Exists(resumeDatFile))
                 return;
@@ -154,18 +153,16 @@ namespace TVRename
             //					 return;
             //
 
-            lvUTResults.Items.Clear();
+            this.lvUTResults.Items.Clear();
 
-            BTResume btp = new BTResume(SetProg, resumeDatFile);
+            BTResume btp = new BTResume(this.SetProg, resumeDatFile);
 
             StringList sl = new StringList();
 
-            foreach (string torrent in lbUTTorrents.CheckedItems)
+            foreach (string torrent in this.lbUTTorrents.CheckedItems)
                 sl.Add(torrent);
 
-            btp.DoWork(sl, searchFolder, lvUTResults, cbUTUseHashing.Checked, cbUTMatchMissing.Checked,
-                cbUTSetPrio.Checked, testMode, chkUTSearchSubfolders.Checked,
-                mDoc.TheActionList, mDoc.Settings.FNPRegexs);
+            btp.DoWork(sl, searchFolder, this.lvUTResults, this.cbUTUseHashing.Checked, this.cbUTMatchMissing.Checked, this.cbUTSetPrio.Checked, testMode, this.chkUTSearchSubfolders.Checked, this.mDoc.TheActionList, this.mDoc.Settings.FNPRegexs);
 
             if (!testMode)
                 RestartUTorrent();
@@ -173,19 +170,18 @@ namespace TVRename
 
         private void cbUTUseHashing_CheckedChanged(object sender, System.EventArgs e)
         {
-            EnableDisable();
+            this.EnableDisable();
         }
 
         private void EnableDisable()
         {
-            bool en = cbUTUseHashing.Checked;
-            txtUTSearchFolder.Enabled = en;
-            bnUTBrowseSearchFolder.Enabled = en;
-            chkUTSearchSubfolders.Enabled = en;
+            bool en = this.cbUTUseHashing.Checked;
+            this.txtUTSearchFolder.Enabled = en;
+            this.bnUTBrowseSearchFolder.Enabled = en;
+            this.chkUTSearchSubfolders.Enabled = en;
 
-            lbDPMatch.Enabled = cbUTSetPrio.Checked && cbUTUseHashing.Checked;
-            lbDPMissing.Enabled = cbUTSetPrio.Checked && cbUTMatchMissing.Checked;
-
+            this.lbDPMatch.Enabled = this.cbUTSetPrio.Checked && this.cbUTUseHashing.Checked;
+            this.lbDPMissing.Enabled = this.cbUTSetPrio.Checked && this.cbUTMatchMissing.Checked;
         }
 
         private static bool CheckUTorrentClosed()
@@ -200,7 +196,6 @@ namespace TVRename
             return true;
         }
 
-
         private void bnClose_Click(object sender, System.EventArgs e)
         {
             this.Close();
@@ -208,27 +203,27 @@ namespace TVRename
 
         private void cbUTMatchMissing_CheckedChanged(object sender, System.EventArgs e)
         {
-            EnableDisable();
+            this.EnableDisable();
         }
 
         private void cbUTSetPrio_CheckedChanged(object sender, System.EventArgs e)
         {
-            EnableDisable();
+            this.EnableDisable();
         }
 
         private void watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
         {
-            RefreshResumeDat();
+            this.RefreshResumeDat();
         }
 
         private void WatcherError(object UnnamedParameter1, System.IO.ErrorEventArgs UnnamedParameter2)
         {
-            while (!watcher.EnableRaisingEvents)
+            while (!this.watcher.EnableRaisingEvents)
             {
                 try
                 {
-                    StartWatching();
-                    RefreshResumeDat();
+                    this.StartWatching();
+                    this.RefreshResumeDat();
                 }
                 catch
                 {
@@ -239,33 +234,33 @@ namespace TVRename
 
         private void txtResumeDatFolder_TextChanged(object sender, System.EventArgs e)
         {
-            StartWatching();
+            this.StartWatching();
         }
 
         private void StartWatching()
         {
-            FileInfo f = new FileInfo(mDoc.Settings.ResumeDatPath);
+            FileInfo f = new FileInfo(this.mDoc.Settings.ResumeDatPath);
             if (f.Exists)
             {
-                watcher.Path = f.Directory.Name;
-                watcher.Filter = "resume.dat";
-                watcher.EnableRaisingEvents = true;
+                this.watcher.Path = f.Directory.Name;
+                this.watcher.Filter = "resume.dat";
+                this.watcher.EnableRaisingEvents = true;
             }
             else
-                watcher.EnableRaisingEvents = false;
+                this.watcher.EnableRaisingEvents = false;
         }
 
         private void watcher_Created(object sender, System.IO.FileSystemEventArgs e)
         {
-            RefreshResumeDat();
+            this.RefreshResumeDat();
         }
 
         private void bnUTBrowseSearchFolder_Click(object sender, System.EventArgs e)
         {
-            folderBrowser.SelectedPath = txtUTSearchFolder.Text;
+            this.folderBrowser.SelectedPath = this.txtUTSearchFolder.Text;
 
-            if (folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                txtUTSearchFolder.Text = folderBrowser.SelectedPath;
+            if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                this.txtUTSearchFolder.Text = this.folderBrowser.SelectedPath;
         }
     }
 }

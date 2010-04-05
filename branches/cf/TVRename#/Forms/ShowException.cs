@@ -1,17 +1,15 @@
-//
+// 
 // Main website for TVRename is http://tvrename.com
-//
+// 
 // Source code available at http://code.google.com/p/tvrename/
-//
+// 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-//
-
+// 
 using System;
 using System.Windows.Forms;
 
 namespace TVRename
 {
-
     /// <summary>
     /// Summary for ShowException
     ///
@@ -24,18 +22,19 @@ namespace TVRename
     public partial class ShowException : Form
     {
         private Exception mException;
+
         public ShowException(Exception e)
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
-            mException = e;
+            this.mException = e;
         }
 
         private void ShowException_Load(object sender, System.EventArgs e)
         {
             string t;
-            t = mException.Message + "\r\n\r\n" + mException.StackTrace;
-            txtText.Text = t;
+            t = this.mException.Message + "\r\n\r\n" + this.mException.StackTrace;
+            this.txtText.Text = t;
         }
 
         private void button1_Click(object sender, System.EventArgs e)
@@ -44,5 +43,3 @@ namespace TVRename
         }
     }
 }
-
-
