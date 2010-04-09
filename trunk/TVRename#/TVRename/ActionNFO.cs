@@ -149,7 +149,7 @@ namespace TVRename
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("episodeguideurl");
-                writer.WriteValue(this.SI.TVDB.BuildURL(true, true, this.SI.TVDBCode, this.SI.TVDB.PreferredLanguage(this.SI.TVDBCode)));
+                writer.WriteValue(TheTVDB.BuildURL(true, true, this.SI.TVDBCode, this.SI.TVDB.PreferredLanguage(this.SI.TVDBCode)));
                 writer.WriteEndElement();
 
                 WriteInfo(writer, this.SI, "Overview", "plot");

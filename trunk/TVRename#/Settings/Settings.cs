@@ -251,6 +251,8 @@ namespace TVRename
                     this.NFOs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpg")
                     this.FolderJpg = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "FolderJpgIs")
+                    this.FolderJpgIs = (FolderJpgIsType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameCheck")
                     this.RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
@@ -449,13 +451,12 @@ namespace TVRename
             this.EpImgs = false;
             this.NFOs = false;
             this.FolderJpg = false;
+            this.FolderJpgIs = FolderJpgIsType.Poster;
             this.RenameCheck = true;
             this.CheckuTorrent = false;
             this.MissingCheck = true;
             this.SearchLocally = true;
             this.LeaveOriginals = false;
-
-            this.FolderJpgIs = FolderJpgIsType.Poster;
         }
 
         public static FNPRegexList DefaultFNPList()
@@ -633,6 +634,9 @@ namespace TVRename
             writer.WriteEndElement();
             writer.WriteStartElement("FolderJpg");
             writer.WriteValue(this.FolderJpg);
+            writer.WriteEndElement();
+            writer.WriteStartElement("FolderJpgIs");
+            writer.WriteValue((int)this.FolderJpgIs);
             writer.WriteEndElement();
             writer.WriteStartElement("CheckuTorrent");
             writer.WriteValue(this.CheckuTorrent);

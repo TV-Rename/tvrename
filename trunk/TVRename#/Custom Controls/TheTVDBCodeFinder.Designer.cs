@@ -37,19 +37,20 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtSearchStatus = (new System.Windows.Forms.Label());
-            this.bnGoSearch = (new System.Windows.Forms.Button());
-            this.txtFindThis = (new System.Windows.Forms.TextBox());
-            this.lvMatches = (new System.Windows.Forms.ListView());
-            this.columnHeader1 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader2 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader3 = (new System.Windows.Forms.ColumnHeader());
-            this.label3 = (new System.Windows.Forms.Label());
+            this.txtSearchStatus = new System.Windows.Forms.Label();
+            this.bnGoSearch = new System.Windows.Forms.Button();
+            this.txtFindThis = new System.Windows.Forms.TextBox();
+            this.lvMatches = new System.Windows.Forms.ListView();
+            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // txtSearchStatus
             // 
-            this.txtSearchStatus.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtSearchStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearchStatus.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.txtSearchStatus.Location = new System.Drawing.Point(2, 153);
             this.txtSearchStatus.Name = "txtSearchStatus";
@@ -59,40 +60,46 @@ namespace TVRename
             // 
             // bnGoSearch
             // 
-            this.bnGoSearch.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
-            this.bnGoSearch.Location = new System.Drawing.Point(324, -1);
+            this.bnGoSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnGoSearch.Location = new System.Drawing.Point(325, 1);
             this.bnGoSearch.Name = "bnGoSearch";
             this.bnGoSearch.Size = new System.Drawing.Size(75, 23);
             this.bnGoSearch.TabIndex = 7;
             this.bnGoSearch.Text = "&Search";
             this.bnGoSearch.UseVisualStyleBackColor = true;
-            this.bnGoSearch.Click += new System.EventHandler(bnGoSearch_Click);
+            this.bnGoSearch.Click += new System.EventHandler(this.bnGoSearch_Click);
             // 
             // txtFindThis
             // 
-            this.txtFindThis.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.txtFindThis.Location = new System.Drawing.Point(90, 1);
+            this.txtFindThis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFindThis.Location = new System.Drawing.Point(90, 3);
             this.txtFindThis.Name = "txtFindThis";
             this.txtFindThis.Size = new System.Drawing.Size(228, 20);
             this.txtFindThis.TabIndex = 6;
-            this.txtFindThis.TextChanged += new System.EventHandler(txtFindThis_TextChanged);
-            this.txtFindThis.KeyDown += new System.Windows.Forms.KeyEventHandler(txtFindThis_KeyDown);
+            this.txtFindThis.TextChanged += new System.EventHandler(this.txtFindThis_TextChanged);
+            this.txtFindThis.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFindThis_KeyDown);
             // 
             // lvMatches
             // 
-            this.lvMatches.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.lvMatches.Columns.AddRange(new System.Windows.Forms.ColumnHeader[3] { this.columnHeader1, this.columnHeader2, this.columnHeader3 });
+            this.lvMatches.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvMatches.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3});
             this.lvMatches.FullRowSelect = true;
             this.lvMatches.HideSelection = false;
-            this.lvMatches.Location = new System.Drawing.Point(1, 27);
+            this.lvMatches.Location = new System.Drawing.Point(1, 30);
             this.lvMatches.MultiSelect = false;
             this.lvMatches.Name = "lvMatches";
             this.lvMatches.ShowItemToolTips = true;
-            this.lvMatches.Size = new System.Drawing.Size(397, 123);
+            this.lvMatches.Size = new System.Drawing.Size(397, 120);
             this.lvMatches.TabIndex = 8;
             this.lvMatches.UseCompatibleStateImageBehavior = false;
             this.lvMatches.View = System.Windows.Forms.View.Details;
-            this.lvMatches.SelectedIndexChanged += new System.EventHandler(lvMatches_SelectedIndexChanged);
+            this.lvMatches.SelectedIndexChanged += new System.EventHandler(this.lvMatches_SelectedIndexChanged);
             // 
             // columnHeader1
             // 
@@ -112,7 +119,7 @@ namespace TVRename
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(-1, 4);
+            this.label3.Location = new System.Drawing.Point(-1, 6);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(85, 13);
             this.label3.TabIndex = 5;
@@ -121,7 +128,7 @@ namespace TVRename
             // 
             // TheTVDBCodeFinder
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.txtSearchStatus);
             this.Controls.Add(this.bnGoSearch);

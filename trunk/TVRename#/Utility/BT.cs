@@ -102,11 +102,6 @@ namespace TVRename
         public string PieceAsNiceString(int pieceNum)
         {
             return CharsToHex(this.Data, pieceNum * 20, 20);
-            //                String ^r = gc"";
-            //				for (int i=0;i<20;i++,p++)
-            //				r += (Data[p]<16?"0":"") + Data[p].ToString("x")->ToUpper();
-            //
-            //				return r;
         }
 
         public override void Tree(TreeNodeCollection tn)
@@ -557,42 +552,29 @@ namespace TVRename
             if (sr.Length == sr.Position)
                 return new BTEOF();
 
-            string t = this.NextThing(sr);
+            // Read the next character from the stream to see what is next
 
-            if (t == "d")
-                return this.ReadDictionary(sr);
-            if (t == "l")
-                return this.ReadList(sr);
-            if (t == "e")
-                return new BTListOrDictionaryEnd();
-            if (t[0] == 's')
-                return this.ReadString(sr, Convert.ToInt32(t.Substring(1)));
-            if (t[0] == 'i')
-                return this.ReadInt(sr);
-            BTError e = new BTError();
-            e.Message = string.Concat("Error: unknown thing: ", t);
-            return e;
-        }
-
-        public string NextThing(FileStream sr)
-        {
             int c = sr.ReadByte();
             if (c == 'd')
-                return "d"; // dictionary
+                return this.ReadDictionary(sr); // dictionary
             if (c == 'l')
-                return "l"; // list
+                return this.ReadList(sr); // list
             if (c == 'i')
-                return "i"; // integer
+                return this.ReadInt(sr); // integer
             if (c == 'e')
-                return "e"; // end of list/dictionary/etc.
-            if ((c >= '0') && (c <= '9'))
+                return new BTListOrDictionaryEnd(); // end of list/dictionary/etc.
+            if ((c >= '0') && (c <= '9')) // digits mean it is a string of the specified length
             {
                 string r = Convert.ToString(c - '0');
                 while ((c = sr.ReadByte()) != ':')
                     r += Convert.ToString(c - '0');
-                return "s" + r;
+                return this.ReadString(sr, Convert.ToInt32(r));
             }
-            return "?";
+                
+            BTError e = new BTError {
+                                        Message = String.Concat("Error: unknown BEncode item type: ", c)
+                                    };
+            return e;
         }
 
         public BTFile Load(string filename)
@@ -897,8 +879,7 @@ namespace TVRename
         public string CopyToFolder;
 
         public System.Collections.Generic.List<ActionItem> RenameListOut;
-        public TreeView tvTree;
-
+        
         public BTFileRenamer(SetProgressDelegate setprog)
             : base(setprog)
         {
@@ -936,7 +917,9 @@ namespace TVRename
             return r;
         }
 
-        public bool RenameFilesOnDiskToMatchTorrent(string torrentFile, string folder, TreeView tvTree, System.Collections.Generic.List<ActionItem> renameListOut, SetProgressDelegate _prog, bool copyNotMove, string copyDest)
+        public bool RenameFilesOnDiskToMatchTorrent(string torrentFile, string folder, TreeView tvTree,
+            System.Collections.Generic.List<ActionItem> renameListOut,
+            bool copyNotMove, string copyDest)
         {
             if ((string.IsNullOrEmpty(folder) || !Directory.Exists(folder)))
                 return false;
@@ -965,14 +948,14 @@ namespace TVRename
 
             return r;
         }
-
-        // bool Go();
     }
 
     // BTProcessor
 
     public class BTResume : BTCore
     {
+        private static class BTPrio { public const int Normal = 0x08, Skip = 0x80; }
+
         public bool Altered;
         public bool DoMatchMissing;
         public bool HashSearch;
@@ -1008,7 +991,7 @@ namespace TVRename
             return dict;
         }
 
-        public int PercentBitsOn(BTString s)
+        public static int PercentBitsOn(BTString s)
         {
             int totalBits = 0;
             int bitsOn = 0;
@@ -1090,7 +1073,7 @@ namespace TVRename
                                     }
                                 }
                             }
-                            int percent = (a.Count == 1) ? this.PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
+                            int percent = (a.Count == 1) ? PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
                             TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent);
                             r.Add(te);
                         }
@@ -1438,15 +1421,5 @@ namespace TVRename
             lvi.EnsureVisible();
             this.Results.Update();
         }
-
-        #region Nested type: BTPrio
-
-        private class BTPrio
-        {
-            public const int Normal = 8;
-            public const int Skip = 0x80;
-        }
-
-        #endregion
     }
 }

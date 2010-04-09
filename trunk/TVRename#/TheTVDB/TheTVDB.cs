@@ -22,6 +22,7 @@ using Ionic.Utils.Zip;
 
 namespace TVRename
 {
+    [FlagsAttribute] 
     public enum typeMaskBits // defined by thetvdb for mirror types
     {
         tmMainSite = 0,
@@ -30,7 +31,7 @@ namespace TVRename
         tmZIP = 4
     }
 
-    class TVDBException : System.Exception
+    public class TVDBException : System.Exception
     {
         // Thrown if an error occurs in the XML when reading TheTVDB.xml
         public TVDBException(String message)
@@ -55,7 +56,7 @@ namespace TVRename
         private long New_Srv_Time;
         private System.Collections.Generic.Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
         private long Srv_Time; // only update this after a 100% successful download
-        private StringList WhoHasLock;
+        // private StringList WhoHasLock;
         public string XMLMirror;
         public string ZIPMirror;
 
@@ -65,7 +66,7 @@ namespace TVRename
             this.CacheFile = cacheFile;
 
             this.LastError = "";
-            this.WhoHasLock = new StringList();
+            // this.WhoHasLock = new StringList();
             this.LanguagePriorityList = new StringList();
             this.LanguagePriorityList.Add("en");
             this.Connected = false;
@@ -277,7 +278,7 @@ namespace TVRename
             return this.Connected;
         }
 
-        public string BuildURL(bool withHttpAndKey, bool episodesToo, int code, string lang)
+        public static string BuildURL(bool withHttpAndKey, bool episodesToo, int code, string lang)
         {
             string r = withHttpAndKey ? "http://thetvdb.com/api/" + APIKey() + "/" : "";
             r += episodesToo ? "series/" + code + "/all/" + lang + ".zip" : "series/" + code + "/" + lang + ".xml";
@@ -871,7 +872,7 @@ namespace TVRename
                         if (e.OK())
                         {
                             if (!this.Series.ContainsKey(e.SeriesID))
-                                throw new Exception("Can't find the series to add the episode to (TheTVDB).");
+                                throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
                             SeriesInfo ser = this.Series[e.SeriesID];
                             Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
 
@@ -986,7 +987,7 @@ namespace TVRename
             this.Say(txt);
 
             string lang = forceEnglish ? "en" : this.PreferredLanguage(code);
-            string url = this.BuildURL(false, episodesToo, code, lang);
+            string url = BuildURL(false, episodesToo, code, lang);
             byte[] p = episodesToo ? this.GetPageZIP(url, lang + ".xml", true, forceReload) : this.GetPage(url, true, typeMaskBits.tmXML, forceReload);
             if (p == null)
                 return null;

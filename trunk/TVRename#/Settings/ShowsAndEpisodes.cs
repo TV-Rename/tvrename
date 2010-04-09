@@ -455,7 +455,7 @@ namespace TVRename
             return this.AllFolderLocations(settings, true);
         }
 
-        public string TTS(string s) // trim trailing slash
+        public static string TTS(string s) // trim trailing slash
         {
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
@@ -471,7 +471,7 @@ namespace TVRename
                     if (!fld.ContainsKey(kvp.Key))
                         fld[kvp.Key] = new StringList();
                     foreach (string s in kvp.Value)
-                        fld[kvp.Key].Add(this.TTS(s));
+                        fld[kvp.Key].Add(TTS(s));
                 }
             }
 
@@ -495,7 +495,7 @@ namespace TVRename
                         if (!fld.ContainsKey(i))
                             fld[i] = new StringList();
                         if (!fld[i].Contains(newName))
-                            fld[i].Add(this.TTS(newName));
+                            fld[i].Add(TTS(newName));
                     }
                 }
             }
