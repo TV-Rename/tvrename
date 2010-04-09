@@ -99,9 +99,9 @@ namespace TVRename
                         {
                             ActionCopyMoveRename cmr = (ActionCopyMoveRename) (Action);
                             if (cmr.Operation == ActionCopyMoveRename.Op.Rename)
-                                this.Rename.Add((ActionCopyMoveRename) (Action));
+                                this.Rename.Add(cmr);
                             else // copy/move
-                                this.CopyMove.Add((ActionCopyMoveRename) (Action));
+                                this.CopyMove.Add(cmr);
                             break;
                         }
                     case ActionType.kDownload:

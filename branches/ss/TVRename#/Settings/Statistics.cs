@@ -20,7 +20,7 @@ namespace TVRename
         public int FilesRenamed;
         public int FindAndOrganisesDone;
         public int MissingChecksDone;
-        public int NS_NumberOfEpisodes;
+        public int NS_NumberOfEpisodes; // NS = "Not Saved", i.e. counted when doing a Scan
         public int NS_NumberOfEpisodesExpected;
         public int NS_NumberOfSeasons;
         public int NS_NumberOfShows;
@@ -39,7 +39,7 @@ namespace TVRename
             this.TorrentsMatched = 0;
             this.NS_NumberOfShows = 0;
             this.NS_NumberOfSeasons = 0;
-            this.NS_NumberOfEpisodes = -1;
+            this.NS_NumberOfEpisodes = -1; // -1 signals 'unknown'
             this.NS_NumberOfEpisodesExpected = 0;
         }
 

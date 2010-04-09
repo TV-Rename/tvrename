@@ -20,6 +20,7 @@ namespace TVRename
     // right click commands
     public enum RightClickCommands
     {
+        None = 0,
         kEpisodeGuideForShow = 1,
         kVisitTVDBEpisode,
         kVisitTVDBSeason,
@@ -55,8 +56,7 @@ namespace TVRename
         #endregion
 
         protected int Busy;
-        private IPCMethods IPC;
-
+        
         public IPCDelegate IPCBringToForeground;
         public IPCDelegate IPCDoAll;
         public IPCDelegate IPCQuit;
@@ -165,7 +165,7 @@ namespace TVRename
             //Register this service type.
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(IPCMethods), "IPCMethods", WellKnownObjectMode.Singleton);
 
-            this.IPC = new IPCMethods(this, this.mDoc);
+            IPCMethods.Setup(this, this.mDoc);
         }
 
         public void SetProgressActual(int p)
@@ -190,6 +190,7 @@ namespace TVRename
             if (this.mDoc.Args.Quit || this.mDoc.Args.Hide)
                 this.Close();
         }
+
 
         ~UI()
         {
@@ -2380,12 +2381,12 @@ namespace TVRename
         private void Scan(ShowItem s)
         {
             this.MoreBusy();
-            this.mDoc.ActionGo(this.SetProgress, s);
+            this.mDoc.ActionGo(s);
             this.LessBusy();
             this.FillActionList();
         }
 
-        private string GBMB(long size)
+        private static string GBMB(long size)
         {
             long gb1 = (1024 * 1024 * 1024);
             long gb = ((gb1 / 2) + size) / gb1;
@@ -2399,7 +2400,7 @@ namespace TVRename
             }
         }
 
-        private string itemitems(int n)
+        private static string itemitems(int n)
         {
             if (n == 1)
                 return "Item";
@@ -2520,14 +2521,14 @@ namespace TVRename
                     utCount++;
             }
 
-            this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + this.itemitems(missingCount) + ")";
-            this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + this.itemitems(renameCount) + ")";
-            this.lvAction.Groups[2].Header = "Copy (" + copyCount + " " + this.itemitems(copyCount) + ", " + this.GBMB(copySize) + ")";
-            this.lvAction.Groups[3].Header = "Move (" + moveCount + " " + this.itemitems(moveCount) + ", " + this.GBMB(moveSize) + ")";
-            this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + this.itemitems(rssCount) + ")";
-            this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + this.itemitems(downloadCount) + ")";
-            this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + this.itemitems(nfoCount) + ")";
-            this.lvAction.Groups[7].Header = "Downloading In µTorrent (" + utCount + " " + this.itemitems(utCount) + ")";
+            this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
+            this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
+            this.lvAction.Groups[2].Header = "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
+            this.lvAction.Groups[3].Header = "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
+            this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
+            this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
+            this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
+            this.lvAction.Groups[7].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
 
             this.InternalCheckChange = false;
 
@@ -2758,7 +2759,6 @@ namespace TVRename
             }
 
             this.InternalCheckChange = true;
-            LVResults lvr = new LVResults(this.lvAction, true);
             foreach (ListViewItem lvi in this.lvAction.Items)
                 lvi.Checked = cs == CheckState.Checked;
             this.InternalCheckChange = false;
@@ -2774,7 +2774,6 @@ namespace TVRename
                 cs = CheckState.Unchecked;
             }
 
-            LVResults lvr = new LVResults(this.lvAction, true);
             this.InternalCheckChange = true;
             foreach (ListViewItem lvi in this.lvAction.Items)
             {
@@ -2795,7 +2794,6 @@ namespace TVRename
                 cs = CheckState.Unchecked;
             }
 
-            LVResults lvr = new LVResults(this.lvAction, true);
             this.InternalCheckChange = true;
             foreach (ListViewItem lvi in this.lvAction.Items)
             {
@@ -2816,7 +2814,6 @@ namespace TVRename
                 cs = CheckState.Unchecked;
             }
 
-            LVResults lvr = new LVResults(this.lvAction, true);
             this.InternalCheckChange = true;
             foreach (ListViewItem lvi in this.lvAction.Items)
             {
@@ -2837,7 +2834,6 @@ namespace TVRename
                 cs = CheckState.Unchecked;
             }
 
-            LVResults lvr = new LVResults(this.lvAction, true);
             this.InternalCheckChange = true;
             foreach (ListViewItem lvi in this.lvAction.Items)
             {
@@ -2858,7 +2854,6 @@ namespace TVRename
                 cs = CheckState.Unchecked;
             }
 
-            LVResults lvr = new LVResults(this.lvAction, true);
             this.InternalCheckChange = true;
             foreach (ListViewItem lvi in this.lvAction.Items)
             {

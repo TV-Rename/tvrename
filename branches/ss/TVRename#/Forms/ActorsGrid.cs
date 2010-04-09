@@ -230,7 +230,6 @@ namespace TVRename
             this.grid1[0, 0].View = topleftTitleModel;
             this.grid1[0, 0].AddController(new SideClickEvent(this, null)); // default sort
 
-            SourceGrid.Cells.Views.Cell rotateView = new SourceGrid.Cells.Views.Cell();
             for (int c = 0; c < this.TheData.DataC; c++)
             {
                 h = new SourceGrid.Cells.ColumnHeader(this.TheData.Cols[c]); // "<A HREF=\"http://www.imdb.com/find?s=nm&q="+kvp->Key+"\">"+kvp->Key+"</a>");
@@ -368,6 +367,8 @@ namespace TVRename
 
         private class DataArr
         {
+            // TODO: Rewrite using jagged array (array of arrays), rather than a single multidimensional array
+            // for performance increase
             public int AllocC;
             public int AllocR;
             public StringList Cols;

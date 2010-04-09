@@ -327,7 +327,7 @@ namespace TVRename
 
             BTFileRenamer btp = new BTFileRenamer(prog);
             System.Collections.Generic.List<ActionItem> newList = new System.Collections.Generic.List<ActionItem>();
-            bool r = btp.RenameFilesOnDiskToMatchTorrent(torrent, folder, tvTree, newList, prog, copyNotMove, copyDest);
+            bool r = btp.RenameFilesOnDiskToMatchTorrent(torrent, folder, tvTree, newList, copyNotMove, copyDest);
 
             foreach (ActionItem i in newList)
                 this.TheActionList.Add(i);
@@ -945,144 +945,6 @@ namespace TVRename
             needUpdate = needUpdate || (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
             if (needUpdate)
                 this.TheActionList.Add(new ActionNFO(tvshownfo, si));
-        }
-
-        public bool UpToDateCheck(ShowItem si)
-        {
-            int maxEpNum = 0;
-
-            if (!si.DoMissingCheck)
-                return true;
-
-            System.Collections.Generic.Dictionary<int, StringList> flocs = si.AllFolderLocations(this.Settings);
-
-            if (this.Settings.NFOs)
-                this.TVShowNFOCheck(si);
-
-            int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-            si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-            foreach (int snum in numbers)
-            {
-                if (si.IgnoreSeasons.Contains(snum))
-                    continue; // ignore this season
-
-                //int snum = kvp->Key;
-                if ((snum == 0) && (si.CountSpecials))
-                    continue; // no specials season, they're merged into the seasons themselves
-
-                StringList folders = new StringList();
-
-                if (flocs.ContainsKey(snum))
-                    folders = flocs[snum];
-
-                if ((folders.Count == 0) && (!si.AutoAddNewSeasons))
-                    continue; // no folders defined or found, autoadd off, so onto the next
-
-                foreach (string folder in folders)
-                {
-                    DirectoryInfo di = new DirectoryInfo(folder);
-                    if (!di.Exists)
-                        continue; // Skip non-existent folders, previous call to CheckAllFoldersExist 
-                    // will have made any that the user wants
-
-                    FileInfo[] fi = di.GetFiles();
-
-                    // make up a list of all the epsiodes in this season that we have locally
-                    System.Collections.Generic.List<FileInfo> localEps = new System.Collections.Generic.List<FileInfo>();
-
-                    ProcessedEpisodeList eps = si.SeasonEpisodes[snum];
-
-                    foreach (FileInfo fiTemp in fi)
-                    {
-                        if (this.ActionCancel)
-                            return true;
-
-                        int seas;
-                        int ep;
-
-                        if (!this.Settings.UsefulExtension(fiTemp.Extension, false))
-                            continue; // move on
-
-                        if (this.FindSeasEp(fiTemp, out seas, out ep, si.ShowName()))
-                        {
-                            if (seas == -1)
-                                seas = snum;
-                            if (seas == snum)
-                            {
-                                while (ep >= localEps.Count)
-                                    localEps.Add(null);
-
-                                localEps[ep] = fiTemp;
-                                if (ep > maxEpNum)
-                                    maxEpNum = ep;
-                            }
-                        }
-                    }
-
-                    // now look at EPInfos and see if we're up to date or not
-                    DateTime today = DateTime.Now;
-
-                    TheTVDB db = this.GetTVDB(true, "UpToDateCheck");
-                    foreach (ProcessedEpisode pe in eps)
-                    {
-                        if (this.ActionCancel)
-                        {
-                            db.Unlock("UpToDateCheck");
-                            return true;
-                        }
-
-                        int n = pe.EpNum;
-                        if ((n >= localEps.Count) || (localEps[n] == null)) // not here locally
-                        {
-                            DateTime? dt = pe.GetAirDateDT(true);
-
-                            bool notFuture = (dt != null) && (dt.Value.CompareTo(today) < 0); // isn't an episode yet to be aired
-                            bool anyAirdates = this.HasAnyAirdates(si, snum);
-                            bool lastSeasAirdates = (snum > 1) ? this.HasAnyAirdates(si, snum - 1) : true; // this might be a new season, so check the last one as well
-                            if (si.ForceCheckAll || (!(anyAirdates || lastSeasAirdates)) || notFuture) // not in the future (i.e. its aired)
-                            {
-                                // then add it as officially missing
-                                this.TheActionList.Add(new ActionMissing(pe, folder + System.IO.Path.DirectorySeparatorChar + this.FilenameFriendly(this.Settings.NamingStyle.NameForExt(pe, null))));
-                            }
-                        }
-                        else
-                        {
-                            this.mStats.NS_NumberOfEpisodes++;
-
-                            FileInfo filo = localEps[n];
-                            // do NFO and thumbnail checks if needed
-                            if (this.Settings.EpImgs)
-                            {
-                                string ban = pe.GetItem("filename");
-                                if (!string.IsNullOrEmpty(ban))
-                                {
-                                    string fn = filo.Name;
-                                    fn = fn.Substring(0, fn.Length - filo.Extension.Length);
-                                    fn += ".tbn";
-                                    FileInfo img = Helpers.FileInFolder(filo.Directory, fn);
-                                    if (!img.Exists)
-                                        this.TheActionList.Add(new ActionDownload(si, pe, img, ban));
-                                }
-                            }
-                            if (this.Settings.NFOs)
-                            {
-                                string fn = filo.Name;
-                                fn = fn.Substring(0, fn.Length - filo.Extension.Length);
-                                fn += ".nfo";
-                                FileInfo nfo = Helpers.FileInFolder(filo.Directory, fn);
-
-                                if (!nfo.Exists || (pe.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))
-                                    this.TheActionList.Add(new ActionNFO(nfo, pe));
-                            }
-                        }
-                    }
-                    db.Unlock("UpToDateCheck");
-
-                    localEps = null;
-                } // for each folder
-            } // for each seas
-
-            return true;
         }
 
         public bool GenerateEpisodeDict(ShowItem si)
@@ -2075,7 +1937,7 @@ namespace TVRename
             return false;
         }
 
-        public void ActionGo(SetProgressDelegate prog, ShowItem specific)
+        public void ActionGo(ShowItem specific)
         {
             if (this.Settings.MissingCheck && !this.CheckAllFoldersExist(specific)) // only check for folders existing for missing check
                 return;
@@ -2090,7 +1952,7 @@ namespace TVRename
             this.ActionCancel = false;
 
             if (!this.Args.Hide)
-                this.ScanProgDlg = new ScanProgress(this.Settings.RenameCheck, this.Settings.MissingCheck, this.Settings.MissingCheck && this.Settings.SearchLocally, this.Settings.MissingCheck && this.Settings.CheckuTorrent, this.Settings.MissingCheck && this.Settings.SearchRSS, this.Settings.FolderJpg);
+                this.ScanProgDlg = new ScanProgress(this.Settings.RenameCheck, this.Settings.MissingCheck && this.Settings.SearchLocally, this.Settings.MissingCheck && this.Settings.CheckuTorrent, this.Settings.MissingCheck && this.Settings.SearchRSS);
             else
                 this.ScanProgDlg = null;
 
@@ -2130,7 +1992,6 @@ namespace TVRename
 
                 System.Collections.Generic.Dictionary<int, StringList> flocs = si.AllFolderLocations(this.Settings);
 
-                // TODO: this is a duplicate of code in UpToDateCheck
                 int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
                 si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
                 foreach (int snum in numbers)
@@ -2300,6 +2161,9 @@ namespace TVRename
                 this.Stats().MissingChecksDone++;
 
             prog.Invoke(0);
+            
+            if (specific == null) // only do episode count if we're doing all shows and seasons
+                this.mStats.NS_NumberOfEpisodes = 0;
 
             int c = 0;
             foreach (ShowItem si in showlist)
@@ -2503,7 +2367,8 @@ namespace TVRename
                                 else
                                 {
                                     // the file is here
-                                    this.mStats.NS_NumberOfEpisodes++;
+                                    if (specific == null)
+                                      this.mStats.NS_NumberOfEpisodes++;
 
                                     // do NFO and thumbnail checks if required
                                     FileInfo filo = localEps[dbep.EpNum]; // filename (or future filename) of the file
