@@ -69,14 +69,9 @@ Section "TVRename" SecTVRename
   File "..\TVRename#\bin\Release\SourceGrid.Extensions.dll"
   File "..\TVRename#\bin\Release\log4net.dll"
 
-;  ReadRegStr $R0 HKCU "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" "AppData"
-;  Detailprint $R0
-;  CreateDirectory "$R0\TVRename\TVRename\1.0.0.0\"
-;  SetOutPath "$R0\TVRename\TVRename\1.0.0.0"
-
-  createdirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-  createShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk" "$INSTDIR\TVRename.exe"
-  createShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk" "$INSTDIR\TVRename.exe" /recover
+  CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk" "$INSTDIR\TVRename.exe"
+  CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk" "$INSTDIR\TVRename.exe" /recover
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe" "" "$INSTDIR\Uninstall.exe"
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -87,8 +82,6 @@ Section "TVRename" SecTVRename
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REGUNINSTKEY}" "NoModify" 1
   WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${REGUNINSTKEY}" "NoRepair" 1
 
-
-
 SectionEnd
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -98,15 +91,14 @@ SectionEnd
 
 Section "Uninstall"
 
-  ; Uninstall chart stuff
   Delete "$INSTDIR\TVRename.exe"
   Delete "$INSTDIR\Ionic.Utils.Zip.dll"
   Delete "$INSTDIR\DevAge.Core.dll"
   Delete "$INSTDIR\DevAge.Windows.Forms.dll"
   Delete "$INSTDIR\SourceGrid.dll"
   Delete "$INSTDIR\SourceGrid.Extensions.dll"  
-  Delete "$INSTDIR\Uninstall.exe"
   Delete "$INSTDIR\log4net.dll"
+  Delete "$INSTDIR\Uninstall.exe"
   RmDir "$INSTDIR"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk"
@@ -149,14 +141,6 @@ SectionEnd
 			      Call InstallDotNET
 			${EndIf}
 		${EndIf}
-
-
-		Call CheckVCRedist
-		Pop $0
-		${If} $0 != "151015966" ;  c++ 2008 redist
-                      Call InstallVCRedist
-               	${EndIf}
-
 	FunctionEnd
 
 	Function GetDotNETVersion
@@ -177,26 +161,3 @@ SectionEnd
 		ExecShell Open "http://www.microsoft.com/downloads/details.aspx?familyid=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5&displaylang=en"
 		skipdl:
 	FunctionEnd
-
-	Function InstallVCRedist
-		MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "TV Rename needs the Visual C++ 2008 redistributable to be installed before it can be run.$\rPress OK to go to Microsoft's website and download it, or Cancel to continue installing anyway." IDCANCEL skipdl
-
-		ExecShell Open "http://www.microsoft.com/downloads/details.aspx?familyid=9B2DA534-3E03-4391-8A4D-074B9F2BC1BF&displaylang=en"
-		skipdl:
-	FunctionEnd
-
-;-------------------------------
-; Test if Visual Studio Redistributables 2008 installed
-; Returns -1 if there is no VC redistributables intstalled
-Function CheckVCRedist
-   Push $R0
-   ClearErrors
-   ReadRegDword $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}" "Version"
-
-   ; if VS 2008 redist SP1 not installed, install it
-   IfErrors 0 VSRedistInstalled
-   StrCpy $R0 "-1"
-
-VSRedistInstalled:
-   Exch $R0
-FunctionEnd
