@@ -28,7 +28,7 @@ namespace TVRename
         public int pctRSS;
         public int pctuTorrent;
 
-        public ScanProgress(bool e1, bool e2, bool e3, bool e4, bool e5, bool e6)
+        public ScanProgress(bool e1, bool e3, bool e4, bool e5)
         {
             this.Ready = false;
             this.Finished = false;

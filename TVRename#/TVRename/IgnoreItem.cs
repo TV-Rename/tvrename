@@ -39,9 +39,5 @@ namespace TVRename
             writer.WriteValue(this.FileAndPath);
             writer.WriteEndElement(); // Ignore
         }
-
-        public void Read(XmlReader r)
-        {
-        }
     }
 }

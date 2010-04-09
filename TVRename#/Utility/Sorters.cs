@@ -29,11 +29,11 @@ namespace TVRename
 
         #region IComparer Members
 
-        public virtual int Compare(Object xx, Object yy)
+        public virtual int Compare(Object x, Object y)
         {
-            ListViewItem x = xx as ListViewItem;
-            ListViewItem y = yy as ListViewItem;
-            return string.Compare(x.SubItems[this.col].Text, y.SubItems[this.col].Text);
+            ListViewItem lvi1 = x as ListViewItem;
+            ListViewItem lvi2 = y as ListViewItem;
+            return string.Compare(lvi1.SubItems[this.col].Text, lvi2.SubItems[this.col].Text);
         }
 
         #endregion

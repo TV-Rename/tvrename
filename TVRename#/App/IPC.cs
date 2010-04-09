@@ -1,22 +1,14 @@
-﻿using System;
-
-namespace TVRename
+﻿namespace TVRename
 {
-    class IPCMethods : MarshalByRefObject
+    using System;
+
+    internal class IPCMethods : MarshalByRefObject
     {
         private static UI TheUI;
         private static TVDoc TheDoc;
 
-        public IPCMethods()
-        {
-        }
-
-        public IPCMethods(UI ui, TVDoc doc)
-        {
-            TheDoc = doc;
-            TheUI = ui;
-        }
-
+        // These "do stuff" methods must not be made static, otherwise it messes up the IPC magic
+        // of RegisterWellKnownClientType, etc.
         public CommandLineArgs.MissingFolderBehaviour MissingBehaviour
         {
             get
@@ -33,21 +25,30 @@ namespace TVRename
             }
         }
 
+        public static void Setup(UI ui, TVDoc doc)
+        {
+            TheDoc = doc;
+            TheUI = ui;
+        }
+
         public void BringToForeground()
         {
             if (TheUI != null)
                 TheUI.BeginInvoke(TheUI.IPCBringToForeground);
         }
+
         public void Scan()
         {
             if (TheUI != null)
                 TheUI.Invoke(TheUI.IPCScan);
         }
+
         public void DoAll()
         {
             if (TheUI != null)
                 TheUI.Invoke(TheUI.IPCDoAll);
         }
+
         public void Quit()
         {
             if (TheUI != null)

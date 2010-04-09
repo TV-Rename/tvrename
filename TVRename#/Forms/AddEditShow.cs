@@ -62,16 +62,13 @@ namespace TVRename
             this.txtSeasonFolderName.Text = si.AutoAdd_SeasonFolderName;
             this.txtBaseFolder.Text = si.AutoAdd_FolderBase;
             this.chkAutoFolders.Checked = si.AutoAddNewSeasons;
-            this.chkAutoFolders_CheckedChanged(null, null);
             this.chkFolderPerSeason_CheckedChanged(null, null);
 
-            this.chkThumbnailsAndStuff.Checked = false; // TODO
             this.cbDoRenaming.Checked = si.DoRename;
             this.cbDoMissingCheck.Checked = si.DoMissingCheck;
             this.cbDoMissingCheck_CheckedChanged(null, null);
 
             this.chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
-            this.SetRightNumberOfHashes();
 
             this.ShowTimeZone = (!string.IsNullOrEmpty(timezone)) ? timezone : TimeZone.DefaultTimeZone();
             this.cbTimeZone.Text = this.ShowTimeZone;
@@ -198,11 +195,6 @@ namespace TVRename
                 this.txtBaseFolder.Text = this.folderBrowser.SelectedPath;
         }
 
-        private void chkAutoFolders_CheckedChanged(object sender, System.EventArgs e)
-        {
-            this.gbAutoFolders.Enabled = this.chkAutoFolders.Checked;
-        }
-
         private void cbDoMissingCheck_CheckedChanged(object sender, System.EventArgs e)
         {
             this.chkForceCheckAll.Enabled = this.cbDoMissingCheck.Checked;
@@ -268,14 +260,10 @@ namespace TVRename
             this.txtCustomShowName.Enabled = this.chkCustomShowName.Checked;
         }
 
-        private void chkPadTwoDigits_CheckedChanged(object sender, System.EventArgs e)
+        private void chkAutoFolders_CheckedChanged(object sender, System.EventArgs e)
         {
-            this.SetRightNumberOfHashes();
+            gbAutoFolders.Enabled = chkAutoFolders.Checked;
         }
 
-        private void SetRightNumberOfHashes()
-        {
-            this.txtHash.Text = this.chkPadTwoDigits.Checked ? "##" : "#";
-        }
     }
 }

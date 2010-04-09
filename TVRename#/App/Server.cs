@@ -106,7 +106,7 @@ namespace TVRename
             } // loop forever
         }
 
-        public string Err()
+        public static string Err()
         {
             return "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\"><html><head><title>404 Not Found</title></head><body><h1>Not Found</h1>" + "<p>The requested URL was not found on this server.</p>" + "<hr><p>TVRename on localhost " + DateTime.Now.ToString("g") + "</p></body></html>";
         }
@@ -124,7 +124,7 @@ namespace TVRename
                 doc.GenerateUpcomingXML(ms, doc.NextNShows(doc.Settings.ExportRSSMaxShows, doc.Settings.ExportRSSMaxDays));
                 return System.Text.Encoding.ASCII.GetString(ms.ToArray());
             }
-            return this.Err();
+            return Err();
         }
     }
 }
