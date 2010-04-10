@@ -335,21 +335,7 @@ namespace TVRename
             return r;
         }
 
-        public string FilenameFriendly(string fn)
-        {
-            foreach (Replacement R in this.Settings.Replacements)
-            {
-                if (R.CaseInsensitive)
-                    fn = Regex.Replace(fn, Regex.Escape(R.This), Regex.Escape(R.That), RegexOptions.IgnoreCase);
-                else
-                    fn = fn.Replace(R.This, R.That);
-            }
-            if (this.Settings.ForceLowercaseFilenames)
-                fn = fn.ToLower();
-            return fn;
-        }
-
-        // consider each of files, see if it is suitable for series "ser" and episode "epi"
+        // consider each of the files, see if it is suitable for series "ser" and episode "epi"
         // if so, add a rcitem for copy to "fi"
         public bool FindMissingEp(DirCache dirCache, ActionMissing me, System.Collections.Generic.List<ActionItem> addTo, ActionCopyMoveRename.Op whichOp)
         {
@@ -1803,7 +1789,7 @@ namespace TVRename
             if (!btr.LoadResumeDat())
                 return;
 
-            System.Collections.Generic.List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded();
+            System.Collections.Generic.List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded(Settings);
 
             System.Collections.Generic.List<ActionItem> newList = new System.Collections.Generic.List<ActionItem>();
             System.Collections.Generic.List<ActionItem> toRemove = new System.Collections.Generic.List<ActionItem>();
@@ -2325,7 +2311,7 @@ namespace TVRename
 
                             if (renCheck && this.Settings.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
                             {
-                                string newname = this.FilenameFriendly(this.Settings.NamingStyle.NameForExt(ep, fi.Extension));
+                                string newname = this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(ep, fi.Extension));
                                 if (newname != actualFile.Name)
                                 {
                                     actualFile = Helpers.FileInFolder(folder, newname); // rename updates the filename
@@ -2361,7 +2347,7 @@ namespace TVRename
                                     if (si.ForceCheckAll || (!(anyAirdates || lastSeasAirdates)) || notFuture) // not in the future (i.e. its aired)
                                     {
                                         // then add it as officially missing
-                                        this.TheActionList.Add(new ActionMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));
+                                        this.TheActionList.Add(new ActionMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));
                                     }
                                 }
                                 else

@@ -25,7 +25,11 @@ namespace TVRename
             // all versions while developing are marked (dev)
             // only remove for final release build for upload
             // to site.
-            string v = "2.2.0a10 (dev)";
+
+            // Release history:
+            // Version 2.2.0b1 released 9 April 2010, r94
+
+            string v = "2.2.0b2 (dev)";
 #if DEBUG
             return v + " ** Debug Build **";
 #else

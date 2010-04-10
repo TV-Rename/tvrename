@@ -93,7 +93,7 @@ namespace TVRename
                     this.ErrorText = "No data downloaded";
                 }
 
-                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + doc.FilenameFriendly(this.RSS.Title);
+                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + doc.Settings.FilenameFriendly(this.RSS.Title);
                 if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
                     saveTemp += ".torrent";
                 File.WriteAllBytes(saveTemp, r);

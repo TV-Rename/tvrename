@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -715,6 +716,20 @@ namespace TVRename
 
             string url = this.TheSearchers.CurrentSearchURL();
             return CustomName.NameForNoExt(epi, url, true);
+        }
+
+        public string FilenameFriendly(string fn)
+        {
+            foreach (Replacement R in this.Replacements)
+            {
+                if (R.CaseInsensitive)
+                    fn = Regex.Replace(fn, Regex.Escape(R.This), Regex.Escape(R.That), RegexOptions.IgnoreCase);
+                else
+                    fn = fn.Replace(R.This, R.That);
+            }
+            if (this.ForceLowercaseFilenames)
+                fn = fn.ToLower();
+            return fn;
         }
     }
 }
