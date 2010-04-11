@@ -345,6 +345,7 @@ namespace TVRename
             this.bnAdd.TabIndex = 5;
             this.bnAdd.Text = "&Add";
             this.bnAdd.UseVisualStyleBackColor = true;
+            this.bnAdd.Click += new System.EventHandler(this.bnAdd_Click);
             // 
             // bnRemove
             // 

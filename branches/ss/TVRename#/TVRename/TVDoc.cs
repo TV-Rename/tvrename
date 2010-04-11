@@ -2342,9 +2342,20 @@ namespace TVRename
                                     DateTime? dt = dbep.GetAirDateDT(true);
 
                                     bool notFuture = (dt != null) && (dt.Value.CompareTo(today) < 0); // isn't an episode yet to be aired
-                                    bool anyAirdates = this.HasAnyAirdates(si, snum);
-                                    bool lastSeasAirdates = (snum > 1) ? this.HasAnyAirdates(si, snum - 1) : true; // this might be a new season, so check the last one as well
-                                    if (si.ForceCheckAll || (!(anyAirdates || lastSeasAirdates)) || notFuture) // not in the future (i.e. its aired)
+                                    
+                                    bool noAirdatesUntilNow = true;
+                                    for (int i = 1; i <= snum; i++)
+                                        if (this.HasAnyAirdates(si, i))
+                                        {
+                                            noAirdatesUntilNow = false;
+                                            break;
+                                        }
+
+                                    // only add to the missing list if, either:
+                                    // - force check is on
+                                    // - there are no airdates at all, for up to and including this season
+                                    // - there is an airdate, and it isn't in the future
+                                    if (si.ForceCheckAll || noAirdatesUntilNow || notFuture)
                                     {
                                         // then add it as officially missing
                                         this.TheActionList.Add(new ActionMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));

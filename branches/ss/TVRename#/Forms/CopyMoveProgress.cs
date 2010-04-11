@@ -311,7 +311,7 @@ namespace TVRename
                             msr = null;
                             msw = null;
 
-                            msr = new BinaryReader(new FileStream(Action.From.FullName, FileMode.Open));
+                            msr = new BinaryReader(new FileStream(Action.From.FullName, FileMode.Open, FileAccess.Read));
                             string tempName = TempFor(Action.To);
                             if (File.Exists(tempName))
                                 File.Delete(tempName);
