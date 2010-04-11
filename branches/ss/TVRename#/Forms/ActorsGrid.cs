@@ -135,7 +135,7 @@ namespace TVRename
             int end = 0;
             for (int r = this.TheData.DataR - 1; r >= end; r--)
             {
-                DataArr.ArrData d = this.TheData.Data[r, 0];
+                DataArr.ArrData d = this.TheData.Data[r][0];
                 if ((d != null) && d.yes)
                 {
                     this.TheData.MoveRowToTop(this.TheData.Rows[r++]);
@@ -160,7 +160,7 @@ namespace TVRename
             int end = 0;
             for (int c = this.TheData.DataC - 1; c >= end; c--)
             {
-                DataArr.ArrData d = this.TheData.Data[0, c];
+                DataArr.ArrData d = this.TheData.Data[0][c];
                 if ((d != null) && d.yes)
                 {
                     this.TheData.MoveColToTop(this.TheData.Cols[c++]);
@@ -273,7 +273,7 @@ namespace TVRename
             {
                 for (int r = 0; r < this.TheData.DataR; r++)
                 {
-                    DataArr.ArrData d = this.TheData.Data[r, c];
+                    DataArr.ArrData d = this.TheData.Data[r][c];
                     if ((d != null) && (d.yes))
                     {
                         this.grid1[r + 1, c + 1] = new SourceGrid.Cells.Cell("Y");
@@ -372,7 +372,7 @@ namespace TVRename
             public int AllocC;
             public int AllocR;
             public StringList Cols;
-            public ArrData[,] Data;
+            public ArrData[][] Data;
             public int DataC;
             public int DataR;
             public StringList Rows;
@@ -383,7 +383,9 @@ namespace TVRename
                 this.Cols = new StringList();
                 this.AllocR = rowCountPreAlloc;
                 this.AllocC = rowCountPreAlloc * 10;
-                this.Data = new ArrData[this.AllocR,this.AllocC];
+                this.Data = new ArrData[this.AllocR][];
+                for (int i=0;i<this.AllocR;i++)
+                  this.Data[i] = new ArrData[this.AllocC];
                 this.DataR = this.DataC = 0;
             }
 
@@ -391,9 +393,9 @@ namespace TVRename
             {
                 for (int r = 0; r < this.DataR; r++)
                 {
-                    ArrData t = this.Data[r, c2];
-                    this.Data[r, c2] = this.Data[r, c1];
-                    this.Data[r, c1] = t;
+                    ArrData t = this.Data[r][c2];
+                    this.Data[r][c2] = this.Data[r][c1];
+                    this.Data[r][c1] = t;
                 }
                 string t2 = this.Cols[c1];
                 this.Cols[c1] = this.Cols[c2];
@@ -404,9 +406,9 @@ namespace TVRename
             {
                 for (int c = 0; c < this.DataC; c++)
                 {
-                    ArrData t = this.Data[r2, c];
-                    this.Data[r2, c] = this.Data[r1, c];
-                    this.Data[r1, c] = t;
+                    ArrData t = this.Data[r2][c];
+                    this.Data[r2][c] = this.Data[r1][c];
+                    this.Data[r1][c] = t;
                 }
                 string t2 = this.Rows[r1];
                 this.Rows[r1] = this.Rows[r2];
@@ -418,8 +420,8 @@ namespace TVRename
                 int t = 0;
                 for (int c = 0; c < this.DataC; c++)
                 {
-                    if ((this.Data[r, c] != null) && ((onlyCols == null) || onlyCols[c]))
-                        t += this.Data[r, c].Score();
+                    if ((this.Data[r][c] != null) && ((onlyCols == null) || onlyCols[c]))
+                        t += this.Data[r][c].Score();
                 }
                 return t;
             }
@@ -429,8 +431,8 @@ namespace TVRename
                 int t = 0;
                 for (int r = 0; r < this.DataR; r++)
                 {
-                    if (this.Data[r, c] != null)
-                        t += this.Data[r, c].Score();
+                    if (this.Data[r][c] != null)
+                        t += this.Data[r][c].Score();
                 }
                 return t;
             }
@@ -445,13 +447,16 @@ namespace TVRename
                         this.AllocR = newr * 2;
                     if (newc > this.AllocC)
                         this.AllocC = newc * 2;
-                    ArrData[,] newarr = new ArrData[this.AllocR,this.AllocC];
+                    ArrData[][] newarr = new ArrData[this.AllocR][];
+                    for (int i=0;i<this.AllocR;i++)
+                      newarr[i] = new ArrData[this.AllocC];
+                    
                     for (int r = 0; r < this.DataR; r++)
                     {
                         for (int c = 0; c < this.DataC; c++)
                         {
                             if ((r < newr) && (c < newc))
-                                newarr[r, c] = this.Data[r, c];
+                                newarr[r][c] = this.Data[r][c];
                         }
                     }
                     this.Data = newarr;
@@ -499,15 +504,16 @@ namespace TVRename
                     }
                 }
 
-                ArrData[,] newarr = new ArrData[countR,countC];
+                ArrData[][] newarr = new ArrData[countR][];
                 for (int r = 0, newR = 0; r < this.DataR; r++)
                 {
                     if (keepR[r])
                     {
+                        newarr[newR] = new ArrData[countC];
                         for (int c = 0, newC = 0; c < this.DataC; c++)
                         {
                             if (keepR[r] && keepC[c])
-                                newarr[newR, newC++] = this.Data[r, c];
+                                newarr[newR][newC++] = this.Data[r][c];
                         }
                         newR++;
                     }
@@ -540,7 +546,7 @@ namespace TVRename
                     r = this.AddRow(row);
                 if (c == -1)
                     c = this.AddCol(col);
-                this.Data[r, c] = d;
+                this.Data[r][c] = d;
             }
 
             public void SortCols(bool score) // false->name
@@ -583,10 +589,10 @@ namespace TVRename
 
                 for (int r = 0; r < this.DataR; r++)
                 {
-                    DataArr.ArrData t = this.Data[r, n];
+                    DataArr.ArrData t = this.Data[r][n];
                     for (int c = n; c > 0; c--)
-                        this.Data[r, c] = this.Data[r, c - 1];
-                    this.Data[r, 0] = t;
+                        this.Data[r][c] = this.Data[r][c - 1];
+                    this.Data[r][0] = t;
                 }
 
                 string t2 = this.Cols[n];
@@ -603,10 +609,10 @@ namespace TVRename
 
                 for (int c = 0; c < this.DataC; c++)
                 {
-                    DataArr.ArrData t = this.Data[n, c];
+                    DataArr.ArrData t = this.Data[n][c];
                     for (int r = n; r > 0; r--)
-                        this.Data[r, c] = this.Data[r - 1, c];
-                    this.Data[0, c] = t;
+                        this.Data[r][c] = this.Data[r - 1][c];
+                    this.Data[0][c] = t;
                 }
 
                 string t2 = this.Rows[n];
