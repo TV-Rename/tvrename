@@ -196,7 +196,6 @@ namespace TVRename
             this.txtBaseFolder.Name = "txtBaseFolder";
             this.txtBaseFolder.Size = new System.Drawing.Size(170, 20);
             this.txtBaseFolder.TabIndex = 1;
-            this.txtBaseFolder.Click += new System.EventHandler(this.bnBrowse_Click);
             // 
             // bnBrowse
             // 

@@ -55,7 +55,7 @@ namespace TVRename
             this.txtSearchStatus.Location = new System.Drawing.Point(2, 153);
             this.txtSearchStatus.Name = "txtSearchStatus";
             this.txtSearchStatus.Size = new System.Drawing.Size(397, 15);
-            this.txtSearchStatus.TabIndex = 9;
+            this.txtSearchStatus.TabIndex = 4;
             this.txtSearchStatus.Text = "                    ";
             // 
             // bnGoSearch
@@ -64,7 +64,7 @@ namespace TVRename
             this.bnGoSearch.Location = new System.Drawing.Point(325, 1);
             this.bnGoSearch.Name = "bnGoSearch";
             this.bnGoSearch.Size = new System.Drawing.Size(75, 23);
-            this.bnGoSearch.TabIndex = 7;
+            this.bnGoSearch.TabIndex = 2;
             this.bnGoSearch.Text = "&Search";
             this.bnGoSearch.UseVisualStyleBackColor = true;
             this.bnGoSearch.Click += new System.EventHandler(this.bnGoSearch_Click);
@@ -76,7 +76,7 @@ namespace TVRename
             this.txtFindThis.Location = new System.Drawing.Point(90, 3);
             this.txtFindThis.Name = "txtFindThis";
             this.txtFindThis.Size = new System.Drawing.Size(228, 20);
-            this.txtFindThis.TabIndex = 6;
+            this.txtFindThis.TabIndex = 1;
             this.txtFindThis.TextChanged += new System.EventHandler(this.txtFindThis_TextChanged);
             this.txtFindThis.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtFindThis_KeyDown);
             // 
@@ -96,7 +96,7 @@ namespace TVRename
             this.lvMatches.Name = "lvMatches";
             this.lvMatches.ShowItemToolTips = true;
             this.lvMatches.Size = new System.Drawing.Size(397, 120);
-            this.lvMatches.TabIndex = 8;
+            this.lvMatches.TabIndex = 3;
             this.lvMatches.UseCompatibleStateImageBehavior = false;
             this.lvMatches.View = System.Windows.Forms.View.Details;
             this.lvMatches.SelectedIndexChanged += new System.EventHandler(this.lvMatches_SelectedIndexChanged);
@@ -122,7 +122,7 @@ namespace TVRename
             this.label3.Location = new System.Drawing.Point(-1, 6);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(85, 13);
-            this.label3.TabIndex = 5;
+            this.label3.TabIndex = 0;
             this.label3.Text = "TheTVDB &code:";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 

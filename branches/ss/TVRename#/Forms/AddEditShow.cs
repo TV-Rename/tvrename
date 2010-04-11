@@ -100,6 +100,9 @@ namespace TVRename
 
             this.txtSeasonNumber_TextChanged(null, null);
             this.txtFolder_TextChanged(null, null);
+
+            this.ActiveControl = mTCCF; // set initial focus to the code entry/show finder control
+
         }
 
         private void buttonOK_Click(object sender, System.EventArgs e)
@@ -264,6 +267,5 @@ namespace TVRename
         {
             gbAutoFolders.Enabled = chkAutoFolders.Checked;
         }
-
     }
 }
