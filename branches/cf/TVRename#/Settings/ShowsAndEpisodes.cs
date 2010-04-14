@@ -120,7 +120,8 @@ namespace TVRename
         public bool DVDOrder; // sort by DVD order, not the default sort we get
         public bool DoMissingCheck;
         public bool DoRename;
-        public bool ForceCheckAll;
+        public bool ForceCheckFuture;
+        public bool ForceCheckNoAirdate;
         public System.Collections.Generic.List<int> IgnoreSeasons;
         public System.Collections.Generic.Dictionary<int, StringList> ManualFolderLocations;
         public bool PadSeasonToTwoDigits;
@@ -180,8 +181,12 @@ namespace TVRename
                     this.DoMissingCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DVDOrder")
                     this.DVDOrder = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ForceCheckAll")
-                    this.ForceCheckAll = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ForceCheckAll") // removed 2.2.0b2
+                    this.ForceCheckNoAirdate = this.ForceCheckFuture = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ForceCheckFuture")
+                    this.ForceCheckFuture = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ForceCheckNoAirdate")
+                    this.ForceCheckNoAirdate = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "PadSeasonToTwoDigits")
                     this.PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "UseSequentialMatch")
@@ -283,7 +288,8 @@ namespace TVRename
             this.DoMissingCheck = true;
             this.CountSpecials = false;
             this.DVDOrder = false;
-            this.ForceCheckAll = false;
+            ForceCheckNoAirdate = false;
+            ForceCheckFuture = false;
         }
 
         //Generic.List<int>WhichSeasons()
@@ -383,8 +389,11 @@ namespace TVRename
             writer.WriteStartElement("DVDOrder");
             writer.WriteValue(this.DVDOrder);
             writer.WriteEndElement();
-            writer.WriteStartElement("ForceCheckAll");
-            writer.WriteValue(this.ForceCheckAll);
+            writer.WriteStartElement("ForceCheckNoAirdate");
+            writer.WriteValue(this.ForceCheckNoAirdate);
+            writer.WriteEndElement();
+            writer.WriteStartElement("ForceCheckFuture");
+            writer.WriteValue(this.ForceCheckFuture);
             writer.WriteEndElement();
             writer.WriteStartElement("UseSequentialMatch");
             writer.WriteValue(this.UseSequentialMatch);
