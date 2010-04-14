@@ -34,6 +34,9 @@ namespace TVRename
         kActionAction,
         kActionDelete,
         kActionIgnoreSeason,
+        kEditShow,
+        kEditSeason,
+        kDeleteShow,
         kWatchBase = 1000,
         kOpenFolderBase = 2000
     }
@@ -56,7 +59,7 @@ namespace TVRename
         #endregion
 
         protected int Busy;
-        
+
         public IPCDelegate IPCBringToForeground;
         public IPCDelegate IPCDoAll;
         public IPCDelegate IPCQuit;
@@ -190,7 +193,6 @@ namespace TVRename
             if (this.mDoc.Args.Quit || this.mDoc.Args.Hide)
                 this.Close();
         }
-
 
         ~UI()
         {
@@ -1269,12 +1271,27 @@ namespace TVRename
                 this.showRightClickMenu.Items.Add(tsi);
                 ToolStripSeparator tss = new ToolStripSeparator();
                 this.showRightClickMenu.Items.Add(tss);
-                tsi = new ToolStripMenuItem("Scan");
+                tsi = new ToolStripMenuItem("Scan \"" + si.ShowName()+"\"");
                 tsi.Tag = (int) RightClickCommands.kScanSpecificSeries;
                 this.showRightClickMenu.Items.Add(tsi);
                 //tsi = gcnew ToolStripMenuItem("Renaming Check");     tsi->Tag = (int)kRenamingCheckSeries; showRightClickMenu->Items->Add(tsi);
                 tsi = new ToolStripMenuItem("When to Watch");
                 tsi.Tag = (int) RightClickCommands.kWhenToWatchSeries;
+                this.showRightClickMenu.Items.Add(tsi);
+
+                tsi = new ToolStripMenuItem("Edit Show");
+                tsi.Tag = (int) RightClickCommands.kEditShow;
+                this.showRightClickMenu.Items.Add(tsi);
+
+                tsi = new ToolStripMenuItem("Delete Show");
+                tsi.Tag = (int) RightClickCommands.kDeleteShow;
+                this.showRightClickMenu.Items.Add(tsi);
+            }
+
+            if (seas != null)
+            {
+                tsi = new ToolStripMenuItem("Edit " + (seas.SeasonNumber == 0 ? "Specials" : "Season " + seas.SeasonNumber));
+                tsi.Tag = (int) RightClickCommands.kEditSeason;
                 this.showRightClickMenu.Items.Add(tsi);
             }
 
@@ -1525,6 +1542,15 @@ namespace TVRename
                     }
                 case RightClickCommands.kForceRefreshSeries:
                     this.ForceRefresh(this.mLastShowClicked);
+                    break;
+                case RightClickCommands.kEditShow:
+                    this.EditShow(this.mLastShowClicked);
+                    break;
+                case RightClickCommands.kDeleteShow:
+                    this.DeleteShow(this.mLastShowClicked);
+                    break;
+                case RightClickCommands.kEditSeason:
+                    this.EditSeason(this.mLastShowClicked, this.mLastSeasonClicked.SeasonNumber);
                     break;
                 case RightClickCommands.kBTSearchFor:
                     {
@@ -2032,6 +2058,11 @@ namespace TVRename
             if (si == null)
                 return;
 
+            this.DeleteShow(si);
+        }
+
+        private void DeleteShow(ShowItem si)
+        {
             System.Windows.Forms.DialogResult res = MessageBox.Show("Remove show \"" + si.ShowName() + "\".  Are you sure?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != System.Windows.Forms.DialogResult.Yes)
                 return;
