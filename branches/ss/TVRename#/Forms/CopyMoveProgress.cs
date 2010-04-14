@@ -60,17 +60,12 @@ namespace TVRename
             this.copyTimer.Start();
 
             this.mCurrentNum = -1;
-            //mLastPct = -1;
-            //			mErrorText = "";
-            //			ErrorFiles = gcnew RCList();
 
             this.CopyDone += this.CopyDoneFunc;
             this.Percent += this.SetPercentages;
             this.Filename += this.SetFilename;
         }
 
-        //C++ TO C# CONVERTER NOTE: Embedded comments are not maintained by C++ to C# Converter
-        //ORIGINAL LINE: void CopyDoneFunc(/*CopyMoveResult why, String ^errorText*/)
         public void CopyDoneFunc()
         {
             this.copyTimer.Stop();
@@ -80,18 +75,6 @@ namespace TVRename
         public event CopyDoneHandler CopyDone;
         public event PercentHandler Percent;
         public event FilenameHandler Filename;
-        //            
-        //			String ^ErrorText() 
-        //			{ 
-        //			String ^t = mErrorText;
-        //
-        //			if (t->Length > 0) // last char will be an extra \r we don't really want
-        //			t->Remove(mErrorText->Length-1);
-        //
-        //			return t;
-        //			}
-        //			
-        //			RCList ^ErrFiles() { return ErrorFiles; }
 
         public void SetFilename(string filename)
         {
@@ -420,7 +403,6 @@ namespace TVRename
         {
             this.Stop = true;
             this.Result = CopyMoveResult.kUserCancelled;
-            // this.mCopyThread.Interrupt();
         }
 
         private void CopyMoveProgress_Load(object sender, System.EventArgs e)
