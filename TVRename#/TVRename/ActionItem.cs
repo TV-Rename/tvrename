@@ -53,8 +53,6 @@ namespace TVRename
         public virtual bool Action(TVDoc doc)
         {
             // default is to do nothing
-            // also set Done
-            this.Done = true;
             return true; // all ok
         }
 

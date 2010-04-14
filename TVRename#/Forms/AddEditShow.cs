@@ -73,7 +73,8 @@ namespace TVRename
             this.ShowTimeZone = (!string.IsNullOrEmpty(timezone)) ? timezone : TimeZone.DefaultTimeZone();
             this.cbTimeZone.Text = this.ShowTimeZone;
             this.chkDVDOrder.Checked = si.DVDOrder;
-            this.chkForceCheckAll.Checked = si.ForceCheckAll;
+            this.cbIncludeFuture.Checked = si.ForceCheckFuture;
+            this.cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
 
             bool first = true;
             si.IgnoreSeasons.Sort();
@@ -151,7 +152,9 @@ namespace TVRename
             this.mSI.AutoAdd_FolderBase = this.txtBaseFolder.Text;
 
             this.mSI.DVDOrder = this.chkDVDOrder.Checked;
-            this.mSI.ForceCheckAll = this.chkForceCheckAll.Checked;
+            this.mSI.ForceCheckFuture = this.cbIncludeFuture.Checked;
+            this.mSI.ForceCheckNoAirdate = this.cbIncludeNoAirdate.Checked;
+
             this.mSI.UseSequentialMatch = this.cbSequentialMatching.Checked;
 
             string slist = this.txtIgnoreSeasons.Text;
@@ -197,7 +200,8 @@ namespace TVRename
 
         private void cbDoMissingCheck_CheckedChanged(object sender, System.EventArgs e)
         {
-            this.chkForceCheckAll.Enabled = this.cbDoMissingCheck.Checked;
+            this.cbIncludeNoAirdate.Enabled = this.cbDoMissingCheck.Checked;
+            this.cbIncludeFuture.Enabled = this.cbDoMissingCheck.Checked;
         }
 
         private void bnRemove_Click(object sender, System.EventArgs e)
