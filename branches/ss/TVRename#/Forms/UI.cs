@@ -1269,7 +1269,7 @@ namespace TVRename
                 this.showRightClickMenu.Items.Add(tsi);
                 ToolStripSeparator tss = new ToolStripSeparator();
                 this.showRightClickMenu.Items.Add(tss);
-                tsi = new ToolStripMenuItem("Scan");
+                tsi = new ToolStripMenuItem("Scan \"" + si.ShowName()+"\"");
                 tsi.Tag = (int) RightClickCommands.kScanSpecificSeries;
                 this.showRightClickMenu.Items.Add(tsi);
                 //tsi = gcnew ToolStripMenuItem("Renaming Check");     tsi->Tag = (int)kRenamingCheckSeries; showRightClickMenu->Items->Add(tsi);

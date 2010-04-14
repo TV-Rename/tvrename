@@ -49,6 +49,7 @@ namespace TVRename
         private TVDoc mDoc;
         private TVRenameStats mStats;
         private System.Collections.Generic.List<ActionItem> mToDo;
+        private bool Stop;
 
         public CopyMoveProgress(TVDoc doc, System.Collections.Generic.List<ActionItem> todo, TVRenameStats stats)
         {
@@ -141,17 +142,17 @@ namespace TVRename
             else
             {
                 bool ok = false;
-                ActionItem Action = this.mToDo[this.mCurrentNum];
+                ActionItem action = this.mToDo[this.mCurrentNum];
                 DirectoryInfo toWhere = null;
 
-                if (Action.Type == ActionType.kCopyMoveRename)
-                    toWhere = ((ActionCopyMoveRename) Action).To.Directory;
-                else if (Action.Type == ActionType.kDownload)
-                    toWhere = ((ActionDownload) (Action)).Destination.Directory;
-                else if (Action.Type == ActionType.kRSS)
-                    toWhere = new FileInfo(((ActionRSS) (Action)).TheFileNoExt).Directory;
-                else if (Action.Type == ActionType.kNFO)
-                    toWhere = ((ActionNFO) (Action)).Where.Directory;
+                if (action.Type == ActionType.kCopyMoveRename)
+                    toWhere = ((ActionCopyMoveRename) action).To.Directory;
+                else if (action.Type == ActionType.kDownload)
+                    toWhere = ((ActionDownload) (action)).Destination.Directory;
+                else if (action.Type == ActionType.kRSS)
+                    toWhere = new FileInfo(((ActionRSS) (action)).TheFileNoExt).Directory;
+                else if (action.Type == ActionType.kNFO)
+                    toWhere = ((ActionNFO) (action)).Where.Directory;
 
                 DirectoryInfo toRoot = null;
                 if (toWhere.Name.StartsWith("\\\\"))
@@ -196,6 +197,18 @@ namespace TVRename
         {
             return f.FullName + ".tvrenametemp";
         }
+        private void NicelyStopAndCleanUp(BinaryReader msr, BinaryWriter msw, ActionCopyMoveRename action)
+        {
+            if (msw != null)
+            {
+                msw.Close();
+                string tempName = TempFor(action.To);
+                if (File.Exists(tempName))
+                    File.Delete(tempName);
+            }
+            if (msr != null)
+                msr.Close();
+        }
 
         private void CopyMachine()
         {
@@ -239,66 +252,65 @@ namespace TVRename
                 while (this.cbPause.Checked)
                     System.Threading.Thread.Sleep(100);
 
-                ActionItem Action1 = this.mToDo[i];
+                ActionItem action1 = this.mToDo[i];
 
-                if ((Action1.Type == ActionType.kRSS) || (Action1.Type == ActionType.kRSS) || (Action1.Type == ActionType.kDownload))
+                if ((action1.Type == ActionType.kRSS) || (action1.Type == ActionType.kRSS) || (action1.Type == ActionType.kDownload))
                 {
-                    this.BeginInvoke(this.Filename, Action1.FilenameForProgress());
+                    this.BeginInvoke(this.Filename, action1.FilenameForProgress());
 
                     this.BeginInvoke(this.Percent, (extrasCount != 0) ? (1000 * extrasDone / extrasCount) : 0, (totalSize != 0) ? (int) (1000 * totalCopiedSoFar / totalSize) : 50, i);
 
-                    Action1.Action(this.mDoc);
+                    action1.Action(this.mDoc);
                     extrasDone++;
                     totalCopiedSoFar += sizePerExtra;
                 }
-                else if (Action1.Type == ActionType.kCopyMoveRename)
+                else if (action1.Type == ActionType.kCopyMoveRename)
                 {
-                    ActionCopyMoveRename Action = (ActionCopyMoveRename) (Action1);
-                    Action.HasError = false;
-                    Action.ErrorText = "";
+                    ActionCopyMoveRename action = (ActionCopyMoveRename) (action1);
+                    action.HasError = false;
+                    action.ErrorText = "";
 
-                    this.BeginInvoke(this.Filename, Action.FilenameForProgress());
+                    this.BeginInvoke(this.Filename, action.FilenameForProgress());
 
-                    long thisFileSize;
-                    thisFileSize = Action.FileSize();
+                    long thisFileSize = action.FileSize();
 
                     System.Security.AccessControl.FileSecurity security = null;
                     try
                     {
-                        security = Action.From.GetAccessControl();
+                        security = action.From.GetAccessControl();
                     }
                     catch
                     {
                     }
 
-                    if (Action.IsMoveRename() && (Action.From.Directory.Root.FullName.ToLower() == Action.To.Directory.Root.FullName.ToLower())) // same device ... TODO: UNC paths?
+                    if (action.IsMoveRename() && (action.From.Directory.Root.FullName.ToLower() == action.To.Directory.Root.FullName.ToLower())) // same device ... TODO: UNC paths?
                     {
                         // ask the OS to do it for us, since it's easy and quick!
                         try
                         {
-                            if (Helpers.Same(Action.From, Action.To))
+                            if (Helpers.Same(action.From, action.To))
                             {
                                 // XP won't actually do a rename if its only a case difference
-                                string tempName = TempFor(Action.To);
-                                Action.From.MoveTo(tempName);
-                                File.Move(tempName, Action.To.FullName);
+                                string tempName = TempFor(action.To);
+                                action.From.MoveTo(tempName);
+                                File.Move(tempName, action.To.FullName);
                             }
                             else
-                                Action.From.MoveTo(Action.To.FullName);
+                                action.From.MoveTo(action.To.FullName);
 
-                            Action.Done = true;
+                            action.Done = true;
 
-                            System.Diagnostics.Debug.Assert((Action.Operation == ActionCopyMoveRename.Op.Move) || (Action.Operation == ActionCopyMoveRename.Op.Rename));
-                            if (Action.Operation == ActionCopyMoveRename.Op.Move)
+                            System.Diagnostics.Debug.Assert((action.Operation == ActionCopyMoveRename.Op.Move) || (action.Operation == ActionCopyMoveRename.Op.Rename));
+                            if (action.Operation == ActionCopyMoveRename.Op.Move)
                                 this.mStats.FilesMoved++;
-                            else if (Action.Operation == ActionCopyMoveRename.Op.Rename)
+                            else if (action.Operation == ActionCopyMoveRename.Op.Rename)
                                 this.mStats.FilesRenamed++;
                         }
                         catch (System.Exception e)
                         {
-                            Action.Done = true;
-                            Action.HasError = true;
-                            Action.ErrorText = e.Message;
+                            action.Done = true;
+                            action.HasError = true;
+                            action.ErrorText = e.Message;
                             totalCopiedSoFar += thisFileSize;
                         }
                     }
@@ -311,8 +323,8 @@ namespace TVRename
                             msr = null;
                             msw = null;
 
-                            msr = new BinaryReader(new FileStream(Action.From.FullName, FileMode.Open, FileAccess.Read));
-                            string tempName = TempFor(Action.To);
+                            msr = new BinaryReader(new FileStream(action.From.FullName, FileMode.Open, FileAccess.Read));
+                            string tempName = TempFor(action.To);
                             if (File.Exists(tempName))
                                 File.Delete(tempName);
 
@@ -328,10 +340,16 @@ namespace TVRename
                                 totalCopiedSoFar += n;
                                 thisFileCopied += n;
 
-                                this.BeginInvoke(this.Percent, (thisFileSize != 0) ? (int) (1000 * thisFileCopied / thisFileSize) : 50, (totalSize != 0) ? (int) (1000 * totalCopiedSoFar / totalSize) : 50, i);
+                                this.BeginInvoke(this.Percent, (thisFileSize != 0) ? (int)(1000 * thisFileCopied / thisFileSize) : 50, (totalSize != 0) ? (int)(1000 * totalCopiedSoFar / totalSize) : 50, i);
 
                                 while (this.cbPause.Checked)
                                     System.Threading.Thread.Sleep(100);
+                                if (this.Stop)
+                                {
+                                    this.NicelyStopAndCleanUp(msr,msw,action);
+                                    this.BeginInvoke(this.CopyDone);
+                                    return;
+                                }
                             }
                             while (n != 0);
 
@@ -339,28 +357,28 @@ namespace TVRename
                             msw.Close();
 
                             // rename temp version to final name
-                            if (Action.To.Exists)
-                                Action.To.Delete(); // outta ma way!
-                            File.Move(tempName, Action.To.FullName);
+                            if (action.To.Exists)
+                                action.To.Delete(); // outta ma way!
+                            File.Move(tempName, action.To.FullName);
 
                             // if that was a move/rename, delete the source
-                            if (Action.IsMoveRename())
-                                Action.From.Delete();
+                            if (action.IsMoveRename())
+                                action.From.Delete();
 
-                            if (Action.Operation == ActionCopyMoveRename.Op.Move)
+                            if (action.Operation == ActionCopyMoveRename.Op.Move)
                                 this.mStats.FilesMoved++;
-                            else if (Action.Operation == ActionCopyMoveRename.Op.Rename)
+                            else if (action.Operation == ActionCopyMoveRename.Op.Rename)
                                 this.mStats.FilesRenamed++;
-                            else if (Action.Operation == ActionCopyMoveRename.Op.Copy)
+                            else if (action.Operation == ActionCopyMoveRename.Op.Copy)
                                 this.mStats.FilesCopied++;
 
-                            Action.Done = true;
+                            action.Done = true;
                         } // try
                         catch (IOException e)
                         {
-                            Action.Done = true;
-                            Action.HasError = true;
-                            Action.ErrorText = e.Message;
+                            action.Done = true;
+                            action.HasError = true;
+                            action.ErrorText = e.Message;
 
                             this.Result = CopyMoveResult.kAlreadyExists;
                             if (msw != null)
@@ -370,37 +388,13 @@ namespace TVRename
 
                             totalCopiedSoFar += thisFileSize;
                         }
-                        catch (System.Threading.ThreadAbortException)
+                        catch (System.Exception ex)
                         {
-                            this.Result = CopyMoveResult.kUserCancelled;
-                            //for (int k=i;k<mSources->Count;k++)
-                            // ErrorFiles->Add(mSources[k]); // what was skipped
-
-                            if (msw != null)
-                            {
-                                msw.Close();
-                                string tempName = TempFor(Action.To);
-                                if (File.Exists(tempName))
-                                    File.Delete(tempName);
-                            }
-                            if (msr != null)
-                                msr.Close();
-                            this.BeginInvoke(this.CopyDone);
-                            return;
-                        }
-                        catch (System.Exception e)
-                        {
+                            // handle any other exception type
                             this.Result = CopyMoveResult.kFileError;
-                            Action.HasError = true;
-                            Action.ErrorText = e.Message;
-                            if (msw != null)
-                            {
-                                msw.Close();
-                                if (File.Exists(TempFor(Action.To)))
-                                    File.Delete(TempFor(Action.To));
-                            }
-                            if (msr != null)
-                                msr.Close();
+                            action.HasError = true;
+                            action.ErrorText = ex.Message;
+                            this.NicelyStopAndCleanUp(msr,msw,action);
 
                             totalCopiedSoFar += thisFileSize;
                         }
@@ -408,7 +402,7 @@ namespace TVRename
                     try
                     {
                         if (security != null)
-                            Action.To.SetAccessControl(security);
+                            action.To.SetAccessControl(security);
                     }
                     catch
                     {
@@ -424,12 +418,14 @@ namespace TVRename
 
         private void button1_Click(object sender, System.EventArgs e)
         {
-            this.mCopyThread.Interrupt();
-            //CopyDone(false);
+            this.Stop = true;
+            this.Result = CopyMoveResult.kUserCancelled;
+            // this.mCopyThread.Interrupt();
         }
 
         private void CopyMoveProgress_Load(object sender, System.EventArgs e)
         {
+            this.Stop = false;
             this.mCopyThread = new System.Threading.Thread(this.CopyMachine);
             this.mCopyThread.Name = "Copy Thread";
             this.mCopyThread.Start();

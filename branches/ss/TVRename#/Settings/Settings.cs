@@ -408,7 +408,7 @@ namespace TVRename
             this.ExportRSSMaxShows = 10;
             //DefaultNamingStyle = NStyle::Style::Name_SxxEyy_EpName;
             this.SetVideoExtensionsString(".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm");
-            this.SetOtherExtensionsString(".srt;.nfo;.txt");
+            this.SetOtherExtensionsString(".srt;.nfo;.txt;*.tbn");
             this.KeepTogether = true;
             this.LeadingZeroOnSeason = false;
             this.ShowInTaskbar = true;

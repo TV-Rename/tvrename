@@ -36,6 +36,7 @@ namespace TVRename
             this.Add("torrentz.com", "http://www.torrentz.com/search?q={ShowName}+{Season}+{Episode}");
             this.Add("NewzLeech", "http://www.newzleech.com/usenet/?group=&minage=&age=&min=min&max=max&q={ShowName}+{Season}+{Episode}&mode=usenet&adv=");
             this.Add("nzbs.org", "http://nzbs.org/index.php?action=search&q={ShowName}+{Season}+{Episode}");
+            this.Add("binsearch", "http://binsearch.net/?q={ShowName}+s{Season:2}e{Episode2}&max=25&adv_age=365&server=");
 
             this.CurrentSearch = "Mininova";
         }

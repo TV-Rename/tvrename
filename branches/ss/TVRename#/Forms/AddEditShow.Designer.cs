@@ -58,7 +58,6 @@ namespace TVRename
             this.label5 = new System.Windows.Forms.Label();
             this.txtIgnoreSeasons = new System.Windows.Forms.TextBox();
             this.chkDVDOrder = new System.Windows.Forms.CheckBox();
-            this.chkForceCheckAll = new System.Windows.Forms.CheckBox();
             this.chkPadTwoDigits = new System.Windows.Forms.CheckBox();
             this.lvSeasonFolders = new System.Windows.Forms.ListView();
             this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
@@ -78,6 +77,8 @@ namespace TVRename
             this.label2 = new System.Windows.Forms.Label();
             this.gbAutoFolders = new System.Windows.Forms.GroupBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
+            this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -267,16 +268,6 @@ namespace TVRename
             this.chkDVDOrder.TabIndex = 0;
             this.chkDVDOrder.Text = "&Use DVD Order";
             this.chkDVDOrder.UseVisualStyleBackColor = true;
-            // 
-            // chkForceCheckAll
-            // 
-            this.chkForceCheckAll.AutoSize = true;
-            this.chkForceCheckAll.Location = new System.Drawing.Point(21, 124);
-            this.chkForceCheckAll.Name = "chkForceCheckAll";
-            this.chkForceCheckAll.Size = new System.Drawing.Size(274, 17);
-            this.chkForceCheckAll.TabIndex = 5;
-            this.chkForceCheckAll.Text = "M&issing check for all episodes (future and no airdate)";
-            this.chkForceCheckAll.UseVisualStyleBackColor = true;
             // 
             // chkPadTwoDigits
             // 
@@ -469,10 +460,11 @@ namespace TVRename
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.cbIncludeNoAirdate);
+            this.tabPage2.Controls.Add(this.cbIncludeFuture);
             this.tabPage2.Controls.Add(this.chkShowNextAirdate);
             this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Controls.Add(this.chkDVDOrder);
-            this.tabPage2.Controls.Add(this.chkForceCheckAll);
             this.tabPage2.Controls.Add(this.cbDoRenaming);
             this.tabPage2.Controls.Add(this.cbDoMissingCheck);
             this.tabPage2.Controls.Add(this.cbSequentialMatching);
@@ -484,6 +476,26 @@ namespace TVRename
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Advanced";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // cbIncludeFuture
+            // 
+            this.cbIncludeFuture.AutoSize = true;
+            this.cbIncludeFuture.Location = new System.Drawing.Point(28, 124);
+            this.cbIncludeFuture.Name = "cbIncludeFuture";
+            this.cbIncludeFuture.Size = new System.Drawing.Size(136, 17);
+            this.cbIncludeFuture.TabIndex = 8;
+            this.cbIncludeFuture.Text = "Include future episodes";
+            this.cbIncludeFuture.UseVisualStyleBackColor = true;
+            // 
+            // cbIncludeNoAirdate
+            // 
+            this.cbIncludeNoAirdate.AutoSize = true;
+            this.cbIncludeNoAirdate.Location = new System.Drawing.Point(174, 124);
+            this.cbIncludeNoAirdate.Name = "cbIncludeNoAirdate";
+            this.cbIncludeNoAirdate.Size = new System.Drawing.Size(111, 17);
+            this.cbIncludeNoAirdate.TabIndex = 8;
+            this.cbIncludeNoAirdate.Text = "Include no airdate";
+            this.cbIncludeNoAirdate.UseVisualStyleBackColor = true;
             // 
             // AddEditShow
             // 
@@ -528,7 +540,6 @@ namespace TVRename
         private System.Windows.Forms.FolderBrowserDialog folderBrowser;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox chkDVDOrder;
-        private System.Windows.Forms.CheckBox chkForceCheckAll;
         private System.Windows.Forms.ListView lvSeasonFolders;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
@@ -556,5 +567,7 @@ namespace TVRename
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.GroupBox gbAutoFolders;
+        private System.Windows.Forms.CheckBox cbIncludeNoAirdate;
+        private System.Windows.Forms.CheckBox cbIncludeFuture;
     }
 }

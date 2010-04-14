@@ -789,7 +789,7 @@ namespace TVRename
                     reader.ReadOuterXml(); // skip
             } // reader EOF
 
-            // if more than 30% of a show's episodes are marked as dirty, just download the entire show again
+            // if more than 10% of a show's episodes are marked as dirty, just download the entire show again
             foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
             {
                 int totaleps = 0;
@@ -803,7 +803,7 @@ namespace TVRename
                         totaleps++;
                     }
                 }
-                if (totaldirty >= totaleps / 3)
+                if (totaldirty >= (totaleps / 10)) // 10%
                 {
                     kvp.Value.Dirty = true;
                     kvp.Value.Seasons.Clear();

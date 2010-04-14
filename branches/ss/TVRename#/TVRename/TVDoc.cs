@@ -1890,8 +1890,8 @@ namespace TVRename
 
         public void ActionAction(SetProgressDelegate prog, System.Collections.Generic.List<ActionItem> theList)
         {
-            // first pass to CopyMoveProgress
-            // then, fire Action(TVDoc ^doc) on whatever is left (!Done)
+            // first pass to CopyMoveProgress.  It will take care of copying/moving
+            // then, fire Action on whatever is left (!Done)
 
             if (!this.Args.Hide)
             {
@@ -2318,7 +2318,7 @@ namespace TVRename
                                     this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep));
                                 }
                             }
-                            if (missCheck) // == MISSING CHECK part 1/2 ==
+                            if (missCheck && this.Settings.UsefulExtension(fi.Extension, false)) // == MISSING CHECK part 1/2 ==
                             {
                                 // first pass of missing check is to tally up the episodes we do have
                                 localEps[epNum] = actualFile;
@@ -2341,7 +2341,7 @@ namespace TVRename
                                 {
                                     DateTime? dt = dbep.GetAirDateDT(true);
 
-                                    bool notFuture = (dt != null) && (dt.Value.CompareTo(today) < 0); // isn't an episode yet to be aired
+                                    bool notFuture = ((dt != null) && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
                                     
                                     bool noAirdatesUntilNow = true;
                                     for (int i = 1; i <= snum; i++)
@@ -2355,7 +2355,7 @@ namespace TVRename
                                     // - force check is on
                                     // - there are no airdates at all, for up to and including this season
                                     // - there is an airdate, and it isn't in the future
-                                    if (si.ForceCheckAll || noAirdatesUntilNow || notFuture)
+                                    if (noAirdatesUntilNow || (si.ForceCheckFuture || notFuture) || (si.ForceCheckNoAirdate && dt == null))
                                     {
                                         // then add it as officially missing
                                         this.TheActionList.Add(new ActionMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));
