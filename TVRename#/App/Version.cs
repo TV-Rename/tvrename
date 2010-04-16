@@ -29,7 +29,7 @@ namespace TVRename
             // Release history:
             // Version 2.2.0b1 released 9 April 2010, r94
 
-            string v = "2.2.0b2";
+            string v = "2.2.0b3";
 #if DEBUG
             return v + " ** Debug Build **";
 #else

@@ -6,11 +6,13 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace TVRename
 {
+    using SourceGrid.Cells;
+
     /// <summary>
     /// Summary for ActorsGrid
     ///
@@ -54,7 +56,7 @@ namespace TVRename
                     {
                         string aa = act.Trim();
                         if (!string.IsNullOrEmpty(aa))
-                            this.TheData.Set(si.Name, aa, new DataArr.ArrData(true, true));
+                            this.TheData.Set(si.Name, aa, true);
                     }
                 }
 
@@ -72,7 +74,7 @@ namespace TVRename
                                 {
                                     string aa = g.Trim();
                                     if (!string.IsNullOrEmpty(aa))
-                                        this.TheData.Set(si.Name, aa, new DataArr.ArrData(true, false));
+                                        this.TheData.Set(si.Name, aa, false);
                                 }
                             }
                         }
@@ -135,8 +137,7 @@ namespace TVRename
             int end = 0;
             for (int r = this.TheData.DataR - 1; r >= end; r--)
             {
-                DataArr.ArrData d = this.TheData.Data[r, 0];
-                if ((d != null) && d.yes)
+                if (this.TheData.Data[r][0].HasValue)
                 {
                     this.TheData.MoveRowToTop(this.TheData.Rows[r++]);
                     end++;
@@ -160,8 +161,7 @@ namespace TVRename
             int end = 0;
             for (int c = this.TheData.DataC - 1; c >= end; c--)
             {
-                DataArr.ArrData d = this.TheData.Data[0, c];
-                if ((d != null) && d.yes)
+                if (this.TheData.Data[0][c].HasValue)
                 {
                     this.TheData.MoveColToTop(this.TheData.Cols[c++]);
                     end++;
@@ -173,31 +173,34 @@ namespace TVRename
 
         private void FillGrid()
         {
-            SourceGrid.Cells.Views.Cell rowTitleModel = new SourceGrid.Cells.Views.Cell();
-            rowTitleModel.BackColor = Color.SteelBlue;
-            rowTitleModel.ForeColor = Color.White;
-            rowTitleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell colTitleModel = new SourceGrid.Cells.Views.Cell
+            {
+                ElementText = new RotatedText(-90.0f),
+                BackColor = Color.SteelBlue,
+                ForeColor = Color.White,
+                TextAlignment = DevAge.Drawing.ContentAlignment.BottomCenter
+            };
 
-            SourceGrid.Cells.Views.Cell colTitleModel = new SourceGrid.Cells.Views.Cell();
-            colTitleModel.ElementText = new RotatedText(-90.0f);
-            colTitleModel.BackColor = Color.SteelBlue;
-            colTitleModel.ForeColor = Color.White;
-            colTitleModel.TextAlignment = DevAge.Drawing.ContentAlignment.BottomCenter;
+            SourceGrid.Cells.Views.Cell topleftTitleModel = new SourceGrid.Cells.Views.Cell
+            {
+                BackColor = Color.SteelBlue,
+                ForeColor = Color.White,
+                TextAlignment = DevAge.Drawing.ContentAlignment.BottomLeft
+            };
 
-            SourceGrid.Cells.Views.Cell topleftTitleModel = new SourceGrid.Cells.Views.Cell();
-            topleftTitleModel.BackColor = Color.SteelBlue;
-            topleftTitleModel.ForeColor = Color.White;
-            topleftTitleModel.TextAlignment = DevAge.Drawing.ContentAlignment.BottomLeft;
+            SourceGrid.Cells.Views.Cell isActorModel = new SourceGrid.Cells.Views.Cell
+            {
+                BackColor = Color.Green,
+                ForeColor = Color.Green,
+                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+            };
 
-            SourceGrid.Cells.Views.Cell yesModel = new SourceGrid.Cells.Views.Cell();
-            yesModel.BackColor = Color.Green;
-            yesModel.ForeColor = Color.Green;
-            yesModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
-
-            SourceGrid.Cells.Views.Cell guestModel = new SourceGrid.Cells.Views.Cell();
-            guestModel.BackColor = Color.LightGreen;
-            guestModel.ForeColor = Color.LightGreen;
-            guestModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell isGuestModel = new SourceGrid.Cells.Views.Cell
+            {
+                BackColor = Color.LightGreen,
+                ForeColor = Color.LightGreen,
+                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+            };
 
             this.grid1.Columns.Clear();
             this.grid1.Rows.Clear();
@@ -221,10 +224,11 @@ namespace TVRename
             this.grid1.Rows[0].AutoSizeMode = SourceGrid.AutoSizeMode.MinimumSize;
             this.grid1.Rows[0].Height = 100;
 
-            SourceGrid.Cells.ColumnHeader h;
-            h = new SourceGrid.Cells.ColumnHeader("Show");
-            h.AutomaticSortEnabled = false;
-            h.ResizeEnabled = false;
+            ColumnHeader h = new SourceGrid.Cells.ColumnHeader("Show")
+            {
+                AutomaticSortEnabled = false,
+                ResizeEnabled = false
+            };
 
             this.grid1[0, 0] = h;
             this.grid1[0, 0].View = topleftTitleModel;
@@ -232,52 +236,57 @@ namespace TVRename
 
             for (int c = 0; c < this.TheData.DataC; c++)
             {
-                h = new SourceGrid.Cells.ColumnHeader(this.TheData.Cols[c]); // "<A HREF=\"http://www.imdb.com/find?s=nm&q="+kvp->Key+"\">"+kvp->Key+"</a>");
+                h = new SourceGrid.Cells.ColumnHeader(this.TheData.Cols[c])
+                {
+                    AutomaticSortEnabled = false,
+                    ResizeEnabled = false
+                }; // "<A HREF=\"http://www.imdb.com/find?s=nm&q="+kvp->Key+"\">"+kvp->Key+"</a>");
 
                 // h->AddController(sortableController);
                 // h->SortComparer = gcnew SourceGrid::MultiColumnsComparer(c, 0); // TODO: remove?
-                h.AutomaticSortEnabled = false;
-                h.ResizeEnabled = false;
                 this.grid1[0, c + 1] = h;
                 this.grid1[0, c + 1].View = colTitleModel;
                 this.grid1[0, c + 1].AddController(new TopClickEvent(this, this.TheData.Cols[c]));
             }
 
             int totalCol = this.grid1.ColumnsCount - 1;
-            h = new SourceGrid.Cells.ColumnHeader("Totals");
-            h.AutomaticSortEnabled = false;
+            h = new SourceGrid.Cells.ColumnHeader("Totals")
+            {
+                AutomaticSortEnabled = false,
+                ResizeEnabled = false
+            };
             //h->AddController(sortableController);
             // h->SortComparer = gcnew SourceGrid::MultiColumnsComparer(c, 0);
-            h.ResizeEnabled = false;
             this.grid1.Columns[totalCol].Width = 48;
             this.grid1[0, totalCol] = h;
             this.grid1[0, totalCol].View = colTitleModel;
             this.grid1[0, totalCol].AddController(new SortRowsByCountEvent(this));
 
-            SourceGrid.Cells.RowHeader rh = null;
             for (int r = 0; r < this.TheData.DataR; r++)
             {
-                rh = new SourceGrid.Cells.RowHeader(this.TheData.Rows[r]);
-                rh.ResizeEnabled = false;
-
-                this.grid1[r + 1, 0] = rh;
+                this.grid1[r + 1, 0] = new SourceGrid.Cells.RowHeader(this.TheData.Rows[r])
+                {
+                    ResizeEnabled = false
+                };
                 this.grid1[r + 1, 0].AddController(new SideClickEvent(this, this.TheData.Rows[r]));
             }
 
-            rh = new SourceGrid.Cells.RowHeader("Totals");
-            rh.ResizeEnabled = false;
-            this.grid1[this.TheData.DataR + 1, 0] = rh;
+            this.grid1[this.TheData.DataR + 1, 0] = new SourceGrid.Cells.RowHeader("Totals")
+            {
+                ResizeEnabled = false
+            };
             this.grid1[this.TheData.DataR + 1, 0].AddController(new SortColsByCountEvent(this));
 
             for (int c = 0; c < this.TheData.DataC; c++)
             {
                 for (int r = 0; r < this.TheData.DataR; r++)
                 {
-                    DataArr.ArrData d = this.TheData.Data[r, c];
-                    if ((d != null) && (d.yes))
+                    if (this.TheData.Data[r][c].HasValue)
                     {
-                        this.grid1[r + 1, c + 1] = new SourceGrid.Cells.Cell("Y");
-                        this.grid1[r + 1, c + 1].View = d.act ? yesModel : guestModel;
+                        this.grid1[r + 1, c + 1] = new SourceGrid.Cells.Cell("Y")
+                        {
+                            View = this.TheData.Data[r][c].Value ? isActorModel : isGuestModel
+                        };
                         this.grid1[r + 1, c + 1].AddController(new CellClickEvent(this.TheData.Cols[c], this.TheData.Rows[r]));
                     }
                     else
@@ -346,8 +355,8 @@ namespace TVRename
 
         private class CellClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private string Show;
-            private string Who;
+            private readonly string Show;
+            private readonly string Who;
 
             public CellClickEvent(string who, string show)
             {
@@ -367,15 +376,13 @@ namespace TVRename
 
         private class DataArr
         {
-            // TODO: Rewrite using jagged array (array of arrays), rather than a single multidimensional array
-            // for performance increase
-            public int AllocC;
-            public int AllocR;
-            public StringList Cols;
-            public ArrData[,] Data;
+            private int AllocC;
+            private int AllocR;
+            public readonly StringList Cols;
+            public bool?[][] Data;
             public int DataC;
             public int DataR;
-            public StringList Rows;
+            public readonly StringList Rows;
 
             public DataArr(int rowCountPreAlloc)
             {
@@ -383,30 +390,32 @@ namespace TVRename
                 this.Cols = new StringList();
                 this.AllocR = rowCountPreAlloc;
                 this.AllocC = rowCountPreAlloc * 10;
-                this.Data = new ArrData[this.AllocR,this.AllocC];
+                this.Data = new bool?[this.AllocR][];
+                for (int i = 0; i < this.AllocR; i++)
+                    this.Data[i] = new bool?[this.AllocC];
                 this.DataR = this.DataC = 0;
             }
 
-            public void SwapCols(int c1, int c2)
+            private void SwapCols(int c1, int c2)
             {
                 for (int r = 0; r < this.DataR; r++)
                 {
-                    ArrData t = this.Data[r, c2];
-                    this.Data[r, c2] = this.Data[r, c1];
-                    this.Data[r, c1] = t;
+                    bool? t = this.Data[r][c2];
+                    this.Data[r][c2] = this.Data[r][c1];
+                    this.Data[r][c1] = t;
                 }
                 string t2 = this.Cols[c1];
                 this.Cols[c1] = this.Cols[c2];
                 this.Cols[c2] = t2;
             }
 
-            public void SwapRows(int r1, int r2)
+            private void SwapRows(int r1, int r2)
             {
                 for (int c = 0; c < this.DataC; c++)
                 {
-                    ArrData t = this.Data[r2, c];
-                    this.Data[r2, c] = this.Data[r1, c];
-                    this.Data[r1, c] = t;
+                    bool? t = this.Data[r2][c];
+                    this.Data[r2][c] = this.Data[r1][c];
+                    this.Data[r1][c] = t;
                 }
                 string t2 = this.Rows[r1];
                 this.Rows[r1] = this.Rows[r2];
@@ -418,8 +427,8 @@ namespace TVRename
                 int t = 0;
                 for (int c = 0; c < this.DataC; c++)
                 {
-                    if ((this.Data[r, c] != null) && ((onlyCols == null) || onlyCols[c]))
-                        t += this.Data[r, c].Score();
+                    if (((this.Data[r][c] != null) && ((onlyCols == null) || onlyCols[c])) && this.Data[r][c].HasValue)
+                        t++;
                 }
                 return t;
             }
@@ -429,13 +438,13 @@ namespace TVRename
                 int t = 0;
                 for (int r = 0; r < this.DataR; r++)
                 {
-                    if (this.Data[r, c] != null)
-                        t += this.Data[r, c].Score();
+                    if ((this.Data[r][c] != null) && this.Data[r][c].HasValue)
+                        t++;
                 }
                 return t;
             }
 
-            public void Resize()
+            private void Resize()
             {
                 int newr = this.Rows.Count;
                 int newc = this.Cols.Count;
@@ -445,13 +454,16 @@ namespace TVRename
                         this.AllocR = newr * 2;
                     if (newc > this.AllocC)
                         this.AllocC = newc * 2;
-                    ArrData[,] newarr = new ArrData[this.AllocR,this.AllocC];
+                    bool?[][] newarr = new bool?[this.AllocR][];
+                    for (int i = 0; i < this.AllocR; i++)
+                        newarr[i] = new bool?[this.AllocC];
+
                     for (int r = 0; r < this.DataR; r++)
                     {
                         for (int c = 0; c < this.DataC; c++)
                         {
                             if ((r < newr) && (c < newc))
-                                newarr[r, c] = this.Data[r, c];
+                                newarr[r][c] = this.Data[r][c];
                         }
                     }
                     this.Data = newarr;
@@ -460,14 +472,14 @@ namespace TVRename
                 this.DataC = newc;
             }
 
-            public int AddRow(string name)
+            private int AddRow(string name)
             {
                 this.Rows.Add(name);
                 this.Resize();
                 return this.Rows.Count - 1;
             }
 
-            public int AddCol(string name)
+            private int AddCol(string name)
             {
                 this.Cols.Add(name);
                 this.Resize();
@@ -499,15 +511,16 @@ namespace TVRename
                     }
                 }
 
-                ArrData[,] newarr = new ArrData[countR,countC];
+                bool?[][] newarr = new bool?[countR][];
                 for (int r = 0, newR = 0; r < this.DataR; r++)
                 {
                     if (keepR[r])
                     {
+                        newarr[newR] = new bool?[countC];
                         for (int c = 0, newC = 0; c < this.DataC; c++)
                         {
                             if (keepR[r] && keepC[c])
-                                newarr[newR, newC++] = this.Data[r, c];
+                                newarr[newR][newC++] = this.Data[r][c];
                         }
                         newR++;
                     }
@@ -532,7 +545,7 @@ namespace TVRename
                 this.AllocC = this.DataC = countC;
             }
 
-            public void Set(string row, string col, ArrData d)
+            public void Set(string row, string col, bool isActor) // isActor = false means guest star
             {
                 int r = this.Rows.IndexOf(row);
                 int c = this.Cols.IndexOf(col);
@@ -540,7 +553,7 @@ namespace TVRename
                     r = this.AddRow(row);
                 if (c == -1)
                     c = this.AddCol(col);
-                this.Data[r, c] = d;
+                this.Data[r][c] = isActor;
             }
 
             public void SortCols(bool score) // false->name
@@ -583,10 +596,10 @@ namespace TVRename
 
                 for (int r = 0; r < this.DataR; r++)
                 {
-                    DataArr.ArrData t = this.Data[r, n];
+                    bool? t = this.Data[r][n];
                     for (int c = n; c > 0; c--)
-                        this.Data[r, c] = this.Data[r, c - 1];
-                    this.Data[r, 0] = t;
+                        this.Data[r][c] = this.Data[r][c - 1];
+                    this.Data[r][0] = t;
                 }
 
                 string t2 = this.Cols[n];
@@ -603,10 +616,10 @@ namespace TVRename
 
                 for (int c = 0; c < this.DataC; c++)
                 {
-                    DataArr.ArrData t = this.Data[n, c];
+                    bool? t = this.Data[n][c];
                     for (int r = n; r > 0; r--)
-                        this.Data[r, c] = this.Data[r - 1, c];
-                    this.Data[0, c] = t;
+                        this.Data[r][c] = this.Data[r - 1][c];
+                    this.Data[0][c] = t;
                 }
 
                 string t2 = this.Rows[n];
@@ -646,27 +659,6 @@ namespace TVRename
                         this.SwapRows(r2, maxat);
                 }
             }
-
-            #region Nested type: ArrData
-
-            public class ArrData
-            {
-                public bool act; // false=>guest
-                public bool yes;
-
-                public ArrData(bool @set, bool isact)
-                {
-                    this.yes = @set;
-                    this.act = isact;
-                }
-
-                public int Score()
-                {
-                    return this.yes ? 1 : 0;
-                }
-            }
-
-            #endregion
         }
 
         #endregion
@@ -719,8 +711,8 @@ namespace TVRename
 
         private class SideClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private ActorsGrid G;
-            private string Show;
+            private readonly ActorsGrid G;
+            private readonly string Show;
 
             public SideClickEvent(ActorsGrid g, string show)
             {
@@ -743,7 +735,7 @@ namespace TVRename
 
         private class SortColsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private ActorsGrid G;
+            private readonly ActorsGrid G;
 
             public SortColsByCountEvent(ActorsGrid g)
             {
@@ -762,7 +754,7 @@ namespace TVRename
 
         private class SortRowsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private ActorsGrid G;
+            private readonly ActorsGrid G;
 
             public SortRowsByCountEvent(ActorsGrid g)
             {
@@ -781,8 +773,8 @@ namespace TVRename
 
         private class TopClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private string Actor;
-            private ActorsGrid G;
+            private readonly string Actor;
+            private readonly ActorsGrid G;
 
             public TopClickEvent(ActorsGrid g, string act)
             {

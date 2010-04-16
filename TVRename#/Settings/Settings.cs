@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -331,6 +332,9 @@ namespace TVRename
 
         public static bool OKExtensionsString(string s)
         {
+            if (string.IsNullOrEmpty(s))
+              return true;
+
             string[] t = s.Split(';');
             foreach (string s2 in t)
             {
@@ -406,8 +410,10 @@ namespace TVRename
             this.ExportRSSMaxDays = 7;
             this.ExportRSSMaxShows = 10;
             //DefaultNamingStyle = NStyle::Style::Name_SxxEyy_EpName;
+            this.OtherExtensionsString = "";
+            this.VideoExtensionsString = "";
             this.SetVideoExtensionsString(".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm");
-            this.SetOtherExtensionsString(".srt;.nfo;.txt;*.tbn");
+            this.SetOtherExtensionsString(".srt;.nfo;.txt;.tbn");
             this.KeepTogether = true;
             this.LeadingZeroOnSeason = false;
             this.ShowInTaskbar = true;
@@ -715,6 +721,20 @@ namespace TVRename
 
             string url = this.TheSearchers.CurrentSearchURL();
             return CustomName.NameForNoExt(epi, url, true);
+        }
+
+        public string FilenameFriendly(string fn)
+        {
+            foreach (Replacement R in this.Replacements)
+            {
+                if (R.CaseInsensitive)
+                    fn = Regex.Replace(fn, Regex.Escape(R.This), Regex.Escape(R.That), RegexOptions.IgnoreCase);
+                else
+                    fn = fn.Replace(R.This, R.That);
+            }
+            if (this.ForceLowercaseFilenames)
+                fn = fn.ToLower();
+            return fn;
         }
     }
 }
