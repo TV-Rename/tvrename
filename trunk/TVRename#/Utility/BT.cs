@@ -1011,7 +1011,7 @@ namespace TVRename
             return (100 * bitsOn + totalBits / 2) / totalBits;
         }
 
-        public System.Collections.Generic.List<TorrentEntry> AllFilesBeingDownloaded()
+        public System.Collections.Generic.List<TorrentEntry> AllFilesBeingDownloaded(TVSettings settings)
         {
             System.Collections.Generic.List<TorrentEntry> r = new System.Collections.Generic.List<TorrentEntry>();
 
@@ -1055,9 +1055,9 @@ namespace TVRename
 
                     foreach (string s in a)
                     {
-                        if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip)) // TODO: will break on conversion of character to integer?
+                        if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip))
                         {
-                            string saveTo = Helpers.FileInFolder(defaultFolder, s).Name;
+                            string saveTo = Helpers.FileInFolder(defaultFolder, settings.FilenameFriendly(s)).Name;
                             if (hasTargets)
                             {
                                 // see if there is a target for this (the c'th) file

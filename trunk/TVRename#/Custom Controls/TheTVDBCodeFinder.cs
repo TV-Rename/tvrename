@@ -31,6 +31,13 @@ namespace TVRename
             this.InitializeComponent();
 
             this.txtFindThis.Text = initialHint;
+
+            if (string.IsNullOrEmpty(initialHint))
+            {
+                ListViewItem lvi = new ListViewItem("");
+                lvi.SubItems.Add("Enter the show's name, and click \"Search\"");
+                this.lvMatches.Items.Add(lvi);
+            }
         }
 
         public event EventHandler SelectionChanged;
@@ -153,6 +160,12 @@ namespace TVRename
         {
             if (this.SelectionChanged != null)
                 this.SelectionChanged(sender, e);
+        }
+
+        public void TakeFocus()
+        {
+            this.Focus();
+            this.txtFindThis.Focus();
         }
 
         private void txtFindThis_KeyDown(object sender, KeyEventArgs e)
