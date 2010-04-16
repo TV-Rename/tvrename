@@ -7,72 +7,24 @@
 // 
 namespace TVRename
 {
-    public class ActionSorter : System.Collections.Generic.IComparer<ActionItem>
+    public class ActionSorter : System.Collections.Generic.IComparer<Item>
     {
         #region IComparer<ActionItem> Members
 
-        public virtual int Compare(ActionItem x, ActionItem y)
+        public virtual int Compare(Item x, Item y)
         {
-            if (x.Type == y.Type)
-            {
-                if (x.Type == ActionType.kCopyMoveRename)
-                {
-                    ActionCopyMoveRename xx = (ActionCopyMoveRename) (x);
-                    ActionCopyMoveRename yy = (ActionCopyMoveRename) (y);
+            return (x.GetType() == y.GetType()) ? x.Compare(y) : (TypeNumber(x) - TypeNumber(y));
+        }
 
-                    string s1 = xx.From.FullName + (xx.From.Directory.Root.FullName != xx.To.Directory.Root.FullName ? "0" : "1");
-                    string s2 = yy.From.FullName + (yy.From.Directory.Root.FullName != yy.To.Directory.Root.FullName ? "0" : "1");
-
-                    return s1.CompareTo(s2);
-                }
-                if (x.Type == ActionType.kDownload)
-                {
-                    ActionDownload xx = (ActionDownload) (x);
-                    ActionDownload yy = (ActionDownload) (y);
-
-                    return xx.Destination.FullName.CompareTo(yy.Destination.FullName);
-                }
-                if (x.Type == ActionType.kRSS)
-                {
-                    ActionRSS xx = (ActionRSS) (x);
-                    ActionRSS yy = (ActionRSS) (y);
-
-                    return xx.RSS.URL.CompareTo(yy.RSS.URL);
-                }
-                if (x.Type == ActionType.kMissing)
-                {
-                    ActionMissing xx = (ActionMissing) (x);
-                    ActionMissing yy = (ActionMissing) (y);
-
-                    return (xx.TheFileNoExt + xx.PE.Name).CompareTo(yy.TheFileNoExt + yy.PE.Name);
-                }
-                if (x.Type == ActionType.kNFO)
-                {
-                    ActionNFO xx = (ActionNFO) (x);
-                    ActionNFO yy = (ActionNFO) (y);
-
-                    if (xx.PE == null)
-                        return 1;
-                    if (yy.PE == null)
-                        return -1;
-                    return (xx.Where.FullName + xx.PE.Name).CompareTo(yy.Where.FullName + yy.PE.Name);
-                }
-                if (x.Type == ActionType.kuTorrenting)
-                {
-                    ActionuTorrenting xx = (ActionuTorrenting) (x);
-                    ActionuTorrenting yy = (ActionuTorrenting) (y);
-
-                    if (xx.PE == null)
-                        return 1;
-                    if (yy.PE == null)
-                        return -1;
-                    return (xx.DesiredLocationNoExt).CompareTo(yy.DesiredLocationNoExt);
-                }
-                System.Diagnostics.Debug.Fail("Unknown type in ActionItem::Compare"); // uhoh
-                return 1;
-            }
-            // different types
-            return ((int) x.Type - (int) y.Type);
+        static int TypeNumber(Item a)
+        {
+            if (a is ActionMissing) return 1;
+            if (a is ActionCopyMoveRename) return 2;
+            if (a is ActionRSS) return 3;
+            if (a is ActionDownload) return 4;
+            if (a is ActionNFO) return 5;
+            if (a is ActionuTorrenting) return 6;
+            return 7;
         }
 
         #endregion

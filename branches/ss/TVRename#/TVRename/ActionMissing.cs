@@ -11,78 +11,72 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionMissing : ActionItem
+    public class ActionMissing : EpisodeRelated, ScanList
     {
         public string TheFileNoExt;
 
         public ActionMissing(ProcessedEpisode pe, string whereItShouldBeNoExt)
-            : base(ActionType.kMissing, pe)
         {
+            this.Episode = pe;
             this.TheFileNoExt = whereItShouldBeNoExt;
         }
 
-        public override IgnoreItem GetIgnore()
+        //public bool SameAs(Action o)
+        //{
+        //    return (o is ActionMissing) && (string.Compare((o as ActionMissing).TheFileNoExt, this.TheFileNoExt) == 0);
+        //}
+
+        public ProcessedEpisode Episode { get; private set; }
+        public IgnoreItem Ignore
         {
-            if (string.IsNullOrEmpty(this.TheFileNoExt))
-                return null;
-            return new IgnoreItem(this.TheFileNoExt);
+            get
+            {
+                if (string.IsNullOrEmpty(this.TheFileNoExt))
+                    return null;
+                return new IgnoreItem(this.TheFileNoExt);
+            }
         }
-
-        public override string TargetFolder()
+        public ListViewItem ScanListViewItem
         {
-            if (string.IsNullOrEmpty(this.TheFileNoExt))
-                return null;
-            return new FileInfo(this.TheFileNoExt).DirectoryName;
+            get
+            {
+                ListViewItem lvi = new ListViewItem {
+                                                        Text = this.Episode.SI.ShowName()
+                                                    };
+
+                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                lvi.SubItems.Add(this.Episode.NumsAsString());
+
+                DateTime? dt = this.Episode.GetAirDateDT(true);
+                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
+                    lvi.SubItems.Add(dt.Value.ToShortDateString());
+                else
+                    lvi.SubItems.Add("");
+
+                FileInfo fi = new FileInfo(this.TheFileNoExt);
+                lvi.SubItems.Add(fi.DirectoryName);
+                lvi.SubItems.Add(fi.Name);
+
+                lvi.Tag = this;
+
+                return lvi;
+            }
         }
-
-        public override string FilenameForProgress()
+        public int ScanListViewGroup { get { return 0; } }
+        public string TargetFolder
         {
-            return this.PE.Name;
+            get
+            {
+                if (string.IsNullOrEmpty(this.TheFileNoExt))
+                    return null;
+                return new FileInfo(this.TheFileNoExt).DirectoryName;
+            }
         }
-
-        public override bool Action(TVDoc doc)
+        public int IconNumber { get { return 1; } }
+        public int Compare(Item o)
         {
-            return true; // return success, but don't set as Done
-        }
-
-        public override int IconNumber()
-        {
-            return 1;
-        }
-
-        public bool SameAs2(ActionMissing o)
-        {
-            return string.Compare(o.TheFileNoExt, this.TheFileNoExt) == 0;
-        }
-
-        public override bool SameAs(ActionItem o)
-        {
-            return (this.Type == o.Type) && this.SameAs2((ActionMissing) (o));
-        }
-
-        public override ListViewItem GetLVI(ListView lv)
-        {
-            ListViewItem lvi = new ListViewItem();
-
-            lvi.Text = this.PE.SI.ShowName();
-            lvi.SubItems.Add(this.PE.SeasonNumber.ToString());
-            lvi.SubItems.Add(this.PE.NumsAsString());
-
-            DateTime? dt = this.PE.GetAirDateDT(true);
-            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                lvi.SubItems.Add(dt.Value.ToShortDateString());
-            else
-                lvi.SubItems.Add("");
-
-            FileInfo fi = new FileInfo(this.TheFileNoExt);
-            lvi.SubItems.Add(fi.DirectoryName);
-            lvi.SubItems.Add(fi.Name);
-
-            lvi.Tag = this;
-            lvi.Group = lv.Groups[0];
-
-            //lv->Items->Add(lvi);
-            return lvi;
+            ActionMissing miss = o as ActionMissing;
+            return o == null ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
         }
     }
 }

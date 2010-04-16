@@ -48,10 +48,10 @@ namespace TVRename
         private int mCurrentNum;
         private TVDoc mDoc;
         private TVRenameStats mStats;
-        private System.Collections.Generic.List<ActionItem> mToDo;
+        private ItemList mToDo;
         private bool Stop;
 
-        public CopyMoveProgress(TVDoc doc, System.Collections.Generic.List<ActionItem> todo, TVRenameStats stats)
+        public CopyMoveProgress(TVDoc doc, ItemList todo, TVRenameStats stats)
         {
             this.mDoc = doc;
             this.mToDo = todo;

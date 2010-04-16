@@ -34,6 +34,9 @@ namespace TVRename
         kActionAction,
         kActionDelete,
         kActionIgnoreSeason,
+        kEditShow,
+        kEditSeason,
+        kDeleteShow,
         kWatchBase = 1000,
         kOpenFolderBase = 2000
     }
@@ -56,7 +59,7 @@ namespace TVRename
         #endregion
 
         protected int Busy;
-        
+
         public IPCDelegate IPCBringToForeground;
         public IPCDelegate IPCDoAll;
         public IPCDelegate IPCQuit;
@@ -69,7 +72,7 @@ namespace TVRename
         protected TVDoc mDoc;
         protected StringList mFoldersToOpen;
         protected int mInternalChange;
-        protected System.Collections.Generic.List<ActionItem> mLastActionsClicked;
+        protected ItemList mLastActionsClicked;
         protected ProcessedEpisode mLastEpClicked;
         protected System.Collections.Generic.List<FileInfo> mLastFL;
         protected string mLastFolderClicked;
@@ -190,7 +193,6 @@ namespace TVRename
             if (this.mDoc.Args.Quit || this.mDoc.Args.Hide)
                 this.Close();
         }
-
 
         ~UI()
         {
@@ -1276,6 +1278,21 @@ namespace TVRename
                 tsi = new ToolStripMenuItem("When to Watch");
                 tsi.Tag = (int) RightClickCommands.kWhenToWatchSeries;
                 this.showRightClickMenu.Items.Add(tsi);
+
+                tsi = new ToolStripMenuItem("Edit Show");
+                tsi.Tag = (int) RightClickCommands.kEditShow;
+                this.showRightClickMenu.Items.Add(tsi);
+
+                tsi = new ToolStripMenuItem("Delete Show");
+                tsi.Tag = (int) RightClickCommands.kDeleteShow;
+                this.showRightClickMenu.Items.Add(tsi);
+            }
+
+            if (seas != null)
+            {
+                tsi = new ToolStripMenuItem("Edit " + (seas.SeasonNumber == 0 ? "Specials" : "Season " + seas.SeasonNumber));
+                tsi.Tag = (int) RightClickCommands.kEditSeason;
+                this.showRightClickMenu.Items.Add(tsi);
             }
 
             if (ep != null)
@@ -1526,6 +1543,15 @@ namespace TVRename
                 case RightClickCommands.kForceRefreshSeries:
                     this.ForceRefresh(this.mLastShowClicked);
                     break;
+                case RightClickCommands.kEditShow:
+                    this.EditShow(this.mLastShowClicked);
+                    break;
+                case RightClickCommands.kDeleteShow:
+                    this.DeleteShow(this.mLastShowClicked);
+                    break;
+                case RightClickCommands.kEditSeason:
+                    this.EditSeason(this.mLastShowClicked, this.mLastSeasonClicked.SeasonNumber);
+                    break;
                 case RightClickCommands.kBTSearchFor:
                     {
                         foreach (ListViewItem lvi in this.lvAction.SelectedItems)
@@ -1580,7 +1606,7 @@ namespace TVRename
                                     ai.PE.SI.IgnoreSeasons.Add(snum);
 
                                 // remove all other episodes of this season from the Action list
-                                System.Collections.Generic.List<ActionItem> remove = new System.Collections.Generic.List<ActionItem>();
+                                ItemList remove = new ItemList();
                                 foreach (ActionItem Action in this.mDoc.TheActionList)
                                 {
                                     if ((Action.PE != null) && (Action.PE.SeasonNumber == snum))
@@ -2032,6 +2058,11 @@ namespace TVRename
             if (si == null)
                 return;
 
+            this.DeleteShow(si);
+        }
+
+        private void DeleteShow(ShowItem si)
+        {
             System.Windows.Forms.DialogResult res = MessageBox.Show("Remove show \"" + si.ShowName() + "\".  Are you sure?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != System.Windows.Forms.DialogResult.Yes)
                 return;
@@ -2412,6 +2443,7 @@ namespace TVRename
         {
             ActionItem Action = this.mDoc.TheActionList[e.ItemIndex];
             ListViewItem lvi = Action.GetLVI(this.lvAction);
+            lvi.Group = this.lvWhenToWatch.Groups[Action.GetGroup()];
             int n = Action.IconNumber();
             if (n != -1)
                 lvi.ImageIndex = n;
@@ -2453,6 +2485,7 @@ namespace TVRename
                 foreach (ActionItem Action in this.mDoc.TheActionList)
                 {
                     ListViewItem lvi = Action.GetLVI(this.lvAction);
+                    lvi.Group = this.lvWhenToWatch.Groups[Action.GetGroup()];
                     lvi.Checked = true;
                     lvi.Tag = Action;
                     this.lvAction.Items.Add(lvi);
@@ -2662,7 +2695,7 @@ namespace TVRename
             this.mFoldersToOpen = new StringList();
             this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
 
-            this.mLastActionsClicked = new System.Collections.Generic.List<ActionItem>();
+            this.mLastActionsClicked = new ItemList();
 
             foreach (ActionItem ai in lvr.FlatList)
                 this.mLastActionsClicked.Add(ai);

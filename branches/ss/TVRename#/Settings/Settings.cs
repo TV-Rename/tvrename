@@ -50,6 +50,10 @@ namespace TVRename
         }
     }
 
+    public class ReplacementList : System.Collections.Generic.List<Replacement>
+    {
+    }
+
     public class FNPRegexList : System.Collections.Generic.List<FilenameProcessorRE>
     {
     }
@@ -67,57 +71,55 @@ namespace TVRename
 
         #endregion
 
-        public bool AutoSelectShowInMyShows;
-        public bool BGDownload;
-        public bool CheckuTorrent;
-        public bool EpImgs;
-        public bool ExportFOXML;
-        public string ExportFOXMLTo;
-        public bool ExportMissingCSV;
-        public string ExportMissingCSVTo;
-        public bool ExportMissingXML;
-        public string ExportMissingXMLTo;
-        public int ExportRSSMaxDays;
-        public int ExportRSSMaxShows;
-        public bool ExportRenamingXML;
-        public string ExportRenamingXMLTo;
-        public bool ExportWTWRSS;
-        public string ExportWTWRSSTo;
-        public FNPRegexList FNPRegexs;
-        public bool FolderJpg;
-        public FolderJpgIsType FolderJpgIs;
-
-        public bool ForceLowercaseFilenames;
-        public bool IgnoreSamples;
-        public bool KeepTogether;
-        public bool LeadingZeroOnSeason;
-        public bool LeaveOriginals;
-        public bool MissingCheck;
-        public bool NFOs;
-        public CustomName NamingStyle;
-        public bool NotificationAreaIcon;
-        public bool OfflineMode; // TODO: Make property of thetvdb?
-        private string[] OtherExtensionsArray;
-        private string OtherExtensionsString;
-        public int ParallelDownloads;
-        public StringList RSSURLs;
-        public bool RenameCheck;
-        public bool RenameTxtToSub;
-        public System.Collections.Generic.List<Replacement> Replacements;
-        public string ResumeDatPath;
-
-        public int SampleFileMaxSizeMB; // sample file must be smaller than this to be ignored
-        public bool SearchLocally;
-        public bool SearchRSS;
-        public bool ShowEpisodePictures;
-        public bool ShowInTaskbar;
-        public string SpecialsFolderName;
-        public int StartupTab;
-        public Searchers TheSearchers;
-        private string[] VideoExtensionsArray;
-        private string VideoExtensionsString;
-        public int WTWRecentDays;
-        public string uTorrentPath;
+        public bool AutoSelectShowInMyShows = true;
+        public bool BGDownload = false;
+        public bool CheckuTorrent = false;
+        public bool EpImgs = false;
+        public bool ExportFOXML = false;
+        public string ExportFOXMLTo = "";
+        public bool ExportMissingCSV = false;
+        public string ExportMissingCSVTo = "";
+        public bool ExportMissingXML = false;
+        public string ExportMissingXMLTo = "";
+        public int ExportRSSMaxDays = 7;
+        public int ExportRSSMaxShows = 10;
+        public bool ExportRenamingXML = false;
+        public string ExportRenamingXMLTo = "";
+        public bool ExportWTWRSS = false;
+        public string ExportWTWRSSTo = "";
+        public FNPRegexList FNPRegexs = DefaultFNPList();
+        public bool FolderJpg = false;
+        public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
+        public bool ForceLowercaseFilenames = false;
+        public bool IgnoreSamples = true;
+        public bool KeepTogether = true;
+        public bool LeadingZeroOnSeason = false;
+        public bool LeaveOriginals = false;
+        public bool MissingCheck = true;
+        public bool NFOs = false;
+        public CustomName NamingStyle = new CustomName();
+        public bool NotificationAreaIcon = false;
+        public bool OfflineMode = false; // TODO: Make property of thetvdb?
+        private string[] OtherExtensionsArray = new string[0];
+        private string OtherExtensionsString = "";
+        public int ParallelDownloads = 4;
+        public StringList RSSURLs = DefaultRSSURLList();
+        public bool RenameCheck = true;
+        public bool RenameTxtToSub = false;
+        public ReplacementList Replacements = DefaultReplacementList();
+        public string ResumeDatPath = "";
+        public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
+        public bool SearchLocally = true;
+        public bool SearchRSS = false;
+        public bool ShowEpisodePictures = true;
+        public bool ShowInTaskbar = true;
+        public string SpecialsFolderName = "Specials";
+        public int StartupTab = 0;
+        public Searchers TheSearchers = new Searchers();
+        private string[] VideoExtensionsArray = new string[0];
+        private string VideoExtensionsString = "";
+        public int WTWRecentDays = 7;
+        public string uTorrentPath = "";
 
         public TVSettings()
         {
@@ -253,7 +255,7 @@ namespace TVRename
                 else if (reader.Name == "FolderJpg")
                     this.FolderJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpgIs")
-                    this.FolderJpgIs = (FolderJpgIsType)reader.ReadElementContentAsInt();
+                    this.FolderJpgIs = (FolderJpgIsType) reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameCheck")
                     this.RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
@@ -332,6 +334,9 @@ namespace TVRename
 
         public static bool OKExtensionsString(string s)
         {
+            if (string.IsNullOrEmpty(s))
+                return true;
+
             string[] t = s.Split(';');
             foreach (string s2 in t)
             {
@@ -368,61 +373,10 @@ namespace TVRename
 
         public void SetToDefaults()
         {
-            this.FNPRegexs = new FNPRegexList();
-            this.NamingStyle = new CustomName();
-            this.Replacements = new System.Collections.Generic.List<Replacement>();
-            this.BGDownload = false;
-            this.TheSearchers = new Searchers();
-            this.OfflineMode = false;
-            this.NotificationAreaIcon = false;
-            this.Replacements.Clear();
-            this.Replacements.Add(new Replacement("*", "#", false));
-            this.Replacements.Add(new Replacement("?", "", false));
-            this.Replacements.Add(new Replacement(">", "", false));
-            this.Replacements.Add(new Replacement("<", "", false));
-            this.Replacements.Add(new Replacement(":", "-", false));
-            this.Replacements.Add(new Replacement("/", "-", false));
-            this.Replacements.Add(new Replacement("\\", "-", false));
-            this.Replacements.Add(new Replacement("|", "-", false));
-            this.Replacements.Add(new Replacement("\"", "'", false));
+            // defaults that aren't handled with default initialisers
 
-            this.ExportWTWRSS = false;
-            this.ExportWTWRSSTo = "";
-            this.WTWRecentDays = 7;
-
-            this.ExportMissingXML = false;
-            this.ExportMissingXMLTo = "";
-            this.ExportMissingCSV = false;
-            this.ExportMissingCSVTo = "";
-            this.ExportRenamingXML = false;
-            this.ExportRenamingXMLTo = "";
-            this.ExportFOXML = false;
-            this.ExportFOXMLTo = "";
-
-            this.ForceLowercaseFilenames = false;
-            this.IgnoreSamples = true;
-            this.SampleFileMaxSizeMB = 50;
-
-            this.StartupTab = 0;
-            this.ExportRSSMaxDays = 7;
-            this.ExportRSSMaxShows = 10;
-            //DefaultNamingStyle = NStyle::Style::Name_SxxEyy_EpName;
             this.SetVideoExtensionsString(".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm");
-            this.SetOtherExtensionsString(".srt;.nfo;.txt;*.tbn");
-            this.KeepTogether = true;
-            this.LeadingZeroOnSeason = false;
-            this.ShowInTaskbar = true;
-            this.RenameTxtToSub = false;
-            this.ShowEpisodePictures = false;
-            this.AutoSelectShowInMyShows = false;
-            this.SpecialsFolderName = "Specials";
-
-            this.ParallelDownloads = 4;
-
-            this.FNPRegexs = DefaultFNPList();
-
-            this.RSSURLs = new StringList();
-            this.RSSURLs.Add("http://tvrss.net/feed/eztv");
+            this.SetOtherExtensionsString(".srt;.nfo;.txt;.tbn");
 
             // have a guess at utorrent's path
             string[] guesses = new string[3];
@@ -447,48 +401,57 @@ namespace TVRename
                 this.ResumeDatPath = f2.FullName;
             else
                 this.ResumeDatPath = "";
-
-            this.SearchRSS = false;
-            this.EpImgs = false;
-            this.NFOs = false;
-            this.FolderJpg = false;
-            this.FolderJpgIs = FolderJpgIsType.Poster;
-            this.RenameCheck = true;
-            this.CheckuTorrent = false;
-            this.MissingCheck = true;
-            this.SearchLocally = true;
-            this.LeaveOriginals = false;
         }
 
         public static FNPRegexList DefaultFNPList()
         {
             // Default list of filename processors
 
-            FNPRegexList l = new FNPRegexList();
-
-            l.Add(new FilenameProcessorRE(true, "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})[^a-z]", false, "3x23 s3x23 3e23 s3e23"));
-            l.Add(new FilenameProcessorRE(false, "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]", false, "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."));
-            l.Add(new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]", false, "S02--E03"));
-            l.Add(new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+) e(?<e>[0-9]{2,})[^a-z]", false, "'S02.E04' and 'S02 E04'"));
-            l.Add(new FilenameProcessorRE(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false, "filenames starting with '1.23' for season 1, episode 23"));
-
-            l.Add(new FilenameProcessorRE(true, "(^|[^a-z])(?<s>[0-9])(?<e>[0-9]{2,})[^a-z]", false, "Show - 323 - Foo"));
-            l.Add(new FilenameProcessorRE(true, "(^|[^a-z])se(?<s>[0-9]+)([ex]|ep|xep)?(?<e>[0-9]+)[^a-z]", false, "se3e23 se323 se1ep1 se01xep01..."));
-            l.Add(new FilenameProcessorRE(true, "(^|[^a-z])(?<s>[0-9]+)-(?<e>[0-9]{2,})[^a-z]", false, "3-23 EpName"));
-            l.Add(new FilenameProcessorRE(true, "(^|[^a-z])s(?<s>[0-9]+) +- +e(?<e>[0-9]{2,})[^a-z]", false, "ShowName - S01 - E01"));
-
-            l.Add(new FilenameProcessorRE(true, "\\b(?<e>[0-9]{2,}) ?- ?.* ?- ?(?<s>[0-9]+)", false, "like '13 - Showname - 2 - Episode Title.avi'"));
-            l.Add(new FilenameProcessorRE(true, "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)", false, "episode 3 - season 4"));
-
-            l.Add(new FilenameProcessorRE(true, "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-", true, "Show Season 3\\E23 - Epname"));
-            l.Add(new FilenameProcessorRE(false, "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})", true, "Season 3\\Episode 23"));
+            FNPRegexList l = new FNPRegexList {
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})[^a-z]", false, "3x23 s3x23 3e23 s3e23"),
+                                                  new FilenameProcessorRE(false, "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]", false, "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."),
+                                                  new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]", false, "S02--E03"),
+                                                  new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+) e(?<e>[0-9]{2,})[^a-z]", false, "'S02.E04' and 'S02 E04'"),
+                                                  new FilenameProcessorRE(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false, "filenames starting with '1.23' for season 1, episode 23"),
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])(?<s>[0-9])(?<e>[0-9]{2,})[^a-z]", false, "Show - 323 - Foo"),
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])se(?<s>[0-9]+)([ex]|ep|xep)?(?<e>[0-9]+)[^a-z]", false, "se3e23 se323 se1ep1 se01xep01..."),
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])(?<s>[0-9]+)-(?<e>[0-9]{2,})[^a-z]", false, "3-23 EpName"),
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])s(?<s>[0-9]+) +- +e(?<e>[0-9]{2,})[^a-z]", false, "ShowName - S01 - E01"),
+                                                  new FilenameProcessorRE(true, "\\b(?<e>[0-9]{2,}) ?- ?.* ?- ?(?<s>[0-9]+)", false, "like '13 - Showname - 2 - Episode Title.avi'"),
+                                                  new FilenameProcessorRE(true, "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)", false, "episode 3 - season 4"),
+                                                  new FilenameProcessorRE(true, "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-", true, "Show Season 3\\E23 - Epname"),
+                                                  new FilenameProcessorRE(false, "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})", true, "Season 3\\Episode 23")
+                                              };
 
             return l;
         }
 
+        private static ReplacementList DefaultReplacementList()
+        {
+            return new ReplacementList {
+                                             new Replacement("*", "#", false),
+                                             new Replacement("?", "", false),
+                                             new Replacement(">", "", false),
+                                             new Replacement("<", "", false),
+                                             new Replacement(":", "-", false),
+                                             new Replacement("/", "-", false),
+                                             new Replacement("\\", "-", false),
+                                             new Replacement("|", "-", false),
+                                             new Replacement("\"", "'", false)
+                                         };
+        }
+
+        private static StringList DefaultRSSURLList()
+        {
+            StringList sl = new StringList {
+                                               "http://tvrss.net/feed/eztv"
+                                           };
+            return sl;
+        }
+
         public static string[] TabNames()
         {
-            return new string[3] { "MyShows", "Scan", "WTW" };
+            return new string[] { "MyShows", "Scan", "WTW" };
         }
 
         public static string TabNameForNumber(int n)
@@ -637,7 +600,7 @@ namespace TVRename
             writer.WriteValue(this.FolderJpg);
             writer.WriteEndElement();
             writer.WriteStartElement("FolderJpgIs");
-            writer.WriteValue((int)this.FolderJpgIs);
+            writer.WriteValue((int) this.FolderJpgIs);
             writer.WriteEndElement();
             writer.WriteStartElement("CheckuTorrent");
             writer.WriteValue(this.CheckuTorrent);

@@ -27,7 +27,7 @@ namespace TVRename
         public System.Collections.Generic.List<ActionCopyMoveRename> CopyMove;
         public int Count;
         public System.Collections.Generic.List<ActionDownload> Download;
-        public System.Collections.Generic.List<ActionItem> FlatList;
+        public ItemList FlatList;
         public System.Collections.Generic.List<ActionMissing> Missing;
         public System.Collections.Generic.List<ActionNFO> NFO;
         public System.Collections.Generic.List<ActionRSS> RSS;
@@ -53,7 +53,7 @@ namespace TVRename
             this.Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
             this.Download = new System.Collections.Generic.List<ActionDownload>();
             this.NFO = new System.Collections.Generic.List<ActionNFO>();
-            this.FlatList = new System.Collections.Generic.List<ActionItem>();
+            this.FlatList = new ItemList();
 
             System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
             if (which == WhichResults.Checked)

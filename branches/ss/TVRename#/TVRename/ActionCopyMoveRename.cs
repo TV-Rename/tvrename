@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionCopyMoveRename : ActionItem
+    public class ActionCopyMoveRename : Action, EpisodeRelated, ScanList
     {
         #region Op enum
 
@@ -25,84 +25,115 @@ namespace TVRename
         #endregion
 
         public FileInfo From;
-
         public Op Operation;
         public FileInfo To;
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep)
-            : base(ActionType.kCopyMoveRename, ep)
+        public bool Done { get; set; }
+        public bool Error { get; set; }
+        public string ErrorText { get; set; }
+        public int IconNumber { get { return this.IsMoveRename() ? 4 : 3; } }
+        public string ProgressText
         {
+            get { return this.To.Name; }
+        }
+        public ProcessedEpisode Episode { get; set; }
+        public IgnoreItem Ignore
+        {
+            get
+            {
+                if (this.To == null)
+                    return null;
+                return new IgnoreItem(this.To.FullName);
+            }
+        }
+        public ListViewItem ScanListViewItem
+        {
+            get
+            {
+                ListViewItem lvi = new ListViewItem();
+
+                if (this.Episode == null)
+                {
+                    lvi.Text = "";
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                }
+                else
+                {
+                    lvi.Text = this.Episode.TheSeries.Name;
+                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.NumsAsString());
+                    DateTime? dt = this.Episode.GetAirDateDT(true);
+                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                        lvi.SubItems.Add(dt.Value.ToShortDateString());
+                    else
+                        lvi.SubItems.Add("");
+                }
+
+                lvi.SubItems.Add(this.From.DirectoryName);
+                lvi.SubItems.Add(this.From.Name);
+                lvi.SubItems.Add(this.To.DirectoryName);
+                lvi.SubItems.Add(this.To.Name);
+
+                return lvi;
+            }
+        }
+        public int ScanListViewGroup
+        {
+            get
+            {
+                if (this.Operation == Op.Rename)
+                    return 1;
+                if (this.Operation == Op.Copy)
+                    return 2;
+                if (this.Operation == Op.Move)
+                    return 3;
+                return -1;
+            }
+        }
+        public string TargetFolder
+        {
+            get
+            {
+                if (this.To == null)
+                    return null;
+                return this.To.DirectoryName;
+            }
+        }
+        public int PercentDone { get { return Done ? 100 : 0; } } // 0 to 100
+        public long SizeOfWork { get { return SourceFileSize(); } } // for file copy/move, number of bytes in file.  for simple tasks, 1.
+        public bool SameAs(Action o)
+        {
+            ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
+
+            return ((cmr != null) && 
+                    (this.Operation == cmr.Operation) && 
+                    Helpers.Same(this.From, cmr.From) && 
+                    Helpers.Same(this.To, cmr.To));
+        }
+        public bool Go(TVSettings settings)
+        {
+            // TODO: move non-UI code from CopyMoveProgressDialog to here
+            throw new NotImplementedException();
+        }
+        public bool Stop()
+        {
+            return false;
+        }
+        // --------------------------------------------------------------------------------------------------------
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep)
+        {
+            this.Episode = ep;
+
             this.Operation = operation;
             this.From = from;
             this.To = to;
         }
-
-        public bool IsMoveRename() // same thing to the OS
+        
+        private bool IsMoveRename() // same thing to the OS
         {
             return ((this.Operation == Op.Move) || (this.Operation == Op.Rename));
-        }
-
-        public override IgnoreItem GetIgnore()
-        {
-            if (this.To == null)
-                return null;
-            return new IgnoreItem(this.To.FullName);
-        }
-
-        public override int IconNumber()
-        {
-            return (this.IsMoveRename() ? 4 : 3);
-        }
-
-        public override string TargetFolder()
-        {
-            if (this.To == null)
-                return null;
-            return this.To.DirectoryName;
-        }
-
-        public override string FilenameForProgress()
-        {
-            return this.To.Name;
-        }
-
-        public override ListViewItem GetLVI(ListView lv)
-        {
-            ListViewItem lvi = new ListViewItem();
-
-            if (this.PE == null)
-            {
-                lvi.Text = "";
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-            }
-            else
-            {
-                lvi.Text = this.PE.TheSeries.Name;
-                lvi.SubItems.Add(this.PE.SeasonNumber.ToString());
-                lvi.SubItems.Add(this.PE.NumsAsString());
-                DateTime? dt = this.PE.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
-                else
-                    lvi.SubItems.Add("");
-            }
-
-            lvi.SubItems.Add(this.From.DirectoryName);
-            lvi.SubItems.Add(this.From.Name);
-            lvi.SubItems.Add(this.To.DirectoryName);
-            lvi.SubItems.Add(this.To.Name);
-
-            if (this.Operation == Op.Rename)
-                lvi.Group = lv.Groups[1];
-            else if (this.Operation == Op.Copy)
-                lvi.Group = lv.Groups[2];
-            else if (this.Operation == Op.Move)
-                lvi.Group = lv.Groups[3];
-
-            //lv->Items->Add(lvi);
-            return lvi;
         }
 
         public bool SameSource(ActionCopyMoveRename o)
@@ -110,17 +141,9 @@ namespace TVRename
             return (Helpers.Same(this.From, o.From));
         }
 
-        public bool SameAs2(ActionCopyMoveRename o)
-        {
-            return ((this.Operation == o.Operation) && Helpers.Same(this.From, o.From) && Helpers.Same(this.To, o.To));
-        }
+        // ========================================================================================================
 
-        public override bool SameAs(ActionItem o)
-        {
-            return (this.Type == o.Type) && this.SameAs2((ActionCopyMoveRename) (o));
-        }
-
-        public long FileSize()
+        private long SourceFileSize()
         {
             try
             {
@@ -130,6 +153,18 @@ namespace TVRename
             {
                 return 1;
             }
+        }
+        public int Compare(Item o)
+        {
+            ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
+            
+            if (cmr == null)
+                return 0;
+
+            string s1 = this.From.FullName + (this.From.Directory.Root.FullName != this.To.Directory.Root.FullName ? "0" : "1");
+            string s2 = cmr.From.FullName + (cmr.From.Directory.Root.FullName != cmr.To.Directory.Root.FullName ? "0" : "1");
+
+            return s1.CompareTo(s2);
         }
     }
 }

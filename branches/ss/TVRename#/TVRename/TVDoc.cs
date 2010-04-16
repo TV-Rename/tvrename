@@ -39,7 +39,7 @@ namespace TVRename
         public ScanProgress ScanProgDlg;
         public StringList SearchFolders;
         public TVSettings Settings;
-        public System.Collections.Generic.List<ActionItem> TheActionList;
+        public ItemList TheActionList;
         public Semaphore WorkerSemaphore;
         public System.Collections.Generic.List<Thread> Workers;
         private bool mDirty;
@@ -59,7 +59,7 @@ namespace TVRename
 
             this.mStats = new TVRenameStats();
             this.mDirty = false;
-            this.TheActionList = new System.Collections.Generic.List<ActionItem>();
+            this.TheActionList = new ItemList();
 
             this.Settings = new TVSettings();
 
@@ -326,7 +326,7 @@ namespace TVRename
             this.Stats().TorrentsMatched++;
 
             BTFileRenamer btp = new BTFileRenamer(prog);
-            System.Collections.Generic.List<ActionItem> newList = new System.Collections.Generic.List<ActionItem>();
+            ItemList newList = new ItemList();
             bool r = btp.RenameFilesOnDiskToMatchTorrent(torrent, folder, tvTree, newList, copyNotMove, copyDest);
 
             foreach (ActionItem i in newList)
@@ -337,7 +337,7 @@ namespace TVRename
 
         // consider each of the files, see if it is suitable for series "ser" and episode "epi"
         // if so, add a rcitem for copy to "fi"
-        public bool FindMissingEp(DirCache dirCache, ActionMissing me, System.Collections.Generic.List<ActionItem> addTo, ActionCopyMoveRename.Op whichOp)
+        public bool FindMissingEp(DirCache dirCache, ActionMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
         {
             string showname = me.PE.SI.ShowName();
             int season = me.PE.SeasonNumber;
@@ -406,12 +406,12 @@ namespace TVRename
             return false;
         }
 
-        public void KeepTogether(System.Collections.Generic.List<ActionItem> Actionlist)
+        public void KeepTogether(ItemList Actionlist)
         {
             // for each of the items in rcl, do the same copy/move if for other items with the same
             // base name, but different extensions
 
-            System.Collections.Generic.List<ActionItem> extras = new System.Collections.Generic.List<ActionItem>();
+            ItemList extras = new ItemList();
 
             foreach (ActionItem Action1 in Actionlist)
             {
@@ -498,8 +498,8 @@ namespace TVRename
 
             prog.Invoke(0);
 
-            System.Collections.Generic.List<ActionItem> newList = new System.Collections.Generic.List<ActionItem>();
-            System.Collections.Generic.List<ActionItem> toRemove = new System.Collections.Generic.List<ActionItem>();
+            ItemList newList = new ItemList();
+            ItemList toRemove = new ItemList();
 
             int fileCount = 0;
             foreach (string s in this.SearchFolders)
@@ -543,7 +543,7 @@ namespace TVRename
                 // ideally do that move within same filesystem
 
                 // sort based on source file, and destination drive, putting last if destdrive == sourcedrive
-                newList.Sort(new ActionSorter()); // was SortSmartly
+                newList.Sort(new ActionSorter());
 
                 // sort puts all the CopyMoveRenames together				
 
@@ -1791,8 +1791,8 @@ namespace TVRename
 
             System.Collections.Generic.List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded(Settings);
 
-            System.Collections.Generic.List<ActionItem> newList = new System.Collections.Generic.List<ActionItem>();
-            System.Collections.Generic.List<ActionItem> toRemove = new System.Collections.Generic.List<ActionItem>();
+            ItemList newList = new ItemList();
+            ItemList toRemove = new ItemList();
             int c = this.TheActionList.Count + 2;
             int n = 1;
             prog.Invoke(100 * n / c);
@@ -1851,8 +1851,8 @@ namespace TVRename
             foreach (string s in this.Settings.RSSURLs)
                 this.RSSList.DownloadRSS(s, this.Settings.FNPRegexs);
 
-            System.Collections.Generic.List<ActionItem> newItems = new System.Collections.Generic.List<ActionItem>();
-            System.Collections.Generic.List<ActionItem> toRemove = new System.Collections.Generic.List<ActionItem>();
+            ItemList newItems = new ItemList();
+            ItemList toRemove = new ItemList();
 
             foreach (ActionItem Action1 in this.TheActionList)
             {
@@ -1888,7 +1888,7 @@ namespace TVRename
             prog.Invoke(100);
         }
 
-        public void ActionAction(SetProgressDelegate prog, System.Collections.Generic.List<ActionItem> theList)
+        public void ActionAction(SetProgressDelegate prog, ItemList theList)
         {
             // first pass to CopyMoveProgress.  It will take care of copying/moving
             // then, fire Action on whatever is left (!Done)
@@ -1908,12 +1908,12 @@ namespace TVRename
                     item.Action(this);
             }
 
-            theList.RemoveAll(ActionItem.DoneOK);
+            theList.RemoveAll(x => x.Done && !x.HasError);
 
             prog.Invoke(0);
         }
 
-        public bool MissingItemsInList(System.Collections.Generic.List<ActionItem> l)
+        public bool MissingItemsInList(ItemList l)
         {
             foreach (ActionItem i in l)
             {
@@ -2103,7 +2103,7 @@ namespace TVRename
 
         public void RemoveIgnored()
         {
-            System.Collections.Generic.List<ActionItem> toRemove = new System.Collections.Generic.List<ActionItem>();
+            ItemList toRemove = new ItemList();
             foreach (ActionItem Action in this.TheActionList)
             {
                 foreach (IgnoreItem ii in this.Ignore)
@@ -2121,7 +2121,7 @@ namespace TVRename
 
         public void RenameAndMissingCheck(SetProgressDelegate prog, ShowItem specific)
         {
-            this.TheActionList = new System.Collections.Generic.List<ActionItem>();
+            this.TheActionList = new ItemList();
 
             //int totalEps = 0;
 
@@ -2383,7 +2383,7 @@ namespace TVRename
             this.RemoveIgnored();
         }
 
-        private void ThumbnailAndNFOCheck(ProcessedEpisode dbep, FileInfo filo, System.Collections.Generic.List<ActionItem> addTo)
+        private void ThumbnailAndNFOCheck(ProcessedEpisode dbep, FileInfo filo, ItemList addTo)
         {
             if (this.Settings.EpImgs)
             {
@@ -2421,7 +2421,7 @@ namespace TVRename
             while (!this.Args.Hide && ((this.ScanProgDlg == null) || (!this.ScanProgDlg.Ready)))
                 Thread.Sleep(10); // wait for thread to create the dialog
 
-            this.TheActionList = new System.Collections.Generic.List<ActionItem>();
+            this.TheActionList = new ItemList();
             SetProgressDelegate noProgress = this.NoProgress;
 
             if (this.Settings.RenameCheck || this.Settings.MissingCheck)
@@ -2462,7 +2462,7 @@ namespace TVRename
                 return;
 
             // sort Action list by type
-            this.TheActionList.Sort(new ActionSorter());
+            this.TheActionList.Sort(new ActionSorter()); // was new ActionSorter()
 
             if (this.ScanProgDlg != null)
                 this.ScanProgDlg.Done();
