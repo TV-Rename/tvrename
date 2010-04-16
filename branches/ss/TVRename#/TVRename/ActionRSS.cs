@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionRSS : Action, EpisodeRelated, ScanList
+    public class ActionRSS : Item, Action, EpisodeRelated, ScanListItem
     {
         public RSSItem RSS;
         public string TheFileNoExt;
@@ -23,7 +23,7 @@ namespace TVRename
             this.TheFileNoExt = toWhereNoExt;
         }
 
-        public bool SameAs(Action o)
+        public bool SameAs(Item o)
         {
             return (o is ActionRSS) && ((o as ActionRSS).RSS == this.RSS);
         }
@@ -42,27 +42,27 @@ namespace TVRename
                 byte[] r = wc.DownloadData(this.RSS.URL);
                 if ((r == null) || (r.Length == 0))
                 {
-                    this.HasError = true;
+                    this.Error = true;
                     this.ErrorText = "No data downloaded";
                 }
 
-                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + doc.Settings.FilenameFriendly(this.RSS.Title);
+                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + settings.FilenameFriendly(this.RSS.Title);
                 if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
                     saveTemp += ".torrent";
                 File.WriteAllBytes(saveTemp, r);
 
-                System.Diagnostics.Process.Start(doc.Settings.uTorrentPath, "/directory \"" + (new FileInfo(this.TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
+                System.Diagnostics.Process.Start(settings.uTorrentPath, "/directory \"" + (new FileInfo(this.TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
 
-                this.HasError = false;
+                this.Error = false;
             }
             catch (Exception e)
             {
                 this.ErrorText = e.Message;
-                this.HasError = true;
+                this.Error = true;
             }
             this.Done = true;
 
-            return !this.HasError;
+            return !this.Error;
         }
 
         public bool Stop()
@@ -104,7 +104,7 @@ namespace TVRename
                 return lvi;
             }
         }
-        string ScanList.TargetFolder
+        string ScanListItem.TargetFolder
         {
             get
             {
@@ -114,7 +114,7 @@ namespace TVRename
             }
         }
         public int ScanListViewGroup { get { return 4; } }
-        int ScanList.IconNumber { get { return 6; } }
+        int ScanListItem.IconNumber { get { return 6; } }
         public int Compare(Item o)
         {
             ActionRSS rss = o as ActionRSS;

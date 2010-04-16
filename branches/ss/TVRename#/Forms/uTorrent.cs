@@ -36,9 +36,10 @@ namespace TVRename
             this.watcher.Error += this.WatcherError;
 
             bool en = false;
-            foreach (ActionItem i in this.mDoc.TheActionList)
+            // are there any missing items in the to-do list?
+            foreach (Item i in this.mDoc.TheActionList)
             {
-                if (i.Type == ActionType.kMissing)
+                if (i is ActionMissing)
                 {
                     en = true;
                     break;

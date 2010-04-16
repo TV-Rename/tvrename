@@ -1241,24 +1241,24 @@ namespace TVRename
             // returns true if we found a match (if actSetPrio is on, true also means we have set a priority for this file)
             string simplifiedfname = Helpers.SimplifyName(nameInTorrent);
 
-            foreach (ActionItem Action1 in this.MissingList)
+            foreach (Item Action1 in this.MissingList)
             {
-                if ((Action1.Type != ActionType.kMissing) && (Action1.Type != ActionType.kuTorrenting))
+                if ((!(Action1 is ActionMissing)) && (Action1.Type != ActionType.kuTorrenting))
                     continue;
 
                 ProcessedEpisode m = null;
                 string name = null;
 
-                if (Action1.Type == ActionType.kMissing)
+                if (Action1 is ActionMissing)
                 {
                     ActionMissing Action = (ActionMissing) (Action1);
-                    m = Action.PE;
+                    m = Action.Episode;
                     name = Action.TheFileNoExt;
                 }
-                else if (Action1.Type == ActionType.kuTorrenting)
+                else if (Action1 is ActionuTorrenting)
                 {
                     ActionuTorrenting Action = (ActionuTorrenting) (Action1);
-                    m = Action.PE;
+                    m = Action.Episode;
                     name = Action.DesiredLocationNoExt;
                 }
 

@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionCopyMoveRename : Action, EpisodeRelated, ScanList
+    public class ActionCopyMoveRename : Item, Action, EpisodeRelated, ScanListItem
     {
         #region Op enum
 
@@ -103,7 +103,7 @@ namespace TVRename
         }
         public int PercentDone { get { return Done ? 100 : 0; } } // 0 to 100
         public long SizeOfWork { get { return SourceFileSize(); } } // for file copy/move, number of bytes in file.  for simple tasks, 1.
-        public bool SameAs(Action o)
+        public bool SameAs(Item o)
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 

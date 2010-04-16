@@ -27,7 +27,7 @@ namespace TVRename
         public System.Collections.Generic.List<ActionCopyMoveRename> CopyMove;
         public int Count;
         public System.Collections.Generic.List<ActionDownload> Download;
-        public ItemList FlatList;
+        public ScanListItemList FlatList;
         public System.Collections.Generic.List<ActionMissing> Missing;
         public System.Collections.Generic.List<ActionNFO> NFO;
         public System.Collections.Generic.List<ActionRSS> RSS;
@@ -53,7 +53,7 @@ namespace TVRename
             this.Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
             this.Download = new System.Collections.Generic.List<ActionDownload>();
             this.NFO = new System.Collections.Generic.List<ActionNFO>();
-            this.FlatList = new ItemList();
+            this.FlatList = new ScanListItemList();
 
             System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
             if (which == WhichResults.Checked)
@@ -79,7 +79,7 @@ namespace TVRename
             if (sel.Count == 0)
                 return;
 
-            ActionType t = ((ActionItem) (sel[0].Tag)).Type;
+            System.Type firstType = ((Item) (sel[0].Tag)).GetType();
 
             this.AllSameType = true;
             foreach (ListViewItem lvi in sel)
@@ -87,39 +87,31 @@ namespace TVRename
                 if (lvi == null)
                     continue;
 
-                ActionItem Action = (ActionItem) (lvi.Tag);
-                this.FlatList.Add(Action);
-                ActionType t2 = Action.Type;
-                if (t2 != t)
+                Item action = (Item) (lvi.Tag);
+                if (action is ScanListItem)
+                    this.FlatList.Add(action as ScanListItem);
+
+                if (action.GetType() != firstType)
                     this.AllSameType = false;
 
-                switch (t2)
+                if (action is ActionCopyMoveRename)
                 {
-                    case ActionType.kCopyMoveRename:
-                        {
-                            ActionCopyMoveRename cmr = (ActionCopyMoveRename) (Action);
-                            if (cmr.Operation == ActionCopyMoveRename.Op.Rename)
-                                this.Rename.Add(cmr);
-                            else // copy/move
-                                this.CopyMove.Add(cmr);
-                            break;
-                        }
-                    case ActionType.kDownload:
-                        this.Download.Add((ActionDownload) (Action));
-                        break;
-                    case ActionType.kRSS:
-                        this.RSS.Add((ActionRSS) (Action));
-                        break;
-                    case ActionType.kMissing:
-                        this.Missing.Add((ActionMissing) (Action));
-                        break;
-                    case ActionType.kNFO:
-                        this.NFO.Add((ActionNFO) (Action));
-                        break;
-                    case ActionType.kuTorrenting:
-                        this.uTorrenting.Add((ActionuTorrenting) (Action));
-                        break;
+                    ActionCopyMoveRename cmr = action as ActionCopyMoveRename;
+                    if (cmr.Operation == ActionCopyMoveRename.Op.Rename)
+                        this.Rename.Add(cmr);
+                    else // copy/move
+                        this.CopyMove.Add(cmr);
                 }
+                else if (action is ActionDownload)
+                    this.Download.Add((ActionDownload) (action));
+                else if (action is ActionRSS)
+                    this.RSS.Add((ActionRSS) (action));
+                else if (action is ActionMissing)
+                    this.Missing.Add((ActionMissing) (action));
+                else if (action is ActionNFO)
+                    this.NFO.Add((ActionNFO) (action));
+                else if (action is ActionuTorrenting)
+                    this.uTorrenting.Add((ActionuTorrenting) (action));
             }
         }
     }

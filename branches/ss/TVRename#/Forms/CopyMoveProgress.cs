@@ -125,16 +125,16 @@ namespace TVRename
             else
             {
                 bool ok = false;
-                ActionItem action = this.mToDo[this.mCurrentNum];
+                Item action = this.mToDo[this.mCurrentNum];
                 DirectoryInfo toWhere = null;
 
-                if (action.Type == ActionType.kCopyMoveRename)
+                if (action is ActionCopyMoveRename)
                     toWhere = ((ActionCopyMoveRename) action).To.Directory;
-                else if (action.Type == ActionType.kDownload)
+                else if (action is ActionDownload)
                     toWhere = ((ActionDownload) (action)).Destination.Directory;
-                else if (action.Type == ActionType.kRSS)
+                else if (action is ActionRSS)
                     toWhere = new FileInfo(((ActionRSS) (action)).TheFileNoExt).Directory;
-                else if (action.Type == ActionType.kNFO)
+                else if (action is ActionNFO)
                     toWhere = ((ActionNFO) (action)).Where.Directory;
 
                 DirectoryInfo toRoot = null;
@@ -210,13 +210,13 @@ namespace TVRename
 
             for (int i = 0; i < this.mToDo.Count; i++)
             {
-                if (this.mToDo[i].Type == ActionType.kCopyMoveRename)
+                if (this.mToDo[i] is ActionCopyMoveRename)
                     totalSize += ((ActionCopyMoveRename) this.mToDo[i]).FileSize();
-                else if (this.mToDo[i].Type == ActionType.kNFO)
+                else if (this.mToDo[i] is ActionNFO)
                     nfoCount++;
-                else if (this.mToDo[i].Type == ActionType.kDownload)
+                else if (this.mToDo[i] is ActionDownload)
                     downloadCount++;
-                else if (this.mToDo[i].Type == ActionType.kRSS)
+                else if (this.mToDo[i] is ActionRSS)
                     downloadCount++;
             }
 
@@ -235,9 +235,9 @@ namespace TVRename
                 while (this.cbPause.Checked)
                     System.Threading.Thread.Sleep(100);
 
-                ActionItem action1 = this.mToDo[i];
+                Item action1 = this.mToDo[i];
 
-                if ((action1.Type == ActionType.kRSS) || (action1.Type == ActionType.kRSS) || (action1.Type == ActionType.kDownload))
+                if ((action1 is ActionRSS) || (action1 is ActionRSS) || (action1 is ActionDownload))
                 {
                     this.BeginInvoke(this.Filename, action1.FilenameForProgress());
 
@@ -247,10 +247,10 @@ namespace TVRename
                     extrasDone++;
                     totalCopiedSoFar += sizePerExtra;
                 }
-                else if (action1.Type == ActionType.kCopyMoveRename)
+                else if (action1 is ActionCopyMoveRename)
                 {
                     ActionCopyMoveRename action = (ActionCopyMoveRename) (action1);
-                    action.HasError = false;
+                    action.Error = false;
                     action.ErrorText = "";
 
                     this.BeginInvoke(this.Filename, action.FilenameForProgress());
@@ -292,7 +292,7 @@ namespace TVRename
                         catch (System.Exception e)
                         {
                             action.Done = true;
-                            action.HasError = true;
+                            action.Error = true;
                             action.ErrorText = e.Message;
                             totalCopiedSoFar += thisFileSize;
                         }
@@ -360,7 +360,7 @@ namespace TVRename
                         catch (IOException e)
                         {
                             action.Done = true;
-                            action.HasError = true;
+                            action.Error = true;
                             action.ErrorText = e.Message;
 
                             this.Result = CopyMoveResult.kAlreadyExists;
@@ -375,7 +375,7 @@ namespace TVRename
                         {
                             // handle any other exception type
                             this.Result = CopyMoveResult.kFileError;
-                            action.HasError = true;
+                            action.Error = true;
                             action.ErrorText = ex.Message;
                             this.NicelyStopAndCleanUp(msr,msw,action);
 

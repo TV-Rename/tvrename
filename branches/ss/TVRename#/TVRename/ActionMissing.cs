@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionMissing : EpisodeRelated, ScanList
+    public class ActionMissing : Item, EpisodeRelated, ScanListItem
     {
         public string TheFileNoExt;
 
@@ -21,10 +21,10 @@ namespace TVRename
             this.TheFileNoExt = whereItShouldBeNoExt;
         }
 
-        //public bool SameAs(Action o)
-        //{
-        //    return (o is ActionMissing) && (string.Compare((o as ActionMissing).TheFileNoExt, this.TheFileNoExt) == 0);
-        //}
+        public bool SameAs(Item o)
+        {
+            return (o is ActionMissing) && (string.Compare((o as ActionMissing).TheFileNoExt, this.TheFileNoExt) == 0);
+        }
 
         public ProcessedEpisode Episode { get; private set; }
         public IgnoreItem Ignore

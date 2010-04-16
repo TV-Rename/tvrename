@@ -329,7 +329,7 @@ namespace TVRename
             ItemList newList = new ItemList();
             bool r = btp.RenameFilesOnDiskToMatchTorrent(torrent, folder, tvTree, newList, copyNotMove, copyDest);
 
-            foreach (ActionItem i in newList)
+            foreach (Item i in newList)
                 this.TheActionList.Add(i);
 
             return r;
@@ -339,11 +339,11 @@ namespace TVRename
         // if so, add a rcitem for copy to "fi"
         public bool FindMissingEp(DirCache dirCache, ActionMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
         {
-            string showname = me.PE.SI.ShowName();
-            int season = me.PE.SeasonNumber;
+            string showname = me.Episode.SI.ShowName();
+            int season = me.Episode.SeasonNumber;
 
             //String ^toName = FilenameFriendly(Settings->NamingStyle->NameFor(me->PE));
-            int epnum = me.PE.EpNum;
+            int epnum = me.Episode.EpNum;
 
             // TODO: find a 'best match', or use first ?
 
@@ -371,13 +371,13 @@ namespace TVRename
                         int epF;
                         // String ^fn = file->Name;
 
-                        if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.PE.TheSeries.Name) && (seasF == season) && (epF == epnum)) || (me.PE.SI.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.PE) && (seasF == season) && (epF == epnum)))
+                        if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.TheSeries.Name) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
                             FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
-                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.PE));
+                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode));
 
                             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                            this.ThumbnailAndNFOCheck(me.PE, fi, addTo);
+                            this.ThumbnailAndNFOCheck(me.Episode, fi, addTo);
 
                             return true;
                         }
@@ -394,7 +394,7 @@ namespace TVRename
                         t += matched ? ", matched.  " : ", no match.  ";
                         if (matched)
                         {
-                            t += "Show: " + me.PE.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
+                            t += "Show: " + me.Episode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
                             t += "To: " + me.TheFileNoExt;
                         }
 
@@ -413,9 +413,9 @@ namespace TVRename
 
             ItemList extras = new ItemList();
 
-            foreach (ActionItem Action1 in Actionlist)
+            foreach (Item Action1 in Actionlist)
             {
-                if (Action1.Type != ActionType.kCopyMoveRename)
+                if (!(Action1 is ActionCopyMoveRename))
                     continue;
 
                 ActionCopyMoveRename Action = (ActionCopyMoveRename) (Action1);
@@ -441,13 +441,13 @@ namespace TVRename
                         if ((this.Settings.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, Helpers.FileInFolder(Action.To.Directory, newName), Action.PE);
+                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, Helpers.FileInFolder(Action.To.Directory, newName), Action.Episode);
 
                         // check this item isn't already in our to-do list
                         bool doNotAdd = false;
-                        foreach (ActionItem ai2 in Actionlist)
+                        foreach (Item ai2 in Actionlist)
                         {
-                            if (ai2.Type != ActionType.kCopyMoveRename)
+                            if (!(ai2 is ActionCopyMoveRename))
                                 continue;
 
                             if (((ActionCopyMoveRename) (ai2)).SameSource(newitem))
@@ -471,13 +471,13 @@ namespace TVRename
                 }
             }
 
-            foreach (ActionItem Action in extras)
+            foreach (Item action in extras)
             {
                 // check we don't already have this in our list and, if we don't add it!
                 bool have = false;
-                foreach (ActionItem Action2 in Actionlist)
+                foreach (Item action2 in Actionlist)
                 {
-                    if (Action2.SameAs(Action))
+                    if (action2.SameAs(action))
                     {
                         have = true;
                         break;
@@ -485,7 +485,7 @@ namespace TVRename
                 }
 
                 if (!have)
-                    Actionlist.Add(Action);
+                    Actionlist.Add(action);
             }
         }
 
@@ -518,17 +518,17 @@ namespace TVRename
 
             c = 0;
             int totalN = this.TheActionList.Count;
-            foreach (ActionItem Action1 in this.TheActionList)
+            foreach (Item action1 in this.TheActionList)
             {
                 if (this.ActionCancel)
                     return;
 
                 prog.Invoke(50 + 50 * (++c) / (totalN + 1)); // second 50% of progress bar
 
-                if (Action1.Type == ActionType.kMissing)
+                if (action1 is ActionMissing)
                 {
-                    if (this.FindMissingEp(dirCache, (ActionMissing) (Action1), newList, ActionCopyMoveRename.Op.Copy))
-                        toRemove.Add(Action1);
+                    if (this.FindMissingEp(dirCache, (ActionMissing) (action1), newList, ActionCopyMoveRename.Op.Copy))
+                        toRemove.Add(action1);
                 }
             }
 
@@ -550,30 +550,36 @@ namespace TVRename
                 // then set the last of each source file to be a move
                 for (int i = 0; i < newList.Count; i++)
                 {
-                    bool ok1 = newList[i].Type == ActionType.kCopyMoveRename;
-                    bool last = i == (newList.Count - 1);
-                    bool ok2 = !last && (newList[i + 1].Type == ActionType.kCopyMoveRename);
+                    ActionCopyMoveRename cmr1 = newList[i] as ActionCopyMoveRename;
+                    bool ok1 = cmr1 != null;
+                    
+                    if (!ok1)
+                        continue;
 
-                    if (ok1 && !ok2)
+                    bool last = i == (newList.Count - 1);
+                    ActionCopyMoveRename cmr2 = !last ? newList[i + 1] as ActionCopyMoveRename : null;
+                    bool ok2 = cmr2 != null;
+                    
+                    if (ok2)
                     {
                         // last item, or last copymoverename item in the list
-                        ActionCopyMoveRename a1 = (ActionCopyMoveRename) (newList[i]);
+                        ActionCopyMoveRename a1 = cmr1;
                         a1.Operation = ActionCopyMoveRename.Op.Move;
                     }
-                    else if (ok1 && ok2)
+                    else
                     {
-                        ActionCopyMoveRename a1 = (ActionCopyMoveRename) (newList[i]);
-                        ActionCopyMoveRename a2 = (ActionCopyMoveRename) (newList[i + 1]);
+                        ActionCopyMoveRename a1 = cmr1;
+                        ActionCopyMoveRename a2 = cmr2;
                         if (!Helpers.Same(a1.From, a2.From))
                             a1.Operation = ActionCopyMoveRename.Op.Move;
                     }
                 }
             }
 
-            foreach (ActionItem i in toRemove)
+            foreach (Item i in toRemove)
                 this.TheActionList.Remove(i);
 
-            foreach (ActionItem i in newList)
+            foreach (Item i in newList)
                 this.TheActionList.Add(i);
 
             //                 if (Settings->ExportFOXML)
@@ -1796,7 +1802,7 @@ namespace TVRename
             int c = this.TheActionList.Count + 2;
             int n = 1;
             prog.Invoke(100 * n / c);
-            foreach (ActionItem Action1 in this.TheActionList)
+            foreach (Item Action1 in this.TheActionList)
             {
                 if (this.ActionCancel)
                     return;
@@ -1804,12 +1810,12 @@ namespace TVRename
                 n++;
                 prog.Invoke(100 * n / c);
 
-                if (Action1.Type != ActionType.kMissing)
+                if (!(Action1 is ActionMissing))
                     continue;
 
                 ActionMissing Action = (ActionMissing) (Action1);
 
-                string showname = Helpers.SimplifyName(Action.PE.SI.ShowName());
+                string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName());
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -1823,20 +1829,20 @@ namespace TVRename
                     {
                         int seasF;
                         int epF;
-                        if (this.FindSeasEp(file, out seasF, out epF, Action.PE.TheSeries.Name) && (seasF == Action.PE.SeasonNumber) && (epF == Action.PE.EpNum))
+                        if (this.FindSeasEp(file, out seasF, out epF, Action.Episode.TheSeries.Name) && (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
                         {
                             toRemove.Add(Action1);
-                            newList.Add(new ActionuTorrenting(te, Action.PE, Action.TheFileNoExt));
+                            newList.Add(new ActionuTorrenting(te, Action.Episode, Action.TheFileNoExt));
                             break;
                         }
                     }
                 }
             }
 
-            foreach (ActionItem i in toRemove)
+            foreach (Item i in toRemove)
                 this.TheActionList.Remove(i);
 
-            foreach (ActionItem Action in newList)
+            foreach (Item Action in newList)
                 this.TheActionList.Add(Action);
 
             prog.Invoke(100);
@@ -1854,7 +1860,7 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (ActionItem Action1 in this.TheActionList)
+            foreach (Item Action1 in this.TheActionList)
             {
                 if (this.ActionCancel)
                     return;
@@ -1862,12 +1868,12 @@ namespace TVRename
                 n++;
                 prog.Invoke(100 * n / c);
 
-                if (Action1.Type != ActionType.kMissing)
+                if (!(Action1 is ActionMissing))
                     continue;
 
                 ActionMissing Action = (ActionMissing) (Action1);
 
-                ProcessedEpisode pe = Action.PE;
+                ProcessedEpisode pe = Action.Episode;
                 string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName());
                 string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
 
@@ -1880,15 +1886,15 @@ namespace TVRename
                     }
                 }
             }
-            foreach (ActionItem i in toRemove)
+            foreach (Item i in toRemove)
                 this.TheActionList.Remove(i);
-            foreach (ActionItem Action in newItems)
+            foreach (Item Action in newItems)
                 this.TheActionList.Add(Action);
 
             prog.Invoke(100);
         }
 
-        public void ActionAction(SetProgressDelegate prog, ItemList theList)
+        public void ActionAction(SetProgressDelegate prog, ScanListItemList theList)
         {
             // first pass to CopyMoveProgress.  It will take care of copying/moving
             // then, fire Action on whatever is left (!Done)
@@ -1901,23 +1907,28 @@ namespace TVRename
 
             prog.Invoke(0);
             int c = 0;
-            foreach (ActionItem item in theList)
+            foreach (Item item in theList)
             {
+                if (!(item is Action))
+                    continue;
+
+                Action act = item as Action;
+
                 prog.Invoke((100 * (c + 1)) / (theList.Count + 1));
-                if (!item.Done)
-                    item.Action(this);
+                if (!act.Done)
+                    act.Go(this.Settings);
             }
 
-            theList.RemoveAll(x => x.Done && !x.HasError);
+            theList.RemoveAll(x => (x is Action) && (x as Action).Done && !(x as Action).Error);
 
             prog.Invoke(0);
         }
 
         public bool MissingItemsInList(ItemList l)
         {
-            foreach (ActionItem i in l)
+            foreach (Item i in l)
             {
-                if (i.Type == ActionType.kMissing)
+                if (i is ActionMissing)
                     return true;
             }
             return false;
@@ -2104,18 +2115,19 @@ namespace TVRename
         public void RemoveIgnored()
         {
             ItemList toRemove = new ItemList();
-            foreach (ActionItem Action in this.TheActionList)
+            foreach (Item item in this.TheActionList)
             {
+                ScanListItem act = item as ScanListItem;
                 foreach (IgnoreItem ii in this.Ignore)
                 {
-                    if (ii.SameFileAs(Action.GetIgnore()))
+                    if (ii.SameFileAs(act.Ignore))
                     {
-                        toRemove.Add(Action);
+                        toRemove.Add(item);
                         break;
                     }
                 }
             }
-            foreach (ActionItem Action in toRemove)
+            foreach (Item Action in toRemove)
                 this.TheActionList.Remove(Action);
         }
 

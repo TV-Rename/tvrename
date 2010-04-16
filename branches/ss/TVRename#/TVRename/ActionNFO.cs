@@ -12,7 +12,7 @@ namespace TVRename
     using System.Windows.Forms;
     using System.Xml;
 
-    public class ActionNFO : Action, EpisodeRelated, ScanList
+    public class ActionNFO : Item, Action, EpisodeRelated, ScanListItem
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
         public FileInfo Where;
@@ -47,7 +47,7 @@ namespace TVRename
         public string ProgressText { get { return this.Where.Name; } }
         public int PercentDone { get { return Done ? 100 : 0; } }
         public long SizeOfWork { get { return 1; } }
-        public bool SameAs(Action o)
+        public bool SameAs(Item o)
         {
             return (o is ActionNFO) && ((o as ActionNFO).Where == this.Where);
         }
@@ -199,7 +199,7 @@ namespace TVRename
                 return lvi;
             }
         }
-        string ScanList.TargetFolder
+        string ScanListItem.TargetFolder
         {
             get
             {

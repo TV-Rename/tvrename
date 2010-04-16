@@ -13,7 +13,7 @@ namespace TVRename
 
 
 
-    public class ActionuTorrenting : EpisodeRelated, ScanList
+    public class ActionuTorrenting : Item, EpisodeRelated, ScanListItem
     {
         public string DesiredLocationNoExt;
         public TorrentEntry Entry;
@@ -34,10 +34,10 @@ namespace TVRename
             }
         }
 
-        //public bool SameAs(Action o)
-        //{
-        //    return (o is ActionuTorrenting)&& this.Entry == (o as ActionuTorrenting).Entry;
-        //}
+        public bool SameAs(Item o)
+        {
+            return (o is ActionuTorrenting)&& this.Entry == (o as ActionuTorrenting).Entry;
+        }
 
         public ProcessedEpisode Episode { get; private set; }
         public IgnoreItem Ignore
@@ -76,7 +76,7 @@ namespace TVRename
         }
 
         public int ScanListViewGroup { get { return 7; } }
-        int ScanList.IconNumber { get { return 2; } }
+        int ScanListItem.IconNumber { get { return 2; } }
 
         public int Compare(Item o)
         {

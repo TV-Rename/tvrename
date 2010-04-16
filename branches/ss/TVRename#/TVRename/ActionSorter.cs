@@ -9,7 +9,7 @@ namespace TVRename
 {
     public class ActionSorter : System.Collections.Generic.IComparer<Item>
     {
-        #region IComparer<ActionItem> Members
+        #region IComparer<Item> Members
 
         public virtual int Compare(Item x, Item y)
         {
