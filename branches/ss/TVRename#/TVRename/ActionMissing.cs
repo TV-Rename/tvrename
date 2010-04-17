@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionMissing : Item, EpisodeRelated, ScanListItem
+    public class ActionMissing : Item, ScanListItem
     {
         public string TheFileNoExt;
 

@@ -12,7 +12,7 @@ namespace TVRename
     using System.Windows.Forms;
     using System.Xml;
 
-    public class ActionNFO : Item, Action, EpisodeRelated, ScanListItem
+    public class ActionNFO : Item, Action, ScanListItem  
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
         public FileInfo Where;

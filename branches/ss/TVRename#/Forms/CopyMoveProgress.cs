@@ -48,10 +48,10 @@ namespace TVRename
         private int mCurrentNum;
         private TVDoc mDoc;
         private TVRenameStats mStats;
-        private ItemList mToDo;
+        private ScanListItemList mToDo;
         private bool Stop;
 
-        public CopyMoveProgress(TVDoc doc, ItemList todo, TVRenameStats stats)
+        public CopyMoveProgress(TVDoc doc, ScanListItemList todo, TVRenameStats stats)
         {
             this.mDoc = doc;
             this.mToDo = todo;
@@ -125,9 +125,11 @@ namespace TVRename
             else
             {
                 bool ok = false;
-                Item action = this.mToDo[this.mCurrentNum];
-                DirectoryInfo toWhere = null;
+                //Action action = this.mToDo[this.mCurrentNum] as Action;
+                ScanListItem sli = this.mToDo[this.mCurrentNum];
 
+                DirectoryInfo toWhere = new DirectoryInfo(sli.TargetFolder);
+                /*
                 if (action is ActionCopyMoveRename)
                     toWhere = ((ActionCopyMoveRename) action).To.Directory;
                 else if (action is ActionDownload)
@@ -136,6 +138,7 @@ namespace TVRename
                     toWhere = new FileInfo(((ActionRSS) (action)).TheFileNoExt).Directory;
                 else if (action is ActionNFO)
                     toWhere = ((ActionNFO) (action)).Where.Directory;
+                 */
 
                 DirectoryInfo toRoot = null;
                 if (toWhere.Name.StartsWith("\\\\"))
@@ -211,7 +214,7 @@ namespace TVRename
             for (int i = 0; i < this.mToDo.Count; i++)
             {
                 if (this.mToDo[i] is ActionCopyMoveRename)
-                    totalSize += ((ActionCopyMoveRename) this.mToDo[i]).FileSize();
+                    totalSize += (this.mToDo[i] as ActionCopyMoveRename).SizeOfWork;
                 else if (this.mToDo[i] is ActionNFO)
                     nfoCount++;
                 else if (this.mToDo[i] is ActionDownload)
@@ -235,27 +238,29 @@ namespace TVRename
                 while (this.cbPause.Checked)
                     System.Threading.Thread.Sleep(100);
 
-                Item action1 = this.mToDo[i];
+                Action action1 = this.mToDo[i] as Action;
+                if (action1 == null)
+                    continue;
 
-                if ((action1 is ActionRSS) || (action1 is ActionRSS) || (action1 is ActionDownload))
+                if ((action1 is ActionRSS) || (action1 is ActionDownload))
                 {
-                    this.BeginInvoke(this.Filename, action1.FilenameForProgress());
+                    this.BeginInvoke(this.Filename, action1.ProgressText);
 
                     this.BeginInvoke(this.Percent, (extrasCount != 0) ? (1000 * extrasDone / extrasCount) : 0, (totalSize != 0) ? (int) (1000 * totalCopiedSoFar / totalSize) : 50, i);
 
-                    action1.Action(this.mDoc);
+                    action1.Go(this.mDoc.Settings);
                     extrasDone++;
                     totalCopiedSoFar += sizePerExtra;
                 }
                 else if (action1 is ActionCopyMoveRename)
                 {
-                    ActionCopyMoveRename action = (ActionCopyMoveRename) (action1);
+                    ActionCopyMoveRename action = action1 as ActionCopyMoveRename;
                     action.Error = false;
                     action.ErrorText = "";
 
-                    this.BeginInvoke(this.Filename, action.FilenameForProgress());
+                    this.BeginInvoke(this.Filename, action.ProgressText);
 
-                    long thisFileSize = action.FileSize();
+                    long thisFileSize = action.SizeOfWork;
 
                     System.Security.AccessControl.FileSecurity security = null;
                     try

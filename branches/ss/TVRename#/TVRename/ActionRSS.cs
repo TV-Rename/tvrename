@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionRSS : Item, Action, EpisodeRelated, ScanListItem
+    public class ActionRSS : Item, Action, ScanListItem
     {
         public RSSItem RSS;
         public string TheFileNoExt;

@@ -32,11 +32,6 @@ namespace TVRename
         bool Stop(); // abort any work going on in Go, and clean up.  return of false means not stopped, so use Thread.Abort
     }
 
-    public interface EpisodeRelated // is related to some particular episode
-    {
-        ProcessedEpisode Episode { get; } // associated episode
-    }
-
     public interface ScanListItem // something shown in the list on the Scan tab (not always an Action)
     {
         ListViewItem ScanListViewItem { get; } // to add to Scan ListView
@@ -44,6 +39,7 @@ namespace TVRename
         int ScanListViewGroup { get; } // which group number for the listview
         int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
         IgnoreItem Ignore { get; } // what to add to the ignore list / compare against the ignore list
+        ProcessedEpisode Episode { get; } // associated episode
     }
 
     public class ScanListItemList : System.Collections.Generic.List<ScanListItem>

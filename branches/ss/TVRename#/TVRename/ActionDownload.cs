@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionDownload : Item, Action, EpisodeRelated, ScanListItem
+    public class ActionDownload : Item, Action, ScanListItem
     {
         readonly string BannerPath;
         readonly FileInfo Destination;

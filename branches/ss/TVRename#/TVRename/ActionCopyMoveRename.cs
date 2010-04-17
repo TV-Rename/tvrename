@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionCopyMoveRename : Item, Action, EpisodeRelated, ScanListItem
+    public class ActionCopyMoveRename : Item, Action, ScanListItem
     {
         #region Op enum
 
@@ -89,7 +89,7 @@ namespace TVRename
                     return 2;
                 if (this.Operation == Op.Move)
                     return 3;
-                return -1;
+                return 2;
             }
         }
         public string TargetFolder
@@ -131,7 +131,7 @@ namespace TVRename
             this.To = to;
         }
         
-        private bool IsMoveRename() // same thing to the OS
+        public bool IsMoveRename() // same thing to the OS
         {
             return ((this.Operation == Op.Move) || (this.Operation == Op.Rename));
         }

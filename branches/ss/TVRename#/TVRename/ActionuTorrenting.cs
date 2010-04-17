@@ -13,7 +13,7 @@ namespace TVRename
 
 
 
-    public class ActionuTorrenting : Item, EpisodeRelated, ScanListItem
+    public class ActionuTorrenting : Item, ScanListItem
     {
         public string DesiredLocationNoExt;
         public TorrentEntry Entry;
@@ -55,10 +55,10 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = this.PE.SI.ShowName();
-                lvi.SubItems.Add(this.PE.SeasonNumber.ToString());
-                lvi.SubItems.Add(this.PE.NumsAsString());
-                DateTime? dt = this.PE.GetAirDateDT(true);
+                lvi.Text = this.Episode.SI.ShowName();
+                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                lvi.SubItems.Add(this.Episode.NumsAsString());
+                DateTime? dt = this.Episode.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else

@@ -1243,7 +1243,7 @@ namespace TVRename
 
             foreach (Item Action1 in this.MissingList)
             {
-                if ((!(Action1 is ActionMissing)) && (Action1.Type != ActionType.kuTorrenting))
+                if ((!(Action1 is ActionMissing)) && (!(Action1 is ActionuTorrenting)))
                     continue;
 
                 ProcessedEpisode m = null;

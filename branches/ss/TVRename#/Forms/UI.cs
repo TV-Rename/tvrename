@@ -1601,7 +1601,7 @@ namespace TVRename
                         {
                             foreach (Item ai in this.mLastActionsClicked)
                             {
-                                EpisodeRelated er = ai as EpisodeRelated;
+                                ScanListItem er = ai as ScanListItem;
                                 if ((er == null) || (er.Episode == null))
                                     continue;
 
@@ -1614,7 +1614,7 @@ namespace TVRename
                                 ItemList remove = new ItemList();
                                 foreach (Item action in this.mDoc.TheActionList)
                                 {
-                                    EpisodeRelated er2 = action as EpisodeRelated;
+                                    ScanListItem er2 = action as ScanListItem;
 
                                     if ((er2 != null) && (er2.Episode.SeasonNumber == snum))
                                         remove.Add(action);
@@ -2587,7 +2587,9 @@ namespace TVRename
             // remove items from master list, unless it had an error
             foreach (Item i2 in (new LVResults(this.lvAction, @checked)).FlatList)
             {
-                if (!lvr.FlatList.Contains(i2))
+                ScanListItem sli = i2 as ScanListItem;
+
+                if ((sli != null) && (!lvr.FlatList.Contains(sli)))
                     this.mDoc.TheActionList.Remove(i2);
             }
 
@@ -2704,13 +2706,13 @@ namespace TVRename
 
             if ((lvr.Count == 1) && (this.lvAction.FocusedItem != null) && (this.lvAction.FocusedItem.Tag != null))
             {
-                Item Action = (Item)(this.lvAction.FocusedItem.Tag);
+                ScanListItem action = this.lvAction.FocusedItem.Tag as ScanListItem;
 
-                this.mLastEpClicked = Action.Episode;
-                if (Action.Episode != null)
+                this.mLastEpClicked = action.Episode;
+                if (action.Episode != null)
                 {
-                    this.mLastSeasonClicked = Action.Episode.TheSeason;
-                    this.mLastShowClicked = Action.Episode.SI;
+                    this.mLastSeasonClicked = action.Episode.TheSeason;
+                    this.mLastShowClicked = action.Episode.SI;
                 }
                 else
                 {
@@ -2919,8 +2921,8 @@ namespace TVRename
             // double-click on an item will search for missing, do nothing (for now) for anything else
             foreach (ActionMissing miss in new LVResults(this.lvAction, false).Missing)
             {
-                if (miss.PE != null)
-                    this.mDoc.DoBTSearch(miss.PE);
+                if (miss.Episode != null)
+                    this.mDoc.DoBTSearch(miss.Episode);
             }
         }
 
@@ -2933,8 +2935,9 @@ namespace TVRename
 
             foreach (Item i in lvr.FlatList)
             {
-                if (i.PE != null)
-                    this.mDoc.DoBTSearch(i.PE);
+                ScanListItem sli = i as ScanListItem;
+                if ((sli != null) && (sli.Episode != null))
+                    this.mDoc.DoBTSearch(sli.Episode);
             }
         }
 
@@ -2947,7 +2950,7 @@ namespace TVRename
         {
             LVResults lvr = new LVResults(this.lvAction, false);
             bool added = false;
-            foreach (Item Action in lvr.FlatList)
+            foreach (ScanListItem Action in lvr.FlatList)
             {
                 IgnoreItem ii = Action.Ignore;
                 if (ii != null)
