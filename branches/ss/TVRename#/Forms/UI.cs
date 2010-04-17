@@ -2456,7 +2456,7 @@ namespace TVRename
             }
 
             ListViewItem lvi = sli.ScanListViewItem;
-            lvi.Group = this.lvWhenToWatch.Groups[sli.ScanListViewGroup];
+            lvi.Group = this.lvAction.Groups[sli.ScanListViewGroup];
             if (sli.IconNumber != -1)
                 lvi.ImageIndex = sli.IconNumber;
             lvi.Checked = true;
@@ -2580,12 +2580,12 @@ namespace TVRename
             this.ActionAction(true);
         }
 
-        private void ActionAction(bool @checked)
+        private void ActionAction(bool checkedNotSelected)
         {
-            LVResults lvr = new LVResults(this.lvAction, @checked);
-            this.mDoc.ActionAction(this.SetProgress, lvr.FlatList);
+            LVResults lvr = new LVResults(this.lvAction, checkedNotSelected);
+            this.mDoc.DoActions(lvr.FlatList);
             // remove items from master list, unless it had an error
-            foreach (Item i2 in (new LVResults(this.lvAction, @checked)).FlatList)
+            foreach (Item i2 in (new LVResults(this.lvAction, checkedNotSelected)).FlatList)
             {
                 ScanListItem sli = i2 as ScanListItem;
 

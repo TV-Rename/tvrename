@@ -26,10 +26,10 @@ namespace TVRename
         bool Error { get; } // Error state, after trying to do work?
         string ErrorText { get; } // Human-readable error message, for when Error is true
         string ProgressText { get; } // shortish text to display to user while task is running
-        int PercentDone { get; } // 0 to 100
+        double PercentDone { get; } // 0.0 to 100.0
         long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1.
         bool Go(TVSettings settings); // action the action.  do not return until done.  will be run in a dedicated thread
-        bool Stop(); // abort any work going on in Go, and clean up.  return of false means not stopped, so use Thread.Abort
+        bool Pause(bool yes); // pause any work going on, until called with false.  return false if we don't support pause.
     }
 
     public interface ScanListItem // something shown in the list on the Scan tab (not always an Action)

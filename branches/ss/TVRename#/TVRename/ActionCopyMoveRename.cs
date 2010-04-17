@@ -101,7 +101,9 @@ namespace TVRename
                 return this.To.DirectoryName;
             }
         }
-        public int PercentDone { get { return Done ? 100 : 0; } } // 0 to 100
+        private double _Percent;
+        private bool Paused;
+        public double PercentDone { get { return Done ? 100.0 : _Percent; } set { _Percent = value; } } // 0.0 to 100.0
         public long SizeOfWork { get { return SourceFileSize(); } } // for file copy/move, number of bytes in file.  for simple tasks, 1.
         public bool SameAs(Item o)
         {
@@ -112,20 +114,184 @@ namespace TVRename
                     Helpers.Same(this.From, cmr.From) && 
                     Helpers.Same(this.To, cmr.To));
         }
+        private static string TempFor(FileInfo f)
+        {
+            return f.FullName + ".tvrenametemp";
+        }
+
+
+        private void NicelyStopAndCleanUp(BinaryReader msr, BinaryWriter msw)
+        {
+            if (msw != null)
+            {
+                msw.Close();
+                string tempName = TempFor(this.To);
+                if (File.Exists(tempName))
+                    File.Delete(tempName);
+            }
+            if (msr != null)
+                msr.Close();
+        }
+
         public bool Go(TVSettings settings)
         {
-            // TODO: move non-UI code from CopyMoveProgressDialog to here
-            throw new NotImplementedException();
+            // read NTFS permissions (if any)
+            System.Security.AccessControl.FileSecurity security = null;
+            try
+            {
+                security = this.From.GetAccessControl();
+            }
+            catch
+            {
+            }
+
+            if (this.IsMoveRename() && (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())) // same device ... TODO: UNC paths?
+                OSMoveRename(); // ask the OS to do it for us, since it's easy and quick!
+            else
+                CopyItOurself(); // do it ourself!
+
+            // set NTFS permissions
+            try
+            {
+                if (security != null)
+                    this.To.SetAccessControl(security);
+            }
+            catch
+            {
+            }
+
+            return !this.Error;
         }
-        public bool Stop()
+
+        private void OSMoveRename()
         {
-            return false;
+            try
+            {
+                if (Helpers.Same(this.From, this.To))
+                {
+                    // XP won't actually do a rename if its only a case difference
+                    string tempName = TempFor(this.To);
+                    this.From.MoveTo(tempName);
+                    File.Move(tempName, this.To.FullName);
+                }
+                else
+                    this.From.MoveTo(this.To.FullName);
+
+                this.Done = true;
+
+                System.Diagnostics.Debug.Assert((this.Operation == ActionCopyMoveRename.Op.Move) || (this.Operation == ActionCopyMoveRename.Op.Rename));
+
+                //TODO: Statistics
+                //if (this.Operation == ActionCopyMoveRename.Op.Move)
+                //    this.mStats.FilesMoved++;
+                //else if (this.Operation == ActionCopyMoveRename.Op.Rename)
+                //    this.mStats.FilesRenamed++;
+            }
+            catch (System.Exception e)
+            {
+                this.Done = true;
+                this.Error = true;
+                this.ErrorText = e.Message;
+            }
         }
+
+        private void CopyItOurself()
+        {
+            const int kArrayLength = 256 * 1024;
+            Byte[] dataArray = new Byte[kArrayLength];
+            BinaryReader msr = null;
+            BinaryWriter msw = null;
+
+            try
+            {
+                long thisFileCopied = 0;
+                long thisFileSize = this.SourceFileSize();
+
+                msr = new BinaryReader(new FileStream(this.From.FullName, FileMode.Open, FileAccess.Read));
+                string tempName = TempFor(this.To);
+                if (File.Exists(tempName))
+                    File.Delete(tempName);
+
+                msw = new BinaryWriter(new FileStream(tempName, FileMode.CreateNew));
+
+                int n = 0;
+
+                do
+                {
+                    n = msr.Read(dataArray, 0, kArrayLength);
+                    if (n != 0)
+                        msw.Write(dataArray, 0, n);
+                    thisFileCopied += n;
+
+                    double pct = (thisFileSize != 0) ? (100.0 * thisFileCopied / thisFileSize) : Done ? 100 : 0;
+                    if (pct > 100.0)
+                        pct = 100.0;
+                    this.PercentDone = pct;
+
+                    while (this.Paused)
+                        System.Threading.Thread.Sleep(100);
+
+                }
+                while (n != 0);
+
+                msr.Close();
+                msw.Close();
+
+                // rename temp version to final name
+                if (this.To.Exists)
+                    this.To.Delete(); // outta ma way!
+                File.Move(tempName, this.To.FullName);
+
+                // if that was a move/rename, delete the source
+                if (this.IsMoveRename())
+                    this.From.Delete();
+
+                // TODO: Stats
+                //if (this.Operation == ActionCopyMoveRename.Op.Move)
+                //    this.mStats.FilesMoved++;
+                //else if (this.Operation == ActionCopyMoveRename.Op.Rename)
+                //    this.mStats.FilesRenamed++;
+                //else if (this.Operation == ActionCopyMoveRename.Op.Copy)
+                //    this.mStats.FilesCopied++;
+
+                this.Done = true;
+            } // try
+            catch (System.Threading.ThreadAbortException)
+            {
+                this.NicelyStopAndCleanUp(msr, msw);
+                return;
+            }
+            catch (IOException e)
+            {
+                this.Done = true;
+                this.Error = true;
+                this.ErrorText = e.Message;
+
+                if (msw != null)
+                    msw.Close();
+                if (msr != null)
+                    msr.Close();
+            }
+            catch (System.Exception ex)
+            {
+                // handle any other exception type
+                this.Error = true;
+                this.ErrorText = ex.Message;
+                this.NicelyStopAndCleanUp(msr, msw);
+            }
+        }
+
+        public bool Pause(bool yes)
+        {
+            this.Paused = yes;
+            return true;
+        }
+
         // --------------------------------------------------------------------------------------------------------
         public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep)
         {
+            this.PercentDone = 0;
             this.Episode = ep;
-
             this.Operation = operation;
             this.From = from;
             this.To = to;

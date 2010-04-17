@@ -37,22 +37,22 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = (new System.ComponentModel.Container());
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(CopyMoveProgress)));
-            this.pbFile = (new System.Windows.Forms.ProgressBar());
-            this.pbGroup = (new System.Windows.Forms.ProgressBar());
-            this.button1 = (new System.Windows.Forms.Button());
-            this.label1 = (new System.Windows.Forms.Label());
-            this.label2 = (new System.Windows.Forms.Label());
-            this.label3 = (new System.Windows.Forms.Label());
-            this.txtFilename = (new System.Windows.Forms.Label());
-            this.pbDiskSpace = (new System.Windows.Forms.ProgressBar());
-            this.label4 = (new System.Windows.Forms.Label());
-            this.txtDiskSpace = (new System.Windows.Forms.Label());
-            this.txtTotal = (new System.Windows.Forms.Label());
-            this.txtFile = (new System.Windows.Forms.Label());
-            this.copyTimer = (new System.Windows.Forms.Timer(this.components));
-            this.cbPause = (new System.Windows.Forms.CheckBox());
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CopyMoveProgress));
+            this.pbFile = new System.Windows.Forms.ProgressBar();
+            this.pbGroup = new System.Windows.Forms.ProgressBar();
+            this.bnCancel = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtFilename = new System.Windows.Forms.Label();
+            this.pbDiskSpace = new System.Windows.Forms.ProgressBar();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtDiskSpace = new System.Windows.Forms.Label();
+            this.txtTotal = new System.Windows.Forms.Label();
+            this.txtFile = new System.Windows.Forms.Label();
+            this.copyTimer = new System.Windows.Forms.Timer(this.components);
+            this.cbPause = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // pbFile
@@ -73,15 +73,15 @@ namespace TVRename
             this.pbGroup.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbGroup.TabIndex = 0;
             // 
-            // button1
+            // bnCancel
             // 
-            this.button1.Location = new System.Drawing.Point(312, 126);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Cancel";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(button1_Click);
+            this.bnCancel.Location = new System.Drawing.Point(312, 126);
+            this.bnCancel.Name = "bnCancel";
+            this.bnCancel.Size = new System.Drawing.Size(75, 23);
+            this.bnCancel.TabIndex = 1;
+            this.bnCancel.Text = "Cancel";
+            this.bnCancel.UseVisualStyleBackColor = true;
+            this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
             // 
             // label1
             // 
@@ -172,12 +172,13 @@ namespace TVRename
             // 
             // copyTimer
             // 
-            this.copyTimer.Interval = 200;
-            this.copyTimer.Tick += new System.EventHandler(copyTimer_Tick);
+            this.copyTimer.Interval = 50;
+            this.copyTimer.Tick += new System.EventHandler(this.copyTimer_Tick);
             // 
             // cbPause
             // 
             this.cbPause.Appearance = System.Windows.Forms.Appearance.Button;
+            this.cbPause.Enabled = false;
             this.cbPause.Location = new System.Drawing.Point(231, 126);
             this.cbPause.Name = "cbPause";
             this.cbPause.Size = new System.Drawing.Size(75, 23);
@@ -185,11 +186,11 @@ namespace TVRename
             this.cbPause.Text = "Pause";
             this.cbPause.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.cbPause.UseVisualStyleBackColor = true;
-            this.cbPause.CheckedChanged += new System.EventHandler(cbPause_CheckedChanged);
+            this.cbPause.CheckedChanged += new System.EventHandler(this.cbPause_CheckedChanged);
             // 
             // CopyMoveProgress
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(400, 162);
             this.Controls.Add(this.cbPause);
@@ -201,7 +202,7 @@ namespace TVRename
             this.Controls.Add(this.txtFilename);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.bnCancel);
             this.Controls.Add(this.pbDiskSpace);
             this.Controls.Add(this.pbGroup);
             this.Controls.Add(this.pbFile);
@@ -212,7 +213,6 @@ namespace TVRename
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Progress";
-            this.Load += new System.EventHandler(CopyMoveProgress_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -230,7 +230,7 @@ namespace TVRename
 
         private System.Windows.Forms.ProgressBar pbFile;
         private System.Windows.Forms.ProgressBar pbGroup;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button bnCancel;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;

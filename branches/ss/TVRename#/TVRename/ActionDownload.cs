@@ -81,7 +81,7 @@ namespace TVRename
             }
         }
 
-        public int PercentDone { get { return Done ? 100 : 0; } } // 0 to 100
+        public double PercentDone { get { return Done ? 100 : 0; } } // 0 to 100
         public long SizeOfWork { get { return 1; } } // for file copy/move, number of bytes in file.  for simple tasks, 1.
         public bool SameAs(Item o)
         {
@@ -104,11 +104,10 @@ namespace TVRename
             this.Done = true;
             return true;
         }
-        public bool Stop()
+        public bool Pause(bool yes)
         {
             return false;
         }
-
         public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string bannerPath)
         {
             this.Episode = pe;

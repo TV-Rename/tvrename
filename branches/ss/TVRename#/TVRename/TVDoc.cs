@@ -562,16 +562,16 @@ namespace TVRename
                     
                     if (ok2)
                     {
-                        // last item, or last copymoverename item in the list
-                        ActionCopyMoveRename a1 = cmr1;
-                        a1.Operation = ActionCopyMoveRename.Op.Move;
-                    }
-                    else
-                    {
                         ActionCopyMoveRename a1 = cmr1;
                         ActionCopyMoveRename a2 = cmr2;
                         if (!Helpers.Same(a1.From, a2.From))
                             a1.Operation = ActionCopyMoveRename.Op.Move;
+                    }
+                    else
+                    {
+                        // last item, or last copymoverename item in the list
+                        ActionCopyMoveRename a1 = cmr1;
+                        a1.Operation = ActionCopyMoveRename.Op.Move;
                     }
                 }
             }
@@ -671,7 +671,7 @@ namespace TVRename
                     t.Start(code); // will grab the semaphore as soon as we make it available
                     int nfr = this.WorkerSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
                     System.Diagnostics.Debug.Print("Started " + code + " pool has " + nfr + " free");
-                    Thread.Sleep(0); // allow the other thread a chance to run and grab
+                    Thread.Sleep(1); // allow the other thread a chance to run and grab
 
                     // tidy up any finished workers
                     for (int i = this.Workers.Count - 1; i >= 0; i--)
@@ -1894,37 +1894,121 @@ namespace TVRename
             prog.Invoke(100);
         }
 
-        public void ActionAction(SetProgressDelegate prog, ScanListItemList theList)
+        private Thread ActionProcessorThread;
+
+        public void ProcessSingleAction(Object actionIn)
         {
-            // first pass to CopyMoveProgress.  It will take care of copying/moving
-            // then, fire Action on whatever is left (!Done)
+            System.Diagnostics.Debug.Assert(this.ActionSemaphore != null);
+            this.ActionSemaphore.WaitOne(); // don't start until we're allowed to
 
-            if (!this.Args.Hide)
-            {
-                CopyMoveProgress cmp = new CopyMoveProgress(this, theList, this.Stats());
-                cmp.ShowDialog();
-            }
+            Action action = actionIn as Action;
+            if (action != null)
+                action.Go(this.Settings);
 
-            prog.Invoke(0);
-            int c = 0;
-            foreach (Item item in theList)
-            {
-                if (!(item is Action))
-                    continue;
-
-                Action act = item as Action;
-
-                prog.Invoke((100 * (c + 1)) / (theList.Count + 1));
-                if (!act.Done)
-                    act.Go(this.Settings);
-            }
-
-            theList.RemoveAll(x => (x is Action) && (x as Action).Done && !(x as Action).Error);
-
-            prog.Invoke(0);
+            this.ActionSemaphore.Release(1);
         }
 
-        public bool MissingItemsInList(ItemList l)
+        System.Collections.Generic.List<Thread> ActionWorkers;
+        Semaphore ActionSemaphore;
+
+        public void ActionProcessor(Object theListIn)
+        {
+            // TODO: Run tasks in parallel (as much as is sensible)
+
+            ScanListItemList theList = theListIn as ScanListItemList;
+            if (theList == null)
+                return;
+
+            this.ActionWorkers = new System.Collections.Generic.List<Thread>();
+            this.ActionSemaphore = new Semaphore(1, 1); // allow up to numWorkers working at once
+
+            try
+            {
+                foreach (Item item in theList)
+                {
+                    Action act = item as Action;
+
+                    if (act == null)
+                        continue;
+
+                    if (!act.Done)
+                    {
+                        this.ActionSemaphore.WaitOne();
+                        Thread t = new Thread(this.ProcessSingleAction)
+                        {
+                            Name = "ProcessSingleAction"
+                        };
+                        this.ActionWorkers.Add(t);
+                        t.Start(act);
+                        int nfr = this.ActionSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
+                        System.Diagnostics.Debug.Print("ActionProcessor pool has " + nfr + " free");
+                    }
+
+                    Thread.Sleep(1); // allow the other thread a chance to run and grab
+
+                    // tidy up any finished workers
+                    for (int i = this.ActionWorkers.Count - 1; i >= 0; i--)
+                    {
+                        if (!this.ActionWorkers[i].IsAlive)
+                            this.ActionWorkers.RemoveAt(i); // remove dead worker
+                    }
+
+                }
+                this.WaitForAllActionThreadsAndTidyUp();
+            }
+            catch (ThreadAbortException)
+            {
+                foreach (Thread t in ActionWorkers)
+                    t.Abort();
+                this.WaitForAllActionThreadsAndTidyUp();
+            }
+        }
+
+        private void WaitForAllActionThreadsAndTidyUp()
+        {
+            if (this.ActionWorkers != null)
+            {
+                foreach (Thread t in this.ActionWorkers)
+                {
+                    if (t.IsAlive)
+                        t.Join();
+                }
+            }
+
+            this.ActionWorkers = null;
+            this.ActionSemaphore = null;
+        }
+
+        //public void AbortActionProcessing()
+        //{
+        //    if (ActionProcessorThread != null)
+        //        ActionProcessorThread.Abort();
+        //}
+
+        public void DoActions(ScanListItemList theList)
+        {
+            // If not /hide, show CopyMoveProgress dialog
+            
+            CopyMoveProgress cmp = null;
+            if (!this.Args.Hide)
+                cmp = new CopyMoveProgress(this, theList, this.Stats());
+
+            ActionProcessorThread = new Thread(this.ActionProcessor)
+            {
+                Name = "ActionProcessorThread"
+            };
+
+            ActionProcessorThread.Start(theList);
+
+            if ((cmp != null) && (cmp.ShowDialog() == DialogResult.Cancel))
+                ActionProcessorThread.Abort();
+            
+            ActionProcessorThread.Join();
+
+            theList.RemoveAll(x => (x is Action) && (x as Action).Done && !(x as Action).Error);
+        }
+
+        public bool ListHasMissingItems(ItemList l)
         {
             foreach (Item i in l)
             {
@@ -1942,9 +2026,8 @@ namespace TVRename
             if (!this.DoDownloadsFG())
                 return;
 
-            //Thread ActionWork = new Thread(new ParameterizedThreadStart(this.ActionGoWorker));
             Thread ActionWork = new Thread(this.ScanWorker);
-            ActionWork.Name = "ActionGoWorker";
+            ActionWork.Name = "ActionWork";
 
             this.ActionCancel = false;
 
@@ -2446,7 +2529,7 @@ namespace TVRename
 
                 // have a look around for any missing episodes
 
-                if (this.Settings.SearchLocally && this.MissingItemsInList(this.TheActionList))
+                if (this.Settings.SearchLocally && this.ListHasMissingItems(this.TheActionList))
                 {
                     this.LookForMissingEps(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.LocalSearchProg);
                     this.RemoveIgnored();
@@ -2455,7 +2538,7 @@ namespace TVRename
                 if (this.ActionCancel)
                     return;
 
-                if (this.Settings.CheckuTorrent && this.MissingItemsInList(this.TheActionList))
+                if (this.Settings.CheckuTorrent && this.ListHasMissingItems(this.TheActionList))
                 {
                     this.CheckAgainstuTorrent(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.uTorrentProg);
                     this.RemoveIgnored();
@@ -2464,7 +2547,7 @@ namespace TVRename
                 if (this.ActionCancel)
                     return;
 
-                if (this.Settings.SearchRSS && this.MissingItemsInList(this.TheActionList))
+                if (this.Settings.SearchRSS && this.ListHasMissingItems(this.TheActionList))
                 {
                     this.RSSSearch(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.RSSProg);
                     this.RemoveIgnored();

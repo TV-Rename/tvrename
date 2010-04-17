@@ -45,7 +45,7 @@ namespace TVRename
         public bool Error { get; private set; }
         public string ErrorText { get; set; }
         public string ProgressText { get { return this.Where.Name; } }
-        public int PercentDone { get { return Done ? 100 : 0; } }
+        public double PercentDone { get { return Done ? 100 : 0; } }
         public long SizeOfWork { get { return 1; } }
         public bool SameAs(Item o)
         {
@@ -161,10 +161,11 @@ namespace TVRename
             this.Done = true;
             return true;
         }
-        public bool Stop()
+        public bool Pause(bool yes)
         {
             return false;
         }
+
         public ListViewItem ScanListViewItem
         {
             get
