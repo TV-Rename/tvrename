@@ -102,7 +102,6 @@ namespace TVRename
             }
         }
         private double _Percent;
-        private bool Paused;
         public double PercentDone { get { return Done ? 100.0 : _Percent; } set { _Percent = value; } } // 0.0 to 100.0
         public long SizeOfWork { get { return SourceFileSize(); } } // for file copy/move, number of bytes in file.  for simple tasks, 1.
         public bool SameAs(Item o)
@@ -133,7 +132,7 @@ namespace TVRename
                 msr.Close();
         }
 
-        public bool Go(TVSettings settings)
+        public bool Go(TVSettings settings, ref bool pause)
         {
             // read NTFS permissions (if any)
             System.Security.AccessControl.FileSecurity security = null;
@@ -148,7 +147,7 @@ namespace TVRename
             if (this.IsMoveRename() && (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())) // same device ... TODO: UNC paths?
                 OSMoveRename(); // ask the OS to do it for us, since it's easy and quick!
             else
-                CopyItOurself(); // do it ourself!
+                CopyItOurself(ref pause); // do it ourself!
 
             // set NTFS permissions
             try
@@ -195,7 +194,7 @@ namespace TVRename
             }
         }
 
-        private void CopyItOurself()
+        private void CopyItOurself(ref bool pause)
         {
             const int kArrayLength = 256 * 1024;
             Byte[] dataArray = new Byte[kArrayLength];
@@ -228,7 +227,7 @@ namespace TVRename
                         pct = 100.0;
                     this.PercentDone = pct;
 
-                    while (this.Paused)
+                    while (pause)
                         System.Threading.Thread.Sleep(100);
 
                 }
@@ -279,12 +278,6 @@ namespace TVRename
                 this.ErrorText = ex.Message;
                 this.NicelyStopAndCleanUp(msr, msw);
             }
-        }
-
-        public bool Pause(bool yes)
-        {
-            this.Paused = yes;
-            return true;
         }
 
         // --------------------------------------------------------------------------------------------------------

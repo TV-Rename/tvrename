@@ -1903,18 +1903,20 @@ namespace TVRename
 
             Action action = actionIn as Action;
             if (action != null)
-                action.Go(this.Settings);
+                action.Go(this.Settings, ref ActionPause);
 
             this.ActionSemaphore.Release(1);
         }
 
         System.Collections.Generic.List<Thread> ActionWorkers;
         Semaphore ActionSemaphore;
+        public bool ActionPause;
 
         public void ActionProcessor(Object theListIn)
         {
             // TODO: Run tasks in parallel (as much as is sensible)
 
+            this.ActionPause = false;
             ScanListItemList theList = theListIn as ScanListItemList;
             if (theList == null)
                 return;

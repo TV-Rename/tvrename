@@ -61,7 +61,7 @@ namespace TVRename
                 writer.WriteEndElement();
             }
         }
-        public bool Go(TVSettings tvsettings)
+        public bool Go(TVSettings tvsettings, ref bool pause)
         {
             XmlWriterSettings settings = new XmlWriterSettings {
                                                                    Indent = true,
@@ -160,10 +160,6 @@ namespace TVRename
             writer.Close();
             this.Done = true;
             return true;
-        }
-        public bool Pause(bool yes)
-        {
-            return false;
         }
 
         public ListViewItem ScanListViewItem

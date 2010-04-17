@@ -34,7 +34,7 @@ namespace TVRename
         public double PercentDone { get { return Done ? 100 : 0; } }
         public long SizeOfWork { get { return 1; } }
 
-        public bool Go(TVSettings settings)
+        public bool Go(TVSettings settings, ref bool pause)
         {
             System.Net.WebClient wc = new System.Net.WebClient();
             try
@@ -65,10 +65,6 @@ namespace TVRename
             return !this.Error;
         }
 
-        public bool Pause(bool yes)
-        {
-            return false;
-        }
         public ProcessedEpisode Episode { get; private set; }
         public IgnoreItem Ignore
         {

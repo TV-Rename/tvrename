@@ -178,7 +178,6 @@ namespace TVRename
             // cbPause
             // 
             this.cbPause.Appearance = System.Windows.Forms.Appearance.Button;
-            this.cbPause.Enabled = false;
             this.cbPause.Location = new System.Drawing.Point(231, 126);
             this.cbPause.Name = "cbPause";
             this.cbPause.Size = new System.Drawing.Size(75, 23);

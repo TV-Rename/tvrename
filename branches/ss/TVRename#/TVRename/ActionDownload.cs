@@ -40,7 +40,8 @@ namespace TVRename
             get
             {
                 ListViewItem lvi = new ListViewItem {
-                                                        Text = this.Episode.SI.ShowName()
+                                                        Text = (this.Episode != null) ? this.Episode.SI.ShowName() : 
+                                                        ((SI != null) ? SI.ShowName() : "")
                                                     };
 
                 lvi.SubItems.Add(this.Episode != null ? this.Episode.SeasonNumber.ToString() : "");
@@ -87,7 +88,7 @@ namespace TVRename
         {
             return (o is ActionDownload) && ((o as ActionDownload).Destination == this.Destination);
         }
-        public bool Go(TVSettings settings)
+        public bool Go(TVSettings settings, ref bool pause)
         {
             byte[] theData = this.SI.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
             if (theData == null)
@@ -103,10 +104,6 @@ namespace TVRename
 
             this.Done = true;
             return true;
-        }
-        public bool Pause(bool yes)
-        {
-            return false;
         }
         public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string bannerPath)
         {

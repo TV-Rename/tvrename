@@ -178,9 +178,8 @@ namespace TVRename
 
         private void cbPause_CheckedChanged(object sender, System.EventArgs e)
         {
-            throw new NotImplementedException();
+            mDoc.ActionPause = cbPause.Checked;
 
-#pragma warning disable 162
             bool en = !(this.cbPause.Checked);
             this.pbFile.Enabled = en;
             this.pbGroup.Enabled = en;
@@ -193,7 +192,6 @@ namespace TVRename
             this.label4.Enabled = en;
             this.label3.Enabled = en;
             this.txtFilename.Enabled = en;
-#pragma warning restore 162
         }
     }
 }
