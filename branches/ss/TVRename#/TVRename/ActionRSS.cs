@@ -11,6 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
+    // TODO: derive this from ActionDownload?
     public class ActionRSS : Item, Action, ScanListItem
     {
         public RSSItem RSS;
@@ -32,6 +33,7 @@ namespace TVRename
         public string ErrorText { get; private set; }
         public string ProgressText { get { return this.RSS.Title; } }
         public double PercentDone { get { return Done ? 100 : 0; } }
+        public string Name { get { return "Get Torrent"; } }
         public long SizeOfWork { get { return 1; } }
 
         public bool Go(TVSettings settings, ref bool pause)
@@ -44,6 +46,8 @@ namespace TVRename
                 {
                     this.Error = true;
                     this.ErrorText = "No data downloaded";
+                    this.Done = true;
+                    return false;
                 }
 
                 string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + settings.FilenameFriendly(this.RSS.Title);
@@ -53,16 +57,16 @@ namespace TVRename
 
                 System.Diagnostics.Process.Start(settings.uTorrentPath, "/directory \"" + (new FileInfo(this.TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
 
-                this.Error = false;
+                this.Done = true;
+                return true;
             }
             catch (Exception e)
             {
                 this.ErrorText = e.Message;
                 this.Error = true;
+                this.Done = true;
+                return false;
             }
-            this.Done = true;
-
-            return !this.Error;
         }
 
         public ProcessedEpisode Episode { get; private set; }

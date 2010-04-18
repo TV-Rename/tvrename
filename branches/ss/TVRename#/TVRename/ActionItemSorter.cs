@@ -7,7 +7,7 @@
 // 
 namespace TVRename
 {
-    public class ActionSorter : System.Collections.Generic.IComparer<Item>
+    public class ActionItemSorter : System.Collections.Generic.IComparer<Item>
     {
         #region IComparer<Item> Members
 
@@ -18,12 +18,12 @@ namespace TVRename
 
         static int TypeNumber(Item a)
         {
-            if (a is ActionMissing) return 1;
+            if (a is ItemMissing) return 1;
             if (a is ActionCopyMoveRename) return 2;
             if (a is ActionRSS) return 3;
             if (a is ActionDownload) return 4;
             if (a is ActionNFO) return 5;
-            if (a is ActionuTorrenting) return 6;
+            if (a is ItemuTorrenting) return 6;
             return 7;
         }
 

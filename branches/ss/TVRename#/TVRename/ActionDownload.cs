@@ -21,6 +21,7 @@ namespace TVRename
         public bool Error { get; set; }
         public string ErrorText { get; set; }
         public int IconNumber { get { return 5; } }
+        public string Name { get { return "Download"; } }
         public string ProgressText
         {
             get { return this.Destination.Name; }
@@ -91,10 +92,11 @@ namespace TVRename
         public bool Go(TVSettings settings, ref bool pause)
         {
             byte[] theData = this.SI.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
-            if (theData == null)
+            if ((theData == null) || (theData.Length == 0))
             {
                 this.ErrorText = "Unable to download " + this.BannerPath;
                 this.Error = true;
+                this.Done = true;
                 return false;
             }
 

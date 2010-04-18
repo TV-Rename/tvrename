@@ -11,14 +11,12 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-
-
-    public class ActionuTorrenting : Item, ScanListItem
+    public class ItemuTorrenting : Item, ScanListItem
     {
         public string DesiredLocationNoExt;
         public TorrentEntry Entry;
 
-        public ActionuTorrenting(TorrentEntry te, ProcessedEpisode pe, string desiredLocationNoExt)
+        public ItemuTorrenting(TorrentEntry te, ProcessedEpisode pe, string desiredLocationNoExt)
         {
             this.Episode = pe;
             this.DesiredLocationNoExt = desiredLocationNoExt;
@@ -36,7 +34,7 @@ namespace TVRename
 
         public bool SameAs(Item o)
         {
-            return (o is ActionuTorrenting)&& this.Entry == (o as ActionuTorrenting).Entry;
+            return (o is ItemuTorrenting)&& this.Entry == (o as ItemuTorrenting).Entry;
         }
 
         public ProcessedEpisode Episode { get; private set; }
@@ -80,7 +78,7 @@ namespace TVRename
 
         public int Compare(Item o)
         {
-            ActionuTorrenting ut = o as ActionuTorrenting;
+            ItemuTorrenting ut = o as ItemuTorrenting;
             if (ut == null)
                 return 0;
 

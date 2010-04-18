@@ -22,6 +22,7 @@ namespace TVRename
 
     public interface Action // Something we can do
     {
+        string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
         bool Done { get; } // All work has been completed for this item, and can be removed from to-do list
         bool Error { get; } // Error state, after trying to do work?
         string ErrorText { get; } // Human-readable error message, for when Error is true
@@ -44,4 +45,16 @@ namespace TVRename
     public class ScanListItemList : System.Collections.Generic.List<ScanListItem>
     {
     }
+    /*
+    public class ScanListItemListArray
+    {
+        public ScanListItemList[] Array;
+
+        public ScanListItemListArray(int n)
+        {
+            Array = new ScanListItemList[n];
+        }
+        public int Length { get { return Array.Length; } }
+        }
+     * */
 }

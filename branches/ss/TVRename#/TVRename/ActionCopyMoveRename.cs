@@ -32,6 +32,7 @@ namespace TVRename
         public bool Error { get; set; }
         public string ErrorText { get; set; }
         public int IconNumber { get { return this.IsMoveRename() ? 4 : 3; } }
+        public string Name { get { return this.IsMoveRename() ? "Move" : "Copy"; } }
         public string ProgressText
         {
             get { return this.To.Name; }
@@ -131,6 +132,15 @@ namespace TVRename
             if (msr != null)
                 msr.Close();
         }
+        public bool QuickOperation()
+        {
+            if ((this.From == null)||
+                (this.To == null))
+                return false;
+
+            return (this.IsMoveRename() && 
+                    (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())); // same device ... TODO: UNC paths?
+        }
 
         public bool Go(TVSettings settings, ref bool pause)
         {
@@ -144,7 +154,7 @@ namespace TVRename
             {
             }
 
-            if (this.IsMoveRename() && (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())) // same device ... TODO: UNC paths?
+            if (this.QuickOperation())
                 OSMoveRename(); // ask the OS to do it for us, since it's easy and quick!
             else
                 CopyItOurself(ref pause); // do it ourself!
@@ -275,6 +285,7 @@ namespace TVRename
             {
                 // handle any other exception type
                 this.Error = true;
+                this.Done = true;
                 this.ErrorText = ex.Message;
                 this.NicelyStopAndCleanUp(msr, msw);
             }

@@ -1557,7 +1557,7 @@ namespace TVRename
                     {
                         foreach (ListViewItem lvi in this.lvAction.SelectedItems)
                         {
-                            ActionMissing m = (ActionMissing)(lvi.Tag);
+                            ItemMissing m = (ItemMissing)(lvi.Tag);
                             if (m != null)
                                 this.mDoc.DoBTSearch(m.Episode);
                         }
@@ -1570,7 +1570,7 @@ namespace TVRename
                     {
                         if ((this.mLastActionsClicked != null) && (this.mLastActionsClicked.Count > 0))
                         {
-                            ActionMissing mi = (ActionMissing)this.mLastActionsClicked[0];
+                            ItemMissing mi = (ItemMissing)this.mLastActionsClicked[0];
                             if (mi != null)
                             {
                                 // browse for mLastActionClicked
@@ -2525,7 +2525,7 @@ namespace TVRename
 
             foreach (Item Action in this.mDoc.TheActionList)
             {
-                if (Action is ActionMissing)
+                if (Action is ItemMissing)
                     missingCount++;
                 else if (Action is ActionCopyMoveRename)
                 {
@@ -2552,7 +2552,7 @@ namespace TVRename
                     rssCount++;
                 else if (Action is ActionNFO)
                     nfoCount++;
-                else if (Action is ActionuTorrenting)
+                else if (Action is ItemuTorrenting)
                     utCount++;
             }
 
@@ -2907,7 +2907,7 @@ namespace TVRename
             if ((e.Index < 0) || (e.Index > this.lvAction.Items.Count))
                 return;
             Item Action = (Item)(this.lvAction.Items[e.Index].Tag);
-            if ((Action != null) && ((Action is ActionMissing) || (Action is ActionuTorrenting)))
+            if ((Action != null) && ((Action is ItemMissing) || (Action is ItemuTorrenting)))
                 e.NewValue = CheckState.Unchecked;
         }
 
@@ -2919,7 +2919,7 @@ namespace TVRename
         private void lvAction_MouseDoubleClick(object sender, System.Windows.Forms.MouseEventArgs e)
         {
             // double-click on an item will search for missing, do nothing (for now) for anything else
-            foreach (ActionMissing miss in new LVResults(this.lvAction, false).Missing)
+            foreach (ItemMissing miss in new LVResults(this.lvAction, false).Missing)
             {
                 if (miss.Episode != null)
                     this.mDoc.DoBTSearch(miss.Episode);

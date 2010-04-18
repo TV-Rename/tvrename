@@ -1243,21 +1243,21 @@ namespace TVRename
 
             foreach (Item Action1 in this.MissingList)
             {
-                if ((!(Action1 is ActionMissing)) && (!(Action1 is ActionuTorrenting)))
+                if ((!(Action1 is ItemMissing)) && (!(Action1 is ItemuTorrenting)))
                     continue;
 
                 ProcessedEpisode m = null;
                 string name = null;
 
-                if (Action1 is ActionMissing)
+                if (Action1 is ItemMissing)
                 {
-                    ActionMissing Action = (ActionMissing) (Action1);
+                    ItemMissing Action = (ItemMissing) (Action1);
                     m = Action.Episode;
                     name = Action.TheFileNoExt;
                 }
-                else if (Action1 is ActionuTorrenting)
+                else if (Action1 is ItemuTorrenting)
                 {
-                    ActionuTorrenting Action = (ActionuTorrenting) (Action1);
+                    ItemuTorrenting Action = (ItemuTorrenting) (Action1);
                     m = Action.Episode;
                     name = Action.DesiredLocationNoExt;
                 }

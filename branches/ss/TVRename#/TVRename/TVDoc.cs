@@ -337,7 +337,7 @@ namespace TVRename
 
         // consider each of the files, see if it is suitable for series "ser" and episode "epi"
         // if so, add a rcitem for copy to "fi"
-        public bool FindMissingEp(DirCache dirCache, ActionMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
+        public bool FindMissingEp(DirCache dirCache, ItemMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
         {
             string showname = me.Episode.SI.ShowName();
             int season = me.Episode.SeasonNumber;
@@ -525,9 +525,9 @@ namespace TVRename
 
                 prog.Invoke(50 + 50 * (++c) / (totalN + 1)); // second 50% of progress bar
 
-                if (action1 is ActionMissing)
+                if (action1 is ItemMissing)
                 {
-                    if (this.FindMissingEp(dirCache, (ActionMissing) (action1), newList, ActionCopyMoveRename.Op.Copy))
+                    if (this.FindMissingEp(dirCache, (ItemMissing) (action1), newList, ActionCopyMoveRename.Op.Copy))
                         toRemove.Add(action1);
                 }
             }
@@ -543,7 +543,7 @@ namespace TVRename
                 // ideally do that move within same filesystem
 
                 // sort based on source file, and destination drive, putting last if destdrive == sourcedrive
-                newList.Sort(new ActionSorter());
+                newList.Sort(new ActionItemSorter());
 
                 // sort puts all the CopyMoveRenames together				
 
@@ -1810,10 +1810,10 @@ namespace TVRename
                 n++;
                 prog.Invoke(100 * n / c);
 
-                if (!(Action1 is ActionMissing))
+                if (!(Action1 is ItemMissing))
                     continue;
 
-                ActionMissing Action = (ActionMissing) (Action1);
+                ItemMissing Action = (ItemMissing) (Action1);
 
                 string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName());
 
@@ -1832,7 +1832,7 @@ namespace TVRename
                         if (this.FindSeasEp(file, out seasF, out epF, Action.Episode.TheSeries.Name) && (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
                         {
                             toRemove.Add(Action1);
-                            newList.Add(new ActionuTorrenting(te, Action.Episode, Action.TheFileNoExt));
+                            newList.Add(new ItemuTorrenting(te, Action.Episode, Action.TheFileNoExt));
                             break;
                         }
                     }
@@ -1868,10 +1868,10 @@ namespace TVRename
                 n++;
                 prog.Invoke(100 * n / c);
 
-                if (!(Action1 is ActionMissing))
+                if (!(Action1 is ItemMissing))
                     continue;
 
-                ActionMissing Action = (ActionMissing) (Action1);
+                ItemMissing Action = (ItemMissing) (Action1);
 
                 ProcessedEpisode pe = Action.Episode;
                 string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName());
@@ -1895,58 +1895,149 @@ namespace TVRename
         }
 
         private Thread ActionProcessorThread;
-
-        public void ProcessSingleAction(Object actionIn)
+        private class ProcessActionInfo
         {
-            System.Diagnostics.Debug.Assert(this.ActionSemaphore != null);
-            this.ActionSemaphore.WaitOne(); // don't start until we're allowed to
+            public int SemaphoreNumber;
+            public Action TheAction;
 
-            Action action = actionIn as Action;
+            public ProcessActionInfo(int n, Action a)
+            {
+                SemaphoreNumber = n;
+                TheAction = a;
+            }
+        };
+
+        public void ProcessSingleAction(Object infoIn)
+        {
+            ProcessActionInfo info = infoIn as ProcessActionInfo;
+            if (info == null)
+                return;
+
+            System.Diagnostics.Debug.Assert(this.ActionSemaphore != null);
+            this.ActionSemaphore[info.SemaphoreNumber].WaitOne(); // don't start until we're allowed to
+
+            Action action = info.TheAction;
             if (action != null)
                 action.Go(this.Settings, ref ActionPause);
 
-            this.ActionSemaphore.Release(1);
+            this.ActionSemaphore[info.SemaphoreNumber].Release(1);
         }
 
         System.Collections.Generic.List<Thread> ActionWorkers;
-        Semaphore ActionSemaphore;
+        Semaphore[] ActionSemaphore;
         public bool ActionPause;
 
-        public void ActionProcessor(Object theListIn)
+        public ScanListItemList[] ActionProcessorMakeQueues(ScanListItemList theList)
+        {
+            // Take a single list
+            // Return an array of lists
+            // Each of the lists in the array will be processed sequentially, but each of them in parallel
+            // The lists:
+            //     - #0 all the cross filesystem moves, and all copies
+            //     - #1 all quick "local" moves
+            //     - #2 NFO Generator list
+            //     - #3..N Split the downloads (rss torrent, thumbnail, folder.jpg) across Settings.ParallelDownloads lists
+            // We can discard any non-action items, as there is nothing to do for them
+
+            ScanListItemList[] queues = new ScanListItemList[Settings.ParallelDownloads + 3];
+            for (int i = 0; i < queues.Length; i++)
+                queues[i] = new ScanListItemList();
+
+            int dlListNum = 0; // cycles through each of the donwload queues to distribute the tasks evenly
+            foreach (ScanListItem sli in theList)
+            {
+                Action action = sli as Action;
+
+                if (action == null)
+                    continue; // skip non-actions
+
+                if (action is ActionNFO)
+                    queues[2].Add(sli);
+                else if ((action is ActionDownload) || (action is ActionRSS))
+                {
+                    queues[3 + dlListNum].Add(sli);
+                    dlListNum = (dlListNum + 1) % Settings.ParallelDownloads;
+                }
+                else if (action is ActionCopyMoveRename)
+                {
+                    queues[(action as ActionCopyMoveRename).QuickOperation() ? 1 : 0].Add(sli);
+                }
+            }
+            return queues;
+        }
+
+
+        public void ActionProcessor(Object queuesIn)
         {
             // TODO: Run tasks in parallel (as much as is sensible)
 
-            this.ActionPause = false;
-            ScanListItemList theList = theListIn as ScanListItemList;
-            if (theList == null)
+            ScanListItemList[] queues = queuesIn as ScanListItemList[];
+            if (queues == null)
                 return;
 
+            int N = queues.Length;
+            int[] queuePosition = new int[N];
+
             this.ActionWorkers = new System.Collections.Generic.List<Thread>();
-            this.ActionSemaphore = new Semaphore(1, 1); // allow up to numWorkers working at once
+            this.ActionSemaphore = new Semaphore[N];
+
+            for (int i=0;i<N;i++)
+            {
+                this.ActionSemaphore[i] = new Semaphore(1, 1); // allow up to numWorkers working at once
+                queuePosition[i] = 0;
+            }
 
             try
             {
-                foreach (Item item in theList)
+                for (; ; )
                 {
-                    Action act = item as Action;
+                    // look through the list of semaphores to see if there is one waiting for some work to do
+                    bool allDone = true;
+                    int which = -1;
+                    for (int i=0;i<N;i++)
+                    {
+                        // something to do in this queue, and semaphore is available
+                        if (queuePosition[i] < queues[i].Count)
+                        {
+                            allDone = false;
+                            if (this.ActionSemaphore[i].WaitOne(20))
+                            {
+                                which = i;
+                                break;
+                            }
+                        }
+                    }
+                    if ((which == -1) && (allDone))
+                        break; // all done!
+
+                    if (which == -1)
+                        continue; // no semaphores available yet, try again for one
+
+
+                    Action act = queues[which][queuePosition[which]++] as Action;
 
                     if (act == null)
                         continue;
 
                     if (!act.Done)
                     {
-                        this.ActionSemaphore.WaitOne();
                         Thread t = new Thread(this.ProcessSingleAction)
                         {
-                            Name = "ProcessSingleAction"
+                            Name = "ProcessSingleAction("+act.Name+":"+act.ProgressText+")"
                         };
                         this.ActionWorkers.Add(t);
-                        t.Start(act);
-                        int nfr = this.ActionSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
-                        System.Diagnostics.Debug.Print("ActionProcessor pool has " + nfr + " free");
+                        t.Start(new ProcessActionInfo(which, act));
+                        int nfr = this.ActionSemaphore[which].Release(1); // release our hold on the semaphore, so that worker can grab it
+                        System.Diagnostics.Debug.Print("ActionProcessor["+which+"] pool has " + nfr + " free");
                     }
 
-                    Thread.Sleep(1); // allow the other thread a chance to run and grab
+                    // keep on trying to get the semaphore back.  if we can, it means that the other thread hasn't got
+                    // hold of it yet.
+                    while (!act.Done && this.ActionSemaphore[which].WaitOne(20))
+                    {
+                        Thread.Sleep(10); // allow the other thread a chance to run and grab
+                        this.ActionSemaphore[which].Release(1); // let it go
+                    }
 
                     // tidy up any finished workers
                     for (int i = this.ActionWorkers.Count - 1; i >= 0; i--)
@@ -1981,26 +2072,26 @@ namespace TVRename
             this.ActionSemaphore = null;
         }
 
-        //public void AbortActionProcessing()
-        //{
-        //    if (ActionProcessorThread != null)
-        //        ActionProcessorThread.Abort();
-        //}
-
         public void DoActions(ScanListItemList theList)
         {
+            if (theList == null)
+                return;
+
+            ScanListItemList[] queues = ActionProcessorMakeQueues(theList);
+            this.ActionPause = false;
+
             // If not /hide, show CopyMoveProgress dialog
             
             CopyMoveProgress cmp = null;
             if (!this.Args.Hide)
-                cmp = new CopyMoveProgress(this, theList, this.Stats());
+                cmp = new CopyMoveProgress(this, queues, this.Stats());
 
             ActionProcessorThread = new Thread(this.ActionProcessor)
             {
                 Name = "ActionProcessorThread"
             };
 
-            ActionProcessorThread.Start(theList);
+            ActionProcessorThread.Start(queues);
 
             if ((cmp != null) && (cmp.ShowDialog() == DialogResult.Cancel))
                 ActionProcessorThread.Abort();
@@ -2014,7 +2105,7 @@ namespace TVRename
         {
             foreach (Item i in l)
             {
-                if (i is ActionMissing)
+                if (i is ItemMissing)
                     return true;
             }
             return false;
@@ -2455,7 +2546,7 @@ namespace TVRename
                                     if (noAirdatesUntilNow || (si.ForceCheckFuture || notFuture) || (si.ForceCheckNoAirdate && dt == null))
                                     {
                                         // then add it as officially missing
-                                        this.TheActionList.Add(new ActionMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));
+                                        this.TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));
                                     }
                                 }
                                 else
@@ -2559,7 +2650,7 @@ namespace TVRename
                 return;
 
             // sort Action list by type
-            this.TheActionList.Sort(new ActionSorter()); // was new ActionSorter()
+            this.TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
 
             if (this.ScanProgDlg != null)
                 this.ScanProgDlg.Done();

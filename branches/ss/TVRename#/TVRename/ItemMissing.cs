@@ -11,11 +11,11 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionMissing : Item, ScanListItem
+    public class ItemMissing : Item, ScanListItem
     {
         public string TheFileNoExt;
 
-        public ActionMissing(ProcessedEpisode pe, string whereItShouldBeNoExt)
+        public ItemMissing(ProcessedEpisode pe, string whereItShouldBeNoExt)
         {
             this.Episode = pe;
             this.TheFileNoExt = whereItShouldBeNoExt;
@@ -23,7 +23,7 @@ namespace TVRename
 
         public bool SameAs(Item o)
         {
-            return (o is ActionMissing) && (string.Compare((o as ActionMissing).TheFileNoExt, this.TheFileNoExt) == 0);
+            return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, this.TheFileNoExt) == 0);
         }
 
         public ProcessedEpisode Episode { get; private set; }
@@ -75,7 +75,7 @@ namespace TVRename
         public int IconNumber { get { return 1; } }
         public int Compare(Item o)
         {
-            ActionMissing miss = o as ActionMissing;
+            ItemMissing miss = o as ItemMissing;
             return o == null ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
         }
     }

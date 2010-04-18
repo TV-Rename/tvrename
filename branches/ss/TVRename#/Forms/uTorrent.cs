@@ -39,7 +39,7 @@ namespace TVRename
             // are there any missing items in the to-do list?
             foreach (Item i in this.mDoc.TheActionList)
             {
-                if (i is ActionMissing)
+                if (i is ItemMissing)
                 {
                     en = true;
                     break;

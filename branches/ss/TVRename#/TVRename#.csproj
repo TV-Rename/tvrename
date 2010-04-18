@@ -149,11 +149,11 @@
     <Compile Include="TVRename\ActionCopyMoveRename.cs" />
     <Compile Include="TVRename\ActionDownload.cs" />
     <Compile Include="TVRename\ActionItem.cs" />
-    <Compile Include="TVRename\ActionMissing.cs" />
+    <Compile Include="TVRename\ItemMissing.cs" />
     <Compile Include="TVRename\ActionNFO.cs" />
     <Compile Include="TVRename\ActionRSS.cs" />
-    <Compile Include="TVRename\ActionSorter.cs" />
-    <Compile Include="TVRename\ActionuTorrenting.cs" />
+    <Compile Include="TVRename\ActionItemSorter.cs" />
+    <Compile Include="TVRename\ItemuTorrenting.cs" />
     <Compile Include="TVRename\FolderMonitorItem.cs" />
     <Compile Include="Forms\AddModifyRule.cs">
       <SubType>Form</SubType>

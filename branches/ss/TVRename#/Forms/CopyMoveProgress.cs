@@ -34,18 +34,40 @@ namespace TVRename
 
         private TVDoc mDoc;
         private TVRenameStats mStats;
-        private ScanListItemList mToDo;
+        private ScanListItemList[] mToDo;
 
-        public CopyMoveProgress(TVDoc doc, ScanListItemList todo, TVRenameStats stats)
+        public CopyMoveProgress(TVDoc doc, ScanListItemList[] todo, TVRenameStats stats)
         {
             this.mDoc = doc;
             this.mToDo = todo;
             this.mStats = stats;
             this.InitializeComponent();
             this.copyTimer.Start();
+
+            // set up list view items, one for each non-empty queue
+            foreach (ScanListItemList slil in this.mToDo)
+            {
+                if (slil.Count == 0)
+                    continue;
+
+                ListViewItem lvi = new ListViewItem("");
+                lvi.SubItems.Add("");
+                lvi.SubItems.Add("");
+                lvi.SubItems.Add("");
+                this.lvProgress.Items.Add(lvi);
+            }
         }
 
-        public void SetPercentages(double file, double group)
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        ~CopyMoveProgress()
+        {
+            this.copyTimer.Stop();
+        }
+
+        private void SetPercentages(double file, double group)
         {
             if (file > 100)
                 file = 100;
@@ -68,19 +90,8 @@ namespace TVRename
             this.txtTotal.Update();
             this.Update();
         }
-
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        ~CopyMoveProgress()
+        private void UpdateOldStyle()
         {
-            this.copyTimer.Stop();
-        }
-
-        private void copyTimer_Tick(object sender, System.EventArgs e)
-        {
-            this.copyTimer.Stop();
-
             double workDone = 0;
             double totalWork = 0;
             double workingPercent = 0;
@@ -88,24 +99,33 @@ namespace TVRename
 
             bool allDone = true;
 
-            foreach (ScanListItem sli in mToDo)
+            string filename = "";
+
+            foreach (ScanListItemList slil in this.mToDo)
             {
-                Action action = sli as Action;
-                if (action == null)
-                    continue;
-
-                if (!action.Done)
-                    allDone = false;
-
-                workDone += action.PercentDone;
-                totalWork += 100.0;
-
-                if ((action.PercentDone > 0.0) && (!action.Done))
+                foreach (ScanListItem sli in slil)
                 {
-                    workingPercent += action.PercentDone;
-                    workingTotal += 100.0;
+                    Action action = sli as Action;
+                    if (action == null)
+                        continue;
+
+                    if (!action.Done)
+                        allDone = false;
+
+                    workDone += action.PercentDone;
+                    totalWork += 100.0;
+
+                    if ((action.PercentDone > 0.0) && (!action.Done))
+                    {
+                        workingPercent += action.PercentDone;
+                        workingTotal += 100.0;
+
+                        filename = action.ProgressText;
+                    }
                 }
             }
+
+            this.txtFilename.Text = filename;
 
             if (totalWork != 0.0)
                 workDone = workDone * 100.0 / totalWork;
@@ -113,6 +133,72 @@ namespace TVRename
                 workingPercent = workingPercent * 100.0 / workingTotal;
 
             this.SetPercentages(workingPercent, workDone);
+        }
+
+        private bool UpdateNewStyle() // return true if all tasks are done
+        {
+            // update each listview item, for non-empty queues
+            int itemNum = 0;
+            bool allDone = true;
+
+            lvProgress.BeginUpdate();
+            foreach (ScanListItemList slil in this.mToDo)
+            {
+                if (slil.Count == 0)
+                    continue;
+
+                ListViewItem lvi = lvProgress.Items[itemNum++];
+                double workDone = 0;
+                double totalWork = 0;
+                double workingPercent = 0;
+                double workingTotal = 0;
+                string filename = "";
+                string actname = "";
+                foreach (ScanListItem sli in slil)
+                {
+                    Action action = sli as Action;
+                    if (action == null)
+                        continue;
+
+                    if (!action.Done)
+                        allDone = false;
+
+                    workDone += action.PercentDone;
+                    totalWork += 100.0;
+
+                    if ((action.PercentDone > 0.0) && (!action.Done))
+                    {
+                        workingPercent += action.PercentDone;
+                        workingTotal += 100.0;
+
+                        filename = action.ProgressText;
+                        actname = action.Name;
+                    }
+                }
+
+                if (totalWork != 0.0)
+                    workDone = workDone * 100.0 / totalWork;
+                if (workingTotal != 0.0)
+                    workingPercent = workingPercent * 100.0 / workingTotal;
+
+
+                lvi.Text = actname;
+                lvi.SubItems[1].Text = filename;
+                lvi.SubItems[2].Text = ((int)(Math.Round(workingPercent))).ToString();
+                lvi.SubItems[3].Text = ((int)(Math.Round(workDone))).ToString();
+            }
+            lvProgress.EndUpdate();
+
+            return allDone;
+        }
+
+        private void copyTimer_Tick(object sender, System.EventArgs e)
+        {
+            this.copyTimer.Stop();
+
+            this.UpdateOldStyle();
+            bool allDone = this.UpdateNewStyle();
+
 
             if (allDone)
             {
@@ -121,53 +207,6 @@ namespace TVRename
             }
             else
                 this.copyTimer.Start();
-            /* 
-             if (this.mCurrentNum == -1)
-             {
-                 this.pbDiskSpace.Value = 0;
-                 this.txtDiskSpace.Text = "--- GB free";
-             }
-             else
-             {
-                 bool ok = false;
-                 //Action action = this.mToDo[this.mCurrentNum] as Action;
-                 ScanListItem sli = this.mToDo[this.mCurrentNum];
-
-                 string folder = sli.TargetFolder;
-                 DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
-
-                 if (toRoot != null)
-                 {
-                     System.IO.DriveInfo di;
-                     try
-                     {
-                         // try to get root of drive
-                         di = new System.IO.DriveInfo(toRoot.ToString());
-                     }
-                     catch (System.ArgumentException)
-                     {
-                         di = null;
-                     }
-
-                     if (di != null)
-                     {
-                         int pct = (int) ((1000 * di.TotalFreeSpace) / di.TotalSize);
-                         this.pbDiskSpace.Value = 1000 - pct;
-                         this.txtDiskSpace.Text = ((int) (di.TotalFreeSpace / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
-                         ok = true;
-                     }
-                 }
-
-                 if (!ok)
-                 {
-                     this.txtDiskSpace.Text = "Unknown";
-                     this.pbDiskSpace.Value = 0;
-                 }
-             }
-
-             this.pbDiskSpace.Update();
-             this.txtDiskSpace.Update();
-             */
         }
 
         private void bnCancel_Click(object sender, System.EventArgs e)

@@ -17,6 +17,8 @@ namespace TVRename
         public ShowItem SI; // if for an entire show, rather than specific episode
         public FileInfo Where;
 
+        public string Name { get { return "Write NFO"; } }
+
         public ActionNFO(FileInfo nfo, ProcessedEpisode pe)
         {
             this.SI = null;
