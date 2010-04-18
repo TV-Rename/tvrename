@@ -143,6 +143,12 @@
     <Compile Include="Forms\ShowException.Designer.cs">
       <DependentUpon>ShowException.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ShowSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ShowSummary.Designer.cs">
+      <DependentUpon>ShowSummary.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\StatsWindow.Designer.cs">
       <DependentUpon>StatsWindow.cs</DependentUpon>
     </Compile>
@@ -293,6 +299,9 @@
     <EmbeddedResource Include="Forms\Preferences.resx">
       <DependentUpon>Preferences.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ShowSummary.resx">
+      <DependentUpon>ShowSummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
