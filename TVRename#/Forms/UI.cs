@@ -2970,5 +2970,15 @@ namespace TVRename
         {
             this.UpdateActionCheckboxes();
         }
+
+        private void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ShowSummary(this.mDoc).ShowDialog();
+        }
+
+        private void showSummaryToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+            new ShowSummary(this.mDoc).ShowDialog();
+        }
     }
 }
