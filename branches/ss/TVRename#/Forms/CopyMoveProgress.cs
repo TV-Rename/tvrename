@@ -5,12 +5,12 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using System;
-using System.Windows.Forms;
-using System.IO;
-
 namespace TVRename
 {
+    using System;
+    using System.IO;
+    using System.Windows.Forms;
+
     /// <summary>
     /// Summary for CopyMoveProgress
     ///
@@ -45,7 +45,6 @@ namespace TVRename
             this.copyTimer.Start();
         }
 
-
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
@@ -65,12 +64,12 @@ namespace TVRename
             if (group < 0)
                 group = 0;
 
-            this.txtFile.Text = ((int)Math.Round(file)) + "% Done";
-            this.txtTotal.Text = ((int)Math.Round(group)) + "% Done";
+            this.txtFile.Text = ((int) Math.Round(file)) + "% Done";
+            this.txtTotal.Text = ((int) Math.Round(group)) + "% Done";
 
             // progress bars go 0 to 1000
-            this.pbFile.Value = (int)(10.0 * file);
-            this.pbGroup.Value = (int)(10.0 * group);
+            this.pbFile.Value = (int) (10.0 * file);
+            this.pbGroup.Value = (int) (10.0 * group);
             this.pbFile.Update();
             this.pbGroup.Update();
             this.txtFile.Update();
@@ -83,12 +82,12 @@ namespace TVRename
             // update each listview item, for non-empty queues
             bool allDone = true;
 
-            lvProgress.BeginUpdate();
-            int top = lvProgress.TopItem != null ? lvProgress.TopItem.Index : 0;
+            this.lvProgress.BeginUpdate();
+            int top = this.lvProgress.TopItem != null ? this.lvProgress.TopItem.Index : 0;
             ActionCopyMoveRename activeCMAction = null;
             long workDone = 0;
             long totalWork = 0;
-            lvProgress.Items.Clear();
+            this.lvProgress.Items.Clear();
             foreach (ActionQueue aq in this.mToDo)
             {
                 if (aq.Actions.Count == 0)
@@ -100,7 +99,7 @@ namespace TVRename
                         allDone = false;
 
                     long size = action.SizeOfWork;
-                    workDone += (long)(size * action.PercentDone / 100);
+                    workDone += (long) (size * action.PercentDone / 100);
                     totalWork += action.SizeOfWork;
 
                     if (!action.Done)
@@ -113,17 +112,16 @@ namespace TVRename
                         lvi.Text = action.Name;
                         lvi.SubItems.Add(action.ProgressText);
 
-                        lvProgress.Items.Add(lvi);
+                        this.lvProgress.Items.Add(lvi);
                     }
                 }
             }
 
-            if (top >= lvProgress.Items.Count)
-                top = lvProgress.Items.Count - 1;
+            if (top >= this.lvProgress.Items.Count)
+                top = this.lvProgress.Items.Count - 1;
             if (top >= 0)
-                lvProgress.TopItem = lvProgress.Items[top];
-            lvProgress.EndUpdate();
-
+                this.lvProgress.TopItem = this.lvProgress.Items[top];
+            this.lvProgress.EndUpdate();
 
             int diskValue = 0;
             string diskText = "--- GB free";
@@ -149,9 +147,9 @@ namespace TVRename
 
                     if (di != null)
                     {
-                        int pct = (int)((1000 * di.TotalFreeSpace) / di.TotalSize);
+                        int pct = (int) ((1000 * di.TotalFreeSpace) / di.TotalSize);
                         diskValue = 1000 - pct;
-                        diskText = ((int)(di.TotalFreeSpace / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
+                        diskText = ((int) (di.TotalFreeSpace / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
                     }
 
                     fileText = activeCMAction.ProgressText;
@@ -160,7 +158,7 @@ namespace TVRename
                 this.txtFilename.Text = fileText;
                 this.pbDiskSpace.Value = diskValue;
                 this.txtDiskSpace.Text = diskText;
-                
+
                 if (totalWork != 0.0)
                     workDone = workDone * 100 / totalWork;
 
@@ -194,7 +192,7 @@ namespace TVRename
 
         private void cbPause_CheckedChanged(object sender, System.EventArgs e)
         {
-            mDoc.ActionPause = cbPause.Checked;
+            this.mDoc.ActionPause = this.cbPause.Checked;
 
             bool en = !(this.cbPause.Checked);
             this.pbFile.Enabled = en;

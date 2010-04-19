@@ -21,12 +21,25 @@ namespace TVRename
             this.TheFileNoExt = whereItShouldBeNoExt;
         }
 
+        #region Item Members
+
         public bool SameAs(Item o)
         {
             return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, this.TheFileNoExt) == 0);
         }
 
+        public int Compare(Item o)
+        {
+            ItemMissing miss = o as ItemMissing;
+            return o == null ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
+        }
+
+        #endregion
+
+        #region ScanListItem Members
+
         public ProcessedEpisode Episode { get; private set; }
+
         public IgnoreItem Ignore
         {
             get
@@ -36,6 +49,7 @@ namespace TVRename
                 return new IgnoreItem(this.TheFileNoExt);
             }
         }
+
         public ListViewItem ScanListViewItem
         {
             get
@@ -62,7 +76,12 @@ namespace TVRename
                 return lvi;
             }
         }
-        public int ScanListViewGroup { get { return 0; } }
+
+        public int ScanListViewGroup
+        {
+            get { return 0; }
+        }
+
         public string TargetFolder
         {
             get
@@ -72,11 +91,12 @@ namespace TVRename
                 return new FileInfo(this.TheFileNoExt).DirectoryName;
             }
         }
-        public int IconNumber { get { return 1; } }
-        public int Compare(Item o)
+
+        public int IconNumber
         {
-            ItemMissing miss = o as ItemMissing;
-            return o == null ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
+            get { return 1; }
         }
+
+        #endregion
     }
 }

@@ -12,12 +12,10 @@ namespace TVRename
     using System.Windows.Forms;
     using System.Xml;
 
-    public class ActionNFO : Item, Action, ScanListItem  
+    public class ActionNFO : Item, Action, ScanListItem
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
         public FileInfo Where;
-
-        public string Name { get { return "Write NFO"; } }
 
         public ActionNFO(FileInfo nfo, ProcessedEpisode pe)
         {
@@ -33,36 +31,32 @@ namespace TVRename
             this.Where = nfo;
         }
 
-        public IgnoreItem Ignore
+        #region Action Members
+
+        public string Name
         {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return new IgnoreItem(this.Where.FullName);
-            }
+            get { return "Write NFO"; }
         }
 
         public bool Done { get; private set; }
         public bool Error { get; private set; }
         public string ErrorText { get; set; }
-        public string ProgressText { get { return this.Where.Name; } }
-        public double PercentDone { get { return Done ? 100 : 0; } }
-        public long SizeOfWork { get { return 10000; } }
-        public bool SameAs(Item o)
+
+        public string ProgressText
         {
-            return (o is ActionNFO) && ((o as ActionNFO).Where == this.Where);
+            get { return this.Where.Name; }
         }
-        private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string @as)
+
+        public double PercentDone
         {
-            string t = si.TheSeries().GetItem(whichItem);
-            if (!string.IsNullOrEmpty(t))
-            {
-                writer.WriteStartElement(@as);
-                writer.WriteValue(t);
-                writer.WriteEndElement();
-            }
+            get { return this.Done ? 100 : 0; }
         }
+
+        public long SizeOfWork
+        {
+            get { return 10000; }
+        }
+
         public bool Go(TVSettings tvsettings, ref bool pause)
         {
             XmlWriterSettings settings = new XmlWriterSettings {
@@ -164,6 +158,40 @@ namespace TVRename
             return true;
         }
 
+        #endregion
+
+        #region Item Members
+
+        public bool SameAs(Item o)
+        {
+            return (o is ActionNFO) && ((o as ActionNFO).Where == this.Where);
+        }
+
+        public int Compare(Item o)
+        {
+            ActionNFO nfo = o as ActionNFO;
+
+            if (this.Episode == null)
+                return 1;
+            if (nfo.Episode == null)
+                return -1;
+            return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+        }
+
+        #endregion
+
+        #region ScanListItem Members
+
+        public IgnoreItem Ignore
+        {
+            get
+            {
+                if (this.Where == null)
+                    return null;
+                return new IgnoreItem(this.Where.FullName);
+            }
+        }
+
         public ListViewItem ScanListViewItem
         {
             get
@@ -198,28 +226,40 @@ namespace TVRename
                 return lvi;
             }
         }
+
         string ScanListItem.TargetFolder
         {
             get
             {
                 if (this.Where == null)
-                    return null; 
+                    return null;
                 return this.Where.DirectoryName;
             }
         }
-        public int ScanListViewGroup { get { return 6; } }
-        public int IconNumber { get { return 7; } }
+
+        public int ScanListViewGroup
+        {
+            get { return 6; }
+        }
+
+        public int IconNumber
+        {
+            get { return 7; }
+        }
 
         public ProcessedEpisode Episode { get; private set; }
-        public int Compare(Item o)
+
+        #endregion
+
+        private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string @as)
         {
-            ActionNFO nfo = o as ActionNFO;
-            
-            if (this.Episode == null)
-                return 1;
-            if (nfo.Episode == null)
-                return -1;
-            return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+            string t = si.TheSeries().GetItem(whichItem);
+            if (!string.IsNullOrEmpty(t))
+            {
+                writer.WriteStartElement(@as);
+                writer.WriteValue(t);
+                writer.WriteEndElement();
+            }
         }
     }
 }

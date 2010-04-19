@@ -13,20 +13,90 @@ namespace TVRename
 
     public class ActionDownload : Item, Action, ScanListItem
     {
-        readonly string BannerPath;
-        readonly FileInfo Destination;
-        readonly ShowItem SI;
+        private readonly string BannerPath;
+        private readonly FileInfo Destination;
+        private readonly ShowItem SI;
+
+        public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string bannerPath)
+        {
+            this.Episode = pe;
+            this.SI = si;
+            this.Destination = dest;
+            this.BannerPath = bannerPath;
+        }
+
+        #region Action Members
 
         public bool Done { get; set; }
         public bool Error { get; set; }
         public string ErrorText { get; set; }
-        public int IconNumber { get { return 5; } }
-        public string Name { get { return "Download"; } }
+
+        public string Name
+        {
+            get { return "Download"; }
+        }
+
         public string ProgressText
         {
             get { return this.Destination.Name; }
         }
+
+        public double PercentDone
+        {
+            get { return this.Done ? 100 : 0; }
+        }
+
+        // 0 to 100
+        public long SizeOfWork
+        {
+            get { return 1000000; }
+        }
+
+        public bool Go(TVSettings settings, ref bool pause)
+        {
+            byte[] theData = this.SI.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
+            if ((theData == null) || (theData.Length == 0))
+            {
+                this.ErrorText = "Unable to download " + this.BannerPath;
+                this.Error = true;
+                this.Done = true;
+                return false;
+            }
+
+            FileStream fs = new FileStream(this.Destination.FullName, FileMode.Create);
+            fs.Write(theData, 0, theData.Length);
+            fs.Close();
+
+            this.Done = true;
+            return true;
+        }
+
+        #endregion
+
+        #region Item Members
+
+        public bool SameAs(Item o)
+        {
+            return (o is ActionDownload) && ((o as ActionDownload).Destination == this.Destination);
+        }
+
+        public int Compare(Item o)
+        {
+            ActionDownload dl = o as ActionDownload;
+            return dl == null ? 0 : this.Destination.FullName.CompareTo(dl.Destination.FullName);
+        }
+
+        #endregion
+
+        #region ScanListItem Members
+
+        public int IconNumber
+        {
+            get { return 5; }
+        }
+
         public ProcessedEpisode Episode { get; set; }
+
         public IgnoreItem Ignore
         {
             get
@@ -36,13 +106,13 @@ namespace TVRename
                 return new IgnoreItem(this.Destination.FullName);
             }
         }
-        public ListViewItem ScanListViewItem 
-        { 
+
+        public ListViewItem ScanListViewItem
+        {
             get
             {
                 ListViewItem lvi = new ListViewItem {
-                                                        Text = (this.Episode != null) ? this.Episode.SI.ShowName() : 
-                                                        ((SI != null) ? SI.ShowName() : "")
+                                                        Text = (this.Episode != null) ? this.Episode.SI.ShowName() : ((this.SI != null) ? this.SI.ShowName() : "")
                                                     };
 
                 lvi.SubItems.Add(this.Episode != null ? this.Episode.SeasonNumber.ToString() : "");
@@ -72,7 +142,12 @@ namespace TVRename
                 return lvi;
             }
         }
-        public int ScanListViewGroup { get { return 5; } }
+
+        public int ScanListViewGroup
+        {
+            get { return 5; }
+        }
+
         public string TargetFolder
         {
             get
@@ -83,41 +158,6 @@ namespace TVRename
             }
         }
 
-        public double PercentDone { get { return Done ? 100 : 0; } } // 0 to 100
-        public long SizeOfWork { get { return 1000000; } } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
-        public bool SameAs(Item o)
-        {
-            return (o is ActionDownload) && ((o as ActionDownload).Destination == this.Destination);
-        }
-        public bool Go(TVSettings settings, ref bool pause)
-        {
-            byte[] theData = this.SI.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
-            if ((theData == null) || (theData.Length == 0))
-            {
-                this.ErrorText = "Unable to download " + this.BannerPath;
-                this.Error = true;
-                this.Done = true;
-                return false;
-            }
-
-            FileStream fs = new FileStream(this.Destination.FullName, FileMode.Create);
-            fs.Write(theData, 0, theData.Length);
-            fs.Close();
-
-            this.Done = true;
-            return true;
-        }
-        public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string bannerPath)
-        {
-            this.Episode = pe;
-            this.SI = si;
-            this.Destination = dest;
-            this.BannerPath = bannerPath;
-        }
-        public int Compare(Item o)
-        {
-            ActionDownload dl = o as ActionDownload;
-            return dl == null ? 0 : this.Destination.FullName.CompareTo(dl.Destination.FullName);
-        }
+        #endregion
     }
 }

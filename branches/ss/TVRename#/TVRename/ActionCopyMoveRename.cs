@@ -27,17 +27,110 @@ namespace TVRename
         public FileInfo From;
         public Op Operation;
         public FileInfo To;
+        private double _Percent;
+
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep)
+        {
+            this.PercentDone = 0;
+            this.Episode = ep;
+            this.Operation = operation;
+            this.From = from;
+            this.To = to;
+        }
+
+        #region Action Members
 
         public bool Done { get; set; }
         public bool Error { get; set; }
         public string ErrorText { get; set; }
-        public int IconNumber { get { return this.IsMoveRename() ? 4 : 3; } }
-        public string Name { get { return this.IsMoveRename() ? "Move" : "Copy"; } }
+
+        public string Name
+        {
+            get { return this.IsMoveRename() ? "Move" : "Copy"; }
+        }
+
         public string ProgressText
         {
             get { return this.To.Name; }
         }
+
+        public double PercentDone
+        {
+            get { return this.Done ? 100.0 : this._Percent; }
+            set { this._Percent = value; }
+        }
+
+        // 0.0 to 100.0
+        public long SizeOfWork
+        {
+            get { return this.SourceFileSize(); }
+        }
+
+        public bool Go(TVSettings settings, ref bool pause)
+        {
+            // read NTFS permissions (if any)
+            System.Security.AccessControl.FileSecurity security = null;
+            try
+            {
+                security = this.From.GetAccessControl();
+            }
+            catch
+            {
+            }
+
+            if (this.QuickOperation())
+                this.OSMoveRename(); // ask the OS to do it for us, since it's easy and quick!
+            else
+                this.CopyItOurself(ref pause); // do it ourself!
+
+            // set NTFS permissions
+            try
+            {
+                if (security != null)
+                    this.To.SetAccessControl(security);
+            }
+            catch
+            {
+            }
+
+            return !this.Error;
+        }
+
+        #endregion
+
+        #region Item Members
+
+        public bool SameAs(Item o)
+        {
+            ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
+
+            return ((cmr != null) && (this.Operation == cmr.Operation) && Helpers.Same(this.From, cmr.From) && Helpers.Same(this.To, cmr.To));
+        }
+
+        public int Compare(Item o)
+        {
+            ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
+
+            if (cmr == null)
+                return 0;
+
+            string s1 = this.From.FullName + (this.From.Directory.Root.FullName != this.To.Directory.Root.FullName ? "0" : "1");
+            string s2 = cmr.From.FullName + (cmr.From.Directory.Root.FullName != cmr.To.Directory.Root.FullName ? "0" : "1");
+
+            return s1.CompareTo(s2);
+        }
+
+        #endregion
+
+        #region ScanListItem Members
+
+        public int IconNumber
+        {
+            get { return this.IsMoveRename() ? 4 : 3; }
+        }
+
         public ProcessedEpisode Episode { get; set; }
+
         public IgnoreItem Ignore
         {
             get
@@ -47,6 +140,7 @@ namespace TVRename
                 return new IgnoreItem(this.To.FullName);
             }
         }
+
         public ListViewItem ScanListViewItem
         {
             get
@@ -80,6 +174,7 @@ namespace TVRename
                 return lvi;
             }
         }
+
         public int ScanListViewGroup
         {
             get
@@ -93,6 +188,7 @@ namespace TVRename
                 return 2;
             }
         }
+
         public string TargetFolder
         {
             get
@@ -102,23 +198,13 @@ namespace TVRename
                 return this.To.DirectoryName;
             }
         }
-        private double _Percent;
-        public double PercentDone { get { return Done ? 100.0 : _Percent; } set { _Percent = value; } } // 0.0 to 100.0
-        public long SizeOfWork { get { return SourceFileSize(); } } // for file copy/move, number of bytes in file.  for simple tasks, 1.
-        public bool SameAs(Item o)
-        {
-            ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
-            return ((cmr != null) && 
-                    (this.Operation == cmr.Operation) && 
-                    Helpers.Same(this.From, cmr.From) && 
-                    Helpers.Same(this.To, cmr.To));
-        }
+        #endregion
+
         private static string TempFor(FileInfo f)
         {
             return f.FullName + ".tvrenametemp";
         }
-
 
         private void NicelyStopAndCleanUp(BinaryReader msr, BinaryWriter msw)
         {
@@ -132,44 +218,13 @@ namespace TVRename
             if (msr != null)
                 msr.Close();
         }
+
         public bool QuickOperation()
         {
-            if ((this.From == null)||
-                (this.To == null))
+            if ((this.From == null) || (this.To == null))
                 return false;
 
-            return (this.IsMoveRename() && 
-                    (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())); // same device ... TODO: UNC paths?
-        }
-
-        public bool Go(TVSettings settings, ref bool pause)
-        {
-            // read NTFS permissions (if any)
-            System.Security.AccessControl.FileSecurity security = null;
-            try
-            {
-                security = this.From.GetAccessControl();
-            }
-            catch
-            {
-            }
-
-            if (this.QuickOperation())
-                OSMoveRename(); // ask the OS to do it for us, since it's easy and quick!
-            else
-                CopyItOurself(ref pause); // do it ourself!
-
-            // set NTFS permissions
-            try
-            {
-                if (security != null)
-                    this.To.SetAccessControl(security);
-            }
-            catch
-            {
-            }
-
-            return !this.Error;
+            return (this.IsMoveRename() && (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())); // same device ... TODO: UNC paths?
         }
 
         private void OSMoveRename()
@@ -232,14 +287,13 @@ namespace TVRename
                         msw.Write(dataArray, 0, n);
                     thisFileCopied += n;
 
-                    double pct = (thisFileSize != 0) ? (100.0 * thisFileCopied / thisFileSize) : Done ? 100 : 0;
+                    double pct = (thisFileSize != 0) ? (100.0 * thisFileCopied / thisFileSize) : this.Done ? 100 : 0;
                     if (pct > 100.0)
                         pct = 100.0;
                     this.PercentDone = pct;
 
                     while (pause)
                         System.Threading.Thread.Sleep(100);
-
                 }
                 while (n != 0);
 
@@ -292,15 +346,7 @@ namespace TVRename
         }
 
         // --------------------------------------------------------------------------------------------------------
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep)
-        {
-            this.PercentDone = 0;
-            this.Episode = ep;
-            this.Operation = operation;
-            this.From = from;
-            this.To = to;
-        }
-        
+
         public bool IsMoveRename() // same thing to the OS
         {
             return ((this.Operation == Op.Move) || (this.Operation == Op.Rename));
@@ -323,18 +369,6 @@ namespace TVRename
             {
                 return 1;
             }
-        }
-        public int Compare(Item o)
-        {
-            ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
-            
-            if (cmr == null)
-                return 0;
-
-            string s1 = this.From.FullName + (this.From.Directory.Root.FullName != this.To.Directory.Root.FullName ? "0" : "1");
-            string s2 = cmr.From.FullName + (cmr.From.Directory.Root.FullName != cmr.To.Directory.Root.FullName ? "0" : "1");
-
-            return s1.CompareTo(s2);
         }
     }
 }

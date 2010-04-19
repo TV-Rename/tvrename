@@ -24,17 +24,31 @@ namespace TVRename
             this.TheFileNoExt = toWhereNoExt;
         }
 
-        public bool SameAs(Item o)
-        {
-            return (o is ActionRSS) && ((o as ActionRSS).RSS == this.RSS);
-        }
+        #region Action Members
+
         public bool Done { get; private set; }
         public bool Error { get; private set; }
         public string ErrorText { get; private set; }
-        public string ProgressText { get { return this.RSS.Title; } }
-        public double PercentDone { get { return Done ? 100 : 0; } }
-        public string Name { get { return "Get Torrent"; } }
-        public long SizeOfWork { get { return 1000000; } }
+
+        public string ProgressText
+        {
+            get { return this.RSS.Title; }
+        }
+
+        public double PercentDone
+        {
+            get { return this.Done ? 100 : 0; }
+        }
+
+        public string Name
+        {
+            get { return "Get Torrent"; }
+        }
+
+        public long SizeOfWork
+        {
+            get { return 1000000; }
+        }
 
         public bool Go(TVSettings settings, ref bool pause)
         {
@@ -69,7 +83,27 @@ namespace TVRename
             }
         }
 
+        #endregion
+
+        #region Item Members
+
+        public bool SameAs(Item o)
+        {
+            return (o is ActionRSS) && ((o as ActionRSS).RSS == this.RSS);
+        }
+
+        public int Compare(Item o)
+        {
+            ActionRSS rss = o as ActionRSS;
+            return rss == null ? 0 : this.RSS.URL.CompareTo(rss.RSS.URL);
+        }
+
+        #endregion
+
+        #region ScanListItem Members
+
         public ProcessedEpisode Episode { get; private set; }
+
         public IgnoreItem Ignore
         {
             get
@@ -79,6 +113,7 @@ namespace TVRename
                 return new IgnoreItem(this.TheFileNoExt);
             }
         }
+
         public ListViewItem ScanListViewItem
         {
             get
@@ -103,6 +138,7 @@ namespace TVRename
                 return lvi;
             }
         }
+
         string ScanListItem.TargetFolder
         {
             get
@@ -112,12 +148,17 @@ namespace TVRename
                 return new FileInfo(this.TheFileNoExt).DirectoryName;
             }
         }
-        public int ScanListViewGroup { get { return 4; } }
-        int ScanListItem.IconNumber { get { return 6; } }
-        public int Compare(Item o)
+
+        public int ScanListViewGroup
         {
-            ActionRSS rss = o as ActionRSS;
-            return rss == null ? 0 : this.RSS.URL.CompareTo(rss.RSS.URL);
+            get { return 4; }
         }
+
+        int ScanListItem.IconNumber
+        {
+            get { return 6; }
+        }
+
+        #endregion
     }
 }

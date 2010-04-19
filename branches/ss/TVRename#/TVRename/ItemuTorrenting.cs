@@ -22,6 +22,32 @@ namespace TVRename
             this.DesiredLocationNoExt = desiredLocationNoExt;
             this.Entry = te;
         }
+
+        #region Item Members
+
+        public bool SameAs(Item o)
+        {
+            return (o is ItemuTorrenting) && this.Entry == (o as ItemuTorrenting).Entry;
+        }
+
+        public int Compare(Item o)
+        {
+            ItemuTorrenting ut = o as ItemuTorrenting;
+            if (ut == null)
+                return 0;
+
+            if (this.Episode == null)
+                return 1;
+            if (ut.Episode == null)
+                return -1;
+
+            return (this.DesiredLocationNoExt).CompareTo(ut.DesiredLocationNoExt);
+        }
+
+        #endregion
+
+        #region ScanListItem Members
+
         public string TargetFolder
         {
             get
@@ -32,12 +58,8 @@ namespace TVRename
             }
         }
 
-        public bool SameAs(Item o)
-        {
-            return (o is ItemuTorrenting)&& this.Entry == (o as ItemuTorrenting).Entry;
-        }
-
         public ProcessedEpisode Episode { get; private set; }
+
         public IgnoreItem Ignore
         {
             get
@@ -47,6 +69,7 @@ namespace TVRename
                 return new IgnoreItem(this.DesiredLocationNoExt);
             }
         }
+
         public ListViewItem ScanListViewItem
         {
             get
@@ -73,21 +96,16 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup { get { return 7; } }
-        int ScanListItem.IconNumber { get { return 2; } }
-
-        public int Compare(Item o)
+        public int ScanListViewGroup
         {
-            ItemuTorrenting ut = o as ItemuTorrenting;
-            if (ut == null)
-                return 0;
-
-            if (this.Episode == null)
-                return 1;
-            if (ut.Episode == null)
-                return -1;
-            
-            return (this.DesiredLocationNoExt).CompareTo(ut.DesiredLocationNoExt);
+            get { return 7; }
         }
+
+        int ScanListItem.IconNumber
+        {
+            get { return 2; }
+        }
+
+        #endregion
     }
 }

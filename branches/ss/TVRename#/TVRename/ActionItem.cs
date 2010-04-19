@@ -5,17 +5,20 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-
-using System.Windows.Forms;
-
 namespace TVRename
 {
+    using System.Windows.Forms;
+
     public interface Item
     {
-        int Compare(Item o); // for sorting items in scan list
-        bool SameAs(Item o); // are we the same thing as that other one?
+        int Compare(Item o);
+
+        // for sorting items in scan list
+        bool SameAs(Item o);
+
+        // are we the same thing as that other one?
     }
-    
+
     public class ItemList : System.Collections.Generic.List<Item>
     {
     }
@@ -29,7 +32,7 @@ namespace TVRename
         string ProgressText { get; } // shortish text to display to user while task is running
         double PercentDone { get; } // 0.0 to 100.0
         long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
-        bool Go(TVSettings settings, ref bool pause); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false
+        bool Go(TVSettings settings, ref bool pause); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
     }
 
     public interface ScanListItem // something shown in the list on the Scan tab (not always an Action)
@@ -45,21 +48,20 @@ namespace TVRename
     public class ScanListItemList : System.Collections.Generic.List<ScanListItem>
     {
     }
-    
+
     public class ActionQueue
     {
+        public int ActionPosition;
+        public System.Collections.Generic.List<Action> Actions;
         public string Name;
         public int SemaphoreLimit;
-        public System.Collections.Generic.List<Action> Actions;
-        public int ActionPosition;
 
         public ActionQueue(string name, int parallelLimit)
         {
-            Name = name;
-            SemaphoreLimit = parallelLimit;
-            Actions = new System.Collections.Generic.List<Action>();
-            ActionPosition = 0;
+            this.Name = name;
+            this.SemaphoreLimit = parallelLimit;
+            this.Actions = new System.Collections.Generic.List<Action>();
+            this.ActionPosition = 0;
         }
     }
-
 }

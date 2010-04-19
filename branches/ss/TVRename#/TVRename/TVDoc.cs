@@ -1919,7 +1919,7 @@ namespace TVRename
         {
             // Take a single list
             // Return an array of "ActionQueue" items.
-            // Each of the lists in the array will be processed sequentially, but each of them in parallel
+            // Each individual queue is processed sequentially, but all the queues run in parallel
             // The lists:
             //     - #0 all the cross filesystem moves, and all copies
             //     - #1 all quick "local" moves
