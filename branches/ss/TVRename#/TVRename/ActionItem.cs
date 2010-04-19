@@ -23,12 +23,12 @@ namespace TVRename
     public interface Action // Something we can do
     {
         string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
-        bool Done { get; } // All work has been completed for this item, and can be removed from to-do list
+        bool Done { get; } // All work has been completed for this item, and can be removed from to-do list.  set to true on completion, even on error.
         bool Error { get; } // Error state, after trying to do work?
         string ErrorText { get; } // Human-readable error message, for when Error is true
         string ProgressText { get; } // shortish text to display to user while task is running
         double PercentDone { get; } // 0.0 to 100.0
-        long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1.
+        long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
         bool Go(TVSettings settings, ref bool pause); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false
     }
 
@@ -45,16 +45,21 @@ namespace TVRename
     public class ScanListItemList : System.Collections.Generic.List<ScanListItem>
     {
     }
-    /*
-    public class ScanListItemListArray
+    
+    public class ActionQueue
     {
-        public ScanListItemList[] Array;
+        public string Name;
+        public int SemaphoreLimit;
+        public System.Collections.Generic.List<Action> Actions;
+        public int ActionPosition;
 
-        public ScanListItemListArray(int n)
+        public ActionQueue(string name, int parallelLimit)
         {
-            Array = new ScanListItemList[n];
+            Name = name;
+            SemaphoreLimit = parallelLimit;
+            Actions = new System.Collections.Generic.List<Action>();
+            ActionPosition = 0;
         }
-        public int Length { get { return Array.Length; } }
-        }
-     * */
+    }
+
 }

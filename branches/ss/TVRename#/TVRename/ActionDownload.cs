@@ -84,7 +84,7 @@ namespace TVRename
         }
 
         public double PercentDone { get { return Done ? 100 : 0; } } // 0 to 100
-        public long SizeOfWork { get { return 1; } } // for file copy/move, number of bytes in file.  for simple tasks, 1.
+        public long SizeOfWork { get { return 1000000; } } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
         public bool SameAs(Item o)
         {
             return (o is ActionDownload) && ((o as ActionDownload).Destination == this.Destination);

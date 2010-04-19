@@ -34,7 +34,7 @@ namespace TVRename
         public string ProgressText { get { return this.RSS.Title; } }
         public double PercentDone { get { return Done ? 100 : 0; } }
         public string Name { get { return "Get Torrent"; } }
-        public long SizeOfWork { get { return 1; } }
+        public long SizeOfWork { get { return 1000000; } }
 
         public bool Go(TVSettings settings, ref bool pause)
         {

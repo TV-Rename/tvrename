@@ -52,6 +52,9 @@
   <ItemGroup>
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\IPC.cs" />
+    <Compile Include="Custom Controls\ListViewFlickerFree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Custom Controls\TheTVDBCodeFinder.Designer.cs">
       <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
     </Compile>

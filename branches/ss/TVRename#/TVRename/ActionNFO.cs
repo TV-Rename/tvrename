@@ -48,7 +48,7 @@ namespace TVRename
         public string ErrorText { get; set; }
         public string ProgressText { get { return this.Where.Name; } }
         public double PercentDone { get { return Done ? 100 : 0; } }
-        public long SizeOfWork { get { return 1; } }
+        public long SizeOfWork { get { return 10000; } }
         public bool SameAs(Item o)
         {
             return (o is ActionNFO) && ((o as ActionNFO).Where == this.Where);

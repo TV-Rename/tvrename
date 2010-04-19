@@ -124,7 +124,7 @@ namespace TVRename
             this.bnWhenToWatchCheck = new System.Windows.Forms.Button();
             this.txtWhenToWatchSynopsis = new System.Windows.Forms.TextBox();
             this.calCalendar = new System.Windows.Forms.MonthCalendar();
-            this.lvWhenToWatch = new System.Windows.Forms.ListView();
+            this.lvWhenToWatch = new ListViewFlickerFree();
             this.columnHeader29 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader30 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader31 = new System.Windows.Forms.ColumnHeader();
@@ -1245,7 +1245,7 @@ namespace TVRename
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;
         private System.Windows.Forms.ColumnHeader columnHeader8;
-        private System.Windows.Forms.ListView lvWhenToWatch;
+        private ListViewFlickerFree lvWhenToWatch;
         private System.Windows.Forms.ColumnHeader columnHeader29;
         private System.Windows.Forms.ColumnHeader columnHeader30;
         private System.Windows.Forms.ColumnHeader columnHeader31;

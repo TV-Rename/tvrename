@@ -20,7 +20,7 @@ namespace TVRename
     /// <summary>
     /// Summary for MyListView
     /// </summary>
-    public class MyListView : ListView
+    public class MyListView : ListViewFlickerFree
     {
         private bool _checkEnable;
         private bool _keyCheck;
