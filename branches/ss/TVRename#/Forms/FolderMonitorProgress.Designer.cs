@@ -37,22 +37,22 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = (new System.ComponentModel.Container());
-            this.bnCancel = (new System.Windows.Forms.Button());
-            this.label2 = (new System.Windows.Forms.Label());
-            this.timer1 = (new System.Windows.Forms.Timer(this.components));
+            this.components = new System.ComponentModel.Container();
+            this.bnCancel = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
             // 
             // bnCancel
             // 
-            this.bnCancel.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
-            this.bnCancel.Location = new System.Drawing.Point(60, 33);
+            this.bnCancel.Location = new System.Drawing.Point(60, 56);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 0;
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
-            this.bnCancel.Click += new System.EventHandler(bnCancel_Click);
+            this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
             // 
             // label2
             // 
@@ -66,20 +66,29 @@ namespace TVRename
             // timer1
             // 
             this.timer1.Enabled = true;
-            this.timer1.Tick += new System.EventHandler(timer1_Tick);
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // pbProgress
+            // 
+            this.pbProgress.Location = new System.Drawing.Point(12, 27);
+            this.pbProgress.Name = "pbProgress";
+            this.pbProgress.Size = new System.Drawing.Size(177, 23);
+            this.pbProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.pbProgress.TabIndex = 29;
             // 
             // FolderMonitorProgress
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(201, 68);
+            this.ClientSize = new System.Drawing.Size(201, 91);
+            this.Controls.Add(this.pbProgress);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.bnCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "FolderMonitorProgress";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Folder Monitor";
+            this.Text = "Folder Monitor Auto ID";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -91,5 +100,6 @@ namespace TVRename
 
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.ProgressBar pbProgress;
     }
 }

@@ -2036,7 +2036,7 @@ namespace TVRename
             this.MoreBusy();
             ShowItem si = new ShowItem(this.mDoc.GetTVDB(false, ""));
             TheTVDB db = this.mDoc.GetTVDB(true, "AddShow");
-            AddEditShow aes = new AddEditShow(si, db, TimeZone.DefaultTimeZone());
+            AddEditShow aes = new AddEditShow(si, db);
             System.Windows.Forms.DialogResult dr = aes.ShowDialog();
             db.Unlock("AddShow");
             if (dr == System.Windows.Forms.DialogResult.OK)
@@ -2131,7 +2131,7 @@ namespace TVRename
 
             int oldCode = si.TVDBCode;
 
-            AddEditShow aes = new AddEditShow(si, db, ser != null ? ser.ShowTimeZone : TimeZone.DefaultTimeZone());
+            AddEditShow aes = new AddEditShow(si, db);
 
             System.Windows.Forms.DialogResult dr = aes.ShowDialog();
 

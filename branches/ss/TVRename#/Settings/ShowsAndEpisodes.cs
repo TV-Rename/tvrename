@@ -136,6 +136,12 @@ namespace TVRename
             this.SetDefaults(db);
         }
 
+        public ShowItem(TheTVDB db, int tvDBCode)
+        {
+            this.SetDefaults(db);
+            this.TVDBCode = tvDBCode;
+        }
+
         public ShowItem(TheTVDB db, XmlReader reader, TVSettings settings)
         {
             this.SetDefaults(db);

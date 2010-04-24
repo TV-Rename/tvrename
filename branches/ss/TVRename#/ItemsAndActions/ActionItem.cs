@@ -11,7 +11,7 @@ namespace TVRename
 
     public interface Item
     {
-        int Compare(Item o); // for sorting items in scan list.
+        int Compare(Item o); // for sorting items in scan list (ActionItemSorter)
         bool SameAs(Item o); // are we the same thing as that other one?
     }
 

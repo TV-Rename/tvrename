@@ -29,8 +29,19 @@ namespace TVRename
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
+            if (this.mFM == null)
+                return;
+
+            timer1.Stop();
+
+            this.pbProgress.Value = this.mFM.FMPPercent;
+            this.label2.Text = this.mFM.FMPUpto;
+            
             if (this.mFM.FMPStopNow)
                 this.Close();
+
+            timer1.Start();
+
         }
     }
 }

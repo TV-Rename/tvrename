@@ -109,6 +109,12 @@
     <Compile Include="Forms\FolderMonitor.Designer.cs">
       <DependentUpon>FolderMonitor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FolderMonitorEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FolderMonitorEdit.Designer.cs">
+      <DependentUpon>FolderMonitorEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FolderMonitorProgress.Designer.cs">
       <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
     </Compile>
@@ -157,7 +163,7 @@
     <Compile Include="ItemsAndActions\ActionRSS.cs" />
     <Compile Include="ItemsAndActions\ActionItemSorter.cs" />
     <Compile Include="ItemsAndActions\ItemuTorrenting.cs" />
-    <Compile Include="TVRename\FolderMonitorItem.cs" />
+    <Compile Include="TVRename\FolderMonitorEntry.cs" />
     <Compile Include="Forms\AddModifyRule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -259,6 +265,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FolderMonitor.resx">
       <DependentUpon>FolderMonitor.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FolderMonitorEdit.resx">
+      <DependentUpon>FolderMonitorEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FolderMonitorProgress.resx">
