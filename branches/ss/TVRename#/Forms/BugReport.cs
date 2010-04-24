@@ -27,9 +27,6 @@ namespace TVRename
         {
             this.mDoc = doc;
             this.InitializeComponent();
-            //
-            //TODO: Add the constructor code here
-            //
         }
 
         private void bnCreate_Click(object sender, System.EventArgs e)

@@ -106,8 +106,6 @@ namespace TVRename
         }
     }
 
-    //enum CheckType { checkNone = 0, checkAll = 1, checkRecent = 2}; // TODO: remove this, and make a list of seasons/eps to ignore
-
     public class ShowItem
     {
         public bool AutoAddNewSeasons;

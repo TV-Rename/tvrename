@@ -32,15 +32,13 @@ namespace TVRename
 
         #endregion
 
-        private TVDoc mDoc;
-        private TVRenameStats mStats;
-        private ActionQueue[] mToDo;
+        private readonly TVDoc mDoc;
+        private readonly ActionQueue[] mToDo;
 
-        public CopyMoveProgress(TVDoc doc, ActionQueue[] todo, TVRenameStats stats)
+        public CopyMoveProgress(TVDoc doc, ActionQueue[] todo)
         {
             this.mDoc = doc;
             this.mToDo = todo;
-            this.mStats = stats;
             this.InitializeComponent();
             this.copyTimer.Start();
         }
@@ -107,9 +105,7 @@ namespace TVRename
                         if ((action is ActionCopyMoveRename) && (action.PercentDone > 0))
                             activeCMAction = action as ActionCopyMoveRename;
 
-                        ListViewItem lvi = new ListViewItem();
-
-                        lvi.Text = action.Name;
+                        ListViewItem lvi = new ListViewItem(action.Name);
                         lvi.SubItems.Add(action.ProgressText);
 
                         this.lvProgress.Items.Add(lvi);
@@ -159,10 +155,7 @@ namespace TVRename
                 this.pbDiskSpace.Value = diskValue;
                 this.txtDiskSpace.Text = diskText;
 
-                if (totalWork != 0.0)
-                    workDone = workDone * 100 / totalWork;
-
-                this.SetPercentages(activeCMAction.PercentDone, workDone);
+                this.SetPercentages(activeCMAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
             }
 
             return allDone;

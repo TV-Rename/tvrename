@@ -1091,6 +1091,13 @@ namespace TVRename
                     }
                 }
 
+                if (sr.DoWhatNow == RuleAction.kInsert)
+                {
+                    // this only applies for inserting an episode, at the end of the list
+                    if (nn1 == eis[eis.Count-1].EpNum+1) // after the last episode
+                        n1 = eis.Count;
+                }
+
                 string txt = sr.UserSuppliedText;
                 int ec = eis.Count;
 
@@ -1197,10 +1204,18 @@ namespace TVRename
                                 n.EpNum = -2;
                                 n.EpNum2 = -2;
                                 eis.Insert(n1, n);
-                                break;
                             }
+                            else if (n1 == eis.Count)
+                            {
+                                ProcessedEpisode t = eis[n1-1];
+                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheSeason, si);
+                                n.Name = txt;
+                                n.EpNum = -2;
+                                n.EpNum2 = -2;
+                                eis.Add(n);
+                            }
+                            break;
                         }
-                        break;
                 } // switch DoWhatNow
 
                 Renumber(eis);
@@ -1930,7 +1945,7 @@ namespace TVRename
             ActionQueue[] queues = new ActionQueue[4];
             queues[0] = new ActionQueue("Move/Copy", 1); // cross-filesystem moves (slow ones)
             queues[1] = new ActionQueue("Move", 2); // local rename/moves
-            queues[2] = new ActionQueue("Write NFO", 2); // writing XBMC NFO files
+            queues[2] = new ActionQueue("Write NFO", 4); // writing XBMC NFO files
             queues[3] = new ActionQueue("Download", this.Settings.ParallelDownloads); // downloading torrents, banners, thumbnails
 
             foreach (ScanListItem sli in theList)
@@ -1952,7 +1967,6 @@ namespace TVRename
 
         public void ActionProcessor(Object queuesIn)
         {
-            // TODO: Run tasks in parallel (as much as is sensible)
 #if DEBUG
             System.Diagnostics.Debug.Assert(queuesIn is ActionQueue[]);
 #endif
@@ -2056,6 +2070,8 @@ namespace TVRename
             if (theList == null)
                 return;
 
+            // Run tasks in parallel (as much as is sensible)
+
             ActionQueue[] queues = this.ActionProcessorMakeQueues(theList);
             this.ActionPause = false;
 
@@ -2063,7 +2079,7 @@ namespace TVRename
 
             CopyMoveProgress cmp = null;
             if (!this.Args.Hide)
-                cmp = new CopyMoveProgress(this, queues, this.Stats());
+                cmp = new CopyMoveProgress(this, queues);
 
             this.ActionProcessorThread = new Thread(this.ActionProcessor) {
                                                                               Name = "ActionProcessorThread"
@@ -2406,7 +2422,7 @@ namespace TVRename
                         }
                         catch
                         {
-                            continue; // TODO: show an error?
+                            continue;
                         }
 
                         bool renCheck = this.Settings.RenameCheck && si.DoRename && di.Exists; // renaming check needs the folder to exist
