@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at http://code.google.com/p/tvrename/
+// 
+// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// 
 namespace TVRename
 {
     using System.Windows.Forms;
 
     // Thanks to http://stackoverflow.com/questions/442817/c-flickering-listview-on-update
-    public class ListViewFlickerFree : System.Windows.Forms.ListView
+    public class ListViewFlickerFree : ListView
     {
         public ListViewFlickerFree()
         {

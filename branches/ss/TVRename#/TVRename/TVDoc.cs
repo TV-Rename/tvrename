@@ -1980,7 +1980,7 @@ namespace TVRename
             this.ActionSemaphores = new Semaphore[N];
 
             for (int i = 0; i < N; i++)
-                this.ActionSemaphores[i] = new Semaphore(queues[i].SemaphoreLimit, queues[i].SemaphoreLimit); // allow up to numWorkers working at once
+                this.ActionSemaphores[i] = new Semaphore(queues[i].ParallelLimit, queues[i].ParallelLimit); // allow up to numWorkers working at once
 
             try
             {

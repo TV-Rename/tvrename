@@ -11,12 +11,8 @@ namespace TVRename
 
     public interface Item
     {
-        int Compare(Item o);
-
-        // for sorting items in scan list
-        bool SameAs(Item o);
-
-        // are we the same thing as that other one?
+        int Compare(Item o); // for sorting items in scan list.
+        bool SameAs(Item o); // are we the same thing as that other one?
     }
 
     public class ItemList : System.Collections.Generic.List<Item>
@@ -51,15 +47,15 @@ namespace TVRename
 
     public class ActionQueue
     {
-        public int ActionPosition;
-        public System.Collections.Generic.List<Action> Actions;
-        public string Name;
-        public int SemaphoreLimit;
+        public System.Collections.Generic.List<Action> Actions; // The contents of this queue
+        public int ParallelLimit; // Number of tasks in the queue than can be run at once
+        public string Name; // Name of this queue
+        public int ActionPosition; // Position in the queue list of the next item to process
 
         public ActionQueue(string name, int parallelLimit)
         {
             this.Name = name;
-            this.SemaphoreLimit = parallelLimit;
+            this.ParallelLimit = parallelLimit;
             this.Actions = new System.Collections.Generic.List<Action>();
             this.ActionPosition = 0;
         }
