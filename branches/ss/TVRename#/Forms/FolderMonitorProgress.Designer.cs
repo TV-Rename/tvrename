@@ -39,7 +39,7 @@ namespace TVRename
         {
             this.components = new System.ComponentModel.Container();
             this.bnCancel = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lbMessage = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.SuspendLayout();
@@ -54,14 +54,14 @@ namespace TVRename
             this.bnCancel.UseVisualStyleBackColor = true;
             this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
             // 
-            // label2
+            // lbMessage
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(39, 9);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(117, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Automatic show lookup";
+            this.lbMessage.AutoSize = true;
+            this.lbMessage.Location = new System.Drawing.Point(12, 9);
+            this.lbMessage.Name = "lbMessage";
+            this.lbMessage.Size = new System.Drawing.Size(56, 13);
+            this.lbMessage.TabIndex = 2;
+            this.lbMessage.Text = "Working...";
             // 
             // timer1
             // 
@@ -82,13 +82,14 @@ namespace TVRename
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(201, 91);
             this.Controls.Add(this.pbProgress);
-            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lbMessage);
             this.Controls.Add(this.bnCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "FolderMonitorProgress";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Folder Monitor Auto ID";
+            this.Text = "Folder Monitor Progress";
+            this.Load += new System.EventHandler(this.FolderMonitorProgress_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -98,7 +99,7 @@ namespace TVRename
 
         private System.Windows.Forms.Button bnCancel;
 
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lbMessage;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ProgressBar pbProgress;
     }

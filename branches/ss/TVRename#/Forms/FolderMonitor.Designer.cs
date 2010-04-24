@@ -51,11 +51,6 @@ namespace TVRename
             this.lstFMIgnoreFolders = new System.Windows.Forms.ListBox();
             this.bnVisitTVcom = new System.Windows.Forms.Button();
             this.bnFullAuto = new System.Windows.Forms.Button();
-            this.lvFMNewShows = new TVRename.ListViewFlickerFree();
-            this.columnHeader42 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader43 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader44 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader45 = new System.Windows.Forms.ColumnHeader();
             this.bnFolderMonitorDone = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.bnRemoveNewFolder = new System.Windows.Forms.Button();
@@ -72,6 +67,11 @@ namespace TVRename
             this.bnEditEntry = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.bnClose = new System.Windows.Forms.Button();
+            this.lvFMNewShows = new TVRename.ListViewFlickerFree();
+            this.columnHeader42 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader43 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader44 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader45 = new System.Windows.Forms.ColumnHeader();
             this.tabControl1.SuspendLayout();
             this.tbFolders.SuspendLayout();
             this.tbIgnore.SuspendLayout();
@@ -81,7 +81,7 @@ namespace TVRename
             // bnCheck1
             // 
             this.bnCheck1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnCheck1.Location = new System.Drawing.Point(581, 463);
+            this.bnCheck1.Location = new System.Drawing.Point(659, 377);
             this.bnCheck1.Name = "bnCheck1";
             this.bnCheck1.Size = new System.Drawing.Size(75, 23);
             this.bnCheck1.TabIndex = 10;
@@ -92,7 +92,7 @@ namespace TVRename
             // bnOpenMonFolder
             // 
             this.bnOpenMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnOpenMonFolder.Location = new System.Drawing.Point(168, 463);
+            this.bnOpenMonFolder.Location = new System.Drawing.Point(168, 377);
             this.bnOpenMonFolder.Name = "bnOpenMonFolder";
             this.bnOpenMonFolder.Size = new System.Drawing.Size(75, 23);
             this.bnOpenMonFolder.TabIndex = 9;
@@ -103,7 +103,7 @@ namespace TVRename
             // bnRemoveMonFolder
             // 
             this.bnRemoveMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnRemoveMonFolder.Location = new System.Drawing.Point(87, 463);
+            this.bnRemoveMonFolder.Location = new System.Drawing.Point(87, 377);
             this.bnRemoveMonFolder.Name = "bnRemoveMonFolder";
             this.bnRemoveMonFolder.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveMonFolder.TabIndex = 8;
@@ -132,7 +132,7 @@ namespace TVRename
             this.lstFMMonitorFolders.Name = "lstFMMonitorFolders";
             this.lstFMMonitorFolders.ScrollAlwaysVisible = true;
             this.lstFMMonitorFolders.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstFMMonitorFolders.Size = new System.Drawing.Size(650, 402);
+            this.lstFMMonitorFolders.Size = new System.Drawing.Size(728, 316);
             this.lstFMMonitorFolders.TabIndex = 6;
             this.lstFMMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragOver);
             this.lstFMMonitorFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragDrop);
@@ -142,7 +142,7 @@ namespace TVRename
             // bnAddMonFolder
             // 
             this.bnAddMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnAddMonFolder.Location = new System.Drawing.Point(6, 463);
+            this.bnAddMonFolder.Location = new System.Drawing.Point(6, 377);
             this.bnAddMonFolder.Name = "bnAddMonFolder";
             this.bnAddMonFolder.Size = new System.Drawing.Size(75, 23);
             this.bnAddMonFolder.TabIndex = 7;
@@ -153,7 +153,7 @@ namespace TVRename
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(4, 26);
+            this.label7.Location = new System.Drawing.Point(3, 39);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(77, 13);
             this.label7.TabIndex = 5;
@@ -162,7 +162,7 @@ namespace TVRename
             // bnOpenIgFolder
             // 
             this.bnOpenIgFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnOpenIgFolder.Location = new System.Drawing.Point(169, 463);
+            this.bnOpenIgFolder.Location = new System.Drawing.Point(169, 406);
             this.bnOpenIgFolder.Name = "bnOpenIgFolder";
             this.bnOpenIgFolder.Size = new System.Drawing.Size(75, 23);
             this.bnOpenIgFolder.TabIndex = 9;
@@ -173,7 +173,7 @@ namespace TVRename
             // bnAddIgFolder
             // 
             this.bnAddIgFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnAddIgFolder.Location = new System.Drawing.Point(6, 463);
+            this.bnAddIgFolder.Location = new System.Drawing.Point(6, 406);
             this.bnAddIgFolder.Name = "bnAddIgFolder";
             this.bnAddIgFolder.Size = new System.Drawing.Size(75, 23);
             this.bnAddIgFolder.TabIndex = 7;
@@ -184,7 +184,7 @@ namespace TVRename
             // bnRemoveIgFolder
             // 
             this.bnRemoveIgFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnRemoveIgFolder.Location = new System.Drawing.Point(88, 463);
+            this.bnRemoveIgFolder.Location = new System.Drawing.Point(88, 406);
             this.bnRemoveIgFolder.Name = "bnRemoveIgFolder";
             this.bnRemoveIgFolder.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveIgFolder.TabIndex = 8;
@@ -200,11 +200,11 @@ namespace TVRename
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.lstFMIgnoreFolders.FormattingEnabled = true;
             this.lstFMIgnoreFolders.IntegralHeight = false;
-            this.lstFMIgnoreFolders.Location = new System.Drawing.Point(6, 42);
+            this.lstFMIgnoreFolders.Location = new System.Drawing.Point(6, 55);
             this.lstFMIgnoreFolders.Name = "lstFMIgnoreFolders";
             this.lstFMIgnoreFolders.ScrollAlwaysVisible = true;
             this.lstFMIgnoreFolders.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstFMIgnoreFolders.Size = new System.Drawing.Size(650, 415);
+            this.lstFMIgnoreFolders.Size = new System.Drawing.Size(781, 345);
             this.lstFMIgnoreFolders.TabIndex = 6;
             this.lstFMIgnoreFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMIgnoreFolders_DragOver);
             this.lstFMIgnoreFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMIgnoreFolders_DragDrop);
@@ -214,7 +214,7 @@ namespace TVRename
             // bnVisitTVcom
             // 
             this.bnVisitTVcom.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnVisitTVcom.Location = new System.Drawing.Point(346, 463);
+            this.bnVisitTVcom.Location = new System.Drawing.Point(346, 377);
             this.bnVisitTVcom.Name = "bnVisitTVcom";
             this.bnVisitTVcom.Size = new System.Drawing.Size(75, 23);
             this.bnVisitTVcom.TabIndex = 26;
@@ -225,13 +225,195 @@ namespace TVRename
             // bnFullAuto
             // 
             this.bnFullAuto.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnFullAuto.Location = new System.Drawing.Point(6, 463);
+            this.bnFullAuto.Location = new System.Drawing.Point(6, 377);
             this.bnFullAuto.Name = "bnFullAuto";
             this.bnFullAuto.Size = new System.Drawing.Size(75, 23);
             this.bnFullAuto.TabIndex = 24;
-            this.bnFullAuto.Text = "Auto ID All";
+            this.bnFullAuto.Text = "&Auto ID All";
             this.bnFullAuto.UseVisualStyleBackColor = true;
             this.bnFullAuto.Click += new System.EventHandler(this.bnFullAuto_Click);
+            // 
+            // bnFolderMonitorDone
+            // 
+            this.bnFolderMonitorDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnFolderMonitorDone.Location = new System.Drawing.Point(659, 377);
+            this.bnFolderMonitorDone.Name = "bnFolderMonitorDone";
+            this.bnFolderMonitorDone.Size = new System.Drawing.Size(75, 23);
+            this.bnFolderMonitorDone.TabIndex = 10;
+            this.bnFolderMonitorDone.Text = "A&dd && Close";
+            this.bnFolderMonitorDone.UseVisualStyleBackColor = true;
+            this.bnFolderMonitorDone.Click += new System.EventHandler(this.bnFolderMonitorDone_Click);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 39);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(64, 13);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "&New Shows";
+            // 
+            // bnRemoveNewFolder
+            // 
+            this.bnRemoveNewFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnRemoveNewFolder.Location = new System.Drawing.Point(175, 377);
+            this.bnRemoveNewFolder.Name = "bnRemoveNewFolder";
+            this.bnRemoveNewFolder.Size = new System.Drawing.Size(75, 23);
+            this.bnRemoveNewFolder.TabIndex = 9;
+            this.bnRemoveNewFolder.Text = "Re&move";
+            this.bnRemoveNewFolder.UseVisualStyleBackColor = true;
+            this.bnRemoveNewFolder.Click += new System.EventHandler(this.bnRemoveNewFolder_Click);
+            // 
+            // bnNewFolderOpen
+            // 
+            this.bnNewFolderOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnNewFolderOpen.Location = new System.Drawing.Point(427, 377);
+            this.bnNewFolderOpen.Name = "bnNewFolderOpen";
+            this.bnNewFolderOpen.Size = new System.Drawing.Size(75, 23);
+            this.bnNewFolderOpen.TabIndex = 9;
+            this.bnNewFolderOpen.Text = "Open &Folder";
+            this.bnNewFolderOpen.UseVisualStyleBackColor = true;
+            this.bnNewFolderOpen.Click += new System.EventHandler(this.bnNewFolderOpen_Click);
+            // 
+            // bnIgnoreNewFolder
+            // 
+            this.bnIgnoreNewFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnIgnoreNewFolder.Location = new System.Drawing.Point(256, 377);
+            this.bnIgnoreNewFolder.Name = "bnIgnoreNewFolder";
+            this.bnIgnoreNewFolder.Size = new System.Drawing.Size(75, 23);
+            this.bnIgnoreNewFolder.TabIndex = 9;
+            this.bnIgnoreNewFolder.Text = "&Ignore";
+            this.bnIgnoreNewFolder.UseVisualStyleBackColor = true;
+            this.bnIgnoreNewFolder.Click += new System.EventHandler(this.bnIgnoreNewFolder_Click);
+            // 
+            // folderBrowser
+            // 
+            this.folderBrowser.ShowNewFolderButton = false;
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Controls.Add(this.tbFolders);
+            this.tabControl1.Controls.Add(this.tbIgnore);
+            this.tabControl1.Controls.Add(this.tbResults);
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(748, 429);
+            this.tabControl1.TabIndex = 13;
+            // 
+            // tbFolders
+            // 
+            this.tbFolders.Controls.Add(this.bnCheck1);
+            this.tbFolders.Controls.Add(this.label1);
+            this.tbFolders.Controls.Add(this.label2);
+            this.tbFolders.Controls.Add(this.bnOpenMonFolder);
+            this.tbFolders.Controls.Add(this.bnAddMonFolder);
+            this.tbFolders.Controls.Add(this.bnRemoveMonFolder);
+            this.tbFolders.Controls.Add(this.lstFMMonitorFolders);
+            this.tbFolders.Location = new System.Drawing.Point(4, 22);
+            this.tbFolders.Name = "tbFolders";
+            this.tbFolders.Padding = new System.Windows.Forms.Padding(3);
+            this.tbFolders.Size = new System.Drawing.Size(740, 403);
+            this.tbFolders.TabIndex = 0;
+            this.tbFolders.Text = "Folders";
+            this.tbFolders.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(3, 3);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(562, 36);
+            this.label1.TabIndex = 5;
+            this.label1.Text = resources.GetString("label1.Text");
+            // 
+            // tbIgnore
+            // 
+            this.tbIgnore.Controls.Add(this.bnCheck2);
+            this.tbIgnore.Controls.Add(this.label3);
+            this.tbIgnore.Controls.Add(this.label7);
+            this.tbIgnore.Controls.Add(this.lstFMIgnoreFolders);
+            this.tbIgnore.Controls.Add(this.bnOpenIgFolder);
+            this.tbIgnore.Controls.Add(this.bnRemoveIgFolder);
+            this.tbIgnore.Controls.Add(this.bnAddIgFolder);
+            this.tbIgnore.Location = new System.Drawing.Point(4, 22);
+            this.tbIgnore.Name = "tbIgnore";
+            this.tbIgnore.Padding = new System.Windows.Forms.Padding(3);
+            this.tbIgnore.Size = new System.Drawing.Size(793, 432);
+            this.tbIgnore.TabIndex = 1;
+            this.tbIgnore.Text = "Ignore";
+            this.tbIgnore.UseVisualStyleBackColor = true;
+            // 
+            // bnCheck2
+            // 
+            this.bnCheck2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnCheck2.Location = new System.Drawing.Point(712, 406);
+            this.bnCheck2.Name = "bnCheck2";
+            this.bnCheck2.Size = new System.Drawing.Size(75, 23);
+            this.bnCheck2.TabIndex = 11;
+            this.bnCheck2.Text = "&Check >>";
+            this.bnCheck2.UseVisualStyleBackColor = true;
+            this.bnCheck2.Click += new System.EventHandler(this.bnCheck2_Click);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(3, 3);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(487, 36);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Add folders to this list, to have them ignored when Checking.  Drag and drop, or " +
+                "click \"Add...\" below.  Click \"Check >>\" when done.";
+            // 
+            // tbResults
+            // 
+            this.tbResults.Controls.Add(this.bnEditEntry);
+            this.tbResults.Controls.Add(this.label4);
+            this.tbResults.Controls.Add(this.label6);
+            this.tbResults.Controls.Add(this.lvFMNewShows);
+            this.tbResults.Controls.Add(this.bnFullAuto);
+            this.tbResults.Controls.Add(this.bnVisitTVcom);
+            this.tbResults.Controls.Add(this.bnIgnoreNewFolder);
+            this.tbResults.Controls.Add(this.bnNewFolderOpen);
+            this.tbResults.Controls.Add(this.bnFolderMonitorDone);
+            this.tbResults.Controls.Add(this.bnRemoveNewFolder);
+            this.tbResults.Location = new System.Drawing.Point(4, 22);
+            this.tbResults.Name = "tbResults";
+            this.tbResults.Size = new System.Drawing.Size(740, 403);
+            this.tbResults.TabIndex = 2;
+            this.tbResults.Text = "Scan Results";
+            this.tbResults.UseVisualStyleBackColor = true;
+            // 
+            // bnEditEntry
+            // 
+            this.bnEditEntry.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnEditEntry.Location = new System.Drawing.Point(93, 377);
+            this.bnEditEntry.Name = "bnEditEntry";
+            this.bnEditEntry.Size = new System.Drawing.Size(75, 23);
+            this.bnEditEntry.TabIndex = 28;
+            this.bnEditEntry.Text = "&Edit";
+            this.bnEditEntry.UseVisualStyleBackColor = true;
+            this.bnEditEntry.Click += new System.EventHandler(this.bnEditEntry_Click);
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(3, 3);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(645, 32);
+            this.label4.TabIndex = 12;
+            this.label4.Text = resources.GetString("label4.Text");
+            // 
+            // bnClose
+            // 
+            this.bnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnClose.Location = new System.Drawing.Point(663, 435);
+            this.bnClose.Name = "bnClose";
+            this.bnClose.Size = new System.Drawing.Size(75, 23);
+            this.bnClose.TabIndex = 27;
+            this.bnClose.Text = "Close";
+            this.bnClose.UseVisualStyleBackColor = true;
+            this.bnClose.Click += new System.EventHandler(this.bnClose_Click);
             // 
             // lvFMNewShows
             // 
@@ -249,7 +431,7 @@ namespace TVRename
             this.lvFMNewShows.HideSelection = false;
             this.lvFMNewShows.Location = new System.Drawing.Point(6, 55);
             this.lvFMNewShows.Name = "lvFMNewShows";
-            this.lvFMNewShows.Size = new System.Drawing.Size(653, 402);
+            this.lvFMNewShows.Size = new System.Drawing.Size(728, 316);
             this.lvFMNewShows.TabIndex = 11;
             this.lvFMNewShows.UseCompatibleStateImageBehavior = false;
             this.lvFMNewShows.View = System.Windows.Forms.View.Details;
@@ -266,203 +448,23 @@ namespace TVRename
             // columnHeader43
             // 
             this.columnHeader43.Text = "Show";
-            this.columnHeader43.Width = 139;
+            this.columnHeader43.Width = 277;
             // 
             // columnHeader44
             // 
-            this.columnHeader44.Text = "Season";
+            this.columnHeader44.Text = "Folder Structure";
+            this.columnHeader44.Width = 103;
             // 
             // columnHeader45
             // 
             this.columnHeader45.Text = "thetvdb code";
             this.columnHeader45.Width = 94;
             // 
-            // bnFolderMonitorDone
-            // 
-            this.bnFolderMonitorDone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnFolderMonitorDone.Location = new System.Drawing.Point(584, 463);
-            this.bnFolderMonitorDone.Name = "bnFolderMonitorDone";
-            this.bnFolderMonitorDone.Size = new System.Drawing.Size(75, 23);
-            this.bnFolderMonitorDone.TabIndex = 10;
-            this.bnFolderMonitorDone.Text = "Add && Close";
-            this.bnFolderMonitorDone.UseVisualStyleBackColor = true;
-            this.bnFolderMonitorDone.Click += new System.EventHandler(this.bnFolderMonitorDone_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(3, 39);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(64, 13);
-            this.label6.TabIndex = 5;
-            this.label6.Text = "&New Shows";
-            // 
-            // bnRemoveNewFolder
-            // 
-            this.bnRemoveNewFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnRemoveNewFolder.Location = new System.Drawing.Point(175, 463);
-            this.bnRemoveNewFolder.Name = "bnRemoveNewFolder";
-            this.bnRemoveNewFolder.Size = new System.Drawing.Size(75, 23);
-            this.bnRemoveNewFolder.TabIndex = 9;
-            this.bnRemoveNewFolder.Text = "Re&move";
-            this.bnRemoveNewFolder.UseVisualStyleBackColor = true;
-            this.bnRemoveNewFolder.Click += new System.EventHandler(this.bnRemoveNewFolder_Click);
-            // 
-            // bnNewFolderOpen
-            // 
-            this.bnNewFolderOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnNewFolderOpen.Location = new System.Drawing.Point(427, 463);
-            this.bnNewFolderOpen.Name = "bnNewFolderOpen";
-            this.bnNewFolderOpen.Size = new System.Drawing.Size(75, 23);
-            this.bnNewFolderOpen.TabIndex = 9;
-            this.bnNewFolderOpen.Text = "Op&en Folder";
-            this.bnNewFolderOpen.UseVisualStyleBackColor = true;
-            this.bnNewFolderOpen.Click += new System.EventHandler(this.bnNewFolderOpen_Click);
-            // 
-            // bnIgnoreNewFolder
-            // 
-            this.bnIgnoreNewFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnIgnoreNewFolder.Location = new System.Drawing.Point(256, 463);
-            this.bnIgnoreNewFolder.Name = "bnIgnoreNewFolder";
-            this.bnIgnoreNewFolder.Size = new System.Drawing.Size(75, 23);
-            this.bnIgnoreNewFolder.TabIndex = 9;
-            this.bnIgnoreNewFolder.Text = "&Ignore";
-            this.bnIgnoreNewFolder.UseVisualStyleBackColor = true;
-            this.bnIgnoreNewFolder.Click += new System.EventHandler(this.bnIgnoreNewFolder_Click);
-            // 
-            // folderBrowser
-            // 
-            this.folderBrowser.ShowNewFolderButton = false;
-            // 
-            // tabControl1
-            // 
-            this.tabControl1.Controls.Add(this.tbFolders);
-            this.tabControl1.Controls.Add(this.tbIgnore);
-            this.tabControl1.Controls.Add(this.tbResults);
-            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tabControl1.Location = new System.Drawing.Point(0, 0);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(670, 515);
-            this.tabControl1.TabIndex = 13;
-            // 
-            // tbFolders
-            // 
-            this.tbFolders.Controls.Add(this.bnCheck1);
-            this.tbFolders.Controls.Add(this.label1);
-            this.tbFolders.Controls.Add(this.label2);
-            this.tbFolders.Controls.Add(this.bnOpenMonFolder);
-            this.tbFolders.Controls.Add(this.bnAddMonFolder);
-            this.tbFolders.Controls.Add(this.bnRemoveMonFolder);
-            this.tbFolders.Controls.Add(this.lstFMMonitorFolders);
-            this.tbFolders.Location = new System.Drawing.Point(4, 22);
-            this.tbFolders.Name = "tbFolders";
-            this.tbFolders.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFolders.Size = new System.Drawing.Size(662, 489);
-            this.tbFolders.TabIndex = 0;
-            this.tbFolders.Text = "Folders";
-            this.tbFolders.UseVisualStyleBackColor = true;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(3, 3);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(562, 36);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "These are the folders at the \"top\" of your media library.  Add one or more folder" +
-                "s here, either by dragging and dropping, or clicking \"Add...\" below.";
-            // 
-            // tbIgnore
-            // 
-            this.tbIgnore.Controls.Add(this.bnCheck2);
-            this.tbIgnore.Controls.Add(this.label3);
-            this.tbIgnore.Controls.Add(this.label7);
-            this.tbIgnore.Controls.Add(this.lstFMIgnoreFolders);
-            this.tbIgnore.Controls.Add(this.bnOpenIgFolder);
-            this.tbIgnore.Controls.Add(this.bnRemoveIgFolder);
-            this.tbIgnore.Controls.Add(this.bnAddIgFolder);
-            this.tbIgnore.Location = new System.Drawing.Point(4, 22);
-            this.tbIgnore.Name = "tbIgnore";
-            this.tbIgnore.Padding = new System.Windows.Forms.Padding(3);
-            this.tbIgnore.Size = new System.Drawing.Size(662, 489);
-            this.tbIgnore.TabIndex = 1;
-            this.tbIgnore.Text = "Ignore";
-            this.tbIgnore.UseVisualStyleBackColor = true;
-            // 
-            // bnCheck2
-            // 
-            this.bnCheck2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnCheck2.Location = new System.Drawing.Point(581, 463);
-            this.bnCheck2.Name = "bnCheck2";
-            this.bnCheck2.Size = new System.Drawing.Size(75, 23);
-            this.bnCheck2.TabIndex = 11;
-            this.bnCheck2.Text = "&Check >>";
-            this.bnCheck2.UseVisualStyleBackColor = true;
-            this.bnCheck2.Click += new System.EventHandler(this.bnCheck2_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 3);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(481, 13);
-            this.label3.TabIndex = 10;
-            this.label3.Text = "Add folders to this list, to have them ignored when Checking.  Drag and drop, or " +
-                "click \"Add...\" below.";
-            // 
-            // tbResults
-            // 
-            this.tbResults.Controls.Add(this.bnEditEntry);
-            this.tbResults.Controls.Add(this.label4);
-            this.tbResults.Controls.Add(this.label6);
-            this.tbResults.Controls.Add(this.lvFMNewShows);
-            this.tbResults.Controls.Add(this.bnFullAuto);
-            this.tbResults.Controls.Add(this.bnVisitTVcom);
-            this.tbResults.Controls.Add(this.bnIgnoreNewFolder);
-            this.tbResults.Controls.Add(this.bnNewFolderOpen);
-            this.tbResults.Controls.Add(this.bnFolderMonitorDone);
-            this.tbResults.Controls.Add(this.bnRemoveNewFolder);
-            this.tbResults.Location = new System.Drawing.Point(4, 22);
-            this.tbResults.Name = "tbResults";
-            this.tbResults.Size = new System.Drawing.Size(662, 489);
-            this.tbResults.TabIndex = 2;
-            this.tbResults.Text = "Scan Results";
-            this.tbResults.UseVisualStyleBackColor = true;
-            // 
-            // bnEditEntry
-            // 
-            this.bnEditEntry.Location = new System.Drawing.Point(93, 463);
-            this.bnEditEntry.Name = "bnEditEntry";
-            this.bnEditEntry.Size = new System.Drawing.Size(75, 23);
-            this.bnEditEntry.TabIndex = 28;
-            this.bnEditEntry.Text = "Edit";
-            this.bnEditEntry.UseVisualStyleBackColor = true;
-            this.bnEditEntry.Click += new System.EventHandler(this.bnEditEntry_Click);
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(3, 3);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(565, 32);
-            this.label4.TabIndex = 12;
-            this.label4.Text = resources.GetString("label4.Text");
-            // 
-            // bnClose
-            // 
-            this.bnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnClose.Location = new System.Drawing.Point(593, 525);
-            this.bnClose.Name = "bnClose";
-            this.bnClose.Size = new System.Drawing.Size(75, 23);
-            this.bnClose.TabIndex = 27;
-            this.bnClose.Text = "Close";
-            this.bnClose.UseVisualStyleBackColor = true;
-            this.bnClose.Click += new System.EventHandler(this.bnClose_Click);
-            // 
             // FolderMonitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(670, 560);
+            this.ClientSize = new System.Drawing.Size(748, 470);
             this.Controls.Add(this.bnClose);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

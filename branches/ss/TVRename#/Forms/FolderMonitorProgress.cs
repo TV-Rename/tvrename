@@ -11,14 +11,15 @@ namespace TVRename
 {
     public partial class FolderMonitorProgress : Form
     {
-        public bool StopNow;
+        public bool StopNow = false;
+        public bool Ready = false;
         private FolderMonitor mFM;
 
         public FolderMonitorProgress(FolderMonitor thefm)
         {
             this.mFM = thefm;
-
             this.InitializeComponent();
+            timer1_Tick(null, null); // force immediate initial update
         }
 
         public void bnCancel_Click(object sender, System.EventArgs e)
@@ -35,13 +36,18 @@ namespace TVRename
             timer1.Stop();
 
             this.pbProgress.Value = this.mFM.FMPPercent;
-            this.label2.Text = this.mFM.FMPUpto;
+            this.lbMessage.Text = this.mFM.FMPUpto;
             
             if (this.mFM.FMPStopNow)
                 this.Close();
 
             timer1.Start();
 
+        }
+
+        private void FolderMonitorProgress_Load(object sender, System.EventArgs e)
+        {
+            this.Ready = true;
         }
     }
 }

@@ -300,12 +300,15 @@ namespace TVRename
         }
 
 
-        public void MonitorCheckFolderRecursive(DirectoryInfo di)
+        public void MonitorCheckFolderRecursive(DirectoryInfo di, ref bool stop)
         {
             // recursively check a monitored folder for new shows
 
             foreach (DirectoryInfo di2 in di.GetDirectories())
             {
+                if (stop)
+                    return;
+
                 // if its not in the ignore list
                 if (this.IgnoreFolders.Contains(di2.FullName.ToLower()))
                     continue;
@@ -313,7 +316,7 @@ namespace TVRename
                 bool hasSeasonFolders = MonitorAddSingleFolder(di2, false);
                 
                 if (!hasSeasonFolders)
-                    this.MonitorCheckFolderRecursive(di2); // not a season folder.. recurse!
+                    this.MonitorCheckFolderRecursive(di2, ref stop); // not a season folder.. recurse!
 
             } // for each directory
         }
@@ -386,7 +389,7 @@ namespace TVRename
             db.Unlock("MonitorGuessShowItem");
         }
 
-        public void MonitorCheckFolders()
+        public void MonitorCheckFolders(ref bool stop, ref int percentDone)
         {
             // Check the monitored folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
@@ -394,15 +397,21 @@ namespace TVRename
 
             this.AddItems = new FolderMonitorEntryList();
 
-            this.LockShowItems();
+            int c = this.MonitorFolders.Count;
 
+            this.LockShowItems();
+            int c2 = 0;
             foreach (string folder in this.MonitorFolders)
             {
+                percentDone = 100 * c2++ / c;
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (!di.Exists)
                     continue;
 
-                this.MonitorCheckFolderRecursive(di);
+                this.MonitorCheckFolderRecursive(di, ref stop);
+
+                if (stop)
+                    break;
             }
 
             this.UnlockShowItems();

@@ -156,8 +156,25 @@ namespace TVRename
         private void DoCheck()
         {
             tabControl1.SelectedTab = tbResults;
-            this.mDoc.MonitorCheckFolders();
+            tabControl1.Update();
+
+            this.FMPStopNow = false;
+            this.FMPUpto = "Checking folders";
+            this.FMPPercent = 0;
+
+            Thread fmpshower = new Thread(this.FMPShower);
+            fmpshower.Name = "Folder Monitor Progress (Folder Check)";
+            fmpshower.Start();
+
+            while ((this.FMP == null) || (!this.FMP.Ready))
+                Thread.Sleep(10);
+
+            this.mDoc.MonitorCheckFolders(ref this.FMPStopNow, ref this.FMPPercent);
+            
+            this.FMPStopNow = true;
+
             this.FillFMNewShowList(false);
+
         }
 
         private void lstFMMonitorFolders_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
@@ -232,13 +249,19 @@ namespace TVRename
 
         private void bnFullAuto_Click(object sender, System.EventArgs e)
         {
+            if (this.mDoc.AddItems.Count == 0)
+                return;
+
             this.FMPStopNow = false;
-            this.FMPUpto = "";
+            this.FMPUpto = "Identifying shows";
             this.FMPPercent = 0;
 
             Thread fmpshower = new Thread(this.FMPShower);
-            fmpshower.Name = "Folder Monitor Progress";
+            fmpshower.Name = "Folder Monitor Progress (Full Auto)";
             fmpshower.Start();
+
+            while ((this.FMP == null) || (!this.FMP.Ready))
+                Thread.Sleep(10);
 
             int n = 0;
             int n2 = this.mDoc.AddItems.Count;
@@ -405,11 +428,14 @@ namespace TVRename
 
         private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
         {
-            DialogResult res = MessageBox.Show("Add all of these to My Shows?", "Folder Monitor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (res != DialogResult.Yes)
-                return;
+            if (this.mDoc.AddItems.Count > 0)
+            {
+                DialogResult res = MessageBox.Show("Add all of these to My Shows?", "Folder Monitor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (res != DialogResult.Yes)
+                    return;
 
-            this.mDoc.MonitorAddAllToMyShows();
+                this.mDoc.MonitorAddAllToMyShows();
+            }
 
             this.Close();
         }

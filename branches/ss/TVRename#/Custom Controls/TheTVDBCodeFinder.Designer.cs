@@ -149,7 +149,7 @@ namespace TVRename
         private System.Windows.Forms.Label txtSearchStatus;
         private System.Windows.Forms.Button bnGoSearch;
         private System.Windows.Forms.TextBox txtFindThis;
-        private System.Windows.Forms.ListView lvMatches;
+        public System.Windows.Forms.ListView lvMatches;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.Label label3;

@@ -23,6 +23,8 @@ namespace TVRename
             this.mTCCF = new TheTVDBCodeFinder("", db);
             this.mTCCF.Dock = DockStyle.Fill;
             this.mTCCF.SelectionChanged += this.CodeChanged;
+            this.mTCCF.lvMatches.DoubleClick += this.MatchDoubleClick;
+
 
             this.pnlCF.SuspendLayout();
             this.pnlCF.Controls.Add(this.mTCCF);
@@ -37,6 +39,11 @@ namespace TVRename
                 this.mTCCF.SetHint(s.Substring(p+1));
             }
             this.Code = -1;
+        }
+
+        private void MatchDoubleClick(object sender, EventArgs e)
+        {
+            this.bnOK_Click(null, null);
         }
 
         private void CodeChanged(object sender, EventArgs e)
