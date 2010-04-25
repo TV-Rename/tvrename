@@ -288,7 +288,9 @@ namespace TVRename
 
             string folderName = null;
             bool hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName);
-            if (!alreadyHaveIt)
+            bool hasSubFolders = di2.GetDirectories().Length > 0;
+
+            if (!alreadyHaveIt && !hasSubFolders)
             {
                 // ....its good!
                 FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
@@ -296,12 +298,19 @@ namespace TVRename
                 if (andGuess)
                     this.MonitorGuessShowItem(ai);
             }
-            return hasSeasonFolders;
+            return hasSeasonFolders || alreadyHaveIt;
         }
 
 
         public void MonitorCheckFolderRecursive(DirectoryInfo di, ref bool stop)
         {
+            // is it on the folder monitor ignore list?
+            if (this.IgnoreFolders.Contains(di.FullName.ToLower()))
+                return;
+
+            if (MonitorAddSingleFolder(di, false))
+                return; // done.
+
             // recursively check a monitored folder for new shows
 
             foreach (DirectoryInfo di2 in di.GetDirectories())
@@ -309,15 +318,7 @@ namespace TVRename
                 if (stop)
                     return;
 
-                // if its not in the ignore list
-                if (this.IgnoreFolders.Contains(di2.FullName.ToLower()))
-                    continue;
-
-                bool hasSeasonFolders = MonitorAddSingleFolder(di2, false);
-                
-                if (!hasSeasonFolders)
-                    this.MonitorCheckFolderRecursive(di2, ref stop); // not a season folder.. recurse!
-
+                this.MonitorCheckFolderRecursive(di2, ref stop); // not a season folder.. recurse!
             } // for each directory
         }
 
@@ -342,28 +343,7 @@ namespace TVRename
                 found.AutoAdd_FolderBase = ai.Folder;
                 found.AutoAdd_FolderPerSeason = ai.HasSeasonFoldersGuess;
 
-                string foldername = "Season ";
-
-                foreach (string sw in SeasonWords)
-                {
-                    foreach (DirectoryInfo di in new DirectoryInfo(ai.Folder).GetDirectories("*Season *"))
-                    {
-                        string s = di.FullName;
-                        string f = ai.Folder;
-                        if (!f.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
-                            f = f + System.IO.Path.DirectorySeparatorChar;
-                        f = Regex.Escape(f);
-                        s = Regex.Replace(s, f + "(.*" + sw + " ).*", "$1", RegexOptions.IgnoreCase);
-                        
-                        if (string.IsNullOrEmpty(s))
-                            continue;
-
-                        foldername = s;
-                        break;
-                    }
-                }
-
-                found.AutoAdd_SeasonFolderName = foldername + " ";
+                found.AutoAdd_SeasonFolderName = ai.SeasonFolderName + " ";
                 this.Stats().AutoAddedShows++;
             }
 
@@ -2307,7 +2287,8 @@ namespace TVRename
                                 }
                                 catch
                                 {
-                                    return false;
+                                    goAgain = false;
+                                    break;
                                 }
                             }
                             if ((di == null) || (!di.Exists))

@@ -2422,6 +2422,7 @@ namespace TVRename
             this.MoreBusy();
             this.mDoc.ActionGo(s);
             this.LessBusy();
+            this.FillShowLists(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
         }
 

@@ -49,28 +49,46 @@ namespace TVRename
 
         private void bnClose_Click(object sender, System.EventArgs e)
         {
+            bool confirmClose = false;
+            foreach (FolderMonitorEntry fme in this.mDoc.AddItems)
+            {
+                if (fme.CodeKnown)
+                {
+                    confirmClose = true;
+                    break;
+                }
+            }
+            if (confirmClose)
+            {
+                if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"My Shows\"?", "Folder Monitor", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
+                {
+                    return;
+                }
+            }
+
             this.Close();
         }
 
         private void FillFolderStringLists()
         {
-            this.lstFMIgnoreFolders.BeginUpdate();
-            this.lstFMMonitorFolders.BeginUpdate();
-
-            this.lstFMIgnoreFolders.Items.Clear();
-            this.lstFMMonitorFolders.Items.Clear();
-
             this.mDoc.MonitorFolders.Sort();
             this.mDoc.IgnoreFolders.Sort();
-
+            
+            this.lstFMMonitorFolders.BeginUpdate();
+            this.lstFMMonitorFolders.Items.Clear();
+            
             foreach (string folder in this.mDoc.MonitorFolders)
                 this.lstFMMonitorFolders.Items.Add(folder);
+
+            this.lstFMMonitorFolders.EndUpdate();
+
+            this.lstFMIgnoreFolders.BeginUpdate();
+            this.lstFMIgnoreFolders.Items.Clear();
 
             foreach (string folder in this.mDoc.IgnoreFolders)
                 this.lstFMIgnoreFolders.Items.Add(folder);
 
             this.lstFMIgnoreFolders.EndUpdate();
-            this.lstFMMonitorFolders.EndUpdate();
         }
 
         private void bnRemoveMonFolder_Click(object sender, System.EventArgs e)
@@ -284,6 +302,7 @@ namespace TVRename
                 // update our display
                 this.UpdateFMListItem(ai, true);
                 this.lvFMNewShows.Update();
+                this.Update();
             }
             this.FMPStopNow = true;
         }
@@ -341,13 +360,13 @@ namespace TVRename
                     if (di.Exists)
                     {
                         this.mDoc.MonitorAddSingleFolder(di, true);
+                        this.FillFMNewShowList(true);
                     }
                 }
                 catch
                 {
                 }
             }
-            this.FillFMNewShowList(true);
         }
 
         private void lvFMNewShows_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
@@ -398,6 +417,7 @@ namespace TVRename
             }
 
             this.lvFMNewShows.EndUpdate();
+            this.lvFMNewShows.Update();
         }
 
         private void UpdateResultEntry(FolderMonitorEntry ai, ListViewItem lvi)
@@ -430,7 +450,7 @@ namespace TVRename
         {
             if (this.mDoc.AddItems.Count > 0)
             {
-                DialogResult res = MessageBox.Show("Add all of these to My Shows?", "Folder Monitor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult res = MessageBox.Show("Add identified shows to \"My Shows\"?", "Folder Monitor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res != DialogResult.Yes)
                     return;
 

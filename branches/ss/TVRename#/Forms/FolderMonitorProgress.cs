@@ -35,6 +35,8 @@ namespace TVRename
 
             timer1.Stop();
 
+            this.BringToFront();
+
             this.pbProgress.Value = this.mFM.FMPPercent;
             this.lbMessage.Text = this.mFM.FMPUpto;
             

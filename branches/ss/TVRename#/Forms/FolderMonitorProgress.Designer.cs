@@ -46,7 +46,7 @@ namespace TVRename
             // 
             // bnCancel
             // 
-            this.bnCancel.Location = new System.Drawing.Point(60, 56);
+            this.bnCancel.Location = new System.Drawing.Point(114, 59);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 0;
@@ -80,7 +80,7 @@ namespace TVRename
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(201, 91);
+            this.ClientSize = new System.Drawing.Size(201, 92);
             this.Controls.Add(this.pbProgress);
             this.Controls.Add(this.lbMessage);
             this.Controls.Add(this.bnCancel);

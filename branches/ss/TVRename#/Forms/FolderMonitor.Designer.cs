@@ -341,7 +341,7 @@ namespace TVRename
             this.tbIgnore.Location = new System.Drawing.Point(4, 22);
             this.tbIgnore.Name = "tbIgnore";
             this.tbIgnore.Padding = new System.Windows.Forms.Padding(3);
-            this.tbIgnore.Size = new System.Drawing.Size(793, 432);
+            this.tbIgnore.Size = new System.Drawing.Size(740, 403);
             this.tbIgnore.TabIndex = 1;
             this.tbIgnore.Text = "Ignore";
             this.tbIgnore.UseVisualStyleBackColor = true;
@@ -407,6 +407,7 @@ namespace TVRename
             // bnClose
             // 
             this.bnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bnClose.Location = new System.Drawing.Point(663, 435);
             this.bnClose.Name = "bnClose";
             this.bnClose.Size = new System.Drawing.Size(75, 23);
