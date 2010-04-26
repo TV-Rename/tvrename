@@ -123,7 +123,7 @@ namespace TVRename
 
             this.Text = this.Text + " " + Version.DisplayVersionString();
 
-            this.FillShowLists();
+            this.FillMyShows();
             this.UpdateSearchButton();
             this.SetGuideHTMLbody("");
             this.mDoc.DoWhenToWatch(true);
@@ -253,7 +253,7 @@ namespace TVRename
             if (res == System.Windows.Forms.DialogResult.Yes)
             {
                 this.mDoc.GetTVDB(false, "").ForgetEverything();
-                this.FillShowLists();
+                this.FillMyShows();
                 this.FillEpGuideHTML();
                 this.FillWhenToWatchList();
             }
@@ -477,7 +477,7 @@ namespace TVRename
             this.ChooseSiteMenu(2);
         }
 
-        private void FillShowLists()
+        private void FillMyShows()
         {
             Season currentSeas = TreeNodeToSeason(this.MyShowTree.SelectedNode);
             ShowItem currentSI = this.TreeNodeToShowItem(this.MyShowTree.SelectedNode);
@@ -1060,7 +1060,7 @@ namespace TVRename
         public void bnEpGuideRefresh_Click(object sender, System.EventArgs e)
         {
             this.bnWhenToWatchCheck_Click(null, null); // close enough!
-            this.FillShowLists();
+            this.FillMyShows();
         }
 
         public void RefreshWTW(bool doDownloads)
@@ -1073,7 +1073,7 @@ namespace TVRename
 
             this.mInternalChange++;
             this.mDoc.DoWhenToWatch(true);
-            this.FillShowLists();
+            this.FillMyShows();
             this.FillWhenToWatchList();
             this.mInternalChange--;
 
@@ -1622,7 +1622,11 @@ namespace TVRename
 
                                 foreach (Item action in remove)
                                     this.mDoc.TheActionList.Remove(action);
+
+                                if (remove.Count > 0)
+                                    this.mDoc.SetDirty();
                             }
+                            this.FillMyShows();
                         }
                         this.mLastActionsClicked = null;
                         this.FillActionList();
@@ -2056,7 +2060,7 @@ namespace TVRename
         {
             this.mDoc.SetDirty();
             this.RefreshWTW(download);
-            this.FillShowLists();
+            this.FillMyShows();
         }
 
         private void bnMyShowsDelete_Click(object sender, System.EventArgs e)
@@ -2153,7 +2157,7 @@ namespace TVRename
             if (si != null)
                 this.mDoc.GetTVDB(false, "").ForgetShow(si.TVDBCode, true);
             this.mDoc.DoDownloadsFG();
-            this.FillShowLists();
+            this.FillMyShows();
             this.FillEpGuideHTML();
             this.RefreshWTW(false);
         }
@@ -2422,7 +2426,7 @@ namespace TVRename
             this.MoreBusy();
             this.mDoc.ActionGo(s);
             this.LessBusy();
-            this.FillShowLists(); // scanning can download more info to be displayed in my shows
+            this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
         }
 
@@ -2602,7 +2606,7 @@ namespace TVRename
         {
             FolderMonitor fm = new FolderMonitor(this.mDoc);
             fm.ShowDialog();
-            this.FillShowLists();
+            this.FillMyShows();
         }
 
         private void torrentMatchToolStripMenuItem_Click(object sender, System.EventArgs e)

@@ -2204,7 +2204,12 @@ namespace TVRename
             this.ActionCancel = false;
 
             if (!this.Args.Hide)
-                this.ScanProgDlg = new ScanProgress(this.Settings.RenameCheck, this.Settings.MissingCheck && this.Settings.SearchLocally, this.Settings.MissingCheck && this.Settings.CheckuTorrent, this.Settings.MissingCheck && this.Settings.SearchRSS);
+            {
+                this.ScanProgDlg = new ScanProgress(this.Settings.RenameCheck || this.Settings.MissingCheck,
+                                                    this.Settings.MissingCheck && this.Settings.SearchLocally,
+                                                    this.Settings.MissingCheck && this.Settings.CheckuTorrent,
+                                                    this.Settings.MissingCheck && this.Settings.SearchRSS);
+            }
             else
                 this.ScanProgDlg = null;
 
@@ -2465,7 +2470,7 @@ namespace TVRename
                     StringList folders = allFolders[snum];
 
                     bool folderNotDefined = (folders.Count == 0);
-                    if (folderNotDefined && (this.Settings.MissingCheck && !si.AutoAddNewSeasons) || !this.Settings.MissingCheck)
+                    if (folderNotDefined && (this.Settings.MissingCheck && !si.AutoAddNewSeasons))
                         continue; // folder for the season is not defined, and we're not auto-adding it
 
                     ProcessedEpisodeList eps = si.SeasonEpisodes[snum];
@@ -2608,8 +2613,9 @@ namespace TVRename
                                 if ((dbep.EpNum > maxEpNumFound) || (localEps[dbep.EpNum] == null)) // not here locally
                                 {
                                     DateTime? dt = dbep.GetAirDateDT(true);
+                                    bool dtOK = dt != null;
 
-                                    bool notFuture = ((dt != null) && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
+                                    bool notFuture = (dtOK && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
 
                                     bool noAirdatesUntilNow = true;
                                     for (int i = 1; i <= snum; i++)
@@ -2625,7 +2631,9 @@ namespace TVRename
                                     // - force check is on
                                     // - there are no airdates at all, for up to and including this season
                                     // - there is an airdate, and it isn't in the future
-                                    if (noAirdatesUntilNow || (si.ForceCheckFuture || notFuture) || (si.ForceCheckNoAirdate && dt == null))
+                                    if (noAirdatesUntilNow ||
+                                        ((si.ForceCheckFuture || notFuture) && dtOK) ||
+                                        (si.ForceCheckNoAirdate && !dtOK))
                                     {
                                         // then add it as officially missing
                                         this.TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));
