@@ -52,6 +52,9 @@
   <ItemGroup>
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\IPC.cs" />
+    <Compile Include="Custom Controls\ListViewFlickerFree.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Custom Controls\TheTVDBCodeFinder.Designer.cs">
       <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
     </Compile>
@@ -106,6 +109,12 @@
     <Compile Include="Forms\FolderMonitor.Designer.cs">
       <DependentUpon>FolderMonitor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FolderMonitorEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FolderMonitorEdit.Designer.cs">
+      <DependentUpon>FolderMonitorEdit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FolderMonitorProgress.Designer.cs">
       <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
     </Compile>
@@ -146,15 +155,15 @@
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
     <Compile Include="TheTVDB\SeriesInfo.cs" />
-    <Compile Include="TVRename\ActionCopyMoveRename.cs" />
-    <Compile Include="TVRename\ActionDownload.cs" />
-    <Compile Include="TVRename\ActionItem.cs" />
-    <Compile Include="TVRename\ActionMissing.cs" />
-    <Compile Include="TVRename\ActionNFO.cs" />
-    <Compile Include="TVRename\ActionRSS.cs" />
-    <Compile Include="TVRename\ActionSorter.cs" />
-    <Compile Include="TVRename\ActionuTorrenting.cs" />
-    <Compile Include="TVRename\FolderMonitorItem.cs" />
+    <Compile Include="ItemsAndActions\ActionCopyMoveRename.cs" />
+    <Compile Include="ItemsAndActions\ActionDownload.cs" />
+    <Compile Include="ItemsAndActions\ActionItem.cs" />
+    <Compile Include="ItemsAndActions\ItemMissing.cs" />
+    <Compile Include="ItemsAndActions\ActionNFO.cs" />
+    <Compile Include="ItemsAndActions\ActionRSS.cs" />
+    <Compile Include="ItemsAndActions\ActionItemSorter.cs" />
+    <Compile Include="ItemsAndActions\ItemuTorrenting.cs" />
+    <Compile Include="TVRename\FolderMonitorEntry.cs" />
     <Compile Include="Forms\AddModifyRule.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -258,6 +267,10 @@
       <DependentUpon>FolderMonitor.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FolderMonitorEdit.resx">
+      <DependentUpon>FolderMonitorEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FolderMonitorProgress.resx">
       <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -289,9 +302,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ScanProgress.resx">
       <DependentUpon>ScanProgress.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ShowControl.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ShowException.resx">

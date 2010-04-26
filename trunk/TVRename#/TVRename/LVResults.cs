@@ -27,12 +27,12 @@ namespace TVRename
         public System.Collections.Generic.List<ActionCopyMoveRename> CopyMove;
         public int Count;
         public System.Collections.Generic.List<ActionDownload> Download;
-        public System.Collections.Generic.List<ActionItem> FlatList;
-        public System.Collections.Generic.List<ActionMissing> Missing;
+        public ScanListItemList FlatList;
+        public System.Collections.Generic.List<ItemMissing> Missing;
         public System.Collections.Generic.List<ActionNFO> NFO;
         public System.Collections.Generic.List<ActionRSS> RSS;
         public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
-        public System.Collections.Generic.List<ActionuTorrenting> uTorrenting;
+        public System.Collections.Generic.List<ItemuTorrenting> uTorrenting;
 
         public LVResults(ListView lv, bool @checked) // if not checked, then selected items
         {
@@ -46,14 +46,14 @@ namespace TVRename
 
         public void Go(ListView lv, WhichResults which)
         {
-            this.uTorrenting = new System.Collections.Generic.List<ActionuTorrenting>();
-            this.Missing = new System.Collections.Generic.List<ActionMissing>();
+            this.uTorrenting = new System.Collections.Generic.List<ItemuTorrenting>();
+            this.Missing = new System.Collections.Generic.List<ItemMissing>();
             this.RSS = new System.Collections.Generic.List<ActionRSS>();
             this.CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
             this.Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
             this.Download = new System.Collections.Generic.List<ActionDownload>();
             this.NFO = new System.Collections.Generic.List<ActionNFO>();
-            this.FlatList = new System.Collections.Generic.List<ActionItem>();
+            this.FlatList = new ScanListItemList();
 
             System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
             if (which == WhichResults.Checked)
@@ -79,7 +79,7 @@ namespace TVRename
             if (sel.Count == 0)
                 return;
 
-            ActionType t = ((ActionItem) (sel[0].Tag)).Type;
+            System.Type firstType = ((Item) (sel[0].Tag)).GetType();
 
             this.AllSameType = true;
             foreach (ListViewItem lvi in sel)
@@ -87,39 +87,31 @@ namespace TVRename
                 if (lvi == null)
                     continue;
 
-                ActionItem Action = (ActionItem) (lvi.Tag);
-                this.FlatList.Add(Action);
-                ActionType t2 = Action.Type;
-                if (t2 != t)
+                Item action = (Item) (lvi.Tag);
+                if (action is ScanListItem)
+                    this.FlatList.Add(action as ScanListItem);
+
+                if (action.GetType() != firstType)
                     this.AllSameType = false;
 
-                switch (t2)
+                if (action is ActionCopyMoveRename)
                 {
-                    case ActionType.kCopyMoveRename:
-                        {
-                            ActionCopyMoveRename cmr = (ActionCopyMoveRename) (Action);
-                            if (cmr.Operation == ActionCopyMoveRename.Op.Rename)
-                                this.Rename.Add(cmr);
-                            else // copy/move
-                                this.CopyMove.Add(cmr);
-                            break;
-                        }
-                    case ActionType.kDownload:
-                        this.Download.Add((ActionDownload) (Action));
-                        break;
-                    case ActionType.kRSS:
-                        this.RSS.Add((ActionRSS) (Action));
-                        break;
-                    case ActionType.kMissing:
-                        this.Missing.Add((ActionMissing) (Action));
-                        break;
-                    case ActionType.kNFO:
-                        this.NFO.Add((ActionNFO) (Action));
-                        break;
-                    case ActionType.kuTorrenting:
-                        this.uTorrenting.Add((ActionuTorrenting) (Action));
-                        break;
+                    ActionCopyMoveRename cmr = action as ActionCopyMoveRename;
+                    if (cmr.Operation == ActionCopyMoveRename.Op.Rename)
+                        this.Rename.Add(cmr);
+                    else // copy/move
+                        this.CopyMove.Add(cmr);
                 }
+                else if (action is ActionDownload)
+                    this.Download.Add((ActionDownload) (action));
+                else if (action is ActionRSS)
+                    this.RSS.Add((ActionRSS) (action));
+                else if (action is ItemMissing)
+                    this.Missing.Add((ItemMissing) (action));
+                else if (action is ActionNFO)
+                    this.NFO.Add((ActionNFO) (action));
+                else if (action is ItemuTorrenting)
+                    this.uTorrenting.Add((ItemuTorrenting) (action));
             }
         }
     }

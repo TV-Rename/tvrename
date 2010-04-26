@@ -27,6 +27,20 @@ namespace TVRename
         kBTEOF
     }
 
+    public class TorrentEntry // represents a torrent downloading in uTorrent
+    {
+        public string DownloadingTo;
+        public int PercentDone;
+        public string TorrentFile;
+
+        public TorrentEntry(string torrentfile, string to, int percent)
+        {
+            this.TorrentFile = torrentfile;
+            this.DownloadingTo = to;
+            this.PercentDone = percent;
+        }
+    }
+
     public abstract class BTItem
     {
         public BTChunk Type; // from enum
@@ -878,7 +892,7 @@ namespace TVRename
         public bool CopyNotMove;
         public string CopyToFolder;
 
-        public System.Collections.Generic.List<ActionItem> RenameListOut;
+        public ItemList RenameListOut;
         
         public BTFileRenamer(SetProgressDelegate setprog)
             : base(setprog)
@@ -918,7 +932,7 @@ namespace TVRename
         }
 
         public bool RenameFilesOnDiskToMatchTorrent(string torrentFile, string folder, TreeView tvTree,
-            System.Collections.Generic.List<ActionItem> renameListOut,
+            ItemList renameListOut,
             bool copyNotMove, string copyDest)
         {
             if ((string.IsNullOrEmpty(folder) || !Directory.Exists(folder)))
@@ -959,7 +973,7 @@ namespace TVRename
         public bool Altered;
         public bool DoMatchMissing;
         public bool HashSearch;
-        public System.Collections.Generic.List<ActionItem> MissingList;
+        public ItemList MissingList;
 
         public string NewLocation;
         public bool PrioWasSet;
@@ -1227,24 +1241,24 @@ namespace TVRename
             // returns true if we found a match (if actSetPrio is on, true also means we have set a priority for this file)
             string simplifiedfname = Helpers.SimplifyName(nameInTorrent);
 
-            foreach (ActionItem Action1 in this.MissingList)
+            foreach (Item Action1 in this.MissingList)
             {
-                if ((Action1.Type != ActionType.kMissing) && (Action1.Type != ActionType.kuTorrenting))
+                if ((!(Action1 is ItemMissing)) && (!(Action1 is ItemuTorrenting)))
                     continue;
 
                 ProcessedEpisode m = null;
                 string name = null;
 
-                if (Action1.Type == ActionType.kMissing)
+                if (Action1 is ItemMissing)
                 {
-                    ActionMissing Action = (ActionMissing) (Action1);
-                    m = Action.PE;
+                    ItemMissing Action = (ItemMissing) (Action1);
+                    m = Action.Episode;
                     name = Action.TheFileNoExt;
                 }
-                else if (Action1.Type == ActionType.kuTorrenting)
+                else if (Action1 is ItemuTorrenting)
                 {
-                    ActionuTorrenting Action = (ActionuTorrenting) (Action1);
-                    m = Action.PE;
+                    ItemuTorrenting Action = (ItemuTorrenting) (Action1);
+                    m = Action.Episode;
                     name = Action.DesiredLocationNoExt;
                 }
 
@@ -1348,7 +1362,7 @@ namespace TVRename
             return (this.ResumeDat != null);
         }
 
-        public bool DoWork(StringList Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, bool searchSubFolders, System.Collections.Generic.List<ActionItem> missingList, FNPRegexList rexps)
+        public bool DoWork(StringList Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, bool searchSubFolders, ItemList missingList, FNPRegexList rexps)
         {
             this.Rexps = rexps;
 
