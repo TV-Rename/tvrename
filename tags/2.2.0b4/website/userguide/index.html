@@ -1,0 +1,471 @@
+<html>
+<Head>
+<Title>TVRename User Guide</title>
+</head>
+<link rel="stylesheet" type="text/css" href="../style.css" />
+<body>
+<br/>
+<table border="0" width="750" cellspacing="0" cellpadding="0" align="center" style="border: 1px solid #4D4D45;">
+<tr align="left" valign="top">
+<td width="750" colspan="2" bgcolor="#0C93D7">
+
+<div id="header_image">
+<table>
+<tr>
+
+<td>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+<td>
+<A HREF="/"><img src="../img/oldTV.png" alt="" border="0" width=90 height=90/></a>
+</td>
+<td>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+</td>
+<td>
+<font size=+40 color=white>tvrename.com</font><br/>
+
+<font size=-1 color=white>tvrename.com - S02E10 - The User Guide</font><br/>
+</td>
+</tr>
+</table>
+</div>
+
+
+<div id="pagebody">
+<table border="0" width="750" cellspacing="0" cellpadding="0" align="left">
+<tr valign="top">
+<td width="550" bgcolor="#FFFFFF">
+<div id="maincontent">
+This is a fairly brief overview of TVRename and how to use it.  I'm not very good at writing documentation (and it's not something that's anywhere near as fun as writing code), so this may be somewhat brief.  Any suggestions for improvements, or offers to write better documentation, are welcome. :)
+<p>
+<font color='red'><b>Note:</b></font> This user guide is written based on the older, 2.0, version of the software.  Most of the features are the same, or similar.  The main changes have been to how you enter in your shows ("Shows and Folders"), and the use of <a href="http://thetvdb.com">thetvdb.com</a> as the database - rather than tv.com.
+<p>
+If you need any further help, sign up to <A HREF="/bb">the forums</a> and post a message there.
+<p>
+<hr>
+<h2>Contents</h2>
+<li><A HREF="#intro">Introduction</a>
+<li><A HREF="#beginner">Beginner's Overview</a>
+<li><A HREF="#tipsandtricks">Tips and Tricks</a>
+<li><A HREF="#showsandfolders">Shows and Folders</a>
+<li><A href="#addeditshow">Add/Edit Show</a>
+<li><A href="#addmodifyrule">Add/Modify Rule</a>
+<li><A href="#addeditfolder">Add/Edit Folder</a>
+<li><A HREF="#episodeguide">Episode Guide</a>
+<li><A HREF="#renaming">Renaming</a>
+<li><A HREF="#Missing">Missing</a>
+<li><A HREF="#findingandorganising">Finding and Organising</a>
+<li><A HREF="#foldermonitor">Folder Monitor</a>
+<li><A HREF="#torrentmatch">Torrent Match</a>
+<li><A HREF="#whentowatch">When to Watch</a>
+<li><A HREF="#preferences">Preferences</a>
+<li><A HREF="#buymeadrink">Buy Me A Drink!</a>
+<li><A HREF="#flushcache">Flush Cache</a>
+<li><A HREF="#markoldshows">Mark Old Shows</a>
+<li><A HREF="#statistics">Statistics</a>
+<li><A HREF="#updatecodes">Update Codes</a>
+<li><A HREF="#files">Files</a>
+<li><A HREF="#furtherhelp">Further Help, Bugs, and Suggestions</a>
+<hr>
+<A name="intro"></a>
+<h2>Introduction</h2>
+First we'll start with what you're going to end up with.  This shows a number of shows we are currently watching.  The first four in the list have aired, and the first two of those are on disk locally.  We can also see what's coming up in the next few days, and further ahead.  There is a episode summary for the currently selected episode, and a calendar showing when shows are airing.  At the very bottom, in the status bar, is a countdown to the next show that is airing.<br/>
+<p>
+<img src="whentowatch.png" width=999 height=744>
+<hr>
+<A name="beginner"></a>
+<h2>Beginner's Overview</h2>
+<p>
+The first time you use this program, you will probably be wanting to do one of the following two things:
+<p>
+<b>(1)</b> Get an existing collection of shows under control.  In this case, I'd start with the "Folder Monitor" (or "Shows and Folders"), followed by "Rename", then "Missing Check", and "Finding and Organising".  If you have a lot of shows, choose "Update Codes" from the "Tools" menu before you start.
+<p>
+<b>(2)</b> Set up new shows you want to keep track of.  For this, add shows to "Shows and Folders", then do a "Missing Check", and/or visit the "When to Watch" tab.
+<p>
+Whatever manipulation TVRename does to your files, it will never change the season or episode number.  If the names get screwed up, the season and episode number will be unchanged, meaning that the problem should be (fairly easily) fixable after changing some settings, or adding new rules.  At least, that's the theory. :)
+<P>
+<hr>
+<A name="tipsandtricks"></a>
+<h2>Tips and Tricks</h2>
+<P>
+<li>Most items can be double-clicked, to do the most "useful" thing for them.
+<LI>Folders, shows, and episodes can be right-clicked for appropriate actions.
+<li>Column headers can be clicked to sort by that column.
+<li>Folder lists support drag and drop of folders from Explorer, for quick and easy addition.
+<li>You cen remove items from the renaming and finding and organising lists by selecting them, and pressing "Delete" on your keyboard.
+<li>If you double-click on a tab to select it, it will automatically do the "Find", "Check", or "Refresh" action for that tab.
+<li>After making changes, you need to save before exiting (TVRename will prompt you).  If you screw something up, just exit without saving and your settings will be restored.
+<li>TVRename stores a lot of data in XML files.  See the <A href="#files">files</a> section for more information on what there is, and where it is.
+<hr>
+<A name="showsandfolders"></a>
+<h2>Shows and Folders</h2>
+This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer.  It can be a local drive, or a mapped network share.
+<p>
+In this image, you can see a number of shows, each of which can have zero, one, or more folders associated with it.
+<p>
+<IMG src="showsandfolders.png" width=999 height=744>
+<p>
+In the top half of the screen, from left to right:
+<p>
+<B>Show</b> - The show's name.<br/>
+<b>Season</b> - The season.<br/>
+<b>tv.com code</b> - As data is taken from tv.com, this is their code/reference number for the show.  TVRename will help you find this easily.<br/>
+<b>Show next airdate</b> - If you want to see this show listed on the "When to Watch" tab.<br/>
+<b>Ignore</b> - Whether or not we ignore <b>P</b>ilots, <b>S</b>pecials, or <b>M</b>ovies.  This is discussed further in the "Add/Edit Show" section.<br/>
+<b>Rules</b> - If there are any rules applied to manipulate the data from tv.com to suit how you want to number and group your episodes.<br/>
+<b>Folders</b> - The number of folders on your computer that have this show in it.<br/>
+<b>Old</b> - A show marked as "Old" won't have its data repeatedly downloaded from tv.com, after it is cached for the first time.
+<p>
+Buttons for the top half:
+<p>
+<b>Add</b> - Add a new show to the list.  Remember to add folders to it separately if you need to monitor them it on disk as well.  You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.<br/>
+<b>Edit</b> - Edit the currently selected show.<br/>
+<b>Remove</b> - Remove the currently selected show(s).<br/>
+<b>Visit tv.com</b> - Visit the tv.com page for this season of this show.<br/>
+<p>
+After clicking on a show in the top half, the bottom half becomes useful.  From left to right:
+<p>
+<b>Folder</b> - The folder on your computer that this show is in.<br/>
+<b>Check Type</b> - Whether or not we check for missing episodes, etc.  This is covered more in the "Add/Edit Folder" section.<br/>
+<b>Naming Style</b> - How you like your shows to be named.  The default is set in the Preferences dialog, but can be individually overridden for individual folders.<br/>
+<p>
+Buttons for the bottom half:
+<p>
+<b>Add</b> - Add a new folder to the currently selected show.<br/>
+<b>Edit</b> - Edit the selected folder's details.<br/>
+<b>Remove</b> - Remove the selected folder(s).<br/>
+<b>Open</b> - Open in Windows Explorer the current folder.<br/>
+
+<hr>
+<A name="addeditshow"></a>
+<h2>Add/Edit Show</h2>
+<P>
+Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
+<p>
+<table width=100 border=0>
+<tr width=100% valign=top>
+<td><img src="addeditshow.png" width=439 height=582 align=top></td><td><img src="tvcomsearch.png" align=right width=439 height=216></td>
+</tr>
+</table>
+<p>
+
+In this example, we are setting up TVRename for the show "Grey's
+Anatomy", season 4.
+<p>
+The first thing is entering the <b>tv.com code</b>.  If
+you know it, you can type it in directly.  Otherwise, type part of the
+show's name (e.g. "Grey").  If it still doesn't show, click on
+"Search" and TVRename will search for what you typed on tv.com.
+Downloaded results from searching are cached locally for future use.
+<p>
+<p>
+You can pre-load the cache for tv.com codes by using the "Update
+Codes" option on the "Tools" menu.  This will download from TVRename's
+website data for about 14000 shows, but it is only updated very
+infrequently.
+<p>
+The <b>show name</b> is what you like to call the show yourself.  You
+may like to remove "The" from names, or extra info like the year that
+tv.com puts on some shows.  If you click <b>Copy</b>, it will keep it
+the same as tv.com's naming.
+<p>
+You enter the season number into the <b>season</b> field.  The
+<b>timezone</b> is the timezone that the airdate times on the tv.com
+summary page are in.  Most shows are Eastern USA timezone, but British
+shows (e.g. Jekyll) will be British Standard Time.  This only has an
+effect on the "When to Watch" display, which then translates those
+times into your computer's timezone.
+<p>
+
+<B>Show next airdate</b> chooses if this show will appear in the "When
+to Watch" tab.  tv.com also can include <b>pilots</b>,
+<b>specials</b>, and <b>TV movies</b> in their episode guide.  If you
+don't check these three checkboxes, they will be ignored completely.
+If you check the checkbox, it will be counted as an episode.  For
+example, Mythbusters often counts a special as an episode.
+<p>
+The <b>Old</b> option means that once data is downloaded from tv.com, and locally cached, it will never be downloaded again.  (See the "Mark Old Shows" dialog, too.)  Otherwise, TVRename re-downloads data from tv.com for a show depending on how long it was since the last episode, and if the next episode's airdate is known.
+<p>
+The <b>rules</b> section lets you manipulate the tv.com episode guide to suit how you have the episodes on your computer.  The rules are applied in order, from top to bottom, it is possible to use the <b>Up</b> and <b>Down</b> buttons to re-prioritise them.  <B>Add</b>, <b>edit</b>, and <b>Delete</b> will alter the rules list.
+<p>
+In this example, episodes 16 and 17 were aired as a double episode, meaning you have only one file on disk for both.  The rule <b>merges</b> the two episodes into one.  This affects the display in the "Episode Guide" tab, as well as what is checked for and how the files are renamed.
+<p>
+<hr>
+<A Name="addmodifyrule"></a>
+<h2>Add/Modify Rule</h2>
+
+<P>
+This is the dialog for adding or editing a rule for a show's season.  Choose the operation at the top, then enter the appropriate values below.
+<P>
+<IMG src="addmodifyrule.png" width=357 height=344>
+<p>
+<b>Ignore</b> - Keep the specified episode in the guide, but don't check for it (or rename it) on disk locally.<br/>
+<b>Rename</b> - Manually set the name of an episode.<br/>
+<b>Remove</b> - Make a an episode disappear.  All episodes above will be renumbered down to fill the gap.<br/>
+<b>Swap</b> - Swap the position of two episodes.<br/>
+<b>Merge</b> - These episodes are all on disk locally as one multi-episode file.<br/>
+<b>Insert</b> - Manually add an episode into the season.  Episodes after are renumbered to accomodate it.<br/>
+<b>Split</b> - Turn one episode into many, renumbering episode after the split to accomodate them.<br/>
+<p>
+After adding a rule, you can go to the "Episode Guide" tab, select the show, and then click "Refresh".  You will then be able to see (and check) the effects of the rules you've created.
+<p>
+<hr>
+<A Name="addeditfolder"></a>
+<h2>Add/Edit Folder</h2>
+<p>
+You can drag amd drop a new folder from explorer onto a line in the Shows list to add it to that show, or into the folder area below the shows.  Note that you can have multiple folders for a show.
+<p>
+To add/edit a folder you click on the appropriate button, which displays this dialog:
+<p>
+<IMG src="addeditfolder.png" width=474 height=333>
+<P>
+The <b>folder</b> is the folder on your computer where this season of this show lives.  The <b>naming style</b> chooses how you like your filenames to be, and the systemwide default (for newly added folders) can be set in the Preferences dialog.
+<p>
+The <b>missing episode</b> radiobuttons choose whether or not you want to check if you are missing episodes from your collection.  <b>no</b> wont, <b>all</b> will check for everything that has aired to date, and <b>only recent</b> will look for episodes since the earliest one in the folder (or start of season, if you have none.)  
+<p>
+The <b>rename files</b> radiobuttons choose wether or not this folder is subject to checking on the "Rename Files" tab.
+<p>
+The <b>fetch</b> button will immediately get the thumbnail for this show from tv.com, and save it in the specified folder as "folder.jpg".  Clicking <b>remove</b> will delete the thumbnail file.
+<p>
+<hr>
+<A Name="episodeguide"></a>
+<h2>Episode Guide</h2>
+<P>
+Once you have set up your shows, you can visit the episode guide to see the information from tv.com, after modification by any rules you may have added.
+<P>
+Select the show from the combo box.  If you've recently edited the show in the "shows and folders" tab, the display may be empty.  In this case, click on the <b>Refresh</b> button.
+<p>
+<b>Visit TV.com</b> will open your web browser on the tv.com page for this season of this show.  Clicking on the show name will take you to the show summary page.
+<p>
+The rightmost button lets you choose your preferred torrent search engine.  This is used when you click on one of the "Search" links in the episode guide.
+<p>
+If TVRename has found the corresponding episode on disk, a <b>watch</b> link will be displayed.  That will open the video file in the associated Windows movie player.
+<p>
+The episode guide also includes indication of whether or not the show has been aired, or how long until it airs.  The "time to do" display is adjusted from the timezone on tv.com's page, to that of your computer.
+<p>
+<img src="episodeguide.png" width=999 height=744>
+<P>
+<hr>
+<A Name="renaming"></a>
+<h2>Renaming</h2>
+<P>
+Click on the <b>check</b> button, and TVRename will, after downloading any needed information from tv.com, go through your folders and see if any files need to be renamed.
+<P>
+TVRename attempts to intelligently determine a show's season and episode number from it's filename, and handles most common naming styles.
+<P>
+A folder can be excluded from a rename check by setting <b>rename files</b> to <b>no</b> in the add/edit folder dialog, accessed from the <b>shows and folders</b> tab.
+<P>
+You can select items in the list and press the <b>Delete</b> key on your keyboard to remove them from the list.  Once you are happy with the changes offered, click the <b>Rename</b> button at the bottom, and TVRename will make the changes.
+<P>
+<img src="renaming.png" width=999 height=744>
+<P>
+<hr>
+<A Name="Missing"></a>
+<h2>Missing</h2>
+<P>
+This shows you where ther are gaps in your collection.  Click the <b>check</b> button, and TVRename will look through your folders and list what you are missing.
+<P>
+The "arrow-down" button in the bottom left lets you choose your preferred torrent search engine.  Clicking on the button in the bottom left will search for the currently selected missing episode(s) on that site.  Double-clicking an item in the list will also search.
+<P>
+<img src="missing.png" width=999 height=744>
+<P>
+<P>
+<hr>
+<A Name="findingandorganising"></a>
+<h2>Finding and Organising</h2>
+<P>
+After doing a "missing" check, "finding and organising" will search, on your computer, for those missing files.
+<P>
+Add a number of "search folders".  Either use the "Add" button, or drag and drop folders from Windows Explorer into this list.  The "Open" button will open an Explorer window for the selected folder.  Folders added to this list automatically have their subfolders searched.
+<P>
+Press the "Find" button to search for missing episodes.  TVRename will list the episodes it found, and the appropriate move (on the same device) or copy (across different devices) operation to get them to where they should be.  If you choose "Leave Originals", it will always copy the files to their new location.
+<p>
+Once you are satisfied with the list of things to do, click on "Move/Copy" and TVRename will do it.
+<P>
+<img src="findingandorganising.png" width=999 height=744>
+<p>
+While files are being copied and/or moved, the dialog below is shown.  Press "Pause" to temporarily pause the copy/move operation.  Click it again to resume.  "Cancel" will stop immediately.  The disk space shown is for the drive that the current file is being copied/moved to.
+<P>
+<img src="copymoveprogress.png" width=416 height=198>
+<P>
+<P>
+<hr>
+<A Name="foldermonitor"></a>
+<h2>Folder Monitor</h2>
+<P>
+This is admittedly probably the most confusing, non-obvious, but most useful window there is. :)
+<p>
+This will monitor your media collection for new shows (folders), that TVRename hasn't seen before, and help you to quickly add them to the "Shows and Folders" tab.
+<p>
+Before using this, make sure your preferred renaming style is set in the preferences dialog.  If this is your first time using TVRename, you might also want to choose "Update Codes" from the Tools menu, which will make things go faster later on.
+<p>
+Add (or drag+drop) folders to the "monitor folders" list in the top left.  Click the <b>Check</b> button, and TVRename will recursively search for new folders.  The middle list will then be filled.  Using its existing cache of tv.com codes, it will automatically guess and fill in the season number and code for each folder.
+<P>
+Click on a show to edit it.  You can then type a tv.com code, or part of a show name, to find the tv.com code in the list.  If it isn't showing up, type in part of the name and press the <b>Search</b> button.  This searches on tv.com, and will add any results to the local code cache.
+<p>
+After entering the code, or clicking on the show in the list, enter (or correct) the season number.  Changes are immediately applied to the "New shows and folders" list.  If you select multiple folders, all will be updated simultaneously.
+<p>
+<b>Visit tv.com</b> will take you to the tv.com page, so you can check it is the right show.  <b>Guess</b> will re-guess the show details.
+<P>
+Clicking <b>Remove</b>, or pressing <b>delete</b> on your keyboard will remove the selected folder(s) from the list.  It will be re-detected the next tiem you do a <b>Check</b> here.  Click <b>Ignore</b> to add the folder to the "Ignored Folders" list.  <b>Ignore All</b> will ignore all folders in the list.
+<P>
+<b>Open</b> will open an Explorer window in that folder.  Clicking on <b>Done</b> will then take all the shows with tv.com codes and season numbers, and add/merge them into your shows and folders lists.
+<p>
+In the example here, if the user clicked "Done" then only Seinfeld would be added.  The other two shows are missing either the season number, or tv.com code.
+<P>
+
+<img src="foldermonitor.png" width=999 height=744>
+<P>
+<P>
+<hr>
+<A Name="torrentmatch"></a>
+<h2>Torrent Match</h2>
+<P>
+The "Torrent Match" tab lets you rename files, so their names match what is in a .torrent file.  This is done using the torrent hashes, so it will work on any type of file, as long as it is big enough for a partial hash to be done on it.
+<P>
+Choose the .torrent file, and folder of files to rename.  If you choose a "Copy To" location, the files will be copied to their new names, leaving the originals intact.  If it is off, then they will be renamed in place.
+<img src="torrentmatch1.png" width=999 height=744>
+<P>
+Currently, TVRename can only process single file torrents, and multi-file torrents without subdirectories in them.
+<P>
+After clicking "Go", the torrent file will be processed.  This can take a while if the torrent file has a lot of items in it, or there are a lot of potential matches in the "Folder" you have selected.
+<P>
+If processing is successful, you will be taken to the rename or finding and orgnising tab, to see the suggested operations.  Your files will only be modified if you click "Rename" or "Move/Copy" from there.
+<p>
+<img src="torrentmatch2.png" width=999 height=744>
+<P>
+It's not possible to rename the files in (a multiple file) torrent, to match what you have on disk.  Changing the names affects the hash, which makes it a different torrent from the tracker's point of view.  Because of this, TVRename renames the files on disk instead.
+<P>
+<hr>
+<A Name="whentowatch"></a>
+<h2>When to Watch</h2>
+<P>
+For shows which have the "Show next airdate" option set, they will be listed here if tv.com has airdate information available.  The time and date are adjusted to be in the timezone that you have Windows set to be.
+<P>
+Click on the columns to sort by them.  Right-click on items to do useful related actions.  For shows that have aired, an icon is shown to indicate if it is on disk (double-clicking will open it), or needs to be searched for.  Double-clicking a item that isn't on disk will open the specified torrent search engine for it.
+<P>
+Click on the calendar to see what is airing on a particular day.  Dates with shows airing are in bold.  Click on a show to see its episode summary below.  The <b>refresh</b> button will make sure that the information is up-to-date.
+<P>
+"Aired in the last <I>N</i> days" and "Next 7 days" are self-explanatory.  "Later" shows the next airing episode of any show you're interested in that isn't in the next week.  "Future Episodes" are all known episodes after anything in the two preceding categories.
+<P>
+You can turn this grouping off by clicking on the "How Long" column header, and on by clicking on "Air Date".
+<P>
+The "When to Watch" display is automatically refreshed from time to time, and TVRename will download in the background any updates needed from tv.com.  Background downloading can be disabled from the Options menu, and will also be disabled if you're in Offline Mode.
+<P>
+<img src="whentowatch.png"  width=999 height=744>
+<P>
+<P>
+<hr>
+<A Name="preferences"></a>
+<h2>Preferences</h2>
+<P>
+The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename.
+<P>
+The "days count as recent" specifies how many days to show for "Aired in the last <i>N</i> days" in the "When to Watch" tab.  The "Startup tab" is what TVRename shows when you open it.  The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!
+<P>
+"Use sequential number matching" will match episodes based on their overall airing order.  Because this causes a lot of false matches, it is off by default.  For example, Seinfeld S08E02 is the 136th episode aired, so with this option "Seinfeld - 136 - The Soul Mate.avi" will be seen at S08E02.
+<P>
+"Find Extensions" sets the extensions of media files to look for.  Separate them each with a semicolon, don't use spaces, and make sure you put the dot in!
+<P>
+"RSS Export" will save a RSS-reader compatible XML file to the location you specify.  It can then be read by something like XBOX Media Center, or the Vista RSS Widget.  You can limit how many days or shows are written to the file.  The RSS file is updated whenever the "When to watch" tab is manually or automatically refreshed.
+<P>
+<img src="preferences.png" width=443 height=454>
+<P>
+Below is an example of the RSS output being displayed in a Vista sidebar <A HREF="http://gallery.live.com/liveItemDetail.aspx?li=1a8fef49-39e7-4622-b9c5-5bd5c00791f0&bt=1&pl=1">gadget</a>.  Clicking on each item shows the episode summary information.
+<P>
+<table width=100 border=0>
+<tr width=100% valign=top>
+<td><img src="rsswidget.png" width=132 height=212 align=top></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><img src="rsswidget2.png" align=right width=548 height=221></td>
+</tr>
+</table>
+
+<P>
+<P>
+<hr>
+<A Name="buymeadrink"></a>
+<h2>Buy Me A Drink!</h2>
+<P>
+I'm a thirsty man, so I need lots of drinks. :)
+<P>
+<img src="buymeadrink.png" width=359 height=151>
+<P>
+<P>
+<hr>
+<A Name="flushcache"></a>
+<h2>Flush Cache</h2>
+<P>
+This will delete all the files in the local cache of pages downloaded from tv.com.  Doing this means that on the next check, rename, or refresh, all data will be re-downloaded from tv.com.
+<P>
+<img src="flushcache.png" width=483 height=169>
+<P>
+<hr>
+<A Name="markoldshows"></a>
+<h2>Mark Old Shows</h2>
+<P>
+This lets you quickly manage which shows are old, i.e.: their data is never flushed from the cache or retrieved more than once from tv.com.
+<P>
+Tick the boxes, or click <b>Auto</b> to automatically tick any shows older than the specified time period.  The age is defined as how long it has been since the last known airdate and now.  <b>Auto</b> will not un-tick any shows.
+<P>
+<img src="markoldshows.png" width=487 height=393>
+<P>
+<hr>
+<A Name="statistics"></a>
+<h2>Statistics</h2>
+<P>
+Just how useful has TVRename been?  "Episodes on disk" is the number of episodes found the last time a "missing check" was done.  "Total Episodes" is the count from the tv.com episode guide for all the shows you have.
+<P>
+<img src="statistics.png" width=223 height=355>
+<P>
+<hr>
+<A Name="updatecodes"></a>
+<h2>Update Codes</h2>
+<P>
+This will pre-load the cache for tv.com codes by using the "Update
+Codes" option on the "Tools" menu.  This will download from TVRename's
+website data for about 14000 shows, but it is only updated very
+very infrequently.  Perhaps once or twice a year.
+<P>
+<img src="updatecodes.png" width=434 height=169>
+<P>
+<hr>
+<A Name="files"></a>
+<h2>Files</h2>
+<P>
+Files on your computer that TVRename creates and uses:
+<P>
+<b>%temp%\TVRenameCache</b><br/>
+Cache of pages downloaded from tv.com.  TVRename keeps this under control, deleting old files.  Alternatively, you can force it to be emptied by choosing "Flush Cache" from the "Tools" menu.  You can manually delete files from here, if you want, without any side effects (apart from TVRename downloading it fresh the next time it needs it.)
+<P>
+<b>\Documents and Settings\&lt;username&gt;\Application Data\TVRename\TVRename\2.0\</b> (Windows XP)<br/>
+<b>\Users\&lt;username&gt;\AppData\Roaming\TVRename\TVRename\2.0\</b> (Vista)<br/>
+<p>
+This folder contains TVRename's settings:
+<li><b>TVRenameSettings.xml</b> - Pretty much everything.  All your shows, folders, and settings.  This is only overwritten when you choose "Save".  Older, backup, copies of the settings file are also kept in here.
+<li><b>Layout.xml</b> - TVRename's window position, column sizes, and statistics are saved here.
+<li><b>TVcomShowCache.xml</b> - Locally cached tv.com show code information.
+<p>
+The only thing saved to the registry is uninstall information, used by the "Add/Remove" control panel.
+<hr>
+<A NAME="furtherhelp">
+<h2>Further Help, Bugs, and Suggestions</h2>
+Visit the <A HREF="/bb">forums</a>, and make a post there or PM sstteevvee.  If you've found a bug, you can also use the "Bug Report" item on the "Help" menu.  Fill in the boxes, then click "Create".  Once it is done gathering diagnostic informatino, copy and paste the text in an email to the address indicated.
+
+
+</div>
+</td>
+</tr>
+
+</table>
+</table>
+
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script><script type="text/javascript">_uacct = "UA-239307-20";urchinTracker();</script>
+
+</body>
+</html>
