@@ -26,9 +26,6 @@ namespace TVRename
         {
             this.mDoc = doc;
             this.InitializeComponent();
-            //
-            //TODO: Add the constructor code here
-            //
         }
 
         private void UpcomingPopup_Load(object sender, System.EventArgs e)

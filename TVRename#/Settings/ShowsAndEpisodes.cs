@@ -106,8 +106,6 @@ namespace TVRename
         }
     }
 
-    //enum CheckType { checkNone = 0, checkAll = 1, checkRecent = 2}; // TODO: remove this, and make a list of seasons/eps to ignore
-
     public class ShowItem
     {
         public bool AutoAddNewSeasons;
@@ -136,6 +134,12 @@ namespace TVRename
         public ShowItem(TheTVDB db)
         {
             this.SetDefaults(db);
+        }
+
+        public ShowItem(TheTVDB db, int tvDBCode)
+        {
+            this.SetDefaults(db);
+            this.TVDBCode = tvDBCode;
         }
 
         public ShowItem(TheTVDB db, XmlReader reader, TVSettings settings)

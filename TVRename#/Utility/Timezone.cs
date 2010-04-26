@@ -62,7 +62,7 @@ namespace TVRename
         {
             if (Version.OnMono())
             {
-#warning Need a mono version of the TimeZone class.  Does mono have System.Core.TimeZoneInfo?
+                // TODO: Need a mono version of the TimeZone class.  Does mono have System.Core.TimeZoneInfo?
                 return null;
             }
             // HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Time Zones\Eastern Standard Time

@@ -28,16 +28,16 @@ namespace TVRename
         public int pctRSS;
         public int pctuTorrent;
 
-        public ScanProgress(bool e1, bool e3, bool e4, bool e5)
+        public ScanProgress(bool mediaLib, bool searchLocal, bool uTorrent, bool rss)
         {
             this.Ready = false;
             this.Finished = false;
             this.InitializeComponent();
 
-            this.lb1.Enabled = e1;
-            this.lb3.Enabled = e3;
-            this.lb4.Enabled = e4;
-            this.lb5.Enabled = e5;
+            this.lbMediaLibrary.Enabled = mediaLib;
+            this.lbSearchLocally.Enabled = searchLocal;
+            this.lbCheckuTorrent.Enabled = uTorrent;
+            this.lbSearchRSS.Enabled = rss;
         }
 
         public void UpdateProg()

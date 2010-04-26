@@ -40,13 +40,13 @@ namespace TVRename
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScanProgress));
             this.bnCancel = new System.Windows.Forms.Button();
-            this.lb1 = new System.Windows.Forms.Label();
+            this.lbMediaLibrary = new System.Windows.Forms.Label();
             this.pbMediaLib = new System.Windows.Forms.ProgressBar();
-            this.lb3 = new System.Windows.Forms.Label();
+            this.lbSearchLocally = new System.Windows.Forms.Label();
             this.pbLocalSearch = new System.Windows.Forms.ProgressBar();
-            this.lb5 = new System.Windows.Forms.Label();
+            this.lbSearchRSS = new System.Windows.Forms.Label();
             this.pbRSS = new System.Windows.Forms.ProgressBar();
-            this.lb4 = new System.Windows.Forms.Label();
+            this.lbCheckuTorrent = new System.Windows.Forms.Label();
             this.pbuTorrent = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
@@ -62,14 +62,14 @@ namespace TVRename
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
             // 
-            // lb1
+            // lbMediaLibrary
             // 
-            this.lb1.AutoSize = true;
-            this.lb1.Location = new System.Drawing.Point(12, 9);
-            this.lb1.Name = "lb1";
-            this.lb1.Size = new System.Drawing.Size(104, 13);
-            this.lb1.TabIndex = 1;
-            this.lb1.Text = "Media Library Check";
+            this.lbMediaLibrary.AutoSize = true;
+            this.lbMediaLibrary.Location = new System.Drawing.Point(12, 9);
+            this.lbMediaLibrary.Name = "lbMediaLibrary";
+            this.lbMediaLibrary.Size = new System.Drawing.Size(104, 13);
+            this.lbMediaLibrary.TabIndex = 1;
+            this.lbMediaLibrary.Text = "Media Library Check";
             // 
             // pbMediaLib
             // 
@@ -81,14 +81,14 @@ namespace TVRename
             this.pbMediaLib.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbMediaLib.TabIndex = 2;
             // 
-            // lb3
+            // lbSearchLocally
             // 
-            this.lb3.AutoSize = true;
-            this.lb3.Location = new System.Drawing.Point(12, 28);
-            this.lb3.Name = "lb3";
-            this.lb3.Size = new System.Drawing.Size(77, 13);
-            this.lb3.TabIndex = 1;
-            this.lb3.Text = "Search Locally";
+            this.lbSearchLocally.AutoSize = true;
+            this.lbSearchLocally.Location = new System.Drawing.Point(12, 28);
+            this.lbSearchLocally.Name = "lbSearchLocally";
+            this.lbSearchLocally.Size = new System.Drawing.Size(77, 13);
+            this.lbSearchLocally.TabIndex = 1;
+            this.lbSearchLocally.Text = "Search Locally";
             // 
             // pbLocalSearch
             // 
@@ -100,14 +100,14 @@ namespace TVRename
             this.pbLocalSearch.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbLocalSearch.TabIndex = 2;
             // 
-            // lb5
+            // lbSearchRSS
             // 
-            this.lb5.AutoSize = true;
-            this.lb5.Location = new System.Drawing.Point(12, 66);
-            this.lb5.Name = "lb5";
-            this.lb5.Size = new System.Drawing.Size(66, 13);
-            this.lb5.TabIndex = 1;
-            this.lb5.Text = "Search RSS";
+            this.lbSearchRSS.AutoSize = true;
+            this.lbSearchRSS.Location = new System.Drawing.Point(12, 66);
+            this.lbSearchRSS.Name = "lbSearchRSS";
+            this.lbSearchRSS.Size = new System.Drawing.Size(66, 13);
+            this.lbSearchRSS.TabIndex = 1;
+            this.lbSearchRSS.Text = "Search RSS";
             // 
             // pbRSS
             // 
@@ -119,14 +119,14 @@ namespace TVRename
             this.pbRSS.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbRSS.TabIndex = 2;
             // 
-            // lb4
+            // lbCheckuTorrent
             // 
-            this.lb4.AutoSize = true;
-            this.lb4.Location = new System.Drawing.Point(12, 47);
-            this.lb4.Name = "lb4";
-            this.lb4.Size = new System.Drawing.Size(81, 13);
-            this.lb4.TabIndex = 1;
-            this.lb4.Text = "Check µTorrent";
+            this.lbCheckuTorrent.AutoSize = true;
+            this.lbCheckuTorrent.Location = new System.Drawing.Point(12, 47);
+            this.lbCheckuTorrent.Name = "lbCheckuTorrent";
+            this.lbCheckuTorrent.Size = new System.Drawing.Size(81, 13);
+            this.lbCheckuTorrent.TabIndex = 1;
+            this.lbCheckuTorrent.Text = "Check µTorrent";
             // 
             // pbuTorrent
             // 
@@ -149,13 +149,13 @@ namespace TVRename
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(376, 125);
             this.Controls.Add(this.pbuTorrent);
-            this.Controls.Add(this.lb4);
+            this.Controls.Add(this.lbCheckuTorrent);
             this.Controls.Add(this.pbRSS);
-            this.Controls.Add(this.lb5);
+            this.Controls.Add(this.lbSearchRSS);
             this.Controls.Add(this.pbLocalSearch);
-            this.Controls.Add(this.lb3);
+            this.Controls.Add(this.lbSearchLocally);
             this.Controls.Add(this.pbMediaLib);
-            this.Controls.Add(this.lb1);
+            this.Controls.Add(this.lbMediaLibrary);
             this.Controls.Add(this.bnCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -175,13 +175,13 @@ namespace TVRename
         private System.Windows.Forms.Timer timer1;
 
         private System.Windows.Forms.Button bnCancel;
-        private System.Windows.Forms.Label lb1;
+        private System.Windows.Forms.Label lbMediaLibrary;
         private System.Windows.Forms.ProgressBar pbMediaLib;
-        private System.Windows.Forms.Label lb3;
+        private System.Windows.Forms.Label lbSearchLocally;
         private System.Windows.Forms.ProgressBar pbLocalSearch;
-        private System.Windows.Forms.Label lb5;
+        private System.Windows.Forms.Label lbSearchRSS;
         private System.Windows.Forms.ProgressBar pbRSS;
-        private System.Windows.Forms.Label lb4;
+        private System.Windows.Forms.Label lbCheckuTorrent;
         private System.Windows.Forms.ProgressBar pbuTorrent;
 	
     }

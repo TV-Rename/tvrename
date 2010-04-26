@@ -25,10 +25,6 @@ namespace TVRename
         public BuyMeADrink()
         {
             this.InitializeComponent();
-            //
-            //TODO: Add the constructor code here
-            //
-
             this.label1.Text = "If this program has saved you time, and you use it regularly, then please consider buying me a drink to say thanks!\r\r" + "Type in (or choose) an amount, then hit the button to go to Paypal.";
             this.comboBox1.Items.Add("$" + ((double) 1).ToString(".00"));
             this.comboBox1.Items.Add("$" + ((double) 2).ToString(".00"));

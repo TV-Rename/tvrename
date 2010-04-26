@@ -700,9 +700,6 @@ namespace TVRename
                     graphics.Graphics.Restore(state);
                 }
             }
-
-            //TODO Implement Clone and MeasureContent
-            //Here I should also implement MeasureContent (think also for a solution to allow rotated text with any kind of alignment)
         }
 
         #endregion

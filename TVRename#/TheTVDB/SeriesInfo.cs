@@ -109,10 +109,13 @@ namespace TVRename
             // "o" is always newer/better than us, if there is a choice
             if ((!string.IsNullOrEmpty(o.Name)) && betterLanguage)
                 this.Name = o.Name;
-            this.Items.Clear();
+           // this.Items.Clear();
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in o.Items)
             {
-                if ((!string.IsNullOrEmpty(kvp.Value)) || betterLanguage)
+                // on offer is non-empty text, in a better language
+                // or text for something we don't have
+                if ((!string.IsNullOrEmpty(kvp.Value) && betterLanguage) || 
+                     (!this.Items.ContainsKey(kvp.Key) || string.IsNullOrEmpty(this.Items[kvp.Key])))
                     this.Items[kvp.Key] = kvp.Value;
             }
             if (o.AirsTime != null)

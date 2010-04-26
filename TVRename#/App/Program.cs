@@ -14,8 +14,7 @@ using System.Windows.Forms;
 using TVRename;
 
 // Check the mutex that we're not already running, start the main UI, pass in commandline arguments
-
-// TODO: mutex stops you running a (future) command-line version if main UI version is already running
+// If we are running, send arguments via IPC to already running process
 
 public static class GlobalMembersTVRename
 {

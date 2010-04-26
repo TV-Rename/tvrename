@@ -28,7 +28,7 @@ namespace TVRename
         private TheTVDBCodeFinder mTCCF;
         private TheTVDB mTVDB;
 
-        public AddEditShow(ShowItem si, TheTVDB db, string timezone)
+        public AddEditShow(ShowItem si, TheTVDB db)
         {
             this.mSI = si;
             this.mTVDB = db;
@@ -70,7 +70,8 @@ namespace TVRename
 
             this.chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
 
-            this.ShowTimeZone = (!string.IsNullOrEmpty(timezone)) ? timezone : TimeZone.DefaultTimeZone();
+            this.ShowTimeZone = ((si == null)||(si.TheSeries() == null)) ? TimeZone.DefaultTimeZone() : si.TheSeries().ShowTimeZone;
+
             this.cbTimeZone.Text = this.ShowTimeZone;
             this.chkDVDOrder.Checked = si.DVDOrder;
             this.cbIncludeFuture.Checked = si.ForceCheckFuture;

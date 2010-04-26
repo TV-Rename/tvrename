@@ -120,6 +120,12 @@
   <metadata name="folderBrowser.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="label1.Text" xml:space="preserve">
+    <value>These are the folders at the "top" of your media library.  Add one or more folders here, either by dragging and dropping, or clicking "Add..." below.  Go to the "Ignore" tab, or click "Check &gt;&gt;" when done.</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>These are the new folders that have been found.  Click "Auto ID All", or manually edit each to set the show.  "Ignore" to add the folder to the Ignore list.  You can also drag and drop folders into this list.  Click "Add &amp;&amp; Close" add all identified shows to your "My Shows" list.</value>
+  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

@@ -250,6 +250,25 @@ namespace TVRename
             this.Unlock("SaveCache");
         }
 
+        public SeriesInfo FindSeriesForName(string showName)
+        {
+            this.Search(showName);
+            
+            if (string.IsNullOrEmpty(showName))
+                return null;
+
+            showName = showName.ToLower();
+
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in this.Series)
+            {
+                if (ser.Value.Name.ToLower() == showName)
+                    return ser.Value;
+            }
+
+            return null;
+        }
+
+
         public Episode FindEpisodeByID(int id)
         {
             this.GetLock("FindEpisodeByID");
