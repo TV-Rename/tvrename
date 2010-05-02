@@ -40,7 +40,7 @@ namespace TVRename
             else
                 this.WorkingRuleSet = new System.Collections.Generic.List<ShowRule>();
 
-            this.txtShowName.Text = si.ShowName();
+            this.txtShowName.Text = si.ShowName;
             this.txtSeasonNumber.Text = seasonNumber.ToString();
 
             this.FillRuleList(false, 0);

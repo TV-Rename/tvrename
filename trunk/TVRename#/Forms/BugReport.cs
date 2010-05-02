@@ -117,7 +117,7 @@ namespace TVRename
 
                         foreach (string folder in si.AllFolderLocations(this.mDoc.Settings)[snum])
                         {
-                            txt += si.TVDBCode + " : " + si.ShowName() + " : S" + snum + "\r\n";
+                            txt += si.TVDBCode + " : " + si.ShowName + " : S" + snum + "\r\n";
                             txt += "Folder: " + folder;
                             txt += "\r\n";
                             DirCache files = new DirCache();
@@ -127,7 +127,7 @@ namespace TVRename
                             {
                                 int seas;
                                 int ep;
-                                bool r = this.mDoc.FindSeasEp(fi.TheFile, out seas, out ep, si.ShowName());
+                                bool r = this.mDoc.FindSeasEp(fi.TheFile, out seas, out ep, si);
                                 bool useful = fi.HasUsefulExtension_NotOthersToo;
                                 txt += fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n";
                             }

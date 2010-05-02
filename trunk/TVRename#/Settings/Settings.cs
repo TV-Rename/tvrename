@@ -95,6 +95,7 @@ namespace TVRename
         public bool KeepTogether = true;
         public bool LeadingZeroOnSeason = false;
         public bool LeaveOriginals = false;
+        public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
         public bool NFOs = false;
         public CustomName NamingStyle = new CustomName();
@@ -266,6 +267,8 @@ namespace TVRename
                     this.SearchLocally = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LeaveOriginals")
                     this.LeaveOriginals = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "LookForDateInFilename")
+                    LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FNPRegexs")
                 {
                     this.FNPRegexs.Clear();
@@ -616,6 +619,9 @@ namespace TVRename
             writer.WriteEndElement();
             writer.WriteStartElement("LeaveOriginals");
             writer.WriteValue(this.LeaveOriginals);
+            writer.WriteEndElement();
+            writer.WriteStartElement("LookForDateInFilename");
+            writer.WriteValue(this.LookForDateInFilename);
             writer.WriteEndElement();
 
             writer.WriteStartElement("FNPRegexs");

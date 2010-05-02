@@ -41,7 +41,7 @@ namespace TVRename
 
             foreach (ShowItem si in this.SIL)
             {
-                this.cbShowList.Items.Add(si.ShowName());
+                this.cbShowList.Items.Add(si.ShowName);
                 if (si == initialShow)
                     this.cbShowList.SelectedIndex = this.cbShowList.Items.Count - 1;
             }
@@ -283,7 +283,8 @@ namespace TVRename
                 if (!this.TheSettings.UsefulExtension(fi.Extension, true))
                     continue; // move on
 
-                bool r = TVDoc.FindSeasEp(fi, out seas, out ep, this.cbShowList.Text, rel);
+                ShowItem si = this.cbShowList.SelectedIndex >= 0 ? this.SIL[this.cbShowList.SelectedIndex] : null;
+                bool r = TVDoc.FindSeasEp(fi, out seas, out ep, si, rel, false);
                 ListViewItem lvi = new ListViewItem();
                 lvi.Text = fi.Name;
                 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
