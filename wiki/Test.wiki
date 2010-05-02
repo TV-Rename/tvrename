@@ -1,0 +1,32 @@
+#summary Testing stuff
+
+= Introduction =
+
+This is a test page.  Testing stuff.
+
+= Details =
+
+Blah blah blah.
+
+A list:
+  * One *two* three_
+  * I like cheese.
+  * Moose!
+
+An image:
+
+http://tvrename.com/img/oldTV.png
+
+What an old TV!  It is almost as old as I am.
+
+How about an image url inline ? http://tvrename.com/img/oldTV.png does that work?
+
+= Gadgets =
+
+<wiki:gadget url="http://www.ohloh.net/p/tvrename/widgets/project_basic_stats.xml" height="220" border="1" />
+
+<wiki:gadget url="http://www.ohloh.net/p/tvrename/widgets/project_cocomo.xml" height="250" border="0" />
+
+<wiki:gadget url="http://www.ohloh.net/p/430139/widgets/project_factoids.xml" border="0"/>
+
+<wiki:gadget url="http://www.ohloh.net/p/430139/widgets/project_languages.xml" border="1"/>
