@@ -483,7 +483,7 @@ namespace TVRename
         //           xxx 
         //               ShowItem si = new ShowItem(this.mDoc.GetTVDB(false, ""));
         //            si.TVDBCode = ai.TheSeries.TVDBCode;
-        //            //si->ShowName() = ai->TheSeries->Name;
+        //            //si->ShowName = ai->TheSeries->Name;
         //            this.mDoc.GetShowItems(true).Add(si);
         //            this.mDoc.UnlockShowItems();
         //            this.mDoc.GenDict();

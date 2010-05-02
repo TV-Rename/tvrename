@@ -96,7 +96,7 @@ namespace TVRename
                 writer.WriteStartElement("tvshow");
 
                 writer.WriteStartElement("title");
-                writer.WriteValue(this.SI.ShowName());
+                writer.WriteValue(this.SI.ShowName);
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("episodeguideurl");
@@ -200,7 +200,7 @@ namespace TVRename
 
                 if (this.Episode != null)
                 {
-                    lvi.Text = this.Episode.SI.ShowName();
+                    lvi.Text = this.Episode.SI.ShowName;
                     lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
                     lvi.SubItems.Add(this.Episode.NumsAsString());
                     DateTime? dt = this.Episode.GetAirDateDT(true);
@@ -211,7 +211,7 @@ namespace TVRename
                 }
                 else
                 {
-                    lvi.Text = this.SI.ShowName();
+                    lvi.Text = this.SI.ShowName;
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");

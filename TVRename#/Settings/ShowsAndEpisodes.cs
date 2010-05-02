@@ -259,14 +259,17 @@ namespace TVRename
             return this.TVDB.GetSeries(this.TVDBCode);
         }
 
-        public string ShowName()
+        public string ShowName
         {
-            if (this.UseCustomShowName)
-                return this.CustomShowName;
-            SeriesInfo ser = this.TheSeries();
-            if (ser != null)
-                return ser.Name;
-            return "<" + this.TVDBCode + " not downloaded>";
+            get
+            {
+                if (this.UseCustomShowName)
+                    return this.CustomShowName;
+                SeriesInfo ser = this.TheSeries();
+                if (ser != null)
+                    return ser.Name;
+                return "<" + this.TVDBCode + " not downloaded>";
+            }
         }
 
         public void SetDefaults(TheTVDB db)
@@ -518,8 +521,8 @@ namespace TVRename
 
         public static int CompareShowItemNames(ShowItem one, ShowItem two)
         {
-            string ones = one.ShowName(); // + " " +one->SeasonNumber.ToString("D3");
-            string twos = two.ShowName(); // + " " +two->SeasonNumber.ToString("D3");
+            string ones = one.ShowName; // + " " +one->SeasonNumber.ToString("D3");
+            string twos = two.ShowName; // + " " +two->SeasonNumber.ToString("D3");
             return ones.CompareTo(twos);
         }
     }

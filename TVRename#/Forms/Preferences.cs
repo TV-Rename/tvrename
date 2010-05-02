@@ -110,6 +110,7 @@ namespace TVRename
             S.SearchLocally = this.cbSearchLocally.Checked;
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
+            S.LookForDateInFilename = this.cbLookForAirdate.Checked;
 
             if (this.rbFolderFanArt.Checked)
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
@@ -222,6 +223,7 @@ namespace TVRename
             this.cbFolderJpg.Checked = S.FolderJpg;
             this.cbRenameCheck.Checked = S.RenameCheck;
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
+            this.cbLookForAirdate.Checked = S.LookForDateInFilename;
             this.cbMissing.Checked = S.MissingCheck;
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;

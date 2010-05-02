@@ -189,7 +189,7 @@ namespace TVRename
             this.Dirty = false;
         }
 
-        public DateTime? GetAirDateDT(bool correct)
+        public DateTime? GetAirDateDT(bool inLocalTime)
         {
             if (this.FirstAired == null)
                 return null;
@@ -199,7 +199,7 @@ namespace TVRename
 
             DateTime dt = new DateTime(fa.Year, fa.Month, fa.Day, (airs != null) ? airs.Value.Hour : 20, (airs != null) ? airs.Value.Minute : 0, 0, 0);
 
-            if (!correct)
+            if (!inLocalTime)
                 return dt;
 
             // do timezone adjustment
