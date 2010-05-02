@@ -240,7 +240,8 @@ namespace TVRename
                 // keep in sync with ProcessAddItems, etc.
                 foreach (string sw in SeasonWords)
                 {
-                    if (di.GetDirectories("*" + sw + " *").Length == 0)
+                    DirectoryInfo[] di2 = di.GetDirectories("*" + sw + " *");
+                    if (di2.Length == 0)
                         continue;
 
                     folderName = sw;
@@ -290,7 +291,7 @@ namespace TVRename
             bool hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName);
             bool hasSubFolders = di2.GetDirectories().Length > 0;
 
-            if (!alreadyHaveIt && !hasSubFolders)
+            if (!alreadyHaveIt && (!hasSubFolders || hasSeasonFolders))
             {
                 // ....its good!
                 FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
@@ -428,7 +429,7 @@ namespace TVRename
         // if so, add a rcitem for copy to "fi"
         public bool FindMissingEp(DirCache dirCache, ItemMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
         {
-            string showname = me.Episode.SI.ShowName();
+            string showname = me.Episode.SI.ShowName;
             int season = me.Episode.SeasonNumber;
 
             //String ^toName = FilenameFriendly(Settings->NamingStyle->NameFor(me->PE));
@@ -460,7 +461,7 @@ namespace TVRename
                         int epF;
                         // String ^fn = file->Name;
 
-                        if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.TheSeries.Name) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
+                        if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
                             FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
                             addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode));
@@ -978,7 +979,7 @@ namespace TVRename
                     if (!this.Settings.UsefulExtension(fiTemp.Extension, false))
                         continue; // move on
 
-                    if (this.FindSeasEp(fiTemp, out seasFound, out epFound, si.ShowName()))
+                    if (this.FindSeasEp(fiTemp, out seasFound, out epFound, si))
                     {
                         if (seasFound == -1)
                             seasFound = seasWanted;
@@ -1760,7 +1761,7 @@ namespace TVRename
         //			{
         //			writer->WriteStartElement("MissingItem");
         //			writer->WriteStartElement("ShowName");
-        //			writer->WriteValue(me->SI->ShowName());
+        //			writer->WriteValue(me->SI->ShowName);
         //			writer->WriteEndElement();
         //			writer->WriteStartElement("Season");
         //			writer->WriteValue(me->Season);
@@ -1920,7 +1921,7 @@ namespace TVRename
 
                 ItemMissing Action = (ItemMissing) (Action1);
 
-                string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName());
+                string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName);
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -1934,7 +1935,7 @@ namespace TVRename
                     {
                         int seasF;
                         int epF;
-                        if (this.FindSeasEp(file, out seasF, out epF, Action.Episode.TheSeries.Name) && (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
+                        if (this.FindSeasEp(file, out seasF, out epF, Action.Episode.SI) && (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
                         {
                             toRemove.Add(Action1);
                             newList.Add(new ItemuTorrenting(te, Action.Episode, Action.TheFileNoExt));
@@ -1979,7 +1980,7 @@ namespace TVRename
                 ItemMissing Action = (ItemMissing) (Action1);
 
                 ProcessedEpisode pe = Action.Episode;
-                string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName());
+                string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName);
                 string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
 
                 foreach (RSSItem rss in this.RSSList)
@@ -2298,7 +2299,7 @@ namespace TVRename
                             }
                             if ((di == null) || (!di.Exists))
                             {
-                                string sn = si.ShowName();
+                                string sn = si.ShowName;
                                 string text = snum + " of " + si.MaxSeason();
                                 string theFolder = folder;
                                 string otherFolder = null;
@@ -2455,6 +2456,11 @@ namespace TVRename
                 si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
                 System.Collections.Generic.Dictionary<int, StringList> allFolders = si.AllFolderLocations(this.Settings);
 
+                int lastSeason = 0;
+                foreach (int n in numbers)
+                    if (n > lastSeason)
+                        lastSeason = n;
+
                 foreach (int snum in numbers)
                 {
                     if (this.ActionCancel)
@@ -2550,7 +2556,7 @@ namespace TVRename
                             int seasNum;
                             int epNum;
 
-                            if (!this.FindSeasEp(fi, out seasNum, out epNum, si.ShowName()))
+                            if (!this.FindSeasEp(fi, out seasNum, out epNum, si))
                                 continue; // can't find season & episode, so this file is of no interest to us
 
                             if (seasNum == -1)
@@ -2618,7 +2624,9 @@ namespace TVRename
                                     bool notFuture = (dtOK && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
 
                                     bool noAirdatesUntilNow = true;
-                                    for (int i = 1; i <= snum; i++)
+                                    // for specials "season", see if any season has any airdates
+                                    // otherwise, check only up to the season we are considering
+                                    for (int i = 1; i <= ((snum == 0) ? lastSeason : snum); i++)
                                     {
                                         if (this.HasAnyAirdates(si, i))
                                         {
@@ -2799,22 +2807,82 @@ namespace TVRename
             return filename;
         }
 
-        public bool FindSeasEp(FileInfo fi, out int seas, out int ep, string showNameHint)
+        private static bool FindSeasEpDateCheck(FileInfo fi, out int seas, out int ep, ShowItem si)
         {
-            return FindSeasEp(fi, out seas, out ep, showNameHint, this.Settings.FNPRegexs);
+            if (fi == null)
+            {
+                seas = -1;
+                ep = -1;
+                return false;
+            }
+
+            // look for a valid airdate in the filename
+            // check for YMD, DMY, and MDY
+            // only check against airdates we expect for the given show
+            SeriesInfo ser = si.TVDB.GetSeries(si.TVDBCode);
+            string[] dateFormats = new[] { "yyyy-MM-dd","dd-MM-yyyy","MM-dd-yyyy",
+                                           "yy-MM-dd","dd-MM-yy","MM-dd-yy" };
+            string filename = fi.Name;
+            // force possible date separators to a dash
+            filename = filename.Replace("/", "-");
+            filename = filename.Replace(".", "-");
+            filename = filename.Replace(",", "-");
+            filename = filename.Replace(" ", "-");
+
+            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in ser.Seasons)
+            {
+                foreach (Episode epi in kvp.Value.Episodes)
+                {
+                    DateTime? dt = epi.GetAirDateDT(false); // file will have local timezone date, not ours
+                    if ((dt == null) || (!dt.HasValue))
+                        continue;
+
+                    foreach (string dateFormat in dateFormats)
+                    {
+                        string datestr = dt.Value.ToString(dateFormat);
+                        if (filename.Contains(datestr))
+                        {
+                            seas = epi.SeasonNumber;
+                            ep = epi.EpNum;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            ep = -1;
+            seas = -1;
+            return false;
         }
 
-        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, string showNameHint, FNPRegexList rexps)
+        public bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si)
         {
+            return TVDoc.FindSeasEp(fi, out seas, out ep, si, this.Settings.FNPRegexs, this.Settings.LookForDateInFilename);
+        }
+
+        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si, FNPRegexList rexps, bool doDateCheck)
+        {
+            if (fi == null)
+            {
+                seas = -1;
+                ep = -1;
+                return false;
+            }
+
+            if (doDateCheck && FindSeasEpDateCheck(fi, out seas, out ep, si))
+                return true;
+
             string filename = fi.Name;
             int l = filename.Length;
             int le = fi.Extension.Length;
             filename = filename.Substring(0, l - le);
-            return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, showNameHint, rexps);
+            return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, si, rexps);
         }
 
-        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, string showNameHint, FNPRegexList rexps)
+        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, ShowItem si, FNPRegexList rexps)
         {
+            string showNameHint = (si != null) ? si.ShowName : "";
+                
             seas = ep = -1;
 
             filename = SEFinderSimplifyFilename(filename, showNameHint);

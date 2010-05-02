@@ -105,7 +105,7 @@ namespace TVRename
         {
             String name = styleString; // TODO: make copy instead?
 
-            string showname = pe.SI.ShowName();
+            string showname = pe.SI.ShowName;
             string epname = pe.Name;
             if (urlEncode)
             {

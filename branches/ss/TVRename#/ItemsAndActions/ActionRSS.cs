@@ -119,7 +119,7 @@ namespace TVRename
             get
             {
                 ListViewItem lvi = new ListViewItem {
-                                                        Text = this.Episode.SI.ShowName()
+                                                        Text = this.Episode.SI.ShowName
                                                     };
 
                 lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());

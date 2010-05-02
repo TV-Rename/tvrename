@@ -1271,7 +1271,7 @@ namespace TVRename
                     // see if season and episode match
                     int seasF;
                     int epF;
-                    if (TVDoc.FindSeasEp("", simplifiedfname, out seasF, out epF, m.TheSeries.Name, this.Rexps) && (seasF == m.SeasonNumber) && (epF == m.EpNum))
+                    if (TVDoc.FindSeasEp("", simplifiedfname, out seasF, out epF, m.SI, this.Rexps) && (seasF == m.SeasonNumber) && (epF == m.EpNum))
                     {
                         // match!
                         // get extension from nameInTorrent

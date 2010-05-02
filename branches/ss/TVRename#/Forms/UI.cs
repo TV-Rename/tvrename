@@ -681,7 +681,7 @@ namespace TVRename
                 else
                     seasText = " - " + seasText;
 
-                body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName() + "</A>" + seasText + "</h1>";
+                body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
 
                 foreach (ProcessedEpisode ei in eis)
                 {
@@ -732,7 +732,7 @@ namespace TVRename
                 if ((!string.IsNullOrEmpty(ser.GetItem("banner"))) && (!string.IsNullOrEmpty(db.BannerMirror)))
                     body += "<img width=758 height=140 src=\"" + db.BannerMirror + "/banners/" + ser.GetItem("banner") + "\"><br/>";
 
-                body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName() + "</A> " + "</h1>";
+                body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A> " + "</h1>";
 
                 body += "<h2>Overview</h2>" + ser.GetItem("Overview");
 
@@ -1271,7 +1271,7 @@ namespace TVRename
                 this.showRightClickMenu.Items.Add(tsi);
                 ToolStripSeparator tss = new ToolStripSeparator();
                 this.showRightClickMenu.Items.Add(tss);
-                tsi = new ToolStripMenuItem("Scan \"" + si.ShowName() + "\"");
+                tsi = new ToolStripMenuItem("Scan \"" + si.ShowName + "\"");
                 tsi.Tag = (int)RightClickCommands.kScanSpecificSeries;
                 this.showRightClickMenu.Items.Add(tsi);
                 //tsi = gcnew ToolStripMenuItem("Renaming Check");     tsi->Tag = (int)kRenamingCheckSeries; showRightClickMenu->Items->Add(tsi);
@@ -1909,7 +1909,7 @@ namespace TVRename
         public TreeNode AddShowItemToTree(ShowItem si)
         {
             TheTVDB db = this.mDoc.GetTVDB(true, "AddShowItemToTree");
-            string name = si.ShowName();
+            string name = si.ShowName;
 
             SeriesInfo ser = db.GetSeries(si.TVDBCode);
 
@@ -1979,7 +1979,7 @@ namespace TVRename
                 lvi.Group = this.lvWhenToWatch.Groups[2];
 
             int n = 1;
-            lvi.Text = pe.SI.ShowName();
+            lvi.Text = pe.SI.ShowName;
             lvi.SubItems[n++].Text = (pe.SeasonNumber != 0) ? pe.SeasonNumber.ToString() : "Special";
             string estr = (pe.EpNum > 0) ? pe.EpNum.ToString() : "";
             if ((pe.EpNum > 0) && (pe.EpNum2 != pe.EpNum) && (pe.EpNum2 > 0))
@@ -2075,7 +2075,7 @@ namespace TVRename
 
         private void DeleteShow(ShowItem si)
         {
-            System.Windows.Forms.DialogResult res = MessageBox.Show("Remove show \"" + si.ShowName() + "\".  Are you sure?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            System.Windows.Forms.DialogResult res = MessageBox.Show("Remove show \"" + si.ShowName + "\".  Are you sure?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != System.Windows.Forms.DialogResult.Yes)
                 return;
 
