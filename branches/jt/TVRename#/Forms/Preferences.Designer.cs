@@ -68,6 +68,7 @@ namespace TVRename
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
             this.label21 = new System.Windows.Forms.Label();
             this.cbAutoSelInMyShows = new System.Windows.Forms.CheckBox();
             this.label20 = new System.Windows.Forms.Label();
@@ -138,7 +139,7 @@ namespace TVRename
             this.label24 = new System.Windows.Forms.Label();
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.openFile = new System.Windows.Forms.OpenFileDialog();
-            this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
+            this.cbMonitorFolder = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -468,6 +469,16 @@ namespace TVRename
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // cbLookForAirdate
+            // 
+            this.cbLookForAirdate.AutoSize = true;
+            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 157);
+            this.cbLookForAirdate.Name = "cbLookForAirdate";
+            this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
+            this.cbLookForAirdate.TabIndex = 12;
+            this.cbLookForAirdate.Text = "&Look for airdate in filenames";
+            this.cbLookForAirdate.UseVisualStyleBackColor = true;
+            // 
             // label21
             // 
             this.label21.AutoSize = true;
@@ -783,6 +794,7 @@ namespace TVRename
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.cbMonitorFolder);
             this.tabPage4.Controls.Add(this.bnOpenSearchFolder);
             this.tabPage4.Controls.Add(this.bnRemoveSearchFolder);
             this.tabPage4.Controls.Add(this.bnAddSearchFolder);
@@ -1213,15 +1225,16 @@ namespace TVRename
             // 
             this.openFile.Filter = "Torrent files (*.torrent)|*.torrent|All files (*.*)|*.*";
             // 
-            // cbLookForAirdate
+            // chMonitorFolder
             // 
-            this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 157);
-            this.cbLookForAirdate.Name = "cbLookForAirdate";
-            this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
-            this.cbLookForAirdate.TabIndex = 12;
-            this.cbLookForAirdate.Text = "&Look for airdate in filenames";
-            this.cbLookForAirdate.UseVisualStyleBackColor = true;
+            this.cbMonitorFolder.AutoSize = true;
+            this.cbMonitorFolder.Location = new System.Drawing.Point(249, 373);
+            this.cbMonitorFolder.Name = "chMonitorFolder";
+            this.cbMonitorFolder.Size = new System.Drawing.Size(98, 17);
+            this.cbMonitorFolder.TabIndex = 5;
+            this.cbMonitorFolder.Text = "Monitor Folders";
+            this.cbMonitorFolder.UseVisualStyleBackColor = true;
+            this.cbMonitorFolder.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // Preferences
             // 
@@ -1386,6 +1399,7 @@ namespace TVRename
         private System.Windows.Forms.ListBox lbLangs;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.CheckBox cbLookForAirdate;
+        private System.Windows.Forms.CheckBox cbMonitorFolder;
 
     }
 }

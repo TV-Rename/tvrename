@@ -21,7 +21,7 @@ namespace TVRename
         private static int TypeNumber(Item a)
         {
             if (a is ItemMissing)
-                return 1;
+                return 7;
             if (a is ActionCopyMoveRename)
                 return 2;
             if (a is ActionRSS)
