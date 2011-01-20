@@ -151,7 +151,7 @@ namespace TVRename
             try
             {
                 fs = loadFrom.Open(FileMode.Open);
-                bool r = this.ProcessTVDBResponse(fs);
+                bool r = this.ProcessTVDBResponse(fs, null);
                 fs.Close();
                 fs = null;
                 if (r)
@@ -832,7 +832,7 @@ namespace TVRename
             return true;
         }
 
-        public bool ProcessTVDBResponse(Stream str)
+        public bool ProcessTVDBResponse(Stream str, int? codeHint)
         {
             // Will have one or more series, and episodes
             // all wrapped in <Data> </Data>
@@ -942,9 +942,19 @@ namespace TVRename
             {
                 string message = "Error processing data from TheTVDB (top level).";
                 message += "\r\n" + e.Message;
-                MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                String name = "";
+                if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
+                {
+                    name += "Show \"" + Series[codeHint.Value].Name + "\" ";
+                }
+                if (codeHint.HasValue)
+                {
+                    name += "ID #" + codeHint.Value+" ";
+                }
 
-                throw new TVDBException(e.Message);
+                MessageBox.Show(name+message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // throw new TVDBException(e.Message);
+                return false;
             }
             finally
             {
@@ -1013,7 +1023,7 @@ namespace TVRename
 
             MemoryStream ms = new MemoryStream(p);
 
-            this.ProcessTVDBResponse(ms);
+            this.ProcessTVDBResponse(ms, code);
 
             this.ForceReloadOn.Remove(code);
 
@@ -1047,7 +1057,7 @@ namespace TVRename
 
             MemoryStream ms = new MemoryStream(p);
 
-            return this.ProcessTVDBResponse(ms);
+            return this.ProcessTVDBResponse(ms, seriesID);
         }
 
         public SeriesInfo MakePlaceholderSeries(int code, string name)
@@ -1118,7 +1128,7 @@ namespace TVRename
 
             MemoryStream ms = new MemoryStream(p);
 
-            this.ProcessTVDBResponse(ms);
+            this.ProcessTVDBResponse(ms, null);
         }
 
         public string WebsiteURL(int code, int seasid, bool summaryPage)
