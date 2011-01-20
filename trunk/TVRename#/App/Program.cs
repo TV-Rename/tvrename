@@ -120,7 +120,7 @@ public static class GlobalMembersTVRename
 
             // try loading using current settings files, and set up the main
             // classes
-            TheTVDB tvdb = new TheTVDB(tvdbFile, TVDoc.TVDBFile());
+            TheTVDB tvdb = new TheTVDB(tvdbFile, TVDoc.TVDBFile(), clargs);
             doc = new TVDoc(settingsFile, tvdb, clargs);
 
             if (!ok)

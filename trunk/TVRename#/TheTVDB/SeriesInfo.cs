@@ -187,13 +187,19 @@ namespace TVRename
                     }
                     else if (r.Name == "FirstAired")
                     {
+                        string theDate = r.ReadElementContentAsString();
+    
                         try
                         {
-                            this.FirstAired = DateTime.ParseExact(r.ReadElementContentAsString(), "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                            this.FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                            this.Items["FirstAired"] = this.FirstAired.Value.ToString("yyyy-MM-dd");
+                            this.Items["Year"] = this.FirstAired.Value.ToString("yyyy");
                         }
                         catch
                         {
                             this.FirstAired = null;
+                            this.Items["FirstAired"] = "";
+                            this.Items["Year"] = "";
                         }
                     }
                     else
