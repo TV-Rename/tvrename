@@ -1195,8 +1195,6 @@ namespace TVRename
             this.PerformLayout();
 
         }
-
-
         #endregion
 
         private System.Windows.Forms.Button bnMyShowsCollapse;
