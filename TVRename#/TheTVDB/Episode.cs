@@ -53,7 +53,7 @@ namespace TVRename
             this.SetDefaults(ser, seas);
         }
 
-        public Episode(SeriesInfo ser, Season seas, XmlReader r)
+        public Episode(SeriesInfo ser, Season seas, XmlReader r, CommandLineArgs args)
         {
             // <Episode>
             //  <id>...</id>
@@ -132,7 +132,8 @@ namespace TVRename
 
                 message += "\r\n" + e.Message;
 
-                MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!args.Unattended) 
+                    MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 throw new TVDBException(e.Message);
             }

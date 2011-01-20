@@ -103,7 +103,7 @@ namespace TVRename
             string file = this.mDoc.Settings.ResumeDatPath;
             if (!File.Exists(file))
                 return;
-            BEncodeLoader bel = new BEncodeLoader();
+            BEncodeLoader bel = new BEncodeLoader(mDoc.Args);
             BTFile resumeDat = bel.Load(file);
             if (resumeDat == null)
                 return;
@@ -163,7 +163,9 @@ namespace TVRename
             foreach (string torrent in this.lbUTTorrents.CheckedItems)
                 sl.Add(torrent);
 
-            btp.DoWork(sl, searchFolder, this.lvUTResults, this.cbUTUseHashing.Checked, this.cbUTMatchMissing.Checked, this.cbUTSetPrio.Checked, testMode, this.chkUTSearchSubfolders.Checked, this.mDoc.TheActionList, this.mDoc.Settings.FNPRegexs);
+            btp.DoWork(sl, searchFolder, this.lvUTResults, this.cbUTUseHashing.Checked, this.cbUTMatchMissing.Checked, this.cbUTSetPrio.Checked, 
+                       testMode, this.chkUTSearchSubfolders.Checked, this.mDoc.TheActionList, this.mDoc.Settings.FNPRegexs,
+                       mDoc.Args);
 
             if (!testMode)
                 RestartUTorrent();

@@ -493,6 +493,13 @@ namespace TVRename
 
     public class BEncodeLoader
     {
+        private CommandLineArgs Args;
+        
+        public BEncodeLoader(CommandLineArgs args)
+        {
+            Args = args;
+        }
+
         public BTItem ReadString(Stream sr, Int64 length)
         {
             BinaryReader br = new BinaryReader(sr);
@@ -742,7 +749,7 @@ namespace TVRename
             }
         }
 
-        public bool ProcessTorrentFile(string torrentFile, TreeView tvTree)
+        public bool ProcessTorrentFile(string torrentFile, TreeView tvTree, CommandLineArgs args)
         {
             // ----------------------------------------
             // read in torrent file
@@ -750,7 +757,7 @@ namespace TVRename
             if (tvTree != null)
                 tvTree.Nodes.Clear();
 
-            BEncodeLoader bel = new BEncodeLoader();
+            BEncodeLoader bel = new BEncodeLoader(args);
             BTFile btFile = bel.Load(torrentFile);
 
             if (btFile == null)
@@ -933,7 +940,7 @@ namespace TVRename
 
         public bool RenameFilesOnDiskToMatchTorrent(string torrentFile, string folder, TreeView tvTree,
             ItemList renameListOut,
-            bool copyNotMove, string copyDest)
+            bool copyNotMove, string copyDest, CommandLineArgs args)
         {
             if ((string.IsNullOrEmpty(folder) || !Directory.Exists(folder)))
                 return false;
@@ -958,7 +965,7 @@ namespace TVRename
 
             this.RenameListOut.Clear();
 
-            bool r = this.ProcessTorrentFile(torrentFile, tvTree);
+            bool r = this.ProcessTorrentFile(torrentFile, tvTree, args);
 
             return r;
         }
@@ -1025,11 +1032,11 @@ namespace TVRename
             return (100 * bitsOn + totalBits / 2) / totalBits;
         }
 
-        public System.Collections.Generic.List<TorrentEntry> AllFilesBeingDownloaded(TVSettings settings)
+        public System.Collections.Generic.List<TorrentEntry> AllFilesBeingDownloaded(TVSettings settings, CommandLineArgs args)
         {
             System.Collections.Generic.List<TorrentEntry> r = new System.Collections.Generic.List<TorrentEntry>();
 
-            BEncodeLoader bel = new BEncodeLoader();
+            BEncodeLoader bel = new BEncodeLoader(args);
             foreach (BTItem it in this.ResumeDat.GetDict().Items)
             {
                 if ((it.Type != BTChunk.kDictionaryItem))
@@ -1048,8 +1055,9 @@ namespace TVRename
                     continue;
 
                 BTString prioString = (BTString) (p);
+                string directoryName = Path.GetDirectoryName(this.ResumeDatPath) + "\\";
 
-                BTFile tor = bel.Load(torrentFile);
+                BTFile tor = bel.Load(directoryName + torrentFile);
                 if (tor == null)
                     continue;
 
@@ -1355,14 +1363,15 @@ namespace TVRename
             return true;
         }
 
-        public bool LoadResumeDat()
+        public bool LoadResumeDat(CommandLineArgs args)
         {
-            BEncodeLoader bel = new BEncodeLoader();
+            BEncodeLoader bel = new BEncodeLoader(args);
             this.ResumeDat = bel.Load(this.ResumeDatPath);
             return (this.ResumeDat != null);
         }
 
-        public bool DoWork(StringList Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, bool searchSubFolders, ItemList missingList, FNPRegexList rexps)
+        public bool DoWork(StringList Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, 
+                           bool searchSubFolders, ItemList missingList, FNPRegexList rexps, CommandLineArgs args)
         {
             this.Rexps = rexps;
 
@@ -1383,7 +1392,7 @@ namespace TVRename
 
             this.Prog(0);
 
-            if (!this.LoadResumeDat())
+            if (!this.LoadResumeDat(args))
                 return false;
 
             bool r = true;
@@ -1395,8 +1404,8 @@ namespace TVRename
 
             foreach (string tf in Torrents)
             {
-                r = r && this.ProcessTorrentFile(tf, null);
-                if (!r)
+                r = this.ProcessTorrentFile(tf, null, args);
+                if (!r) // stop on the first failure
                     break;
             }
 

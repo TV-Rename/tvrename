@@ -19,6 +19,7 @@ namespace TVRename
         public bool ForceRecover;
         public bool Scan;
         public bool DoAll;
+        public bool Unattended;
 
         public CommandLineArgs(String[] args)
         {
@@ -41,6 +42,8 @@ namespace TVRename
 
             DoAll = Array.IndexOf(args, "/doall") != -1;
             Scan = Array.IndexOf(args, "/scan") != -1;
+
+            Unattended = Array.IndexOf(args, "/unattended") != -1;
         }
     }
 }

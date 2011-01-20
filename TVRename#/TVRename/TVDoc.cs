@@ -288,17 +288,27 @@ namespace TVRename
             } // for each showitem
 
             string folderName = null;
-            bool hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName);
-            bool hasSubFolders = di2.GetDirectories().Length > 0;
-
-            if (!alreadyHaveIt && (!hasSubFolders || hasSeasonFolders))
+            bool hasSeasonFolders = false;
+            bool hasSubFolders = false;
+            try
             {
-                // ....its good!
-                FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
-                AddItems.Add(ai);
-                if (andGuess)
-                    this.MonitorGuessShowItem(ai);
+                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName);
+                hasSubFolders = di2.GetDirectories().Length > 0;
+                if (!alreadyHaveIt && (!hasSubFolders || hasSeasonFolders))
+                {
+                    // ....its good!
+                    FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
+                    AddItems.Add(ai);
+                    if (andGuess)
+                        this.MonitorGuessShowItem(ai);
+                }
+
             }
+            catch (UnauthorizedAccessException)
+            {
+                alreadyHaveIt = true;
+            }
+
             return hasSeasonFolders || alreadyHaveIt;
         }
 
@@ -398,7 +408,7 @@ namespace TVRename
             this.UnlockShowItems();
         }
 
-        public bool RenameFilesToMatchTorrent(string torrent, string folder, TreeView tvTree, SetProgressDelegate prog, bool copyNotMove, string copyDest)
+        public bool RenameFilesToMatchTorrent(string torrent, string folder, TreeView tvTree, SetProgressDelegate prog, bool copyNotMove, string copyDest, CommandLineArgs args)
         {
             if (string.IsNullOrEmpty(folder))
                 return false;
@@ -417,7 +427,7 @@ namespace TVRename
 
             BTFileRenamer btp = new BTFileRenamer(prog);
             ItemList newList = new ItemList();
-            bool r = btp.RenameFilesOnDiskToMatchTorrent(torrent, folder, tvTree, newList, copyNotMove, copyDest);
+            bool r = btp.RenameFilesOnDiskToMatchTorrent(torrent, folder, tvTree, newList, copyNotMove, copyDest, args);
 
             foreach (Item i in newList)
                 this.TheActionList.Add(i);
@@ -865,7 +875,8 @@ namespace TVRename
 
             if (!this.DownloadOK)
             {
-                MessageBox.Show(this.mTVDB.LastError, "Error while downloading", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!this.Args.Unattended)
+                    MessageBox.Show(this.mTVDB.LastError, "Error while downloading", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 this.mTVDB.LastError = "";
             }
 
@@ -1898,10 +1909,10 @@ namespace TVRename
                 return;
 
             BTResume btr = new BTResume(prog, resDatFile);
-            if (!btr.LoadResumeDat())
+            if (!btr.LoadResumeDat(Args))
                 return;
 
-            System.Collections.Generic.List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded(this.Settings);
+            System.Collections.Generic.List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded(this.Settings, Args);
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
