@@ -1055,9 +1055,15 @@ namespace TVRename
                     continue;
 
                 BTString prioString = (BTString) (p);
-                string directoryName = Path.GetDirectoryName(this.ResumeDatPath) + "\\";
+                string directoryName = Path.GetDirectoryName(this.ResumeDatPath) + System.IO.Path.DirectorySeparatorChar;
 
-                BTFile tor = bel.Load(directoryName + torrentFile);
+                if (!File.Exists(torrentFile)) // if the torrent file doesn't exist
+                    torrentFile = directoryName + torrentFile; // ..try prepending the resume.dat folder's path to it.
+
+                if (!File.Exists(torrentFile))
+                    continue; // can't find it.  give up!
+                
+                BTFile tor = bel.Load(torrentFile);
                 if (tor == null)
                     continue;
 
