@@ -75,14 +75,17 @@ namespace TVRename
                         break;
                     if (r.Name == "id")
                         this.EpisodeID = r.ReadElementContentAsInt();
-                    if (r.Name == "seriesid")
+                    else if (r.Name == "seriesid")
                         this.SeriesID = r.ReadElementContentAsInt(); // thetvdb series id
-                    if (r.Name == "seasonid")
+                    else if (r.Name == "seasonid")
                         this.SeasonID = r.ReadElementContentAsInt();
                     else if (r.Name == "EpisodeNumber")
                         this.EpNum = r.ReadElementContentAsInt();
                     else if (r.Name == "SeasonNumber")
-                        this.ReadSeasonNum = r.ReadElementContentAsInt();
+                    {
+                        String sn = r.ReadElementContentAsString();
+                        int.TryParse(sn, out this.ReadSeasonNum);
+                    }
                     else if (r.Name == "lastupdated")
                         this.Srv_LastUpdated = r.ReadElementContentAsInt();
                     else if (r.Name == "Overview")

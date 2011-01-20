@@ -37,6 +37,7 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Preferences));
             this.OKButton = new System.Windows.Forms.Button();
             this.bnCancel = new System.Windows.Forms.Button();
@@ -99,6 +100,7 @@ namespace TVRename
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.cbMonitorFolder = new System.Windows.Forms.CheckBox();
             this.bnOpenSearchFolder = new System.Windows.Forms.Button();
             this.bnRemoveSearchFolder = new System.Windows.Forms.Button();
             this.bnAddSearchFolder = new System.Windows.Forms.Button();
@@ -139,6 +141,7 @@ namespace TVRename
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -783,6 +786,7 @@ namespace TVRename
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.cbMonitorFolder);
             this.tabPage4.Controls.Add(this.bnOpenSearchFolder);
             this.tabPage4.Controls.Add(this.bnRemoveSearchFolder);
             this.tabPage4.Controls.Add(this.bnAddSearchFolder);
@@ -794,6 +798,18 @@ namespace TVRename
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Search Folders";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // cbMonitorFolder
+            // 
+            this.cbMonitorFolder.AutoSize = true;
+            this.cbMonitorFolder.Location = new System.Drawing.Point(249, 373);
+            this.cbMonitorFolder.Name = "cbMonitorFolder";
+            this.cbMonitorFolder.Size = new System.Drawing.Size(154, 17);
+            this.cbMonitorFolder.TabIndex = 5;
+            this.cbMonitorFolder.Text = "&Monitor folders for changes";
+            this.toolTip1.SetToolTip(this.cbMonitorFolder, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
+                    " \"Do\".");
+            this.cbMonitorFolder.UseVisualStyleBackColor = true;
             // 
             // bnOpenSearchFolder
             // 
@@ -1386,6 +1402,8 @@ namespace TVRename
         private System.Windows.Forms.ListBox lbLangs;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.CheckBox cbLookForAirdate;
+        private System.Windows.Forms.CheckBox cbMonitorFolder;
+        private System.Windows.Forms.ToolTip toolTip1;
 
     }
 }

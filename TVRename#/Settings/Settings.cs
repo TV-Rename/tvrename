@@ -121,6 +121,7 @@ namespace TVRename
         private string VideoExtensionsString = "";
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
+        public bool MonitorFolders = false;
 
         public TVSettings()
         {
@@ -269,6 +270,8 @@ namespace TVRename
                     this.LeaveOriginals = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LookForDateInFilename")
                     LookForDateInFilename = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "MonitorFolders")
+                    this.MonitorFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FNPRegexs")
                 {
                     this.FNPRegexs.Clear();
@@ -622,6 +625,9 @@ namespace TVRename
             writer.WriteEndElement();
             writer.WriteStartElement("LookForDateInFilename");
             writer.WriteValue(this.LookForDateInFilename);
+            writer.WriteEndElement();
+            writer.WriteStartElement("MonitorFolders");
+            writer.WriteValue(this.MonitorFolders);
             writer.WriteEndElement();
 
             writer.WriteStartElement("FNPRegexs");
