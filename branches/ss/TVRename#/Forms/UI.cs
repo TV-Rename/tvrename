@@ -55,6 +55,7 @@ namespace TVRename
         #region Delegates
 
         public delegate void IPCDelegate();
+        public delegate void AutoFolderMonitorDelegate();
 
         #endregion
 
@@ -66,6 +67,9 @@ namespace TVRename
         public IPCDelegate IPCScan;
         protected bool InternalCheckChange;
         private int LastDLRemaining;
+
+        public AutoFolderMonitorDelegate AFMScan;
+        public AutoFolderMonitorDelegate AFMDoAll;
 
         public SetProgressDelegate SetProgress;
         private MyListView lvAction;
@@ -80,6 +84,8 @@ namespace TVRename
         protected Size mLastNonMaximizedSize;
         protected Season mLastSeasonClicked;
         protected ShowItem mLastShowClicked;
+        protected bool mReverseList = false;
+        protected AutoFolderMonitor mAutoFolderMonitor;
 
         public UI(TVDoc doc)
         {
@@ -135,6 +141,12 @@ namespace TVRename
             if (t < this.tabControl1.TabCount)
                 this.tabControl1.SelectedIndex = this.mDoc.Settings.StartupTab;
             this.tabControl1_SelectedIndexChanged(null, null);
+
+            this.mAutoFolderMonitor = new TVRename.AutoFolderMonitor(mDoc,this);
+            if (this.mDoc.Settings.MonitorFolders)
+                this.mAutoFolderMonitor.StartMonitor();
+
+
         }
 
         public static int BGDLLongInterval()
@@ -159,6 +171,8 @@ namespace TVRename
             this.IPCDoAll += this.ActionAll;
             this.IPCQuit += this.Close;
 
+            this.AFMScan += this.ScanAll;
+            this.AFMDoAll += this.ActionAll;
             //Instantiate our server channel.
             var channel = new IpcServerChannel("TVRenameChannel");
 
@@ -1729,6 +1743,7 @@ namespace TVRename
                 this.FillWhenToWatchList();
                 this.ShowInTaskbar = this.mDoc.Settings.ShowInTaskbar;
                 this.FillEpGuideHTML();
+                this.mAutoFolderMonitor.SettingsChanged(this.mDoc.Settings.MonitorFolders);
             }
         }
 
@@ -2461,7 +2476,14 @@ namespace TVRename
             }
 
             ListViewItem lvi = sli.ScanListViewItem;
+            if (this.mReverseList)
+            {
+                lvi.Group = this.lvAction.Groups[7 - sli.ScanListViewGroup];
+            }
+            else
+            {
             lvi.Group = this.lvAction.Groups[sli.ScanListViewGroup];
+            }
             if (sli.IconNumber != -1)
                 lvi.ImageIndex = sli.IconNumber;
             lvi.Checked = true;
@@ -2560,7 +2582,19 @@ namespace TVRename
                 else if (Action is ItemuTorrenting)
                     utCount++;
             }
-
+            if (this.mReverseList)
+            {
+                this.lvAction.Groups[7].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
+                this.lvAction.Groups[6].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
+                this.lvAction.Groups[5].Header = "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
+                this.lvAction.Groups[4].Header = "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
+                this.lvAction.Groups[3].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
+                this.lvAction.Groups[2].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
+                this.lvAction.Groups[1].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
+                this.lvAction.Groups[0].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
+            }
+            else
+            {
             this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
             this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
             this.lvAction.Groups[2].Header = "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
@@ -2569,10 +2603,17 @@ namespace TVRename
             this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
             this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
             this.lvAction.Groups[7].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
+            }
 
             this.InternalCheckChange = false;
 
             this.UpdateActionCheckboxes();
+        }
+
+        void lvAction_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
+        {
+            this.mReverseList = !this.mReverseList;
+            this.FillActionList();
         }
 
         private void bnActionAction_Click(object sender, System.EventArgs e)
@@ -2678,6 +2719,7 @@ namespace TVRename
 
             this.showRightClickMenu.Show(pt);
         }
+
 
         private void lvAction_SelectedIndexChanged(object sender, System.EventArgs e)
         {

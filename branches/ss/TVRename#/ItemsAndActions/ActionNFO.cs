@@ -116,7 +116,9 @@ namespace TVRename
                 }
 
                 WriteInfo(writer, this.SI, "FirstAired", "premiered");
+                WriteInfo(writer, this.SI, "Year", "year");
                 WriteInfo(writer, this.SI, "Rating", "rating");
+                WriteInfo(writer, this.SI, "Status", "status");
 
                 // actors...
                 string actors = this.SI.TheSeries().GetItem("Actors");

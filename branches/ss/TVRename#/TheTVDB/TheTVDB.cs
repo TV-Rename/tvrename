@@ -59,9 +59,12 @@ namespace TVRename
         // private StringList WhoHasLock;
         public string XMLMirror;
         public string ZIPMirror;
+        private CommandLineArgs Args;
 
-        public TheTVDB(FileInfo loadFrom, FileInfo cacheFile)
+        public TheTVDB(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args)
         {
+            Args = args;
+
             System.Diagnostics.Debug.Assert(cacheFile != null);
             this.CacheFile = cacheFile;
 
@@ -887,7 +890,7 @@ namespace TVRename
                     }
                     else if (r.Name == "Episode")
                     {
-                        Episode e = new Episode(null, null, r.ReadSubtree());
+                        Episode e = new Episode(null, null, r.ReadSubtree(), Args);
                         if (e.OK())
                         {
                             if (!this.Series.ContainsKey(e.SeriesID))
@@ -940,6 +943,8 @@ namespace TVRename
             }
             catch (XmlException e)
             {
+                if (!this.Args.Unattended)
+                {
                 string message = "Error processing data from TheTVDB (top level).";
                 message += "\r\n" + e.Message;
                 String name = "";
@@ -951,9 +956,9 @@ namespace TVRename
                 {
                     name += "ID #" + codeHint.Value+" ";
                 }
-
                 MessageBox.Show(name+message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 // throw new TVDBException(e.Message);
+                }
                 return false;
             }
             finally

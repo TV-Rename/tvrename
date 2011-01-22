@@ -53,7 +53,7 @@ namespace TVRename
             this.SetDefaults(ser, seas);
         }
 
-        public Episode(SeriesInfo ser, Season seas, XmlReader r)
+        public Episode(SeriesInfo ser, Season seas, XmlReader r, CommandLineArgs args)
         {
             // <Episode>
             //  <id>...</id>
@@ -73,10 +73,6 @@ namespace TVRename
                 {
                     if ((r.Name == "Episode") && (!r.IsStartElement()))
                         break;
-
-                    /*if ((!r.HasValue) || (r.IsEmptyElement))
-                        r.ReadOuterXml();
-                    else */
                     if (r.Name == "id")
                         this.EpisodeID = r.ReadElementContentAsInt();
                     else if (r.Name == "seriesid")
@@ -136,6 +132,7 @@ namespace TVRename
 
                 message += "\r\n" + e.Message;
 
+                if (!args.Unattended) 
                 MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 throw new TVDBException(e.Message);

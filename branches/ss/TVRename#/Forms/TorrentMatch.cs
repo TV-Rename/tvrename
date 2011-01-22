@@ -41,7 +41,8 @@ namespace TVRename
 
         private void bnGo_Click(object sender, System.EventArgs e)
         {
-            this.mDoc.RenameFilesToMatchTorrent(this.txtTorrentFile.Text, this.txtFolder.Text, this.tmatchTree, this.SetProgress, this.rbBTCopyTo.Checked, this.txtBTSecondLocation.Text);
+            this.mDoc.RenameFilesToMatchTorrent(this.txtTorrentFile.Text, this.txtFolder.Text, this.tmatchTree, this.SetProgress, this.rbBTCopyTo.Checked, 
+                                                this.txtBTSecondLocation.Text, mDoc.Args);
         }
 
         private void bnBTCopyToBrowse_Click(object sender, System.EventArgs e)
