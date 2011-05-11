@@ -1,0 +1,11 @@
+#summary Links to descriptions of how different parts of TVRename work.
+
+= Introduction =
+
+This "How It Works" page will have a series of links to descriptions of how the code and data structures for TVRename works and fit together.
+
+If you're working on the code, or adding a new feature, let me (sstteevvee) know, and I'll put an initial description of how the relevant parts of TVRename work.  Edits and updates by other people are welcome here, too!
+
+= Details =
+
+[Overview] - Quick overview of how TVRename checks your media library, identifies missing episodes, and then finds those which are missing.
