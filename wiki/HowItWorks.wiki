@@ -1,4 +1,4 @@
-#summary Links to descriptions of how different parts of TVRename work.
+#summary Links to descriptions of how TVRename's code works.
 #labels Featured
 
 = Introduction =
