@@ -1630,7 +1630,7 @@ namespace TVRename
                                 {
                                     ScanListItem er2 = action as ScanListItem;
 
-                                    if ((er2 != null) && (er2.Episode.SeasonNumber == snum))
+                                    if ((er2 != null) && (er2.Episode != null) && (er2.Episode.SeasonNumber == snum))
                                         remove.Add(action);
                                 }
 

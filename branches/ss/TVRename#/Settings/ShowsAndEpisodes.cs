@@ -499,8 +499,7 @@ namespace TVRename
                     if (kvp.Key > highestThereIs)
                         highestThereIs = kvp.Key;
                 }
-
-                for (int i = 0; i <= highestThereIs; i++) // start at 0 for specials season
+                foreach (int i in SeasonEpisodes.Keys)
                 {
                     if (this.IgnoreSeasons.Contains(i))
                         continue;

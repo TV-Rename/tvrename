@@ -2441,6 +2441,8 @@ namespace TVRename
             {
                 if (this.ActionCancel)
                     return;
+
+                System.Diagnostics.Debug.Print(DateTime.Now.ToLongTimeString()+ " Rename and missing check: " + si.ShowName);
                 c++;
 
                 prog.Invoke(100 * c / showlist.Count);
@@ -2558,6 +2560,8 @@ namespace TVRename
                         FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
 
                         int maxEpNumFound = 0;
+                        if (!renCheck && !missCheck)
+                            continue;
 
                         foreach (FileInfo fi in files)
                         {
