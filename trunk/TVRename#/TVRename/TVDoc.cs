@@ -97,16 +97,7 @@ namespace TVRename
             return this.mTVDB;
         }
 
-        public static FileInfo TVDBFile()
-        {
-            return new FileInfo(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "TheTVDB.xml");
-        }
-
-        public static FileInfo TVDocSettingsFile()
-        {
-            return new FileInfo(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "TVRenameSettings.xml");
-        }
-
+        
         ~TVDoc()
         {
             this.StopBGDownloadThread();
@@ -1461,12 +1452,12 @@ namespace TVRename
         {
             // backup old settings before writing new ones
 
-            Rotate(TVDocSettingsFile().FullName);
+            Rotate(PathManager.TVDocSettingsFile.FullName);
 
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
-            XmlWriter writer = XmlWriter.Create(TVDocSettingsFile().FullName, settings);
+            XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings);
 
             writer.WriteStartDocument();
             writer.WriteStartElement("TVRename");
@@ -2441,6 +2432,8 @@ namespace TVRename
             {
                 if (this.ActionCancel)
                     return;
+
+                System.Diagnostics.Debug.Print(DateTime.Now.ToLongTimeString()+ " Rename and missing check: " + si.ShowName);
                 c++;
 
                 prog.Invoke(100 * c / showlist.Count);
@@ -2558,6 +2551,8 @@ namespace TVRename
                         FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
 
                         int maxEpNumFound = 0;
+                        if (!renCheck && !missCheck)
+                            continue;
 
                         foreach (FileInfo fi in files)
                         {

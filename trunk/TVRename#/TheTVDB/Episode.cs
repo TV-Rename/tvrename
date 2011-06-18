@@ -19,6 +19,10 @@ namespace TVRename
         public DateTime? FirstAired;
         public System.Collections.Generic.Dictionary<string, string> Items; // other fields we don't specifically grab
         public string Overview;
+        public string EpisodeRating;
+        public string EpisodeGuestStars;
+        public string EpisodeDirector;
+        public string Writer;
 
         public int ReadSeasonNum; // only use after loading to attach to the correct season!
         public int SeasonID;
@@ -37,6 +41,10 @@ namespace TVRename
             this.FirstAired = O.FirstAired;
             this.Srv_LastUpdated = O.Srv_LastUpdated;
             this.Overview = O.Overview;
+            this.EpisodeRating = O.EpisodeRating;
+            this.EpisodeGuestStars = O.EpisodeGuestStars;
+            this.EpisodeDirector = O.EpisodeDirector;
+            this.Writer = O.Writer;
             this.Name = O.Name;
             this.TheSeason = O.TheSeason;
             this.TheSeries = O.TheSeries;
@@ -90,6 +98,14 @@ namespace TVRename
                         this.Srv_LastUpdated = r.ReadElementContentAsInt();
                     else if (r.Name == "Overview")
                         this.Overview = Helpers.ReadStringFixQuotesAndSpaces(r);
+                    else if (r.Name == "Rating")        
+                        this.EpisodeRating = Helpers.ReadStringFixQuotesAndSpaces(r);  
+                    else if (r.Name == "GuestStars")
+                        this.EpisodeGuestStars = Helpers.ReadStringFixQuotesAndSpaces(r);      
+                    else if (r.Name == "Director")
+                        this.EpisodeDirector = Helpers.ReadStringFixQuotesAndSpaces(r);      
+                    else if (r.Name == "Writer")
+                        this.Writer = Helpers.ReadStringFixQuotesAndSpaces(r);      
                     else if (r.Name == "EpisodeName")
                         this.Name = Helpers.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "FirstAired")
@@ -184,6 +200,10 @@ namespace TVRename
             this.TheSeries = ser;
 
             this.Overview = "";
+            this.EpisodeRating = "";  
+            this.EpisodeGuestStars = "";   
+            this.EpisodeDirector = ""; 
+            this.Writer = ""; 
             this.Name = "";
             this.EpisodeID = -1;
             this.SeriesID = -1;
@@ -277,6 +297,18 @@ namespace TVRename
             writer.WriteStartElement("Overview");
             writer.WriteValue(this.Overview);
             writer.WriteEndElement();
+            writer.WriteStartElement("Rating");     
+            writer.WriteValue(this.EpisodeRating);  
+            writer.WriteEndElement();               
+            writer.WriteStartElement("GuestStars");     
+            writer.WriteValue(this.EpisodeGuestStars);  
+            writer.WriteEndElement();               
+            writer.WriteStartElement("EpisodeDirector");     
+            writer.WriteValue(this.EpisodeDirector);  
+            writer.WriteEndElement();               
+            writer.WriteStartElement("Writer");     
+            writer.WriteValue(this.Writer);  
+            writer.WriteEndElement();               
             writer.WriteStartElement("EpisodeName");
             writer.WriteValue(this.Name);
             writer.WriteEndElement();

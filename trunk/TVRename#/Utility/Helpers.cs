@@ -34,6 +34,10 @@ namespace TVRename
             return System.Drawing.Color.FromArgb(255, 210, 210);
         }
 
+        public static string TranslateColorToHtml(System.Drawing.Color c)
+        {
+            return string.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
+        }
         public static string SimplifyName(string n)
         {
             n = n.ToLower();
