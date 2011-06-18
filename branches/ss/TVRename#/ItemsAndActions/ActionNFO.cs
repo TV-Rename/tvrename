@@ -59,10 +59,11 @@ namespace TVRename
 
         public bool Go(TVSettings tvsettings, ref bool pause)
         {
-            XmlWriterSettings settings = new XmlWriterSettings {
-                                                                   Indent = true,
-                                                                   NewLineOnAttributes = true
-                                                               };
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = true
+            };
             // "try" and silently fail.  eg. when file is use by other...
             XmlWriter writer;
             try
@@ -86,7 +87,7 @@ namespace TVRename
                 writer.WriteValue(this.Episode.Name);
                 writer.WriteEndElement();
                 writer.WriteStartElement("rating");
-                writer.WriteValue(this.Episode.EpisodeRating); 
+                writer.WriteValue(this.Episode.EpisodeRating);
                 writer.WriteEndElement();
                 writer.WriteStartElement("season");
                 writer.WriteValue(this.Episode.SeasonNumber);
@@ -106,9 +107,9 @@ namespace TVRename
                 {
                     WriteInfo(writer, this.Episode.SI, "ContentRating", "mpaa");
                 }
-                
+
                 //Director(s)
-                if (this.Episode.EpisodeDirector != null && this.Episode.EpisodeDirector != "")
+                if (!String.IsNullOrEmpty(this.Episode.EpisodeDirector))
                 {
                     string EpDirector = this.Episode.EpisodeDirector;
                     if (!string.IsNullOrEmpty(EpDirector))
@@ -124,9 +125,9 @@ namespace TVRename
                         }
                     }
                 }
-                
+
                 //Writers(s)
-                if (this.Episode.Writer != null && this.Episode.Writer != "")
+                if (!String.IsNullOrEmpty(this.Episode.Writer))
                 {
                     string EpWriter = this.Episode.Writer;
                     if (!string.IsNullOrEmpty(EpWriter))
@@ -136,9 +137,9 @@ namespace TVRename
                         writer.WriteEndElement();
                     }
                 }
-                
+
                 // Guest Stars...
-                if (this.Episode.EpisodeGuestStars != null && this.Episode.EpisodeGuestStars != "")
+                if (!String.IsNullOrEmpty(this.Episode.EpisodeGuestStars))
                 {
                     string RecurringActors = "";
 
@@ -156,10 +157,9 @@ namespace TVRename
                                 continue;
 
                             // Skip if the guest actor is also in the overal recurring list
-                            if (!string.IsNullOrEmpty(RecurringActors))
+                            if (!string.IsNullOrEmpty(RecurringActors) && RecurringActors.Contains(Gaa))
                             {
-                                if (RecurringActors.Contains(Gaa))
-                                    continue;
+                                continue;
                             }
 
                             writer.WriteStartElement("actor");
@@ -170,7 +170,7 @@ namespace TVRename
                         }
                     }
                 }
-                
+
                 // actors...
                 if (this.Episode.SI != null)
                 {
