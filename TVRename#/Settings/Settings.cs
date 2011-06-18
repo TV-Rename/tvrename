@@ -232,8 +232,7 @@ namespace TVRename
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
-
-        public ShowStatusColoringTypeList ShowStatusColors = null;
+        public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
 
         public TVSettings()
         {
@@ -811,29 +810,32 @@ namespace TVRename
             }
             writer.WriteEndElement(); // RSSURL
 
-            writer.WriteStartElement("ShowStatusTVWColors");
-            foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this.ShowStatusColors)
+            if (ShowStatusColors != null)
             {
-                writer.WriteStartElement("ShowStatusTVWColor");
-                // TODO ... Write Meta Flags
-                writer.WriteStartAttribute("IsMeta");
-                writer.WriteValue(e.Key.IsMetaType);
-                writer.WriteEndAttribute();
+                writer.WriteStartElement("ShowStatusTVWColors");
+                foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this.ShowStatusColors)
+                {
+                    writer.WriteStartElement("ShowStatusTVWColor");
+                    // TODO ... Write Meta Flags
+                    writer.WriteStartAttribute("IsMeta");
+                    writer.WriteValue(e.Key.IsMetaType);
+                    writer.WriteEndAttribute();
 
-                writer.WriteStartAttribute("IsShowLevel");
-                writer.WriteValue(e.Key.IsShowLevel);
-                writer.WriteEndAttribute();
+                    writer.WriteStartAttribute("IsShowLevel");
+                    writer.WriteValue(e.Key.IsShowLevel);
+                    writer.WriteEndAttribute();
 
-                writer.WriteStartAttribute("ShowStatus");
-                writer.WriteValue(e.Key.Status);
-                writer.WriteEndAttribute();
+                    writer.WriteStartAttribute("ShowStatus");
+                    writer.WriteValue(e.Key.Status);
+                    writer.WriteEndAttribute();
 
-                writer.WriteStartAttribute("Color");
-                writer.WriteValue(Helpers.TranslateColorToHtml(e.Value));
-                writer.WriteEndAttribute();
-                writer.WriteEndElement();
+                    writer.WriteStartAttribute("Color");
+                    writer.WriteValue(Helpers.TranslateColorToHtml(e.Value));
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+                writer.WriteEndElement(); // ShowStatusTVWColors
             }
-            writer.WriteEndElement();
 
             writer.WriteEndElement(); // settings
         }
