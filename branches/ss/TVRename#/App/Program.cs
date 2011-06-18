@@ -100,9 +100,19 @@ public static class GlobalMembersTVRename
 
         // Load settings files
         TVDoc doc = null;
+        try
+        {
+            if (!string.IsNullOrEmpty(clargs.UserFilePath))
+                PathManager.SetUserDefinedBasePath(clargs.UserFilePath);
+        }
+        catch (System.Exception ex)
+        {
+            MessageBox.Show("Error while setting the User-Defined File Path:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Environment.Exit(1);
+        }
 
-        FileInfo tvdbFile = TVDoc.TVDBFile();
-        FileInfo settingsFile = TVDoc.TVDocSettingsFile();
+        FileInfo tvdbFile = PathManager.TVDBFile;
+        FileInfo settingsFile = PathManager.TVDocSettingsFile;
 
         do // loop until no problems loading settings & tvdb cache files
         {
@@ -120,7 +130,7 @@ public static class GlobalMembersTVRename
 
             // try loading using current settings files, and set up the main
             // classes
-            TheTVDB tvdb = new TheTVDB(tvdbFile, TVDoc.TVDBFile(), clargs);
+            TheTVDB tvdb = new TheTVDB(tvdbFile, PathManager.TVDBFile, clargs);
             doc = new TVDoc(settingsFile, tvdb, clargs);
 
             if (!ok)

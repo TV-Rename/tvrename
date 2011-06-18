@@ -58,6 +58,116 @@ namespace TVRename
     {
     }
 
+    public class ShowStatusColoringTypeList : System.Collections.Generic.Dictionary<ShowStatusColoringType, System.Drawing.Color>
+    {
+        public bool IsShowStatusDefined(string showStatus)
+        {
+            foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+            {
+                if (!e.Key.IsMetaType && e.Key.IsShowLevel && e.Key.Status.Equals(showStatus, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public System.Drawing.Color GetEntry(bool meta, bool showLevel, string status)
+        {
+            foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+            {
+                if (e.Key.IsMetaType == meta && e.Key.IsShowLevel == showLevel && e.Key.Status.Equals(status, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    return e.Value;
+                }
+            }
+            return System.Drawing.Color.Empty;
+        }
+    }
+
+    public class ShowStatusColoringType
+    {
+        public ShowStatusColoringType(bool isMetaType, bool isShowLevel, string status)
+        {
+            this.IsMetaType = isMetaType;
+            this.IsShowLevel = isShowLevel;
+            this.Status = status;
+        }
+        public bool IsMetaType;
+        public bool IsShowLevel;
+        public string Status;
+        public string Text
+        {
+            get
+            {
+                if (IsShowLevel && IsMetaType)
+                {
+                    return string.Format("Show Seasons Status: {0}", StatusTextForDisplay);
+                }
+                else if (!IsShowLevel && IsMetaType)
+                {
+                    return string.Format("Season Status: {0}", StatusTextForDisplay);
+                }
+                else if (IsShowLevel && !IsMetaType)
+                {
+                    return string.Format("Show Status: {0}", StatusTextForDisplay);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
+        string StatusTextForDisplay
+        {
+            get
+            {
+                if (IsMetaType)
+                {
+                    if (IsShowLevel)
+                    {
+                        ShowItem.ShowAirStatus status = (ShowItem.ShowAirStatus)Enum.Parse(typeof(ShowItem.ShowAirStatus), Status);
+                        switch (status)
+                        {
+                            case ShowItem.ShowAirStatus.Aired:
+                                return "All aired";
+                            case ShowItem.ShowAirStatus.NoEpisodesOrSeasons:
+                                return "No Seasons or Episodes in Seasons";
+                            case ShowItem.ShowAirStatus.NoneAired:
+                                return "None aired";
+                            case ShowItem.ShowAirStatus.PartiallyAired:
+                                return "Partially aired";
+                            default:
+                                return Status;
+                        }
+                    }
+                    else
+                    {
+                        Season.SeasonStatus status = (Season.SeasonStatus)Enum.Parse(typeof(Season.SeasonStatus), Status);
+                        switch (status)
+                        {
+                            case Season.SeasonStatus.Aired:
+                                return "All aired";
+                            case Season.SeasonStatus.NoEpisodes:
+                                return "No Episodes";
+                            case Season.SeasonStatus.NoneAired:
+                                return "None aired";
+                            case Season.SeasonStatus.PartiallyAired:
+                                return "Partially aired";
+                            default:
+                                return Status;
+                        }
+                    }
+                }
+                else
+                {
+                    return Status;
+                }
+            }
+        }
+    }
+
     public class TVSettings
     {
         #region FolderJpgIsType enum
@@ -122,6 +232,8 @@ namespace TVRename
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
+
+        public ShowStatusColoringTypeList ShowStatusColors = null;
 
         public TVSettings()
         {
@@ -307,6 +419,47 @@ namespace TVRename
                             reader.ReadOuterXml();
                     }
                     reader.Read();
+                }
+                else if (reader.Name == "ShowStatusTVWColors")
+                {
+                    this.ShowStatusColors = new ShowStatusColoringTypeList();
+                    reader.Read();
+                    while (!reader.EOF)
+                    {
+                        if ((reader.Name == "ShowStatusTVWColors") && (!reader.IsStartElement()))
+                            break;
+                        if (reader.Name == "ShowStatusTVWColor")
+                        {
+                            ShowStatusColoringType type = null;
+                            try
+                            {
+                                string showStatus = reader.GetAttribute("ShowStatus");
+                                bool isMeta = bool.Parse(reader.GetAttribute("IsMeta"));
+                                bool isShowLevel = bool.Parse(reader.GetAttribute("IsShowLevel"));
+
+                                type = new ShowStatusColoringType(isMeta, isShowLevel, showStatus);
+                            }
+                            catch
+                            { }
+
+                            string color = reader.GetAttribute("Color");
+                            if (type != null && !string.IsNullOrEmpty(color))
+                            {
+                                try
+                                {
+                                    System.Drawing.Color c = System.Drawing.ColorTranslator.FromHtml(color);
+                                    this.ShowStatusColors.Add(type, c);
+                                }
+                                catch { }
+                            }
+                            reader.Read();
+                        }
+                        else
+                            reader.ReadOuterXml();
+                    }
+                    reader.Read();
+
+
                 }
                 else
                     reader.ReadOuterXml();
@@ -657,6 +810,30 @@ namespace TVRename
                 writer.WriteEndElement();
             }
             writer.WriteEndElement(); // RSSURL
+
+            writer.WriteStartElement("ShowStatusTVWColors");
+            foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this.ShowStatusColors)
+            {
+                writer.WriteStartElement("ShowStatusTVWColor");
+                // TODO ... Write Meta Flags
+                writer.WriteStartAttribute("IsMeta");
+                writer.WriteValue(e.Key.IsMetaType);
+                writer.WriteEndAttribute();
+
+                writer.WriteStartAttribute("IsShowLevel");
+                writer.WriteValue(e.Key.IsShowLevel);
+                writer.WriteEndAttribute();
+
+                writer.WriteStartAttribute("ShowStatus");
+                writer.WriteValue(e.Key.Status);
+                writer.WriteEndAttribute();
+
+                writer.WriteStartAttribute("Color");
+                writer.WriteValue(Helpers.TranslateColorToHtml(e.Value));
+                writer.WriteEndAttribute();
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
 
             writer.WriteEndElement(); // settings
         }

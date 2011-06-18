@@ -63,7 +63,7 @@ namespace TVRename
                 txt += "\r\n";
                 try
                 {
-                    StreamReader sr = new StreamReader(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "TVRenameSettings.xml");
+                    StreamReader sr = new StreamReader(PathManager.TVDocSettingsFile.FullName);
                     txt += sr.ReadToEnd();
                     sr.Close();
                     txt += "\r\n";

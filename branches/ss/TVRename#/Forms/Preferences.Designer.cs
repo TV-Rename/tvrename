@@ -69,6 +69,7 @@ namespace TVRename
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
             this.label21 = new System.Windows.Forms.Label();
             this.cbAutoSelInMyShows = new System.Windows.Forms.CheckBox();
             this.label20 = new System.Windows.Forms.Label();
@@ -138,10 +139,21 @@ namespace TVRename
             this.bnLangUp = new System.Windows.Forms.Button();
             this.lbLangs = new System.Windows.Forms.ListBox();
             this.label24 = new System.Windows.Forms.Label();
+            this.tpTreeColoring = new System.Windows.Forms.TabPage();
+            this.label7 = new System.Windows.Forms.Label();
+            this.cboShowStatus = new System.Windows.Forms.ComboBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtShowStatusColor = new System.Windows.Forms.TextBox();
+            this.btnSelectColor = new System.Windows.Forms.Button();
+            this.bnRemoveDefinedColor = new System.Windows.Forms.Button();
+            this.btnAddShowStatusColoring = new System.Windows.Forms.Button();
+            this.lvwDefinedColors = new System.Windows.Forms.ListView();
+            this.colShowStatus = new System.Windows.Forms.ColumnHeader();
+            this.colColor = new System.Windows.Forms.ColumnHeader();
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.openFile = new System.Windows.Forms.OpenFileDialog();
-            this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -155,12 +167,13 @@ namespace TVRename
             this.tabPage5.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.tabPage6.SuspendLayout();
+            this.tpTreeColoring.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OKButton.Location = new System.Drawing.Point(279, 445);
+            this.OKButton.Location = new System.Drawing.Point(280, 445);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 0;
@@ -172,7 +185,7 @@ namespace TVRename
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(360, 445);
+            this.bnCancel.Location = new System.Drawing.Point(361, 445);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 1;
@@ -441,10 +454,11 @@ namespace TVRename
             this.tabControl1.Controls.Add(this.tpScanOptions);
             this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage6);
+            this.tabControl1.Controls.Add(this.tpTreeColoring);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(423, 421);
+            this.tabControl1.Size = new System.Drawing.Size(424, 421);
             this.tabControl1.TabIndex = 5;
             this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
@@ -466,10 +480,20 @@ namespace TVRename
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(415, 395);
+            this.tabPage1.Size = new System.Drawing.Size(416, 395);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cbLookForAirdate
+            // 
+            this.cbLookForAirdate.AutoSize = true;
+            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 157);
+            this.cbLookForAirdate.Name = "cbLookForAirdate";
+            this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
+            this.cbLookForAirdate.TabIndex = 12;
+            this.cbLookForAirdate.Text = "&Look for airdate in filenames";
+            this.cbLookForAirdate.UseVisualStyleBackColor = true;
             // 
             // label21
             // 
@@ -529,7 +553,7 @@ namespace TVRename
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(415, 395);
+            this.tabPage2.Size = new System.Drawing.Size(416, 395);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Files and Folders";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -625,7 +649,7 @@ namespace TVRename
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(415, 395);
+            this.tabPage3.Size = new System.Drawing.Size(416, 395);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Automatic Export";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -794,7 +818,7 @@ namespace TVRename
             this.tabPage4.Controls.Add(this.label23);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(415, 395);
+            this.tabPage4.Size = new System.Drawing.Size(416, 395);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Search Folders";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -850,7 +874,7 @@ namespace TVRename
             this.lbSearchFolders.Location = new System.Drawing.Point(3, 23);
             this.lbSearchFolders.Name = "lbSearchFolders";
             this.lbSearchFolders.ScrollAlwaysVisible = true;
-            this.lbSearchFolders.Size = new System.Drawing.Size(409, 342);
+            this.lbSearchFolders.Size = new System.Drawing.Size(295, 342);
             this.lbSearchFolders.TabIndex = 1;
             this.lbSearchFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbSearchFolders_KeyDown);
             // 
@@ -881,7 +905,7 @@ namespace TVRename
             this.tpScanOptions.Location = new System.Drawing.Point(4, 22);
             this.tpScanOptions.Name = "tpScanOptions";
             this.tpScanOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScanOptions.Size = new System.Drawing.Size(415, 395);
+            this.tpScanOptions.Size = new System.Drawing.Size(416, 395);
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
@@ -1038,7 +1062,7 @@ namespace TVRename
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(415, 395);
+            this.tabPage5.Size = new System.Drawing.Size(416, 395);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "RSS / µTorrent";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1174,7 +1198,7 @@ namespace TVRename
             this.tabPage6.Location = new System.Drawing.Point(4, 22);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(415, 395);
+            this.tabPage6.Size = new System.Drawing.Size(416, 395);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "Languages";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -1221,6 +1245,116 @@ namespace TVRename
             this.label24.TabIndex = 0;
             this.label24.Text = "&Preferred languages for thetvdb.com";
             // 
+            // tpTreeColoring
+            // 
+            this.tpTreeColoring.Controls.Add(this.label7);
+            this.tpTreeColoring.Controls.Add(this.cboShowStatus);
+            this.tpTreeColoring.Controls.Add(this.label5);
+            this.tpTreeColoring.Controls.Add(this.txtShowStatusColor);
+            this.tpTreeColoring.Controls.Add(this.btnSelectColor);
+            this.tpTreeColoring.Controls.Add(this.bnRemoveDefinedColor);
+            this.tpTreeColoring.Controls.Add(this.btnAddShowStatusColoring);
+            this.tpTreeColoring.Controls.Add(this.lvwDefinedColors);
+            this.tpTreeColoring.Location = new System.Drawing.Point(4, 22);
+            this.tpTreeColoring.Name = "tpTreeColoring";
+            this.tpTreeColoring.Padding = new System.Windows.Forms.Padding(3);
+            this.tpTreeColoring.Size = new System.Drawing.Size(416, 395);
+            this.tpTreeColoring.TabIndex = 7;
+            this.tpTreeColoring.Text = "Tree Coloring";
+            this.tpTreeColoring.UseVisualStyleBackColor = true;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(3, 328);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(40, 13);
+            this.label7.TabIndex = 8;
+            this.label7.Text = "&Status:";
+            // 
+            // cboShowStatus
+            // 
+            this.cboShowStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboShowStatus.FormattingEnabled = true;
+            this.cboShowStatus.Location = new System.Drawing.Point(51, 325);
+            this.cboShowStatus.Name = "cboShowStatus";
+            this.cboShowStatus.Size = new System.Drawing.Size(315, 21);
+            this.cboShowStatus.TabIndex = 7;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(3, 360);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(58, 13);
+            this.label5.TabIndex = 6;
+            this.label5.Text = "&Text Color:";
+            // 
+            // txtShowStatusColor
+            // 
+            this.txtShowStatusColor.Location = new System.Drawing.Point(67, 357);
+            this.txtShowStatusColor.Name = "txtShowStatusColor";
+            this.txtShowStatusColor.Size = new System.Drawing.Size(100, 20);
+            this.txtShowStatusColor.TabIndex = 5;
+            this.txtShowStatusColor.TextChanged += new System.EventHandler(this.txtShowStatusColor_TextChanged);
+            // 
+            // btnSelectColor
+            // 
+            this.btnSelectColor.Location = new System.Drawing.Point(173, 355);
+            this.btnSelectColor.Name = "btnSelectColor";
+            this.btnSelectColor.Size = new System.Drawing.Size(75, 23);
+            this.btnSelectColor.TabIndex = 4;
+            this.btnSelectColor.Text = "Select &Color";
+            this.btnSelectColor.UseVisualStyleBackColor = true;
+            this.btnSelectColor.Click += new System.EventHandler(this.btnSelectColor_Click);
+            // 
+            // bnRemoveDefinedColor
+            // 
+            this.bnRemoveDefinedColor.Enabled = false;
+            this.bnRemoveDefinedColor.Location = new System.Drawing.Point(6, 296);
+            this.bnRemoveDefinedColor.Name = "bnRemoveDefinedColor";
+            this.bnRemoveDefinedColor.Size = new System.Drawing.Size(75, 23);
+            this.bnRemoveDefinedColor.TabIndex = 3;
+            this.bnRemoveDefinedColor.Text = "&Remove";
+            this.bnRemoveDefinedColor.UseVisualStyleBackColor = true;
+            this.bnRemoveDefinedColor.Click += new System.EventHandler(this.bnRemoveDefinedColor_Click);
+            // 
+            // btnAddShowStatusColoring
+            // 
+            this.btnAddShowStatusColoring.Location = new System.Drawing.Point(291, 355);
+            this.btnAddShowStatusColoring.Name = "btnAddShowStatusColoring";
+            this.btnAddShowStatusColoring.Size = new System.Drawing.Size(75, 23);
+            this.btnAddShowStatusColoring.TabIndex = 3;
+            this.btnAddShowStatusColoring.Text = "&Add";
+            this.btnAddShowStatusColoring.UseVisualStyleBackColor = true;
+            this.btnAddShowStatusColoring.Click += new System.EventHandler(this.btnAddShowStatusColoring_Click);
+            // 
+            // lvwDefinedColors
+            // 
+            this.lvwDefinedColors.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colShowStatus,
+            this.colColor});
+            this.lvwDefinedColors.GridLines = true;
+            this.lvwDefinedColors.Location = new System.Drawing.Point(6, 6);
+            this.lvwDefinedColors.MultiSelect = false;
+            this.lvwDefinedColors.Name = "lvwDefinedColors";
+            this.lvwDefinedColors.Size = new System.Drawing.Size(399, 284);
+            this.lvwDefinedColors.TabIndex = 0;
+            this.lvwDefinedColors.UseCompatibleStateImageBehavior = false;
+            this.lvwDefinedColors.View = System.Windows.Forms.View.Details;
+            this.lvwDefinedColors.SelectedIndexChanged += new System.EventHandler(this.lvwDefinedColors_SelectedIndexChanged);
+            this.lvwDefinedColors.DoubleClick += new System.EventHandler(this.lvwDefinedColors_DoubleClick);
+            // 
+            // colShowStatus
+            // 
+            this.colShowStatus.Text = "Show Status";
+            this.colShowStatus.Width = 297;
+            // 
+            // colColor
+            // 
+            this.colColor.Text = "Color";
+            this.colColor.Width = 92;
+            // 
             // folderBrowser
             // 
             this.folderBrowser.ShowNewFolderButton = false;
@@ -1229,23 +1363,13 @@ namespace TVRename
             // 
             this.openFile.Filter = "Torrent files (*.torrent)|*.torrent|All files (*.*)|*.*";
             // 
-            // cbLookForAirdate
-            // 
-            this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 157);
-            this.cbLookForAirdate.Name = "cbLookForAirdate";
-            this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
-            this.cbLookForAirdate.TabIndex = 12;
-            this.cbLookForAirdate.Text = "&Look for airdate in filenames";
-            this.cbLookForAirdate.UseVisualStyleBackColor = true;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(447, 480);
+            this.ClientSize = new System.Drawing.Size(448, 480);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.bnCancel);
             this.Controls.Add(this.OKButton);
@@ -1281,6 +1405,8 @@ namespace TVRename
             this.groupBox6.PerformLayout();
             this.tabPage6.ResumeLayout(false);
             this.tabPage6.PerformLayout();
+            this.tpTreeColoring.ResumeLayout(false);
+            this.tpTreeColoring.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1404,6 +1530,18 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbLookForAirdate;
         private System.Windows.Forms.CheckBox cbMonitorFolder;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.TabPage tpTreeColoring;
+        private System.Windows.Forms.ListView lvwDefinedColors;
+        private System.Windows.Forms.ColumnHeader colShowStatus;
+        private System.Windows.Forms.ColumnHeader colColor;
+        private System.Windows.Forms.TextBox txtShowStatusColor;
+        private System.Windows.Forms.Button btnSelectColor;
+        private System.Windows.Forms.Button btnAddShowStatusColoring;
+        private System.Windows.Forms.ColorDialog colorDialog;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ComboBox cboShowStatus;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button bnRemoveDefinedColor;
 
     }
 }

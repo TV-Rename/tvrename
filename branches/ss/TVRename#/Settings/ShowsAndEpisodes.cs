@@ -272,6 +272,151 @@ namespace TVRename
             }
         }
 
+        public string ShowStatus
+        {
+            get{
+                SeriesInfo ser = this.TheSeries();
+                if(ser != null && ser.Items != null && ser.Items.ContainsKey("Status"))
+                    return ser.Items["Status"];
+
+                return "Unknown";
+            }
+        }
+
+        public enum ShowAirStatus
+        {
+            NoEpisodesOrSeasons,
+            Aired,
+            PartiallyAired,
+            NoneAired
+        }
+
+        public ShowAirStatus SeasonsAirStatus
+        {
+            get
+            {
+                if (HasSeasonsAndEpisodes)
+                {
+                    if (HasAiredEpisodes && !HasUnairedEpisodes)
+                    {
+                        return ShowAirStatus.Aired;
+                    }
+                    else if (HasUnairedEpisodes && !HasAiredEpisodes)
+                    {
+                        return ShowAirStatus.NoneAired;
+                    }
+                    else if (HasAiredEpisodes && HasUnairedEpisodes)
+                    {
+                        return ShowAirStatus.PartiallyAired;
+                    }
+                    else
+                    {
+                        //System.Diagnostics.Debug.Assert(false, "That is weird ... we have 'seasons and episodes' but none are aired, nor unaired. That case shouldn't actually occur !");
+                        return ShowAirStatus.NoEpisodesOrSeasons;
+                    }
+                }
+                else
+                {
+                    return ShowAirStatus.NoEpisodesOrSeasons;
+                }
+            }
+        }
+
+        bool HasSeasonsAndEpisodes
+        {
+            get
+            {
+                if (this.TheSeries() != null && this.TheSeries().Seasons != null && this.TheSeries().Seasons.Count > 0)
+                {
+                    foreach (System.Collections.Generic.KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                    {
+                        if(this.IgnoreSeasons.Contains(s.Key))
+                            continue;
+                        if (s.Value.Episodes != null && s.Value.Episodes.Count > 0)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        bool HasUnairedEpisodes
+        {
+            get
+            {
+                if (HasSeasonsAndEpisodes)
+                {
+                    foreach (System.Collections.Generic.KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                    {
+                        if(this.IgnoreSeasons.Contains(s.Key))
+                            continue;
+                        if (s.Value.Status == Season.SeasonStatus.NoneAired || s.Value.Status == Season.SeasonStatus.PartiallyAired)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        bool HasAiredEpisodes
+        {
+            get
+            {
+                if (HasSeasonsAndEpisodes)
+                {
+                    foreach (System.Collections.Generic.KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                    {
+                        if(this.IgnoreSeasons.Contains(s.Key))
+                            continue;
+                        if (s.Value.Status == Season.SeasonStatus.PartiallyAired || s.Value.Status == Season.SeasonStatus.Aired)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+
+        public string[] Genres
+        {
+            get
+            {
+                SeriesInfo ser = this.TheSeries();
+                if (ser != null && ser.Items != null && ser.Items.ContainsKey("Genre"))
+                {
+                    string[] genres = null;
+                    string[] genreItems = ser.Items["Genre"].Split('|');
+                    if (genreItems != null && genreItems.Length > 0)
+                    {
+                        System.Collections.Generic.List<string> genreItemsList = new System.Collections.Generic.List<string>();
+                        foreach (string genreItem in genreItems)
+                        {
+                            if (!string.IsNullOrEmpty(genreItem.Trim()))
+                            {
+                                genreItemsList.Add(genreItem);
+                            }
+                        }
+                        if (genreItemsList.Count > 0)
+                        {
+                            genres = genreItemsList.ToArray();
+                        }
+                    }
+                    return genres;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+                    
+
         public void SetDefaults(TheTVDB db)
         {
             this.TVDB = db;

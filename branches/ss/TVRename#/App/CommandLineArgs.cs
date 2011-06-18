@@ -20,6 +20,7 @@ namespace TVRename
         public bool Scan;
         public bool DoAll;
         public bool Unattended;
+        public string UserFilePath;
 
         public CommandLineArgs(String[] args)
         {
@@ -44,6 +45,14 @@ namespace TVRename
             Scan = Array.IndexOf(args, "/scan") != -1;
 
             Unattended = Array.IndexOf(args, "/unattended") != -1;
+
+            foreach (string arg in args)
+            {
+                if (arg.StartsWith("/userfilepath:"))
+                {
+                    UserFilePath = arg.Substring(arg.IndexOf(":") + 1);
+                }
+            }
         }
     }
 }
