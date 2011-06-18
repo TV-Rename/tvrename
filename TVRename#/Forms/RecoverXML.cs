@@ -38,8 +38,8 @@ namespace TVRename
 
         private void RecoverXML_Load(object sender, System.EventArgs e)
         {
-            this.SettingsList = new DirectoryInfo(System.Windows.Forms.Application.UserAppDataPath).GetFiles("TVRenameSettings.xml*");
-            this.DBList = new DirectoryInfo(System.Windows.Forms.Application.UserAppDataPath).GetFiles("TheTVDB.xml*");
+            this.SettingsList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
+            this.DBList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TVDBFileName + "*");
 
             this.lbSettings.Items.Add("Default settings");
             if ((this.SettingsList != null) && this.SettingsList.Length > 0)

@@ -380,7 +380,7 @@ namespace TVRename
             //wr->KeepAlive = false;
 
             System.Net.WebClient wc = new System.Net.WebClient();
-
+            
             if (forceReload)
                 wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
 

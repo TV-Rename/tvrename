@@ -49,7 +49,7 @@ namespace TVRename
             settings.IgnoreComments = true;
             settings.IgnoreWhitespace = true;
 
-            string fn = System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "Statistics.xml";
+            string fn = PathManager.StatisticsFile.FullName;
             if (!File.Exists(fn))
                 return true;
 
@@ -97,7 +97,8 @@ namespace TVRename
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
-            XmlWriter writer = XmlWriter.Create(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "Statistics.xml", settings);
+            
+            XmlWriter writer = XmlWriter.Create(PathManager.StatisticsFile.FullName, settings);
 
             writer.WriteStartDocument();
             writer.WriteStartElement("Statistics");

@@ -59,13 +59,25 @@ namespace TVRename
 
         public bool Go(TVSettings tvsettings, ref bool pause)
         {
-            XmlWriterSettings settings = new XmlWriterSettings {
-                                                                   Indent = true,
-                                                                   NewLineOnAttributes = true
-                                                               };
-            XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings);
-            if (writer == null)
-                return false;
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = true
+            };
+            // "try" and silently fail.  eg. when file is use by other...
+            XmlWriter writer;
+            try
+            {
+                //                XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings);
+                writer = XmlWriter.Create(this.Where.FullName, settings);
+                if (writer == null)
+                    return false;
+            }
+            catch (Exception excep)
+            {
+                this.Done = true;
+                return true;
+            }
 
             if (this.Episode != null) // specific episode
             {
@@ -73,6 +85,9 @@ namespace TVRename
                 writer.WriteStartElement("episodedetails");
                 writer.WriteStartElement("title");
                 writer.WriteValue(this.Episode.Name);
+                writer.WriteEndElement();
+                writer.WriteStartElement("rating");
+                writer.WriteValue(this.Episode.EpisodeRating);
                 writer.WriteEndElement();
                 writer.WriteStartElement("season");
                 writer.WriteValue(this.Episode.SeasonNumber);
@@ -87,6 +102,95 @@ namespace TVRename
                 if (this.Episode.FirstAired != null)
                     writer.WriteValue(this.Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
                 writer.WriteEndElement();
+
+                if (this.Episode.SI != null)
+                {
+                    WriteInfo(writer, this.Episode.SI, "ContentRating", "mpaa");
+                }
+
+                //Director(s)
+                if (!String.IsNullOrEmpty(this.Episode.EpisodeDirector))
+                {
+                    string EpDirector = this.Episode.EpisodeDirector;
+                    if (!string.IsNullOrEmpty(EpDirector))
+                    {
+                        foreach (string Daa in EpDirector.Split('|'))
+                        {
+                            if (string.IsNullOrEmpty(Daa))
+                                continue;
+
+                            writer.WriteStartElement("director");
+                            writer.WriteValue(Daa);
+                            writer.WriteEndElement();
+                        }
+                    }
+                }
+
+                //Writers(s)
+                if (!String.IsNullOrEmpty(this.Episode.Writer))
+                {
+                    string EpWriter = this.Episode.Writer;
+                    if (!string.IsNullOrEmpty(EpWriter))
+                    {
+                        writer.WriteStartElement("credits");
+                        writer.WriteValue(EpWriter);
+                        writer.WriteEndElement();
+                    }
+                }
+
+                // Guest Stars...
+                if (!String.IsNullOrEmpty(this.Episode.EpisodeGuestStars))
+                {
+                    string RecurringActors = "";
+
+                    if (this.Episode.SI != null)
+                    {
+                        RecurringActors = this.Episode.SI.TheSeries().GetItem("Actors");
+                    }
+
+                    string GuestActors = this.Episode.EpisodeGuestStars;
+                    if (!string.IsNullOrEmpty(GuestActors))
+                    {
+                        foreach (string Gaa in GuestActors.Split('|'))
+                        {
+                            if (string.IsNullOrEmpty(Gaa))
+                                continue;
+
+                            // Skip if the guest actor is also in the overal recurring list
+                            if (!string.IsNullOrEmpty(RecurringActors) && RecurringActors.Contains(Gaa))
+                            {
+                                continue;
+                            }
+
+                            writer.WriteStartElement("actor");
+                            writer.WriteStartElement("name");
+                            writer.WriteValue(Gaa);
+                            writer.WriteEndElement(); // name
+                            writer.WriteEndElement(); // actor
+                        }
+                    }
+                }
+
+                // actors...
+                if (this.Episode.SI != null)
+                {
+                    string actors = this.Episode.SI.TheSeries().GetItem("Actors");
+                    if (!string.IsNullOrEmpty(actors))
+                    {
+                        foreach (string aa in actors.Split('|'))
+                        {
+                            if (string.IsNullOrEmpty(aa))
+                                continue;
+
+                            writer.WriteStartElement("actor");
+                            writer.WriteStartElement("name");
+                            writer.WriteValue(aa);
+                            writer.WriteEndElement(); // name
+                            writer.WriteEndElement(); // actor
+                        }
+                    }
+                }
+
                 writer.WriteEndElement(); // episodedetails
             }
             else if (this.SI != null) // show overview (tvshow.nfo)

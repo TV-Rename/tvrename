@@ -227,6 +227,16 @@ namespace TVRename
             return (this.IsMoveRename() && (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())); // same device ... TODO: UNC paths?
         }
 
+        private static void KeepTimestamps(FileInfo from, FileInfo to)
+        {
+            to.CreationTime = from.CreationTime;
+            to.CreationTimeUtc = from.CreationTimeUtc;
+            to.LastAccessTime = from.LastAccessTime;
+            to.LastAccessTimeUtc = from.LastAccessTimeUtc;
+            to.LastWriteTime = from.LastWriteTime;
+            to.LastWriteTimeUtc = from.LastWriteTimeUtc;
+        }
+
         private void OSMoveRename()
         {
             try
@@ -240,6 +250,8 @@ namespace TVRename
                 }
                 else
                     this.From.MoveTo(this.To.FullName);
+
+                KeepTimestamps(this.From, this.To);
 
                 this.Done = true;
 
@@ -304,6 +316,8 @@ namespace TVRename
                 if (this.To.Exists)
                     this.To.Delete(); // outta ma way!
                 File.Move(tempName, this.To.FullName);
+
+                KeepTimestamps(this.From, this.To);
 
                 // if that was a move/rename, delete the source
                 if (this.IsMoveRename())

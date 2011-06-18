@@ -192,7 +192,7 @@ namespace TVRename
 
         public void Save()
         {
-            StreamWriter sw = new StreamWriter(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "TVRenameLayout.dat");
+            StreamWriter sw = new StreamWriter(PathManager.LayoutFile.FullName);
             sw.WriteLine("Version=2");
 
             for (int i = 0; i < this.mLayouts.Count; i++)
@@ -206,7 +206,7 @@ namespace TVRename
             System.IO.StreamReader sr;
             try
             {
-                sr = new StreamReader(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "TVRenameLayout.dat");
+                sr = new StreamReader(PathManager.LayoutFile.FullName);
             }
             catch
             {

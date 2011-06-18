@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TVRename")]
 [assembly: AssemblyProduct("TVRename")]
-[assembly: AssemblyCopyright("Copyright © 2007-2010")]
+[assembly: AssemblyCopyright("Copyright © 2007-2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,5 +34,5 @@ using System.Resources;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("2.1")]
+[assembly: AssemblyFileVersion("2.1")] // used in settings path, so be careful about changing
 [assembly: NeutralResourcesLanguageAttribute("")]

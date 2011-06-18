@@ -306,7 +306,8 @@ namespace TVRename
             settings.IgnoreComments = true;
             settings.IgnoreWhitespace = true;
 
-            string fn = System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "Layout.xml";
+            
+            string fn = PathManager.UILayoutFile.FullName;
             if (!File.Exists(fn))
                 return true;
 
@@ -374,7 +375,8 @@ namespace TVRename
             XmlWriterSettings settings = new XmlWriterSettings();
             settings.Indent = true;
             settings.NewLineOnAttributes = true;
-            XmlWriter writer = XmlWriter.Create(System.Windows.Forms.Application.UserAppDataPath + System.IO.Path.DirectorySeparatorChar + "Layout.xml", settings);
+            
+            XmlWriter writer = XmlWriter.Create(PathManager.UILayoutFile.FullName, settings);
 
             writer.WriteStartDocument();
             writer.WriteStartElement("TVRename");
@@ -441,22 +443,29 @@ namespace TVRename
 
         private void UI_FormClosing(object sender, System.Windows.Forms.FormClosingEventArgs e)
         {
-            if (this.mDoc.Dirty())
+            try
             {
-                System.Windows.Forms.DialogResult res = MessageBox.Show("Your changes have not been saved.  Do you wish to save before quitting?", "Unsaved data", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-                if (res == System.Windows.Forms.DialogResult.Yes)
-                    this.mDoc.WriteXMLSettings();
-                else if (res == System.Windows.Forms.DialogResult.Cancel)
-                    e.Cancel = true;
-                else if (res == System.Windows.Forms.DialogResult.No)
+                if (this.mDoc.Dirty())
                 {
+                    System.Windows.Forms.DialogResult res = MessageBox.Show("Your changes have not been saved.  Do you wish to save before quitting?", "Unsaved data", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                    if (res == System.Windows.Forms.DialogResult.Yes)
+                        this.mDoc.WriteXMLSettings();
+                    else if (res == System.Windows.Forms.DialogResult.Cancel)
+                        e.Cancel = true;
+                    else if (res == System.Windows.Forms.DialogResult.No)
+                    {
+                    }
+                }
+                if (!e.Cancel)
+                {
+                    this.SaveLayoutXML();
+                    this.mDoc.TidyTVDB();
+                    this.mDoc.Closing();
                 }
             }
-            if (!e.Cancel)
+            catch (System.Exception ex)
             {
-                this.SaveLayoutXML();
-                this.mDoc.TidyTVDB();
-                this.mDoc.Closing();
+                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1630,7 +1639,7 @@ namespace TVRename
                                 {
                                     ScanListItem er2 = action as ScanListItem;
 
-                                    if ((er2 != null) && (er2.Episode.SeasonNumber == snum))
+                                    if ((er2 != null) && (er2.Episode != null) && (er2.Episode.SeasonNumber == snum))
                                         remove.Add(action);
                                 }
 
@@ -1744,14 +1753,22 @@ namespace TVRename
                 this.ShowInTaskbar = this.mDoc.Settings.ShowInTaskbar;
                 this.FillEpGuideHTML();
                 this.mAutoFolderMonitor.SettingsChanged(this.mDoc.Settings.MonitorFolders);
+                ForceRefresh(null);
             }
         }
 
         public void saveToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            this.mDoc.WriteXMLSettings();
-            this.mDoc.GetTVDB(false, "").SaveCache();
-            this.SaveLayoutXML();
+            try
+            {
+                this.mDoc.WriteXMLSettings();
+                this.mDoc.GetTVDB(false, "").SaveCache();
+                this.SaveLayoutXML();
+            }
+            catch (System.Exception ex)
+            {
+                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         public void UI_SizeChanged(object sender, System.EventArgs e)
@@ -1941,12 +1958,26 @@ namespace TVRename
 
             if (ser != null)
             {
-                System.Collections.Generic.List<int> theKeys = new System.Collections.Generic.List<int>();
+                if (mDoc.Settings.ShowStatusColors != null)
+                {
+                    if (mDoc.Settings.ShowStatusColors.IsShowStatusDefined(si.ShowStatus))
+                    {
+                        n.ForeColor = mDoc.Settings.ShowStatusColors.GetEntry(false, true, si.ShowStatus);
+                    }
+                    else
+                    {
+                        Color nodeColor = mDoc.Settings.ShowStatusColors.GetEntry(true, true, si.SeasonsAirStatus.ToString());
+                        if (!nodeColor.IsEmpty)
+                            n.ForeColor = nodeColor;
+                    }
+                }
+                System.Collections.Generic.List<int> theKeys = new System.Collections.Generic.List<int>(ser.Seasons.Keys);
                 // now, go through and number them all sequentially
-                foreach (int snum in ser.Seasons.Keys)
-                    theKeys.Add(snum);
+                //foreach (int snum in ser.Seasons.Keys)
+                //    theKeys.Add(snum);
 
                 theKeys.Sort();
+                
 
                 foreach (int snum in theKeys)
                 {
@@ -1954,6 +1985,15 @@ namespace TVRename
                     TreeNode n2 = new TreeNode(nodeTitle);
                     if (si.IgnoreSeasons.Contains(snum))
                         n2.ForeColor = Color.Gray;
+                    else
+                    {
+                        if (mDoc.Settings.ShowStatusColors != null)
+                        {
+                            Color nodeColor = mDoc.Settings.ShowStatusColors.GetEntry(true, false, ser.Seasons[snum].Status.ToString());
+                            if (!nodeColor.IsEmpty)
+                                n2.ForeColor = nodeColor;
+                        }
+                    }
                     n2.Tag = ser.Seasons[snum];
                     n.Nodes.Add(n2);
                 }

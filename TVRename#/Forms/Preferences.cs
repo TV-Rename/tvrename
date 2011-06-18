@@ -162,6 +162,15 @@ namespace TVRename
                     S.RSSURLs.Add(url);
             }
 
+            S.ShowStatusColors = new ShowStatusColoringTypeList();
+            foreach (ListViewItem item in lvwDefinedColors.Items)
+            {
+                if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null && item.Tag is ShowStatusColoringType)
+                {
+                    S.ShowStatusColors.Add(item.Tag as ShowStatusColoringType, System.Drawing.ColorTranslator.FromHtml(item.SubItems[1].Text));
+                }
+            }
+
             this.mDoc.SetDirty();
             this.DialogResult = DialogResult.OK;
             this.Close();
@@ -249,6 +258,59 @@ namespace TVRename
                     this.rbFolderPoster.Checked = true;
                     break;
             }
+            if (S.ShowStatusColors != null)
+            {
+                foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in S.ShowStatusColors)
+                {
+                    ListViewItem item = new ListViewItem();
+                    item.Text = showStatusColor.Key.Text;
+                    item.Tag = showStatusColor.Key;
+                    item.SubItems.Add(TranslateColorToHtml(showStatusColor.Value));
+                    item.ForeColor = showStatusColor.Value;
+                    this.lvwDefinedColors.Items.Add(item);
+                }
+            }
+
+            FillTreeViewColoringShowStatusTypeCombobox();
+        }
+
+        
+
+        private void FillTreeViewColoringShowStatusTypeCombobox()
+        {
+            //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>();
+            // Shows
+            foreach (string status in Enum.GetNames(typeof(ShowItem.ShowAirStatus)))
+            {
+                ShowStatusColoringType t = new ShowStatusColoringType(true, true, status);
+                //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Show Seasons Status: " + status, new ShowStatusColoringType(true, true, status));
+                this.cboShowStatus.Items.Add(t);
+                //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
+            }
+            System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
+            ShowItemList shows = this.mDoc.GetShowItems(false);
+            foreach (var show in shows)
+            {
+                if(!showStatusList.Contains(show.ShowStatus))
+                    showStatusList.Add(show.ShowStatus);
+            }
+            foreach (string status in showStatusList)
+            {
+                ShowStatusColoringType t = new ShowStatusColoringType(false, true, status);
+                //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Show  Status: " + status, new ShowStatusColoringType(false, true, status));
+                this.cboShowStatus.Items.Add(t);
+            }
+            //this.cboShowStatus.Items.Add(new System.Collections.Generic.KeyValuePair<string, object>("Show Seasons Status: Custom", null));
+            // Seasons
+            foreach (string status in Enum.GetNames(typeof(Season.SeasonStatus)))
+            {
+                ShowStatusColoringType t = new ShowStatusColoringType(true, false, status);
+                //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Seasons Status: " + status, new ShowStatusColoringType(true, false, status));
+                this.cboShowStatus.Items.Add(t);
+                //this.cboShowStatus.Items.Add("Seasons Status: " + status);
+            }
+            this.cboShowStatus.DisplayMember = "Text";
+            //this.cboShowStatus.ValueMember = ";
         }
 
         private void Browse(TextBox txt)
@@ -696,5 +758,93 @@ namespace TVRename
                     this.ReplacementsGrid.Rows.Remove(n);
             }
         }
+
+        private void btnAddShowStatusColoring_Click(object sender, EventArgs e)
+        {
+            if (this.cboShowStatus.SelectedItem != null && !string.IsNullOrEmpty(this.txtShowStatusColor.Text))
+            {
+                try
+                {
+                    ShowStatusColoringType ssct = this.cboShowStatus.SelectedItem as ShowStatusColoringType;
+                    if (!ColorTranslator.FromHtml(this.txtShowStatusColor.Text).IsEmpty)
+                    {
+                        ListViewItem item = null;
+                        item  = this.lvwDefinedColors.FindItemWithText(ssct.Text) ;
+                        if(item == null)
+                        {
+                            item = new ListViewItem();
+                            item.SubItems.Add(this.txtShowStatusColor.Text);
+                            this.lvwDefinedColors.Items.Add(item);
+                        }
+
+                        item.Text = ssct.Text;
+                        item.SubItems[1].Text = this.txtShowStatusColor.Text;
+                        item.ForeColor = ColorTranslator.FromHtml(this.txtShowStatusColor.Text);
+                        item.Tag = ssct;
+                        this.txtShowStatusColor.Text = string.Empty;
+                        this.txtShowStatusColor.ForeColor = Color.Black;
+                    }
+                }
+                catch { }
+            }
+        }
+
+        private void btnSelectColor_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                colorDialog.Color = System.Drawing.ColorTranslator.FromHtml(this.txtShowStatusColor.Text);
+            }
+            catch
+            {
+                colorDialog.Color = Color.Black;
+            }
+            if (colorDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                this.txtShowStatusColor.Text =  TranslateColorToHtml(colorDialog.Color);
+                this.txtShowStatusColor.ForeColor = colorDialog.Color;
+            }
+        }
+
+        string TranslateColorToHtml(Color c)
+        {
+            return string.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
+        }
+
+        private void lvwDefinedColors_DoubleClick(object sender, EventArgs e)
+        {
+            RemoveSelectedDefinedColor();
+        }
+
+        private void bnRemoveDefinedColor_Click(object sender, EventArgs e)
+        {
+            RemoveSelectedDefinedColor();
+        }
+
+        private void lvwDefinedColors_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bnRemoveDefinedColor.Enabled = this.lvwDefinedColors.SelectedItems.Count == 1;
+        }
+
+        private void RemoveSelectedDefinedColor()
+        {
+            if (this.lvwDefinedColors.SelectedItems.Count == 1)
+            {
+                this.lvwDefinedColors.Items.Remove(this.lvwDefinedColors.SelectedItems[0]);
+            }
+        }
+
+        private void txtShowStatusColor_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                this.txtShowStatusColor.ForeColor = ColorTranslator.FromHtml(this.txtShowStatusColor.Text);
+            }
+            catch
+            {
+                this.txtShowStatusColor.ForeColor = Color.Black;
+            }
+        }
+
     }
 }
