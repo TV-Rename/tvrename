@@ -78,7 +78,7 @@ namespace TVRename
             if (this.cbFOScan.Checked || this.cbFolderScan.Checked)
             {
                 txt += "==== Filename processors ====\r\n";
-                foreach (FilenameProcessorRE s in this.mDoc.Settings.FNPRegexs)
+                foreach (FilenameProcessorRE s in this.mDoc.SettingsObj.innerDocument.FNPRegexs)
                     txt += (s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RE + "\" " + (s.UseFullPath ? "(FullPath)" : "") + "\r\n";
                 txt += "\r\n";
             }
@@ -90,7 +90,7 @@ namespace TVRename
 
                 DirCache dirC = new DirCache();
                 foreach (string efi in this.mDoc.SearchFolders)
-                    dirC.AddFolder(null, 0, 0, efi, true, this.mDoc.Settings);
+                    dirC.AddFolder(null, 0, 0, efi, true, this.mDoc.SettingsObj);
 
                 foreach (DirCacheEntry fi in dirC)
                 {
@@ -112,17 +112,17 @@ namespace TVRename
                     foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
                     {
                         int snum = kvp.Key;
-                        if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations(this.mDoc.Settings).ContainsKey(snum))
+                        if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations(this.mDoc.SettingsObj).ContainsKey(snum))
                             continue; // skip specials
 
-                        foreach (string folder in si.AllFolderLocations(this.mDoc.Settings)[snum])
+                        foreach (string folder in si.AllFolderLocations(this.mDoc.SettingsObj)[snum])
                         {
                             txt += si.TVDBCode + " : " + si.ShowName + " : S" + snum + "\r\n";
                             txt += "Folder: " + folder;
                             txt += "\r\n";
                             DirCache files = new DirCache();
                             if (Directory.Exists(folder))
-                                files.AddFolder(null, 0, 0, folder, true, this.mDoc.Settings);
+                                files.AddFolder(null, 0, 0, folder, true, this.mDoc.SettingsObj);
                             foreach (DirCacheEntry fi in files)
                             {
                                 int seas;

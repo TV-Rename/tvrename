@@ -9,6 +9,8 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using TVRename.db_access.documents;
+using TVRename.Settings;
 
 namespace TVRename
 {
@@ -43,82 +45,82 @@ namespace TVRename
 
         private void OKButton_Click(object sender, System.EventArgs e)
         {
-            if (!TVSettings.OKExtensionsString(this.txtVideoExtensions.Text))
+            if (!Config.OKExtensionsString(this.txtVideoExtensions.Text))
             {
                 MessageBox.Show("Extensions list must be separated by semicolons, and each extension must start with a dot.", "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.tabControl1.SelectedIndex = 1;
                 this.txtVideoExtensions.Focus();
                 return;
             }
-            if (!TVSettings.OKExtensionsString(this.txtOtherExtensions.Text))
+            if (!Config.OKExtensionsString(this.txtOtherExtensions.Text))
             {
                 MessageBox.Show("Extensions list must be separated by semicolons, and each extension must start with a dot.", "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.tabControl1.SelectedIndex = 1;
                 this.txtOtherExtensions.Focus();
                 return;
             }
-            TVSettings S = this.mDoc.Settings;
-            S.Replacements.Clear();
+            Config S = this.mDoc.SettingsObj;
+            S.innerDocument.Replacements.Clear();
             for (int i = 1; i < this.ReplacementsGrid.RowsCount; i++)
             {
                 string from = (string) (this.ReplacementsGrid[i, 0].Value);
                 string to = (string) (this.ReplacementsGrid[i, 1].Value);
                 bool ins = (bool) (this.ReplacementsGrid[i, 2].Value);
                 if (!string.IsNullOrEmpty(from))
-                    S.Replacements.Add(new Replacement(from, to, ins));
+                    S.innerDocument.Replacements.Add(new Replacement(from, to, ins));
             }
 
-            S.ExportWTWRSS = this.cbWTWRSS.Checked;
-            S.ExportWTWRSSTo = this.txtWTWRSS.Text;
+            S.innerDocument.ExportWTWRSS = this.cbWTWRSS.Checked;
+            S.innerDocument.ExportWTWRSSTo = this.txtWTWRSS.Text;
 
-            S.ExportMissingXML = this.cbMissingXML.Checked;
-            S.ExportMissingXMLTo = this.txtMissingXML.Text;
-            S.ExportMissingCSV = this.cbMissingCSV.Checked;
-            S.ExportMissingCSVTo = this.txtMissingCSV.Text;
-            S.ExportRenamingXML = this.cbRenamingXML.Checked;
-            S.ExportRenamingXMLTo = this.txtRenamingXML.Text;
-            S.ExportFOXML = this.cbFOXML.Checked;
-            S.ExportFOXMLTo = this.txtFOXML.Text;
+            S.innerDocument.ExportMissingXML = this.cbMissingXML.Checked;
+            S.innerDocument.ExportMissingXMLTo = this.txtMissingXML.Text;
+            S.innerDocument.ExportMissingCSV = this.cbMissingCSV.Checked;
+            S.innerDocument.ExportMissingCSVTo = this.txtMissingCSV.Text;
+            S.innerDocument.ExportRenamingXML = this.cbRenamingXML.Checked;
+            S.innerDocument.ExportRenamingXMLTo = this.txtRenamingXML.Text;
+            S.innerDocument.ExportFOXML = this.cbFOXML.Checked;
+            S.innerDocument.ExportFOXMLTo = this.txtFOXML.Text;
 
-            S.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
-            S.StartupTab = this.cbStartupTab.SelectedIndex;
-            S.NotificationAreaIcon = this.cbNotificationIcon.Checked;
+            S.innerDocument.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
+            S.innerDocument.StartupTab = this.cbStartupTab.SelectedIndex;
+            S.innerDocument.NotificationAreaIcon = this.cbNotificationIcon.Checked;
             S.SetVideoExtensionsString(this.txtVideoExtensions.Text);
             S.SetOtherExtensionsString(this.txtOtherExtensions.Text);
-            S.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
-            S.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
-            S.KeepTogether = this.cbKeepTogether.Checked;
-            S.LeadingZeroOnSeason = this.cbLeadingZero.Checked;
-            S.ShowInTaskbar = this.chkShowInTaskbar.Checked;
-            S.RenameTxtToSub = this.cbTxtToSub.Checked;
-            S.ShowEpisodePictures = this.cbShowEpisodePictures.Checked;
-            S.AutoSelectShowInMyShows = this.cbAutoSelInMyShows.Checked;
-            S.SpecialsFolderName = this.txtSpecialsFolderName.Text;
+            S.innerDocument.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
+            S.innerDocument.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
+            S.innerDocument.KeepTogether = this.cbKeepTogether.Checked;
+            S.innerDocument.LeadingZeroOnSeason = this.cbLeadingZero.Checked;
+            S.innerDocument.ShowInTaskbar = this.chkShowInTaskbar.Checked;
+            S.innerDocument.RenameTxtToSub = this.cbTxtToSub.Checked;
+            S.innerDocument.ShowEpisodePictures = this.cbShowEpisodePictures.Checked;
+            S.innerDocument.AutoSelectShowInMyShows = this.cbAutoSelInMyShows.Checked;
+            S.innerDocument.SpecialsFolderName = this.txtSpecialsFolderName.Text;
 
-            S.ForceLowercaseFilenames = this.cbForceLower.Checked;
-            S.IgnoreSamples = this.cbIgnoreSamples.Checked;
+            S.innerDocument.ForceLowercaseFilenames = this.cbForceLower.Checked;
+            S.innerDocument.IgnoreSamples = this.cbIgnoreSamples.Checked;
 
-            S.uTorrentPath = this.txtRSSuTorrentPath.Text;
-            S.ResumeDatPath = this.txtUTResumeDatPath.Text;
+            S.innerDocument.uTorrentPath = this.txtRSSuTorrentPath.Text;
+            S.innerDocument.ResumeDatPath = this.txtUTResumeDatPath.Text;
 
-            S.SearchRSS = this.cbSearchRSS.Checked;
-            S.EpImgs = this.cbEpImgs.Checked;
-            S.NFOs = this.cbNFOs.Checked;
-            S.FolderJpg = this.cbFolderJpg.Checked;
-            S.RenameCheck = this.cbRenameCheck.Checked;
-            S.MissingCheck = this.cbMissing.Checked;
-            S.SearchLocally = this.cbSearchLocally.Checked;
-            S.LeaveOriginals = this.cbLeaveOriginals.Checked;
-            S.CheckuTorrent = this.cbCheckuTorrent.Checked;
-            S.LookForDateInFilename = this.cbLookForAirdate.Checked;
-            S.MonitorFolders = this.cbMonitorFolder.Checked;
+            S.innerDocument.SearchRSS = this.cbSearchRSS.Checked;
+            S.innerDocument.EpImgs = this.cbEpImgs.Checked;
+            S.innerDocument.NFOs = this.cbNFOs.Checked;
+            S.innerDocument.FolderJpg = this.cbFolderJpg.Checked;
+            S.innerDocument.RenameCheck = this.cbRenameCheck.Checked;
+            S.innerDocument.MissingCheck = this.cbMissing.Checked;
+            S.innerDocument.SearchLocally = this.cbSearchLocally.Checked;
+            S.innerDocument.LeaveOriginals = this.cbLeaveOriginals.Checked;
+            S.innerDocument.CheckuTorrent = this.cbCheckuTorrent.Checked;
+            S.innerDocument.LookForDateInFilename = this.cbLookForAirdate.Checked;
+            S.innerDocument.MonitorFolders = this.cbMonitorFolder.Checked;
 
             if (this.rbFolderFanArt.Checked)
-                S.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
+                S.innerDocument.FolderJpgIs = ConfigDocument.FolderJpgIsType.FanArt;
             else if (this.rbFolderBanner.Checked)
-                S.FolderJpgIs = TVSettings.FolderJpgIsType.Banner;
+                S.innerDocument.FolderJpgIs = ConfigDocument.FolderJpgIsType.Banner;
             else
-                S.FolderJpgIs = TVSettings.FolderJpgIsType.Poster;
+                S.innerDocument.FolderJpgIs = ConfigDocument.FolderJpgIsType.Poster;
 
             if (this.LangList != null)
             {
@@ -132,42 +134,42 @@ namespace TVRename
 
             try
             {
-                S.SampleFileMaxSizeMB = int.Parse(this.txtMaxSampleSize.Text);
+                S.innerDocument.SampleFileMaxSizeMB = int.Parse(this.txtMaxSampleSize.Text);
             }
             catch
             {
-                S.SampleFileMaxSizeMB = 50;
+                S.innerDocument.SampleFileMaxSizeMB = 50;
             }
 
             try
             {
-                S.ParallelDownloads = int.Parse(this.txtParallelDownloads.Text);
+                S.innerDocument.ParallelDownloads = int.Parse(this.txtParallelDownloads.Text);
             }
             catch
             {
-                S.ParallelDownloads = 4;
+                S.innerDocument.ParallelDownloads = 4;
             }
 
-            if (S.ParallelDownloads < 1)
-                S.ParallelDownloads = 1;
-            else if (S.ParallelDownloads > 8)
-                S.ParallelDownloads = 8;
+            if (S.innerDocument.ParallelDownloads < 1)
+                S.innerDocument.ParallelDownloads = 1;
+            else if (S.innerDocument.ParallelDownloads > 8)
+                S.innerDocument.ParallelDownloads = 8;
 
             // RSS URLs
-            S.RSSURLs.Clear();
+            S.innerDocument.RSSURLs.Clear();
             for (int i = 1; i < this.RSSGrid.RowsCount; i++)
             {
                 string url = (string) (this.RSSGrid[i, 0].Value);
                 if (!string.IsNullOrEmpty(url))
-                    S.RSSURLs.Add(url);
+                    S.innerDocument.RSSURLs.Add(url);
             }
 
-            S.ShowStatusColors = new ShowStatusColoringTypeList();
+            S.innerDocument.ShowStatusColors = new ShowStatusColoringTypeList();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
                 if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null && item.Tag is ShowStatusColoringType)
                 {
-                    S.ShowStatusColors.Add(item.Tag as ShowStatusColoringType, System.Drawing.ColorTranslator.FromHtml(item.SubItems[1].Text));
+                    S.innerDocument.ShowStatusColors.Add(item.Tag as ShowStatusColoringType, System.Drawing.ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
             }
 
@@ -178,89 +180,89 @@ namespace TVRename
 
         private void Preferences_Load(object sender, System.EventArgs e)
         {
-            TVSettings S = this.mDoc.Settings;
+            Config S = this.mDoc.SettingsObj;
             int r = 1;
 
-            foreach (Replacement R in S.Replacements)
+            foreach (Replacement R in S.innerDocument.Replacements)
             {
                 this.AddNewReplacementRow(R.This, R.That, R.CaseInsensitive);
                 r++;
             }
 
-            this.txtMaxSampleSize.Text = S.SampleFileMaxSizeMB.ToString();
+            this.txtMaxSampleSize.Text = S.innerDocument.SampleFileMaxSizeMB.ToString();
 
-            this.cbWTWRSS.Checked = S.ExportWTWRSS;
-            this.txtWTWRSS.Text = S.ExportWTWRSSTo;
-            this.txtWTWDays.Text = S.WTWRecentDays.ToString();
-            this.txtExportRSSMaxDays.Text = S.ExportRSSMaxDays.ToString();
-            this.txtExportRSSMaxShows.Text = S.ExportRSSMaxShows.ToString();
+            this.cbWTWRSS.Checked = S.innerDocument.ExportWTWRSS;
+            this.txtWTWRSS.Text = S.innerDocument.ExportWTWRSSTo;
+            this.txtWTWDays.Text = S.innerDocument.WTWRecentDays.ToString();
+            this.txtExportRSSMaxDays.Text = S.innerDocument.ExportRSSMaxDays.ToString();
+            this.txtExportRSSMaxShows.Text = S.innerDocument.ExportRSSMaxShows.ToString();
 
-            this.cbMissingXML.Checked = S.ExportMissingXML;
-            this.txtMissingXML.Text = S.ExportMissingXMLTo;
-            this.cbMissingCSV.Checked = S.ExportMissingCSV;
-            this.txtMissingCSV.Text = S.ExportMissingCSVTo;
+            this.cbMissingXML.Checked = S.innerDocument.ExportMissingXML;
+            this.txtMissingXML.Text = S.innerDocument.ExportMissingXMLTo;
+            this.cbMissingCSV.Checked = S.innerDocument.ExportMissingCSV;
+            this.txtMissingCSV.Text = S.innerDocument.ExportMissingCSVTo;
 
-            this.cbRenamingXML.Checked = S.ExportRenamingXML;
-            this.txtRenamingXML.Text = S.ExportRenamingXMLTo;
+            this.cbRenamingXML.Checked = S.innerDocument.ExportRenamingXML;
+            this.txtRenamingXML.Text = S.innerDocument.ExportRenamingXMLTo;
 
-            this.cbFOXML.Checked = S.ExportFOXML;
-            this.txtFOXML.Text = S.ExportFOXMLTo;
+            this.cbFOXML.Checked = S.innerDocument.ExportFOXML;
+            this.txtFOXML.Text = S.innerDocument.ExportFOXMLTo;
 
-            this.cbStartupTab.SelectedIndex = S.StartupTab;
-            this.cbNotificationIcon.Checked = S.NotificationAreaIcon;
-            this.txtVideoExtensions.Text = S.GetVideoExtensionsString();
-            this.txtOtherExtensions.Text = S.GetOtherExtensionsString();
+            this.cbStartupTab.SelectedIndex = S.innerDocument.StartupTab;
+            this.cbNotificationIcon.Checked = S.innerDocument.NotificationAreaIcon;
+            this.txtVideoExtensions.Text = S.innerDocument.GetVideoExtensionsString();
+            this.txtOtherExtensions.Text = S.innerDocument.GetOtherExtensionsString();
 
-            this.cbKeepTogether.Checked = S.KeepTogether;
+            this.cbKeepTogether.Checked = S.innerDocument.KeepTogether;
             this.cbKeepTogether_CheckedChanged(null, null);
 
-            this.cbLeadingZero.Checked = S.LeadingZeroOnSeason;
-            this.chkShowInTaskbar.Checked = S.ShowInTaskbar;
-            this.cbTxtToSub.Checked = S.RenameTxtToSub;
-            this.cbShowEpisodePictures.Checked = S.ShowEpisodePictures;
-            this.cbAutoSelInMyShows.Checked = S.AutoSelectShowInMyShows;
-            this.txtSpecialsFolderName.Text = S.SpecialsFolderName;
-            this.cbForceLower.Checked = S.ForceLowercaseFilenames;
-            this.cbIgnoreSamples.Checked = S.IgnoreSamples;
-            this.txtRSSuTorrentPath.Text = S.uTorrentPath;
-            this.txtUTResumeDatPath.Text = S.ResumeDatPath;
+            this.cbLeadingZero.Checked = S.innerDocument.LeadingZeroOnSeason;
+            this.chkShowInTaskbar.Checked = S.innerDocument.ShowInTaskbar;
+            this.cbTxtToSub.Checked = S.innerDocument.RenameTxtToSub;
+            this.cbShowEpisodePictures.Checked = S.innerDocument.ShowEpisodePictures;
+            this.cbAutoSelInMyShows.Checked = S.innerDocument.AutoSelectShowInMyShows;
+            this.txtSpecialsFolderName.Text = S.innerDocument.SpecialsFolderName;
+            this.cbForceLower.Checked = S.innerDocument.ForceLowercaseFilenames;
+            this.cbIgnoreSamples.Checked = S.innerDocument.IgnoreSamples;
+            this.txtRSSuTorrentPath.Text = S.innerDocument.uTorrentPath;
+            this.txtUTResumeDatPath.Text = S.innerDocument.ResumeDatPath;
 
-            this.txtParallelDownloads.Text = S.ParallelDownloads.ToString();
+            this.txtParallelDownloads.Text = S.innerDocument.ParallelDownloads.ToString();
 
-            this.cbSearchRSS.Checked = S.SearchRSS;
-            this.cbEpImgs.Checked = S.EpImgs;
-            this.cbNFOs.Checked = S.NFOs;
-            this.cbFolderJpg.Checked = S.FolderJpg;
-            this.cbRenameCheck.Checked = S.RenameCheck;
-            this.cbCheckuTorrent.Checked = S.CheckuTorrent;
-            this.cbLookForAirdate.Checked = S.LookForDateInFilename;
-            this.cbMonitorFolder.Checked = S.MonitorFolders;
-            this.cbMissing.Checked = S.MissingCheck;
-            this.cbSearchLocally.Checked = S.SearchLocally;
-            this.cbLeaveOriginals.Checked = S.LeaveOriginals;
+            this.cbSearchRSS.Checked = S.innerDocument.SearchRSS;
+            this.cbEpImgs.Checked = S.innerDocument.EpImgs;
+            this.cbNFOs.Checked = S.innerDocument.NFOs;
+            this.cbFolderJpg.Checked = S.innerDocument.FolderJpg;
+            this.cbRenameCheck.Checked = S.innerDocument.RenameCheck;
+            this.cbCheckuTorrent.Checked = S.innerDocument.CheckuTorrent;
+            this.cbLookForAirdate.Checked = S.innerDocument.LookForDateInFilename;
+            this.cbMonitorFolder.Checked = S.innerDocument.MonitorFolders;
+            this.cbMissing.Checked = S.innerDocument.MissingCheck;
+            this.cbSearchLocally.Checked = S.innerDocument.SearchLocally;
+            this.cbLeaveOriginals.Checked = S.innerDocument.LeaveOriginals;
 
             this.EnableDisable(null, null);
 
             this.FillSearchFolderList();
 
-            foreach (string s in S.RSSURLs)
+            foreach (string s in S.innerDocument.RSSURLs)
                 this.AddNewRSSRow(s);
 
-            switch (S.FolderJpgIs)
+            switch (S.innerDocument.FolderJpgIs)
             {
-                case TVSettings.FolderJpgIsType.FanArt:
+                case ConfigDocument.FolderJpgIsType.FanArt:
                     this.rbFolderFanArt.Checked = true;
                     break;
-                case TVSettings.FolderJpgIsType.Banner:
+                case ConfigDocument.FolderJpgIsType.Banner:
                     this.rbFolderBanner.Checked = true;
                     break;
                 default:
                     this.rbFolderPoster.Checked = true;
                     break;
             }
-            if (S.ShowStatusColors != null)
+            if (S.innerDocument.ShowStatusColors != null)
             {
-                foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in S.ShowStatusColors)
+                foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in S.innerDocument.ShowStatusColors)
                 {
                     ListViewItem item = new ListViewItem();
                     item.Text = showStatusColor.Key.Text;
@@ -575,7 +577,7 @@ namespace TVRename
             this.ReplacementsGrid[r, 0] = new SourceGrid.Cells.Cell(from, typeof(string));
             this.ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
             this.ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
-            if (!string.IsNullOrEmpty(from) && (TVSettings.CompulsoryReplacements().IndexOf(from) != -1))
+            if (!string.IsNullOrEmpty(from) && (ConfigDocument.CompulsoryReplacements().IndexOf(from) != -1))
             {
                 this.ReplacementsGrid[r, 0].Editor.EnableEdit = false;
                 this.ReplacementsGrid[r, 0].View = roModel;
@@ -754,7 +756,7 @@ namespace TVRename
                 // don't delete compulsory items
                 int n = rowsIndex[0];
                 string from = (string) (this.ReplacementsGrid[n, 0].Value);
-                if (string.IsNullOrEmpty(from) || (TVSettings.CompulsoryReplacements().IndexOf(from) == -1))
+                if (string.IsNullOrEmpty(from) || (ConfigDocument.CompulsoryReplacements().IndexOf(from) == -1))
                     this.ReplacementsGrid.Rows.Remove(n);
             }
         }

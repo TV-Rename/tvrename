@@ -8,6 +8,8 @@
 using System.IO;
 using System;
 using System.Windows.Forms;
+using TVRename.db_access.documents;
+using TVRename.Settings;
 
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
@@ -20,7 +22,7 @@ namespace TVRename
         {
         }
 
-        public DirCache(SetProgressDelegate prog, string folder, bool subFolders, TVSettings theSettings)
+        public DirCache(SetProgressDelegate prog, string folder, bool subFolders, Config theSettings)
         {
             this.BuildDirCache(prog, 0, 0, folder, subFolders, theSettings);
         }
@@ -50,12 +52,12 @@ namespace TVRename
             return n;
         }
 
-        public int AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders, TVSettings theSettings)
+        public int AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders, Config theSettings)
         {
             return this.BuildDirCache(prog, initialCount, totalFiles, folder, subFolders, theSettings);
         }
 
-        private int BuildDirCache(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders, TVSettings theSettings)
+        private int BuildDirCache(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders, Config theSettings)
         {
             int filesDone = initialCount;
 

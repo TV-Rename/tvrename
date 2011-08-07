@@ -10,7 +10,8 @@ namespace TVRename.db_access
     {
         private static RavenSession instance;
 
-        private RavenSession() {
+        private RavenSession()
+        {
             var documentStore = new EmbeddableDocumentStore
             {
                 DataDirectory = "App_Data\\tvrename\\RavenDB"

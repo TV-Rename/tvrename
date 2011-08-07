@@ -14,6 +14,8 @@ using System.Windows.Forms;
 namespace TVRename
 {
     using System.Text.RegularExpressions;
+    using TVRename.db_access.documents;
+    using TVRename.Settings;
 
     public enum BTChunk
     {
@@ -1032,7 +1034,7 @@ namespace TVRename
             return (100 * bitsOn + totalBits / 2) / totalBits;
         }
 
-        public System.Collections.Generic.List<TorrentEntry> AllFilesBeingDownloaded(TVSettings settings, CommandLineArgs args)
+        public System.Collections.Generic.List<TorrentEntry> AllFilesBeingDownloaded(Config settings, CommandLineArgs args)
         {
             System.Collections.Generic.List<TorrentEntry> r = new System.Collections.Generic.List<TorrentEntry>();
 
