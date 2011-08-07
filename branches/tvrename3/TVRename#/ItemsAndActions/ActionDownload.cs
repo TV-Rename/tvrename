@@ -10,6 +10,8 @@ namespace TVRename
     using System;
     using System.IO;
     using System.Windows.Forms;
+    using TVRename.db_access.documents;
+    using TVRename.Settings;
 
     public class ActionDownload : Item, Action, ScanListItem
     {
@@ -52,7 +54,7 @@ namespace TVRename
             get { return 1000000; }
         }
 
-        public bool Go(TVSettings settings, ref bool pause)
+        public bool Go(Config settings, ref bool pause)
         {
             byte[] theData = this.SI.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
             if ((theData == null) || (theData.Length == 0))

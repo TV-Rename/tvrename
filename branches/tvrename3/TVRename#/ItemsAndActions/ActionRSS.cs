@@ -10,6 +10,8 @@ namespace TVRename
     using System;
     using System.IO;
     using System.Windows.Forms;
+    using TVRename.db_access.documents;
+    using TVRename.Settings;
 
     // TODO: derive this from ActionDownload?
     public class ActionRSS : Item, Action, ScanListItem
@@ -50,7 +52,7 @@ namespace TVRename
             get { return 1000000; }
         }
 
-        public bool Go(TVSettings settings, ref bool pause)
+        public bool Go(Config settings, ref bool pause)
         {
             System.Net.WebClient wc = new System.Net.WebClient();
             try
@@ -69,7 +71,7 @@ namespace TVRename
                     saveTemp += ".torrent";
                 File.WriteAllBytes(saveTemp, r);
 
-                System.Diagnostics.Process.Start(settings.uTorrentPath, "/directory \"" + (new FileInfo(this.TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
+                System.Diagnostics.Process.Start(settings.innerDocument.uTorrentPath, "/directory \"" + (new FileInfo(this.TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
 
                 this.Done = true;
                 return true;

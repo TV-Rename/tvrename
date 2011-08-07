@@ -7,6 +7,8 @@
 // 
 using System;
 using System.IO;
+using TVRename.db_access.documents;
+using TVRename.Settings;
 
 namespace TVRename
 {
@@ -19,7 +21,7 @@ namespace TVRename
         public string SimplifiedFullName;
         public FileInfo TheFile;
 
-        public DirCacheEntry(FileInfo f, TVSettings theSettings)
+        public DirCacheEntry(FileInfo f, Config theSettings)
         {
             this.TheFile = f;
             this.SimplifiedFullName = Helpers.SimplifyName(f.FullName);

@@ -80,7 +80,7 @@ namespace TVRename
 
         private bool CheckResumeDatPath()
         {
-            if (string.IsNullOrEmpty(this.mDoc.Settings.ResumeDatPath) || !File.Exists(this.mDoc.Settings.ResumeDatPath))
+            if (string.IsNullOrEmpty(this.mDoc.SettingsObj.innerDocument.ResumeDatPath) || !File.Exists(this.mDoc.SettingsObj.innerDocument.ResumeDatPath))
             {
                 MessageBox.Show("Please set the resume.dat path in Preferences before using this feature", "µTorrent", MessageBoxButtons.OK);
                 return false;
@@ -100,7 +100,7 @@ namespace TVRename
             this.lbUTTorrents.Items.Clear();
             // open resume.dat file, fill checked list box with torrents available to choose from
 
-            string file = this.mDoc.Settings.ResumeDatPath;
+            string file = this.mDoc.SettingsObj.innerDocument.ResumeDatPath;
             if (!File.Exists(file))
                 return;
             BEncodeLoader bel = new BEncodeLoader(mDoc.Args);
@@ -135,7 +135,7 @@ namespace TVRename
                 return;
 
             string searchFolder = this.txtUTSearchFolder.Text;
-            string resumeDatFile = this.mDoc.Settings.ResumeDatPath;
+            string resumeDatFile = this.mDoc.SettingsObj.innerDocument.ResumeDatPath;
             bool testMode = this.chkUTTest.Checked;
 
             if (!File.Exists(resumeDatFile))
@@ -163,8 +163,8 @@ namespace TVRename
             foreach (string torrent in this.lbUTTorrents.CheckedItems)
                 sl.Add(torrent);
 
-            btp.DoWork(sl, searchFolder, this.lvUTResults, this.cbUTUseHashing.Checked, this.cbUTMatchMissing.Checked, this.cbUTSetPrio.Checked, 
-                       testMode, this.chkUTSearchSubfolders.Checked, this.mDoc.TheActionList, this.mDoc.Settings.FNPRegexs,
+            btp.DoWork(sl, searchFolder, this.lvUTResults, this.cbUTUseHashing.Checked, this.cbUTMatchMissing.Checked, this.cbUTSetPrio.Checked,
+                       testMode, this.chkUTSearchSubfolders.Checked, this.mDoc.TheActionList, this.mDoc.SettingsObj.innerDocument.FNPRegexs,
                        mDoc.Args);
 
             if (!testMode)
@@ -242,7 +242,7 @@ namespace TVRename
 
         private void StartWatching()
         {
-            FileInfo f = new FileInfo(this.mDoc.Settings.ResumeDatPath);
+            FileInfo f = new FileInfo(this.mDoc.SettingsObj.innerDocument.ResumeDatPath);
             if (f.Exists)
             {
                 this.watcher.Path = f.Directory.Name;

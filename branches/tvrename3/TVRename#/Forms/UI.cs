@@ -137,13 +137,13 @@ namespace TVRename
             this.mDoc.WriteUpcomingRSS();
             this.ShowHideNotificationIcon();
 
-            int t = this.mDoc.Settings.StartupTab;
+            int t = this.mDoc.SettingsObj.innerDocument.StartupTab;
             if (t < this.tabControl1.TabCount)
-                this.tabControl1.SelectedIndex = this.mDoc.Settings.StartupTab;
+                this.tabControl1.SelectedIndex = this.mDoc.SettingsObj.innerDocument.StartupTab;
             this.tabControl1_SelectedIndexChanged(null, null);
 
             this.mAutoFolderMonitor = new TVRename.AutoFolderMonitor(mDoc,this);
-            if (this.mDoc.Settings.MonitorFolders)
+            if (this.mDoc.SettingsObj.innerDocument.MonitorFolders)
                 this.mAutoFolderMonitor.StartMonitor();
 
 
@@ -216,7 +216,7 @@ namespace TVRename
 
         public void UpdateSearchButton()
         {
-            string name = this.mDoc.GetSearchers().Name(this.mDoc.Settings.TheSearchers.CurrentSearchNum());
+            string name = this.mDoc.GetSearchers().Name(this.mDoc.SettingsObj.innerDocument.TheSearchers.CurrentSearchNum());
             this.bnWTWBTSearch.Text = name;
             this.bnActionBTSearch.Text = name;
             this.FillEpGuideHTML();
@@ -234,7 +234,7 @@ namespace TVRename
 
         private void UI_Load(object sender, System.EventArgs e)
         {
-            this.ShowInTaskbar = this.mDoc.Settings.ShowInTaskbar && !this.mDoc.Args.Hide;
+            this.ShowInTaskbar = this.mDoc.SettingsObj.innerDocument.ShowInTaskbar && !this.mDoc.Args.Hide;
 
             foreach (TabPage tp in this.tabControl1.TabPages) // grr! TODO: why does it go white?
                 tp.BackColor = System.Drawing.SystemColors.Control;
@@ -243,10 +243,10 @@ namespace TVRename
             this.UI_LocationChanged(null, null);
             this.UI_SizeChanged(null, null);
 
-            this.backgroundDownloadToolStripMenuItem.Checked = this.mDoc.Settings.BGDownload;
-            this.offlineOperationToolStripMenuItem.Checked = this.mDoc.Settings.OfflineMode;
+            this.backgroundDownloadToolStripMenuItem.Checked = this.mDoc.SettingsObj.innerDocument.BGDownload;
+            this.offlineOperationToolStripMenuItem.Checked = this.mDoc.SettingsObj.innerDocument.OfflineMode;
             this.BGDownloadTimer.Interval = 10000; // first time
-            if (this.mDoc.Settings.BGDownload)
+            if (this.mDoc.SettingsObj.innerDocument.BGDownload)
                 this.BGDownloadTimer.Start();
 
             this.quickTimer.Start();
@@ -719,7 +719,7 @@ namespace TVRename
                     if (si.UseSequentialMatch && (ei.OverallNumber != -1))
                         body += " (#" + ei.OverallNumber + ")";
 
-                    body += " <A HREF=\"" + this.mDoc.Settings.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
+                    body += " <A HREF=\"" + this.mDoc.SettingsObj.innerDocument.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
 
                     System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
                     if (fl != null)
@@ -734,7 +734,7 @@ namespace TVRename
 
                     body += "<p><p>";
 
-                    if (this.mDoc.Settings.ShowEpisodePictures)
+                    if (this.mDoc.SettingsObj.innerDocument.ShowEpisodePictures)
                     {
                         body += "<table><tr>";
                         body += "<td width=100% valign=top>" + ei.Overview + "</td><td width=300 height=225>";
@@ -891,7 +891,7 @@ namespace TVRename
             this.mInternalChange++;
             this.lvWhenToWatch.BeginUpdate();
 
-            int dd = this.mDoc.Settings.WTWRecentDays;
+            int dd = this.mDoc.SettingsObj.innerDocument.WTWRecentDays;
 
             this.lvWhenToWatch.Groups[0].Header = "Aired in the last " + dd + " day" + ((dd == 1) ? "" : "s");
 
@@ -1027,7 +1027,7 @@ namespace TVRename
             }
             this.mInternalChange--;
 
-            if (this.mDoc.Settings.AutoSelectShowInMyShows)
+            if (this.mDoc.SettingsObj.innerDocument.AutoSelectShowInMyShows)
                 GotoEpguideFor(ei, false);
         }
 
@@ -1165,7 +1165,7 @@ namespace TVRename
 
         public void ShowYourself()
         {
-            if (!this.mDoc.Settings.ShowInTaskbar)
+            if (!this.mDoc.SettingsObj.innerDocument.ShowInTaskbar)
                 this.Show();
             if (this.WindowState == FormWindowState.Minimized)
                 this.WindowState = FormWindowState.Normal;
@@ -1378,11 +1378,11 @@ namespace TVRename
 
             if (ep != null)
             {
-                if (ep.SI.AllFolderLocations(this.mDoc.Settings).ContainsKey(ep.SeasonNumber))
+                if (ep.SI.AllFolderLocations(this.mDoc.SettingsObj).ContainsKey(ep.SeasonNumber))
                 {
                     int n = this.mFoldersToOpen.Count;
                     bool first = true;
-                    foreach (string folder in ep.SI.AllFolderLocations(this.mDoc.Settings)[ep.SeasonNumber])
+                    foreach (string folder in ep.SI.AllFolderLocations(this.mDoc.SettingsObj)[ep.SeasonNumber])
                     {
                         if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder))
                         {
@@ -1403,11 +1403,11 @@ namespace TVRename
                     }
                 }
             }
-            else if ((seas != null) && (si != null) && (si.AllFolderLocations(this.mDoc.Settings).ContainsKey(seas.SeasonNumber)))
+            else if ((seas != null) && (si != null) && (si.AllFolderLocations(this.mDoc.SettingsObj).ContainsKey(seas.SeasonNumber)))
             {
                 int n = this.mFoldersToOpen.Count;
                 bool first = true;
-                foreach (string folder in si.AllFolderLocations(this.mDoc.Settings)[seas.SeasonNumber])
+                foreach (string folder in si.AllFolderLocations(this.mDoc.SettingsObj)[seas.SeasonNumber])
                 {
                     if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
                     {
@@ -1432,7 +1432,7 @@ namespace TVRename
                 int n = this.mFoldersToOpen.Count;
                 bool first = true;
 
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.AllFolderLocations(this.mDoc.Settings))
+                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.AllFolderLocations(this.mDoc.SettingsObj))
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -1597,13 +1597,13 @@ namespace TVRename
                             if (mi != null)
                             {
                                 // browse for mLastActionClicked
-                                this.openFile.Filter = "Video Files|" + this.mDoc.Settings.GetVideoExtensionsString().Replace(".", "*.") + "|All Files (*.*)|*.*";
+                                this.openFile.Filter = "Video Files|" + this.mDoc.SettingsObj.innerDocument.GetVideoExtensionsString().Replace(".", "*.") + "|All Files (*.*)|*.*";
 
                                 if (this.openFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                                 {
                                     // make new Item for copying/moving to specified location
                                     FileInfo from = new FileInfo(this.openFile.FileName);
-                                    this.mDoc.TheActionList.Add(new ActionCopyMoveRename(this.mDoc.Settings.LeaveOriginals ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Move, from, new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode));
+                                    this.mDoc.TheActionList.Add(new ActionCopyMoveRename(this.mDoc.SettingsObj.innerDocument.LeaveOriginals ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Move, from, new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode));
                                     // and remove old Missing item
                                     this.mDoc.TheActionList.Remove(mi);
                                 }
@@ -1750,9 +1750,9 @@ namespace TVRename
                 this.mDoc.SetDirty();
                 this.ShowHideNotificationIcon();
                 this.FillWhenToWatchList();
-                this.ShowInTaskbar = this.mDoc.Settings.ShowInTaskbar;
+                this.ShowInTaskbar = this.mDoc.SettingsObj.innerDocument.ShowInTaskbar;
                 this.FillEpGuideHTML();
-                this.mAutoFolderMonitor.SettingsChanged(this.mDoc.Settings.MonitorFolders);
+                this.mAutoFolderMonitor.SettingsChanged(this.mDoc.SettingsObj.innerDocument.MonitorFolders);
                 ForceRefresh(null);
             }
         }
@@ -1775,7 +1775,7 @@ namespace TVRename
         {
             if (this.WindowState == FormWindowState.Normal)
                 this.mLastNonMaximizedSize = this.Size;
-            if ((this.WindowState == FormWindowState.Minimized) && (!this.mDoc.Settings.ShowInTaskbar))
+            if ((this.WindowState == FormWindowState.Minimized) && (!this.mDoc.SettingsObj.innerDocument.ShowInTaskbar))
                 this.Hide();
         }
 
@@ -1789,7 +1789,7 @@ namespace TVRename
         {
             int n = this.mDoc.DownloadDone ? 0 : this.mDoc.DownloadsRemaining;
 
-            this.txtDLStatusLabel.Visible = (n != 0 || this.mDoc.Settings.BGDownload);
+            this.txtDLStatusLabel.Visible = (n != 0 || this.mDoc.SettingsObj.innerDocument.BGDownload);
             if (n != 0)
             {
                 this.txtDLStatusLabel.Text = "Background download: " + this.mDoc.GetTVDB(false, "").CurrentDLTask;
@@ -1814,12 +1814,12 @@ namespace TVRename
 
         public void backgroundDownloadToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            this.mDoc.Settings.BGDownload = !this.mDoc.Settings.BGDownload;
-            this.backgroundDownloadToolStripMenuItem.Checked = this.mDoc.Settings.BGDownload;
+            this.mDoc.SettingsObj.innerDocument.BGDownload = !this.mDoc.SettingsObj.innerDocument.BGDownload;
+            this.backgroundDownloadToolStripMenuItem.Checked = this.mDoc.SettingsObj.innerDocument.BGDownload;
             this.statusTimer_Tick(null, null);
             this.mDoc.SetDirty();
 
-            if (this.mDoc.Settings.BGDownload)
+            if (this.mDoc.SettingsObj.innerDocument.BGDownload)
                 this.BGDownloadTimer.Start();
             else
                 this.BGDownloadTimer.Stop();
@@ -1836,7 +1836,7 @@ namespace TVRename
             this.BGDownloadTimer.Interval = BGDLLongInterval(); // after first time (10 seconds), put up to 60 minutes
             this.BGDownloadTimer.Start();
 
-            if (this.mDoc.Settings.BGDownload && this.mDoc.DownloadDone) // only do auto-download if don't have stuff to do already
+            if (this.mDoc.SettingsObj.innerDocument.BGDownload && this.mDoc.DownloadDone) // only do auto-download if don't have stuff to do already
             {
                 this.mDoc.StartBGDownloadThread(false);
 
@@ -1846,7 +1846,7 @@ namespace TVRename
 
         public void backgroundDownloadNowToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            if (this.mDoc.Settings.OfflineMode)
+            if (this.mDoc.SettingsObj.innerDocument.OfflineMode)
             {
                 System.Windows.Forms.DialogResult res = MessageBox.Show("Ignore offline mode and download anyway?", "Background Download", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res != System.Windows.Forms.DialogResult.Yes)
@@ -1862,14 +1862,14 @@ namespace TVRename
 
         public void offlineOperationToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            if (!this.mDoc.Settings.OfflineMode)
+            if (!this.mDoc.SettingsObj.innerDocument.OfflineMode)
             {
                 if (MessageBox.Show("Are you sure you wish to go offline?", "TVRename", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                     return;
             }
 
-            this.mDoc.Settings.OfflineMode = !this.mDoc.Settings.OfflineMode;
-            this.offlineOperationToolStripMenuItem.Checked = this.mDoc.Settings.OfflineMode;
+            this.mDoc.SettingsObj.innerDocument.OfflineMode = !this.mDoc.SettingsObj.innerDocument.OfflineMode;
+            this.offlineOperationToolStripMenuItem.Checked = this.mDoc.SettingsObj.innerDocument.OfflineMode;
             this.mDoc.SetDirty();
         }
 
@@ -1927,7 +1927,7 @@ namespace TVRename
 
         public void ShowHideNotificationIcon()
         {
-            this.notifyIcon1.Visible = this.mDoc.Settings.NotificationAreaIcon && !this.mDoc.Args.Hide;
+            this.notifyIcon1.Visible = this.mDoc.SettingsObj.innerDocument.NotificationAreaIcon && !this.mDoc.Args.Hide;
         }
 
         public void statisticsToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -1958,15 +1958,15 @@ namespace TVRename
 
             if (ser != null)
             {
-                if (mDoc.Settings.ShowStatusColors != null)
+                if (mDoc.SettingsObj.innerDocument.ShowStatusColors != null)
                 {
-                    if (mDoc.Settings.ShowStatusColors.IsShowStatusDefined(si.ShowStatus))
+                    if (mDoc.SettingsObj.innerDocument.ShowStatusColors.IsShowStatusDefined(si.ShowStatus))
                     {
-                        n.ForeColor = mDoc.Settings.ShowStatusColors.GetEntry(false, true, si.ShowStatus);
+                        n.ForeColor = mDoc.SettingsObj.innerDocument.ShowStatusColors.GetEntry(false, true, si.ShowStatus);
                     }
                     else
                     {
-                        Color nodeColor = mDoc.Settings.ShowStatusColors.GetEntry(true, true, si.SeasonsAirStatus.ToString());
+                        Color nodeColor = mDoc.SettingsObj.innerDocument.ShowStatusColors.GetEntry(true, true, si.SeasonsAirStatus.ToString());
                         if (!nodeColor.IsEmpty)
                             n.ForeColor = nodeColor;
                     }
@@ -1987,9 +1987,9 @@ namespace TVRename
                         n2.ForeColor = Color.Gray;
                     else
                     {
-                        if (mDoc.Settings.ShowStatusColors != null)
+                        if (mDoc.SettingsObj.innerDocument.ShowStatusColors != null)
                         {
-                            Color nodeColor = mDoc.Settings.ShowStatusColors.GetEntry(true, false, ser.Seasons[snum].Status.ToString());
+                            Color nodeColor = mDoc.SettingsObj.innerDocument.ShowStatusColors.GetEntry(true, false, ser.Seasons[snum].Status.ToString());
                             if (!nodeColor.IsEmpty)
                                 n2.ForeColor = nodeColor;
                         }
@@ -2169,7 +2169,7 @@ namespace TVRename
             SeriesInfo ser = db.GetSeries(si.TVDBCode);
             ProcessedEpisodeList pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
 
-            EditRules er = new EditRules(si, pel, seasnum, this.mDoc.Settings.NamingStyle);
+            EditRules er = new EditRules(si, pel, seasnum, this.mDoc.SettingsObj.innerDocument.NamingStyle);
             System.Windows.Forms.DialogResult dr = er.ShowDialog();
             db.Unlock("EditSeason");
             if (dr == DialogResult.OK)
@@ -2257,7 +2257,7 @@ namespace TVRename
                 return;
 
             Season seas = TreeNodeToSeason(n);
-            System.Collections.Generic.Dictionary<int, StringList> afl = si.AllFolderLocations(this.mDoc.Settings);
+            System.Collections.Generic.Dictionary<int, StringList> afl = si.AllFolderLocations(this.mDoc.SettingsObj);
             int[] keys = new int[afl.Count];
             afl.Keys.CopyTo(keys, 0);
             if ((seas == null) && (keys.Length > 0))
@@ -2358,12 +2358,12 @@ namespace TVRename
 
         private void filenameTemplateEditorToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            CustomName cn = new CustomName(this.mDoc.Settings.NamingStyle.StyleString);
+            CustomName cn = new CustomName(this.mDoc.SettingsObj.innerDocument.NamingStyle.StyleString);
             CustomNameDesigner cne = new CustomNameDesigner(this.CurrentlySelectedPEL(), cn, this.mDoc);
             DialogResult dr = cne.ShowDialog();
             if (dr == DialogResult.OK)
             {
-                this.mDoc.Settings.NamingStyle = cn;
+                this.mDoc.SettingsObj.innerDocument.NamingStyle = cn;
                 this.mDoc.SetDirty();
             }
         }
@@ -2389,7 +2389,7 @@ namespace TVRename
 
             if (currentSI != null)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in currentSI.AllFolderLocations(this.mDoc.Settings))
+                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in currentSI.AllFolderLocations(this.mDoc.SettingsObj))
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -2404,7 +2404,7 @@ namespace TVRename
                 }
             }
 
-            AddEditSeasEpFinders d = new AddEditSeasEpFinders(this.mDoc.Settings.FNPRegexs, this.mDoc.GetShowItems(true), currentSI, theFolder, this.mDoc.Settings);
+            AddEditSeasEpFinders d = new AddEditSeasEpFinders(this.mDoc.SettingsObj.innerDocument.FNPRegexs, this.mDoc.GetShowItems(true), currentSI, theFolder, this.mDoc.SettingsObj);
             this.mDoc.UnlockShowItems();
 
             DialogResult dr = d.ShowDialog();
@@ -2807,7 +2807,7 @@ namespace TVRename
                     this.mLastShowClicked = null;
                 }
 
-                if ((this.mLastEpClicked != null) && (this.mDoc.Settings.AutoSelectShowInMyShows))
+                if ((this.mLastEpClicked != null) && (this.mDoc.SettingsObj.innerDocument.AutoSelectShowInMyShows))
                     this.GotoEpguideFor(this.mLastEpClicked, false);
             }
         }

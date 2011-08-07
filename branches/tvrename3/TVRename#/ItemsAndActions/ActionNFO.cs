@@ -11,6 +11,8 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
     using System.Xml;
+    using TVRename.db_access.documents;
+    using TVRename.Settings;
 
     public class ActionNFO : Item, Action, ScanListItem
     {
@@ -57,7 +59,7 @@ namespace TVRename
             get { return 10000; }
         }
 
-        public bool Go(TVSettings tvsettings, ref bool pause)
+        public bool Go(Config tvsettings, ref bool pause)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {

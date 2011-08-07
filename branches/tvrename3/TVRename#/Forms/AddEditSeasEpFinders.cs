@@ -9,6 +9,8 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using TVRename.db_access.documents;
+using TVRename.Settings;
 
 namespace TVRename
 {
@@ -26,9 +28,9 @@ namespace TVRename
         private FNPRegexList Rex;
         private ShowItemList SIL;
 
-        private TVSettings TheSettings;
+        private Config TheSettings;
 
-        public AddEditSeasEpFinders(FNPRegexList rex, ShowItemList sil, ShowItem initialShow, string initialFolder, TVSettings s)
+        public AddEditSeasEpFinders(FNPRegexList rex, ShowItemList sil, ShowItem initialShow, string initialFolder, Config s)
         {
             this.Rex = rex;
             this.SIL = sil;
@@ -300,7 +302,7 @@ namespace TVRename
         {
             DialogResult dr = MessageBox.Show("Restore to default matching expressions?", "Filename Processors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (dr == DialogResult.Yes)
-                this.FillGrid(TVSettings.DefaultFNPList());
+                this.FillGrid(Config.DefaultFNPList());
         }
 
         #region Nested type: ChangedCont

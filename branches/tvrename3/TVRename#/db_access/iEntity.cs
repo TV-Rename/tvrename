@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TVRename.db_access.document
+namespace TVRename.db_access
 {
-    class ShowEpisode
+    public interface IEntity<TDoc>
     {
+        TDoc GetInnerDocument();
     }
 }

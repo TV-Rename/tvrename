@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using TVRename.Settings;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -142,7 +143,7 @@ namespace TVRename
             this.TVDBCode = tvDBCode;
         }
 
-        public ShowItem(TheTVDB db, XmlReader reader, TVSettings settings)
+        public ShowItem(TheTVDB db, XmlReader reader, Config settings)
         {
             this.SetDefaults(db);
 
@@ -460,9 +461,9 @@ namespace TVRename
                 return null;
         }
 
-        public string AutoFolderNameForSeason(int n, TVSettings settings)
+        public string AutoFolderNameForSeason(int n, Config settings)
         {
-            bool leadingZero = settings.LeadingZeroOnSeason || this.PadSeasonToTwoDigits;
+            bool leadingZero = settings.innerDocument.LeadingZeroOnSeason || this.PadSeasonToTwoDigits;
             string r = this.AutoAdd_FolderBase;
             if (string.IsNullOrEmpty(r))
                 return "";
@@ -472,7 +473,7 @@ namespace TVRename
             if (this.AutoAdd_FolderPerSeason)
             {
                 if (n == 0)
-                    r += settings.SpecialsFolderName;
+                    r += settings.innerDocument.SpecialsFolderName;
                 else
                 {
                     r += this.AutoAdd_SeasonFolderName;
@@ -611,7 +612,7 @@ namespace TVRename
             return pel;
         }
 
-        public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(TVSettings settings)
+        public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(Config settings)
         {
             return this.AllFolderLocations(settings, true);
         }
@@ -621,7 +622,7 @@ namespace TVRename
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
 
-        public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(TVSettings settings, bool manualToo)
+        public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(Config settings, bool manualToo)
         {
             System.Collections.Generic.Dictionary<int, StringList> fld = new System.Collections.Generic.Dictionary<int, StringList>();
 

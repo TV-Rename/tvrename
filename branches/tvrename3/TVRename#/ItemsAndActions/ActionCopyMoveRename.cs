@@ -10,6 +10,8 @@ namespace TVRename
     using System;
     using System.IO;
     using System.Windows.Forms;
+    using TVRename.db_access.documents;
+    using TVRename.Settings;
 
     public class ActionCopyMoveRename : Item, Action, ScanListItem
     {
@@ -66,7 +68,7 @@ namespace TVRename
             get { return this.SourceFileSize(); }
         }
 
-        public bool Go(TVSettings settings, ref bool pause)
+        public bool Go(Config settings, ref bool pause)
         {
             // read NTFS permissions (if any)
             System.Security.AccessControl.FileSecurity security = null;
