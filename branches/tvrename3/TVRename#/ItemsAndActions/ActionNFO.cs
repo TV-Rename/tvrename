@@ -13,6 +13,7 @@ namespace TVRename
     using System.Xml;
     using TVRename.db_access.documents;
     using TVRename.Settings;
+    using TVRename.Shows;
 
     public class ActionNFO : Item, Action, ScanListItem
     {
@@ -206,7 +207,7 @@ namespace TVRename
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("episodeguideurl");
-                writer.WriteValue(TheTVDB.BuildURL(true, true, this.SI.TVDBCode, this.SI.TVDB.PreferredLanguage(this.SI.TVDBCode)));
+                writer.WriteValue(TheTVDB.BuildURL(true, true, this.SI.innerDocument.TVDBCode, this.SI.innerDocument.TVDB.PreferredLanguage(this.SI.innerDocument.TVDBCode)));
                 writer.WriteEndElement();
 
                 WriteInfo(writer, this.SI, "Overview", "plot");

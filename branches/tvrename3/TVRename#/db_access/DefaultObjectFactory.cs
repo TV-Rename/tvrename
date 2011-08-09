@@ -5,6 +5,7 @@ using System.Text;
 using TVRename.db_access.documents;
 using System.IO;
 using TVRename.Utility;
+using TVRename.Shows;
 
 namespace TVRename.db_access
 {
@@ -163,6 +164,35 @@ namespace TVRename.db_access
             return cd;
         }
 
-        
+        public static ShowItemDocument getShowItemDocument(TheTVDB db)
+        {
+            ShowItemDocument si = new ShowItemDocument();
+
+            si.TVDB = db;
+            si.ManualFolderLocations = new System.Collections.Generic.Dictionary<int, StringList>();
+            si.IgnoreSeasons = new System.Collections.Generic.List<int>();
+            si.UseCustomShowName = false;
+            si.CustomShowName = "";
+            si.UseSequentialMatch = false;
+            si.SeasonRules = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>>();
+            si.SeasonEpisodes = new System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>();
+            si.ShowNextAirdate = true;
+            si.TVDBCode = -1;
+            //                WhichSeasons = gcnew System.Collections.Generic.List<int>;
+            //                NamingStyle = (int)NStyle.DefaultStyle();
+            si.AutoAddNewSeasons = true;
+            si.PadSeasonToTwoDigits = false;
+            si.AutoAdd_FolderBase = "";
+            si.AutoAdd_FolderPerSeason = true;
+            si.AutoAdd_SeasonFolderName = "Season ";
+            si.DoRename = true;
+            si.DoMissingCheck = true;
+            si.CountSpecials = false;
+            si.DVDOrder = false;
+            si.ForceCheckNoAirdate = false;
+            si.ForceCheckFuture = false;
+
+            return si;
+        }
     }
 }

@@ -115,7 +115,9 @@
     <Compile Include="App\AutoFolderMonitor.cs" />
     <Compile Include="App\IPC.cs" />
     <Compile Include="db_access\DefaultObjectFactory.cs" />
+    <Compile Include="db_access\documents\ShowItemDocument.cs" />
     <Compile Include="db_access\repository\ConfigRepository.cs" />
+    <Compile Include="db_access\repository\ShowItemRepository.cs" />
     <Compile Include="Settings\Config.cs" />
     <Compile Include="Custom Controls\ListViewFlickerFree.cs">
       <SubType>Component</SubType>
@@ -219,6 +221,7 @@
     <Compile Include="Forms\uTorrent.Designer.cs">
       <DependentUpon>uTorrent.cs</DependentUpon>
     </Compile>
+    <Compile Include="Shows\ShowItem.cs" />
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />

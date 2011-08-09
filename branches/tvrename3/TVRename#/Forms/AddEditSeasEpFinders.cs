@@ -12,6 +12,7 @@ using System.IO;
 using TVRename.db_access.documents;
 using TVRename.Settings;
 using TVRename.db_access;
+using TVRename.Shows;
 
 namespace TVRename
 {

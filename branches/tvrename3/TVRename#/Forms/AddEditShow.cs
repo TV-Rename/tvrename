@@ -7,6 +7,7 @@
 // 
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using TVRename.Shows;
 
 //            this->txtCustomShowName->TextChanged += gcnew System::EventHandler(this, &AddEditShow::txtCustomShowName_TextChanged);
 
@@ -42,7 +43,7 @@ namespace TVRename
 
             this.cbTimeZone.EndUpdate();
 
-            this.mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "", this.mTVDB);
+            this.mTCCF = new TheTVDBCodeFinder(si.innerDocument.TVDBCode != -1 ? si.innerDocument.TVDBCode.ToString() : "", this.mTVDB);
             this.mTCCF.Dock = DockStyle.Fill;
             //mTCCF->SelectionChanged += gcnew System::EventHandler(this, &AddEditShow::lvMatches_ItemSelectionChanged);
 
@@ -50,36 +51,36 @@ namespace TVRename
             this.pnlCF.Controls.Add(this.mTCCF);
             this.pnlCF.ResumeLayout();
 
-            this.chkCustomShowName.Checked = si.UseCustomShowName;
+            this.chkCustomShowName.Checked = si.innerDocument.UseCustomShowName;
             if (this.chkCustomShowName.Checked)
-                this.txtCustomShowName.Text = si.CustomShowName;
+                this.txtCustomShowName.Text = si.innerDocument.CustomShowName;
             this.chkCustomShowName_CheckedChanged(null, null);
 
-            this.cbSequentialMatching.Checked = si.UseSequentialMatch;
-            this.chkShowNextAirdate.Checked = si.ShowNextAirdate;
-            this.chkSpecialsCount.Checked = si.CountSpecials;
-            this.chkFolderPerSeason.Checked = si.AutoAdd_FolderPerSeason;
-            this.txtSeasonFolderName.Text = si.AutoAdd_SeasonFolderName;
-            this.txtBaseFolder.Text = si.AutoAdd_FolderBase;
-            this.chkAutoFolders.Checked = si.AutoAddNewSeasons;
+            this.cbSequentialMatching.Checked = si.innerDocument.UseSequentialMatch;
+            this.chkShowNextAirdate.Checked = si.innerDocument.ShowNextAirdate;
+            this.chkSpecialsCount.Checked = si.innerDocument.CountSpecials;
+            this.chkFolderPerSeason.Checked = si.innerDocument.AutoAdd_FolderPerSeason;
+            this.txtSeasonFolderName.Text = si.innerDocument.AutoAdd_SeasonFolderName;
+            this.txtBaseFolder.Text = si.innerDocument.AutoAdd_FolderBase;
+            this.chkAutoFolders.Checked = si.innerDocument.AutoAddNewSeasons;
             this.chkFolderPerSeason_CheckedChanged(null, null);
 
-            this.cbDoRenaming.Checked = si.DoRename;
-            this.cbDoMissingCheck.Checked = si.DoMissingCheck;
+            this.cbDoRenaming.Checked = si.innerDocument.DoRename;
+            this.cbDoMissingCheck.Checked = si.innerDocument.DoMissingCheck;
             this.cbDoMissingCheck_CheckedChanged(null, null);
 
-            this.chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
+            this.chkPadTwoDigits.Checked = si.innerDocument.PadSeasonToTwoDigits;
 
             this.ShowTimeZone = ((si == null)||(si.TheSeries() == null)) ? TimeZone.DefaultTimeZone() : si.TheSeries().ShowTimeZone;
 
             this.cbTimeZone.Text = this.ShowTimeZone;
-            this.chkDVDOrder.Checked = si.DVDOrder;
-            this.cbIncludeFuture.Checked = si.ForceCheckFuture;
-            this.cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
+            this.chkDVDOrder.Checked = si.innerDocument.DVDOrder;
+            this.cbIncludeFuture.Checked = si.innerDocument.ForceCheckFuture;
+            this.cbIncludeNoAirdate.Checked = si.innerDocument.ForceCheckNoAirdate;
 
             bool first = true;
-            si.IgnoreSeasons.Sort();
-            foreach (int i in si.IgnoreSeasons)
+            si.innerDocument.IgnoreSeasons.Sort();
+            foreach (int i in si.innerDocument.IgnoreSeasons)
             {
                 if (!first)
                     this.txtIgnoreSeasons.Text += " ";
@@ -87,7 +88,7 @@ namespace TVRename
                 first = false;
             }
 
-            foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.ManualFolderLocations)
+            foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.innerDocument.ManualFolderLocations)
             {
                 foreach (string s in kvp.Value)
                 {
@@ -138,44 +139,44 @@ namespace TVRename
 
             string tz = (this.cbTimeZone.SelectedItem != null) ? this.cbTimeZone.SelectedItem.ToString() : "";
 
-            this.mSI.CustomShowName = this.txtCustomShowName.Text;
-            this.mSI.UseCustomShowName = this.chkCustomShowName.Checked;
+            this.mSI.innerDocument.CustomShowName = this.txtCustomShowName.Text;
+            this.mSI.innerDocument.UseCustomShowName = this.chkCustomShowName.Checked;
             this.ShowTimeZone = tz; //TODO: move to somewhere else. make timezone manager for tvdb?
-            this.mSI.ShowNextAirdate = this.chkShowNextAirdate.Checked;
-            this.mSI.PadSeasonToTwoDigits = this.chkPadTwoDigits.Checked;
-            this.mSI.TVDBCode = code;
+            this.mSI.innerDocument.ShowNextAirdate = this.chkShowNextAirdate.Checked;
+            this.mSI.innerDocument.PadSeasonToTwoDigits = this.chkPadTwoDigits.Checked;
+            this.mSI.innerDocument.TVDBCode = code;
             //todo mSI->SeasonNumber = seasnum;
-            this.mSI.CountSpecials = this.chkSpecialsCount.Checked;
+            this.mSI.innerDocument.CountSpecials = this.chkSpecialsCount.Checked;
             //                                 mSI->Rules = mWorkingRuleSet;  // TODO
-            this.mSI.DoRename = this.cbDoRenaming.Checked;
-            this.mSI.DoMissingCheck = this.cbDoMissingCheck.Checked;
+            this.mSI.innerDocument.DoRename = this.cbDoRenaming.Checked;
+            this.mSI.innerDocument.DoMissingCheck = this.cbDoMissingCheck.Checked;
 
-            this.mSI.AutoAddNewSeasons = this.chkAutoFolders.Checked;
-            this.mSI.AutoAdd_FolderPerSeason = this.chkFolderPerSeason.Checked;
-            this.mSI.AutoAdd_SeasonFolderName = this.txtSeasonFolderName.Text;
-            this.mSI.AutoAdd_FolderBase = this.txtBaseFolder.Text;
+            this.mSI.innerDocument.AutoAddNewSeasons = this.chkAutoFolders.Checked;
+            this.mSI.innerDocument.AutoAdd_FolderPerSeason = this.chkFolderPerSeason.Checked;
+            this.mSI.innerDocument.AutoAdd_SeasonFolderName = this.txtSeasonFolderName.Text;
+            this.mSI.innerDocument.AutoAdd_FolderBase = this.txtBaseFolder.Text;
 
-            this.mSI.DVDOrder = this.chkDVDOrder.Checked;
-            this.mSI.ForceCheckFuture = this.cbIncludeFuture.Checked;
-            this.mSI.ForceCheckNoAirdate = this.cbIncludeNoAirdate.Checked;
+            this.mSI.innerDocument.DVDOrder = this.chkDVDOrder.Checked;
+            this.mSI.innerDocument.ForceCheckFuture = this.cbIncludeFuture.Checked;
+            this.mSI.innerDocument.ForceCheckNoAirdate = this.cbIncludeNoAirdate.Checked;
 
-            this.mSI.UseSequentialMatch = this.cbSequentialMatching.Checked;
+            this.mSI.innerDocument.UseSequentialMatch = this.cbSequentialMatching.Checked;
 
             string slist = this.txtIgnoreSeasons.Text;
-            this.mSI.IgnoreSeasons.Clear();
+            this.mSI.innerDocument.IgnoreSeasons.Clear();
             foreach (Match match in Regex.Matches(slist, "\\b[0-9]+\\b"))
-                this.mSI.IgnoreSeasons.Add(int.Parse(match.Value));
+                this.mSI.innerDocument.IgnoreSeasons.Add(int.Parse(match.Value));
 
-            this.mSI.ManualFolderLocations.Clear();
+            this.mSI.innerDocument.ManualFolderLocations.Clear();
             foreach (ListViewItem lvi in this.lvSeasonFolders.Items)
             {
                 try
                 {
                     int seas = int.Parse(lvi.Text);
-                    if (!this.mSI.ManualFolderLocations.ContainsKey(seas))
-                        this.mSI.ManualFolderLocations.Add(seas, new StringList());
+                    if (!this.mSI.innerDocument.ManualFolderLocations.ContainsKey(seas))
+                        this.mSI.innerDocument.ManualFolderLocations.Add(seas, new StringList());
 
-                    this.mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
+                    this.mSI.innerDocument.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
                 }
                 catch
                 {
