@@ -40,7 +40,7 @@ namespace TVRename
         public System.Collections.Generic.List<IgnoreItem> Ignore;
         public StringList IgnoreFolders;
         public string LoadErr;
-        public bool LoadOK;
+        public bool LoadOK {get;set;}
         public StringList MonitorFolders;
         public RSSItemList RSSList;
         public ScanProgress ScanProgDlg;
@@ -1467,7 +1467,8 @@ namespace TVRename
             writer.WriteValue("2.1");
             writer.WriteEndAttribute(); // version
 
-            this.SettingsObj.WriteXML(writer); // <Settings>
+            //this.SettingsObj.WriteXML(writer); // <Settings>
+            this.SettingsObj.saveConfig();
 
             writer.WriteStartElement("MyShows");
             foreach (ShowItem si in ShowItems)
@@ -1567,7 +1568,7 @@ namespace TVRename
 
                     if (reader.Name == "Settings")
                     {
-                        this.SettingsObj = new Config(reader.ReadSubtree());
+                        //this.SettingsObj = new Config(reader.ReadSubtree());
                         reader.Read();
                     }
                     else if (reader.Name == "MyShows")

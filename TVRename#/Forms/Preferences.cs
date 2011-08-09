@@ -11,6 +11,8 @@ using System.Drawing;
 using System.IO;
 using TVRename.db_access.documents;
 using TVRename.Settings;
+using TVRename.Utility;
+using TVRename.db_access;
 
 namespace TVRename
 {
@@ -45,14 +47,14 @@ namespace TVRename
 
         private void OKButton_Click(object sender, System.EventArgs e)
         {
-            if (!Config.OKExtensionsString(this.txtVideoExtensions.Text))
+            if (!FileNameUtility.OKExtensionsString(this.txtVideoExtensions.Text))
             {
                 MessageBox.Show("Extensions list must be separated by semicolons, and each extension must start with a dot.", "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.tabControl1.SelectedIndex = 1;
                 this.txtVideoExtensions.Focus();
                 return;
             }
-            if (!Config.OKExtensionsString(this.txtOtherExtensions.Text))
+            if (!FileNameUtility.OKExtensionsString(this.txtOtherExtensions.Text))
             {
                 MessageBox.Show("Extensions list must be separated by semicolons, and each extension must start with a dot.", "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.tabControl1.SelectedIndex = 1;
@@ -85,8 +87,8 @@ namespace TVRename
             S.innerDocument.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
             S.innerDocument.StartupTab = this.cbStartupTab.SelectedIndex;
             S.innerDocument.NotificationAreaIcon = this.cbNotificationIcon.Checked;
-            S.SetVideoExtensionsString(this.txtVideoExtensions.Text);
-            S.SetOtherExtensionsString(this.txtOtherExtensions.Text);
+            S.innerDocument = DefaultObjectFactory.SetVideoExtensionsString(S.innerDocument,this.txtVideoExtensions.Text);
+            S.innerDocument = DefaultObjectFactory.SetOtherExtensionsString(S.innerDocument, this.txtOtherExtensions.Text);
             S.innerDocument.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
             S.innerDocument.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
             S.innerDocument.KeepTogether = this.cbKeepTogether.Checked;

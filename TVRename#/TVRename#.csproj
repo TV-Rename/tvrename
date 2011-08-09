@@ -114,7 +114,8 @@
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
     <Compile Include="App\IPC.cs" />
-    <Compile Include="Settings\ConfigManager.cs" />
+    <Compile Include="db_access\DefaultObjectFactory.cs" />
+    <Compile Include="db_access\repository\ConfigRepository.cs" />
     <Compile Include="Settings\Config.cs" />
     <Compile Include="Custom Controls\ListViewFlickerFree.cs">
       <SubType>Component</SubType>
@@ -268,6 +269,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Utility\DirCacheEntry.cs" />
+    <Compile Include="Utility\FileNameUtility.cs" />
     <Compile Include="Utility\Helpers.cs" />
     <Compile Include="Forms\IgnoreEdit.cs">
       <SubType>Form</SubType>
