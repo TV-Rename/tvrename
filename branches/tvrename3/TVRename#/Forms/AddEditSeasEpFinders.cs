@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using TVRename.db_access.documents;
 using TVRename.Settings;
+using TVRename.db_access;
 
 namespace TVRename
 {
@@ -302,7 +303,7 @@ namespace TVRename
         {
             DialogResult dr = MessageBox.Show("Restore to default matching expressions?", "Filename Processors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (dr == DialogResult.Yes)
-                this.FillGrid(Config.DefaultFNPList());
+                this.FillGrid(DefaultObjectFactory.DefaultFNPList());
         }
 
         #region Nested type: ChangedCont
