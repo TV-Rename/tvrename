@@ -19,6 +19,7 @@ namespace TVRename
     using System.Xml;
     using TVRename.db_access.documents;
     using TVRename.Settings;
+    using TVRename.Shows;
 
     public class TVDoc
     {
@@ -142,9 +143,9 @@ namespace TVRename
             this.LockShowItems();
             foreach (ShowItem si in ShowItems)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> k in si.SeasonEpisodes)
+                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> k in si.innerDocument.SeasonEpisodes)
                     this.mStats.NS_NumberOfEpisodesExpected += k.Value.Count;
-                this.mStats.NS_NumberOfSeasons += si.SeasonEpisodes.Count;
+                this.mStats.NS_NumberOfSeasons += si.innerDocument.SeasonEpisodes.Count;
             }
             this.UnlockShowItems();
 
@@ -175,7 +176,7 @@ namespace TVRename
             this.LockShowItems();
             foreach (ShowItem si in ShowItems)
             {
-                if (si.TVDBCode == id)
+                if (si.innerDocument.TVDBCode == id)
                 {
                     this.UnlockShowItems();
                     return si;
@@ -256,7 +257,7 @@ namespace TVRename
             bool alreadyHaveIt = false;
             foreach (ShowItem si in ShowItems)
             {
-                if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) && this.FolderIsSubfolderOf(theFolder, si.AutoAdd_FolderBase))
+                if (si.innerDocument.AutoAddNewSeasons && !string.IsNullOrEmpty(si.innerDocument.AutoAdd_FolderBase) && this.FolderIsSubfolderOf(theFolder, si.innerDocument.AutoAdd_FolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
                     alreadyHaveIt = true;
@@ -344,10 +345,10 @@ namespace TVRename
                     this.ShowItems.Add(found);
                 }
 
-                found.AutoAdd_FolderBase = ai.Folder;
-                found.AutoAdd_FolderPerSeason = ai.HasSeasonFoldersGuess;
+                found.innerDocument.AutoAdd_FolderBase = ai.Folder;
+                found.innerDocument.AutoAdd_FolderPerSeason = ai.HasSeasonFoldersGuess;
 
-                found.AutoAdd_SeasonFolderName = ai.SeasonFolderName + " ";
+                found.innerDocument.AutoAdd_SeasonFolderName = ai.SeasonFolderName + " ";
                 this.Stats().AutoAddedShows++;
             }
 
@@ -464,7 +465,7 @@ namespace TVRename
                         int epF;
                         // String ^fn = file->Name;
 
-                        if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
+                        if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.innerDocument.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
                             FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
                             addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode));
@@ -743,7 +744,7 @@ namespace TVRename
                 System.Collections.Generic.List<int> codes = new System.Collections.Generic.List<int>();
                 this.LockShowItems();
                 foreach (ShowItem si in ShowItems)
-                    codes.Add(si.TVDBCode);
+                    codes.Add(si.innerDocument.TVDBCode);
                 this.UnlockShowItems();
 
                 int numWorkers = this.SettingsObj.innerDocument.ParallelDownloads;
@@ -905,7 +906,7 @@ namespace TVRename
                 bool found = false;
                 foreach (ShowItem si in ShowItems)
                 {
-                    if (si.TVDBCode == kvp.Key)
+                    if (si.innerDocument.TVDBCode == kvp.Key)
                     {
                         found = true;
                         break;
@@ -1000,7 +1001,7 @@ namespace TVRename
         {
             bool r = false;
             TheTVDB db = this.GetTVDB(false, "");
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            SeriesInfo ser = db.GetSeries(si.innerDocument.TVDBCode);
             if ((ser != null) && (ser.Seasons.ContainsKey(snum)))
             {
                 foreach (Episode e in ser.Seasons[snum].Episodes)
@@ -1018,13 +1019,13 @@ namespace TVRename
         public void TVShowNFOCheck(ShowItem si)
         {
             // check there is a TVShow.nfo file in the root folder for the show
-            if (string.IsNullOrEmpty(si.AutoAdd_FolderBase)) // no base folder defined
+            if (string.IsNullOrEmpty(si.innerDocument.AutoAdd_FolderBase)) // no base folder defined
                 return;
 
             if (si.AllFolderLocations(this.SettingsObj).Count == 0) // no seasons enabled
                 return;
 
-            FileInfo tvshownfo = Helpers.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
+            FileInfo tvshownfo = Helpers.FileInFolder(si.innerDocument.AutoAdd_FolderBase, "tvshow.nfo");
 
             bool needUpdate = !tvshownfo.Exists || (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime));
             // was it written before we fixed the bug in <episodeguideurl> ?
@@ -1035,7 +1036,7 @@ namespace TVRename
 
         public bool GenerateEpisodeDict(ShowItem si)
         {
-            si.SeasonEpisodes.Clear();
+            si.innerDocument.SeasonEpisodes.Clear();
 
             // copy data from tvdb
             // process as per rules
@@ -1043,7 +1044,7 @@ namespace TVRename
 
             TheTVDB db = this.GetTVDB(true, "GenerateEpisodeDict");
 
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            SeriesInfo ser = db.GetSeries(si.innerDocument.TVDBCode);
 
             if (ser == null)
                 return false; // TODO: warn user
@@ -1052,7 +1053,7 @@ namespace TVRename
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in ser.Seasons)
             {
                 ProcessedEpisodeList pel = GenerateEpisodes(si, ser, kvp.Key, true);
-                si.SeasonEpisodes[kvp.Key] = pel;
+                si.innerDocument.SeasonEpisodes[kvp.Key] = pel;
                 if (pel == null)
                     r = false;
             }
@@ -1069,7 +1070,7 @@ namespace TVRename
             {
                 if (snum != 0)
                 {
-                    foreach (ProcessedEpisode pe in si.SeasonEpisodes[snum])
+                    foreach (ProcessedEpisode pe in si.innerDocument.SeasonEpisodes[snum])
                     {
                         pe.OverallNumber = overallCount;
                         overallCount += 1 + pe.EpNum2 - pe.EpNum;
@@ -1097,7 +1098,7 @@ namespace TVRename
             foreach (Episode e in seas.Episodes)
                 eis.Add(new ProcessedEpisode(e, si)); // add a copy
 
-            if (si.DVDOrder)
+            if (si.innerDocument.DVDOrder)
             {
                 eis.Sort(new System.Comparison<ProcessedEpisode>(ProcessedEpisode.DVDOrderSorter));
                 Renumber(eis);
@@ -1105,7 +1106,7 @@ namespace TVRename
             else
                 eis.Sort(new System.Comparison<ProcessedEpisode>(ProcessedEpisode.EPNumberSorter));
 
-            if (si.CountSpecials && ser.Seasons.ContainsKey(0))
+            if (si.innerDocument.CountSpecials && ser.Seasons.ContainsKey(0))
             {
                 // merge specials in
                 foreach (Episode ep in ser.Seasons[0].Episodes)
@@ -1378,11 +1379,11 @@ namespace TVRename
                 TimeSpan howClose = TimeSpan.MaxValue;
                 foreach (ShowItem si in this.GetShowItems(false))
                 {
-                    if (!si.ShowNextAirdate)
+                    if (!si.innerDocument.ShowNextAirdate)
                         continue;
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> v in si.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> v in si.innerDocument.SeasonEpisodes)
                     {
-                        if (si.IgnoreSeasons.Contains(v.Key))
+                        if (si.innerDocument.IgnoreSeasons.Contains(v.Key))
                             continue; // ignore this season
 
                         foreach (ProcessedEpisode ei in v.Value)
@@ -1584,14 +1585,14 @@ namespace TVRename
                             {
                                 ShowItem si = new ShowItem(this.mTVDB, r2.ReadSubtree(), this.SettingsObj);
 
-                                if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                                if (si.innerDocument.UseCustomShowName) // see if custom show name is actually the real show name
                                 {
                                     SeriesInfo ser = si.TheSeries();
-                                    if ((ser != null) && (si.CustomShowName == ser.Name))
+                                    if ((ser != null) && (si.innerDocument.CustomShowName == ser.Name))
                                     {
                                         // then, turn it off
-                                        si.CustomShowName = "";
-                                        si.UseCustomShowName = false;
+                                        si.innerDocument.CustomShowName = "";
+                                        si.innerDocument.UseCustomShowName = false;
                                     }
                                 }
                                 ShowItems.Add(si);
@@ -2250,20 +2251,20 @@ namespace TVRename
 
             foreach (ShowItem si in showlist)
             {
-                if (!si.DoMissingCheck && !si.DoRename)
+                if (!si.innerDocument.DoMissingCheck && !si.innerDocument.DoRename)
                     continue; // skip
 
                 System.Collections.Generic.Dictionary<int, StringList> flocs = si.AllFolderLocations(this.SettingsObj);
 
-                int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-                si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
+                int[] numbers = new int[si.innerDocument.SeasonEpisodes.Keys.Count];
+                si.innerDocument.SeasonEpisodes.Keys.CopyTo(numbers, 0);
                 foreach (int snum in numbers)
                 {
-                    if (si.IgnoreSeasons.Contains(snum))
+                    if (si.innerDocument.IgnoreSeasons.Contains(snum))
                         continue; // ignore this season
 
                     //int snum = kvp->Key;
-                    if ((snum == 0) && (si.CountSpecials))
+                    if ((snum == 0) && (si.innerDocument.CountSpecials))
                         continue; // no specials season, they're merged into the seasons themselves
 
                     StringList folders = new StringList();
@@ -2271,7 +2272,7 @@ namespace TVRename
                     if (flocs.ContainsKey(snum))
                         folders = flocs[snum];
 
-                    if ((folders.Count == 0) && (!si.AutoAddNewSeasons))
+                    if ((folders.Count == 0) && (!si.innerDocument.AutoAddNewSeasons))
                         continue; // no folders defined or found, autoadd off, so onto the next
 
                     if (folders.Count == 0)
@@ -2345,7 +2346,7 @@ namespace TVRename
                                 }
                                 else if (whatToDo == FAResult.kfaIgnoreAlways)
                                 {
-                                    si.IgnoreSeasons.Add(snum);
+                                    si.innerDocument.IgnoreSeasons.Add(snum);
                                     this.SetDirty();
                                     break;
                                 }
@@ -2360,9 +2361,9 @@ namespace TVRename
                                     goAgain = !di.Exists;
                                     if (di.Exists && (si.AutoFolderNameForSeason(snum, this.SettingsObj).ToLower() != folder.ToLower()))
                                     {
-                                        if (!si.ManualFolderLocations.ContainsKey(snum))
-                                            si.ManualFolderLocations[snum] = new StringList();
-                                        si.ManualFolderLocations[snum].Add(folder);
+                                        if (!si.innerDocument.ManualFolderLocations.ContainsKey(snum))
+                                            si.innerDocument.ManualFolderLocations[snum] = new StringList();
+                                        si.innerDocument.ManualFolderLocations[snum].Add(folder);
                                         this.SetDirty();
                                     }
                                 }
@@ -2446,9 +2447,9 @@ namespace TVRename
 
                 // for each tv show, optionally write a tvshow.nfo file
 
-                if (this.SettingsObj.innerDocument.NFOs && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(this.SettingsObj).Count > 0))
+                if (this.SettingsObj.innerDocument.NFOs && !string.IsNullOrEmpty(si.innerDocument.AutoAdd_FolderBase) && (si.AllFolderLocations(this.SettingsObj).Count > 0))
                 {
-                    FileInfo tvshownfo = Helpers.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
+                    FileInfo tvshownfo = Helpers.FileInFolder(si.innerDocument.AutoAdd_FolderBase, "tvshow.nfo");
 
                     bool needUpdate = !tvshownfo.Exists || (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime));
                     // was it written before we fixed the bug in <episodeguideurl> ?
@@ -2459,8 +2460,8 @@ namespace TVRename
 
                 // process each folder for each season...
 
-                int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-                si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
+                int[] numbers = new int[si.innerDocument.SeasonEpisodes.Keys.Count];
+                si.innerDocument.SeasonEpisodes.Keys.CopyTo(numbers, 0);
                 System.Collections.Generic.Dictionary<int, StringList> allFolders = si.AllFolderLocations(this.SettingsObj);
 
                 int lastSeason = 0;
@@ -2473,20 +2474,20 @@ namespace TVRename
                     if (this.ActionCancel)
                         return;
 
-                    if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
+                    if ((si.innerDocument.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
                         continue; // ignore/skip this season
 
-                    if ((snum == 0) && (si.CountSpecials))
+                    if ((snum == 0) && (si.innerDocument.CountSpecials))
                         continue; // don't process the specials season, as they're merged into the seasons themselves
 
                     // all the folders for this particular season
                     StringList folders = allFolders[snum];
 
                     bool folderNotDefined = (folders.Count == 0);
-                    if (folderNotDefined && (this.SettingsObj.innerDocument.MissingCheck && !si.AutoAddNewSeasons))
+                    if (folderNotDefined && (this.SettingsObj.innerDocument.MissingCheck && !si.innerDocument.AutoAddNewSeasons))
                         continue; // folder for the season is not defined, and we're not auto-adding it
 
-                    ProcessedEpisodeList eps = si.SeasonEpisodes[snum];
+                    ProcessedEpisodeList eps = si.innerDocument.SeasonEpisodes[snum];
                     int maxEpisodeNumber = 0;
                     foreach (ProcessedEpisode episode in eps)
                     {
@@ -2500,16 +2501,16 @@ namespace TVRename
                         // main image for the folder itself
 
                         // base folder:
-                        if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(this.SettingsObj, false).Count > 0))
+                        if (!string.IsNullOrEmpty(si.innerDocument.AutoAdd_FolderBase) && (si.AllFolderLocations(this.SettingsObj, false).Count > 0))
                         {
-                            FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "folder.jpg");
+                            FileInfo fi = Helpers.FileInFolder(si.innerDocument.AutoAdd_FolderBase, "folder.jpg");
                             if (!fi.Exists)
                             {
                                 string bannerPath = si.TheSeries().GetItem(this.SettingsObj.innerDocument.ItemForFolderJpg());
                                 if (!string.IsNullOrEmpty(bannerPath))
                                     this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath));
                             }
-                            doneFolderJPG.Add(si.AutoAdd_FolderBase);
+                            doneFolderJPG.Add(si.innerDocument.AutoAdd_FolderBase);
                         }
                     }
 
@@ -2529,8 +2530,8 @@ namespace TVRename
                             continue;
                         }
 
-                        bool renCheck = this.SettingsObj.innerDocument.RenameCheck && si.DoRename && di.Exists; // renaming check needs the folder to exist
-                        bool missCheck = this.SettingsObj.innerDocument.MissingCheck && si.DoMissingCheck;
+                        bool renCheck = this.SettingsObj.innerDocument.RenameCheck && si.innerDocument.DoRename && di.Exists; // renaming check needs the folder to exist
+                        bool missCheck = this.SettingsObj.innerDocument.MissingCheck && si.innerDocument.DoMissingCheck;
 
                         if (this.SettingsObj.innerDocument.FolderJpg)
                         {
@@ -2649,8 +2650,8 @@ namespace TVRename
                                     // - there are no airdates at all, for up to and including this season
                                     // - there is an airdate, and it isn't in the future
                                     if (noAirdatesUntilNow ||
-                                        ((si.ForceCheckFuture || notFuture) && dtOK) ||
-                                        (si.ForceCheckNoAirdate && !dtOK))
+                                        ((si.innerDocument.ForceCheckFuture || notFuture) && dtOK) ||
+                                        (si.innerDocument.ForceCheckNoAirdate && !dtOK))
                                     {
                                         // then add it as officially missing
                                         this.TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.SettingsObj.FilenameFriendly
@@ -2829,7 +2830,7 @@ namespace TVRename
             // look for a valid airdate in the filename
             // check for YMD, DMY, and MDY
             // only check against airdates we expect for the given show
-            SeriesInfo ser = si.TVDB.GetSeries(si.TVDBCode);
+            SeriesInfo ser = si.innerDocument.TVDB.GetSeries(si.innerDocument.TVDBCode);
             string[] dateFormats = new[] { "yyyy-MM-dd","dd-MM-yyyy","MM-dd-yyyy",
                                            "yy-MM-dd","dd-MM-yy","MM-dd-yy" };
             string filename = fi.Name;
@@ -2958,7 +2959,7 @@ namespace TVRename
         {
             foreach (ShowItem si in this.ShowItems)
             {
-                if (si.TVDBCode == code)
+                if (si.innerDocument.TVDBCode == code)
                     return si;
             }
             return null;

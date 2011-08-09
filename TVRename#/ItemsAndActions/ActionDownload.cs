@@ -12,6 +12,7 @@ namespace TVRename
     using System.Windows.Forms;
     using TVRename.db_access.documents;
     using TVRename.Settings;
+    using TVRename.Shows;
 
     public class ActionDownload : Item, Action, ScanListItem
     {
@@ -56,7 +57,7 @@ namespace TVRename
 
         public bool Go(Config settings, ref bool pause)
         {
-            byte[] theData = this.SI.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
+            byte[] theData = this.SI.innerDocument.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
             if ((theData == null) || (theData.Length == 0))
             {
                 this.ErrorText = "Unable to download " + this.BannerPath;

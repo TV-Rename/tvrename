@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System.Windows.Forms;
+using TVRename.Shows;
 
 namespace TVRename
 {
@@ -35,8 +36,8 @@ namespace TVRename
             this.mOriginalEps = originalEpList;
             this.mSeasonNumber = seasonNumber;
 
-            if (si.SeasonRules.ContainsKey(seasonNumber))
-                this.WorkingRuleSet = new System.Collections.Generic.List<ShowRule>(si.SeasonRules[seasonNumber]);
+            if (si.innerDocument.SeasonRules.ContainsKey(seasonNumber))
+                this.WorkingRuleSet = new System.Collections.Generic.List<ShowRule>(si.innerDocument.SeasonRules[seasonNumber]);
             else
                 this.WorkingRuleSet = new System.Collections.Generic.List<ShowRule>();
 
@@ -151,7 +152,7 @@ namespace TVRename
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            this.mSI.SeasonRules[this.mSeasonNumber] = this.WorkingRuleSet;
+            this.mSI.innerDocument.SeasonRules[this.mSeasonNumber] = this.WorkingRuleSet;
             this.Close();
         }
 

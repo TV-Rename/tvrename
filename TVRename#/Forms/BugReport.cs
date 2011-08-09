@@ -7,6 +7,7 @@
 // 
 using System.Windows.Forms;
 using System.IO;
+using TVRename.Shows;
 
 namespace TVRename
 {
@@ -109,15 +110,15 @@ namespace TVRename
 
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.innerDocument.SeasonEpisodes)
                     {
                         int snum = kvp.Key;
-                        if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations(this.mDoc.SettingsObj).ContainsKey(snum))
+                        if (((snum == 0) && (si.innerDocument.CountSpecials)) || !si.AllFolderLocations(this.mDoc.SettingsObj).ContainsKey(snum))
                             continue; // skip specials
 
                         foreach (string folder in si.AllFolderLocations(this.mDoc.SettingsObj)[snum])
                         {
-                            txt += si.TVDBCode + " : " + si.ShowName + " : S" + snum + "\r\n";
+                            txt += si.innerDocument.TVDBCode + " : " + si.ShowName + " : S" + snum + "\r\n";
                             txt += "Folder: " + folder;
                             txt += "\r\n";
                             DirCache files = new DirCache();

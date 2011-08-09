@@ -14,6 +14,7 @@ using System.Drawing;
 using System.Xml;
 using System.Threading;
 using System.IO;
+using TVRename.Shows;
 
 namespace TVRename
 {
@@ -585,7 +586,7 @@ namespace TVRename
                     int tvdbcode = seas.TheSeries.TVDBCode;
                     foreach (ShowItem si2 in this.mDoc.GetShowItems(true))
                     {
-                        if (si2.TVDBCode == tvdbcode)
+                        if (si2.innerDocument.TVDBCode == tvdbcode)
                         {
                             this.mDoc.UnlockShowItems();
                             return si2;
@@ -631,7 +632,7 @@ namespace TVRename
                     int tvdbcode = seas.TheSeries.TVDBCode;
                     foreach (ShowItem si in this.mDoc.GetShowItems(true))
                     {
-                        if (si.TVDBCode == tvdbcode)
+                        if (si.innerDocument.TVDBCode == tvdbcode)
                         {
                             this.mDoc.UnlockShowItems();
                             this.FillEpGuideHTML(si, seas.SeasonNumber);
@@ -664,7 +665,7 @@ namespace TVRename
                 return;
             }
             TheTVDB db = this.mDoc.GetTVDB(true, "FillEpGuideHTML");
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            SeriesInfo ser = db.GetSeries(si.innerDocument.TVDBCode);
 
             if (ser == null)
             {
@@ -693,18 +694,18 @@ namespace TVRename
 
                 ProcessedEpisodeList eis = null;
                 // int snum = s.SeasonNumber;
-                if (si.SeasonEpisodes.ContainsKey(snum))
-                    eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
+                if (si.innerDocument.SeasonEpisodes.ContainsKey(snum))
+                    eis = si.innerDocument.SeasonEpisodes[snum]; // use processed episodes if they are available
                 else
                     eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
 
                 string seasText = snum == 0 ? "Specials" : ("Season " + snum);
                 if ((eis.Count > 0) && (eis[0].SeasonID > 0))
-                    seasText = " - <A HREF=\"" + db.WebsiteURL(si.TVDBCode, eis[0].SeasonID, false) + "\">" + seasText + "</a>";
+                    seasText = " - <A HREF=\"" + db.WebsiteURL(si.innerDocument.TVDBCode, eis[0].SeasonID, false) + "\">" + seasText + "</a>";
                 else
                     seasText = " - " + seasText;
 
-                body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
+                body += "<h1><A HREF=\"" + db.WebsiteURL(si.innerDocument.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
 
                 foreach (ProcessedEpisode ei in eis)
                 {
@@ -716,7 +717,7 @@ namespace TVRename
                     body += "<A href=\"" + episodeURL + "\" name=\"ep" + epl + "\">"; // anchor
                     body += "<b>" + CustomName.NameForNoExt(ei, CustomName.OldNStyle(6)) + "</b>";
                     body += "</A>"; // anchor
-                    if (si.UseSequentialMatch && (ei.OverallNumber != -1))
+                    if (si.innerDocument.UseSequentialMatch && (ei.OverallNumber != -1))
                         body += " (#" + ei.OverallNumber + ")";
 
                     body += " <A HREF=\"" + this.mDoc.SettingsObj.innerDocument.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
@@ -755,7 +756,7 @@ namespace TVRename
                 if ((!string.IsNullOrEmpty(ser.GetItem("banner"))) && (!string.IsNullOrEmpty(db.BannerMirror)))
                     body += "<img width=758 height=140 src=\"" + db.BannerMirror + "/banners/" + ser.GetItem("banner") + "\"><br/>";
 
-                body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A> " + "</h1>";
+                body += "<h1><A HREF=\"" + db.WebsiteURL(si.innerDocument.TVDBCode, -1, true) + "\">" + si.ShowName + "</A> " + "</h1>";
 
                 body += "<h2>Overview</h2>" + ser.GetItem("Overview");
 
@@ -856,7 +857,7 @@ namespace TVRename
             if (e == null)
                 return;
 
-            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(e.SI.TVDBCode, e.SeasonID, false));
+            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(e.SI.innerDocument.TVDBCode, e.SeasonID, false));
         }
 
         public void TVDBFor(Season seas)
@@ -872,7 +873,7 @@ namespace TVRename
             if (si == null)
                 return;
 
-            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(si.TVDBCode, -1, false));
+            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(si.innerDocument.TVDBCode, -1, false));
         }
 
         public void menuSearchSites_ItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
@@ -909,12 +910,12 @@ namespace TVRename
 
             foreach (ShowItem si in this.mDoc.GetShowItems(true))
             {
-                if (!si.ShowNextAirdate)
+                if (!si.innerDocument.ShowNextAirdate)
                     continue;
 
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
+                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.innerDocument.SeasonEpisodes)
                 {
-                    if (si.IgnoreSeasons.Contains(kvp.Key))
+                    if (si.innerDocument.IgnoreSeasons.Contains(kvp.Key))
                         continue; // ignore this season
 
                     ProcessedEpisodeList eis = kvp.Value;
@@ -1343,7 +1344,7 @@ namespace TVRename
             {
                 // for each episode in season, find it on disk
                 bool first = true;
-                foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
+                foreach (ProcessedEpisode epds in si.innerDocument.SeasonEpisodes[seas.SeasonNumber])
                 {
                     System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(epds);
                     if ((fl != null) && (fl.Count > 0))
@@ -1544,7 +1545,7 @@ namespace TVRename
                         if (this.mLastEpClicked != null)
                             code = this.mLastEpClicked.TheSeries.TVDBCode;
                         if (this.mLastShowClicked != null)
-                            code = this.mLastShowClicked.TVDBCode;
+                            code = this.mLastShowClicked.innerDocument.TVDBCode;
 
                         if (code != -1)
                         {
@@ -1630,8 +1631,8 @@ namespace TVRename
 
                                 int snum = er.Episode.SeasonNumber;
 
-                                if (!er.Episode.SI.IgnoreSeasons.Contains(snum))
-                                    er.Episode.SI.IgnoreSeasons.Add(snum);
+                                if (!er.Episode.SI.innerDocument.IgnoreSeasons.Contains(snum))
+                                    er.Episode.SI.innerDocument.IgnoreSeasons.Add(snum);
 
                                 // remove all other episodes of this season from the Action list
                                 ItemList remove = new ItemList();
@@ -1943,14 +1944,14 @@ namespace TVRename
             TheTVDB db = this.mDoc.GetTVDB(true, "AddShowItemToTree");
             string name = si.ShowName;
 
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            SeriesInfo ser = db.GetSeries(si.innerDocument.TVDBCode);
 
             if (string.IsNullOrEmpty(name))
             {
                 if (ser != null)
                     name = ser.Name;
                 else
-                    name = "-- Unknown : " + si.TVDBCode + " --";
+                    name = "-- Unknown : " + si.innerDocument.TVDBCode + " --";
             }
 
             TreeNode n = new TreeNode(name);
@@ -1983,7 +1984,7 @@ namespace TVRename
                 {
                     string nodeTitle = snum == 0 ? "Specials" : "Season " + snum;
                     TreeNode n2 = new TreeNode(nodeTitle);
-                    if (si.IgnoreSeasons.Contains(snum))
+                    if (si.innerDocument.IgnoreSeasons.Contains(snum))
                         n2.ForeColor = Color.Gray;
                     else
                     {
@@ -2053,7 +2054,7 @@ namespace TVRename
                 System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(pe);
                 if ((fl != null) && (fl.Count > 0))
                     lvi.ImageIndex = 0;
-                else if (pe.SI.DoMissingCheck)
+                else if (pe.SI.innerDocument.DoMissingCheck)
                     lvi.ImageIndex = 1;
             }
         }
@@ -2102,7 +2103,7 @@ namespace TVRename
             {
                 this.mDoc.GetShowItems(true).Add(si);
                 this.mDoc.UnlockShowItems();
-                SeriesInfo ser = db.GetSeries(si.TVDBCode);
+                SeriesInfo ser = db.GetSeries(si.innerDocument.TVDBCode);
                 if (ser != null)
                     ser.ShowTimeZone = aes.ShowTimeZone;
                 this.ShowAddedOrEdited(true);
@@ -2166,7 +2167,7 @@ namespace TVRename
             this.MoreBusy();
 
             TheTVDB db = this.mDoc.GetTVDB(true, "EditSeason");
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            SeriesInfo ser = db.GetSeries(si.innerDocument.TVDBCode);
             ProcessedEpisodeList pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
 
             EditRules er = new EditRules(si, pel, seasnum, this.mDoc.SettingsObj.innerDocument.NamingStyle);
@@ -2186,9 +2187,9 @@ namespace TVRename
         {
             this.MoreBusy();
             TheTVDB db = this.mDoc.GetTVDB(true, "EditShow");
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            SeriesInfo ser = db.GetSeries(si.innerDocument.TVDBCode);
 
-            int oldCode = si.TVDBCode;
+            int oldCode = si.innerDocument.TVDBCode;
 
             AddEditShow aes = new AddEditShow(si, db);
 
@@ -2201,7 +2202,7 @@ namespace TVRename
                 if (ser != null)
                     ser.ShowTimeZone = aes.ShowTimeZone; // TODO: move into AddEditShow
 
-                this.ShowAddedOrEdited(si.TVDBCode != oldCode);
+                this.ShowAddedOrEdited(si.innerDocument.TVDBCode != oldCode);
                 this.SelectShow(si);
             }
             this.LessBusy();
@@ -2210,7 +2211,7 @@ namespace TVRename
         private void ForceRefresh(ShowItem si)
         {
             if (si != null)
-                this.mDoc.GetTVDB(false, "").ForgetShow(si.TVDBCode, true);
+                this.mDoc.GetTVDB(false, "").ForgetShow(si.innerDocument.TVDBCode, true);
             this.mDoc.DoDownloadsFG();
             this.FillMyShows();
             this.FillEpGuideHTML();
@@ -2246,7 +2247,7 @@ namespace TVRename
             int sid = -1;
             if (seas != null)
                 sid = seas.SeasonID;
-            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(si.TVDBCode, sid, false));
+            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(si.innerDocument.TVDBCode, sid, false));
         }
 
         private void bnMyShowsOpenFolder_Click(object sender, System.EventArgs e)
@@ -2262,7 +2263,7 @@ namespace TVRename
             afl.Keys.CopyTo(keys, 0);
             if ((seas == null) && (keys.Length > 0))
             {
-                string f = si.AutoAdd_FolderBase;
+                string f = si.innerDocument.AutoAdd_FolderBase;
                 if (string.IsNullOrEmpty(f))
                 {
                     int n2 = keys[0];
@@ -2295,8 +2296,8 @@ namespace TVRename
             }
             try
             {
-                if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (Directory.Exists(si.AutoAdd_FolderBase)))
-                    TVDoc.SysOpen(si.AutoAdd_FolderBase);
+                if (!string.IsNullOrEmpty(si.innerDocument.AutoAdd_FolderBase) && (Directory.Exists(si.innerDocument.AutoAdd_FolderBase)))
+                    TVDoc.SysOpen(si.innerDocument.AutoAdd_FolderBase);
             }
             catch
             {
@@ -2337,13 +2338,13 @@ namespace TVRename
 
             int snum = (currentSeas != null) ? currentSeas.SeasonNumber : 1;
             ProcessedEpisodeList pel = null;
-            if ((currentSI != null) && (currentSI.SeasonEpisodes.ContainsKey(snum)))
-                pel = currentSI.SeasonEpisodes[snum];
+            if ((currentSI != null) && (currentSI.innerDocument.SeasonEpisodes.ContainsKey(snum)))
+                pel = currentSI.innerDocument.SeasonEpisodes[snum];
             else
             {
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.innerDocument.SeasonEpisodes)
                     {
                         pel = kvp.Value;
                         break;
