@@ -23,7 +23,7 @@ namespace TVRename.db_access.documents
         public List<int> IgnoreSeasons { get; set; }
         public Dictionary<int, StringList> ManualFolderLocations { get; set; }
         public bool PadSeasonToTwoDigits { get; set; }
-        public Dictionary<int, ProcessedEpisodeList> SeasonEpisodes { get; set; }
+        public Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes { get; set; }
         public Dictionary<int, List<ShowRule>> SeasonRules { get; set; }
         public bool ShowNextAirdate { get; set; }
         public TheTVDB TVDB { get; set; }

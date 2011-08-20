@@ -4,17 +4,13 @@ using System.Linq;
 using System.Text;
 using TVRename.db_access.documents;
 using Raven.Client;
+using TVRename.Settings;
 
 namespace TVRename.db_access.repository
 {
-    class ConfigRepository
+    public class ConfigRepository : EntityRepository<Config, ConfigDocument>, IConfigRepository
     {
-        private IDocumentSession session;
-
-        public ConfigRepository(IDocumentSession session)
-        {
-            this.session = session;
-        }
+        public ConfigRepository(IDocumentSession documentSession) : base(documentSession) { }
 
         public ConfigDocument loadConfigSettings()
         {
@@ -25,16 +21,10 @@ namespace TVRename.db_access.repository
             return null;
         }
 
-        //Load ConfigDocument based on Id
-        public ConfigDocument Load(string id)
-        {
-            return session.Load<ConfigDocument>(id);
-        }
-
         //Get all ConfigDocument
         public IEnumerable<ConfigDocument> GetConfigDocuments()
         {
-            var categories = session.Advanced.LuceneQuery<ConfigDocument>()
+            var categories = documentSession.Advanced.LuceneQuery<ConfigDocument>()
                 .ToArray();
             return categories;
         }
@@ -43,17 +33,14 @@ namespace TVRename.db_access.repository
         public void Save(ConfigDocument category)
         {
             //store ConfigDocument object into session
-            session.Store(category);
+            documentSession.Store(category);
             //save changes 
-            session.SaveChanges();
+            documentSession.SaveChanges();
         }
 
-        //delete a ConfigDocument
-        public void Delete(string id)
+        protected override Config Create(ConfigDocument doc)
         {
-            var category = Load(id);
-            session.Delete<ConfigDocument>(category);
-            session.SaveChanges();
+            return new Config(doc);
         }
     }
 }

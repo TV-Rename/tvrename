@@ -8,6 +8,7 @@
 using System.Windows.Forms;
 using System.IO;
 using TVRename.Shows;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -90,7 +91,7 @@ namespace TVRename
                 txt += "\r\n";
 
                 DirCache dirC = new DirCache();
-                foreach (string efi in this.mDoc.SearchFolders)
+                foreach (string efi in this.mDoc.SettingsObj.innerDocument.SearchFoldersList)
                     dirC.AddFolder(null, 0, 0, efi, true, this.mDoc.SettingsObj);
 
                 foreach (DirCacheEntry fi in dirC)
@@ -110,7 +111,7 @@ namespace TVRename
 
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.innerDocument.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si.innerDocument.SeasonEpisodes)
                     {
                         int snum = kvp.Key;
                         if (((snum == 0) && (si.innerDocument.CountSpecials)) || !si.AllFolderLocations(this.mDoc.SettingsObj).ContainsKey(snum))

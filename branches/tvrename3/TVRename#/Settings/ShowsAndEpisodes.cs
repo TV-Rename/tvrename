@@ -10,6 +10,9 @@ using System.IO;
 using System.Xml;
 using TVRename.Settings;
 using TVRename.Shows;
+using System.Collections.Generic;
+using TVRename.db_access.repository;
+using TVRename.db_access;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -29,7 +32,11 @@ namespace TVRename
         public bool Ignore;
         public bool NextToAir;
         public int OverallNumber;
-        public ShowItem SI;
+        public string ShowItemID;
+        public string ShowEffectiveName;
+
+        private ShowItemRepository repo = null;
+        private ShowItem parentShowItem = null;
 
         public ProcessedEpisode(SeriesInfo ser, Season seas, ShowItem si)
             : base(ser, seas)
@@ -38,7 +45,8 @@ namespace TVRename
             this.OverallNumber = -1;
             this.Ignore = false;
             this.EpNum2 = this.EpNum;
-            this.SI = si;
+            this.ShowItemID = si.innerDocument.Id;
+            this.ShowEffectiveName = si.ShowName;
         }
 
         public ProcessedEpisode(ProcessedEpisode O)
@@ -47,7 +55,7 @@ namespace TVRename
             this.NextToAir = O.NextToAir;
             this.EpNum2 = O.EpNum2;
             this.Ignore = O.Ignore;
-            this.SI = O.SI;
+            this.ShowItemID = O.ShowItemID;
             this.OverallNumber = O.OverallNumber;
         }
 
@@ -58,7 +66,23 @@ namespace TVRename
             this.NextToAir = false;
             this.EpNum2 = this.EpNum;
             this.Ignore = false;
-            this.SI = si;
+            this.ShowEffectiveName = si.ShowName;
+            this.ShowItemID = si.innerDocument.Id;
+        }
+
+        public ShowItem getParentShowItem()
+        {
+            if (repo == null)
+                repo = new ShowItemRepository(RavenSession.SessionInstance);
+
+            if (parentShowItem == null)
+                parentShowItem = repo.Load(ShowItemID);
+
+            if (parentShowItem == null)
+            {
+                parentShowItem = new ShowItem();
+            }
+            return parentShowItem;
         }
 
         public string NumsAsString()
@@ -110,15 +134,7 @@ namespace TVRename
 
     // ShowItem
 
-    public class ShowItemList : System.Collections.Generic.List<ShowItem>
-    {
-    }
-
-    public class ProcessedEpisodeList : System.Collections.Generic.List<ProcessedEpisode>
-    {
-    }
-
-    public class EpisodeDict : System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>
+    public class EpisodeDict : System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>>
     {
     }
 

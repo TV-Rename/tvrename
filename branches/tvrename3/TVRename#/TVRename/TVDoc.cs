@@ -17,13 +17,16 @@ namespace TVRename
     using System.Threading;
     using System.Windows.Forms;
     using System.Xml;
+    using System.Collections.Generic;
     using TVRename.db_access.documents;
     using TVRename.Settings;
     using TVRename.Shows;
+    using TVRename.db_access.repository;
+    using TVRename.db_access;
 
     public class TVDoc
     {
-        private ShowItemList ShowItems;
+        private List<ShowItem> ShowItems;
         public bool ActionCancel;
         public bool ActionPause;
         private Thread ActionProcessorThread;
@@ -32,20 +35,15 @@ namespace TVRename
         private System.Collections.Generic.List<Thread> ActionWorkers;
         public FolderMonitorEntryList AddItems;
         public CommandLineArgs Args;
-
         public bool DownloadDone;
         private bool DownloadOK;
         public int DownloadPct;
         public bool DownloadStopOnError;
         public int DownloadsRemaining;
-        public System.Collections.Generic.List<IgnoreItem> Ignore;
-        public StringList IgnoreFolders;
         public string LoadErr;
         public bool LoadOK {get;set;}
-        public StringList MonitorFolders;
         public RSSItemList RSSList;
         public ScanProgress ScanProgDlg;
-        public StringList SearchFolders;
         public Config SettingsObj;
         public ItemList TheActionList;
         public Semaphore WorkerSemaphore;
@@ -55,12 +53,14 @@ namespace TVRename
         private TVRenameStats mStats;
         private TheTVDB mTVDB;
 
+        private ShowItemRepository showItemRepo;
+
         public TVDoc(FileInfo settingsFile, TheTVDB tvdb, CommandLineArgs args)
         {
+            showItemRepo = new ShowItemRepository(RavenSession.SessionInstance);
+
             this.mTVDB = tvdb;
             this.Args = args;
-
-            this.Ignore = new System.Collections.Generic.List<IgnoreItem>();
 
             this.Workers = null;
             this.WorkerSemaphore = null;
@@ -71,10 +71,7 @@ namespace TVRename
 
             this.SettingsObj = new Config();
 
-            this.MonitorFolders = new StringList();
-            this.IgnoreFolders = new StringList();
-            this.SearchFolders = new StringList();
-            ShowItems = new ShowItemList();
+            ShowItems = new List<ShowItem>();
             this.AddItems = new FolderMonitorEntryList();
 
             this.DownloadDone = true;
@@ -83,7 +80,7 @@ namespace TVRename
             this.ActionCancel = false;
             this.ScanProgDlg = null;
 
-            this.LoadOK = ((settingsFile == null) || this.LoadXMLSettings(settingsFile)) && this.mTVDB.LoadOK;
+            this.LoadOK = ((settingsFile == null) || this.LoadConfigShows()) && this.mTVDB.LoadOK;
 
             //    StartServer();
         }
@@ -143,7 +140,7 @@ namespace TVRename
             this.LockShowItems();
             foreach (ShowItem si in ShowItems)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> k in si.innerDocument.SeasonEpisodes)
+                foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> k in si.innerDocument.SeasonEpisodes)
                     this.mStats.NS_NumberOfEpisodesExpected += k.Value.Count;
                 this.mStats.NS_NumberOfSeasons += si.innerDocument.SeasonEpisodes.Count;
             }
@@ -162,7 +159,7 @@ namespace TVRename
             return this.mDirty;
         }
 
-        public ShowItemList GetShowItems(bool lockThem)
+        public List<ShowItem> GetShowItems(bool lockThem)
         {
             if (lockThem)
                 this.LockShowItems();
@@ -310,7 +307,7 @@ namespace TVRename
         public void MonitorCheckFolderRecursive(DirectoryInfo di, ref bool stop)
         {
             // is it on the folder monitor ignore list?
-            if (this.IgnoreFolders.Contains(di.FullName.ToLower()))
+            if (SettingsObj.innerDocument.IgnoreFoldersList.Contains(di.FullName.ToLower()))
                 return;
 
             if (MonitorAddSingleFolder(di, false))
@@ -382,11 +379,11 @@ namespace TVRename
 
             this.AddItems = new FolderMonitorEntryList();
 
-            int c = this.MonitorFolders.Count;
+            int c = SettingsObj.innerDocument.MonitorFoldersList.Count;
 
             this.LockShowItems();
             int c2 = 0;
-            foreach (string folder in this.MonitorFolders)
+            foreach (string folder in SettingsObj.innerDocument.MonitorFoldersList)
             {
                 percentDone = 100 * c2++ / c;
                 DirectoryInfo di = new DirectoryInfo(folder);
@@ -433,7 +430,7 @@ namespace TVRename
         // if so, add a rcitem for copy to "fi"
         public bool FindMissingEp(DirCache dirCache, ItemMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
         {
-            string showname = me.Episode.SI.ShowName;
+            string showname = me.Episode.getParentShowItem().ShowName;
             int season = me.Episode.SeasonNumber;
 
             //String ^toName = FilenameFriendly(Settings->NamingStyle->NameFor(me->PE));
@@ -465,7 +462,9 @@ namespace TVRename
                         int epF;
                         // String ^fn = file->Name;
 
-                        if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.innerDocument.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
+                        if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.getParentShowItem()) && (seasF == season) && (epF == epnum)) || 
+                            (me.Episode.getParentShowItem().innerDocument.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && 
+                            (seasF == season) && (epF == epnum)))
                         {
                             FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
                             addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode));
@@ -596,13 +595,13 @@ namespace TVRename
             ItemList toRemove = new ItemList();
 
             int fileCount = 0;
-            foreach (string s in this.SearchFolders)
+            foreach (string s in SettingsObj.innerDocument.SearchFoldersList)
                 fileCount += DirCache.CountFiles(s, true);
 
             int c = 0;
 
             DirCache dirCache = new DirCache();
-            foreach (String s in this.SearchFolders)
+            foreach (String s in SettingsObj.innerDocument.SearchFoldersList)
             {
                 if (this.ActionCancel)
                     return;
@@ -946,7 +945,7 @@ namespace TVRename
 
         public System.Collections.Generic.List<System.IO.FileInfo> FindEpOnDisk(ProcessedEpisode pe)
         {
-            return this.FindEpOnDisk(pe.SI, pe);
+            return this.FindEpOnDisk(pe.getParentShowItem(), pe);
         }
 
         public System.Collections.Generic.List<System.IO.FileInfo> FindEpOnDisk(ShowItem si, Episode epi)
@@ -1052,7 +1051,7 @@ namespace TVRename
             bool r = true;
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in ser.Seasons)
             {
-                ProcessedEpisodeList pel = GenerateEpisodes(si, ser, kvp.Key, true);
+                List<ProcessedEpisode> pel = GenerateEpisodes(si, ser, kvp.Key, true);
                 si.innerDocument.SeasonEpisodes[kvp.Key] = pel;
                 if (pel == null)
                     r = false;
@@ -1083,9 +1082,9 @@ namespace TVRename
             return r;
         }
 
-        public static ProcessedEpisodeList GenerateEpisodes(ShowItem si, SeriesInfo ser, int snum, bool applyRules)
+        public static List<ProcessedEpisode> GenerateEpisodes(ShowItem si, SeriesInfo ser, int snum, bool applyRules)
         {
-            ProcessedEpisodeList eis = new ProcessedEpisodeList();
+            List<ProcessedEpisode> eis = new List<ProcessedEpisode>();
 
             if ((ser == null) || !ser.Seasons.ContainsKey(snum))
                 return null; // todo.. something?
@@ -1154,7 +1153,7 @@ namespace TVRename
             return eis;
         }
 
-        public static void ApplyRules(ProcessedEpisodeList eis, System.Collections.Generic.List<ShowRule> rules, ShowItem si)
+        public static void ApplyRules(List<ProcessedEpisode> eis, System.Collections.Generic.List<ShowRule> rules, ShowItem si)
         {
             foreach (ShowRule sr in rules)
             {
@@ -1318,7 +1317,7 @@ namespace TVRename
             }
         }
 
-        public static void Renumber(ProcessedEpisodeList eis)
+        public static void Renumber(List<ProcessedEpisode> eis)
         {
             if (eis.Count == 0)
                 return; // nothing to do
@@ -1367,10 +1366,10 @@ namespace TVRename
             return showName;
         }
 
-        public ProcessedEpisodeList NextNShows(int nshows, int ndays)
+        public List<ProcessedEpisode> NextNShows(int nshows, int ndays)
         {
             DateTime notBefore = DateTime.Now;
-            ProcessedEpisodeList found = new ProcessedEpisodeList();
+            List<ProcessedEpisode> found = new List<ProcessedEpisode>();
 
             this.LockShowItems();
             for (int i = 0; i < nshows; i++)
@@ -1381,7 +1380,7 @@ namespace TVRename
                 {
                     if (!si.innerDocument.ShowNextAirdate)
                         continue;
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> v in si.innerDocument.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> v in si.innerDocument.SeasonEpisodes)
                     {
                         if (si.innerDocument.IgnoreSeasons.Contains(v.Key))
                             continue; // ignore this season
@@ -1419,18 +1418,6 @@ namespace TVRename
             return found;
         }
 
-        public static void WriteStringsToXml(StringList strings, XmlWriter writer, string elementName, string stringName)
-        {
-            writer.WriteStartElement(elementName);
-            foreach (string ss in strings)
-            {
-                writer.WriteStartElement(stringName);
-                writer.WriteValue(ss);
-                writer.WriteEndElement();
-            }
-            writer.WriteEndElement();
-        }
-
         public static void Rotate(string filenameBase)
         {
             if (File.Exists(filenameBase))
@@ -1451,197 +1438,41 @@ namespace TVRename
             }
         }
 
-        public void WriteXMLSettings()
+        public void SaveSettings()
         {
-            // backup old settings before writing new ones
-
-            Rotate(PathManager.TVDocSettingsFile.FullName);
-
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = true;
-            XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings);
-
-            writer.WriteStartDocument();
-            writer.WriteStartElement("TVRename");
-            writer.WriteStartAttribute("Version");
-            writer.WriteValue("2.1");
-            writer.WriteEndAttribute(); // version
 
             //this.SettingsObj.WriteXML(writer); // <Settings>
             this.SettingsObj.saveConfig();
 
-            writer.WriteStartElement("MyShows");
             foreach (ShowItem si in ShowItems)
-                si.WriteXMLSettings(writer);
-            writer.WriteEndElement(); // myshows
-
-            WriteStringsToXml(this.MonitorFolders, writer, "MonitorFolders", "Folder");
-            WriteStringsToXml(this.IgnoreFolders, writer, "IgnoreFolders", "Folder");
-            WriteStringsToXml(this.SearchFolders, writer, "FinderSearchFolders", "Folder");
-
-            writer.WriteStartElement("IgnoreItems");
-            foreach (IgnoreItem ii in this.Ignore)
-                ii.Write(writer);
-            writer.WriteEndElement(); // IgnoreItems
-
-            writer.WriteEndElement(); // tvrename
-            writer.WriteEndDocument();
-            writer.Close();
-            writer = null;
+            {
+                si.saveConfig();
+            } 
 
             this.mDirty = false;
 
             this.Stats().Save();
         }
 
-        public static StringList ReadStringsFromXml(XmlReader reader, string elementName, string stringName)
+        public bool LoadConfigShows()
         {
-            StringList r = new StringList();
-
-            if (reader.Name != elementName)
-                return r; // uhoh
-
-            if (!reader.IsEmptyElement)
+            ShowItems = showItemRepo.getShowItems();
+            for ( int i=0; i < ShowItems.Count; i++ )
             {
-                reader.Read();
-                while (!reader.EOF)
+                if (ShowItems[i].innerDocument.UseCustomShowName) // see if custom show name is actually the real show name
                 {
-                    if ((reader.Name == elementName) && !reader.IsStartElement())
-                        break;
-                    if (reader.Name == stringName)
-                        r.Add(reader.ReadElementContentAsString());
-                    else
-                        reader.ReadOuterXml();
-                }
-            }
-            reader.Read();
-            return r;
-        }
-
-        public bool LoadXMLSettings(FileInfo from)
-        {
-            if (from == null)
-                return true;
-
-            try
-            {
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.IgnoreComments = true;
-                settings.IgnoreWhitespace = true;
-
-                if (!from.Exists)
-                {
-                    //LoadErr = from->Name + " : File does not exist";
-                    //return false;
-                    return true; // that's ok
-                }
-
-                XmlReader reader = XmlReader.Create(from.FullName, settings);
-
-                reader.Read();
-                if (reader.Name != "xml")
-                {
-                    this.LoadErr = from.Name + " : Not a valid XML file";
-                    return false;
-                }
-
-                reader.Read();
-
-                if (reader.Name != "TVRename")
-                {
-                    this.LoadErr = from.Name + " : Not a TVRename settings file";
-                    return false;
-                }
-
-                if (reader.GetAttribute("Version") != "2.1")
-                {
-                    this.LoadErr = from.Name + " : Incompatible version";
-                    return false;
-                }
-
-                reader.Read(); // move forward one
-
-                while (!reader.EOF)
-                {
-                    if (reader.Name == "TVRename" && !reader.IsStartElement())
-                        break; // end of it all
-
-                    if (reader.Name == "Settings")
+                    SeriesInfo ser = ShowItems[i].TheSeries();
+                    if ((ser != null) && (ShowItems[i].innerDocument.CustomShowName == ser.Name))
                     {
-                        //this.SettingsObj = new Config(reader.ReadSubtree());
-                        reader.Read();
+                        // then, turn it off
+                        ShowItems[i].innerDocument.CustomShowName = "";
+                        ShowItems[i].innerDocument.UseCustomShowName = false;
                     }
-                    else if (reader.Name == "MyShows")
-                    {
-                        XmlReader r2 = reader.ReadSubtree();
-                        r2.Read();
-                        r2.Read();
-                        while (!r2.EOF)
-                        {
-                            if ((r2.Name == "MyShows") && (!r2.IsStartElement()))
-                                break;
-                            if (r2.Name == "ShowItem")
-                            {
-                                ShowItem si = new ShowItem(this.mTVDB, r2.ReadSubtree(), this.SettingsObj);
-
-                                if (si.innerDocument.UseCustomShowName) // see if custom show name is actually the real show name
-                                {
-                                    SeriesInfo ser = si.TheSeries();
-                                    if ((ser != null) && (si.innerDocument.CustomShowName == ser.Name))
-                                    {
-                                        // then, turn it off
-                                        si.innerDocument.CustomShowName = "";
-                                        si.innerDocument.UseCustomShowName = false;
-                                    }
-                                }
-                                ShowItems.Add(si);
-
-                                r2.Read();
-                            }
-                            else
-                                r2.ReadOuterXml();
-                        }
-                        reader.Read();
-                    }
-                    else if (reader.Name == "MonitorFolders")
-                        this.MonitorFolders = ReadStringsFromXml(reader, "MonitorFolders", "Folder");
-                    else if (reader.Name == "IgnoreFolders")
-                        this.IgnoreFolders = ReadStringsFromXml(reader, "IgnoreFolders", "Folder");
-                    else if (reader.Name == "FinderSearchFolders")
-                        this.SearchFolders = ReadStringsFromXml(reader, "FinderSearchFolders", "Folder");
-                    else if (reader.Name == "IgnoreItems")
-                    {
-                        XmlReader r2 = reader.ReadSubtree();
-                        r2.Read();
-                        r2.Read();
-                        while (r2.Name == "Ignore")
-                            this.Ignore.Add(new IgnoreItem(r2));
-                        reader.Read();
-                    }
-                    else
-                        reader.ReadOuterXml();
                 }
-
-                reader.Close();
-                reader = null;
-            }
-            catch (Exception e)
-            {
-                this.LoadErr = from.Name + " : " + e.Message;
-                return false;
-            }
-
-            try
-            {
-                this.Stats().Load();
-            }
-            catch (Exception)
-            {
-                // not worried if stats loading fails
             }
             return true;
         }
+
 
         public static bool SysOpen(string what)
         {
@@ -1804,7 +1635,7 @@ namespace TVRename
         //			writer->Close();
         //			}
         //			
-        public bool GenerateUpcomingXML(Stream str, ProcessedEpisodeList elist)
+        public bool GenerateUpcomingXML(Stream str, List<ProcessedEpisode> elist)
         {
             if (elist == null)
                 return false;
@@ -1927,7 +1758,7 @@ namespace TVRename
 
                 ItemMissing Action = (ItemMissing) (Action1);
 
-                string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName);
+                string showname = Helpers.SimplifyName(Action.Episode.getParentShowItem().ShowName);
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -1941,7 +1772,7 @@ namespace TVRename
                     {
                         int seasF;
                         int epF;
-                        if (this.FindSeasEp(file, out seasF, out epF, Action.Episode.SI) && (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
+                        if (this.FindSeasEp(file, out seasF, out epF, Action.Episode.getParentShowItem()) && (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
                         {
                             toRemove.Add(Action1);
                             newList.Add(new ItemuTorrenting(te, Action.Episode, Action.TheFileNoExt));
@@ -1986,7 +1817,7 @@ namespace TVRename
                 ItemMissing Action = (ItemMissing) (Action1);
 
                 ProcessedEpisode pe = Action.Episode;
-                string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName);
+                string simpleShowName = Helpers.SimplifyName(pe.getParentShowItem().ShowName);
                 string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
 
                 foreach (RSSItem rss in this.RSSList)
@@ -2243,7 +2074,7 @@ namespace TVRename
 
             if (specific != null)
             {
-                showlist = new ShowItemList();
+                showlist = new List<ShowItem>();
                 showlist.Add(specific);
             }
             else
@@ -2386,7 +2217,7 @@ namespace TVRename
             foreach (Item item in this.TheActionList)
             {
                 ScanListItem act = item as ScanListItem;
-                foreach (IgnoreItem ii in this.Ignore)
+                foreach (IgnoreItem ii in this.SettingsObj.innerDocument.Ignore)
                 {
                     if (ii.SameFileAs(act.Ignore))
                     {
@@ -2410,7 +2241,7 @@ namespace TVRename
             System.Collections.Generic.List<ShowItem> showlist;
             if (specific != null)
             {
-                showlist = new ShowItemList();
+                showlist = new List<ShowItem>();
                 showlist.Add(specific);
             }
             else
@@ -2487,7 +2318,7 @@ namespace TVRename
                     if (folderNotDefined && (this.SettingsObj.innerDocument.MissingCheck && !si.innerDocument.AutoAddNewSeasons))
                         continue; // folder for the season is not defined, and we're not auto-adding it
 
-                    ProcessedEpisodeList eps = si.innerDocument.SeasonEpisodes[snum];
+                    List<ProcessedEpisode> eps = si.innerDocument.SeasonEpisodes[snum];
                     int maxEpisodeNumber = 0;
                     foreach (ProcessedEpisode episode in eps)
                     {
@@ -2692,7 +2523,7 @@ namespace TVRename
                     fn += ".tbn";
                     FileInfo img = Helpers.FileInFolder(filo.Directory, fn);
                     if (!img.Exists)
-                        addTo.Add(new ActionDownload(dbep.SI, dbep, img, ban));
+                        addTo.Add(new ActionDownload(dbep.getParentShowItem(), dbep, img, ban));
                 }
             }
             if (this.SettingsObj.innerDocument.NFOs)

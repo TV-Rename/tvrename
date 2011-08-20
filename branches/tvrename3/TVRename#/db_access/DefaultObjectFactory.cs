@@ -97,6 +97,11 @@ namespace TVRename.db_access
             cd.MonitorFolders = false;
             cd.ShowStatusColors = new ShowStatusColoringTypeList();
 
+            cd.Ignore = new System.Collections.Generic.List<IgnoreItem>();
+            cd.MonitorFoldersList = new StringList();
+            cd.IgnoreFoldersList = new StringList();
+            cd.SearchFoldersList = new StringList();
+
             return cd;
         }
 
@@ -175,7 +180,7 @@ namespace TVRename.db_access
             si.CustomShowName = "";
             si.UseSequentialMatch = false;
             si.SeasonRules = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>>();
-            si.SeasonEpisodes = new System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>();
+            si.SeasonEpisodes = new System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>>();
             si.ShowNextAirdate = true;
             si.TVDBCode = -1;
             //                WhichSeasons = gcnew System.Collections.Generic.List<int>;

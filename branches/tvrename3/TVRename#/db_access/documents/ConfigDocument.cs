@@ -74,6 +74,10 @@ namespace TVRename.db_access.documents
         public string uTorrentPath { get; set; }
         public bool MonitorFolders { get; set; }
         public ShowStatusColoringTypeList ShowStatusColors { get; set; }
+        public StringList MonitorFoldersList { get; set; }
+        public StringList IgnoreFoldersList { get; set; }
+        public StringList SearchFoldersList { get; set; }
+        public List<IgnoreItem> Ignore { get; set; }
 
         public string ItemForFolderJpg()
         {

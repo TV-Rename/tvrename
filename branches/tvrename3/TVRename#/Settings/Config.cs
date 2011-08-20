@@ -16,6 +16,10 @@ namespace TVRename.Settings
         public ConfigDocument innerDocument;
         private ConfigRepository repo;
 
+        public Config(ConfigDocument inner){
+            this.innerDocument = inner;
+        }
+
         public Config() {
             repo = new ConfigRepository(RavenSession.SessionInstance);
             //if (this.innerDocument == null) innerDocument = new ConfigDocument();
@@ -44,11 +48,6 @@ namespace TVRename.Settings
         public void saveConfig()
         {
             repo.Save(this.innerDocument);
-        }
-
-        ConfigDocument IEntity<ConfigDocument>.GetInnerDocument()
-        {
-            return this.innerDocument;
         }
 
         public static string[] TabNames()
@@ -94,6 +93,11 @@ namespace TVRename.Settings
             if (this.innerDocument.ForceLowercaseFilenames)
                 fn = fn.ToLower();
             return fn;
+        }
+
+        ConfigDocument IEntity<ConfigDocument>.GetInnerDocument()
+        {
+            return this.innerDocument;
         }
     }
 }
