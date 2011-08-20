@@ -14,6 +14,7 @@ using TVRename.Settings;
 using TVRename.Utility;
 using TVRename.db_access;
 using TVRename.Shows;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -293,7 +294,7 @@ namespace TVRename
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            ShowItemList shows = this.mDoc.GetShowItems(false);
+            List<ShowItem> shows = this.mDoc.GetShowItems(false);
             foreach (var show in shows)
             {
                 if(!showStatusList.Contains(show.ShowStatus))
@@ -411,13 +412,13 @@ namespace TVRename
         {
             int n = this.lbSearchFolders.SelectedIndex;
             if (n != -1)
-                this.folderBrowser.SelectedPath = this.mDoc.SearchFolders[n];
+                this.folderBrowser.SelectedPath = this.mDoc.SettingsObj.innerDocument.SearchFoldersList[n];
             else
                 this.folderBrowser.SelectedPath = "";
 
             if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                this.mDoc.SearchFolders.Add(this.folderBrowser.SelectedPath);
+                this.mDoc.SettingsObj.innerDocument.SearchFoldersList.Add(this.folderBrowser.SelectedPath);
                 this.mDoc.SetDirty();
             }
 
@@ -430,7 +431,7 @@ namespace TVRename
             if (n == -1)
                 return;
 
-            this.mDoc.SearchFolders.RemoveAt(n);
+            this.mDoc.SettingsObj.innerDocument.SearchFoldersList.RemoveAt(n);
             this.mDoc.SetDirty();
 
             this.FillSearchFolderList();
@@ -441,14 +442,14 @@ namespace TVRename
             int n = this.lbSearchFolders.SelectedIndex;
             if (n == -1)
                 return;
-            TVDoc.SysOpen(this.mDoc.SearchFolders[n]);
+            TVDoc.SysOpen(this.mDoc.SettingsObj.innerDocument.SearchFoldersList[n]);
         }
 
         private void FillSearchFolderList()
         {
             this.lbSearchFolders.Items.Clear();
-            this.mDoc.SearchFolders.Sort();
-            foreach (string efi in this.mDoc.SearchFolders)
+            this.mDoc.SettingsObj.innerDocument.SearchFoldersList.Sort();
+            foreach (string efi in this.mDoc.SettingsObj.innerDocument.SearchFoldersList)
                 this.lbSearchFolders.Items.Add(efi);
         }
 
@@ -477,7 +478,7 @@ namespace TVRename
                 {
                     di = new DirectoryInfo(path);
                     if (di.Exists)
-                        this.mDoc.SearchFolders.Add(path.ToLower());
+                        this.mDoc.SettingsObj.innerDocument.SearchFoldersList.Add(path.ToLower());
                 }
                 catch
                 {

@@ -19,7 +19,7 @@ namespace TVRename.db_access
            
             var documentStore = new EmbeddableDocumentStore
             {
-                DataDirectory = "RavenDB"
+                DataDirectory = PathManager.RavenDBDir
                 //, UseEmbeddedHttpServer = true
             };
             documentStore.Initialize();

@@ -7,6 +7,7 @@
 // 
 using System.Windows.Forms;
 using System.IO;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -22,10 +23,10 @@ namespace TVRename
     public partial class CustomNameDesigner : Form
     {
         private CustomName CN;
-        private ProcessedEpisodeList Eps;
+        private List<ProcessedEpisode> Eps;
         private TVDoc mDoc;
 
-        public CustomNameDesigner(ProcessedEpisodeList pel, CustomName cn, TVDoc doc)
+        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomName cn, TVDoc doc)
         {
             this.Eps = pel;
             this.CN = cn;
@@ -87,7 +88,7 @@ namespace TVRename
                 {
                     int seas;
                     int ep;
-                    ok = this.mDoc.FindSeasEp(new FileInfo(fn + ".avi"), out seas, out ep, pe.SI);
+                    ok = this.mDoc.FindSeasEp(new FileInfo(fn + ".avi"), out seas, out ep, pe.getParentShowItem());
                     ok1 = ok && (seas == pe.SeasonNumber);
                     ok2 = ok && (ep == pe.EpNum);
                     string pre1 = ok1 ? "" : "* ";

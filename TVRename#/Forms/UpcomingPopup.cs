@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -50,7 +51,7 @@ namespace TVRename
 
             const int kN = 5;
 
-            ProcessedEpisodeList next5 = this.mDoc.NextNShows(kN, 9999);
+            List<ProcessedEpisode> next5 = this.mDoc.NextNShows(kN, 9999);
 
             if (next5 != null)
             {

@@ -13,6 +13,7 @@ using TVRename.db_access.documents;
 using TVRename.Settings;
 using TVRename.db_access;
 using TVRename.Shows;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -28,11 +29,11 @@ namespace TVRename
     public partial class AddEditSeasEpFinders : Form
     {
         private FNPRegexList Rex;
-        private ShowItemList SIL;
+        private List<ShowItem> SIL;
 
         private Config TheSettings;
 
-        public AddEditSeasEpFinders(FNPRegexList rex, ShowItemList sil, ShowItem initialShow, string initialFolder, Config s)
+        public AddEditSeasEpFinders(FNPRegexList rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder, Config s)
         {
             this.Rex = rex;
             this.SIL = sil;

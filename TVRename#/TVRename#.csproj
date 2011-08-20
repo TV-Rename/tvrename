@@ -117,6 +117,10 @@
     <Compile Include="db_access\DefaultObjectFactory.cs" />
     <Compile Include="db_access\documents\ShowItemDocument.cs" />
     <Compile Include="db_access\repository\ConfigRepository.cs" />
+    <Compile Include="db_access\repository\EntityRepository.cs" />
+    <Compile Include="db_access\repository\IConfigRepository.cs" />
+    <Compile Include="db_access\repository\IEntityRepository.cs" />
+    <Compile Include="db_access\repository\IShowItemRepository.cs" />
     <Compile Include="db_access\repository\ShowItemRepository.cs" />
     <Compile Include="Settings\Config.cs" />
     <Compile Include="Custom Controls\ListViewFlickerFree.cs">

@@ -71,13 +71,13 @@ namespace TVRename
 
         private void FillFolderStringLists()
         {
-            this.mDoc.MonitorFolders.Sort();
-            this.mDoc.IgnoreFolders.Sort();
+            this.mDoc.SettingsObj.innerDocument.MonitorFoldersList.Sort();
+            this.mDoc.SettingsObj.innerDocument.IgnoreFoldersList.Sort();
             
             this.lstFMMonitorFolders.BeginUpdate();
             this.lstFMMonitorFolders.Items.Clear();
-            
-            foreach (string folder in this.mDoc.MonitorFolders)
+
+            foreach (string folder in this.mDoc.SettingsObj.innerDocument.MonitorFoldersList)
                 this.lstFMMonitorFolders.Items.Add(folder);
 
             this.lstFMMonitorFolders.EndUpdate();
@@ -85,7 +85,7 @@ namespace TVRename
             this.lstFMIgnoreFolders.BeginUpdate();
             this.lstFMIgnoreFolders.Items.Clear();
 
-            foreach (string folder in this.mDoc.IgnoreFolders)
+            foreach (string folder in this.mDoc.SettingsObj.innerDocument.IgnoreFoldersList)
                 this.lstFMIgnoreFolders.Items.Add(folder);
 
             this.lstFMIgnoreFolders.EndUpdate();
@@ -96,7 +96,7 @@ namespace TVRename
             for (int i = this.lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
             {
                 int n = this.lstFMMonitorFolders.SelectedIndices[i];
-                this.mDoc.MonitorFolders.RemoveAt(n);
+                this.mDoc.SettingsObj.innerDocument.MonitorFoldersList.RemoveAt(n);
             }
             this.mDoc.SetDirty();
             this.FillFolderStringLists();
@@ -107,7 +107,7 @@ namespace TVRename
             for (int i = this.lstFMIgnoreFolders.SelectedIndices.Count - 1; i >= 0; i--)
             {
                 int n = this.lstFMIgnoreFolders.SelectedIndices[i];
-                this.mDoc.IgnoreFolders.RemoveAt(n);
+                this.mDoc.SettingsObj.innerDocument.IgnoreFoldersList.RemoveAt(n);
             }
             this.mDoc.SetDirty();
             this.FillFolderStringLists();
@@ -119,12 +119,12 @@ namespace TVRename
             if (this.lstFMMonitorFolders.SelectedIndex != -1)
             {
                 int n = this.lstFMMonitorFolders.SelectedIndex;
-                this.folderBrowser.SelectedPath = this.mDoc.MonitorFolders[n];
+                this.folderBrowser.SelectedPath = this.mDoc.SettingsObj.innerDocument.MonitorFoldersList[n];
             }
 
             if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                this.mDoc.MonitorFolders.Add(this.folderBrowser.SelectedPath.ToLower());
+                this.mDoc.SettingsObj.innerDocument.MonitorFoldersList.Add(this.folderBrowser.SelectedPath.ToLower());
                 this.mDoc.SetDirty();
                 this.FillFolderStringLists();
             }
@@ -134,11 +134,11 @@ namespace TVRename
         {
             this.folderBrowser.SelectedPath = "";
             if (this.lstFMIgnoreFolders.SelectedIndex != -1)
-                this.folderBrowser.SelectedPath = this.mDoc.IgnoreFolders[this.lstFMIgnoreFolders.SelectedIndex];
+                this.folderBrowser.SelectedPath = this.mDoc.SettingsObj.innerDocument.IgnoreFoldersList[this.lstFMIgnoreFolders.SelectedIndex];
 
             if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                this.mDoc.IgnoreFolders.Add(this.folderBrowser.SelectedPath.ToLower());
+                this.mDoc.SettingsObj.innerDocument.IgnoreFoldersList.Add(this.folderBrowser.SelectedPath.ToLower());
                 this.mDoc.SetDirty();
                 this.FillFolderStringLists();
             }
@@ -147,13 +147,13 @@ namespace TVRename
         private void bnOpenMonFolder_Click(object sender, System.EventArgs e)
         {
             if (this.lstFMMonitorFolders.SelectedIndex != -1)
-                TVDoc.SysOpen(this.mDoc.MonitorFolders[this.lstFMMonitorFolders.SelectedIndex]);
+                TVDoc.SysOpen(this.mDoc.SettingsObj.innerDocument.MonitorFoldersList[this.lstFMMonitorFolders.SelectedIndex]);
         }
 
         private void bnOpenIgFolder_Click(object sender, System.EventArgs e)
         {
             if (this.lstFMIgnoreFolders.SelectedIndex != -1)
-                TVDoc.SysOpen(this.mDoc.MonitorFolders[this.lstFMIgnoreFolders.SelectedIndex]);
+                TVDoc.SysOpen(this.mDoc.SettingsObj.innerDocument.MonitorFoldersList[this.lstFMIgnoreFolders.SelectedIndex]);
         }
 
         private void lstFMMonitorFolders_DoubleClick(object sender, System.EventArgs e)
@@ -222,7 +222,7 @@ namespace TVRename
                 {
                     di = new DirectoryInfo(path);
                     if (di.Exists)
-                        this.mDoc.MonitorFolders.Add(path.ToLower());
+                        this.mDoc.SettingsObj.innerDocument.MonitorFoldersList.Add(path.ToLower());
                 }
                 catch
                 {
@@ -243,7 +243,7 @@ namespace TVRename
                 {
                     di = new DirectoryInfo(path);
                     if (di.Exists)
-                        this.mDoc.IgnoreFolders.Add(path.ToLower());
+                        this.mDoc.SettingsObj.innerDocument.IgnoreFoldersList.Add(path.ToLower());
                 }
                 catch
                 {
@@ -331,7 +331,7 @@ namespace TVRename
             foreach (ListViewItem lvi in this.lvFMNewShows.SelectedItems)
             {
                 FolderMonitorEntry ai = (FolderMonitorEntry)(lvi.Tag);
-                this.mDoc.IgnoreFolders.Add(ai.Folder.ToLower());
+                this.mDoc.SettingsObj.innerDocument.IgnoreFoldersList.Add(ai.Folder.ToLower());
                 this.mDoc.AddItems.Remove(ai);
             }
             this.mDoc.SetDirty();

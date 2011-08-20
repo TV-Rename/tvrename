@@ -35,7 +35,7 @@ namespace TVRename
 
         public void StartMonitor()
         {
-            foreach (string efi in this.mDoc.SearchFolders)
+            foreach (string efi in this.mDoc.SettingsObj.innerDocument.SearchFoldersList)
             {
                 FileSystemWatcher watcher = new FileSystemWatcher(efi);
                 watcher.Changed += new FileSystemEventHandler(watcher_Changed);

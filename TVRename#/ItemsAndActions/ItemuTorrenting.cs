@@ -76,7 +76,7 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = this.Episode.SI.ShowName;
+                lvi.Text = this.Episode.getParentShowItem().ShowName;
                 lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
                 lvi.SubItems.Add(this.Episode.NumsAsString());
                 DateTime? dt = this.Episode.GetAirDateDT(true);

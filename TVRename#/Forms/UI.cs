@@ -15,6 +15,7 @@ using System.Xml;
 using System.Threading;
 using System.IO;
 using TVRename.Shows;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -450,7 +451,7 @@ namespace TVRename
                 {
                     System.Windows.Forms.DialogResult res = MessageBox.Show("Your changes have not been saved.  Do you wish to save before quitting?", "Unsaved data", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                     if (res == System.Windows.Forms.DialogResult.Yes)
-                        this.mDoc.WriteXMLSettings();
+                        this.mDoc.SaveSettings();
                     else if (res == System.Windows.Forms.DialogResult.Cancel)
                         e.Cancel = true;
                     else if (res == System.Windows.Forms.DialogResult.No)
@@ -506,7 +507,7 @@ namespace TVRename
             Season currentSeas = TreeNodeToSeason(this.MyShowTree.SelectedNode);
             ShowItem currentSI = this.TreeNodeToShowItem(this.MyShowTree.SelectedNode);
 
-            ShowItemList expanded = new ShowItemList();
+            List<ShowItem> expanded = new List<ShowItem>();
             foreach (TreeNode n in this.MyShowTree.Nodes)
             {
                 if (n.IsExpanded)
@@ -576,7 +577,7 @@ namespace TVRename
 
             ProcessedEpisode pe = n.Tag as ProcessedEpisode;
             if (pe != null)
-                return pe.SI;
+                return pe.getParentShowItem();
 
             Season seas = n.Tag as Season;
             if (seas != null)
@@ -619,7 +620,7 @@ namespace TVRename
             ProcessedEpisode pe = n.Tag as ProcessedEpisode;
             if (pe != null)
             {
-                this.FillEpGuideHTML(pe.SI, pe.SeasonNumber);
+                this.FillEpGuideHTML(pe.getParentShowItem(), pe.SeasonNumber);
                 return;
             }
 
@@ -643,7 +644,7 @@ namespace TVRename
 
                     if (pe != null)
                     {
-                        this.FillEpGuideHTML(pe.SI, -1);
+                        this.FillEpGuideHTML(pe.getParentShowItem(), -1);
                         return;
                     }
                 }
@@ -692,7 +693,7 @@ namespace TVRename
 
                 Season s = ser.Seasons[snum];
 
-                ProcessedEpisodeList eis = null;
+                List<ProcessedEpisode> eis = null;
                 // int snum = s.SeasonNumber;
                 if (si.innerDocument.SeasonEpisodes.ContainsKey(snum))
                     eis = si.innerDocument.SeasonEpisodes[snum]; // use processed episodes if they are available
@@ -857,7 +858,7 @@ namespace TVRename
             if (e == null)
                 return;
 
-            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(e.SI.innerDocument.TVDBCode, e.SeasonID, false));
+            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(e.getParentShowItem().innerDocument.TVDBCode, e.SeasonID, false));
         }
 
         public void TVDBFor(Season seas)
@@ -897,7 +898,7 @@ namespace TVRename
             this.lvWhenToWatch.Groups[0].Header = "Aired in the last " + dd + " day" + ((dd == 1) ? "" : "s");
 
             // try to maintain selections if we can
-            ProcessedEpisodeList selections = new ProcessedEpisodeList();
+            List<ProcessedEpisode> selections = new List<ProcessedEpisode>();
             foreach (ListViewItem lvi in this.lvWhenToWatch.SelectedItems)
                 selections.Add((ProcessedEpisode)(lvi.Tag));
 
@@ -913,12 +914,12 @@ namespace TVRename
                 if (!si.innerDocument.ShowNextAirdate)
                     continue;
 
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.innerDocument.SeasonEpisodes)
+                foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si.innerDocument.SeasonEpisodes)
                 {
                     if (si.innerDocument.IgnoreSeasons.Contains(kvp.Key))
                         continue; // ignore this season
 
-                    ProcessedEpisodeList eis = kvp.Value;
+                    List<ProcessedEpisode> eis = kvp.Value;
 
                     bool nextToAirFound = false;
 
@@ -1113,7 +1114,7 @@ namespace TVRename
         public void UpdateToolstripWTW()
         {
             // update toolstrip text too
-            ProcessedEpisodeList next1 = this.mDoc.NextNShows(1, 36500);
+            List<ProcessedEpisode> next1 = this.mDoc.NextNShows(1, 36500);
 
             this.tsNextShowTxt.Text = "Next airing: ";
             if ((next1 != null) && (next1.Count >= 1))
@@ -1221,7 +1222,7 @@ namespace TVRename
         public void RightClickOnShow(ProcessedEpisode ep, Point pt)
         {
             this.mLastEpClicked = ep;
-            this.mLastShowClicked = ep != null ? ep.SI : null;
+            this.mLastShowClicked = ep != null ? ep.getParentShowItem() : null;
             this.mLastSeasonClicked = ep != null ? ep.TheSeason : null;
             this.mLastActionsClicked = null;
             this.BuildRightClickMenu(pt);
@@ -1379,11 +1380,11 @@ namespace TVRename
 
             if (ep != null)
             {
-                if (ep.SI.AllFolderLocations(this.mDoc.SettingsObj).ContainsKey(ep.SeasonNumber))
+                if (ep.getParentShowItem().AllFolderLocations(this.mDoc.SettingsObj).ContainsKey(ep.SeasonNumber))
                 {
                     int n = this.mFoldersToOpen.Count;
                     bool first = true;
-                    foreach (string folder in ep.SI.AllFolderLocations(this.mDoc.SettingsObj)[ep.SeasonNumber])
+                    foreach (string folder in ep.getParentShowItem().AllFolderLocations(this.mDoc.SettingsObj)[ep.SeasonNumber])
                     {
                         if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder))
                         {
@@ -1631,8 +1632,8 @@ namespace TVRename
 
                                 int snum = er.Episode.SeasonNumber;
 
-                                if (!er.Episode.SI.innerDocument.IgnoreSeasons.Contains(snum))
-                                    er.Episode.SI.innerDocument.IgnoreSeasons.Add(snum);
+                                if (!er.Episode.getParentShowItem().innerDocument.IgnoreSeasons.Contains(snum))
+                                    er.Episode.getParentShowItem().innerDocument.IgnoreSeasons.Add(snum);
 
                                 // remove all other episodes of this season from the Action list
                                 ItemList remove = new ItemList();
@@ -1762,7 +1763,7 @@ namespace TVRename
         {
             try
             {
-                this.mDoc.WriteXMLSettings();
+                this.mDoc.SaveSettings();
                 this.mDoc.GetTVDB(false, "").SaveCache();
                 this.SaveLayoutXML();
             }
@@ -2035,7 +2036,7 @@ namespace TVRename
                 lvi.Group = this.lvWhenToWatch.Groups[2];
 
             int n = 1;
-            lvi.Text = pe.SI.ShowName;
+            lvi.Text = pe.getParentShowItem().ShowName;
             lvi.SubItems[n++].Text = (pe.SeasonNumber != 0) ? pe.SeasonNumber.ToString() : "Special";
             string estr = (pe.EpNum > 0) ? pe.EpNum.ToString() : "";
             if ((pe.EpNum > 0) && (pe.EpNum2 != pe.EpNum) && (pe.EpNum2 > 0))
@@ -2054,7 +2055,7 @@ namespace TVRename
                 System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(pe);
                 if ((fl != null) && (fl.Count > 0))
                     lvi.ImageIndex = 0;
-                else if (pe.SI.innerDocument.DoMissingCheck)
+                else if (pe.getParentShowItem().innerDocument.DoMissingCheck)
                     lvi.ImageIndex = 1;
             }
         }
@@ -2168,7 +2169,7 @@ namespace TVRename
 
             TheTVDB db = this.mDoc.GetTVDB(true, "EditSeason");
             SeriesInfo ser = db.GetSeries(si.innerDocument.TVDBCode);
-            ProcessedEpisodeList pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
+            List<ProcessedEpisode> pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
 
             EditRules er = new EditRules(si, pel, seasnum, this.mDoc.SettingsObj.innerDocument.NamingStyle);
             System.Windows.Forms.DialogResult dr = er.ShowDialog();
@@ -2331,20 +2332,20 @@ namespace TVRename
             this.ShowQuickStartGuide();
         }
 
-        private ProcessedEpisodeList CurrentlySelectedPEL()
+        private List<ProcessedEpisode> CurrentlySelectedPEL()
         {
             Season currentSeas = TreeNodeToSeason(this.MyShowTree.SelectedNode);
             ShowItem currentSI = this.TreeNodeToShowItem(this.MyShowTree.SelectedNode);
 
             int snum = (currentSeas != null) ? currentSeas.SeasonNumber : 1;
-            ProcessedEpisodeList pel = null;
+            List<ProcessedEpisode> pel = null;
             if ((currentSI != null) && (currentSI.innerDocument.SeasonEpisodes.ContainsKey(snum)))
                 pel = currentSI.innerDocument.SeasonEpisodes[snum];
             else
             {
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.innerDocument.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si.innerDocument.SeasonEpisodes)
                     {
                         pel = kvp.Value;
                         break;
@@ -2371,7 +2372,7 @@ namespace TVRename
 
         private void searchEnginesToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            ProcessedEpisodeList pel = this.CurrentlySelectedPEL();
+            List<ProcessedEpisode> pel = this.CurrentlySelectedPEL();
 
             AddEditSearchEngine aese = new AddEditSearchEngine(this.mDoc.GetSearchers(), ((pel != null) && (pel.Count > 0)) ? pel[0] : null);
             DialogResult dr = aese.ShowDialog();
@@ -2800,7 +2801,7 @@ namespace TVRename
                 if (action.Episode != null)
                 {
                     this.mLastSeasonClicked = action.Episode.TheSeason;
-                    this.mLastShowClicked = action.Episode.SI;
+                    this.mLastShowClicked = action.Episode.getParentShowItem();
                 }
                 else
                 {
@@ -3043,7 +3044,7 @@ namespace TVRename
                 IgnoreItem ii = Action.Ignore;
                 if (ii != null)
                 {
-                    this.mDoc.Ignore.Add(ii);
+                    this.mDoc.SettingsObj.innerDocument.Ignore.Add(ii);
                     added = true;
                 }
             }

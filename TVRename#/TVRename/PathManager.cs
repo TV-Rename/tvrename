@@ -12,6 +12,7 @@ namespace TVRename
         const string LayoutFileName = "TVRenameLayout.dat";
         const string UILayoutFileName = "Layout.xml";
         const string StatisticsFileName = "Statistics.xml";
+        const string RavenDBDirName = "RavenDB";
 
         private static string userDefinedBasePath;
 
@@ -114,5 +115,20 @@ namespace TVRename
             }
         }
 
+        public static string RavenDBDir
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(userDefinedBasePath))
+                {
+                    return GetFileInfo(userDefinedBasePath, RavenDBDirName).FullName;
+                }
+                else
+                {
+                    return GetFileInfo(System.Windows.Forms.Application.UserAppDataPath, RavenDBDirName).FullName;
+                }
+            }
+        }
+        
     }
 }

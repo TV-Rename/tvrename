@@ -15,12 +15,6 @@ namespace TVRename
     {
         public string FileAndPath;
 
-        public IgnoreItem(XmlReader r)
-        {
-            if (r.Name == "Ignore")
-                this.FileAndPath = r.ReadElementContentAsString();
-        }
-
         public IgnoreItem(string fileAndPath)
         {
             this.FileAndPath = fileAndPath;
@@ -31,13 +25,6 @@ namespace TVRename
             if (string.IsNullOrEmpty(this.FileAndPath) || string.IsNullOrEmpty(o.FileAndPath))
                 return false;
             return this.FileAndPath == o.FileAndPath;
-        }
-
-        public void Write(XmlWriter writer)
-        {
-            writer.WriteStartElement("Ignore");
-            writer.WriteValue(this.FileAndPath);
-            writer.WriteEndElement(); // Ignore
         }
     }
 }

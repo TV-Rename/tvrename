@@ -7,6 +7,7 @@
 // 
 using System.Windows.Forms;
 using TVRename.Shows;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -23,11 +24,11 @@ namespace TVRename
     {
         private CustomName NameStyle;
         private System.Collections.Generic.List<ShowRule> WorkingRuleSet;
-        private ProcessedEpisodeList mOriginalEps;
+        private List<ProcessedEpisode> mOriginalEps;
         private ShowItem mSI;
         private int mSeasonNumber;
 
-        public EditRules(ShowItem si, ProcessedEpisodeList originalEpList, int seasonNumber, CustomName style)
+        public EditRules(ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomName style)
         {
             this.NameStyle = style;
             this.InitializeComponent();
@@ -163,7 +164,7 @@ namespace TVRename
 
         private void FillPreview()
         {
-            ProcessedEpisodeList pel = new ProcessedEpisodeList();
+            List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
 
             if (this.mOriginalEps != null)
             {

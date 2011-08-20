@@ -106,9 +106,9 @@ namespace TVRename
                     writer.WriteValue(this.Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
                 writer.WriteEndElement();
 
-                if (this.Episode.SI != null)
+                if (this.Episode.getParentShowItem() != null)
                 {
-                    WriteInfo(writer, this.Episode.SI, "ContentRating", "mpaa");
+                    WriteInfo(writer, this.Episode.getParentShowItem(), "ContentRating", "mpaa");
                 }
 
                 //Director(s)
@@ -146,9 +146,9 @@ namespace TVRename
                 {
                     string RecurringActors = "";
 
-                    if (this.Episode.SI != null)
+                    if (this.Episode.getParentShowItem() != null)
                     {
-                        RecurringActors = this.Episode.SI.TheSeries().GetItem("Actors");
+                        RecurringActors = this.Episode.getParentShowItem().TheSeries().GetItem("Actors");
                     }
 
                     string GuestActors = this.Episode.EpisodeGuestStars;
@@ -175,9 +175,9 @@ namespace TVRename
                 }
 
                 // actors...
-                if (this.Episode.SI != null)
+                if (this.Episode.getParentShowItem() != null)
                 {
-                    string actors = this.Episode.SI.TheSeries().GetItem("Actors");
+                    string actors = this.Episode.getParentShowItem().TheSeries().GetItem("Actors");
                     if (!string.IsNullOrEmpty(actors))
                     {
                         foreach (string aa in actors.Split('|'))
@@ -309,7 +309,7 @@ namespace TVRename
 
                 if (this.Episode != null)
                 {
-                    lvi.Text = this.Episode.SI.ShowName;
+                    lvi.Text = this.Episode.ShowEffectiveName;
                     lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
                     lvi.SubItems.Add(this.Episode.NumsAsString());
                     DateTime? dt = this.Episode.GetAirDateDT(true);
