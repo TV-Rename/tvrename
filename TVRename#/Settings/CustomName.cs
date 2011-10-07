@@ -65,9 +65,16 @@ namespace TVRename
                                   };
         }
 
-        public string NameForExt(ProcessedEpisode pe, string extension)
+        public string NameForExt(ProcessedEpisode pe, string extension, int folderNameLength)
         {
+            // set folderNameLength to have the filename truncated if the total path length is too long
+
             string r = NameForNoExt(pe, this.StyleString);
+
+            int maxLenOK = 200 - (folderNameLength + ((extension != null) ? extension.Length : 0));
+            if (r.Length > maxLenOK)
+                r = r.Substring(0, maxLenOK);
+
             if (!string.IsNullOrEmpty(extension))
             {
                 if (!extension.StartsWith("."))
@@ -103,7 +110,7 @@ namespace TVRename
 
         public static string NameForNoExt(ProcessedEpisode pe, String styleString, bool urlEncode)
         {
-            String name = styleString; // TODO: make copy instead?
+            String name = styleString;
 
             string showname = pe.SI.ShowName;
             string epname = pe.Name;

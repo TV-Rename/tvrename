@@ -105,6 +105,10 @@ namespace TVRename
 
             this.ActiveControl = mTCCF; // set initial focus to the code entry/show finder control
 
+            foreach (string aliasName in this.mSI.AliasNames)
+            {
+                lbShowAlias.Items.Add(aliasName);
+            }
         }
 
         private void buttonOK_Click(object sender, System.EventArgs e)
@@ -179,6 +183,15 @@ namespace TVRename
                 }
                 catch
                 {
+                }
+            }
+
+            this.mSI.AliasNames.Clear();
+            foreach (string showAlias in this.lbShowAlias.Items)
+            {
+                if (!this.mSI.AliasNames.Contains(showAlias))
+                {
+                    this.mSI.AliasNames.Add(showAlias);
                 }
             }
         }
@@ -271,6 +284,37 @@ namespace TVRename
         private void chkAutoFolders_CheckedChanged(object sender, System.EventArgs e)
         {
             gbAutoFolders.Enabled = chkAutoFolders.Checked;
+        }
+
+        private void bnAddAlias_Click(object sender, System.EventArgs e)
+        {
+            string aliasName = tbShowAlias.Text;
+
+            if (!string.IsNullOrEmpty(aliasName))
+            {
+                if (lbShowAlias.FindStringExact(aliasName) == -1)
+                {
+                    lbShowAlias.Items.Add(aliasName);
+                }
+                tbShowAlias.Text = "";
+            }
+        }
+
+        private void bnRemoveAlias_Click(object sender, System.EventArgs e)
+        {
+            if (lbShowAlias.SelectedItems.Count > 0)
+            {
+                foreach (int i in lbShowAlias.SelectedIndices)
+                {
+                    lbShowAlias.Items.RemoveAt(i);
+                }
+            }
+        }
+
+        private void tbShowAlias_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                this.bnAddAlias_Click(null, null);
         }
     }
 }

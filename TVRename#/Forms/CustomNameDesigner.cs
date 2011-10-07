@@ -77,7 +77,7 @@ namespace TVRename
             foreach (ProcessedEpisode pe in this.Eps)
             {
                 ListViewItem lvi = new ListViewItem();
-                string fn = this.mDoc.Settings.FilenameFriendly(this.CN.NameForExt(pe, null));
+                string fn = this.mDoc.Settings.FilenameFriendly(this.CN.NameForExt(pe, null, 0));
                 lvi.Text = fn;
 
                 bool ok = false;
