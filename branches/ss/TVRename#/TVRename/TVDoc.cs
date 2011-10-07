@@ -1844,7 +1844,7 @@ namespace TVRename
 
                 foreach (ProcessedEpisode ei in elist)
                 {
-                    string niceName = this.Settings.NamingStyle.NameForExt(ei, null);
+                    string niceName = this.Settings.NamingStyle.NameForExt(ei, null, 0);
 
                     writer.WriteStartElement("item");
                     writer.WriteStartElement("title");
@@ -2609,11 +2609,12 @@ namespace TVRename
 
                             if (renCheck && this.Settings.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
                             {
-                                string newname = this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(ep, fi.Extension));
+                                string newname = this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(ep, fi.Extension, folder.Length));
+
                                 if (newname != actualFile.Name)
                                 {
                                     actualFile = Helpers.FileInFolder(folder, newname); // rename updates the filename
-                                    this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep));
+                                      this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep));
                                 }
                             }
                             if (missCheck && this.Settings.UsefulExtension(fi.Extension, false)) // == MISSING CHECK part 1/2 ==
@@ -2663,7 +2664,7 @@ namespace TVRename
                                         (si.ForceCheckNoAirdate && !dtOK))
                                     {
                                         // then add it as officially missing
-                                        this.TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));
+                                        this.TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null, folder.Length))));
                                     }
                                 }
                                 else
