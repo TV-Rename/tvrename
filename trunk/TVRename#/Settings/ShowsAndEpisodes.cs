@@ -8,6 +8,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using System.Collections.Generic;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -130,6 +131,7 @@ namespace TVRename
         public int TVDBCode;
         public bool UseCustomShowName;
         public bool UseSequentialMatch;
+        public List<string> AliasNames = new List<string>();
 
         public ShowItem(TheTVDB db)
         {
@@ -204,6 +206,21 @@ namespace TVRename
                         {
                             if (reader.Name == "Ignore")
                                 this.IgnoreSeasons.Add(reader.ReadElementContentAsInt());
+                            else
+                                reader.ReadOuterXml();
+                        }
+                    }
+                    reader.Read();
+                }
+                else if (reader.Name == "AliasNames")
+                {
+                    if (!reader.IsEmptyElement)
+                    {
+                        reader.Read();
+                        while (reader.Name != "AliasNames")
+                        {
+                            if (reader.Name == "Alias")
+                                this.AliasNames.Add(reader.ReadElementContentAsString());
                             else
                                 reader.ReadOuterXml();
                         }
@@ -559,6 +576,15 @@ namespace TVRename
             {
                 writer.WriteStartElement("Ignore");
                 writer.WriteValue(i);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("AliasNames");
+            foreach (string str in this.AliasNames)
+            {
+                writer.WriteStartElement("Alias");
+                writer.WriteValue(str);
                 writer.WriteEndElement();
             }
             writer.WriteEndElement();

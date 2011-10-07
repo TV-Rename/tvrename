@@ -37,6 +37,10 @@ namespace TVRename
         {
             foreach (string efi in this.mDoc.SearchFolders)
             {
+                if (!File.Exists(efi) ||  // doesn't exist
+                    ((File.GetAttributes(efi) & FileAttributes.Directory) != (FileAttributes.Directory)) ) // not a folder
+                    continue;
+
                 FileSystemWatcher watcher = new FileSystemWatcher(efi);
                 watcher.Changed += new FileSystemEventHandler(watcher_Changed);
                 watcher.Created += new FileSystemEventHandler(watcher_Changed);

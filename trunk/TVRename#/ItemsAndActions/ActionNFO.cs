@@ -73,7 +73,7 @@ namespace TVRename
                 if (writer == null)
                     return false;
             }
-            catch (Exception excep)
+            catch (Exception)
             {
                 this.Done = true;
                 return true;

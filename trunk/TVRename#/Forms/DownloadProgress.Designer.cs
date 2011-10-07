@@ -37,28 +37,29 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = (new System.ComponentModel.Container());
-            this.bnCancel = (new System.Windows.Forms.Button());
-            this.pbProgressBar = (new System.Windows.Forms.ProgressBar());
-            this.label2 = (new System.Windows.Forms.Label());
-            this.txtCurrent = (new System.Windows.Forms.Label());
-            this.tmrUpdate = (new System.Windows.Forms.Timer(this.components));
+            this.components = new System.ComponentModel.Container();
+            this.bnCancel = new System.Windows.Forms.Button();
+            this.pbProgressBar = new System.Windows.Forms.ProgressBar();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtCurrent = new System.Windows.Forms.Label();
+            this.tmrUpdate = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // bnCancel
             // 
-            this.bnCancel.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnCancel.Location = new System.Drawing.Point(159, 62);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 0;
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
-            this.bnCancel.Click += new System.EventHandler(bnCancel_Click);
+            this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
             // 
             // pbProgressBar
             // 
-            this.pbProgressBar.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.pbProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.pbProgressBar.Location = new System.Drawing.Point(12, 35);
             this.pbProgressBar.Name = "pbProgressBar";
             this.pbProgressBar.Size = new System.Drawing.Size(366, 15);
@@ -82,16 +83,16 @@ namespace TVRename
             this.txtCurrent.Size = new System.Drawing.Size(16, 13);
             this.txtCurrent.TabIndex = 2;
             this.txtCurrent.Text = "---";
+            this.txtCurrent.UseMnemonic = false;
             // 
             // tmrUpdate
             // 
             this.tmrUpdate.Enabled = true;
-            this.tmrUpdate.Interval = 100;
-            this.tmrUpdate.Tick += new System.EventHandler(tmrUpdate_Tick);
+            this.tmrUpdate.Tick += new System.EventHandler(this.tmrUpdate_Tick);
             // 
             // DownloadProgress
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(390, 97);
             this.Controls.Add(this.txtCurrent);
@@ -103,7 +104,7 @@ namespace TVRename
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Download Progress";
-            this.Load += new System.EventHandler(DownloadProgress_Load);
+            this.Load += new System.EventHandler(this.DownloadProgress_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

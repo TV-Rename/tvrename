@@ -12,6 +12,7 @@
 namespace TVRename
 {
     using System;
+    using System.Globalization;
     using System.IO;
     using System.Text.RegularExpressions;
     using System.Threading;
@@ -455,6 +456,18 @@ namespace TVRename
                         continue;
 
                     matched = Regex.Match(dce.SimplifiedFullName, "\\b" + showname + "\\b", RegexOptions.IgnoreCase).Success;
+
+                    // if we don't match the main name, then test the aliases
+                    if (!matched)
+                    {
+                        foreach (string alias in me.Episode.SI.AliasNames)
+                        {
+                            string aliasName = Helpers.SimplifyName(alias);
+                            matched = Regex.Match(dce.SimplifiedFullName, "\\b" + aliasName + "\\b", RegexOptions.IgnoreCase).Success;
+                            if (matched)
+                                break;
+                        }
+                    }
 
                     if (matched)
                     {
@@ -1831,7 +1844,7 @@ namespace TVRename
 
                 foreach (ProcessedEpisode ei in elist)
                 {
-                    string niceName = this.Settings.NamingStyle.NameForExt(ei, null);
+                    string niceName = this.Settings.NamingStyle.NameForExt(ei, null, 0);
 
                     writer.WriteStartElement("item");
                     writer.WriteStartElement("title");
@@ -2086,7 +2099,7 @@ namespace TVRename
                         if (queues[i].ActionPosition < queues[i].Actions.Count)
                         {
                             allDone = false;
-                            if (this.ActionSemaphores[i].WaitOne(20))
+                            if (this.ActionSemaphores[i].WaitOne(20, false))
                             {
                                 which = i;
                                 break;
@@ -2596,11 +2609,12 @@ namespace TVRename
 
                             if (renCheck && this.Settings.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
                             {
-                                string newname = this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(ep, fi.Extension));
+                                string newname = this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(ep, fi.Extension, folder.Length));
+
                                 if (newname != actualFile.Name)
                                 {
                                     actualFile = Helpers.FileInFolder(folder, newname); // rename updates the filename
-                                    this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep));
+                                      this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep));
                                 }
                             }
                             if (missCheck && this.Settings.UsefulExtension(fi.Extension, false)) // == MISSING CHECK part 1/2 ==
@@ -2650,7 +2664,7 @@ namespace TVRename
                                         (si.ForceCheckNoAirdate && !dtOK))
                                     {
                                         // then add it as officially missing
-                                        this.TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null))));
+                                        this.TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null, folder.Length))));
                                     }
                                 }
                                 else
@@ -2826,8 +2840,7 @@ namespace TVRename
             // check for YMD, DMY, and MDY
             // only check against airdates we expect for the given show
             SeriesInfo ser = si.TVDB.GetSeries(si.TVDBCode);
-            string[] dateFormats = new[] { "yyyy-MM-dd","dd-MM-yyyy","MM-dd-yyyy",
-                                           "yy-MM-dd","dd-MM-yy","MM-dd-yy" };
+            string[] dateFormats = new[] { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy" };
             string filename = fi.Name;
             // force possible date separators to a dash
             filename = filename.Replace("/", "-");
@@ -2835,30 +2848,41 @@ namespace TVRename
             filename = filename.Replace(",", "-");
             filename = filename.Replace(" ", "-");
 
+            ep = -1;
+            seas = -1;
+
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in ser.Seasons)
             {
+                if (si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
+                    continue;
+
                 foreach (Episode epi in kvp.Value.Episodes)
                 {
                     DateTime? dt = epi.GetAirDateDT(false); // file will have local timezone date, not ours
                     if ((dt == null) || (!dt.HasValue))
                         continue;
 
+                    TimeSpan closestDate = TimeSpan.MaxValue;
+
                     foreach (string dateFormat in dateFormats)
                     {
                         string datestr = dt.Value.ToString(dateFormat);
-                        if (filename.Contains(datestr))
+                        DateTime dtInFilename;
+                        if (filename.Contains(datestr) && DateTime.TryParseExact(datestr, dateFormat, new CultureInfo("en-GB"), DateTimeStyles.None, out dtInFilename))
                         {
-                            seas = epi.SeasonNumber;
-                            ep = epi.EpNum;
-                            return true;
+                            TimeSpan timeAgo = DateTime.Now.Subtract(dtInFilename);
+                            if (timeAgo < closestDate)
+                            {
+                                seas = epi.SeasonNumber;
+                                ep = epi.EpNum;
+                                closestDate = timeAgo;
+                            }
                         }
                     }
                 }
             }
 
-            ep = -1;
-            seas = -1;
-            return false;
+            return ((ep != -1) && (seas != -1));
         }
 
         public bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si)
