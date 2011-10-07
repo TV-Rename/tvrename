@@ -25,6 +25,22 @@
             }
         }
 
+        public bool RenameBehaviour
+        {
+            get
+            {
+                if (TheDoc != null)
+                    return TheDoc.Settings.RenameCheck;
+
+                return false;
+            }
+            set
+            {
+                if (TheDoc != null)
+                    TheDoc.Settings.RenameCheck = value;
+            }
+        }
+
         public static void Setup(UI ui, TVDoc doc)
         {
             TheDoc = doc;

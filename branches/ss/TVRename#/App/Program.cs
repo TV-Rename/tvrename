@@ -55,11 +55,18 @@ public static class GlobalMembersTVRename
             // Send command-line arguments to already running TVRename via IPC
 
             CommandLineArgs.MissingFolderBehaviour before = ipc.MissingBehaviour;
+            bool renameBefore = ipc.RenameBehaviour;
 
-            if (clargs.MissingFolder != CommandLineArgs.MissingFolderBehaviour.Ask)
+            if (clargs.RenameCheck == false)
              {
               // Temporarily override behaviour for missing folders
-              ipc.MissingBehaviour = clargs.MissingFolder;
+              ipc.RenameBehaviour = false;
+            }
+
+            if (clargs.MissingFolder != CommandLineArgs.MissingFolderBehaviour.Ask)
+            {
+                // Temporarily override behaviour for missing folders
+                ipc.MissingBehaviour = clargs.MissingFolder;
             }
 
             // TODO: Unify command line handling between here and in UI.cs (ProcessArgs).  Just send in clargs via IPC?
@@ -76,6 +83,7 @@ public static class GlobalMembersTVRename
                 return 0;
             }
 
+            ipc.RenameBehaviour = renameBefore;
             ipc.MissingBehaviour = before;
 
         return 0;

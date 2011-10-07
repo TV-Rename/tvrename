@@ -99,6 +99,8 @@ namespace TVRename
 
         public string CurrentSearchURL()
         {
+            if (this.mURLs.Count == 0)
+                return "";
             return this.mURLs[this.CurrentSearchNum()];
         }
 
@@ -144,6 +146,8 @@ namespace TVRename
         {
             if (n >= this.mNames.Count)
                 n = this.mNames.Count - 1;
+            else if (n < 0)
+                n = 0;
             return this.mNames[n];
         }
 
@@ -151,6 +155,8 @@ namespace TVRename
         {
             if (n >= this.mNames.Count)
                 n = this.mNames.Count - 1;
+            else if (n < 0)
+                n = 0;
             return this.mURLs[n];
         }
     }

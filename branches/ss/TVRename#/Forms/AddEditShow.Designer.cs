@@ -77,13 +77,19 @@ namespace TVRename
             this.label2 = new System.Windows.Forms.Label();
             this.gbAutoFolders = new System.Windows.Forms.GroupBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
+            this.cbIncludeFuture = new System.Windows.Forms.CheckBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.bnRemoveAlias = new System.Windows.Forms.Button();
+            this.bnAddAlias = new System.Windows.Forms.Button();
+            this.tbShowAlias = new System.Windows.Forms.TextBox();
+            this.lbShowAlias = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.gbAutoFolders.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtCustomShowName
@@ -408,7 +414,8 @@ namespace TVRename
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(0, 2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Location = new System.Drawing.Point(-4, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(433, 390);
@@ -477,6 +484,16 @@ namespace TVRename
             this.tabPage2.Text = "Advanced";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // cbIncludeNoAirdate
+            // 
+            this.cbIncludeNoAirdate.AutoSize = true;
+            this.cbIncludeNoAirdate.Location = new System.Drawing.Point(174, 124);
+            this.cbIncludeNoAirdate.Name = "cbIncludeNoAirdate";
+            this.cbIncludeNoAirdate.Size = new System.Drawing.Size(111, 17);
+            this.cbIncludeNoAirdate.TabIndex = 8;
+            this.cbIncludeNoAirdate.Text = "Include no airdate";
+            this.cbIncludeNoAirdate.UseVisualStyleBackColor = true;
+            // 
             // cbIncludeFuture
             // 
             this.cbIncludeFuture.AutoSize = true;
@@ -487,15 +504,56 @@ namespace TVRename
             this.cbIncludeFuture.Text = "Include future episodes";
             this.cbIncludeFuture.UseVisualStyleBackColor = true;
             // 
-            // cbIncludeNoAirdate
+            // tabPage3
             // 
-            this.cbIncludeNoAirdate.AutoSize = true;
-            this.cbIncludeNoAirdate.Location = new System.Drawing.Point(174, 124);
-            this.cbIncludeNoAirdate.Name = "cbIncludeNoAirdate";
-            this.cbIncludeNoAirdate.Size = new System.Drawing.Size(111, 17);
-            this.cbIncludeNoAirdate.TabIndex = 8;
-            this.cbIncludeNoAirdate.Text = "Include no airdate";
-            this.cbIncludeNoAirdate.UseVisualStyleBackColor = true;
+            this.tabPage3.Controls.Add(this.bnRemoveAlias);
+            this.tabPage3.Controls.Add(this.bnAddAlias);
+            this.tabPage3.Controls.Add(this.tbShowAlias);
+            this.tabPage3.Controls.Add(this.lbShowAlias);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(425, 364);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Show Aliases";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // bnRemoveAlias
+            // 
+            this.bnRemoveAlias.Location = new System.Drawing.Point(6, 336);
+            this.bnRemoveAlias.Name = "bnRemoveAlias";
+            this.bnRemoveAlias.Size = new System.Drawing.Size(413, 23);
+            this.bnRemoveAlias.TabIndex = 3;
+            this.bnRemoveAlias.Text = "&Remove Alias";
+            this.bnRemoveAlias.UseVisualStyleBackColor = true;
+            this.bnRemoveAlias.Click += new System.EventHandler(this.bnRemoveAlias_Click);
+            // 
+            // bnAddAlias
+            // 
+            this.bnAddAlias.Location = new System.Drawing.Point(6, 307);
+            this.bnAddAlias.Name = "bnAddAlias";
+            this.bnAddAlias.Size = new System.Drawing.Size(413, 23);
+            this.bnAddAlias.TabIndex = 2;
+            this.bnAddAlias.Text = "&Add Alias";
+            this.bnAddAlias.UseVisualStyleBackColor = true;
+            this.bnAddAlias.Click += new System.EventHandler(this.bnAddAlias_Click);
+            // 
+            // tbShowAlias
+            // 
+            this.tbShowAlias.Location = new System.Drawing.Point(6, 281);
+            this.tbShowAlias.Name = "tbShowAlias";
+            this.tbShowAlias.Size = new System.Drawing.Size(413, 20);
+            this.tbShowAlias.TabIndex = 1;
+            this.tbShowAlias.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbShowAlias_KeyDown);
+            // 
+            // lbShowAlias
+            // 
+            this.lbShowAlias.FormattingEnabled = true;
+            this.lbShowAlias.Location = new System.Drawing.Point(6, 6);
+            this.lbShowAlias.Name = "lbShowAlias";
+            this.lbShowAlias.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lbShowAlias.Size = new System.Drawing.Size(413, 264);
+            this.lbShowAlias.TabIndex = 0;
             // 
             // AddEditShow
             // 
@@ -522,6 +580,8 @@ namespace TVRename
             this.gbAutoFolders.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -569,5 +629,10 @@ namespace TVRename
         private System.Windows.Forms.GroupBox gbAutoFolders;
         private System.Windows.Forms.CheckBox cbIncludeNoAirdate;
         private System.Windows.Forms.CheckBox cbIncludeFuture;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button bnRemoveAlias;
+        private System.Windows.Forms.Button bnAddAlias;
+        private System.Windows.Forms.TextBox tbShowAlias;
+        private System.Windows.Forms.ListBox lbShowAlias;
     }
 }
