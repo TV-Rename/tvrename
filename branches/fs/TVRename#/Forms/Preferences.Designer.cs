@@ -43,6 +43,11 @@ namespace TVRename
             this.bnCancel = new System.Windows.Forms.Button();
             this.ReplacementsGrid = new SourceGrid.Grid();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txtExportRSSDaysPast = new System.Windows.Forms.TextBox();
+            this.bnBrowseWTWXML = new System.Windows.Forms.Button();
+            this.txtWTWXML = new System.Windows.Forms.TextBox();
+            this.cbWTWXML = new System.Windows.Forms.CheckBox();
             this.bnBrowseWTWRSS = new System.Windows.Forms.Button();
             this.txtWTWRSS = new System.Windows.Forms.TextBox();
             this.cbWTWRSS = new System.Windows.Forms.CheckBox();
@@ -148,8 +153,8 @@ namespace TVRename
             this.bnRemoveDefinedColor = new System.Windows.Forms.Button();
             this.btnAddShowStatusColoring = new System.Windows.Forms.Button();
             this.lvwDefinedColors = new System.Windows.Forms.ListView();
-            this.colShowStatus = new System.Windows.Forms.ColumnHeader();
-            this.colColor = new System.Windows.Forms.ColumnHeader();
+            this.colShowStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -208,6 +213,11 @@ namespace TVRename
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label4);
+            this.groupBox2.Controls.Add(this.txtExportRSSDaysPast);
+            this.groupBox2.Controls.Add(this.bnBrowseWTWXML);
+            this.groupBox2.Controls.Add(this.txtWTWXML);
+            this.groupBox2.Controls.Add(this.cbWTWXML);
             this.groupBox2.Controls.Add(this.bnBrowseWTWRSS);
             this.groupBox2.Controls.Add(this.txtWTWRSS);
             this.groupBox2.Controls.Add(this.cbWTWRSS);
@@ -218,10 +228,54 @@ namespace TVRename
             this.groupBox2.Controls.Add(this.txtExportRSSMaxShows);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(403, 84);
+            this.groupBox2.Size = new System.Drawing.Size(403, 113);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "When to Watch";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(330, 83);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(59, 13);
+            this.label4.TabIndex = 21;
+            this.label4.Text = "in the past.";
+            // 
+            // txtExportRSSDaysPast
+            // 
+            this.txtExportRSSDaysPast.Location = new System.Drawing.Point(294, 80);
+            this.txtExportRSSDaysPast.Name = "txtExportRSSDaysPast";
+            this.txtExportRSSDaysPast.Size = new System.Drawing.Size(28, 20);
+            this.txtExportRSSDaysPast.TabIndex = 20;
+            // 
+            // bnBrowseWTWXML
+            // 
+            this.bnBrowseWTWXML.Location = new System.Drawing.Point(322, 47);
+            this.bnBrowseWTWXML.Name = "bnBrowseWTWXML";
+            this.bnBrowseWTWXML.Size = new System.Drawing.Size(75, 23);
+            this.bnBrowseWTWXML.TabIndex = 19;
+            this.bnBrowseWTWXML.Text = "Browse...";
+            this.bnBrowseWTWXML.UseVisualStyleBackColor = true;
+            this.bnBrowseWTWXML.Click += new System.EventHandler(this.bnBrowseWTWXML_Click);
+            // 
+            // txtWTWXML
+            // 
+            this.txtWTWXML.Location = new System.Drawing.Point(65, 49);
+            this.txtWTWXML.Name = "txtWTWXML";
+            this.txtWTWXML.Size = new System.Drawing.Size(251, 20);
+            this.txtWTWXML.TabIndex = 18;
+            // 
+            // cbWTWXML
+            // 
+            this.cbWTWXML.AutoSize = true;
+            this.cbWTWXML.Location = new System.Drawing.Point(10, 51);
+            this.cbWTWXML.Name = "cbWTWXML";
+            this.cbWTWXML.Size = new System.Drawing.Size(48, 17);
+            this.cbWTWXML.TabIndex = 17;
+            this.cbWTWXML.Text = "XML";
+            this.cbWTWXML.UseVisualStyleBackColor = true;
+            this.cbWTWXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
             // 
             // bnBrowseWTWRSS
             // 
@@ -254,16 +308,16 @@ namespace TVRename
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(212, 53);
+            this.label17.Location = new System.Drawing.Point(212, 83);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(61, 13);
+            this.label17.Size = new System.Drawing.Size(79, 13);
             this.label17.TabIndex = 7;
-            this.label17.Text = "days worth.";
+            this.label17.Text = "days worth and";
             // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(120, 53);
+            this.label16.Location = new System.Drawing.Point(120, 83);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(52, 13);
             this.label16.TabIndex = 5;
@@ -272,7 +326,7 @@ namespace TVRename
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(9, 53);
+            this.label15.Location = new System.Drawing.Point(9, 83);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(71, 13);
             this.label15.TabIndex = 3;
@@ -280,7 +334,7 @@ namespace TVRename
             // 
             // txtExportRSSMaxDays
             // 
-            this.txtExportRSSMaxDays.Location = new System.Drawing.Point(178, 50);
+            this.txtExportRSSMaxDays.Location = new System.Drawing.Point(178, 80);
             this.txtExportRSSMaxDays.Name = "txtExportRSSMaxDays";
             this.txtExportRSSMaxDays.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSMaxDays.TabIndex = 6;
@@ -288,7 +342,7 @@ namespace TVRename
             // 
             // txtExportRSSMaxShows
             // 
-            this.txtExportRSSMaxShows.Location = new System.Drawing.Point(86, 50);
+            this.txtExportRSSMaxShows.Location = new System.Drawing.Point(86, 80);
             this.txtExportRSSMaxShows.Name = "txtExportRSSMaxShows";
             this.txtExportRSSMaxShows.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSMaxShows.TabIndex = 4;
@@ -659,7 +713,7 @@ namespace TVRename
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
             this.groupBox5.Controls.Add(this.cbFOXML);
             this.groupBox5.Controls.Add(this.txtFOXML);
-            this.groupBox5.Location = new System.Drawing.Point(6, 244);
+            this.groupBox5.Location = new System.Drawing.Point(6, 271);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(402, 55);
             this.groupBox5.TabIndex = 3;
@@ -700,7 +754,7 @@ namespace TVRename
             this.groupBox4.Controls.Add(this.bnBrowseRenamingXML);
             this.groupBox4.Controls.Add(this.cbRenamingXML);
             this.groupBox4.Controls.Add(this.txtRenamingXML);
-            this.groupBox4.Location = new System.Drawing.Point(6, 181);
+            this.groupBox4.Location = new System.Drawing.Point(6, 208);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(402, 57);
             this.groupBox4.TabIndex = 2;
@@ -744,7 +798,7 @@ namespace TVRename
             this.groupBox3.Controls.Add(this.txtMissingXML);
             this.groupBox3.Controls.Add(this.cbMissingCSV);
             this.groupBox3.Controls.Add(this.txtMissingCSV);
-            this.groupBox3.Location = new System.Drawing.Point(6, 96);
+            this.groupBox3.Location = new System.Drawing.Point(6, 123);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(402, 79);
             this.groupBox3.TabIndex = 1;
@@ -1542,6 +1596,11 @@ namespace TVRename
         private System.Windows.Forms.ComboBox cboShowStatus;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button bnRemoveDefinedColor;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox txtExportRSSDaysPast;
+        private System.Windows.Forms.Button bnBrowseWTWXML;
+        private System.Windows.Forms.TextBox txtWTWXML;
+        private System.Windows.Forms.CheckBox cbWTWXML;
 
     }
 }

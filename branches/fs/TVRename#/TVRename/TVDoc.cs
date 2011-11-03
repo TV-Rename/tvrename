@@ -1379,7 +1379,8 @@ namespace TVRename
 
         public ProcessedEpisodeList NextNShows(int nshows, int ndays)
         {
-            DateTime notBefore = DateTime.Now;
+
+            DateTime notBefore = DateTime.Now.AddDays(Settings.ExportRSSDaysPast * -1);
             ProcessedEpisodeList found = new ProcessedEpisodeList();
 
             this.LockShowItems();
@@ -1813,7 +1814,7 @@ namespace TVRename
         //			writer->Close();
         //			}
         //			
-        public bool GenerateUpcomingXML(Stream str, ProcessedEpisodeList elist)
+        public bool GenerateUpcomingRSS(Stream str, ProcessedEpisodeList elist)
         {
             if (elist == null)
                 return false;
@@ -1873,11 +1874,102 @@ namespace TVRename
             {
                 return false;
             }
-        }
+        } 
+
+        public bool GenerateUpcomingXML(Stream str, ProcessedEpisodeList elist)
+        {
+            if (elist == null)
+                return false;
+
+            try
+            {
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Indent = true;
+                settings.NewLineOnAttributes = true;
+                settings.Encoding = System.Text.Encoding.ASCII;
+                XmlWriter writer = XmlWriter.Create(str, settings);
+
+                writer.WriteStartDocument();
+                writer.WriteStartElement("WhenToWatch");
+
+                foreach (ProcessedEpisode ei in elist)
+                {
+                    string niceName = this.Settings.NamingStyle.NameForExt(ei, null, 0);
+
+                    writer.WriteStartElement("item");
+                    writer.WriteStartElement("id");
+                    writer.WriteValue(ei.TheSeries.TVDBCode);
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("SeriesName");
+                    writer.WriteValue(ei.TheSeries.Name);
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("SeasonNumber");
+
+                    if (ei.SeasonNumber.ToString().Length > 1)
+                    {
+                        writer.WriteValue(ei.SeasonNumber);
+                    }
+                    else { writer.WriteValue("0" + ei.SeasonNumber); }
+                    writer.WriteEndElement();
+
+                    writer.WriteStartElement("EpisodeNumber");
+                    if (ei.EpNum.ToString().Length > 1)
+                    {
+                        writer.WriteValue(ei.EpNum);
+                    }
+                    else { writer.WriteValue("0" + ei.EpNum); }
+                    writer.WriteEndElement();
+
+                    writer.WriteStartElement("EpisodeName");
+                    writer.WriteValue(ei.Name);
+                    writer.WriteEndElement();
+
+                    writer.WriteStartElement("available");
+                    DateTime? airdt = ei.GetAirDateDT(true);
+
+                    if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
+                    {
+                        System.Collections.Generic.List<System.IO.FileInfo> fl = this.FindEpOnDisk(ei);
+                        if ((fl != null) && (fl.Count > 0))
+                            writer.WriteValue("true");
+                        else if (ei.SI.DoMissingCheck)
+                            writer.WriteValue("false");
+                    }
+
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("Overview");
+                    writer.WriteValue(ei.Overview);
+                    writer.WriteEndElement();
+
+                    writer.WriteStartElement("FirstAired");
+                    DateTime? dt = ei.GetAirDateDT(true);
+                    if (dt != null)
+                        writer.WriteValue(dt.Value.ToString("F"));
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("Rating");
+                    writer.WriteValue(ei.EpisodeRating);
+                    writer.WriteEndElement();
+                    writer.WriteStartElement("filename");
+                    writer.WriteValue(ei.GetItem("filename"));
+                    writer.WriteEndElement();
+
+                    writer.WriteEndElement(); // item
+                }
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+                writer.Close();
+                return true;
+            } // try
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return false;
+            }
+        } // wtwXML Export
 
         public void WriteUpcomingRSS()
         {
-            if (!this.Settings.ExportWTWRSS)
+            if (!this.Settings.ExportWTWRSS && !this.Settings.ExportWTWXML) //Additional check added for the wtwXML export.
                 return;
 
             try
@@ -1886,12 +1978,25 @@ namespace TVRename
                 // when windows restarts, the share isn't "back" before this timer times out and fires
                 // windows explorer tends to lose explorer windows on shares when slept/resumed, too, so its not
                 // just me :P
-                MemoryStream ms = new MemoryStream();
-                if (this.GenerateUpcomingXML(ms, this.NextNShows(this.Settings.ExportRSSMaxShows, this.Settings.ExportRSSMaxDays)))
+                if (this.Settings.ExportWTWRSS)
                 {
-                    StreamWriter sw = new StreamWriter(this.Settings.ExportWTWRSSTo);
-                    sw.Write(System.Text.Encoding.UTF8.GetString(ms.ToArray()));
-                    sw.Close();
+                    MemoryStream RSS = new MemoryStream(); //duplicated the IF statement one for RSS and one for XML so that both can be generated.
+                    if (this.GenerateUpcomingRSS(RSS, this.NextNShows(this.Settings.ExportRSSMaxShows, this.Settings.ExportRSSMaxDays)))
+                    {
+                        StreamWriter sRSS = new StreamWriter(this.Settings.ExportWTWRSSTo);
+                        sRSS.Write(System.Text.Encoding.UTF8.GetString(RSS.ToArray()));
+                        sRSS.Close();
+                    }
+                }
+                if (this.Settings.ExportWTWXML)
+                {
+                    MemoryStream ms = new MemoryStream();
+                    if (this.GenerateUpcomingXML(ms, this.NextNShows(this.Settings.ExportRSSMaxShows, this.Settings.ExportRSSMaxDays)))
+                    {
+                        StreamWriter sw = new StreamWriter(this.Settings.ExportWTWXMLTo);
+                        sw.Write(System.Text.Encoding.UTF8.GetString(ms.ToArray()));
+                        sw.Close();
+                    }
                 }
             }
             catch
