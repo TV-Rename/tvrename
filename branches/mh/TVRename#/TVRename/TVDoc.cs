@@ -2046,7 +2046,7 @@ namespace TVRename
             ActionQueue[] queues = new ActionQueue[4];
             queues[0] = new ActionQueue("Move/Copy", 1); // cross-filesystem moves (slow ones)
             queues[1] = new ActionQueue("Move", 2); // local rename/moves
-            queues[2] = new ActionQueue("Write NFO", 4); // writing XBMC NFO files
+            queues[2] = new ActionQueue("Write NFO/pyTivo Meta", 4); // writing XBMC NFO files
             queues[3] = new ActionQueue("Download", this.Settings.ParallelDownloads); // downloading torrents, banners, thumbnails
 
             foreach (ScanListItem sli in theList)
@@ -2056,7 +2056,7 @@ namespace TVRename
                 if (action == null)
                     continue; // skip non-actions
 
-                if (action is ActionNFO)
+                if (action is ActionNFO || action is ActionPyTivoMeta)
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownload) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
@@ -2713,6 +2713,18 @@ namespace TVRename
 
                 if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))
                     addTo.Add(new ActionNFO(nfo, dbep));
+            }
+            if (this.Settings.pyTivoMeta)
+            {
+                string fn = filo.Name;
+                fn += ".txt";
+                string folder = filo.DirectoryName;
+                if (this.Settings.pyTivoMetaSubFolder)
+                    folder += "\\.meta";
+                FileInfo meta = Helpers.FileInFolder(folder, fn);
+
+                if (!meta.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(meta.LastWriteTime)))
+                    addTo.Add(new ActionPyTivoMeta(meta, dbep));
             }
         }
 

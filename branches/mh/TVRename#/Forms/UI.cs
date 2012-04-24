@@ -6,14 +6,14 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Drawing;
+using System.IO;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
-using System.Windows.Forms;
-using System.Drawing;
-using System.Xml;
 using System.Threading;
-using System.IO;
+using System.Windows.Forms;
+using System.Xml;
 
 namespace TVRename
 {
@@ -2518,7 +2518,7 @@ namespace TVRename
             ListViewItem lvi = sli.ScanListViewItem;
             if (this.mReverseList)
             {
-                lvi.Group = this.lvAction.Groups[7 - sli.ScanListViewGroup];
+                lvi.Group = this.lvAction.Groups[8 - sli.ScanListViewGroup];
             }
             else
             {
@@ -2588,6 +2588,7 @@ namespace TVRename
             int rssCount = 0;
             int downloadCount = 0;
             int nfoCount = 0;
+            int metaCount = 0;
             int utCount = 0;
 
             foreach (Item Action in this.mDoc.TheActionList)
@@ -2619,18 +2620,21 @@ namespace TVRename
                     rssCount++;
                 else if (Action is ActionNFO)
                     nfoCount++;
+                else if (Action is ActionPyTivoMeta)
+                    metaCount++;
                 else if (Action is ItemuTorrenting)
                     utCount++;
             }
             if (this.mReverseList)
             {
-                this.lvAction.Groups[7].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
-                this.lvAction.Groups[6].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
-                this.lvAction.Groups[5].Header = "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
-                this.lvAction.Groups[4].Header = "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
-                this.lvAction.Groups[3].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
-                this.lvAction.Groups[2].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
-                this.lvAction.Groups[1].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
+                this.lvAction.Groups[8].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
+                this.lvAction.Groups[7].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
+                this.lvAction.Groups[6].Header = "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
+                this.lvAction.Groups[5].Header = "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
+                this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
+                this.lvAction.Groups[3].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
+                this.lvAction.Groups[2].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
+                this.lvAction.Groups[1].Header = "pyTiovo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
                 this.lvAction.Groups[0].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
             }
             else
@@ -2642,7 +2646,8 @@ namespace TVRename
             this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
             this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
             this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
-            this.lvAction.Groups[7].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
+            this.lvAction.Groups[7].Header = "pyTiovo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
+            this.lvAction.Groups[8].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
             }
 
             this.InternalCheckChange = false;
@@ -2864,8 +2869,14 @@ namespace TVRename
             else
                 this.cbNFO.CheckState = (chk.NFO.Count == all.NFO.Count) ? CheckState.Checked : CheckState.Indeterminate;
 
-            int total1 = all.Rename.Count + all.CopyMove.Count + all.RSS.Count + all.Download.Count + all.NFO.Count;
-            int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.RSS.Count + chk.Download.Count + chk.NFO.Count;
+            if (chk.PyTivoMeta.Count == 0)
+                this.cbMeta.CheckState = CheckState.Unchecked;
+            else
+                this.cbMeta.CheckState = (chk.PyTivoMeta.Count == all.PyTivoMeta.Count) ? CheckState.Checked : CheckState.Indeterminate;
+
+
+            int total1 = all.Rename.Count + all.CopyMove.Count + all.RSS.Count + all.Download.Count + all.NFO.Count + all.PyTivoMeta.Count;
+            int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.RSS.Count + chk.Download.Count + chk.NFO.Count + chk.PyTivoMeta.Count;
 
             if (total2 == 0)
                 this.cbAll.CheckState = CheckState.Unchecked;
@@ -2943,6 +2954,26 @@ namespace TVRename
             {
                 Item i = (Item)(lvi.Tag);
                 if ((i != null) && (i is ActionNFO))
+                    lvi.Checked = cs == CheckState.Checked;
+            }
+            this.InternalCheckChange = false;
+            this.UpdateActionCheckboxes();
+        }
+
+        private void cbActionPyTivoMeta_Click(object sender, System.EventArgs e)
+        {
+            CheckState cs = this.cbMeta.CheckState;
+            if (cs == CheckState.Indeterminate)
+            {
+                this.cbMeta.CheckState = CheckState.Unchecked;
+                cs = CheckState.Unchecked;
+            }
+
+            this.InternalCheckChange = true;
+            foreach (ListViewItem lvi in this.lvAction.Items)
+            {
+                Item i = (Item)(lvi.Tag);
+                if ((i != null) && (i is ActionPyTivoMeta))
                     lvi.Checked = cs == CheckState.Checked;
             }
             this.InternalCheckChange = false;

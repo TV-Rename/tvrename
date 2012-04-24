@@ -108,6 +108,8 @@ namespace TVRename
             this.lbSearchFolders = new System.Windows.Forms.ListBox();
             this.label23 = new System.Windows.Forms.Label();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.cbMetaSubfolder = new System.Windows.Forms.CheckBox();
+            this.cbMeta = new System.Windows.Forms.CheckBox();
             this.rbFolderFanArt = new System.Windows.Forms.RadioButton();
             this.rbFolderPoster = new System.Windows.Forms.RadioButton();
             this.rbFolderBanner = new System.Windows.Forms.RadioButton();
@@ -148,8 +150,8 @@ namespace TVRename
             this.bnRemoveDefinedColor = new System.Windows.Forms.Button();
             this.btnAddShowStatusColoring = new System.Windows.Forms.Button();
             this.lvwDefinedColors = new System.Windows.Forms.ListView();
-            this.colShowStatus = new System.Windows.Forms.ColumnHeader();
-            this.colColor = new System.Windows.Forms.ColumnHeader();
+            this.colShowStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -444,9 +446,9 @@ namespace TVRename
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
@@ -832,7 +834,7 @@ namespace TVRename
             this.cbMonitorFolder.TabIndex = 5;
             this.cbMonitorFolder.Text = "&Monitor folders for changes";
             this.toolTip1.SetToolTip(this.cbMonitorFolder, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
-                    " \"Do\".");
+        " \"Do\".");
             this.cbMonitorFolder.UseVisualStyleBackColor = true;
             // 
             // bnOpenSearchFolder
@@ -868,8 +870,8 @@ namespace TVRename
             // lbSearchFolders
             // 
             this.lbSearchFolders.AllowDrop = true;
-            this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbSearchFolders.FormattingEnabled = true;
             this.lbSearchFolders.Location = new System.Drawing.Point(3, 23);
             this.lbSearchFolders.Name = "lbSearchFolders";
@@ -889,6 +891,8 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.cbMetaSubfolder);
+            this.tpScanOptions.Controls.Add(this.cbMeta);
             this.tpScanOptions.Controls.Add(this.rbFolderFanArt);
             this.tpScanOptions.Controls.Add(this.rbFolderPoster);
             this.tpScanOptions.Controls.Add(this.rbFolderBanner);
@@ -910,10 +914,31 @@ namespace TVRename
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
             // 
+            // cbMetaSubfolder
+            // 
+            this.cbMetaSubfolder.AutoSize = true;
+            this.cbMetaSubfolder.Location = new System.Drawing.Point(60, 240);
+            this.cbMetaSubfolder.Name = "cbMetaSubfolder";
+            this.cbMetaSubfolder.Size = new System.Drawing.Size(194, 17);
+            this.cbMetaSubfolder.TabIndex = 14;
+            this.cbMetaSubfolder.Text = "Place py&TiVo Meta files in subfolder";
+            this.cbMetaSubfolder.UseVisualStyleBackColor = true;
+            // 
+            // cbMeta
+            // 
+            this.cbMeta.AutoSize = true;
+            this.cbMeta.Location = new System.Drawing.Point(40, 217);
+            this.cbMeta.Name = "cbMeta";
+            this.cbMeta.Size = new System.Drawing.Size(167, 17);
+            this.cbMeta.TabIndex = 13;
+            this.cbMeta.Text = "py&TiVo Meta files for episodes";
+            this.cbMeta.UseVisualStyleBackColor = true;
+            this.cbMeta.CheckedChanged += new System.EventHandler(this.cbMeta_CheckedChanged);
+            // 
             // rbFolderFanArt
             // 
             this.rbFolderFanArt.AutoSize = true;
-            this.rbFolderFanArt.Location = new System.Drawing.Point(41, 286);
+            this.rbFolderFanArt.Location = new System.Drawing.Point(41, 332);
             this.rbFolderFanArt.Name = "rbFolderFanArt";
             this.rbFolderFanArt.Size = new System.Drawing.Size(59, 17);
             this.rbFolderFanArt.TabIndex = 12;
@@ -924,7 +949,7 @@ namespace TVRename
             // rbFolderPoster
             // 
             this.rbFolderPoster.AutoSize = true;
-            this.rbFolderPoster.Location = new System.Drawing.Point(40, 263);
+            this.rbFolderPoster.Location = new System.Drawing.Point(40, 309);
             this.rbFolderPoster.Name = "rbFolderPoster";
             this.rbFolderPoster.Size = new System.Drawing.Size(55, 17);
             this.rbFolderPoster.TabIndex = 11;
@@ -935,7 +960,7 @@ namespace TVRename
             // rbFolderBanner
             // 
             this.rbFolderBanner.AutoSize = true;
-            this.rbFolderBanner.Location = new System.Drawing.Point(40, 240);
+            this.rbFolderBanner.Location = new System.Drawing.Point(40, 286);
             this.rbFolderBanner.Name = "rbFolderBanner";
             this.rbFolderBanner.Size = new System.Drawing.Size(59, 17);
             this.rbFolderBanner.TabIndex = 10;
@@ -985,7 +1010,7 @@ namespace TVRename
             // cbFolderJpg
             // 
             this.cbFolderJpg.AutoSize = true;
-            this.cbFolderJpg.Location = new System.Drawing.Point(20, 217);
+            this.cbFolderJpg.Location = new System.Drawing.Point(20, 263);
             this.cbFolderJpg.Name = "cbFolderJpg";
             this.cbFolderJpg.Size = new System.Drawing.Size(164, 17);
             this.cbFolderJpg.TabIndex = 9;
@@ -1095,8 +1120,8 @@ namespace TVRename
             // 
             // txtUTResumeDatPath
             // 
-            this.txtUTResumeDatPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtUTResumeDatPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUTResumeDatPath.Location = new System.Drawing.Point(75, 55);
             this.txtUTResumeDatPath.Name = "txtUTResumeDatPath";
             this.txtUTResumeDatPath.Size = new System.Drawing.Size(247, 20);
@@ -1227,9 +1252,9 @@ namespace TVRename
             // 
             // lbLangs
             // 
-            this.lbLangs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbLangs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbLangs.FormattingEnabled = true;
             this.lbLangs.Location = new System.Drawing.Point(6, 19);
             this.lbLangs.Name = "lbLangs";
@@ -1542,6 +1567,8 @@ namespace TVRename
         private System.Windows.Forms.ComboBox cboShowStatus;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button bnRemoveDefinedColor;
+        private System.Windows.Forms.CheckBox cbMeta;
+        private System.Windows.Forms.CheckBox cbMetaSubfolder;
 
     }
 }

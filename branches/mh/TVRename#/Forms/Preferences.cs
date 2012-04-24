@@ -104,6 +104,8 @@ namespace TVRename
             S.SearchRSS = this.cbSearchRSS.Checked;
             S.EpImgs = this.cbEpImgs.Checked;
             S.NFOs = this.cbNFOs.Checked;
+            S.pyTivoMeta = this.cbMeta.Checked;
+            S.pyTivoMetaSubFolder = this.cbMetaSubfolder.Checked;
             S.FolderJpg = this.cbFolderJpg.Checked;
             S.RenameCheck = this.cbRenameCheck.Checked;
             S.MissingCheck = this.cbMissing.Checked;
@@ -230,6 +232,8 @@ namespace TVRename
             this.cbSearchRSS.Checked = S.SearchRSS;
             this.cbEpImgs.Checked = S.EpImgs;
             this.cbNFOs.Checked = S.NFOs;
+            this.cbMeta.Checked = S.pyTivoMeta;
+            this.cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
             this.cbFolderJpg.Checked = S.FolderJpg;
             this.cbRenameCheck.Checked = S.RenameCheck;
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
@@ -240,6 +244,7 @@ namespace TVRename
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;
 
             this.EnableDisable(null, null);
+            this.ScanOptEnableDisable();
 
             this.FillSearchFolderList();
 
@@ -729,13 +734,22 @@ namespace TVRename
             this.cbSearchLocally.Enabled = e;
             this.cbEpImgs.Enabled = e;
             this.cbNFOs.Enabled = e;
+            this.cbMeta.Enabled = e;
             this.cbCheckuTorrent.Enabled = e;
 
             bool e2 = this.cbSearchLocally.Checked;
             this.cbLeaveOriginals.Enabled = e && e2;
+
+            bool e3 = this.cbMeta.Checked;
+            this.cbMetaSubfolder.Enabled = e && e3;
         }
 
         private void cbSearchLocally_CheckedChanged(object sender, System.EventArgs e)
+        {
+            this.ScanOptEnableDisable();
+        }
+
+        private void cbMeta_CheckedChanged(object sender, EventArgs e)
         {
             this.ScanOptEnableDisable();
         }
@@ -845,6 +859,5 @@ namespace TVRename
                 this.txtShowStatusColor.ForeColor = Color.Black;
             }
         }
-
     }
 }
