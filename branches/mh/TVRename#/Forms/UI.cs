@@ -86,6 +86,7 @@ namespace TVRename
         protected ShowItem mLastShowClicked;
         protected bool mReverseList = false;
         protected AutoFolderMonitor mAutoFolderMonitor;
+        private bool treeExpandCollapseToggle = true;
 
         public UI(TVDoc doc)
         {
@@ -2432,7 +2433,10 @@ namespace TVRename
 
         private void bnMyShowsCollapse_Click(object sender, System.EventArgs e)
         {
-            this.MyShowTree.CollapseAll();
+            if (treeExpandCollapseToggle  = !treeExpandCollapseToggle)
+                this.MyShowTree.CollapseAll();
+            else
+                this.MyShowTree.ExpandAll();
         }
 
         private void UI_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
