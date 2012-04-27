@@ -2433,10 +2433,14 @@ namespace TVRename
 
         private void bnMyShowsCollapse_Click(object sender, System.EventArgs e)
         {
-            if (treeExpandCollapseToggle  = !treeExpandCollapseToggle)
+            this.MyShowTree.BeginUpdate();            
+            if (treeExpandCollapseToggle = !treeExpandCollapseToggle)           
                 this.MyShowTree.CollapseAll();
             else
                 this.MyShowTree.ExpandAll();
+            if (this.MyShowTree.SelectedNode != null)
+                this.MyShowTree.SelectedNode.EnsureVisible();
+            this.MyShowTree.EndUpdate();
         }
 
         private void UI_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
