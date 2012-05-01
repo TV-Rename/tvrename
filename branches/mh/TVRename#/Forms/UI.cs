@@ -360,6 +360,14 @@ namespace TVRename
                 } // window
                 else if (reader.Name == "ColumnWidths")
                     ok = this.LoadWidths(reader) && ok;
+                else if (reader.Name == "Splitter")
+                {
+                    this.splitContainer1.SplitterDistance = int.Parse(reader.GetAttribute("Distance"));
+                    this.splitContainer1.Panel2Collapsed = bool.Parse(reader.GetAttribute("HTMLCollapsed"));
+                    if (this.splitContainer1.Panel2Collapsed)
+                        this.bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
+                    reader.Read();
+                }
                 else
                     reader.ReadOuterXml();
             } // while
@@ -413,6 +421,15 @@ namespace TVRename
 
             this.WriteColWidthsXML("WhenToWatch", writer);
             this.WriteColWidthsXML("AllInOne", writer);
+
+            writer.WriteStartElement("Splitter");
+            writer.WriteStartAttribute("Distance");
+            writer.WriteValue(this.splitContainer1.SplitterDistance);
+            writer.WriteEndAttribute();
+            writer.WriteStartAttribute("HTMLCollapsed");
+            writer.WriteValue(this.splitContainer1.Panel2Collapsed);
+            writer.WriteEndAttribute();
+            writer.WriteEndElement(); // splitter
 
             writer.WriteEndElement(); // Layout
             writer.WriteEndElement(); // tvrename
@@ -3102,6 +3119,20 @@ namespace TVRename
         private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             this.UpdateActionCheckboxes();
+        }
+
+        private void bnHideHTMLPanel_Click(object sender, EventArgs e)
+        {
+            if (splitContainer1.Panel2Collapsed)
+            {
+                splitContainer1.Panel2Collapsed = false;
+                bnHideHTMLPanel.ImageKey = "FillRight.bmp";
+            }
+            else
+            {
+                splitContainer1.Panel2Collapsed = true;
+                bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
+            }
         }
     }
 }

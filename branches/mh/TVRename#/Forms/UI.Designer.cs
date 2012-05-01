@@ -39,19 +39,19 @@ namespace TVRename
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
-            System.Windows.Forms.ListViewGroup listViewGroup14 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup15 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup16 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup17 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup18 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup19 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup20 = new System.Windows.Forms.ListViewGroup("NFO File", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup21 = new System.Windows.Forms.ListViewGroup("pyTivo Meta File", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup22 = new System.Windows.Forms.ListViewGroup("Downloading In µTorrent", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("NFO File", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("pyTivo Meta File", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Downloading In µTorrent", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup13 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -85,6 +85,7 @@ namespace TVRename
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbMyShows = new System.Windows.Forms.TabPage();
             this.bnMyShowsCollapse = new System.Windows.Forms.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.bnMyShowsVisitTVDB = new System.Windows.Forms.Button();
             this.bnMyShowsOpenFolder = new System.Windows.Forms.Button();
             this.bnMyShowsRefresh = new System.Windows.Forms.Button();
@@ -140,7 +141,8 @@ namespace TVRename
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.bnHideHTMLPanel = new System.Windows.Forms.Button();
             this.lvAction = new TVRename.MyListView();
             this.columnHeader48 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader49 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -166,6 +168,9 @@ namespace TVRename
             this.tbAllInOne.SuspendLayout();
             this.tbWTW.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -433,12 +438,12 @@ namespace TVRename
             // 
             // tbMyShows
             // 
+            this.tbMyShows.Controls.Add(this.bnHideHTMLPanel);
+            this.tbMyShows.Controls.Add(this.splitContainer1);
             this.tbMyShows.Controls.Add(this.bnMyShowsCollapse);
             this.tbMyShows.Controls.Add(this.bnMyShowsVisitTVDB);
             this.tbMyShows.Controls.Add(this.bnMyShowsOpenFolder);
             this.tbMyShows.Controls.Add(this.bnMyShowsRefresh);
-            this.tbMyShows.Controls.Add(this.epGuideHTML);
-            this.tbMyShows.Controls.Add(this.MyShowTree);
             this.tbMyShows.Controls.Add(this.bnMyShowsDelete);
             this.tbMyShows.Controls.Add(this.bnMyShowsEdit);
             this.tbMyShows.Controls.Add(this.bnMyShowsAdd);
@@ -462,6 +467,29 @@ namespace TVRename
             this.bnMyShowsCollapse.TabIndex = 4;
             this.bnMyShowsCollapse.UseVisualStyleBackColor = true;
             this.bnMyShowsCollapse.Click += new System.EventHandler(this.bnMyShowsCollapse_Click);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Magenta;
+            this.imageList1.Images.SetKeyName(0, "clock.bmp");
+            this.imageList1.Images.SetKeyName(1, "Calendar_schedule.bmp");
+            this.imageList1.Images.SetKeyName(2, "Save.bmp");
+            this.imageList1.Images.SetKeyName(3, "Refresh.bmp");
+            this.imageList1.Images.SetKeyName(4, "Control_TreeView.bmp");
+            this.imageList1.Images.SetKeyName(5, "Zoom.bmp");
+            this.imageList1.Images.SetKeyName(6, "delete.bmp");
+            this.imageList1.Images.SetKeyName(7, "EditInformation.bmp");
+            this.imageList1.Images.SetKeyName(8, "FormRun.bmp");
+            this.imageList1.Images.SetKeyName(9, "GetLatestVersion.bmp");
+            this.imageList1.Images.SetKeyName(10, "OpenFolder.bmp");
+            this.imageList1.Images.SetKeyName(11, "SearchWeb.bmp");
+            this.imageList1.Images.SetKeyName(12, "PublishToWeb.bmp");
+            this.imageList1.Images.SetKeyName(13, "Options.bmp");
+            this.imageList1.Images.SetKeyName(14, "NewCard.bmp");
+            this.imageList1.Images.SetKeyName(15, "TVOff.bmp");
+            this.imageList1.Images.SetKeyName(16, "FillLeft.bmp");
+            this.imageList1.Images.SetKeyName(17, "FillRight.bmp");
             // 
             // bnMyShowsVisitTVDB
             // 
@@ -508,25 +536,23 @@ namespace TVRename
             // epGuideHTML
             // 
             this.epGuideHTML.AllowWebBrowserDrop = false;
-            this.epGuideHTML.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.epGuideHTML.Location = new System.Drawing.Point(279, 6);
+            this.epGuideHTML.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.epGuideHTML.Location = new System.Drawing.Point(0, 0);
             this.epGuideHTML.MinimumSize = new System.Drawing.Size(20, 20);
             this.epGuideHTML.Name = "epGuideHTML";
-            this.epGuideHTML.Size = new System.Drawing.Size(644, 467);
+            this.epGuideHTML.Size = new System.Drawing.Size(632, 466);
             this.epGuideHTML.TabIndex = 6;
             this.epGuideHTML.WebBrowserShortcutsEnabled = false;
             this.epGuideHTML.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.epGuideHTML_Navigating);
             // 
             // MyShowTree
             // 
-            this.MyShowTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.MyShowTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.MyShowTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MyShowTree.HideSelection = false;
-            this.MyShowTree.Location = new System.Drawing.Point(3, 6);
+            this.MyShowTree.Location = new System.Drawing.Point(0, 0);
             this.MyShowTree.Name = "MyShowTree";
-            this.MyShowTree.Size = new System.Drawing.Size(270, 467);
+            this.MyShowTree.Size = new System.Drawing.Size(276, 466);
             this.MyShowTree.TabIndex = 0;
             this.MyShowTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyShowTree_AfterSelect);
             this.MyShowTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyShowTree_MouseClick);
@@ -1032,26 +1058,40 @@ namespace TVRename
             this.quickTimer.Interval = 1;
             this.quickTimer.Tick += new System.EventHandler(this.quickTimer_Tick);
             // 
-            // imageList1
+            // splitContainer1
             // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Magenta;
-            this.imageList1.Images.SetKeyName(0, "clock.bmp");
-            this.imageList1.Images.SetKeyName(1, "Calendar_schedule.bmp");
-            this.imageList1.Images.SetKeyName(2, "Save.bmp");
-            this.imageList1.Images.SetKeyName(3, "Refresh.bmp");
-            this.imageList1.Images.SetKeyName(4, "Control_TreeView.bmp");
-            this.imageList1.Images.SetKeyName(5, "Zoom.bmp");
-            this.imageList1.Images.SetKeyName(6, "delete.bmp");
-            this.imageList1.Images.SetKeyName(7, "EditInformation.bmp");
-            this.imageList1.Images.SetKeyName(8, "FormRun.bmp");
-            this.imageList1.Images.SetKeyName(9, "GetLatestVersion.bmp");
-            this.imageList1.Images.SetKeyName(10, "OpenFolder.bmp");
-            this.imageList1.Images.SetKeyName(11, "SearchWeb.bmp");
-            this.imageList1.Images.SetKeyName(12, "PublishToWeb.bmp");
-            this.imageList1.Images.SetKeyName(13, "Options.bmp");
-            this.imageList1.Images.SetKeyName(14, "NewCard.bmp");
-            this.imageList1.Images.SetKeyName(15, "TVOff.bmp");
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 3);
+            this.splitContainer1.Name = "splitContainer1";
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.MyShowTree);
+            this.splitContainer1.Panel1MinSize = 100;
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.epGuideHTML);
+            this.splitContainer1.Panel2MinSize = 100;
+            this.splitContainer1.Size = new System.Drawing.Size(920, 470);
+            this.splitContainer1.SplitterDistance = 280;
+            this.splitContainer1.TabIndex = 8;
+            // 
+            // bnHideHTMLPanel
+            // 
+            this.bnHideHTMLPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnHideHTMLPanel.ImageKey = "FillRight.bmp";
+            this.bnHideHTMLPanel.ImageList = this.imageList1;
+            this.bnHideHTMLPanel.Location = new System.Drawing.Point(282, 479);
+            this.bnHideHTMLPanel.Name = "bnHideHTMLPanel";
+            this.bnHideHTMLPanel.Size = new System.Drawing.Size(25, 25);
+            this.bnHideHTMLPanel.TabIndex = 9;
+            this.bnHideHTMLPanel.UseVisualStyleBackColor = true;
+            this.bnHideHTMLPanel.Click += new System.EventHandler(this.bnHideHTMLPanel_Click);
             // 
             // lvAction
             // 
@@ -1070,34 +1110,34 @@ namespace TVRename
             this.columnHeader56,
             this.columnHeader58});
             this.lvAction.FullRowSelect = true;
-            listViewGroup14.Header = "Missing";
-            listViewGroup14.Name = "lvgActionMissing";
-            listViewGroup15.Header = "Rename";
-            listViewGroup15.Name = "lvgActionRename";
-            listViewGroup16.Header = "Copy";
-            listViewGroup16.Name = "lvgActionCopy";
-            listViewGroup17.Header = "Move";
-            listViewGroup17.Name = "lvgActionMove";
-            listViewGroup18.Header = "Download RSS";
-            listViewGroup18.Name = "lvgActionDownloadRSS";
-            listViewGroup19.Header = "Download";
-            listViewGroup19.Name = "lvgActionDownload";
-            listViewGroup20.Header = "NFO File";
-            listViewGroup20.Name = "lvgActionNFO";
-            listViewGroup21.Header = "pyTivo Meta File";
-            listViewGroup21.Name = "lvgActionMeta";
-            listViewGroup22.Header = "Downloading In µTorrent";
-            listViewGroup22.Name = "lngInuTorrent";
+            listViewGroup1.Header = "Missing";
+            listViewGroup1.Name = "lvgActionMissing";
+            listViewGroup2.Header = "Rename";
+            listViewGroup2.Name = "lvgActionRename";
+            listViewGroup3.Header = "Copy";
+            listViewGroup3.Name = "lvgActionCopy";
+            listViewGroup4.Header = "Move";
+            listViewGroup4.Name = "lvgActionMove";
+            listViewGroup5.Header = "Download RSS";
+            listViewGroup5.Name = "lvgActionDownloadRSS";
+            listViewGroup6.Header = "Download";
+            listViewGroup6.Name = "lvgActionDownload";
+            listViewGroup7.Header = "NFO File";
+            listViewGroup7.Name = "lvgActionNFO";
+            listViewGroup8.Header = "pyTivo Meta File";
+            listViewGroup8.Name = "lvgActionMeta";
+            listViewGroup9.Header = "Downloading In µTorrent";
+            listViewGroup9.Name = "lngInuTorrent";
             this.lvAction.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup14,
-            listViewGroup15,
-            listViewGroup16,
-            listViewGroup17,
-            listViewGroup18,
-            listViewGroup19,
-            listViewGroup20,
-            listViewGroup21,
-            listViewGroup22});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4,
+            listViewGroup5,
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8,
+            listViewGroup9});
             this.lvAction.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvAction.HideSelection = false;
             this.lvAction.Location = new System.Drawing.Point(0, 35);
@@ -1176,21 +1216,21 @@ namespace TVRename
             this.columnHeader34,
             this.columnHeader35});
             this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup1.Header = "Recently Aired";
-            listViewGroup1.Name = "justPassed";
-            listViewGroup2.Header = "Next 7 Days";
-            listViewGroup2.Name = "next7days";
-            listViewGroup2.Tag = "1";
-            listViewGroup3.Header = "Later";
-            listViewGroup3.Name = "later";
-            listViewGroup3.Tag = "2";
-            listViewGroup4.Header = "Future Episodes";
-            listViewGroup4.Name = "futureEps";
+            listViewGroup10.Header = "Recently Aired";
+            listViewGroup10.Name = "justPassed";
+            listViewGroup11.Header = "Next 7 Days";
+            listViewGroup11.Name = "next7days";
+            listViewGroup11.Tag = "1";
+            listViewGroup12.Header = "Later";
+            listViewGroup12.Name = "later";
+            listViewGroup12.Tag = "2";
+            listViewGroup13.Header = "Future Episodes";
+            listViewGroup13.Name = "futureEps";
             this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup10,
+            listViewGroup11,
+            listViewGroup12,
+            listViewGroup13});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -1273,6 +1313,9 @@ namespace TVRename
             this.tbWTW.ResumeLayout(false);
             this.tbWTW.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1392,5 +1435,7 @@ namespace TVRename
         private System.Windows.Forms.ToolStripMenuItem uTorrentToolStripMenuItem;
         private System.Windows.Forms.CheckBox cbMeta;
         private System.Windows.Forms.ImageList imageList1;
+        private System.Windows.Forms.Button bnHideHTMLPanel;
+        private System.Windows.Forms.SplitContainer splitContainer1;
     }
 }
