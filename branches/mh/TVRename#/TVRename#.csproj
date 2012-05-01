@@ -396,6 +396,19 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />
+    <None Include="Resources\EditInformationHS.png" />
+    <None Include="Resources\SearchWebHS.png" />
+    <None Include="Resources\SearchFolderHS.png" />
+    <None Include="Resources\ZoomHS.png" />
+    <None Include="Resources\TableHS.png" />
+    <None Include="Resources\FormulaEvaluatorHS.png" />
+    <None Include="Resources\FindHS.png" />
+    <None Include="Resources\Web.png" />
+    <None Include="Resources\RefreshDocViewHS.png" />
+    <None Include="Resources\Help.png" />
+    <None Include="Resources\graphhs.png" />
+    <None Include="Resources\GetLatestVersion.png" />
+    <None Include="Resources\saveHS.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
