@@ -6,12 +6,12 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
-using System.IO;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Windows.Forms;
 using TVRename;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Check the mutex that we're not already running, start the main UI, pass in commandline arguments
 // If we are running, send arguments via IPC to already running process

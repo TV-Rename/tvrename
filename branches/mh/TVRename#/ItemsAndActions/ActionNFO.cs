@@ -8,9 +8,9 @@
 namespace TVRename
 {
     using System;
-    using System.IO;
     using System.Windows.Forms;
     using System.Xml;
+    using Alphaleonis.Win32.Filesystem;
 
     public class ActionNFO : Item, Action, ScanListItem
     {

@@ -1,3 +1,4 @@
+using System.Threading;
 // 
 // Main website for TVRename is http://tvrename.com
 // 
@@ -6,9 +7,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System.Windows.Forms;
-using System.IO;
-using System.Threading;
-using System.Text.RegularExpressions;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename
 {

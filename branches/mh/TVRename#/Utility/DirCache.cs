@@ -5,9 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using System.IO;
 using System;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
@@ -30,8 +30,9 @@ namespace TVRename
             int n = 0;
             if (!Directory.Exists(folder))
                 return n;
-            if (folder.Length >= 248)
-                return n;
+            // Remove length check, now we're using AlphaFS
+            //if (folder.Length >= 248)
+            //    return n;
             try
             {
                 DirectoryInfo di = new DirectoryInfo(folder);
@@ -66,11 +67,12 @@ namespace TVRename
 
             try
             {
-                if (folder.Length >= 248)
-                {
-                    MessageBox.Show("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder, "Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return filesDone;
-                }
+                // Remove length check, now we're using AlphaFS
+                //if (folder.Length >= 248)
+                //{
+                //    MessageBox.Show("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder, "Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //    return filesDone;
+                //}
 
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (!di.Exists)
@@ -82,9 +84,10 @@ namespace TVRename
                 foreach (FileInfo ff in f2)
                 {
                     filesDone++;
-                    if ((ff.Name.Length + folder.Length) >= 260)
-                        MessageBox.Show("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder, "File+Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    else
+                    // Remove length check, now we're using AlphaFS
+                    //if ((ff.Name.Length + folder.Length) >= 260)
+                    //    MessageBox.Show("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder, "File+Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    //else
                         this.Add(new DirCacheEntry(ff, theSettings));
                     if ((prog != null) && (totalFiles != 0))
                         prog.Invoke(100 * (filesDone) / totalFiles);

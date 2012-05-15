@@ -9,6 +9,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using LongPathIO = Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -274,8 +275,8 @@ namespace TVRename
             }
 
             this.lvPreview.BeginUpdate();
-            DirectoryInfo d = new DirectoryInfo(this.txtFolder.Text);
-            foreach (FileInfo fi in d.GetFiles())
+            LongPathIO.DirectoryInfo d = new LongPathIO.DirectoryInfo(this.txtFolder.Text);
+            foreach (LongPathIO.FileInfo fi in d.GetFiles())
             {
                 int seas;
                 int ep;

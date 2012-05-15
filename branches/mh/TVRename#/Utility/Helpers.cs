@@ -5,8 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using System.IO;
+
 using System.Text.RegularExpressions;
+using Alphaleonis.Win32.Filesystem;
 
 // Helpful functions and classes
 
@@ -59,17 +60,17 @@ namespace TVRename
         {
             string n1 = a.FullName;
             string n2 = b.FullName;
-            if (!n1.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
-                n1 = n1 + System.IO.Path.DirectorySeparatorChar;
-            if (!n2.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
-                n2 = n2 + System.IO.Path.DirectorySeparatorChar;
+            if (!n1.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                n1 = n1 + Path.DirectorySeparatorChar;
+            if (!n2.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                n2 = n2 + Path.DirectorySeparatorChar;
 
             return string.Compare(n1, n2, true) == 0; // true->ignore case
         }
 
         public static FileInfo FileInFolder(string dir, string fn)
         {
-            return new FileInfo(string.Concat(dir, dir.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ? "" : System.IO.Path.DirectorySeparatorChar.ToString(), fn));
+            return new FileInfo(string.Concat(dir, dir.EndsWith(Path.DirectorySeparatorChar.ToString()) ? "" : Path.DirectorySeparatorChar.ToString(), fn));
         }
 
         public static FileInfo FileInFolder(DirectoryInfo di, string fn)

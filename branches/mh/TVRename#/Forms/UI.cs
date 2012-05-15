@@ -14,6 +14,11 @@ using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
@@ -739,7 +744,7 @@ namespace TVRename
 
                     body += " <A HREF=\"" + this.mDoc.Settings.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
 
-                    System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
+                    System.Collections.Generic.List<FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
                     if (fl != null)
                     {
                         foreach (FileInfo fi in fl)
@@ -862,7 +867,7 @@ namespace TVRename
 
             string path = EpGuidePath();
 
-            BinaryWriter bw = new BinaryWriter(new FileStream(path, FileMode.Create));
+            BinaryWriter bw = new BinaryWriter(new FileStream(path, System.IO.FileMode.Create));
             bw.Write(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(html));
             bw.Close();
 
@@ -1054,7 +1059,7 @@ namespace TVRename
             if (this.lvWhenToWatch.SelectedItems.Count > 0)
             {
                 ProcessedEpisode ei = (ProcessedEpisode)(this.lvWhenToWatch.SelectedItems[0].Tag);
-                System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
+                System.Collections.Generic.List<FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
                 if ((fl != null) && (fl.Count > 0))
                 {
                     TVDoc.SysOpen(fl[0].FullName);
@@ -1338,7 +1343,7 @@ namespace TVRename
 
             if (ep != null)
             {
-                System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ep);
+                System.Collections.Generic.List<FileInfo> fl = this.mDoc.FindEpOnDisk(ep);
                 if (fl != null)
                 {
                     if (fl.Count > 0)
@@ -1363,7 +1368,7 @@ namespace TVRename
                 bool first = true;
                 foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
                 {
-                    System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(epds);
+                    System.Collections.Generic.List<FileInfo> fl = this.mDoc.FindEpOnDisk(epds);
                     if ((fl != null) && (fl.Count > 0))
                     {
                         if (first)
@@ -1507,7 +1512,7 @@ namespace TVRename
         {
             this.showRightClickMenu.Items.Clear();
             this.mFoldersToOpen = new StringList();
-            this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
+            this.mLastFL = new System.Collections.Generic.List<FileInfo>();
 
             this.MenuGuideAndTVDB(false);
             this.MenuShowAndEpisodes();
@@ -2068,7 +2073,7 @@ namespace TVRename
 
             if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
             {
-                System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(pe);
+                System.Collections.Generic.List<FileInfo> fl = this.mDoc.FindEpOnDisk(pe);
                 if ((fl != null) && (fl.Count > 0))
                     lvi.ImageIndex = 0;
                 else if (pe.SI.DoMissingCheck)
@@ -2814,7 +2819,7 @@ namespace TVRename
 
             this.showRightClickMenu.Items.Clear();
             this.mFoldersToOpen = new StringList();
-            this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
+            this.mLastFL = new System.Collections.Generic.List<FileInfo>();
 
             this.mLastActionsClicked = new ItemList();
 

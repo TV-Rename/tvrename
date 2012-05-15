@@ -18,6 +18,11 @@ namespace TVRename
     using System.Threading;
     using System.Windows.Forms;
     using System.Xml;
+    using Directory = Alphaleonis.Win32.Filesystem.Directory;
+    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+    using File = Alphaleonis.Win32.Filesystem.File;
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    using Path = Alphaleonis.Win32.Filesystem.Path;
 
     public class TVDoc
     {
@@ -214,8 +219,8 @@ namespace TVRename
         public bool FolderIsSubfolderOf(string thisOne, string ofThat)
         {
             // need terminating slash, otherwise "c:\abc def" will match "c:\abc"
-            thisOne += System.IO.Path.DirectorySeparatorChar.ToString();
-            ofThat += System.IO.Path.DirectorySeparatorChar.ToString();
+            thisOne += Path.DirectorySeparatorChar.ToString();
+            ofThat += Path.DirectorySeparatorChar.ToString();
             int l = ofThat.Length;
             return ((thisOne.Length >= l) && (thisOne.Substring(0, l).ToLower() == ofThat.ToLower()));
         }
@@ -954,14 +959,14 @@ namespace TVRename
                 this.GenDict();
         }
 
-        public System.Collections.Generic.List<System.IO.FileInfo> FindEpOnDisk(ProcessedEpisode pe)
+        public System.Collections.Generic.List<FileInfo> FindEpOnDisk(ProcessedEpisode pe)
         {
             return this.FindEpOnDisk(pe.SI, pe);
         }
 
-        public System.Collections.Generic.List<System.IO.FileInfo> FindEpOnDisk(ShowItem si, Episode epi)
+        public System.Collections.Generic.List<FileInfo> FindEpOnDisk(ShowItem si, Episode epi)
         {
-            System.Collections.Generic.List<System.IO.FileInfo> ret = new System.Collections.Generic.List<System.IO.FileInfo>();
+            System.Collections.Generic.List<FileInfo> ret = new System.Collections.Generic.List<FileInfo>();
 
             int seasWanted = epi.TheSeason.SeasonNumber;
             int epWanted = epi.EpNum;
@@ -1372,7 +1377,7 @@ namespace TVRename
                 }
             }
             // assume last folder element is the show name
-            showName = showName.Substring(showName.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString()) + 1);
+            showName = showName.Substring(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString()) + 1);
 
             return showName;
         }
@@ -2664,7 +2669,7 @@ namespace TVRename
                                         (si.ForceCheckNoAirdate && !dtOK))
                                     {
                                         // then add it as officially missing
-                                        this.TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null, folder.Length))));
+                                        this.TheActionList.Add(new ItemMissing(dbep, folder + Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null, folder.Length))));
                                     }
                                 }
                                 else
@@ -2929,10 +2934,11 @@ namespace TVRename
 
             filename = SEFinderSimplifyFilename(filename, showNameHint);
 
-            string fullPath = directory + System.IO.Path.DirectorySeparatorChar + filename; // construct full path with sanitised filename
+            string fullPath = directory + Path.DirectorySeparatorChar + filename; // construct full path with sanitised filename
 
-            if ((filename.Length > 256) || (fullPath.Length > 256))
-                return false;
+            // Remove length check, now we're using AlphaFS
+            //if ((filename.Length > 256) || (fullPath.Length > 256))
+            //    return false;
 
             int leftMostPos = filename.Length;
 

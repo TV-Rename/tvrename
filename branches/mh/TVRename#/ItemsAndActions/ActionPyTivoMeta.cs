@@ -8,8 +8,8 @@
 namespace TVRename
 {
     using System;
-    using System.IO;
     using System.Windows.Forms;
+    using Alphaleonis.Win32.Filesystem;
 
     public class ActionPyTivoMeta : Item, Action, ScanListItem
     {
@@ -50,13 +50,13 @@ namespace TVRename
         public bool Go(TVSettings tvsettings, ref bool pause)
         {
             // "try" and silently fail.  eg. when file is use by other...
-            StreamWriter writer;
+            System.IO.StreamWriter writer;
             try
             {
                 // create folder if it does not exist. (Only really applies when .meta\ folder is being used.)
                 if (!this.Where.Directory.Exists)
-                    this.Where.Directory.Create();
-                writer = new StreamWriter(this.Where.FullName);
+                    Directory.CreateDirectory(this.Where.Directory.FullName);
+                writer = new System.IO.StreamWriter(this.Where.FullName);
                 if (writer == null)
                     return false;
             }
@@ -88,7 +88,7 @@ namespace TVRename
             return true;
         }
 
-        private void WriteEntries(StreamWriter writer, string Heading, string Entries)
+        private void WriteEntries(System.IO.StreamWriter writer, string Heading, string Entries)
         {
             if (string.IsNullOrEmpty(Entries))
                 return;

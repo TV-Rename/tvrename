@@ -12,6 +12,9 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
 
 using Ionic.Utils.Zip;
 

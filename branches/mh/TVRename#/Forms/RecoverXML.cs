@@ -6,7 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System.Windows.Forms;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -38,8 +38,8 @@ namespace TVRename
 
         private void RecoverXML_Load(object sender, System.EventArgs e)
         {
-            this.SettingsList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
-            this.DBList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TVDBFileName + "*");
+            this.SettingsList = new DirectoryInfo(Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
+            this.DBList = new DirectoryInfo(Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TVDBFileName + "*");
 
             this.lbSettings.Items.Add("Default settings");
             if ((this.SettingsList != null) && this.SettingsList.Length > 0)

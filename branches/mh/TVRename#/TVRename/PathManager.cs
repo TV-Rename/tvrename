@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -21,22 +21,22 @@ namespace TVRename
             {
                 throw new ArgumentNullException("path");
             }
-            if (System.IO.File.Exists(path))
+            if (File.Exists(path))
             {
                 throw new ArgumentException("path");
             }
-            path = System.IO.Path.GetFullPath(path); // Get absolute path, in case the given path was a relative one. This will make the Path absolute depending on the Environment.CurrentDirectory.
+            path = Path.GetFullPath(path); // Get absolute path, in case the given path was a relative one. This will make the Path absolute depending on the Environment.CurrentDirectory.
             // Why are we getting a absolute path here ? Simply because it is not guaranteed that the Environment.CurrentDirectory will not change a some point during runtime and then all bets are off were the Files are going to be saved, which would be fatal to the data integrity.(Saved changes might go to some file nobody even knew about )
-            if (!System.IO.Directory.Exists(path))
+            if (!Directory.Exists(path))
             {
-                System.IO.Directory.CreateDirectory(path);
+                Directory.CreateDirectory(path);
             }
             userDefinedBasePath = path;
         }
 
         protected static FileInfo GetFileInfo(string path, string file)
         {
-            return new FileInfo(System.IO.Path.Combine(path, file));
+            return new FileInfo(Path.Combine(path, file));
         }
 
         public static FileInfo StatisticsFile
