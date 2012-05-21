@@ -95,6 +95,7 @@ namespace TVRename
                 this.txtValue2.Enabled = true;
                 this.txtUserText.Enabled = false;
                 this.txtWithNameLabel.Enabled = false;
+                this.txtWithNameLabel.Text = "New Name:";
             }
             else if (this.rbSwap.Checked)
             {
@@ -106,6 +107,7 @@ namespace TVRename
                 this.txtValue2.Enabled = true;
                 this.txtUserText.Enabled = false;
                 this.txtWithNameLabel.Enabled = false;
+                this.txtWithNameLabel.Text = "New Name:";
             }
             else if (this.rbMerge.Checked || this.rbCollapse.Checked)
             {
@@ -117,6 +119,7 @@ namespace TVRename
                 this.txtValue2.Enabled = true;
                 this.txtUserText.Enabled = true;
                 this.txtWithNameLabel.Enabled = true;
+                this.txtWithNameLabel.Text = "New Name:";
             }
             else if (this.rbInsert.Checked)
             {
@@ -128,6 +131,7 @@ namespace TVRename
                 this.txtValue2.Enabled = false;
                 this.txtUserText.Enabled = true;
                 this.txtWithNameLabel.Enabled = true;
+                this.txtWithNameLabel.Text = "New Name:";
             }
             else if (this.rbIgnore.Checked)
             {
@@ -139,6 +143,7 @@ namespace TVRename
                 this.txtValue2.Enabled = true;
                 this.txtUserText.Enabled = false;
                 this.txtWithNameLabel.Enabled = false;
+                this.txtWithNameLabel.Text = "New Name:";
             }
             else if (this.rbRename.Checked)
             {
@@ -150,17 +155,19 @@ namespace TVRename
                 this.txtValue2.Enabled = false;
                 this.txtUserText.Enabled = true;
                 this.txtWithNameLabel.Enabled = true;
+                this.txtWithNameLabel.Text = "New Name:";
             }
             else if (this.rbSplit.Checked)
             {
                 this.txtLabel1.Text = "&Number:";
                 this.txtLabel2.Text = "Int&o:";
-                this.txtLeaveBlank.Visible = false;
+                this.txtLeaveBlank.Visible = true;
                 this.txtLabel2.Enabled = true;
                 this.txtValue1.Enabled = true;
                 this.txtValue2.Enabled = true;
-                this.txtUserText.Enabled = false;
-                this.txtWithNameLabel.Enabled = false;
+                this.txtUserText.Enabled = true;
+                this.txtWithNameLabel.Enabled = true;
+                this.txtWithNameLabel.Text = "Delimiters:";
             }
         }
 

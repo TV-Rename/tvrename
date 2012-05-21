@@ -1244,7 +1244,16 @@ namespace TVRename
                                 for (int i = 0; i < nn2; i++) // make n2 new parts
                                 {
                                     ProcessedEpisode pe2 = new ProcessedEpisode(ei, si);
-                                    pe2.Name = nameBase + " (Part " + (i + 1) + ")";
+                                    if (string.IsNullOrEmpty(txt))
+                                        pe2.Name = nameBase + " (Part " + (i + 1) + ")";
+                                    else
+                                    {
+                                        string[] names = nameBase.Split(txt.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+                                        if (i <= names.GetUpperBound(0))
+                                            pe2.Name = names[i].Trim();
+                                        else
+                                            pe2.Name = nameBase + " (Part " + (i + 1) + ")";
+                                    }
                                     pe2.EpNum = -2;
                                     pe2.EpNum2 = -2;
                                     eis.Insert(n1 + i, pe2);
