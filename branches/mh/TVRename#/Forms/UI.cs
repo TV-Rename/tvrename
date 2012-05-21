@@ -3123,7 +3123,8 @@ namespace TVRename
 
         private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            this.UpdateActionCheckboxes();
+            if (!InternalCheckChange)
+                this.UpdateActionCheckboxes();
         }
 
         private void bnHideHTMLPanel_Click(object sender, EventArgs e)
