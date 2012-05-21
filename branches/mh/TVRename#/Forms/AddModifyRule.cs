@@ -88,7 +88,7 @@ namespace TVRename
             if (this.rbRemove.Checked)
             {
                 this.txtLabel1.Text = "&From/Number:";
-                this.txtLabel2.Text = "T&o:";
+                this.txtLabel2.Text = "T&o (Optional):";
                 this.txtLeaveBlank.Visible = false;
                 this.txtLabel2.Enabled = true;
                 this.txtValue1.Enabled = true;
@@ -132,7 +132,7 @@ namespace TVRename
             else if (this.rbIgnore.Checked)
             {
                 this.txtLabel1.Text = "&From/Number:";
-                this.txtLabel2.Text = "T&o:";
+                this.txtLabel2.Text = "T&o (Optional):";
                 this.txtLeaveBlank.Visible = false;
                 this.txtLabel2.Enabled = true;
                 this.txtValue1.Enabled = true;

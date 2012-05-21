@@ -37,25 +37,25 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(AddModifyRule)));
-            this.rbRemove = (new System.Windows.Forms.RadioButton());
-            this.rbSwap = (new System.Windows.Forms.RadioButton());
-            this.rbMerge = (new System.Windows.Forms.RadioButton());
-            this.rbInsert = (new System.Windows.Forms.RadioButton());
-            this.label1 = (new System.Windows.Forms.Label());
-            this.txtLabel1 = (new System.Windows.Forms.Label());
-            this.txtLabel2 = (new System.Windows.Forms.Label());
-            this.txtValue1 = (new System.Windows.Forms.TextBox());
-            this.txtValue2 = (new System.Windows.Forms.TextBox());
-            this.txtWithNameLabel = (new System.Windows.Forms.Label());
-            this.txtUserText = (new System.Windows.Forms.TextBox());
-            this.bnOK = (new System.Windows.Forms.Button());
-            this.bnCancel = (new System.Windows.Forms.Button());
-            this.rbIgnore = (new System.Windows.Forms.RadioButton());
-            this.rbRename = (new System.Windows.Forms.RadioButton());
-            this.txtLeaveBlank = (new System.Windows.Forms.Label());
-            this.rbSplit = (new System.Windows.Forms.RadioButton());
-            this.rbCollapse = (new System.Windows.Forms.RadioButton());
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AddModifyRule));
+            this.rbRemove = new System.Windows.Forms.RadioButton();
+            this.rbSwap = new System.Windows.Forms.RadioButton();
+            this.rbMerge = new System.Windows.Forms.RadioButton();
+            this.rbInsert = new System.Windows.Forms.RadioButton();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtLabel1 = new System.Windows.Forms.Label();
+            this.txtLabel2 = new System.Windows.Forms.Label();
+            this.txtValue1 = new System.Windows.Forms.TextBox();
+            this.txtValue2 = new System.Windows.Forms.TextBox();
+            this.txtWithNameLabel = new System.Windows.Forms.Label();
+            this.txtUserText = new System.Windows.Forms.TextBox();
+            this.bnOK = new System.Windows.Forms.Button();
+            this.bnCancel = new System.Windows.Forms.Button();
+            this.rbIgnore = new System.Windows.Forms.RadioButton();
+            this.rbRename = new System.Windows.Forms.RadioButton();
+            this.txtLeaveBlank = new System.Windows.Forms.Label();
+            this.rbSplit = new System.Windows.Forms.RadioButton();
+            this.rbCollapse = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // rbRemove
@@ -68,7 +68,7 @@ namespace TVRename
             this.rbRemove.TabStop = true;
             this.rbRemove.Text = "R&emove : Remove episode(s) from the series";
             this.rbRemove.UseVisualStyleBackColor = true;
-            this.rbRemove.Click += new System.EventHandler(rb_Click);
+            this.rbRemove.Click += new System.EventHandler(this.rb_Click);
             // 
             // rbSwap
             // 
@@ -80,7 +80,7 @@ namespace TVRename
             this.rbSwap.TabStop = true;
             this.rbSwap.Text = "&Swap : Swap position of two episodes";
             this.rbSwap.UseVisualStyleBackColor = true;
-            this.rbSwap.Click += new System.EventHandler(rb_Click);
+            this.rbSwap.Click += new System.EventHandler(this.rb_Click);
             // 
             // rbMerge
             // 
@@ -92,7 +92,7 @@ namespace TVRename
             this.rbMerge.TabStop = true;
             this.rbMerge.Text = "&Merge : Merge episodes into multi-episode file";
             this.rbMerge.UseVisualStyleBackColor = true;
-            this.rbMerge.Click += new System.EventHandler(rb_Click);
+            this.rbMerge.Click += new System.EventHandler(this.rb_Click);
             // 
             // rbInsert
             // 
@@ -104,7 +104,7 @@ namespace TVRename
             this.rbInsert.TabStop = true;
             this.rbInsert.Text = "Inser&t : Insert another episode into the season";
             this.rbInsert.UseVisualStyleBackColor = true;
-            this.rbInsert.Click += new System.EventHandler(rb_Click);
+            this.rbInsert.Click += new System.EventHandler(this.rb_Click);
             // 
             // label1
             // 
@@ -135,16 +135,16 @@ namespace TVRename
             // 
             // txtValue1
             // 
-            this.txtValue1.Location = new System.Drawing.Point(80, 213);
+            this.txtValue1.Location = new System.Drawing.Point(94, 213);
             this.txtValue1.Name = "txtValue1";
-            this.txtValue1.Size = new System.Drawing.Size(100, 20);
+            this.txtValue1.Size = new System.Drawing.Size(86, 20);
             this.txtValue1.TabIndex = 7;
             // 
             // txtValue2
             // 
-            this.txtValue2.Location = new System.Drawing.Point(80, 239);
+            this.txtValue2.Location = new System.Drawing.Point(94, 239);
             this.txtValue2.Name = "txtValue2";
-            this.txtValue2.Size = new System.Drawing.Size(100, 20);
+            this.txtValue2.Size = new System.Drawing.Size(86, 20);
             this.txtValue2.TabIndex = 9;
             // 
             // txtWithNameLabel
@@ -158,9 +158,9 @@ namespace TVRename
             // 
             // txtUserText
             // 
-            this.txtUserText.Location = new System.Drawing.Point(80, 266);
+            this.txtUserText.Location = new System.Drawing.Point(94, 266);
             this.txtUserText.Name = "txtUserText";
-            this.txtUserText.Size = new System.Drawing.Size(254, 20);
+            this.txtUserText.Size = new System.Drawing.Size(240, 20);
             this.txtUserText.TabIndex = 11;
             // 
             // bnOK
@@ -172,7 +172,7 @@ namespace TVRename
             this.bnOK.TabIndex = 12;
             this.bnOK.Text = "OK";
             this.bnOK.UseVisualStyleBackColor = true;
-            this.bnOK.Click += bnOK_Click;
+            this.bnOK.Click += new System.EventHandler(this.bnOK_Click);
             // 
             // bnCancel
             // 
@@ -189,12 +189,12 @@ namespace TVRename
             this.rbIgnore.AutoSize = true;
             this.rbIgnore.Location = new System.Drawing.Point(61, 12);
             this.rbIgnore.Name = "rbIgnore";
-            this.rbIgnore.Size = new System.Drawing.Size(246, 17);
+            this.rbIgnore.Size = new System.Drawing.Size(238, 17);
             this.rbIgnore.TabIndex = 1;
             this.rbIgnore.TabStop = true;
             this.rbIgnore.Text = "&Ignore : Don\'t rename or check for episode(s)";
             this.rbIgnore.UseVisualStyleBackColor = true;
-            this.rbIgnore.Click += new System.EventHandler(rb_Click);
+            this.rbIgnore.Click += new System.EventHandler(this.rb_Click);
             // 
             // rbRename
             // 
@@ -206,12 +206,12 @@ namespace TVRename
             this.rbRename.TabStop = true;
             this.rbRename.Text = "&Rename : Set episode name manually";
             this.rbRename.UseVisualStyleBackColor = true;
-            this.rbRename.Click += new System.EventHandler(rb_Click);
+            this.rbRename.Click += new System.EventHandler(this.rb_Click);
             // 
             // txtLeaveBlank
             // 
             this.txtLeaveBlank.AutoSize = true;
-            this.txtLeaveBlank.Location = new System.Drawing.Point(77, 289);
+            this.txtLeaveBlank.Location = new System.Drawing.Point(94, 289);
             this.txtLeaveBlank.Name = "txtLeaveBlank";
             this.txtLeaveBlank.Size = new System.Drawing.Size(173, 13);
             this.txtLeaveBlank.TabIndex = 10;
@@ -227,7 +227,7 @@ namespace TVRename
             this.rbSplit.TabStop = true;
             this.rbSplit.Text = "S&plit: Make one episode count as multiple";
             this.rbSplit.UseVisualStyleBackColor = true;
-            this.rbSplit.Click += new System.EventHandler(rb_Click);
+            this.rbSplit.Click += new System.EventHandler(this.rb_Click);
             // 
             // rbCollapse
             // 
@@ -239,12 +239,12 @@ namespace TVRename
             this.rbCollapse.TabStop = true;
             this.rbCollapse.Text = "&Collapse: Merge episodes, and renumber";
             this.rbCollapse.UseVisualStyleBackColor = true;
-            this.rbCollapse.Click += new System.EventHandler(rb_Click);
+            this.rbCollapse.Click += new System.EventHandler(this.rb_Click);
             // 
             // AddModifyRule
             // 
             this.AcceptButton = this.bnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(341, 341);

@@ -116,5 +116,32 @@ namespace TVRename
                     return "<Unknown>";
             }
         }
+
+        public string PlainEnglishDescription()
+        {
+            switch (this.DoWhatNow)
+            {
+                case RuleAction.kIgnoreEp:
+                case RuleAction.kRemove:
+                    return this.Second == -1
+                               ? string.Format("{0} episode {1}.", this.ActionInWords(), this.First)
+                               : string.Format("{0} episodes {1} through {2}.", this.ActionInWords(), this.First, this.Second);
+                case RuleAction.kSwap:
+                    return string.Format("{0} episode {1} with {2}.", this.ActionInWords(), this.First, this.Second);
+                case RuleAction.kCollapse:
+                case RuleAction.kMerge:
+                    return string.IsNullOrEmpty(this.UserSuppliedText)
+                        ? string.Format("{0} episodes {1} through {2}.", this.ActionInWords(), this.First, this.Second)
+                        : string.Format("{0} episodes {1} through {2} and rename to '{3}'.", this.ActionInWords(), this.First, this.Second, this.UserSuppliedText);
+                case RuleAction.kSplit:
+                    return string.Format("{0} episode {1} into {2} parts.", this.ActionInWords(), this.First, this.Second);
+                case RuleAction.kInsert:
+                    return string.Format("{0} new episode '{1}' in position {2}.", this.ActionInWords(), this.UserSuppliedText, this.First);
+                case RuleAction.kRename:
+                    return string.Format("{0} Episode {1} to '{2}'.", this.ActionInWords(), this.First, this.UserSuppliedText);
+                default:
+                    return "<Unknown>";
+            }
+        }
     }
 }
