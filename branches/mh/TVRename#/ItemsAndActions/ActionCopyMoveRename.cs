@@ -247,12 +247,13 @@ namespace TVRename
                     // XP won't actually do a rename if its only a case difference
                     string tempName = TempFor(this.To);
                     this.From.MoveTo(tempName);
-                    File.Move(tempName, this.To.FullName);
+                    Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName);
                 }
                 else
                     this.From.MoveTo(this.To.FullName);
 
-                KeepTimestamps(this.From, this.To);
+                // AlfaFS doesn't reset fule time stamps
+                //KeepTimestamps(this.From, this.To);
 
                 this.Done = true;
 
