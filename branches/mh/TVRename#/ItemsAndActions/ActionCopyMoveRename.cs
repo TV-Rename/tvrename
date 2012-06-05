@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+using Alphaleonis.Win32.Filesystem;
+
 namespace TVRename
 {
     using System;
@@ -79,10 +81,11 @@ namespace TVRename
             {
             }
 
-            if (this.QuickOperation())
+            // Always get the OS/AlphaFS to do the copy. We can report on progress!
+            //if (this.QuickOperation())
                 this.OSMoveRename(); // ask the OS to do it for us, since it's easy and quick!
-            else
-                this.CopyItOurself(ref pause); // do it ourself!
+            //else
+            //    this.CopyItOurself(ref pause); // do it ourself!
 
             // set NTFS permissions
             try
@@ -246,13 +249,21 @@ namespace TVRename
                 {
                     // XP won't actually do a rename if its only a case difference
                     string tempName = TempFor(this.To);
-                    this.From.MoveTo(tempName);
+                    // This step could be slow, so report progress
+                    if (!Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName,
+                                                           MoveFileOptions.CopyAllowed | MoveFileOptions.ReplaceExisting,
+                                                           CopyProgressCallback, null))
+                        new Exception("Move operation aborted");
+                    // This step very quick, so no progress reporting
                     Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName);
                 }
                 else
-                    this.From.MoveTo(this.To.FullName);
+                    if (!Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName,
+                                                           MoveFileOptions.CopyAllowed | MoveFileOptions.ReplaceExisting,
+                                                           CopyProgressCallback, null))
+                        new Exception("Move operation aborted");
 
-                // AlfaFS doesn't reset fule time stamps
+                // AlfaFS doesn't reset file time stamps
                 //KeepTimestamps(this.From, this.To);
 
                 this.Done = true;
@@ -271,6 +282,13 @@ namespace TVRename
                 this.Error = true;
                 this.ErrorText = e.Message;
             }
+        }
+
+        private CopyProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, uint StreamNumber, CopyProgressCallbackReason CallbackReason, object UserData)
+        {
+            double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
+            this.PercentDone = pct > 100.0 ? 100.0 : pct;
+            return CopyProgressResult.Continue;
         }
 
         private void CopyItOurself(ref bool pause)
