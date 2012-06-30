@@ -2468,6 +2468,7 @@ namespace TVRename
         private void bnActionCheck_Click(object sender, System.EventArgs e)
         {
             this.ScanAll();
+            this.mDoc.ExportMissingXML(); //Save missing shows to XML
         }
 
         private void ScanAll()

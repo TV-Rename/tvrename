@@ -1814,6 +1814,75 @@ namespace TVRename
         //			writer->Close();
         //			}
         //			
+
+        public void ExportMissingXML() 
+        {
+            if (this.Settings.ExportMissingXML)
+            {
+                XmlWriterSettings settings = new XmlWriterSettings();
+                //XmlWriterSettings settings = gcnew XmlWriterSettings();
+                settings.Indent = true;
+                settings.NewLineOnAttributes = true;
+                XmlWriter writer = XmlWriter.Create(this.Settings.ExportMissingXMLTo, settings);
+
+                writer.WriteStartDocument();
+                writer.WriteStartElement("TVRename");
+                writer.WriteStartAttribute("Version");
+                writer.WriteValue("2.1");
+                writer.WriteEndAttribute(); // version
+                writer.WriteStartElement("MissingItems");
+
+                foreach (Item Action in this.TheActionList)
+                {
+                    if (Action is ItemMissing)
+                    {
+                        ItemMissing Missing = (ItemMissing)(Action);
+                        writer.WriteStartElement("MissingItem");
+                        writer.WriteStartElement("id");
+                        writer.WriteValue(Missing.Episode.SI.TVDBCode);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("title");
+                        writer.WriteValue(Missing.Episode.TheSeries.Name);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("season");
+
+                        if (Missing.Episode.SeasonNumber.ToString().Length > 1)
+                        {
+                            writer.WriteValue(Missing.Episode.SeasonNumber);
+                        }
+                        else { writer.WriteValue("0" + Missing.Episode.SeasonNumber); }
+
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("episode");
+
+                        if (Missing.Episode.EpNum.ToString().Length > 1)
+                        {
+                            writer.WriteValue(Missing.Episode.EpNum);
+                        }
+                        else { writer.WriteValue("0" + Missing.Episode.EpNum); }
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("episodeName");
+                        writer.WriteValue(Missing.Episode.Name);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("description");
+                        writer.WriteValue(Missing.Episode.Overview);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("pubDate");
+
+                        DateTime? dt = Missing.Episode.GetAirDateDT(true);
+                        if (dt != null)
+                            writer.WriteValue(dt.Value.ToString("F"));
+                        writer.WriteEndElement();
+                        writer.WriteEndElement(); // MissingItem
+                    }
+                }
+                writer.WriteEndElement(); // MissingItems
+                writer.WriteEndElement(); // tvrename
+                writer.WriteEndDocument();
+                writer.Close();
+            }
+        }
+
         public bool GenerateUpcomingRSS(Stream str, ProcessedEpisodeList elist)
         {
             if (elist == null)

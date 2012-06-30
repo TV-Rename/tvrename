@@ -350,7 +350,7 @@ namespace TVRename
             // 
             // saveFile
             // 
-            this.saveFile.DefaultExt = "rss";
+            this.saveFile.DefaultExt = "xml";
             this.saveFile.Filter = "RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|All files (*.*)|*.*";
             // 
             // cbTxtToSub
@@ -796,19 +796,18 @@ namespace TVRename
             this.groupBox3.Controls.Add(this.cbMissingXML);
             this.groupBox3.Controls.Add(this.bnBrowseMissingCSV);
             this.groupBox3.Controls.Add(this.txtMissingXML);
-            this.groupBox3.Controls.Add(this.cbMissingCSV);
             this.groupBox3.Controls.Add(this.txtMissingCSV);
+            this.groupBox3.Controls.Add(this.cbMissingCSV);
             this.groupBox3.Location = new System.Drawing.Point(6, 123);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(402, 79);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Missing";
-            this.groupBox3.Visible = false;
             // 
             // bnBrowseMissingXML
             // 
-            this.bnBrowseMissingXML.Location = new System.Drawing.Point(321, 44);
+            this.bnBrowseMissingXML.Location = new System.Drawing.Point(321, 19);
             this.bnBrowseMissingXML.Name = "bnBrowseMissingXML";
             this.bnBrowseMissingXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingXML.TabIndex = 5;
@@ -819,7 +818,7 @@ namespace TVRename
             // cbMissingXML
             // 
             this.cbMissingXML.AutoSize = true;
-            this.cbMissingXML.Location = new System.Drawing.Point(10, 48);
+            this.cbMissingXML.Location = new System.Drawing.Point(10, 23);
             this.cbMissingXML.Name = "cbMissingXML";
             this.cbMissingXML.Size = new System.Drawing.Size(48, 17);
             this.cbMissingXML.TabIndex = 3;
@@ -829,17 +828,18 @@ namespace TVRename
             // 
             // bnBrowseMissingCSV
             // 
-            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(321, 14);
+            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(321, 47);
             this.bnBrowseMissingCSV.Name = "bnBrowseMissingCSV";
             this.bnBrowseMissingCSV.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingCSV.TabIndex = 2;
             this.bnBrowseMissingCSV.Text = "Browse...";
             this.bnBrowseMissingCSV.UseVisualStyleBackColor = true;
+            this.bnBrowseMissingCSV.Visible = false;
             this.bnBrowseMissingCSV.Click += new System.EventHandler(this.bnBrowseMissingCSV_Click);
             // 
             // txtMissingXML
             // 
-            this.txtMissingXML.Location = new System.Drawing.Point(64, 46);
+            this.txtMissingXML.Location = new System.Drawing.Point(64, 21);
             this.txtMissingXML.Name = "txtMissingXML";
             this.txtMissingXML.Size = new System.Drawing.Size(251, 20);
             this.txtMissingXML.TabIndex = 4;
@@ -847,20 +847,22 @@ namespace TVRename
             // cbMissingCSV
             // 
             this.cbMissingCSV.AutoSize = true;
-            this.cbMissingCSV.Location = new System.Drawing.Point(10, 19);
+            this.cbMissingCSV.Location = new System.Drawing.Point(10, 52);
             this.cbMissingCSV.Name = "cbMissingCSV";
             this.cbMissingCSV.Size = new System.Drawing.Size(47, 17);
             this.cbMissingCSV.TabIndex = 0;
             this.cbMissingCSV.Text = "CSV";
             this.cbMissingCSV.UseVisualStyleBackColor = true;
+            this.cbMissingCSV.Visible = false;
             this.cbMissingCSV.CheckedChanged += new System.EventHandler(this.EnableDisable);
             // 
             // txtMissingCSV
             // 
-            this.txtMissingCSV.Location = new System.Drawing.Point(64, 17);
+            this.txtMissingCSV.Location = new System.Drawing.Point(64, 50);
             this.txtMissingCSV.Name = "txtMissingCSV";
             this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
             this.txtMissingCSV.TabIndex = 1;
+            this.txtMissingCSV.Visible = false;
             // 
             // tabPage4
             // 
