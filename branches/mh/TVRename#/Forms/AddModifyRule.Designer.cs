@@ -56,6 +56,7 @@ namespace TVRename
             this.txtLeaveBlank = new System.Windows.Forms.Label();
             this.rbSplit = new System.Windows.Forms.RadioButton();
             this.rbCollapse = new System.Windows.Forms.RadioButton();
+            this.rbFlag = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // rbRemove
@@ -118,7 +119,7 @@ namespace TVRename
             // txtLabel1
             // 
             this.txtLabel1.AutoSize = true;
-            this.txtLabel1.Location = new System.Drawing.Point(13, 217);
+            this.txtLabel1.Location = new System.Drawing.Point(11, 228);
             this.txtLabel1.Name = "txtLabel1";
             this.txtLabel1.Size = new System.Drawing.Size(42, 13);
             this.txtLabel1.TabIndex = 6;
@@ -127,7 +128,7 @@ namespace TVRename
             // txtLabel2
             // 
             this.txtLabel2.AutoSize = true;
-            this.txtLabel2.Location = new System.Drawing.Point(13, 242);
+            this.txtLabel2.Location = new System.Drawing.Point(11, 253);
             this.txtLabel2.Name = "txtLabel2";
             this.txtLabel2.Size = new System.Drawing.Size(42, 13);
             this.txtLabel2.TabIndex = 8;
@@ -135,14 +136,14 @@ namespace TVRename
             // 
             // txtValue1
             // 
-            this.txtValue1.Location = new System.Drawing.Point(94, 213);
+            this.txtValue1.Location = new System.Drawing.Point(92, 224);
             this.txtValue1.Name = "txtValue1";
             this.txtValue1.Size = new System.Drawing.Size(86, 20);
             this.txtValue1.TabIndex = 7;
             // 
             // txtValue2
             // 
-            this.txtValue2.Location = new System.Drawing.Point(94, 239);
+            this.txtValue2.Location = new System.Drawing.Point(92, 250);
             this.txtValue2.Name = "txtValue2";
             this.txtValue2.Size = new System.Drawing.Size(86, 20);
             this.txtValue2.TabIndex = 9;
@@ -150,7 +151,7 @@ namespace TVRename
             // txtWithNameLabel
             // 
             this.txtWithNameLabel.AutoSize = true;
-            this.txtWithNameLabel.Location = new System.Drawing.Point(13, 269);
+            this.txtWithNameLabel.Location = new System.Drawing.Point(11, 280);
             this.txtWithNameLabel.Name = "txtWithNameLabel";
             this.txtWithNameLabel.Size = new System.Drawing.Size(63, 13);
             this.txtWithNameLabel.TabIndex = 10;
@@ -158,7 +159,7 @@ namespace TVRename
             // 
             // txtUserText
             // 
-            this.txtUserText.Location = new System.Drawing.Point(94, 266);
+            this.txtUserText.Location = new System.Drawing.Point(92, 277);
             this.txtUserText.Name = "txtUserText";
             this.txtUserText.Size = new System.Drawing.Size(240, 20);
             this.txtUserText.TabIndex = 11;
@@ -166,7 +167,7 @@ namespace TVRename
             // bnOK
             // 
             this.bnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.bnOK.Location = new System.Drawing.Point(175, 308);
+            this.bnOK.Location = new System.Drawing.Point(173, 319);
             this.bnOK.Name = "bnOK";
             this.bnOK.Size = new System.Drawing.Size(75, 23);
             this.bnOK.TabIndex = 12;
@@ -177,7 +178,7 @@ namespace TVRename
             // bnCancel
             // 
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(256, 308);
+            this.bnCancel.Location = new System.Drawing.Point(254, 319);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 13;
@@ -211,7 +212,7 @@ namespace TVRename
             // txtLeaveBlank
             // 
             this.txtLeaveBlank.AutoSize = true;
-            this.txtLeaveBlank.Location = new System.Drawing.Point(94, 289);
+            this.txtLeaveBlank.Location = new System.Drawing.Point(92, 300);
             this.txtLeaveBlank.Name = "txtLeaveBlank";
             this.txtLeaveBlank.Size = new System.Drawing.Size(173, 13);
             this.txtLeaveBlank.TabIndex = 10;
@@ -222,10 +223,10 @@ namespace TVRename
             this.rbSplit.AutoSize = true;
             this.rbSplit.Location = new System.Drawing.Point(61, 150);
             this.rbSplit.Name = "rbSplit";
-            this.rbSplit.Size = new System.Drawing.Size(221, 17);
+            this.rbSplit.Size = new System.Drawing.Size(224, 17);
             this.rbSplit.TabIndex = 5;
             this.rbSplit.TabStop = true;
-            this.rbSplit.Text = "S&plit: Make one episode count as multiple";
+            this.rbSplit.Text = "S&plit : Make one episode count as multiple";
             this.rbSplit.UseVisualStyleBackColor = true;
             this.rbSplit.Click += new System.EventHandler(this.rb_Click);
             // 
@@ -234,12 +235,24 @@ namespace TVRename
             this.rbCollapse.AutoSize = true;
             this.rbCollapse.Location = new System.Drawing.Point(61, 173);
             this.rbCollapse.Name = "rbCollapse";
-            this.rbCollapse.Size = new System.Drawing.Size(217, 17);
+            this.rbCollapse.Size = new System.Drawing.Size(220, 17);
             this.rbCollapse.TabIndex = 5;
             this.rbCollapse.TabStop = true;
-            this.rbCollapse.Text = "&Collapse: Merge episodes, and renumber";
+            this.rbCollapse.Text = "&Collapse : Merge episodes, and renumber";
             this.rbCollapse.UseVisualStyleBackColor = true;
             this.rbCollapse.Click += new System.EventHandler(this.rb_Click);
+            // 
+            // rbFlag
+            // 
+            this.rbFlag.AutoSize = true;
+            this.rbFlag.Location = new System.Drawing.Point(61, 196);
+            this.rbFlag.Name = "rbFlag";
+            this.rbFlag.Size = new System.Drawing.Size(194, 17);
+            this.rbFlag.TabIndex = 14;
+            this.rbFlag.TabStop = true;
+            this.rbFlag.Text = "&Flag : Mark episode for replacement";
+            this.rbFlag.UseVisualStyleBackColor = true;
+            this.rbFlag.Click += new System.EventHandler(this.rb_Click);
             // 
             // AddModifyRule
             // 
@@ -247,7 +260,8 @@ namespace TVRename
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(341, 341);
+            this.ClientSize = new System.Drawing.Size(341, 354);
+            this.Controls.Add(this.rbFlag);
             this.Controls.Add(this.bnCancel);
             this.Controls.Add(this.bnOK);
             this.Controls.Add(this.txtUserText);
@@ -301,5 +315,6 @@ namespace TVRename
         private System.Windows.Forms.Label txtLeaveBlank;
         private System.Windows.Forms.RadioButton rbSplit;
         private System.Windows.Forms.RadioButton rbCollapse;
+        private System.Windows.Forms.RadioButton rbFlag;
     }
 }

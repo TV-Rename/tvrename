@@ -68,6 +68,10 @@ namespace TVRename
                     this.rbInsert.Checked = true;
                     break;
 
+                case RuleAction.kFlag:
+                    this.rbFlag.Checked = true;
+                    break;
+
                 default:
                 case RuleAction.kIgnoreEp:
                     this.rbIgnore.Checked = true;
@@ -160,7 +164,7 @@ namespace TVRename
             else if (this.rbSplit.Checked)
             {
                 this.txtLabel1.Text = "&Number:";
-                this.txtLabel2.Text = "Int&o:";
+                this.txtLabel2.Text = "N&umber:";
                 this.txtLeaveBlank.Visible = true;
                 this.txtLabel2.Enabled = true;
                 this.txtValue1.Enabled = true;
@@ -168,6 +172,18 @@ namespace TVRename
                 this.txtUserText.Enabled = true;
                 this.txtWithNameLabel.Enabled = true;
                 this.txtWithNameLabel.Text = "Delimiters:";
+            }
+            else if (this.rbFlag.Checked)
+            {
+                this.txtLabel1.Text = "&Number:";
+                this.txtLabel2.Text = "Int&o:";
+                this.txtLeaveBlank.Visible = false;
+                this.txtLabel2.Enabled = false;
+                this.txtValue1.Enabled = true;
+                this.txtValue2.Enabled = false;
+                this.txtUserText.Enabled = true;
+                this.txtWithNameLabel.Enabled = true;
+                this.txtWithNameLabel.Text = "Note:";                
             }
         }
 
@@ -191,6 +207,8 @@ namespace TVRename
                 dwn = RuleAction.kRename;
             else if (this.rbSplit.Checked)
                 dwn = RuleAction.kSplit;
+            else if (this.rbFlag.Checked)
+                dwn = RuleAction.kFlag;
 
             this.mRule.DoWhatNow = dwn;
             this.mRule.UserSuppliedText = this.txtUserText.Enabled ? this.txtUserText.Text : "";

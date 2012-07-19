@@ -61,11 +61,18 @@ namespace TVRename
                 lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
                 lvi.SubItems.Add(this.Episode.NumsAsString());
 
-                DateTime? dt = this.Episode.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
+                if (this.Episode.Flag)
+                {
+                    lvi.SubItems.Add("Flagged: " + this.Episode.FlagNote);
+                }
                 else
-                    lvi.SubItems.Add("");
+                {
+                    DateTime? dt = this.Episode.GetAirDateDT(true);
+                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
+                        lvi.SubItems.Add(dt.Value.ToShortDateString());
+                    else
+                        lvi.SubItems.Add("");
+                }
 
                 FileInfo fi = new FileInfo(this.TheFileNoExt);
                 lvi.SubItems.Add(fi.DirectoryName);

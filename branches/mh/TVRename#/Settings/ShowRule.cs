@@ -21,7 +21,8 @@ namespace TVRename
         kIgnoreEp,
         kRename,
         kSplit,
-        kCollapse
+        kCollapse,
+        kFlag
     }
 
     public class ShowRule
@@ -112,6 +113,8 @@ namespace TVRename
                     return "Insert";
                 case RuleAction.kRename:
                     return "Rename";
+                case RuleAction.kFlag:
+                    return "Flag";
                 default:
                     return "<Unknown>";
             }
@@ -139,6 +142,8 @@ namespace TVRename
                     return string.Format("{0} new episode '{1}' in position {2}.", this.ActionInWords(), this.UserSuppliedText, this.First);
                 case RuleAction.kRename:
                     return string.Format("{0} Episode {1} to '{2}'.", this.ActionInWords(), this.First, this.UserSuppliedText);
+                case RuleAction.kFlag:
+                    return string.Format("{0} Episode {1} as '{2}'.", this.ActionInWords(), this.First, this.UserSuppliedText);
                 default:
                     return "<Unknown>";
             }

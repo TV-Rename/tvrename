@@ -1214,6 +1214,15 @@ namespace TVRename
                                 eis[n1].Name = txt;
                             break;
                         }
+                    case RuleAction.kFlag:
+                        {
+                            if ((n1 < ec) && (n1 >= 0))
+                            {
+                                eis[n1].Flag = true;
+                                eis[n1].FlagNote = sr.UserSuppliedText;
+                            }
+                            break;
+                        }
                     case RuleAction.kRemove:
                         {
                             if ((n1 < ec) && (n1 >= 0) && (n2 < ec) && (n2 >= 0))
@@ -1321,7 +1330,7 @@ namespace TVRename
                             }
                             else if (n1 == eis.Count)
                             {
-                                ProcessedEpisode t = eis[n1-1];
+                                ProcessedEpisode t = eis[n1 - 1];
                                 ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheSeason, si);
                                 n.Name = txt;
                                 n.EpNum = -2;
@@ -2686,6 +2695,10 @@ namespace TVRename
                                     // the file is here
                                     if (specific == null)
                                         this.mStats.NS_NumberOfEpisodes++;
+
+                                    // If episode is flagged, add it to missing list anyway as "needing replacement"
+                                    if (dbep.Flag)
+                                        this.TheActionList.Add(new ItemMissing(dbep, folder + Path.DirectorySeparatorChar + this.Settings.FilenameFriendly(this.Settings.NamingStyle.NameForExt(dbep, null, folder.Length))));
 
                                     // do NFO and thumbnail checks if required
                                     FileInfo filo = localEps[dbep.EpNum]; // filename (or future filename) of the file

@@ -26,6 +26,8 @@ namespace TVRename
     {
         public int EpNum2; // if we are a concatenation of episodes, this is the last one in the series. Otherwise, same as EpNum
         public bool Ignore;
+        public bool Flag;
+        public string FlagNote;
         public bool NextToAir;
         public int OverallNumber;
         public ShowItem SI;
