@@ -2664,7 +2664,7 @@ namespace TVRename
                 this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
                 this.lvAction.Groups[3].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
                 this.lvAction.Groups[2].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
-                this.lvAction.Groups[1].Header = "pyTiovo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
+                this.lvAction.Groups[1].Header = "pyTivo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
                 this.lvAction.Groups[0].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
             }
             else
@@ -2676,7 +2676,7 @@ namespace TVRename
             this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
             this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
             this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
-            this.lvAction.Groups[7].Header = "pyTiovo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
+            this.lvAction.Groups[7].Header = "pyTivo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
             this.lvAction.Groups[8].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
             }
 
