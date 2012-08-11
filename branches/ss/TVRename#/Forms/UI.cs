@@ -85,7 +85,6 @@ namespace TVRename
         protected Size mLastNonMaximizedSize;
         protected Season mLastSeasonClicked;
         protected ShowItem mLastShowClicked;
-        protected bool mReverseList = false;
         protected AutoFolderMonitor mAutoFolderMonitor;
         private bool treeExpandCollapseToggle = true;
 
@@ -542,11 +541,6 @@ namespace TVRename
         private void bnWTWChooseSite_Click(object sender, System.EventArgs e)
         {
             this.ChooseSiteMenu(1);
-        }
-
-        private void bnEpGuideChooseSearch_Click(object sender, System.EventArgs e)
-        {
-            this.ChooseSiteMenu(2);
         }
 
         private void FillMyShows()
@@ -2572,16 +2566,8 @@ namespace TVRename
             }
 
             ListViewItem lvi = sli.ScanListViewItem;
-            if (this.mReverseList)
-            {
-                int nGrp = this.lvAction.Groups.Count;
-                System.Diagnostics.Debug.Assert(nGrp == 8); 
-                lvi.Group = this.lvAction.Groups[nGrp - sli.ScanListViewGroup];
-            }
-            else
-            {
             lvi.Group = this.lvAction.Groups[sli.ScanListViewGroup];
-            }
+
             if (sli.IconNumber != -1)
                 lvi.ImageIndex = sli.IconNumber;
             lvi.Checked = true;
@@ -2683,20 +2669,6 @@ namespace TVRename
                 else if (Action is ItemuTorrenting)
                     utCount++;
             }
-            if (this.mReverseList)
-            {
-                this.lvAction.Groups[8].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
-                this.lvAction.Groups[7].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
-                this.lvAction.Groups[6].Header = "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
-                this.lvAction.Groups[5].Header = "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
-                this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
-                this.lvAction.Groups[3].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
-                this.lvAction.Groups[2].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
-                this.lvAction.Groups[1].Header = "pyTiovo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
-                this.lvAction.Groups[0].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
-            }
-            else
-            {
             this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
             this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
             this.lvAction.Groups[2].Header = "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
@@ -2706,17 +2678,10 @@ namespace TVRename
             this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
             this.lvAction.Groups[7].Header = "pyTiovo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
             this.lvAction.Groups[8].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
-            }
 
             this.InternalCheckChange = false;
 
             this.UpdateActionCheckboxes();
-        }
-
-        void lvAction_ColumnClick(object sender, System.Windows.Forms.ColumnClickEventArgs e)
-        {
-            this.mReverseList = !this.mReverseList;
-            this.FillActionList();
         }
 
         private void bnActionAction_Click(object sender, System.EventArgs e)

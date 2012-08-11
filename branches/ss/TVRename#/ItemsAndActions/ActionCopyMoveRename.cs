@@ -66,7 +66,7 @@ namespace TVRename
             get { return this.SourceFileSize(); }
         }
 
-        public bool Go(TVSettings settings, ref bool pause)
+        public bool Go(TVSettings settings, ref bool pause, TVRenameStats stats)
         {
             // read NTFS permissions (if any)
             System.Security.AccessControl.FileSecurity security = null;
@@ -79,9 +79,9 @@ namespace TVRename
             }
 
             if (this.QuickOperation())
-                this.OSMoveRename(); // ask the OS to do it for us, since it's easy and quick!
+                this.OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
             else
-                this.CopyItOurself(ref pause); // do it ourself!
+                this.CopyItOurself(ref pause, stats); // do it ourself!
 
             // set NTFS permissions
             try
@@ -245,7 +245,7 @@ namespace TVRename
             to.LastWriteTimeUtc = from.LastWriteTimeUtc;
         }
 
-        private void OSMoveRename()
+        private void OSMoveRename(TVRenameStats stats)
         {
             try
             {
@@ -265,11 +265,10 @@ namespace TVRename
 
                 System.Diagnostics.Debug.Assert((this.Operation == ActionCopyMoveRename.Op.Move) || (this.Operation == ActionCopyMoveRename.Op.Rename));
 
-                //TODO: Statistics
-                //if (this.Operation == ActionCopyMoveRename.Op.Move)
-                //    this.mStats.FilesMoved++;
-                //else if (this.Operation == ActionCopyMoveRename.Op.Rename)
-                //    this.mStats.FilesRenamed++;
+                if (this.Operation == ActionCopyMoveRename.Op.Move)
+                    stats.FilesMoved++;
+                else if (this.Operation == ActionCopyMoveRename.Op.Rename)
+                    stats.FilesRenamed++;
             }
             catch (System.Exception e)
             {
@@ -279,7 +278,7 @@ namespace TVRename
             }
         }
 
-        private void CopyItOurself(ref bool pause)
+        private void CopyItOurself(ref bool pause, TVRenameStats stats)
         {
             const int kArrayLength = 1 * 1024 * 1024;
             Byte[] dataArray = new Byte[kArrayLength];
@@ -358,13 +357,12 @@ namespace TVRename
                 if (this.IsMoveRename())
                     this.From.Delete();
 
-                // TODO: Stats
-                //if (this.Operation == ActionCopyMoveRename.Op.Move)
-                //    this.mStats.FilesMoved++;
-                //else if (this.Operation == ActionCopyMoveRename.Op.Rename)
-                //    this.mStats.FilesRenamed++;
-                //else if (this.Operation == ActionCopyMoveRename.Op.Copy)
-                //    this.mStats.FilesCopied++;
+                if (this.Operation == ActionCopyMoveRename.Op.Move)
+                    stats.FilesMoved++;
+                else if (this.Operation == ActionCopyMoveRename.Op.Rename)
+                    stats.FilesRenamed++;
+                else if (this.Operation == ActionCopyMoveRename.Op.Copy)
+                    stats.FilesCopied++;
 
                 this.Done = true;
             } // try

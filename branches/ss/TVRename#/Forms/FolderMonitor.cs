@@ -383,11 +383,6 @@ namespace TVRename
             TVDoc.SysOpen(ai.Folder);
         }
 
-        private void lvFMNewShows_DoubleClick(object sender, System.EventArgs e)
-        {
-            this.bnNewFolderOpen_Click(null, null);
-        }
-
         private void FillFMNewShowList(bool keepSel)
         {
             System.Collections.Generic.List<int> sel = new System.Collections.Generic.List<int>();

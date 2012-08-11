@@ -2026,7 +2026,7 @@ namespace TVRename
 
             Action action = info.TheAction;
             if (action != null)
-                action.Go(this.Settings, ref this.ActionPause);
+                action.Go(this.Settings, ref this.ActionPause, mStats);
 
             this.ActionSemaphores[info.SemaphoreNumber].Release(1);
         }

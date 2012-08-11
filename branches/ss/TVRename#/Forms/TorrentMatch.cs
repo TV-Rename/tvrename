@@ -45,20 +45,6 @@ namespace TVRename
                                                 this.txtBTSecondLocation.Text, mDoc.Args);
         }
 
-        private void bnBTCopyToBrowse_Click(object sender, System.EventArgs e)
-        {
-            if (!string.IsNullOrEmpty(this.txtBTSecondLocation.Text))
-                this.folderBrowser.SelectedPath = this.txtBTSecondLocation.Text;
-            else if (!string.IsNullOrEmpty(this.txtTorrentFile.Text))
-            {
-                FileInfo fi = new FileInfo(this.txtTorrentFile.Text);
-                if (fi != null)
-                    this.folderBrowser.SelectedPath = fi.DirectoryName;
-            }
-            if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                this.txtBTSecondLocation.Text = this.folderBrowser.SelectedPath;
-        }
-
         private void rbBTRenameFiles_CheckedChanged(object sender, System.EventArgs e)
         {
             this.TabBTEnableDisable();
@@ -76,11 +62,6 @@ namespace TVRename
         private void rbBTCopyTo_CheckedChanged(object sender, System.EventArgs e)
         {
             this.TabBTEnableDisable();
-        }
-
-        private void bnBTCopyToOpen_Click(object sender, System.EventArgs e)
-        {
-            TVDoc.SysOpen(this.txtBTSecondLocation.Text);
         }
 
         private void bnBTOpenFolder_Click(object sender, System.EventArgs e)

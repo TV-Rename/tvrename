@@ -235,11 +235,6 @@ namespace TVRename
             }
         }
 
-        private void txtResumeDatFolder_TextChanged(object sender, System.EventArgs e)
-        {
-            this.StartWatching();
-        }
-
         private void StartWatching()
         {
             FileInfo f = new FileInfo(this.mDoc.Settings.ResumeDatPath);
