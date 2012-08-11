@@ -63,9 +63,20 @@ namespace TVRename
                 return false;
             }
 
-            FileStream fs = new FileStream(this.Destination.FullName, FileMode.Create);
-            fs.Write(theData, 0, theData.Length);
-            fs.Close();
+            try
+            {
+                FileStream fs = new FileStream(this.Destination.FullName, FileMode.Create);
+                fs.Write(theData, 0, theData.Length);
+                fs.Close();
+            }
+            catch (Exception e)
+            {
+                this.ErrorText = e.Message;
+                this.Error = true;
+                this.Done = true;
+                return false;
+            }
+                
 
             this.Done = true;
             return true;

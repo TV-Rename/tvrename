@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+
 namespace TVRename
 {
     // What version are we?
@@ -19,6 +22,12 @@ namespace TVRename
                 OnMonoCached = System.Type.GetType("Mono.Runtime") != null;
             return OnMonoCached.Value;
         }
+
+        public static bool OnWindows()
+        {
+            return Environment.OSVersion.Platform == PlatformID.Win32NT;
+        }
+
 
         public static string DisplayVersionString()
         {

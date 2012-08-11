@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Diagnostics;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
@@ -173,16 +174,46 @@ namespace TVRename
 
             this.AFMScan += this.ScanAll;
             this.AFMDoAll += this.ActionAll;
-            //Instantiate our server channel.
-            var channel = new IpcServerChannel("TVRenameChannel");
 
-            //Register the server channel.
-            ChannelServices.RegisterChannel(channel, true);
+            int retries = 2;
+            while (retries > 0)
+            {
+                try
+                {
+                    //Instantiate our server channel.
+                    var channel = new IpcServerChannel("TVRenameChannel");
 
-            //Register this service type.
-            RemotingConfiguration.RegisterWellKnownServiceType(typeof(IPCMethods), "IPCMethods", WellKnownObjectMode.Singleton);
+                    //Register the server channel.
+                    ChannelServices.RegisterChannel(channel, true);
 
-            IPCMethods.Setup(this, this.mDoc);
+                    //Register this service type.
+                    RemotingConfiguration.RegisterWellKnownServiceType(typeof (IPCMethods), "IPCMethods",
+                                                                       WellKnownObjectMode.Singleton);
+
+                    IPCMethods.Setup(this, this.mDoc);
+                    break; // got this far, all is good, exit retry loop
+                }
+                catch
+                {
+                    // Maybe there is a half-dead TVRename process?  Try to kill it off.
+                    String pn = Process.GetCurrentProcess().ProcessName; 
+                    Process[] procs = Process.GetProcessesByName(pn);
+                    foreach (Process proc in procs)
+                    {
+                        if (proc.Id != Process.GetCurrentProcess().Id)
+                        {
+                            try
+                            {
+                                proc.Kill();
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                }
+                retries--;
+            } // retry loop
         }
 
         public void SetProgressActual(int p)
