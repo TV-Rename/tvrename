@@ -380,7 +380,7 @@ namespace TVRename
                 }
                 return;
             }
-            catch
+            catch (Exception ex)
             {
                 // handle any exception type
                 this.Error = true;

@@ -36,6 +36,8 @@ namespace TVRename
             // to site.
 
             // Release history:
+            // Version 2.2.0b11 released XXX August 2012, rXXX
+            // Version 2.2.0b10 released 7 October 2011, r173
             // Version 2.2.0b9 released 18 June 2011, r161
             // Version 2.2.0b8 released 18 June 2011, r159
             // Version 2.2.0b7 released 20 January 2011, r143
@@ -49,7 +51,7 @@ namespace TVRename
             // NOTE: If you're doing your own branch/patch version number, please put your name or nickname or something in brackets afterwards
             // to indicate that it is not an official release, or talk to me (tvrename@tvrename.com) so any versions I make don't duplicate
             // a version number you may have created.
-            string v = "2.2.0b10 (dev)";
+            string v = "2.2.0b11 (dev)";
 #if DEBUG
             return v + " ** Debug Build **";
 #else

@@ -7,8 +7,8 @@
 // 
 using System;
 using System.IO;
-using System.Xml;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -208,6 +208,8 @@ namespace TVRename
         public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
         public bool NFOs = false;
+        public bool pyTivoMeta = false;
+        public bool pyTivoMetaSubFolder = false;
         public CustomName NamingStyle = new CustomName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false; // TODO: Make property of thetvdb?
@@ -365,6 +367,10 @@ namespace TVRename
                     this.EpImgs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "NFOs")
                     this.NFOs = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "pyTivoMeta")
+                    this.pyTivoMeta = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "pyTivoMetaSubFolder")
+                    this.pyTivoMetaSubFolder = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpg")
                     this.FolderJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpgIs")
@@ -753,6 +759,12 @@ namespace TVRename
             writer.WriteEndElement();
             writer.WriteStartElement("NFOs");
             writer.WriteValue(this.NFOs);
+            writer.WriteEndElement();
+            writer.WriteStartElement("pyTivoMeta");
+            writer.WriteValue(this.pyTivoMeta);
+            writer.WriteEndElement();
+            writer.WriteStartElement("pyTivoMetaSubFolder");
+            writer.WriteValue(this.pyTivoMetaSubFolder);
             writer.WriteEndElement();
             writer.WriteStartElement("FolderJpg");
             writer.WriteValue(this.FolderJpg);
