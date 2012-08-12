@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 
@@ -109,7 +111,7 @@ namespace TVRename
 
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
                         int snum = kvp.Key;
                         if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations(this.mDoc.Settings).ContainsKey(snum))

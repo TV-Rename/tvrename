@@ -11,28 +11,28 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ItemuTorrenting : Item, ScanListItem
+    public class ItemSABnzbd : Item, ScanListItem
     {
         public string DesiredLocationNoExt;
-        public TorrentEntry Entry;
+        public SAB.queueSlotsSlot Entry;
 
-        public ItemuTorrenting(TorrentEntry te, ProcessedEpisode pe, string desiredLocationNoExt)
+        public ItemSABnzbd(SAB.queueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
         {
             this.Episode = pe;
             this.DesiredLocationNoExt = desiredLocationNoExt;
-            this.Entry = te;
+            this.Entry = qss;
         }
 
         #region Item Members
 
         public bool SameAs(Item o)
         {
-            return (o is ItemuTorrenting) && this.Entry == (o as ItemuTorrenting).Entry;
+            return (o is ItemSABnzbd) && this.Entry == (o as ItemSABnzbd).Entry;
         }
 
         public int Compare(Item o)
         {
-            ItemuTorrenting ut = o as ItemuTorrenting;
+            ItemSABnzbd ut = o as ItemSABnzbd;
             if (ut == null)
                 return 0;
 
@@ -52,9 +52,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.Entry.DownloadingTo))
+                if (string.IsNullOrEmpty(this.Entry.filename))
                     return null;
-                return new FileInfo(this.Entry.DownloadingTo).DirectoryName;
+                return new FileInfo(this.Entry.filename).DirectoryName;
             }
         }
 
@@ -85,10 +85,9 @@ namespace TVRename
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.Entry.TorrentFile);
-                lvi.SubItems.Add(this.Entry.DownloadingTo);
-                int p = this.Entry.PercentDone;
-                lvi.SubItems.Add(p == -1 ? "" : this.Entry.PercentDone + "% Complete");
+                lvi.SubItems.Add(this.Entry.filename);
+                lvi.SubItems.Add(this.Entry.status + " " + (int)(0.5 + 100 - 100 * Entry.mbleft / Entry.mb) + "% Complete, " + this.Entry.timeleft + " left");
+                lvi.SubItems.Add("");
 
                 lvi.Tag = this;
 
@@ -103,7 +102,7 @@ namespace TVRename
 
         int ScanListItem.IconNumber
         {
-            get { return 2; }
+            get { return 8; }
         }
 
         #endregion

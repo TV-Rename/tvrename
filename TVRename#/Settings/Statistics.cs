@@ -45,9 +45,11 @@ namespace TVRename
 
         public bool Load()
         {
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.IgnoreComments = true;
-            settings.IgnoreWhitespace = true;
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true
+            };
 
             string fn = PathManager.StatisticsFile.FullName;
             if (!File.Exists(fn))
@@ -94,10 +96,12 @@ namespace TVRename
 
         public void Save()
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = true;
-            
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = true
+            };
+
             XmlWriter writer = XmlWriter.Create(PathManager.StatisticsFile.FullName, settings);
 
             writer.WriteStartDocument();

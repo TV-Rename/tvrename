@@ -32,8 +32,7 @@ namespace TVRename
 
         private void ShowException_Load(object sender, System.EventArgs e)
         {
-            string t;
-            t = this.mException.Message + "\r\n\r\n" + this.mException.StackTrace;
+            string t = this.mException.Message + "\r\n\r\n" + this.mException.StackTrace;
             this.txtText.Text = t;
         }
 

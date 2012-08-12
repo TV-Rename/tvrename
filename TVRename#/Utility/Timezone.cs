@@ -55,7 +55,7 @@ namespace TVRename
             }
 
             RegistryKey rk = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Time Zones");
-            return rk.GetSubKeyNames();
+            return rk != null ? rk.GetSubKeyNames() : new string[0];
         }
 
         public static TimeZone TimeZoneFor(string name)
@@ -79,9 +79,9 @@ namespace TVRename
             return "Eastern Standard Time";
         }
 
-        public static DateTime? AdjustTZTimeToLocalTime(DateTime? dt, TimeZone theirTimeZone) // set tz to 0 to not correct for timezone
+        public static DateTime AdjustTZTimeToLocalTime(DateTime dt, TimeZone theirTimeZone) // set tz to 0 to not correct for timezone
         {
-            if ((theirTimeZone == null) || (dt == null))
+            if (theirTimeZone == null)
                 return dt;
 
             if (Version.OnMono())
@@ -115,7 +115,7 @@ namespace TVRename
 
             TimeSpan tweakTime = DateTime.Now.Subtract(themNow);
 
-            return dt.Value.Add(tweakTime);
+            return dt.Add(tweakTime);
         }
 
         public static uint Epoch() // unix epoch time for now (seconds since midnight 1 jan 1970 UTC)

@@ -30,7 +30,7 @@ namespace TVRename
                 return 4;
             if (a is ActionNFO)
                 return 5;
-            if (a is ItemuTorrenting)
+            if (a is ItemuTorrenting || a is ItemSABnzbd)
                 return 6;
             return 7;
         }

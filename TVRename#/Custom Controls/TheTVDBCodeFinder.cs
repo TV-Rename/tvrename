@@ -112,10 +112,7 @@ namespace TVRename
                         ListViewItem lvi = new ListViewItem();
                         lvi.Text = num.ToString();
                         lvi.SubItems.Add(show);
-                        if (kvp.Value.FirstAired != null)
-                            lvi.SubItems.Add(kvp.Value.FirstAired.Value.Year.ToString());
-                        else
-                            lvi.SubItems.Add("");
+                        lvi.SubItems.Add(kvp.Value.FirstAired != null ? kvp.Value.FirstAired.Value.Year.ToString() : "");
 
                         lvi.Tag = num;
                         if (numberMatch)
