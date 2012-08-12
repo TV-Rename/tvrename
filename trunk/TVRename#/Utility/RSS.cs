@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -33,9 +35,9 @@ namespace TVRename
 
     public class RSSItemList : System.Collections.Generic.List<RSSItem>
     {
-        private FNPRegexList Rexps; // only trustable while in DownloadRSS or its called functions
+        private List<FilenameProcessorRE> Rexps; // only trustable while in DownloadRSS or its called functions
 
-        public bool DownloadRSS(string URL, FNPRegexList rexps)
+        public bool DownloadRSS(string URL, List<FilenameProcessorRE> rexps)
         {
             this.Rexps = rexps;
 
@@ -46,9 +48,11 @@ namespace TVRename
 
                 MemoryStream ms = new MemoryStream(r);
 
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.IgnoreComments = true;
-                settings.IgnoreWhitespace = true;
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true
+                };
                 XmlReader reader = XmlReader.Create(ms, settings);
 
                 reader.Read();

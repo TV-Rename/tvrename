@@ -57,7 +57,7 @@ namespace TVRename
             get { return 10000; }
         }
 
-        public bool Go(TVSettings tvsettings, ref bool pause)
+        public bool Go(TVSettings tvsettings, ref bool pause, TVRenameStats stats)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -242,7 +242,7 @@ namespace TVRename
                 }
 
                 WriteInfo(writer, this.SI, "ContentRating", "mpaa");
-                WriteInfo(writer, this.SI, "IMDB_ID", "id");
+                WriteInfo(writer, this.SI, "IMDB_ID", "id", "moviedb","imdb");
 
                 writer.WriteStartElement("tvdbid");
                 writer.WriteValue(this.SI.TheSeries().TVDBCode);
@@ -279,7 +279,7 @@ namespace TVRename
 
             if (this.Episode == null)
                 return 1;
-            if (nfo.Episode == null)
+            if (nfo == null || nfo.Episode == null)
                 return -1;
             return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
         }
@@ -357,12 +357,21 @@ namespace TVRename
 
         #endregion
 
-        private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string @as)
+        private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string elemName)
+        {
+            ActionNFO.WriteInfo(writer, si, whichItem, elemName, null, null);
+        }
+
+        private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string elemName, string attribute, string attributeVal)
         {
             string t = si.TheSeries().GetItem(whichItem);
             if (!string.IsNullOrEmpty(t))
             {
-                writer.WriteStartElement(@as);
+                writer.WriteStartElement(elemName);
+                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
+                {
+                    writer.WriteAttributeString(attribute, attributeVal);
+                }
                 writer.WriteValue(t);
                 writer.WriteEndElement();
             }

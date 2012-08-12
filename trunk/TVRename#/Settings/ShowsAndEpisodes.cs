@@ -124,7 +124,7 @@ namespace TVRename
         public System.Collections.Generic.List<int> IgnoreSeasons;
         public System.Collections.Generic.Dictionary<int, StringList> ManualFolderLocations;
         public bool PadSeasonToTwoDigits;
-        public System.Collections.Generic.Dictionary<int, ProcessedEpisodeList> SeasonEpisodes; // built up by applying rules.
+        public System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
         public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>> SeasonRules;
         public bool ShowNextAirdate;
         public TheTVDB TVDB;
@@ -132,6 +132,7 @@ namespace TVRename
         public bool UseCustomShowName;
         public bool UseSequentialMatch;
         public List<string> AliasNames = new List<string>();
+        public String CustomSearchURL;
 
         public ShowItem(TheTVDB db)
         {
@@ -187,6 +188,8 @@ namespace TVRename
                     this.DoMissingCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DVDOrder")
                     this.DVDOrder = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "CustomSearchURL")
+                    this.CustomSearchURL = reader.ReadElementContentAsString();
                 else if (reader.Name == "ForceCheckAll") // removed 2.2.0b2
                     this.ForceCheckNoAirdate = this.ForceCheckFuture = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ForceCheckFuture")
@@ -443,7 +446,7 @@ namespace TVRename
             this.CustomShowName = "";
             this.UseSequentialMatch = false;
             this.SeasonRules = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>>();
-            this.SeasonEpisodes = new System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>();
+            this.SeasonEpisodes = new System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>>();
             this.ShowNextAirdate = true;
             this.TVDBCode = -1;
             //                WhichSeasons = gcnew System.Collections.Generic.List<int>;
@@ -457,6 +460,7 @@ namespace TVRename
             this.DoMissingCheck = true;
             this.CountSpecials = false;
             this.DVDOrder = false;
+            CustomSearchURL = "";
             ForceCheckNoAirdate = false;
             ForceCheckFuture = false;
         }
@@ -464,7 +468,7 @@ namespace TVRename
         //Generic.List<int>WhichSeasons()
         //{
         //    System.Collections.Generic.List<int>r = gcnew System.Collections.Generic.List<int>();
-        //    for each (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList>kvp in SeasonEpisodes)
+        //    for each (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>>kvp in SeasonEpisodes)
         //        r->Add(kvp->Key);
         //    return r;
         //}
@@ -504,7 +508,7 @@ namespace TVRename
         public int MaxSeason()
         {
             int max = 0;
-            foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in this.SeasonEpisodes)
+            foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
             {
                 if (kvp.Key > max)
                     max = kvp.Key;
@@ -588,6 +592,9 @@ namespace TVRename
                 writer.WriteEndElement();
             }
             writer.WriteEndElement();
+            writer.WriteStartElement("CustomSearchURL");
+            writer.WriteValue(this.CustomSearchURL);
+            writer.WriteEndElement();
 
             foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ShowRule>> kvp in this.SeasonRules)
             {
@@ -629,9 +636,9 @@ namespace TVRename
             writer.WriteEndElement(); // ShowItem
         }
 
-        public static ProcessedEpisodeList ProcessedListFromEpisodes(System.Collections.Generic.List<Episode> el, ShowItem si)
+        public static List<ProcessedEpisode> ProcessedListFromEpisodes(System.Collections.Generic.List<Episode> el, ShowItem si)
         {
-            ProcessedEpisodeList pel = new ProcessedEpisodeList();
+            List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
             foreach (Episode e in el)
                 pel.Add(new ProcessedEpisode(e, si));
             return pel;
@@ -665,7 +672,7 @@ namespace TVRename
             if (this.AutoAddNewSeasons && (!string.IsNullOrEmpty(this.AutoAdd_FolderBase)))
             {
                 int highestThereIs = -1;
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in this.SeasonEpisodes)
+                foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
                 {
                     if (kvp.Key > highestThereIs)
                         highestThereIs = kvp.Key;
@@ -696,26 +703,11 @@ namespace TVRename
             return ones.CompareTo(twos);
         }
     }
-
-    // ShowItem
-
-    public class ShowItemList : System.Collections.Generic.List<ShowItem>
-    {
-    }
-
-    public class ProcessedEpisodeList : System.Collections.Generic.List<ProcessedEpisode>
-    {
-    }
-
-    public class EpisodeDict : System.Collections.Generic.Dictionary<int, ProcessedEpisodeList>
+    public class EpisodeDict : System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>>
     {
     }
 
     // dictionary by season #
-
-    public class IgnoreSeasonList : System.Collections.Generic.List<int>
-    {
-    }
 
     public class FolderLocationDict : System.Collections.Generic.Dictionary<int, StringList>
     {

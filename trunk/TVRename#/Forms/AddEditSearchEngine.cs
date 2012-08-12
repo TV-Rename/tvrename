@@ -47,10 +47,12 @@ namespace TVRename
 
         public void SetupGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell();
-            titleModel.BackColor = Color.SteelBlue;
-            titleModel.ForeColor = Color.White;
-            titleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+                                                         {
+                                                             BackColor = Color.SteelBlue,
+                                                             ForeColor = Color.White,
+                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                         };
 
             this.Grid1.Columns.Clear();
             this.Grid1.Rows.Clear();

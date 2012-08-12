@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace TVRename
@@ -67,6 +65,7 @@ namespace TVRename
             {
                 mUI.Invoke(mUI.AFMScan);
                 mUI.Invoke(mUI.AFMDoAll);
+                mDoc.ExportMissingXML(); // Export Missing episodes to XML 
             }
             this.StartMonitor();
         }

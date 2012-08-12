@@ -6,9 +6,10 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Xml;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -50,19 +51,11 @@ namespace TVRename
         }
     }
 
-    public class ReplacementList : System.Collections.Generic.List<Replacement>
-    {
-    }
-
-    public class FNPRegexList : System.Collections.Generic.List<FilenameProcessorRE>
-    {
-    }
-
-    public class ShowStatusColoringTypeList : System.Collections.Generic.Dictionary<ShowStatusColoringType, System.Drawing.Color>
+    public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, System.Drawing.Color>
     {
         public bool IsShowStatusDefined(string showStatus)
         {
-            foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+            foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
             {
                 if (!e.Key.IsMetaType && e.Key.IsShowLevel && e.Key.Status.Equals(showStatus, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -74,7 +67,7 @@ namespace TVRename
 
         public System.Drawing.Color GetEntry(bool meta, bool showLevel, string status)
         {
-            foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+            foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
             {
                 if (e.Key.IsMetaType == meta && e.Key.IsShowLevel == showLevel && e.Key.Status.Equals(status, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -96,6 +89,7 @@ namespace TVRename
         public bool IsMetaType;
         public bool IsShowLevel;
         public string Status;
+
         public string Text
         {
             get
@@ -104,65 +98,61 @@ namespace TVRename
                 {
                     return string.Format("Show Seasons Status: {0}", StatusTextForDisplay);
                 }
-                else if (!IsShowLevel && IsMetaType)
+                if (!IsShowLevel && IsMetaType)
                 {
                     return string.Format("Season Status: {0}", StatusTextForDisplay);
                 }
-                else if (IsShowLevel && !IsMetaType)
+                if (IsShowLevel && !IsMetaType)
                 {
                     return string.Format("Show Status: {0}", StatusTextForDisplay);
                 }
-                else
-                {
-                    return "";
-                }
+                return "";
             }
         }
 
-        string StatusTextForDisplay
+        private string StatusTextForDisplay
         {
             get
             {
-                if (IsMetaType)
+                if (!IsMetaType)
                 {
-                    if (IsShowLevel)
+                    return Status;
+                }
+                if (IsShowLevel)
+                {
+                    ShowItem.ShowAirStatus status =
+                        (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), Status);
+                    switch (status)
                     {
-                        ShowItem.ShowAirStatus status = (ShowItem.ShowAirStatus)Enum.Parse(typeof(ShowItem.ShowAirStatus), Status);
-                        switch (status)
-                        {
-                            case ShowItem.ShowAirStatus.Aired:
-                                return "All aired";
-                            case ShowItem.ShowAirStatus.NoEpisodesOrSeasons:
-                                return "No Seasons or Episodes in Seasons";
-                            case ShowItem.ShowAirStatus.NoneAired:
-                                return "None aired";
-                            case ShowItem.ShowAirStatus.PartiallyAired:
-                                return "Partially aired";
-                            default:
-                                return Status;
-                        }
-                    }
-                    else
-                    {
-                        Season.SeasonStatus status = (Season.SeasonStatus)Enum.Parse(typeof(Season.SeasonStatus), Status);
-                        switch (status)
-                        {
-                            case Season.SeasonStatus.Aired:
-                                return "All aired";
-                            case Season.SeasonStatus.NoEpisodes:
-                                return "No Episodes";
-                            case Season.SeasonStatus.NoneAired:
-                                return "None aired";
-                            case Season.SeasonStatus.PartiallyAired:
-                                return "Partially aired";
-                            default:
-                                return Status;
-                        }
+                        case ShowItem.ShowAirStatus.Aired:
+                            return "All aired";
+                        case ShowItem.ShowAirStatus.NoEpisodesOrSeasons:
+                            return "No Seasons or Episodes in Seasons";
+                        case ShowItem.ShowAirStatus.NoneAired:
+                            return "None aired";
+                        case ShowItem.ShowAirStatus.PartiallyAired:
+                            return "Partially aired";
+                        default:
+                            return Status;
                     }
                 }
                 else
                 {
-                    return Status;
+                    Season.SeasonStatus status =
+                        (Season.SeasonStatus) Enum.Parse(typeof (Season.SeasonStatus), Status);
+                    switch (status)
+                    {
+                        case Season.SeasonStatus.Aired:
+                            return "All aired";
+                        case Season.SeasonStatus.NoEpisodes:
+                            return "No Episodes";
+                        case Season.SeasonStatus.NoneAired:
+                            return "None aired";
+                        case Season.SeasonStatus.PartiallyAired:
+                            return "Partially aired";
+                        default:
+                            return Status;
+                    }
                 }
             }
         }
@@ -193,11 +183,14 @@ namespace TVRename
         public string ExportMissingXMLTo = "";
         public int ExportRSSMaxDays = 7;
         public int ExportRSSMaxShows = 10;
+        public int ExportRSSDaysPast = 0;
         public bool ExportRenamingXML = false;
         public string ExportRenamingXMLTo = "";
         public bool ExportWTWRSS = false;
         public string ExportWTWRSSTo = "";
-        public FNPRegexList FNPRegexs = DefaultFNPList();
+        public bool ExportWTWXML = false;
+        public string ExportWTWXMLTo = "";
+        public List<FilenameProcessorRE> FNPRegexs = DefaultFNPList();
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
         public bool ForceLowercaseFilenames = false;
@@ -208,6 +201,8 @@ namespace TVRename
         public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
         public bool NFOs = false;
+        public bool pyTivoMeta = false;
+        public bool pyTivoMetaSubFolder = false;
         public CustomName NamingStyle = new CustomName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false; // TODO: Make property of thetvdb?
@@ -217,7 +212,7 @@ namespace TVRename
         public StringList RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
         public bool RenameTxtToSub = false;
-        public ReplacementList Replacements = DefaultReplacementList();
+        public List<Replacement> Replacements = DefaultListRE();
         public string ResumeDatPath = "";
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
@@ -233,6 +228,9 @@ namespace TVRename
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
+        public String SABHostPort;
+        public String SABAPIKey;
+        public bool CheckSABnzbd;
 
         public TVSettings()
         {
@@ -289,6 +287,10 @@ namespace TVRename
                     this.ExportWTWRSS = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportWTWRSSTo")
                     this.ExportWTWRSSTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportWTWXML")
+                    this.ExportWTWXML = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportWTWXMLTo")
+                    this.ExportWTWXMLTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWRecentDays")
                     this.WTWRecentDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "StartupTab")
@@ -317,6 +319,8 @@ namespace TVRename
                     this.ExportRSSMaxDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportRSSMaxShows")
                     this.ExportRSSMaxShows = reader.ReadElementContentAsInt();
+                else if (reader.Name == "ExportRSSDaysPast")
+                    this.ExportRSSDaysPast = reader.ReadElementContentAsInt();
                 else if (reader.Name == "KeepTogether")
                     this.KeepTogether = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LeadingZeroOnSeason")
@@ -331,6 +335,12 @@ namespace TVRename
                     this.AutoSelectShowInMyShows = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SpecialsFolderName")
                     this.SpecialsFolderName = reader.ReadElementContentAsString();
+                else if (reader.Name == "SABAPIKey")
+                    this.SABAPIKey = reader.ReadElementContentAsString();
+                else if (reader.Name == "CheckSABnzbd")
+                    this.CheckSABnzbd = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "SABHostPort")
+                    this.SABHostPort = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportMissingXML")
                     this.ExportMissingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingXMLTo")
@@ -365,6 +375,10 @@ namespace TVRename
                     this.EpImgs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "NFOs")
                     this.NFOs = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "pyTivoMeta")
+                    this.pyTivoMeta = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "pyTivoMetaSubFolder")
+                    this.pyTivoMetaSubFolder = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpg")
                     this.FolderJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpgIs")
@@ -394,7 +408,7 @@ namespace TVRename
                         if (reader.Name == "Regex")
                         {
                             string s = reader.GetAttribute("Enabled");
-                            bool en = s != null ? bool.Parse(s) : true;
+                            bool en = s == null || bool.Parse(s);
 
                             this.FNPRegexs.Add(new FilenameProcessorRE(en, reader.GetAttribute("RE"), bool.Parse(reader.GetAttribute("UseFullPath")), reader.GetAttribute("Notes")));
                             reader.Read();
@@ -555,17 +569,14 @@ namespace TVRename
 
             // ResumeDatPath
             FileInfo f2 = new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
-            if (f2.Exists)
-                this.ResumeDatPath = f2.FullName;
-            else
-                this.ResumeDatPath = "";
+            this.ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
-        public static FNPRegexList DefaultFNPList()
+        public static List<FilenameProcessorRE> DefaultFNPList()
         {
             // Default list of filename processors
 
-            FNPRegexList l = new FNPRegexList {
+            List<FilenameProcessorRE> l = new List<FilenameProcessorRE> {
                                                   new FilenameProcessorRE(true, "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]", false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),
                                                   new FilenameProcessorRE(false, "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]", false, "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."),
                                                   new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]", false, "S02--E03"),
@@ -584,9 +595,9 @@ namespace TVRename
             return l;
         }
 
-        private static ReplacementList DefaultReplacementList()
+        private static List<Replacement> DefaultListRE()
         {
-            return new ReplacementList {
+            return new List<Replacement> {
                                              new Replacement("*", "#", false),
                                              new Replacement("?", "", false),
                                              new Replacement(">", "", false),
@@ -609,7 +620,7 @@ namespace TVRename
 
         public static string[] TabNames()
         {
-            return new string[] { "MyShows", "Scan", "WTW" };
+            return new[] { "MyShows", "Scan", "WTW" };
         }
 
         public static string TabNameForNumber(int n)
@@ -661,6 +672,12 @@ namespace TVRename
             writer.WriteStartElement("ExportWTWRSSTo");
             writer.WriteValue(this.ExportWTWRSSTo);
             writer.WriteEndElement();
+            writer.WriteStartElement("ExportWTWXML");
+            writer.WriteValue(this.ExportWTWXML);
+            writer.WriteEndElement();
+            writer.WriteStartElement("ExportWTWXMLTo");
+            writer.WriteValue(this.ExportWTWXMLTo);
+            writer.WriteEndElement();
             writer.WriteStartElement("WTWRecentDays");
             writer.WriteValue(this.WTWRecentDays);
             writer.WriteEndElement();
@@ -709,6 +726,9 @@ namespace TVRename
             writer.WriteStartElement("ExportRSSMaxShows");
             writer.WriteValue(this.ExportRSSMaxShows);
             writer.WriteEndElement();
+            writer.WriteStartElement("ExportRSSDaysPast");
+            writer.WriteValue(this.ExportRSSDaysPast);
+            writer.WriteEndElement();
             writer.WriteStartElement("KeepTogether");
             writer.WriteValue(this.KeepTogether);
             writer.WriteEndElement();
@@ -754,6 +774,12 @@ namespace TVRename
             writer.WriteStartElement("NFOs");
             writer.WriteValue(this.NFOs);
             writer.WriteEndElement();
+            writer.WriteStartElement("pyTivoMeta");
+            writer.WriteValue(this.pyTivoMeta);
+            writer.WriteEndElement();
+            writer.WriteStartElement("pyTivoMetaSubFolder");
+            writer.WriteValue(this.pyTivoMetaSubFolder);
+            writer.WriteEndElement();
             writer.WriteStartElement("FolderJpg");
             writer.WriteValue(this.FolderJpg);
             writer.WriteEndElement();
@@ -781,7 +807,15 @@ namespace TVRename
             writer.WriteStartElement("MonitorFolders");
             writer.WriteValue(this.MonitorFolders);
             writer.WriteEndElement();
-
+            writer.WriteStartElement("SABAPIKey");
+            writer.WriteValue(this.SABAPIKey);
+            writer.WriteEndElement();
+            writer.WriteStartElement("CheckSABnzbd");
+            writer.WriteValue(this.CheckSABnzbd);
+            writer.WriteEndElement();
+            writer.WriteStartElement("SABHostPort");
+            writer.WriteValue(this.SABHostPort);
+            writer.WriteEndElement();
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)
             {
@@ -813,7 +847,7 @@ namespace TVRename
             if (ShowStatusColors != null)
             {
                 writer.WriteStartElement("ShowStatusTVWColors");
-                foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this.ShowStatusColors)
+                foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this.ShowStatusColors)
                 {
                     writer.WriteStartElement("ShowStatusTVWColor");
                     // TODO ... Write Meta Flags
@@ -868,7 +902,7 @@ namespace TVRename
             if (s == null)
                 return "";
 
-            string url = this.TheSearchers.CurrentSearchURL();
+            String url = String.IsNullOrEmpty(epi.SI.CustomSearchURL) ? this.TheSearchers.CurrentSearchURL() : epi.SI.CustomSearchURL;
             return CustomName.NameForNoExt(epi, url, true);
         }
 
