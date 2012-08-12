@@ -72,7 +72,8 @@ namespace TVRename
 
             S.ExportWTWRSS = this.cbWTWRSS.Checked;
             S.ExportWTWRSSTo = this.txtWTWRSS.Text;
-
+            S.ExportWTWXML = this.cbWTWXML.Checked;
+            S.ExportWTWXMLTo = this.txtWTWXML.Text;
             S.ExportMissingXML = this.cbMissingXML.Checked;
             S.ExportMissingXMLTo = this.txtMissingXML.Text;
             S.ExportMissingCSV = this.cbMissingCSV.Checked;
@@ -89,6 +90,7 @@ namespace TVRename
             S.SetOtherExtensionsString(this.txtOtherExtensions.Text);
             S.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
             S.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
+            S.ExportRSSDaysPast = Convert.ToInt32(this.txtExportRSSDaysPast.Text); 
             S.KeepTogether = this.cbKeepTogether.Checked;
             S.LeadingZeroOnSeason = this.cbLeadingZero.Checked;
             S.ShowInTaskbar = this.chkShowInTaskbar.Checked;
@@ -196,8 +198,11 @@ namespace TVRename
             this.cbWTWRSS.Checked = S.ExportWTWRSS;
             this.txtWTWRSS.Text = S.ExportWTWRSSTo;
             this.txtWTWDays.Text = S.WTWRecentDays.ToString();
+            this.cbWTWXML.Checked = S.ExportWTWXML;
+            this.txtWTWXML.Text = S.ExportWTWXMLTo;
             this.txtExportRSSMaxDays.Text = S.ExportRSSMaxDays.ToString();
             this.txtExportRSSMaxShows.Text = S.ExportRSSMaxShows.ToString();
+            this.txtExportRSSDaysPast.Text = S.ExportRSSDaysPast.ToString();
 
             this.cbMissingXML.Checked = S.ExportMissingXML;
             this.txtMissingXML.Text = S.ExportMissingXMLTo;
@@ -332,6 +337,11 @@ namespace TVRename
             this.Browse(this.txtWTWRSS);
         }
 
+        private void bnBrowseWTWXML_Click(object sender, System.EventArgs e)
+        {
+            this.Browse(this.txtWTWXML);
+        }
+
         private void txtNumberOnlyKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
         {
             // digits only
@@ -383,14 +393,25 @@ namespace TVRename
 
         private void EnableDisable(object sender, System.EventArgs e)
         {
-            bool wtw = this.cbWTWRSS.Checked;
-            this.txtWTWRSS.Enabled = wtw;
-            this.bnBrowseWTWRSS.Enabled = wtw;
+            this.txtWTWRSS.Enabled = this.cbWTWRSS.Checked;
+            this.bnBrowseWTWRSS.Enabled = this.cbWTWRSS.Checked;
+
+            this.txtWTWXML.Enabled = this.cbWTWXML.Checked;
+            this.bnBrowseWTWXML.Enabled = this.cbWTWXML.Checked;
+
+            bool wtw;
+            if ((this.cbWTWRSS.Checked) || (this.cbWTWXML.Checked))
+                wtw = true;
+            else
+                wtw = false;
+
+            this.label4.Enabled = wtw;
             this.label15.Enabled = wtw;
             this.label16.Enabled = wtw;
             this.label17.Enabled = wtw;
             this.txtExportRSSMaxDays.Enabled = wtw;
             this.txtExportRSSMaxShows.Enabled = wtw;
+            this.txtExportRSSDaysPast.Enabled = wtw;
 
             bool fo = this.cbFOXML.Checked;
             this.txtFOXML.Enabled = fo;

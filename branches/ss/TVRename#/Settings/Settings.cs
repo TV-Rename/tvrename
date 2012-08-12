@@ -193,10 +193,13 @@ namespace TVRename
         public string ExportMissingXMLTo = "";
         public int ExportRSSMaxDays = 7;
         public int ExportRSSMaxShows = 10;
+        public int ExportRSSDaysPast = 0;
         public bool ExportRenamingXML = false;
         public string ExportRenamingXMLTo = "";
         public bool ExportWTWRSS = false;
         public string ExportWTWRSSTo = "";
+        public bool ExportWTWXML = false;
+        public string ExportWTWXMLTo = "";
         public FNPRegexList FNPRegexs = DefaultFNPList();
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
@@ -291,6 +294,10 @@ namespace TVRename
                     this.ExportWTWRSS = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportWTWRSSTo")
                     this.ExportWTWRSSTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportWTWXML")
+                    this.ExportWTWXML = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportWTWXMLTo")
+                    this.ExportWTWXMLTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWRecentDays")
                     this.WTWRecentDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "StartupTab")
@@ -319,6 +326,8 @@ namespace TVRename
                     this.ExportRSSMaxDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportRSSMaxShows")
                     this.ExportRSSMaxShows = reader.ReadElementContentAsInt();
+                else if (reader.Name == "ExportRSSDaysPast")
+                    this.ExportRSSDaysPast = reader.ReadElementContentAsInt();
                 else if (reader.Name == "KeepTogether")
                     this.KeepTogether = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LeadingZeroOnSeason")
@@ -664,6 +673,12 @@ namespace TVRename
             writer.WriteStartElement("ExportWTWRSSTo");
             writer.WriteValue(this.ExportWTWRSSTo);
             writer.WriteEndElement();
+            writer.WriteStartElement("ExportWTWXML");
+            writer.WriteValue(this.ExportWTWXML);
+            writer.WriteEndElement();
+            writer.WriteStartElement("ExportWTWXMLTo");
+            writer.WriteValue(this.ExportWTWXMLTo);
+            writer.WriteEndElement();
             writer.WriteStartElement("WTWRecentDays");
             writer.WriteValue(this.WTWRecentDays);
             writer.WriteEndElement();
@@ -711,6 +726,9 @@ namespace TVRename
             writer.WriteEndElement();
             writer.WriteStartElement("ExportRSSMaxShows");
             writer.WriteValue(this.ExportRSSMaxShows);
+            writer.WriteEndElement();
+            writer.WriteStartElement("ExportRSSDaysPast");
+            writer.WriteValue(this.ExportRSSDaysPast);
             writer.WriteEndElement();
             writer.WriteStartElement("KeepTogether");
             writer.WriteValue(this.KeepTogether);

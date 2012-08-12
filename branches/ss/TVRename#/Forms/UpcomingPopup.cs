@@ -52,7 +52,7 @@ namespace TVRename
 
             const int kN = 5;
 
-            List<ProcessedEpisode> next5 = this.mDoc.NextNShows(kN, 9999);
+            List<ProcessedEpisode> next5 = this.mDoc.NextNShows(kN, 0, 9999);
 
             if (next5 != null)
             {

@@ -137,7 +137,7 @@ namespace TVRename
             this.SetGuideHTMLbody("");
             this.mDoc.DoWhenToWatch(true);
             this.FillWhenToWatchList();
-            this.mDoc.WriteUpcomingRSS();
+            this.mDoc.WriteUpcomingRSSandXML();
             this.ShowHideNotificationIcon();
 
             int t = this.mDoc.Settings.StartupTab;
@@ -1176,7 +1176,7 @@ namespace TVRename
             this.FillWhenToWatchList();
             this.mInternalChange--;
 
-            this.mDoc.WriteUpcomingRSS();
+            this.mDoc.WriteUpcomingRSSandXML();
         }
 
         public void refreshWTWTimer_Tick(object sender, System.EventArgs e)
@@ -1188,7 +1188,7 @@ namespace TVRename
         public void UpdateToolstripWTW()
         {
             // update toolstrip text too
-            List<ProcessedEpisode> next1 = this.mDoc.NextNShows(1, 36500);
+            List<ProcessedEpisode> next1 = this.mDoc.NextNShows(1,0, 36500);
 
             this.tsNextShowTxt.Text = "Next airing: ";
             if ((next1 != null) && (next1.Count >= 1))
@@ -2329,9 +2329,12 @@ namespace TVRename
 
         private void ForceRefresh(List<ShowItem> sis)
         {
-            foreach (ShowItem si in sis)
+            if (sis != null)
             {
-                this.mDoc.GetTVDB(false, "").ForgetShow(si.TVDBCode, true);
+                foreach (ShowItem si in sis)
+                {
+                    this.mDoc.GetTVDB(false, "").ForgetShow(si.TVDBCode, true);
+                }
             }
             this.mDoc.DoDownloadsFG();
             this.FillMyShows();
