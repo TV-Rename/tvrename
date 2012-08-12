@@ -1683,154 +1683,74 @@ namespace TVRename
             }
         }
 
-        //            
-        //			void ExportMissingCSV(String ^filename)
-        //			{
-        //			TextWriter ^f = gcnew StreamWriter(filename);
-        //			String ^line;
-        //			line = "Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code";
-        //			f->WriteLine(line);
-        //			for each (MissingEpisode ^me in MissingEpisodes)
-        //			{
-        //			DateTime ^dt = me->GetAirDateDT(true);
-        //			String ^line = "\"" + me->TheSeries->Name + "\"" + "," + 
-        //			me->SeasonNumber + "," + me->EpNum + 
-        //			((me->EpNum != me->EpNum2) ? "-"+me->EpNum2 : "") +
-        //			"," +
-        //			"\"" + me->Name + "\"" + "," +
-        //			((dt != nullptr) ? dt->ToString("G") : "") + "," +
-        //			"\"" + me->WhereItBelongs + "\"" + "," +
-        //			"\"" + FilenameFriendly(Settings->NamingStyle->NameFor(me)) + "\"" + "," +
-        //			me->SeriesID;
-        //            //(NStyle::Style)me->SI->NamingStyle
-        //
-        //			f->WriteLine(line);
-        //			}
-        //			f->Close();
-        //			}
-        //			
-        //            
-        //			void ExportRCXML(String ^name, String ^filename, RCList ^list)
-        //			{
-        //			XmlWriterSettings ^settings = gcnew XmlWriterSettings();
-        //			settings->Indent = true;
-        //			settings->NewLineOnAttributes = true;
-        //			XmlWriter ^writer = XmlWriter::Create(filename, settings);
-        //
-        //			writer->WriteStartDocument();
-        //			writer->WriteStartElement("TVRename");
-        //			writer->WriteStartAttribute("Version");
-        //			writer->WriteValue("2.1");
-        //			writer->WriteEndAttribute(); // version
-        //			writer->WriteStartElement(name);
-        //
-        //
-        //			for each (RCItem ^r in list)
-        //			{
-        //			writer->WriteStartElement("Item");
-        //
-        //			writer->WriteStartElement("Operation");
-        //			writer->WriteValue(r->GetOperationName());
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("FromFolder");
-        //			writer->WriteValue(r->FromFolder);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("FromName");
-        //			writer->WriteValue(r->FromName);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("ToFolder");
-        //			writer->WriteValue(r->ToFolder);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("ToName");
-        //			writer->WriteValue(r->ToName);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("ShowName");
-        //			writer->WriteValue(r->ShowName);
-        //			writer->WriteEndElement();	
-        //			writer->WriteStartElement("Season");
-        //			if (r->TheEpisode != nullptr)
-        //			writer->WriteValue(r->TheEpisode->SeasonNumber);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("EpNum");
-        //			if (r->TheEpisode != nullptr)
-        //			writer->WriteValue(r->TheEpisode->EpNum);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("EpNum2");
-        //			if ((r->TheEpisode != nullptr) && (r->TheEpisode->EpNum != r->TheEpisode->EpNum2) )
-        //			writer->WriteValue(r->TheEpisode->EpNum2);
-        //			writer->WriteEndElement();
-        //
-        //			writer->WriteEndElement(); //Item
-        //			}
-        //
-        //			writer->WriteEndElement(); // "name"
-        //			writer->WriteEndElement(); // tvrename
-        //			writer->WriteEndDocument();
-        //			writer->Close();
-        //			}
-        //			void ExportRenamingXML(String ^filename)
-        //			{
-        //			ExportRCXML("Renaming", filename, RenameList);
-        //			}
-        //			void ExportFOXML(String ^filename)
-        //			{
-        //			ExportRCXML("FindingAndOrganising", filename, CopyMoveList);
-        //			}
-        //			void ExportMissingXML(String ^filename)
-        //			{
-        //			XmlWriterSettings ^settings = gcnew XmlWriterSettings();
-        //			settings->Indent = true;
-        //			settings->NewLineOnAttributes = true;
-        //			XmlWriter ^writer = XmlWriter::Create(filename, settings);
-        //
-        //			writer->WriteStartDocument();
-        //			writer->WriteStartElement("TVRename");
-        //			writer->WriteStartAttribute("Version");
-        //			writer->WriteValue("2.1");
-        //			writer->WriteEndAttribute(); // version
-        //			writer->WriteStartElement("MissingItems");
-        //
-        //			for each (MissingEpisode ^me in MissingEpisodes)
-        //			{
-        //			writer->WriteStartElement("MissingItem");
-        //			writer->WriteStartElement("ShowName");
-        //			writer->WriteValue(me->SI->ShowName);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("Season");
-        //			writer->WriteValue(me->Season);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("Episode");
-        //			String ^epl = me->EpNum.ToString();
-        //			if (me->EpNum != me->EpNum2)
-        //			epl += "-"+me->EpNum2.ToString();
-        //			writer->WriteValue(epl);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("EpisodeName");
-        //			writer->WriteValue(me->Name);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("AirDate");
-        //			DateTime ^dt = me->GetAirDateDT(true);
-        //			if (dt != nullptr)
-        //			writer->WriteValue(dt);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("Folder");
-        //			writer->WriteValue(me->WhereItBelongs);
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("NiceName");
-        //			writer->WriteValue(FilenameFriendly(Settings->NamingStyle->NameFor(me)));
-        //			writer->WriteEndElement();
-        //			writer->WriteStartElement("thetvdbID");
-        //			writer->WriteValue( me->SI->TVDBCode);
-        //			writer->WriteEndElement();
-        //			writer->WriteEndElement(); // MissingItem
-        //			}
-        //
-        //			writer->WriteEndElement(); // MissingItems
-        //			writer->WriteEndElement(); // tvrename
-        //			writer->WriteEndDocument();
-        //			writer->Close();
-        //			}
-        //			
+        public void ExportMissingXML() 
+        {
+            if (this.Settings.ExportMissingXML)
+            {
+                XmlWriterSettings settings = new XmlWriterSettings();
+                //XmlWriterSettings settings = gcnew XmlWriterSettings();
+                settings.Indent = true;
+                settings.NewLineOnAttributes = true;
+                XmlWriter writer = XmlWriter.Create(this.Settings.ExportMissingXMLTo, settings);
+
+                writer.WriteStartDocument();
+                writer.WriteStartElement("TVRename");
+                writer.WriteStartAttribute("Version");
+                writer.WriteValue("2.1");
+                writer.WriteEndAttribute(); // version
+                writer.WriteStartElement("MissingItems");
+
+                foreach (Item Action in this.TheActionList)
+                {
+                    if (Action is ItemMissing)
+                    {
+                        ItemMissing Missing = (ItemMissing)(Action);
+                        writer.WriteStartElement("MissingItem");
+                        writer.WriteStartElement("id");
+                        writer.WriteValue(Missing.Episode.SI.TVDBCode);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("title");
+                        writer.WriteValue(Missing.Episode.TheSeries.Name);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("season");
+
+                        if (Missing.Episode.SeasonNumber.ToString().Length > 1)
+                        {
+                            writer.WriteValue(Missing.Episode.SeasonNumber);
+                        }
+                        else { writer.WriteValue("0" + Missing.Episode.SeasonNumber); }
+
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("episode");
+
+                        if (Missing.Episode.EpNum.ToString().Length > 1)
+                        {
+                            writer.WriteValue(Missing.Episode.EpNum);
+                        }
+                        else { writer.WriteValue("0" + Missing.Episode.EpNum); }
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("episodeName");
+                        writer.WriteValue(Missing.Episode.Name);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("description");
+                        writer.WriteValue(Missing.Episode.Overview);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("pubDate");
+
+                        DateTime? dt = Missing.Episode.GetAirDateDT(true);
+                        if (dt != null)
+                            writer.WriteValue(dt.Value.ToString("F"));
+                        writer.WriteEndElement();
+                        writer.WriteEndElement(); // MissingItem
+                    }
+                }
+                writer.WriteEndElement(); // MissingItems
+                writer.WriteEndElement(); // tvrename
+                writer.WriteEndDocument();
+                writer.Close();
+            }
+        }
+
         public bool GenerateUpcomingRSS(Stream str, List<ProcessedEpisode> elist)
         {
             if (elist == null)

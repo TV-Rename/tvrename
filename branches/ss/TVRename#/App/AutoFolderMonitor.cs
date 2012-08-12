@@ -65,6 +65,7 @@ namespace TVRename
             {
                 mUI.Invoke(mUI.AFMScan);
                 mUI.Invoke(mUI.AFMDoAll);
+                mDoc.ExportMissingXML(); // Export Missing episodes to XML 
             }
             this.StartMonitor();
         }

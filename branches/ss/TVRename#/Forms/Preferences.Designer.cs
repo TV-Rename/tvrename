@@ -103,8 +103,8 @@ namespace TVRename
             this.cbMissingXML = new System.Windows.Forms.CheckBox();
             this.bnBrowseMissingCSV = new System.Windows.Forms.Button();
             this.txtMissingXML = new System.Windows.Forms.TextBox();
-            this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
+            this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.cbMonitorFolder = new System.Windows.Forms.CheckBox();
             this.bnOpenSearchFolder = new System.Windows.Forms.Button();
@@ -155,8 +155,8 @@ namespace TVRename
             this.bnRemoveDefinedColor = new System.Windows.Forms.Button();
             this.btnAddShowStatusColoring = new System.Windows.Forms.Button();
             this.lvwDefinedColors = new System.Windows.Forms.ListView();
-            this.colShowStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colShowStatus = new System.Windows.Forms.ColumnHeader();
+            this.colColor = new System.Windows.Forms.ColumnHeader();
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -352,7 +352,7 @@ namespace TVRename
             // 
             // saveFile
             // 
-            this.saveFile.DefaultExt = "rss";
+            this.saveFile.DefaultExt = "xml";
             this.saveFile.Filter = "RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|All files (*.*)|*.*";
             // 
             // cbTxtToSub
@@ -701,12 +701,15 @@ namespace TVRename
             // 
             this.tabPage3.Controls.Add(this.groupBox5);
             this.tabPage3.Controls.Add(this.groupBox4);
+            this.tabPage3.Controls.Add(this.bnBrowseMissingCSV);
             this.tabPage3.Controls.Add(this.groupBox3);
             this.tabPage3.Controls.Add(this.groupBox2);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Controls.Add(this.txtMissingCSV);
+            this.tabPage3.Controls.Add(this.cbMissingCSV);
+            this.tabPage3.Location = new System.Drawing.Point(4, 40);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(416, 395);
+            this.tabPage3.Size = new System.Drawing.Size(416, 377);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Automatic Export";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -716,7 +719,7 @@ namespace TVRename
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
             this.groupBox5.Controls.Add(this.cbFOXML);
             this.groupBox5.Controls.Add(this.txtFOXML);
-            this.groupBox5.Location = new System.Drawing.Point(6, 271);
+            this.groupBox5.Location = new System.Drawing.Point(6, 313);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(402, 55);
             this.groupBox5.TabIndex = 3;
@@ -757,7 +760,7 @@ namespace TVRename
             this.groupBox4.Controls.Add(this.bnBrowseRenamingXML);
             this.groupBox4.Controls.Add(this.cbRenamingXML);
             this.groupBox4.Controls.Add(this.txtRenamingXML);
-            this.groupBox4.Location = new System.Drawing.Point(6, 208);
+            this.groupBox4.Location = new System.Drawing.Point(6, 250);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(402, 57);
             this.groupBox4.TabIndex = 2;
@@ -797,21 +800,17 @@ namespace TVRename
             // 
             this.groupBox3.Controls.Add(this.bnBrowseMissingXML);
             this.groupBox3.Controls.Add(this.cbMissingXML);
-            this.groupBox3.Controls.Add(this.bnBrowseMissingCSV);
             this.groupBox3.Controls.Add(this.txtMissingXML);
-            this.groupBox3.Controls.Add(this.cbMissingCSV);
-            this.groupBox3.Controls.Add(this.txtMissingCSV);
             this.groupBox3.Location = new System.Drawing.Point(6, 123);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(402, 79);
+            this.groupBox3.Size = new System.Drawing.Size(402, 55);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Missing";
-            this.groupBox3.Visible = false;
             // 
             // bnBrowseMissingXML
             // 
-            this.bnBrowseMissingXML.Location = new System.Drawing.Point(321, 44);
+            this.bnBrowseMissingXML.Location = new System.Drawing.Point(321, 19);
             this.bnBrowseMissingXML.Name = "bnBrowseMissingXML";
             this.bnBrowseMissingXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingXML.TabIndex = 5;
@@ -822,7 +821,7 @@ namespace TVRename
             // cbMissingXML
             // 
             this.cbMissingXML.AutoSize = true;
-            this.cbMissingXML.Location = new System.Drawing.Point(10, 48);
+            this.cbMissingXML.Location = new System.Drawing.Point(10, 23);
             this.cbMissingXML.Name = "cbMissingXML";
             this.cbMissingXML.Size = new System.Drawing.Size(48, 17);
             this.cbMissingXML.TabIndex = 3;
@@ -832,38 +831,41 @@ namespace TVRename
             // 
             // bnBrowseMissingCSV
             // 
-            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(321, 14);
+            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(327, 226);
             this.bnBrowseMissingCSV.Name = "bnBrowseMissingCSV";
             this.bnBrowseMissingCSV.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingCSV.TabIndex = 2;
             this.bnBrowseMissingCSV.Text = "Browse...";
             this.bnBrowseMissingCSV.UseVisualStyleBackColor = true;
+            this.bnBrowseMissingCSV.Visible = false;
             this.bnBrowseMissingCSV.Click += new System.EventHandler(this.bnBrowseMissingCSV_Click);
             // 
             // txtMissingXML
             // 
-            this.txtMissingXML.Location = new System.Drawing.Point(64, 46);
+            this.txtMissingXML.Location = new System.Drawing.Point(64, 21);
             this.txtMissingXML.Name = "txtMissingXML";
             this.txtMissingXML.Size = new System.Drawing.Size(251, 20);
             this.txtMissingXML.TabIndex = 4;
             // 
+            // txtMissingCSV
+            // 
+            this.txtMissingCSV.Location = new System.Drawing.Point(70, 229);
+            this.txtMissingCSV.Name = "txtMissingCSV";
+            this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
+            this.txtMissingCSV.TabIndex = 1;
+            this.txtMissingCSV.Visible = false;
+            // 
             // cbMissingCSV
             // 
             this.cbMissingCSV.AutoSize = true;
-            this.cbMissingCSV.Location = new System.Drawing.Point(10, 19);
+            this.cbMissingCSV.Location = new System.Drawing.Point(16, 231);
             this.cbMissingCSV.Name = "cbMissingCSV";
             this.cbMissingCSV.Size = new System.Drawing.Size(47, 17);
             this.cbMissingCSV.TabIndex = 0;
             this.cbMissingCSV.Text = "CSV";
             this.cbMissingCSV.UseVisualStyleBackColor = true;
+            this.cbMissingCSV.Visible = false;
             this.cbMissingCSV.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            // 
-            // txtMissingCSV
-            // 
-            this.txtMissingCSV.Location = new System.Drawing.Point(64, 17);
-            this.txtMissingCSV.Name = "txtMissingCSV";
-            this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
-            this.txtMissingCSV.TabIndex = 1;
             // 
             // tabPage4
             // 
@@ -873,9 +875,9 @@ namespace TVRename
             this.tabPage4.Controls.Add(this.bnAddSearchFolder);
             this.tabPage4.Controls.Add(this.lbSearchFolders);
             this.tabPage4.Controls.Add(this.label23);
-            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Location = new System.Drawing.Point(4, 40);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(416, 395);
+            this.tabPage4.Size = new System.Drawing.Size(416, 377);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Search Folders";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -963,10 +965,10 @@ namespace TVRename
             this.tpScanOptions.Controls.Add(this.cbLeaveOriginals);
             this.tpScanOptions.Controls.Add(this.cbCheckuTorrent);
             this.tpScanOptions.Controls.Add(this.cbSearchLocally);
-            this.tpScanOptions.Location = new System.Drawing.Point(4, 22);
+            this.tpScanOptions.Location = new System.Drawing.Point(4, 40);
             this.tpScanOptions.Name = "tpScanOptions";
             this.tpScanOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScanOptions.Size = new System.Drawing.Size(416, 395);
+            this.tpScanOptions.Size = new System.Drawing.Size(416, 377);
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
@@ -1471,6 +1473,7 @@ namespace TVRename
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
