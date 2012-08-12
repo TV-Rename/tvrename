@@ -2756,7 +2756,7 @@ namespace TVRename
             int downloadCount = 0;
             int nfoCount = 0;
             int metaCount = 0;
-            int utCount = 0;
+            int dlCount = 0;
 
             foreach (Item Action in this.mDoc.TheActionList)
             {
@@ -2789,8 +2789,8 @@ namespace TVRename
                     nfoCount++;
                 else if (Action is ActionPyTivoMeta)
                     metaCount++;
-                else if (Action is ItemuTorrenting)
-                    utCount++;
+                else if (Action is ItemuTorrenting || Action is ItemSABnzbd)
+                    dlCount++;
             }
             this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
             this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
@@ -2800,7 +2800,7 @@ namespace TVRename
             this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
             this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
             this.lvAction.Groups[7].Header = "pyTiovo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
-            this.lvAction.Groups[8].Header = "Downloading In µTorrent (" + utCount + " " + itemitems(utCount) + ")";
+            this.lvAction.Groups[8].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
 
             this.InternalCheckChange = false;
 
@@ -2893,7 +2893,7 @@ namespace TVRename
             {
                 this.showRightClickMenu.Items.Add(new ToolStripSeparator());
 
-                tsi = new ToolStripMenuItem("BT Search");
+                tsi = new ToolStripMenuItem("Search");
                 tsi.Tag = (int)RightClickCommands.kBTSearchFor;
                 this.showRightClickMenu.Items.Add(tsi);
 
@@ -3020,7 +3020,6 @@ namespace TVRename
                 this.cbMeta.CheckState = CheckState.Unchecked;
             else
                 this.cbMeta.CheckState = (chk.PyTivoMeta.Count == all.PyTivoMeta.Count) ? CheckState.Checked : CheckState.Indeterminate;
-
 
             int total1 = all.Rename.Count + all.CopyMove.Count + all.RSS.Count + all.Download.Count + all.NFO.Count + all.PyTivoMeta.Count;
             int total2 = chk.Rename.Count + chk.CopyMove.Count + chk.RSS.Count + chk.Download.Count + chk.NFO.Count + chk.PyTivoMeta.Count;
@@ -3172,7 +3171,7 @@ namespace TVRename
             if ((e.Index < 0) || (e.Index > this.lvAction.Items.Count))
                 return;
             Item Action = (Item)(this.lvAction.Items[e.Index].Tag);
-            if ((Action != null) && ((Action is ItemMissing) || (Action is ItemuTorrenting)))
+            if ((Action != null) && ((Action is ItemMissing) || (Action is ItemuTorrenting) || (Action is ItemSABnzbd)))
                 e.NewValue = CheckState.Unchecked;
         }
 

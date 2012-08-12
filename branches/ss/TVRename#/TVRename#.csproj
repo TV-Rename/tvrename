@@ -160,6 +160,7 @@
       <DependentUpon>uTorrent.cs</DependentUpon>
     </Compile>
     <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
+    <Compile Include="ItemsAndActions\ItemSABnzbd.cs" />
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
@@ -371,6 +372,7 @@
     </Compile>
     <Compile Include="Settings\ShowsAndEpisodes.cs" />
     <Compile Include="Settings\ShowRule.cs" />
+    <Compile Include="Utility\SABnzbdXML.cs" />
     <Compile Include="Utility\Sorters.cs" />
     <Compile Include="Settings\Statistics.cs" />
     <Compile Include="Forms\StatsWindow.cs">

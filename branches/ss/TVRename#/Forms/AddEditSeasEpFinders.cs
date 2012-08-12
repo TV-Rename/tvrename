@@ -24,12 +24,12 @@ namespace TVRename
     /// </summary>
     public partial class AddEditSeasEpFinders : Form
     {
-        private FNPRegexList Rex;
+        private List<FilenameProcessorRE> Rex;
         private List<ShowItem> SIL;
 
         private TVSettings TheSettings;
 
-        public AddEditSeasEpFinders(FNPRegexList rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder, TVSettings s)
+        public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder, TVSettings s)
         {
             this.Rex = rex;
             this.SIL = sil;
@@ -132,7 +132,7 @@ namespace TVRename
                 this.Grid1[r, c].AddController(changed);
         }
 
-        public void FillGrid(FNPRegexList list)
+        public void FillGrid(List<FilenameProcessorRE> list)
         {
             while (this.Grid1.Rows.Count > 1) // leave header row
                 this.Grid1.Rows.Remove(1);
@@ -253,7 +253,7 @@ namespace TVRename
 
             this.lvPreview.Enabled = true;
 
-            FNPRegexList rel = new FNPRegexList();
+            List<FilenameProcessorRE> rel = new List<FilenameProcessorRE>();
 
             if (this.chkTestAll.Checked)
             {

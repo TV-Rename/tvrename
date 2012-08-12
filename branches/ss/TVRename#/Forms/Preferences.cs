@@ -104,6 +104,9 @@ namespace TVRename
 
             S.uTorrentPath = this.txtRSSuTorrentPath.Text;
             S.ResumeDatPath = this.txtUTResumeDatPath.Text;
+            S.SABHostPort = this.txtSABHostPort.Text;
+            S.SABAPIKey = this.txtSABAPIKey.Text;
+            S.CheckSABnzbd = this.cbCheckSABnzbd.Checked;
 
             S.SearchRSS = this.cbSearchRSS.Checked;
             S.EpImgs = this.cbEpImgs.Checked;
@@ -233,6 +236,9 @@ namespace TVRename
             this.cbIgnoreSamples.Checked = S.IgnoreSamples;
             this.txtRSSuTorrentPath.Text = S.uTorrentPath;
             this.txtUTResumeDatPath.Text = S.ResumeDatPath;
+            this.txtSABHostPort.Text = S.SABHostPort;
+            this.txtSABAPIKey.Text = S.SABAPIKey;
+            this.cbCheckSABnzbd.Checked = S.CheckSABnzbd;
 
             this.txtParallelDownloads.Text = S.ParallelDownloads.ToString();
 

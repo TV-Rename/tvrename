@@ -10,6 +10,7 @@
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
 using System.Collections.Generic;
+using System.Net;
 
 namespace TVRename
 {
@@ -1949,7 +1950,119 @@ namespace TVRename
             return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showname) : showname) + "\\b", RegexOptions.IgnoreCase).Success;
         }
 
-        public void CheckAgainstuTorrent(SetProgressDelegate prog)
+        public void CheckAgainstSABnzbd(SetProgressDelegate prog, int startpct, int totPct)
+        {
+            if (String.IsNullOrEmpty(Settings.SABAPIKey) || String.IsNullOrEmpty(Settings.SABHostPort))
+            {
+                prog.Invoke(startpct + totPct);
+                return;
+            }
+
+            // get list of files being downloaded by SABnzbd
+
+            // Something like:
+            // http://localhost:8080/sabnzbd/api?mode=queue&apikey=xxx&start=0&limit=8888&output=xml
+            String theURL = "http://" + Settings.SABHostPort +
+                            "/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey=" + Settings.SABAPIKey;
+
+            WebClient wc = new WebClient();
+            byte[] r = null;
+            try
+            {
+                r = wc.DownloadData(theURL);
+            }
+            catch (WebException)
+            {
+            }
+           
+            if (r == null)
+            {
+                prog.Invoke(startpct + totPct);
+                return;
+            }
+
+            try
+            {
+                result res = result.Deserialize(r);
+                if (res.status == "False")
+                {
+                    MessageBox.Show(res.error, "SABnzbd Queue Check", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    prog.Invoke(startpct + totPct);
+                    return;
+                }
+            }
+            catch
+            {
+            }
+
+            queue sq = null;
+            try
+            {
+                sq = queue.Deserialize(r);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error processing data from SABnzbd", "SABnzbd Queue Check", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                prog.Invoke(startpct + totPct);
+                return;
+            }
+
+            ItemList newList = new ItemList();
+            ItemList toRemove = new ItemList();
+            int c = this.TheActionList.Count + 2;
+            int n = 1;
+
+            foreach (Item Action1 in this.TheActionList)
+            {
+                if (this.ActionCancel)
+                    return;
+
+                n++;
+                prog.Invoke(startpct + totPct * n / c);
+
+                if (!(Action1 is ItemMissing))
+                    continue;
+
+                ItemMissing Action = (ItemMissing) (Action1);
+
+                string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName);
+
+                foreach (queueSlotsSlot te  in sq.slots)
+                {
+                    //foreach (queueSlotsSlot te in qs)
+                    {
+                        FileInfo file = new FileInfo(te.filename);
+                        //if (!this.Settings.UsefulExtension(file.Extension, false)) // not a usefile file extension
+                        //    continue;
+
+                        if (this.SimplifyAndCheckFilename(file.FullName, showname, true, false))
+                            // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
+                        {
+                            int seasF;
+                            int epF;
+                            if (this.FindSeasEp(file, out seasF, out epF, Action.Episode.SI) &&
+                                (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
+                            {
+                                toRemove.Add(Action1);
+                                newList.Add(new ItemSABnzbd(te, Action.Episode, Action.TheFileNoExt));
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            foreach (Item i in toRemove)
+                this.TheActionList.Remove(i);
+
+            foreach (Item Action in newList)
+                this.TheActionList.Add(Action);
+
+            prog.Invoke(startpct+totPct);
+        }
+
+
+        public void CheckAgainstuTorrent(SetProgressDelegate prog, int startpct, int totPct)
         {
             // get list of files being downloaded by uTorrent
             string resDatFile = this.Settings.ResumeDatPath;
@@ -1966,7 +2079,7 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             int c = this.TheActionList.Count + 2;
             int n = 1;
-            prog.Invoke(100 * n / c);
+            prog.Invoke(startpct + totPct * n / c);
             foreach (Item Action1 in this.TheActionList)
             {
                 if (this.ActionCancel)
@@ -1988,8 +2101,6 @@ namespace TVRename
                     if (!this.Settings.UsefulExtension(file.Extension, false)) // not a usefile file extension
                         continue;
 
-                    // String ^simplifiedfname = Helpers.SimplifyName(file->FullName);
-
                     if (this.SimplifyAndCheckFilename(file.FullName, showname, true, false)) // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
                     {
                         int seasF;
@@ -2010,7 +2121,7 @@ namespace TVRename
             foreach (Item Action in newList)
                 this.TheActionList.Add(Action);
 
-            prog.Invoke(100);
+            prog.Invoke(startpct + totPct);
         }
 
         public void RSSSearch(SetProgressDelegate prog)
@@ -2267,7 +2378,7 @@ namespace TVRename
             {
                 this.ScanProgDlg = new ScanProgress(this.Settings.RenameCheck || this.Settings.MissingCheck,
                                                     this.Settings.MissingCheck && this.Settings.SearchLocally,
-                                                    this.Settings.MissingCheck && this.Settings.CheckuTorrent,
+                                                    this.Settings.MissingCheck && (this.Settings.CheckuTorrent || this.Settings.CheckSABnzbd),
                                                     this.Settings.MissingCheck && this.Settings.SearchRSS);
             }
             else
@@ -2793,9 +2904,18 @@ namespace TVRename
                 if (this.ActionCancel)
                     return;
 
-                if (this.Settings.CheckuTorrent && this.ListHasMissingItems(this.TheActionList))
+
+                bool ut = this.Settings.CheckuTorrent;
+                bool sab = this.Settings.CheckSABnzbd;
+                if (ut && this.ListHasMissingItems(this.TheActionList))
                 {
-                    this.CheckAgainstuTorrent(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.uTorrentProg);
+                    this.CheckAgainstuTorrent(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.DownloadingProg, 0, sab ? 50:100);
+                    this.RemoveIgnored();
+                }
+
+                if (sab && this.ListHasMissingItems(this.TheActionList))
+                {
+                    this.CheckAgainstSABnzbd(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.DownloadingProg, ut?50:0, ut?50:100);
                     this.RemoveIgnored();
                 }
 
@@ -2934,7 +3054,7 @@ namespace TVRename
             return TVDoc.FindSeasEp(fi, out seas, out ep, si, this.Settings.FNPRegexs, this.Settings.LookForDateInFilename);
         }
 
-        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si, FNPRegexList rexps, bool doDateCheck)
+        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si, List<FilenameProcessorRE> rexps, bool doDateCheck)
         {
             if (fi == null)
             {
@@ -2953,7 +3073,7 @@ namespace TVRename
             return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, si, rexps);
         }
 
-        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, ShowItem si, FNPRegexList rexps)
+        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, ShowItem si, List<FilenameProcessorRE> rexps)
         {
             string showNameHint = (si != null) ? si.ShowName : "";
                 

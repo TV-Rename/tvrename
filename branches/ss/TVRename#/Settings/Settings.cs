@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -50,19 +51,11 @@ namespace TVRename
         }
     }
 
-    public class ReplacementList : System.Collections.Generic.List<Replacement>
-    {
-    }
-
-    public class FNPRegexList : System.Collections.Generic.List<FilenameProcessorRE>
-    {
-    }
-
-    public class ShowStatusColoringTypeList : System.Collections.Generic.Dictionary<ShowStatusColoringType, System.Drawing.Color>
+    public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, System.Drawing.Color>
     {
         public bool IsShowStatusDefined(string showStatus)
         {
-            foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+            foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
             {
                 if (!e.Key.IsMetaType && e.Key.IsShowLevel && e.Key.Status.Equals(showStatus, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -74,7 +67,7 @@ namespace TVRename
 
         public System.Drawing.Color GetEntry(bool meta, bool showLevel, string status)
         {
-            foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+            foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
             {
                 if (e.Key.IsMetaType == meta && e.Key.IsShowLevel == showLevel && e.Key.Status.Equals(status, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -96,6 +89,7 @@ namespace TVRename
         public bool IsMetaType;
         public bool IsShowLevel;
         public string Status;
+
         public string Text
         {
             get
@@ -104,65 +98,61 @@ namespace TVRename
                 {
                     return string.Format("Show Seasons Status: {0}", StatusTextForDisplay);
                 }
-                else if (!IsShowLevel && IsMetaType)
+                if (!IsShowLevel && IsMetaType)
                 {
                     return string.Format("Season Status: {0}", StatusTextForDisplay);
                 }
-                else if (IsShowLevel && !IsMetaType)
+                if (IsShowLevel && !IsMetaType)
                 {
                     return string.Format("Show Status: {0}", StatusTextForDisplay);
                 }
-                else
-                {
-                    return "";
-                }
+                return "";
             }
         }
 
-        string StatusTextForDisplay
+        private string StatusTextForDisplay
         {
             get
             {
-                if (IsMetaType)
+                if (!IsMetaType)
                 {
-                    if (IsShowLevel)
+                    return Status;
+                }
+                if (IsShowLevel)
+                {
+                    ShowItem.ShowAirStatus status =
+                        (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), Status);
+                    switch (status)
                     {
-                        ShowItem.ShowAirStatus status = (ShowItem.ShowAirStatus)Enum.Parse(typeof(ShowItem.ShowAirStatus), Status);
-                        switch (status)
-                        {
-                            case ShowItem.ShowAirStatus.Aired:
-                                return "All aired";
-                            case ShowItem.ShowAirStatus.NoEpisodesOrSeasons:
-                                return "No Seasons or Episodes in Seasons";
-                            case ShowItem.ShowAirStatus.NoneAired:
-                                return "None aired";
-                            case ShowItem.ShowAirStatus.PartiallyAired:
-                                return "Partially aired";
-                            default:
-                                return Status;
-                        }
-                    }
-                    else
-                    {
-                        Season.SeasonStatus status = (Season.SeasonStatus)Enum.Parse(typeof(Season.SeasonStatus), Status);
-                        switch (status)
-                        {
-                            case Season.SeasonStatus.Aired:
-                                return "All aired";
-                            case Season.SeasonStatus.NoEpisodes:
-                                return "No Episodes";
-                            case Season.SeasonStatus.NoneAired:
-                                return "None aired";
-                            case Season.SeasonStatus.PartiallyAired:
-                                return "Partially aired";
-                            default:
-                                return Status;
-                        }
+                        case ShowItem.ShowAirStatus.Aired:
+                            return "All aired";
+                        case ShowItem.ShowAirStatus.NoEpisodesOrSeasons:
+                            return "No Seasons or Episodes in Seasons";
+                        case ShowItem.ShowAirStatus.NoneAired:
+                            return "None aired";
+                        case ShowItem.ShowAirStatus.PartiallyAired:
+                            return "Partially aired";
+                        default:
+                            return Status;
                     }
                 }
                 else
                 {
-                    return Status;
+                    Season.SeasonStatus status =
+                        (Season.SeasonStatus) Enum.Parse(typeof (Season.SeasonStatus), Status);
+                    switch (status)
+                    {
+                        case Season.SeasonStatus.Aired:
+                            return "All aired";
+                        case Season.SeasonStatus.NoEpisodes:
+                            return "No Episodes";
+                        case Season.SeasonStatus.NoneAired:
+                            return "None aired";
+                        case Season.SeasonStatus.PartiallyAired:
+                            return "Partially aired";
+                        default:
+                            return Status;
+                    }
                 }
             }
         }
@@ -200,7 +190,7 @@ namespace TVRename
         public string ExportWTWRSSTo = "";
         public bool ExportWTWXML = false;
         public string ExportWTWXMLTo = "";
-        public FNPRegexList FNPRegexs = DefaultFNPList();
+        public List<FilenameProcessorRE> FNPRegexs = DefaultFNPList();
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
         public bool ForceLowercaseFilenames = false;
@@ -222,7 +212,7 @@ namespace TVRename
         public StringList RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
         public bool RenameTxtToSub = false;
-        public ReplacementList Replacements = DefaultReplacementList();
+        public List<Replacement> Replacements = DefaultListRE();
         public string ResumeDatPath = "";
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
@@ -238,6 +228,9 @@ namespace TVRename
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
+        public String SABHostPort;
+        public String SABAPIKey;
+        public bool CheckSABnzbd;
 
         public TVSettings()
         {
@@ -342,6 +335,12 @@ namespace TVRename
                     this.AutoSelectShowInMyShows = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SpecialsFolderName")
                     this.SpecialsFolderName = reader.ReadElementContentAsString();
+                else if (reader.Name == "SABAPIKey")
+                    this.SABAPIKey = reader.ReadElementContentAsString();
+                else if (reader.Name == "CheckSABnzbd")
+                    this.CheckSABnzbd = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "SABHostPort")
+                    this.SABHostPort = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportMissingXML")
                     this.ExportMissingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingXMLTo")
@@ -573,11 +572,11 @@ namespace TVRename
             this.ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
-        public static FNPRegexList DefaultFNPList()
+        public static List<FilenameProcessorRE> DefaultFNPList()
         {
             // Default list of filename processors
 
-            FNPRegexList l = new FNPRegexList {
+            List<FilenameProcessorRE> l = new List<FilenameProcessorRE> {
                                                   new FilenameProcessorRE(true, "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]", false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),
                                                   new FilenameProcessorRE(false, "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]", false, "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."),
                                                   new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]", false, "S02--E03"),
@@ -596,9 +595,9 @@ namespace TVRename
             return l;
         }
 
-        private static ReplacementList DefaultReplacementList()
+        private static List<Replacement> DefaultListRE()
         {
-            return new ReplacementList {
+            return new List<Replacement> {
                                              new Replacement("*", "#", false),
                                              new Replacement("?", "", false),
                                              new Replacement(">", "", false),
@@ -621,7 +620,7 @@ namespace TVRename
 
         public static string[] TabNames()
         {
-            return new string[] { "MyShows", "Scan", "WTW" };
+            return new[] { "MyShows", "Scan", "WTW" };
         }
 
         public static string TabNameForNumber(int n)
@@ -808,7 +807,15 @@ namespace TVRename
             writer.WriteStartElement("MonitorFolders");
             writer.WriteValue(this.MonitorFolders);
             writer.WriteEndElement();
-
+            writer.WriteStartElement("SABAPIKey");
+            writer.WriteValue(this.SABAPIKey);
+            writer.WriteEndElement();
+            writer.WriteStartElement("CheckSABnzbd");
+            writer.WriteValue(this.CheckSABnzbd);
+            writer.WriteEndElement();
+            writer.WriteStartElement("SABHostPort");
+            writer.WriteValue(this.SABHostPort);
+            writer.WriteEndElement();
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)
             {
@@ -840,7 +847,7 @@ namespace TVRename
             if (ShowStatusColors != null)
             {
                 writer.WriteStartElement("ShowStatusTVWColors");
-                foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this.ShowStatusColors)
+                foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this.ShowStatusColors)
                 {
                     writer.WriteStartElement("ShowStatusTVWColor");
                     // TODO ... Write Meta Flags

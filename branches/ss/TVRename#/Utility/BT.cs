@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -984,7 +985,7 @@ namespace TVRename
         public BTFile ResumeDat; // resume file, if we're using it
         public string ResumeDatPath;
 
-        public FNPRegexList Rexps; // used by MatchMissing
+        public List<FilenameProcessorRE> Rexps; // used by MatchMissing
         public bool SearchSubFolders;
         public bool SetPrios;
         public bool TestMode;
@@ -1252,7 +1253,7 @@ namespace TVRename
 
             foreach (Item Action1 in this.MissingList)
             {
-                if ((!(Action1 is ItemMissing)) && (!(Action1 is ItemuTorrenting)))
+                if ((!(Action1 is ItemMissing)) && (!(Action1 is ItemuTorrenting)) && (!(Action1 is ItemSABnzbd)))
                     continue;
 
                 ProcessedEpisode m = null;
@@ -1267,6 +1268,12 @@ namespace TVRename
                 else if (Action1 is ItemuTorrenting)
                 {
                     ItemuTorrenting Action = (ItemuTorrenting) (Action1);
+                    m = Action.Episode;
+                    name = Action.DesiredLocationNoExt;
+                }
+                else if (Action1 is ItemSABnzbd)
+                {
+                    ItemSABnzbd Action = (ItemSABnzbd)(Action1);
                     m = Action.Episode;
                     name = Action.DesiredLocationNoExt;
                 }
@@ -1372,7 +1379,7 @@ namespace TVRename
         }
 
         public bool DoWork(StringList Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, 
-                           bool searchSubFolders, ItemList missingList, FNPRegexList rexps, CommandLineArgs args)
+                           bool searchSubFolders, ItemList missingList, List<FilenameProcessorRE> rexps, CommandLineArgs args)
         {
             this.Rexps = rexps;
 

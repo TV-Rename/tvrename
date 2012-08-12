@@ -39,19 +39,19 @@ namespace TVRename
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
-            System.Windows.Forms.ListViewGroup listViewGroup14 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup15 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup16 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup17 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup18 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup19 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup20 = new System.Windows.Forms.ListViewGroup("NFO File", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup21 = new System.Windows.Forms.ListViewGroup("pyTivo Meta File", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup22 = new System.Windows.Forms.ListViewGroup("Downloading In µTorrent", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("NFO File", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("pyTivo Meta File", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Downloading", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup13 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -112,6 +112,7 @@ namespace TVRename
             this.bnActionBTSearch = new System.Windows.Forms.Button();
             this.ilIcons = new System.Windows.Forms.ImageList(this.components);
             this.bnActionAction = new System.Windows.Forms.Button();
+            this.bnActionRecentCheck = new System.Windows.Forms.Button();
             this.bnActionCheck = new System.Windows.Forms.Button();
             this.tbWTW = new System.Windows.Forms.TabPage();
             this.bnWTWChooseSite = new System.Windows.Forms.Button();
@@ -143,7 +144,6 @@ namespace TVRename
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
-            this.bnActionRecentCheck = new System.Windows.Forms.Button();
             this.lvAction = new TVRename.MyListView();
             this.columnHeader48 = new System.Windows.Forms.ColumnHeader();
             this.columnHeader49 = new System.Windows.Forms.ColumnHeader();
@@ -847,6 +847,7 @@ namespace TVRename
             this.ilIcons.Images.SetKeyName(5, "download.bmp");
             this.ilIcons.Images.SetKeyName(6, "RSS.bmp");
             this.ilIcons.Images.SetKeyName(7, "NFO.bmp");
+            this.ilIcons.Images.SetKeyName(8, "sab.png");
             // 
             // bnActionAction
             // 
@@ -860,6 +861,19 @@ namespace TVRename
             this.bnActionAction.Text = "&Do Checked";
             this.bnActionAction.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.bnActionAction.Click += new System.EventHandler(this.bnActionAction_Click);
+            // 
+            // bnActionRecentCheck
+            // 
+            this.bnActionRecentCheck.ImageKey = "Zoom.bmp";
+            this.bnActionRecentCheck.ImageList = this.imageList1;
+            this.bnActionRecentCheck.Location = new System.Drawing.Point(89, 6);
+            this.bnActionRecentCheck.Name = "bnActionRecentCheck";
+            this.bnActionRecentCheck.Size = new System.Drawing.Size(75, 25);
+            this.bnActionRecentCheck.TabIndex = 0;
+            this.bnActionRecentCheck.Text = "R&ecent";
+            this.bnActionRecentCheck.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.bnActionRecentCheck.UseVisualStyleBackColor = true;
+            this.bnActionRecentCheck.Click += new System.EventHandler(this.bnActionRecentCheck_Click);
             // 
             // bnActionCheck
             // 
@@ -1106,19 +1120,6 @@ namespace TVRename
             this.quickTimer.Interval = 1;
             this.quickTimer.Tick += new System.EventHandler(this.quickTimer_Tick);
             // 
-            // bnActionRecentCheck
-            // 
-            this.bnActionRecentCheck.ImageKey = "Zoom.bmp";
-            this.bnActionRecentCheck.ImageList = this.imageList1;
-            this.bnActionRecentCheck.Location = new System.Drawing.Point(89, 6);
-            this.bnActionRecentCheck.Name = "bnActionRecentCheck";
-            this.bnActionRecentCheck.Size = new System.Drawing.Size(75, 25);
-            this.bnActionRecentCheck.TabIndex = 0;
-            this.bnActionRecentCheck.Text = "R&ecent";
-            this.bnActionRecentCheck.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.bnActionRecentCheck.UseVisualStyleBackColor = true;
-            this.bnActionRecentCheck.Click += new System.EventHandler(this.bnActionRecentCheck_Click);
-            // 
             // lvAction
             // 
             this.lvAction.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -1136,34 +1137,34 @@ namespace TVRename
             this.columnHeader56,
             this.columnHeader58});
             this.lvAction.FullRowSelect = true;
-            listViewGroup14.Header = "Missing";
-            listViewGroup14.Name = "lvgActionMissing";
-            listViewGroup15.Header = "Rename";
-            listViewGroup15.Name = "lvgActionRename";
-            listViewGroup16.Header = "Copy";
-            listViewGroup16.Name = "lvgActionCopy";
-            listViewGroup17.Header = "Move";
-            listViewGroup17.Name = "lvgActionMove";
-            listViewGroup18.Header = "Download RSS";
-            listViewGroup18.Name = "lvgActionDownloadRSS";
-            listViewGroup19.Header = "Download";
-            listViewGroup19.Name = "lvgActionDownload";
-            listViewGroup20.Header = "NFO File";
-            listViewGroup20.Name = "lvgActionNFO";
-            listViewGroup21.Header = "pyTivo Meta File";
-            listViewGroup21.Name = "lvgActionMeta";
-            listViewGroup22.Header = "Downloading In µTorrent";
-            listViewGroup22.Name = "lngInuTorrent";
+            listViewGroup1.Header = "Missing";
+            listViewGroup1.Name = "lvgActionMissing";
+            listViewGroup2.Header = "Rename";
+            listViewGroup2.Name = "lvgActionRename";
+            listViewGroup3.Header = "Copy";
+            listViewGroup3.Name = "lvgActionCopy";
+            listViewGroup4.Header = "Move";
+            listViewGroup4.Name = "lvgActionMove";
+            listViewGroup5.Header = "Download RSS";
+            listViewGroup5.Name = "lvgActionDownloadRSS";
+            listViewGroup6.Header = "Download";
+            listViewGroup6.Name = "lvgActionDownload";
+            listViewGroup7.Header = "NFO File";
+            listViewGroup7.Name = "lvgActionNFO";
+            listViewGroup8.Header = "pyTivo Meta File";
+            listViewGroup8.Name = "lvgActionMeta";
+            listViewGroup9.Header = "Downloading";
+            listViewGroup9.Name = "lngDownloading";
             this.lvAction.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup14,
-            listViewGroup15,
-            listViewGroup16,
-            listViewGroup17,
-            listViewGroup18,
-            listViewGroup19,
-            listViewGroup20,
-            listViewGroup21,
-            listViewGroup22});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4,
+            listViewGroup5,
+            listViewGroup6,
+            listViewGroup7,
+            listViewGroup8,
+            listViewGroup9});
             this.lvAction.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvAction.HideSelection = false;
             this.lvAction.Location = new System.Drawing.Point(0, 35);
@@ -1242,21 +1243,21 @@ namespace TVRename
             this.columnHeader34,
             this.columnHeader35});
             this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup1.Header = "Recently Aired";
-            listViewGroup1.Name = "justPassed";
-            listViewGroup2.Header = "Next 7 Days";
-            listViewGroup2.Name = "next7days";
-            listViewGroup2.Tag = "1";
-            listViewGroup3.Header = "Later";
-            listViewGroup3.Name = "later";
-            listViewGroup3.Tag = "2";
-            listViewGroup4.Header = "Future Episodes";
-            listViewGroup4.Name = "futureEps";
+            listViewGroup10.Header = "Recently Aired";
+            listViewGroup10.Name = "justPassed";
+            listViewGroup11.Header = "Next 7 Days";
+            listViewGroup11.Name = "next7days";
+            listViewGroup11.Tag = "1";
+            listViewGroup12.Header = "Later";
+            listViewGroup12.Name = "later";
+            listViewGroup12.Tag = "2";
+            listViewGroup13.Header = "Future Episodes";
+            listViewGroup13.Name = "futureEps";
             this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4});
+            listViewGroup10,
+            listViewGroup11,
+            listViewGroup12,
+            listViewGroup13});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
