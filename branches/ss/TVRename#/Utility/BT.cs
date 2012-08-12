@@ -296,7 +296,7 @@ namespace TVRename
         public override void Write(Stream sw)
         {
             sw.WriteByte((byte) 'd');
-            foreach (BTItem i in this.Items)
+            foreach (BTDictionaryItem i in this.Items)
                 i.Write(sw);
             sw.WriteByte((byte) 'e');
         }
@@ -493,13 +493,6 @@ namespace TVRename
 
     public class BEncodeLoader
     {
-        private CommandLineArgs Args;
-        
-        public BEncodeLoader(CommandLineArgs args)
-        {
-            Args = args;
-        }
-
         public BTItem ReadString(Stream sr, Int64 length)
         {
             BinaryReader br = new BinaryReader(sr);
@@ -547,9 +540,11 @@ namespace TVRename
                     return e;
                 }
 
-                BTDictionaryItem di = new BTDictionaryItem();
-                di.Key = ((BTString) next).AsString();
-                di.Data = this.ReadNext(sr);
+                BTDictionaryItem di = new BTDictionaryItem
+                                          {
+                                              Key = ((BTString)next).AsString(),
+                                              Data = this.ReadNext(sr)
+                                          };
 
                 d.Items.Add(di);
             }
@@ -757,7 +752,7 @@ namespace TVRename
             if (tvTree != null)
                 tvTree.Nodes.Clear();
 
-            BEncodeLoader bel = new BEncodeLoader(args);
+            BEncodeLoader bel = new BEncodeLoader();
             BTFile btFile = bel.Load(torrentFile);
 
             if (btFile == null)
@@ -1036,8 +1031,8 @@ namespace TVRename
         {
             System.Collections.Generic.List<TorrentEntry> r = new System.Collections.Generic.List<TorrentEntry>();
 
-            BEncodeLoader bel = new BEncodeLoader(args);
-            foreach (BTItem it in this.ResumeDat.GetDict().Items)
+            BEncodeLoader bel = new BEncodeLoader();
+            foreach (BTDictionaryItem it in this.ResumeDat.GetDict().Items)
             {
                 if ((it.Type != BTChunk.kDictionaryItem))
                     continue;
@@ -1371,7 +1366,7 @@ namespace TVRename
 
         public bool LoadResumeDat(CommandLineArgs args)
         {
-            BEncodeLoader bel = new BEncodeLoader(args);
+            BEncodeLoader bel = new BEncodeLoader();
             this.ResumeDat = bel.Load(this.ResumeDatPath);
             return (this.ResumeDat != null);
         }

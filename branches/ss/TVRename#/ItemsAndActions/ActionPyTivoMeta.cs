@@ -117,7 +117,7 @@ namespace TVRename
 
             if (this.Episode == null)
                 return 1;
-            if (nfo.Episode == null)
+            if (nfo ==null || nfo.Episode == null)
                 return -1;
             return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
         }

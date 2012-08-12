@@ -111,7 +111,7 @@ namespace TVRename
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
-            if (cmr == null)
+            if (cmr == null || this.From.Directory == null || this.To.Directory == null || cmr.From.Directory==null || cmr.To.Directory==null)
                 return 0;
 
             string s1 = this.From.FullName + (this.From.Directory.Root.FullName != this.To.Directory.Root.FullName ? "0" : "1");
@@ -229,7 +229,7 @@ namespace TVRename
 
         public bool QuickOperation()
         {
-            if ((this.From == null) || (this.To == null))
+            if ((this.From == null) || (this.To == null) || (this.From.Directory == null) || (this.To.Directory == null))
                 return false;
 
             return (this.IsMoveRename() && (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())); // same device ... TODO: UNC paths?

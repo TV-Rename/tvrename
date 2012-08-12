@@ -279,13 +279,12 @@ namespace TVRename
                     break;
             } // for each showitem
 
-            string folderName = null;
             bool hasSeasonFolders = false;
-            bool hasSubFolders = false;
             try
             {
+                string folderName = null;
                 hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName);
-                hasSubFolders = di2.GetDirectories().Length > 0;
+                bool hasSubFolders = di2.GetDirectories().Length > 0;
             if (!alreadyHaveIt && (!hasSubFolders || hasSeasonFolders))
             {
                 // ....its good!
@@ -1135,9 +1134,11 @@ namespace TVRename
                         {
                             if ((eis[i].SeasonNumber == sease) && (eis[i].EpNum == epnum))
                             {
-                                ProcessedEpisode pe = new ProcessedEpisode(ep, si);
-                                pe.TheSeason = eis[i].TheSeason;
-                                pe.SeasonID = eis[i].SeasonID;
+                                ProcessedEpisode pe = new ProcessedEpisode(ep, si)
+                                                          {
+                                                              TheSeason = eis[i].TheSeason,
+                                                              SeasonID = eis[i].SeasonID
+                                                          };
                                 eis.Insert(i, pe);
                                 break;
                             }
@@ -1238,10 +1239,12 @@ namespace TVRename
                                 eis.RemoveAt(n1); // remove old one
                                 for (int i = 0; i < nn2; i++) // make n2 new parts
                                 {
-                                    ProcessedEpisode pe2 = new ProcessedEpisode(ei, si);
-                                    pe2.Name = nameBase + " (Part " + (i + 1) + ")";
-                                    pe2.EpNum = -2;
-                                    pe2.EpNum2 = -2;
+                                    ProcessedEpisode pe2 = new ProcessedEpisode(ei, si)
+                                                               {
+                                                                   Name = nameBase + " (Part " + (i + 1) + ")",
+                                                                   EpNum = -2,
+                                                                   EpNum2 = -2
+                                                               };
                                     eis.Insert(n1 + i, pe2);
                                 }
                             }
@@ -1271,9 +1274,11 @@ namespace TVRename
 
                                 eis.RemoveAt(n1);
 
-                                ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si);
-                                pe2.Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt);
-                                pe2.EpNum = -2;
+                                ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si)
+                                                           {
+                                                               Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt),
+                                                               EpNum = -2
+                                                           };
                                 if (sr.DoWhatNow == RuleAction.kMerge)
                                     pe2.EpNum2 = -2 + n2 - n1;
                                 else
@@ -1299,19 +1304,23 @@ namespace TVRename
                             if ((n1 < ec) && (n1 >= 0))
                             {
                                 ProcessedEpisode t = eis[n1];
-                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheSeason, si);
-                                n.Name = txt;
-                                n.EpNum = -2;
-                                n.EpNum2 = -2;
+                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheSeason, si)
+                                                         {
+                                                             Name = txt,
+                                                             EpNum = -2,
+                                                             EpNum2 = -2
+                                                         };
                                 eis.Insert(n1, n);
                             }
                             else if (n1 == eis.Count)
                             {
                                 ProcessedEpisode t = eis[n1-1];
-                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheSeason, si);
-                                n.Name = txt;
-                                n.EpNum = -2;
-                                n.EpNum2 = -2;
+                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheSeason, si)
+                                {
+                                    Name = txt,
+                                    EpNum = -2,
+                                    EpNum2 = -2
+                                };
                                 eis.Add(n);
                             }
                             break;
@@ -1421,8 +1430,11 @@ namespace TVRename
                     return found;
 
                 DateTime? nextdt = nextAfterThat.GetAirDateDT(true);
-                notBefore = (DateTime) nextdt;
-                found.Add(nextAfterThat);
+                if (nextdt.HasValue)
+                {
+                    notBefore = nextdt.Value;
+                    found.Add(nextAfterThat);
+                }
             }
             this.UnlockShowItems();
 
@@ -1467,9 +1479,11 @@ namespace TVRename
 
             Rotate(PathManager.TVDocSettingsFile.FullName);
 
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = true;
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = true
+            };
             XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings);
 
             writer.WriteStartDocument();
@@ -1535,9 +1549,11 @@ namespace TVRename
 
             try
             {
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.IgnoreComments = true;
-                settings.IgnoreWhitespace = true;
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true
+                };
 
                 if (!from.Exists)
                 {
@@ -1820,10 +1836,12 @@ namespace TVRename
 
             try
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.NewLineOnAttributes = true;
-                settings.Encoding = System.Text.Encoding.ASCII;
+                XmlWriterSettings settings = new XmlWriterSettings
+                                                 {
+                                                     Indent = true,
+                                                     NewLineOnAttributes = true,
+                                                     Encoding = System.Text.Encoding.ASCII
+                                                 };
                 XmlWriter writer = XmlWriter.Create(str, settings);
 
                 writer.WriteStartDocument();
@@ -2252,8 +2270,7 @@ namespace TVRename
 
             if (specific != null)
             {
-                showlist = new ShowItemList();
-                showlist.Add(specific);
+                showlist = new ShowItemList {specific};
             }
             else
                 showlist = ShowItems;
@@ -2419,8 +2436,7 @@ namespace TVRename
             System.Collections.Generic.List<ShowItem> showlist;
             if (specific != null)
             {
-                showlist = new ShowItemList();
-                showlist.Add(specific);
+                showlist = new ShowItemList {specific};
             }
             else
                 showlist = ShowItems;

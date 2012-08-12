@@ -270,10 +270,7 @@ namespace TVRename
                 {
                 }
             }
-            if (ok)
-                this.txtFolder.BackColor = System.Drawing.SystemColors.Window;
-            else
-                this.txtFolder.BackColor = Helpers.WarningColor();
+            this.txtFolder.BackColor = ok ? System.Drawing.SystemColors.Window : Helpers.WarningColor();
         }
 
         private void chkCustomShowName_CheckedChanged(object sender, System.EventArgs e)

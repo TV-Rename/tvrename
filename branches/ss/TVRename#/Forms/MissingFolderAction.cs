@@ -96,10 +96,7 @@ namespace TVRename
 
         private void MissingFolderAction_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.None;
-            else
-                e.Effect = DragDropEffects.Copy;
+            e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
         private void MissingFolderAction_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
@@ -108,10 +105,9 @@ namespace TVRename
             for (int i = 0; i < files.Length; i++)
             {
                 string path = files[i];
-                DirectoryInfo di;
                 try
                 {
-                    di = new DirectoryInfo(path);
+                    DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
                         this.FolderName = path;

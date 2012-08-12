@@ -400,7 +400,7 @@ namespace TVRename
                         if (reader.Name == "Regex")
                         {
                             string s = reader.GetAttribute("Enabled");
-                            bool en = s != null ? bool.Parse(s) : true;
+                            bool en = s == null || bool.Parse(s);
 
                             this.FNPRegexs.Add(new FilenameProcessorRE(en, reader.GetAttribute("RE"), bool.Parse(reader.GetAttribute("UseFullPath")), reader.GetAttribute("Notes")));
                             reader.Read();
@@ -561,10 +561,7 @@ namespace TVRename
 
             // ResumeDatPath
             FileInfo f2 = new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
-            if (f2.Exists)
-                this.ResumeDatPath = f2.FullName;
-            else
-                this.ResumeDatPath = "";
+            this.ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
         public static FNPRegexList DefaultFNPList()

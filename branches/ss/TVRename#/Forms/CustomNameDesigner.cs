@@ -61,10 +61,7 @@ namespace TVRename
 
             foreach (string s in CustomName.Presets())
             {
-                if (pe != null)
-                    this.cbPresets.Items.Add(CustomName.NameForNoExt(pe, s));
-                else
-                    this.cbPresets.Items.Add(s);
+                this.cbPresets.Items.Add(pe != null ? CustomName.NameForNoExt(pe, s) : s);
             }
         }
 

@@ -333,11 +333,13 @@ namespace TVRename
                 return true;
 
             bool ok = true;
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.IgnoreComments = true;
-            settings.IgnoreWhitespace = true;
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true
+            };
 
-            
+
             string fn = PathManager.UILayoutFile.FullName;
             if (!File.Exists(fn))
                 return true;
@@ -411,10 +413,12 @@ namespace TVRename
             if (this.mDoc.Args.Hide)
                 return true;
 
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = true;
-            
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = true
+            };
+
             XmlWriter writer = XmlWriter.Create(PathManager.UILayoutFile.FullName, settings);
 
             writer.WriteStartDocument();
@@ -717,15 +721,17 @@ namespace TVRename
 
             string body = "";
 
-            StringList skip = new StringList();
-            skip.Add("Actors");
-            skip.Add("banner");
-            skip.Add("Overview");
-            skip.Add("Airs_Time");
-            skip.Add("Airs_DayOfWeek");
-            skip.Add("fanart");
-            skip.Add("poster");
-            skip.Add("zap2it_id");
+            StringList skip = new StringList
+                                  {
+                                      "Actors",
+                                      "banner",
+                                      "Overview",
+                                      "Airs_Time",
+                                      "Airs_DayOfWeek",
+                                      "fanart",
+                                      "poster",
+                                      "zap2it_id"
+                                  };
 
             if ((snum >= 0) && (ser.Seasons.ContainsKey(snum)))
             {
@@ -1758,10 +1764,9 @@ namespace TVRename
             this.mLastFolderClicked = folderPath;
             this.folderRightClickMenu.Items.Clear();
 
-            ToolStripMenuItem tsi;
             int n = 0;
 
-            tsi = new ToolStripMenuItem("Open: " + folderPath);
+            ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folderPath);
             tsi.Tag = n++;
             this.folderRightClickMenu.Items.Add(tsi);
 
@@ -2475,9 +2480,10 @@ namespace TVRename
 
         private void bnMyShowsCollapse_Click(object sender, System.EventArgs e)
         {
-            this.MyShowTree.BeginUpdate();            
-            if (treeExpandCollapseToggle = !treeExpandCollapseToggle)           
-            this.MyShowTree.CollapseAll();
+            this.MyShowTree.BeginUpdate();
+            treeExpandCollapseToggle = !treeExpandCollapseToggle;
+            if (treeExpandCollapseToggle)          
+              this.MyShowTree.CollapseAll();
             else
                 this.MyShowTree.ExpandAll();
             if (this.MyShowTree.SelectedNode != null)
@@ -2800,10 +2806,7 @@ namespace TVRename
                 return;
             }
 
-            if (lvr.Download.Count > 0)
-                this.bnActionBTSearch.Enabled = false;
-            else
-                this.bnActionBTSearch.Enabled = true;
+            this.bnActionBTSearch.Enabled = lvr.Download.Count <= 0;
 
             this.mLastShowClicked = null;
             this.mLastEpClicked = null;
@@ -2822,21 +2825,23 @@ namespace TVRename
             if ((lvr.Count == 1) && (this.lvAction.FocusedItem != null) && (this.lvAction.FocusedItem.Tag != null))
             {
                 ScanListItem action = this.lvAction.FocusedItem.Tag as ScanListItem;
-
-                this.mLastEpClicked = action.Episode;
-                if (action.Episode != null)
+                if (action != null)
                 {
-                    this.mLastSeasonClicked = action.Episode.TheSeason;
-                    this.mLastShowClicked = action.Episode.SI;
-                }
-                else
-                {
-                    this.mLastSeasonClicked = null;
-                    this.mLastShowClicked = null;
-                }
+                    this.mLastEpClicked = action.Episode;
+                    if (action.Episode != null)
+                    {
+                        this.mLastSeasonClicked = action.Episode.TheSeason;
+                        this.mLastShowClicked = action.Episode.SI;
+                    }
+                    else
+                    {
+                        this.mLastSeasonClicked = null;
+                        this.mLastShowClicked = null;
+                    }
 
-                if ((this.mLastEpClicked != null) && (this.mDoc.Settings.AutoSelectShowInMyShows))
-                    this.GotoEpguideFor(this.mLastEpClicked, false);
+                    if ((this.mLastEpClicked != null) && (this.mDoc.Settings.AutoSelectShowInMyShows))
+                        this.GotoEpguideFor(this.mLastEpClicked, false);
+                }
             }
         }
 

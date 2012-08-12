@@ -46,9 +46,11 @@ namespace TVRename
 
                 MemoryStream ms = new MemoryStream(r);
 
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.IgnoreComments = true;
-                settings.IgnoreWhitespace = true;
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true
+                };
                 XmlReader reader = XmlReader.Create(ms, settings);
 
                 reader.Read();

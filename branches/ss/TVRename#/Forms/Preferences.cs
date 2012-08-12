@@ -9,6 +9,7 @@ using System;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 
 namespace TVRename
 {
@@ -410,10 +411,7 @@ namespace TVRename
         private void bnAddSearchFolder_Click(object sender, System.EventArgs e)
         {
             int n = this.lbSearchFolders.SelectedIndex;
-            if (n != -1)
-                this.folderBrowser.SelectedPath = this.mDoc.SearchFolders[n];
-            else
-                this.folderBrowser.SelectedPath = "";
+            this.folderBrowser.SelectedPath = n != -1 ? this.mDoc.SearchFolders[n] : "";
 
             if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -460,10 +458,7 @@ namespace TVRename
 
         private void lbSearchFolders_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.None;
-            else
-                e.Effect = DragDropEffects.Copy;
+            e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
         private void lbSearchFolders_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
@@ -472,10 +467,9 @@ namespace TVRename
             for (int i = 0; i < files.Length; i++)
             {
                 string path = files[i];
-                DirectoryInfo di;
                 try
                 {
-                    di = new DirectoryInfo(path);
+                    DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                         this.mDoc.SearchFolders.Add(path.ToLower());
                 }
@@ -485,25 +479,6 @@ namespace TVRename
             }
             this.mDoc.SetDirty();
             this.FillSearchFolderList();
-        }
-
-        private void lbSearchFolders_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (e.Button != System.Windows.Forms.MouseButtons.Right)
-                return;
-            //                 
-            //				 TODO ?
-            //				 lbSearchFolders->ClearSelected();
-            //				 lbSearchFolders->SelectedIndex = lbSearchFolders->IndexFromPoint(Point(e->X,e->Y));
-            //
-            //				 int p;
-            //				 if ((p = lbSearchFolders->SelectedIndex) == -1)
-            //				 return;
-            //
-            //				 Point^ pt = lbSearchFolders->PointToScreen(Point(e->X, e->Y));
-            //				 RightClickOnFolder(lbSearchFolders->Items[p]->ToString(),pt);
-            //				 }
-            //				 
         }
 
         private void bnRSSBrowseuTorrent_Click(object sender, System.EventArgs e)
@@ -524,10 +499,12 @@ namespace TVRename
 
         private void SetupReplacementsGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell();
-            titleModel.BackColor = Color.SteelBlue;
-            titleModel.ForeColor = Color.White;
-            titleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+                                                         {
+                                                             BackColor = Color.SteelBlue,
+                                                             ForeColor = Color.White,
+                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                         };
 
             this.ReplacementsGrid.Columns.Clear();
             this.ReplacementsGrid.Rows.Clear();
@@ -572,8 +549,7 @@ namespace TVRename
 
         private void AddNewReplacementRow(string from, string to, bool ins)
         {
-            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell();
-            roModel.ForeColor = Color.Gray;
+            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell {ForeColor = Color.Gray};
 
             int r = this.ReplacementsGrid.RowsCount;
             this.ReplacementsGrid.RowsCount = r + 1;
@@ -589,10 +565,12 @@ namespace TVRename
 
         private void SetupRSSGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell();
-            titleModel.BackColor = Color.SteelBlue;
-            titleModel.ForeColor = Color.White;
-            titleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+                                                         {
+                                                             BackColor = Color.SteelBlue,
+                                                             ForeColor = Color.White,
+                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                         };
 
             this.RSSGrid.Columns.Clear();
             this.RSSGrid.Rows.Clear();
@@ -611,8 +589,7 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            SourceGrid.Cells.ColumnHeader h;
-            h = new SourceGrid.Cells.ColumnHeader("URL");
+            ColumnHeader h = new SourceGrid.Cells.ColumnHeader("URL");
             h.AutomaticSortEnabled = false;
             this.RSSGrid[0, 0] = h;
             this.RSSGrid[0, 0].View = titleModel;
@@ -780,11 +757,11 @@ namespace TVRename
                 try
                 {
                     ShowStatusColoringType ssct = this.cboShowStatus.SelectedItem as ShowStatusColoringType;
-                    if (!ColorTranslator.FromHtml(this.txtShowStatusColor.Text).IsEmpty)
+                    if (!ColorTranslator.FromHtml(this.txtShowStatusColor.Text).IsEmpty && ssct != null)
                     {
                         ListViewItem item = null;
-                        item  = this.lvwDefinedColors.FindItemWithText(ssct.Text) ;
-                        if(item == null)
+                        item = this.lvwDefinedColors.FindItemWithText(ssct.Text);
+                        if (item == null)
                         {
                             item = new ListViewItem();
                             item.SubItems.Add(this.txtShowStatusColor.Text);

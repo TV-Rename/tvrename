@@ -458,6 +458,7 @@ namespace TVRename
             this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Controls.Add(this.tpTreeColoring);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(424, 421);
@@ -479,10 +480,10 @@ namespace TVRename
             this.tabPage1.Controls.Add(this.cbNotificationIcon);
             this.tabPage1.Controls.Add(this.txtParallelDownloads);
             this.tabPage1.Controls.Add(this.txtWTWDays);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Location = new System.Drawing.Point(4, 40);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(416, 395);
+            this.tabPage1.Size = new System.Drawing.Size(416, 377);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -552,10 +553,10 @@ namespace TVRename
             this.tabPage2.Controls.Add(this.cbForceLower);
             this.tabPage2.Controls.Add(this.cbIgnoreSamples);
             this.tabPage2.Controls.Add(this.cbLeadingZero);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 40);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(416, 395);
+            this.tabPage2.Size = new System.Drawing.Size(416, 377);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Files and Folders";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -1086,10 +1087,10 @@ namespace TVRename
             this.tabPage5.Controls.Add(this.bnRSSAdd);
             this.tabPage5.Controls.Add(this.bnRSSGo);
             this.tabPage5.Controls.Add(this.label25);
-            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Location = new System.Drawing.Point(4, 40);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(416, 395);
+            this.tabPage5.Size = new System.Drawing.Size(416, 377);
             this.tabPage5.TabIndex = 4;
             this.tabPage5.Text = "RSS / µTorrent";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -1222,10 +1223,10 @@ namespace TVRename
             this.tabPage6.Controls.Add(this.bnLangUp);
             this.tabPage6.Controls.Add(this.lbLangs);
             this.tabPage6.Controls.Add(this.label24);
-            this.tabPage6.Location = new System.Drawing.Point(4, 22);
+            this.tabPage6.Location = new System.Drawing.Point(4, 40);
             this.tabPage6.Name = "tabPage6";
             this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage6.Size = new System.Drawing.Size(416, 395);
+            this.tabPage6.Size = new System.Drawing.Size(416, 377);
             this.tabPage6.TabIndex = 5;
             this.tabPage6.Text = "Languages";
             this.tabPage6.UseVisualStyleBackColor = true;
@@ -1260,7 +1261,7 @@ namespace TVRename
             this.lbLangs.FormattingEnabled = true;
             this.lbLangs.Location = new System.Drawing.Point(6, 19);
             this.lbLangs.Name = "lbLangs";
-            this.lbLangs.Size = new System.Drawing.Size(183, 368);
+            this.lbLangs.Size = new System.Drawing.Size(183, 342);
             this.lbLangs.TabIndex = 1;
             // 
             // label24
@@ -1282,10 +1283,10 @@ namespace TVRename
             this.tpTreeColoring.Controls.Add(this.bnRemoveDefinedColor);
             this.tpTreeColoring.Controls.Add(this.btnAddShowStatusColoring);
             this.tpTreeColoring.Controls.Add(this.lvwDefinedColors);
-            this.tpTreeColoring.Location = new System.Drawing.Point(4, 22);
+            this.tpTreeColoring.Location = new System.Drawing.Point(4, 40);
             this.tpTreeColoring.Name = "tpTreeColoring";
             this.tpTreeColoring.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTreeColoring.Size = new System.Drawing.Size(416, 395);
+            this.tpTreeColoring.Size = new System.Drawing.Size(416, 377);
             this.tpTreeColoring.TabIndex = 7;
             this.tpTreeColoring.Text = "Tree Coloring";
             this.tpTreeColoring.UseVisualStyleBackColor = true;

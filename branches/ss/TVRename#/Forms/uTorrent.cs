@@ -103,7 +103,7 @@ namespace TVRename
             string file = this.mDoc.Settings.ResumeDatPath;
             if (!File.Exists(file))
                 return;
-            BEncodeLoader bel = new BEncodeLoader(mDoc.Args);
+            BEncodeLoader bel = new BEncodeLoader();
             BTFile resumeDat = bel.Load(file);
             if (resumeDat == null)
                 return;
@@ -238,7 +238,7 @@ namespace TVRename
         private void StartWatching()
         {
             FileInfo f = new FileInfo(this.mDoc.Settings.ResumeDatPath);
-            if (f.Exists)
+            if (f.Exists && f.Directory != null)
             {
                 this.watcher.Path = f.Directory.Name;
                 this.watcher.Filter = "resume.dat";

@@ -82,44 +82,50 @@ namespace TVRename
             string l1;
             while ((l1 = sr.ReadLine()) != null)
             {
-                string what;
                 if (l1 == "--")
                     return true;
                 int p = l1.IndexOf('=');
-                if (p != -1)
+                if (p == -1) 
+                    continue;
+
+                string what = l1.Substring(0, p);
+                l1 = l1.Substring(p + 1);
+               
+                switch (what)
                 {
-                    what = l1.Substring(0, p);
-                    l1 = l1.Substring(p + 1);
-                    if (what == "ColWidths")
-                    {
+                    case "ColWidths":
                         while ((p = l1.IndexOf(' ')) != -1)
                         {
                             int n = int.Parse(l1.Substring(0, p));
                             l1 = l1.Substring(p + 1);
                             this.mColWidths.Add(n);
                         }
-                    }
-                    else if (what == "Maximised")
+                        break;
+                    case "Maximised":
                         this.mMaximised = l1 == "1";
-                    else if (what == "Size")
-                    {
-                        p = l1.IndexOf(' ');
-                        int x = int.Parse(l1.Substring(0, p));
-                        int y = int.Parse(l1.Substring(p + 1));
-                        this.mSize = new System.Drawing.Size(x, y);
-                    }
-                    else if (what == "Location")
-                    {
-                        p = l1.IndexOf(' ');
-                        int x = int.Parse(l1.Substring(0, p));
-                        int y = int.Parse(l1.Substring(p + 1));
-                        this.mLocation = new Point(x, y);
-                    }
-                    else if (what == "WindowID")
-                    {
-                        int n = int.Parse(l1);
-                        this.mWindowID = (WindowID) n;
-                    }
+                        break;
+                    case "Size":
+                        {
+                            p = l1.IndexOf(' ');
+                            int x = int.Parse(l1.Substring(0, p));
+                            int y = int.Parse(l1.Substring(p + 1));
+                            this.mSize = new System.Drawing.Size(x, y);
+                        }
+                        break;
+                    case "Location":
+                        {
+                            p = l1.IndexOf(' ');
+                            int x = int.Parse(l1.Substring(0, p));
+                            int y = int.Parse(l1.Substring(p + 1));
+                            this.mLocation = new Point(x, y);
+                        }
+                        break;
+                    case "WindowID":
+                        {
+                            int n = int.Parse(l1);
+                            this.mWindowID = (WindowID) n;
+                        }
+                        break;
                 }
             }
             return false;
@@ -212,17 +218,15 @@ namespace TVRename
             {
                 return;
             }
-            string l1;
-            l1 = sr.ReadLine();
+            string l1 = sr.ReadLine();
             if (l1 == null)
                 return;
 
-            string what;
             int p = l1.IndexOf('=');
             if (p == -1)
                 return;
 
-            what = l1.Substring(0, p);
+            string what = l1.Substring(0, p);
             l1 = l1.Substring(p + 1);
             if ((what != "Version") && (l1 != "2"))
                 return;

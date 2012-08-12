@@ -50,15 +50,20 @@ namespace TVRename
 
         public void SetupGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell();
-            titleModel.BackColor = Color.SteelBlue;
-            titleModel.ForeColor = Color.White;
-            titleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+                                                         {
+                                                             BackColor = Color.SteelBlue,
+                                                             ForeColor = Color.White,
+                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                         };
 
-            SourceGrid.Cells.Views.Cell titleModelC = new SourceGrid.Cells.Views.Cell();
-            titleModelC.BackColor = Color.SteelBlue;
-            titleModelC.ForeColor = Color.White;
-            titleModelC.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleCenter;
+            SourceGrid.Cells.Views.Cell titleModelC = new SourceGrid.Cells.Views.Cell
+                                                          {
+                                                              BackColor = Color.SteelBlue,
+                                                              ForeColor = Color.White,
+                                                              TextAlignment =
+                                                                  DevAge.Drawing.ContentAlignment.MiddleCenter
+                                                          };
 
             this.Grid1.Columns.Clear();
             this.Grid1.Rows.Clear();
@@ -158,9 +163,7 @@ namespace TVRename
             bool en = (bool) (this.Grid1[i, 0].Value);
             string regex = (string) (this.Grid1[i, 1].Value);
             bool fullPath = (bool) (this.Grid1[i, 2].Value);
-            string notes = (string) (this.Grid1[i, 3].Value);
-            if (notes == null)
-                notes = "";
+            string notes = (string) (this.Grid1[i, 3].Value) ?? "";
 
             if (string.IsNullOrEmpty(regex))
                 return null;
