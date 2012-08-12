@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
@@ -294,7 +295,7 @@ namespace TVRename
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            ShowItemList shows = this.mDoc.GetShowItems(false);
+            List<ShowItem> shows = this.mDoc.GetShowItems(false);
             foreach (var show in shows)
             {
                 if(!showStatusList.Contains(show.ShowStatus))

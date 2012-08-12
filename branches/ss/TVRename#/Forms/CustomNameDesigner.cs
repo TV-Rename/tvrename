@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 
@@ -22,10 +24,10 @@ namespace TVRename
     public partial class CustomNameDesigner : Form
     {
         private CustomName CN;
-        private ProcessedEpisodeList Eps;
+        private List<ProcessedEpisode> Eps;
         private TVDoc mDoc;
 
-        public CustomNameDesigner(ProcessedEpisodeList pel, CustomName cn, TVDoc doc)
+        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomName cn, TVDoc doc)
         {
             this.Eps = pel;
             this.CN = cn;

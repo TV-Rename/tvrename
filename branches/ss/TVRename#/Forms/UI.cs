@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -552,7 +553,7 @@ namespace TVRename
             Season currentSeas = TreeNodeToSeason(this.MyShowTree.SelectedNode);
             ShowItem currentSI = this.TreeNodeToShowItem(this.MyShowTree.SelectedNode);
 
-            ShowItemList expanded = new ShowItemList();
+            List<ShowItem> expanded = new List<ShowItem>();
             foreach (TreeNode n in this.MyShowTree.Nodes)
             {
                 if (n.IsExpanded)
@@ -563,7 +564,7 @@ namespace TVRename
 
             this.MyShowTree.Nodes.Clear();
 
-            System.Collections.Generic.List<ShowItem> sil = this.mDoc.GetShowItems(true);
+            List<ShowItem> sil = this.mDoc.GetShowItems(true);
             foreach (ShowItem si in sil)
             {
                 TreeNode tvn = this.AddShowItemToTree(si);
@@ -740,7 +741,7 @@ namespace TVRename
 
                 Season s = ser.Seasons[snum];
 
-                ProcessedEpisodeList eis = null;
+                List<ProcessedEpisode> eis = null;
                 // int snum = s.SeasonNumber;
                 if (si.SeasonEpisodes.ContainsKey(snum))
                     eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
@@ -945,7 +946,7 @@ namespace TVRename
             this.lvWhenToWatch.Groups[0].Header = "Aired in the last " + dd + " day" + ((dd == 1) ? "" : "s");
 
             // try to maintain selections if we can
-            ProcessedEpisodeList selections = new ProcessedEpisodeList();
+            List<ProcessedEpisode> selections = new List<ProcessedEpisode>();
             foreach (ListViewItem lvi in this.lvWhenToWatch.SelectedItems)
                 selections.Add((ProcessedEpisode)(lvi.Tag));
 
@@ -961,12 +962,12 @@ namespace TVRename
                 if (!si.ShowNextAirdate)
                     continue;
 
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                 {
                     if (si.IgnoreSeasons.Contains(kvp.Key))
                         continue; // ignore this season
 
-                    ProcessedEpisodeList eis = kvp.Value;
+                    List<ProcessedEpisode> eis = kvp.Value;
 
                     bool nextToAirFound = false;
 
@@ -1161,7 +1162,7 @@ namespace TVRename
         public void UpdateToolstripWTW()
         {
             // update toolstrip text too
-            ProcessedEpisodeList next1 = this.mDoc.NextNShows(1, 36500);
+            List<ProcessedEpisode> next1 = this.mDoc.NextNShows(1, 36500);
 
             this.tsNextShowTxt.Text = "Next airing: ";
             if ((next1 != null) && (next1.Count >= 1))
@@ -1581,7 +1582,7 @@ namespace TVRename
                     {
                         if (this.mLastShowClicked != null)
                         {
-                            this.Scan(this.mLastShowClicked);
+                            this.Scan(new List<ShowItem>() {this.mLastShowClicked});
                             this.tabControl1.SelectTab(this.tbAllInOne);
                         }
                         break;
@@ -1744,7 +1745,7 @@ namespace TVRename
             else if (this.tabControl1.SelectedTab == this.tbWTW)
                 this.bnWhenToWatchCheck_Click(null, null);
             else if (this.tabControl1.SelectedTab == this.tbAllInOne)
-                this.bnActionCheck_Click(null, null);
+                this.bnActionRecentCheck_Click(null, null);
         }
 
         public void folderRightClickMenu_ItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
@@ -2215,7 +2216,7 @@ namespace TVRename
 
             TheTVDB db = this.mDoc.GetTVDB(true, "EditSeason");
             SeriesInfo ser = db.GetSeries(si.TVDBCode);
-            ProcessedEpisodeList pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
+            List<ProcessedEpisode> pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
 
             EditRules er = new EditRules(si, pel, seasnum, this.mDoc.Settings.NamingStyle);
             System.Windows.Forms.DialogResult dr = er.ShowDialog();
@@ -2378,20 +2379,20 @@ namespace TVRename
             this.ShowQuickStartGuide();
         }
 
-        private ProcessedEpisodeList CurrentlySelectedPEL()
+        private List<ProcessedEpisode> CurrentlySelectedPEL()
         {
             Season currentSeas = TreeNodeToSeason(this.MyShowTree.SelectedNode);
             ShowItem currentSI = this.TreeNodeToShowItem(this.MyShowTree.SelectedNode);
 
             int snum = (currentSeas != null) ? currentSeas.SeasonNumber : 1;
-            ProcessedEpisodeList pel = null;
+            List<ProcessedEpisode> pel = null;
             if ((currentSI != null) && (currentSI.SeasonEpisodes.ContainsKey(snum)))
                 pel = currentSI.SeasonEpisodes[snum];
             else
             {
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> kvp in si.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
                         pel = kvp.Value;
                         break;
@@ -2418,7 +2419,7 @@ namespace TVRename
 
         private void searchEnginesToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            ProcessedEpisodeList pel = this.CurrentlySelectedPEL();
+            List<ProcessedEpisode> pel = this.CurrentlySelectedPEL();
 
             AddEditSearchEngine aese = new AddEditSearchEngine(this.mDoc.GetSearchers(), ((pel != null) && (pel.Count > 0)) ? pel[0] : null);
             DialogResult dr = aese.ShowDialog();
@@ -2532,10 +2533,50 @@ namespace TVRename
             this.Scan(null);
         }
 
-        private void Scan(ShowItem s)
+        private void ScanRecent()
+        {
+            // only scan "recent" shows
+            List<ShowItem> shows = new List<ShowItem>();
+            int dd = this.mDoc.Settings.WTWRecentDays;
+            
+            // for each show, see if any episodes were aired in "recent" days...
+            foreach (ShowItem si in this.mDoc.GetShowItems(true))
+            {
+                bool added = false;
+
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+                    if (added)
+                        break;
+
+                    if (si.IgnoreSeasons.Contains(kvp.Key))
+                        continue; // ignore this season
+
+                    List<ProcessedEpisode> eis = kvp.Value;
+
+                    foreach (ProcessedEpisode ei in eis)
+                    {
+                        DateTime? dt = ei.GetAirDateDT(true);
+                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                        {
+                            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
+                            if ((ts.TotalHours >= (-24 * dd)) && (ts.TotalHours <= 0)) // fairly recent?
+                            {
+                                shows.Add(si);
+                                added = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            Scan(shows);
+        }
+
+        private void Scan(List<ShowItem> shows)
         {
             this.MoreBusy();
-            this.mDoc.ActionGo(s);
+            this.mDoc.ActionGo(shows);
             this.LessBusy();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
@@ -3136,6 +3177,11 @@ namespace TVRename
                 splitContainer1.Panel2Collapsed = true;
                 bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
             }
+        }
+
+        private void bnActionRecentCheck_Click(object sender, EventArgs e)
+        {
+            this.ScanRecent();
         }
     }
 }

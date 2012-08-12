@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
@@ -24,11 +25,11 @@ namespace TVRename
     public partial class AddEditSeasEpFinders : Form
     {
         private FNPRegexList Rex;
-        private ShowItemList SIL;
+        private List<ShowItem> SIL;
 
         private TVSettings TheSettings;
 
-        public AddEditSeasEpFinders(FNPRegexList rex, ShowItemList sil, ShowItem initialShow, string initialFolder, TVSettings s)
+        public AddEditSeasEpFinders(FNPRegexList rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder, TVSettings s)
         {
             this.Rex = rex;
             this.SIL = sil;

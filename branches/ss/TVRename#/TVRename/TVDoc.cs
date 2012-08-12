@@ -9,6 +9,8 @@
 // All the processing and work should be done in here, nothing in UI.cs
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
+using System.Collections.Generic;
+
 namespace TVRename
 {
     using System;
@@ -21,7 +23,7 @@ namespace TVRename
 
     public class TVDoc
     {
-        private ShowItemList ShowItems;
+        private List<ShowItem> ShowItems;
         public bool ActionCancel;
         public bool ActionPause;
         private Thread ActionProcessorThread;
@@ -72,7 +74,7 @@ namespace TVRename
             this.MonitorFolders = new StringList();
             this.IgnoreFolders = new StringList();
             this.SearchFolders = new StringList();
-            ShowItems = new ShowItemList();
+            ShowItems = new List<ShowItem>();
             this.AddItems = new FolderMonitorEntryList();
 
             this.DownloadDone = true;
@@ -141,7 +143,7 @@ namespace TVRename
             this.LockShowItems();
             foreach (ShowItem si in ShowItems)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> k in si.SeasonEpisodes)
+                foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> k in si.SeasonEpisodes)
                     this.mStats.NS_NumberOfEpisodesExpected += k.Value.Count;
                 this.mStats.NS_NumberOfSeasons += si.SeasonEpisodes.Count;
             }
@@ -160,7 +162,7 @@ namespace TVRename
             return this.mDirty;
         }
 
-        public ShowItemList GetShowItems(bool lockThem)
+        public List<ShowItem> GetShowItems(bool lockThem)
         {
             if (lockThem)
                 this.LockShowItems();
@@ -1061,7 +1063,7 @@ namespace TVRename
             bool r = true;
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in ser.Seasons)
             {
-                ProcessedEpisodeList pel = GenerateEpisodes(si, ser, kvp.Key, true);
+                List<ProcessedEpisode> pel = GenerateEpisodes(si, ser, kvp.Key, true);
                 si.SeasonEpisodes[kvp.Key] = pel;
                 if (pel == null)
                     r = false;
@@ -1092,9 +1094,9 @@ namespace TVRename
             return r;
         }
 
-        public static ProcessedEpisodeList GenerateEpisodes(ShowItem si, SeriesInfo ser, int snum, bool applyRules)
+        public static List<ProcessedEpisode> GenerateEpisodes(ShowItem si, SeriesInfo ser, int snum, bool applyRules)
         {
-            ProcessedEpisodeList eis = new ProcessedEpisodeList();
+            List<ProcessedEpisode> eis = new List<ProcessedEpisode>();
 
             if ((ser == null) || !ser.Seasons.ContainsKey(snum))
                 return null; // todo.. something?
@@ -1165,7 +1167,7 @@ namespace TVRename
             return eis;
         }
 
-        public static void ApplyRules(ProcessedEpisodeList eis, System.Collections.Generic.List<ShowRule> rules, ShowItem si)
+        public static void ApplyRules(List<ProcessedEpisode> eis, System.Collections.Generic.List<ShowRule> rules, ShowItem si)
         {
             foreach (ShowRule sr in rules)
             {
@@ -1337,7 +1339,7 @@ namespace TVRename
             }
         }
 
-        public static void Renumber(ProcessedEpisodeList eis)
+        public static void Renumber(List<ProcessedEpisode> eis)
         {
             if (eis.Count == 0)
                 return; // nothing to do
@@ -1386,10 +1388,10 @@ namespace TVRename
             return showName;
         }
 
-        public ProcessedEpisodeList NextNShows(int nshows, int ndays)
+        public List<ProcessedEpisode> NextNShows(int nshows, int ndays)
         {
             DateTime notBefore = DateTime.Now;
-            ProcessedEpisodeList found = new ProcessedEpisodeList();
+            List<ProcessedEpisode> found = new List<ProcessedEpisode>();
 
             this.LockShowItems();
             for (int i = 0; i < nshows; i++)
@@ -1400,7 +1402,7 @@ namespace TVRename
                 {
                     if (!si.ShowNextAirdate)
                         continue;
-                    foreach (System.Collections.Generic.KeyValuePair<int, ProcessedEpisodeList> v in si.SeasonEpisodes)
+                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes)
                     {
                         if (si.IgnoreSeasons.Contains(v.Key))
                             continue; // ignore this season
@@ -1829,7 +1831,7 @@ namespace TVRename
         //			writer->Close();
         //			}
         //			
-        public bool GenerateUpcomingXML(Stream str, ProcessedEpisodeList elist)
+        public bool GenerateUpcomingXML(Stream str, List<ProcessedEpisode> elist)
         {
             if (elist == null)
                 return false;
@@ -2224,9 +2226,9 @@ namespace TVRename
             return false;
         }
 
-        public void ActionGo(ShowItem specific)
+        public void ActionGo(List<ShowItem> shows)
         {
-            if (this.Settings.MissingCheck && !this.CheckAllFoldersExist(specific)) // only check for folders existing for missing check
+            if (this.Settings.MissingCheck && !this.CheckAllFoldersExist(shows)) // only check for folders existing for missing check
                 return;
 
             if (!this.DoDownloadsFG())
@@ -2247,7 +2249,7 @@ namespace TVRename
             else
                 this.ScanProgDlg = null;
 
-            ActionWork.Start(specific);
+            ActionWork.Start(shows);
 
             if ((this.ScanProgDlg != null) && (this.ScanProgDlg.ShowDialog() == DialogResult.Cancel))
             {
@@ -2260,20 +2262,15 @@ namespace TVRename
             this.ScanProgDlg = null;
         }
 
-        public bool CheckAllFoldersExist(ShowItem specific)
+        public bool CheckAllFoldersExist(List<ShowItem> showlist)
         {
             // show MissingFolderAction for any folders that are missing
             // return false if user cancels
 
             this.LockShowItems();
-            System.Collections.Generic.List<ShowItem> showlist;
 
-            if (specific != null)
-            {
-                showlist = new ShowItemList {specific};
-            }
-            else
-                showlist = ShowItems;
+            if (showlist == null) // nothing specified?
+                showlist = ShowItems; // everything
 
             foreach (ShowItem si in showlist)
             {
@@ -2425,7 +2422,7 @@ namespace TVRename
                 this.TheActionList.Remove(Action);
         }
 
-        public void RenameAndMissingCheck(SetProgressDelegate prog, ShowItem specific)
+        public void RenameAndMissingCheck(SetProgressDelegate prog, List<ShowItem> showList)
         {
             this.TheActionList = new ItemList();
 
@@ -2433,13 +2430,8 @@ namespace TVRename
 
             this.LockShowItems();
 
-            System.Collections.Generic.List<ShowItem> showlist;
-            if (specific != null)
-            {
-                showlist = new ShowItemList {specific};
-            }
-            else
-                showlist = ShowItems;
+            if (showList == null)
+                showList = ShowItems;
 
             //foreach (ShowItem si in showlist)
             //  if (si.DoRename)
@@ -2453,11 +2445,11 @@ namespace TVRename
 
             prog.Invoke(0);
 
-            if (specific == null) // only do episode count if we're doing all shows and seasons
+            if (showList == null) // only do episode count if we're doing all shows and seasons
                 this.mStats.NS_NumberOfEpisodes = 0;
 
             int c = 0;
-            foreach (ShowItem si in showlist)
+            foreach (ShowItem si in showList)
             {
                 if (this.ActionCancel)
                     return;
@@ -2465,7 +2457,7 @@ namespace TVRename
                 System.Diagnostics.Debug.Print(DateTime.Now.ToLongTimeString()+ " Rename and missing check: " + si.ShowName);
                 c++;
 
-                prog.Invoke(100 * c / showlist.Count);
+                prog.Invoke(100 * c / showList.Count);
 
                 if (si.AllFolderLocations(this.Settings).Count == 0) // no folders defined for this show
                     continue; // so, nothing to do.
@@ -2512,7 +2504,7 @@ namespace TVRename
                     if (folderNotDefined && (this.Settings.MissingCheck && !si.AutoAddNewSeasons))
                         continue; // folder for the season is not defined, and we're not auto-adding it
 
-                    ProcessedEpisodeList eps = si.SeasonEpisodes[snum];
+                    List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
                     int maxEpisodeNumber = 0;
                     foreach (ProcessedEpisode episode in eps)
                     {
@@ -2686,7 +2678,7 @@ namespace TVRename
                                 else
                                 {
                                     // the file is here
-                                    if (specific == null)
+                                    if (showList == null)
                                         this.mStats.NS_NumberOfEpisodes++;
 
                                     // do NFO and thumbnail checks if required
@@ -2750,7 +2742,7 @@ namespace TVRename
 
         public void ScanWorker(Object o)
         {
-            ShowItem specific = (ShowItem) (o);
+            List<ShowItem> specific = (List<ShowItem>)(o);
 
             while (!this.Args.Hide && ((this.ScanProgDlg == null) || (!this.ScanProgDlg.Ready)))
                 Thread.Sleep(10); // wait for thread to create the dialog
