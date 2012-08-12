@@ -14,9 +14,9 @@ namespace TVRename
     public class ItemSABnzbd : Item, ScanListItem
     {
         public string DesiredLocationNoExt;
-        public queueSlotsSlot Entry;
+        public SAB.queueSlotsSlot Entry;
 
-        public ItemSABnzbd(queueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
+        public ItemSABnzbd(SAB.queueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
         {
             this.Episode = pe;
             this.DesiredLocationNoExt = desiredLocationNoExt;

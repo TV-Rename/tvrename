@@ -1983,7 +1983,7 @@ namespace TVRename
 
             try
             {
-                result res = result.Deserialize(r);
+                SAB.result res = SAB.result.Deserialize(r);
                 if (res.status == "False")
                 {
                     MessageBox.Show(res.error, "SABnzbd Queue Check", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1993,12 +1993,13 @@ namespace TVRename
             }
             catch
             {
+                // wasn't a result/error combo.  this is good!
             }
 
-            queue sq = null;
+            SAB.queue sq = null;
             try
             {
-                sq = queue.Deserialize(r);
+                sq = SAB.queue.Deserialize(r);
             }
             catch (Exception)
             {
@@ -2006,6 +2007,10 @@ namespace TVRename
                 prog.Invoke(startpct + totPct);
                 return;
             }
+
+            System.Diagnostics.Debug.Assert(sq != null); // shouldn't happen
+            if (sq == null || sq.slots==null || sq.slots.Length == 0) // empty queue
+                return;
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -2027,7 +2032,7 @@ namespace TVRename
 
                 string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName);
 
-                foreach (queueSlotsSlot te  in sq.slots)
+                foreach (SAB.queueSlotsSlot te  in sq.slots)
                 {
                     //foreach (queueSlotsSlot te in qs)
                     {

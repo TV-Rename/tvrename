@@ -17,7 +17,7 @@ using System;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace TVRename
+namespace TVRename.SAB
 {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
