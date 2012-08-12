@@ -132,6 +132,7 @@ namespace TVRename
         public bool UseCustomShowName;
         public bool UseSequentialMatch;
         public List<string> AliasNames = new List<string>();
+        public String CustomSearchURL;
 
         public ShowItem(TheTVDB db)
         {
@@ -187,6 +188,8 @@ namespace TVRename
                     this.DoMissingCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DVDOrder")
                     this.DVDOrder = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "CustomSearchURL")
+                    this.CustomSearchURL = reader.ReadElementContentAsString();
                 else if (reader.Name == "ForceCheckAll") // removed 2.2.0b2
                     this.ForceCheckNoAirdate = this.ForceCheckFuture = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ForceCheckFuture")
@@ -457,6 +460,7 @@ namespace TVRename
             this.DoMissingCheck = true;
             this.CountSpecials = false;
             this.DVDOrder = false;
+            CustomSearchURL = "";
             ForceCheckNoAirdate = false;
             ForceCheckFuture = false;
         }
@@ -587,6 +591,9 @@ namespace TVRename
                 writer.WriteValue(str);
                 writer.WriteEndElement();
             }
+            writer.WriteEndElement();
+            writer.WriteStartElement("CustomSearchURL");
+            writer.WriteValue(this.CustomSearchURL);
             writer.WriteEndElement();
 
             foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ShowRule>> kvp in this.SeasonRules)

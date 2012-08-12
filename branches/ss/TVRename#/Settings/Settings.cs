@@ -877,7 +877,7 @@ namespace TVRename
             if (s == null)
                 return "";
 
-            string url = this.TheSearchers.CurrentSearchURL();
+            String url = String.IsNullOrEmpty(epi.SI.CustomSearchURL) ? this.TheSearchers.CurrentSearchURL() : epi.SI.CustomSearchURL;
             return CustomName.NameForNoExt(epi, url, true);
         }
 

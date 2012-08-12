@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -70,7 +73,9 @@ namespace TVRename
 
             this.chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
 
-            this.ShowTimeZone = ((si == null)||(si.TheSeries() == null)) ? TimeZone.DefaultTimeZone() : si.TheSeries().ShowTimeZone;
+            this.ShowTimeZone = ((si == null) || (si.TheSeries() == null))
+                                    ? TimeZone.DefaultTimeZone()
+                                    : si.TheSeries().ShowTimeZone;
 
             this.cbTimeZone.Text = this.ShowTimeZone;
             this.chkDVDOrder.Checked = si.DVDOrder;
@@ -109,6 +114,18 @@ namespace TVRename
             {
                 lbShowAlias.Items.Add(aliasName);
             }
+
+            StringBuilder tl = new StringBuilder();
+
+            foreach (string s in CustomName.Tags())
+            {
+                tl.AppendLine(s);
+            }
+            this.txtTagList.Text = tl.ToString();
+
+            cbUseCustomSearch.Checked = !String.IsNullOrEmpty(si.CustomSearchURL);
+            txtSearchURL.Text = si.CustomSearchURL ?? "";
+            EnableDisableCustomSearch();
         }
 
         private void buttonOK_Click(object sender, System.EventArgs e)
@@ -128,7 +145,8 @@ namespace TVRename
         {
             if (!this.mTVDB.HasSeries(this.mTCCF.SelectedCode()))
             {
-                DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
+                                                  MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (dr == DialogResult.No)
                     return false;
             }
@@ -162,6 +180,7 @@ namespace TVRename
             this.mSI.DVDOrder = this.chkDVDOrder.Checked;
             this.mSI.ForceCheckFuture = this.cbIncludeFuture.Checked;
             this.mSI.ForceCheckNoAirdate = this.cbIncludeNoAirdate.Checked;
+            this.mSI.CustomSearchURL = this.txtSearchURL.Text;
 
             this.mSI.UseSequentialMatch = this.cbSequentialMatching.Checked;
 
@@ -313,5 +332,21 @@ namespace TVRename
             if (e.KeyCode == Keys.Enter)
                 this.bnAddAlias_Click(null, null);
         }
+
+        private void cbUseCustomSearch_CheckedChanged(object sender, System.EventArgs e)
+        {
+            EnableDisableCustomSearch();
+        }
+
+        private void EnableDisableCustomSearch()
+        {
+            bool en = cbUseCustomSearch.Checked;
+
+            lbSearchURL.Enabled = en;
+            txtSearchURL.Enabled = en;
+            lbTags.Enabled = en;
+            txtTagList.Enabled = en;
+        }
+
     }
 }

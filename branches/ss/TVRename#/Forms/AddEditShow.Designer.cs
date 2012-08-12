@@ -84,12 +84,19 @@ namespace TVRename
             this.bnAddAlias = new System.Windows.Forms.Button();
             this.tbShowAlias = new System.Windows.Forms.TextBox();
             this.lbShowAlias = new System.Windows.Forms.ListBox();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.txtSearchURL = new System.Windows.Forms.TextBox();
+            this.txtTagList = new System.Windows.Forms.Label();
+            this.lbTags = new System.Windows.Forms.Label();
+            this.lbSearchURL = new System.Windows.Forms.Label();
+            this.cbUseCustomSearch = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.gbAutoFolders.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.tabPage3.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // txtCustomShowName
@@ -415,6 +422,7 @@ namespace TVRename
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(-4, 2);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -555,6 +563,66 @@ namespace TVRename
             this.lbShowAlias.Size = new System.Drawing.Size(413, 264);
             this.lbShowAlias.TabIndex = 0;
             // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.txtSearchURL);
+            this.tabPage4.Controls.Add(this.txtTagList);
+            this.tabPage4.Controls.Add(this.lbTags);
+            this.tabPage4.Controls.Add(this.lbSearchURL);
+            this.tabPage4.Controls.Add(this.cbUseCustomSearch);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage4.Size = new System.Drawing.Size(425, 364);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Search";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // txtSearchURL
+            // 
+            this.txtSearchURL.Location = new System.Drawing.Point(65, 33);
+            this.txtSearchURL.Name = "txtSearchURL";
+            this.txtSearchURL.Size = new System.Drawing.Size(354, 20);
+            this.txtSearchURL.TabIndex = 2;
+            // 
+            // txtTagList
+            // 
+            this.txtTagList.Location = new System.Drawing.Point(47, 83);
+            this.txtTagList.Name = "txtTagList";
+            this.txtTagList.Size = new System.Drawing.Size(361, 267);
+            this.txtTagList.TabIndex = 1;
+            this.txtTagList.Text = "<tags>";
+            // 
+            // lbTags
+            // 
+            this.lbTags.AutoSize = true;
+            this.lbTags.Location = new System.Drawing.Point(27, 63);
+            this.lbTags.Name = "lbTags";
+            this.lbTags.Size = new System.Drawing.Size(34, 13);
+            this.lbTags.TabIndex = 1;
+            this.lbTags.Tag = "";
+            this.lbTags.Text = "Tags:";
+            // 
+            // lbSearchURL
+            // 
+            this.lbSearchURL.AutoSize = true;
+            this.lbSearchURL.Location = new System.Drawing.Point(27, 36);
+            this.lbSearchURL.Name = "lbSearchURL";
+            this.lbSearchURL.Size = new System.Drawing.Size(32, 13);
+            this.lbSearchURL.TabIndex = 1;
+            this.lbSearchURL.Text = "URL:";
+            // 
+            // cbUseCustomSearch
+            // 
+            this.cbUseCustomSearch.AutoSize = true;
+            this.cbUseCustomSearch.Location = new System.Drawing.Point(8, 9);
+            this.cbUseCustomSearch.Name = "cbUseCustomSearch";
+            this.cbUseCustomSearch.Size = new System.Drawing.Size(120, 17);
+            this.cbUseCustomSearch.TabIndex = 0;
+            this.cbUseCustomSearch.Text = "&Use Custom Search";
+            this.cbUseCustomSearch.UseVisualStyleBackColor = true;
+            this.cbUseCustomSearch.CheckedChanged += new System.EventHandler(this.cbUseCustomSearch_CheckedChanged);
+            // 
             // AddEditShow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -582,6 +650,8 @@ namespace TVRename
             this.tabPage2.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -634,5 +704,11 @@ namespace TVRename
         private System.Windows.Forms.Button bnAddAlias;
         private System.Windows.Forms.TextBox tbShowAlias;
         private System.Windows.Forms.ListBox lbShowAlias;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.TextBox txtSearchURL;
+        private System.Windows.Forms.Label lbSearchURL;
+        private System.Windows.Forms.CheckBox cbUseCustomSearch;
+        private System.Windows.Forms.Label txtTagList;
+        private System.Windows.Forms.Label lbTags;
     }
 }

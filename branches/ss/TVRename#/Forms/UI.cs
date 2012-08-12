@@ -250,8 +250,31 @@ namespace TVRename
         public void UpdateSearchButton()
         {
             string name = this.mDoc.GetSearchers().Name(this.mDoc.Settings.TheSearchers.CurrentSearchNum());
-            this.bnWTWBTSearch.Text = name;
-            this.bnActionBTSearch.Text = name;
+
+            bool customWTW = false;
+            foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
+            {
+                ProcessedEpisode pe = lvi.Tag as ProcessedEpisode;
+                if (pe != null && !String.IsNullOrEmpty(pe.SI.CustomSearchURL))
+                {
+                    customWTW = true;
+                    break;
+                }
+            }
+
+            bool customAction = false;
+            foreach (ListViewItem lvi in lvAction.SelectedItems)
+            {
+                ProcessedEpisode pe = lvi.Tag as ProcessedEpisode;
+                if (pe != null && !String.IsNullOrEmpty(pe.SI.CustomSearchURL))
+                {
+                    customAction = true;
+                    break;
+                }
+            }
+            
+            this.bnWTWBTSearch.Text = customWTW ? "Search" : name;
+            this.bnActionBTSearch.Text = customAction ? "Search" : name;
             this.FillEpGuideHTML();
         }
 
@@ -1059,6 +1082,8 @@ namespace TVRename
 
         public void lvWhenToWatch_Click(object sender, System.EventArgs e)
         {
+            UpdateSearchButton();
+
             if (this.lvWhenToWatch.SelectedIndices.Count == 0)
             {
                 this.txtWhenToWatchSynopsis.Text = "";
@@ -2324,7 +2349,9 @@ namespace TVRename
                 this.ForceRefresh(new List<ShowItem>() { si });
             }
             else
+            {
                 this.ForceRefresh(null);
+            }
         }
 
         private void MyShowTree_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
@@ -2883,6 +2910,8 @@ namespace TVRename
 
         private void lvAction_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            UpdateSearchButton();
+
             LVResults lvr = new LVResults(this.lvAction, false);
 
             if (lvr.Count == 0)
