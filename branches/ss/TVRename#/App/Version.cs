@@ -51,7 +51,7 @@ namespace TVRename
             // NOTE: If you're doing your own branch/patch version number, please put your name or nickname or something in brackets afterwards
             // to indicate that it is not an official release, or talk to me (tvrename@tvrename.com) so any versions I make don't duplicate
             // a version number you may have created.
-            string v = "2.2.0b11 (dev)";
+            string v = "2.2.2b1 (dev)";
 #if DEBUG
             return v + " ** Debug Build **";
 #else

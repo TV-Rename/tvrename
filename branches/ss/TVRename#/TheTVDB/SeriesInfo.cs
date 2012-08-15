@@ -90,8 +90,13 @@ namespace TVRename
         {
             if (string.IsNullOrEmpty(this.Language))
                 return 999999;
+            int divPrio = languages.IndexOf(TheTVDB.LanguagePriorityDivider);
             int r = languages.IndexOf(this.Language); // -1 for not found
-            return (r == -1) ? 999999 : r;
+            if (r == -1) 
+                return 999999;
+            if (r > divPrio)
+              return 99999;
+            return r;
         }
 
         public void Merge(SeriesInfo o, StringList languages)

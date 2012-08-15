@@ -654,7 +654,7 @@ namespace TVRename
 
         private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            if (this.tabControl1.SelectedIndex == 5) // gone to languages tab
+            if (this.tabControl1.SelectedTab == tbLanguages) // gone to languages tab
                 this.SetupLanguages();
         }
 
@@ -671,11 +671,16 @@ namespace TVRename
 
             // make our list
             // add already prioritised items (that still exist)
+            bool dividerFound = false;
             this.LangList = new StringList();
             foreach (string s in db.LanguagePriorityList)
             {
                 if (db.LanguageList.ContainsKey(s))
+                {
                     this.LangList.Add(s);
+                    if (s == TheTVDB.LanguagePriorityDivider)
+                        dividerFound = true;
+                }
             }
 
             // add items that haven't been prioritised
@@ -684,18 +689,37 @@ namespace TVRename
                 if (!this.LangList.Contains(k.Key))
                     this.LangList.Add(k.Key);
             }
+            if (!dividerFound)
+            {
+                this.LangList.Add(TheTVDB.LanguagePriorityDivider);
+                db.LanguageList.Add(TheTVDB.LanguagePriorityDivider, TheTVDB.LanguagePriorityDivider);
+            }
+
             db.Unlock("Preferences-SL");
 
             this.FillLanguageList();
         }
 
+        const String LangListDivider = "-- Ignore Below --";
         private void FillLanguageList()
         {
             TheTVDB db = this.mDoc.GetTVDB(true, "Preferences-FLL");
             this.lbLangs.BeginUpdate();
             this.lbLangs.Items.Clear();
+            bool dividerDone = false;
             foreach (string l in this.LangList)
-                this.lbLangs.Items.Add(db.LanguageList[l]);
+            {
+                if (l == TheTVDB.LanguagePriorityDivider)
+                {
+                    this.lbLangs.Items.Add(LangListDivider);
+                    dividerDone = true;
+                }
+                else
+                {
+                    this.lbLangs.Items.Add(db.LanguageList[l]);
+                }
+            }
+
             this.lbLangs.EndUpdate();
             db.Unlock("Preferences-FLL");
         }

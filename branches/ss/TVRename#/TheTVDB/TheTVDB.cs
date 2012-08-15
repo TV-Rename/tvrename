@@ -49,6 +49,7 @@ namespace TVRename
         private System.Collections.Generic.List<ExtraEp> ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
         private System.Collections.Generic.List<int> ForceReloadOn;
         public System.Collections.Generic.Dictionary<string, string> LanguageList;
+        static public readonly String LanguagePriorityDivider = "-";
         public StringList LanguagePriorityList;
         public string LastError;
         public string LoadErr;
@@ -954,19 +955,19 @@ namespace TVRename
             {
                 if (!this.Args.Unattended)
                 {
-                string message = "Error processing data from TheTVDB (top level).";
-                message += "\r\n" + e.Message;
-                String name = "";
-                if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
-                {
-                    name += "Show \"" + Series[codeHint.Value].Name + "\" ";
-                }
-                if (codeHint.HasValue)
-                {
-                    name += "ID #" + codeHint.Value+" ";
-                }
-                MessageBox.Show(name+message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                // throw new TVDBException(e.Message);
+                    string message = "Error processing data from TheTVDB (top level).";
+                    message += "\r\n" + e.Message;
+                    String name = "";
+                    if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
+                    {
+                        name += "Show \"" + Series[codeHint.Value].Name + "\" ";
+                    }
+                    if (codeHint.HasValue)
+                    {
+                        name += "ID #" + codeHint.Value + " ";
+                    }
+                    MessageBox.Show(name + message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // throw new TVDBException(e.Message);
                 }
                 return false;
             }
@@ -982,7 +983,8 @@ namespace TVRename
             if (!this.Series.ContainsKey(seriesID) || (string.IsNullOrEmpty(this.Series[seriesID].Language)))
             {
                 // new series we don't know about, or don't have any language info
-                SeriesInfo ser = this.DownloadSeriesNow(seriesID, false, true); // pretend we want "en", download overview
+                SeriesInfo ser = this.DownloadSeriesNow(seriesID, false, true);
+                    // pretend we want "en", download overview
                 if (ser == null)
                     return "en";
                 string name = ser.Name;
@@ -1004,10 +1006,14 @@ namespace TVRename
                 return serl.Language; // return that language
 
             // otherwise, try for the user's top rated language
-            if (this.LanguagePriorityList.Count > 0)
-                return (this.LanguagePriorityList[0]);
-            else
-                return "en";
+            foreach (String la in LanguagePriorityList)
+            {
+                if (la == LanguagePriorityDivider)
+                    break;
+                return la;
+            }
+            String la2 = LanguagePriorityList.Count > 0 ? LanguagePriorityList[0] : "en"; // first on the list, or english
+            return la2 != LanguagePriorityDivider ? la2 : "en"; // default
         }
 
         public bool DoWeForceReloadFor(int code)
