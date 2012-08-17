@@ -56,48 +56,46 @@ namespace TVRename
             return this.BuildDirCache(prog, initialCount, totalFiles, folder, subFolders, theSettings);
         }
 
-        private int BuildDirCache(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders, TVSettings theSettings)
+        private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders, TVSettings theSettings)
         {
-            int filesDone = initialCount;
-
             if (!Directory.Exists(folder))
             {
-                System.Windows.Forms.DialogResult res = MessageBox.Show("The search folder \"" + folder + " does not exist.\n", "Folder does not exist", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("The search folder \"" + folder + " does not exist.\n", "Folder does not exist", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return count;
             }
 
             try
             {
-                // Remove length check, now we're using AlphaFS
                 //if (folder.Length >= 248)
                 //{
                 //    MessageBox.Show("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder, "Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                //    return filesDone;
+                //    return count;
                 //}
 
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (!di.Exists)
-                    return filesDone;
+                    return count;
 
                 //                DirectorySecurity ^ds = di->GetAccessControl();
 
                 FileInfo[] f2 = di.GetFiles();
                 foreach (FileInfo ff in f2)
                 {
-                    filesDone++;
+                    count++;
                     // Remove length check, now we're using AlphaFS
                     //if ((ff.Name.Length + folder.Length) >= 260)
                     //    MessageBox.Show("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder, "File+Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     //else
                         this.Add(new DirCacheEntry(ff, theSettings));
                     if ((prog != null) && (totalFiles != 0))
-                        prog.Invoke(100 * (filesDone) / totalFiles);
+                        prog.Invoke(100 * (count) / totalFiles);
                 }
 
                 if (subFolders)
                 {
                     DirectoryInfo[] dirs = di.GetDirectories();
                     foreach (DirectoryInfo di2 in dirs)
-                        filesDone = this.BuildDirCache(prog, filesDone, totalFiles, di2.FullName, subFolders, theSettings);
+                        count = this.BuildDirCache(prog, count, totalFiles, di2.FullName, subFolders, theSettings);
                 }
             }
             catch (UnauthorizedAccessException)
@@ -106,7 +104,7 @@ namespace TVRename
             catch
             {
             }
-            return filesDone;
+            return count;
         }
     }
 }

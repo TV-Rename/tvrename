@@ -28,7 +28,7 @@ namespace TVRename
         public int pctRSS;
         public int pctuTorrent;
 
-        public ScanProgress(bool mediaLib, bool searchLocal, bool uTorrent, bool rss)
+        public ScanProgress(bool mediaLib, bool searchLocal, bool downloading, bool rss)
         {
             this.Ready = false;
             this.Finished = false;
@@ -36,7 +36,7 @@ namespace TVRename
 
             this.lbMediaLibrary.Enabled = mediaLib;
             this.lbSearchLocally.Enabled = searchLocal;
-            this.lbCheckuTorrent.Enabled = uTorrent;
+            this.lbCheckDownloading.Enabled = downloading;
             this.lbSearchRSS.Enabled = rss;
         }
 
@@ -48,8 +48,8 @@ namespace TVRename
             this.pbLocalSearch.Update();
             this.pbRSS.Value = ((this.pctRSS < 0) ? 0 : ((this.pctRSS > 100) ? 100 : this.pctRSS));
             this.pbRSS.Update();
-            this.pbuTorrent.Value = ((this.pctuTorrent < 0) ? 0 : ((this.pctuTorrent > 100) ? 100 : this.pctuTorrent));
-            this.pbuTorrent.Update();
+            this.pbDownloading.Value = ((this.pctuTorrent < 0) ? 0 : ((this.pctuTorrent > 100) ? 100 : this.pctuTorrent));
+            this.pbDownloading.Update();
         }
 
         public void MediaLibProg(int p)
@@ -67,7 +67,7 @@ namespace TVRename
             this.pctRSS = p;
         }
 
-        public void uTorrentProg(int p)
+        public void DownloadingProg(int p)
         {
             this.pctuTorrent = p;
         }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename

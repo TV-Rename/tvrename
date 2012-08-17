@@ -46,8 +46,8 @@ namespace TVRename
             this.pbLocalSearch = new System.Windows.Forms.ProgressBar();
             this.lbSearchRSS = new System.Windows.Forms.Label();
             this.pbRSS = new System.Windows.Forms.ProgressBar();
-            this.lbCheckuTorrent = new System.Windows.Forms.Label();
-            this.pbuTorrent = new System.Windows.Forms.ProgressBar();
+            this.lbCheckDownloading = new System.Windows.Forms.Label();
+            this.pbDownloading = new System.Windows.Forms.ProgressBar();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
@@ -119,24 +119,24 @@ namespace TVRename
             this.pbRSS.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbRSS.TabIndex = 2;
             // 
-            // lbCheckuTorrent
+            // lbCheckDownloading
             // 
-            this.lbCheckuTorrent.AutoSize = true;
-            this.lbCheckuTorrent.Location = new System.Drawing.Point(12, 47);
-            this.lbCheckuTorrent.Name = "lbCheckuTorrent";
-            this.lbCheckuTorrent.Size = new System.Drawing.Size(81, 13);
-            this.lbCheckuTorrent.TabIndex = 1;
-            this.lbCheckuTorrent.Text = "Check µTorrent";
+            this.lbCheckDownloading.AutoSize = true;
+            this.lbCheckDownloading.Location = new System.Drawing.Point(12, 47);
+            this.lbCheckDownloading.Name = "lbCheckDownloading";
+            this.lbCheckDownloading.Size = new System.Drawing.Size(103, 13);
+            this.lbCheckDownloading.TabIndex = 1;
+            this.lbCheckDownloading.Text = "Check Downloading";
             // 
-            // pbuTorrent
+            // pbDownloading
             // 
-            this.pbuTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.pbDownloading.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbuTorrent.Location = new System.Drawing.Point(141, 47);
-            this.pbuTorrent.Name = "pbuTorrent";
-            this.pbuTorrent.Size = new System.Drawing.Size(223, 13);
-            this.pbuTorrent.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.pbuTorrent.TabIndex = 2;
+            this.pbDownloading.Location = new System.Drawing.Point(141, 47);
+            this.pbDownloading.Name = "pbDownloading";
+            this.pbDownloading.Size = new System.Drawing.Size(223, 13);
+            this.pbDownloading.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.pbDownloading.TabIndex = 2;
             // 
             // timer1
             // 
@@ -148,8 +148,8 @@ namespace TVRename
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(376, 125);
-            this.Controls.Add(this.pbuTorrent);
-            this.Controls.Add(this.lbCheckuTorrent);
+            this.Controls.Add(this.pbDownloading);
+            this.Controls.Add(this.lbCheckDownloading);
             this.Controls.Add(this.pbRSS);
             this.Controls.Add(this.lbSearchRSS);
             this.Controls.Add(this.pbLocalSearch);
@@ -181,8 +181,8 @@ namespace TVRename
         private System.Windows.Forms.ProgressBar pbLocalSearch;
         private System.Windows.Forms.Label lbSearchRSS;
         private System.Windows.Forms.ProgressBar pbRSS;
-        private System.Windows.Forms.Label lbCheckuTorrent;
-        private System.Windows.Forms.ProgressBar pbuTorrent;
+        private System.Windows.Forms.Label lbCheckDownloading;
+        private System.Windows.Forms.ProgressBar pbDownloading;
 	
     }
 }

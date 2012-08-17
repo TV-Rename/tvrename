@@ -31,7 +31,7 @@ namespace TVRename
         public int Compare(Item o)
         {
             ItemMissing miss = o as ItemMissing;
-            return o == null ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
+            return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
         }
 
         #endregion

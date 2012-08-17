@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
@@ -301,7 +302,7 @@ namespace TVRename
         public override void Write(Stream sw)
         {
             sw.WriteByte((byte) 'd');
-            foreach (BTItem i in this.Items)
+            foreach (BTDictionaryItem i in this.Items)
                 i.Write(sw);
             sw.WriteByte((byte) 'e');
         }
@@ -498,13 +499,6 @@ namespace TVRename
 
     public class BEncodeLoader
     {
-        private CommandLineArgs Args;
-        
-        public BEncodeLoader(CommandLineArgs args)
-        {
-            Args = args;
-        }
-
         public BTItem ReadString(Stream sr, Int64 length)
         {
             BinaryReader br = new BinaryReader(sr);
@@ -552,9 +546,11 @@ namespace TVRename
                     return e;
                 }
 
-                BTDictionaryItem di = new BTDictionaryItem();
-                di.Key = ((BTString) next).AsString();
-                di.Data = this.ReadNext(sr);
+                BTDictionaryItem di = new BTDictionaryItem
+                                          {
+                                              Key = ((BTString)next).AsString(),
+                                              Data = this.ReadNext(sr)
+                                          };
 
                 d.Items.Add(di);
             }
@@ -762,7 +758,7 @@ namespace TVRename
             if (tvTree != null)
                 tvTree.Nodes.Clear();
 
-            BEncodeLoader bel = new BEncodeLoader(args);
+            BEncodeLoader bel = new BEncodeLoader();
             BTFile btFile = bel.Load(torrentFile);
 
             if (btFile == null)
@@ -994,7 +990,7 @@ namespace TVRename
         public BTFile ResumeDat; // resume file, if we're using it
         public string ResumeDatPath;
 
-        public FNPRegexList Rexps; // used by MatchMissing
+        public List<FilenameProcessorRE> Rexps; // used by MatchMissing
         public bool SearchSubFolders;
         public bool SetPrios;
         public bool TestMode;
@@ -1041,8 +1037,8 @@ namespace TVRename
         {
             System.Collections.Generic.List<TorrentEntry> r = new System.Collections.Generic.List<TorrentEntry>();
 
-            BEncodeLoader bel = new BEncodeLoader(args);
-            foreach (BTItem it in this.ResumeDat.GetDict().Items)
+            BEncodeLoader bel = new BEncodeLoader();
+            foreach (BTDictionaryItem it in this.ResumeDat.GetDict().Items)
             {
                 if ((it.Type != BTChunk.kDictionaryItem))
                     continue;
@@ -1262,7 +1258,7 @@ namespace TVRename
 
             foreach (Item Action1 in this.MissingList)
             {
-                if ((!(Action1 is ItemMissing)) && (!(Action1 is ItemuTorrenting)))
+                if ((!(Action1 is ItemMissing)) && (!(Action1 is ItemuTorrenting)) && (!(Action1 is ItemSABnzbd)))
                     continue;
 
                 ProcessedEpisode m = null;
@@ -1277,6 +1273,12 @@ namespace TVRename
                 else if (Action1 is ItemuTorrenting)
                 {
                     ItemuTorrenting Action = (ItemuTorrenting) (Action1);
+                    m = Action.Episode;
+                    name = Action.DesiredLocationNoExt;
+                }
+                else if (Action1 is ItemSABnzbd)
+                {
+                    ItemSABnzbd Action = (ItemSABnzbd)(Action1);
                     m = Action.Episode;
                     name = Action.DesiredLocationNoExt;
                 }
@@ -1376,13 +1378,13 @@ namespace TVRename
 
         public bool LoadResumeDat(CommandLineArgs args)
         {
-            BEncodeLoader bel = new BEncodeLoader(args);
+            BEncodeLoader bel = new BEncodeLoader();
             this.ResumeDat = bel.Load(this.ResumeDatPath);
             return (this.ResumeDat != null);
         }
 
         public bool DoWork(StringList Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, 
-                           bool searchSubFolders, ItemList missingList, FNPRegexList rexps, CommandLineArgs args)
+                           bool searchSubFolders, ItemList missingList, List<FilenameProcessorRE> rexps, CommandLineArgs args)
         {
             this.Rexps = rexps;
 

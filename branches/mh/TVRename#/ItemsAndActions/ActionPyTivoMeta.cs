@@ -47,7 +47,7 @@ namespace TVRename
             get { return 10000; }
         }
 
-        public bool Go(TVSettings tvsettings, ref bool pause)
+        public bool Go(TVSettings tvsettings, ref bool pause, TVRenameStats stats)
         {
             // "try" and silently fail.  eg. when file is use by other...
             System.IO.StreamWriter writer;
@@ -74,7 +74,7 @@ namespace TVRename
             writer.WriteLine("isEpisode : true");
             writer.WriteLine(string.Format("description : {0}", this.Episode.Overview));
             if (this.Episode.FirstAired != null)
-                writer.WriteLine(string.Format("originalAirDate : {0:yyyy-MM-dd}T00:00:00Z",this.Episode.FirstAired.Value));
+                writer.WriteLine(string.Format("originalAirDate : {0:yyyy-MM-dd}T00:00:00Z", this.Episode.FirstAired.Value));
             writer.WriteLine(string.Format("callsign : {0}", this.Episode.SI.TheSeries().GetItem("Network")));
 
             WriteEntries(writer, "vDirector", this.Episode.EpisodeDirector);
@@ -117,7 +117,7 @@ namespace TVRename
 
             if (this.Episode == null)
                 return 1;
-            if (nfo.Episode == null)
+            if (nfo == null || nfo.Episode == null)
                 return -1;
             return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
         }

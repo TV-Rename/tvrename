@@ -32,7 +32,7 @@ namespace TVRename
                 return 5;
             if (a is ActionPyTivoMeta)
                 return 6;
-            if (a is ItemuTorrenting)
+            if (a is ItemuTorrenting || a is ItemSABnzbd)
                 return 7;
             return 8;
         }

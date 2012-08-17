@@ -121,7 +121,7 @@ namespace TVRename
             if (parts[1].EndsWith("/upcoming.xml"))
             {
                 MemoryStream ms = new MemoryStream();
-                doc.GenerateUpcomingXML(ms, doc.NextNShows(doc.Settings.ExportRSSMaxShows, doc.Settings.ExportRSSMaxDays));
+                doc.GenerateUpcomingXML(ms, doc.NextNShows(doc.Settings.ExportRSSMaxShows, doc.Settings.ExportRSSDaysPast, doc.Settings.ExportRSSMaxDays));
                 return System.Text.Encoding.ASCII.GetString(ms.ToArray());
             }
             return Err();

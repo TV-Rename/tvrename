@@ -28,7 +28,7 @@ namespace TVRename
         string ProgressText { get; } // shortish text to display to user while task is running
         double PercentDone { get; } // 0.0 to 100.0
         long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
-        bool Go(TVSettings settings, ref bool pause); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
+        bool Go(TVSettings settings, ref bool pause, TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
     }
 
     public interface ScanListItem // something shown in the list on the Scan tab (not always an Action)

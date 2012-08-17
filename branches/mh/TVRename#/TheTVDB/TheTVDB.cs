@@ -73,8 +73,7 @@ namespace TVRename
 
             this.LastError = "";
             // this.WhoHasLock = new StringList();
-            this.LanguagePriorityList = new StringList();
-            this.LanguagePriorityList.Add("en");
+            this.LanguagePriorityList = new StringList {"en"};
             this.Connected = false;
             this.ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
 
@@ -218,9 +217,11 @@ namespace TVRename
 
             // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
             // to make loading easy
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.NewLineOnAttributes = true;
+            XmlWriterSettings settings = new XmlWriterSettings
+            {
+                Indent = true,
+                NewLineOnAttributes = true
+            };
             XmlWriter writer = XmlWriter.Create(this.CacheFile.FullName, settings);
             writer.WriteStartDocument();
             writer.WriteStartElement("Data");
@@ -439,12 +440,14 @@ namespace TVRename
             byte[] p = this.GetPage("languages.xml", true, typeMaskBits.tmMainSite, false);
             if (p == null)
                 return false;
-            ;
+            
             MemoryStream ms = new MemoryStream(p);
 
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.IgnoreComments = true;
-            settings.IgnoreWhitespace = true;
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true
+            };
             XmlReader reader = XmlReader.Create(ms, settings);
             reader.Read();
 
@@ -511,12 +514,14 @@ namespace TVRename
             byte[] p = this.GetPage("mirrors.xml", true, typeMaskBits.tmMainSite, false);
             if (p == null)
                 return false;
-            ;
+            
             MemoryStream ms = new MemoryStream(p);
 
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.IgnoreComments = true;
-            settings.IgnoreWhitespace = true;
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true
+            };
             XmlReader reader = XmlReader.Create(ms, settings);
             reader.Read();
 
@@ -696,9 +701,11 @@ namespace TVRename
         {
             // if updatetime > localtime for item, then remove it, so it will be downloaded later
 
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.IgnoreComments = true;
-            settings.IgnoreWhitespace = true;
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true
+            };
             XmlReader reader = XmlReader.Create(str, settings);
             reader.Read();
 
@@ -864,9 +871,11 @@ namespace TVRename
 
             try
             {
-                XmlReaderSettings settings = new XmlReaderSettings();
-                settings.IgnoreComments = true;
-                settings.IgnoreWhitespace = true;
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true
+                };
                 XmlReader r = XmlReader.Create(str, settings);
 
                 r.Read();

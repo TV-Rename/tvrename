@@ -50,7 +50,7 @@ namespace TVRename
             get { return 1000000; }
         }
 
-        public bool Go(TVSettings settings, ref bool pause)
+        public bool Go(TVSettings settings, ref bool pause, TVRenameStats stats)
         {
             System.Net.WebClient wc = new System.Net.WebClient();
             try

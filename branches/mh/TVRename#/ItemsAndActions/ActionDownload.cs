@@ -52,7 +52,7 @@ namespace TVRename
             get { return 1000000; }
         }
 
-        public bool Go(TVSettings settings, ref bool pause)
+        public bool Go(TVSettings settings, ref bool pause, TVRenameStats stats)
         {
             byte[] theData = this.SI.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
             if ((theData == null) || (theData.Length == 0))
@@ -63,9 +63,20 @@ namespace TVRename
                 return false;
             }
 
-            System.IO.FileStream fs = new System.IO.FileStream(this.Destination.FullName, System.IO.FileMode.Create);
-            fs.Write(theData, 0, theData.Length);
-            fs.Close();
+            try
+            {
+                System.IO.FileStream fs = new System.IO.FileStream(this.Destination.FullName, System.IO.FileMode.Create);
+                fs.Write(theData, 0, theData.Length);
+                fs.Close();
+            }
+            catch (Exception e)
+            {
+                this.ErrorText = e.Message;
+                this.Error = true;
+                this.Done = true;
+                return false;
+            }
+                
 
             this.Done = true;
             return true;

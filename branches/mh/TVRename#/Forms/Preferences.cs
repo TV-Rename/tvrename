@@ -6,9 +6,11 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
+using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 
 namespace TVRename
 {
@@ -70,7 +72,8 @@ namespace TVRename
 
             S.ExportWTWRSS = this.cbWTWRSS.Checked;
             S.ExportWTWRSSTo = this.txtWTWRSS.Text;
-
+            S.ExportWTWXML = this.cbWTWXML.Checked;
+            S.ExportWTWXMLTo = this.txtWTWXML.Text;
             S.ExportMissingXML = this.cbMissingXML.Checked;
             S.ExportMissingXMLTo = this.txtMissingXML.Text;
             S.ExportMissingCSV = this.cbMissingCSV.Checked;
@@ -87,6 +90,7 @@ namespace TVRename
             S.SetOtherExtensionsString(this.txtOtherExtensions.Text);
             S.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
             S.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
+            S.ExportRSSDaysPast = Convert.ToInt32(this.txtExportRSSDaysPast.Text); 
             S.KeepTogether = this.cbKeepTogether.Checked;
             S.LeadingZeroOnSeason = this.cbLeadingZero.Checked;
             S.ShowInTaskbar = this.chkShowInTaskbar.Checked;
@@ -100,6 +104,9 @@ namespace TVRename
 
             S.uTorrentPath = this.txtRSSuTorrentPath.Text;
             S.ResumeDatPath = this.txtUTResumeDatPath.Text;
+            S.SABHostPort = this.txtSABHostPort.Text;
+            S.SABAPIKey = this.txtSABAPIKey.Text;
+            S.CheckSABnzbd = this.cbCheckSABnzbd.Checked;
 
             S.SearchRSS = this.cbSearchRSS.Checked;
             S.EpImgs = this.cbEpImgs.Checked;
@@ -194,8 +201,11 @@ namespace TVRename
             this.cbWTWRSS.Checked = S.ExportWTWRSS;
             this.txtWTWRSS.Text = S.ExportWTWRSSTo;
             this.txtWTWDays.Text = S.WTWRecentDays.ToString();
+            this.cbWTWXML.Checked = S.ExportWTWXML;
+            this.txtWTWXML.Text = S.ExportWTWXMLTo;
             this.txtExportRSSMaxDays.Text = S.ExportRSSMaxDays.ToString();
             this.txtExportRSSMaxShows.Text = S.ExportRSSMaxShows.ToString();
+            this.txtExportRSSDaysPast.Text = S.ExportRSSDaysPast.ToString();
 
             this.cbMissingXML.Checked = S.ExportMissingXML;
             this.txtMissingXML.Text = S.ExportMissingXMLTo;
@@ -226,6 +236,9 @@ namespace TVRename
             this.cbIgnoreSamples.Checked = S.IgnoreSamples;
             this.txtRSSuTorrentPath.Text = S.uTorrentPath;
             this.txtUTResumeDatPath.Text = S.ResumeDatPath;
+            this.txtSABHostPort.Text = S.SABHostPort;
+            this.txtSABAPIKey.Text = S.SABAPIKey;
+            this.cbCheckSABnzbd.Checked = S.CheckSABnzbd;
 
             this.txtParallelDownloads.Text = S.ParallelDownloads.ToString();
 
@@ -293,7 +306,7 @@ namespace TVRename
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            ShowItemList shows = this.mDoc.GetShowItems(false);
+            List<ShowItem> shows = this.mDoc.GetShowItems(false);
             foreach (var show in shows)
             {
                 if(!showStatusList.Contains(show.ShowStatus))
@@ -328,6 +341,11 @@ namespace TVRename
         private void bnBrowseWTWRSS_Click(object sender, System.EventArgs e)
         {
             this.Browse(this.txtWTWRSS);
+        }
+
+        private void bnBrowseWTWXML_Click(object sender, System.EventArgs e)
+        {
+            this.Browse(this.txtWTWXML);
         }
 
         private void txtNumberOnlyKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
@@ -381,14 +399,25 @@ namespace TVRename
 
         private void EnableDisable(object sender, System.EventArgs e)
         {
-            bool wtw = this.cbWTWRSS.Checked;
-            this.txtWTWRSS.Enabled = wtw;
-            this.bnBrowseWTWRSS.Enabled = wtw;
+            this.txtWTWRSS.Enabled = this.cbWTWRSS.Checked;
+            this.bnBrowseWTWRSS.Enabled = this.cbWTWRSS.Checked;
+
+            this.txtWTWXML.Enabled = this.cbWTWXML.Checked;
+            this.bnBrowseWTWXML.Enabled = this.cbWTWXML.Checked;
+
+            bool wtw;
+            if ((this.cbWTWRSS.Checked) || (this.cbWTWXML.Checked))
+                wtw = true;
+            else
+                wtw = false;
+
+            this.label4.Enabled = wtw;
             this.label15.Enabled = wtw;
             this.label16.Enabled = wtw;
             this.label17.Enabled = wtw;
             this.txtExportRSSMaxDays.Enabled = wtw;
             this.txtExportRSSMaxShows.Enabled = wtw;
+            this.txtExportRSSDaysPast.Enabled = wtw;
 
             bool fo = this.cbFOXML.Checked;
             this.txtFOXML.Enabled = fo;
@@ -410,10 +439,7 @@ namespace TVRename
         private void bnAddSearchFolder_Click(object sender, System.EventArgs e)
         {
             int n = this.lbSearchFolders.SelectedIndex;
-            if (n != -1)
-                this.folderBrowser.SelectedPath = this.mDoc.SearchFolders[n];
-            else
-                this.folderBrowser.SelectedPath = "";
+            this.folderBrowser.SelectedPath = n != -1 ? this.mDoc.SearchFolders[n] : "";
 
             if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
@@ -460,10 +486,7 @@ namespace TVRename
 
         private void lbSearchFolders_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.None;
-            else
-                e.Effect = DragDropEffects.Copy;
+            e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
         private void lbSearchFolders_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
@@ -472,10 +495,9 @@ namespace TVRename
             for (int i = 0; i < files.Length; i++)
             {
                 string path = files[i];
-                DirectoryInfo di;
                 try
                 {
-                    di = new DirectoryInfo(path);
+                    DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                         this.mDoc.SearchFolders.Add(path.ToLower());
                 }
@@ -485,25 +507,6 @@ namespace TVRename
             }
             this.mDoc.SetDirty();
             this.FillSearchFolderList();
-        }
-
-        private void lbSearchFolders_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-        {
-            if (e.Button != System.Windows.Forms.MouseButtons.Right)
-                return;
-            //                 
-            //				 TODO ?
-            //				 lbSearchFolders->ClearSelected();
-            //				 lbSearchFolders->SelectedIndex = lbSearchFolders->IndexFromPoint(Point(e->X,e->Y));
-            //
-            //				 int p;
-            //				 if ((p = lbSearchFolders->SelectedIndex) == -1)
-            //				 return;
-            //
-            //				 Point^ pt = lbSearchFolders->PointToScreen(Point(e->X, e->Y));
-            //				 RightClickOnFolder(lbSearchFolders->Items[p]->ToString(),pt);
-            //				 }
-            //				 
         }
 
         private void bnRSSBrowseuTorrent_Click(object sender, System.EventArgs e)
@@ -524,10 +527,12 @@ namespace TVRename
 
         private void SetupReplacementsGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell();
-            titleModel.BackColor = Color.SteelBlue;
-            titleModel.ForeColor = Color.White;
-            titleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+                                                         {
+                                                             BackColor = Color.SteelBlue,
+                                                             ForeColor = Color.White,
+                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                         };
 
             this.ReplacementsGrid.Columns.Clear();
             this.ReplacementsGrid.Rows.Clear();
@@ -572,8 +577,7 @@ namespace TVRename
 
         private void AddNewReplacementRow(string from, string to, bool ins)
         {
-            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell();
-            roModel.ForeColor = Color.Gray;
+            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell {ForeColor = Color.Gray};
 
             int r = this.ReplacementsGrid.RowsCount;
             this.ReplacementsGrid.RowsCount = r + 1;
@@ -589,10 +593,12 @@ namespace TVRename
 
         private void SetupRSSGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell();
-            titleModel.BackColor = Color.SteelBlue;
-            titleModel.ForeColor = Color.White;
-            titleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+                                                         {
+                                                             BackColor = Color.SteelBlue,
+                                                             ForeColor = Color.White,
+                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                         };
 
             this.RSSGrid.Columns.Clear();
             this.RSSGrid.Rows.Clear();
@@ -611,8 +617,7 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            SourceGrid.Cells.ColumnHeader h;
-            h = new SourceGrid.Cells.ColumnHeader("URL");
+            ColumnHeader h = new SourceGrid.Cells.ColumnHeader("URL");
             h.AutomaticSortEnabled = false;
             this.RSSGrid[0, 0] = h;
             this.RSSGrid[0, 0].View = titleModel;
@@ -780,11 +785,11 @@ namespace TVRename
                 try
                 {
                     ShowStatusColoringType ssct = this.cboShowStatus.SelectedItem as ShowStatusColoringType;
-                    if (!ColorTranslator.FromHtml(this.txtShowStatusColor.Text).IsEmpty)
+                    if (!ColorTranslator.FromHtml(this.txtShowStatusColor.Text).IsEmpty && ssct != null)
                     {
                         ListViewItem item = null;
-                        item  = this.lvwDefinedColors.FindItemWithText(ssct.Text) ;
-                        if(item == null)
+                        item = this.lvwDefinedColors.FindItemWithText(ssct.Text);
+                        if (item == null)
                         {
                             item = new ListViewItem();
                             item.SubItems.Add(this.txtShowStatusColor.Text);
