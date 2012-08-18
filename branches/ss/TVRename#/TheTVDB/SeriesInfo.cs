@@ -85,28 +85,15 @@ namespace TVRename
             this.TVDBCode = -1;
             this.Language = "";
         }
-
-        public int LanguagePriority(StringList languages)
-        {
-            if (string.IsNullOrEmpty(this.Language))
-                return 999999;
-            int divPrio = languages.IndexOf(TheTVDB.LanguagePriorityDivider);
-            int r = languages.IndexOf(this.Language); // -1 for not found
-            if (r == -1) 
-                return 999999;
-            if (r > divPrio)
-              return 99999;
-            return r;
-        }
-
-        public void Merge(SeriesInfo o, StringList languages)
+       
+        public void Merge(SeriesInfo o, String preferredLanguage)
         {
             if (o.TVDBCode != this.TVDBCode)
                 return; // that's not us!
-            if (o.Srv_LastUpdated < this.Srv_LastUpdated)
+            if (o.Srv_LastUpdated != 0 && o.Srv_LastUpdated < this.Srv_LastUpdated)
                 return; // older!?
 
-            bool betterLanguage = o.LanguagePriority(languages) < this.LanguagePriority(languages); // lower is better
+            bool betterLanguage = (o.Language == preferredLanguage) && (this.Language != preferredLanguage);
 
             this.Srv_LastUpdated = o.Srv_LastUpdated;
 

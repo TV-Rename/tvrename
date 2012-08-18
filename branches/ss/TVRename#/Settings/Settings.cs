@@ -205,7 +205,7 @@ namespace TVRename
         public bool pyTivoMetaSubFolder = false;
         public CustomName NamingStyle = new CustomName();
         public bool NotificationAreaIcon = false;
-        public bool OfflineMode = false; // TODO: Make property of thetvdb?
+        public bool OfflineMode = false;
         private string[] OtherExtensionsArray = new string[0];
         private string OtherExtensionsString = "";
         public int ParallelDownloads = 4;
@@ -228,9 +228,10 @@ namespace TVRename
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
-        public String SABHostPort;
-        public String SABAPIKey;
-        public bool CheckSABnzbd;
+        public String SABHostPort = "";
+        public String SABAPIKey = "";
+        public bool CheckSABnzbd = false;
+        public String PreferredLanguage = "en";
 
         public TVSettings()
         {
@@ -341,6 +342,8 @@ namespace TVRename
                     this.CheckSABnzbd = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SABHostPort")
                     this.SABHostPort = reader.ReadElementContentAsString();
+                else if (reader.Name == "PreferredLanguage")
+                    this.PreferredLanguage = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportMissingXML")
                     this.ExportMissingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingXMLTo")
@@ -815,6 +818,9 @@ namespace TVRename
             writer.WriteEndElement();
             writer.WriteStartElement("SABHostPort");
             writer.WriteValue(this.SABHostPort);
+            writer.WriteEndElement();
+            writer.WriteStartElement("PreferredLanguage");
+            writer.WriteValue(this.PreferredLanguage);
             writer.WriteEndElement();
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)

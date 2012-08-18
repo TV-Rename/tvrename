@@ -86,13 +86,21 @@ namespace TVRename
 
             this.LoadOK = ((settingsFile == null) || this.LoadXMLSettings(settingsFile)) && this.mTVDB.LoadOK;
 
+            UpdateTVDBLanguage();
+
             //    StartServer();
+        }
+
+        public void UpdateTVDBLanguage()
+        {
+            mTVDB.RequestLanguage = Settings.PreferredLanguage;
         }
 
         public TheTVDB GetTVDB(bool lockDB, string whoFor)
         {
             if (lockDB)
             {
+                System.Diagnostics.Debug.Assert(!String.IsNullOrEmpty(whoFor));
                 if (string.IsNullOrEmpty(whoFor))
                     whoFor = "unknown";
 
@@ -1059,7 +1067,10 @@ namespace TVRename
             SeriesInfo ser = db.GetSeries(si.TVDBCode);
 
             if (ser == null)
+            {
+                db.Unlock("GenerateEpisodeDict");
                 return false; // TODO: warn user
+            }
 
             bool r = true;
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in ser.Seasons)
@@ -1487,34 +1498,35 @@ namespace TVRename
                 Indent = true,
                 NewLineOnAttributes = true
             };
-            XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings);
+            using (XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings))
+            {
 
-            writer.WriteStartDocument();
-            writer.WriteStartElement("TVRename");
-            writer.WriteStartAttribute("Version");
-            writer.WriteValue("2.1");
-            writer.WriteEndAttribute(); // version
+                writer.WriteStartDocument();
+                writer.WriteStartElement("TVRename");
+                writer.WriteStartAttribute("Version");
+                writer.WriteValue("2.1");
+                writer.WriteEndAttribute(); // version
 
-            this.Settings.WriteXML(writer); // <Settings>
+                this.Settings.WriteXML(writer); // <Settings>
 
-            writer.WriteStartElement("MyShows");
-            foreach (ShowItem si in ShowItems)
-                si.WriteXMLSettings(writer);
-            writer.WriteEndElement(); // myshows
+                writer.WriteStartElement("MyShows");
+                foreach (ShowItem si in ShowItems)
+                    si.WriteXMLSettings(writer);
+                writer.WriteEndElement(); // myshows
 
-            WriteStringsToXml(this.MonitorFolders, writer, "MonitorFolders", "Folder");
-            WriteStringsToXml(this.IgnoreFolders, writer, "IgnoreFolders", "Folder");
-            WriteStringsToXml(this.SearchFolders, writer, "FinderSearchFolders", "Folder");
+                WriteStringsToXml(this.MonitorFolders, writer, "MonitorFolders", "Folder");
+                WriteStringsToXml(this.IgnoreFolders, writer, "IgnoreFolders", "Folder");
+                WriteStringsToXml(this.SearchFolders, writer, "FinderSearchFolders", "Folder");
 
-            writer.WriteStartElement("IgnoreItems");
-            foreach (IgnoreItem ii in this.Ignore)
-                ii.Write(writer);
-            writer.WriteEndElement(); // IgnoreItems
+                writer.WriteStartElement("IgnoreItems");
+                foreach (IgnoreItem ii in this.Ignore)
+                    ii.Write(writer);
+                writer.WriteEndElement(); // IgnoreItems
 
-            writer.WriteEndElement(); // tvrename
-            writer.WriteEndDocument();
-            writer.Close();
-            writer = null;
+                writer.WriteEndElement(); // tvrename
+                writer.WriteEndDocument();
+                writer.Close();
+            }
 
             this.mDirty = false;
 
@@ -1692,63 +1704,70 @@ namespace TVRename
                 //XmlWriterSettings settings = gcnew XmlWriterSettings();
                 settings.Indent = true;
                 settings.NewLineOnAttributes = true;
-                XmlWriter writer = XmlWriter.Create(this.Settings.ExportMissingXMLTo, settings);
-
-                writer.WriteStartDocument();
-                writer.WriteStartElement("TVRename");
-                writer.WriteStartAttribute("Version");
-                writer.WriteValue("2.1");
-                writer.WriteEndAttribute(); // version
-                writer.WriteStartElement("MissingItems");
-
-                foreach (Item Action in this.TheActionList)
+                using (XmlWriter writer = XmlWriter.Create(this.Settings.ExportMissingXMLTo, settings))
                 {
-                    if (Action is ItemMissing)
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("TVRename");
+                    writer.WriteStartAttribute("Version");
+                    writer.WriteValue("2.1");
+                    writer.WriteEndAttribute(); // version
+                    writer.WriteStartElement("MissingItems");
+
+                    foreach (Item Action in this.TheActionList)
                     {
-                        ItemMissing Missing = (ItemMissing)(Action);
-                        writer.WriteStartElement("MissingItem");
-                        writer.WriteStartElement("id");
-                        writer.WriteValue(Missing.Episode.SI.TVDBCode);
-                        writer.WriteEndElement();
-                        writer.WriteStartElement("title");
-                        writer.WriteValue(Missing.Episode.TheSeries.Name);
-                        writer.WriteEndElement();
-                        writer.WriteStartElement("season");
-
-                        if (Missing.Episode.SeasonNumber.ToString().Length > 1)
+                        if (Action is ItemMissing)
                         {
-                            writer.WriteValue(Missing.Episode.SeasonNumber);
+                            ItemMissing Missing = (ItemMissing) (Action);
+                            writer.WriteStartElement("MissingItem");
+                            writer.WriteStartElement("id");
+                            writer.WriteValue(Missing.Episode.SI.TVDBCode);
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("title");
+                            writer.WriteValue(Missing.Episode.TheSeries.Name);
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("season");
+
+                            if (Missing.Episode.SeasonNumber.ToString().Length > 1)
+                            {
+                                writer.WriteValue(Missing.Episode.SeasonNumber);
+                            }
+                            else
+                            {
+                                writer.WriteValue("0" + Missing.Episode.SeasonNumber);
+                            }
+
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("episode");
+
+                            if (Missing.Episode.EpNum.ToString().Length > 1)
+                            {
+                                writer.WriteValue(Missing.Episode.EpNum);
+                            }
+                            else
+                            {
+                                writer.WriteValue("0" + Missing.Episode.EpNum);
+                            }
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("episodeName");
+                            writer.WriteValue(Missing.Episode.Name);
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("description");
+                            writer.WriteValue(Missing.Episode.Overview);
+                            writer.WriteEndElement();
+                            writer.WriteStartElement("pubDate");
+
+                            DateTime? dt = Missing.Episode.GetAirDateDT(true);
+                            if (dt != null)
+                                writer.WriteValue(dt.Value.ToString("F"));
+                            writer.WriteEndElement();
+                            writer.WriteEndElement(); // MissingItem
                         }
-                        else { writer.WriteValue("0" + Missing.Episode.SeasonNumber); }
-
-                        writer.WriteEndElement();
-                        writer.WriteStartElement("episode");
-
-                        if (Missing.Episode.EpNum.ToString().Length > 1)
-                        {
-                            writer.WriteValue(Missing.Episode.EpNum);
-                        }
-                        else { writer.WriteValue("0" + Missing.Episode.EpNum); }
-                        writer.WriteEndElement();
-                        writer.WriteStartElement("episodeName");
-                        writer.WriteValue(Missing.Episode.Name);
-                        writer.WriteEndElement();
-                        writer.WriteStartElement("description");
-                        writer.WriteValue(Missing.Episode.Overview);
-                        writer.WriteEndElement();
-                        writer.WriteStartElement("pubDate");
-
-                        DateTime? dt = Missing.Episode.GetAirDateDT(true);
-                        if (dt != null)
-                            writer.WriteValue(dt.Value.ToString("F"));
-                        writer.WriteEndElement();
-                        writer.WriteEndElement(); // MissingItem
                     }
+                    writer.WriteEndElement(); // MissingItems
+                    writer.WriteEndElement(); // tvrename
+                    writer.WriteEndDocument();
+                    writer.Close();
                 }
-                writer.WriteEndElement(); // MissingItems
-                writer.WriteEndElement(); // tvrename
-                writer.WriteEndDocument();
-                writer.Close();
             }
         }
 
@@ -1765,49 +1784,50 @@ namespace TVRename
                                                      NewLineOnAttributes = true,
                                                      Encoding = System.Text.Encoding.ASCII
                                                  };
-                XmlWriter writer = XmlWriter.Create(str, settings);
-
-                writer.WriteStartDocument();
-                writer.WriteStartElement("rss");
-                writer.WriteStartAttribute("version");
-                writer.WriteValue("2.0");
-                writer.WriteEndAttribute();
-                writer.WriteStartElement("channel");
-                writer.WriteStartElement("title");
-                writer.WriteValue("Upcoming Shows");
-                writer.WriteEndElement();
-                writer.WriteStartElement("title");
-                writer.WriteValue("http://tvrename.com");
-                writer.WriteEndElement();
-                writer.WriteStartElement("description");
-                writer.WriteValue("Upcoming shows, exported by TVRename");
-                writer.WriteEndElement();
-
-                foreach (ProcessedEpisode ei in elist)
+                using (XmlWriter writer = XmlWriter.Create(str, settings))
                 {
-                    string niceName = this.Settings.NamingStyle.NameForExt(ei, null, 0);
-
-                    writer.WriteStartElement("item");
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("rss");
+                    writer.WriteStartAttribute("version");
+                    writer.WriteValue("2.0");
+                    writer.WriteEndAttribute();
+                    writer.WriteStartElement("channel");
                     writer.WriteStartElement("title");
-                    writer.WriteValue(ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + niceName);
+                    writer.WriteValue("Upcoming Shows");
                     writer.WriteEndElement();
-                    writer.WriteStartElement("link");
-                    writer.WriteValue(this.GetTVDB(false, "").WebsiteURL(ei.TheSeries.TVDBCode, ei.SeasonID, false));
+                    writer.WriteStartElement("title");
+                    writer.WriteValue("http://tvrename.com");
                     writer.WriteEndElement();
                     writer.WriteStartElement("description");
-                    writer.WriteValue(niceName + "<br/>" + ei.Overview);
+                    writer.WriteValue("Upcoming shows, exported by TVRename");
                     writer.WriteEndElement();
-                    writer.WriteStartElement("pubDate");
-                    DateTime? dt = ei.GetAirDateDT(true);
-                    if (dt != null)
-                        writer.WriteValue(dt.Value.ToString("r"));
+
+                    foreach (ProcessedEpisode ei in elist)
+                    {
+                        string niceName = this.Settings.NamingStyle.NameForExt(ei, null, 0);
+
+                        writer.WriteStartElement("item");
+                        writer.WriteStartElement("title");
+                        writer.WriteValue(ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + niceName);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("link");
+                        writer.WriteValue(this.GetTVDB(false, "").WebsiteURL(ei.TheSeries.TVDBCode, ei.SeasonID, false));
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("description");
+                        writer.WriteValue(niceName + "<br/>" + ei.Overview);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("pubDate");
+                        DateTime? dt = ei.GetAirDateDT(true);
+                        if (dt != null)
+                            writer.WriteValue(dt.Value.ToString("r"));
+                        writer.WriteEndElement();
+                        writer.WriteEndElement(); // item
+                    }
                     writer.WriteEndElement();
-                    writer.WriteEndElement(); // item
+                    writer.WriteEndElement();
+                    writer.WriteEndDocument();
+                    writer.Close();
                 }
-                writer.WriteEndElement();
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
-                writer.Close();
                 return true;
             } // try
             catch
@@ -1827,77 +1847,84 @@ namespace TVRename
                 settings.Indent = true;
                 settings.NewLineOnAttributes = true;
                 settings.Encoding = System.Text.Encoding.ASCII;
-                XmlWriter writer = XmlWriter.Create(str, settings);
-
-                writer.WriteStartDocument();
-                writer.WriteStartElement("WhenToWatch");
-
-                foreach (ProcessedEpisode ei in elist)
+                using (XmlWriter writer = XmlWriter.Create(str, settings))
                 {
-                    string niceName = this.Settings.NamingStyle.NameForExt(ei, null, 0);
+                    writer.WriteStartDocument();
+                    writer.WriteStartElement("WhenToWatch");
 
-                    writer.WriteStartElement("item");
-                    writer.WriteStartElement("id");
-                    writer.WriteValue(ei.TheSeries.TVDBCode);
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("SeriesName");
-                    writer.WriteValue(ei.TheSeries.Name);
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("SeasonNumber");
-
-                    if (ei.SeasonNumber.ToString().Length > 1)
+                    foreach (ProcessedEpisode ei in elist)
                     {
-                        writer.WriteValue(ei.SeasonNumber);
+                        string niceName = this.Settings.NamingStyle.NameForExt(ei, null, 0);
+
+                        writer.WriteStartElement("item");
+                        writer.WriteStartElement("id");
+                        writer.WriteValue(ei.TheSeries.TVDBCode);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("SeriesName");
+                        writer.WriteValue(ei.TheSeries.Name);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("SeasonNumber");
+
+                        if (ei.SeasonNumber.ToString().Length > 1)
+                        {
+                            writer.WriteValue(ei.SeasonNumber);
+                        }
+                        else
+                        {
+                            writer.WriteValue("0" + ei.SeasonNumber);
+                        }
+                        writer.WriteEndElement();
+
+                        writer.WriteStartElement("EpisodeNumber");
+                        if (ei.EpNum.ToString().Length > 1)
+                        {
+                            writer.WriteValue(ei.EpNum);
+                        }
+                        else
+                        {
+                            writer.WriteValue("0" + ei.EpNum);
+                        }
+                        writer.WriteEndElement();
+
+                        writer.WriteStartElement("EpisodeName");
+                        writer.WriteValue(ei.Name);
+                        writer.WriteEndElement();
+
+                        writer.WriteStartElement("available");
+                        DateTime? airdt = ei.GetAirDateDT(true);
+
+                        if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
+                        {
+                            System.Collections.Generic.List<System.IO.FileInfo> fl = this.FindEpOnDisk(ei);
+                            if ((fl != null) && (fl.Count > 0))
+                                writer.WriteValue("true");
+                            else if (ei.SI.DoMissingCheck)
+                                writer.WriteValue("false");
+                        }
+
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("Overview");
+                        writer.WriteValue(ei.Overview);
+                        writer.WriteEndElement();
+
+                        writer.WriteStartElement("FirstAired");
+                        DateTime? dt = ei.GetAirDateDT(true);
+                        if (dt != null)
+                            writer.WriteValue(dt.Value.ToString("F"));
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("Rating");
+                        writer.WriteValue(ei.EpisodeRating);
+                        writer.WriteEndElement();
+                        writer.WriteStartElement("filename");
+                        writer.WriteValue(ei.GetItem("filename"));
+                        writer.WriteEndElement();
+
+                        writer.WriteEndElement(); // item
                     }
-                    else { writer.WriteValue("0" + ei.SeasonNumber); }
                     writer.WriteEndElement();
-
-                    writer.WriteStartElement("EpisodeNumber");
-                    if (ei.EpNum.ToString().Length > 1)
-                    {
-                        writer.WriteValue(ei.EpNum);
-                    }
-                    else { writer.WriteValue("0" + ei.EpNum); }
-                    writer.WriteEndElement();
-
-                    writer.WriteStartElement("EpisodeName");
-                    writer.WriteValue(ei.Name);
-                    writer.WriteEndElement();
-
-                    writer.WriteStartElement("available");
-                    DateTime? airdt = ei.GetAirDateDT(true);
-
-                    if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
-                    {
-                        System.Collections.Generic.List<System.IO.FileInfo> fl = this.FindEpOnDisk(ei);
-                        if ((fl != null) && (fl.Count > 0))
-                            writer.WriteValue("true");
-                        else if (ei.SI.DoMissingCheck)
-                            writer.WriteValue("false");
-                    }
-
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("Overview");
-                    writer.WriteValue(ei.Overview);
-                    writer.WriteEndElement();
-
-                    writer.WriteStartElement("FirstAired");
-                    DateTime? dt = ei.GetAirDateDT(true);
-                    if (dt != null)
-                        writer.WriteValue(dt.Value.ToString("F"));
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("Rating");
-                    writer.WriteValue(ei.EpisodeRating);
-                    writer.WriteEndElement();
-                    writer.WriteStartElement("filename");
-                    writer.WriteValue(ei.GetItem("filename"));
-                    writer.WriteEndElement();
-
-                    writer.WriteEndElement(); // item
+                    writer.WriteEndDocument();
+                    writer.Close();
                 }
-                writer.WriteEndElement();
-                writer.WriteEndDocument();
-                writer.Close();
                 return true;
             } // try
             catch (Exception e)

@@ -6,8 +6,11 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -49,8 +52,6 @@ namespace TVRename
         private System.Collections.Generic.List<ExtraEp> ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
         private System.Collections.Generic.List<int> ForceReloadOn;
         public System.Collections.Generic.Dictionary<string, string> LanguageList;
-        static public readonly String LanguagePriorityDivider = "-";
-        public StringList LanguagePriorityList;
         public string LastError;
         public string LoadErr;
         public bool LoadOK;
@@ -60,6 +61,9 @@ namespace TVRename
         // private StringList WhoHasLock;
         public string XMLMirror;
         public string ZIPMirror;
+
+        public String RequestLanguage = "en"; // Set and updated by TVDoc
+
         private CommandLineArgs Args;
 
         public TheTVDB(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args)
@@ -71,7 +75,6 @@ namespace TVRename
 
             this.LastError = "";
             // this.WhoHasLock = new StringList();
-            this.LanguagePriorityList = new StringList {"en"};
             this.Connected = false;
             this.ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
 
@@ -118,26 +121,28 @@ namespace TVRename
             return this.Series;
         }
 
-        public void GetLock(string whoFor)
+        public bool GetLock(string whoFor)
         {
-            return;
-            //            System.Diagnostics::Debug::Print("Lock Series for " + whoFor);
-            //            Monitor::Enter(Series);
+            System.Diagnostics.Debug.Print("Lock Series for " + whoFor);
+            bool ok = Monitor.TryEnter(Series, 10000);
+            System.Diagnostics.Debug.Assert(ok);
+            return ok;
             //            WhoHasLock->Add(whoFor);
         }
 
         public void Unlock(string whoFor)
         {
-            return;
+            //return;
+
             //            int n = WhoHasLock->Count - 1;
             //            String ^whoHad = WhoHasLock[n];
             //#if defined(DEBUG)
             //            System.Diagnostics::Debug::Assert(whoFor == whoHad);
             //#endif
-            //            System.Diagnostics::Debug::Print("Unlock series ("+whoFor+")");
-            //            WhoHasLock->RemoveAt(n);
+            System.Diagnostics.Debug.Print("Unlock series (" + whoFor + ")");
+                        // WhoHasLock->RemoveAt(n);
             //
-            //            Monitor::Exit(Series);
+                        Monitor.Exit(Series);
         }
 
         private void Say(string s)
@@ -183,8 +188,8 @@ namespace TVRename
 
         public void SaveCache()
         {
-            this.GetLock("SaveCache");
-            //String ^fname = System::Windows::Forms::Application::UserAppDataPath+System.IO.Path.DirectorySeparatorChar.ToString()+"TheTVDB.xml";
+            if (!this.GetLock("SaveCache"))
+                return;
 
             if (this.CacheFile.Exists)
             {
@@ -220,38 +225,33 @@ namespace TVRename
                 Indent = true,
                 NewLineOnAttributes = true
             };
-            XmlWriter writer = XmlWriter.Create(this.CacheFile.FullName, settings);
-            writer.WriteStartDocument();
-            writer.WriteStartElement("Data");
-            writer.WriteStartAttribute("time");
-            writer.WriteValue(this.Srv_Time);
-            writer.WriteEndAttribute();
-
-            string lp = "";
-            foreach (string s in this.LanguagePriorityList)
-                lp += s + " ";
-            writer.WriteStartAttribute("TVRename_LanguagePriority");
-            writer.WriteValue(lp);
-            writer.WriteEndAttribute();
-
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
+            using (XmlWriter writer = XmlWriter.Create(this.CacheFile.FullName, settings))
             {
-                if (kvp.Value.Srv_LastUpdated != 0)
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Data");
+                writer.WriteStartAttribute("time");
+                writer.WriteValue(this.Srv_Time);
+                writer.WriteEndAttribute();
+
+                foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
                 {
-                    kvp.Value.WriteXml(writer);
-                    foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                    if (kvp.Value.Srv_LastUpdated != 0)
                     {
-                        Season seas = kvp2.Value;
-                        foreach (Episode e in seas.Episodes)
-                            e.WriteXml(writer);
+                        kvp.Value.WriteXml(writer);
+                        foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                        {
+                            Season seas = kvp2.Value;
+                            foreach (Episode e in seas.Episodes)
+                                e.WriteXml(writer);
+                        }
                     }
                 }
+
+                writer.WriteEndElement(); // data
+
+                writer.WriteEndDocument();
+                writer.Close();
             }
-
-            writer.WriteEndElement(); // data
-
-            writer.WriteEndDocument();
-            writer.Close();
             this.Unlock("SaveCache");
         }
 
@@ -276,7 +276,9 @@ namespace TVRename
 
         public Episode FindEpisodeByID(int id)
         {
-            this.GetLock("FindEpisodeByID");
+            if (!this.GetLock("FindEpisodeByID"))
+                return null;
+
             foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
             {
                 foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
@@ -408,7 +410,9 @@ namespace TVRename
 
         public void ForgetEverything()
         {
-            this.GetLock("ForgetEverything");
+            if (!this.GetLock("ForgetEverything"))
+                return;
+
             this.Series.Clear();
             this.Connected = false;
             this.SaveCache();
@@ -417,7 +421,9 @@ namespace TVRename
 
         public void ForgetShow(int id, bool makePlaceholder)
         {
-            this.GetLock("ForgetShow");
+            if (!this.GetLock("ForgetShow"))
+                return;
+
             if (this.Series.ContainsKey(id))
             {
                 string name = this.Series[id].Name;
@@ -865,7 +871,8 @@ namespace TVRename
             // ...
             //</Data>
 
-            this.GetLock("ProcessTVDBResponse");
+            if (!this.GetLock("ProcessTVDBResponse"))
+                return false;
 
             try
             {
@@ -893,7 +900,7 @@ namespace TVRename
 
                         SeriesInfo si = new SeriesInfo(r.ReadSubtree());
                         if (this.Series.ContainsKey(si.TVDBCode))
-                            this.Series[si.TVDBCode].Merge(si, this.LanguagePriorityList);
+                            this.Series[si.TVDBCode].Merge(si, this.RequestLanguage);
                         else
                             this.Series[si.TVDBCode] = si;
                         r.Read();
@@ -932,19 +939,6 @@ namespace TVRename
                         string time = r.GetAttribute("time");
                         if (time != null)
                             this.New_Srv_Time = int.Parse(time);
-
-                        string lp = r.GetAttribute("TVRename_LanguagePriority");
-                        if (lp != null)
-                        {
-                            this.LanguagePriorityList.Clear();
-
-                            foreach (string s in lp.Split(' '))
-                            {
-                                if (!string.IsNullOrEmpty(s))
-                                    this.LanguagePriorityList.Add(s);
-                            }
-                        }
-
                         r.Read();
                     }
                     else
@@ -978,50 +972,12 @@ namespace TVRename
             return true;
         }
 
-        public string PreferredLanguage(int seriesID)
-        {
-            if (!this.Series.ContainsKey(seriesID) || (string.IsNullOrEmpty(this.Series[seriesID].Language)))
-            {
-                // new series we don't know about, or don't have any language info
-                SeriesInfo ser = this.DownloadSeriesNow(seriesID, false, true);
-                    // pretend we want "en", download overview
-                if (ser == null)
-                    return "en";
-                string name = ser.Name;
-                ser = null;
-                this.ForgetShow(seriesID, true);
-
-                // using the name found, search (which gives all languages)
-                this.Search(name); // will find all languages available, and pick the "best"
-            }
-
-            if (!this.Series.ContainsKey(seriesID))
-            {
-                System.Diagnostics.Debug.Assert(this.Series.ContainsKey(seriesID));
-                return "en"; // really shouldn't happen!
-            }
-            // and we have a language recorded for it
-            SeriesInfo serl = this.Series[seriesID];
-            if (!string.IsNullOrEmpty(serl.Language))
-                return serl.Language; // return that language
-
-            // otherwise, try for the user's top rated language
-            foreach (String la in LanguagePriorityList)
-            {
-                if (la == LanguagePriorityDivider)
-                    break;
-                return la;
-            }
-            String la2 = LanguagePriorityList.Count > 0 ? LanguagePriorityList[0] : "en"; // first on the list, or english
-            return la2 != LanguagePriorityDivider ? la2 : "en"; // default
-        }
-
         public bool DoWeForceReloadFor(int code)
         {
             return this.ForceReloadOn.Contains(code) || !this.Series.ContainsKey(code);
         }
 
-        public SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool forceEnglish)
+        public SeriesInfo DownloadSeriesNow(int code, bool episodesToo)
         {
             bool forceReload = this.ForceReloadOn.Contains(code);
             string txt = "";
@@ -1035,7 +991,7 @@ namespace TVRename
                 txt += " Overview";
             this.Say(txt);
 
-            string lang = forceEnglish ? "en" : this.PreferredLanguage(code);
+            string lang = this.RequestLanguage;
             string url = BuildURL(false, episodesToo, code, lang);
             byte[] p = episodesToo ? this.GetPageZIP(url, lang + ".xml", true, forceReload) : this.GetPage(url, true, typeMaskBits.tmXML, forceReload);
             if (p == null)
@@ -1068,7 +1024,7 @@ namespace TVRename
                 return false; // shouldn't happen
             this.Say(txt);
 
-            string url = "episodes/" + episodeID + "/" + this.PreferredLanguage(seriesID) + ".xml";
+            string url = "episodes/" + episodeID + "/" + this.RequestLanguage + ".xml";
 
             byte[] p = this.GetPage(url, true, typeMaskBits.tmXML, forceReload);
 
@@ -1092,12 +1048,12 @@ namespace TVRename
         public bool EnsureUpdated(int code)
         {
             if (!this.Series.ContainsKey(code) || (this.Series[code].Seasons.Count == 0))
-                return this.DownloadSeriesNow(code, true, false) != null; // the whole lot!
+                return this.DownloadSeriesNow(code, true) != null; // the whole lot!
 
             bool ok = true;
 
             if (this.Series[code].Dirty)
-                ok = (this.DownloadSeriesNow(code, false, false) != null) && ok;
+                ok = (this.DownloadSeriesNow(code, false) != null) && ok;
 
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in this.Series[code].Seasons)
             {
@@ -1131,12 +1087,14 @@ namespace TVRename
 
         public void Search(string text)
         {
+            text = Helpers.RemoveDiacritics(text); // API doesn't like accented characters
+
             // http://www.thetvdb.com/api/GetSeries.php?seriesname=prison
             // by default, english only.  add &language=all
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
             if (isNumber)
-                this.DownloadSeriesNow(int.Parse(text), false, false);
+                this.DownloadSeriesNow(int.Parse(text), false);
 
             // but, the number could also be a name, so continue searching as usual
             text = text.Replace(".", " ");
@@ -1147,7 +1105,7 @@ namespace TVRename
                 return;
 
             MemoryStream ms = new MemoryStream(p);
-
+            
             this.ProcessTVDBResponse(ms, null);
         }
 

@@ -102,47 +102,49 @@ namespace TVRename
                 NewLineOnAttributes = true
             };
 
-            XmlWriter writer = XmlWriter.Create(PathManager.StatisticsFile.FullName, settings);
+            using (XmlWriter writer = XmlWriter.Create(PathManager.StatisticsFile.FullName, settings))
+            {
 
-            writer.WriteStartDocument();
-            writer.WriteStartElement("Statistics");
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Statistics");
 
-            writer.WriteStartElement("FilesMoved");
-            writer.WriteValue(this.FilesMoved);
-            writer.WriteEndElement();
+                writer.WriteStartElement("FilesMoved");
+                writer.WriteValue(this.FilesMoved);
+                writer.WriteEndElement();
 
-            writer.WriteStartElement("FilesRenamed");
-            writer.WriteValue(this.FilesRenamed);
-            writer.WriteEndElement();
+                writer.WriteStartElement("FilesRenamed");
+                writer.WriteValue(this.FilesRenamed);
+                writer.WriteEndElement();
 
-            writer.WriteStartElement("FilesCopied");
-            writer.WriteValue(this.FilesCopied);
-            writer.WriteEndElement();
+                writer.WriteStartElement("FilesCopied");
+                writer.WriteValue(this.FilesCopied);
+                writer.WriteEndElement();
 
-            writer.WriteStartElement("RenameChecksDone");
-            writer.WriteValue(this.RenameChecksDone);
-            writer.WriteEndElement();
+                writer.WriteStartElement("RenameChecksDone");
+                writer.WriteValue(this.RenameChecksDone);
+                writer.WriteEndElement();
 
-            writer.WriteStartElement("MissingChecksDone");
-            writer.WriteValue(this.MissingChecksDone);
-            writer.WriteEndElement();
+                writer.WriteStartElement("MissingChecksDone");
+                writer.WriteValue(this.MissingChecksDone);
+                writer.WriteEndElement();
 
-            writer.WriteStartElement("FindAndOrganisesDone");
-            writer.WriteValue(this.FindAndOrganisesDone);
-            writer.WriteEndElement();
+                writer.WriteStartElement("FindAndOrganisesDone");
+                writer.WriteValue(this.FindAndOrganisesDone);
+                writer.WriteEndElement();
 
-            writer.WriteStartElement("AutoAddedShows");
-            writer.WriteValue(this.AutoAddedShows);
-            writer.WriteEndElement();
+                writer.WriteStartElement("AutoAddedShows");
+                writer.WriteValue(this.AutoAddedShows);
+                writer.WriteEndElement();
 
-            writer.WriteStartElement("TorrentsMatched");
-            writer.WriteValue(this.TorrentsMatched);
-            writer.WriteEndElement();
+                writer.WriteStartElement("TorrentsMatched");
+                writer.WriteValue(this.TorrentsMatched);
+                writer.WriteEndElement();
 
-            writer.WriteEndElement(); // statistics
+                writer.WriteEndElement(); // statistics
 
-            writer.WriteEndDocument();
-            writer.Close();
+                writer.WriteEndDocument();
+                writer.Close();
+            }
         }
     }
 }
