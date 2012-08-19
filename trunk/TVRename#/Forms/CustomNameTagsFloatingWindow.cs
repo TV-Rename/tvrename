@@ -24,7 +24,7 @@ namespace TVRename
         {
             this.InitializeComponent();
 
-            foreach (string s in CustomName.Tags())
+            foreach (string s in CustomName.Tags)
             {
                 string txt = s;
                 if (pe != null)
