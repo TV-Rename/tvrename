@@ -20,10 +20,6 @@ namespace TVRename
 {
     public delegate void SetProgressDelegate(int percent);
 
-    public class StringList : System.Collections.Generic.List<string>
-    {
-    }
-
     public static class Helpers
     {
         public static string ReadStringFixQuotesAndSpaces(XmlReader r)

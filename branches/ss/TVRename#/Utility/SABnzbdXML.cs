@@ -25,19 +25,19 @@ namespace TVRename.SAB
     public class queue // : object, System.ComponentModel.INotifyPropertyChanged
     {
         public static queue Deserialize(byte[] data)
-      {
-        MemoryStream ms = new MemoryStream(data);
-        XmlSerializer serializer = new XmlSerializer(typeof (queue));
-        try
-          {
-            queue r = (queue) serializer.Deserialize(ms);
-            return r;
-          }
-        catch
-          {
-            return null;
-          }
-      }
+        {
+            MemoryStream ms = new MemoryStream(data);
+            XmlSerializer serializer = new XmlSerializer(typeof (queue));
+            try
+            {
+                queue r = (queue) serializer.Deserialize(ms);
+                return r;
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         public string uniconfig { get; set; }
         public string cache_size { get; set; }
@@ -96,7 +96,7 @@ namespace TVRename.SAB
         public queueCategories[] categories { get; set; }
     }
 
-   
+
     [System.SerializableAttribute]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true)]
@@ -123,7 +123,7 @@ namespace TVRename.SAB
         public string size { get; set; }
     }
 
-   
+
     [System.SerializableAttribute]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true)]
@@ -133,25 +133,25 @@ namespace TVRename.SAB
         public string category { get; set; }
     }
 
-  [System.SerializableAttribute]
+    [System.SerializableAttribute]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true)]
     public class result
     {
         public static result Deserialize(byte[] data)
-      {
-        MemoryStream ms = new MemoryStream(data);
-        XmlSerializer serializer = new XmlSerializer(typeof(result));
-        try
-          {
-            result r = (result)serializer.Deserialize(ms);
-            return r;
-          }
-        catch
-          {
-            return null;
-          }
-      }
+        {
+            MemoryStream ms = new MemoryStream(data);
+            XmlSerializer serializer = new XmlSerializer(typeof (result));
+            try
+            {
+                result r = (result) serializer.Deserialize(ms);
+                return r;
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         public string status { get; set; }
         public string error { get; set; }

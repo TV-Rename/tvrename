@@ -7,10 +7,8 @@
 // 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -58,7 +56,7 @@ namespace TVRename
         private long New_Srv_Time;
         private System.Collections.Generic.Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
         private long Srv_Time; // only update this after a 100% successful download
-        // private StringList WhoHasLock;
+        // private List<String> WhoHasLock;
         public string XMLMirror;
         public string ZIPMirror;
 
@@ -74,7 +72,7 @@ namespace TVRename
             this.CacheFile = cacheFile;
 
             this.LastError = "";
-            // this.WhoHasLock = new StringList();
+            // this.WhoHasLock = new List<String>();
             this.Connected = false;
             this.ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
 
@@ -511,9 +509,9 @@ namespace TVRename
             // get mirror list
             this.Say("TheTVDB Mirrors");
 
-            StringList XMLMirrorList = new StringList();
-            StringList BannerMirrorList = new StringList();
-            StringList ZIPMirrorList = new StringList();
+            List<string> XMLMirrorList = new List<String>();
+            List<string> BannerMirrorList = new List<String>();
+            List<string> ZIPMirrorList = new List<String>();
 
             byte[] p = this.GetPage("mirrors.xml", true, typeMaskBits.tmMainSite, false);
             if (p == null)

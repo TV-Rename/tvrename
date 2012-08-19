@@ -122,7 +122,7 @@ namespace TVRename
         public bool ForceCheckFuture;
         public bool ForceCheckNoAirdate;
         public System.Collections.Generic.List<int> IgnoreSeasons;
-        public System.Collections.Generic.Dictionary<int, StringList> ManualFolderLocations;
+        public System.Collections.Generic.Dictionary<int, List<String>> ManualFolderLocations;
         public bool PadSeasonToTwoDigits;
         public System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
         public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>> SeasonRules;
@@ -235,7 +235,7 @@ namespace TVRename
                     if (!reader.IsEmptyElement)
                     {
                         int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-                        this.SeasonRules[snum] = new System.Collections.Generic.List<ShowRule>();
+                        this.SeasonRules[snum] = new List<ShowRule>();
                         reader.Read();
                         while (reader.Name != "Rules")
                         {
@@ -253,7 +253,7 @@ namespace TVRename
                     if (!reader.IsEmptyElement)
                     {
                         int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-                        this.ManualFolderLocations[snum] = new StringList();
+                        this.ManualFolderLocations[snum] = new List<String>();
                         reader.Read();
                         while (reader.Name != "SeasonFolders")
                         {
@@ -348,7 +348,7 @@ namespace TVRename
             {
                 if (this.TheSeries() != null && this.TheSeries().Seasons != null && this.TheSeries().Seasons.Count > 0)
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                    foreach (KeyValuePair<int, Season> s in this.TheSeries().Seasons)
                     {
                         if(this.IgnoreSeasons.Contains(s.Key))
                             continue;
@@ -368,7 +368,7 @@ namespace TVRename
             {
                 if (HasSeasonsAndEpisodes)
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                    foreach (KeyValuePair<int, Season> s in this.TheSeries().Seasons)
                     {
                         if(this.IgnoreSeasons.Contains(s.Key))
                             continue;
@@ -388,7 +388,7 @@ namespace TVRename
             {
                 if (HasSeasonsAndEpisodes)
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                    foreach (KeyValuePair<int, Season> s in this.TheSeries().Seasons)
                     {
                         if(this.IgnoreSeasons.Contains(s.Key))
                             continue;
@@ -414,7 +414,7 @@ namespace TVRename
                     string[] genreItems = ser.Items["Genre"].Split('|');
                     if (genreItems != null && genreItems.Length > 0)
                     {
-                        System.Collections.Generic.List<string> genreItemsList = new System.Collections.Generic.List<string>();
+                        List<string> genreItemsList = new List<string>();
                         foreach (string genreItem in genreItems)
                         {
                             if (!string.IsNullOrEmpty(genreItem.Trim()))
@@ -435,21 +435,20 @@ namespace TVRename
                 }
             }
         }
-                    
 
         public void SetDefaults(TheTVDB db)
         {
             this.TVDB = db;
-            this.ManualFolderLocations = new System.Collections.Generic.Dictionary<int, StringList>();
-            this.IgnoreSeasons = new System.Collections.Generic.List<int>();
+            this.ManualFolderLocations = new Dictionary<int, List<string>>();
+            this.IgnoreSeasons = new List<int>();
             this.UseCustomShowName = false;
             this.CustomShowName = "";
             this.UseSequentialMatch = false;
-            this.SeasonRules = new System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>>();
-            this.SeasonEpisodes = new System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>>();
+            this.SeasonRules = new Dictionary<int, List<ShowRule>>();
+            this.SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
             this.ShowNextAirdate = true;
             this.TVDBCode = -1;
-            //                WhichSeasons = gcnew System.Collections.Generic.List<int>;
+            //                WhichSeasons = gcnew List<int>;
             //                NamingStyle = (int)NStyle.DefaultStyle();
             this.AutoAddNewSeasons = true;
             this.PadSeasonToTwoDigits = false;
@@ -465,15 +464,7 @@ namespace TVRename
             ForceCheckFuture = false;
         }
 
-        //Generic.List<int>WhichSeasons()
-        //{
-        //    System.Collections.Generic.List<int>r = gcnew System.Collections.Generic.List<int>();
-        //    for each (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>>kvp in SeasonEpisodes)
-        //        r->Add(kvp->Key);
-        //    return r;
-        //}
-
-        public System.Collections.Generic.List<ShowRule> RulesForSeason(int n)
+        public List<ShowRule> RulesForSeason(int n)
         {
             if (this.SeasonRules.ContainsKey(n))
                 return this.SeasonRules[n];
@@ -508,7 +499,7 @@ namespace TVRename
         public int MaxSeason()
         {
             int max = 0;
-            foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
+            foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
             {
                 if (kvp.Key > max)
                     max = kvp.Key;
@@ -596,7 +587,7 @@ namespace TVRename
             writer.WriteValue(this.CustomSearchURL);
             writer.WriteEndElement();
 
-            foreach (System.Collections.Generic.KeyValuePair<int, System.Collections.Generic.List<ShowRule>> kvp in this.SeasonRules)
+            foreach (KeyValuePair<int, List<ShowRule>> kvp in this.SeasonRules)
             {
                 if (kvp.Value.Count > 0)
                 {
@@ -611,7 +602,7 @@ namespace TVRename
                     writer.WriteEndElement(); // Rules
                 }
             }
-            foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in this.ManualFolderLocations)
+            foreach (KeyValuePair<int, List<String>> kvp in this.ManualFolderLocations)
             {
                 if (kvp.Value.Count > 0)
                 {
@@ -636,7 +627,7 @@ namespace TVRename
             writer.WriteEndElement(); // ShowItem
         }
 
-        public static List<ProcessedEpisode> ProcessedListFromEpisodes(System.Collections.Generic.List<Episode> el, ShowItem si)
+        public static List<ProcessedEpisode> ProcessedListFromEpisodes(List<Episode> el, ShowItem si)
         {
             List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
             foreach (Episode e in el)
@@ -644,7 +635,7 @@ namespace TVRename
             return pel;
         }
 
-        public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(TVSettings settings)
+        public Dictionary<int, List<string>> AllFolderLocations(TVSettings settings)
         {
             return this.AllFolderLocations(settings, true);
         }
@@ -654,16 +645,16 @@ namespace TVRename
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
 
-        public System.Collections.Generic.Dictionary<int, StringList> AllFolderLocations(TVSettings settings, bool manualToo)
+        public Dictionary<int, List<string>> AllFolderLocations(TVSettings settings, bool manualToo)
         {
-            System.Collections.Generic.Dictionary<int, StringList> fld = new System.Collections.Generic.Dictionary<int, StringList>();
+            Dictionary<int, List<string>> fld = new Dictionary<int, List<string>>();
 
             if (manualToo)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in this.ManualFolderLocations)
+                foreach (KeyValuePair<int, List<string>> kvp in this.ManualFolderLocations)
                 {
                     if (!fld.ContainsKey(kvp.Key))
-                        fld[kvp.Key] = new StringList();
+                        fld[kvp.Key] = new List<String>();
                     foreach (string s in kvp.Value)
                         fld[kvp.Key].Add(TTS(s));
                 }
@@ -672,7 +663,7 @@ namespace TVRename
             if (this.AutoAddNewSeasons && (!string.IsNullOrEmpty(this.AutoAdd_FolderBase)))
             {
                 int highestThereIs = -1;
-                foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
                 {
                     if (kvp.Key > highestThereIs)
                         highestThereIs = kvp.Key;
@@ -686,7 +677,7 @@ namespace TVRename
                     if ((!string.IsNullOrEmpty(newName)) && (Directory.Exists(newName)))
                     {
                         if (!fld.ContainsKey(i))
-                            fld[i] = new StringList();
+                            fld[i] = new List<String>();
                         if (!fld[i].Contains(newName))
                             fld[i].Add(TTS(newName));
                     }
@@ -702,14 +693,5 @@ namespace TVRename
             string twos = two.ShowName; // + " " +two->SeasonNumber.ToString("D3");
             return ones.CompareTo(twos);
         }
-    }
-    public class EpisodeDict : System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>>
-    {
-    }
-
-    // dictionary by season #
-
-    public class FolderLocationDict : System.Collections.Generic.Dictionary<int, StringList>
-    {
     }
 }

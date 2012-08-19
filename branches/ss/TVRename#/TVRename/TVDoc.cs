@@ -9,28 +9,33 @@
 // All the processing and work should be done in here, nothing in UI.cs
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Windows.Forms;
+using System.Xml;
 
 namespace TVRename
 {
-    using System;
-    using System.Globalization;
-    using System.IO;
-    using System.Text.RegularExpressions;
-    using System.Threading;
-    using System.Windows.Forms;
-    using System.Xml;
-
     public class TVDoc
     {
-        private List<ShowItem> ShowItems;
+        public TVSettings Settings;
+        public List<ShowItem> ShowItems;
+        public List<string> MonitorFolders;
+        public List<string> IgnoreFolders;
+        public List<string> SearchFolders;
+        public List<IgnoreItem> Ignore;
+
         public bool ActionCancel;
         public bool ActionPause;
         private Thread ActionProcessorThread;
         private Semaphore[] ActionSemaphores;
         private bool ActionStarting;
-        private System.Collections.Generic.List<Thread> ActionWorkers;
+        private List<Thread> ActionWorkers;
         public FolderMonitorEntryList AddItems;
         public CommandLineArgs Args;
 
@@ -39,18 +44,13 @@ namespace TVRename
         public int DownloadPct;
         public bool DownloadStopOnError;
         public int DownloadsRemaining;
-        public System.Collections.Generic.List<IgnoreItem> Ignore;
-        public StringList IgnoreFolders;
         public string LoadErr;
         public bool LoadOK;
-        public StringList MonitorFolders;
         public RSSItemList RSSList;
         public ScanProgress ScanProgDlg;
-        public StringList SearchFolders;
-        public TVSettings Settings;
         public ItemList TheActionList;
         public Semaphore WorkerSemaphore;
-        public System.Collections.Generic.List<Thread> Workers;
+        public List<Thread> Workers;
         private bool mDirty;
         private Thread mDownloaderThread;
         private TVRenameStats mStats;
@@ -61,7 +61,7 @@ namespace TVRename
             this.mTVDB = tvdb;
             this.Args = args;
 
-            this.Ignore = new System.Collections.Generic.List<IgnoreItem>();
+            this.Ignore = new List<IgnoreItem>();
 
             this.Workers = null;
             this.WorkerSemaphore = null;
@@ -72,9 +72,10 @@ namespace TVRename
 
             this.Settings = new TVSettings();
 
-            this.MonitorFolders = new StringList();
-            this.IgnoreFolders = new StringList();
-            this.SearchFolders = new StringList();
+            this.MonitorFolders = new List<String>();
+            this.IgnoreFolders = new List<String>();
+            this.SearchFolders = new List<String>();
+            
             ShowItems = new List<ShowItem>();
             this.AddItems = new FolderMonitorEntryList();
 
@@ -152,7 +153,7 @@ namespace TVRename
             this.LockShowItems();
             foreach (ShowItem si in ShowItems)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> k in si.SeasonEpisodes)
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> k in si.SeasonEpisodes)
                     this.mStats.NS_NumberOfEpisodesExpected += k.Value.Count;
                 this.mStats.NS_NumberOfSeasons += si.SeasonEpisodes.Count;
             }
@@ -273,8 +274,8 @@ namespace TVRename
                     break;
                 }
 
-                System.Collections.Generic.Dictionary<int, StringList> afl = si.AllFolderLocations(this.Settings);
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in afl)
+                Dictionary<int, List<string>> afl = si.AllFolderLocations(this.Settings);
+                foreach (KeyValuePair<int, List<string>> kvp in afl)
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -761,14 +762,14 @@ namespace TVRename
 
                 int n2 = ShowItems.Count;
                 int n = 0;
-                System.Collections.Generic.List<int> codes = new System.Collections.Generic.List<int>();
+                List<int> codes = new List<int>();
                 this.LockShowItems();
                 foreach (ShowItem si in ShowItems)
                     codes.Add(si.TVDBCode);
                 this.UnlockShowItems();
 
                 int numWorkers = this.Settings.ParallelDownloads;
-                this.Workers = new System.Collections.Generic.List<Thread>();
+                this.Workers = new List<Thread>();
 
                 this.WorkerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
 
@@ -919,9 +920,9 @@ namespace TVRename
         {
             // remove any shows from thetvdb that aren't in My Shows
             TheTVDB db = this.GetTVDB(true, "TidyTVDB");
-            System.Collections.Generic.List<int> removeList = new System.Collections.Generic.List<int>();
+            List<int> removeList = new List<int>();
 
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.mTVDB.GetSeriesDict())
+            foreach (KeyValuePair<int, SeriesInfo> kvp in this.mTVDB.GetSeriesDict())
             {
                 bool found = false;
                 foreach (ShowItem si in ShowItems)
@@ -964,14 +965,14 @@ namespace TVRename
                 this.GenDict();
         }
 
-        public System.Collections.Generic.List<System.IO.FileInfo> FindEpOnDisk(ProcessedEpisode pe)
+        public List<System.IO.FileInfo> FindEpOnDisk(ProcessedEpisode pe)
         {
             return this.FindEpOnDisk(pe.SI, pe);
         }
 
-        public System.Collections.Generic.List<System.IO.FileInfo> FindEpOnDisk(ShowItem si, Episode epi)
+        public List<System.IO.FileInfo> FindEpOnDisk(ShowItem si, Episode epi)
         {
-            System.Collections.Generic.List<System.IO.FileInfo> ret = new System.Collections.Generic.List<System.IO.FileInfo>();
+            List<System.IO.FileInfo> ret = new List<System.IO.FileInfo>();
 
             int seasWanted = epi.TheSeason.SeasonNumber;
             int epWanted = epi.EpNum;
@@ -1073,7 +1074,7 @@ namespace TVRename
             }
 
             bool r = true;
-            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in ser.Seasons)
+            foreach (KeyValuePair<int, Season> kvp in ser.Seasons)
             {
                 List<ProcessedEpisode> pel = GenerateEpisodes(si, ser, kvp.Key, true);
                 si.SeasonEpisodes[kvp.Key] = pel;
@@ -1081,7 +1082,7 @@ namespace TVRename
                     r = false;
             }
 
-            System.Collections.Generic.List<int> theKeys = new System.Collections.Generic.List<int>();
+            List<int> theKeys = new List<int>();
             // now, go through and number them all sequentially
             foreach (int snum in ser.Seasons.Keys)
                 theKeys.Add(snum);
@@ -1171,7 +1172,7 @@ namespace TVRename
 
             if (applyRules)
             {
-                System.Collections.Generic.List<ShowRule> rules = si.RulesForSeason(snum);
+                List<ShowRule> rules = si.RulesForSeason(snum);
                 if (rules != null)
                     ApplyRules(eis, rules, si);
             }
@@ -1179,7 +1180,7 @@ namespace TVRename
             return eis;
         }
 
-        public static void ApplyRules(List<ProcessedEpisode> eis, System.Collections.Generic.List<ShowRule> rules, ShowItem si)
+        public static void ApplyRules(List<ProcessedEpisode> eis, List<ShowRule> rules, ShowItem si)
         {
             foreach (ShowRule sr in rules)
             {
@@ -1414,7 +1415,7 @@ namespace TVRename
                 {
                     if (!si.ShowNextAirdate)
                         continue;
-                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes)
+                    foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes)
                     {
                         if (si.IgnoreSeasons.Contains(v.Key))
                             continue; // ignore this season
@@ -1455,7 +1456,7 @@ namespace TVRename
             return found;
         }
 
-        public static void WriteStringsToXml(StringList strings, XmlWriter writer, string elementName, string stringName)
+        public static void WriteStringsToXml(List<string> strings, XmlWriter writer, string elementName, string stringName)
         {
             writer.WriteStartElement(elementName);
             foreach (string ss in strings)
@@ -1533,9 +1534,9 @@ namespace TVRename
             this.Stats().Save();
         }
 
-        public static StringList ReadStringsFromXml(XmlReader reader, string elementName, string stringName)
+        public static List<string> ReadStringsFromXml(XmlReader reader, string elementName, string stringName)
         {
-            StringList r = new StringList();
+            List<string> r = new List<String>();
 
             if (reader.Name != elementName)
                 return r; // uhoh
@@ -1674,7 +1675,7 @@ namespace TVRename
 
             try
             {
-                this.Stats().Load();
+                mStats = TVRenameStats.Load();
             }
             catch (Exception)
             {
@@ -1895,7 +1896,7 @@ namespace TVRename
 
                         if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
                         {
-                            System.Collections.Generic.List<System.IO.FileInfo> fl = this.FindEpOnDisk(ei);
+                            List<System.IO.FileInfo> fl = this.FindEpOnDisk(ei);
                             if ((fl != null) && (fl.Count > 0))
                                 writer.WriteValue("true");
                             else if (ei.SI.DoMissingCheck)
@@ -2105,7 +2106,7 @@ namespace TVRename
             if (!btr.LoadResumeDat(Args))
                 return;
 
-            System.Collections.Generic.List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded(this.Settings, Args);
+            List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded(this.Settings, Args);
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -2264,7 +2265,7 @@ namespace TVRename
 
             int N = queues.Length;
 
-            this.ActionWorkers = new System.Collections.Generic.List<Thread>();
+            this.ActionWorkers = new List<Thread>();
             this.ActionSemaphores = new Semaphore[N];
 
             for (int i = 0; i < N; i++)
@@ -2444,7 +2445,7 @@ namespace TVRename
                 if (!si.DoMissingCheck && !si.DoRename)
                     continue; // skip
 
-                System.Collections.Generic.Dictionary<int, StringList> flocs = si.AllFolderLocations(this.Settings);
+                Dictionary<int, List<string>> flocs = si.AllFolderLocations(this.Settings);
 
                 int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
                 si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
@@ -2457,7 +2458,7 @@ namespace TVRename
                     if ((snum == 0) && (si.CountSpecials))
                         continue; // no specials season, they're merged into the seasons themselves
 
-                    StringList folders = new StringList();
+                    List<string> folders = new List<String>();
 
                     if (flocs.ContainsKey(snum))
                         folders = flocs[snum];
@@ -2552,7 +2553,7 @@ namespace TVRename
                                     if (di.Exists && (si.AutoFolderNameForSeason(snum, this.Settings).ToLower() != folder.ToLower()))
                                     {
                                         if (!si.ManualFolderLocations.ContainsKey(snum))
-                                            si.ManualFolderLocations[snum] = new StringList();
+                                            si.ManualFolderLocations[snum] = new List<String>();
                                         si.ManualFolderLocations[snum].Add(folder);
                                         this.SetDirty();
                                     }
@@ -2646,7 +2647,7 @@ namespace TVRename
 
                 int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
                 si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-                System.Collections.Generic.Dictionary<int, StringList> allFolders = si.AllFolderLocations(this.Settings);
+                Dictionary<int, List<string>> allFolders = si.AllFolderLocations(this.Settings);
 
                 int lastSeason = 0;
                 foreach (int n in numbers)
@@ -2665,7 +2666,7 @@ namespace TVRename
                         continue; // don't process the specials season, as they're merged into the seasons themselves
 
                     // all the folders for this particular season
-                    StringList folders = allFolders[snum];
+                    List<string> folders = allFolders[snum];
 
                     bool folderNotDefined = (folders.Count == 0);
                     if (folderNotDefined && (this.Settings.MissingCheck && !si.AutoAddNewSeasons))
@@ -2679,7 +2680,7 @@ namespace TVRename
                             maxEpisodeNumber = episode.EpNum;
                     }
 
-                    StringList doneFolderJPG = new StringList();
+                    List<string> doneFolderJPG = new List<String>();
                     if (this.Settings.FolderJpg)
                     {
                         // main image for the folder itself
@@ -3047,7 +3048,7 @@ namespace TVRename
             ep = -1;
             seas = -1;
 
-            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in ser.Seasons)
+            foreach (KeyValuePair<int, Season> kvp in ser.Seasons)
             {
                 if (si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
                     continue;

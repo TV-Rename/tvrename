@@ -76,7 +76,7 @@ namespace TVRename
         public SetProgressDelegate SetProgress;
         private MyListView lvAction;
         protected TVDoc mDoc;
-        protected StringList mFoldersToOpen;
+        protected List<string> mFoldersToOpen;
         protected int mInternalChange;
         protected System.Collections.Generic.List<FileInfo> mLastFL;
         protected Point mLastNonMaximizedLocation;
@@ -102,7 +102,7 @@ namespace TVRename
             this.mLastActionsClicked = null;
 
             this.mInternalChange = 0;
-            this.mFoldersToOpen = new StringList();
+            this.mFoldersToOpen = new List<String>();
 
             this.InternalCheckChange = false;
 
@@ -747,7 +747,7 @@ namespace TVRename
 
             string body = "";
 
-            StringList skip = new StringList
+            List<string> skip = new List<String>
                                   {
                                       "Actors",
                                       "banner",
@@ -1472,7 +1472,7 @@ namespace TVRename
             Season seas = this.mLastSeasonClicked;
             ProcessedEpisode ep = this.mLastEpClicked;
             ToolStripMenuItem tsi;
-            StringList added = new StringList();
+            List<string> added = new List<String>();
 
             if (ep != null)
             {
@@ -1530,7 +1530,7 @@ namespace TVRename
                 int n = this.mFoldersToOpen.Count;
                 bool first = true;
 
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.AllFolderLocations(this.mDoc.Settings))
+                foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in si.AllFolderLocations(this.mDoc.Settings))
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -1586,7 +1586,7 @@ namespace TVRename
         public void BuildRightClickMenu(Point pt)
         {
             this.showRightClickMenu.Items.Clear();
-            this.mFoldersToOpen = new StringList();
+            this.mFoldersToOpen = new List<String>();
             this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
 
             this.MenuGuideAndTVDB(false);
@@ -1890,9 +1890,18 @@ namespace TVRename
                 this.mDoc.GetTVDB(false, "").SaveCache();
                 this.SaveLayoutXML();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message+"\r\n\r\n"+ex.StackTrace, "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Exception e2 = ex;
+                while (e2.InnerException != null)
+                    e2 = e2.InnerException;
+                String m2 = e2.Message;
+                MessageBox.Show(this,
+                                ex.Message + "\r\n\r\n" +
+                                m2 + "\r\n\r\n" +
+                                ex.StackTrace,
+                                "Save Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -2389,7 +2398,7 @@ namespace TVRename
                 return;
 
             Season seas = TreeNodeToSeason(n);
-            System.Collections.Generic.Dictionary<int, StringList> afl = si.AllFolderLocations(this.mDoc.Settings);
+            System.Collections.Generic.Dictionary<int, List<string>> afl = si.AllFolderLocations(this.mDoc.Settings);
             int[] keys = new int[afl.Count];
             afl.Keys.CopyTo(keys, 0);
             if ((seas == null) && (keys.Length > 0))
@@ -2521,7 +2530,7 @@ namespace TVRename
 
             if (currentSI != null)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in currentSI.AllFolderLocations(this.mDoc.Settings))
+                foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in currentSI.AllFolderLocations(this.mDoc.Settings))
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -2938,7 +2947,7 @@ namespace TVRename
             this.mLastActionsClicked = null;
 
             this.showRightClickMenu.Items.Clear();
-            this.mFoldersToOpen = new StringList();
+            this.mFoldersToOpen = new List<String>();
             this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
 
             this.mLastActionsClicked = new ItemList();

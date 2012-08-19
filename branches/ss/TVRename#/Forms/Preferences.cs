@@ -91,8 +91,8 @@ namespace TVRename
             S.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
             S.StartupTab = this.cbStartupTab.SelectedIndex;
             S.NotificationAreaIcon = this.cbNotificationIcon.Checked;
-            S.SetVideoExtensionsString(this.txtVideoExtensions.Text);
-            S.SetOtherExtensionsString(this.txtOtherExtensions.Text);
+            S.VideoExtensionsString = this.txtVideoExtensions.Text;
+            S.OtherExtensionsString = this.txtOtherExtensions.Text;
             S.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
             S.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
             S.ExportRSSDaysPast = Convert.ToInt32(this.txtExportRSSDaysPast.Text); 
