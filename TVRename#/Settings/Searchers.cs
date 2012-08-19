@@ -5,8 +5,6 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-
-using System.Collections.Generic;
 using System.Xml;
 
 // Things like bittorrent search engines, etc.  Manages a URL template that is fed through
@@ -16,17 +14,14 @@ namespace TVRename
 {
     public class Searchers
     {
-        public class Choice
-        {
-            public string Name;
-            public string URL2;
-        }
-
         public string CurrentSearch;
-        private List<Choice> Choices = new List<Choice>();
+        private StringList mNames;
+        private StringList mURLs;
 
         public Searchers()
         {
+            this.mNames = new StringList();
+            this.mURLs = new StringList();
             this.CurrentSearch = "";
 
             this.Add("Area07", "http://www.area07.net/browse.php?search={ShowName}+{Season}+{Episode}&cat=4");
@@ -45,10 +40,11 @@ namespace TVRename
 
             this.CurrentSearch = "Mininova";
         }
-        
+
         public Searchers(XmlReader reader)
         {
-            this.Choices = new List<Choice>();
+            this.mNames = new StringList();
+            this.mURLs = new StringList();
             this.CurrentSearch = "";
 
             reader.Read();
@@ -83,7 +79,7 @@ namespace TVRename
 
         public void SetToNumber(int n)
         {
-            this.CurrentSearch = this.Choices[n].Name;
+            this.CurrentSearch = this.mNames[n];
         }
 
         public int CurrentSearchNum()
@@ -93,9 +89,9 @@ namespace TVRename
 
         public int NumForName(string srch)
         {
-            for (int i = 0; i < this.Choices.Count; i++)
+            for (int i = 0; i < this.Count(); i++)
             {
-                if (this.Choices[i].Name == srch)
+                if (this.mNames[i] == srch)
                     return i;
             }
             return 0;
@@ -103,10 +99,11 @@ namespace TVRename
 
         public string CurrentSearchURL()
         {
-            if (this.Choices.Count == 0)
+            if (this.mURLs.Count == 0)
                 return "";
-            return this.Choices[this.CurrentSearchNum()].URL2;
+            return this.mURLs[this.CurrentSearchNum()];
         }
+
         public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
@@ -118,47 +115,49 @@ namespace TVRename
             {
                 writer.WriteStartElement("Choice");
                 writer.WriteStartAttribute("Name");
-                writer.WriteValue(this.Choices[i].Name);
+                writer.WriteValue(this.mNames[i]);
                 writer.WriteEndAttribute();
                 writer.WriteStartAttribute("URL2");
-                writer.WriteValue(this.Choices[i].URL2);
+                writer.WriteValue(this.mURLs[i]);
                 writer.WriteEndAttribute();
                 writer.WriteEndElement();
             }
             writer.WriteEndElement(); // TheSearchers
         }
+
         public void Clear()
         {
-            this.Choices.Clear();
+            this.mNames.Clear();
+            this.mURLs.Clear();
         }
 
         public void Add(string name, string url)
         {
-
-            this.Choices.Add(new Choice { Name = name, URL2 = url });
+            this.mNames.Add(name);
+            this.mURLs.Add(url);
         }
 
         public int Count()
         {
-            return this.Choices.Count;
+            return this.mNames.Count;
         }
 
         public string Name(int n)
         {
-            if (n >= this.Choices.Count)
-                n = this.Choices.Count - 1;
+            if (n >= this.mNames.Count)
+                n = this.mNames.Count - 1;
             else if (n < 0)
                 n = 0;
-            return this.Choices[n].Name;
+            return this.mNames[n];
         }
 
         public string URL(int n)
         {
-            if (n >= this.Choices.Count)
-                n = this.Choices.Count - 1;
+            if (n >= this.mNames.Count)
+                n = this.mNames.Count - 1;
             else if (n < 0)
                 n = 0;
-            return this.Choices[n].URL2;
+            return this.mURLs[n];
         }
     }
 }

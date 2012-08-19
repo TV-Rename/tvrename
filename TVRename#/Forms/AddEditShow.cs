@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -93,7 +92,7 @@ namespace TVRename
                 first = false;
             }
 
-            foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in si.ManualFolderLocations)
+            foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.ManualFolderLocations)
             {
                 foreach (string s in kvp.Value)
                 {
@@ -118,7 +117,7 @@ namespace TVRename
 
             StringBuilder tl = new StringBuilder();
 
-            foreach (string s in CustomName.Tags)
+            foreach (string s in CustomName.Tags())
             {
                 tl.AppendLine(s);
             }
@@ -197,7 +196,7 @@ namespace TVRename
                 {
                     int seas = int.Parse(lvi.Text);
                     if (!this.mSI.ManualFolderLocations.ContainsKey(seas))
-                        this.mSI.ManualFolderLocations.Add(seas, new List<String>());
+                        this.mSI.ManualFolderLocations.Add(seas, new StringList());
 
                     this.mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
                 }

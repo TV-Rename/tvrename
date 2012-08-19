@@ -388,9 +388,9 @@ namespace TVRename
             this.Items = new System.Collections.Generic.List<BTItem>();
         }
 
-        public List<string> AllFilesInTorrent()
+        public StringList AllFilesInTorrent()
         {
-            List<string> r = new List<String>();
+            StringList r = new StringList();
 
             BTItem bti = this.GetItem("info");
             if ((bti == null) || (bti.Type != BTChunk.kDictionary))
@@ -1063,7 +1063,7 @@ namespace TVRename
                 if (tor == null)
                     continue;
 
-                List<string> a = tor.AllFilesInTorrent();
+                StringList a = tor.AllFilesInTorrent();
                 if (a != null)
                 {
                     int c = 0;
@@ -1378,7 +1378,7 @@ namespace TVRename
             return (this.ResumeDat != null);
         }
 
-        public bool DoWork(List<string> Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, 
+        public bool DoWork(StringList Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, 
                            bool searchSubFolders, ItemList missingList, List<FilenameProcessorRE> rexps, CommandLineArgs args)
         {
             this.Rexps = rexps;

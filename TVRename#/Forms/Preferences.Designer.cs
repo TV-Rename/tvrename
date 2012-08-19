@@ -73,15 +73,13 @@ namespace TVRename
             this.label6 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tbGeneral = new System.Windows.Forms.TabPage();
-            this.label10 = new System.Windows.Forms.Label();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
             this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
-            this.cbLanguages = new System.Windows.Forms.ComboBox();
             this.label21 = new System.Windows.Forms.Label();
             this.cbAutoSelInMyShows = new System.Windows.Forms.CheckBox();
             this.label20 = new System.Windows.Forms.Label();
             this.txtParallelDownloads = new System.Windows.Forms.TextBox();
-            this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
             this.bnReplaceRemove = new System.Windows.Forms.Button();
             this.bnReplaceAdd = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -91,7 +89,7 @@ namespace TVRename
             this.txtOtherExtensions = new System.Windows.Forms.TextBox();
             this.cbForceLower = new System.Windows.Forms.CheckBox();
             this.cbIgnoreSamples = new System.Windows.Forms.CheckBox();
-            this.tbAutoExport = new System.Windows.Forms.TabPage();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.bnBrowseFOXML = new System.Windows.Forms.Button();
             this.cbFOXML = new System.Windows.Forms.CheckBox();
@@ -124,14 +122,14 @@ namespace TVRename
             this.cbCheckSABnzbd = new System.Windows.Forms.CheckBox();
             this.cbCheckuTorrent = new System.Windows.Forms.CheckBox();
             this.cbSearchLocally = new System.Windows.Forms.CheckBox();
-            this.tbSearchFolders = new System.Windows.Forms.TabPage();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
             this.cbMonitorFolder = new System.Windows.Forms.CheckBox();
             this.bnOpenSearchFolder = new System.Windows.Forms.Button();
             this.bnRemoveSearchFolder = new System.Windows.Forms.Button();
             this.bnAddSearchFolder = new System.Windows.Forms.Button();
             this.lbSearchFolders = new System.Windows.Forms.ListBox();
             this.label23 = new System.Windows.Forms.Label();
-            this.tbuTorrentNZB = new System.Windows.Forms.TabPage();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtSABHostPort = new System.Windows.Forms.TextBox();
             this.txtSABAPIKey = new System.Windows.Forms.TextBox();
@@ -149,6 +147,11 @@ namespace TVRename
             this.bnRSSAdd = new System.Windows.Forms.Button();
             this.bnRSSGo = new System.Windows.Forms.Button();
             this.label25 = new System.Windows.Forms.Label();
+            this.tabPage6 = new System.Windows.Forms.TabPage();
+            this.bnLangDown = new System.Windows.Forms.Button();
+            this.bnLangUp = new System.Windows.Forms.Button();
+            this.lbLangs = new System.Windows.Forms.ListBox();
+            this.label24 = new System.Windows.Forms.Label();
             this.tpTreeColoring = new System.Windows.Forms.TabPage();
             this.label7 = new System.Windows.Forms.Label();
             this.cboShowStatus = new System.Windows.Forms.ComboBox();
@@ -166,24 +169,25 @@ namespace TVRename
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
-            this.tbGeneral.SuspendLayout();
-            this.tbFilesAndFolders.SuspendLayout();
-            this.tbAutoExport.SuspendLayout();
+            this.tabPage1.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.tabPage3.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.tpScanOptions.SuspendLayout();
-            this.tbSearchFolders.SuspendLayout();
-            this.tbuTorrentNZB.SuspendLayout();
+            this.tabPage4.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
+            this.tabPage6.SuspendLayout();
             this.tpTreeColoring.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OKButton.Location = new System.Drawing.Point(280, 469);
+            this.OKButton.Location = new System.Drawing.Point(280, 445);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 0;
@@ -195,7 +199,7 @@ namespace TVRename
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(361, 469);
+            this.bnCancel.Location = new System.Drawing.Point(361, 445);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 1;
@@ -506,53 +510,44 @@ namespace TVRename
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tbGeneral);
-            this.tabControl1.Controls.Add(this.tbFilesAndFolders);
-            this.tabControl1.Controls.Add(this.tbAutoExport);
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Controls.Add(this.tpScanOptions);
-            this.tabControl1.Controls.Add(this.tbSearchFolders);
-            this.tabControl1.Controls.Add(this.tbuTorrentNZB);
+            this.tabControl1.Controls.Add(this.tabPage4);
+            this.tabControl1.Controls.Add(this.tabPage5);
+            this.tabControl1.Controls.Add(this.tabPage6);
             this.tabControl1.Controls.Add(this.tpTreeColoring);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(424, 445);
+            this.tabControl1.Size = new System.Drawing.Size(424, 421);
             this.tabControl1.TabIndex = 5;
+            this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
             // 
-            // tbGeneral
+            // tabPage1
             // 
-            this.tbGeneral.Controls.Add(this.label10);
-            this.tbGeneral.Controls.Add(this.cbLookForAirdate);
-            this.tbGeneral.Controls.Add(this.cbLanguages);
-            this.tbGeneral.Controls.Add(this.cbStartupTab);
-            this.tbGeneral.Controls.Add(this.label21);
-            this.tbGeneral.Controls.Add(this.label1);
-            this.tbGeneral.Controls.Add(this.cbAutoSelInMyShows);
-            this.tbGeneral.Controls.Add(this.cbShowEpisodePictures);
-            this.tbGeneral.Controls.Add(this.label6);
-            this.tbGeneral.Controls.Add(this.chkShowInTaskbar);
-            this.tbGeneral.Controls.Add(this.label20);
-            this.tbGeneral.Controls.Add(this.label2);
-            this.tbGeneral.Controls.Add(this.cbNotificationIcon);
-            this.tbGeneral.Controls.Add(this.txtParallelDownloads);
-            this.tbGeneral.Controls.Add(this.txtWTWDays);
-            this.tbGeneral.Location = new System.Drawing.Point(4, 40);
-            this.tbGeneral.Name = "tbGeneral";
-            this.tbGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tbGeneral.Size = new System.Drawing.Size(416, 401);
-            this.tbGeneral.TabIndex = 0;
-            this.tbGeneral.Text = "General";
-            this.tbGeneral.UseVisualStyleBackColor = true;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 181);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(100, 13);
-            this.label10.TabIndex = 13;
-            this.label10.Text = "&Preferred language:";
+            this.tabPage1.Controls.Add(this.cbLookForAirdate);
+            this.tabPage1.Controls.Add(this.cbStartupTab);
+            this.tabPage1.Controls.Add(this.label21);
+            this.tabPage1.Controls.Add(this.label1);
+            this.tabPage1.Controls.Add(this.cbAutoSelInMyShows);
+            this.tabPage1.Controls.Add(this.cbShowEpisodePictures);
+            this.tabPage1.Controls.Add(this.label6);
+            this.tabPage1.Controls.Add(this.chkShowInTaskbar);
+            this.tabPage1.Controls.Add(this.label20);
+            this.tabPage1.Controls.Add(this.label2);
+            this.tabPage1.Controls.Add(this.cbNotificationIcon);
+            this.tabPage1.Controls.Add(this.txtParallelDownloads);
+            this.tabPage1.Controls.Add(this.txtWTWDays);
+            this.tabPage1.Location = new System.Drawing.Point(4, 40);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(416, 377);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "General";
+            this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // cbLookForAirdate
             // 
@@ -563,20 +558,6 @@ namespace TVRename
             this.cbLookForAirdate.TabIndex = 12;
             this.cbLookForAirdate.Text = "&Look for airdate in filenames";
             this.cbLookForAirdate.UseVisualStyleBackColor = true;
-            // 
-            // cbLanguages
-            // 
-            this.cbLanguages.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLanguages.FormattingEnabled = true;
-            this.cbLanguages.Items.AddRange(new object[] {
-            "My Shows",
-            "Scan",
-            "When to Watch"});
-            this.cbLanguages.Location = new System.Drawing.Point(112, 178);
-            this.cbLanguages.Name = "cbLanguages";
-            this.cbLanguages.Size = new System.Drawing.Size(146, 21);
-            this.cbLanguages.Sorted = true;
-            this.cbLanguages.TabIndex = 4;
             // 
             // label21
             // 
@@ -614,32 +595,32 @@ namespace TVRename
             this.txtParallelDownloads.TabIndex = 9;
             this.txtParallelDownloads.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumberOnlyKeyPress);
             // 
-            // tbFilesAndFolders
+            // tabPage2
             // 
-            this.tbFilesAndFolders.Controls.Add(this.bnReplaceRemove);
-            this.tbFilesAndFolders.Controls.Add(this.bnReplaceAdd);
-            this.tbFilesAndFolders.Controls.Add(this.label3);
-            this.tbFilesAndFolders.Controls.Add(this.ReplacementsGrid);
-            this.tbFilesAndFolders.Controls.Add(this.label19);
-            this.tbFilesAndFolders.Controls.Add(this.txtMaxSampleSize);
-            this.tbFilesAndFolders.Controls.Add(this.cbTxtToSub);
-            this.tbFilesAndFolders.Controls.Add(this.label22);
-            this.tbFilesAndFolders.Controls.Add(this.label14);
-            this.tbFilesAndFolders.Controls.Add(this.txtSpecialsFolderName);
-            this.tbFilesAndFolders.Controls.Add(this.label13);
-            this.tbFilesAndFolders.Controls.Add(this.txtOtherExtensions);
-            this.tbFilesAndFolders.Controls.Add(this.txtVideoExtensions);
-            this.tbFilesAndFolders.Controls.Add(this.cbKeepTogether);
-            this.tbFilesAndFolders.Controls.Add(this.cbForceLower);
-            this.tbFilesAndFolders.Controls.Add(this.cbIgnoreSamples);
-            this.tbFilesAndFolders.Controls.Add(this.cbLeadingZero);
-            this.tbFilesAndFolders.Location = new System.Drawing.Point(4, 40);
-            this.tbFilesAndFolders.Name = "tbFilesAndFolders";
-            this.tbFilesAndFolders.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFilesAndFolders.Size = new System.Drawing.Size(416, 401);
-            this.tbFilesAndFolders.TabIndex = 1;
-            this.tbFilesAndFolders.Text = "Files and Folders";
-            this.tbFilesAndFolders.UseVisualStyleBackColor = true;
+            this.tabPage2.Controls.Add(this.bnReplaceRemove);
+            this.tabPage2.Controls.Add(this.bnReplaceAdd);
+            this.tabPage2.Controls.Add(this.label3);
+            this.tabPage2.Controls.Add(this.ReplacementsGrid);
+            this.tabPage2.Controls.Add(this.label19);
+            this.tabPage2.Controls.Add(this.txtMaxSampleSize);
+            this.tabPage2.Controls.Add(this.cbTxtToSub);
+            this.tabPage2.Controls.Add(this.label22);
+            this.tabPage2.Controls.Add(this.label14);
+            this.tabPage2.Controls.Add(this.txtSpecialsFolderName);
+            this.tabPage2.Controls.Add(this.label13);
+            this.tabPage2.Controls.Add(this.txtOtherExtensions);
+            this.tabPage2.Controls.Add(this.txtVideoExtensions);
+            this.tabPage2.Controls.Add(this.cbKeepTogether);
+            this.tabPage2.Controls.Add(this.cbForceLower);
+            this.tabPage2.Controls.Add(this.cbIgnoreSamples);
+            this.tabPage2.Controls.Add(this.cbLeadingZero);
+            this.tabPage2.Location = new System.Drawing.Point(4, 40);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(416, 377);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Files and Folders";
+            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // bnReplaceRemove
             // 
@@ -723,22 +704,22 @@ namespace TVRename
             this.cbIgnoreSamples.Text = "&Ignore \"sample\" videos, up to";
             this.cbIgnoreSamples.UseVisualStyleBackColor = true;
             // 
-            // tbAutoExport
+            // tabPage3
             // 
-            this.tbAutoExport.Controls.Add(this.groupBox5);
-            this.tbAutoExport.Controls.Add(this.groupBox4);
-            this.tbAutoExport.Controls.Add(this.bnBrowseMissingCSV);
-            this.tbAutoExport.Controls.Add(this.groupBox3);
-            this.tbAutoExport.Controls.Add(this.groupBox2);
-            this.tbAutoExport.Controls.Add(this.txtMissingCSV);
-            this.tbAutoExport.Controls.Add(this.cbMissingCSV);
-            this.tbAutoExport.Location = new System.Drawing.Point(4, 40);
-            this.tbAutoExport.Name = "tbAutoExport";
-            this.tbAutoExport.Padding = new System.Windows.Forms.Padding(3);
-            this.tbAutoExport.Size = new System.Drawing.Size(416, 401);
-            this.tbAutoExport.TabIndex = 2;
-            this.tbAutoExport.Text = "Automatic Export";
-            this.tbAutoExport.UseVisualStyleBackColor = true;
+            this.tabPage3.Controls.Add(this.groupBox5);
+            this.tabPage3.Controls.Add(this.groupBox4);
+            this.tabPage3.Controls.Add(this.bnBrowseMissingCSV);
+            this.tabPage3.Controls.Add(this.groupBox3);
+            this.tabPage3.Controls.Add(this.groupBox2);
+            this.tabPage3.Controls.Add(this.txtMissingCSV);
+            this.tabPage3.Controls.Add(this.cbMissingCSV);
+            this.tabPage3.Location = new System.Drawing.Point(4, 40);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(416, 377);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Automatic Export";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // groupBox5
             // 
@@ -914,7 +895,7 @@ namespace TVRename
             this.tpScanOptions.Location = new System.Drawing.Point(4, 40);
             this.tpScanOptions.Name = "tpScanOptions";
             this.tpScanOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScanOptions.Size = new System.Drawing.Size(416, 401);
+            this.tpScanOptions.Size = new System.Drawing.Size(416, 377);
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
@@ -1092,20 +1073,20 @@ namespace TVRename
             this.cbSearchLocally.UseVisualStyleBackColor = true;
             this.cbSearchLocally.CheckedChanged += new System.EventHandler(this.cbSearchLocally_CheckedChanged);
             // 
-            // tbSearchFolders
+            // tabPage4
             // 
-            this.tbSearchFolders.Controls.Add(this.cbMonitorFolder);
-            this.tbSearchFolders.Controls.Add(this.bnOpenSearchFolder);
-            this.tbSearchFolders.Controls.Add(this.bnRemoveSearchFolder);
-            this.tbSearchFolders.Controls.Add(this.bnAddSearchFolder);
-            this.tbSearchFolders.Controls.Add(this.lbSearchFolders);
-            this.tbSearchFolders.Controls.Add(this.label23);
-            this.tbSearchFolders.Location = new System.Drawing.Point(4, 40);
-            this.tbSearchFolders.Name = "tbSearchFolders";
-            this.tbSearchFolders.Size = new System.Drawing.Size(416, 401);
-            this.tbSearchFolders.TabIndex = 3;
-            this.tbSearchFolders.Text = "Search Folders";
-            this.tbSearchFolders.UseVisualStyleBackColor = true;
+            this.tabPage4.Controls.Add(this.cbMonitorFolder);
+            this.tabPage4.Controls.Add(this.bnOpenSearchFolder);
+            this.tabPage4.Controls.Add(this.bnRemoveSearchFolder);
+            this.tabPage4.Controls.Add(this.bnAddSearchFolder);
+            this.tabPage4.Controls.Add(this.lbSearchFolders);
+            this.tabPage4.Controls.Add(this.label23);
+            this.tabPage4.Location = new System.Drawing.Point(4, 40);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(416, 377);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Search Folders";
+            this.tabPage4.UseVisualStyleBackColor = true;
             // 
             // cbMonitorFolder
             // 
@@ -1173,22 +1154,22 @@ namespace TVRename
             this.label23.TabIndex = 0;
             this.label23.Text = "&Search Folders";
             // 
-            // tbuTorrentNZB
+            // tabPage5
             // 
-            this.tbuTorrentNZB.Controls.Add(this.groupBox1);
-            this.tbuTorrentNZB.Controls.Add(this.groupBox6);
-            this.tbuTorrentNZB.Controls.Add(this.RSSGrid);
-            this.tbuTorrentNZB.Controls.Add(this.bnRSSRemove);
-            this.tbuTorrentNZB.Controls.Add(this.bnRSSAdd);
-            this.tbuTorrentNZB.Controls.Add(this.bnRSSGo);
-            this.tbuTorrentNZB.Controls.Add(this.label25);
-            this.tbuTorrentNZB.Location = new System.Drawing.Point(4, 40);
-            this.tbuTorrentNZB.Name = "tbuTorrentNZB";
-            this.tbuTorrentNZB.Padding = new System.Windows.Forms.Padding(3);
-            this.tbuTorrentNZB.Size = new System.Drawing.Size(416, 401);
-            this.tbuTorrentNZB.TabIndex = 4;
-            this.tbuTorrentNZB.Text = "µTorrent / NZB";
-            this.tbuTorrentNZB.UseVisualStyleBackColor = true;
+            this.tabPage5.Controls.Add(this.groupBox1);
+            this.tabPage5.Controls.Add(this.groupBox6);
+            this.tabPage5.Controls.Add(this.RSSGrid);
+            this.tabPage5.Controls.Add(this.bnRSSRemove);
+            this.tabPage5.Controls.Add(this.bnRSSAdd);
+            this.tabPage5.Controls.Add(this.bnRSSGo);
+            this.tabPage5.Controls.Add(this.label25);
+            this.tabPage5.Location = new System.Drawing.Point(4, 40);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage5.Size = new System.Drawing.Size(416, 377);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "µTorrent / NZB";
+            this.tabPage5.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -1363,6 +1344,62 @@ namespace TVRename
             this.label25.TabIndex = 0;
             this.label25.Text = "Torrent RSS URLs:";
             // 
+            // tabPage6
+            // 
+            this.tabPage6.Controls.Add(this.bnLangDown);
+            this.tabPage6.Controls.Add(this.bnLangUp);
+            this.tabPage6.Controls.Add(this.lbLangs);
+            this.tabPage6.Controls.Add(this.label24);
+            this.tabPage6.Location = new System.Drawing.Point(4, 40);
+            this.tabPage6.Name = "tabPage6";
+            this.tabPage6.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage6.Size = new System.Drawing.Size(416, 377);
+            this.tabPage6.TabIndex = 5;
+            this.tabPage6.Text = "Languages";
+            this.tabPage6.UseVisualStyleBackColor = true;
+            // 
+            // bnLangDown
+            // 
+            this.bnLangDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnLangDown.Location = new System.Drawing.Point(195, 48);
+            this.bnLangDown.Name = "bnLangDown";
+            this.bnLangDown.Size = new System.Drawing.Size(75, 23);
+            this.bnLangDown.TabIndex = 3;
+            this.bnLangDown.Text = "Move &down";
+            this.bnLangDown.UseVisualStyleBackColor = true;
+            this.bnLangDown.Click += new System.EventHandler(this.bnLangDown_Click);
+            // 
+            // bnLangUp
+            // 
+            this.bnLangUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnLangUp.Location = new System.Drawing.Point(195, 19);
+            this.bnLangUp.Name = "bnLangUp";
+            this.bnLangUp.Size = new System.Drawing.Size(75, 23);
+            this.bnLangUp.TabIndex = 2;
+            this.bnLangUp.Text = "Move &up";
+            this.bnLangUp.UseVisualStyleBackColor = true;
+            this.bnLangUp.Click += new System.EventHandler(this.bnLangUp_Click);
+            // 
+            // lbLangs
+            // 
+            this.lbLangs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbLangs.FormattingEnabled = true;
+            this.lbLangs.Location = new System.Drawing.Point(6, 19);
+            this.lbLangs.Name = "lbLangs";
+            this.lbLangs.Size = new System.Drawing.Size(183, 342);
+            this.lbLangs.TabIndex = 1;
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(3, 3);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(179, 13);
+            this.label24.TabIndex = 0;
+            this.label24.Text = "&Preferred languages for thetvdb.com";
+            // 
             // tpTreeColoring
             // 
             this.tpTreeColoring.Controls.Add(this.label7);
@@ -1376,7 +1413,7 @@ namespace TVRename
             this.tpTreeColoring.Location = new System.Drawing.Point(4, 40);
             this.tpTreeColoring.Name = "tpTreeColoring";
             this.tpTreeColoring.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTreeColoring.Size = new System.Drawing.Size(416, 401);
+            this.tpTreeColoring.Size = new System.Drawing.Size(416, 377);
             this.tpTreeColoring.TabIndex = 7;
             this.tpTreeColoring.Text = "Tree Coloring";
             this.tpTreeColoring.UseVisualStyleBackColor = true;
@@ -1487,7 +1524,7 @@ namespace TVRename
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(448, 504);
+            this.ClientSize = new System.Drawing.Size(448, 480);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.bnCancel);
             this.Controls.Add(this.OKButton);
@@ -1499,16 +1536,15 @@ namespace TVRename
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Preferences";
             this.Load += new System.EventHandler(this.Preferences_Load);
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Preferences_FormClosing);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.tabControl1.ResumeLayout(false);
-            this.tbGeneral.ResumeLayout(false);
-            this.tbGeneral.PerformLayout();
-            this.tbFilesAndFolders.ResumeLayout(false);
-            this.tbFilesAndFolders.PerformLayout();
-            this.tbAutoExport.ResumeLayout(false);
-            this.tbAutoExport.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -1517,14 +1553,16 @@ namespace TVRename
             this.groupBox3.PerformLayout();
             this.tpScanOptions.ResumeLayout(false);
             this.tpScanOptions.PerformLayout();
-            this.tbSearchFolders.ResumeLayout(false);
-            this.tbSearchFolders.PerformLayout();
-            this.tbuTorrentNZB.ResumeLayout(false);
-            this.tbuTorrentNZB.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
+            this.tabPage6.ResumeLayout(false);
+            this.tabPage6.PerformLayout();
             this.tpTreeColoring.ResumeLayout(false);
             this.tpTreeColoring.PerformLayout();
             this.ResumeLayout(false);
@@ -1587,9 +1625,9 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtSpecialsFolderName;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tbGeneral;
-        private System.Windows.Forms.TabPage tbFilesAndFolders;
-        private System.Windows.Forms.TabPage tbAutoExport;
+        private System.Windows.Forms.TabPage tabPage1;
+        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -1617,14 +1655,14 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtParallelDownloads;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.TextBox txtOtherExtensions;
-        private System.Windows.Forms.TabPage tbSearchFolders;
+        private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.Button bnOpenSearchFolder;
         private System.Windows.Forms.Button bnRemoveSearchFolder;
         private System.Windows.Forms.Button bnAddSearchFolder;
         private System.Windows.Forms.ListBox lbSearchFolders;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.FolderBrowserDialog folderBrowser;
-        private System.Windows.Forms.TabPage tbuTorrentNZB;
+        private System.Windows.Forms.TabPage tabPage5;
         private System.Windows.Forms.Button bnRSSBrowseuTorrent;
         private System.Windows.Forms.Button bnRSSGo;
         private System.Windows.Forms.TextBox txtRSSuTorrentPath;
@@ -1640,6 +1678,13 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtUTResumeDatPath;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.TabPage tabPage6;
+
+        private System.Windows.Forms.Button bnLangDown;
+        private System.Windows.Forms.Button bnLangUp;
+
+        private System.Windows.Forms.ListBox lbLangs;
+        private System.Windows.Forms.Label label24;
         private System.Windows.Forms.CheckBox cbLookForAirdate;
         private System.Windows.Forms.CheckBox cbMonitorFolder;
         private System.Windows.Forms.ToolTip toolTip1;
@@ -1668,8 +1713,6 @@ namespace TVRename
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox cbCheckSABnzbd;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox cbLanguages;
 
     }
 }

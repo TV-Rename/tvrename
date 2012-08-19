@@ -7,7 +7,6 @@
 // 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
@@ -26,18 +25,14 @@ namespace TVRename
     /// </summary>
     public partial class Preferences : Form
     {
-        delegate void LoadLanguageDoneDel();
-
+        private StringList LangList;
         private TVDoc mDoc;
-        private Thread LoadLanguageThread;
-        private String EnterPreferredLanguage; // hold here until background language download task is done
-
-        private LoadLanguageDoneDel LoadLanguageDone;
 
         public Preferences(TVDoc doc, bool goToScanOpts)
         {
+            this.LangList = null;
+
             this.InitializeComponent();
-            this.LoadLanguageDone += this.LoadLanguageDoneFunc;
 
             this.SetupRSSGrid();
             this.SetupReplacementsGrid();
@@ -91,8 +86,8 @@ namespace TVRename
             S.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
             S.StartupTab = this.cbStartupTab.SelectedIndex;
             S.NotificationAreaIcon = this.cbNotificationIcon.Checked;
-            S.VideoExtensionsString = this.txtVideoExtensions.Text;
-            S.OtherExtensionsString = this.txtOtherExtensions.Text;
+            S.SetVideoExtensionsString(this.txtVideoExtensions.Text);
+            S.SetOtherExtensionsString(this.txtOtherExtensions.Text);
             S.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
             S.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
             S.ExportRSSDaysPast = Convert.ToInt32(this.txtExportRSSDaysPast.Text); 
@@ -134,19 +129,16 @@ namespace TVRename
             else
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.Poster;
 
-
-            TheTVDB db = this.mDoc.GetTVDB(true, "Preferences-OK");
-            foreach (var kvp in db.LanguageList)
+            if (this.LangList != null)
             {
-                if (kvp.Value == cbLanguages.Text)
-                {
-                    S.PreferredLanguage = kvp.Key;
-                    break;
-                }
+                //only set if the language tab was visited
+
+                TheTVDB db = this.mDoc.GetTVDB(true, "Preferences-OK");
+                db.LanguagePriorityList = this.LangList;
+                db.SaveCache();
+                db.Unlock("Preferences-OK");
             }
-            db.SaveCache();
-            db.Unlock("Preferences-OK");
-            
+
             try
             {
                 S.SampleFileMaxSizeMB = int.Parse(this.txtMaxSampleSize.Text);
@@ -195,8 +187,6 @@ namespace TVRename
 
         private void Preferences_Load(object sender, System.EventArgs e)
         {
-            this.SetupLanguages();
-
             TVSettings S = this.mDoc.Settings;
             int r = 1;
 
@@ -265,7 +255,6 @@ namespace TVRename
             this.cbMissing.Checked = S.MissingCheck;
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;
-            EnterPreferredLanguage = S.PreferredLanguage;
 
             this.EnableDisable(null, null);
             this.ScanOptEnableDisable();
@@ -663,66 +652,54 @@ namespace TVRename
                 TVDoc.SysOpen((string) (this.RSSGrid[rowsIndex[0], 0].Value));
         }
 
+        private void tabControl1_SelectedIndexChanged(object sender, System.EventArgs e)
+        {
+            if (this.tabControl1.SelectedIndex == 5) // gone to languages tab
+                this.SetupLanguages();
+        }
+
         private void SetupLanguages()
         {
-            this.cbLanguages.Items.Clear();
-            this.cbLanguages.Items.Add("Please wait...");
-            this.cbLanguages.SelectedIndex = 0;
-            this.cbLanguages.Update();
-            this.cbLanguages.Enabled = false;
-
-            LoadLanguageThread = new Thread(LoadLanguage);
-            LoadLanguageThread.Start();
-        }
-
-        private void LoadLanguage()
-        {
-            TheTVDB db = this.mDoc.GetTVDB(true, "Preferences-LoadLanguages");
-            bool aborted = false;
-            try
+            TheTVDB db = this.mDoc.GetTVDB(true, "Preferences-SL");
+            if (!db.Connected)
             {
-                if (!db.Connected)
-                {
-                    db.Connect();
-                }
+                this.lbLangs.Items.Add("Please Wait");
+                this.lbLangs.Items.Add("Connecting...");
+                this.lbLangs.Update();
+                db.Connect();
             }
-            catch (ThreadAbortException)
+
+            // make our list
+            // add already prioritised items (that still exist)
+            this.LangList = new StringList();
+            foreach (string s in db.LanguagePriorityList)
             {
-                aborted = true;
+                if (db.LanguageList.ContainsKey(s))
+                    this.LangList.Add(s);
             }
-            db.Unlock("Preferences-LoadLanguages");
-            if (!aborted)
-                this.BeginInvoke(LoadLanguageDone);
-        }
 
-        private void LoadLanguageDoneFunc()
-        {
-            FillLanguageList();
-        }
+            // add items that haven't been prioritised
+            foreach (System.Collections.Generic.KeyValuePair<string, string> k in db.LanguageList)
+            {
+                if (!this.LangList.Contains(k.Key))
+                    this.LangList.Add(k.Key);
+            }
+            db.Unlock("Preferences-SL");
 
+            this.FillLanguageList();
+        }
 
         private void FillLanguageList()
         {
             TheTVDB db = this.mDoc.GetTVDB(true, "Preferences-FLL");
-            this.cbLanguages.BeginUpdate();
-            this.cbLanguages.Items.Clear();
-
-            String pref = "";
-            foreach (var kvp in db.LanguageList)
-            {
-                String name = kvp.Value;
-                this.cbLanguages.Items.Add(name);
-
-                if (EnterPreferredLanguage == kvp.Key)
-                    pref = kvp.Value;
-            }
-            this.cbLanguages.EndUpdate();
-            this.cbLanguages.Text = pref;
-            this.cbLanguages.Enabled = true;
-
+            this.lbLangs.BeginUpdate();
+            this.lbLangs.Items.Clear();
+            foreach (string l in this.LangList)
+                this.lbLangs.Items.Add(db.LanguageList[l]);
+            this.lbLangs.EndUpdate();
             db.Unlock("Preferences-FLL");
         }
-        /*
+
         private void bnLangDown_Click(object sender, System.EventArgs e)
         {
             int n = this.lbLangs.SelectedIndex;
@@ -748,7 +725,7 @@ namespace TVRename
                 this.FillLanguageList();
                 this.lbLangs.SelectedIndex = n - 1;
             }
-        }*/
+        }
 
         private void cbMissing_CheckedChanged(object sender, System.EventArgs e)
         {
@@ -885,15 +862,6 @@ namespace TVRename
             catch
             {
                 this.txtShowStatusColor.ForeColor = Color.Black;
-            }
-        }
-
-        private void Preferences_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (LoadLanguageThread != null && LoadLanguageThread.IsAlive)
-            {
-                LoadLanguageThread.Abort();
-                LoadLanguageThread.Join(500); // milliseconds timeout
             }
         }
     }

@@ -6,7 +6,6 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -44,7 +43,7 @@ namespace TVRename
         private void BuildData()
         {
             // find actors that have been in more than one thing
-            // Dictionary<String^, List<String> ^> ^whoInWhat = gcnew Dictionary<String^, List<String> ^>;
+            // Dictionary<String^, StringList ^> ^whoInWhat = gcnew Dictionary<String^, StringList ^>;
             TheTVDB db = this.mDoc.GetTVDB(true, "Actors");
             this.TheData = new DataArr(db.GetSeriesDict().Count);
             foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in db.GetSeriesDict())
@@ -379,16 +378,16 @@ namespace TVRename
         {
             private int AllocC;
             private int AllocR;
-            public readonly List<string> Cols;
+            public readonly StringList Cols;
             public bool?[][] Data;
             public int DataC;
             public int DataR;
-            public readonly List<string> Rows;
+            public readonly StringList Rows;
 
             public DataArr(int rowCountPreAlloc)
             {
-                this.Rows = new List<String>();
-                this.Cols = new List<String>();
+                this.Rows = new StringList();
+                this.Cols = new StringList();
                 this.AllocR = rowCountPreAlloc;
                 this.AllocC = rowCountPreAlloc * 10;
                 this.Data = new bool?[this.AllocR][];

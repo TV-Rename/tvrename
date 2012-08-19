@@ -79,7 +79,6 @@ namespace TVRename
             this.lvMatches.BeginUpdate();
 
             string what = this.txtFindThis.Text;
-            what = Helpers.RemoveDiacritics(what);
             what = what.Replace(".", " ");
 
             this.lvMatches.Items.Clear();
@@ -97,16 +96,11 @@ namespace TVRename
                 {
                 }
 
-                what = Helpers.RemoveDiacritics(what);
-
-                if (!this.mTVDB.GetLock("DoFind"))
-                    return;
-
+                this.mTVDB.GetLock("DoFind");
                 foreach (KeyValuePair<int, SeriesInfo> kvp in this.mTVDB.GetSeriesDict())
                 {
                     int num = kvp.Key;
                     string show = kvp.Value.Name;
-                    show = Helpers.RemoveDiacritics(show);
                     string s = num + " " + show;
 
                     string simpleS = Regex.Replace(s.ToLower(), "[^\\w ]", "");
@@ -154,6 +148,7 @@ namespace TVRename
             if (!String.IsNullOrEmpty(this.txtFindThis.Text))
             {
                 this.mTVDB.Search(this.txtFindThis.Text);
+
                 this.DoFind(true);
             }
         }
@@ -177,15 +172,6 @@ namespace TVRename
                 this.bnGoSearch_Click(null, null);
                 e.Handled = true;
             }
-        }
-
-        private void lvMatches_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            if (e.Column == 0 || e.Column == 2) // code or year
-                lvMatches.ListViewItemSorter = new NumberAsTextSorter(e.Column);
-            else
-                lvMatches.ListViewItemSorter = new TextSorter(e.Column);
-            lvMatches.Sort();
         }
     }
 }

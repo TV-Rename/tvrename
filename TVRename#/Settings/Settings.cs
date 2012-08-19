@@ -205,16 +205,11 @@ namespace TVRename
         public bool pyTivoMetaSubFolder = false;
         public CustomName NamingStyle = new CustomName();
         public bool NotificationAreaIcon = false;
-        public bool OfflineMode = false;
-        public string OtherExtensionsString = "";
-
-        public string[] OtherExtensionsArray
-        {
-            get { return OtherExtensionsString.Split(';'); }
-        }
-
+        public bool OfflineMode = false; // TODO: Make property of thetvdb?
+        private string[] OtherExtensionsArray = new string[0];
+        private string OtherExtensionsString = "";
         public int ParallelDownloads = 4;
-        public List<string> RSSURLs = DefaultRSSURLList();
+        public StringList RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
         public bool RenameTxtToSub = false;
         public List<Replacement> Replacements = DefaultListRE();
@@ -227,27 +222,21 @@ namespace TVRename
         public string SpecialsFolderName = "Specials";
         public int StartupTab = 0;
         public Searchers TheSearchers = new Searchers();
-        
-        public string[] VideoExtensionsArray
-        {
-            get { return OtherExtensionsString.Split(';'); }
-        }
-
-        public string VideoExtensionsString = "";
+        private string[] VideoExtensionsArray = new string[0];
+        private string VideoExtensionsString = "";
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
-        public String SABHostPort = "";
-        public String SABAPIKey = "";
-        public bool CheckSABnzbd = false;
-        public String PreferredLanguage = "en";
+        public String SABHostPort;
+        public String SABAPIKey;
+        public bool CheckSABnzbd;
 
         public TVSettings()
         {
             this.SetToDefaults();
         }
-        
+
         public TVSettings(XmlReader reader)
         {
             this.SetToDefaults();
@@ -323,9 +312,9 @@ namespace TVRename
                 else if (reader.Name == "NotificationAreaIcon")
                     this.NotificationAreaIcon = reader.ReadElementContentAsBoolean();
                 else if ((reader.Name == "GoodExtensions") || (reader.Name == "VideoExtensions"))
-                    this.VideoExtensionsString = reader.ReadElementContentAsString();
+                    this.SetVideoExtensionsString(reader.ReadElementContentAsString());
                 else if (reader.Name == "OtherExtensions")
-                    this.OtherExtensionsString = reader.ReadElementContentAsString();
+                    this.SetOtherExtensionsString(reader.ReadElementContentAsString());
                 else if (reader.Name == "ExportRSSMaxDays")
                     this.ExportRSSMaxDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportRSSMaxShows")
@@ -352,8 +341,6 @@ namespace TVRename
                     this.CheckSABnzbd = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SABHostPort")
                     this.SABHostPort = reader.ReadElementContentAsString();
-                else if (reader.Name == "PreferredLanguage")
-                    this.PreferredLanguage = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportMissingXML")
                     this.ExportMissingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingXMLTo")
@@ -492,12 +479,76 @@ namespace TVRename
             }
         }
 
+        // ========================================================================================
+
+        public string ItemForFolderJpg()
+        {
+            switch (this.FolderJpgIs)
+            {
+                case FolderJpgIsType.Banner:
+                    return "banner";
+                case FolderJpgIsType.FanArt:
+                    return "fanart";
+                default:
+                    return "poster";
+            }
+        }
+
+        public string GetVideoExtensionsString()
+        {
+            return this.VideoExtensionsString;
+        }
+
+        public string GetOtherExtensionsString()
+        {
+            return this.OtherExtensionsString;
+        }
+
+        public static bool OKExtensionsString(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+              return true;
+
+            string[] t = s.Split(';');
+            foreach (string s2 in t)
+            {
+                if ((string.IsNullOrEmpty(s2)) || (!s2.StartsWith(".")))
+                    return false;
+            }
+            return true;
+        }
+
+        public void SetVideoExtensionsString(string s)
+        {
+            if (OKExtensionsString(s))
+            {
+                s = s.ToLower();
+                this.VideoExtensionsString = s;
+                this.VideoExtensionsArray = s.Split(';');
+            }
+        }
+
+        public void SetOtherExtensionsString(string s)
+        {
+            if (OKExtensionsString(s))
+            {
+                s = s.ToLower();
+                this.OtherExtensionsString = s;
+                this.OtherExtensionsArray = s.Split(';');
+            }
+        }
+
+        public static string CompulsoryReplacements()
+        {
+            return "*?<>:/\\|\""; // invalid filename characters, must be in the list!
+        }
+
         public void SetToDefaults()
         {
             // defaults that aren't handled with default initialisers
 
-            this.VideoExtensionsString = ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm";
-            this.OtherExtensionsString = ".srt;.nfo;.txt;.tbn";
+            this.SetVideoExtensionsString(".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm");
+            this.SetOtherExtensionsString(".srt;.nfo;.txt;.tbn");
 
             // have a guess at utorrent's path
             string[] guesses = new string[3];
@@ -517,11 +568,77 @@ namespace TVRename
             }
 
             // ResumeDatPath
-            FileInfo f2 =
-                new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
+            FileInfo f2 = new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
             this.ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
+        public static List<FilenameProcessorRE> DefaultFNPList()
+        {
+            // Default list of filename processors
+
+            List<FilenameProcessorRE> l = new List<FilenameProcessorRE> {
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]", false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),
+                                                  new FilenameProcessorRE(false, "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]", false, "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."),
+                                                  new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]", false, "S02--E03"),
+                                                  new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+) e(?<e>[0-9]{2,})[^a-z]", false, "'S02.E04' and 'S02 E04'"),
+                                                  new FilenameProcessorRE(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false, "filenames starting with '1.23' for season 1, episode 23"),
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])(?<s>[0-9])(?<e>[0-9]{2,})[^a-z]", false, "Show - 323 - Foo"),
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])se(?<s>[0-9]+)([ex]|ep|xep)?(?<e>[0-9]+)[^a-z]", false, "se3e23 se323 se1ep1 se01xep01..."),
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])(?<s>[0-9]+)-(?<e>[0-9]{2,})[^a-z]", false, "3-23 EpName"),
+                                                  new FilenameProcessorRE(true, "(^|[^a-z])s(?<s>[0-9]+) +- +e(?<e>[0-9]{2,})[^a-z]", false, "ShowName - S01 - E01"),
+                                                  new FilenameProcessorRE(true, "\\b(?<e>[0-9]{2,}) ?- ?.* ?- ?(?<s>[0-9]+)", false, "like '13 - Showname - 2 - Episode Title.avi'"),
+                                                  new FilenameProcessorRE(true, "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)", false, "episode 3 - season 4"),
+                                                  new FilenameProcessorRE(true, "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-", true, "Show Season 3\\E23 - Epname"),
+                                                  new FilenameProcessorRE(false, "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})", true, "Season 3\\Episode 23")
+                                              };
+
+            return l;
+        }
+
+        private static List<Replacement> DefaultListRE()
+        {
+            return new List<Replacement> {
+                                             new Replacement("*", "#", false),
+                                             new Replacement("?", "", false),
+                                             new Replacement(">", "", false),
+                                             new Replacement("<", "", false),
+                                             new Replacement(":", "-", false),
+                                             new Replacement("/", "-", false),
+                                             new Replacement("\\", "-", false),
+                                             new Replacement("|", "-", false),
+                                             new Replacement("\"", "'", false)
+                                         };
+        }
+
+        private static StringList DefaultRSSURLList()
+        {
+            StringList sl = new StringList {
+                                               "http://tvrss.net/feed/eztv"
+                                           };
+            return sl;
+        }
+
+        public static string[] TabNames()
+        {
+            return new[] { "MyShows", "Scan", "WTW" };
+        }
+
+        public static string TabNameForNumber(int n)
+        {
+            if ((n >= 0) && (n < TabNames().Length))
+                return TabNames()[n];
+            return "";
+        }
+
+        public static int TabNumberFromName(string n)
+        {
+            int r = 0;
+            if (!string.IsNullOrEmpty(n))
+                r = Array.IndexOf(TabNames(), n);
+            if (r < 0)
+                r = 0;
+            return r;
+        }
 
         public void WriteXML(XmlWriter writer)
         {
@@ -699,9 +816,6 @@ namespace TVRename
             writer.WriteStartElement("SABHostPort");
             writer.WriteValue(this.SABHostPort);
             writer.WriteEndElement();
-            writer.WriteStartElement("PreferredLanguage");
-            writer.WriteValue(this.PreferredLanguage);
-            writer.WriteEndElement();
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)
             {
@@ -759,116 +873,7 @@ namespace TVRename
 
             writer.WriteEndElement(); // settings
         }
-        
-        public string ItemForFolderJpg()
-        {
-            switch (this.FolderJpgIs)
-            {
-                case FolderJpgIsType.Banner:
-                    return "banner";
-                case FolderJpgIsType.FanArt:
-                    return "fanart";
-                default:
-                    return "poster";
-            }
-        }
 
-        public string GetVideoExtensionsString()
-        {
-            return this.VideoExtensionsString;
-        }
-
-        public string GetOtherExtensionsString()
-        {
-            return this.OtherExtensionsString;
-        }
-
-        public static bool OKExtensionsString(string s)
-        {
-            if (string.IsNullOrEmpty(s))
-              return true;
-
-            string[] t = s.Split(';');
-            foreach (string s2 in t)
-            {
-                if ((string.IsNullOrEmpty(s2)) || (!s2.StartsWith(".")))
-                    return false;
-            }
-            return true;
-        }
-
-        public static string CompulsoryReplacements()
-        {
-            return "*?<>:/\\|\""; // invalid filename characters, must be in the list!
-        }
-
-        public static List<FilenameProcessorRE> DefaultFNPList()
-        {
-            // Default list of filename processors
-
-            List<FilenameProcessorRE> l = new List<FilenameProcessorRE> {
-                                                  new FilenameProcessorRE(true, "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]", false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),
-                                                  new FilenameProcessorRE(false, "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]", false, "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."),
-                                                  new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]", false, "S02--E03"),
-                                                  new FilenameProcessorRE(false, "(^|[^a-z])s(?<s>[0-9]+) e(?<e>[0-9]{2,})[^a-z]", false, "'S02.E04' and 'S02 E04'"),
-                                                  new FilenameProcessorRE(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false, "filenames starting with '1.23' for season 1, episode 23"),
-                                                  new FilenameProcessorRE(true, "(^|[^a-z])(?<s>[0-9])(?<e>[0-9]{2,})[^a-z]", false, "Show - 323 - Foo"),
-                                                  new FilenameProcessorRE(true, "(^|[^a-z])se(?<s>[0-9]+)([ex]|ep|xep)?(?<e>[0-9]+)[^a-z]", false, "se3e23 se323 se1ep1 se01xep01..."),
-                                                  new FilenameProcessorRE(true, "(^|[^a-z])(?<s>[0-9]+)-(?<e>[0-9]{2,})[^a-z]", false, "3-23 EpName"),
-                                                  new FilenameProcessorRE(true, "(^|[^a-z])s(?<s>[0-9]+) +- +e(?<e>[0-9]{2,})[^a-z]", false, "ShowName - S01 - E01"),
-                                                  new FilenameProcessorRE(true, "\\b(?<e>[0-9]{2,}) ?- ?.* ?- ?(?<s>[0-9]+)", false, "like '13 - Showname - 2 - Episode Title.avi'"),
-                                                  new FilenameProcessorRE(true, "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)", false, "episode 3 - season 4"),
-                                                  new FilenameProcessorRE(true, "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-", true, "Show Season 3\\E23 - Epname"),
-                                                  new FilenameProcessorRE(false, "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})", true, "Season 3\\Episode 23")
-                                              };
-
-            return l;
-        }
-
-        private static List<Replacement> DefaultListRE()
-        {
-            return new List<Replacement> {
-                                             new Replacement("*", "#", false),
-                                             new Replacement("?", "", false),
-                                             new Replacement(">", "", false),
-                                             new Replacement("<", "", false),
-                                             new Replacement(":", "-", false),
-                                             new Replacement("/", "-", false),
-                                             new Replacement("\\", "-", false),
-                                             new Replacement("|", "-", false),
-                                             new Replacement("\"", "'", false)
-                                         };
-        }
-
-        private static List<string> DefaultRSSURLList()
-        {
-            List<string> sl = new List<String> {
-                                               "http://tvrss.net/feed/eztv"
-                                           };
-            return sl;
-        }
-
-        public static string[] TabNames()
-        {
-            return new[] { "MyShows", "Scan", "WTW" };
-        }
-
-        public static string TabNameForNumber(int n)
-        {
-            if ((n >= 0) && (n < TabNames().Length))
-                return TabNames()[n];
-            return "";
-        }
-
-        public static int TabNumberFromName(string n)
-        {
-            int r = 0;
-            if (!string.IsNullOrEmpty(n))
-                r = Array.IndexOf(TabNames(), n);
-            if (r < 0)
-                r = 0;
-            return r;
-        }
         public bool UsefulExtension(string sn, bool otherExtensionsToo)
         {
             foreach (string s in this.VideoExtensionsArray)

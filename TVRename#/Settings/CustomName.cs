@@ -6,7 +6,6 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)
@@ -34,7 +33,7 @@ namespace TVRename
 
         public static string DefaultStyle()
         {
-            return Presets[1];
+            return Presets()[1];
         }
 
         public static string OldNStyle(int n)
@@ -44,24 +43,27 @@ namespace TVRename
 
             // for now, this maps onto the presets
             if ((n >= 0) && (n < 9))
-                return Presets[n];
+                return Presets()[n];
 
             return DefaultStyle();
         }
 
-        public static readonly List<string> Presets = new List<String>
-                                                        {
-                                                            "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
-                                                            "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
-                                                            "{ShowName} S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
-                                                            "{Season}{Episode}[-{Season}{Episode2}] - {EpisodeName}",
-                                                            "{Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
-                                                            "S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
-                                                            "E{Episode}[-E{Episode2}] - {EpisodeName}",
-                                                            "{Episode}[-{Episode2}] - {ShowName} - 3 - {EpisodeName}",
-                                                            "{Episode}[-{Episode2}] - {EpisodeName}",
-                                                            "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
-                                                        };
+        public static StringList Presets()
+        {
+            // if _any_ of these are changed, you'll need to change the OldNStyle function, too.
+            return new StringList {
+                                      "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
+                                      "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                      "{ShowName} S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                      "{Season}{Episode}[-{Season}{Episode2}] - {EpisodeName}",
+                                      "{Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
+                                      "S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                      "E{Episode}[-E{Episode2}] - {EpisodeName}",
+                                      "{Episode}[-{Episode2}] - {ShowName} - 3 - {EpisodeName}",
+                                      "{Episode}[-{Episode2}] - {EpisodeName}",
+                                      "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
+                                  };
+        }
 
         public string NameForExt(ProcessedEpisode pe, string extension, int folderNameLength)
         {
@@ -82,23 +84,24 @@ namespace TVRename
             return r;
         }
 
-        public static readonly List<string> Tags = new List<String>
-                       {
-                           "{ShowName}",
-                           "{Season}",
-                           "{Season:2}",
-                           "{Episode}",
-                           "{Episode2}",
-                           "{EpisodeName}",
-                           "{Number}",
-                           "{Number:2}",
-                           "{Number:3}",
-                           "{ShortDate}",
-                           "{LongDate}",
-                           "{YMDDate}",
-                           "{AllEpisodes}"
-                       };
-        
+        public static StringList Tags()
+        {
+            return new StringList {
+                                      "{ShowName}",
+                                      "{Season}",
+                                      "{Season:2}",
+                                      "{Episode}",
+                                      "{Episode2}",
+                                      "{EpisodeName}",
+                                      "{Number}",
+                                      "{Number:2}",
+                                      "{Number:3}",
+                                      "{ShortDate}",
+                                      "{LongDate}",
+                                      "{YMDDate}",
+                                      "{AllEpisodes}"
+                                  };
+        }
 
         public static string NameForNoExt(ProcessedEpisode pe, string styleString)
         {

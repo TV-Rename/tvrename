@@ -63,7 +63,7 @@ namespace TVRename
         // 0.0 to 100.0
         public long SizeOfWork
         {
-            get { return this.QuickOperation() ? 10000 : this.SourceFileSize(); }
+            get { return this.SourceFileSize(); }
         }
 
         public bool Go(TVSettings settings, ref bool pause, TVRenameStats stats)
