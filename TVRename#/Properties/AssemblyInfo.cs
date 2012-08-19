@@ -10,7 +10,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TVRename")]
 [assembly: AssemblyProduct("TVRename")]
-[assembly: AssemblyCopyright("Copyright © 2007-2011")]
+[assembly: AssemblyCopyright("Copyright © 2007-2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,6 +32,11 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
+
+
+// ** Do not change the version here!  Set it in "version.cs"
+
+
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("2.1")] // used in settings path, so be careful about changing
 [assembly: NeutralResourcesLanguageAttribute("")]

@@ -96,10 +96,12 @@ namespace TVRename
             this.lvMatches.Name = "lvMatches";
             this.lvMatches.ShowItemToolTips = true;
             this.lvMatches.Size = new System.Drawing.Size(397, 120);
+            this.lvMatches.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.lvMatches.TabIndex = 3;
             this.lvMatches.UseCompatibleStateImageBehavior = false;
             this.lvMatches.View = System.Windows.Forms.View.Details;
             this.lvMatches.SelectedIndexChanged += new System.EventHandler(this.lvMatches_SelectedIndexChanged);
+            this.lvMatches.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lvMatches_ColumnClick);
             // 
             // columnHeader1
             // 

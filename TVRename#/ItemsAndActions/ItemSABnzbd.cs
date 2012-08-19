@@ -86,7 +86,12 @@ namespace TVRename
                     lvi.SubItems.Add("");
 
                 lvi.SubItems.Add(this.Entry.filename);
-                lvi.SubItems.Add(this.Entry.status + " " + (int)(0.5 + 100 - 100 * Entry.mbleft / Entry.mb) + "% Complete, " + this.Entry.timeleft + " left");
+                String txt = this.Entry.status + ", " + (int) (0.5 + 100 - 100 * Entry.mbleft / Entry.mb) + "% Complete";
+                if (this.Entry.status == "Downloading")
+                    txt += ", " + this.Entry.timeleft + " left";
+                
+                lvi.SubItems.Add(txt);
+
                 lvi.SubItems.Add("");
 
                 lvi.Tag = this;
