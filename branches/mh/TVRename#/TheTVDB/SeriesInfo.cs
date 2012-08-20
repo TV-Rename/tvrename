@@ -178,7 +178,12 @@ namespace TVRename
                             if (!string.IsNullOrEmpty(theTime))
                             {
                                 this.Items["Airs_Time"] = theTime;
-                                this.AirsTime = DateTime.Parse(theTime);
+                                DateTime airsTime;
+                                if (DateTime.TryParse(theTime, out airsTime) |
+                                    DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
+                                    this.AirsTime = airsTime;
+                                else
+                                    this.AirsTime = null;
                             }
                         }
                         catch (FormatException)
