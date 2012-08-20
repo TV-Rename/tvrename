@@ -230,7 +230,7 @@ namespace TVRename
         
         public string[] VideoExtensionsArray
         {
-            get { return OtherExtensionsString.Split(';'); }
+            get { return VideoExtensionsString.Split(';'); }
         }
 
         public string VideoExtensionsString = "";
