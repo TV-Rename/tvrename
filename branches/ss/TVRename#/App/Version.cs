@@ -28,7 +28,6 @@ namespace TVRename
             return Environment.OSVersion.Platform == PlatformID.Win32NT;
         }
 
-
         public static string DisplayVersionString()
         {
             // all versions while developing are marked (dev)
@@ -36,9 +35,9 @@ namespace TVRename
             // to site.
 
             // Release history:
+            // Version 2.2.2 released 19 August 2012, r209
             // Version 2.2.2a1 released 18 August 2012, r207
             // Version 2.2.1 released 12 August 2012, r204
-            // Version 2.2.0b11 released XXX August 2012, rXXX
             // Version 2.2.0b10 released 7 October 2011, r173
             // Version 2.2.0b9 released 18 June 2011, r161
             // Version 2.2.0b8 released 18 June 2011, r159
@@ -53,7 +52,7 @@ namespace TVRename
             // NOTE: If you're doing your own branch/patch version number, please put your name or nickname or something in brackets afterwards
             // to indicate that it is not an official release, or talk to me (tvrename@tvrename.com) so any versions I make don't duplicate
             // a version number you may have created.
-            string v = "2.2.2a2-ss";
+            string v = "2.2.2-ss";
 #if DEBUG
             return v + " ** Debug Build **";
 #else
