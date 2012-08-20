@@ -28,6 +28,14 @@ namespace TVRename
             return Environment.OSVersion.Platform == PlatformID.Win32NT;
         }
 
+        public static string PersonalTag()
+        {
+            // NOTE: If you're doing your own branch/patch version number, please put your name or nickname here,
+            // to indicate that it is not an official release.  Also, talk to me (tvrename@tvrename.com) so any 
+            // I can consider merging your changes into the main version!
+            return "-ss"; // e.g. "-ss", "-foo".
+        }
+
         public static string DisplayVersionString()
         {
             // all versions while developing are marked (dev)
@@ -35,6 +43,7 @@ namespace TVRename
             // to site.
 
             // Release history:
+            // Version 2.2.3 released 20 August 2012, r214
             // Version 2.2.2 released 19 August 2012, r209
             // Version 2.2.2a1 released 18 August 2012, r207
             // Version 2.2.1 released 12 August 2012, r204
@@ -49,10 +58,7 @@ namespace TVRename
             // Version 2.2.0b2 released 14 April 2010, r108
             // Version 2.2.0b1 released 9 April 2010, r94
 
-            // NOTE: If you're doing your own branch/patch version number, please put your name or nickname or something in brackets afterwards
-            // to indicate that it is not an official release, or talk to me (tvrename@tvrename.com) so any versions I make don't duplicate
-            // a version number you may have created.
-            string v = "2.2.2-ss";
+            string v = "2.2.3" + PersonalTag();
 #if DEBUG
             return v + " ** Debug Build **";
 #else
