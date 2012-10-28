@@ -164,6 +164,9 @@ namespace TVRename
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog = new System.Windows.Forms.ColorDialog();
+            this.rbWTWSearch = new System.Windows.Forms.RadioButton();
+            this.rbWTWScan = new System.Windows.Forms.RadioButton();
+            this.label11 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -390,18 +393,18 @@ namespace TVRename
             "My Shows",
             "Scan",
             "When to Watch"});
-            this.cbStartupTab.Location = new System.Drawing.Point(74, 35);
+            this.cbStartupTab.Location = new System.Drawing.Point(74, 88);
             this.cbStartupTab.Name = "cbStartupTab";
             this.cbStartupTab.Size = new System.Drawing.Size(135, 21);
-            this.cbStartupTab.TabIndex = 4;
+            this.cbStartupTab.TabIndex = 7;
             // 
             // cbShowEpisodePictures
             // 
             this.cbShowEpisodePictures.AutoSize = true;
-            this.cbShowEpisodePictures.Location = new System.Drawing.Point(9, 85);
+            this.cbShowEpisodePictures.Location = new System.Drawing.Point(9, 138);
             this.cbShowEpisodePictures.Name = "cbShowEpisodePictures";
             this.cbShowEpisodePictures.Size = new System.Drawing.Size(218, 17);
-            this.cbShowEpisodePictures.TabIndex = 7;
+            this.cbShowEpisodePictures.TabIndex = 10;
             this.cbShowEpisodePictures.Text = "S&how episode pictures in episode guides";
             this.cbShowEpisodePictures.UseVisualStyleBackColor = true;
             // 
@@ -429,10 +432,10 @@ namespace TVRename
             // chkShowInTaskbar
             // 
             this.chkShowInTaskbar.AutoSize = true;
-            this.chkShowInTaskbar.Location = new System.Drawing.Point(169, 62);
+            this.chkShowInTaskbar.Location = new System.Drawing.Point(169, 115);
             this.chkShowInTaskbar.Name = "chkShowInTaskbar";
             this.chkShowInTaskbar.Size = new System.Drawing.Size(102, 17);
-            this.chkShowInTaskbar.TabIndex = 6;
+            this.chkShowInTaskbar.TabIndex = 9;
             this.chkShowInTaskbar.Text = "Show in &taskbar";
             this.chkShowInTaskbar.UseVisualStyleBackColor = true;
             this.chkShowInTaskbar.CheckedChanged += new System.EventHandler(this.chkShowInTaskbar_CheckedChanged);
@@ -440,10 +443,10 @@ namespace TVRename
             // cbNotificationIcon
             // 
             this.cbNotificationIcon.AutoSize = true;
-            this.cbNotificationIcon.Location = new System.Drawing.Point(9, 62);
+            this.cbNotificationIcon.Location = new System.Drawing.Point(9, 115);
             this.cbNotificationIcon.Name = "cbNotificationIcon";
             this.cbNotificationIcon.Size = new System.Drawing.Size(154, 17);
-            this.cbNotificationIcon.TabIndex = 5;
+            this.cbNotificationIcon.TabIndex = 8;
             this.cbNotificationIcon.Text = "Show &notification area icon";
             this.cbNotificationIcon.UseVisualStyleBackColor = true;
             this.cbNotificationIcon.CheckedChanged += new System.EventHandler(this.cbNotificationIcon_CheckedChanged);
@@ -486,10 +489,10 @@ namespace TVRename
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(6, 38);
+            this.label6.Location = new System.Drawing.Point(6, 91);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(62, 13);
-            this.label6.TabIndex = 3;
+            this.label6.TabIndex = 6;
             this.label6.Text = "&Startup tab:";
             // 
             // label1
@@ -522,6 +525,8 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.rbWTWScan);
+            this.tbGeneral.Controls.Add(this.rbWTWSearch);
             this.tbGeneral.Controls.Add(this.label10);
             this.tbGeneral.Controls.Add(this.cbLookForAirdate);
             this.tbGeneral.Controls.Add(this.cbLanguages);
@@ -530,6 +535,7 @@ namespace TVRename
             this.tbGeneral.Controls.Add(this.label1);
             this.tbGeneral.Controls.Add(this.cbAutoSelInMyShows);
             this.tbGeneral.Controls.Add(this.cbShowEpisodePictures);
+            this.tbGeneral.Controls.Add(this.label11);
             this.tbGeneral.Controls.Add(this.label6);
             this.tbGeneral.Controls.Add(this.chkShowInTaskbar);
             this.tbGeneral.Controls.Add(this.label20);
@@ -548,19 +554,19 @@ namespace TVRename
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 181);
+            this.label10.Location = new System.Drawing.Point(6, 234);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 13);
-            this.label10.TabIndex = 13;
+            this.label10.TabIndex = 16;
             this.label10.Text = "&Preferred language:";
             // 
             // cbLookForAirdate
             // 
             this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 157);
+            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 210);
             this.cbLookForAirdate.Name = "cbLookForAirdate";
             this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
-            this.cbLookForAirdate.TabIndex = 12;
+            this.cbLookForAirdate.TabIndex = 15;
             this.cbLookForAirdate.Text = "&Look for airdate in filenames";
             this.cbLookForAirdate.UseVisualStyleBackColor = true;
             // 
@@ -572,46 +578,46 @@ namespace TVRename
             "My Shows",
             "Scan",
             "When to Watch"});
-            this.cbLanguages.Location = new System.Drawing.Point(112, 178);
+            this.cbLanguages.Location = new System.Drawing.Point(112, 231);
             this.cbLanguages.Name = "cbLanguages";
             this.cbLanguages.Size = new System.Drawing.Size(146, 21);
             this.cbLanguages.Sorted = true;
-            this.cbLanguages.TabIndex = 4;
+            this.cbLanguages.TabIndex = 17;
             // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(6, 111);
+            this.label21.Location = new System.Drawing.Point(6, 164);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(82, 13);
-            this.label21.TabIndex = 8;
+            this.label21.TabIndex = 11;
             this.label21.Text = "&Download up to";
             // 
             // cbAutoSelInMyShows
             // 
             this.cbAutoSelInMyShows.AutoSize = true;
-            this.cbAutoSelInMyShows.Location = new System.Drawing.Point(9, 134);
+            this.cbAutoSelInMyShows.Location = new System.Drawing.Point(9, 187);
             this.cbAutoSelInMyShows.Name = "cbAutoSelInMyShows";
             this.cbAutoSelInMyShows.Size = new System.Drawing.Size(268, 17);
-            this.cbAutoSelInMyShows.TabIndex = 11;
+            this.cbAutoSelInMyShows.TabIndex = 14;
             this.cbAutoSelInMyShows.Text = "&Automatically select show and season in My Shows";
             this.cbAutoSelInMyShows.UseVisualStyleBackColor = true;
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(126, 111);
+            this.label20.Location = new System.Drawing.Point(126, 164);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(170, 13);
-            this.label20.TabIndex = 10;
+            this.label20.TabIndex = 13;
             this.label20.Text = "shows simultaneously from thetvdb";
             // 
             // txtParallelDownloads
             // 
-            this.txtParallelDownloads.Location = new System.Drawing.Point(92, 108);
+            this.txtParallelDownloads.Location = new System.Drawing.Point(92, 161);
             this.txtParallelDownloads.Name = "txtParallelDownloads";
             this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
-            this.txtParallelDownloads.TabIndex = 9;
+            this.txtParallelDownloads.TabIndex = 12;
             this.txtParallelDownloads.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumberOnlyKeyPress);
             // 
             // tbFilesAndFolders
@@ -1481,6 +1487,37 @@ namespace TVRename
             // 
             this.openFile.Filter = "Torrent files (*.torrent)|*.torrent|All files (*.*)|*.*";
             // 
+            // rbWTWSearch
+            // 
+            this.rbWTWSearch.AutoSize = true;
+            this.rbWTWSearch.Location = new System.Drawing.Point(27, 47);
+            this.rbWTWSearch.Name = "rbWTWSearch";
+            this.rbWTWSearch.Size = new System.Drawing.Size(59, 17);
+            this.rbWTWSearch.TabIndex = 4;
+            this.rbWTWSearch.TabStop = true;
+            this.rbWTWSearch.Text = "S&earch";
+            this.rbWTWSearch.UseVisualStyleBackColor = true;
+            // 
+            // rbWTWScan
+            // 
+            this.rbWTWScan.AutoSize = true;
+            this.rbWTWScan.Location = new System.Drawing.Point(27, 66);
+            this.rbWTWScan.Name = "rbWTWScan";
+            this.rbWTWScan.Size = new System.Drawing.Size(50, 17);
+            this.rbWTWScan.TabIndex = 5;
+            this.rbWTWScan.TabStop = true;
+            this.rbWTWScan.Text = "S&can";
+            this.rbWTWScan.UseVisualStyleBackColor = true;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 32);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(185, 13);
+            this.label11.TabIndex = 3;
+            this.label11.Text = "Double-click in When to Watch does:";
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -1670,6 +1707,9 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbCheckSABnzbd;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox cbLanguages;
+        private System.Windows.Forms.RadioButton rbWTWScan;
+        private System.Windows.Forms.RadioButton rbWTWSearch;
+        private System.Windows.Forms.Label label11;
 
     }
 }

@@ -31,7 +31,7 @@ namespace TVRename
         public static string PersonalTag()
         {
             // NOTE: If you're doing your own branch/patch version number, please put your name or nickname here,
-            // to indicate that it is not an official release.  Also, talk to me (tvrename@tvrename.com) so any 
+            // to indicate that it is not an official release.  Also, talk to me (tvrename@tvrename.com) so that 
             // I can consider merging your changes into the main version!
             return "-ss"; // e.g. "-ss", "-foo".
         }
@@ -58,7 +58,7 @@ namespace TVRename
             // Version 2.2.0b2 released 14 April 2010, r108
             // Version 2.2.0b1 released 9 April 2010, r94
 
-            string v = "2.2.3" + PersonalTag();
+            string v = "2.2.4" + PersonalTag();
 #if DEBUG
             return v + " ** Debug Build **";
 #else
