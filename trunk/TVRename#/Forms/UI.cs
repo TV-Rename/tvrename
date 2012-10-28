@@ -1110,18 +1110,30 @@ namespace TVRename
 
         public void lvWhenToWatch_DoubleClick(object sender, System.EventArgs e)
         {
-            if (this.lvWhenToWatch.SelectedItems.Count > 0)
+            if (this.lvWhenToWatch.SelectedItems.Count == 0)
+                return;
+
+            ProcessedEpisode ei = (ProcessedEpisode) (this.lvWhenToWatch.SelectedItems[0].Tag);
+            System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
+            if ((fl != null) && (fl.Count > 0))
             {
-                ProcessedEpisode ei = (ProcessedEpisode)(this.lvWhenToWatch.SelectedItems[0].Tag);
-                System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
-                if ((fl != null) && (fl.Count > 0))
-                {
-                    TVDoc.SysOpen(fl[0].FullName);
-                    return;
-                }
+                TVDoc.SysOpen(fl[0].FullName);
+                return;
             }
 
-            this.bnWTWBTSearch_Click(null, null);
+            // Don't have the episode.  Scan or search?
+
+            switch (this.mDoc.Settings.WTWDoubleClick)
+            {
+                default:
+                case TVSettings.WTWDoubleClickAction.Search:
+                    this.bnWTWBTSearch_Click(null, null);
+                    break;
+                case TVSettings.WTWDoubleClickAction.Scan:
+                    this.Scan(new List<ShowItem> {ei.SI});
+                    this.tabControl1.SelectTab(this.tbAllInOne);
+                    break;
+            }
         }
 
         public void calCalendar_DateSelected(object sender, System.Windows.Forms.DateRangeEventArgs e)
