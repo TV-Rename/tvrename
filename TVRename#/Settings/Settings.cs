@@ -169,6 +169,12 @@ namespace TVRename
             FanArt
         }
 
+        public enum WTWDoubleClickAction
+        {
+            Search,
+            Scan
+        }
+
         #endregion
 
         public bool AutoSelectShowInMyShows = true;
@@ -242,6 +248,7 @@ namespace TVRename
         public String SABAPIKey = "";
         public bool CheckSABnzbd = false;
         public String PreferredLanguage = "en";
+        public WTWDoubleClickAction WTWDoubleClick;
 
         public TVSettings()
         {
@@ -354,6 +361,8 @@ namespace TVRename
                     this.SABHostPort = reader.ReadElementContentAsString();
                 else if (reader.Name == "PreferredLanguage")
                     this.PreferredLanguage = reader.ReadElementContentAsString();
+                else if (reader.Name == "WTWDoubleClick")
+                    this.WTWDoubleClick = (WTWDoubleClickAction)reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportMissingXML")
                     this.ExportMissingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingXMLTo")
@@ -395,7 +404,7 @@ namespace TVRename
                 else if (reader.Name == "FolderJpg")
                     this.FolderJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpgIs")
-                    this.FolderJpgIs = (FolderJpgIsType) reader.ReadElementContentAsInt();
+                    this.FolderJpgIs = (FolderJpgIsType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameCheck")
                     this.RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
@@ -701,6 +710,9 @@ namespace TVRename
             writer.WriteEndElement();
             writer.WriteStartElement("PreferredLanguage");
             writer.WriteValue(this.PreferredLanguage);
+            writer.WriteEndElement();
+            writer.WriteStartElement("WTWDoubleClick");
+            writer.WriteValue((int)this.WTWDoubleClick);
             writer.WriteEndElement();
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)

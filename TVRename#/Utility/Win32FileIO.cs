@@ -46,6 +46,8 @@ namespace Win32FileIO
         // Constants required to handle file I/O:
         private const uint GENERIC_READ = 0x80000000;
         private const uint GENERIC_WRITE = 0x40000000;
+        private const uint FILE_SHARE_READ = 0x00000001;
+
         private const uint OPEN_EXISTING = 3;
         private const uint CREATE_ALWAYS = 2;
         private const int BlockSize = 65536;
@@ -153,7 +155,7 @@ namespace Win32FileIO
             // This function uses the Windows API CreateFile function to open an existing file.
             // A return value of true indicates success.
             Close(true, false);
-            pHandleRead = CreateFile(FileName, GENERIC_READ, 0, 0, OPEN_EXISTING, 0, 0);
+            pHandleRead = CreateFile(FileName, GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
             if (pHandleRead == System.IntPtr.Zero)
             {
                 Win32Exception WE = new Win32Exception();

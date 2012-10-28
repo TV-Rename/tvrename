@@ -144,6 +144,11 @@ namespace TVRename
                     break;
                 }
             }
+            if (rbWTWScan.Checked)
+                S.WTWDoubleClick = TVSettings.WTWDoubleClickAction.Scan;
+            else
+                S.WTWDoubleClick = TVSettings.WTWDoubleClickAction.Search;
+
             db.SaveCache();
             db.Unlock("Preferences-OK");
             
@@ -266,6 +271,17 @@ namespace TVRename
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;
             EnterPreferredLanguage = S.PreferredLanguage;
+
+            switch (S.WTWDoubleClick)
+            {
+                case TVSettings.WTWDoubleClickAction.Search:
+                default:
+                    this.rbWTWSearch.Checked = true;
+                    break;
+                case TVSettings.WTWDoubleClickAction.Scan:
+                    this.rbWTWScan.Checked = true;
+                    break;
+            }
 
             this.EnableDisable(null, null);
             this.ScanOptEnableDisable();
