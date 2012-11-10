@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -22,11 +24,11 @@ namespace TVRename
     {
         private CustomName NameStyle;
         private System.Collections.Generic.List<ShowRule> WorkingRuleSet;
-        private ProcessedEpisodeList mOriginalEps;
+        private List<ProcessedEpisode> mOriginalEps;
         private ShowItem mSI;
         private int mSeasonNumber;
 
-        public EditRules(ShowItem si, ProcessedEpisodeList originalEpList, int seasonNumber, CustomName style)
+        public EditRules(ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomName style)
         {
             this.NameStyle = style;
             this.InitializeComponent();
@@ -162,7 +164,7 @@ namespace TVRename
 
         private void FillPreview()
         {
-            ProcessedEpisodeList pel = new ProcessedEpisodeList();
+            List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
 
             if (this.mOriginalEps != null)
             {
@@ -175,7 +177,7 @@ namespace TVRename
             this.lbEpsPreview.BeginUpdate();
             this.lbEpsPreview.Items.Clear();
             foreach (ProcessedEpisode pe in pel)
-                this.lbEpsPreview.Items.Add(this.NameStyle.NameForExt(pe, null));
+                this.lbEpsPreview.Items.Add(this.NameStyle.NameForExt(pe, null, 0));
             this.lbEpsPreview.EndUpdate();
         }
     }

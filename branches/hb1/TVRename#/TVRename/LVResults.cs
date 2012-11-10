@@ -30,13 +30,14 @@ namespace TVRename
         public ScanListItemList FlatList;
         public System.Collections.Generic.List<ItemMissing> Missing;
         public System.Collections.Generic.List<ActionNFO> NFO;
+        public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
         public System.Collections.Generic.List<ActionRSS> RSS;
         public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
-        public System.Collections.Generic.List<ItemuTorrenting> uTorrenting;
+        //public System.Collections.Generic.List<ItemuTorrenting> uTorrenting;
 
-        public LVResults(ListView lv, bool @checked) // if not checked, then selected items
+        public LVResults(ListView lv, bool isChecked) // if not checked, then selected items
         {
-            this.Go(lv, @checked ? WhichResults.Checked : WhichResults.Selected);
+            this.Go(lv, isChecked ? WhichResults.Checked : WhichResults.Selected);
         }
 
         public LVResults(ListView lv, WhichResults which)
@@ -46,13 +47,14 @@ namespace TVRename
 
         public void Go(ListView lv, WhichResults which)
         {
-            this.uTorrenting = new System.Collections.Generic.List<ItemuTorrenting>();
+            //this.uTorrenting = new System.Collections.Generic.List<ItemuTorrenting>();
             this.Missing = new System.Collections.Generic.List<ItemMissing>();
             this.RSS = new System.Collections.Generic.List<ActionRSS>();
             this.CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
             this.Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
             this.Download = new System.Collections.Generic.List<ActionDownload>();
             this.NFO = new System.Collections.Generic.List<ActionNFO>();
+            this.PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
             this.FlatList = new ScanListItemList();
 
             System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
@@ -110,8 +112,10 @@ namespace TVRename
                     this.Missing.Add((ItemMissing) (action));
                 else if (action is ActionNFO)
                     this.NFO.Add((ActionNFO) (action));
-                else if (action is ItemuTorrenting)
-                    this.uTorrenting.Add((ItemuTorrenting) (action));
+                else if (action is ActionPyTivoMeta)
+                    this.PyTivoMeta.Add((ActionPyTivoMeta) (action));
+                //else if (action is ItemuTorrenting)
+                //    this.uTorrenting.Add((ItemuTorrenting) (action));
             }
         }
     }

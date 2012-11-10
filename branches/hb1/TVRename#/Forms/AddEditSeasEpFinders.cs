@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
@@ -23,12 +24,12 @@ namespace TVRename
     /// </summary>
     public partial class AddEditSeasEpFinders : Form
     {
-        private FNPRegexList Rex;
-        private ShowItemList SIL;
+        private List<FilenameProcessorRE> Rex;
+        private List<ShowItem> SIL;
 
         private TVSettings TheSettings;
 
-        public AddEditSeasEpFinders(FNPRegexList rex, ShowItemList sil, ShowItem initialShow, string initialFolder, TVSettings s)
+        public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder, TVSettings s)
         {
             this.Rex = rex;
             this.SIL = sil;
@@ -50,15 +51,20 @@ namespace TVRename
 
         public void SetupGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell();
-            titleModel.BackColor = Color.SteelBlue;
-            titleModel.ForeColor = Color.White;
-            titleModel.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft;
+            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+                                                         {
+                                                             BackColor = Color.SteelBlue,
+                                                             ForeColor = Color.White,
+                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                         };
 
-            SourceGrid.Cells.Views.Cell titleModelC = new SourceGrid.Cells.Views.Cell();
-            titleModelC.BackColor = Color.SteelBlue;
-            titleModelC.ForeColor = Color.White;
-            titleModelC.TextAlignment = DevAge.Drawing.ContentAlignment.MiddleCenter;
+            SourceGrid.Cells.Views.Cell titleModelC = new SourceGrid.Cells.Views.Cell
+                                                          {
+                                                              BackColor = Color.SteelBlue,
+                                                              ForeColor = Color.White,
+                                                              TextAlignment =
+                                                                  DevAge.Drawing.ContentAlignment.MiddleCenter
+                                                          };
 
             this.Grid1.Columns.Clear();
             this.Grid1.Rows.Clear();
@@ -126,7 +132,7 @@ namespace TVRename
                 this.Grid1[r, c].AddController(changed);
         }
 
-        public void FillGrid(FNPRegexList list)
+        public void FillGrid(List<FilenameProcessorRE> list)
         {
             while (this.Grid1.Rows.Count > 1) // leave header row
                 this.Grid1.Rows.Remove(1);
@@ -158,9 +164,7 @@ namespace TVRename
             bool en = (bool) (this.Grid1[i, 0].Value);
             string regex = (string) (this.Grid1[i, 1].Value);
             bool fullPath = (bool) (this.Grid1[i, 2].Value);
-            string notes = (string) (this.Grid1[i, 3].Value);
-            if (notes == null)
-                notes = "";
+            string notes = (string) (this.Grid1[i, 3].Value) ?? "";
 
             if (string.IsNullOrEmpty(regex))
                 return null;
@@ -249,7 +253,7 @@ namespace TVRename
 
             this.lvPreview.Enabled = true;
 
-            FNPRegexList rel = new FNPRegexList();
+            List<FilenameProcessorRE> rel = new List<FilenameProcessorRE>();
 
             if (this.chkTestAll.Checked)
             {

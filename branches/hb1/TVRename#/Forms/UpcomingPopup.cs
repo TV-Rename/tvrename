@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -50,7 +52,7 @@ namespace TVRename
 
             const int kN = 5;
 
-            ProcessedEpisodeList next5 = this.mDoc.NextNShows(kN, 9999);
+            List<ProcessedEpisode> next5 = this.mDoc.NextNShows(kN, 0, 9999);
 
             if (next5 != null)
             {
@@ -60,7 +62,7 @@ namespace TVRename
                     lvi.Text = ei.HowLong();
                     lvi.SubItems.Add(ei.DayOfWeek());
                     lvi.SubItems.Add(ei.TimeOfDay());
-                    lvi.SubItems.Add(this.mDoc.Settings.NamingStyle.NameForExt(ei, null));
+                    lvi.SubItems.Add(this.mDoc.Settings.NamingStyle.NameForExt(ei, null, 0));
                     this.lvUpcoming.Items.Add(lvi);
                 }
                 if (this.lvUpcoming.Items.Count > 0)

@@ -98,7 +98,7 @@ namespace TVRename
 
         public int ScanListViewGroup
         {
-            get { return 7; }
+            get { return 8; }
         }
 
         int ScanListItem.IconNumber

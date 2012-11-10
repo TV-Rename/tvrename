@@ -85,23 +85,15 @@ namespace TVRename
             this.TVDBCode = -1;
             this.Language = "";
         }
-
-        public int LanguagePriority(StringList languages)
-        {
-            if (string.IsNullOrEmpty(this.Language))
-                return 999999;
-            int r = languages.IndexOf(this.Language); // -1 for not found
-            return (r == -1) ? 999999 : r;
-        }
-
-        public void Merge(SeriesInfo o, StringList languages)
+       
+        public void Merge(SeriesInfo o, String preferredLanguage)
         {
             if (o.TVDBCode != this.TVDBCode)
                 return; // that's not us!
-            if (o.Srv_LastUpdated < this.Srv_LastUpdated)
+            if (o.Srv_LastUpdated != 0 && o.Srv_LastUpdated < this.Srv_LastUpdated)
                 return; // older!?
 
-            bool betterLanguage = o.LanguagePriority(languages) < this.LanguagePriority(languages); // lower is better
+            bool betterLanguage = (o.Language == preferredLanguage) && (this.Language != preferredLanguage);
 
             this.Srv_LastUpdated = o.Srv_LastUpdated;
 
@@ -178,7 +170,12 @@ namespace TVRename
                             if (!string.IsNullOrEmpty(theTime))
                             {
                                 this.Items["Airs_Time"] = theTime;
-                                this.AirsTime = DateTime.Parse(theTime);
+                                DateTime airsTime;
+                                if (DateTime.TryParse(theTime, out airsTime) |
+                                    DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
+                                    this.AirsTime = airsTime;
+                                else
+                                    this.AirsTime = null;
                             }
                         }
                         catch (FormatException)

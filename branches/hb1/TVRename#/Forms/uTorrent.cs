@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 
@@ -93,7 +96,7 @@ namespace TVRename
             if (!this.CheckResumeDatPath())
                 return;
 
-            StringList checkedItems = new StringList();
+            List<string> checkedItems = new List<String>();
             foreach (string torrent in this.lbUTTorrents.CheckedItems)
                 checkedItems.Add(torrent);
 
@@ -103,7 +106,7 @@ namespace TVRename
             string file = this.mDoc.Settings.ResumeDatPath;
             if (!File.Exists(file))
                 return;
-            BEncodeLoader bel = new BEncodeLoader(mDoc.Args);
+            BEncodeLoader bel = new BEncodeLoader();
             BTFile resumeDat = bel.Load(file);
             if (resumeDat == null)
                 return;
@@ -158,7 +161,7 @@ namespace TVRename
 
             BTResume btp = new BTResume(this.SetProg, resumeDatFile);
 
-            StringList sl = new StringList();
+            List<string> sl = new List<String>();
 
             foreach (string torrent in this.lbUTTorrents.CheckedItems)
                 sl.Add(torrent);
@@ -235,15 +238,10 @@ namespace TVRename
             }
         }
 
-        private void txtResumeDatFolder_TextChanged(object sender, System.EventArgs e)
-        {
-            this.StartWatching();
-        }
-
         private void StartWatching()
         {
             FileInfo f = new FileInfo(this.mDoc.Settings.ResumeDatPath);
-            if (f.Exists)
+            if (f.Exists && f.Directory != null)
             {
                 this.watcher.Path = f.Directory.Name;
                 this.watcher.Filter = "resume.dat";

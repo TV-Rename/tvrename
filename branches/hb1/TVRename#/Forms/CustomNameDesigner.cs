@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 
@@ -22,10 +24,10 @@ namespace TVRename
     public partial class CustomNameDesigner : Form
     {
         private CustomName CN;
-        private ProcessedEpisodeList Eps;
+        private List<ProcessedEpisode> Eps;
         private TVDoc mDoc;
 
-        public CustomNameDesigner(ProcessedEpisodeList pel, CustomName cn, TVDoc doc)
+        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomName cn, TVDoc doc)
         {
             this.Eps = pel;
             this.CN = cn;
@@ -51,7 +53,7 @@ namespace TVRename
             else
                 pe = (ProcessedEpisode) (this.lvTest.SelectedItems[0].Tag);
 
-            foreach (string s in CustomName.Tags())
+            foreach (string s in CustomName.Tags)
             {
                 string txt = s;
                 if (pe != null)
@@ -59,12 +61,9 @@ namespace TVRename
                 this.cbTags.Items.Add(txt);
             }
 
-            foreach (string s in CustomName.Presets())
+            foreach (string s in CustomName.Presets)
             {
-                if (pe != null)
-                    this.cbPresets.Items.Add(CustomName.NameForNoExt(pe, s));
-                else
-                    this.cbPresets.Items.Add(s);
+                this.cbPresets.Items.Add(pe != null ? CustomName.NameForNoExt(pe, s) : s);
             }
         }
 
@@ -77,7 +76,7 @@ namespace TVRename
             foreach (ProcessedEpisode pe in this.Eps)
             {
                 ListViewItem lvi = new ListViewItem();
-                string fn = this.mDoc.Settings.FilenameFriendly(this.CN.NameForExt(pe, null));
+                string fn = this.mDoc.Settings.FilenameFriendly(this.CN.NameForExt(pe, null, 0));
                 lvi.Text = fn;
 
                 bool ok = false;
@@ -109,7 +108,7 @@ namespace TVRename
             if (n == -1)
                 return;
 
-            this.txtTemplate.Text = CustomName.Presets()[n];
+            this.txtTemplate.Text = CustomName.Presets[n];
             this.cbPresets.SelectedIndex = -1;
         }
 
@@ -127,7 +126,7 @@ namespace TVRename
 
             int p = this.txtTemplate.SelectionStart;
             string s = this.txtTemplate.Text;
-            this.txtTemplate.Text = s.Substring(0, p) + CustomName.Tags()[this.cbTags.SelectedIndex] + s.Substring(p);
+            this.txtTemplate.Text = s.Substring(0, p) + CustomName.Tags[this.cbTags.SelectedIndex] + s.Substring(p);
 
             this.cbTags.SelectedIndex = -1;
         }

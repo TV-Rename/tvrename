@@ -5,6 +5,10 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -70,7 +74,9 @@ namespace TVRename
 
             this.chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
 
-            this.ShowTimeZone = ((si == null)||(si.TheSeries() == null)) ? TimeZone.DefaultTimeZone() : si.TheSeries().ShowTimeZone;
+            this.ShowTimeZone = ((si == null) || (si.TheSeries() == null))
+                                    ? TimeZone.DefaultTimeZone()
+                                    : si.TheSeries().ShowTimeZone;
 
             this.cbTimeZone.Text = this.ShowTimeZone;
             this.chkDVDOrder.Checked = si.DVDOrder;
@@ -87,7 +93,7 @@ namespace TVRename
                 first = false;
             }
 
-            foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.ManualFolderLocations)
+            foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in si.ManualFolderLocations)
             {
                 foreach (string s in kvp.Value)
                 {
@@ -105,6 +111,22 @@ namespace TVRename
 
             this.ActiveControl = mTCCF; // set initial focus to the code entry/show finder control
 
+            foreach (string aliasName in this.mSI.AliasNames)
+            {
+                lbShowAlias.Items.Add(aliasName);
+            }
+
+            StringBuilder tl = new StringBuilder();
+
+            foreach (string s in CustomName.Tags)
+            {
+                tl.AppendLine(s);
+            }
+            this.txtTagList.Text = tl.ToString();
+
+            cbUseCustomSearch.Checked = !String.IsNullOrEmpty(si.CustomSearchURL);
+            txtSearchURL.Text = si.CustomSearchURL ?? "";
+            EnableDisableCustomSearch();
         }
 
         private void buttonOK_Click(object sender, System.EventArgs e)
@@ -124,7 +146,8 @@ namespace TVRename
         {
             if (!this.mTVDB.HasSeries(this.mTCCF.SelectedCode()))
             {
-                DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
+                                                  MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (dr == DialogResult.No)
                     return false;
             }
@@ -158,6 +181,7 @@ namespace TVRename
             this.mSI.DVDOrder = this.chkDVDOrder.Checked;
             this.mSI.ForceCheckFuture = this.cbIncludeFuture.Checked;
             this.mSI.ForceCheckNoAirdate = this.cbIncludeNoAirdate.Checked;
+            this.mSI.CustomSearchURL = this.txtSearchURL.Text;
 
             this.mSI.UseSequentialMatch = this.cbSequentialMatching.Checked;
 
@@ -173,12 +197,21 @@ namespace TVRename
                 {
                     int seas = int.Parse(lvi.Text);
                     if (!this.mSI.ManualFolderLocations.ContainsKey(seas))
-                        this.mSI.ManualFolderLocations.Add(seas, new StringList());
+                        this.mSI.ManualFolderLocations.Add(seas, new List<String>());
 
                     this.mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
                 }
                 catch
                 {
+                }
+            }
+
+            this.mSI.AliasNames.Clear();
+            foreach (string showAlias in this.lbShowAlias.Items)
+            {
+                if (!this.mSI.AliasNames.Contains(showAlias))
+                {
+                    this.mSI.AliasNames.Add(showAlias);
                 }
             }
         }
@@ -257,10 +290,7 @@ namespace TVRename
                 {
                 }
             }
-            if (ok)
-                this.txtFolder.BackColor = System.Drawing.SystemColors.Window;
-            else
-                this.txtFolder.BackColor = Helpers.WarningColor();
+            this.txtFolder.BackColor = ok ? System.Drawing.SystemColors.Window : Helpers.WarningColor();
         }
 
         private void chkCustomShowName_CheckedChanged(object sender, System.EventArgs e)
@@ -272,5 +302,52 @@ namespace TVRename
         {
             gbAutoFolders.Enabled = chkAutoFolders.Checked;
         }
+
+        private void bnAddAlias_Click(object sender, System.EventArgs e)
+        {
+            string aliasName = tbShowAlias.Text;
+
+            if (!string.IsNullOrEmpty(aliasName))
+            {
+                if (lbShowAlias.FindStringExact(aliasName) == -1)
+                {
+                    lbShowAlias.Items.Add(aliasName);
+                }
+                tbShowAlias.Text = "";
+            }
+        }
+
+        private void bnRemoveAlias_Click(object sender, System.EventArgs e)
+        {
+            if (lbShowAlias.SelectedItems.Count > 0)
+            {
+                foreach (int i in lbShowAlias.SelectedIndices)
+                {
+                    lbShowAlias.Items.RemoveAt(i);
+                }
+            }
+        }
+
+        private void tbShowAlias_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                this.bnAddAlias_Click(null, null);
+        }
+
+        private void cbUseCustomSearch_CheckedChanged(object sender, System.EventArgs e)
+        {
+            EnableDisableCustomSearch();
+        }
+
+        private void EnableDisableCustomSearch()
+        {
+            bool en = cbUseCustomSearch.Checked;
+
+            lbSearchURL.Enabled = en;
+            txtSearchURL.Enabled = en;
+            lbTags.Enabled = en;
+            txtTagList.Enabled = en;
+        }
+
     }
 }

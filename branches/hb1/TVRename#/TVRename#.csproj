@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2FFF6A6D-6094-47FF-AB34-E04E644F8F9C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -13,6 +13,10 @@
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>App\app.ico</ApplicationIcon>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +26,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +36,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ionic.Utils.Zip, Version=1.5.2.1, Culture=neutral, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL">
@@ -152,6 +160,8 @@
     <Compile Include="Forms\uTorrent.Designer.cs">
       <DependentUpon>uTorrent.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
+    <Compile Include="ItemsAndActions\ItemSABnzbd.cs" />
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
@@ -363,6 +373,7 @@
     </Compile>
     <Compile Include="Settings\ShowsAndEpisodes.cs" />
     <Compile Include="Settings\ShowRule.cs" />
+    <Compile Include="Utility\SABnzbdXML.cs" />
     <Compile Include="Utility\Sorters.cs" />
     <Compile Include="Settings\Statistics.cs" />
     <Compile Include="Forms\StatsWindow.cs">
@@ -388,9 +399,23 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="App\Version.cs" />
+    <Compile Include="Utility\Win32FileIO.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />
+    <None Include="Resources\EditInformationHS.png" />
+    <None Include="Resources\SearchWebHS.png" />
+    <None Include="Resources\SearchFolderHS.png" />
+    <None Include="Resources\ZoomHS.png" />
+    <None Include="Resources\TableHS.png" />
+    <None Include="Resources\FormulaEvaluatorHS.png" />
+    <None Include="Resources\FindHS.png" />
+    <None Include="Resources\Web.png" />
+    <None Include="Resources\RefreshDocViewHS.png" />
+    <None Include="Resources\Help.png" />
+    <None Include="Resources\graphhs.png" />
+    <None Include="Resources\GetLatestVersion.png" />
+    <None Include="Resources\saveHS.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

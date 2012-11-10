@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TVRename
 {
@@ -12,9 +10,11 @@ namespace TVRename
             Ignore,
             Create
         };
+
         // holds boolean settings set on the command line
         public bool Hide;
         public MissingFolderBehaviour MissingFolder;
+        public bool RenameCheck;
         public bool Quit;
         public bool ForceRecover;
         public bool Scan;
@@ -38,6 +38,7 @@ namespace TVRename
             else
                 MissingFolder = MissingFolderBehaviour.Ask;
 
+            RenameCheck = !(Array.IndexOf(args, "/norenamecheck") != -1);
             Quit = Array.IndexOf(args, "/quit") != -1;
             ForceRecover = Array.IndexOf(args, "/recover") != -1;
 
