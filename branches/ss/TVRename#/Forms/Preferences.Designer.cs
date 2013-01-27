@@ -74,11 +74,14 @@ namespace TVRename
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbGeneral = new System.Windows.Forms.TabPage();
+            this.rbWTWScan = new System.Windows.Forms.RadioButton();
+            this.rbWTWSearch = new System.Windows.Forms.RadioButton();
             this.label10 = new System.Windows.Forms.Label();
             this.cbLookForAirdate = new System.Windows.Forms.CheckBox();
             this.cbLanguages = new System.Windows.Forms.ComboBox();
             this.label21 = new System.Windows.Forms.Label();
             this.cbAutoSelInMyShows = new System.Windows.Forms.CheckBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.txtParallelDownloads = new System.Windows.Forms.TextBox();
             this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
@@ -108,22 +111,31 @@ namespace TVRename
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
-            this.cbMetaSubfolder = new System.Windows.Forms.CheckBox();
-            this.cbMeta = new System.Windows.Forms.CheckBox();
-            this.rbFolderFanArt = new System.Windows.Forms.RadioButton();
-            this.rbFolderPoster = new System.Windows.Forms.RadioButton();
-            this.rbFolderBanner = new System.Windows.Forms.RadioButton();
             this.label28 = new System.Windows.Forms.Label();
             this.cbSearchRSS = new System.Windows.Forms.CheckBox();
-            this.cbEpImgs = new System.Windows.Forms.CheckBox();
-            this.cbNFOs = new System.Windows.Forms.CheckBox();
-            this.cbFolderJpg = new System.Windows.Forms.CheckBox();
             this.cbRenameCheck = new System.Windows.Forms.CheckBox();
             this.cbMissing = new System.Windows.Forms.CheckBox();
             this.cbLeaveOriginals = new System.Windows.Forms.CheckBox();
             this.cbCheckSABnzbd = new System.Windows.Forms.CheckBox();
             this.cbCheckuTorrent = new System.Windows.Forms.CheckBox();
             this.cbSearchLocally = new System.Windows.Forms.CheckBox();
+            this.tbMediaCenter = new System.Windows.Forms.TabPage();
+            this.cbShrinkLarge = new System.Windows.Forms.CheckBox();
+            this.cbEpThumbJpg = new System.Windows.Forms.CheckBox();
+            this.label29 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.cbMetaSubfolder = new System.Windows.Forms.CheckBox();
+            this.cbMeta = new System.Windows.Forms.CheckBox();
+            this.rbFolderFanArt = new System.Windows.Forms.RadioButton();
+            this.rbFolderPoster = new System.Windows.Forms.RadioButton();
+            this.rbFolderBanner = new System.Windows.Forms.RadioButton();
+            this.cbEpTBNs = new System.Windows.Forms.CheckBox();
+            this.cbSeriesJpg = new System.Windows.Forms.CheckBox();
+            this.cbXMLFiles = new System.Windows.Forms.CheckBox();
+            this.cbNFOs = new System.Windows.Forms.CheckBox();
+            this.cbFolderJpg = new System.Windows.Forms.CheckBox();
             this.tbSearchFolders = new System.Windows.Forms.TabPage();
             this.cbMonitorFolder = new System.Windows.Forms.CheckBox();
             this.bnOpenSearchFolder = new System.Windows.Forms.Button();
@@ -164,9 +176,12 @@ namespace TVRename
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog = new System.Windows.Forms.ColorDialog();
-            this.rbWTWSearch = new System.Windows.Forms.RadioButton();
-            this.rbWTWScan = new System.Windows.Forms.RadioButton();
-            this.label11 = new System.Windows.Forms.Label();
+            this.bnMCPresets = new System.Windows.Forms.Button();
+            this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.xBMCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -176,11 +191,13 @@ namespace TVRename
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.tpScanOptions.SuspendLayout();
+            this.tbMediaCenter.SuspendLayout();
             this.tbSearchFolders.SuspendLayout();
             this.tbuTorrentNZB.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.tpTreeColoring.SuspendLayout();
+            this.cmDefaults.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -513,6 +530,7 @@ namespace TVRename
             this.tabControl1.Controls.Add(this.tbFilesAndFolders);
             this.tabControl1.Controls.Add(this.tbAutoExport);
             this.tabControl1.Controls.Add(this.tpScanOptions);
+            this.tabControl1.Controls.Add(this.tbMediaCenter);
             this.tabControl1.Controls.Add(this.tbSearchFolders);
             this.tabControl1.Controls.Add(this.tbuTorrentNZB);
             this.tabControl1.Controls.Add(this.tpTreeColoring);
@@ -550,6 +568,28 @@ namespace TVRename
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
+            // 
+            // rbWTWScan
+            // 
+            this.rbWTWScan.AutoSize = true;
+            this.rbWTWScan.Location = new System.Drawing.Point(27, 66);
+            this.rbWTWScan.Name = "rbWTWScan";
+            this.rbWTWScan.Size = new System.Drawing.Size(50, 17);
+            this.rbWTWScan.TabIndex = 5;
+            this.rbWTWScan.TabStop = true;
+            this.rbWTWScan.Text = "S&can";
+            this.rbWTWScan.UseVisualStyleBackColor = true;
+            // 
+            // rbWTWSearch
+            // 
+            this.rbWTWSearch.AutoSize = true;
+            this.rbWTWSearch.Location = new System.Drawing.Point(27, 47);
+            this.rbWTWSearch.Name = "rbWTWSearch";
+            this.rbWTWSearch.Size = new System.Drawing.Size(59, 17);
+            this.rbWTWSearch.TabIndex = 4;
+            this.rbWTWSearch.TabStop = true;
+            this.rbWTWSearch.Text = "S&earch";
+            this.rbWTWSearch.UseVisualStyleBackColor = true;
             // 
             // label10
             // 
@@ -602,6 +642,15 @@ namespace TVRename
             this.cbAutoSelInMyShows.TabIndex = 14;
             this.cbAutoSelInMyShows.Text = "&Automatically select show and season in My Shows";
             this.cbAutoSelInMyShows.UseVisualStyleBackColor = true;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 32);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(185, 13);
+            this.label11.TabIndex = 3;
+            this.label11.Text = "Double-click in When to Watch does:";
             // 
             // label20
             // 
@@ -901,16 +950,8 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
-            this.tpScanOptions.Controls.Add(this.cbMetaSubfolder);
-            this.tpScanOptions.Controls.Add(this.cbMeta);
-            this.tpScanOptions.Controls.Add(this.rbFolderFanArt);
-            this.tpScanOptions.Controls.Add(this.rbFolderPoster);
-            this.tpScanOptions.Controls.Add(this.rbFolderBanner);
             this.tpScanOptions.Controls.Add(this.label28);
             this.tpScanOptions.Controls.Add(this.cbSearchRSS);
-            this.tpScanOptions.Controls.Add(this.cbEpImgs);
-            this.tpScanOptions.Controls.Add(this.cbNFOs);
-            this.tpScanOptions.Controls.Add(this.cbFolderJpg);
             this.tpScanOptions.Controls.Add(this.cbRenameCheck);
             this.tpScanOptions.Controls.Add(this.cbMissing);
             this.tpScanOptions.Controls.Add(this.cbLeaveOriginals);
@@ -924,60 +965,6 @@ namespace TVRename
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
-            // 
-            // cbMetaSubfolder
-            // 
-            this.cbMetaSubfolder.AutoSize = true;
-            this.cbMetaSubfolder.Location = new System.Drawing.Point(60, 263);
-            this.cbMetaSubfolder.Name = "cbMetaSubfolder";
-            this.cbMetaSubfolder.Size = new System.Drawing.Size(194, 17);
-            this.cbMetaSubfolder.TabIndex = 11;
-            this.cbMetaSubfolder.Text = "Place py&TiVo Meta files in subfolder";
-            this.cbMetaSubfolder.UseVisualStyleBackColor = true;
-            // 
-            // cbMeta
-            // 
-            this.cbMeta.AutoSize = true;
-            this.cbMeta.Location = new System.Drawing.Point(40, 240);
-            this.cbMeta.Name = "cbMeta";
-            this.cbMeta.Size = new System.Drawing.Size(167, 17);
-            this.cbMeta.TabIndex = 10;
-            this.cbMeta.Text = "py&TiVo Meta files for episodes";
-            this.cbMeta.UseVisualStyleBackColor = true;
-            this.cbMeta.CheckedChanged += new System.EventHandler(this.cbMeta_CheckedChanged);
-            // 
-            // rbFolderFanArt
-            // 
-            this.rbFolderFanArt.AutoSize = true;
-            this.rbFolderFanArt.Location = new System.Drawing.Point(40, 346);
-            this.rbFolderFanArt.Name = "rbFolderFanArt";
-            this.rbFolderFanArt.Size = new System.Drawing.Size(59, 17);
-            this.rbFolderFanArt.TabIndex = 15;
-            this.rbFolderFanArt.TabStop = true;
-            this.rbFolderFanArt.Text = "F&an Art";
-            this.rbFolderFanArt.UseVisualStyleBackColor = true;
-            // 
-            // rbFolderPoster
-            // 
-            this.rbFolderPoster.AutoSize = true;
-            this.rbFolderPoster.Location = new System.Drawing.Point(40, 326);
-            this.rbFolderPoster.Name = "rbFolderPoster";
-            this.rbFolderPoster.Size = new System.Drawing.Size(55, 17);
-            this.rbFolderPoster.TabIndex = 14;
-            this.rbFolderPoster.TabStop = true;
-            this.rbFolderPoster.Text = "&Poster";
-            this.rbFolderPoster.UseVisualStyleBackColor = true;
-            // 
-            // rbFolderBanner
-            // 
-            this.rbFolderBanner.AutoSize = true;
-            this.rbFolderBanner.Location = new System.Drawing.Point(40, 306);
-            this.rbFolderBanner.Name = "rbFolderBanner";
-            this.rbFolderBanner.Size = new System.Drawing.Size(59, 17);
-            this.rbFolderBanner.TabIndex = 13;
-            this.rbFolderBanner.TabStop = true;
-            this.rbFolderBanner.Text = "&Banner";
-            this.rbFolderBanner.UseVisualStyleBackColor = true;
             // 
             // label28
             // 
@@ -997,36 +984,6 @@ namespace TVRename
             this.cbSearchRSS.TabIndex = 7;
             this.cbSearchRSS.Text = "&Search RSS for missing files";
             this.cbSearchRSS.UseVisualStyleBackColor = true;
-            // 
-            // cbEpImgs
-            // 
-            this.cbEpImgs.AutoSize = true;
-            this.cbEpImgs.Location = new System.Drawing.Point(40, 194);
-            this.cbEpImgs.Name = "cbEpImgs";
-            this.cbEpImgs.Size = new System.Drawing.Size(148, 17);
-            this.cbEpImgs.TabIndex = 8;
-            this.cbEpImgs.Text = "&Episode Thumbnails (.tbn)";
-            this.cbEpImgs.UseVisualStyleBackColor = true;
-            // 
-            // cbNFOs
-            // 
-            this.cbNFOs.AutoSize = true;
-            this.cbNFOs.Location = new System.Drawing.Point(40, 217);
-            this.cbNFOs.Name = "cbNFOs";
-            this.cbNFOs.Size = new System.Drawing.Size(216, 17);
-            this.cbNFOs.TabIndex = 9;
-            this.cbNFOs.Text = "&XBMC NFO files for shows and episodes";
-            this.cbNFOs.UseVisualStyleBackColor = true;
-            // 
-            // cbFolderJpg
-            // 
-            this.cbFolderJpg.AutoSize = true;
-            this.cbFolderJpg.Location = new System.Drawing.Point(20, 286);
-            this.cbFolderJpg.Name = "cbFolderJpg";
-            this.cbFolderJpg.Size = new System.Drawing.Size(164, 17);
-            this.cbFolderJpg.TabIndex = 12;
-            this.cbFolderJpg.Text = "&Folder Thumbnails (folder.jpg)";
-            this.cbFolderJpg.UseVisualStyleBackColor = true;
             // 
             // cbRenameCheck
             // 
@@ -1097,6 +1054,192 @@ namespace TVRename
             this.cbSearchLocally.Text = "&Look in \"Search Folders\" for mising files";
             this.cbSearchLocally.UseVisualStyleBackColor = true;
             this.cbSearchLocally.CheckedChanged += new System.EventHandler(this.cbSearchLocally_CheckedChanged);
+            // 
+            // tbMediaCenter
+            // 
+            this.tbMediaCenter.Controls.Add(this.bnMCPresets);
+            this.tbMediaCenter.Controls.Add(this.cbShrinkLarge);
+            this.tbMediaCenter.Controls.Add(this.cbEpThumbJpg);
+            this.tbMediaCenter.Controls.Add(this.label29);
+            this.tbMediaCenter.Controls.Add(this.label24);
+            this.tbMediaCenter.Controls.Add(this.label18);
+            this.tbMediaCenter.Controls.Add(this.label12);
+            this.tbMediaCenter.Controls.Add(this.cbMetaSubfolder);
+            this.tbMediaCenter.Controls.Add(this.cbMeta);
+            this.tbMediaCenter.Controls.Add(this.rbFolderFanArt);
+            this.tbMediaCenter.Controls.Add(this.rbFolderPoster);
+            this.tbMediaCenter.Controls.Add(this.rbFolderBanner);
+            this.tbMediaCenter.Controls.Add(this.cbEpTBNs);
+            this.tbMediaCenter.Controls.Add(this.cbSeriesJpg);
+            this.tbMediaCenter.Controls.Add(this.cbXMLFiles);
+            this.tbMediaCenter.Controls.Add(this.cbNFOs);
+            this.tbMediaCenter.Controls.Add(this.cbFolderJpg);
+            this.tbMediaCenter.Location = new System.Drawing.Point(4, 40);
+            this.tbMediaCenter.Name = "tbMediaCenter";
+            this.tbMediaCenter.Padding = new System.Windows.Forms.Padding(3);
+            this.tbMediaCenter.Size = new System.Drawing.Size(416, 401);
+            this.tbMediaCenter.TabIndex = 8;
+            this.tbMediaCenter.Text = "Media Center";
+            this.tbMediaCenter.UseVisualStyleBackColor = true;
+            // 
+            // cbShrinkLarge
+            // 
+            this.cbShrinkLarge.AutoSize = true;
+            this.cbShrinkLarge.Location = new System.Drawing.Point(38, 236);
+            this.cbShrinkLarge.Name = "cbShrinkLarge";
+            this.cbShrinkLarge.Size = new System.Drawing.Size(206, 17);
+            this.cbShrinkLarge.TabIndex = 9;
+            this.cbShrinkLarge.Text = "Shink large images to 156 x 232 pixels";
+            this.cbShrinkLarge.UseVisualStyleBackColor = true;
+            // 
+            // cbEpThumbJpg
+            // 
+            this.cbEpThumbJpg.AutoSize = true;
+            this.cbEpThumbJpg.Location = new System.Drawing.Point(38, 373);
+            this.cbEpThumbJpg.Name = "cbEpThumbJpg";
+            this.cbEpThumbJpg.Size = new System.Drawing.Size(147, 17);
+            this.cbEpThumbJpg.TabIndex = 15;
+            this.cbEpThumbJpg.Text = "&Episode Thumbnails (.jpg)";
+            this.cbEpThumbJpg.UseVisualStyleBackColor = true;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(17, 170);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(49, 13);
+            this.label29.TabIndex = 6;
+            this.label29.Text = "Mede8er";
+            // 
+            // label24
+            // 
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(17, 269);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(44, 13);
+            this.label24.TabIndex = 10;
+            this.label24.Text = "General";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(17, 92);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(39, 13);
+            this.label18.TabIndex = 3;
+            this.label18.Text = "pyTivo";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(17, 15);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(37, 13);
+            this.label12.TabIndex = 0;
+            this.label12.Text = "XBMC";
+            // 
+            // cbMetaSubfolder
+            // 
+            this.cbMetaSubfolder.AutoSize = true;
+            this.cbMetaSubfolder.Location = new System.Drawing.Point(38, 134);
+            this.cbMetaSubfolder.Name = "cbMetaSubfolder";
+            this.cbMetaSubfolder.Size = new System.Drawing.Size(187, 17);
+            this.cbMetaSubfolder.TabIndex = 5;
+            this.cbMetaSubfolder.Text = "Place Meta files in .meta subfolder";
+            this.cbMetaSubfolder.UseVisualStyleBackColor = true;
+            // 
+            // cbMeta
+            // 
+            this.cbMeta.AutoSize = true;
+            this.cbMeta.Location = new System.Drawing.Point(38, 111);
+            this.cbMeta.Name = "cbMeta";
+            this.cbMeta.Size = new System.Drawing.Size(154, 17);
+            this.cbMeta.TabIndex = 4;
+            this.cbMeta.Text = "Meta files for episodes (.txt)";
+            this.cbMeta.UseVisualStyleBackColor = true;
+            // 
+            // rbFolderFanArt
+            // 
+            this.rbFolderFanArt.AutoSize = true;
+            this.rbFolderFanArt.Location = new System.Drawing.Point(58, 350);
+            this.rbFolderFanArt.Name = "rbFolderFanArt";
+            this.rbFolderFanArt.Size = new System.Drawing.Size(59, 17);
+            this.rbFolderFanArt.TabIndex = 14;
+            this.rbFolderFanArt.TabStop = true;
+            this.rbFolderFanArt.Text = "F&an Art";
+            this.rbFolderFanArt.UseVisualStyleBackColor = true;
+            // 
+            // rbFolderPoster
+            // 
+            this.rbFolderPoster.AutoSize = true;
+            this.rbFolderPoster.Location = new System.Drawing.Point(58, 330);
+            this.rbFolderPoster.Name = "rbFolderPoster";
+            this.rbFolderPoster.Size = new System.Drawing.Size(55, 17);
+            this.rbFolderPoster.TabIndex = 13;
+            this.rbFolderPoster.TabStop = true;
+            this.rbFolderPoster.Text = "&Poster";
+            this.rbFolderPoster.UseVisualStyleBackColor = true;
+            // 
+            // rbFolderBanner
+            // 
+            this.rbFolderBanner.AutoSize = true;
+            this.rbFolderBanner.Location = new System.Drawing.Point(58, 310);
+            this.rbFolderBanner.Name = "rbFolderBanner";
+            this.rbFolderBanner.Size = new System.Drawing.Size(59, 17);
+            this.rbFolderBanner.TabIndex = 12;
+            this.rbFolderBanner.TabStop = true;
+            this.rbFolderBanner.Text = "&Banner";
+            this.rbFolderBanner.UseVisualStyleBackColor = true;
+            // 
+            // cbEpTBNs
+            // 
+            this.cbEpTBNs.AutoSize = true;
+            this.cbEpTBNs.Location = new System.Drawing.Point(38, 34);
+            this.cbEpTBNs.Name = "cbEpTBNs";
+            this.cbEpTBNs.Size = new System.Drawing.Size(148, 17);
+            this.cbEpTBNs.TabIndex = 1;
+            this.cbEpTBNs.Text = "&Episode Thumbnails (.tbn)";
+            this.cbEpTBNs.UseVisualStyleBackColor = true;
+            // 
+            // cbSeriesJpg
+            // 
+            this.cbSeriesJpg.AutoSize = true;
+            this.cbSeriesJpg.Location = new System.Drawing.Point(38, 190);
+            this.cbSeriesJpg.Name = "cbSeriesJpg";
+            this.cbSeriesJpg.Size = new System.Drawing.Size(172, 17);
+            this.cbSeriesJpg.TabIndex = 7;
+            this.cbSeriesJpg.Text = "Create series poster (series.jpg)";
+            this.cbSeriesJpg.UseVisualStyleBackColor = true;
+            // 
+            // cbXMLFiles
+            // 
+            this.cbXMLFiles.AutoSize = true;
+            this.cbXMLFiles.Location = new System.Drawing.Point(38, 213);
+            this.cbXMLFiles.Name = "cbXMLFiles";
+            this.cbXMLFiles.Size = new System.Drawing.Size(183, 17);
+            this.cbXMLFiles.TabIndex = 8;
+            this.cbXMLFiles.Text = "&XML files for shows and episodes";
+            this.cbXMLFiles.UseVisualStyleBackColor = true;
+            // 
+            // cbNFOs
+            // 
+            this.cbNFOs.AutoSize = true;
+            this.cbNFOs.Location = new System.Drawing.Point(38, 57);
+            this.cbNFOs.Name = "cbNFOs";
+            this.cbNFOs.Size = new System.Drawing.Size(183, 17);
+            this.cbNFOs.TabIndex = 2;
+            this.cbNFOs.Text = "&NFO files for shows and episodes";
+            this.cbNFOs.UseVisualStyleBackColor = true;
+            // 
+            // cbFolderJpg
+            // 
+            this.cbFolderJpg.AutoSize = true;
+            this.cbFolderJpg.Location = new System.Drawing.Point(38, 290);
+            this.cbFolderJpg.Name = "cbFolderJpg";
+            this.cbFolderJpg.Size = new System.Drawing.Size(138, 17);
+            this.cbFolderJpg.TabIndex = 11;
+            this.cbFolderJpg.Text = "Folder image (folder.jpg)";
+            this.cbFolderJpg.UseVisualStyleBackColor = true;
             // 
             // tbSearchFolders
             // 
@@ -1487,36 +1630,54 @@ namespace TVRename
             // 
             this.openFile.Filter = "Torrent files (*.torrent)|*.torrent|All files (*.*)|*.*";
             // 
-            // rbWTWSearch
+            // bnMCPresets
             // 
-            this.rbWTWSearch.AutoSize = true;
-            this.rbWTWSearch.Location = new System.Drawing.Point(27, 47);
-            this.rbWTWSearch.Name = "rbWTWSearch";
-            this.rbWTWSearch.Size = new System.Drawing.Size(59, 17);
-            this.rbWTWSearch.TabIndex = 4;
-            this.rbWTWSearch.TabStop = true;
-            this.rbWTWSearch.Text = "S&earch";
-            this.rbWTWSearch.UseVisualStyleBackColor = true;
+            this.bnMCPresets.Location = new System.Drawing.Point(327, 369);
+            this.bnMCPresets.Name = "bnMCPresets";
+            this.bnMCPresets.Size = new System.Drawing.Size(75, 23);
+            this.bnMCPresets.TabIndex = 16;
+            this.bnMCPresets.Text = "Presets...";
+            this.bnMCPresets.UseVisualStyleBackColor = true;
+            this.bnMCPresets.Click += new System.EventHandler(this.bnMCPresets_Click);
             // 
-            // rbWTWScan
+            // cmDefaults
             // 
-            this.rbWTWScan.AutoSize = true;
-            this.rbWTWScan.Location = new System.Drawing.Point(27, 66);
-            this.rbWTWScan.Name = "rbWTWScan";
-            this.rbWTWScan.Size = new System.Drawing.Size(50, 17);
-            this.rbWTWScan.TabIndex = 5;
-            this.rbWTWScan.TabStop = true;
-            this.rbWTWScan.Text = "S&can";
-            this.rbWTWScan.UseVisualStyleBackColor = true;
+            this.cmDefaults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.xBMCToolStripMenuItem,
+            this.pyTivoToolStripMenuItem,
+            this.mede8erToolStripMenuItem,
+            this.noneToolStripMenuItem});
+            this.cmDefaults.Name = "cmDefaults";
+            this.cmDefaults.Size = new System.Drawing.Size(121, 92);
+            this.cmDefaults.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.cmDefaults_ItemClicked);
             // 
-            // label11
+            // xBMCToolStripMenuItem
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 32);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(185, 13);
-            this.label11.TabIndex = 3;
-            this.label11.Text = "Double-click in When to Watch does:";
+            this.xBMCToolStripMenuItem.Name = "xBMCToolStripMenuItem";
+            this.xBMCToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.xBMCToolStripMenuItem.Tag = "1";
+            this.xBMCToolStripMenuItem.Text = "&XBMC";
+            // 
+            // pyTivoToolStripMenuItem
+            // 
+            this.pyTivoToolStripMenuItem.Name = "pyTivoToolStripMenuItem";
+            this.pyTivoToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.pyTivoToolStripMenuItem.Tag = "2";
+            this.pyTivoToolStripMenuItem.Text = "&pyTivo";
+            // 
+            // mede8erToolStripMenuItem
+            // 
+            this.mede8erToolStripMenuItem.Name = "mede8erToolStripMenuItem";
+            this.mede8erToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.mede8erToolStripMenuItem.Tag = "3";
+            this.mede8erToolStripMenuItem.Text = "&Mede8er";
+            // 
+            // noneToolStripMenuItem
+            // 
+            this.noneToolStripMenuItem.Name = "noneToolStripMenuItem";
+            this.noneToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
+            this.noneToolStripMenuItem.Tag = "4";
+            this.noneToolStripMenuItem.Text = "&None";
             // 
             // Preferences
             // 
@@ -1554,6 +1715,8 @@ namespace TVRename
             this.groupBox3.PerformLayout();
             this.tpScanOptions.ResumeLayout(false);
             this.tpScanOptions.PerformLayout();
+            this.tbMediaCenter.ResumeLayout(false);
+            this.tbMediaCenter.PerformLayout();
             this.tbSearchFolders.ResumeLayout(false);
             this.tbSearchFolders.PerformLayout();
             this.tbuTorrentNZB.ResumeLayout(false);
@@ -1564,6 +1727,7 @@ namespace TVRename
             this.groupBox6.PerformLayout();
             this.tpTreeColoring.ResumeLayout(false);
             this.tpTreeColoring.PerformLayout();
+            this.cmDefaults.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1573,9 +1737,6 @@ namespace TVRename
 
         private System.Windows.Forms.TabPage tpScanOptions;
         private System.Windows.Forms.CheckBox cbSearchRSS;
-        private System.Windows.Forms.CheckBox cbEpImgs;
-        private System.Windows.Forms.CheckBox cbNFOs;
-        private System.Windows.Forms.CheckBox cbFolderJpg;
         private System.Windows.Forms.CheckBox cbRenameCheck;
         private System.Windows.Forms.CheckBox cbMissing;
         private System.Windows.Forms.CheckBox cbLeaveOriginals;
@@ -1587,9 +1748,6 @@ namespace TVRename
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox cbCheckuTorrent;
         private System.Windows.Forms.CheckBox cbAutoSelInMyShows;
-        private System.Windows.Forms.RadioButton rbFolderFanArt;
-        private System.Windows.Forms.RadioButton rbFolderPoster;
-        private System.Windows.Forms.RadioButton rbFolderBanner;
 
         private System.Windows.Forms.Button OKButton;
         private System.Windows.Forms.Button bnCancel;
@@ -1692,8 +1850,6 @@ namespace TVRename
         private System.Windows.Forms.ComboBox cboShowStatus;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button bnRemoveDefinedColor;
-        private System.Windows.Forms.CheckBox cbMeta;
-        private System.Windows.Forms.CheckBox cbMetaSubfolder;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtExportRSSDaysPast;
         private System.Windows.Forms.Button bnBrowseWTWXML;
@@ -1710,6 +1866,29 @@ namespace TVRename
         private System.Windows.Forms.RadioButton rbWTWScan;
         private System.Windows.Forms.RadioButton rbWTWSearch;
         private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TabPage tbMediaCenter;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.CheckBox cbMetaSubfolder;
+        private System.Windows.Forms.CheckBox cbMeta;
+        private System.Windows.Forms.RadioButton rbFolderFanArt;
+        private System.Windows.Forms.RadioButton rbFolderPoster;
+        private System.Windows.Forms.RadioButton rbFolderBanner;
+        private System.Windows.Forms.CheckBox cbEpTBNs;
+        private System.Windows.Forms.CheckBox cbNFOs;
+        private System.Windows.Forms.CheckBox cbFolderJpg;
+        private System.Windows.Forms.CheckBox cbEpThumbJpg;
+        private System.Windows.Forms.CheckBox cbShrinkLarge;
+        private System.Windows.Forms.CheckBox cbSeriesJpg;
+        private System.Windows.Forms.CheckBox cbXMLFiles;
+        private System.Windows.Forms.Button bnMCPresets;
+        private System.Windows.Forms.ContextMenuStrip cmDefaults;
+        private System.Windows.Forms.ToolStripMenuItem xBMCToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pyTivoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mede8erToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem noneToolStripMenuItem;
 
     }
 }

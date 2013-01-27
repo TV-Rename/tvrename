@@ -149,9 +149,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 4; }
+            get { return "lvgActionDownloadRSS"; }
         }
 
         int ScanListItem.IconNumber

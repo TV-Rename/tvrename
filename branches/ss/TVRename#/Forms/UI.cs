@@ -780,7 +780,8 @@ namespace TVRename
                     seasText = " - " + seasText;
 
                 body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
-
+                
+                DirFilesCache dfc = new DirFilesCache();
                 foreach (ProcessedEpisode ei in eis)
                 {
                     string epl = ei.NumsAsString();
@@ -796,7 +797,7 @@ namespace TVRename
 
                     body += " <A HREF=\"" + this.mDoc.Settings.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
 
-                    System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
+                    List<FileInfo> fl = this.mDoc.FindEpOnDisk(dfc, ei);
                     if (fl != null)
                     {
                         foreach (FileInfo fi in fl)
@@ -981,7 +982,7 @@ namespace TVRename
             this.lvWhenToWatch.Items.Clear();
 
             System.Collections.Generic.List<DateTime> bolded = new System.Collections.Generic.List<DateTime>();
-
+            DirFilesCache dfc = new DirFilesCache();
             foreach (ShowItem si in this.mDoc.GetShowItems(true))
             {
                 if (!si.ShowNextAirdate)
@@ -1018,7 +1019,7 @@ namespace TVRename
                                 for (int i = 0; i < 7; i++)
                                     lvi.SubItems.Add("");
 
-                                this.UpdateWTW(ei, lvi);
+                                this.UpdateWTW(dfc, ei, lvi);
 
                                 this.lvWhenToWatch.Items.Add(lvi);
 
@@ -1114,7 +1115,7 @@ namespace TVRename
                 return;
 
             ProcessedEpisode ei = (ProcessedEpisode) (this.lvWhenToWatch.SelectedItems[0].Tag);
-            System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
+            List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, ei);
             if ((fl != null) && (fl.Count > 0))
             {
                 TVDoc.SysOpen(fl[0].FullName);
@@ -1427,7 +1428,7 @@ namespace TVRename
 
             if (ep != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
-                System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ep);
+                List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, ep);
                 if (fl != null)
                 {
                     if (fl.Count > 0)
@@ -1452,7 +1453,7 @@ namespace TVRename
                 bool first = true;
                 foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
                 {
-                    System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(epds);
+                    List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, epds);
                     if ((fl != null) && (fl.Count > 0))
                     {
                         if (first)
@@ -1599,7 +1600,7 @@ namespace TVRename
         {
             this.showRightClickMenu.Items.Clear();
             this.mFoldersToOpen = new List<String>();
-            this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
+            this.mLastFL = new List<FileInfo>();
 
             this.MenuGuideAndTVDB(false);
             this.MenuShowAndEpisodes();
@@ -2152,7 +2153,7 @@ namespace TVRename
             return n;
         }
 
-        public void UpdateWTW(ProcessedEpisode pe, ListViewItem lvi)
+        public void UpdateWTW(DirFilesCache dfc, ProcessedEpisode pe, ListViewItem lvi)
         {
             lvi.Tag = pe;
 
@@ -2171,13 +2172,13 @@ namespace TVRename
             double ttn = (dt.Subtract(DateTime.Now)).TotalHours;
 
             if (ttn < 0)
-                lvi.Group = this.lvWhenToWatch.Groups[0];
+                lvi.Group = this.lvWhenToWatch.Groups["justpassed"];
             else if (ttn < (7 * 24))
-                lvi.Group = this.lvWhenToWatch.Groups[1];
+                lvi.Group = this.lvWhenToWatch.Groups["next7days"];
             else if (!pe.NextToAir)
-                lvi.Group = this.lvWhenToWatch.Groups[3];
+                lvi.Group = this.lvWhenToWatch.Groups["later"];
             else
-                lvi.Group = this.lvWhenToWatch.Groups[2];
+                lvi.Group = this.lvWhenToWatch.Groups["futureEps"];
 
             int n = 1;
             lvi.Text = pe.SI.ShowName;
@@ -2196,7 +2197,7 @@ namespace TVRename
 
             if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
             {
-                System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(pe);
+                List<FileInfo> fl = this.mDoc.FindEpOnDisk(dfc, pe);
                 if ((fl != null) && (fl.Count > 0))
                     lvi.ImageIndex = 0;
                 else if (pe.SI.DoMissingCheck)
@@ -2960,7 +2961,7 @@ namespace TVRename
 
             this.showRightClickMenu.Items.Clear();
             this.mFoldersToOpen = new List<String>();
-            this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
+            this.mLastFL = new List<FileInfo>();
 
             this.mLastActionsClicked = new ItemList();
 

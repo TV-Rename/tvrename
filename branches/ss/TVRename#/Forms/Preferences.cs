@@ -114,7 +114,7 @@ namespace TVRename
             S.CheckSABnzbd = this.cbCheckSABnzbd.Checked;
 
             S.SearchRSS = this.cbSearchRSS.Checked;
-            S.EpImgs = this.cbEpImgs.Checked;
+            S.EpTBNs = this.cbEpTBNs.Checked;
             S.NFOs = this.cbNFOs.Checked;
             S.pyTivoMeta = this.cbMeta.Checked;
             S.pyTivoMetaSubFolder = this.cbMetaSubfolder.Checked;
@@ -126,6 +126,11 @@ namespace TVRename
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
             S.MonitorFolders = this.cbMonitorFolder.Checked;
+
+            S.EpJPGs = this.cbEpThumbJpg.Checked;
+            S.SeriesJPG = this.cbSeriesJpg.Checked;
+            S.Mede8erXML = this.cbXMLFiles.Checked;
+            S.ShrinkLargeImages = this.cbShrinkLarge.Checked;
 
             if (this.rbFolderFanArt.Checked)
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
@@ -258,7 +263,7 @@ namespace TVRename
             this.txtParallelDownloads.Text = S.ParallelDownloads.ToString();
 
             this.cbSearchRSS.Checked = S.SearchRSS;
-            this.cbEpImgs.Checked = S.EpImgs;
+            this.cbEpTBNs.Checked = S.EpTBNs;
             this.cbNFOs.Checked = S.NFOs;
             this.cbMeta.Checked = S.pyTivoMeta;
             this.cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
@@ -270,7 +275,12 @@ namespace TVRename
             this.cbMissing.Checked = S.MissingCheck;
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;
-            EnterPreferredLanguage = S.PreferredLanguage;
+            this.EnterPreferredLanguage = S.PreferredLanguage;
+
+            this.cbEpThumbJpg.Checked = S.EpJPGs;
+            this.cbSeriesJpg.Checked = S.SeriesJPG;
+            this.cbXMLFiles.Checked = S.Mede8erXML;
+            this.cbShrinkLarge.Checked = S.ShrinkLargeImages;
 
             switch (S.WTWDoubleClick)
             {
@@ -774,18 +784,15 @@ namespace TVRename
         private void ScanOptEnableDisable()
         {
             bool e = this.cbMissing.Checked;
+            this.tbMediaCenter.Enabled = e;
+
             this.cbSearchRSS.Enabled = e;
             this.cbSearchLocally.Enabled = e;
-            this.cbEpImgs.Enabled = e;
-            this.cbNFOs.Enabled = e;
-            this.cbMeta.Enabled = e;
             this.cbCheckuTorrent.Enabled = e;
 
-            bool e2 = this.cbSearchLocally.Checked;
-            this.cbLeaveOriginals.Enabled = e && e2;
-
-            bool e3 = this.cbMeta.Checked;
-            this.cbMetaSubfolder.Enabled = e && e3;
+            bool e2 = e && this.cbSearchLocally.Checked;
+            this.cbLeaveOriginals.Enabled = e2;
+            this.cbCheckSABnzbd.Enabled = e2;
         }
 
         private void cbSearchLocally_CheckedChanged(object sender, System.EventArgs e)
@@ -912,5 +919,76 @@ namespace TVRename
                 LoadLanguageThread.Join(500); // milliseconds timeout
             }
         }
+
+        private void cmDefaults_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            int v;
+            if (e.ClickedItem == null || !(e.ClickedItem.Tag is String) || !int.TryParse(e.ClickedItem.Tag as String, out v))
+                return;
+
+            switch (v)
+            {
+                case 1: // xbmc
+                    cbEpTBNs.Checked = true;
+                    cbNFOs.Checked = true;
+                    cbMeta.Checked = false;
+                    cbMetaSubfolder.Checked = false;
+                    cbSeriesJpg.Checked = false;
+                    cbXMLFiles.Checked = false;
+                    cbShrinkLarge.Checked = false;
+                    cbFolderJpg.Checked = true;
+                    rbFolderPoster.Checked = true;
+                    cbEpThumbJpg.Checked = false;
+                    break;
+                case 2: // pytivo
+                    cbEpTBNs.Checked = false;
+                    cbNFOs.Checked = false;
+                    cbMeta.Checked = true;
+                    cbMetaSubfolder.Checked = true;
+                    cbSeriesJpg.Checked = false;
+                    cbXMLFiles.Checked = false;
+                    cbShrinkLarge.Checked = false;
+                    cbFolderJpg.Checked = true;
+                    rbFolderPoster.Checked = true;
+                    cbEpThumbJpg.Checked = false;
+                    break;
+                case 3: // mede8er
+                    cbEpTBNs.Checked = false;
+                    cbNFOs.Checked = false;
+                    cbMeta.Checked = false;
+                    cbMetaSubfolder.Checked = false;
+                    cbSeriesJpg.Checked = true;
+                    cbXMLFiles.Checked = true;
+                    cbShrinkLarge.Checked = true;
+                    cbFolderJpg.Checked = true;
+                    rbFolderPoster.Checked = true;
+                    cbEpThumbJpg.Checked = true; 
+                    break;
+                case 4: // none
+                    cbEpTBNs.Checked = false;
+                    cbNFOs.Checked = false;
+                    cbMeta.Checked = false;
+                    cbMetaSubfolder.Checked = false;
+                    cbSeriesJpg.Checked = false;
+                    cbXMLFiles.Checked = false;
+                    cbShrinkLarge.Checked = false;
+                    cbFolderJpg.Checked = false;
+                    rbFolderPoster.Checked = false;
+                    cbEpThumbJpg.Checked = false; 
+                    break;
+#if DEBUG
+                default:
+                    System.Diagnostics.Debug.Fail("Unknown default selected.");
+                    break;
+#endif
+            }
+        }
+
+        private void bnMCPresets_Click(object sender, EventArgs e)
+        {
+            Point pt = this.PointToScreen(bnMCPresets.Location);
+            cmDefaults.Show(pt);
+        }
+
     }
 }

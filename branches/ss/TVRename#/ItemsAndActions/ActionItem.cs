@@ -35,7 +35,7 @@ namespace TVRename
     {
         ListViewItem ScanListViewItem { get; } // to add to Scan ListView
         string TargetFolder { get; } // return a list of folders for right-click menu
-        int ScanListViewGroup { get; } // which group number for the listview
+        string ScanListViewGroup { get; } // which group name for the listview
         int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
         IgnoreItem Ignore { get; } // what to add to the ignore list / compare against the ignore list
         ProcessedEpisode Episode { get; } // associated episode

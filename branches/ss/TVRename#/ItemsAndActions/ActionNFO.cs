@@ -343,9 +343,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 6; }
+            get { return "lvgActionNFO"; }
         }
 
         public int IconNumber

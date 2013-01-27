@@ -154,9 +154,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 5; }
+            get { return "lvgActionDownload"; }
         }
 
         public string TargetFolder

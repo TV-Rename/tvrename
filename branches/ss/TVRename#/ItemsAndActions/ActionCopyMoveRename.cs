@@ -175,17 +175,17 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
             get
             {
                 if (this.Operation == Op.Rename)
-                    return 1;
+                    return "lvgActionRename";
                 if (this.Operation == Op.Copy)
-                    return 2;
+                    return "lvgActionCopy";
                 if (this.Operation == Op.Move)
-                    return 3;
-                return 2;
+                    return "lvgActionMove";
+                return "lvgActionCopy";
             }
         }
 

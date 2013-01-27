@@ -1154,7 +1154,7 @@ namespace TVRename
             listViewGroup8.Header = "pyTivo Meta File";
             listViewGroup8.Name = "lvgActionMeta";
             listViewGroup9.Header = "Downloading";
-            listViewGroup9.Name = "lngDownloading";
+            listViewGroup9.Name = "lvgDownloading";
             this.lvAction.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2,

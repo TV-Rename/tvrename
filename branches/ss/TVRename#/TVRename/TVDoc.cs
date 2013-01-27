@@ -10,6 +10,7 @@
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -965,14 +966,17 @@ namespace TVRename
                 this.GenDict();
         }
 
-        public List<System.IO.FileInfo> FindEpOnDisk(ProcessedEpisode pe)
+        public List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ProcessedEpisode pe)
         {
-            return this.FindEpOnDisk(pe.SI, pe);
+            return this.FindEpOnDisk(dfc, pe.SI, pe);
         }
 
-        public List<System.IO.FileInfo> FindEpOnDisk(ShowItem si, Episode epi)
+       
+        public List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ShowItem si, Episode epi)
         {
-            List<System.IO.FileInfo> ret = new List<System.IO.FileInfo>();
+            if (dfc == null)
+                dfc = new DirFilesCache();
+            List<FileInfo> ret = new List<FileInfo>();
 
             int seasWanted = epi.TheSeason.SeasonNumber;
             int epWanted = epi.EpNum;
@@ -984,19 +988,10 @@ namespace TVRename
 
             foreach (string folder in si.AllFolderLocations(this.Settings)[snum])
             {
-                DirectoryInfo di;
-                try
-                {
-                    di = new DirectoryInfo(folder);
-                }
-                catch
-                {
-                    return ret;
-                }
-                if (!di.Exists)
-                    return ret;
+                FileInfo[] files = dfc.Get(folder);
+                if (files == null)
+                    continue;
 
-                FileInfo[] files = di.GetFiles();
                 foreach (FileInfo fiTemp in files)
                 {
                     int seasFound;
@@ -1842,6 +1837,7 @@ namespace TVRename
             if (elist == null)
                 return false;
 
+            DirFilesCache dfc = new DirFilesCache();
             try
             {
                 XmlWriterSettings settings = new XmlWriterSettings();
@@ -1896,7 +1892,7 @@ namespace TVRename
 
                         if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
                         {
-                            List<System.IO.FileInfo> fl = this.FindEpOnDisk(ei);
+                            List<FileInfo> fl = this.FindEpOnDisk(dfc, ei);
                             if ((fl != null) && (fl.Count > 0))
                                 writer.WriteValue("true");
                             else if (ei.SI.DoMissingCheck)
@@ -2616,6 +2612,7 @@ namespace TVRename
             if (showList == null) // only do episode count if we're doing all shows and seasons
                 this.mStats.NS_NumberOfEpisodes = 0;
 
+            DirFilesCache dfc = new DirFilesCache();
             int c = 0;
             foreach (ShowItem si in showList)
             {
@@ -2703,19 +2700,12 @@ namespace TVRename
                     {
                         if (this.ActionCancel)
                             return;
-
-                        // generate new filename info
-                        DirectoryInfo di;
-                        try
-                        {
-                            di = new DirectoryInfo(folder);
-                        }
-                        catch
-                        {
+                       
+                        FileInfo[] files = dfc.Get(folder);
+                        if (files == null)
                             continue;
-                        }
 
-                        bool renCheck = this.Settings.RenameCheck && si.DoRename && di.Exists; // renaming check needs the folder to exist
+                        bool renCheck = this.Settings.RenameCheck && si.DoRename && Directory.Exists(folder); // renaming check needs the folder to exist
                         bool missCheck = this.Settings.MissingCheck && si.DoMissingCheck;
 
                         if (this.Settings.FolderJpg)
@@ -2736,7 +2726,6 @@ namespace TVRename
                             }
                         }
 
-                        FileInfo[] files = di.GetFiles(); // all the files in the folder
                         FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
 
                         int maxEpNumFound = 0;
@@ -2867,7 +2856,7 @@ namespace TVRename
 
         private void ThumbnailAndNFOCheck(ProcessedEpisode dbep, FileInfo filo, ItemList addTo)
         {
-            if (this.Settings.EpImgs)
+            if (this.Settings.EpTBNs)
             {
                 string ban = dbep.GetItem("filename");
                 if (!string.IsNullOrEmpty(ban))

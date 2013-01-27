@@ -180,7 +180,11 @@ namespace TVRename
         public bool AutoSelectShowInMyShows = true;
         public bool BGDownload = false;
         public bool CheckuTorrent = false;
-        public bool EpImgs = false;
+        public bool EpTBNs = false;
+        public bool EpJPGs = false;
+        public bool SeriesJPG = false;
+        public bool ShrinkLargeImages = false;
+        public bool Mede8erXML = false;
         public bool ExportFOXML = false;
         public string ExportFOXMLTo = "";
         public bool ExportMissingCSV = false;
@@ -394,7 +398,7 @@ namespace TVRename
                 else if (reader.Name == "SearchRSS")
                     this.SearchRSS = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpImgs")
-                    this.EpImgs = reader.ReadElementContentAsBoolean();
+                    this.EpTBNs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "NFOs")
                     this.NFOs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMeta")
@@ -419,6 +423,14 @@ namespace TVRename
                     LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "EpJPGs")
+                    this.EpJPGs = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "SeriesJPG")
+                    this.SeriesJPG = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "Mede8erXML")
+                    this.Mede8erXML = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ShrinkLargeImages")
+                    this.ShrinkLargeImages = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FNPRegexs")
                 {
                     this.FNPRegexs.Clear();
@@ -661,7 +673,7 @@ namespace TVRename
             writer.WriteValue(this.SearchRSS);
             writer.WriteEndElement();
             writer.WriteStartElement("EpImgs");
-            writer.WriteValue(this.EpImgs);
+            writer.WriteValue(this.EpTBNs);
             writer.WriteEndElement();
             writer.WriteStartElement("NFOs");
             writer.WriteValue(this.NFOs);
@@ -713,6 +725,19 @@ namespace TVRename
             writer.WriteEndElement();
             writer.WriteStartElement("WTWDoubleClick");
             writer.WriteValue((int)this.WTWDoubleClick);
+            writer.WriteEndElement();
+
+            writer.WriteStartElement("EpJPGs");
+            writer.WriteValue(this.EpJPGs);
+            writer.WriteEndElement();
+            writer.WriteStartElement("SeriesJPG");
+            writer.WriteValue(this.SeriesJPG);
+            writer.WriteEndElement();
+            writer.WriteStartElement("Mede8erXML");
+            writer.WriteValue(this.Mede8erXML);
+            writer.WriteEndElement();
+            writer.WriteStartElement("ShrinkLargeImages");
+            writer.WriteValue(this.ShrinkLargeImages);
             writer.WriteEndElement();
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)

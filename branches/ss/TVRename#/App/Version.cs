@@ -58,7 +58,7 @@ namespace TVRename
             // Version 2.2.0b2 released 14 April 2010, r108
             // Version 2.2.0b1 released 9 April 2010, r94
 
-            string v = "2.2.4" + PersonalTag();
+            string v = "2.2.5" + PersonalTag();
 #if DEBUG
             return v + " ** Debug Build **";
 #else
