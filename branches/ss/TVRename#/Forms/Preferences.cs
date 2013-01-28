@@ -128,9 +128,10 @@ namespace TVRename
             S.MonitorFolders = this.cbMonitorFolder.Checked;
 
             S.EpJPGs = this.cbEpThumbJpg.Checked;
-            S.SeriesJPG = this.cbSeriesJpg.Checked;
+            S.SeriesJpg = this.cbSeriesJpg.Checked;
             S.Mede8erXML = this.cbXMLFiles.Checked;
-            S.ShrinkLargeImages = this.cbShrinkLarge.Checked;
+            S.ShrinkLargeMede8erImages = this.cbShrinkLarge.Checked;
+            S.FanArtJpg = this.cbFantArtJpg.Checked;
 
             if (this.rbFolderFanArt.Checked)
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
@@ -278,9 +279,10 @@ namespace TVRename
             this.EnterPreferredLanguage = S.PreferredLanguage;
 
             this.cbEpThumbJpg.Checked = S.EpJPGs;
-            this.cbSeriesJpg.Checked = S.SeriesJPG;
+            this.cbSeriesJpg.Checked = S.SeriesJpg;
             this.cbXMLFiles.Checked = S.Mede8erXML;
-            this.cbShrinkLarge.Checked = S.ShrinkLargeImages;
+            this.cbShrinkLarge.Checked = S.ShrinkLargeMede8erImages;
+            this.cbFantArtJpg.Checked = S.FanArtJpg;
 
             switch (S.WTWDoubleClick)
             {
@@ -939,6 +941,7 @@ namespace TVRename
                     cbFolderJpg.Checked = true;
                     rbFolderPoster.Checked = true;
                     cbEpThumbJpg.Checked = false;
+                    cbFantArtJpg.Checked = false;
                     break;
                 case 2: // pytivo
                     cbEpTBNs.Checked = false;
@@ -951,6 +954,7 @@ namespace TVRename
                     cbFolderJpg.Checked = true;
                     rbFolderPoster.Checked = true;
                     cbEpThumbJpg.Checked = false;
+                    cbFantArtJpg.Checked = false;
                     break;
                 case 3: // mede8er
                     cbEpTBNs.Checked = false;
@@ -962,7 +966,8 @@ namespace TVRename
                     cbShrinkLarge.Checked = true;
                     cbFolderJpg.Checked = true;
                     rbFolderPoster.Checked = true;
-                    cbEpThumbJpg.Checked = true; 
+                    cbEpThumbJpg.Checked = true;
+                    cbFantArtJpg.Checked = true;
                     break;
                 case 4: // none
                     cbEpTBNs.Checked = false;
@@ -974,7 +979,8 @@ namespace TVRename
                     cbShrinkLarge.Checked = false;
                     cbFolderJpg.Checked = false;
                     rbFolderPoster.Checked = false;
-                    cbEpThumbJpg.Checked = false; 
+                    cbEpThumbJpg.Checked = false;
+                    cbFantArtJpg.Checked = false;
                     break;
 #if DEBUG
                 default:

@@ -160,7 +160,7 @@ namespace TVRename
 
     public class TVSettings
     {
-        #region FolderJpgIsType enum
+        #region enums
 
         public enum FolderJpgIsType
         {
@@ -182,8 +182,9 @@ namespace TVRename
         public bool CheckuTorrent = false;
         public bool EpTBNs = false;
         public bool EpJPGs = false;
-        public bool SeriesJPG = false;
-        public bool ShrinkLargeImages = false;
+        public bool SeriesJpg = false;
+        public bool ShrinkLargeMede8erImages = false;
+        public bool FanArtJpg = false;
         public bool Mede8erXML = false;
         public bool ExportFOXML = false;
         public string ExportFOXMLTo = "";
@@ -425,12 +426,14 @@ namespace TVRename
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpJPGs")
                     this.EpJPGs = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SeriesJPG")
-                    this.SeriesJPG = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "SeriesJpg")
+                    this.SeriesJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "Mede8erXML")
                     this.Mede8erXML = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ShrinkLargeImages")
-                    this.ShrinkLargeImages = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ShrinkLargeMede8erImages")
+                    this.ShrinkLargeMede8erImages = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "FanArtJpg")
+                    this.FanArtJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FNPRegexs")
                 {
                     this.FNPRegexs.Clear();
@@ -730,14 +733,17 @@ namespace TVRename
             writer.WriteStartElement("EpJPGs");
             writer.WriteValue(this.EpJPGs);
             writer.WriteEndElement();
-            writer.WriteStartElement("SeriesJPG");
-            writer.WriteValue(this.SeriesJPG);
+            writer.WriteStartElement("SeriesJpg");
+            writer.WriteValue(this.SeriesJpg);
             writer.WriteEndElement();
             writer.WriteStartElement("Mede8erXML");
             writer.WriteValue(this.Mede8erXML);
             writer.WriteEndElement();
-            writer.WriteStartElement("ShrinkLargeImages");
-            writer.WriteValue(this.ShrinkLargeImages);
+            writer.WriteStartElement("ShrinkLargeMede8erImages");
+            writer.WriteValue(this.ShrinkLargeMede8erImages);
+            writer.WriteEndElement();
+            writer.WriteStartElement("FanArtJpg");
+            writer.WriteValue(this.FanArtJpg);
             writer.WriteEndElement();
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)

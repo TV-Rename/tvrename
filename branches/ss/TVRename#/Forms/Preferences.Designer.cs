@@ -120,6 +120,7 @@ namespace TVRename
             this.cbCheckuTorrent = new System.Windows.Forms.CheckBox();
             this.cbSearchLocally = new System.Windows.Forms.CheckBox();
             this.tbMediaCenter = new System.Windows.Forms.TabPage();
+            this.bnMCPresets = new System.Windows.Forms.Button();
             this.cbShrinkLarge = new System.Windows.Forms.CheckBox();
             this.cbEpThumbJpg = new System.Windows.Forms.CheckBox();
             this.label29 = new System.Windows.Forms.Label();
@@ -176,12 +177,12 @@ namespace TVRename
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.colorDialog = new System.Windows.Forms.ColorDialog();
-            this.bnMCPresets = new System.Windows.Forms.Button();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.xBMCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cbFantArtJpg = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -1073,6 +1074,7 @@ namespace TVRename
             this.tbMediaCenter.Controls.Add(this.cbSeriesJpg);
             this.tbMediaCenter.Controls.Add(this.cbXMLFiles);
             this.tbMediaCenter.Controls.Add(this.cbNFOs);
+            this.tbMediaCenter.Controls.Add(this.cbFantArtJpg);
             this.tbMediaCenter.Controls.Add(this.cbFolderJpg);
             this.tbMediaCenter.Location = new System.Drawing.Point(4, 40);
             this.tbMediaCenter.Name = "tbMediaCenter";
@@ -1082,20 +1084,30 @@ namespace TVRename
             this.tbMediaCenter.Text = "Media Center";
             this.tbMediaCenter.UseVisualStyleBackColor = true;
             // 
+            // bnMCPresets
+            // 
+            this.bnMCPresets.Location = new System.Drawing.Point(335, 369);
+            this.bnMCPresets.Name = "bnMCPresets";
+            this.bnMCPresets.Size = new System.Drawing.Size(75, 23);
+            this.bnMCPresets.TabIndex = 16;
+            this.bnMCPresets.Text = "Presets...";
+            this.bnMCPresets.UseVisualStyleBackColor = true;
+            this.bnMCPresets.Click += new System.EventHandler(this.bnMCPresets_Click);
+            // 
             // cbShrinkLarge
             // 
             this.cbShrinkLarge.AutoSize = true;
-            this.cbShrinkLarge.Location = new System.Drawing.Point(38, 236);
+            this.cbShrinkLarge.Location = new System.Drawing.Point(38, 221);
             this.cbShrinkLarge.Name = "cbShrinkLarge";
-            this.cbShrinkLarge.Size = new System.Drawing.Size(206, 17);
+            this.cbShrinkLarge.Size = new System.Drawing.Size(300, 17);
             this.cbShrinkLarge.TabIndex = 9;
-            this.cbShrinkLarge.Text = "Shink large images to 156 x 232 pixels";
+            this.cbShrinkLarge.Text = "Shrink large series and episode images to 156 x 232 pixels";
             this.cbShrinkLarge.UseVisualStyleBackColor = true;
             // 
             // cbEpThumbJpg
             // 
             this.cbEpThumbJpg.AutoSize = true;
-            this.cbEpThumbJpg.Location = new System.Drawing.Point(38, 373);
+            this.cbEpThumbJpg.Location = new System.Drawing.Point(38, 375);
             this.cbEpThumbJpg.Name = "cbEpThumbJpg";
             this.cbEpThumbJpg.Size = new System.Drawing.Size(147, 17);
             this.cbEpThumbJpg.TabIndex = 15;
@@ -1105,7 +1117,7 @@ namespace TVRename
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(17, 170);
+            this.label29.Location = new System.Drawing.Point(17, 155);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(49, 13);
             this.label29.TabIndex = 6;
@@ -1114,7 +1126,7 @@ namespace TVRename
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(17, 269);
+            this.label24.Location = new System.Drawing.Point(17, 250);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(44, 13);
             this.label24.TabIndex = 10;
@@ -1123,7 +1135,7 @@ namespace TVRename
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(17, 92);
+            this.label18.Location = new System.Drawing.Point(17, 84);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(39, 13);
             this.label18.TabIndex = 3;
@@ -1141,7 +1153,7 @@ namespace TVRename
             // cbMetaSubfolder
             // 
             this.cbMetaSubfolder.AutoSize = true;
-            this.cbMetaSubfolder.Location = new System.Drawing.Point(38, 134);
+            this.cbMetaSubfolder.Location = new System.Drawing.Point(38, 126);
             this.cbMetaSubfolder.Name = "cbMetaSubfolder";
             this.cbMetaSubfolder.Size = new System.Drawing.Size(187, 17);
             this.cbMetaSubfolder.TabIndex = 5;
@@ -1151,7 +1163,7 @@ namespace TVRename
             // cbMeta
             // 
             this.cbMeta.AutoSize = true;
-            this.cbMeta.Location = new System.Drawing.Point(38, 111);
+            this.cbMeta.Location = new System.Drawing.Point(38, 103);
             this.cbMeta.Name = "cbMeta";
             this.cbMeta.Size = new System.Drawing.Size(154, 17);
             this.cbMeta.TabIndex = 4;
@@ -1161,7 +1173,7 @@ namespace TVRename
             // rbFolderFanArt
             // 
             this.rbFolderFanArt.AutoSize = true;
-            this.rbFolderFanArt.Location = new System.Drawing.Point(58, 350);
+            this.rbFolderFanArt.Location = new System.Drawing.Point(58, 331);
             this.rbFolderFanArt.Name = "rbFolderFanArt";
             this.rbFolderFanArt.Size = new System.Drawing.Size(59, 17);
             this.rbFolderFanArt.TabIndex = 14;
@@ -1172,7 +1184,7 @@ namespace TVRename
             // rbFolderPoster
             // 
             this.rbFolderPoster.AutoSize = true;
-            this.rbFolderPoster.Location = new System.Drawing.Point(58, 330);
+            this.rbFolderPoster.Location = new System.Drawing.Point(58, 311);
             this.rbFolderPoster.Name = "rbFolderPoster";
             this.rbFolderPoster.Size = new System.Drawing.Size(55, 17);
             this.rbFolderPoster.TabIndex = 13;
@@ -1183,7 +1195,7 @@ namespace TVRename
             // rbFolderBanner
             // 
             this.rbFolderBanner.AutoSize = true;
-            this.rbFolderBanner.Location = new System.Drawing.Point(58, 310);
+            this.rbFolderBanner.Location = new System.Drawing.Point(58, 291);
             this.rbFolderBanner.Name = "rbFolderBanner";
             this.rbFolderBanner.Size = new System.Drawing.Size(59, 17);
             this.rbFolderBanner.TabIndex = 12;
@@ -1204,7 +1216,7 @@ namespace TVRename
             // cbSeriesJpg
             // 
             this.cbSeriesJpg.AutoSize = true;
-            this.cbSeriesJpg.Location = new System.Drawing.Point(38, 190);
+            this.cbSeriesJpg.Location = new System.Drawing.Point(38, 175);
             this.cbSeriesJpg.Name = "cbSeriesJpg";
             this.cbSeriesJpg.Size = new System.Drawing.Size(172, 17);
             this.cbSeriesJpg.TabIndex = 7;
@@ -1214,7 +1226,7 @@ namespace TVRename
             // cbXMLFiles
             // 
             this.cbXMLFiles.AutoSize = true;
-            this.cbXMLFiles.Location = new System.Drawing.Point(38, 213);
+            this.cbXMLFiles.Location = new System.Drawing.Point(38, 198);
             this.cbXMLFiles.Name = "cbXMLFiles";
             this.cbXMLFiles.Size = new System.Drawing.Size(183, 17);
             this.cbXMLFiles.TabIndex = 8;
@@ -1234,7 +1246,7 @@ namespace TVRename
             // cbFolderJpg
             // 
             this.cbFolderJpg.AutoSize = true;
-            this.cbFolderJpg.Location = new System.Drawing.Point(38, 290);
+            this.cbFolderJpg.Location = new System.Drawing.Point(38, 271);
             this.cbFolderJpg.Name = "cbFolderJpg";
             this.cbFolderJpg.Size = new System.Drawing.Size(138, 17);
             this.cbFolderJpg.TabIndex = 11;
@@ -1630,16 +1642,6 @@ namespace TVRename
             // 
             this.openFile.Filter = "Torrent files (*.torrent)|*.torrent|All files (*.*)|*.*";
             // 
-            // bnMCPresets
-            // 
-            this.bnMCPresets.Location = new System.Drawing.Point(327, 369);
-            this.bnMCPresets.Name = "bnMCPresets";
-            this.bnMCPresets.Size = new System.Drawing.Size(75, 23);
-            this.bnMCPresets.TabIndex = 16;
-            this.bnMCPresets.Text = "Presets...";
-            this.bnMCPresets.UseVisualStyleBackColor = true;
-            this.bnMCPresets.Click += new System.EventHandler(this.bnMCPresets_Click);
-            // 
             // cmDefaults
             // 
             this.cmDefaults.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -1678,6 +1680,16 @@ namespace TVRename
             this.noneToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
+            // 
+            // cbFantArtJpg
+            // 
+            this.cbFantArtJpg.AutoSize = true;
+            this.cbFantArtJpg.Location = new System.Drawing.Point(38, 352);
+            this.cbFantArtJpg.Name = "cbFantArtJpg";
+            this.cbFantArtJpg.Size = new System.Drawing.Size(141, 17);
+            this.cbFantArtJpg.TabIndex = 11;
+            this.cbFantArtJpg.Text = "Fanart Image (fanart.jpg)";
+            this.cbFantArtJpg.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -1889,6 +1901,7 @@ namespace TVRename
         private System.Windows.Forms.ToolStripMenuItem pyTivoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mede8erToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem noneToolStripMenuItem;
+        private System.Windows.Forms.CheckBox cbFantArtJpg;
 
     }
 }

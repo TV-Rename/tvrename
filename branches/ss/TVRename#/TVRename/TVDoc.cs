@@ -493,7 +493,7 @@ namespace TVRename
                             addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode));
 
                             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                            this.ThumbnailAndNFOCheck(me.Episode, fi, addTo);
+                            this.EpisodeThumbnailAndMetadataCheck(me.Episode, fi, addTo);
 
                             return true;
                         }
@@ -1030,24 +1030,6 @@ namespace TVRename
                 }
             }
             return r;
-        }
-
-        public void TVShowNFOCheck(ShowItem si)
-        {
-            // check there is a TVShow.nfo file in the root folder for the show
-            if (string.IsNullOrEmpty(si.AutoAdd_FolderBase)) // no base folder defined
-                return;
-
-            if (si.AllFolderLocations(this.Settings).Count == 0) // no seasons enabled
-                return;
-
-            FileInfo tvshownfo = Helpers.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
-
-            bool needUpdate = !tvshownfo.Exists || (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime));
-            // was it written before we fixed the bug in <episodeguideurl> ?
-            needUpdate = needUpdate || (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
-            if (needUpdate)
-                this.TheActionList.Add(new ActionNFO(tvshownfo, si));
         }
 
         public bool GenerateEpisodeDict(ShowItem si)
@@ -2629,15 +2611,28 @@ namespace TVRename
 
                 // for each tv show, optionally write a tvshow.nfo file
 
-                if (this.Settings.NFOs && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(this.Settings).Count > 0))
+                if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(this.Settings).Count > 0))
                 {
-                    FileInfo tvshownfo = Helpers.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
+                    if (this.Settings.NFOs)
+                    {
+                        FileInfo tvshownfo = Helpers.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
 
-                    bool needUpdate = !tvshownfo.Exists || (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime));
-                    // was it written before we fixed the bug in <episodeguideurl> ?
-                    needUpdate = needUpdate || (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
-                    if (needUpdate)
-                        this.TheActionList.Add(new ActionNFO(tvshownfo, si));
+                        bool needUpdate = !tvshownfo.Exists ||
+                                          (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime));
+                        if (needUpdate)
+                            this.TheActionList.Add(new ActionNFO(tvshownfo, si));
+                    }
+
+                    if (this.Settings.Mede8erXML)
+                    {
+                        FileInfo tvshowxml = Helpers.FileInFolder(si.AutoAdd_FolderBase, "series.xml");
+
+                        bool needUpdate = !tvshowxml.Exists ||
+                                          (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshowxml.LastWriteTime));
+                        
+                        if (needUpdate)
+                            this.TheActionList.Add(new ActionMede8erXML(tvshowxml, si));
+                    }
                 }
 
                 // process each folder for each season...
@@ -2650,6 +2645,8 @@ namespace TVRename
                 foreach (int n in numbers)
                     if (n > lastSeason)
                         lastSeason = n;
+
+                List<string> doneFolderJPG = new List<String>();
 
                 foreach (int snum in numbers)
                 {
@@ -2677,22 +2674,46 @@ namespace TVRename
                             maxEpisodeNumber = episode.EpNum;
                     }
 
-                    List<string> doneFolderJPG = new List<String>();
-                    if (this.Settings.FolderJpg)
+                    if (this.Settings.FolderJpg | this.Settings.SeriesJpg)
                     {
                         // main image for the folder itself
 
                         // base folder:
                         if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(this.Settings, false).Count > 0))
                         {
-                            FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "folder.jpg");
-                            if (!fi.Exists)
+                            if (this.Settings.FolderJpg)
                             {
-                                string bannerPath = si.TheSeries().GetItem(this.Settings.ItemForFolderJpg());
-                                if (!string.IsNullOrEmpty(bannerPath))
-                                    this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath));
+                                FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "folder.jpg");
+                                if (!doneFolderJPG.Contains(fi.FullName) && !fi.Exists)
+                                {
+                                    string bannerPath = si.TheSeries().GetItem(this.Settings.ItemForFolderJpg());
+                                    if (!string.IsNullOrEmpty(bannerPath))
+                                        this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, false));
+                                    doneFolderJPG.Add(fi.FullName);
+                                }
                             }
-                            doneFolderJPG.Add(si.AutoAdd_FolderBase);
+                            if (this.Settings.FanArtJpg)
+                            {
+                                FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "fanart.jpg");
+                                if (!doneFolderJPG.Contains(fi.FullName) && !fi.Exists)
+                                {
+                                    string bannerPath = si.TheSeries().GetItem("fanart");
+                                    if (!string.IsNullOrEmpty(bannerPath))
+                                        this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, this.Settings.ShrinkLargeMede8erImages));
+                                    doneFolderJPG.Add(fi.FullName);
+                                }
+                            }
+                            if (this.Settings.SeriesJpg)
+                            {
+                                FileInfo fi = Helpers.FileInFolder(si.AutoAdd_FolderBase, "series.jpg");
+                                if (!doneFolderJPG.Contains(fi.FullName) && !fi.Exists)
+                                {
+                                    string bannerPath = si.TheSeries().GetItem("poster");
+                                    if (!string.IsNullOrEmpty(bannerPath))
+                                        this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, this.Settings.ShrinkLargeMede8erImages));
+                                    doneFolderJPG.Add(fi.FullName);
+                                }
+                            }
                         }
                     }
 
@@ -2712,16 +2733,16 @@ namespace TVRename
                         {
                             // season folders JPGs
 
-                            if (!doneFolderJPG.Contains(folder)) // some folders may come up multiple times
+                            FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
+                            if (!doneFolderJPG.Contains(fi.FullName)) // some folders may come up multiple times
                             {
-                                doneFolderJPG.Add(folder);
+                                doneFolderJPG.Add(fi.FullName);
 
-                                FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
                                 if (!fi.Exists)
                                 {
                                     string bannerPath = si.TheSeries().GetItem(this.Settings.ItemForFolderJpg());
                                     if (!string.IsNullOrEmpty(bannerPath))
-                                        this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath));
+                                        this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, this.Settings.ShrinkLargeMede8erImages));
                                 }
                             }
                         }
@@ -2841,7 +2862,7 @@ namespace TVRename
                                     // do NFO and thumbnail checks if required
                                     FileInfo filo = localEps[dbep.EpNum]; // filename (or future filename) of the file
 
-                                    this.ThumbnailAndNFOCheck(dbep, filo, this.TheActionList);
+                                    this.EpisodeThumbnailAndMetadataCheck(dbep, filo, this.TheActionList);
                                 }
                             } // up to date check, for each episode in thetvdb
                             db.Unlock("UpToDateCheck");
@@ -2854,19 +2875,21 @@ namespace TVRename
             this.RemoveIgnored();
         }
 
-        private void ThumbnailAndNFOCheck(ProcessedEpisode dbep, FileInfo filo, ItemList addTo)
+        private void EpisodeThumbnailAndMetadataCheck(ProcessedEpisode dbep, FileInfo filo, ItemList addTo)
         {
-            if (this.Settings.EpTBNs)
+            if (this.Settings.EpTBNs || this.Settings.EpJPGs)
             {
                 string ban = dbep.GetItem("filename");
                 if (!string.IsNullOrEmpty(ban))
                 {
-                    string fn = filo.Name;
-                    fn = fn.Substring(0, fn.Length - filo.Extension.Length);
-                    fn += ".tbn";
-                    FileInfo img = Helpers.FileInFolder(filo.Directory, fn);
-                    if (!img.Exists)
-                        addTo.Add(new ActionDownload(dbep.SI, dbep, img, ban));
+                    string basefn = filo.Name;
+                    basefn = basefn.Substring(0, basefn.Length - filo.Extension.Length); //remove extension
+                    FileInfo imgtbn = Helpers.FileInFolder(filo.Directory, basefn + ".tbn");
+                    FileInfo imgjpg = Helpers.FileInFolder(filo.Directory, basefn + ".jpg");
+                    if (this.Settings.EpTBNs && !imgtbn.Exists)
+                        addTo.Add(new ActionDownload(dbep.SI, dbep, imgtbn, ban,false));
+                    if (this.Settings.EpJPGs && !imgjpg.Exists)
+                        addTo.Add(new ActionDownload(dbep.SI, dbep, imgjpg, ban, this.Settings.ShrinkLargeMede8erImages));
                 }
             }
             if (this.Settings.NFOs)
@@ -2878,6 +2901,16 @@ namespace TVRename
 
                 if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))
                     addTo.Add(new ActionNFO(nfo, dbep));
+            }
+            if (this.Settings.Mede8erXML)
+            {
+                string fn = filo.Name;
+                fn = fn.Substring(0, fn.Length - filo.Extension.Length);
+                fn += ".xml";
+                FileInfo nfo = Helpers.FileInFolder(filo.Directory, fn);
+
+                if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))
+                    addTo.Add(new ActionMede8erXML(nfo, dbep));
             }
             if (this.Settings.pyTivoMeta)
             {

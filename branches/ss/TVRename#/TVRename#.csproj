@@ -67,6 +67,7 @@
     <Compile Include="Custom Controls\TheTVDBCodeFinder.Designer.cs">
       <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\ActorsGrid.cs">
       <SubType>Form</SubType>
