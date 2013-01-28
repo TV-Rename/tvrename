@@ -911,7 +911,7 @@ namespace TVRename
 
         public override bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent, string nameInTorrent)
         {
-            this.RenameListOut.Add(new ActionCopyMoveRename(this.CopyNotMove ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Rename, onDisk, Helpers.FileInFolder(this.CopyNotMove ? this.CopyToFolder : onDisk.Directory.Name, nameInTorrent), null));
+            this.RenameListOut.Add(new ActionCopyMoveRename(this.CopyNotMove ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Rename, onDisk, Helpers.FileInFolder(this.CopyNotMove ? this.CopyToFolder : onDisk.Directory.Name, nameInTorrent), null,null));
 
             return true;
         }

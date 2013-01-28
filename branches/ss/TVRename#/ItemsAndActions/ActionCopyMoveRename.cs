@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 
+using Microsoft.VisualBasic.FileIO;
+
 namespace TVRename
 {
     using System;
@@ -28,9 +30,11 @@ namespace TVRename
         public Op Operation;
         public FileInfo To;
         private double _Percent;
+        private TidySettings Tidyup;
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep)
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup)
         {
+            this.Tidyup = tidyup;
             this.PercentDone = 0;
             this.Episode = ep;
             this.Operation = operation;
@@ -79,7 +83,9 @@ namespace TVRename
             }
 
             if (this.QuickOperation())
+            {
                 this.OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
+            }
             else
                 this.CopyItOurself(ref pause, stats); // do it ourself!
 
@@ -93,7 +99,89 @@ namespace TVRename
             {
             }
 
+            if (this.Operation == Op.Move && this.Tidyup != null && this.Tidyup.DeleteEmpty)
+            {
+                DoTidyup();
+            }
+
             return !this.Error;
+        }
+
+        private void DeleteOrRecycleFolder()
+        {
+            DirectoryInfo di = this.From.Directory;
+            if (Tidyup.DeleteEmptyIsRecycle)
+            {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            }
+            else
+            {
+                di.Delete();
+            }
+        }
+
+
+        private void DoTidyup()
+        {
+#if DEBUG
+            System.Diagnostics.Debug.Assert(this.Tidyup != null);
+            System.Diagnostics.Debug.Assert(this.Tidyup.DeleteEmpty);
+#else
+            if (this.Tidyup == null || !this.Tidyup.DeleteEmpty)
+            {
+                return;
+            }
+#endif
+            // See if we should now delete the folder we just moved that file from.
+            DirectoryInfo di = this.From.Directory;
+            if (di == null)
+                return;
+
+            FileInfo[] files = di.GetFiles();
+            if (files.Length == 0)
+            {
+                // its empty, so just delete it
+                di.Delete();
+                return;
+            }
+
+            if (Tidyup.EmptyIgnoreExtensions && !Tidyup.EmptyIgnoreWords)
+                return; // nope
+
+            foreach (FileInfo fi in files)
+            {
+                bool okToDelete = Tidyup.EmptyIgnoreExtensions &&
+                                  Array.FindIndex(Tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
+
+                if (okToDelete)
+                    continue; // onto the next file
+
+                // look in the filename
+                foreach (string word in Tidyup.EmptyIgnoreWordsArray)
+                {
+                    if (fi.Name.Contains(word))
+                    {
+                        okToDelete = true;
+                        break;
+                    }
+                }
+
+                if (!okToDelete)
+                    return;
+            }
+
+            if (Tidyup.EmptyMaxSizeCheck)
+            {
+                // how many MB are we deleting?
+                long totalBytes = 0;
+                foreach (FileInfo fi in files)
+                {
+                    totalBytes += fi.Length;
+                }
+                if (totalBytes / (1024 * 1024) > Tidyup.EmptyMaxSizeMB)
+                    return; // too much
+            }
+            DeleteOrRecycleFolder();
         }
 
         #endregion

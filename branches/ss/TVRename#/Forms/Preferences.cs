@@ -50,17 +50,40 @@ namespace TVRename
 
         private void OKButton_Click(object sender, System.EventArgs e)
         {
+            if (!TVSettings.OKExtensionsString(this.txtEmptyIgnoreExtensions.Text))
+            {
+                MessageBox.Show(
+                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
+                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.tabControl1.SelectedTab = tbFolderDeleting;
+                this.txtVideoExtensions.Focus();
+                return;
+            }
+
             if (!TVSettings.OKExtensionsString(this.txtVideoExtensions.Text))
             {
-                MessageBox.Show("Extensions list must be separated by semicolons, and each extension must start with a dot.", "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.tabControl1.SelectedIndex = 1;
+                MessageBox.Show(
+                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
+                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.tabControl1.SelectedTab = tbFilesAndFolders;
+                this.txtVideoExtensions.Focus();
+                return;
+            }
+            if (!TVSettings.OKExtensionsString(this.txtVideoExtensions.Text))
+            {
+                MessageBox.Show(
+                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
+                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.tabControl1.SelectedTab = tbFilesAndFolders;
                 this.txtVideoExtensions.Focus();
                 return;
             }
             if (!TVSettings.OKExtensionsString(this.txtOtherExtensions.Text))
             {
-                MessageBox.Show("Extensions list must be separated by semicolons, and each extension must start with a dot.", "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.tabControl1.SelectedIndex = 1;
+                MessageBox.Show(
+                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
+                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.tabControl1.SelectedTab = tbFilesAndFolders;
                 this.txtOtherExtensions.Focus();
                 return;
             }
@@ -95,7 +118,7 @@ namespace TVRename
             S.OtherExtensionsString = this.txtOtherExtensions.Text;
             S.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
             S.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
-            S.ExportRSSDaysPast = Convert.ToInt32(this.txtExportRSSDaysPast.Text); 
+            S.ExportRSSDaysPast = Convert.ToInt32(this.txtExportRSSDaysPast.Text);
             S.KeepTogether = this.cbKeepTogether.Checked;
             S.LeadingZeroOnSeason = this.cbLeadingZero.Checked;
             S.ShowInTaskbar = this.chkShowInTaskbar.Checked;
@@ -133,6 +156,15 @@ namespace TVRename
             S.ShrinkLargeMede8erImages = this.cbShrinkLarge.Checked;
             S.FanArtJpg = this.cbFantArtJpg.Checked;
 
+            S.Tidyup.DeleteEmpty = this.cbDeleteEmpty.Checked;
+            S.Tidyup.DeleteEmptyIsRecycle = this.cbRecycleNotDelete.Checked;
+            S.Tidyup.EmptyIgnoreWords = this.cbEmptyIgnoreWords.Checked;
+            S.Tidyup.EmptyIgnoreWordList = this.txtEmptyIgnoreWords.Text;
+            S.Tidyup.EmptyIgnoreExtensions = this.cbEmptyIgnoreExtensions.Checked;
+            S.Tidyup.EmptyIgnoreExtensionList = this.txtEmptyIgnoreExtensions.Text;
+            S.Tidyup.EmptyMaxSizeCheck = this.cbEmptyMaxSize.Checked;
+            int.TryParse(this.txtEmptyMaxSize.Text, out S.Tidyup.EmptyMaxSizeMB);
+
             if (this.rbFolderFanArt.Checked)
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
             else if (this.rbFolderBanner.Checked)
@@ -157,7 +189,7 @@ namespace TVRename
 
             db.SaveCache();
             db.Unlock("Preferences-OK");
-            
+
             try
             {
                 S.SampleFileMaxSizeMB = int.Parse(this.txtMaxSampleSize.Text);
@@ -193,9 +225,11 @@ namespace TVRename
             S.ShowStatusColors = new ShowStatusColoringTypeList();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
-                if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null && item.Tag is ShowStatusColoringType)
+                if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
+                    item.Tag is ShowStatusColoringType)
                 {
-                    S.ShowStatusColors.Add(item.Tag as ShowStatusColoringType, System.Drawing.ColorTranslator.FromHtml(item.SubItems[1].Text));
+                    S.ShowStatusColors.Add(item.Tag as ShowStatusColoringType,
+                                           System.Drawing.ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
             }
 
@@ -284,6 +318,19 @@ namespace TVRename
             this.cbShrinkLarge.Checked = S.ShrinkLargeMede8erImages;
             this.cbFantArtJpg.Checked = S.FanArtJpg;
 
+#if DEBUG
+            System.Diagnostics.Debug.Assert(S.Tidyup != null);
+#endif
+            this.cbDeleteEmpty.Checked = S.Tidyup.DeleteEmpty;
+            this.cbRecycleNotDelete.Checked = S.Tidyup.DeleteEmptyIsRecycle;
+            this.cbEmptyIgnoreWords.Checked = S.Tidyup.EmptyIgnoreWords;
+            this.txtEmptyIgnoreWords.Text = S.Tidyup.EmptyIgnoreWordList;
+            this.cbEmptyIgnoreExtensions.Checked = S.Tidyup.EmptyIgnoreExtensions;
+            this.txtEmptyIgnoreExtensions.Text = S.Tidyup.EmptyIgnoreExtensionList;
+            this.cbEmptyMaxSize.Checked = S.Tidyup.EmptyMaxSizeCheck;
+            this.txtEmptyMaxSize.Text = S.Tidyup.EmptyMaxSizeMB.ToString();
+
+
             switch (S.WTWDoubleClick)
             {
                 case TVSettings.WTWDoubleClickAction.Search:
@@ -317,7 +364,9 @@ namespace TVRename
             }
             if (S.ShowStatusColors != null)
             {
-                foreach (System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in S.ShowStatusColors)
+                foreach (
+                    System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in
+                        S.ShowStatusColors)
                 {
                     ListViewItem item = new ListViewItem();
                     item.Text = showStatusColor.Key.Text;
@@ -331,7 +380,7 @@ namespace TVRename
             FillTreeViewColoringShowStatusTypeCombobox();
         }
 
-        
+
 
         private void FillTreeViewColoringShowStatusTypeCombobox()
         {

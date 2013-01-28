@@ -183,6 +183,18 @@ namespace TVRename
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cbFantArtJpg = new System.Windows.Forms.CheckBox();
+            this.tbFolderDeleting = new System.Windows.Forms.TabPage();
+            this.cbDeleteEmpty = new System.Windows.Forms.CheckBox();
+            this.cbEmptyIgnoreExtensions = new System.Windows.Forms.CheckBox();
+            this.txtEmptyIgnoreExtensions = new System.Windows.Forms.TextBox();
+            this.cbEmptyMaxSize = new System.Windows.Forms.CheckBox();
+            this.txtEmptyMaxSize = new System.Windows.Forms.TextBox();
+            this.label31 = new System.Windows.Forms.Label();
+            this.txtEmptyIgnoreWords = new System.Windows.Forms.TextBox();
+            this.cbEmptyIgnoreWords = new System.Windows.Forms.CheckBox();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label32 = new System.Windows.Forms.Label();
+            this.cbRecycleNotDelete = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -199,6 +211,7 @@ namespace TVRename
             this.groupBox6.SuspendLayout();
             this.tpTreeColoring.SuspendLayout();
             this.cmDefaults.SuspendLayout();
+            this.tbFolderDeleting.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -531,6 +544,7 @@ namespace TVRename
             this.tabControl1.Controls.Add(this.tbFilesAndFolders);
             this.tabControl1.Controls.Add(this.tbAutoExport);
             this.tabControl1.Controls.Add(this.tpScanOptions);
+            this.tabControl1.Controls.Add(this.tbFolderDeleting);
             this.tabControl1.Controls.Add(this.tbMediaCenter);
             this.tabControl1.Controls.Add(this.tbSearchFolders);
             this.tabControl1.Controls.Add(this.tbuTorrentNZB);
@@ -540,7 +554,7 @@ namespace TVRename
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(424, 445);
-            this.tabControl1.TabIndex = 5;
+            this.tabControl1.TabIndex = 0;
             // 
             // tbGeneral
             // 
@@ -1090,7 +1104,7 @@ namespace TVRename
             this.bnMCPresets.Name = "bnMCPresets";
             this.bnMCPresets.Size = new System.Drawing.Size(75, 23);
             this.bnMCPresets.TabIndex = 16;
-            this.bnMCPresets.Text = "Presets...";
+            this.bnMCPresets.Text = "Pre&sets...";
             this.bnMCPresets.UseVisualStyleBackColor = true;
             this.bnMCPresets.Click += new System.EventHandler(this.bnMCPresets_Click);
             // 
@@ -1101,7 +1115,7 @@ namespace TVRename
             this.cbShrinkLarge.Name = "cbShrinkLarge";
             this.cbShrinkLarge.Size = new System.Drawing.Size(300, 17);
             this.cbShrinkLarge.TabIndex = 9;
-            this.cbShrinkLarge.Text = "Shrink large series and episode images to 156 x 232 pixels";
+            this.cbShrinkLarge.Text = "S&hrink large series and episode images to 156 x 232 pixels";
             this.cbShrinkLarge.UseVisualStyleBackColor = true;
             // 
             // cbEpThumbJpg
@@ -1110,8 +1124,8 @@ namespace TVRename
             this.cbEpThumbJpg.Location = new System.Drawing.Point(38, 375);
             this.cbEpThumbJpg.Name = "cbEpThumbJpg";
             this.cbEpThumbJpg.Size = new System.Drawing.Size(147, 17);
-            this.cbEpThumbJpg.TabIndex = 15;
-            this.cbEpThumbJpg.Text = "&Episode Thumbnails (.jpg)";
+            this.cbEpThumbJpg.TabIndex = 16;
+            this.cbEpThumbJpg.Text = "Episode Thumbnails (.&jpg)";
             this.cbEpThumbJpg.UseVisualStyleBackColor = true;
             // 
             // label29
@@ -1157,7 +1171,7 @@ namespace TVRename
             this.cbMetaSubfolder.Name = "cbMetaSubfolder";
             this.cbMetaSubfolder.Size = new System.Drawing.Size(187, 17);
             this.cbMetaSubfolder.TabIndex = 5;
-            this.cbMetaSubfolder.Text = "Place Meta files in .meta subfolder";
+            this.cbMetaSubfolder.Text = "Pl&ace Meta files in .meta subfolder";
             this.cbMetaSubfolder.UseVisualStyleBackColor = true;
             // 
             // cbMeta
@@ -1167,7 +1181,7 @@ namespace TVRename
             this.cbMeta.Name = "cbMeta";
             this.cbMeta.Size = new System.Drawing.Size(154, 17);
             this.cbMeta.TabIndex = 4;
-            this.cbMeta.Text = "Meta files for episodes (.txt)";
+            this.cbMeta.Text = "&Meta files for episodes (.txt)";
             this.cbMeta.UseVisualStyleBackColor = true;
             // 
             // rbFolderFanArt
@@ -1178,7 +1192,7 @@ namespace TVRename
             this.rbFolderFanArt.Size = new System.Drawing.Size(59, 17);
             this.rbFolderFanArt.TabIndex = 14;
             this.rbFolderFanArt.TabStop = true;
-            this.rbFolderFanArt.Text = "F&an Art";
+            this.rbFolderFanArt.Text = "Fan A&rt";
             this.rbFolderFanArt.UseVisualStyleBackColor = true;
             // 
             // rbFolderPoster
@@ -1220,7 +1234,7 @@ namespace TVRename
             this.cbSeriesJpg.Name = "cbSeriesJpg";
             this.cbSeriesJpg.Size = new System.Drawing.Size(172, 17);
             this.cbSeriesJpg.TabIndex = 7;
-            this.cbSeriesJpg.Text = "Create series poster (series.jpg)";
+            this.cbSeriesJpg.Text = "&Create series poster (series.jpg)";
             this.cbSeriesJpg.UseVisualStyleBackColor = true;
             // 
             // cbXMLFiles
@@ -1250,7 +1264,7 @@ namespace TVRename
             this.cbFolderJpg.Name = "cbFolderJpg";
             this.cbFolderJpg.Size = new System.Drawing.Size(138, 17);
             this.cbFolderJpg.TabIndex = 11;
-            this.cbFolderJpg.Text = "Folder image (folder.jpg)";
+            this.cbFolderJpg.Text = "&Folder image (folder.jpg)";
             this.cbFolderJpg.UseVisualStyleBackColor = true;
             // 
             // tbSearchFolders
@@ -1687,9 +1701,130 @@ namespace TVRename
             this.cbFantArtJpg.Location = new System.Drawing.Point(38, 352);
             this.cbFantArtJpg.Name = "cbFantArtJpg";
             this.cbFantArtJpg.Size = new System.Drawing.Size(141, 17);
-            this.cbFantArtJpg.TabIndex = 11;
-            this.cbFantArtJpg.Text = "Fanart Image (fanart.jpg)";
+            this.cbFantArtJpg.TabIndex = 15;
+            this.cbFantArtJpg.Text = "Fanar&t Image (fanart.jpg)";
             this.cbFantArtJpg.UseVisualStyleBackColor = true;
+            // 
+            // tbFolderDeleting
+            // 
+            this.tbFolderDeleting.Controls.Add(this.label32);
+            this.tbFolderDeleting.Controls.Add(this.label30);
+            this.tbFolderDeleting.Controls.Add(this.txtEmptyMaxSize);
+            this.tbFolderDeleting.Controls.Add(this.txtEmptyIgnoreWords);
+            this.tbFolderDeleting.Controls.Add(this.txtEmptyIgnoreExtensions);
+            this.tbFolderDeleting.Controls.Add(this.label31);
+            this.tbFolderDeleting.Controls.Add(this.cbRecycleNotDelete);
+            this.tbFolderDeleting.Controls.Add(this.cbEmptyMaxSize);
+            this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreWords);
+            this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreExtensions);
+            this.tbFolderDeleting.Controls.Add(this.cbDeleteEmpty);
+            this.tbFolderDeleting.Location = new System.Drawing.Point(4, 40);
+            this.tbFolderDeleting.Name = "tbFolderDeleting";
+            this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
+            this.tbFolderDeleting.Size = new System.Drawing.Size(416, 401);
+            this.tbFolderDeleting.TabIndex = 9;
+            this.tbFolderDeleting.Text = "Folder Deleting";
+            this.tbFolderDeleting.UseVisualStyleBackColor = true;
+            // 
+            // cbDeleteEmpty
+            // 
+            this.cbDeleteEmpty.AutoSize = true;
+            this.cbDeleteEmpty.Location = new System.Drawing.Point(16, 18);
+            this.cbDeleteEmpty.Name = "cbDeleteEmpty";
+            this.cbDeleteEmpty.Size = new System.Drawing.Size(204, 17);
+            this.cbDeleteEmpty.TabIndex = 0;
+            this.cbDeleteEmpty.Text = "&Delete empty folders after moving files";
+            this.cbDeleteEmpty.UseVisualStyleBackColor = true;
+            // 
+            // cbEmptyIgnoreExtensions
+            // 
+            this.cbEmptyIgnoreExtensions.AutoSize = true;
+            this.cbEmptyIgnoreExtensions.Location = new System.Drawing.Point(35, 116);
+            this.cbEmptyIgnoreExtensions.Name = "cbEmptyIgnoreExtensions";
+            this.cbEmptyIgnoreExtensions.Size = new System.Drawing.Size(305, 17);
+            this.cbEmptyIgnoreExtensions.TabIndex = 4;
+            this.cbEmptyIgnoreExtensions.Text = "&Ignore files with these extensions: (semicolon separated list)";
+            this.cbEmptyIgnoreExtensions.UseVisualStyleBackColor = true;
+            // 
+            // txtEmptyIgnoreExtensions
+            // 
+            this.txtEmptyIgnoreExtensions.Location = new System.Drawing.Point(95, 139);
+            this.txtEmptyIgnoreExtensions.Name = "txtEmptyIgnoreExtensions";
+            this.txtEmptyIgnoreExtensions.Size = new System.Drawing.Size(306, 20);
+            this.txtEmptyIgnoreExtensions.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.txtEmptyIgnoreExtensions, "For example \".par2;.nzb;.nfo\"");
+            // 
+            // cbEmptyMaxSize
+            // 
+            this.cbEmptyMaxSize.AutoSize = true;
+            this.cbEmptyMaxSize.Location = new System.Drawing.Point(35, 191);
+            this.cbEmptyMaxSize.Name = "cbEmptyMaxSize";
+            this.cbEmptyMaxSize.Size = new System.Drawing.Size(177, 17);
+            this.cbEmptyMaxSize.TabIndex = 7;
+            this.cbEmptyMaxSize.Text = "&Maximum total file size to delete:";
+            this.cbEmptyMaxSize.UseVisualStyleBackColor = true;
+            // 
+            // txtEmptyMaxSize
+            // 
+            this.txtEmptyMaxSize.Location = new System.Drawing.Point(218, 189);
+            this.txtEmptyMaxSize.Name = "txtEmptyMaxSize";
+            this.txtEmptyMaxSize.Size = new System.Drawing.Size(55, 20);
+            this.txtEmptyMaxSize.TabIndex = 8;
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(281, 193);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(23, 13);
+            this.label31.TabIndex = 9;
+            this.label31.Text = "MB";
+            // 
+            // txtEmptyIgnoreWords
+            // 
+            this.txtEmptyIgnoreWords.Location = new System.Drawing.Point(95, 89);
+            this.txtEmptyIgnoreWords.Name = "txtEmptyIgnoreWords";
+            this.txtEmptyIgnoreWords.Size = new System.Drawing.Size(306, 20);
+            this.txtEmptyIgnoreWords.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.txtEmptyIgnoreWords, "For example \"sample\"");
+            // 
+            // cbEmptyIgnoreWords
+            // 
+            this.cbEmptyIgnoreWords.AutoSize = true;
+            this.cbEmptyIgnoreWords.Location = new System.Drawing.Point(35, 66);
+            this.cbEmptyIgnoreWords.Name = "cbEmptyIgnoreWords";
+            this.cbEmptyIgnoreWords.Size = new System.Drawing.Size(366, 17);
+            this.cbEmptyIgnoreWords.TabIndex = 2;
+            this.cbEmptyIgnoreWords.Text = "Ignore any files with these &words in their name: (semicolon separated list)";
+            this.cbEmptyIgnoreWords.UseVisualStyleBackColor = true;
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(13, 43);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(291, 13);
+            this.label30.TabIndex = 1;
+            this.label30.Text = "Folders that have files left in them can also be \"empty\" if we:";
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(13, 168);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(72, 13);
+            this.label32.TabIndex = 6;
+            this.label32.Text = "Extra checks:";
+            // 
+            // cbRecycleNotDelete
+            // 
+            this.cbRecycleNotDelete.AutoSize = true;
+            this.cbRecycleNotDelete.Location = new System.Drawing.Point(16, 221);
+            this.cbRecycleNotDelete.Name = "cbRecycleNotDelete";
+            this.cbRecycleNotDelete.Size = new System.Drawing.Size(299, 17);
+            this.cbRecycleNotDelete.TabIndex = 10;
+            this.cbRecycleNotDelete.Text = "Folders with files are moved to the &recycle bin, not deleted";
+            this.cbRecycleNotDelete.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -1740,6 +1875,8 @@ namespace TVRename
             this.tpTreeColoring.ResumeLayout(false);
             this.tpTreeColoring.PerformLayout();
             this.cmDefaults.ResumeLayout(false);
+            this.tbFolderDeleting.ResumeLayout(false);
+            this.tbFolderDeleting.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1902,6 +2039,18 @@ namespace TVRename
         private System.Windows.Forms.ToolStripMenuItem mede8erToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem noneToolStripMenuItem;
         private System.Windows.Forms.CheckBox cbFantArtJpg;
+        private System.Windows.Forms.TabPage tbFolderDeleting;
+        private System.Windows.Forms.CheckBox cbEmptyIgnoreExtensions;
+        private System.Windows.Forms.CheckBox cbDeleteEmpty;
+        private System.Windows.Forms.TextBox txtEmptyMaxSize;
+        private System.Windows.Forms.TextBox txtEmptyIgnoreWords;
+        private System.Windows.Forms.TextBox txtEmptyIgnoreExtensions;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.CheckBox cbEmptyMaxSize;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.CheckBox cbEmptyIgnoreWords;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.CheckBox cbRecycleNotDelete;
 
     }
 }

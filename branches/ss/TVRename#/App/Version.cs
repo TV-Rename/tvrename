@@ -30,6 +30,7 @@ namespace TVRename
 
         public static string PersonalTag()
         {
+// #error Your must set your personal tag here!
             // NOTE: If you're doing your own branch/patch version number, please put your name or nickname here,
             // to indicate that it is not an official release.  Also, talk to me (tvrename@tvrename.com) so that 
             // I can consider merging your changes into the main version!

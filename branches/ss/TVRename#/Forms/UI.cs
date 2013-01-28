@@ -1734,7 +1734,7 @@ namespace TVRename
                                             this.mDoc.Settings.LeaveOriginals
                                                 ? ActionCopyMoveRename.Op.Copy
                                                 : ActionCopyMoveRename.Op.Move, from,
-                                            new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode));
+                                            new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode, mDoc.Settings.Tidyup));
                                     // and remove old Missing item
                                     this.mDoc.TheActionList.Remove(mi);
                                 }

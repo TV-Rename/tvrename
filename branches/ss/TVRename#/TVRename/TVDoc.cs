@@ -485,12 +485,11 @@ namespace TVRename
                     {
                         int seasF;
                         int epF;
-                        // String ^fn = file->Name;
 
                         if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
                             FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
-                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode));
+                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, Settings.Tidyup));
 
                             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
                             this.EpisodeThumbnailAndMetadataCheck(me.Episode, fi, addTo);
@@ -557,7 +556,7 @@ namespace TVRename
                         if ((this.Settings.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, Helpers.FileInFolder(Action.To.Directory, newName), Action.Episode);
+                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, Helpers.FileInFolder(Action.To.Directory, newName), Action.Episode, Settings.Tidyup);
 
                         // check this item isn't already in our to-do list
                         bool doNotAdd = false;
@@ -2800,7 +2799,7 @@ namespace TVRename
                                 if (newname != actualFile.Name)
                                 {
                                     actualFile = Helpers.FileInFolder(folder, newname); // rename updates the filename
-                                      this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep));
+                                      this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep, null));
                                 }
                             }
                             if (missCheck && this.Settings.UsefulExtension(fi.Extension, false)) // == MISSING CHECK part 1/2 ==
