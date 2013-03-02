@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionPyTivoMeta : Item, Action, ScanListItem
+    public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
     {
         public FileInfo Where;
 

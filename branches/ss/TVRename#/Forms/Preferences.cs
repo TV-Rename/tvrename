@@ -1015,7 +1015,7 @@ namespace TVRename
                     cbShrinkLarge.Checked = true;
                     cbFolderJpg.Checked = true;
                     rbFolderPoster.Checked = true;
-                    cbEpThumbJpg.Checked = true;
+                    cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = true;
                     break;
                 case 4: // none

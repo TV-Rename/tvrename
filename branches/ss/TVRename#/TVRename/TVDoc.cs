@@ -489,7 +489,19 @@ namespace TVRename
                         if ((this.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && this.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
                             FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
-                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, Settings.Tidyup));
+
+                            // don't remove the base search folders
+                            bool doTidyup = true;
+                            foreach (String folder in this.SearchFolders)
+                            {
+                                // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
+                                if (String.Compare(folder.ToLower().TrimEnd('\\'), fi.Directory.FullName.ToLower().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0)
+                                {
+                                    doTidyup = false;
+                                    break;
+                                }
+                            }
+                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, doTidyup ? Settings.Tidyup : null));
 
                             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
                             this.EpisodeThumbnailAndMetadataCheck(me.Episode, fi, addTo);
@@ -556,7 +568,7 @@ namespace TVRename
                         if ((this.Settings.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, Helpers.FileInFolder(Action.To.Directory, newName), Action.Episode, Settings.Tidyup);
+                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, Helpers.FileInFolder(Action.To.Directory, newName), Action.Episode, null); // tidyup on main action, not this
 
                         // check this item isn't already in our to-do list
                         bool doNotAdd = false;
@@ -600,7 +612,7 @@ namespace TVRename
                 }
 
                 if (!have)
-                    Actionlist.Add(action);
+                    Actionlist.Insert(0, action); // put before other actions, so tidyup is run last
             }
         }
 
@@ -2211,7 +2223,7 @@ namespace TVRename
             ActionQueue[] queues = new ActionQueue[4];
             queues[0] = new ActionQueue("Move/Copy", 1); // cross-filesystem moves (slow ones)
             queues[1] = new ActionQueue("Move", 2); // local rename/moves
-            queues[2] = new ActionQueue("Write NFO/pyTivo Meta", 4); // writing XBMC NFO files
+            queues[2] = new ActionQueue("Write Metadata", 4); // writing XBMC NFO files, etc.
             queues[3] = new ActionQueue("Download", this.Settings.ParallelDownloads); // downloading torrents, banners, thumbnails
 
             foreach (ScanListItem sli in theList)
@@ -2221,12 +2233,19 @@ namespace TVRename
                 if (action == null)
                     continue; // skip non-actions
 
-                if (action is ActionNFO || action is ActionPyTivoMeta)
+                if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownload) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
                 else if (action is ActionCopyMoveRename)
                     queues[(action as ActionCopyMoveRename).QuickOperation() ? 1 : 0].Actions.Add(action);
+                else
+                {
+#if DEBUG
+                    System.Diagnostics.Debug.Fail("Unknown action type for making processing queue");
+#endif
+                    queues[3].Actions.Add(action); // put it in this queue by default
+                }
             }
             return queues;
         }
@@ -2673,7 +2692,7 @@ namespace TVRename
                             maxEpisodeNumber = episode.EpNum;
                     }
 
-                    if (this.Settings.FolderJpg | this.Settings.SeriesJpg)
+                    if (this.Settings.FolderJpg | this.Settings.SeriesJpg | this.Settings.FanArtJpg)
                     {
                         // main image for the folder itself
 
@@ -2698,7 +2717,7 @@ namespace TVRename
                                 {
                                     string bannerPath = si.TheSeries().GetItem("fanart");
                                     if (!string.IsNullOrEmpty(bannerPath))
-                                        this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, this.Settings.ShrinkLargeMede8erImages));
+                                        this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, false));
                                     doneFolderJPG.Add(fi.FullName);
                                 }
                             }
@@ -2733,16 +2752,25 @@ namespace TVRename
                             // season folders JPGs
 
                             FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
-                            if (!doneFolderJPG.Contains(fi.FullName)) // some folders may come up multiple times
+                            if (!doneFolderJPG.Contains(fi.FullName) && !fi.Exists)
+                                // some folders may come up multiple times
                             {
+                                string bannerPath = si.TheSeries().GetItem(this.Settings.ItemForFolderJpg());
+                                if (!string.IsNullOrEmpty(bannerPath))
+                                    this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath,
+                                                                              this.Settings.ShrinkLargeMede8erImages));
                                 doneFolderJPG.Add(fi.FullName);
-
-                                if (!fi.Exists)
-                                {
-                                    string bannerPath = si.TheSeries().GetItem(this.Settings.ItemForFolderJpg());
-                                    if (!string.IsNullOrEmpty(bannerPath))
-                                        this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, this.Settings.ShrinkLargeMede8erImages));
-                                }
+                            }
+                        }
+                        if (this.Settings.SeriesJpg)
+                        {
+                            FileInfo fi = Helpers.FileInFolder(folder, "series.jpg");
+                            if (!doneFolderJPG.Contains(fi.FullName) && !fi.Exists)
+                            {
+                                string bannerPath = si.TheSeries().GetItem("poster");
+                                if (!string.IsNullOrEmpty(bannerPath))
+                                    this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, this.Settings.ShrinkLargeMede8erImages));
+                                doneFolderJPG.Add(fi.FullName);
                             }
                         }
 
