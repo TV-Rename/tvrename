@@ -169,12 +169,11 @@ namespace TVRename
 
         private void FillPreview(int StopAfter = 0)
         {
+            List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
             this.txtPreviewLabel.Text = StopAfter == 0
                                        ? "Processed List Preview :"
                                        : string.Format("Processed List Preview (Rules 1 to {0}):", StopAfter);
 
-
-            List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
             if (this.mOriginalEps != null)
             {
                 foreach (ProcessedEpisode pe in this.mOriginalEps)

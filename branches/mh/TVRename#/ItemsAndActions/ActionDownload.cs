@@ -9,7 +9,8 @@ namespace TVRename
 {
     using System;
     using System.Windows.Forms;
-    using Alphaleonis.Win32.Filesystem;
+    using System.IO;
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionDownload : Item, Action, ScanListItem
     {
@@ -65,7 +66,7 @@ namespace TVRename
 
             try
             {
-                System.IO.FileStream fs = new System.IO.FileStream(this.Destination.FullName, System.IO.FileMode.Create);
+                FileStream fs = new FileStream(this.Destination.FullName, FileMode.Create);
                 fs.Write(theData, 0, theData.Length);
                 fs.Close();
             }

@@ -81,7 +81,7 @@ namespace TVRename
         public SetProgressDelegate SetProgress;
         private MyListView lvAction;
         protected TVDoc mDoc;
-        protected StringList mFoldersToOpen;
+        protected List<string> mFoldersToOpen;
         protected int mInternalChange;
         protected System.Collections.Generic.List<FileInfo> mLastFL;
         protected Point mLastNonMaximizedLocation;
@@ -107,7 +107,7 @@ namespace TVRename
             this.mLastActionsClicked = null;
 
             this.mInternalChange = 0;
-            this.mFoldersToOpen = new StringList();
+            this.mFoldersToOpen = new List<String>();
 
             this.InternalCheckChange = false;
 
@@ -324,8 +324,9 @@ namespace TVRename
 
         private void flushCacheToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            System.Windows.Forms.DialogResult res = MessageBox.Show("Are you sure you want to remove all " + "locally stored TheTVDB information?  This information will have to be downloaded again.  You " + "can force the refresh of a single show by holding down the \"Control\" key while clicking on " + "the \"Refresh\" button in the \"My Shows\" tab.", "Flush Web Cache", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            if (res == System.Windows.Forms.DialogResult.Yes)
+            DialogResult res = MessageBox.Show("Are you sure you want to remove all " + "locally stored TheTVDB information?  This information will have to be downloaded again.  You " + "can force the refresh of a single show by holding down the \"Control\" key while clicking on " + "the \"Refresh\" button in the \"My Shows\" tab.", 
+                "Force Refresh All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (res == DialogResult.Yes)
             {
                 this.mDoc.GetTVDB(false, "").ForgetEverything();
                 this.FillMyShows();
@@ -449,59 +450,59 @@ namespace TVRename
                 NewLineOnAttributes = true
             };
 
-            XmlWriter writer = XmlWriter.Create(PathManager.UILayoutFile.FullName, settings);
+            using (XmlWriter writer = XmlWriter.Create(PathManager.UILayoutFile.FullName, settings))
+            {
 
-            writer.WriteStartDocument();
-            writer.WriteStartElement("TVRename");
-            writer.WriteStartAttribute("Version");
-            writer.WriteValue("2.1");
-            writer.WriteEndAttribute(); // version
-            writer.WriteStartElement("Layout");
-            writer.WriteStartElement("Window");
+                writer.WriteStartDocument();
+                writer.WriteStartElement("TVRename");
+                writer.WriteStartAttribute("Version");
+                writer.WriteValue("2.1");
+                writer.WriteEndAttribute(); // version
+                writer.WriteStartElement("Layout");
+                writer.WriteStartElement("Window");
 
-            writer.WriteStartElement("Size");
-            writer.WriteStartAttribute("Width");
-            writer.WriteValue(this.mLastNonMaximizedSize.Width);
-            writer.WriteEndAttribute();
-            writer.WriteStartAttribute("Height");
-            writer.WriteValue(this.mLastNonMaximizedSize.Height);
-            writer.WriteEndAttribute();
-            writer.WriteEndElement(); // size
+                writer.WriteStartElement("Size");
+                writer.WriteStartAttribute("Width");
+                writer.WriteValue(this.mLastNonMaximizedSize.Width);
+                writer.WriteEndAttribute();
+                writer.WriteStartAttribute("Height");
+                writer.WriteValue(this.mLastNonMaximizedSize.Height);
+                writer.WriteEndAttribute();
+                writer.WriteEndElement(); // size
 
-            writer.WriteStartElement("Location");
-            writer.WriteStartAttribute("X");
-            writer.WriteValue(this.mLastNonMaximizedLocation.X);
-            writer.WriteEndAttribute();
-            writer.WriteStartAttribute("Y");
-            writer.WriteValue(this.mLastNonMaximizedLocation.Y);
-            writer.WriteEndAttribute();
-            writer.WriteEndElement(); // Location
+                writer.WriteStartElement("Location");
+                writer.WriteStartAttribute("X");
+                writer.WriteValue(this.mLastNonMaximizedLocation.X);
+                writer.WriteEndAttribute();
+                writer.WriteStartAttribute("Y");
+                writer.WriteValue(this.mLastNonMaximizedLocation.Y);
+                writer.WriteEndAttribute();
+                writer.WriteEndElement(); // Location
 
-            writer.WriteStartElement("Maximized");
-            writer.WriteValue(this.WindowState == FormWindowState.Maximized);
-            writer.WriteEndElement(); // maximized
+                writer.WriteStartElement("Maximized");
+                writer.WriteValue(this.WindowState == FormWindowState.Maximized);
+                writer.WriteEndElement(); // maximized
 
-            writer.WriteEndElement(); // window
+                writer.WriteEndElement(); // window
 
-            this.WriteColWidthsXML("WhenToWatch", writer);
-            this.WriteColWidthsXML("AllInOne", writer);
+                this.WriteColWidthsXML("WhenToWatch", writer);
+                this.WriteColWidthsXML("AllInOne", writer);
 
-            writer.WriteStartElement("Splitter");
-            writer.WriteStartAttribute("Distance");
-            writer.WriteValue(this.splitContainer1.SplitterDistance);
-            writer.WriteEndAttribute();
-            writer.WriteStartAttribute("HTMLCollapsed");
-            writer.WriteValue(this.splitContainer1.Panel2Collapsed);
-            writer.WriteEndAttribute();
-            writer.WriteEndElement(); // splitter
+                writer.WriteStartElement("Splitter");
+                writer.WriteStartAttribute("Distance");
+                writer.WriteValue(this.splitContainer1.SplitterDistance);
+                writer.WriteEndAttribute();
+                writer.WriteStartAttribute("HTMLCollapsed");
+                writer.WriteValue(this.splitContainer1.Panel2Collapsed);
+                writer.WriteEndAttribute();
+                writer.WriteEndElement(); // splitter
 
-            writer.WriteEndElement(); // Layout
-            writer.WriteEndElement(); // tvrename
-            writer.WriteEndDocument();
+                writer.WriteEndElement(); // Layout
+                writer.WriteEndElement(); // tvrename
+                writer.WriteEndDocument();
 
-            writer.Close();
-            writer = null;
-
+                writer.Close();
+            }
             return true;
         }
 
@@ -547,7 +548,7 @@ namespace TVRename
             }
             catch (System.Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this, ex.Message + "\r\n\r\n" + ex.StackTrace, "Form Closing Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -751,7 +752,7 @@ namespace TVRename
 
             string body = "";
 
-            StringList skip = new StringList
+            List<string> skip = new List<String>
                                   {
                                       "Actors",
                                       "banner",
@@ -1114,18 +1115,30 @@ namespace TVRename
 
         public void lvWhenToWatch_DoubleClick(object sender, System.EventArgs e)
         {
-            if (this.lvWhenToWatch.SelectedItems.Count > 0)
+            if (this.lvWhenToWatch.SelectedItems.Count == 0)
+                return;
+
+            ProcessedEpisode ei = (ProcessedEpisode) (this.lvWhenToWatch.SelectedItems[0].Tag);
+            System.Collections.Generic.List<FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
+            if ((fl != null) && (fl.Count > 0))
             {
-                ProcessedEpisode ei = (ProcessedEpisode)(this.lvWhenToWatch.SelectedItems[0].Tag);
-                System.Collections.Generic.List<FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
-                if ((fl != null) && (fl.Count > 0))
-                {
-                    TVDoc.SysOpen(fl[0].FullName);
-                    return;
-                }
+                TVDoc.SysOpen(fl[0].FullName);
+                return;
             }
 
-            this.bnWTWBTSearch_Click(null, null);
+            // Don't have the episode.  Scan or search?
+
+            switch (this.mDoc.Settings.WTWDoubleClick)
+            {
+                default:
+                case TVSettings.WTWDoubleClickAction.Search:
+                    this.bnWTWBTSearch_Click(null, null);
+                    break;
+                case TVSettings.WTWDoubleClickAction.Scan:
+                    this.Scan(new List<ShowItem> {ei.SI});
+                    this.tabControl1.SelectTab(this.tbAllInOne);
+                    break;
+            }
         }
 
         public void calCalendar_DateSelected(object sender, System.Windows.Forms.DateRangeEventArgs e)
@@ -1476,7 +1489,7 @@ namespace TVRename
             Season seas = this.mLastSeasonClicked;
             ProcessedEpisode ep = this.mLastEpClicked;
             ToolStripMenuItem tsi;
-            StringList added = new StringList();
+            List<string> added = new List<String>();
 
             if (ep != null)
             {
@@ -1534,7 +1547,7 @@ namespace TVRename
                 int n = this.mFoldersToOpen.Count;
                 bool first = true;
 
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in si.AllFolderLocations(this.mDoc.Settings))
+                foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in si.AllFolderLocations(this.mDoc.Settings))
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -1590,7 +1603,7 @@ namespace TVRename
         public void BuildRightClickMenu(Point pt)
         {
             this.showRightClickMenu.Items.Clear();
-            this.mFoldersToOpen = new StringList();
+            this.mFoldersToOpen = new List<String>();
             this.mLastFL = new System.Collections.Generic.List<FileInfo>();
 
             this.MenuGuideAndTVDB(false);
@@ -1869,10 +1882,13 @@ namespace TVRename
 
         public void DoPrefs(bool scanOptions)
         {
+            this.MoreBusy(); // no background download while preferences are open!
+
             Preferences pref = new Preferences(this.mDoc, scanOptions);
             if (pref.ShowDialog() == DialogResult.OK)
             {
                 this.mDoc.SetDirty();
+                this.mDoc.UpdateTVDBLanguage();
                 this.ShowHideNotificationIcon();
                 this.FillWhenToWatchList();
                 this.ShowInTaskbar = this.mDoc.Settings.ShowInTaskbar;
@@ -1880,6 +1896,7 @@ namespace TVRename
                 this.mAutoFolderMonitor.SettingsChanged(this.mDoc.Settings.MonitorFolders);
                 ForceRefresh(null);
             }
+            this.LessBusy();
         }
 
         public void saveToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -1890,9 +1907,18 @@ namespace TVRename
                 this.mDoc.GetTVDB(false, "").SaveCache();
                 this.SaveLayoutXML();
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Exception e2 = ex;
+                while (e2.InnerException != null)
+                    e2 = e2.InnerException;
+                String m2 = e2.Message;
+                MessageBox.Show(this,
+                                ex.Message + "\r\n\r\n" +
+                                m2 + "\r\n\r\n" +
+                                ex.StackTrace,
+                                "Save Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -2389,7 +2415,7 @@ namespace TVRename
                 return;
 
             Season seas = TreeNodeToSeason(n);
-            System.Collections.Generic.Dictionary<int, StringList> afl = si.AllFolderLocations(this.mDoc.Settings);
+            System.Collections.Generic.Dictionary<int, List<string>> afl = si.AllFolderLocations(this.mDoc.Settings);
             int[] keys = new int[afl.Count];
             afl.Keys.CopyTo(keys, 0);
             if ((seas == null) && (keys.Length > 0))
@@ -2521,7 +2547,7 @@ namespace TVRename
 
             if (currentSI != null)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, StringList> kvp in currentSI.AllFolderLocations(this.mDoc.Settings))
+                foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in currentSI.AllFolderLocations(this.mDoc.Settings))
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -2564,9 +2590,10 @@ namespace TVRename
 
         private void bnMyShowsCollapse_Click(object sender, System.EventArgs e)
         {
-            this.MyShowTree.BeginUpdate();            
-            if (treeExpandCollapseToggle = !treeExpandCollapseToggle)           
-                this.MyShowTree.CollapseAll();
+            this.MyShowTree.BeginUpdate();
+            treeExpandCollapseToggle = !treeExpandCollapseToggle;
+            if (treeExpandCollapseToggle)          
+              this.MyShowTree.CollapseAll();
             else
                 this.MyShowTree.ExpandAll();
             if (this.MyShowTree.SelectedNode != null)
@@ -2937,7 +2964,7 @@ namespace TVRename
             this.mLastActionsClicked = null;
 
             this.showRightClickMenu.Items.Clear();
-            this.mFoldersToOpen = new StringList();
+            this.mFoldersToOpen = new List<String>();
             this.mLastFL = new System.Collections.Generic.List<FileInfo>();
 
             this.mLastActionsClicked = new ItemList();

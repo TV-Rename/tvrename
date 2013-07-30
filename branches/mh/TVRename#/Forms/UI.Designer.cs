@@ -329,7 +329,7 @@ namespace TVRename
             // 
             this.flushCacheToolStripMenuItem.Name = "flushCacheToolStripMenuItem";
             this.flushCacheToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
-            this.flushCacheToolStripMenuItem.Text = "&Flush Cache";
+            this.flushCacheToolStripMenuItem.Text = "&Force Refesh All";
             this.flushCacheToolStripMenuItem.Click += new System.EventHandler(this.flushCacheToolStripMenuItem_Click);
             // 
             // backgroundDownloadNowToolStripMenuItem

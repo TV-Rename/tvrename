@@ -1,4 +1,3 @@
-using System.Threading;
 // 
 // Main website for TVRename is http://tvrename.com
 // 
@@ -7,6 +6,8 @@ using System.Threading;
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System.Windows.Forms;
+using System.IO;
+using System.Threading;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename
@@ -196,18 +197,12 @@ namespace TVRename
 
         private void lstFMMonitorFolders_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.None;
-            else
-                e.Effect = DragDropEffects.Copy;
+            e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
         private void lstFMIgnoreFolders_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.None;
-            else
-                e.Effect = DragDropEffects.Copy;
+            e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
         private void lstFMMonitorFolders_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
@@ -216,10 +211,9 @@ namespace TVRename
             for (int i = 0; i < files.Length; i++)
             {
                 string path = files[i];
-                DirectoryInfo di;
                 try
                 {
-                    di = new DirectoryInfo(path);
+                    DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                         this.mDoc.MonitorFolders.Add(path.ToLower());
                 }
@@ -237,10 +231,9 @@ namespace TVRename
             for (int i = 0; i < files.Length; i++)
             {
                 string path = files[i];
-                DirectoryInfo di;
                 try
                 {
-                    di = new DirectoryInfo(path);
+                    DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                         this.mDoc.IgnoreFolders.Add(path.ToLower());
                 }
@@ -273,8 +266,7 @@ namespace TVRename
             this.FMPUpto = "Identifying shows";
             this.FMPPercent = 0;
 
-            Thread fmpshower = new Thread(this.FMPShower);
-            fmpshower.Name = "Folder Monitor Progress (Full Auto)";
+            Thread fmpshower = new Thread(this.FMPShower) {Name = "Folder Monitor Progress (Full Auto)"};
             fmpshower.Start();
 
             while ((this.FMP == null) || (!this.FMP.Ready))
@@ -340,10 +332,7 @@ namespace TVRename
 
         private void lvFMNewShows_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
         {
-            if (!e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.None;
-            else
-                e.Effect = DragDropEffects.Copy;
+            e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
         private void lvFMNewShows_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
@@ -352,10 +341,9 @@ namespace TVRename
             for (int i = 0; i < files.Length; i++)
             {
                 string path = files[i];
-                DirectoryInfo di;
                 try
                 {
-                    di = new DirectoryInfo(path);
+                    DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
                         this.mDoc.MonitorAddSingleFolder(di, true);
@@ -379,12 +367,8 @@ namespace TVRename
             if (this.lvFMNewShows.SelectedItems.Count == 0)
                 return;
             FolderMonitorEntry ai = this.lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
-            TVDoc.SysOpen(ai.Folder);
-        }
-
-        private void lvFMNewShows_DoubleClick(object sender, System.EventArgs e)
-        {
-            this.bnNewFolderOpen_Click(null, null);
+            if (ai != null)
+                TVDoc.SysOpen(ai.Folder);
         }
 
         private void FillFMNewShowList(bool keepSel)
@@ -541,7 +525,11 @@ namespace TVRename
             if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
 
-            int code = (this.lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry).TVDBCode;
+            FolderMonitorEntry fme = this.lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
+            if (fme == null)
+                return;
+
+            int code = fme.TVDBCode;
             if (code != -1)
               TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(code, -1, false));
         }

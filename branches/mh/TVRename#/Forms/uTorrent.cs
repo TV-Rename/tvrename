@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
 
@@ -93,7 +96,7 @@ namespace TVRename
             if (!this.CheckResumeDatPath())
                 return;
 
-            StringList checkedItems = new StringList();
+            List<string> checkedItems = new List<String>();
             foreach (string torrent in this.lbUTTorrents.CheckedItems)
                 checkedItems.Add(torrent);
 
@@ -158,7 +161,7 @@ namespace TVRename
 
             BTResume btp = new BTResume(this.SetProg, resumeDatFile);
 
-            StringList sl = new StringList();
+            List<string> sl = new List<String>();
 
             foreach (string torrent in this.lbUTTorrents.CheckedItems)
                 sl.Add(torrent);

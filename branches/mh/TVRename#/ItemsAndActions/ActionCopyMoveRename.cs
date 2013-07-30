@@ -5,14 +5,15 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 
-using Alphaleonis.Win32.Filesystem;
-
 namespace TVRename
 {
     using System;
     using System.IO;
     using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    using CopyProgressResult = Alphaleonis.Win32.Filesystem.CopyProgressResult;
+    using CopyProgressCallbackReason = Alphaleonis.Win32.Filesystem.CopyProgressCallbackReason;
+    using MoveFileOptions = Alphaleonis.Win32.Filesystem.MoveFileOptions;
 
     public class ActionCopyMoveRename : Item, Action, ScanListItem
     {
@@ -66,7 +67,7 @@ namespace TVRename
         // 0.0 to 100.0
         public long SizeOfWork
         {
-            get { return this.SourceFileSize(); }
+            get { return this.QuickOperation() ? 10000 : this.SourceFileSize(); }
         }
 
         public bool Go(TVSettings settings, ref bool pause, TVRenameStats stats)

@@ -38,7 +38,9 @@ InstallDir "$PROGRAMFILES\${DEF_INSTALL_DIR}"
   !define MUI_HEADERIMAGE
 ;  !define MUI_HEADERIMAGE_BITMAP "..\InstallerExtras\header.bmp"
 
-  !define MUI_FINISHPAGE_RUN "$INSTDIR\TVRename.exe"
+; Don't do this from the installer, as it will run as Administrator!
+; TODO: Find out how to run as the original user.
+;  !define MUI_FINISHPAGE_RUN "$INSTDIR\TVRename.exe"
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_DIRECTORY
