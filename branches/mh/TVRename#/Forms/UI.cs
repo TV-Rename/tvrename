@@ -1616,6 +1616,8 @@ namespace TVRename
         public void showRightClickMenu_ItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
         {
             this.showRightClickMenu.Close();
+            if (e.ClickedItem.Tag == null) return;  // Handle separator lines being clicked
+
             RightClickCommands n = (RightClickCommands) e.ClickedItem.Tag;
 
             ShowItem si = (this.mLastShowsClicked != null) && (this.mLastShowsClicked.Count > 0)
