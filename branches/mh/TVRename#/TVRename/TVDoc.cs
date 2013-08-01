@@ -2750,7 +2750,7 @@ namespace TVRename
                                 FileInfo fi = Helpers.FileInFolder(folder, "folder.jpg");
                                 if (!fi.Exists)
                                 {
-                                    string bannerPath = si.TheSeries().GetItem(this.Settings.ItemForFolderJpg());
+                                    string bannerPath = si.TheSeries().GetBanner(Settings.PreferredLanguage, snum, TVSettings.FolderJpgIsType.Season);
                                     if (!string.IsNullOrEmpty(bannerPath))
                                         this.TheActionList.Add(new ActionDownload(si, null, fi, bannerPath));
                                 }

@@ -973,6 +973,71 @@ namespace TVRename
             return true;
         }
 
+        public bool ProcessBanners(Stream str, SeriesInfo si)
+        {
+            // Will have all the banners for a series
+            // all wrapped in <Banners> </Banners>
+
+            // e.g.: 
+            //<Banners>
+            // <Banner>
+            //  <id>...</id>
+            //  etc.
+            // </Banner>
+            // <Banner>
+            //  <id>...</id>
+            //  blah blah
+            // </Banner>
+            // ...
+            //</Banners>
+
+            if (!this.GetLock("ProcessTVDBResponse"))
+                return false;
+
+            try
+            {
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true
+                };
+                XmlReader r = XmlReader.Create(str, settings);
+
+                r.Read();
+
+                while (!r.EOF)
+                {
+                    if ((r.Name == "Banners") && !r.IsStartElement())
+                        break; // that's it.
+                    if (r.Name == "Banners")
+                    {
+                        si.LoadBannersXml(r);
+                        r.Read();
+                    }
+                    else if (r.Name == "xml")
+                        r.Read();
+                    else
+                        r.ReadOuterXml();
+                }
+            }
+            catch (XmlException e)
+            {
+                if (!this.Args.Unattended)
+                {
+                    string message = "Error processing data from TheTVDB (banners).";
+                    message += "\r\n" + e.Message;
+                    MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // throw new TVDBException(e.Message);
+                }
+                return false;
+            }
+            finally
+            {
+                this.Unlock("ProcessTVDBResponse");
+            }
+            return true;
+        }
+
         public bool DoWeForceReloadFor(int code)
         {
             return this.ForceReloadOn.Contains(code) || !this.Series.ContainsKey(code);
@@ -1002,6 +1067,15 @@ namespace TVRename
 
             this.ProcessTVDBResponse(ms, code);
 
+            if (this.Series.ContainsKey(code) & url.EndsWith(".zip"))
+            {
+                p = this.GetPageZIP(url, "banners.xml", true, forceReload);
+                if (p != null)
+                {
+                    ms = new MemoryStream(p);
+                    this.ProcessBanners(ms, this.Series[code]);
+                }
+            }
             this.ForceReloadOn.Remove(code);
 
             return (this.Series.ContainsKey(code)) ? this.Series[code] : null;

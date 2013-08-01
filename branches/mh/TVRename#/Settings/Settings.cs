@@ -164,9 +164,10 @@ namespace TVRename
 
         public enum FolderJpgIsType
         {
-            Banner,
+            Banner, // aka "Series"
             Poster,
-            FanArt
+            FanArt,
+            Season
         }
 
         public enum WTWDoubleClickAction

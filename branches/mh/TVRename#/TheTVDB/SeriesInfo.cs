@@ -21,6 +21,8 @@ namespace TVRename
         private string LastFiguredTZ;
         public string Name;
 
+        public System.Collections.Generic.List<Banner> Banners; 
+
         public System.Collections.Generic.Dictionary<int, Season> Seasons;
         private TimeZone SeriesTZ;
 
@@ -199,6 +201,10 @@ namespace TVRename
                             this.Items["Year"] = "";
                         }
                     }
+                    else if (r.Name == "Banners")
+                    {
+                        LoadBannersXml(r);
+                    }
                     else
                     {
                         string name = r.Name;
@@ -264,6 +270,12 @@ namespace TVRename
                 writer.WriteEndElement();
             }
 
+            if (this.Banners != null)
+            {
+                writer.WriteStartElement("Banners");
+                WriteBannersXml(writer);
+                writer.WriteEndElement();
+            }
             writer.WriteEndElement(); // series
         }
 
@@ -276,6 +288,218 @@ namespace TVRename
             this.Seasons[num] = s;
 
             return s;
+        }
+
+        public void LoadBannersXml(XmlReader r)
+        {
+            //<Banners>
+            // <Banner>
+            //  <id>...</id>
+            //  etc.
+            // </Banner>
+            // <Banner>
+            //  <id>...</id>
+            //  blah blah
+            // </Banner>
+            // ...
+            //</Banners>
+
+            try
+            {
+                r.Read();
+                while (r.Name.ToLowerInvariant() == "banner" & r.IsStartElement())
+                {
+                    Banner ban = new Banner();
+                    r.Read();
+                    while (r.Name.ToLowerInvariant() != "banner")
+                    {
+                        switch (r.Name.ToLowerInvariant())
+                        {
+                            case "id":
+                                ban.id = r.ReadElementContentAsInt();
+                                break;
+                            case "bannerpath":
+                                ban.BannerPath = r.ReadElementContentAsString();
+                                break;
+                            case "bannertype":
+                                ban.BannerType = r.ReadElementContentAsString();
+                                break;
+                            case "bannertype2":
+                                ban.BannerType2 = r.ReadElementContentAsString();
+                                break;
+                            case "language":
+                                ban.Language = r.ReadElementContentAsString();
+                                break;
+                            case "season":
+                                ban.Season = r.ReadElementContentAsInt();
+                                break;
+                            case "rating":
+                                string x = r.ReadElementContentAsString();
+                                if (!String.IsNullOrEmpty(x))
+                                    ban.Rating = Convert.ToDecimal(x);
+                               break;
+                            case "ratingcount":
+                                ban.RatingCount = r.ReadElementContentAsInt();
+                                break;
+                            case "seriesname":
+                                ban.SeriesName = (r.ReadElementContentAsString().ToLowerInvariant() == "true");
+                                break;
+                            default:
+                                string name = r.Name;
+                                ban.Items[name] = r.ReadElementContentAsString();
+                                break;
+                        }
+                    } // while
+                    if (this.Banners == null)
+                        this.Banners = new System.Collections.Generic.List<Banner>();
+                    this.Banners.Add(ban);
+                    r.Read();
+                } // while
+            } // try
+            catch (XmlException e)
+            {
+                string message = "Error processing banner data from TheTVDB for a show.";
+                if (this.TVDBCode != -1)
+                    message += "\r\nTheTVDB Code: " + this.TVDBCode;
+                if (!string.IsNullOrEmpty(this.Name))
+                    message += "\r\nName: " + this.Name;
+                if (!string.IsNullOrEmpty(this.Language))
+                    message += "\r\nLanguage: \"" + this.Language + "\"";
+
+                message += "\r\n" + e.Message;
+
+                MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                throw new TVDBException(e.Message);
+            }
+        }
+
+        public void WriteBannersXml(XmlWriter writer)
+        {
+            foreach (var banner in this.Banners)
+            {
+                writer.WriteStartElement("Banner");
+
+                writer.WriteStartElement("id");
+                writer.WriteValue(banner.id);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("BannerPath");
+                writer.WriteValue(banner.BannerPath);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("BannerType");
+                writer.WriteValue(banner.BannerType);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("BannerType2");
+                writer.WriteValue(banner.BannerType2);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("Language");
+                writer.WriteValue(banner.Language);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("Season");
+                writer.WriteValue(banner.Season);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("Rating");
+                writer.WriteValue(banner.Rating);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("RatingCount");
+                writer.WriteValue(banner.RatingCount);
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("SeriesName");
+                writer.WriteValue(banner.SeriesName);
+                writer.WriteEndElement();
+
+                foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in banner.Items)
+                {
+                    writer.WriteStartElement(kvp.Key);
+                    writer.WriteValue(kvp.Value);
+                    writer.WriteEndElement();
+                }
+
+                writer.WriteEndElement(); // Banner
+            }
+        }
+
+        public string GetBanner(string Language, int Season, TVSettings.FolderJpgIsType JpgType)
+        {
+            if (this.Banners == null)
+                return String.Empty;
+
+            Banner bestban = new Banner();
+            string BannerType;
+            switch (JpgType)
+            {
+                case TVSettings.FolderJpgIsType.FanArt:
+                    BannerType = "fanart";
+                    break;
+                case TVSettings.FolderJpgIsType.Poster:
+                    BannerType = "poster";
+                    break;
+                case TVSettings.FolderJpgIsType.Season:
+                    BannerType = "season";
+                    break;
+                case TVSettings.FolderJpgIsType.Banner:
+                default:
+                    BannerType = "series";
+                    break;
+            }
+
+            // Go through once, with the language set to our preferred language
+            foreach (var banner in this.Banners)
+            {
+                // Banner must be of the correct type and language
+                if (banner.BannerType == BannerType & banner.Language == Language & ((BannerType == "season" & banner.BannerType2 == "season" & banner.Season == Season) | BannerType != "season") )
+                {
+                    // if this banner has a better rating than what we've found so far, use it
+                    if (banner.Rating > bestban.Rating)
+                        bestban = banner;
+                    else if (banner.Rating == bestban.Rating & banner.RatingCount > bestban.RatingCount)
+                        bestban = banner;
+                }
+            }
+
+            // if a banner was not found in the language we wanted, and that language wasn't english, go through list again and find one using "en" as language
+            if (Language != "en" & bestban.id == 0)
+            {
+                foreach (var banner in this.Banners)
+                {
+                    // Banner must be of the correct type and language
+                    if (banner.BannerType == BannerType & banner.Language == "en" & ((BannerType == "season" & banner.BannerType2 == "season" & banner.Season == Season) | BannerType != "season") )
+                    {
+                        // if this banner has a better rating than what we've found so far, use it
+                        if (banner.Rating > bestban.Rating)
+                            bestban = banner;
+                        else if (banner.Rating == bestban.Rating & banner.RatingCount > bestban.RatingCount)
+                            bestban = banner;
+                    }
+                }
+            }
+            return bestban.BannerPath;
+        }
+
+        // Using data from http://www.thetvdb.com/wiki/index.php?title=API:banners.xml
+        public class Banner
+        {
+            public long id;
+            public string BannerPath;
+            public string BannerType;
+            public string BannerType2;
+            public string Language;
+            public int Season;
+            public decimal Rating;
+            public int RatingCount;
+            public bool SeriesName;
+            public System.Collections.Generic.Dictionary<string, string> Items = new System.Collections.Generic.Dictionary<string, string>();
+            //public string ThumbnailPath;
+            //public string VignettePath;
+            //public string Colors;
         }
     }
 }
