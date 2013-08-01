@@ -56,7 +56,7 @@ namespace TVRename
                 // create folder if it does not exist. (Only really applies when .meta\ folder is being used.)
                 if (!this.Where.Directory.Exists)
                     Directory.CreateDirectory(this.Where.Directory.FullName);
-                writer = new System.IO.StreamWriter(this.Where.FullName);
+                writer = new System.IO.StreamWriter(this.Where.FullName, false, System.Text.Encoding.GetEncoding(1252));
                 if (writer == null)
                     return false;
             }
