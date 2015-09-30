@@ -17,6 +17,18 @@ namespace TVRename
 
     public class ItemList : System.Collections.Generic.List<Item>
     {
+        public void Add(ItemList il)
+        {
+            if (il != null) 
+            {
+                foreach (Item i in il)
+                {
+                    this.Add(i);
+                }
+            }
+        }
+
+
     }
 
     public interface Action // Something we can do
@@ -28,14 +40,15 @@ namespace TVRename
         string ProgressText { get; } // shortish text to display to user while task is running
         double PercentDone { get; } // 0.0 to 100.0
         long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
-        bool Go(TVSettings settings, ref bool pause, TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
+        bool Go( ref bool pause, TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
+        string produces { get; } //What does this action produce? typically a filename
     }
 
     public interface ScanListItem // something shown in the list on the Scan tab (not always an Action)
     {
         ListViewItem ScanListViewItem { get; } // to add to Scan ListView
         string TargetFolder { get; } // return a list of folders for right-click menu
-        int ScanListViewGroup { get; } // which group number for the listview
+        string ScanListViewGroup { get; } // which group name for the listview
         int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
         IgnoreItem Ignore { get; } // what to add to the ignore list / compare against the ignore list
         ProcessedEpisode Episode { get; } // associated episode
@@ -43,6 +56,16 @@ namespace TVRename
 
     public class ScanListItemList : System.Collections.Generic.List<ScanListItem>
     {
+        public void Add(ScanListItemList slil)
+        {
+            if (slil != null)
+            {
+                foreach (ScanListItem sli in slil)
+                {
+                    this.Add(sli);
+                }
+            }
+        }
     }
 
     public class ActionQueue

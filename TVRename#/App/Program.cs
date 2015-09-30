@@ -138,8 +138,9 @@ public static class GlobalMembersTVRename
 
             // try loading using current settings files, and set up the main
             // classes
-            TheTVDB tvdb = new TheTVDB(tvdbFile, PathManager.TVDBFile, clargs);
-            doc = new TVDoc(settingsFile, tvdb, clargs);
+            TheTVDB.Instance.setup(tvdbFile, PathManager.TVDBFile, clargs);
+
+            doc = new TVDoc(settingsFile, clargs);
 
             if (!ok)
                 doc.SetDirty();
@@ -151,8 +152,8 @@ public static class GlobalMembersTVRename
                 recoverText = "";
                 if (!doc.LoadOK && !String.IsNullOrEmpty(doc.LoadErr))
                     recoverText += doc.LoadErr;
-                if (!tvdb.LoadOK && !String.IsNullOrEmpty(tvdb.LoadErr))
-                    recoverText += "\r\n" + tvdb.LoadErr;
+                if (!TheTVDB.Instance.LoadOK && !String.IsNullOrEmpty(TheTVDB.Instance.LoadErr))
+                    recoverText += "\r\n" + TheTVDB.Instance.LoadErr;
             }
         } while (!ok);
 

@@ -30,12 +30,10 @@ namespace TVRename
         public string ShowTimeZone;
         private ShowItem mSI;
         private TheTVDBCodeFinder mTCCF;
-        private TheTVDB mTVDB;
 
-        public AddEditShow(ShowItem si, TheTVDB db)
+        public AddEditShow(ShowItem si)
         {
             this.mSI = si;
-            this.mTVDB = db;
             this.InitializeComponent();
 
             this.cbTimeZone.BeginUpdate();
@@ -46,7 +44,7 @@ namespace TVRename
 
             this.cbTimeZone.EndUpdate();
 
-            this.mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "", this.mTVDB);
+            this.mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
             this.mTCCF.Dock = DockStyle.Fill;
             //mTCCF->SelectionChanged += gcnew System::EventHandler(this, &AddEditShow::lvMatches_ItemSelectionChanged);
 
@@ -144,7 +142,7 @@ namespace TVRename
 
         private bool OKToClose()
         {
-            if (!this.mTVDB.HasSeries(this.mTCCF.SelectedCode()))
+            if (!TheTVDB.Instance.HasSeries(this.mTCCF.SelectedCode()))
             {
                 DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);

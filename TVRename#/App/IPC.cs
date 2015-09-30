@@ -30,14 +30,14 @@
             get
             {
                 if (TheDoc != null)
-                    return TheDoc.Settings.RenameCheck;
+                    return TVSettings.Instance.RenameCheck;
 
                 return false;
             }
             set
             {
                 if (TheDoc != null)
-                    TheDoc.Settings.RenameCheck = value;
+                    TVSettings.Instance.RenameCheck = value;
             }
         }
 

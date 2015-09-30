@@ -20,9 +20,9 @@ namespace TVRename
         {
         }
 
-        public DirCache(SetProgressDelegate prog, string folder, bool subFolders, TVSettings theSettings)
+        public DirCache(SetProgressDelegate prog, string folder, bool subFolders)
         {
-            this.BuildDirCache(prog, 0, 0, folder, subFolders, theSettings);
+            this.BuildDirCache(prog, 0, 0, folder, subFolders);
         }
 
         public static int CountFiles(string folder, bool subFolders)
@@ -50,12 +50,12 @@ namespace TVRename
             return n;
         }
 
-        public int AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders, TVSettings theSettings)
+        public int AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders)
         {
-            return this.BuildDirCache(prog, initialCount, totalFiles, folder, subFolders, theSettings);
+            return this.BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
         }
 
-        private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders, TVSettings theSettings)
+        private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders)
         {
             if (!Directory.Exists(folder))
             {
@@ -84,7 +84,7 @@ namespace TVRename
                     if ((ff.Name.Length + folder.Length) >= 260)
                         MessageBox.Show("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder, "File+Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     else
-                        this.Add(new DirCacheEntry(ff, theSettings));
+                        this.Add(new DirCacheEntry(ff));
                     if ((prog != null) && (totalFiles != 0))
                         prog.Invoke(100 * (count) / totalFiles);
                 }
@@ -93,7 +93,7 @@ namespace TVRename
                 {
                     DirectoryInfo[] dirs = di.GetDirectories();
                     foreach (DirectoryInfo di2 in dirs)
-                        count = this.BuildDirCache(prog, count, totalFiles, di2.FullName, subFolders, theSettings);
+                        count = this.BuildDirCache(prog, count, totalFiles, di2.FullName, subFolders);
                 }
             }
             catch (UnauthorizedAccessException)

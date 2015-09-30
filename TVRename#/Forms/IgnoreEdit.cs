@@ -47,7 +47,12 @@ namespace TVRename
         private void bnRemove_Click(object sender, System.EventArgs e)
         {
             foreach (int i in this.lbItems.SelectedIndices)
-                this.Ignore.Remove(this.DisplayedSet[i]);
+                foreach (IgnoreItem iitest in this.Ignore)
+                    if (this.lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
+                    {
+                        this.Ignore.Remove(iitest);
+                        break;
+                    }
             this.FillList();
         }
 

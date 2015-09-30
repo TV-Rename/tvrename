@@ -5,6 +5,11 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+
 namespace TVRename
 {
     using System;
@@ -16,13 +21,17 @@ namespace TVRename
         private readonly string BannerPath;
         private readonly FileInfo Destination;
         private readonly ShowItem SI;
+        private readonly bool ShrinkLargeMede8erImage;
 
-        public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string bannerPath)
+        public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string bannerPath) : this(si, pe, dest, bannerPath, false) { }
+
+        public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string bannerPath, bool mede8erShrink)
         {
             this.Episode = pe;
             this.SI = si;
             this.Destination = dest;
             this.BannerPath = bannerPath;
+            ShrinkLargeMede8erImage = mede8erShrink;
         }
 
         #region Action Members
@@ -46,21 +55,81 @@ namespace TVRename
             get { return this.Done ? 100 : 0; }
         }
 
+        public string produces
+        {
+            get { return this.Destination.FullName; }
+        }
+
         // 0 to 100
         public long SizeOfWork
         {
             get { return 1000000; }
         }
 
-        public bool Go(TVSettings settings, ref bool pause, TVRenameStats stats)
+        // http://www.codeproject.com/Articles/2941/Resizing-a-Photographic-image-with-GDI-for-NET
+        static Image MaxSize(Image imgPhoto, int Width, int Height)
         {
-            byte[] theData = this.SI.TVDB.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
+            int sourceWidth = imgPhoto.Width;
+            int sourceHeight = imgPhoto.Height;
+
+            float nPercentW = ((float)Width / (float)sourceWidth);
+            float nPercentH = ((float)Height / (float)sourceHeight);
+
+            //float nPercent = Math.Min(nPercentH, nPercentW);
+            int destWidth, destHeight;
+
+            if (nPercentH < nPercentW)
+            {
+                destHeight = Height;
+                destWidth = (int)(sourceWidth * nPercentH);
+            }
+            else
+            {
+                destHeight = (int)(sourceHeight * nPercentW);
+                destWidth = Width;
+            }
+
+            Bitmap bmPhoto = new Bitmap(destWidth, destHeight, PixelFormat.Format24bppRgb);
+            bmPhoto.SetResolution(imgPhoto.HorizontalResolution, imgPhoto.VerticalResolution);
+
+            Graphics grPhoto = Graphics.FromImage(bmPhoto);
+            grPhoto.Clear(Color.Black);
+            grPhoto.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+            grPhoto.DrawImage(imgPhoto,
+                new Rectangle(0, 0, destWidth, destHeight),
+                new Rectangle(0, 0, sourceWidth, sourceHeight),
+                GraphicsUnit.Pixel);
+
+            grPhoto.Dispose();
+            return bmPhoto;
+        }
+
+        public bool Go(ref bool pause, TVRenameStats stats)
+        {
+            byte[] theData = TheTVDB.Instance.GetPage(this.BannerPath, false, typeMaskBits.tmBanner, false);
             if ((theData == null) || (theData.Length == 0))
             {
                 this.ErrorText = "Unable to download " + this.BannerPath;
                 this.Error = true;
                 this.Done = true;
                 return false;
+            }
+
+            if (ShrinkLargeMede8erImage)
+            {
+                // shrink images down to a maximum size of 156x232
+                Image im = new Bitmap(new MemoryStream(theData));
+                if ((im.Width > 156) || (im.Height > 232))
+                {
+                    im = MaxSize(im, 156, 232);
+
+                    using (MemoryStream m = new MemoryStream())
+                    {
+                        im.Save(m, ImageFormat.Jpeg);
+                        theData = m.ToArray();
+                    }
+                }
             }
 
             try
@@ -154,9 +223,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 5; }
+            get { return "lvgActionDownload"; }
         }
 
         public string TargetFolder

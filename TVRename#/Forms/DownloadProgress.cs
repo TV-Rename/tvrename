@@ -51,7 +51,7 @@ namespace TVRename
 
         private void UpdateStuff()
         {
-            this.txtCurrent.Text = this.mDoc.GetTVDB(false, "").CurrentDLTask;
+            this.txtCurrent.Text = TheTVDB.Instance.CurrentDLTask;
             this.pbProgressBar.Value = this.mDoc.DownloadPct;
         }
     }

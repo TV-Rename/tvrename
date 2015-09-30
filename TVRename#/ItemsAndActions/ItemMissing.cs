@@ -77,9 +77,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 0; }
+            get { return "lvgActionMissing"; }
         }
 
         public string TargetFolder

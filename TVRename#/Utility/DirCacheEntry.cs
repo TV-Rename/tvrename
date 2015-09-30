@@ -19,18 +19,18 @@ namespace TVRename
         public string SimplifiedFullName;
         public FileInfo TheFile;
 
-        public DirCacheEntry(FileInfo f, TVSettings theSettings)
+        public DirCacheEntry(FileInfo f)
         {
             this.TheFile = f;
             this.SimplifiedFullName = Helpers.SimplifyName(f.FullName);
             this.LowerName = f.Name.ToLower();
             this.Length = f.Length;
 
-            if (theSettings == null)
+            if (TVSettings.Instance == null)
                 return;
 
-            this.HasUsefulExtension_NotOthersToo = theSettings.UsefulExtension(f.Extension, false);
-            this.HasUsefulExtension_OthersToo = this.HasUsefulExtension_NotOthersToo | theSettings.UsefulExtension(f.Extension, true);
+            this.HasUsefulExtension_NotOthersToo = TVSettings.Instance.UsefulExtension(f.Extension, false);
+            this.HasUsefulExtension_OthersToo = this.HasUsefulExtension_NotOthersToo | TVSettings.Instance.UsefulExtension(f.Extension, true);
         }
     }
 }

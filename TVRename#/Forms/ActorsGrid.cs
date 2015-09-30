@@ -45,9 +45,9 @@ namespace TVRename
         {
             // find actors that have been in more than one thing
             // Dictionary<String^, List<String> ^> ^whoInWhat = gcnew Dictionary<String^, List<String> ^>;
-            TheTVDB db = this.mDoc.GetTVDB(true, "Actors");
-            this.TheData = new DataArr(db.GetSeriesDict().Count);
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in db.GetSeriesDict())
+            TheTVDB.Instance.GetLock("Actors");
+            this.TheData = new DataArr(TheTVDB.Instance.GetSeriesDict().Count);
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in TheTVDB.Instance.GetSeriesDict())
             {
                 SeriesInfo si = ser.Value;
                 string actors = si.GetItem("Actors");
@@ -83,7 +83,7 @@ namespace TVRename
                 }
             }
 
-            db.Unlock("Actors");
+            TheTVDB.Instance.Unlock("Actors");
             this.TheData.RemoveEmpties();
         }
 
@@ -367,7 +367,7 @@ namespace TVRename
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                TVDoc.SysOpen("http://www.imdb.com/find?s=nm&q=" + this.Who);
+                Helpers.SysOpen("http://www.imdb.com/find?s=nm&q=" + this.Who);
             }
         }
 

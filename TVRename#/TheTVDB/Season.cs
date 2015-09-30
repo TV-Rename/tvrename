@@ -108,5 +108,15 @@ namespace TVRename
             }
         }
 
+        public string GetBannerPath()
+        {
+            return this.TheSeries.GetSeasonBannerPath(this.SeasonNumber);
+        }
+
+        public string GetWideBannerPath()
+        {
+            return this.TheSeries.GetSeasonWideBannerPath(this.SeasonNumber);
+        }
+
     }
 }

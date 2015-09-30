@@ -27,14 +27,11 @@ namespace TVRename
         private List<FilenameProcessorRE> Rex;
         private List<ShowItem> SIL;
 
-        private TVSettings TheSettings;
-
-        public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder, TVSettings s)
+        public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder)
         {
             this.Rex = rex;
             this.SIL = sil;
-            this.TheSettings = s;
-
+            
             this.InitializeComponent();
 
             this.SetupGrid();
@@ -284,7 +281,7 @@ namespace TVRename
                 int seas;
                 int ep;
 
-                if (!this.TheSettings.UsefulExtension(fi.Extension, true))
+                if (!TVSettings.Instance.UsefulExtension(fi.Extension, true))
                     continue; // move on
 
                 ShowItem si = this.cbShowList.SelectedIndex >= 0 ? this.SIL[this.cbShowList.SelectedIndex] : null;

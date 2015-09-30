@@ -21,12 +21,10 @@ namespace TVRename
     public partial class TheTVDBCodeFinder : UserControl
     {
         private bool mInternal;
-        private TheTVDB mTVDB;
 
-        public TheTVDBCodeFinder(string initialHint, TheTVDB db)
+        public TheTVDBCodeFinder(string initialHint)
         {
             this.mInternal = false;
-            this.mTVDB = db;
 
             this.InitializeComponent();
 
@@ -99,10 +97,10 @@ namespace TVRename
 
                 what = Helpers.RemoveDiacritics(what);
 
-                if (!this.mTVDB.GetLock("DoFind"))
+                if (!TheTVDB.Instance.GetLock("DoFind"))
                     return;
 
-                foreach (KeyValuePair<int, SeriesInfo> kvp in this.mTVDB.GetSeriesDict())
+                foreach (KeyValuePair<int, SeriesInfo> kvp in TheTVDB.Instance.GetSeriesDict())
                 {
                     int num = kvp.Key;
                     string show = kvp.Value.Name;
@@ -126,7 +124,7 @@ namespace TVRename
                         this.lvMatches.Items.Add(lvi);
                     }
                 }
-                this.mTVDB.Unlock("DoFind");
+                TheTVDB.Instance.Unlock("DoFind");
 
                 if ((this.lvMatches.Items.Count == 1) && numeric)
                     this.lvMatches.Items[0].Selected = true;
@@ -153,7 +151,7 @@ namespace TVRename
 
             if (!String.IsNullOrEmpty(this.txtFindThis.Text))
             {
-                this.mTVDB.Search(this.txtFindThis.Text);
+                TheTVDB.Instance.Search(this.txtFindThis.Text);
                 this.DoFind(true);
             }
         }

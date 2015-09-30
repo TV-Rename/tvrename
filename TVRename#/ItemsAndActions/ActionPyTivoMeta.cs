@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    public class ActionPyTivoMeta : Item, Action, ScanListItem
+    public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
     {
         public FileInfo Where;
 
@@ -19,6 +19,11 @@ namespace TVRename
         {
             this.Episode = pe;
             this.Where = nfo;
+        }
+
+        public string produces
+        {
+            get { return this.Where.FullName; }
         }
 
         #region Action Members
@@ -47,7 +52,7 @@ namespace TVRename
             get { return 10000; }
         }
 
-        public bool Go(TVSettings tvsettings, ref bool pause, TVRenameStats stats)
+        public bool Go( ref bool pause, TVRenameStats stats)
         {
             // "try" and silently fail.  eg. when file is use by other...
             StreamWriter writer;
@@ -171,9 +176,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 7; }
+            get { return "lvgActionMeta"; }
         }
 
         public int IconNumber

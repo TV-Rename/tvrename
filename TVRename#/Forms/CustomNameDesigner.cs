@@ -76,7 +76,7 @@ namespace TVRename
             foreach (ProcessedEpisode pe in this.Eps)
             {
                 ListViewItem lvi = new ListViewItem();
-                string fn = this.mDoc.Settings.FilenameFriendly(this.CN.NameForExt(pe, null, 0));
+                string fn = TVSettings.Instance.FilenameFriendly(this.CN.NameForExt(pe, null, 0));
                 lvi.Text = fn;
 
                 bool ok = false;
@@ -86,7 +86,7 @@ namespace TVRename
                 {
                     int seas;
                     int ep;
-                    ok = this.mDoc.FindSeasEp(new FileInfo(fn + ".avi"), out seas, out ep, pe.SI);
+                    ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out seas, out ep, pe.SI);
                     ok1 = ok && (seas == pe.SeasonNumber);
                     ok2 = ok && (ep == pe.EpNum);
                     string pre1 = ok1 ? "" : "* ";

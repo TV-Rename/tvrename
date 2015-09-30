@@ -739,7 +739,7 @@ namespace TVRename
         {
             if ((this.FileCache == null) || (this.FileCacheIsFor == null) || (this.FileCacheIsFor != folder) || (this.FileCacheWithSubFolders != subFolders))
             {
-                this.FileCache = new DirCache(null, folder, subFolders, null);
+                this.FileCache = new DirCache(null, folder, subFolders);
                 this.FileCacheIsFor = folder;
                 this.FileCacheWithSubFolders = subFolders;
             }
@@ -911,7 +911,7 @@ namespace TVRename
 
         public override bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent, string nameInTorrent)
         {
-            this.RenameListOut.Add(new ActionCopyMoveRename(this.CopyNotMove ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Rename, onDisk, Helpers.FileInFolder(this.CopyNotMove ? this.CopyToFolder : onDisk.Directory.Name, nameInTorrent), null));
+            this.RenameListOut.Add(new ActionCopyMoveRename(this.CopyNotMove ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Rename, onDisk, FileHelper.FileInFolder(this.CopyNotMove ? this.CopyToFolder : onDisk.Directory.Name, nameInTorrent), null,null));
 
             return true;
         }
@@ -1028,7 +1028,7 @@ namespace TVRename
             return (100 * bitsOn + totalBits / 2) / totalBits;
         }
 
-        public System.Collections.Generic.List<TorrentEntry> AllFilesBeingDownloaded(TVSettings settings, CommandLineArgs args)
+        public System.Collections.Generic.List<TorrentEntry> AllFilesBeingDownloaded()
         {
             System.Collections.Generic.List<TorrentEntry> r = new System.Collections.Generic.List<TorrentEntry>();
 
@@ -1081,7 +1081,7 @@ namespace TVRename
                     {
                         if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip))
                         {
-                            string saveTo = Helpers.FileInFolder(defaultFolder, settings.FilenameFriendly(s)).Name;
+                            string saveTo = FileHelper.FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
                             if (hasTargets)
                             {
                                 // see if there is a target for this (the c'th) file
@@ -1371,7 +1371,7 @@ namespace TVRename
             return true;
         }
 
-        public bool LoadResumeDat(CommandLineArgs args)
+        public bool LoadResumeDat()
         {
             BEncodeLoader bel = new BEncodeLoader();
             this.ResumeDat = bel.Load(this.ResumeDatPath);
@@ -1400,7 +1400,7 @@ namespace TVRename
 
             this.Prog(0);
 
-            if (!this.LoadResumeDat(args))
+            if (!this.LoadResumeDat())
                 return false;
 
             bool r = true;

@@ -120,9 +120,8 @@ namespace TVRename
                 return "";
             if (parts[1].EndsWith("/upcoming.xml"))
             {
-                MemoryStream ms = new MemoryStream();
-                doc.GenerateUpcomingXML(ms, doc.NextNShows(doc.Settings.ExportRSSMaxShows, doc.Settings.ExportRSSDaysPast, doc.Settings.ExportRSSMaxDays));
-                return System.Text.Encoding.ASCII.GetString(ms.ToArray());
+                UpcomingXML uXML = new UpcomingXML(doc);
+                return uXML.produce();
             }
             return Err();
         }

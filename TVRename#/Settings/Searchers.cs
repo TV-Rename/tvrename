@@ -29,18 +29,20 @@ namespace TVRename
         {
             this.CurrentSearch = "";
 
-            this.Add("Area07", "http://www.area07.net/browse.php?search={ShowName}+{Season}+{Episode}&cat=4");
+            // MS Edit 1/4/13 - Removed URLs that no longer work
+            //this.Add("Area07", "http://www.area07.net/browse.php?search={ShowName}+{Season}+{Episode}&cat=4");
+            //this.Add("BushTorrents", "http://www.bushtorrent.com/torrents.php?search=&words={ShowName}+{Season}+{Episode}");
+            //this.Add("BT Junkie", "http://btjunkie.org/search?q={ShowName}+{Season}+{Episode}");
+            //this.Add("diwana.org", "http://diwana.org/browse.php?search={ShowName}+{Season}+{Episode}&cat=0");
+            //this.Add("NewzLeech", "http://www.newzleech.com/usenet/?group=&minage=&age=&min=min&max=max&q={ShowName}+{Season}+{Episode}&mode=usenet&adv=");
+            //this.Add("nzbs.org", "http://nzbs.org/index.php?action=search&q={ShowName}+{Season}+{Episode}");
+            
             this.Add("BitMeTV", "http://www.bitmetv.org/browse.php?search={ShowName}+{Season}+{Episode}");
-            this.Add("BushTorrents", "http://www.bushtorrent.com/torrents.php?search=&words={ShowName}+{Season}+{Episode}");
-            this.Add("BT Junkie", "http://btjunkie.org/search?q={ShowName}+{Season}+{Episode}");
-            this.Add("diwana.org", "http://diwana.org/browse.php?search={ShowName}+{Season}+{Episode}&cat=0");
             this.Add("IP Torrents", "http://iptorrents.com/browse.php?incldead=0&search={ShowName}+{Season}+{Episode}&cat=0");
             this.Add("ISO Hunt", "http://isohunt.com/torrents/?ihq={ShowName}+{Season}+{Episode}");
             this.Add("Mininova", "http://www.mininova.org/search/?search={ShowName}+{Season}+{Episode}/8"); // "/8" for tv shows only
             this.Add("Pirate Bay", "http://thepiratebay.org/search.php?q={ShowName}+{Season}+{Episode}");
-            this.Add("torrentz.com", "http://www.torrentz.com/search?q={ShowName}+{Season}+{Episode}");
-            this.Add("NewzLeech", "http://www.newzleech.com/usenet/?group=&minage=&age=&min=min&max=max&q={ShowName}+{Season}+{Episode}&mode=usenet&adv=");
-            this.Add("nzbs.org", "http://nzbs.org/index.php?action=search&q={ShowName}+{Season}+{Episode}");
+            this.Add("torrentz.com", "http://www.torrentz.com/search?q={ShowName}+s{Season:2}e{Episode2}");
             this.Add("binsearch", "http://binsearch.net/?q={ShowName}+s{Season:2}e{Episode2}&max=25&adv_age=365&server=");
 
             this.CurrentSearch = "Mininova";
@@ -110,19 +112,13 @@ namespace TVRename
         public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
-            writer.WriteStartElement("Current");
-            writer.WriteValue(this.CurrentSearch);
-            writer.WriteEndElement();
+            XMLHelper.WriteElementToXML(writer,"Current",this.CurrentSearch);
 
             for (int i = 0; i < this.Count(); i++)
             {
                 writer.WriteStartElement("Choice");
-                writer.WriteStartAttribute("Name");
-                writer.WriteValue(this.Choices[i].Name);
-                writer.WriteEndAttribute();
-                writer.WriteStartAttribute("URL2");
-                writer.WriteValue(this.Choices[i].URL2);
-                writer.WriteEndAttribute();
+                XMLHelper.WriteAttributeToXML(writer,"Name",this.Choices[i].Name);
+                XMLHelper.WriteAttributeToXML(writer,"URL2",this.Choices[i].URL2);
                 writer.WriteEndElement();
             }
             writer.WriteEndElement(); // TheSearchers

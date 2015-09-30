@@ -16,11 +16,11 @@ namespace TVRename
 
         private TheTVDBCodeFinder mTCCF;
 
-        public FolderMonitorEdit(TheTVDB db, FolderMonitorEntry hint)
+        public FolderMonitorEdit(FolderMonitorEntry hint)
         {
             this.InitializeComponent();
 
-            this.mTCCF = new TheTVDBCodeFinder("", db);
+            this.mTCCF = new TheTVDBCodeFinder("");
             this.mTCCF.Dock = DockStyle.Fill;
             this.mTCCF.SelectionChanged += this.CodeChanged;
             this.mTCCF.lvMatches.DoubleClick += this.MatchDoubleClick;

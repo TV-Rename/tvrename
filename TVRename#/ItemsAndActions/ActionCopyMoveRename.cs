@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 
+using Microsoft.VisualBasic.FileIO;
+
 namespace TVRename
 {
     using System;
@@ -28,9 +30,11 @@ namespace TVRename
         public Op Operation;
         public FileInfo To;
         private double _Percent;
+        private TidySettings Tidyup;
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep)
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup)
         {
+            this.Tidyup = tidyup;
             this.PercentDone = 0;
             this.Episode = ep;
             this.Operation = operation;
@@ -66,7 +70,7 @@ namespace TVRename
             get { return this.QuickOperation() ? 10000 : this.SourceFileSize(); }
         }
 
-        public bool Go(TVSettings settings, ref bool pause, TVRenameStats stats)
+        public bool Go( ref bool pause, TVRenameStats stats)
         {
             // read NTFS permissions (if any)
             System.Security.AccessControl.FileSecurity security = null;
@@ -79,7 +83,9 @@ namespace TVRename
             }
 
             if (this.QuickOperation())
+            {
                 this.OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
+            }
             else
                 this.CopyItOurself(ref pause, stats); // do it ourself!
 
@@ -93,10 +99,105 @@ namespace TVRename
             {
             }
 
+            if (this.Operation == Op.Move && this.Tidyup != null && this.Tidyup.DeleteEmpty)
+            {
+                DoTidyup();
+            }
+
             return !this.Error;
         }
 
+        private void DeleteOrRecycleFolder()
+        {
+            DirectoryInfo di = this.From.Directory;
+            if (Tidyup.DeleteEmptyIsRecycle)
+            {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            }
+            else
+            {
+                di.Delete();
+            }
+        }
+
+
+        private void DoTidyup()
+        {
+#if DEBUG
+            System.Diagnostics.Debug.Assert(this.Tidyup != null);
+            System.Diagnostics.Debug.Assert(this.Tidyup.DeleteEmpty);
+#else
+            if (this.Tidyup == null || !this.Tidyup.DeleteEmpty)
+            {
+                return;
+            }
+#endif
+            // See if we should now delete the folder we just moved that file from.
+            DirectoryInfo di = this.From.Directory;
+            if (di == null)
+                return;
+
+            //if there are sub-directories then we shouldn't remove this one
+            if (di.GetDirectories().Length > 0) { return; }
+
+
+            FileInfo[] files = di.GetFiles();
+            if (files.Length == 0)
+            {
+                // its empty, so just delete it
+                di.Delete();
+                return;
+            }
+
+
+
+            if (Tidyup.EmptyIgnoreExtensions && !Tidyup.EmptyIgnoreWords)
+                return; // nope
+
+            foreach (FileInfo fi in files)
+            {
+                bool okToDelete = Tidyup.EmptyIgnoreExtensions &&
+                                  Array.FindIndex(Tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
+
+                if (okToDelete)
+                    continue; // onto the next file
+
+                // look in the filename
+                foreach (string word in Tidyup.EmptyIgnoreWordsArray)
+                {
+                    if (fi.Name.Contains(word))
+                    {
+                        okToDelete = true;
+                        break;
+                    }
+                }
+
+                if (!okToDelete)
+                    return;
+            }
+
+            if (Tidyup.EmptyMaxSizeCheck)
+            {
+                // how many MB are we deleting?
+                long totalBytes = 0;
+                foreach (FileInfo fi in files)
+                {
+                    totalBytes += fi.Length;
+                }
+
+
+                if (totalBytes / (1024 * 1024) > Tidyup.EmptyMaxSizeMB)
+                    return; // too much
+            }
+            DeleteOrRecycleFolder();
+        }
+
         #endregion
+
+        public string produces
+        {
+            get { return this.To.FullName; }
+        }
 
         #region Item Members
 
@@ -104,7 +205,7 @@ namespace TVRename
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
-            return ((cmr != null) && (this.Operation == cmr.Operation) && Helpers.Same(this.From, cmr.From) && Helpers.Same(this.To, cmr.To));
+            return ((cmr != null) && (this.Operation == cmr.Operation) && FileHelper.Same(this.From, cmr.From) && FileHelper.Same(this.To, cmr.To));
         }
 
         public int Compare(Item o)
@@ -175,17 +276,17 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
             get
             {
                 if (this.Operation == Op.Rename)
-                    return 1;
+                    return "lvgActionRename";
                 if (this.Operation == Op.Copy)
-                    return 2;
+                    return "lvgActionCopy";
                 if (this.Operation == Op.Move)
-                    return 3;
-                return 2;
+                    return "lvgActionMove";
+                return "lvgActionCopy";
             }
         }
 
@@ -208,7 +309,7 @@ namespace TVRename
 
         private void NicelyStopAndCleanUp_Win32(Win32FileIO.WinFileIO copier)
         {
-            copier.Close();
+            if (copier != null ) copier.Close();
             string tempName = TempFor(this.To);
             if (File.Exists(tempName))
                 File.Delete(tempName);
@@ -249,7 +350,7 @@ namespace TVRename
         {
             try
             {
-                if (Helpers.Same(this.From, this.To))
+                if (FileHelper.Same(this.From, this.To))
                 {
                     // XP won't actually do a rename if its only a case difference
                     string tempName = TempFor(this.To);
@@ -405,7 +506,7 @@ namespace TVRename
 
         public bool SameSource(ActionCopyMoveRename o)
         {
-            return (Helpers.Same(this.From, o.From));
+            return (FileHelper.Same(this.From, o.From));
         }
 
         // ========================================================================================================

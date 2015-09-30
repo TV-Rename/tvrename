@@ -13,6 +13,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Collections.Generic;
 
 // Helpful functions and classes
 
@@ -20,8 +21,44 @@ namespace TVRename
 {
     public delegate void SetProgressDelegate(int percent);
 
-    public static class Helpers
+    public static class XMLHelper
     {
+        public static void WriteStringsToXml(List<string> strings, XmlWriter writer, string elementName, string stringName)
+        {
+            writer.WriteStartElement(elementName);
+            foreach (string ss in strings)
+            {
+                writer.WriteStartElement(stringName);
+                writer.WriteValue(ss);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+        
+        public static List<string> ReadStringsFromXml(XmlReader reader, string elementName, string stringName)
+        {
+            List<string> r = new List<String>();
+
+            if (reader.Name != elementName)
+                return r; // uhoh
+
+            if (!reader.IsEmptyElement)
+            {
+                reader.Read();
+                while (!reader.EOF)
+                {
+                    if ((reader.Name == elementName) && !reader.IsStartElement())
+                        break;
+                    if (reader.Name == stringName)
+                        r.Add(reader.ReadElementContentAsString());
+                    else
+                        reader.ReadOuterXml();
+                }
+            }
+            reader.Read();
+            return r;
+        }
+
         public static string ReadStringFixQuotesAndSpaces(XmlReader r)
         {
             string res = r.ReadElementContentAsString();
@@ -31,25 +68,100 @@ namespace TVRename
             return res;
         }
 
-        public static Color WarningColor()
+        public static void WriteElementToXML(XmlWriter writer, string elementName, string value)
         {
-            return Color.FromArgb(255, 210, 210);
+            writer.WriteStartElement(elementName);
+            writer.WriteValue(value);
+            writer.WriteEndElement();
+        }
+        public static void WriteElementToXML(XmlWriter writer, string elementName, double value)
+        {
+            writer.WriteStartElement(elementName);
+            writer.WriteValue(value);
+            writer.WriteEndElement();
+        }
+        public static void WriteElementToXML(XmlWriter writer, string elementName, int value)
+        {
+            writer.WriteStartElement(elementName);
+            writer.WriteValue(value);
+            writer.WriteEndElement();
+        }
+        public static void WriteElementToXML(XmlWriter writer, string elementName, bool value)
+        {
+            writer.WriteStartElement(elementName);
+            writer.WriteValue(value);
+            writer.WriteEndElement();
+        }
+        public static void WriteElementToXML(XmlWriter writer, string attributeName, DateTime? value)
+        {
+            writer.WriteStartElement(attributeName);
+            if (!(value == null))
+                writer.WriteValue(value);
+            writer.WriteEndElement();
         }
 
-        public static string TranslateColorToHtml(Color c)
+        public static void WriteAttributeToXML(XmlWriter writer, string attributeName, string value)
         {
-            return String.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
+            writer.WriteStartAttribute(attributeName);
+            writer.WriteValue(value);
+            writer.WriteEndAttribute();
         }
-        public static string SimplifyName(string n)
+        public static void WriteAttributeToXML(XmlWriter writer, string attributeName, DateTime?  value)
         {
-            n = n.ToLower();
-            n = n.Replace("the", "");
-            n = n.Replace("'", "");
-            n = n.Replace("&", "");
-            n = n.Replace("and", "");
-            n = n.Replace("!", "");
-            n = Regex.Replace(n, "[_\\W]+", " ");
-            return n;
+            writer.WriteStartAttribute(attributeName);
+            if (!(value == null))
+                writer.WriteValue(value);
+            writer.WriteEndAttribute();
+        }
+        public static void WriteAttributeToXML(XmlWriter writer, string attributeName, int value)
+        {
+            writer.WriteStartAttribute(attributeName);
+            writer.WriteValue(value);
+            writer.WriteEndAttribute();
+        }
+        public static void WriteAttributeToXML(XmlWriter writer, string attributeName, bool value)
+        {
+            writer.WriteStartAttribute(attributeName);
+            writer.WriteValue(value);
+            writer.WriteEndAttribute();
+        }
+        public static void WriteAttributeToXML(XmlWriter writer, string attributeName, long value)
+        {
+            writer.WriteStartAttribute(attributeName);
+            writer.WriteValue(value);
+            writer.WriteEndAttribute();
+        }
+    }
+
+    public static class FileHelper
+    {
+        public static bool FolderIsSubfolderOf(string thisOne, string ofThat)
+        {
+            // need terminating slash, otherwise "c:\abc def" will match "c:\abc"
+            thisOne += System.IO.Path.DirectorySeparatorChar.ToString();
+            ofThat += System.IO.Path.DirectorySeparatorChar.ToString();
+            int l = ofThat.Length;
+            return ((thisOne.Length >= l) && (thisOne.Substring(0, l).ToLower() == ofThat.ToLower()));
+        }
+
+        public static void Rotate(string filenameBase)
+        {
+            if (File.Exists(filenameBase))
+            {
+                for (int i = 8; i >= 0; i--)
+                {
+                    string fn = filenameBase + "." + i;
+                    if (File.Exists(fn))
+                    {
+                        string fn2 = filenameBase + "." + (i + 1);
+                        if (File.Exists(fn2))
+                            File.Delete(fn2);
+                        File.Move(fn, fn2);
+                    }
+                }
+
+                File.Copy(filenameBase, filenameBase + ".0");
+            }
         }
 
         public static bool Same(FileInfo a, FileInfo b)
@@ -77,6 +189,69 @@ namespace TVRename
         public static FileInfo FileInFolder(DirectoryInfo di, string fn)
         {
             return FileInFolder(di.FullName, fn);
+        }
+
+        // see if showname is somewhere in filename
+        public static bool SimplifyAndCheckFilename(string filename, string showname, bool simplifyfilename, bool simplifyshowname)
+        {
+            return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showname) : showname) + "\\b", RegexOptions.IgnoreCase).Success;
+        }
+
+    }
+
+    public static class Helpers
+    {
+
+        public static string pad(int i)
+        {
+            if (i.ToString().Length > 1)
+            {
+                return (i.ToString());
+            }
+            else
+            {
+                return ("0" + i);
+            }
+        }
+
+        public static bool SysOpen(string what)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(what);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public static Color WarningColor()
+        {
+            return Color.FromArgb(255, 210, 210);
+        }
+
+        public static bool Contains(string source, string toCheck, StringComparison comp)
+        {
+            return source.IndexOf(toCheck, comp) >= 0;
+        }
+
+        public static string TranslateColorToHtml(Color c)
+        {
+            return String.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
+        }
+        
+        public static string SimplifyName(string n)
+        {
+            n = n.ToLower();
+            n = n.Replace("the", "");
+            n = n.Replace("'", "");
+            n = n.Replace("&", "");
+            n = n.Replace("and", "");
+            n = n.Replace("!", "");
+            n = Regex.Replace(n, "[_\\W]+", " ");
+            return n;
         }
 
         public static string RemoveDiacritics(string stIn)

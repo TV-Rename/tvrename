@@ -17,6 +17,21 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,6 +59,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Ionic.Utils.Zip.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="SourceGrid, Version=4.21.3441.17573, Culture=neutral, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\SourceGrid.dll</HintPath>
@@ -67,6 +83,37 @@
     <Compile Include="Custom Controls\TheTVDBCodeFinder.Designer.cs">
       <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
     </Compile>
+    <Compile Include="DownloadIdentifers\DownloadEpisodeJPG.cs" />
+    <Compile Include="DownloadIdentifers\DownloadIdentifiersController.cs" />
+    <Compile Include="DownloadIdentifers\DownloadpyTivoMetaData.cs" />
+    <Compile Include="DownloadIdentifers\DownloadMede8erMetaData.cs" />
+    <Compile Include="DownloadIdentifers\DownloadSeriesJPG.cs" />
+    <Compile Include="DownloadIdentifers\DownloadXBMCMetaData.cs" />
+    <Compile Include="DownloadIdentifers\DownloadFanartJPG.cs" />
+    <Compile Include="DownloadIdentifers\DownloadIdentifier.cs" />
+    <Compile Include="DownloadIdentifers\DownloadJolderJPG.cs" />
+    <Compile Include="DownloadIdentifers\DownloadXBMCImages.cs" />
+    <Compile Include="Exporter\Exporter.cs" />
+    <Compile Include="Exporter\MissingXML.cs" />
+    <Compile Include="Exporter\UpcomingRSS.cs" />
+    <Compile Include="Exporter\UpcomingXML.cs" />
+    <Compile Include="Finders\FileFinder.cs" />
+    <Compile Include="Finders\RSSFinder.cs" />
+    <Compile Include="Finders\uTorrentFinder.cs" />
+    <Compile Include="Finders\SABnzbdFinder.cs" />
+    <Compile Include="Finders\Finder.cs" />
+    <Compile Include="Forms\ISplashForm.cs" />
+    <Compile Include="Forms\SplashScreen.cs" />
+    <Compile Include="Forms\TVRenameSplash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\TVRenameSplash.Designer.cs">
+      <DependentUpon>TVRenameSplash.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
+    <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
+    <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
+    <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\ActorsGrid.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,6 +209,7 @@
     </Compile>
     <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
     <Compile Include="ItemsAndActions\ItemSABnzbd.cs" />
+    <Compile Include="TheTVDB\Banner.cs" />
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
     <Compile Include="TheTVDB\Season.cs" />
@@ -303,6 +351,9 @@
       <DependentUpon>Preferences.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\TVRenameSplash.resx">
+      <DependentUpon>TVRenameSplash.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -403,6 +454,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />
+    <None Include="Resources\Black-Red_256x256.png" />
     <None Include="Resources\EditInformationHS.png" />
     <None Include="Resources\SearchWebHS.png" />
     <None Include="Resources\SearchFolderHS.png" />
@@ -416,6 +468,23 @@
     <None Include="Resources\graphhs.png" />
     <None Include="Resources\GetLatestVersion.png" />
     <None Include="Resources\saveHS.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

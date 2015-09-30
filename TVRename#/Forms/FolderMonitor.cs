@@ -146,13 +146,13 @@ namespace TVRename
         private void bnOpenMonFolder_Click(object sender, System.EventArgs e)
         {
             if (this.lstFMMonitorFolders.SelectedIndex != -1)
-                TVDoc.SysOpen(this.mDoc.MonitorFolders[this.lstFMMonitorFolders.SelectedIndex]);
+                Helpers.SysOpen(this.mDoc.MonitorFolders[this.lstFMMonitorFolders.SelectedIndex]);
         }
 
         private void bnOpenIgFolder_Click(object sender, System.EventArgs e)
         {
             if (this.lstFMIgnoreFolders.SelectedIndex != -1)
-                TVDoc.SysOpen(this.mDoc.MonitorFolders[this.lstFMIgnoreFolders.SelectedIndex]);
+                Helpers.SysOpen(this.mDoc.MonitorFolders[this.lstFMIgnoreFolders.SelectedIndex]);
         }
 
         private void lstFMMonitorFolders_DoubleClick(object sender, System.EventArgs e)
@@ -367,7 +367,7 @@ namespace TVRename
                 return;
             FolderMonitorEntry ai = this.lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
             if (ai != null)
-                TVDoc.SysOpen(ai.Folder);
+                Helpers.SysOpen(ai.Folder);
         }
 
         private void FillFMNewShowList(bool keepSel)
@@ -406,7 +406,7 @@ namespace TVRename
         {
             lvi.SubItems.Clear();
             lvi.Text = ai.Folder;
-            lvi.SubItems.Add(ai.CodeKnown ? this.mDoc.GetTVDB(false, "").GetSeries(ai.TVDBCode).Name : "");
+            lvi.SubItems.Add(ai.CodeKnown ? TheTVDB.Instance.GetSeries(ai.TVDBCode).Name : "");
             lvi.SubItems.Add(ai.HasSeasonFoldersGuess ? "Folder per season" : "Flat");
             lvi.SubItems.Add(ai.CodeKnown ? ai.TVDBCode.ToString() : "");
             lvi.Tag = ai;
@@ -530,7 +530,7 @@ namespace TVRename
 
             int code = fme.TVDBCode;
             if (code != -1)
-              TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(code, -1, false));
+                Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(code, -1, false));
         }
 
         private void bnCheck2_Click(object sender, System.EventArgs e)
@@ -555,7 +555,7 @@ namespace TVRename
 
         private void EditEntry(FolderMonitorEntry fme)
         {
-            FolderMonitorEdit ed = new FolderMonitorEdit(this.mDoc.GetTVDB(false, ""), fme);
+            FolderMonitorEdit ed = new FolderMonitorEdit(fme);
             if ((ed.ShowDialog() != DialogResult.OK )|| (ed.Code == -1))
                 return;
 

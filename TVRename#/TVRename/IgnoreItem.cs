@@ -35,9 +35,7 @@ namespace TVRename
 
         public void Write(XmlWriter writer)
         {
-            writer.WriteStartElement("Ignore");
-            writer.WriteValue(this.FileAndPath);
-            writer.WriteEndElement(); // Ignore
+            XMLHelper.WriteElementToXML(writer,"Ignore",this.FileAndPath);
         }
     }
 }

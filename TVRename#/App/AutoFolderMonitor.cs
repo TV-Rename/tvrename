@@ -35,9 +35,12 @@ namespace TVRename
         {
             foreach (string efi in this.mDoc.SearchFolders)
             {
-                if (!File.Exists(efi) ||  // doesn't exist
-                    ((File.GetAttributes(efi) & FileAttributes.Directory) != (FileAttributes.Directory)) ) // not a folder
+                if (!Directory.Exists(efi)) //Does not exist
                     continue;
+
+                if ((File.GetAttributes(efi) & FileAttributes.Directory) != (FileAttributes.Directory))  // not a folder
+                    continue;
+                
 
                 FileSystemWatcher watcher = new FileSystemWatcher(efi);
                 watcher.Changed += new FileSystemEventHandler(watcher_Changed);
@@ -61,11 +64,35 @@ namespace TVRename
         {
             mScanDelayTimer.Stop();
             this.StopMonitor();
-            if (mUI != null)
+            
+            //We only wish to do a scan now if we are not already undertaking one
+            if (!mDoc.CurrentlyBusy) {
+                if (mUI != null)
+                {
+                    switch (TVSettings.Instance.MonitoredFoldersScanType)
+                    {
+                        case TVRename.TVSettings.ScanType.Full:
+                            mUI.Invoke(mUI.AFMFullScan);
+                            break;
+                        case TVRename.TVSettings.ScanType.Recent:
+                            mUI.Invoke(mUI.AFMRecentScan);
+                            break;
+                        case TVRename.TVSettings.ScanType.Quick:
+                            mUI.Invoke(mUI.AFMQuickScan);
+                            break;
+                    }
+
+                    mUI.Invoke(mUI.AFMDoAll);
+
+                    if (TVSettings.Instance.MonitoredFoldersScanType == TVSettings.ScanType.Full)
+                        mDoc.ExportMissingXML(); // Export Missing episodes to XML if we scanned all
+
+                }
+                
+            }
+            else
             {
-                mUI.Invoke(mUI.AFMScan);
-                mUI.Invoke(mUI.AFMDoAll);
-                mDoc.ExportMissingXML(); // Export Missing episodes to XML 
+                System.Diagnostics.Debug.Print("Auto scan cancelled as the system is already busy");
             }
             this.StartMonitor();
         }

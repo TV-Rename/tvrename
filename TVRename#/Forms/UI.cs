@@ -39,6 +39,7 @@ namespace TVRename
         kEditShow,
         kEditSeason,
         kDeleteShow,
+        kUpdateImages,
         kWatchBase = 1000,
         kOpenFolderBase = 2000
     }
@@ -62,7 +63,7 @@ namespace TVRename
         #endregion
 
         protected int Busy;
-
+        private TVDoc mDoc;
         public IPCDelegate IPCBringToForeground;
         public IPCDelegate IPCDoAll;
         public IPCDelegate IPCQuit;
@@ -70,12 +71,13 @@ namespace TVRename
         protected bool InternalCheckChange;
         private int LastDLRemaining;
 
-        public AutoFolderMonitorDelegate AFMScan;
+        public AutoFolderMonitorDelegate AFMFullScan;
+        public AutoFolderMonitorDelegate AFMRecentScan;
+        public AutoFolderMonitorDelegate AFMQuickScan;
         public AutoFolderMonitorDelegate AFMDoAll;
 
         public SetProgressDelegate SetProgress;
         private MyListView lvAction;
-        protected TVDoc mDoc;
         protected List<string> mFoldersToOpen;
         protected int mInternalChange;
         protected System.Collections.Generic.List<FileInfo> mLastFL;
@@ -92,6 +94,10 @@ namespace TVRename
 
         public UI(TVDoc doc)
         {
+
+            SplashScreen.Show(new TVRenameSplash());
+            SplashScreen.UpdateStatus("Initalising");
+
             this.mDoc = doc;
 
             this.Busy = 0;
@@ -131,24 +137,47 @@ namespace TVRename
             }
 
             this.Text = this.Text + " " + Version.DisplayVersionString();
+            SplashScreen.UpdateInfo(Version.DisplayVersionString());
 
+            SplashScreen.UpdateStatus("Filling Shows");
             this.FillMyShows();
             this.UpdateSearchButton();
-            this.SetGuideHTMLbody("");
+            this.ClearInfoWindows();
+            SplashScreen.UpdateProgress(12);
+            SplashScreen.UpdateStatus("Updating WTW");
             this.mDoc.DoWhenToWatch(true);
+            SplashScreen.UpdateProgress(50); 
             this.FillWhenToWatchList();
-            this.mDoc.WriteUpcomingRSSandXML();
+            SplashScreen.UpdateProgress(90); 
+            SplashScreen.UpdateStatus("Write Upcoming");
+            this.mDoc.WriteUpcoming();
+            SplashScreen.UpdateStatus("Setting Notifications");
             this.ShowHideNotificationIcon();
 
-            int t = this.mDoc.Settings.StartupTab;
+            int t = TVSettings.Instance.StartupTab;
             if (t < this.tabControl1.TabCount)
-                this.tabControl1.SelectedIndex = this.mDoc.Settings.StartupTab;
+                this.tabControl1.SelectedIndex = TVSettings.Instance.StartupTab;
             this.tabControl1_SelectedIndexChanged(null, null);
 
+            SplashScreen.UpdateStatus("Starting Monitor");
+
             this.mAutoFolderMonitor = new TVRename.AutoFolderMonitor(mDoc,this);
-            if (this.mDoc.Settings.MonitorFolders)
+            if (TVSettings.Instance.MonitorFolders)
                 this.mAutoFolderMonitor.StartMonitor();
 
+            SplashScreen.Close();
+
+        }
+
+        public void ClearInfoWindows()
+        {
+            ClearInfoWindows("");
+
+        }
+        public void ClearInfoWindows(string defaultText)
+        {
+            SetHTMLbody(defaultText, EpGuidePath(), this.epGuideHTML);
+            SetHTMLbody(defaultText, ImagesGuidePath(), this.webBrowserImages);
 
         }
 
@@ -174,9 +203,12 @@ namespace TVRename
             this.IPCDoAll += this.ActionAll;
             this.IPCQuit += this.Close;
 
-            this.AFMScan += this.ScanAll;
-            this.AFMDoAll += this.ActionAll;
+            this.AFMFullScan += this.ScanAll;
+            this.AFMQuickScan += this.QuickScan; 
+            this.AFMRecentScan += this.ScanRecent;
 
+            this.AFMDoAll += this.ActionAll;
+            
             int retries = 2;
             while (retries > 0)
             {
@@ -249,7 +281,7 @@ namespace TVRename
 
         public void UpdateSearchButton()
         {
-            string name = this.mDoc.GetSearchers().Name(this.mDoc.Settings.TheSearchers.CurrentSearchNum());
+            string name = this.mDoc.GetSearchers().Name(TVSettings.Instance.TheSearchers.CurrentSearchNum());
 
             bool customWTW = false;
             foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
@@ -285,12 +317,12 @@ namespace TVRename
 
         private void visitWebsiteToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            TVDoc.SysOpen("http://tvrename.com");
+            Helpers.SysOpen("http://tvrename.com");
         }
 
         private void UI_Load(object sender, System.EventArgs e)
         {
-            this.ShowInTaskbar = this.mDoc.Settings.ShowInTaskbar && !this.mDoc.Args.Hide;
+            this.ShowInTaskbar = TVSettings.Instance.ShowInTaskbar && !this.mDoc.Args.Hide;
 
             foreach (TabPage tp in this.tabControl1.TabPages) // grr! TODO: why does it go white?
                 tp.BackColor = System.Drawing.SystemColors.Control;
@@ -299,10 +331,10 @@ namespace TVRename
             this.UI_LocationChanged(null, null);
             this.UI_SizeChanged(null, null);
 
-            this.backgroundDownloadToolStripMenuItem.Checked = this.mDoc.Settings.BGDownload;
-            this.offlineOperationToolStripMenuItem.Checked = this.mDoc.Settings.OfflineMode;
+            this.backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
+            this.offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
             this.BGDownloadTimer.Interval = 10000; // first time
-            if (this.mDoc.Settings.BGDownload)
+            if (TVSettings.Instance.BGDownload)
                 this.BGDownloadTimer.Start();
 
             this.quickTimer.Start();
@@ -323,7 +355,7 @@ namespace TVRename
                 "Force Refresh All", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res == DialogResult.Yes)
             {
-                this.mDoc.GetTVDB(false, "").ForgetEverything();
+                TheTVDB.Instance.ForgetEverything();
                 this.FillMyShows();
                 this.FillEpGuideHTML();
                 this.FillWhenToWatchList();
@@ -450,46 +482,30 @@ namespace TVRename
 
                 writer.WriteStartDocument();
                 writer.WriteStartElement("TVRename");
-                writer.WriteStartAttribute("Version");
-                writer.WriteValue("2.1");
-                writer.WriteEndAttribute(); // version
+                XMLHelper.WriteAttributeToXML(writer, "Version", "2.1");
                 writer.WriteStartElement("Layout");
                 writer.WriteStartElement("Window");
 
                 writer.WriteStartElement("Size");
-                writer.WriteStartAttribute("Width");
-                writer.WriteValue(this.mLastNonMaximizedSize.Width);
-                writer.WriteEndAttribute();
-                writer.WriteStartAttribute("Height");
-                writer.WriteValue(this.mLastNonMaximizedSize.Height);
-                writer.WriteEndAttribute();
+                XMLHelper.WriteAttributeToXML(writer, "Width", this.mLastNonMaximizedSize.Width);
+                XMLHelper.WriteAttributeToXML(writer, "Height", this.mLastNonMaximizedSize.Height);
                 writer.WriteEndElement(); // size
 
                 writer.WriteStartElement("Location");
-                writer.WriteStartAttribute("X");
-                writer.WriteValue(this.mLastNonMaximizedLocation.X);
-                writer.WriteEndAttribute();
-                writer.WriteStartAttribute("Y");
-                writer.WriteValue(this.mLastNonMaximizedLocation.Y);
-                writer.WriteEndAttribute();
+                XMLHelper.WriteAttributeToXML(writer, "X", this.mLastNonMaximizedLocation.X);
+                XMLHelper.WriteAttributeToXML(writer, "Y", this.mLastNonMaximizedLocation.Y);
                 writer.WriteEndElement(); // Location
 
-                writer.WriteStartElement("Maximized");
-                writer.WriteValue(this.WindowState == FormWindowState.Maximized);
-                writer.WriteEndElement(); // maximized
-
+                XMLHelper.WriteElementToXML(writer,"Maximized",this.WindowState == FormWindowState.Maximized);
+                
                 writer.WriteEndElement(); // window
 
                 this.WriteColWidthsXML("WhenToWatch", writer);
                 this.WriteColWidthsXML("AllInOne", writer);
 
                 writer.WriteStartElement("Splitter");
-                writer.WriteStartAttribute("Distance");
-                writer.WriteValue(this.splitContainer1.SplitterDistance);
-                writer.WriteEndAttribute();
-                writer.WriteStartAttribute("HTMLCollapsed");
-                writer.WriteValue(this.splitContainer1.Panel2Collapsed);
-                writer.WriteEndAttribute();
+                XMLHelper.WriteElementToXML(writer,"Distance",this.splitContainer1.SplitterDistance);
+                XMLHelper.WriteElementToXML(writer,"HTMLCollapsed",this.splitContainer1.Panel2Collapsed);
                 writer.WriteEndElement(); // splitter
 
                 writer.WriteEndElement(); // Layout
@@ -506,15 +522,12 @@ namespace TVRename
             ListView lv = this.ListViewByName(thingName);
             if (lv == null)
                 return;
+
             writer.WriteStartElement("ColumnWidths");
-            writer.WriteStartAttribute("For");
-            writer.WriteValue(thingName);
-            writer.WriteEndAttribute();
+            XMLHelper.WriteAttributeToXML (writer,"For",thingName);
             foreach (ColumnHeader lvc in lv.Columns)
             {
-                writer.WriteStartElement("Width");
-                writer.WriteValue(lvc.Width);
-                writer.WriteEndElement();
+                XMLHelper.WriteElementToXML(writer,"Width",lvc.Width);
             }
             writer.WriteEndElement(); // columnwidths
         }
@@ -624,6 +637,7 @@ namespace TVRename
         {
             this.tabControl1.SelectTab(this.tbMyShows);
             this.epGuideHTML.Navigate(QuickStartGuide());
+            this.webBrowserImages.Navigate(QuickStartGuide());
         }
 
         private void FillEpGuideHTML()
@@ -733,19 +747,93 @@ namespace TVRename
 
             if (si == null)
             {
-                this.SetGuideHTMLbody("");
+                this.ClearInfoWindows(); 
                 return;
             }
-            TheTVDB db = this.mDoc.GetTVDB(true, "FillEpGuideHTML");
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            TheTVDB.Instance.GetLock("FillEpGuideHTML");
+
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
 
             if (ser == null)
             {
-                this.SetGuideHTMLbody("Not downloaded, or not available");
+                this.ClearInfoWindows("Not downloaded, or not available");
+                TheTVDB.Instance.Unlock("FillEpGuideHTML");
                 return;
             }
 
+            string infoPaneBody;
+            string imagesPaneBody;
+
+            if ((snum >= 0) && (ser.Seasons.ContainsKey(snum)))
+            {
+                infoPaneBody = GetSeasonHTMLOverview(si, ser, snum);
+                imagesPaneBody = GetSeasonImagesHTMLOverview(si, ser, snum);
+            }
+            else
+            {
+                // no epnum specified, just show an overview
+                infoPaneBody = GetShowHTMLOverview(si, ser);
+                imagesPaneBody = GetShowImagesHTMLOverview(si, ser);
+            }
+            TheTVDB.Instance.Unlock("FillEpGuideHTML");
+            SetHTMLbody(infoPaneBody, EpGuidePath(), this.epGuideHTML);
+            SetHTMLbody(imagesPaneBody, ImagesGuidePath(), this.webBrowserImages);
+        }
+        private string GetSeasonImagesHTMLOverview(ShowItem si, SeriesInfo ser, int snum)
+        {
             string body = "";
+
+            Season s = ser.Seasons[snum];
+
+            List<ProcessedEpisode> eis = null;
+            // int snum = s.SeasonNumber;
+            if (si.SeasonEpisodes.ContainsKey(snum))
+                eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
+            else
+                eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
+
+            string seasText = snum == 0 ? "Specials" : ("Season " + snum);
+            if ((eis.Count > 0) && (eis[0].SeasonID > 0))
+                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, eis[0].SeasonID, false) + "\">" + seasText + "</a>";
+            else
+                seasText = " - " + seasText;
+
+            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
+
+            body += ImageSection("Series Banner", 758, 140, ser.GetSeasonWideBannerPath(snum));
+            body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
+
+            return body;
+        }
+
+        private string GetShowImagesHTMLOverview(ShowItem si, SeriesInfo ser)
+        {
+            string body = "";
+
+            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A> " + "</h1>";
+
+            body += ImageSection("Show Banner", 758, 140, ser.GetItem("banner"));
+            body += ImageSection("Show Poster", 350, 500, ser.GetItem("poster"));
+            body += ImageSection("Show Fanart", 960, 540, ser.GetItem("fanart"));
+            
+            return body;
+        }
+
+        private static string ImageSection(string title, int width, int height, string bannerPath)
+        {
+            string body = "";
+
+            if ((!string.IsNullOrEmpty(bannerPath )) && (!string.IsNullOrEmpty(TheTVDB.Instance.BannerMirror)))
+            {
+                body += "<h2>"+title+"</h2>";
+                body += "<img width=" + width + " height=" + height + " src=\"" + TheTVDB.Instance.BannerMirror + "/banners/" + bannerPath + "\"><br/>";
+            }
+            return body;
+        }
+
+        private string GetShowHTMLOverview(ShowItem si, SeriesInfo ser)
+        {
+            string body =""; 
 
             List<string> skip = new List<String>
                                   {
@@ -759,135 +847,138 @@ namespace TVRename
                                       "zap2it_id"
                                   };
 
-            if ((snum >= 0) && (ser.Seasons.ContainsKey(snum)))
+            
+            if ((!string.IsNullOrEmpty(ser.GetItem("banner"))) && (!string.IsNullOrEmpty(TheTVDB.Instance.BannerMirror)))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.BannerMirror + "/banners/" + ser.GetItem("banner") + "\"><br/>";
+
+            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A> " + "</h1>";
+
+            body += "<h2>Overview</h2>" + ser.GetItem("Overview");
+
+            string actors = ser.GetItem("Actors");
+            if (!string.IsNullOrEmpty(actors))
             {
-                if (!string.IsNullOrEmpty(ser.GetItem("banner")) && !string.IsNullOrEmpty(db.BannerMirror))
-                    body += "<img width=758 height=140 src=\"" + db.BannerMirror + "/banners/" + ser.GetItem("banner") + "\"><br/>";
-
-                Season s = ser.Seasons[snum];
-
-                List<ProcessedEpisode> eis = null;
-                // int snum = s.SeasonNumber;
-                if (si.SeasonEpisodes.ContainsKey(snum))
-                    eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
-                else
-                    eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
-
-                string seasText = snum == 0 ? "Specials" : ("Season " + snum);
-                if ((eis.Count > 0) && (eis[0].SeasonID > 0))
-                    seasText = " - <A HREF=\"" + db.WebsiteURL(si.TVDBCode, eis[0].SeasonID, false) + "\">" + seasText + "</a>";
-                else
-                    seasText = " - " + seasText;
-
-                body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
-
-                foreach (ProcessedEpisode ei in eis)
+                bool first = true;
+                foreach (string aa in actors.Split('|'))
                 {
-                    string epl = ei.NumsAsString();
-
-                    // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
-                    string episodeURL = "http://www.thetvdb.com/?tab=episode&seriesid=" + ei.SeriesID + "&seasonid=" + ei.SeasonID + "&id=" + ei.EpisodeID;
-
-                    body += "<A href=\"" + episodeURL + "\" name=\"ep" + epl + "\">"; // anchor
-                    body += "<b>" + CustomName.NameForNoExt(ei, CustomName.OldNStyle(6)) + "</b>";
-                    body += "</A>"; // anchor
-                    if (si.UseSequentialMatch && (ei.OverallNumber != -1))
-                        body += " (#" + ei.OverallNumber + ")";
-
-                    body += " <A HREF=\"" + this.mDoc.Settings.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
-
-                    System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
-                    if (fl != null)
+                    if (!string.IsNullOrEmpty(aa))
                     {
-                        foreach (FileInfo fi in fl)
-                            body += " <A HREF=\"file://" + fi.FullName + "\" class=\"search\">Watch</A>";
-                    }
-
-                    DateTime? dt = ei.GetAirDateDT(true);
-                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                        body += "<p>" + dt.Value.ToShortDateString() + " (" + ei.HowLong() + ")";
-
-                    body += "<p><p>";
-
-                    if (this.mDoc.Settings.ShowEpisodePictures)
-                    {
-                        body += "<table><tr>";
-                        body += "<td width=100% valign=top>" + ei.Overview + "</td><td width=300 height=225>";
-                        // 300x168 / 300x225
-                        if (!string.IsNullOrEmpty(ei.GetItem("filename")))
-                            body += "<img src=" + db.BannerMirror + "/banners/_cache/" + ei.GetItem("filename") + ">";
-                        body += "</td></tr></table>";
-                    }
-                    else
-                        body += ei.Overview;
-
-                    body += "<p><hr><p>";
-                } // for each episode in this season
-            }
-            else
-            {
-                // no epnum specified, just show an overview
-                if ((!string.IsNullOrEmpty(ser.GetItem("banner"))) && (!string.IsNullOrEmpty(db.BannerMirror)))
-                    body += "<img width=758 height=140 src=\"" + db.BannerMirror + "/banners/" + ser.GetItem("banner") + "\"><br/>";
-
-                body += "<h1><A HREF=\"" + db.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A> " + "</h1>";
-
-                body += "<h2>Overview</h2>" + ser.GetItem("Overview");
-
-                string actors = ser.GetItem("Actors");
-                if (!string.IsNullOrEmpty(actors))
-                {
-                    bool first = true;
-                    foreach (string aa in actors.Split('|'))
-                    {
-                        if (!string.IsNullOrEmpty(aa))
-                        {
-                            if (!first)
-                                body += ", ";
-                            else
-                                body += "<h2>Actors</h2>";
-                            body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa + "\">" + aa + "</a>";
-                            first = false;
-                        }
-                    }
-                }
-
-                string airsTime = ser.GetItem("Airs_Time");
-                string airsDay = ser.GetItem("Airs_DayOfWeek");
-                if ((!string.IsNullOrEmpty(airsTime)) && (!string.IsNullOrEmpty(airsDay)))
-                {
-                    body += "<h2>Airs</h2> " + airsTime + " " + airsDay;
-                    string net = ser.GetItem("Network");
-                    if (!string.IsNullOrEmpty(net))
-                    {
-                        skip.Add("Network");
-                        body += ", " + net;
-                    }
-                }
-
-                bool firstInfo = true;
-                foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in ser.Items)
-                {
-                    if (firstInfo)
-                    {
-                        body += "<h2>Information<table border=0>";
-                        firstInfo = false;
-                    }
-                    if (!skip.Contains(kvp.Key))
-                    {
-                        if (kvp.Key == "SeriesID")
-                            body += "<tr><td width=120px>tv.com</td><td><A HREF=\"http://www.tv.com/show/" + kvp.Value + "/summary.html\">Visit</a></td></tr>";
-                        else if (kvp.Key == "IMDB_ID")
-                            body += "<tr><td width=120px>imdb.com</td><td><A HREF=\"http://www.imdb.com/title/" + kvp.Value + "\">Visit</a></td></tr>";
+                        if (!first)
+                            body += ", ";
                         else
-                            body += "<tr><td width=120px>" + kvp.Key + "</td><td>" + kvp.Value + "</td></tr>";
+                            body += "<h2>Actors</h2>";
+                        body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa + "\">" + aa + "</a>";
+                        first = false;
                     }
                 }
-                if (!firstInfo)
-                    body += "</table>";
             }
-            db.Unlock("FillEpGuideHTML");
-            this.SetGuideHTMLbody(body);
+
+            string airsTime = ser.GetItem("Airs_Time");
+            string airsDay = ser.GetItem("Airs_DayOfWeek");
+            if ((!string.IsNullOrEmpty(airsTime)) && (!string.IsNullOrEmpty(airsDay)))
+            {
+                body += "<h2>Airs</h2> " + airsTime + " " + airsDay;
+                string net = ser.GetItem("Network");
+                if (!string.IsNullOrEmpty(net))
+                {
+                    skip.Add("Network");
+                    body += ", " + net;
+                }
+            }
+
+            bool firstInfo = true;
+            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in ser.Items)
+            {
+                if (firstInfo)
+                {
+                    body += "<h2>Information<table border=0>";
+                    firstInfo = false;
+                }
+                if (!skip.Contains(kvp.Key))
+                {
+                    if (kvp.Key == "SeriesID")
+                        body += "<tr><td width=120px>tv.com</td><td><A HREF=\"http://www.tv.com/show/" + kvp.Value + "/summary.html\">Visit</a></td></tr>";
+                    else if (kvp.Key == "IMDB_ID")
+                        body += "<tr><td width=120px>imdb.com</td><td><A HREF=\"http://www.imdb.com/title/" + kvp.Value + "\">Visit</a></td></tr>";
+                    else
+                        body += "<tr><td width=120px>" + kvp.Key + "</td><td>" + kvp.Value + "</td></tr>";
+                }
+            }
+            if (!firstInfo)
+                body += "</table>";
+
+            return body;
+
+        }
+
+        private string GetSeasonHTMLOverview(ShowItem si,SeriesInfo ser, int snum ) {
+            string body = "";
+
+            if (!string.IsNullOrEmpty(ser.GetItem("banner")) && !string.IsNullOrEmpty(TheTVDB.Instance.BannerMirror))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.BannerMirror + "/banners/" + ser.GetItem("banner") + "\"><br/>";
+
+            Season s = ser.Seasons[snum];
+
+            List<ProcessedEpisode> eis = null;
+            // int snum = s.SeasonNumber;
+            if (si.SeasonEpisodes.ContainsKey(snum))
+                eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
+            else
+                eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
+
+            string seasText = snum == 0 ? "Specials" : ("Season " + snum);
+            if ((eis.Count > 0) && (eis[0].SeasonID > 0))
+                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, eis[0].SeasonID, false) + "\">" + seasText + "</a>";
+            else
+                seasText = " - " + seasText;
+
+            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
+
+            DirFilesCache dfc = new DirFilesCache();
+            foreach (ProcessedEpisode ei in eis)
+            {
+                string epl = ei.NumsAsString();
+
+                // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
+                string episodeURL = "http://www.thetvdb.com/?tab=episode&seriesid=" + ei.SeriesID + "&seasonid=" + ei.SeasonID + "&id=" + ei.EpisodeID;
+
+                body += "<A href=\"" + episodeURL + "\" name=\"ep" + epl + "\">"; // anchor
+                body += "<b>" + CustomName.NameForNoExt(ei, CustomName.OldNStyle(6)) + "</b>";
+                body += "</A>"; // anchor
+                if (si.UseSequentialMatch && (ei.OverallNumber != -1))
+                    body += " (#" + ei.OverallNumber + ")";
+
+                body += " <A HREF=\"" + TVSettings.Instance.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
+
+                List<FileInfo> fl = this.mDoc.FindEpOnDisk(dfc, ei);
+                if (fl != null)
+                {
+                    foreach (FileInfo fi in fl)
+                        body += " <A HREF=\"file://" + fi.FullName + "\" class=\"search\">Watch</A>";
+                }
+
+                DateTime? dt = ei.GetAirDateDT(true);
+                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                    body += "<p>" + dt.Value.ToShortDateString() + " (" + ei.HowLong() + ")";
+
+                body += "<p><p>";
+
+                if (TVSettings.Instance.ShowEpisodePictures)
+                {
+                    body += "<table><tr>";
+                    body += "<td width=100% valign=top>" + ei.Overview + "</td><td width=300 height=225>";
+                    // 300x168 / 300x225
+                    if (!string.IsNullOrEmpty(ei.GetItem("filename")))
+                        body += "<img src=" + TheTVDB.Instance.BannerMirror + "/banners/_cache/" + ei.GetItem("filename") + ">";
+                    body += "</td></tr></table>";
+                }
+                else
+                    body += ei.Overview;
+
+                body += "<p><hr><p>";
+            } // for each episode in this season
+
+            return body;
         }
 
         // FillEpGuideHTML
@@ -898,12 +989,18 @@ namespace TVRename
             return tp + "tvrenameepguide.html";
         }
 
-        public static string EpGuideURLBase()
+        public static string ImagesGuidePath()
         {
-            return "file://" + EpGuidePath();
+            string tp = Path.GetTempPath();
+            return tp + "tvrenameimagesguide.html";
         }
 
-        public void SetGuideHTMLbody(string body)
+        public static string LocalFileURLBase(string path)
+        {
+            return "file://" + path;
+        }
+
+        public static void SetHTMLbody(string body, string path, WebBrowser web)
         {
             System.Drawing.Color col = System.Drawing.Color.FromName("ButtonFace");
 
@@ -915,15 +1012,13 @@ namespace TVRename
             html += body;
             html += "</body></html>";
 
-            this.epGuideHTML.Navigate("about:blank"); // make it close any file it might have open
-
-            string path = EpGuidePath();
+            web.Navigate("about:blank"); // make it close any file it might have open
 
             BinaryWriter bw = new BinaryWriter(new FileStream(path, FileMode.Create));
             bw.Write(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(html));
             bw.Close();
 
-            this.epGuideHTML.Navigate(EpGuideURLBase());
+            web.Navigate(LocalFileURLBase(path));
         }
 
         public void TVDBFor(ProcessedEpisode e)
@@ -931,7 +1026,7 @@ namespace TVRename
             if (e == null)
                 return;
 
-            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(e.SI.TVDBCode, e.SeasonID, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(e.SI.TVDBCode, e.SeasonID, false));
         }
 
         public void TVDBFor(Season seas)
@@ -939,7 +1034,7 @@ namespace TVRename
             if (seas == null)
                 return;
 
-            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(seas.TheSeries.TVDBCode, -1, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(seas.TheSeries.TVDBCode, -1, false));
         }
 
         public void TVDBFor(ShowItem si)
@@ -947,7 +1042,7 @@ namespace TVRename
             if (si == null)
                 return;
 
-            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(si.TVDBCode, -1, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, false));
         }
 
         public void menuSearchSites_ItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
@@ -961,14 +1056,27 @@ namespace TVRename
             this.RefreshWTW(true);
         }
 
+        public List<ProcessedEpisode> GetMissingEps()
+        {
+            List<ProcessedEpisode> missing = new List<ProcessedEpisode>();
+            foreach (ListViewItem lvi in this.lvWhenToWatch.Items)
+            {
+                if (lvi.ImageIndex == 1)
+                {
+                    missing.Add((ProcessedEpisode)(lvi.Tag));
+                }
+            }
+            return missing;
+        }
+
         public void FillWhenToWatchList()
         {
             this.mInternalChange++;
             this.lvWhenToWatch.BeginUpdate();
 
-            int dd = this.mDoc.Settings.WTWRecentDays;
+            int dd = TVSettings.Instance.WTWRecentDays;
 
-            this.lvWhenToWatch.Groups[0].Header = "Aired in the last " + dd + " day" + ((dd == 1) ? "" : "s");
+            this.lvWhenToWatch.Groups["justPassed"].Header = "Aired in the last " + dd + " day" + ((dd == 1) ? "" : "s");
 
             // try to maintain selections if we can
             List<ProcessedEpisode> selections = new List<ProcessedEpisode>();
@@ -981,7 +1089,7 @@ namespace TVRename
             this.lvWhenToWatch.Items.Clear();
 
             System.Collections.Generic.List<DateTime> bolded = new System.Collections.Generic.List<DateTime>();
-
+            DirFilesCache dfc = new DirFilesCache();
             foreach (ShowItem si in this.mDoc.GetShowItems(true))
             {
                 if (!si.ShowNextAirdate)
@@ -1018,7 +1126,7 @@ namespace TVRename
                                 for (int i = 0; i < 7; i++)
                                     lvi.SubItems.Add("");
 
-                                this.UpdateWTW(ei, lvi);
+                                this.UpdateWTW(dfc, ei, lvi);
 
                                 this.lvWhenToWatch.Items.Add(lvi);
 
@@ -1104,7 +1212,7 @@ namespace TVRename
             }
             this.mInternalChange--;
 
-            if (this.mDoc.Settings.AutoSelectShowInMyShows)
+            if (TVSettings.Instance.AutoSelectShowInMyShows)
                 GotoEpguideFor(ei, false);
         }
 
@@ -1114,16 +1222,16 @@ namespace TVRename
                 return;
 
             ProcessedEpisode ei = (ProcessedEpisode) (this.lvWhenToWatch.SelectedItems[0].Tag);
-            System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ei);
+            List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, ei);
             if ((fl != null) && (fl.Count > 0))
             {
-                TVDoc.SysOpen(fl[0].FullName);
+                Helpers.SysOpen(fl[0].FullName);
                 return;
             }
 
             // Don't have the episode.  Scan or search?
 
-            switch (this.mDoc.Settings.WTWDoubleClick)
+            switch (TVSettings.Instance.WTWDoubleClick)
             {
                 default:
                 case TVSettings.WTWDoubleClickAction.Search:
@@ -1189,7 +1297,7 @@ namespace TVRename
             this.FillWhenToWatchList();
             this.mInternalChange--;
 
-            this.mDoc.WriteUpcomingRSSandXML();
+            this.mDoc.WriteUpcoming();
         }
 
         public void refreshWTWTimer_Tick(object sender, System.EventArgs e)
@@ -1219,12 +1327,14 @@ namespace TVRename
                 this.mDoc.DoBTSearch((ProcessedEpisode)(lvi.Tag));
         }
 
-        public void epGuideHTML_Navigating(object sender, System.Windows.Forms.WebBrowserNavigatingEventArgs e)
+        public void NavigateTo(object sender, System.Windows.Forms.WebBrowserNavigatingEventArgs e)
         {
             string url = e.Url.AbsoluteUri;
             if (url.Contains("tvrenameepguide.html#ep"))
                 return; // don't intercept
             if (url.EndsWith("tvrenameepguide.html"))
+                return; // don't intercept
+            if (url.EndsWith("tvrenameimagesguide.html"))
                 return; // don't intercept
             if (url.CompareTo("about:blank") == 0)
                 return; // don't intercept about:blank
@@ -1234,7 +1344,7 @@ namespace TVRename
             if ((url.Substring(0, 7).CompareTo("http://") == 0) || (url.Substring(0, 7).CompareTo("file://") == 0))
             {
                 e.Cancel = true;
-                TVDoc.SysOpen(e.Url.AbsoluteUri);
+                Helpers.SysOpen(e.Url.AbsoluteUri);
             }
         }
 
@@ -1254,7 +1364,7 @@ namespace TVRename
 
         public void ShowYourself()
         {
-            if (!this.mDoc.Settings.ShowInTaskbar)
+            if (!TVSettings.Instance.ShowInTaskbar)
                 this.Show();
             if (this.WindowState == FormWindowState.Minimized)
                 this.WindowState = FormWindowState.Normal;
@@ -1394,6 +1504,11 @@ namespace TVRename
                 tsi = new ToolStripMenuItem("Force Refresh");
                 tsi.Tag = (int)RightClickCommands.kForceRefreshSeries;
                 this.showRightClickMenu.Items.Add(tsi);
+
+                tsi = new ToolStripMenuItem("Update Images");
+                tsi.Tag = (int)RightClickCommands.kUpdateImages;
+                this.showRightClickMenu.Items.Add(tsi);
+
                 ToolStripSeparator tss = new ToolStripSeparator();
                 this.showRightClickMenu.Items.Add(tss);
 
@@ -1427,7 +1542,7 @@ namespace TVRename
 
             if (ep != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
-                System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(ep);
+                List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, ep);
                 if (fl != null)
                 {
                     if (fl.Count > 0)
@@ -1452,7 +1567,7 @@ namespace TVRename
                 bool first = true;
                 foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
                 {
-                    System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(epds);
+                    List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, epds);
                     if ((fl != null) && (fl.Count > 0))
                     {
                         if (first)
@@ -1488,11 +1603,11 @@ namespace TVRename
 
             if (ep != null)
             {
-                if (ep.SI.AllFolderLocations(this.mDoc.Settings).ContainsKey(ep.SeasonNumber))
+                if (ep.SI.AllFolderLocations().ContainsKey(ep.SeasonNumber))
                 {
                     int n = this.mFoldersToOpen.Count;
                     bool first = true;
-                    foreach (string folder in ep.SI.AllFolderLocations(this.mDoc.Settings)[ep.SeasonNumber])
+                    foreach (string folder in ep.SI.AllFolderLocations()[ep.SeasonNumber])
                     {
                         if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder))
                         {
@@ -1513,11 +1628,11 @@ namespace TVRename
                     }
                 }
             }
-            else if ((seas != null) && (si != null) && (si.AllFolderLocations(this.mDoc.Settings).ContainsKey(seas.SeasonNumber)))
+            else if ((seas != null) && (si != null) && (si.AllFolderLocations().ContainsKey(seas.SeasonNumber)))
             {
                 int n = this.mFoldersToOpen.Count;
                 bool first = true;
-                foreach (string folder in si.AllFolderLocations(this.mDoc.Settings)[seas.SeasonNumber])
+                foreach (string folder in si.AllFolderLocations()[seas.SeasonNumber])
                 {
                     if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
                     {
@@ -1542,7 +1657,7 @@ namespace TVRename
                 int n = this.mFoldersToOpen.Count;
                 bool first = true;
 
-                foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in si.AllFolderLocations(this.mDoc.Settings))
+                foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in si.AllFolderLocations())
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -1599,7 +1714,7 @@ namespace TVRename
         {
             this.showRightClickMenu.Items.Clear();
             this.mFoldersToOpen = new List<String>();
-            this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
+            this.mLastFL = new List<FileInfo>();
 
             this.MenuGuideAndTVDB(false);
             this.MenuShowAndEpisodes();
@@ -1611,208 +1726,220 @@ namespace TVRename
         public void showRightClickMenu_ItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
         {
             this.showRightClickMenu.Close();
-            RightClickCommands n = (RightClickCommands) e.ClickedItem.Tag;
 
-            ShowItem si = (this.mLastShowsClicked != null) && (this.mLastShowsClicked.Count > 0)
-                              ? this.mLastShowsClicked[0]
-                              : null;
+            if (e.ClickedItem.Tag != null) {
 
-            switch (n)
-            {
-                case RightClickCommands.kEpisodeGuideForShow: // epguide
-                    if (this.mLastEpClicked != null)
-                        this.GotoEpguideFor(this.mLastEpClicked, true);
-                    else
-                    {
-                        if (si != null)
-                            this.GotoEpguideFor(si, true);
-                    }
-                    break;
+                RightClickCommands n = (RightClickCommands) e.ClickedItem.Tag;
 
-                case RightClickCommands.kVisitTVDBEpisode: // thetvdb.com
-                    {
-                        this.TVDBFor(this.mLastEpClicked);
-                        break;
-                    }
+                ShowItem si = (this.mLastShowsClicked != null) && (this.mLastShowsClicked.Count > 0)
+                                  ? this.mLastShowsClicked[0]
+                                  : null;
 
-                case RightClickCommands.kVisitTVDBSeason:
-                    {
-                        this.TVDBFor(this.mLastSeasonClicked);
-                        break;
-                    }
-
-                case RightClickCommands.kVisitTVDBSeries:
-                    {
-                        if (si != null)
-                            this.TVDBFor(si);
-                        break;
-                    }
-                case RightClickCommands.kScanSpecificSeries:
-                    {
-                        if (mLastShowsClicked != null)
+                switch (n)
+                {
+                    case RightClickCommands.kEpisodeGuideForShow: // epguide
+                        if (this.mLastEpClicked != null)
+                            this.GotoEpguideFor(this.mLastEpClicked, true);
+                        else
                         {
-                            this.Scan(mLastShowsClicked);
+                            if (si != null)
+                                this.GotoEpguideFor(si, true);
+                        }
+                        break;
+
+                    case RightClickCommands.kVisitTVDBEpisode: // thetvdb.com
+                        {
+                            this.TVDBFor(this.mLastEpClicked);
+                            break;
+                        }
+
+                    case RightClickCommands.kVisitTVDBSeason:
+                        {
+                            this.TVDBFor(this.mLastSeasonClicked);
+                            break;
+                        }
+
+                    case RightClickCommands.kVisitTVDBSeries:
+                        {
+                            if (si != null)
+                                this.TVDBFor(si);
+                            break;
+                        }
+                    case RightClickCommands.kScanSpecificSeries:
+                        {
+                            if (mLastShowsClicked != null)
+                            {
+                                this.Scan(mLastShowsClicked);
+                                this.tabControl1.SelectTab(this.tbAllInOne);
+                            }
+                            break;
+                        }
+
+                    case RightClickCommands.kWhenToWatchSeries: // when to watch
+                        {
+                            int code = -1;
+                            if (this.mLastEpClicked != null)
+                                code = this.mLastEpClicked.TheSeries.TVDBCode;
+                            if (si != null)
+                                code = si.TVDBCode;
+
+                            if (code != -1)
+                            {
+                                this.tabControl1.SelectTab(this.tbWTW);
+
+                                for (int i = 0; i < this.lvWhenToWatch.Items.Count; i++)
+                                    this.lvWhenToWatch.Items[i].Selected = false;
+
+                                for (int i = 0; i < this.lvWhenToWatch.Items.Count; i++)
+                                {
+                                    ListViewItem lvi = this.lvWhenToWatch.Items[i];
+                                    ProcessedEpisode ei = (ProcessedEpisode)(lvi.Tag);
+                                    if ((ei != null) && (ei.TheSeries.TVDBCode == code))
+                                        lvi.Selected = true;
+                                }
+                                this.lvWhenToWatch.Focus();
+                            }
+                            break;
+                        }
+                    case RightClickCommands.kForceRefreshSeries:
+                        if (si != null)
+                            this.ForceRefresh(mLastShowsClicked);
+                        break;
+                    case RightClickCommands.kUpdateImages:
+                        if (si != null)
+                        {
+                            this.UpdateImages(mLastShowsClicked);
                             this.tabControl1.SelectTab(this.tbAllInOne);
                         }
                         break;
-                    }
-
-                case RightClickCommands.kWhenToWatchSeries: // when to watch
-                    {
-                        int code = -1;
-                        if (this.mLastEpClicked != null)
-                            code = this.mLastEpClicked.TheSeries.TVDBCode;
+                    case RightClickCommands.kEditShow:
                         if (si != null)
-                            code = si.TVDBCode;
-
-                        if (code != -1)
+                            this.EditShow(si);
+                        break;
+                    case RightClickCommands.kDeleteShow:
+                        if (si != null)
+                            this.DeleteShow(si);
+                        break;
+                    case RightClickCommands.kEditSeason:
+                        if (si != null)
+                            this.EditSeason(si, this.mLastSeasonClicked.SeasonNumber);
+                        break;
+                    case RightClickCommands.kBTSearchFor:
                         {
-                            this.tabControl1.SelectTab(this.tbWTW);
-
-                            for (int i = 0; i < this.lvWhenToWatch.Items.Count; i++)
-                                this.lvWhenToWatch.Items[i].Selected = false;
-
-                            for (int i = 0; i < this.lvWhenToWatch.Items.Count; i++)
+                            foreach (ListViewItem lvi in this.lvAction.SelectedItems)
                             {
-                                ListViewItem lvi = this.lvWhenToWatch.Items[i];
-                                ProcessedEpisode ei = (ProcessedEpisode) (lvi.Tag);
-                                if ((ei != null) && (ei.TheSeries.TVDBCode == code))
-                                    lvi.Selected = true;
+                                ItemMissing m = (ItemMissing)(lvi.Tag);
+                                if (m != null)
+                                    this.mDoc.DoBTSearch(m.Episode);
                             }
-                            this.lvWhenToWatch.Focus();
                         }
                         break;
-                    }
-                case RightClickCommands.kForceRefreshSeries:
-                    if (si != null)
-                        this.ForceRefresh(mLastShowsClicked);
-                    break;
-                case RightClickCommands.kEditShow:
-                    if (si != null)
-                        this.EditShow(si);
-                    break;
-                case RightClickCommands.kDeleteShow:
-                    if (si != null)
-                        this.DeleteShow(si);
-                    break;
-                case RightClickCommands.kEditSeason:
-                    if (si != null)
-                        this.EditSeason(si, this.mLastSeasonClicked.SeasonNumber);
-                    break;
-                case RightClickCommands.kBTSearchFor:
-                    {
-                        foreach (ListViewItem lvi in this.lvAction.SelectedItems)
+                    case RightClickCommands.kActionAction:
+                        this.ActionAction(false);
+                        break;
+                    case RightClickCommands.kActionBrowseForFile:
                         {
-                            ItemMissing m = (ItemMissing) (lvi.Tag);
-                            if (m != null)
-                                this.mDoc.DoBTSearch(m.Episode);
-                        }
-                    }
-                    break;
-                case RightClickCommands.kActionAction:
-                    this.ActionAction(false);
-                    break;
-                case RightClickCommands.kActionBrowseForFile:
-                    {
-                        if ((this.mLastActionsClicked != null) && (this.mLastActionsClicked.Count > 0))
-                        {
-                            ItemMissing mi = (ItemMissing) this.mLastActionsClicked[0];
-                            if (mi != null)
+                            if ((this.mLastActionsClicked != null) && (this.mLastActionsClicked.Count > 0))
                             {
-                                // browse for mLastActionClicked
-                                this.openFile.Filter = "Video Files|" +
-                                                       this.mDoc.Settings.GetVideoExtensionsString().Replace(".", "*.") +
-                                                       "|All Files (*.*)|*.*";
-
-                                if (this.openFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                ItemMissing mi = (ItemMissing)this.mLastActionsClicked[0];
+                                if (mi != null)
                                 {
-                                    // make new Item for copying/moving to specified location
-                                    FileInfo from = new FileInfo(this.openFile.FileName);
-                                    this.mDoc.TheActionList.Add(
-                                        new ActionCopyMoveRename(
-                                            this.mDoc.Settings.LeaveOriginals
-                                                ? ActionCopyMoveRename.Op.Copy
-                                                : ActionCopyMoveRename.Op.Move, from,
-                                            new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode));
-                                    // and remove old Missing item
-                                    this.mDoc.TheActionList.Remove(mi);
+                                    // browse for mLastActionClicked
+                                    this.openFile.Filter = "Video Files|" +
+                                                           TVSettings.Instance.GetVideoExtensionsString().Replace(".", "*.") +
+                                                           "|All Files (*.*)|*.*";
+
+                                    if (this.openFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                                    {
+                                        // make new Item for copying/moving to specified location
+                                        FileInfo from = new FileInfo(this.openFile.FileName);
+                                        this.mDoc.TheActionList.Add(
+                                            new ActionCopyMoveRename(
+                                                TVSettings.Instance.LeaveOriginals
+                                                    ? ActionCopyMoveRename.Op.Copy
+                                                    : ActionCopyMoveRename.Op.Move, from,
+                                                new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode, TVSettings.Instance.Tidyup));
+                                        // and remove old Missing item
+                                        this.mDoc.TheActionList.Remove(mi);
+                                    }
                                 }
+                                this.mLastActionsClicked = null;
+                                this.FillActionList();
+                            }
+
+                            break;
+                        }
+                    case RightClickCommands.kActionIgnore:
+                        this.IgnoreSelected();
+                        break;
+                    case RightClickCommands.kActionIgnoreSeason:
+                        {
+                            // add season to ignore list for each show selected
+                            if ((this.mLastActionsClicked != null) && (this.mLastActionsClicked.Count > 0))
+                            {
+                                foreach (Item ai in this.mLastActionsClicked)
+                                {
+                                    ScanListItem er = ai as ScanListItem;
+                                    if ((er == null) || (er.Episode == null))
+                                        continue;
+
+                                    int snum = er.Episode.SeasonNumber;
+
+                                    if (!er.Episode.SI.IgnoreSeasons.Contains(snum))
+                                        er.Episode.SI.IgnoreSeasons.Add(snum);
+
+                                    // remove all other episodes of this season from the Action list
+                                    ItemList remove = new ItemList();
+                                    foreach (Item action in this.mDoc.TheActionList)
+                                    {
+                                        ScanListItem er2 = action as ScanListItem;
+
+                                        if ((er2 != null) && (er2.Episode != null) && (er2.Episode.SeasonNumber == snum))
+                                            if (er2.TargetFolder == er.TargetFolder) //ie if they are for the same series
+                                                remove.Add(action);
+                                    }
+
+                                    foreach (Item action in remove)
+                                        this.mDoc.TheActionList.Remove(action);
+
+                                    if (remove.Count > 0)
+                                        this.mDoc.SetDirty();
+                                }
+                                this.FillMyShows();
                             }
                             this.mLastActionsClicked = null;
                             this.FillActionList();
+                            break;
                         }
-
+                    case RightClickCommands.kActionDelete:
+                        this.ActionDeleteSelected();
                         break;
-                    }
-                case RightClickCommands.kActionIgnore:
-                    this.IgnoreSelected();
-                    break;
-                case RightClickCommands.kActionIgnoreSeason:
-                    {
-                        // add season to ignore list for each show selected
-                        if ((this.mLastActionsClicked != null) && (this.mLastActionsClicked.Count > 0))
+                    default:
                         {
-                            foreach (Item ai in this.mLastActionsClicked)
+                            if ((n >= RightClickCommands.kWatchBase) && (n < RightClickCommands.kOpenFolderBase))
                             {
-                                ScanListItem er = ai as ScanListItem;
-                                if ((er == null) || (er.Episode == null))
-                                    continue;
+                                int wn = n - RightClickCommands.kWatchBase;
+                                if ((this.mLastFL != null) && (wn >= 0) && (wn < this.mLastFL.Count))
+                                    Helpers.SysOpen(this.mLastFL[wn].FullName);
+                            }
+                            else if (n >= RightClickCommands.kOpenFolderBase)
+                            {
+                                int fnum = n - RightClickCommands.kOpenFolderBase;
 
-                                int snum = er.Episode.SeasonNumber;
-
-                                if (!er.Episode.SI.IgnoreSeasons.Contains(snum))
-                                    er.Episode.SI.IgnoreSeasons.Add(snum);
-
-                                // remove all other episodes of this season from the Action list
-                                ItemList remove = new ItemList();
-                                foreach (Item action in this.mDoc.TheActionList)
+                                if (fnum < this.mFoldersToOpen.Count)
                                 {
-                                    ScanListItem er2 = action as ScanListItem;
+                                    string folder = this.mFoldersToOpen[fnum];
 
-                                    if ((er2 != null) && (er2.Episode != null) && (er2.Episode.SeasonNumber == snum))
-                                        remove.Add(action);
+                                    if (Directory.Exists(folder))
+                                        Helpers.SysOpen(folder);
                                 }
-
-                                foreach (Item action in remove)
-                                    this.mDoc.TheActionList.Remove(action);
-
-                                if (remove.Count > 0)
-                                    this.mDoc.SetDirty();
+                                return;
                             }
-                            this.FillMyShows();
+                            else
+                                System.Diagnostics.Debug.Fail("Unknown right-click action " + n);
+                            break;
                         }
-                        this.mLastActionsClicked = null;
-                        this.FillActionList();
-                        break;
-                    }
-                case RightClickCommands.kActionDelete:
-                    this.ActionDeleteSelected();
-                    break;
-                default:
-                    {
-                        if ((n >= RightClickCommands.kWatchBase) && (n < RightClickCommands.kOpenFolderBase))
-                        {
-                            int wn = n - RightClickCommands.kWatchBase;
-                            if ((this.mLastFL != null) && (wn >= 0) && (wn < this.mLastFL.Count))
-                                TVDoc.SysOpen(this.mLastFL[wn].FullName);
-                        }
-                        else if (n >= RightClickCommands.kOpenFolderBase)
-                        {
-                            int fnum = n - RightClickCommands.kOpenFolderBase;
-
-                            if (fnum < this.mFoldersToOpen.Count)
-                            {
-                                string folder = this.mFoldersToOpen[fnum];
-
-                                if (Directory.Exists(folder))
-                                    TVDoc.SysOpen(folder);
-                            }
-                            return;
-                        }
-                        else
-                            System.Diagnostics.Debug.Fail("Unknown right-click action " + n);
-                        break;
-                    }
+                }
             }
 
             this.mLastEpClicked = null;
@@ -1833,7 +1960,7 @@ namespace TVRename
             switch ((int)(e.ClickedItem.Tag))
             {
                 case 0: // open folder
-                    TVDoc.SysOpen(this.mLastFolderClicked);
+                    Helpers.SysOpen(this.mLastFolderClicked);
                     break;
                 default:
                     break;
@@ -1886,9 +2013,9 @@ namespace TVRename
                 this.mDoc.UpdateTVDBLanguage();
                 this.ShowHideNotificationIcon();
                 this.FillWhenToWatchList();
-                this.ShowInTaskbar = this.mDoc.Settings.ShowInTaskbar;
+                this.ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
                 this.FillEpGuideHTML();
-                this.mAutoFolderMonitor.SettingsChanged(this.mDoc.Settings.MonitorFolders);
+                this.mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
                 ForceRefresh(null);
             }
             this.LessBusy();
@@ -1899,7 +2026,7 @@ namespace TVRename
             try
             {
                 this.mDoc.WriteXMLSettings();
-                this.mDoc.GetTVDB(false, "").SaveCache();
+                TheTVDB.Instance.SaveCache();
                 this.SaveLayoutXML();
             }
             catch (Exception ex)
@@ -1921,7 +2048,7 @@ namespace TVRename
         {
             if (this.WindowState == FormWindowState.Normal)
                 this.mLastNonMaximizedSize = this.Size;
-            if ((this.WindowState == FormWindowState.Minimized) && (!this.mDoc.Settings.ShowInTaskbar))
+            if ((this.WindowState == FormWindowState.Minimized) && (!TVSettings.Instance.ShowInTaskbar))
                 this.Hide();
         }
 
@@ -1935,10 +2062,10 @@ namespace TVRename
         {
             int n = this.mDoc.DownloadDone ? 0 : this.mDoc.DownloadsRemaining;
 
-            this.txtDLStatusLabel.Visible = (n != 0 || this.mDoc.Settings.BGDownload);
+            this.txtDLStatusLabel.Visible = (n != 0 || TVSettings.Instance.BGDownload);
             if (n != 0)
             {
-                this.txtDLStatusLabel.Text = "Background download: " + this.mDoc.GetTVDB(false, "").CurrentDLTask;
+                this.txtDLStatusLabel.Text = "Background download: " + TheTVDB.Instance.CurrentDLTask;
                 this.backgroundDownloadNowToolStripMenuItem.Enabled = false;
             }
             else
@@ -1949,7 +2076,7 @@ namespace TVRename
                 if ((n == 0) && (this.LastDLRemaining > 0))
                 {
                     // we've just finished a bunch of background downloads
-                    this.mDoc.GetTVDB(false, "").SaveCache();
+                    TheTVDB.Instance.SaveCache();
                     this.RefreshWTW(false);
 
                     this.backgroundDownloadNowToolStripMenuItem.Enabled = true;
@@ -1960,12 +2087,12 @@ namespace TVRename
 
         public void backgroundDownloadToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            this.mDoc.Settings.BGDownload = !this.mDoc.Settings.BGDownload;
-            this.backgroundDownloadToolStripMenuItem.Checked = this.mDoc.Settings.BGDownload;
+            TVSettings.Instance.BGDownload = !TVSettings.Instance.BGDownload;
+            this.backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
             this.statusTimer_Tick(null, null);
             this.mDoc.SetDirty();
 
-            if (this.mDoc.Settings.BGDownload)
+            if (TVSettings.Instance.BGDownload)
                 this.BGDownloadTimer.Start();
             else
                 this.BGDownloadTimer.Stop();
@@ -1982,7 +2109,7 @@ namespace TVRename
             this.BGDownloadTimer.Interval = BGDLLongInterval(); // after first time (10 seconds), put up to 60 minutes
             this.BGDownloadTimer.Start();
 
-            if (this.mDoc.Settings.BGDownload && this.mDoc.DownloadDone) // only do auto-download if don't have stuff to do already
+            if (TVSettings.Instance.BGDownload && this.mDoc.DownloadDone) // only do auto-download if don't have stuff to do already
             {
                 this.mDoc.StartBGDownloadThread(false);
 
@@ -1992,7 +2119,7 @@ namespace TVRename
 
         public void backgroundDownloadNowToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            if (this.mDoc.Settings.OfflineMode)
+            if (TVSettings.Instance.OfflineMode)
             {
                 System.Windows.Forms.DialogResult res = MessageBox.Show("Ignore offline mode and download anyway?", "Background Download", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res != System.Windows.Forms.DialogResult.Yes)
@@ -2008,14 +2135,14 @@ namespace TVRename
 
         public void offlineOperationToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            if (!this.mDoc.Settings.OfflineMode)
+            if (!TVSettings.Instance.OfflineMode)
             {
                 if (MessageBox.Show("Are you sure you wish to go offline?", "TVRename", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                     return;
             }
 
-            this.mDoc.Settings.OfflineMode = !this.mDoc.Settings.OfflineMode;
-            this.offlineOperationToolStripMenuItem.Checked = this.mDoc.Settings.OfflineMode;
+            TVSettings.Instance.OfflineMode = !TVSettings.Instance.OfflineMode;
+            this.offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
             this.mDoc.SetDirty();
         }
 
@@ -2073,7 +2200,7 @@ namespace TVRename
 
         public void ShowHideNotificationIcon()
         {
-            this.notifyIcon1.Visible = this.mDoc.Settings.NotificationAreaIcon && !this.mDoc.Args.Hide;
+            this.notifyIcon1.Visible = TVSettings.Instance.NotificationAreaIcon && !this.mDoc.Args.Hide;
         }
 
         public void statisticsToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -2086,10 +2213,10 @@ namespace TVRename
 
         public TreeNode AddShowItemToTree(ShowItem si)
         {
-            TheTVDB db = this.mDoc.GetTVDB(true, "AddShowItemToTree");
+            TheTVDB.Instance.GetLock("AddShowItemToTree");
             string name = si.ShowName;
 
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
 
             if (string.IsNullOrEmpty(name))
             {
@@ -2104,15 +2231,15 @@ namespace TVRename
 
             if (ser != null)
             {
-                if (mDoc.Settings.ShowStatusColors != null)
+                if (TVSettings.Instance.ShowStatusColors != null)
                 {
-                    if (mDoc.Settings.ShowStatusColors.IsShowStatusDefined(si.ShowStatus))
+                    if (TVSettings.Instance.ShowStatusColors.IsShowStatusDefined(si.ShowStatus))
                     {
-                        n.ForeColor = mDoc.Settings.ShowStatusColors.GetEntry(false, true, si.ShowStatus);
+                        n.ForeColor = TVSettings.Instance.ShowStatusColors.GetEntry(false, true, si.ShowStatus);
                     }
                     else
                     {
-                        Color nodeColor = mDoc.Settings.ShowStatusColors.GetEntry(true, true, si.SeasonsAirStatus.ToString());
+                        Color nodeColor = TVSettings.Instance.ShowStatusColors.GetEntry(true, true, si.SeasonsAirStatus.ToString());
                         if (!nodeColor.IsEmpty)
                             n.ForeColor = nodeColor;
                     }
@@ -2133,9 +2260,9 @@ namespace TVRename
                         n2.ForeColor = Color.Gray;
                     else
                     {
-                        if (mDoc.Settings.ShowStatusColors != null)
+                        if (TVSettings.Instance.ShowStatusColors != null)
                         {
-                            Color nodeColor = mDoc.Settings.ShowStatusColors.GetEntry(true, false, ser.Seasons[snum].Status.ToString());
+                            Color nodeColor = TVSettings.Instance.ShowStatusColors.GetEntry(true, false, ser.Seasons[snum].Status.ToString());
                             if (!nodeColor.IsEmpty)
                                 n2.ForeColor = nodeColor;
                         }
@@ -2147,12 +2274,12 @@ namespace TVRename
 
             this.MyShowTree.Nodes.Add(n);
 
-            db.Unlock("AddShowItemToTree");
+            TheTVDB.Instance.Unlock("AddShowItemToTree");
 
             return n;
         }
 
-        public void UpdateWTW(ProcessedEpisode pe, ListViewItem lvi)
+        public void UpdateWTW(DirFilesCache dfc, ProcessedEpisode pe, ListViewItem lvi)
         {
             lvi.Tag = pe;
 
@@ -2171,13 +2298,13 @@ namespace TVRename
             double ttn = (dt.Subtract(DateTime.Now)).TotalHours;
 
             if (ttn < 0)
-                lvi.Group = this.lvWhenToWatch.Groups[0];
+                lvi.Group = this.lvWhenToWatch.Groups["justPassed"];
             else if (ttn < (7 * 24))
-                lvi.Group = this.lvWhenToWatch.Groups[1];
+                lvi.Group = this.lvWhenToWatch.Groups["next7days"];
             else if (!pe.NextToAir)
-                lvi.Group = this.lvWhenToWatch.Groups[3];
+                lvi.Group = this.lvWhenToWatch.Groups["later"];
             else
-                lvi.Group = this.lvWhenToWatch.Groups[2];
+                lvi.Group = this.lvWhenToWatch.Groups["futureEps"];
 
             int n = 1;
             lvi.Text = pe.SI.ShowName;
@@ -2196,7 +2323,7 @@ namespace TVRename
 
             if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
             {
-                System.Collections.Generic.List<System.IO.FileInfo> fl = this.mDoc.FindEpOnDisk(pe);
+                List<FileInfo> fl = this.mDoc.FindEpOnDisk(dfc, pe);
                 if ((fl != null) && (fl.Count > 0))
                     lvi.ImageIndex = 0;
                 else if (pe.SI.DoMissingCheck)
@@ -2239,16 +2366,16 @@ namespace TVRename
         private void bnMyShowsAdd_Click(object sender, System.EventArgs e)
         {
             this.MoreBusy();
-            ShowItem si = new ShowItem(this.mDoc.GetTVDB(false, ""));
-            TheTVDB db = this.mDoc.GetTVDB(true, "AddShow");
-            AddEditShow aes = new AddEditShow(si, db);
+            ShowItem si = new ShowItem();
+            TheTVDB.Instance.GetLock( "AddShow");
+            AddEditShow aes = new AddEditShow(si);
             System.Windows.Forms.DialogResult dr = aes.ShowDialog();
-            db.Unlock("AddShow");
+            TheTVDB.Instance.Unlock("AddShow");
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
                 this.mDoc.GetShowItems(true).Add(si);
                 this.mDoc.UnlockShowItems();
-                SeriesInfo ser = db.GetSeries(si.TVDBCode);
+                SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
                 if (ser != null)
                     ser.ShowTimeZone = aes.ShowTimeZone;
                 this.ShowAddedOrEdited(true);
@@ -2311,13 +2438,13 @@ namespace TVRename
         {
             this.MoreBusy();
 
-            TheTVDB db = this.mDoc.GetTVDB(true, "EditSeason");
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            TheTVDB.Instance.GetLock( "EditSeason");
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
             List<ProcessedEpisode> pel = TVDoc.GenerateEpisodes(si, ser, seasnum, false);
 
-            EditRules er = new EditRules(si, pel, seasnum, this.mDoc.Settings.NamingStyle);
+            EditRules er = new EditRules(si, pel, seasnum, TVSettings.Instance.NamingStyle);
             System.Windows.Forms.DialogResult dr = er.ShowDialog();
-            db.Unlock("EditSeason");
+            TheTVDB.Instance.Unlock("EditSeason");
             if (dr == DialogResult.OK)
             {
                 this.ShowAddedOrEdited(false);
@@ -2331,16 +2458,16 @@ namespace TVRename
         private void EditShow(ShowItem si)
         {
             this.MoreBusy();
-            TheTVDB db = this.mDoc.GetTVDB(true, "EditShow");
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            TheTVDB.Instance.GetLock( "EditShow");
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
 
             int oldCode = si.TVDBCode;
 
-            AddEditShow aes = new AddEditShow(si, db);
+            AddEditShow aes = new AddEditShow(si);
 
             System.Windows.Forms.DialogResult dr = aes.ShowDialog();
 
-            db.Unlock("EditShow");
+            TheTVDB.Instance.Unlock("EditShow");
 
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
@@ -2359,7 +2486,7 @@ namespace TVRename
             {
                 foreach (ShowItem si in sis)
                 {
-                    this.mDoc.GetTVDB(false, "").ForgetShow(si.TVDBCode, true);
+                    TheTVDB.Instance.ForgetShow(si.TVDBCode, true);
                 }
             }
             this.mDoc.DoDownloadsFG();
@@ -2368,6 +2495,23 @@ namespace TVRename
             this.RefreshWTW(false);
         }
 
+        private void UpdateImages(List<ShowItem> sis)
+        {
+            if (sis != null)
+            {
+                ForceRefresh(sis);
+
+                foreach (ShowItem si in sis)
+                {
+                    //update images for the showitem
+                    this.mDoc.ForceUpdateImages(si);
+                }
+                this.FillActionList();
+
+            }
+        }
+
+        
         private void bnMyShowsRefresh_Click(object sender, System.EventArgs e)
         {
             if (Control.ModifierKeys == Keys.Control)
@@ -2399,7 +2543,7 @@ namespace TVRename
             int sid = -1;
             if (seas != null)
                 sid = seas.SeasonID;
-            TVDoc.SysOpen(this.mDoc.GetTVDB(false, "").WebsiteURL(si.TVDBCode, sid, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(si.TVDBCode, sid, false));
         }
 
         private void bnMyShowsOpenFolder_Click(object sender, System.EventArgs e)
@@ -2410,7 +2554,7 @@ namespace TVRename
                 return;
 
             Season seas = TreeNodeToSeason(n);
-            System.Collections.Generic.Dictionary<int, List<string>> afl = si.AllFolderLocations(this.mDoc.Settings);
+            System.Collections.Generic.Dictionary<int, List<string>> afl = si.AllFolderLocations();
             int[] keys = new int[afl.Count];
             afl.Keys.CopyTo(keys, 0);
             if ((seas == null) && (keys.Length > 0))
@@ -2426,7 +2570,7 @@ namespace TVRename
                 {
                     try
                     {
-                        TVDoc.SysOpen(f);
+                        Helpers.SysOpen(f);
                         return;
                     }
                     catch
@@ -2441,7 +2585,7 @@ namespace TVRename
                 {
                     if (Directory.Exists(folder))
                     {
-                        TVDoc.SysOpen(folder);
+                        Helpers.SysOpen(folder);
                         return;
                     }
                 }
@@ -2449,7 +2593,7 @@ namespace TVRename
             try
             {
                 if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (Directory.Exists(si.AutoAdd_FolderBase)))
-                    TVDoc.SysOpen(si.AutoAdd_FolderBase);
+                    Helpers.SysOpen(si.AutoAdd_FolderBase);
             }
             catch
             {
@@ -2511,12 +2655,12 @@ namespace TVRename
 
         private void filenameTemplateEditorToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            CustomName cn = new CustomName(this.mDoc.Settings.NamingStyle.StyleString);
+            CustomName cn = new CustomName(TVSettings.Instance.NamingStyle.StyleString);
             CustomNameDesigner cne = new CustomNameDesigner(this.CurrentlySelectedPEL(), cn, this.mDoc);
             DialogResult dr = cne.ShowDialog();
             if (dr == DialogResult.OK)
             {
-                this.mDoc.Settings.NamingStyle = cn;
+                TVSettings.Instance.NamingStyle = cn;
                 this.mDoc.SetDirty();
             }
         }
@@ -2542,7 +2686,7 @@ namespace TVRename
 
             if (currentSI != null)
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in currentSI.AllFolderLocations(this.mDoc.Settings))
+                foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in currentSI.AllFolderLocations())
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -2557,7 +2701,7 @@ namespace TVRename
                 }
             }
 
-            AddEditSeasEpFinders d = new AddEditSeasEpFinders(this.mDoc.Settings.FNPRegexs, this.mDoc.GetShowItems(true), currentSI, theFolder, this.mDoc.Settings);
+            AddEditSeasEpFinders d = new AddEditSeasEpFinders(TVSettings.Instance.FNPRegexs, this.mDoc.GetShowItems(true), currentSI, theFolder);
             this.mDoc.UnlockShowItems();
 
             DialogResult dr = d.ShowDialog();
@@ -2642,7 +2786,7 @@ namespace TVRename
         {
             // only scan "recent" shows
             List<ShowItem> shows = new List<ShowItem>();
-            int dd = this.mDoc.Settings.WTWRecentDays;
+            int dd = TVSettings.Instance.WTWRecentDays;
             
             // for each show, see if any episodes were aired in "recent" days...
             foreach (ShowItem si in this.mDoc.GetShowItems(true))
@@ -2682,6 +2826,15 @@ namespace TVRename
         {
             this.MoreBusy();
             this.mDoc.ActionGo(shows);
+            this.LessBusy();
+            this.FillMyShows(); // scanning can download more info to be displayed in my shows
+            this.FillActionList();
+        }
+
+        private void QuickScan()
+        {
+            this.MoreBusy();
+            this.mDoc.QuickScan(GetMissingEps());
             this.LessBusy();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
@@ -2780,7 +2933,6 @@ namespace TVRename
             long moveSize = 0;
             int rssCount = 0;
             int downloadCount = 0;
-            int nfoCount = 0;
             int metaCount = 0;
             int dlCount = 0;
 
@@ -2811,9 +2963,7 @@ namespace TVRename
                     downloadCount++;
                 else if (Action is ActionRSS)
                     rssCount++;
-                else if (Action is ActionNFO)
-                    nfoCount++;
-                else if (Action is ActionPyTivoMeta)
+                else if (Action is ActionWriteMetadata)  // base interface that all metadata actions are derived from
                     metaCount++;
                 else if (Action is ItemuTorrenting || Action is ItemSABnzbd)
                     dlCount++;
@@ -2824,9 +2974,8 @@ namespace TVRename
             this.lvAction.Groups[3].Header = "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
             this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
             this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
-            this.lvAction.Groups[6].Header = "NFO File (" + nfoCount + " " + itemitems(nfoCount) + ")";
-            this.lvAction.Groups[7].Header = "pyTiovo Meta File (" + metaCount + " " + itemitems(metaCount) + ")";
-            this.lvAction.Groups[8].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
+            this.lvAction.Groups[6].Header = "Media Center Metadata (" + metaCount + " " + itemitems(metaCount) + ")";
+            this.lvAction.Groups[7].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
 
             this.InternalCheckChange = false;
 
@@ -2845,6 +2994,7 @@ namespace TVRename
 
         private void ActionAction(bool checkedNotSelected)
         {
+            this.mDoc.CurrentlyBusy = true;
             LVResults lvr = new LVResults(this.lvAction, checkedNotSelected);
             this.mDoc.DoActions(lvr.FlatList);
             // remove items from master list, unless it had an error
@@ -2858,6 +3008,7 @@ namespace TVRename
 
             this.FillActionList();
             this.RefreshWTW(false);
+            this.mDoc.CurrentlyBusy = false;
         }
 
         private void folderMonitorToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -2960,7 +3111,7 @@ namespace TVRename
 
             this.showRightClickMenu.Items.Clear();
             this.mFoldersToOpen = new List<String>();
-            this.mLastFL = new System.Collections.Generic.List<System.IO.FileInfo>();
+            this.mLastFL = new List<FileInfo>();
 
             this.mLastActionsClicked = new ItemList();
 
@@ -2984,7 +3135,7 @@ namespace TVRename
                         this.mLastShowsClicked = null;
                     }
 
-                    if ((this.mLastEpClicked != null) && (this.mDoc.Settings.AutoSelectShowInMyShows))
+                    if ((this.mLastEpClicked != null) && (TVSettings.Instance.AutoSelectShowInMyShows))
                         this.GotoEpguideFor(this.mLastEpClicked, false);
                 }
             }
@@ -3285,6 +3436,11 @@ namespace TVRename
         private void bnActionRecentCheck_Click(object sender, EventArgs e)
         {
             this.ScanRecent();
+        }
+
+        private void btnActionQuickScan_Click(object sender, EventArgs e)
+        {
+            this.QuickScan();
         }
     }
 }

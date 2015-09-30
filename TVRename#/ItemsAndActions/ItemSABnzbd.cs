@@ -100,9 +100,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 8; }
+            get { return "lvgDownloading"; }
         }
 
         int ScanListItem.IconNumber

@@ -73,8 +73,8 @@ namespace TVRename
             // 
             // pbMediaLib
             // 
-            this.pbMediaLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbMediaLib.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pbMediaLib.Location = new System.Drawing.Point(141, 9);
             this.pbMediaLib.Name = "pbMediaLib";
             this.pbMediaLib.Size = new System.Drawing.Size(223, 13);
@@ -92,8 +92,8 @@ namespace TVRename
             // 
             // pbLocalSearch
             // 
-            this.pbLocalSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbLocalSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pbLocalSearch.Location = new System.Drawing.Point(141, 28);
             this.pbLocalSearch.Name = "pbLocalSearch";
             this.pbLocalSearch.Size = new System.Drawing.Size(223, 13);
@@ -111,8 +111,8 @@ namespace TVRename
             // 
             // pbRSS
             // 
-            this.pbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbRSS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pbRSS.Location = new System.Drawing.Point(141, 66);
             this.pbRSS.Name = "pbRSS";
             this.pbRSS.Size = new System.Drawing.Size(223, 13);
@@ -130,8 +130,8 @@ namespace TVRename
             // 
             // pbDownloading
             // 
-            this.pbDownloading.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbDownloading.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pbDownloading.Location = new System.Drawing.Point(141, 47);
             this.pbDownloading.Name = "pbDownloading";
             this.pbDownloading.Size = new System.Drawing.Size(223, 13);
@@ -159,6 +159,8 @@ namespace TVRename
             this.Controls.Add(this.bnCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "ScanProgress";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

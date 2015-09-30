@@ -80,7 +80,7 @@ namespace TVRename
             if (this.cbFOScan.Checked || this.cbFolderScan.Checked)
             {
                 txt += "==== Filename processors ====\r\n";
-                foreach (FilenameProcessorRE s in this.mDoc.Settings.FNPRegexs)
+                foreach (FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
                     txt += (s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RE + "\" " + (s.UseFullPath ? "(FullPath)" : "") + "\r\n";
                 txt += "\r\n";
             }
@@ -92,13 +92,13 @@ namespace TVRename
 
                 DirCache dirC = new DirCache();
                 foreach (string efi in this.mDoc.SearchFolders)
-                    dirC.AddFolder(null, 0, 0, efi, true, this.mDoc.Settings);
+                    dirC.AddFolder(null, 0, 0, efi, true);
 
                 foreach (DirCacheEntry fi in dirC)
                 {
                     int seas;
                     int ep;
-                    bool r = this.mDoc.FindSeasEp(fi.TheFile, out seas, out ep, null);
+                    bool r = TVDoc.FindSeasEp(fi.TheFile, out seas, out ep, null);
                     bool useful = fi.HasUsefulExtension_NotOthersToo;
                     txt += fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n";
                 }
@@ -114,22 +114,22 @@ namespace TVRename
                     foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
                         int snum = kvp.Key;
-                        if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations(this.mDoc.Settings).ContainsKey(snum))
+                        if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations().ContainsKey(snum))
                             continue; // skip specials
 
-                        foreach (string folder in si.AllFolderLocations(this.mDoc.Settings)[snum])
+                        foreach (string folder in si.AllFolderLocations()[snum])
                         {
                             txt += si.TVDBCode + " : " + si.ShowName + " : S" + snum + "\r\n";
                             txt += "Folder: " + folder;
                             txt += "\r\n";
                             DirCache files = new DirCache();
                             if (Directory.Exists(folder))
-                                files.AddFolder(null, 0, 0, folder, true, this.mDoc.Settings);
+                                files.AddFolder(null, 0, 0, folder, true);
                             foreach (DirCacheEntry fi in files)
                             {
                                 int seas;
                                 int ep;
-                                bool r = this.mDoc.FindSeasEp(fi.TheFile, out seas, out ep, si);
+                                bool r = TVDoc.FindSeasEp(fi.TheFile, out seas, out ep, si);
                                 bool useful = fi.HasUsefulExtension_NotOthersToo;
                                 txt += fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n";
                             }

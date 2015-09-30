@@ -50,7 +50,12 @@ namespace TVRename
             get { return 1000000; }
         }
 
-        public bool Go(TVSettings settings, ref bool pause, TVRenameStats stats)
+        public string produces
+        {
+            get { return this.RSS.URL; }
+        }
+
+        public bool Go( ref bool pause, TVRenameStats stats)
         {
             System.Net.WebClient wc = new System.Net.WebClient();
             try
@@ -64,12 +69,12 @@ namespace TVRename
                     return false;
                 }
 
-                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + settings.FilenameFriendly(this.RSS.Title);
+                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(this.RSS.Title);
                 if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
                     saveTemp += ".torrent";
                 File.WriteAllBytes(saveTemp, r);
 
-                System.Diagnostics.Process.Start(settings.uTorrentPath, "/directory \"" + (new FileInfo(this.TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
+                System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "/directory \"" + (new FileInfo(this.TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
 
                 this.Done = true;
                 return true;
@@ -149,9 +154,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 4; }
+            get { return "lvgActionDownloadRSS"; }
         }
 
         int ScanListItem.IconNumber

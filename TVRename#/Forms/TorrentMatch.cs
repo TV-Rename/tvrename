@@ -66,7 +66,7 @@ namespace TVRename
 
         private void bnBTOpenFolder_Click(object sender, System.EventArgs e)
         {
-            TVDoc.SysOpen(this.txtFolder.Text);
+            Helpers.SysOpen(this.txtFolder.Text);
         }
 
         private void bnBrowseFolder_Click(object sender, System.EventArgs e)
@@ -127,7 +127,7 @@ namespace TVRename
 
         private void bnBTSecondOpen_Click(object sender, System.EventArgs e)
         {
-            TVDoc.SysOpen(this.txtBTSecondLocation.Text);
+            Helpers.SysOpen(this.txtBTSecondLocation.Text);
         }
     }
 }

@@ -97,17 +97,17 @@ namespace TVRename
                     else if (r.Name == "lastupdated")
                         this.Srv_LastUpdated = r.ReadElementContentAsInt();
                     else if (r.Name == "Overview")
-                        this.Overview = Helpers.ReadStringFixQuotesAndSpaces(r);
+                        this.Overview = XMLHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "Rating")        
-                        this.EpisodeRating = Helpers.ReadStringFixQuotesAndSpaces(r);  
+                        this.EpisodeRating = XMLHelper.ReadStringFixQuotesAndSpaces(r);  
                     else if (r.Name == "GuestStars")
-                        this.EpisodeGuestStars = Helpers.ReadStringFixQuotesAndSpaces(r);      
+                        this.EpisodeGuestStars = XMLHelper.ReadStringFixQuotesAndSpaces(r);      
                     else if (r.Name == "Director")
-                        this.EpisodeDirector = Helpers.ReadStringFixQuotesAndSpaces(r);      
+                        this.EpisodeDirector = XMLHelper.ReadStringFixQuotesAndSpaces(r);      
                     else if (r.Name == "Writer")
-                        this.Writer = Helpers.ReadStringFixQuotesAndSpaces(r);      
+                        this.Writer = XMLHelper.ReadStringFixQuotesAndSpaces(r);      
                     else if (r.Name == "EpisodeName")
-                        this.Name = Helpers.ReadStringFixQuotesAndSpaces(r);
+                        this.Name = XMLHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "FirstAired")
                     {
                         try
@@ -276,57 +276,30 @@ namespace TVRename
         {
             writer.WriteStartElement("Episode");
 
-            writer.WriteStartElement("id");
-            writer.WriteValue(this.EpisodeID);
-            writer.WriteEndElement();
-            writer.WriteStartElement("seriesid");
-            writer.WriteValue(this.SeriesID);
-            writer.WriteEndElement();
-            writer.WriteStartElement("seasonid");
-            writer.WriteValue(this.SeasonID);
-            writer.WriteEndElement();
-            writer.WriteStartElement("EpisodeNumber");
-            writer.WriteValue(this.EpNum);
-            writer.WriteEndElement();
-            writer.WriteStartElement("SeasonNumber");
-            writer.WriteValue(this.SeasonNumber);
-            writer.WriteEndElement();
-            writer.WriteStartElement("lastupdated");
-            writer.WriteValue(this.Srv_LastUpdated);
-            writer.WriteEndElement();
-            writer.WriteStartElement("Overview");
-            writer.WriteValue(this.Overview);
-            writer.WriteEndElement();
-            writer.WriteStartElement("Rating");     
-            writer.WriteValue(this.EpisodeRating);  
-            writer.WriteEndElement();               
-            writer.WriteStartElement("GuestStars");     
-            writer.WriteValue(this.EpisodeGuestStars);  
-            writer.WriteEndElement();               
-            writer.WriteStartElement("EpisodeDirector");     
-            writer.WriteValue(this.EpisodeDirector);  
-            writer.WriteEndElement();               
-            writer.WriteStartElement("Writer");     
-            writer.WriteValue(this.Writer);  
-            writer.WriteEndElement();               
-            writer.WriteStartElement("EpisodeName");
-            writer.WriteValue(this.Name);
-            writer.WriteEndElement();
+            XMLHelper.WriteElementToXML(writer,"id",this.EpisodeID);
+            XMLHelper.WriteElementToXML(writer,"seriesid",this.SeriesID);
+            XMLHelper.WriteElementToXML(writer,"seasonid",this.SeasonID);
+            XMLHelper.WriteElementToXML(writer,"EpisodeNumber",this.EpNum);
+            XMLHelper.WriteElementToXML(writer,"SeasonNumber",this.SeasonNumber);
+            XMLHelper.WriteElementToXML(writer,"lastupdated",this.Srv_LastUpdated);
+            XMLHelper.WriteElementToXML(writer,"Overview",this.Overview);
+            XMLHelper.WriteElementToXML(writer,"Rating",this.EpisodeRating);  
+            XMLHelper.WriteElementToXML(writer,"GuestStars",this.EpisodeGuestStars);  
+            XMLHelper.WriteElementToXML(writer,"EpisodeDirector",this.EpisodeDirector);  
+            XMLHelper.WriteElementToXML(writer,"Writer",this.Writer);  
+            XMLHelper.WriteElementToXML(writer,"EpisodeName",this.Name);
+
             if (this.FirstAired != null)
             {
-                writer.WriteStartElement("FirstAired");
-                writer.WriteValue(this.FirstAired.Value.ToString("yyyy-MM-dd"));
-                writer.WriteEndElement();
+                XMLHelper.WriteElementToXML(writer,"FirstAired",this.FirstAired.Value.ToString("yyyy-MM-dd"));
             }
 
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
             {
-                writer.WriteStartElement(kvp.Key);
-                writer.WriteValue(kvp.Value);
-                writer.WriteEndElement();
+                XMLHelper.WriteElementToXML(writer,kvp.Key,kvp.Value);
             }
 
-            writer.WriteEndElement();
+            writer.WriteEndElement(); //Episode
         }
     }
 }

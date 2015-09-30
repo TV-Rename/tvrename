@@ -64,7 +64,32 @@ namespace TVRename
 
         private CommandLineArgs Args;
 
-        public TheTVDB(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args)
+        //We are using the singleton design pattern
+        //http://msdn.microsoft.com/en-au/library/ff650316.aspx
+
+        private static volatile TheTVDB instance;
+        private static object syncRoot = new Object();
+
+        public static TheTVDB Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    lock (syncRoot)
+                    {
+                        if (instance == null)
+                            instance = new TheTVDB();
+                    }
+                }
+
+                return instance;
+            }
+        }
+
+
+             
+        public void setup(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args)
         {
             Args = args;
 
@@ -227,9 +252,7 @@ namespace TVRename
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Data");
-                writer.WriteStartAttribute("time");
-                writer.WriteValue(this.Srv_Time);
-                writer.WriteEndAttribute();
+                XMLHelper.WriteAttributeToXML(writer,"time",this.Srv_Time);
 
                 foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
                 {
@@ -244,6 +267,41 @@ namespace TVRename
                         }
                     }
                 }
+
+                
+
+                
+
+                //
+                // <BannersCache>
+                //      <BannersItem>
+                //          <SeriesId>123</SeriesId>
+                //          <Banners>
+                //              <Banner>
+
+                
+                writer.WriteStartElement("BannersCache");
+
+                foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
+                {
+                    writer.WriteStartElement("BannersItem");
+
+                    XMLHelper.WriteElementToXML(writer,"SeriesId",kvp.Key); 
+
+                    writer.WriteStartElement("Banners");
+
+                    //We need to write out all banners that we have in any of the collections. 
+
+                    foreach (System.Collections.Generic.KeyValuePair<int, Banner> kvp3 in kvp.Value.AllBanners)
+                    {
+                        Banner ban = kvp3.Value;
+                        ban.WriteXml(writer);
+                    }
+                    writer.WriteEndElement(); //Banners
+                    writer.WriteEndElement(); //BannersItem
+                }
+
+                writer.WriteEndElement(); // BannersCache
 
                 writer.WriteEndElement(); // data
 
@@ -308,6 +366,14 @@ namespace TVRename
             r += episodesToo ? "series/" + code + "/all/" + lang + ".zip" : "series/" + code + "/" + lang + ".xml";
             return r;
         }
+
+        public static string BuildBannerURL(bool withHttpAndKey, int code)
+        {
+            string r = withHttpAndKey ? "http://thetvdb.com/api/" + APIKey() + "/" : "";
+            r +=  "series/" + code + "/banners.xml";
+            return r;
+        }
+
 
         private byte[] GetPageZIP(string url, string extractFile, bool useKey, bool forceReload)
         {
@@ -846,6 +912,167 @@ namespace TVRename
 
             return true;
         }
+        public bool ProcessTVDBResponse(Stream str, Stream bannerStr, int? codeHint)
+        {
+            bool response = ProcessTVDBResponse(str, codeHint);
+            if (response == false) return response;
+
+            //now we can process the bannerStr
+            return ProcessTVDBBannerResponse(bannerStr, codeHint);
+        }
+
+        public void ProcessTVDBBannerCacheResponse(XmlReader r)
+        {
+            //this is a wrapper that provides the seriesId and the Banners List as provided from the website
+            //
+            //
+            // <BannersCache>
+            //      <BannersItem Expiry='xx'>
+            //          <SeriesId>123</SeriesId>
+            //          <Banners>
+            //              <Banner>
+
+            int seriesId = -1;
+            
+            while (!r.EOF)
+            {
+                if ((r.Name == "BannersCache") && !r.IsStartElement())
+                    break; // that's it.
+                if (r.Name == "BannersItem")
+                    r.Read();
+                else if ((r.Name == "SeriesId") && r.IsStartElement())
+                    seriesId = r.ReadElementContentAsInt();
+                else if ((r.Name == "Banners") && r.IsStartElement())
+                {
+                    ProcessTVDBBannerResponse(r.ReadSubtree(), seriesId);
+                    r.Read();
+                    seriesId = -1;
+                }
+                else
+                    r.Read();
+            }
+            
+        }
+
+        public bool ProcessTVDBBannerResponse(Stream str, int? codeHint)
+        {
+            // Will have a number of banners in the file. Each is linked to series, a type and a rating.
+            // all wrapped in <Banners> </Banners>
+
+            // e.g.: 
+            //<Banners>
+            //  <Banner>
+            //      <id>42604</id>
+            //      <BannerPath>fanart/original/79488-11.jpg</BannerPath>
+            //      <BannerType>fanart</BannerType>
+            //      <BannerType2>1920x1080</BannerType2>
+            //      <Colors>|235,227,206|38,14,4|150,139,85|</Colors>
+            //      <Language>en</Language>
+            //      <Rating>7.9333</Rating>
+            //      <RatingCount>15</RatingCount>
+            //      <SeriesName>false</SeriesName>
+            //      <ThumbnailPath>_cache/fanart/original/79488-11.jpg</ThumbnailPath>
+            //      <VignettePath>fanart/vignette/79488-11.jpg</VignettePath>
+            //  </Banner>
+            //  <Banner>
+            //      <id>708811</id>
+            //      <BannerPath>seasonswide/79488-5.jpg</BannerPath>
+            //      <BannerType>season</BannerType>
+            //      <BannerType2>seasonwide</BannerType2>
+            //      <Language>en</Language>
+            //      <Rating/>
+            //      <RatingCount>0</RatingCount>
+            //      <Season>5</Season>
+            //  </Banner>
+            //  .......
+            //</Banners>
+
+            //We are only interested in ones that are season speicific posters; these have bannerType and BannerType2 of season.
+            //There may be many posters per season - we need to get the best one. This is decided by the Rating field.
+
+            if (!this.GetLock("ProcessTVDBBannerResponse"))
+                return false;
+
+            try
+            {
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true
+                };
+                XmlReader r = XmlReader.Create(str, settings);
+
+                ProcessTVDBBannerResponse(r, codeHint );
+
+            }
+            catch (XmlException e)
+            {
+                if (!this.Args.Unattended)
+                {
+                    string message = "Error processing data from TheTVDB (top level).";
+                    message += "\r\n" + e.Message;
+                    String name = "";
+                    if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
+                    {
+                        name += "Show \"" + Series[codeHint.Value].Name + "\" ";
+                    }
+                    if (codeHint.HasValue)
+                    {
+                        name += "ID #" + codeHint.Value + " ";
+                    }
+                    MessageBox.Show(name + message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // throw new TVDBException(e.Message);
+                }
+                return false;
+            }
+            finally
+            {
+                this.Unlock("ProcessTVDBBannerResponse");
+            }
+            return true;
+        }
+
+
+        public void ProcessTVDBBannerResponse(XmlReader r, int? codeHint)
+        {
+            r.Read();
+
+            while (!r.EOF)
+            {
+                if ((r.Name == "Banners")&& r.IsStartElement())
+                {
+                    r.Read();
+                }
+                else if ((r.Name == "SeriesId")) 
+                {
+                    break; //we should never have got here - this is the seriesId that should have been passed in via codehint
+                } 
+                else if (r.Name == "Banner")
+                {
+                    Banner b = new Banner(null, null, codeHint, r.ReadSubtree(), Args );
+
+                    if (!this.Series.ContainsKey(b.SeriesID))
+                        throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+
+                    SeriesInfo ser = this.Series[b.SeriesID];
+
+                    ser.AddOrUpdateBanner(b);
+
+                    r.Read();
+
+                } else if ((r.Name == "Banners") && !r.IsStartElement()){
+                    this.Series[(int)codeHint].BannersLoaded = true;
+                    break; // that's it.
+                }
+                
+                else if (r.Name == "xml")
+                    r.Read();
+                else 
+                    r.Read();
+            }
+
+        }
+
 
         public bool ProcessTVDBResponse(Stream str, int? codeHint)
         {
@@ -932,6 +1159,13 @@ namespace TVRename
                     }
                     else if (r.Name == "xml")
                         r.Read();
+                    else if (r.Name == "BannersCache")
+                    {
+                        //this wil not be found in a standard response from the TVDB website
+                        //will only be in the response when we are reading from the cache
+                        ProcessTVDBBannerCacheResponse(r);
+                        r.Read();
+                    }
                     else if (r.Name == "Data")
                     {
                         string time = r.GetAttribute("time");
@@ -975,9 +1209,10 @@ namespace TVRename
             return this.ForceReloadOn.Contains(code) || !this.Series.ContainsKey(code);
         }
 
-        public SeriesInfo DownloadSeriesNow(int code, bool episodesToo)
+        public SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool bannersToo)
         {
             bool forceReload = this.ForceReloadOn.Contains(code);
+            
             string txt = "";
             if (this.Series.ContainsKey(code))
                 txt = this.Series[code].Name;
@@ -987,21 +1222,52 @@ namespace TVRename
                 txt += " (Everything)";
             else
                 txt += " Overview";
+
+            if (bannersToo)
+                txt += " plus banners";
+
             this.Say(txt);
 
             string lang = this.RequestLanguage;
             string url = BuildURL(false, episodesToo, code, lang);
+            
             byte[] p = episodesToo ? this.GetPageZIP(url, lang + ".xml", true, forceReload) : this.GetPage(url, true, typeMaskBits.tmXML, forceReload);
+
             if (p == null)
                 return null;
-
             MemoryStream ms = new MemoryStream(p);
 
-            this.ProcessTVDBResponse(ms, code);
+            if (bannersToo)
+            {
+                //TODO - Tidy this up - make use of the same ZIP file maybe
+                byte[] b;
+                if (episodesToo)
+                {
+                    b = this.GetPageZIP(url, "banners.xml", true, forceReload);
+                } else {
+                    string bannerURL = BuildBannerURL(false, code);
+                    b = this.GetPage(bannerURL, true, typeMaskBits.tmBanner, forceReload);
+                }
+                
+                if (b == null)
+                    return null;
 
+                MemoryStream bannerMS = new MemoryStream(b);
+                this.ProcessTVDBResponse(ms, bannerMS, code);
+
+
+            }
+            else
+            {
+                this.ProcessTVDBResponse(ms, code);
+
+
+            }
             this.ForceReloadOn.Remove(code);
 
             return (this.Series.ContainsKey(code)) ? this.Series[code] : null;
+
+
         }
 
         public bool DownloadEpisodeNow(int seriesID, int episodeID)
@@ -1043,15 +1309,18 @@ namespace TVRename
             return this.Series[code];
         }
 
-        public bool EnsureUpdated(int code)
+        public bool EnsureUpdated(int code, bool bannersToo)
         {
             if (!this.Series.ContainsKey(code) || (this.Series[code].Seasons.Count == 0))
-                return this.DownloadSeriesNow(code, true) != null; // the whole lot!
+                return this.DownloadSeriesNow(code, true, bannersToo) != null; // the whole lot!
 
             bool ok = true;
 
             if (this.Series[code].Dirty)
-                ok = (this.DownloadSeriesNow(code, false) != null) && ok;
+                ok = (this.DownloadSeriesNow(code, false, bannersToo) != null) && ok;
+            
+            if (bannersToo && !this.Series[code].BannersLoaded)
+                ok = (this.DownloadSeriesNow(code, false, bannersToo) != null) && ok;
 
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in this.Series[code].Seasons)
             {
@@ -1092,7 +1361,7 @@ namespace TVRename
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
             if (isNumber)
-                this.DownloadSeriesNow(int.Parse(text), false);
+                this.DownloadSeriesNow(int.Parse(text), false, false);
 
             // but, the number could also be a name, so continue searching as usual
             text = text.Replace(".", " ");

@@ -12,7 +12,7 @@ namespace TVRename
     using System.Windows.Forms;
     using System.Xml;
 
-    public class ActionNFO : Item, Action, ScanListItem
+    public class ActionNFO : Item, Action, ScanListItem, ActionWriteMetadata
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
         public FileInfo Where;
@@ -35,7 +35,7 @@ namespace TVRename
 
         public string Name
         {
-            get { return "Write NFO"; }
+            get { return "Write XBMC Metadata"; }
         }
 
         public bool Done { get; private set; }
@@ -57,7 +57,13 @@ namespace TVRename
             get { return 10000; }
         }
 
-        public bool Go(TVSettings tvsettings, ref bool pause, TVRenameStats stats)
+        public string produces
+        {
+            get { return this.Where.FullName; }
+        }
+
+
+        public bool Go(ref bool pause, TVRenameStats stats)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -83,21 +89,13 @@ namespace TVRename
             {
                 // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
                 writer.WriteStartElement("episodedetails");
-                writer.WriteStartElement("title");
-                writer.WriteValue(this.Episode.Name);
-                writer.WriteEndElement();
-                writer.WriteStartElement("rating");
-                writer.WriteValue(this.Episode.EpisodeRating);
-                writer.WriteEndElement();
-                writer.WriteStartElement("season");
-                writer.WriteValue(this.Episode.SeasonNumber);
-                writer.WriteEndElement();
-                writer.WriteStartElement("episode");
-                writer.WriteValue(this.Episode.EpNum);
-                writer.WriteEndElement();
-                writer.WriteStartElement("plot");
-                writer.WriteValue(this.Episode.Overview);
-                writer.WriteEndElement();
+
+                XMLHelper.WriteElementToXML(writer,"title",this.Episode.Name);
+                XMLHelper.WriteElementToXML(writer,"rating",this.Episode.EpisodeRating);
+                XMLHelper.WriteElementToXML(writer,"season",this.Episode.SeasonNumber);
+                XMLHelper.WriteElementToXML(writer,"episode",this.Episode.EpNum);
+                XMLHelper.WriteElementToXML(writer,"plot",this.Episode.Overview);
+
                 writer.WriteStartElement("aired");
                 if (this.Episode.FirstAired != null)
                     writer.WriteValue(this.Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
@@ -119,9 +117,7 @@ namespace TVRename
                             if (string.IsNullOrEmpty(Daa))
                                 continue;
 
-                            writer.WriteStartElement("director");
-                            writer.WriteValue(Daa);
-                            writer.WriteEndElement();
+                            XMLHelper.WriteElementToXML(writer,"director",Daa);
                         }
                     }
                 }
@@ -132,9 +128,7 @@ namespace TVRename
                     string EpWriter = this.Episode.Writer;
                     if (!string.IsNullOrEmpty(EpWriter))
                     {
-                        writer.WriteStartElement("credits");
-                        writer.WriteValue(EpWriter);
-                        writer.WriteEndElement();
+                        XMLHelper.WriteElementToXML(writer,"credits",EpWriter);
                     }
                 }
 
@@ -163,9 +157,7 @@ namespace TVRename
                             }
 
                             writer.WriteStartElement("actor");
-                            writer.WriteStartElement("name");
-                            writer.WriteValue(Gaa);
-                            writer.WriteEndElement(); // name
+                            XMLHelper.WriteElementToXML(writer,"name",Gaa);
                             writer.WriteEndElement(); // actor
                         }
                     }
@@ -183,9 +175,7 @@ namespace TVRename
                                 continue;
 
                             writer.WriteStartElement("actor");
-                            writer.WriteStartElement("name");
-                            writer.WriteValue(aa);
-                            writer.WriteEndElement(); // name
+                            XMLHelper.WriteElementToXML(writer,"name",aa);
                             writer.WriteEndElement(); // actor
                         }
                     }
@@ -199,13 +189,9 @@ namespace TVRename
 
                 writer.WriteStartElement("tvshow");
 
-                writer.WriteStartElement("title");
-                writer.WriteValue(this.SI.ShowName);
-                writer.WriteEndElement();
+                XMLHelper.WriteElementToXML(writer,"title",this.SI.ShowName);
 
-                writer.WriteStartElement("episodeguideurl");
-                writer.WriteValue(TheTVDB.BuildURL(true, true, this.SI.TVDBCode, this.SI.TVDB.RequestLanguage));
-                writer.WriteEndElement();
+                XMLHelper.WriteElementToXML(writer, "episodeguideurl", TheTVDB.BuildURL(true, true, this.SI.TVDBCode, TheTVDB.Instance.RequestLanguage));
 
                 WriteInfo(writer, this.SI, "Overview", "plot");
 
@@ -214,9 +200,7 @@ namespace TVRename
                 {
                     genre = genre.Trim('|');
                     genre = genre.Replace("|", " / ");
-                    writer.WriteStartElement("genre");
-                    writer.WriteValue(genre);
-                    writer.WriteEndElement();
+                    XMLHelper.WriteElementToXML(writer,"genre",genre);
                 }
 
                 WriteInfo(writer, this.SI, "FirstAired", "premiered");
@@ -234,9 +218,7 @@ namespace TVRename
                             continue;
 
                         writer.WriteStartElement("actor");
-                        writer.WriteStartElement("name");
-                        writer.WriteValue(aa);
-                        writer.WriteEndElement(); // name
+                        XMLHelper.WriteElementToXML(writer,"name",aa);
                         writer.WriteEndElement(); // actor
                     }
                 }
@@ -244,22 +226,29 @@ namespace TVRename
                 WriteInfo(writer, this.SI, "ContentRating", "mpaa");
                 WriteInfo(writer, this.SI, "IMDB_ID", "id", "moviedb","imdb");
 
-                writer.WriteStartElement("tvdbid");
-                writer.WriteValue(this.SI.TheSeries().TVDBCode);
-                writer.WriteEndElement();
+                XMLHelper.WriteElementToXML(writer,"tvdbid",this.SI.TheSeries().TVDBCode);
 
                 string rt = this.SI.TheSeries().GetItem("Runtime");
                 if (!string.IsNullOrEmpty(rt))
                 {
-                    writer.WriteStartElement("runtime");
-                    writer.WriteValue(rt + " minutes");
-                    writer.WriteEndElement();
+                    XMLHelper.WriteElementToXML(writer,"runtime",rt + " minutes");
                 }
 
                 writer.WriteEndElement(); // tvshow
             }
 
-            writer.Close();
+            try
+            {
+                writer.Close();
+            }
+            catch (Exception e)
+            {
+                this.ErrorText = e.Message;
+                this.Error = true;
+                this.Done = true;
+                return false;     
+            }
+
             this.Done = true;
             return true;
         }
@@ -343,9 +332,9 @@ namespace TVRename
             }
         }
 
-        public int ScanListViewGroup
+        public string ScanListViewGroup
         {
-            get { return 6; }
+            get { return "lvgActionMeta"; }
         }
 
         public int IconNumber
@@ -359,7 +348,7 @@ namespace TVRename
 
         private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string elemName)
         {
-            ActionNFO.WriteInfo(writer, si, whichItem, elemName, null, null);
+            WriteInfo(writer, si, whichItem, elemName, null, null);
         }
 
         private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string elemName, string attribute, string attributeVal)
