@@ -33,7 +33,7 @@ namespace TVRename
             // NOTE: If you're doing your own branch/patch version number, please put your name or nickname here,
             // to indicate that it is not an official release.  Also, talk to me (tvrename@tvrename.com) so that 
             // I can consider merging your changes into the main version!
-            return "-Sparky"; // e.g. "-ss", "-foo".
+            return ""; // e.g. "-ss", "-foo".
         }
 
         public static string DisplayVersionString()
@@ -43,6 +43,7 @@ namespace TVRename
             // to site.
 
             // Release history:
+            // Version 2.3 Proposed 1/OCT/2015
             // Version 2.2.3 released 20 August 2012, r214
             // Version 2.2.2 released 19 August 2012, r209
             // Version 2.2.2a1 released 18 August 2012, r207
@@ -61,7 +62,7 @@ namespace TVRename
             // NOTE: If you're doing your own branch/patch version number, please put your name or nickname or something in brackets afterwards
             // to indicate that it is not an official release, or talk to me (tvrename@tvrename.com) so any versions I make don't duplicate
             // a version number you may have created.
-            string v = "2.2.4" + PersonalTag();
+            string v = "2.3" + PersonalTag();
 #if DEBUG
             return v + " ** Debug Build **";
 #else
