@@ -1,0 +1,65 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+
+namespace TVRename
+{
+    abstract class Exporter
+    {
+        public abstract bool Active();
+        public abstract string Location();
+    }
+
+    abstract class MissingExporter : Exporter
+    {
+        public abstract void Run(ItemList TheActionList);
+    }
+
+    abstract class UpcomingExporter : Exporter
+    {
+        protected TVDoc mDoc;
+
+        public UpcomingExporter(TVDoc doc)
+        {
+            this.mDoc = doc;
+        }
+
+        public string produce() 
+        {
+            try
+            {
+                // dirty try/catch to "fix" the problem that a share can disappear during a sleep/resume, and
+                // when windows restarts, the share isn't "back" before this timer times out and fires
+                // windows explorer tends to lose explorer windows on shares when slept/resumed, too, so its not
+                // just me :P
+                
+                MemoryStream ms = new MemoryStream(); //duplicated the IF statement one for RSS and one for XML so that both can be generated.
+                List<ProcessedEpisode> lpe = mDoc.NextNShows(TVSettings.Instance.ExportRSSMaxShows, TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
+                if (lpe != null)
+                    if (this.generate(ms,lpe ))
+                    {
+                        return System.Text.Encoding.ASCII.GetString(ms.ToArray());
+                    }
+               
+            }
+            catch
+            {
+            }
+            return "";
+        }
+
+        public void Run()
+        {
+            if (this.Active())
+            {
+                StreamWriter file = new StreamWriter(Location());
+                file.Write(produce());
+                file.Close();
+            }
+        }
+
+        protected abstract bool generate(Stream str, List<ProcessedEpisode> elist);
+    }
+
+}
