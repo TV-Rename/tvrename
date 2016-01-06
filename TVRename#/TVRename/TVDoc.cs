@@ -482,7 +482,7 @@ namespace TVRename
 
                 // for eachs of the ShowItems, make sure we've got downloaded data for it
 
-                int n2 = ShowItems.Count;
+                int totalItems = ShowItems.Count;
                 int n = 0;
                 List<int> codes = new List<int>();
                 this.LockShowItems();
@@ -497,8 +497,8 @@ namespace TVRename
 
                 foreach (int code in codes)
                 {
-                    this.DownloadPct = 100 * (n + 1) / (n2 + 1);
-                    this.DownloadsRemaining = n2 - n;
+                    this.DownloadPct = 100 * (n + 1) / (totalItems + 1);
+                    this.DownloadsRemaining = totalItems - n;
                     n++;
 
                     this.WorkerSemaphore.WaitOne(); // blocks until there is an available slot
