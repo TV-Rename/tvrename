@@ -146,7 +146,7 @@ namespace TVRename
 
         public bool GetLock(string whoFor)
         {
-            System.Diagnostics.Debug.Print("Lock Series for " + whoFor);
+            //System.Diagnostics.Debug.Print("Lock Series for " + whoFor);
             bool ok = Monitor.TryEnter(Series, 10000);
             System.Diagnostics.Debug.Assert(ok);
             return ok;
@@ -162,7 +162,7 @@ namespace TVRename
             //#if defined(DEBUG)
             //            System.Diagnostics::Debug::Assert(whoFor == whoHad);
             //#endif
-            System.Diagnostics.Debug.Print("Unlock series (" + whoFor + ")");
+            //System.Diagnostics.Debug.Print("Unlock series for (" + whoFor + ")");
                         // WhoHasLock->RemoveAt(n);
             //
                         Monitor.Exit(Series);
@@ -461,12 +461,13 @@ namespace TVRename
                 //str->Read(r, 0, (int)str->Length);
 
                 if (!url.EndsWith(".zip"))
-                    System.Diagnostics.Debug.Print("Downloaded " + url + ", " + r.Length + " bytes");
+                    System.Diagnostics.Debug.Print("Downloaded " + theURL + ", " + r.Length + " bytes");
 
                 return r;
             }
             catch (WebException e)
             {
+                System.Diagnostics.Debug.Print(this.CurrentDLTask + " : " + e.Message + " : " + theURL);
                 this.LastError = this.CurrentDLTask + " : " + e.Message;
                 return null;
             }
@@ -1233,7 +1234,7 @@ namespace TVRename
             
             byte[] p = episodesToo ? this.GetPageZIP(url, lang + ".xml", true, forceReload) : this.GetPage(url, true, typeMaskBits.tmXML, forceReload);
 
-            if (p == null)
+            if (p   == null)
                 return null;
             MemoryStream ms = new MemoryStream(p);
 
@@ -1246,15 +1247,15 @@ namespace TVRename
                     b = this.GetPageZIP(url, "banners.xml", true, forceReload);
                 } else {
                     string bannerURL = BuildBannerURL(false, code);
-                    b = this.GetPage(bannerURL, true, typeMaskBits.tmBanner, forceReload);
+                    b = this.GetPage(bannerURL, true, typeMaskBits.tmXML , forceReload);
                 }
-                
-                if (b == null)
-                    return null;
 
-                MemoryStream bannerMS = new MemoryStream(b);
-                this.ProcessTVDBResponse(ms, bannerMS, code);
-
+                if (b == null) {
+                    this.ProcessTVDBResponse(ms, code);
+                } else { 
+                    MemoryStream bannerMS = new MemoryStream(b);
+                    this.ProcessTVDBResponse(ms, bannerMS, code);
+                }
 
             }
             else

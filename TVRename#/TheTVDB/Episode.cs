@@ -112,7 +112,14 @@ namespace TVRename
                     {
                         try
                         {
-                            this.FirstAired = DateTime.ParseExact(r.ReadElementContentAsString(), "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                            String contents = r.ReadElementContentAsString();
+                            if (contents == "")
+                            {
+                                System.Diagnostics.Debug.Print ("Please confirm, but we are assuming that " + this.Name +"(episode Id =" +this.EpisodeID + ") has no airdate");
+                                this.FirstAired = null;
+                            } else { 
+                                this.FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                            }
                         }
                         catch
                         {
