@@ -364,7 +364,7 @@ namespace TVRename
                     this.BGDownload = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "OfflineMode")
                     this.OfflineMode = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "Replacements")
+                else if (reader.Name == "Replacements" && !reader.IsEmptyElement)
                 {
                     this.Replacements.Clear();
                     reader.Read();
@@ -384,7 +384,7 @@ namespace TVRename
                     }
                     reader.Read();
                 }
-                else if (reader.Name == "ExportWTWRSS")
+                else if (reader.Name == "ExportWTWRSS" && !reader.IsEmptyElement)
                     this.ExportWTWRSS = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportWTWRSSTo")
                     this.ExportWTWRSSTo = reader.ReadElementContentAsString();
@@ -535,7 +535,7 @@ namespace TVRename
                 else if (reader.Name == "EmptyMaxSizeMB")
                     this.Tidyup.EmptyMaxSizeMB = reader.ReadElementContentAsInt();
 
-                else if (reader.Name == "FNPRegexs")
+                else if (reader.Name == "FNPRegexs" && !reader.IsEmptyElement)
                 {
                     this.FNPRegexs.Clear();
                     reader.Read();
@@ -558,7 +558,7 @@ namespace TVRename
                     }
                     reader.Read();
                 }
-                else if (reader.Name == "RSSURLs")
+                else if (reader.Name == "RSSURLs" && !reader.IsEmptyElement)
                 {
                     this.RSSURLs.Clear();
                     reader.Read();
@@ -573,7 +573,7 @@ namespace TVRename
                     }
                     reader.Read();
                 }
-                else if (reader.Name == "ShowStatusTVWColors")
+                else if (reader.Name == "ShowStatusTVWColors" && !reader.IsEmptyElement)
                 {
                     this.ShowStatusColors = new ShowStatusColoringTypeList();
                     reader.Read();
