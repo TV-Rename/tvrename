@@ -2103,6 +2103,13 @@ namespace TVRename
                                             noAirdatesUntilNow = false;
                                             break;
                                         }
+                                        else
+                                        {//If the show is in its first season and no episodes have air dates
+                                            if (lastSeason == 1)
+                                            {
+                                                noAirdatesUntilNow = false;
+                                            }
+                                        }
                                     }
 
                                     // only add to the missing list if, either:
