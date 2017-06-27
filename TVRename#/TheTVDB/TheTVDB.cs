@@ -384,17 +384,17 @@ namespace TVRename
 
             MemoryStream ms = new MemoryStream(zipped);
             MemoryStream theFile = new MemoryStream();
-            //try 
-            //{
-            ZipFile zf = ZipFile.Read(ms);
-            zf.Extract(extractFile, theFile);
-            System.Diagnostics.Debug.Print("Downloaded " + url + ", " + ms.Length + " bytes became " + theFile.Length);
-            //}
-            //catch (Exception ^e)
-            //{
-            //    LastError = CurrentDLTask + " : " + e->Message;
-            //    return nullptr;
-            //}
+            try 
+            {
+                ZipFile zf = ZipFile.Read(ms);
+                zf.Extract(extractFile, theFile);
+                System.Diagnostics.Debug.Print("Downloaded " + url + ", " + ms.Length + " bytes became " + theFile.Length);
+            }
+            catch (Ionic.Utils.Zip.BadReadException e)
+            {
+                System.Diagnostics.Debug.Print("Downloaded " + GetURL(url, useKey, typeMaskBits.tmZIP) + ", obtained " + ms.Length + " bytes, but could not  extract zip file. "+ e.Message);
+                return null;
+            }
 
             // ZipFile allocates more buffer than is needed, so we need to resize the array before returning it
             byte[] r = theFile.GetBuffer();
@@ -408,7 +408,7 @@ namespace TVRename
             return "5FEC454623154441"; // tvrename's API key on thetvdb.com
         }
 
-        public byte[] GetPage(string url, bool useKey, typeMaskBits mirrorType, bool forceReload)
+        public string GetURL(string url, bool useKey, typeMaskBits mirrorType)
         {
             string mirr = "";
             switch (mirrorType)
@@ -441,6 +441,13 @@ namespace TVRename
             if (useKey)
                 theURL += APIKey() + "/";
             theURL += url;
+
+            return theURL;
+        }
+
+        public byte[] GetPage(string url, bool useKey, typeMaskBits mirrorType, bool forceReload)
+        {
+            string theURL = GetURL(url, useKey, mirrorType);
 
             //HttpWebRequest ^wr = dynamic_cast<HttpWebRequest ^>(HttpWebRequest::Create(theURL));
             //wr->Timeout = 10000; // 10 seconds
@@ -1010,7 +1017,7 @@ namespace TVRename
             {
                 if (!this.Args.Unattended)
                 {
-                    string message = "Error processing data from TheTVDB (top level).";
+                    string message = "Error processing data from TheTVDB (banner file).";
                     message += "\r\n" + e.Message;
                     String name = "";
                     if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
@@ -1180,9 +1187,16 @@ namespace TVRename
             }
             catch (XmlException e)
             {
-                if (!this.Args.Unattended)
+
+               
+                  if (!this.Args.Unattended)
                 {
+                    str.Position = 0;
+                    var sr = new StreamReader(str);
+                    var myStr = sr.ReadToEnd();
+
                     string message = "Error processing data from TheTVDB (top level).";
+                    message += "\r\n" + myStr ;
                     message += "\r\n" + e.Message;
                     String name = "";
                     if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
@@ -1193,8 +1207,10 @@ namespace TVRename
                     {
                         name += "ID #" + codeHint.Value + " ";
                     }
-                    MessageBox.Show(name + message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // throw new TVDBException(e.Message);
+                    //MessageBox.Show(name + message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    System.Diagnostics.Debug.Print(name + message);
+                    System.Diagnostics.Debug.Print(str.ToString());
+                    throw new TVDBException(name + message);
                 }
                 return false;
             }
@@ -1298,7 +1314,57 @@ namespace TVRename
 
             MemoryStream ms = new MemoryStream(p);
 
-            return this.ProcessTVDBResponse(ms, seriesID);
+            if (ms.Length  == 14)
+            {
+                //There is a 404 error issue that means that the the XML is not well formed
+                //We should check for it before parsing the response
+
+                ms.Position = 0;
+                var sr = new StreamReader(ms);
+                var myStr = sr.ReadToEnd();
+                ms.Position = 0;
+
+                if (myStr.StartsWith("404 Not Found"))
+                {
+                    System.Diagnostics.Debug.Print("HTML document containing 404 was recieved for "+url );
+                    return false;
+                }
+                    
+
+            }
+
+
+            if (ms.Length == 39)
+            {
+                //There is an issue that means that the the XML is not returned if we open too many connections
+                //We should check for it before parsing the response
+
+                ms.Position = 0;
+                var sr = new StreamReader(ms);
+                var myStr = sr.ReadToEnd();
+                ms.Position = 0;
+
+                if (myStr.StartsWith("Could not connect: Too many connections"))
+                {
+                    System.Diagnostics.Debug.Print("'Could not connect: Too many connections' was recieved for " + url);
+                    return false;
+                }
+
+
+            }
+            
+
+            try {
+
+                return this.ProcessTVDBResponse(ms, seriesID); 
+            }
+            catch (TVDBException e)
+            {
+                System.Diagnostics.Debug.Print("Could not parse TVDB Response " + e.Message);
+                return false;
+            }
+
+            
         }
 
         public SeriesInfo MakePlaceholderSeries(int code, string name)
@@ -1365,7 +1431,7 @@ namespace TVRename
                 this.DownloadSeriesNow(int.Parse(text), false, false);
 
             // but, the number could also be a name, so continue searching as usual
-            text = text.Replace(".", " ");
+            //text = text.Replace(".", " ");
 
             byte[] p = this.GetPage("GetSeries.php?seriesname=" + text + "&language=all", false, typeMaskBits.tmXML, true);
 
