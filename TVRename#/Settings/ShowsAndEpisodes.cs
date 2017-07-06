@@ -318,9 +318,7 @@ namespace TVRename
         {
             get{
                 SeriesInfo ser = this.TheSeries();
-                if(ser != null && ser.Items != null && ser.Items.ContainsKey("Status"))
-                    return ser.Items["Status"];
-
+                if (ser != null && ser.Items != null) return ser.getStatus();
                 return "Unknown";
             }
         }

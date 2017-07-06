@@ -5,6 +5,7 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Windows.Forms;
 using System.Xml;
@@ -159,6 +160,92 @@ namespace TVRename
                     MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                 throw new TVDBException(e.Message);
+            }
+        }
+
+        public Episode(int seriesId,JObject r)
+        {
+            // <Episode>
+            //  <id>...</id>
+            //  blah blah
+            // </Episode>
+
+            this.SetDefaults(null, null);
+
+            //r should be a series of name/value pairs (ie a JArray of JPropertes)
+            //save them all into the Items array for safe keeping
+            foreach (JProperty episodeItems in r.Children<JProperty>())
+            {
+                try
+                {
+                    JToken currentData = (JToken)episodeItems.Value;
+                    if (currentData.Type == JTokenType.Array) this.Items[episodeItems.Name] = JSONHelper.flatten((JArray)currentData);
+                    else
+                    {
+                        JValue currentValue = (JValue)episodeItems.Value;
+                        this.Items[episodeItems.Name] = currentValue.ToObject<string>();
+
+                    }
+                    
+
+                    //if (currentData.Type == JTokenType.Integer) this.Items[episodeItems.Name] = (string)episodeItems.Value;
+                    //else this.Items[episodeItems.Name] = (string)currentData;
+                }
+                catch (ArgumentException ae)
+                {
+                    System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                    //ignore as probably a cast exception
+                    //TODO - Need to deal with genres as they come through and we ignore at present
+                }
+                catch (NullReferenceException  ae)
+                {
+                    System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                    //ignore as probably a cast exception
+                    //TODO - Need to deal with genres as they come through and we ignore at present
+                }
+                catch (InvalidCastException  ae)
+                {
+                    System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                    //ignore as probably a cast exception
+                    //TODO - Need to deal with genres as they come through and we ignore at present
+                }
+            }
+
+            this.SeriesID = seriesId;
+
+            this.EpisodeID = (int)r["id"];
+            
+            this.SeasonID = (int)r["airedSeason"]; 
+            this.EpNum = (int)r["airedEpisodeNumber"];
+            this.Srv_LastUpdated = (int)r["lastUpdated"];
+            this.Overview = (string)r["overview"]; //TODO - Find out if I need to do a ReadStringFixQuotesAndSpaces still
+            this.EpisodeRating = (string)r["siteRating"];
+            this.Name = (string)r["episodeName"]; //TODO - Find out if I need to do a ReadStringFixQuotesAndSpaces still
+
+            String sn = (string)r["airedSeason"];
+            int.TryParse(sn, out this.ReadSeasonNum);
+
+            this.EpisodeGuestStars = JSONHelper.flatten((JArray)r["guestStars"], "|");
+            this.EpisodeDirector = JSONHelper.flatten((JArray)r["directors"], "|");
+            this.Writer = JSONHelper.flatten((JArray)r["writers"], "|");
+
+            try
+            {
+                String contents = (string)r["firstAired"];
+                if (contents == "")
+                {
+                    System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
+                    this.FirstAired = null;
+                }
+                else
+                {
+                    this.FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                }
+            }
+            catch (Exception e)
+            {
+                this.FirstAired = null;
+
             }
         }
 

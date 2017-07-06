@@ -812,9 +812,9 @@ namespace TVRename
 
             body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A> " + "</h1>";
 
-            body += ImageSection("Show Banner", 758, 140, ser.GetItem("banner"));
-            body += ImageSection("Show Poster", 350, 500, ser.GetItem("poster"));
-            body += ImageSection("Show Fanart", 960, 540, ser.GetItem("fanart"));
+            body += ImageSection("Show Banner", 758, 140, ser.GetSeriesWideBannerPath());
+            body += ImageSection("Show Poster", 350, 500, ser.GetSeriesPosterPath());
+            body += ImageSection("Show Fanart", 960, 540, ser.GetSeriesFanartPath());
             
             return body;
         }
@@ -823,10 +823,10 @@ namespace TVRename
         {
             string body = "";
 
-            if ((!string.IsNullOrEmpty(bannerPath )) && (!string.IsNullOrEmpty(TheTVDB.Instance.BannerMirror)))
+            if ((!string.IsNullOrEmpty(bannerPath )) && (!string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot)))
             {
                 body += "<h2>"+title+"</h2>";
-                body += "<img width=" + width + " height=" + height + " src=\"" + TheTVDB.Instance.BannerMirror + "/banners/" + bannerPath + "\"><br/>";
+                body += "<img width=" + width + " height=" + height + " src=\"" + TheTVDB.Instance.WebsiteRoot + "/banners/" + bannerPath + "\"><br/>";
             }
             return body;
         }
@@ -839,21 +839,22 @@ namespace TVRename
                                   {
                                       "Actors",
                                       "banner",
-                                      "Overview",
-                                      "Airs_Time",
-                                      "Airs_DayOfWeek",
+                                      "Overview","overview",
+                                      "Airs_Time","airsTime",
+                                      "Airs_DayOfWeek","airsDayOfWeek",
                                       "fanart",
                                       "poster",
-                                      "zap2it_id"
+                                      "zap2it_id","zap2itId",
+                                      "id","seriesName"
                                   };
 
             
-            if ((!string.IsNullOrEmpty(ser.GetItem("banner"))) && (!string.IsNullOrEmpty(TheTVDB.Instance.BannerMirror)))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.BannerMirror + "/banners/" + ser.GetItem("banner") + "\"><br/>";
+            if ((!string.IsNullOrEmpty(ser.GetItem("banner"))) && (!string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot)))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.WebsiteRoot + "/banners/" + ser.GetItem("banner") + "\"><br/>";
 
             body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A> " + "</h1>";
 
-            body += "<h2>Overview</h2>" + ser.GetItem("Overview");
+            body += "<h2>Overview</h2>" + ser.GetItem("Overview") + ser.GetItem("overview"); //get overview in either format
 
             string actors = ser.GetItem("Actors");
             if (!string.IsNullOrEmpty(actors))
@@ -873,15 +874,16 @@ namespace TVRename
                 }
             }
 
-            string airsTime = ser.GetItem("Airs_Time");
-            string airsDay = ser.GetItem("Airs_DayOfWeek");
+            string airsTime = ser.getAirsTime();
+            string airsDay = ser.getAirsDay();
             if ((!string.IsNullOrEmpty(airsTime)) && (!string.IsNullOrEmpty(airsDay)))
             {
                 body += "<h2>Airs</h2> " + airsTime + " " + airsDay;
-                string net = ser.GetItem("Network");
+                string net = ser.getNetwork();
                 if (!string.IsNullOrEmpty(net))
                 {
                     skip.Add("Network");
+                    skip.Add("network");
                     body += ", " + net;
                 }
             }
@@ -896,11 +898,12 @@ namespace TVRename
                 }
                 if (!skip.Contains(kvp.Key))
                 {
-                    if (kvp.Key == "SeriesID")
+                    if (((kvp.Key == "SeriesID")|| (kvp.Key == "seriesId"))&(kvp.Value!=""))
+
                         body += "<tr><td width=120px>tv.com</td><td><A HREF=\"http://www.tv.com/show/" + kvp.Value + "/summary.html\">Visit</a></td></tr>";
-                    else if (kvp.Key == "IMDB_ID")
+                    else if ((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId"))
                         body += "<tr><td width=120px>imdb.com</td><td><A HREF=\"http://www.imdb.com/title/" + kvp.Value + "\">Visit</a></td></tr>";
-                    else
+                    else if (kvp.Value != "")
                         body += "<tr><td width=120px>" + kvp.Key + "</td><td>" + kvp.Value + "</td></tr>";
                 }
             }
@@ -914,8 +917,8 @@ namespace TVRename
         private string GetSeasonHTMLOverview(ShowItem si,SeriesInfo ser, int snum ) {
             string body = "";
 
-            if (!string.IsNullOrEmpty(ser.GetItem("banner")) && !string.IsNullOrEmpty(TheTVDB.Instance.BannerMirror))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.BannerMirror + "/banners/" + ser.GetItem("banner") + "\"><br/>";
+            if (!string.IsNullOrEmpty(ser.GetItem("banner")) && !string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.WebsiteRoot + "/banners/" + ser.GetItem("banner") + "\"><br/>";
 
             Season s = ser.Seasons[snum];
 
@@ -939,8 +942,7 @@ namespace TVRename
             {
                 string epl = ei.NumsAsString();
 
-                // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
-                string episodeURL = "http://www.thetvdb.com/?tab=episode&seriesid=" + ei.SeriesID + "&seasonid=" + ei.SeasonID + "&id=" + ei.EpisodeID;
+                string episodeURL = TheTVDB.Instance.WebsiteURL(ei.SeriesID ,ei.SeasonID ,ei.EpisodeID);
 
                 body += "<A href=\"" + episodeURL + "\" name=\"ep" + epl + "\">"; // anchor
                 body += "<b>" + CustomName.NameForNoExt(ei, CustomName.OldNStyle(6)) + "</b>";
@@ -969,7 +971,7 @@ namespace TVRename
                     body += "<td width=100% valign=top>" + ei.Overview + "</td><td width=300 height=225>";
                     // 300x168 / 300x225
                     if (!string.IsNullOrEmpty(ei.GetItem("filename")))
-                        body += "<img src=" + TheTVDB.Instance.BannerMirror + "/banners/_cache/" + ei.GetItem("filename") + ">";
+                        body += "<img src=" + TheTVDB.Instance.WebsiteRoot + "/banners/_cache/" + ei.GetItem("filename") + ">";
                     body += "</td></tr></table>";
                 }
                 else
@@ -3444,3 +3446,4 @@ namespace TVRename
         }
     }
 }
+
