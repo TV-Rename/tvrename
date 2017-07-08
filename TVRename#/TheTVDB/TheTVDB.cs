@@ -220,7 +220,7 @@ namespace TVRename
 
         public void SaveCache()
         {
-            //TODO REABLE
+            //TODO RE ENABLE
             return;
             if (!this.GetLock("SaveCache"))
                 return;
@@ -571,18 +571,20 @@ namespace TVRename
 
             String epochTime = theTime.ToString();//TODO - to be confirmed
 
-            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/updated/query", new Dictionary<string, string> { { "fromTime", epochTime } }, this.authenticationToken);
-
-            JArray data = (JArray)jsonResponse["data"];
-            JArray errors = (JArray)jsonResponse["errors"];
-
-
-            if (errors != null || data.Count == 0)//TODO - check this out
+            String uri = APIRoot + "/updated/query";
+            JObject jsonResponse = new JObject();
+            try
             {
-                //Log the errors and issues
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "fromTime", epochTime } }, this.authenticationToken);
+            }
+            catch (WebException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
                 this.Say("");
                 return false;
             }
+
+
 
             this.Say("Processing Updates from TVDB");
 
@@ -943,18 +945,20 @@ namespace TVRename
 
             string lang = this.RequestLanguage;
 
-            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code, null, this.authenticationToken);
-
-            JObject seriesData = (JObject)jsonResponse["data"];
-            JObject errors = (JObject)jsonResponse["errors"];
-
-
-            if (errors != null || seriesData.Count == 0)//TODO - check this out
+            String uri = APIRoot + "/series/" + code;
+            JObject jsonResponse = new JObject();
+            try
             {
-                //Log the errors and issues
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken);
+            }
+            catch (WebException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
                 this.Say("");
                 return null;
             }
+
+            JObject seriesData = (JObject)jsonResponse["data"];
 
             SeriesInfo si = new SeriesInfo(seriesData);
 
@@ -977,24 +981,22 @@ namespace TVRename
 
                 while (morePages)
                 {
-                    JObject jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/episodes", new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
-
-                    JObject episodeData = (JObject)jsonResponse["data"];
-                    JObject episodeErrors = (JObject)jsonResponse["errors"];
-
-
-                    if (episodeErrors != null )
+                    String episodeUri = APIRoot + "/series/" + code + "/episodes";
+                    JObject jsonEpisodeResponse = new JObject();
+                    try
                     {
-                        //TODO Log the errors and issues
+                        jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
+                        episodeResponses.Add(jsonEpisodeResponse);
+                        int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
+                        if (numberOfResponses < 100) { morePages = false; } else { pageNumber++; }
+
                     }
-
-                    episodeResponses.Add(jsonEpisodeResponse);
-                    int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
-                    if (numberOfResponses < 100){ morePages = false; } else { pageNumber++; }
-
-
+                    catch (WebException ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Error obtaining " + episodeUri + ": " + ex.Message);
+                        morePages = false;
+                    }
                 }
-
             }
 
             foreach (JObject response in episodeResponses)
@@ -1046,17 +1048,7 @@ namespace TVRename
                     catch (WebException WebEx)
                     {
                         System.Diagnostics.Debug.WriteLine ("No " +imageType + " found for seriesId "+ code);
-                        JObject bannerErrors = (JObject)jsonResponse["errors"];
-                        if (bannerErrors != null)
-                        {
-                            //TODO Log the errors and issues
-                        }
-
                     }
-
-                    
-                    
-                    
                 }
             }
 
@@ -1105,12 +1097,20 @@ namespace TVRename
 
             //todo make use of language this.RequestLanguage
 
-            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/episodes/" + episodeID.ToString(), null, this.authenticationToken);
+            String uri = APIRoot + "/episodes/" + episodeID.ToString();
+            JObject jsonResponse = new JObject();
+            try {
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken);
+            }
+            catch (WebException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
+                JObject errors = (JObject)jsonResponse["errors"];
+                return false;
+            }
 
-            JObject data = (JObject)jsonResponse["data"];
-            JObject errors = (JObject)jsonResponse["errors"];
+            JObject jsonResponseData = (JObject)jsonResponse["data"];
 
-            //TODO - DEAL with 404 and any errors
 
             if (!this.GetLock("ProcessTVDBResponse"))
                 return false;
@@ -1118,7 +1118,7 @@ namespace TVRename
             try
             {
 
-                Episode e = new Episode(seriesID,data);
+                Episode e = new Episode(seriesID, jsonResponseData);
                 if (e.OK())
                 {
                     if (!this.Series.ContainsKey(e.SeriesID))
@@ -1218,12 +1218,17 @@ namespace TVRename
             //text = text.Replace(".", " ");
 
 
-            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/search/series", new Dictionary<string, string> { { "name", text } }, this.authenticationToken);
-
-            JArray data = (JArray)jsonResponse["data"];
-            JArray errors = (JArray)jsonResponse["errors"];
-
-            //TODO - check errors
+            String uri = APIRoot + "/search/series";
+            JObject jsonResponse = new JObject();
+            try
+            {
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken);
+            }
+            catch (WebException ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
+                return;
+            }
 
             if (this.GetLock("ProcessTVDBResponse"))
             {
