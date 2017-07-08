@@ -220,7 +220,7 @@ namespace TVRename
 
         public void SaveCache()
         {
-            //TODO RE ENABLE
+            //MS_TODO RE ENABLE
             return;
             if (!this.GetLock("SaveCache"))
                 return;
@@ -499,7 +499,7 @@ namespace TVRename
 
         private bool refreshToken()
         {
-            //TODO - set this up so that it is run every 23 hours
+            //MS_TODO - set this up so that it is run every 23 hours
             this.Say("Reconnecting to TVDB");
 
 
@@ -1093,7 +1093,7 @@ namespace TVRename
                 return false; // shouldn't happen
             this.Say(txt);
 
-            //todo make use of language this.RequestLanguage
+            //MS_todo make use of language this.RequestLanguage
 
             String uri = APIRoot + "/episodes/" + episodeID.ToString();
             JObject jsonResponse = new JObject();

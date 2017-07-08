@@ -1925,7 +1925,7 @@ namespace TVRename
                     this.TheActionList.Add(DownloadIdentifiers.ProcessShow(si)); 
                 }
 
-                //MS_TODO Put the bannerrefresh period into the settings file, we'l default to 3 months
+                //MS_TODO Put the bannerrefresh period into the settings file, we'll default to 3 months
                 DateTime cutOff = System.DateTime.Now.AddMonths(-3);
                 DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? System.DateTime.Now.AddMonths(-4);
                 bool timeForBannerUpdate = (cutOff.CompareTo(lastUpdate) == 1);

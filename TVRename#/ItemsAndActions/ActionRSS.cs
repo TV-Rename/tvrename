@@ -11,7 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
 
-    // TODO: derive this from ActionDownload?
+    // MS_TODO: derive this from ActionDownload?
     public class ActionRSS : Item, Action, ScanListItem
     {
         public RSSItem RSS;
