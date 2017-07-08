@@ -846,7 +846,8 @@ namespace TVRename
                                       "fanart",
                                       "poster",
                                       "zap2it_id","zap2itId",
-                                      "id","seriesName"
+                                      "id","seriesName",
+                                      "lastUpdated","updatedBy"
                                   };
 
             
