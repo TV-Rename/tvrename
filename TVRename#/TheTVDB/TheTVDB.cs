@@ -584,15 +584,13 @@ namespace TVRename
                 return false;
             }
 
-
-
             this.Say("Processing Updates from TVDB");
 
             // if updatetime > localtime for item, then remove it, so it will be downloaded later
 
-
-
-            //TODO this.New_Srv_Time = int.Parse(reader.GetAttribute("time"));
+            IEnumerable<long> updateTimes = from a in jsonResponse["data"] select (long)a["lastUpdated"]; 
+            long? maxUpdateTime = updateTimes.Max();
+            if (maxUpdateTime != null) this.New_Srv_Time = (long)maxUpdateTime;
 
 
             foreach (JObject series in jsonResponse["data"])
