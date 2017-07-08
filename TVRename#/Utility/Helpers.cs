@@ -288,11 +288,11 @@ namespace TVRename
             }
         }
 
-        public static bool SysOpen(string what)
+        public static bool SysOpen(string what, string arguments = null)
         {
             try
             {
-                System.Diagnostics.Process.Start(what);
+                System.Diagnostics.Process.Start(what, arguments);
                 return true;
             }
             catch

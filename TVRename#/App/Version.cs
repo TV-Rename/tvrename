@@ -64,10 +64,10 @@ namespace TVRename
             // a version number you may have created.
             string v = "2.3" + PersonalTag();
 #if DEBUG
-            return v + " ** Debug Build **";
-#else
-            return v;
+            v += " ** Debug Build **";
 #endif
+            return v;
+
         }
     }
 }

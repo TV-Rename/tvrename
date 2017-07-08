@@ -14,6 +14,7 @@ using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
+using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -945,19 +946,24 @@ namespace TVRename
                 string episodeURL = TheTVDB.Instance.WebsiteURL(ei.SeriesID ,ei.SeasonID ,ei.EpisodeID);
 
                 body += "<A href=\"" + episodeURL + "\" name=\"ep" + epl + "\">"; // anchor
-                body += "<b>" + CustomName.NameForNoExt(ei, CustomName.OldNStyle(6)) + "</b>";
+                body += "<b>" + HttpUtility.HtmlEncode(CustomName.NameForNoExt(ei, CustomName.OldNStyle(6))) + "</b>";
                 body += "</A>"; // anchor
                 if (si.UseSequentialMatch && (ei.OverallNumber != -1))
                     body += " (#" + ei.OverallNumber + ")";
-
-                body += " <A HREF=\"" + TVSettings.Instance.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
 
                 List<FileInfo> fl = this.mDoc.FindEpOnDisk(dfc, ei);
                 if (fl != null)
                 {
                     foreach (FileInfo fi in fl)
-                        body += " <A HREF=\"file://" + fi.FullName + "\" class=\"search\">Watch</A>";
+                    {
+                        var urlFilename = HttpUtility.UrlEncode(fi.FullName);
+                        body += $" <A HREF=\"watch://{urlFilename}\" class=\"search\">Watch</A>";
+                        body += $" <A HREF=\"explore://{urlFilename}\" class=\"search\">Show in Explorer</A>";
+                                            }
                 }
+                else body += " <A HREF=\"" + TVSettings.Instance.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
+
+
 
                 DateTime? dt = ei.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
@@ -1008,7 +1014,7 @@ namespace TVRename
 
             string css = "* { font-family: Tahoma, Arial; font-size 10pt; } " + "a:link { color: black } " + "a:visited { color:black } " + "a:hover { color:#000080 } " + "a:active { color:black } " + "a.search:link { color: #800000 } " + "a.search:visited { color:#800000 } " + "a.search:hover { color:#000080 } " + "a.search:active { color:#800000 } " + "* {background-color: #" + col.R.ToString("X2") + col.G.ToString("X2") + col.B.ToString("X2") + "}" + "* { color: black }";
 
-            string html = "<html><head><STYLE type=\"text/css\">" + css + "</style>";
+            string html = "<html><head><meta charset=\"UTF-8\"><STYLE type=\"text/css\">" + css + "</style>";
 
             html += "</head><body>";
             html += body;
@@ -1017,7 +1023,7 @@ namespace TVRename
             web.Navigate("about:blank"); // make it close any file it might have open
 
             BinaryWriter bw = new BinaryWriter(new FileStream(path, FileMode.Create));
-            bw.Write(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(html));
+            bw.Write(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(html));
             bw.Close();
 
             web.Navigate(LocalFileURLBase(path));
@@ -1342,6 +1348,23 @@ namespace TVRename
                 return; // don't intercept about:blank
             if (url == QuickStartGuide())
                 return; // let the quickstartguide be shown
+
+            if (url.Contains(@"ieframe.dll"))
+               url = e.Url.Fragment.Substring(1);
+            
+                        if (url.StartsWith("explore://", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                e.Cancel = true;
+                var path = HttpUtility.UrlDecode(url.Substring("explore://".Length).Replace('/', '\\'));
+                Helpers.SysOpen("explorer", $"/select, \"{path}\"");
+                            }
+            
+                        if (url.StartsWith("watch://", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                e.Cancel = true;
+                var fileName = HttpUtility.UrlDecode(url.Substring("watch://".Length))?.Replace('/', '\\');
+                Helpers.SysOpen(fileName);
+                            }
 
             if ((url.Substring(0, 7).CompareTo("http://") == 0) || (url.Substring(0, 7).CompareTo("file://") == 0))
             {
@@ -2877,10 +2900,9 @@ namespace TVRename
             lvi.Checked = true;
             lvi.Tag = sli;
 
-            const int kErrCol = 8;
-            System.Diagnostics.Debug.Assert(lvi.SubItems.Count <= kErrCol);
+            System.Diagnostics.Debug.Assert(lvi.SubItems.Count <= lvAction.Columns.Count - 1);
 
-            while (lvi.SubItems.Count < kErrCol)
+            while (lvi.SubItems.Count < lvAction.Columns.Count - 1)
                 lvi.SubItems.Add(""); // pad our way to the error column
 
             Action act = item as Action;
