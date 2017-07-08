@@ -1012,9 +1012,9 @@ namespace TVRename
                 if (!skip.Contains(kvp.Key))
                 {
 
-                    if ((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId"))
+                    if (((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId")) && (kvp.Value != ""))
                         overviewString += "<tr><td width=120px>imdb.com</td><td><A HREF=\"http://www.imdb.com/title/" + kvp.Value + "\">Visit</a></td></tr>";
-                    else if (kvp.Value != "")
+                    else if (kvp.Value != "" && kvp.Value != "0")
                         overviewString += "<tr><td width=120px>" + kvp.Key + "</td><td>" + kvp.Value + "</td></tr>";
                 }
             }

@@ -220,8 +220,6 @@ namespace TVRename
 
         public void SaveCache()
         {
-            //MS_TODO RE ENABLE
-            return;
             if (!this.GetLock("SaveCache"))
                 return;
 
