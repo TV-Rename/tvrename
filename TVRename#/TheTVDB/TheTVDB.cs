@@ -991,7 +991,8 @@ namespace TVRename
                     }
                     catch (WebException ex)
                     {
-                        System.Diagnostics.Debug.WriteLine("Error obtaining " + episodeUri + ": " + ex.Message);
+                        System.Diagnostics.Debug.WriteLine("Error obtaining page "+pageNumber +" of " + episodeUri + ": " + ex.Message);
+                        //There may be exactly 100 or 200 episodes, may not be a problem
                         morePages = false;
                     }
                 }
