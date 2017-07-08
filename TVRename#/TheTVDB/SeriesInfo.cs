@@ -7,6 +7,7 @@
 // 
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -100,6 +101,10 @@ namespace TVRename
             return "";
         }
 
+        public void setActors(IEnumerable<string> actors)
+        {
+            this.Items["Actors"] = String.Join("|", actors);
+        }
 
         public void SetToDefauts()
         {

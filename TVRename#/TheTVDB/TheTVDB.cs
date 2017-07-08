@@ -18,6 +18,7 @@ using Ionic.Utils.Zip;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Xml;
+using System.Linq;
 
 // Talk to the TheTVDB web API, and get tv series info
 
@@ -1072,7 +1073,10 @@ namespace TVRename
             this.Series[(int)si.TVDBCode].BannersLoaded = true;
 
 
-            //TODO - if we want the actors grid then well need another call for that
+            //Get the actors toothen well need another call for that
+            JObject jsonActorsResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/actors", null, this.authenticationToken);
+            IEnumerable<string> seriesActors = from a in jsonActorsResponse["data"] select (string)a["name"];
+            this.Series[(int)si.TVDBCode].setActors(seriesActors);
 
             this.ForceReloadOn.Remove(code);
 
