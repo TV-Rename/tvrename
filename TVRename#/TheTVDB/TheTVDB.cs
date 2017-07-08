@@ -1045,7 +1045,7 @@ namespace TVRename
                     }
                     catch (WebException WebEx)
                     {
-                        System.Diagnostics.Debug.WriteLine ("No " +imageType + " found for seriesId "+ code);
+                        System.Diagnostics.Debug.WriteLine ("Looking for " +imageType + " images, but none found for seriesId " + code);
                     }
                 }
             }

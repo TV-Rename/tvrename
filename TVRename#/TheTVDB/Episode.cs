@@ -179,8 +179,8 @@ namespace TVRename
                 try
                 {
                     JToken currentData = (JToken)episodeItems.Value;
-                    if (currentData.Type == JTokenType.Array) this.Items[episodeItems.Name] = JSONHelper.flatten((JArray)currentData);
-                    else
+                    if (currentData.Type == JTokenType.Array) this.Items[episodeItems.Name] = JSONHelper.flatten((JArray)currentData)                          ;
+                    else if (currentData.Type != JTokenType.Object ) //Ignore objects here as it is always the 'language' attribute that we do not need
                     {
                         JValue currentValue = (JValue)episodeItems.Value;
                         this.Items[episodeItems.Name] = currentValue.ToObject<string>();
