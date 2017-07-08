@@ -974,19 +974,53 @@ namespace TVRename
                 if (TVSettings.Instance.ShowEpisodePictures)
                 {
                     body += "<table><tr>";
-                    body += "<td width=100% valign=top>" + ei.Overview + "</td><td width=300 height=225>";
+                    body += "<td width=100% valign=top>" + getOverview(ei) + "</td><td width=300 height=225>";
                     // 300x168 / 300x225
                     if (!string.IsNullOrEmpty(ei.GetItem("filename")))
                         body += "<img src=" + TheTVDB.Instance.WebsiteRoot + "/banners/_cache/" + ei.GetItem("filename") + ">";
                     body += "</td></tr></table>";
                 }
                 else
-                    body += ei.Overview;
+                    body += getOverview(ei);
 
                 body += "<p><hr><p>";
             } // for each episode in this season
 
             return body;
+        }
+
+
+        private string getOverview(ProcessedEpisode ei)
+        {
+            String overviewString = ei.Overview;
+
+            List<string> skip = new List<String>
+            {
+                 "id","airedSeason","airedSeasonID","airedEpisodeNumber","episodeName","overview","lastUpdated","dvdSeason","dvdEpisodeNumber","dvdChapter","absoluteNumber","filename","seriesId","lastUpdatedBy","airsAfterSeason","airsBeforeSeason","airsBeforeEpisode","thumbAuthor","thumbAdded","thumbAdded","thumbWidth","thumbHeight","director",
+                 "Combined_episodenumber","Combined_season","DVD_episodenumber","DVD_season","EpImgFlag","absolute_number","filename","is_movie","thumb_added","thumb_height","thumb_width"
+            };
+
+            bool firstInfo = true;
+            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in ei.Items)
+            {
+                if (firstInfo)
+                {
+                    overviewString += "<table border=0>";
+                    firstInfo = false;
+                }
+                if (!skip.Contains(kvp.Key))
+                {
+
+                    if ((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId"))
+                        overviewString += "<tr><td width=120px>imdb.com</td><td><A HREF=\"http://www.imdb.com/title/" + kvp.Value + "\">Visit</a></td></tr>";
+                    else if (kvp.Value != "")
+                        overviewString += "<tr><td width=120px>" + kvp.Key + "</td><td>" + kvp.Value + "</td></tr>";
+                }
+            }
+            if (!firstInfo)
+                overviewString += "</table>";
+
+            return overviewString;
         }
 
         // FillEpGuideHTML
