@@ -228,7 +228,7 @@ namespace TVRename
                 String contents = (string)r["firstAired"];
                 if (contents == "")
                 {
-                    System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
+                    if (this.ReadSeasonNum >0 ) System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
                     this.FirstAired = null;
                 }
                 else

@@ -322,7 +322,12 @@ namespace TVRename
 
             this.TVDBCode = (int)r["id"];
             if ((string)r["seriesName"] != null) this.Name = (string)r["seriesName"];
-            this.Srv_LastUpdated = (long)r["lastUpdated"];
+
+            long updateTime;
+            if (long.TryParse((string)r["lastUpdated"], out updateTime) )
+                this.Srv_LastUpdated = updateTime;
+            else
+                this.Srv_LastUpdated = 0;
 
             string theDate = (string)r["firstAired"];
             try
