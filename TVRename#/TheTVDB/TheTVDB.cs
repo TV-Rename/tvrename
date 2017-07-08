@@ -569,7 +569,7 @@ namespace TVRename
                 return true; // that's it for now
             }
 
-            String epochTime = theTime.ToString();//TODO - to be confirmed
+            String epochTime = theTime.ToString();
 
             String uri = APIRoot + "/updated/query";
             JObject jsonResponse = new JObject();

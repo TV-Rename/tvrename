@@ -187,27 +187,21 @@ namespace TVRename
 
                     }
                     
-
-                    //if (currentData.Type == JTokenType.Integer) this.Items[episodeItems.Name] = (string)episodeItems.Value;
-                    //else this.Items[episodeItems.Name] = (string)currentData;
                 }
                 catch (ArgumentException ae)
                 {
                     System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
-                    //TODO - Need to deal with genres as they come through and we ignore at present
                 }
                 catch (NullReferenceException  ae)
                 {
                     System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
-                    //TODO - Need to deal with genres as they come through and we ignore at present
                 }
                 catch (InvalidCastException  ae)
                 {
                     System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
-                    //TODO - Need to deal with genres as they come through and we ignore at present
                 }
             }
 
@@ -218,9 +212,9 @@ namespace TVRename
             this.SeasonID = (int)r["airedSeason"]; 
             this.EpNum = (int)r["airedEpisodeNumber"];
             this.Srv_LastUpdated = (int)r["lastUpdated"];
-            this.Overview = (string)r["overview"]; //TODO - Find out if I need to do a ReadStringFixQuotesAndSpaces still
+            this.Overview = (string)r["overview"]; 
             this.EpisodeRating = (string)r["siteRating"];
-            this.Name = (string)r["episodeName"]; //TODO - Find out if I need to do a ReadStringFixQuotesAndSpaces still
+            this.Name = (string)r["episodeName"]; 
 
             String sn = (string)r["airedSeason"];
             int.TryParse(sn, out this.ReadSeasonNum);
