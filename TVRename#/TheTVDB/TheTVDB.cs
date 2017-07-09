@@ -1092,7 +1092,7 @@ namespace TVRename
                 return false; // shouldn't happen
             this.Say(txt);
 
-            //MS_todo make use of language this.RequestLanguage
+            //MS_todo make use of language this.RequestLanguage - wait until https://trello.com/c/dyEhtfky/15-handle-multiple-languages-in-the-accept-language-header complete
 
             String uri = APIRoot + "/episodes/" + episodeID.ToString();
             JObject jsonResponse = new JObject();

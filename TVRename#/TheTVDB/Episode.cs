@@ -103,7 +103,7 @@ namespace TVRename
                         this.EpisodeRating = XMLHelper.ReadStringFixQuotesAndSpaces(r);  
                     else if (r.Name == "GuestStars")
                         this.EpisodeGuestStars = XMLHelper.ReadStringFixQuotesAndSpaces(r);      
-                    else if (r.Name == "Director")
+                    else if (r.Name == "EpisodeDirector")
                         this.EpisodeDirector = XMLHelper.ReadStringFixQuotesAndSpaces(r);      
                     else if (r.Name == "Writer")
                         this.Writer = XMLHelper.ReadStringFixQuotesAndSpaces(r);      

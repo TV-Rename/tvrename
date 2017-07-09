@@ -998,7 +998,7 @@ namespace TVRename
             List<string> skip = new List<String>
             {
                  "id","airedSeason","airedSeasonID","airedEpisodeNumber","episodeName","overview","lastUpdated","dvdSeason","dvdEpisodeNumber","dvdChapter","absoluteNumber","filename","seriesId","lastUpdatedBy","airsAfterSeason","airsBeforeSeason","airsBeforeEpisode","thumbAuthor","thumbAdded","thumbAdded","thumbWidth","thumbHeight","director","firstAired",
-                 "Combined_episodenumber","Combined_season","DVD_episodenumber","DVD_season","EpImgFlag","absolute_number","filename","is_movie","thumb_added","thumb_height","thumb_width"
+                 "Combined_episodenumber","Combined_season","DVD_episodenumber","DVD_season","EpImgFlag","absolute_number","filename","is_movie","thumb_added","thumb_height","thumb_width","EpisodeDirector"
             };
 
             bool firstInfo = true;
@@ -1009,12 +1009,14 @@ namespace TVRename
                     overviewString += "<table border=0>";
                     firstInfo = false;
                 }
-                if (!skip.Contains(kvp.Key))
+                if (!skip.Contains(kvp.Key) && (kvp.Value != "") && kvp.Value != "0")
                 {
 
-                    if (((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId")) && (kvp.Value != ""))
+                    if (((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId")) )
                         overviewString += "<tr><td width=120px>imdb.com</td><td><A HREF=\"http://www.imdb.com/title/" + kvp.Value + "\">Visit</a></td></tr>";
-                    else if (kvp.Value != "" && kvp.Value != "0")
+                    else if (((kvp.Key == "showUrl") ) )
+                        overviewString += "<tr><td width=120px>Link</td><td><A HREF=\""+ kvp.Value + "\">Visit</a></td></tr>";
+                    else 
                         overviewString += "<tr><td width=120px>" + kvp.Key + "</td><td>" + kvp.Value + "</td></tr>";
                 }
             }
