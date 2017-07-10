@@ -118,7 +118,6 @@
     <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
     <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
-    <Compile Include="TheTVDB\TheTVDBOld.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\ActorsGrid.cs">
       <SubType>Form</SubType>

@@ -579,6 +579,7 @@ namespace TVRename
             {
                 System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
                 this.Say("");
+                this.LastError = ex.Message;
                 return false;
             }
 
@@ -951,6 +952,7 @@ namespace TVRename
             {
                 System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
                 this.Say("");
+                this.LastError = ex.Message;
                 return null;
             }
 
@@ -1102,7 +1104,8 @@ namespace TVRename
             catch (WebException ex)
             {
                 System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
-                JObject errors = (JObject)jsonResponse["errors"];
+                this.LastError = ex.Message;
+                this.Say ("");
                 return false;
             }
 
@@ -1142,6 +1145,8 @@ namespace TVRename
             catch (TVDBException e)
             {
                 System.Diagnostics.Debug.Print("Could not parse TVDB Response " + e.Message);
+                this.LastError = e.Message;
+                this.Say("");
                 return false;
             }
             finally
@@ -1224,6 +1229,8 @@ namespace TVRename
             catch (WebException ex)
             {
                 System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
+                this.LastError = ex.Message;
+                this.Say("");
                 return;
             }
 
