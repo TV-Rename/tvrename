@@ -216,7 +216,7 @@ namespace TVRename
                 try
                 {
                     //Instantiate our server channel.
-                    var channel = new IpcServerChannel("TVRenameChannel");
+                    IpcServerChannel channel = new IpcServerChannel("TVRenameChannel");
 
                     //Register the server channel.
                     ChannelServices.RegisterChannel(channel, true);
@@ -957,7 +957,7 @@ namespace TVRename
                 {
                     foreach (FileInfo fi in fl)
                     {
-                        var urlFilename = HttpUtility.UrlEncode(fi.FullName);
+                        string urlFilename = HttpUtility.UrlEncode(fi.FullName);
                         body += $" <A HREF=\"watch://{urlFilename}\" class=\"search\">Watch</A>";
                         body += $" <A HREF=\"explore://{urlFilename}\" class=\"search\">Show in Explorer</A>";
                                             }
@@ -1392,14 +1392,14 @@ namespace TVRename
                         if (url.StartsWith("explore://", StringComparison.InvariantCultureIgnoreCase))
                             {
                 e.Cancel = true;
-                var path = HttpUtility.UrlDecode(url.Substring("explore://".Length).Replace('/', '\\'));
+                string path = HttpUtility.UrlDecode(url.Substring("explore://".Length).Replace('/', '\\'));
                 Helpers.SysOpen("explorer", $"/select, \"{path}\"");
                             }
             
                         if (url.StartsWith("watch://", StringComparison.InvariantCultureIgnoreCase))
                             {
                 e.Cancel = true;
-                var fileName = HttpUtility.UrlDecode(url.Substring("watch://".Length))?.Replace('/', '\\');
+                string fileName = HttpUtility.UrlDecode(url.Substring("watch://".Length))?.Replace('/', '\\');
                 Helpers.SysOpen(fileName);
                             }
 
@@ -1485,7 +1485,7 @@ namespace TVRename
             ProcessedEpisode ep = eps[0];
 
             List<ShowItem> sis = new List<ShowItem>();
-            foreach (var e in eps)
+            foreach (ProcessedEpisode  e in eps)
             {
                 sis.Add(e.SI);
             }

@@ -444,7 +444,7 @@ namespace TVRename
             }
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
             List<ShowItem> shows = this.mDoc.GetShowItems(false);
-            foreach (var show in shows)
+            foreach (ShowItem show in shows)
             {
                 if(!showStatusList.Contains(show.ShowStatus))
                     showStatusList.Add(show.ShowStatus);

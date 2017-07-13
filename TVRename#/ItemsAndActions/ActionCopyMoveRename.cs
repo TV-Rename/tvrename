@@ -99,7 +99,7 @@ namespace TVRename
 
         private void DeleteOrRecycleFolder()
         {
-            var di = From.Directory;
+            DirectoryInfo di = From.Directory;
             if (di == null) return;
             if (_tidyup.DeleteEmptyIsRecycle)
                 FileSystem.DeleteDirectory(di.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
@@ -118,7 +118,7 @@ namespace TVRename
                 return;
 #endif
             // See if we should now delete the folder we just moved that file from.
-            var di = From.Directory;
+            DirectoryInfo di = From.Directory;
             if (di == null)
                 return;
 
@@ -127,7 +127,7 @@ namespace TVRename
                 return;
 
 
-            var files = di.GetFiles();
+            FileInfo[] files = di.GetFiles();
             if (files.Length == 0)
             {
                 // its empty, so just delete it
@@ -139,9 +139,9 @@ namespace TVRename
             if (_tidyup.EmptyIgnoreExtensions && !_tidyup.EmptyIgnoreWords)
                 return; // nope
 
-            foreach (var fi in files)
+            foreach (FileInfo fi in files)
             {
-                var okToDelete = _tidyup.EmptyIgnoreExtensions &&
+                bool okToDelete = _tidyup.EmptyIgnoreExtensions &&
                                  Array.FindIndex(_tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
 
                 if (okToDelete)
@@ -158,7 +158,7 @@ namespace TVRename
             if (_tidyup.EmptyMaxSizeCheck)
             {
                 // how many MB are we deleting?
-                var totalBytes = files.Sum(fi => fi.Length);
+                long totalBytes = files.Sum(fi => fi.Length);
 
                 if (totalBytes/(1024*1024) > _tidyup.EmptyMaxSizeMB)
                     return; // too much
@@ -174,7 +174,7 @@ namespace TVRename
 
         public bool SameAs(Item o)
         {
-            var cmr = o as ActionCopyMoveRename;
+            ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
             return (cmr != null) && (Operation == cmr.Operation) && FileHelper.Same(From, cmr.From) &&
                    FileHelper.Same(To, cmr.To);
@@ -182,14 +182,14 @@ namespace TVRename
 
         public int Compare(Item o)
         {
-            var cmr = o as ActionCopyMoveRename;
+            ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
             if (cmr == null || From.Directory == null || To.Directory == null || cmr.From.Directory == null ||
                 cmr.To.Directory == null)
                 return 0;
 
-            var s1 = From.FullName + (From.Directory.Root.FullName != To.Directory.Root.FullName ? "0" : "1");
-            var s2 = cmr.From.FullName +
+            string s1 = From.FullName + (From.Directory.Root.FullName != To.Directory.Root.FullName ? "0" : "1");
+            string s2 = cmr.From.FullName +
                      (cmr.From.Directory.Root.FullName != cmr.To.Directory.Root.FullName ? "0" : "1");
 
             return string.Compare(s1, s2, StringComparison.Ordinal);
@@ -209,7 +209,7 @@ namespace TVRename
         {
             get
             {
-                var lvi = new ListViewItem();
+                ListViewItem lvi = new ListViewItem();
 
 	            if (Episode == null)
 	            {
@@ -224,7 +224,7 @@ namespace TVRename
 		            lvi.Text = Episode.TheSeries.Name;
 		            lvi.SubItems.Add(Episode.SeasonNumber.ToString());
 		            lvi.SubItems.Add(Episode.NumsAsString());
-		            var dt = Episode.GetAirDateDT(true);
+		            DateTime? dt = Episode.GetAirDateDT(true);
 		            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
 			            lvi.SubItems.Add(dt.Value.ToShortDateString());
 		            else
@@ -291,7 +291,7 @@ namespace TVRename
                 if (FileHelper.Same(From, To))
                 {
                     // XP won't actually do a rename if its only a case difference
-                    var tempName = TempFor(To);
+                    string tempName = TempFor(To);
                     From.MoveTo(tempName);
                     File.Move(tempName, To.FullName);
                 }
@@ -329,32 +329,32 @@ namespace TVRename
         private void CopyItOurself(ref bool pause, TVRenameStats stats)
         {
             const int kArrayLength = 4 * 1024 * 1024;
-            var dataArray = new byte[kArrayLength];
+            Byte[] dataArray = new Byte[kArrayLength];
 
-            var useWin32 = Version.OnWindows() && !Version.OnMono();
+            bool useWin32 = Version.OnWindows() && !Version.OnMono();
 
             try
             {
 
-                var tempName = TempFor(To);
+                string tempName = TempFor(To);
                 if (File.Exists(tempName))
                     File.Delete(tempName);
 
-                using (var inputMemoryMappedFile = useWin32 ? MemoryMappedFile.CreateFromFile(From.FullName) : null)
-                using (var inputStream = useWin32 ? (Stream)inputMemoryMappedFile.CreateViewStream() : new FileStream(From.FullName, FileMode.Open, FileAccess.Read))
-                using (var outputStream = new FileStream(tempName, FileMode.CreateNew, FileAccess.Write, FileShare.Read, 4096, FileOptions.WriteThrough))
+                using (MemoryMappedFile inputMemoryMappedFile = useWin32 ? MemoryMappedFile.CreateFromFile(From.FullName) : null)
+                using (Stream  inputStream = useWin32 ? (Stream)inputMemoryMappedFile.CreateViewStream() : new FileStream(From.FullName, FileMode.Open, FileAccess.Read))
+                using (Stream  outputStream = new FileStream(tempName, FileMode.CreateNew, FileAccess.Write, FileShare.Read, 4096, FileOptions.WriteThrough))
                 {
                     long bytesCopied = 0;
                     // MemoryMappedViewStream.Length reflects MemoryMappedView.Size which does not reflect file size
-                    var srcFileSize = useWin32 || inputStream.Length == 0 ? SourceFileSize() : inputStream.Length;
+                    long srcFileSize = useWin32 || inputStream.Length == 0 ? SourceFileSize() : inputStream.Length;
 
                     outputStream.SetLength(srcFileSize);
                     outputStream.Position = 0;
 
-                    var remainingBytes = srcFileSize;
+                    long remainingBytes = srcFileSize;
                     while (srcFileSize == 0 || remainingBytes > 0)
                     {
-                        var bytesRead = inputStream.Read(dataArray, 0, kArrayLength);
+                        int bytesRead = inputStream.Read(dataArray, 0, kArrayLength);
                         if (bytesRead == 0)
                             break;
                         if (srcFileSize != 0 && bytesRead > remainingBytes)
@@ -364,7 +364,7 @@ namespace TVRename
                         bytesCopied += bytesRead;
                         remainingBytes -= bytesRead;
 
-                        var pct = srcFileSize != 0 ? 100.0 * bytesCopied / srcFileSize : (Done ? 100 : 0);
+                        double pct = srcFileSize != 0 ? 100.0 * bytesCopied / srcFileSize : (Done ? 100 : 0);
                         PercentDone = Math.Min(pct, 100.0);
 
                         while (pause)

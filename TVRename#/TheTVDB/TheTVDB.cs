@@ -887,8 +887,8 @@ namespace TVRename
                 if (!this.Args.Unattended)
                 {
                     str.Position = 0;
-                    var sr = new StreamReader(str);
-                    var myStr = sr.ReadToEnd();
+                    StreamReader sr = new StreamReader(str);
+                    string myStr = sr.ReadToEnd();
 
                     string message = "Error processing data from TheTVDB (top level).";
                     message += "\r\n" + myStr;
