@@ -37,6 +37,23 @@ namespace TVRename
         }
     }
 
+    public static class KeepTVDBAliveTimer
+    {
+        static System.Timers.Timer _timer; // From System.Timers
+
+        static public void Start()
+        {
+            _timer = new System.Timers.Timer(23 * 60 * 60 * 1000); // Set up the timer for 23 hours 
+            _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+            _timer.Enabled = true; // Enable it
+        }
+
+        static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            TheTVDB.Instance.refreshToken();
+        }
+    }
+
     public class Language
     {
         public Language(int id, string abbrevation, string name, string englishName) {
@@ -490,14 +507,16 @@ namespace TVRename
 
             this.authenticationToken = (string)jsonResponse["token"];
 
+            KeepTVDBAliveTimer.Start();
+
             this.Say("");
             return true;
 
         }
 
-        private bool refreshToken()
+        public bool refreshToken()
         {
-            //MS_TODO - set this up so that it is run every 23 hours
+            
             this.Say("Reconnecting to TVDB");
 
 
@@ -505,6 +524,8 @@ namespace TVRename
 
             this.authenticationToken = (string)jsonResponse["token"];
 
+            System.Diagnostics.Debug.WriteLine("refreshed token at " + System.DateTime.UtcNow);
+            System.Diagnostics.Debug.WriteLine("New Token " + this.authenticationToken);
             this.Say("");
             return true;
         }
