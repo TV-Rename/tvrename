@@ -1,18 +1,17 @@
-﻿// 
-// Main website for TVRename is http://tvrename.com
-// 
-// Source code available at http://code.google.com/p/tvrename/
-// 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
-
+﻿using System;
+using System.CodeDom;
+using System.Diagnostics;
+using System.IO;
+using System.IO.MemoryMappedFiles;
+using System.Linq;
+using System.Security.AccessControl;
+using System.Threading;
+using System.Web.UI.WebControls;
+using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
 
 namespace TVRename
 {
-    using System;
-    using System.IO;
-    using System.Windows.Forms;
-
     public class ActionCopyMoveRename : Item, Action, ScanListItem
     {
         #region Op enum
@@ -29,17 +28,17 @@ namespace TVRename
         public FileInfo From;
         public Op Operation;
         public FileInfo To;
-        private double _Percent;
-        private TidySettings Tidyup;
+        private double _percent;
+        private readonly TidySettings _tidyup;
 
         public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup)
         {
-            this.Tidyup = tidyup;
-            this.PercentDone = 0;
-            this.Episode = ep;
-            this.Operation = operation;
-            this.From = from;
-            this.To = to;
+            _tidyup = tidyup;
+            PercentDone = 0;
+            Episode = ep;
+            Operation = operation;
+            From = from;
+            To = to;
         }
 
         #region Action Members
@@ -48,97 +47,84 @@ namespace TVRename
         public bool Error { get; set; }
         public string ErrorText { get; set; }
 
-        public string Name
-        {
-            get { return this.IsMoveRename() ? "Move" : "Copy"; }
-        }
+        public string Name => IsMoveRename() ? "Move" : "Copy";
 
-        public string ProgressText
-        {
-            get { return this.To.Name; }
-        }
+        public string ProgressText => To.Name;
 
         public double PercentDone
         {
-            get { return this.Done ? 100.0 : this._Percent; }
-            set { this._Percent = value; }
+            get { return Done ? 100.0 : _percent; }
+            set { _percent = value; }
         }
 
         // 0.0 to 100.0
-        public long SizeOfWork
-        {
-            get { return this.QuickOperation() ? 10000 : this.SourceFileSize(); }
-        }
+        public long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-        public bool Go( ref bool pause, TVRenameStats stats)
+        public bool Go(ref bool pause, TVRenameStats stats)
         {
             // read NTFS permissions (if any)
-            System.Security.AccessControl.FileSecurity security = null;
+            FileSecurity security = null;
             try
             {
-                security = this.From.GetAccessControl();
+                security = From.GetAccessControl();
             }
             catch
             {
+                // ignored
             }
 
-            if (this.QuickOperation())
-            {
-                this.OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
-            }
+            if (QuickOperation())
+                OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
             else
-                this.CopyItOurself(ref pause, stats); // do it ourself!
+                CopyItOurself(ref pause, stats); // do it ourself!
 
             // set NTFS permissions
             try
             {
                 if (security != null)
-                    this.To.SetAccessControl(security);
+                    To.SetAccessControl(security);
             }
             catch
             {
+                // ignored
             }
 
-            if (this.Operation == Op.Move && this.Tidyup != null && this.Tidyup.DeleteEmpty)
+            if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
             {
                 DoTidyup();
             }
 
-            return !this.Error;
+            return !Error;
         }
 
         private void DeleteOrRecycleFolder()
         {
-            DirectoryInfo di = this.From.Directory;
-            if (Tidyup.DeleteEmptyIsRecycle)
-            {
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-            }
+            DirectoryInfo di = From.Directory;
+            if (di == null) return;
+            if (_tidyup.DeleteEmptyIsRecycle)
+                FileSystem.DeleteDirectory(di.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             else
-            {
                 di.Delete();
-            }
         }
 
 
         private void DoTidyup()
         {
 #if DEBUG
-            System.Diagnostics.Debug.Assert(this.Tidyup != null);
-            System.Diagnostics.Debug.Assert(this.Tidyup.DeleteEmpty);
+            Debug.Assert(this._tidyup != null);
+            Debug.Assert(this._tidyup.DeleteEmpty);
 #else
-            if (this.Tidyup == null || !this.Tidyup.DeleteEmpty)
-            {
+            if (_tidyup == null || !_tidyup.DeleteEmpty)
                 return;
-            }
 #endif
             // See if we should now delete the folder we just moved that file from.
-            DirectoryInfo di = this.From.Directory;
+            DirectoryInfo di = From.Directory;
             if (di == null)
                 return;
 
             //if there are sub-directories then we shouldn't remove this one
-            if (di.GetDirectories().Length > 0) { return; }
+            if (di.GetDirectories().Length > 0)
+                return;
 
 
             FileInfo[] files = di.GetFiles();
@@ -150,43 +136,31 @@ namespace TVRename
             }
 
 
-
-            if (Tidyup.EmptyIgnoreExtensions && !Tidyup.EmptyIgnoreWords)
+            if (_tidyup.EmptyIgnoreExtensions && !_tidyup.EmptyIgnoreWords)
                 return; // nope
 
             foreach (FileInfo fi in files)
             {
-                bool okToDelete = Tidyup.EmptyIgnoreExtensions &&
-                                  Array.FindIndex(Tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
+                bool okToDelete = _tidyup.EmptyIgnoreExtensions &&
+                                 Array.FindIndex(_tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
 
                 if (okToDelete)
                     continue; // onto the next file
 
                 // look in the filename
-                foreach (string word in Tidyup.EmptyIgnoreWordsArray)
-                {
-                    if (fi.Name.Contains(word))
-                    {
-                        okToDelete = true;
-                        break;
-                    }
-                }
+                if (_tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word)))
+                    okToDelete = true;
 
                 if (!okToDelete)
                     return;
             }
 
-            if (Tidyup.EmptyMaxSizeCheck)
+            if (_tidyup.EmptyMaxSizeCheck)
             {
                 // how many MB are we deleting?
-                long totalBytes = 0;
-                foreach (FileInfo fi in files)
-                {
-                    totalBytes += fi.Length;
-                }
+                long totalBytes = files.Sum(fi => fi.Length);
 
-
-                if (totalBytes / (1024 * 1024) > Tidyup.EmptyMaxSizeMB)
+                if (totalBytes/(1024*1024) > _tidyup.EmptyMaxSizeMB)
                     return; // too much
             }
             DeleteOrRecycleFolder();
@@ -194,10 +168,7 @@ namespace TVRename
 
         #endregion
 
-        public string produces
-        {
-            get { return this.To.FullName; }
-        }
+        public string produces => To.FullName;
 
         #region Item Members
 
@@ -205,42 +176,34 @@ namespace TVRename
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
-            return ((cmr != null) && (this.Operation == cmr.Operation) && FileHelper.Same(this.From, cmr.From) && FileHelper.Same(this.To, cmr.To));
+            return (cmr != null) && (Operation == cmr.Operation) && FileHelper.Same(From, cmr.From) &&
+                   FileHelper.Same(To, cmr.To);
         }
 
         public int Compare(Item o)
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
-            if (cmr == null || this.From.Directory == null || this.To.Directory == null || cmr.From.Directory==null || cmr.To.Directory==null)
+            if (cmr == null || From.Directory == null || To.Directory == null || cmr.From.Directory == null ||
+                cmr.To.Directory == null)
                 return 0;
 
-            string s1 = this.From.FullName + (this.From.Directory.Root.FullName != this.To.Directory.Root.FullName ? "0" : "1");
-            string s2 = cmr.From.FullName + (cmr.From.Directory.Root.FullName != cmr.To.Directory.Root.FullName ? "0" : "1");
+            string s1 = From.FullName + (From.Directory.Root.FullName != To.Directory.Root.FullName ? "0" : "1");
+            string s2 = cmr.From.FullName +
+                     (cmr.From.Directory.Root.FullName != cmr.To.Directory.Root.FullName ? "0" : "1");
 
-            return s1.CompareTo(s2);
+            return string.Compare(s1, s2, StringComparison.Ordinal);
         }
 
         #endregion
 
         #region ScanListItem Members
 
-        public int IconNumber
-        {
-            get { return this.IsMoveRename() ? 4 : 3; }
-        }
+        public int IconNumber => IsMoveRename() ? 4 : 3;
 
         public ProcessedEpisode Episode { get; set; }
 
-        public IgnoreItem Ignore
-        {
-            get
-            {
-                if (this.To == null)
-                    return null;
-                return new IgnoreItem(this.To.FullName);
-            }
-        }
+        public IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
 
         public ListViewItem ScanListViewItem
         {
@@ -248,29 +211,30 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                if (this.Episode == null)
-                {
-                    lvi.Text = "";
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                }
-                else
-                {
-                    lvi.Text = this.Episode.TheSeries.Name;
-                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
-                    DateTime? dt = this.Episode.GetAirDateDT(true);
-                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                        lvi.SubItems.Add(dt.Value.ToShortDateString());
-                    else
-                        lvi.SubItems.Add("");
-                }
+	            if (Episode == null)
+	            {
+		            lvi.Text = "";
+		            lvi.SubItems.Add("");
+		            lvi.SubItems.Add("");
+		            lvi.SubItems.Add("");
+		            lvi.SubItems.Add("");
+	            }
+	            else
+	            {
+		            lvi.Text = Episode.TheSeries.Name;
+		            lvi.SubItems.Add(Episode.SeasonNumber.ToString());
+		            lvi.SubItems.Add(Episode.NumsAsString());
+		            DateTime? dt = Episode.GetAirDateDT(true);
+		            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+			            lvi.SubItems.Add(dt.Value.ToShortDateString());
+		            else
+			            lvi.SubItems.Add("");
+	            }
 
-                lvi.SubItems.Add(this.From.DirectoryName);
-                lvi.SubItems.Add(this.From.Name);
-                lvi.SubItems.Add(this.To.DirectoryName);
-                lvi.SubItems.Add(this.To.Name);
+	            lvi.SubItems.Add(From.DirectoryName);
+                lvi.SubItems.Add(From.Name);
+                lvi.SubItems.Add(To.DirectoryName);
+                lvi.SubItems.Add(To.Name);
 
                 return lvi;
             }
@@ -280,63 +244,37 @@ namespace TVRename
         {
             get
             {
-                if (this.Operation == Op.Rename)
-                    return "lvgActionRename";
-                if (this.Operation == Op.Copy)
-                    return "lvgActionCopy";
-                if (this.Operation == Op.Move)
-                    return "lvgActionMove";
-                return "lvgActionCopy";
+                switch (Operation)
+                {
+                    case Op.Rename:
+                        return "lvgActionRename";
+                    case Op.Copy:
+                        return "lvgActionCopy";
+                    case Op.Move:
+                        return "lvgActionMove";
+                    default:
+                        return "lvgActionCopy";
+                }
             }
         }
 
-        public string TargetFolder
-        {
-            get
-            {
-                if (this.To == null)
-                    return null;
-                return this.To.DirectoryName;
-            }
-        }
+        public string TargetFolder => To?.DirectoryName;
 
         #endregion
 
-        private static string TempFor(FileInfo f)
-        {
-            return f.FullName + ".tvrenametemp";
-        }
-
-        private void NicelyStopAndCleanUp_Win32(Win32FileIO.WinFileIO copier)
-        {
-            if (copier != null ) copier.Close();
-            string tempName = TempFor(this.To);
-            if (File.Exists(tempName))
-                File.Delete(tempName);
-        }
-
-        private void NicelyStopAndCleanUp_Streams(BinaryReader msr, BinaryWriter msw)
-        {
-            if (msw != null)
-            {
-                msw.Close();
-                string tempName = TempFor(this.To);
-                if (File.Exists(tempName))
-                    File.Delete(tempName);
-            }
-            if (msr != null)
-                msr.Close();
-        }
+        private static string TempFor(FileSystemInfo f) => f.FullName + ".tvrenametemp";
 
         public bool QuickOperation()
         {
-            if ((this.From == null) || (this.To == null) || (this.From.Directory == null) || (this.To.Directory == null))
+            if ((From == null) || (To == null) || (From.Directory == null) || (To.Directory == null))
                 return false;
 
-            return (this.IsMoveRename() && (this.From.Directory.Root.FullName.ToLower() == this.To.Directory.Root.FullName.ToLower())); // same device ... TODO: UNC paths?
+            return IsMoveRename() &&
+                   string.Equals(From.Directory.Root.FullName, To.Directory.Root.FullName,
+                       StringComparison.InvariantCultureIgnoreCase); // same device ... TODO: UNC paths?
         }
 
-        private static void KeepTimestamps(FileInfo from, FileInfo to)
+        private static void KeepTimestamps(FileSystemInfo from, FileSystemInfo to)
         {
             to.CreationTime = from.CreationTime;
             to.CreationTimeUtc = from.CreationTimeUtc;
@@ -350,149 +288,127 @@ namespace TVRename
         {
             try
             {
-                if (FileHelper.Same(this.From, this.To))
+                if (FileHelper.Same(From, To))
                 {
                     // XP won't actually do a rename if its only a case difference
-                    string tempName = TempFor(this.To);
-                    this.From.MoveTo(tempName);
-                    File.Move(tempName, this.To.FullName);
+                    string tempName = TempFor(To);
+                    From.MoveTo(tempName);
+                    File.Move(tempName, To.FullName);
                 }
                 else
-                    this.From.MoveTo(this.To.FullName);
+                    From.MoveTo(To.FullName);
 
-                KeepTimestamps(this.From, this.To);
+                KeepTimestamps(From, To);
 
-                this.Done = true;
+                Done = true;
 
-                System.Diagnostics.Debug.Assert((this.Operation == ActionCopyMoveRename.Op.Move) || (this.Operation == ActionCopyMoveRename.Op.Rename));
+                Debug.Assert((Operation == Op.Move) || (Operation == Op.Rename));
 
-                if (this.Operation == ActionCopyMoveRename.Op.Move)
-                    stats.FilesMoved++;
-                else if (this.Operation == ActionCopyMoveRename.Op.Rename)
-                    stats.FilesRenamed++;
+                switch (Operation)
+                {
+                    case Op.Move:
+                        stats.FilesMoved++;
+                        break;
+                    case Op.Rename:
+                        stats.FilesRenamed++;
+                        break;
+                    case Op.Copy:
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                this.Done = true;
-                this.Error = true;
-                this.ErrorText = e.Message;
+                Done = true;
+                Error = true;
+                ErrorText = e.Message;
             }
         }
 
         private void CopyItOurself(ref bool pause, TVRenameStats stats)
         {
-            const int kArrayLength = 1 * 1024 * 1024;
+            const int kArrayLength = 4 * 1024 * 1024;
             Byte[] dataArray = new Byte[kArrayLength];
 
             bool useWin32 = Version.OnWindows() && !Version.OnMono();
 
-            Win32FileIO.WinFileIO copier = null;
-
-            BinaryReader msr = null;
-            BinaryWriter msw = null;
-
             try
             {
-                long thisFileCopied = 0;
-                long thisFileSize = this.SourceFileSize();
 
-                string tempName = TempFor(this.To);
+                string tempName = TempFor(To);
                 if (File.Exists(tempName))
                     File.Delete(tempName);
 
-                if (useWin32)
+                using (MemoryMappedFile inputMemoryMappedFile = useWin32 ? MemoryMappedFile.CreateFromFile(From.FullName) : null)
+                using (Stream  inputStream = useWin32 ? (Stream)inputMemoryMappedFile.CreateViewStream() : new FileStream(From.FullName, FileMode.Open, FileAccess.Read))
+                using (Stream  outputStream = new FileStream(tempName, FileMode.CreateNew, FileAccess.Write, FileShare.Read, 4096, FileOptions.WriteThrough))
                 {
-                    copier = new Win32FileIO.WinFileIO(dataArray);
-                    copier.OpenForReading(this.From.FullName);
-                    copier.OpenForWriting(tempName);
-                }
-                else
-                {
-                    msr = new BinaryReader(new FileStream(this.From.FullName, FileMode.Open, FileAccess.Read));
-                    msw = new BinaryWriter(new FileStream(tempName, FileMode.CreateNew));
-                }
+                    long bytesCopied = 0;
+                    // MemoryMappedViewStream.Length reflects MemoryMappedView.Size which does not reflect file size
+                    long srcFileSize = useWin32 || inputStream.Length == 0 ? SourceFileSize() : inputStream.Length;
 
-                for (;;)
-                {
-                    int n = useWin32 ? copier.ReadBlocks(kArrayLength) : msr.Read(dataArray, 0, kArrayLength);
-                    if (n == 0)
-                        break;
+                    outputStream.SetLength(srcFileSize);
+                    outputStream.Position = 0;
 
-                    if (useWin32)
+                    long remainingBytes = srcFileSize;
+                    while (srcFileSize == 0 || remainingBytes > 0)
                     {
-                        copier.WriteBlocks(n);
+                        int bytesRead = inputStream.Read(dataArray, 0, kArrayLength);
+                        if (bytesRead == 0)
+                            break;
+                        if (srcFileSize != 0 && bytesRead > remainingBytes)
+                            bytesRead = (int)remainingBytes;
+
+                        outputStream.Write(dataArray, 0, bytesRead);
+                        bytesCopied += bytesRead;
+                        remainingBytes -= bytesRead;
+
+                        double pct = srcFileSize != 0 ? 100.0 * bytesCopied / srcFileSize : (Done ? 100 : 0);
+                        PercentDone = Math.Min(pct, 100.0);
+
+                        while (pause)
+                            Thread.Sleep(100);
                     }
-                    else
-                    {
-                        msw.Write(dataArray, 0, n);
-                    }
-                    thisFileCopied += n;
-
-                    double pct = (thisFileSize != 0) ? (100.0 * thisFileCopied / thisFileSize) : this.Done ? 100 : 0;
-                    if (pct > 100.0)
-                        pct = 100.0;
-                    this.PercentDone = pct;
-
-                    while (pause)
-                        System.Threading.Thread.Sleep(100);
-                }
-
-                if (useWin32)
-                {
-                    copier.Close();
-                }
-                else
-                {
-                    msr.Close();
-                    msw.Close();
                 }
 
                 // rename temp version to final name
-                if (this.To.Exists)
-                    this.To.Delete(); // outta ma way!
-                File.Move(tempName, this.To.FullName);
+                if (To.Exists)
+                    To.Delete(); // outta ma way!
+                File.Move(tempName, To.FullName);
 
-                KeepTimestamps(this.From, this.To);
+                KeepTimestamps(From, To);
 
                 // if that was a move/rename, delete the source
-                if (this.IsMoveRename())
-                    this.From.Delete();
+                if (IsMoveRename())
+                    From.Delete();
 
-                if (this.Operation == ActionCopyMoveRename.Op.Move)
-                    stats.FilesMoved++;
-                else if (this.Operation == ActionCopyMoveRename.Op.Rename)
-                    stats.FilesRenamed++;
-                else if (this.Operation == ActionCopyMoveRename.Op.Copy)
-                    stats.FilesCopied++;
+                switch (Operation)
+                {
+                    case Op.Move:
+                        stats.FilesMoved++;
+                        break;
+                    case Op.Rename:
+                        stats.FilesRenamed++;
+                        break;
+                    case Op.Copy:
+                        stats.FilesCopied++;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
 
-                this.Done = true;
+                Done = true;
             } // try
-            catch (System.Threading.ThreadAbortException)
+            catch (ThreadAbortException)
             {
-                if (useWin32)
-                {
-                    this.NicelyStopAndCleanUp_Win32(copier);
-                }
-                else
-                {
-                    this.NicelyStopAndCleanUp_Streams(msr, msw);
-                }
-                return;
             }
             catch (Exception ex)
             {
                 // handle any exception type
-                this.Error = true;
-                this.Done = true;
-                this.ErrorText = ex.Message;
-                if (useWin32)
-                {
-                    this.NicelyStopAndCleanUp_Win32(copier);
-                }
-                else
-                {
-                    this.NicelyStopAndCleanUp_Streams(msr, msw);
-                }
+                Error = true;
+                Done = true;
+                ErrorText = ex.Message;
             }
         }
 
@@ -500,14 +416,9 @@ namespace TVRename
         // --------------------------------------------------------------------------------------------------------
 
         public bool IsMoveRename() // same thing to the OS
-        {
-            return ((this.Operation == Op.Move) || (this.Operation == Op.Rename));
-        }
+            => (Operation == Op.Move) || (Operation == Op.Rename);
 
-        public bool SameSource(ActionCopyMoveRename o)
-        {
-            return (FileHelper.Same(this.From, o.From));
-        }
+        public bool SameSource(ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
 
         // ========================================================================================================
 
@@ -515,7 +426,7 @@ namespace TVRename
         {
             try
             {
-                return this.From.Length;
+                return From.Length;
             }
             catch
             {
