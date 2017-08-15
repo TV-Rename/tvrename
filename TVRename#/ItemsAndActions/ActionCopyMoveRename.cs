@@ -325,63 +325,84 @@ namespace TVRename
                 ErrorText = e.Message;
             }
         }
-
         private void CopyItOurself(ref bool pause, TVRenameStats stats)
         {
-            const int kArrayLength = 4 * 1024 * 1024;
+            const int kArrayLength = 1 * 1024 * 1024;
             Byte[] dataArray = new Byte[kArrayLength];
 
             bool useWin32 = Version.OnWindows() && !Version.OnMono();
 
+            Win32FileIO.WinFileIO copier = null;
+
+            BinaryReader msr = null;
+            BinaryWriter msw = null;
+
             try
             {
+                long thisFileCopied = 0;
+                long thisFileSize = this.SourceFileSize();
 
-                string tempName = TempFor(To);
+                string tempName = TempFor(this.To);
                 if (File.Exists(tempName))
                     File.Delete(tempName);
 
-                using (MemoryMappedFile inputMemoryMappedFile = useWin32 ? MemoryMappedFile.CreateFromFile(From.FullName) : null)
-                using (Stream  inputStream = useWin32 ? (Stream)inputMemoryMappedFile.CreateViewStream() : new FileStream(From.FullName, FileMode.Open, FileAccess.Read))
-                using (Stream  outputStream = new FileStream(tempName, FileMode.CreateNew, FileAccess.Write, FileShare.Read, 4096, FileOptions.WriteThrough))
+                if (useWin32)
                 {
-                    long bytesCopied = 0;
-                    // MemoryMappedViewStream.Length reflects MemoryMappedView.Size which does not reflect file size
-                    long srcFileSize = useWin32 || inputStream.Length == 0 ? SourceFileSize() : inputStream.Length;
+                    copier = new Win32FileIO.WinFileIO(dataArray);
+                    copier.OpenForReading(this.From.FullName);
+                    copier.OpenForWriting(tempName);
+                }
+                else
+                {
+                    msr = new BinaryReader(new FileStream(this.From.FullName, FileMode.Open, FileAccess.Read));
+                    msw = new BinaryWriter(new FileStream(tempName, FileMode.CreateNew));
+                }
 
-                    outputStream.SetLength(srcFileSize);
-                    outputStream.Position = 0;
+                for (;;)
+                {
+                    int bytesRead = useWin32 ? copier.ReadBlocks(kArrayLength) : msr.Read(dataArray, 0, kArrayLength);
+                    if (bytesRead == 0)
+                        break;
 
-                    long remainingBytes = srcFileSize;
-                    while (srcFileSize == 0 || remainingBytes > 0)
+                    if (useWin32)
                     {
-                        int bytesRead = inputStream.Read(dataArray, 0, kArrayLength);
-                        if (bytesRead == 0)
-                            break;
-                        if (srcFileSize != 0 && bytesRead > remainingBytes)
-                            bytesRead = (int)remainingBytes;
-
-                        outputStream.Write(dataArray, 0, bytesRead);
-                        bytesCopied += bytesRead;
-                        remainingBytes -= bytesRead;
-
-                        double pct = srcFileSize != 0 ? 100.0 * bytesCopied / srcFileSize : (Done ? 100 : 0);
-                        PercentDone = Math.Min(pct, 100.0);
-
-                        while (pause)
-                            Thread.Sleep(100);
+                        copier.WriteBlocks(bytesRead);
                     }
+                    else
+                    {
+                        msw.Write(dataArray, 0, bytesRead);
+                    }
+                    thisFileCopied += bytesRead;
+
+                    double pct = (thisFileSize != 0) ? (100.0 * thisFileCopied / thisFileSize) : this.Done ? 100 : 0;
+                    if (pct > 100.0)
+                        pct = 100.0;
+                    this.PercentDone = pct;
+
+                    while (pause)
+                        System.Threading.Thread.Sleep(100);
+                }
+
+                if (useWin32)
+                {
+                    copier.Close();
+                }
+                else
+                {
+                    msr.Close();
+                    msw.Close();
                 }
 
                 // rename temp version to final name
-                if (To.Exists)
-                    To.Delete(); // outta ma way!
-                File.Move(tempName, To.FullName);
+                if (this.To.Exists)
+                    this.To.Delete(); // outta ma way!
+                File.Move(tempName, this.To.FullName);
 
-                KeepTimestamps(From, To);
+                KeepTimestamps(this.From, this.To);
 
                 // if that was a move/rename, delete the source
-                if (IsMoveRename())
-                    From.Delete();
+                if (this.IsMoveRename())
+                    this.From.Delete();
 
                 switch (Operation)
                 {
@@ -398,18 +419,57 @@ namespace TVRename
                         throw new ArgumentOutOfRangeException();
                 }
 
-                Done = true;
+                this.Done = true;
             } // try
-            catch (ThreadAbortException)
+            catch (System.Threading.ThreadAbortException)
             {
+                if (useWin32)
+                {
+                    this.NicelyStopAndCleanUp_Win32(copier);
+                }
+                else
+                {
+                    this.NicelyStopAndCleanUp_Streams(msr, msw);
+                }
+                return;
             }
             catch (Exception ex)
             {
                 // handle any exception type
-                Error = true;
-                Done = true;
-                ErrorText = ex.Message;
+                this.Error = true;
+                this.Done = true;
+                this.ErrorText = ex.Message;
+                if (useWin32)
+                {
+                    this.NicelyStopAndCleanUp_Win32(copier);
+                }
+                else
+                {
+                    this.NicelyStopAndCleanUp_Streams(msr, msw);
+                }
             }
+        }
+
+
+        private void NicelyStopAndCleanUp_Win32(Win32FileIO.WinFileIO copier)
+        {
+            if (copier != null) copier.Close();
+            string tempName = TempFor(this.To);
+            if (File.Exists(tempName))
+                File.Delete(tempName);
+        }
+
+        private void NicelyStopAndCleanUp_Streams(BinaryReader msr, BinaryWriter msw)
+        {
+            if (msw != null)
+            {
+                msw.Close();
+                string tempName = TempFor(this.To);
+                if (File.Exists(tempName))
+                    File.Delete(tempName);
+            }
+            if (msr != null)
+                msr.Close();
         }
 
 
