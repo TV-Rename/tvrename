@@ -56,6 +56,8 @@ namespace TVRename
         private TVRenameStats mStats;
         public bool CurrentlyBusy = false;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
+        private bool DebugThreads = false;
+
         private List<Finder> Finders;
 
         string[] SeasonWords = new[] { "Season", // EN
@@ -432,10 +434,10 @@ namespace TVRename
             int code = (int) (codeIn);
 
             bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
-            
-            System.Diagnostics.Debug.Print("  Downloading " + code);
+
+            if (DebugThreads) System.Diagnostics.Debug.Print("  Downloading " + code);
             bool r = TheTVDB.Instance.EnsureUpdated(code, bannersToo);
-            System.Diagnostics.Debug.Print("  Finished " + code);
+            if (DebugThreads) System.Diagnostics.Debug.Print("  Finished " + code);
             if (!r)
             {
                 this.DownloadOK = false;
@@ -507,7 +509,7 @@ namespace TVRename
                     t.Name = "GetThread:" + code;
                     t.Start(code); // will grab the semaphore as soon as we make it available
                     int nfr = this.WorkerSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
-                    System.Diagnostics.Debug.Print("Started " + code + " pool has " + nfr + " free");
+                    if (DebugThreads) System.Diagnostics.Debug.Print("Started " + code + " pool has " + nfr + " free");
                     Thread.Sleep(1); // allow the other thread a chance to run and grab
 
                     // tidy up any finished workers
@@ -1464,7 +1466,7 @@ namespace TVRename
                         t.Start(new ProcessActionInfo(which, act));
 
                         int nfr = this.ActionSemaphores[which].Release(1); // release our hold on the semaphore, so that worker can grab it
-                        System.Diagnostics.Debug.Print("ActionProcessor[" + which + "] pool has " + nfr + " free");
+                        if (DebugThreads) System.Diagnostics.Debug.Print("ActionProcessor[" + which + "] pool has " + nfr + " free");
                     }
 
                     while (this.ActionStarting) // wait for thread to get the semaphore
