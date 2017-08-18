@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.IO;
+using System.Text;
 
 namespace TVRename
 {
@@ -36,59 +37,40 @@ namespace TVRename
             this.txtEmailText.Text = "Working... This may take a while.";
             this.txtEmailText.Update();
 
-            string txt = "";
-            txt += "From: " + this.txtName.Text + " <" + this.txtEmail.Text + ">" + "\r\n";
-            txt += "Subject: TVRename bug report" + "\r\n";
-            txt += "\r\n";
-            txt += "TVRename version: " + Version.DisplayVersionString() + "\r\n";
-            txt += "UserAppDataPath is " + System.Windows.Forms.Application.UserAppDataPath + "\r\n";
-            txt += "EpGuidePath is " + UI.EpGuidePath() + "\r\n";
-            txt += "\r\n";
-            txt += "==== Brief Description ====" + "\r\n";
-            txt += this.txtDesc1.Text + "\r\n";
-            txt += "\r\n";
-            txt += "==== Description ====" + "\r\n";
-            txt += this.txtDesc2.Text + "\r\n";
-            txt += "\r\n";
-            txt += "==== Frequency ====" + "\r\n";
-            txt += this.txtFreq.Text + "\r\n";
-            txt += "\r\n";
-            txt += "==== Notes and Comments ====" + "\r\n";
-            txt += this.txtComments.Text + "\r\n";
-            txt += "\r\n";
-
+            StringBuilder txt = new StringBuilder();
+            
             if (this.cbSettings.Checked)
             {
-                txt += "==== Settings Files ====" + "\r\n";
-                txt += "\r\n";
-                txt += "---- TVRenameSettings.xml" + "\r\n";
-                txt += "\r\n";
+                txt.Append("==== Settings Files ====" + "\r\n");
+                txt.Append("\r\n");
+                txt.Append("---- TVRenameSettings.xml" + "\r\n");
+                txt.Append("\r\n");
                 try
                 {
                     StreamReader sr = new StreamReader(PathManager.TVDocSettingsFile.FullName);
-                    txt += sr.ReadToEnd();
+                    txt.Append(sr.ReadToEnd());
                     sr.Close();
-                    txt += "\r\n";
+                    txt.Append("\r\n");
                 }
                 catch
                 {
-                    txt += "Error reading TVRenameSettings.xml\r\n";
+                    txt.Append("Error reading TVRenameSettings.xml\r\n");
                 }
-                txt += "\r\n";
+                txt.Append("\r\n");
             }
 
             if (this.cbFOScan.Checked || this.cbFolderScan.Checked)
             {
-                txt += "==== Filename processors ====\r\n";
+                txt.Append("==== Filename processors ====\r\n");
                 foreach (FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
-                    txt += (s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RE + "\" " + (s.UseFullPath ? "(FullPath)" : "") + "\r\n";
-                txt += "\r\n";
+                    txt.Append((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RE + "\" " + (s.UseFullPath ? "(FullPath)" : "") + "\r\n");
+                txt.Append("\r\n");
             }
 
             if (this.cbFOScan.Checked)
             {
-                txt += "==== Finding & Organising Directory Scan ====" + "\r\n";
-                txt += "\r\n";
+                txt.Append("==== Finding & Organising Directory Scan ====" + "\r\n");
+                txt.Append("\r\n");
 
                 DirCache dirC = new DirCache();
                 foreach (string efi in this.mDoc.SearchFolders)
@@ -100,14 +82,14 @@ namespace TVRename
                     int ep;
                     bool r = TVDoc.FindSeasEp(fi.TheFile, out seas, out ep, null);
                     bool useful = fi.HasUsefulExtension_NotOthersToo;
-                    txt += fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n";
+                    txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                 }
-                txt += "\r\n";
+                txt.Append("\r\n");
             }
 
             if (this.cbFolderScan.Checked)
             {
-                txt += "==== Media Folders Directory Scan ====" + "\r\n";
+                txt.Append("==== Media Folders Directory Scan ====" + "\r\n");
 
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
@@ -119,9 +101,9 @@ namespace TVRename
 
                         foreach (string folder in si.AllFolderLocations()[snum])
                         {
-                            txt += si.TVDBCode + " : " + si.ShowName + " : S" + snum + "\r\n";
-                            txt += "Folder: " + folder;
-                            txt += "\r\n";
+                            txt.Append(si.TVDBCode + " : " + si.ShowName + " : S" + snum + "\r\n");
+                            txt.Append("Folder: " + folder);
+                            txt.Append("\r\n");
                             DirCache files = new DirCache();
                             if (Directory.Exists(folder))
                                 files.AddFolder(null, 0, 0, folder, true);
@@ -131,24 +113,29 @@ namespace TVRename
                                 int ep;
                                 bool r = TVDoc.FindSeasEp(fi.TheFile, out seas, out ep, si);
                                 bool useful = fi.HasUsefulExtension_NotOthersToo;
-                                txt += fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n";
+                                txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                             }
-                            txt += "\r\n";
+                            txt.Append("\r\n");
                         }
                     }
-                    txt += "\r\n";
+                    txt.Append("\r\n");
                 }
                 this.mDoc.UnlockShowItems();
 
-                txt += "\r\n";
+                txt.Append("\r\n");
             }
 
-            this.txtEmailText.Text = txt;
+            this.txtEmailText.Text = txt.ToString();
         }
 
         private void bnCopy_Click(object sender, System.EventArgs e)
         {
             Clipboard.SetDataObject(this.txtEmailText.Text);
+        }
+
+        private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Helpers.SysOpen("https://groups.google.com/forum/#!forum/tvrename");   
         }
     }
 }

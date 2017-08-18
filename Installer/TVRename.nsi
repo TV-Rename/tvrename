@@ -17,6 +17,7 @@ BrandingText /TRIMLEFT " "
 !define MUI_UNICON "uninstall.ico"
 
 !include "MUI.nsh"
+!include "DotNet4Client.nsh"
 
 ;Var MUI_TEMP
 Var STARTMENU_FOLDER
@@ -27,7 +28,7 @@ Var STARTMENU_FOLDER
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
 ;General
-OutFile "TVRename2.2.x.exe"
+OutFile "TVRename2.3.x.exe"
 
 ;Folder selection page
 InstallDir "$PROGRAMFILES\${DEF_INSTALL_DIR}"
@@ -62,9 +63,13 @@ InstallDir "$PROGRAMFILES\${DEF_INSTALL_DIR}"
 
 Section "TVRename" SecTVRename
   SectionIn 1
+
+  Call DotNet4Client_CheckAndInstall
+
   SetOutPath "$INSTDIR"
   File "..\TVRename#\bin\Release\TVRename.exe"
   File "..\TVRename#\bin\Release\Ionic.Utils.Zip.dll"
+  File "..\TVRename#\bin\Release\Newtonsoft.Json.dll"
   File "..\TVRename#\bin\Release\SourceGrid.dll"
 
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
@@ -91,6 +96,7 @@ Section "Uninstall"
 
   Delete "$INSTDIR\TVRename.exe"
   Delete "$INSTDIR\Ionic.Utils.Zip.dll"
+  Delete "$INSTDIR\Newtonsoft.Json.dll"
   Delete "$INSTDIR\SourceGrid.dll"
   Delete "$INSTDIR\Uninstall.exe"
   RmDir "$INSTDIR"

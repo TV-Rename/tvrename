@@ -2304,7 +2304,7 @@ namespace TVRename
 
         private static bool FindSeasEpDateCheck(FileInfo fi, out int seas, out int ep, ShowItem si)
         {
-            if (fi == null)
+            if (fi == null || si == null)
             {
                 seas = -1;
                 ep = -1;
