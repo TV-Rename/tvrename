@@ -33,10 +33,15 @@ namespace TVRename
                 Cache[folder] = null;
                 return null;
             }
-            //mS_todo - catch ioexception
-            FileInfo[] files = di.GetFiles();
-            Cache[folder] = files;
-            return files;
+            
+            try {
+                FileInfo[] files = di.GetFiles();
+                Cache[folder] = files;
+                return files;
+            } catch (IOException) {
+                System.Diagnostics.Debug.Print("IOException occurred trying to access " + folder);
+                return null;
+            }
         }
 
         public void Clear()

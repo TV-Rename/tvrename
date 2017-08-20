@@ -73,6 +73,7 @@ namespace TVRename
             this.txtFile.Update();
             this.txtTotal.Update();
             this.Update();
+            BringToFront();
         }
 
         private bool UpdateNewStyle() // return true if all tasks are done
