@@ -7,6 +7,7 @@
 // 
 using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -208,8 +209,8 @@ namespace TVRename
             this.SeriesID = seriesId;
 
             this.EpisodeID = (int)r["id"];
-            
-            this.SeasonID = (int)r["airedSeason"]; 
+
+            this.SeasonID = (int)(r["airedSeason"].FirstOrDefault() ?? 1);
             this.EpNum = (int)r["airedEpisodeNumber"];
             this.Srv_LastUpdated = (int)r["lastUpdated"];
             this.Overview = (string)r["overview"]; 
