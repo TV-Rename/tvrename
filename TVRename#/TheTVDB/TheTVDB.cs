@@ -56,7 +56,7 @@ namespace TVRename
 
     public class Language
     {
-        public Language(int id, string abbrevation, string name, string englishName) {
+        public Language(int id, string abbreviation, string name, string englishName) {
             this.id = id;
             this.abbreviation = abbreviation;
             this.name = name;
