@@ -31,7 +31,7 @@ namespace TVRename
                 bool doesntExist =  !fi.Exists;
                 if ((forceRefresh ||doesntExist) &&(!doneFanartJPG.Contains(fi.FullName)))
                 {
-                    string bannerPath = si.TheSeries().GetItem("fanart");
+                    string bannerPath = si.TheSeries().GetSeriesFanartPath();
 
                     if (!string.IsNullOrEmpty(bannerPath))
                         TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, false));

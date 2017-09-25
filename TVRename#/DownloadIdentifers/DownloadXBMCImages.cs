@@ -53,7 +53,7 @@ namespace TVRename
 
                     if ((forceRefresh || (!posterJPG.Exists)) && (!donePosterJPG.Contains(si.AutoAdd_FolderBase)))
                     {
-                        string path = si.TheSeries().GetItem("poster");
+                        string path = si.TheSeries().GetSeriesPosterPath();
                         if (!string.IsNullOrEmpty(path))
                         {
                             TheActionList.Add(new ActionDownload(si, null, posterJPG, path, false));
@@ -63,7 +63,7 @@ namespace TVRename
 
                     if ((forceRefresh || (!bannerJPG.Exists)) && (!doneBannerJPG.Contains(si.AutoAdd_FolderBase)))
                     {
-                        string path = si.TheSeries().GetItem("banner");
+                        string path = si.TheSeries().GetSeriesWideBannerPath();
                         if (!string.IsNullOrEmpty(path))
                         {
                             TheActionList.Add(new ActionDownload(si, null, bannerJPG, path, false));
@@ -73,7 +73,7 @@ namespace TVRename
 
                     if ((forceRefresh || (!fanartJPG.Exists)) && (!doneFanartJPG.Contains(si.AutoAdd_FolderBase)))
                     {
-                        string path = si.TheSeries().GetItem("fanart");
+                        string path = si.TheSeries().GetSeriesFanartPath();
                         if (!string.IsNullOrEmpty(path))
                         {
                             TheActionList.Add(new ActionDownload(si, null, fanartJPG, path));
@@ -160,7 +160,7 @@ namespace TVRename
             if (TVSettings.Instance.EpTBNs || TVSettings.Instance.XBMCImages)
             {
                 ItemList TheActionList = new ItemList();
-                string ban = dbep.GetItem("filename");
+                string ban = dbep.GetFilename();
                 if (!string.IsNullOrEmpty(ban))
                 {
                     string basefn = filo.Name;

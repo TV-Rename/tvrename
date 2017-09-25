@@ -94,7 +94,20 @@ namespace TVRename
             return this.SeriesTZ;
         }
 
-        public string GetItem(string which)
+        public string[] GetActors()
+        {
+            String actors = getValueAcrossVersions("Actors","actors","");
+            
+            if (!string.IsNullOrEmpty(actors))
+            {
+                return actors.Split('|');
+
+            }
+            return new String[] { };
+        }
+
+
+        private string GetItem(string which) //MS making this private to avoid external classes having to worry about how the items colelction is keyed
         {
             if (this.Items.ContainsKey(which))
                 return this.Items[which];
@@ -142,7 +155,7 @@ namespace TVRename
             if (o.Srv_LastUpdated != 0 && o.Srv_LastUpdated < this.Srv_LastUpdated)
                 return; // older!?
 
-            bool betterLanguage = (o.LanguageId == preferredLanguageId) && (this.LanguageId != preferredLanguageId);
+            bool betterLanguage = ((o.LanguageId ==-1)|| (o.LanguageId == preferredLanguageId) && (this.LanguageId != preferredLanguageId));
 
             this.Srv_LastUpdated = o.Srv_LastUpdated;
 
@@ -308,8 +321,8 @@ namespace TVRename
             //save them all into the Items array for safe keeping
             foreach (JProperty seriesItems in r.Children<JProperty>())
             {
-                if (seriesItems.Name == "aliases") this.Items[seriesItems.Name] = JSONHelper.flatten((JArray)seriesItems.Value, "|");
-                else if (seriesItems.Name == "genre") this.Items[seriesItems.Name] = JSONHelper.flatten((JArray)seriesItems.Value, "|");
+                if (seriesItems.Name == "aliases") this.Items[seriesItems.Name] = JSONHelper.flatten((JToken)seriesItems.Value, "|");
+                else if (seriesItems.Name == "genre") this.Items[seriesItems.Name] = JSONHelper.flatten((JToken)seriesItems.Value, "|");
                 else try
                     {
                         if (seriesItems.Value != null) this.Items[seriesItems.Name] = (string)seriesItems.Value;
@@ -365,26 +378,35 @@ namespace TVRename
 
         }
 
-        internal string getStatus()
-        {
-            return getValueAcrossVersions("Status", "status", "Unknown");
-        }
+        public string getStatus() =>              getValueAcrossVersions("Status", "status", "Unknown");
+        public string getAirsTime() =>             getValueAcrossVersions("Airs_Time", "airsTime", "");
+        public string getAirsDay()=> getValueAcrossVersions("Airs_DayOfWeek", "airsDayOfWeek", "");
+        public string getNetwork() => getValueAcrossVersions("Network", "network", "");
+        public string GetOverview() => getValueAcrossVersions("Overview", "overview", "");
+        public string GetRuntime() => getValueAcrossVersions("Runtime", "runtime", "");
+        public string GetGenre() => getValueAcrossVersions("Genre", "genre", "");
+        public string GetRating() => getValueAcrossVersions("Rating","rating",""); // check , "ContentRating"
+        public string GetIMDB() => getValueAcrossVersions("IMDB_ID", "imdb_id", "");
+        public string GetYear() => getValueAcrossVersions("Year", "year", "");
+        public string GetFirstAired() => getValueAcrossVersions("FirstAired", "firstAired", "");
 
-        internal string getAirsTime()
-        {
-            return getValueAcrossVersions("Airs_Time", "airsTime", "");
-        }
+        
 
-        internal string getAirsDay()
-        {
-            return getValueAcrossVersions("Airs_DayOfWeek", "airsDayOfWeek", "");
-        }
 
-        internal string getNetwork()
+        public string GetImage(TVSettings.FolderJpgIsType type)
         {
-            return getValueAcrossVersions("Network", "network", "");
+            switch (type)
+            {
+                case TVSettings.FolderJpgIsType.Banner:
+                    return GetSeriesWideBannerPath(); 
+                case TVSettings.FolderJpgIsType.FanArt:
+                    return GetSeriesFanartPath();
+                case TVSettings.FolderJpgIsType.SeasonPoster:
+                    return GetSeriesPosterPath(); 
+                default:
+                    return GetSeriesPosterPath(); 
+            }
         }
-
         string getValueAcrossVersions(string oldTag, string newTag, string defaultValue)
         {
             //Need to cater for new and old style tags (TVDB interface v1 vs v2)
@@ -444,7 +466,8 @@ namespace TVRename
                 return this.SeasonBanners[snum].BannerPath;
 
             //if there is a problem then return the non-season specific poster by default
-            return GetItem("poster");
+            return GetSeriesPosterPath();
+                
         }
 
         public string GetSeriesWideBannerPath()
@@ -507,7 +530,7 @@ namespace TVRename
                 return this.SeasonWideBanners[snum].BannerPath;
 
             //if there is a problem then return the non-season specific poster by default
-            return GetItem("banner");
+            return GetSeriesWideBannerPath();
         }
 
 

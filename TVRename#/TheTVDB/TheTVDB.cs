@@ -360,7 +360,7 @@ namespace TVRename
             if (!this.GetLock("FindEpisodeByID"))
                 return null;
 
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series.ToList())
             {
                 foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
                 {
@@ -594,7 +594,7 @@ namespace TVRename
             JObject jsonResponse = new JObject();
             try
             {
-                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "fromTime", epochTime } }, this.authenticationToken);
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "fromTime", epochTime } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
             }
             catch (WebException ex)
             {
@@ -961,13 +961,11 @@ namespace TVRename
 
             this.Say(txt);
 
-            string lang = this.RequestLanguage;
-
             String uri = APIRoot + "/series/" + code;
             JObject jsonResponse = new JObject();
             try
             {
-                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken);
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
             }
             catch (WebException ex)
             {
@@ -1007,7 +1005,10 @@ namespace TVRename
                         jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
                         episodeResponses.Add(jsonEpisodeResponse);
                         int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
+                        //System.Diagnostics.Debug.WriteLine(code + "****" + jsonEpisodeResponse.ToString());
+                        System.Diagnostics.Debug.WriteLine("Page " + pageNumber + " of " + si.Name + " had " + numberOfResponses + " episodes listed");
                         if (numberOfResponses < 100) { morePages = false; } else { pageNumber++; }
+                        
 
                     }
                     catch (WebException ex)
@@ -1062,7 +1063,7 @@ namespace TVRename
                 foreach (string imageType in imageTypes)
                 {
                     try {
-                        JObject jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, this.authenticationToken);
+                        JObject jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
                         bannerResponses.Add(jsonEpisodeResponse);
                     }
                     catch (WebException WebEx)
@@ -1120,7 +1121,7 @@ namespace TVRename
             String uri = APIRoot + "/episodes/" + episodeID.ToString();
             JObject jsonResponse = new JObject();
             try {
-                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken);
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
             }
             catch (WebException ex)
             {
@@ -1138,6 +1139,9 @@ namespace TVRename
 
             try
             {
+                //TODO - REMOVE DEBUGGING
+                //if ((episodeID > 311800) &&(episodeID < 311900)) System.Diagnostics.Debug.WriteLine(episodeID + "****"+ jsonResponseData.ToString());
+
 
                 Episode e = new Episode(seriesID, jsonResponseData);
                 if (e.OK())
@@ -1240,12 +1244,17 @@ namespace TVRename
             // but, the number could also be a name, so continue searching as usual
             //text = text.Replace(".", " ");
 
+            if (!this.Connected && !this.Connect())
+            {
+                this.Say("Failed to Connect");
+                return;
+            }
 
             String uri = APIRoot + "/search/series";
             JObject jsonResponse = new JObject();
             try
             {
-                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken);
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
             }
             catch (WebException ex)
             {

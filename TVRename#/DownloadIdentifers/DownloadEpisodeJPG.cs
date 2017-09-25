@@ -25,7 +25,7 @@ namespace TVRename
             if (TVSettings.Instance.EpJPGs)
             {
                 ItemList TheActionList = new ItemList(); 
-                string ban = dbep.GetItem("filename");
+                string ban = dbep.GetFilename();
                 if (!string.IsNullOrEmpty(ban))
                 {
                     string basefn = filo.Name;
