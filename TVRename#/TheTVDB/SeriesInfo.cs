@@ -345,9 +345,16 @@ namespace TVRename
             string theDate = (string)r["firstAired"];
             try
             {
-                this.FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
-                this.Items["firstAired"] = this.FirstAired.Value.ToString("yyyy-MM-dd");
-                this.Items["Year"] = this.FirstAired.Value.ToString("yyyy");
+                if (!String.IsNullOrEmpty(theDate)) {
+                    this.FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                    this.Items["firstAired"] = this.FirstAired.Value.ToString("yyyy-MM-dd");
+                    this.Items["Year"] = this.FirstAired.Value.ToString("yyyy");
+                }else
+                {
+                    this.FirstAired = null;
+                    this.Items["firstAired"] = "";
+                    this.Items["Year"] = "";
+                }
             }
             catch
             {
