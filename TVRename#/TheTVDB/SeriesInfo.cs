@@ -68,11 +68,21 @@ namespace TVRename
             this.LoadXml(r);
         }
 
-        public SeriesInfo(JObject json)
+        public SeriesInfo(JObject json,int langId)
         {
             this.SetToDefauts();
+            this.LanguageId = langId;
             this.LoadJSON(json);
         }
+
+        public SeriesInfo(JObject json, JObject jsonInDefaultLang, int langId)
+        {
+            this.SetToDefauts();
+            this.LanguageId = langId;
+            this.LoadJSON(json,jsonInDefaultLang);
+        }
+
+
         private void FigureOutTimeZone()
         {
             string tzstr = this.ShowTimeZone;
@@ -384,6 +394,44 @@ namespace TVRename
             }
 
         }
+
+        public void LoadJSON(JObject bestLanguageR, JObject backupLanguageR)
+        {
+            //Here we have two pieces of JSON. One in local language and one in the default language (English). 
+            //We will populate with the best language frst and then fillin any gaps with the backup Language
+            LoadJSON(bestLanguageR);
+
+            //backupLanguageR should be a series of name/value pairs (ie a JArray of JPropertes)
+            //TVDB asserts that name and overview are the fields that are localised
+
+            if ((string.IsNullOrWhiteSpace(this.Name) && ((string)backupLanguageR["seriesName"] != null)) ){
+                this.Name = (string)backupLanguageR["seriesName"];
+                this.Items["seriesName"] = this.Name;
+            }
+
+            if ((string.IsNullOrWhiteSpace(this.Items["overview"]) && ((string)backupLanguageR["overview"] != null)) ){
+                this.Items["overview"] = (string)backupLanguageR["overview"];
+            }
+
+            //Looking at the data then the aliases, banner and runtime are also different by language
+            
+            if ((string.IsNullOrWhiteSpace(this.Items["aliases"])))
+            {
+                this.Items["aliases"] = JSONHelper.flatten((JToken)backupLanguageR["aliases"], "|");
+            }
+
+            if ((string.IsNullOrWhiteSpace(this.Items["runtime"])))
+            {
+                this.Items["runtime"] = (string)backupLanguageR["runtime"];
+            }
+            if ((string.IsNullOrWhiteSpace(this.Items["banner"])))
+            {
+                this.Items["banner"] = (string)backupLanguageR["banner"];
+            }
+
+
+        }
+
 
         public string getStatus() =>              getValueAcrossVersions("Status", "status", "Unknown");
         public string getAirsTime() =>             getValueAcrossVersions("Airs_Time", "airsTime", "");
