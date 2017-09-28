@@ -140,7 +140,7 @@ namespace TVRename
             }
         }
 
-        public Banner(int seriesId, JObject json)
+        public Banner(int seriesId, JObject json, int LangId)
         {
             this.SetDefaults(null, null);
             // {
@@ -162,7 +162,7 @@ namespace TVRename
             this.BannerPath = (string)json["fileName"];
             this.BannerId = (int)json["id"];
             this.BannerType = (string)json["keyType"];
-            this.LanguageId = (json["languageId"] == null) ? -1 : (int)json["languageId"];
+            this.LanguageId = LangId;//(json["languageId"] == null) ? -1 : (int)json["languageId"];
             
             double.TryParse((string)(json["ratingsInfo"]["average"]), out this.Rating);
             this.RatingCount = (int)(json["ratingsInfo"]["count"]);

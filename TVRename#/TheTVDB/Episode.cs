@@ -163,6 +163,12 @@ namespace TVRename
             }
         }
 
+        public Episode(int seriesId, JObject json, JObject jsonInDefaultLang)
+        {
+            this.SetDefaults(null,null);
+            this.loadJSON(seriesId, json, jsonInDefaultLang);
+        }
+
         public Episode(int seriesId,JObject r)
         {
             // <Episode>
@@ -172,6 +178,35 @@ namespace TVRename
 
             this.SetDefaults(null, null);
 
+            this.loadJSON(seriesId,r);
+        }
+        private void loadJSON(int seriesId, JObject bestLanguageR, JObject backupLanguageR)
+        {
+            //Here we have two pieces of JSON. One in local language and one in the default language (English). 
+            //We will populate with the best language frst and then fillin any gaps with the backup Language
+            loadJSON(seriesId,bestLanguageR);
+
+            //backupLanguageR should be a series of name/value pairs (ie a JArray of JPropertes)
+            //TVDB asserts that name and overview are the fields that are localised
+
+            if ((string.IsNullOrWhiteSpace((string)bestLanguageR["episodeName"]) && ((string)backupLanguageR["episodeName"] != null)))
+            {
+                this.Name = (string)backupLanguageR["episodeName"];
+                this.Items["episodeName"] = this.Name;
+            }
+
+            if ((string.IsNullOrWhiteSpace(this.Items["overview"]) && ((string)backupLanguageR["overview"] != null)))
+            {
+                this.Items["overview"] = (string)backupLanguageR["overview"];
+                this.Overview = (string)backupLanguageR["overview"];
+            }
+
+
+        }
+
+
+        private void loadJSON(int seriesId, JObject r)
+        {
             //r should be a series of name/value pairs (ie a JArray of JPropertes)
             //save them all into the Items array for safe keeping
             foreach (JProperty episodeItems in r.Children<JProperty>())
@@ -179,26 +214,26 @@ namespace TVRename
                 try
                 {
                     JToken currentData = (JToken)episodeItems.Value;
-                    if (currentData.Type == JTokenType.Array) this.Items[episodeItems.Name] = JSONHelper.flatten((JToken)currentData)                          ;
-                    else if (currentData.Type != JTokenType.Object ) //Ignore objects here as it is always the 'language' attribute that we do not need
+                    if (currentData.Type == JTokenType.Array) this.Items[episodeItems.Name] = JSONHelper.flatten((JToken)currentData);
+                    else if (currentData.Type != JTokenType.Object) //Ignore objects here as it is always the 'language' attribute that we do not need
                     {
                         JValue currentValue = (JValue)episodeItems.Value;
                         this.Items[episodeItems.Name] = currentValue.ToObject<string>();
 
                     }
-                    
+
                 }
                 catch (ArgumentException ae)
                 {
                     System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
-                catch (NullReferenceException  ae)
+                catch (NullReferenceException ae)
                 {
                     System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
-                catch (InvalidCastException  ae)
+                catch (InvalidCastException ae)
                 {
                     System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
@@ -208,18 +243,18 @@ namespace TVRename
             this.SeriesID = seriesId;
 
             this.EpisodeID = (int)r["id"];
-            
+
             if ((string)r["airedSeasonID"] != null) { this.SeasonID = (int)r["airedSeasonID"]; }
             else
             {
-                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " called " + Name );
+                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " called " + Name);
             }
 
             this.EpNum = (int)r["airedEpisodeNumber"];
             this.Srv_LastUpdated = (int)r["lastUpdated"];
-            this.Overview = (string)r["overview"]; 
+            this.Overview = (string)r["overview"];
             this.EpisodeRating = (string)r["siteRating"];
-            this.Name = (string)r["episodeName"]; 
+            this.Name = (string)r["episodeName"];
 
             String sn = (string)r["airedSeason"];
             int.TryParse(sn, out this.ReadSeasonNum);
@@ -233,7 +268,7 @@ namespace TVRename
                 String contents = (string)r["firstAired"];
                 if (contents == "")
                 {
-                    if (this.ReadSeasonNum >0 ) System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
+                    if (this.ReadSeasonNum > 0) System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
                     this.FirstAired = null;
                 }
                 else
