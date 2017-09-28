@@ -204,7 +204,7 @@ namespace TVRename
 
     public static class HTTPHelper
     {
-        public static String HTTPRequest(String method, String url,String json, String contentType,String authToken = "") {
+        public static String HTTPRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
             httpWebRequest.Method = method;
@@ -212,7 +212,10 @@ namespace TVRename
             {
                 httpWebRequest.Headers.Add("Authorization", "Bearer " + authToken);
             }
-            
+            if (lang != "")
+            {
+                httpWebRequest.Headers.Add("Accept-Language",lang);
+            }
             if (method == "POST") { 
                 using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
@@ -239,9 +242,9 @@ namespace TVRename
             
         }
 
-        public static JObject JsonHTTPGETRequest(String url, Dictionary<string, string> parameters, String authToken)
+        public static JObject JsonHTTPGETRequest(String url, Dictionary<string, string> parameters, String authToken, String lang="")
         {
-            String response = HTTPHelper.HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken);
+            String response = HTTPHelper.HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
 
             return JObject.Parse(response);
 
@@ -265,11 +268,21 @@ namespace TVRename
     }
 
     public static class JSONHelper {
-        public static String flatten(JArray ja,String delimiter = ",")
+        public static String flatten(JToken ja,String delimiter = ",")
         {
             if (ja == null) return "";
-            string[] values = ja.ToObject<string[]>();
-            return String.Join(delimiter, values);
+
+            
+            if (ja.Type == JTokenType.Array)
+            {
+                JArray ja2 = (JArray)ja;
+                string[] values = ja2.ToObject<string[]>();
+                return String.Join(delimiter, values);
+            }
+            else { return ""; }
+
+                
+            
         }
     }
 

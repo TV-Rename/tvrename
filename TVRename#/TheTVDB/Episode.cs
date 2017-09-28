@@ -179,7 +179,7 @@ namespace TVRename
                 try
                 {
                     JToken currentData = (JToken)episodeItems.Value;
-                    if (currentData.Type == JTokenType.Array) this.Items[episodeItems.Name] = JSONHelper.flatten((JArray)currentData)                          ;
+                    if (currentData.Type == JTokenType.Array) this.Items[episodeItems.Name] = JSONHelper.flatten((JToken)currentData)                          ;
                     else if (currentData.Type != JTokenType.Object ) //Ignore objects here as it is always the 'language' attribute that we do not need
                     {
                         JValue currentValue = (JValue)episodeItems.Value;
@@ -209,7 +209,12 @@ namespace TVRename
 
             this.EpisodeID = (int)r["id"];
             
-            this.SeasonID = (int)r["airedSeason"]; 
+            if ((string)r["airedSeasonID"] != null) { this.SeasonID = (int)r["airedSeasonID"]; }
+            else
+            {
+                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " called " + Name );
+            }
+
             this.EpNum = (int)r["airedEpisodeNumber"];
             this.Srv_LastUpdated = (int)r["lastUpdated"];
             this.Overview = (string)r["overview"]; 
@@ -219,9 +224,9 @@ namespace TVRename
             String sn = (string)r["airedSeason"];
             int.TryParse(sn, out this.ReadSeasonNum);
 
-            this.EpisodeGuestStars = JSONHelper.flatten((JArray)r["guestStars"], "|");
-            this.EpisodeDirector = JSONHelper.flatten((JArray)r["directors"], "|");
-            this.Writer = JSONHelper.flatten((JArray)r["writers"], "|");
+            this.EpisodeGuestStars = JSONHelper.flatten((JToken)r["guestStars"], "|");
+            this.EpisodeDirector = JSONHelper.flatten((JToken)r["directors"], "|");
+            this.Writer = JSONHelper.flatten((JToken)r["writers"], "|");
 
             try
             {
@@ -269,11 +274,32 @@ namespace TVRename
             return (this.EpisodeID == o.EpisodeID);
         }
 
-        public string GetItem(string which)
+        public string GetFilename()
         {
-            if (this.Items.ContainsKey(which))
-                return this.Items[which];
-            return "";
+            return getValueAcrossVersions("filename", "Filename","");
+        }
+
+        public string[] GetGuestStars()
+        {
+
+            String guest = this.EpisodeGuestStars;
+
+            if (!string.IsNullOrEmpty(guest))
+            {
+                return guest.Split('|');
+
+            }
+            return new String[] { };
+
+        }
+
+
+       string getValueAcrossVersions(string oldTag, string newTag, string defaultValue)
+        {
+            //Need to cater for new and old style tags (TVDB interface v1 vs v2)
+            if (this.Items.ContainsKey(oldTag)) return this.Items[oldTag];
+            if (this.Items.ContainsKey(newTag)) return this.Items[newTag];
+            return defaultValue;
         }
 
         public bool OK()

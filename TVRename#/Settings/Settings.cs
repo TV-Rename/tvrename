@@ -777,31 +777,12 @@ namespace TVRename
             writer.WriteEndElement(); // settings
         }
 
-        public string ItemForFolderJpg()
-        {
-            switch (this.FolderJpgIs)
-            {
-                case FolderJpgIsType.Banner:
-                    return "banner";
-                case FolderJpgIsType.FanArt:
-                    return "fanart";
-                case FolderJpgIsType.SeasonPoster:
-                    return "seasonPoster";
-                default:
-                    return "poster";
-            }
-        }
+        public FolderJpgIsType ItemForFolderJpg() => this.FolderJpgIs;
 
-        public string GetVideoExtensionsString()
-        {
-            return this.VideoExtensionsString;
-        }
-
-        public string GetOtherExtensionsString()
-        {
-            return this.OtherExtensionsString;
-        }
-
+        public string GetVideoExtensionsString() =>this.VideoExtensionsString;
+        
+        public string GetOtherExtensionsString() => this.OtherExtensionsString;
+        
         public static bool OKExtensionsString(string s)
         {
             if (string.IsNullOrEmpty(s))

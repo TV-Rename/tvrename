@@ -602,7 +602,7 @@ namespace TVRename
             if (!this.DownloadDone && !this.Args.Hide) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
                 DownloadProgress dp = new DownloadProgress(this);
-                dp.ShowDialog();
+               dp.ShowDialog();
                 dp.Update();
             }
 

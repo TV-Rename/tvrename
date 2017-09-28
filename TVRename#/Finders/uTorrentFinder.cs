@@ -58,7 +58,21 @@ namespace TVRename
                     if (!TVSettings.Instance.UsefulExtension(file.Extension, false)) // not a usefile file extension
                         continue;
 
-                    if (FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
+                    Boolean matched = FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false); // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
+
+                    //check for any show aliases too
+                    if (!matched)
+                    {
+                        foreach (string alias in Action.Episode.SI.AliasNames)
+                        {
+                            string aliasName = Helpers.SimplifyName(alias);
+                            matched = FileHelper.SimplifyAndCheckFilename(file.FullName, aliasName, true, false); // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
+                            if (matched)
+                                break;
+                        }
+                    }
+
+                    if (matched) 
                     {
                         int seasF;
                         int epF;
@@ -69,6 +83,7 @@ namespace TVRename
                             break;
                         }
                     }
+                    
                 }
             }
 
