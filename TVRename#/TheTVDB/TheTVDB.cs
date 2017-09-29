@@ -1107,11 +1107,11 @@ namespace TVRename
                 {
                     JObject jsonEpisodeSearchDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, DefaultLanguage );
                     List<string> imageDefaultLangTypes = new List<string> { };
-                    JArray adl = (JArray)jsonEpisodeSearchResponse["data"];
+                    JObject adl = (JObject)jsonEpisodeSearchDefaultLangResponse["data"];
 
-                    foreach (JProperty imageType in adl)
+                    foreach (KeyValuePair<string, JToken> imageType in adl)
                     {
-                        if ((int)imageType.Value > 0) imageDefaultLangTypes.Add(imageType.Name);
+                        if ((int)imageType.Value > 0) imageDefaultLangTypes.Add(imageType.Key);
 
                     }
                     foreach (string imageType in imageDefaultLangTypes)
