@@ -1079,7 +1079,16 @@ namespace TVRename
             List<JObject> bannerDefaultLangResponses = new List<JObject>();
             if (bannersToo )            {
                 // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
-                List<string> imageTypes = new List<string> { "fanart", "poster", "season", "seasonwide", "series" };
+                
+                JObject jsonEpisodeSearchResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                List<string> imageTypes = new List<string> { };
+                JObject a = (JObject)jsonEpisodeSearchResponse["data"];
+
+                foreach (KeyValuePair<string,JToken>  imageType in a)
+                {
+                    if ((int)imageType.Value > 0) imageTypes.Add(imageType.Key );
+
+                }
 
                 foreach (string imageType in imageTypes)
                 {
@@ -1093,9 +1102,21 @@ namespace TVRename
                         System.Diagnostics.Debug.WriteLine("Looking for " + imageType + " images (in local language), but none found for seriesId " + code);
                     }
 
+                }
+                if (inForeignLanguage())
+                {
+                    JObject jsonEpisodeSearchDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, DefaultLanguage );
+                    List<string> imageDefaultLangTypes = new List<string> { };
+                    JArray adl = (JArray)jsonEpisodeSearchResponse["data"];
 
-                    if (inForeignLanguage())
+                    foreach (JProperty imageType in adl)
                     {
+                        if ((int)imageType.Value > 0) imageDefaultLangTypes.Add(imageType.Name);
+
+                    }
+                    foreach (string imageType in imageDefaultLangTypes)
+                    {
+
                         try
                         {
                             JObject jsonImageDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, this.authenticationToken, DefaultLanguage);
@@ -1105,11 +1126,15 @@ namespace TVRename
                         {
                             System.Diagnostics.Debug.WriteLine("Looking for " + imageType + " images, but none found for seriesId " + code);
                         }
-                    
-
                     }
+
+
                 }
+
+
             }
+
+
 
             foreach (JObject response in bannerResponses )
             {
