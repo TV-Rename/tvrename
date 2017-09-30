@@ -1079,16 +1079,24 @@ namespace TVRename
             List<JObject> bannerDefaultLangResponses = new List<JObject>();
             if (bannersToo )            {
                 // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
-                
-                JObject jsonEpisodeSearchResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
                 List<string> imageTypes = new List<string> { };
-                JObject a = (JObject)jsonEpisodeSearchResponse["data"];
 
-                foreach (KeyValuePair<string,JToken>  imageType in a)
+                try
                 {
-                    if ((int)imageType.Value > 0) imageTypes.Add(imageType.Key );
+                    JObject jsonEpisodeSearchResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                    JObject a = (JObject)jsonEpisodeSearchResponse["data"];
 
+                    foreach (KeyValuePair<string, JToken> imageType in a)
+                    {
+                        if ((int)imageType.Value > 0) imageTypes.Add(imageType.Key);
+
+                    }
                 }
+                catch (WebException ex) {
+                    //no images for chosen language
+                }
+                
+                
 
                 foreach (string imageType in imageTypes)
                 {
@@ -1105,15 +1113,25 @@ namespace TVRename
                 }
                 if (inForeignLanguage())
                 {
-                    JObject jsonEpisodeSearchDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, DefaultLanguage );
                     List<string> imageDefaultLangTypes = new List<string> { };
-                    JObject adl = (JObject)jsonEpisodeSearchDefaultLangResponse["data"];
 
-                    foreach (KeyValuePair<string, JToken> imageType in adl)
+                    try
                     {
-                        if ((int)imageType.Value > 0) imageDefaultLangTypes.Add(imageType.Key);
+                        JObject jsonEpisodeSearchDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, DefaultLanguage);
 
+                        JObject adl = (JObject)jsonEpisodeSearchDefaultLangResponse["data"];
+
+                        foreach (KeyValuePair<string, JToken> imageType in adl)
+                        {
+                            if ((int)imageType.Value > 0) imageDefaultLangTypes.Add(imageType.Key);
+
+                        }
                     }
+                    catch (WebException ex)
+                    {
+                        //no images for chosen language
+                    }
+
                     foreach (string imageType in imageDefaultLangTypes)
                     {
 
