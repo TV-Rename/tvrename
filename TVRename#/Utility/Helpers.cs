@@ -14,6 +14,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.Generic;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Path = Alphaleonis.Win32.Filesystem.Path;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 // Helpful functions and classes
 

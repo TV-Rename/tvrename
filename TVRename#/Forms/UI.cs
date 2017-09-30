@@ -16,6 +16,11 @@ using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
@@ -1014,7 +1019,7 @@ namespace TVRename
 
             web.Navigate("about:blank"); // make it close any file it might have open
 
-            BinaryWriter bw = new BinaryWriter(new FileStream(path, FileMode.Create));
+            BinaryWriter bw = new BinaryWriter(new FileStream(path, System.IO.FileMode.Create));
             bw.Write(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(html));
             bw.Close();
 
