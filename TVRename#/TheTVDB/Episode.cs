@@ -248,6 +248,7 @@ namespace TVRename
             else
             {
                 System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " called " + Name);
+                System.Diagnostics.Debug.Print(r.ToString());
             }
 
             this.EpNum = (int)r["airedEpisodeNumber"];
@@ -268,7 +269,7 @@ namespace TVRename
                 String contents = (string)r["firstAired"];
                 if (contents == "")
                 {
-                    if (this.ReadSeasonNum > 0) System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
+                    //if (this.ReadSeasonNum > 0) System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
                     this.FirstAired = null;
                 }
                 else

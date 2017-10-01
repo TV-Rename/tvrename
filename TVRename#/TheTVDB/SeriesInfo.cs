@@ -73,6 +73,11 @@ namespace TVRename
             this.SetToDefauts();
             this.LanguageId = langId;
             this.LoadJSON(json);
+
+            if (String.IsNullOrEmpty(this.Name)            ){
+                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
+                System.Diagnostics.Debug.Print(json.ToString());
+            }
         }
 
         public SeriesInfo(JObject json, JObject jsonInDefaultLang, int langId)
@@ -80,6 +85,12 @@ namespace TVRename
             this.SetToDefauts();
             this.LanguageId = langId;
             this.LoadJSON(json,jsonInDefaultLang);
+            if (String.IsNullOrEmpty(this.Name)            ){
+                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
+                System.Diagnostics.Debug.Print(json.ToString());
+                System.Diagnostics.Debug.Print(jsonInDefaultLang .ToString());
+            }
+
         }
 
 
@@ -344,7 +355,11 @@ namespace TVRename
 
 
             this.TVDBCode = (int)r["id"];
-            if ((string)r["seriesName"] != null) this.Name = (string)r["seriesName"];
+            if ((string)r["seriesName"] != null)
+            {
+                this.Name = (string)r["seriesName"];
+            }
+
 
             long updateTime;
             if (long.TryParse((string)r["lastUpdated"], out updateTime) )
