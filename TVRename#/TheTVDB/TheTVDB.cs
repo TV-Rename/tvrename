@@ -90,6 +90,7 @@ namespace TVRename
         private string authenticationToken; //The JSON Web token issued by TVDB
 
         public String RequestLanguage = "en"; // Set and updated by TVDoc
+        private static String DefaultLanguage = "en"; //Default backup language
 
         private CommandLineArgs Args;
 
@@ -797,7 +798,15 @@ namespace TVRename
 
             return -1;
         }
+        private int getDefaultLanguageId()
+        {
+            foreach (Language l in LanguageList)
+            {
+                if (l.abbreviation == DefaultLanguage) return l.id;
+            }
 
+            return -1;
+        }
         private bool ProcessXML(Stream str, int? codeHint)
         {
             // Will have one or more series, and episodes
@@ -963,9 +972,12 @@ namespace TVRename
 
             String uri = APIRoot + "/series/" + code;
             JObject jsonResponse = new JObject();
+            JObject jsonDefaultLangResponse = new JObject();
             try
             {
                 jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+
+                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, DefaultLanguage );
             }
             catch (WebException ex)
             {
@@ -975,9 +987,17 @@ namespace TVRename
                 return null;
             }
 
+            SeriesInfo si;
             JObject seriesData = (JObject)jsonResponse["data"];
 
-            SeriesInfo si = new SeriesInfo(seriesData);
+            if (inForeignLanguage()) {
+                JObject seriesDataDefaultLang = (JObject)jsonDefaultLangResponse["data"];
+                si = new SeriesInfo(seriesData,seriesDataDefaultLang, getLanguageId());
+            }
+            else
+            {
+                si = new SeriesInfo(seriesData, getLanguageId());
+            }
 
             if (this.Series.ContainsKey(si.TVDBCode))
                 this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
@@ -1056,37 +1076,111 @@ namespace TVRename
 
 
             List<JObject> bannerResponses = new List<JObject>();
+            List<JObject> bannerDefaultLangResponses = new List<JObject>();
             if (bannersToo )            {
                 // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
-                List<string> imageTypes = new List<string> { "fanart", "poster", "season", "seasonwide", "series" };
+                List<string> imageTypes = new List<string> { };
+
+                try
+                {
+                    JObject jsonEpisodeSearchResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                    JObject a = (JObject)jsonEpisodeSearchResponse["data"];
+
+                    foreach (KeyValuePair<string, JToken> imageType in a)
+                    {
+                        if ((int)imageType.Value > 0) imageTypes.Add(imageType.Key);
+
+                    }
+                }
+                catch (WebException ex) {
+                    //no images for chosen language
+                }
+                
+                
 
                 foreach (string imageType in imageTypes)
                 {
-                    try {
-                        JObject jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
-                        bannerResponses.Add(jsonEpisodeResponse);
+                    try
+                    {
+                        JObject jsonImageResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                        bannerResponses.Add(jsonImageResponse);
                     }
                     catch (WebException WebEx)
                     {
-                        System.Diagnostics.Debug.WriteLine ("Looking for " +imageType + " images, but none found for seriesId " + code);
+                        System.Diagnostics.Debug.WriteLine("Looking for " + imageType + " images (in local language), but none found for seriesId " + code);
                     }
+
                 }
+                if (inForeignLanguage())
+                {
+                    List<string> imageDefaultLangTypes = new List<string> { };
+
+                    try
+                    {
+                        JObject jsonEpisodeSearchDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, DefaultLanguage);
+
+                        JObject adl = (JObject)jsonEpisodeSearchDefaultLangResponse["data"];
+
+                        foreach (KeyValuePair<string, JToken> imageType in adl)
+                        {
+                            if ((int)imageType.Value > 0) imageDefaultLangTypes.Add(imageType.Key);
+
+                        }
+                    }
+                    catch (WebException ex)
+                    {
+                        //no images for chosen language
+                    }
+
+                    foreach (string imageType in imageDefaultLangTypes)
+                    {
+
+                        try
+                        {
+                            JObject jsonImageDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, this.authenticationToken, DefaultLanguage);
+                            bannerDefaultLangResponses.Add(jsonImageDefaultLangResponse);
+                        }
+                        catch (WebException WebEx)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Looking for " + imageType + " images, but none found for seriesId " + code);
+                        }
+                    }
+
+
+                }
+
+
             }
+
+
 
             foreach (JObject response in bannerResponses )
             {
                 foreach (JObject bannerData in response["data"])
                 {
-                    Banner b = new Banner((int)si.TVDBCode, bannerData);
+                    Banner b = new Banner((int)si.TVDBCode, bannerData,getLanguageId());
                     if (!this.Series.ContainsKey(b.SeriesID)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
                     SeriesInfo ser = this.Series[b.SeriesID];
                     ser.AddOrUpdateBanner(b);
                 }
             }
+
+            foreach (JObject response in bannerDefaultLangResponses)
+            {
+                foreach (JObject bannerData in response["data"])
+                {
+                    Banner b = new Banner((int)si.TVDBCode, bannerData, getDefaultLanguageId());
+                    if (!this.Series.ContainsKey(b.SeriesID)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                    SeriesInfo ser = this.Series[b.SeriesID];
+                    ser.AddOrUpdateBanner(b);
+                }
+            }
+
+
             this.Series[(int)si.TVDBCode].BannersLoaded = true;
 
 
-            //Get the actors toothen well need another call for that
+            //Get the actors too then well need another call for that
             JObject jsonActorsResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/actors", null, this.authenticationToken);
             IEnumerable<string> seriesActors = from a in jsonActorsResponse["data"] select (string)a["name"];
             this.Series[(int)si.TVDBCode].setActors(seriesActors);
@@ -1097,6 +1191,8 @@ namespace TVRename
 
 
         }
+
+        private bool inForeignLanguage() => !(DefaultLanguage == this.RequestLanguage);
 
         private bool DownloadEpisodeNow(int seriesID, int episodeID)
         {
@@ -1120,8 +1216,12 @@ namespace TVRename
 
             String uri = APIRoot + "/episodes/" + episodeID.ToString();
             JObject jsonResponse = new JObject();
+            JObject jsonDefaultLangResponse = new JObject();
+
             try {
                 jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+
+                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, DefaultLanguage);
             }
             catch (WebException ex)
             {
@@ -1131,19 +1231,30 @@ namespace TVRename
                 return false;
             }
 
-            JObject jsonResponseData = (JObject)jsonResponse["data"];
-
-
+            
             if (!this.GetLock("ProcessTVDBResponse"))
                 return false;
 
             try
             {
+                Episode e; 
+                JObject jsonResponseData = (JObject)jsonResponse["data"];
+
                 //TODO - REMOVE DEBUGGING
                 //if ((episodeID > 311800) &&(episodeID < 311900)) System.Diagnostics.Debug.WriteLine(episodeID + "****"+ jsonResponseData.ToString());
 
+                if (inForeignLanguage())
+                {
+                    JObject seriesDataDefaultLang = (JObject)jsonDefaultLangResponse["data"];
+                    e = new Episode(seriesID, jsonResponseData, seriesDataDefaultLang);
+                }
+                else
+                {
 
-                Episode e = new Episode(seriesID, jsonResponseData);
+                    e = new Episode(seriesID, jsonResponseData);
+                }
+
+
                 if (e.OK())
                 {
                     if (!this.Series.ContainsKey(e.SeriesID))
@@ -1252,9 +1363,11 @@ namespace TVRename
 
             String uri = APIRoot + "/search/series";
             JObject jsonResponse = new JObject();
+            JObject jsonDefaultLangResponse = new JObject();
             try
             {
                 jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken,  DefaultLanguage);
             }
             catch (WebException ex)
             {
@@ -1278,11 +1391,31 @@ namespace TVRename
                     // info on it (depending on which one came
                     // first).
 
-                    SeriesInfo si = new SeriesInfo(series);
+                    SeriesInfo si = new SeriesInfo(series, getLanguageId());
                     if (this.Series.ContainsKey(si.TVDBCode))
                         this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
                     else
                         this.Series[si.TVDBCode] = si;
+                }
+                if (inForeignLanguage())
+                {
+                    //we also want to search for search terms that match in default language
+                    foreach (JObject series in jsonDefaultLangResponse["data"])
+                    {
+
+                        // The <series> returned by GetSeries have
+                        // less info than other results from
+                        // thetvdb.com, so we need to smartly merge
+                        // in a <Series> if we already have some/all
+                        // info on it (depending on which one came
+                        // first).
+
+                        SeriesInfo si = new SeriesInfo(series, getLanguageId());
+                        if (this.Series.ContainsKey(si.TVDBCode))
+                            this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
+                        else
+                            this.Series[si.TVDBCode] = si;
+                    }
                 }
             }
             this.Unlock("ProcessTVDBResponse");
