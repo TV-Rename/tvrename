@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TVRename.Settings
+namespace TVRename
 {
     public class ShowFilter
     {

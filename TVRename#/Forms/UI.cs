@@ -18,7 +18,6 @@ using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using TVRename.Forms;
-using TVRename.Settings;
 
 namespace TVRename
 {

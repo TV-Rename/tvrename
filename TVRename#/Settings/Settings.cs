@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
-using TVRename.Settings;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
