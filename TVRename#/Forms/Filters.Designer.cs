@@ -1,4 +1,6 @@
-﻿namespace TVRename.Forms
+﻿using System.Linq;
+
+namespace TVRename.Forms
 {
     partial class Filters
     {
@@ -26,7 +28,7 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
+        private void InitializeComponent(TVDoc doc)
         {
             this.cbShowName = new System.Windows.Forms.CheckBox();
             this.cbShowStatus = new System.Windows.Forms.CheckBox();
@@ -95,35 +97,7 @@
             // 
             this.clbGenre.Enabled = false;
             this.clbGenre.FormattingEnabled = true;
-            this.clbGenre.Items.AddRange(new object[] {
-            "Action",
-            "Adventure",
-            "Animation",
-            "Children",
-            "Comedy",
-            "Crime",
-            "Documentary",
-            "Drama",
-            "Family",
-            "Fantasy",
-            "Food",
-            "Game Show",
-            "Home and Garden",
-            "Horror",
-            "Mini-Series",
-            "Mystery",
-            "News",
-            "Reality",
-            "Romance",
-            "Science-Fiction",
-            "Soap",
-            "Special Interest",
-            "Sport",
-            "Suspence",
-            "Talk Show",
-            "Thriller",
-            "Travel",
-            "Western"});
+            this.clbGenre.Items.AddRange(doc.getGenres().Cast<object>().ToArray());
             this.clbGenre.Location = new System.Drawing.Point(13, 87);
             this.clbGenre.MultiColumn = true;
             this.clbGenre.Name = "clbGenre";

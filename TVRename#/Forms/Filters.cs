@@ -9,7 +9,7 @@ namespace TVRename.Forms
 
         public Filters(TVDoc doc)
         {
-            InitializeComponent();
+            InitializeComponent( doc);
             this.doc = doc;
             setButtonStates();
         }

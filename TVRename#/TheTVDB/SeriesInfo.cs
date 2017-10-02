@@ -454,13 +454,25 @@ namespace TVRename
         public string getNetwork() => getValueAcrossVersions("Network", "network", "");
         public string GetOverview() => getValueAcrossVersions("Overview", "overview", "");
         public string GetRuntime() => getValueAcrossVersions("Runtime", "runtime", "");
-        public string GetGenre() => getValueAcrossVersions("Genre", "genre", "");
         public string GetRating() => getValueAcrossVersions("Rating","rating",""); // check , "ContentRating"
         public string GetIMDB() => getValueAcrossVersions("IMDB_ID", "imdb_id", "");
         public string GetYear() => getValueAcrossVersions("Year", "year", "");
         public string GetFirstAired() => getValueAcrossVersions("FirstAired", "firstAired", "");
 
-        
+        public string[] GetGenres()
+        {
+
+            String genreString = getValueAcrossVersions("Genre", "genre", "");
+
+            if (!string.IsNullOrEmpty(genreString))
+            {
+                return genreString.Split('|');
+
+            }
+            return new String[] { };
+
+        }
+
 
 
         public string GetImage(TVSettings.FolderJpgIsType type)

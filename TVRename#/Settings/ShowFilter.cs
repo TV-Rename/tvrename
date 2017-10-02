@@ -48,7 +48,7 @@ namespace TVRename
         public Boolean filter(ShowItem show)
         {
             //Filter on show name
-            if (ShowName != null && !show.ShowName.Contains(ShowName))
+            if (ShowName != null && !show.ShowName.Contains(ShowName , StringComparison.OrdinalIgnoreCase))
             {
                 return false;
             }

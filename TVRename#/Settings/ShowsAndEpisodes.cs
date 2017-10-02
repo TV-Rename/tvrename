@@ -318,7 +318,7 @@ namespace TVRename
         {
             get{
                 SeriesInfo ser = this.TheSeries();
-                if (ser != null && ser.Items != null) return ser.getStatus();
+                if (ser != null ) return ser.getStatus();
                 return "Unknown";
             }
         }
@@ -427,32 +427,7 @@ namespace TVRename
         {
             get
             {
-                SeriesInfo ser = this.TheSeries();
-                if (ser != null && ser.Items != null && ser.Items.ContainsKey("Genre"))
-                {
-                    string[] genres = null;
-                    string[] genreItems = ser.Items["Genre"].Split('|');
-                    if (genreItems != null && genreItems.Length > 0)
-                    {
-                        List<string> genreItemsList = new List<string>();
-                        foreach (string genreItem in genreItems)
-                        {
-                            if (!string.IsNullOrEmpty(genreItem.Trim()))
-                            {
-                                genreItemsList.Add(genreItem);
-                            }
-                        }
-                        if (genreItemsList.Count > 0)
-                        {
-                            genres = genreItemsList.ToArray();
-                        }
-                    }
-                    return genres;
-                }
-                else
-                {
-                    return null;
-                }
+                return this.TheSeries().GetGenres();
             }
         }
 

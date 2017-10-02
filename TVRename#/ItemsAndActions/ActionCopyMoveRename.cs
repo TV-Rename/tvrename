@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using CopyProgressResult = Alphaleonis.Win32.Filesystem.CopyProgressResult;
 using CopyProgressCallbackReason = Alphaleonis.Win32.Filesystem.CopyProgressCallbackReason;
@@ -108,9 +109,13 @@ namespace TVRename
             DirectoryInfo di = From.Directory;
             if (di == null) return;
             if (_tidyup.DeleteEmptyIsRecycle)
-                FileSystem.DeleteDirectory(di.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
             else
+            {
                 di.Delete();
+            }
         }
 
 
