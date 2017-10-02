@@ -1063,7 +1063,7 @@ namespace TVRename
 
             web.Navigate("about:blank"); // make it close any file it might have open
 
-            BinaryWriter bw = new BinaryWriter(new FileStream(path, FileMode.Create));
+            BinaryWriter bw = new BinaryWriter(new FileStream(path, System.IO.FileMode.Create));
             bw.Write(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(html));
             bw.Close();
 
