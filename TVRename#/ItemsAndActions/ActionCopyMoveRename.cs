@@ -8,7 +8,13 @@ using System.Security.AccessControl;
 using System.Threading;
 using System.Web.UI.WebControls;
 using System.Windows.Forms;
-using Microsoft.VisualBasic.FileIO;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using CopyProgressResult = Alphaleonis.Win32.Filesystem.CopyProgressResult;
+using CopyProgressCallbackReason = Alphaleonis.Win32.Filesystem.CopyProgressCallbackReason;
+using MoveFileOptions = Alphaleonis.Win32.Filesystem.MoveFileOptions;
 
 namespace TVRename
 {
@@ -73,10 +79,10 @@ namespace TVRename
                 // ignored
             }
 
-            if (QuickOperation())
-                OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
-            else
-                CopyItOurself(ref pause, stats); // do it ourself!
+            //if (QuickOperation())
+                this.OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
+            //else
+                //CopyItOurself(ref pause, stats); // do it ourself!
 
             // set NTFS permissions
             try
@@ -292,13 +298,20 @@ namespace TVRename
                 {
                     // XP won't actually do a rename if its only a case difference
                     string tempName = TempFor(To);
-                    From.MoveTo(tempName);
-                    File.Move(tempName, To.FullName);
+                    //From.MoveTo(tempName);
+                    //File.Move(tempName, To.FullName);
+
+                    // This step could be slow, so report progress
+                    if (!Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName,MoveFileOptions.CopyAllowed | MoveFileOptions.ReplaceExisting,CopyProgressCallback, null))
+                   new Exception("Move operation aborted");
+                                        // This step very quick, so no progress reporting
+                    Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName);
+
                 }
                 else
                     From.MoveTo(To.FullName);
 
-                KeepTimestamps(From, To);
+                //KeepTimestamps(From, To);
 
                 Done = true;
 
@@ -325,7 +338,15 @@ namespace TVRename
                 ErrorText = e.Message;
             }
         }
-        private void CopyItOurself(ref bool pause, TVRenameStats stats)
+
+        private CopyProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, uint StreamNumber, CopyProgressCallbackReason CallbackReason, object UserData)
+         {
+             double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
+             this.PercentDone = pct > 100.0 ? 100.0 : pct;
+             return CopyProgressResult.Continue;
+         }
+
+    private void CopyItOurself(ref bool pause, TVRenameStats stats)
         {
             const int kArrayLength = 1 * 1024 * 1024;
             Byte[] dataArray = new Byte[kArrayLength];
@@ -354,8 +375,8 @@ namespace TVRename
                 }
                 else
                 {
-                    msr = new BinaryReader(new FileStream(this.From.FullName, FileMode.Open, FileAccess.Read));
-                    msw = new BinaryWriter(new FileStream(tempName, FileMode.CreateNew));
+                    msr = new BinaryReader(new FileStream(this.From.FullName, System.IO.FileMode.Open, FileAccess.Read));
+                    msw = new BinaryWriter(new FileStream(tempName, System.IO.FileMode.CreateNew));
                 }
 
                 for (;;)

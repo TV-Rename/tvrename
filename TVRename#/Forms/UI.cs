@@ -18,6 +18,11 @@ using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using TVRename.Forms;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 namespace TVRename
 {
