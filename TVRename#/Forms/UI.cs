@@ -17,6 +17,8 @@ using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
+using TVRename.Forms;
+
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -607,13 +609,16 @@ namespace TVRename
             this.MyShowTree.BeginUpdate();
 
             this.MyShowTree.Nodes.Clear();
-
             List<ShowItem> sil = this.mDoc.GetShowItems(true);
+            ShowFilter filter = TVSettings.Instance.Filter;
             foreach (ShowItem si in sil)
             {
-                TreeNode tvn = this.AddShowItemToTree(si);
-                if (expanded.Contains(si))
-                    tvn.Expand();
+                if (filter.filter(si))
+                {
+                    TreeNode tvn = this.AddShowItemToTree(si);
+                    if (expanded.Contains(si))
+                        tvn.Expand();
+                }
             }
             this.mDoc.UnlockShowItems();
 
@@ -630,7 +635,6 @@ namespace TVRename
                 this.SelectSeason(currentSeas);
             else if (currentSI != null)
                 this.SelectShow(currentSI);
-
             this.MyShowTree.EndUpdate();
         }
 
@@ -3504,6 +3508,16 @@ namespace TVRename
         private void btnActionQuickScan_Click(object sender, EventArgs e)
         {
             this.QuickScan();
+        }
+
+        private void btnFilter_Click(object sender, EventArgs e)
+        {
+            Filters filters = new Filters(this.mDoc);
+            DialogResult res = filters.ShowDialog();
+            if (res == DialogResult.OK)
+            {
+                this.FillMyShows();
+            }
         }
     }
 }

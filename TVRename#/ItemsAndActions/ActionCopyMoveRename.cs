@@ -8,7 +8,14 @@ using System.Security.AccessControl;
 using System.Threading;
 using System.Web.UI.WebControls;
 using System.Windows.Forms;
-using Microsoft.VisualBasic.FileIO;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using CopyProgressResult = Alphaleonis.Win32.Filesystem.CopyProgressResult;
+using CopyProgressCallbackReason = Alphaleonis.Win32.Filesystem.CopyProgressCallbackReason;
+using MoveFileOptions = Alphaleonis.Win32.Filesystem.MoveFileOptions;
 
 namespace TVRename
 {
@@ -85,7 +92,7 @@ namespace TVRename
             }
 
             if (QuickOperation())
-                OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
+                this.OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
             else
                 CopyItOurself(ref pause, stats); // do it ourself!
 
@@ -113,9 +120,13 @@ namespace TVRename
             DirectoryInfo di = From.Directory;
             if (di == null) return;
             if (_tidyup.DeleteEmptyIsRecycle)
-                FileSystem.DeleteDirectory(di.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
             else
+            {
                 di.Delete();
+            }
         }
 
 
@@ -299,10 +310,9 @@ namespace TVRename
         {
             try
             {
-                if (FileHelper.Same(From, To))
+                if (FileHelper.Same(this.From, this.To))
                 {
                     // XP won't actually do a rename if its only a case difference
-
                     string tempName = TempFor(this.To);
 
                     // This step could be slow, so report progress
@@ -317,45 +327,37 @@ namespace TVRename
                     if (!Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName,
                         MoveFileOptions.CopyAllowed | MoveFileOptions.ReplaceExisting,
                         CopyProgressCallback, null))
-                        new Exception("Move operation aborted");
+                    new Exception("Move operation aborted");
 
                 // AlphaFS doesn't reset file time stamps
                 //KeepTimestamps(this.From, this.To);
 
-                Done = true;
+                this.Done = true;
 
-                Debug.Assert((Operation == Op.Move) || (Operation == Op.Rename));
+                System.Diagnostics.Debug.Assert((this.Operation == ActionCopyMoveRename.Op.Move) || (this.Operation == ActionCopyMoveRename.Op.Rename));
 
-                switch (Operation)
-                {
-                    case Op.Move:
-                        stats.FilesMoved++;
-                        break;
-                    case Op.Rename:
-                        stats.FilesRenamed++;
-                        break;
-                    case Op.Copy:
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                if (this.Operation == ActionCopyMoveRename.Op.Move)
+                    stats.FilesMoved++;
+                else if (this.Operation == ActionCopyMoveRename.Op.Rename)
+                    stats.FilesRenamed++;
             }
-            catch (Exception e)
+            catch (System.Exception e)
             {
-                Done = true;
-                Error = true;
-                ErrorText = e.Message;
+                this.Done = true;
+                this.Error = true;
+                this.ErrorText = e.Message;
             }
         }
 
         private CopyProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, uint StreamNumber, CopyProgressCallbackReason CallbackReason, object UserData)
-        {
-            double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
-            this.PercentDone = pct > 100.0 ? 100.0 : pct;
-            return CopyProgressResult.Continue;
-        }
+         {
+             double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
+             this.PercentDone = pct > 100.0 ? 100.0 : pct;
+             return CopyProgressResult.Continue;
+         }
 
-        private void CopyItOurself(ref bool pause, TVRenameStats stats)
+    private void CopyItOurself(ref bool pause, TVRenameStats stats)
+
         {
             const int kArrayLength = 1 * 1024 * 1024;
             Byte[] dataArray = new Byte[kArrayLength];

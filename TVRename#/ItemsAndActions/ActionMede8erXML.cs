@@ -134,11 +134,9 @@ namespace TVRename
 
                 //Genres...taken from overall Series, not episode specific due to thetvdb
                 writer.WriteStartElement("genres");
-                string genre = this.Episode.SI.TheSeries().GetGenre();
+                string genre = String.Join(" / ", this.Episode.SI.TheSeries().GetGenres());
                 if (!string.IsNullOrEmpty(genre))
                 {
-                    genre = genre.Trim('|');
-                    genre = genre.Replace("|", " / ");
                     XMLHelper.WriteElementToXML(writer,"genre",genre);
                 }
                 writer.WriteEndElement();  // genres
@@ -198,11 +196,9 @@ namespace TVRename
                 XMLHelper.WriteElementToXML(writer,"title",this.SI.ShowName);
               
                 writer.WriteStartElement("genres");
-                string genre = this.SI.TheSeries().GetGenre();
+                string genre = String.Join(" / ", this.SI.TheSeries().GetGenres());
                 if (!string.IsNullOrEmpty(genre))
                 {
-                    genre = genre.Trim('|');
-                    genre = genre.Replace("|", " / ");
                     XMLHelper.WriteElementToXML(writer,"genre",genre);
                 }
                 writer.WriteEndElement();  // genres

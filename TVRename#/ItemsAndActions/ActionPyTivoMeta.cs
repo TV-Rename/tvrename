@@ -12,6 +12,7 @@ namespace TVRename
     using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
+
     public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
     {
         public FileInfo Where;
@@ -87,7 +88,7 @@ namespace TVRename
             WriteEntries(writer, "vWriter", this.Episode.Writer);
             WriteEntries(writer, "vActor", String.Join("|", this.Episode.SI.TheSeries().GetActors()));
             WriteEntries(writer, "vGuestStar", this.Episode.EpisodeGuestStars); // not worring about actors being repeated
-            WriteEntries(writer, "vProgramGenre", this.Episode.SI.TheSeries().GetGenre());
+            WriteEntries(writer, "vProgramGenre", String.Join("|", this.Episode.SI.TheSeries().GetGenres()));
 
             writer.Close();
             this.Done = true;

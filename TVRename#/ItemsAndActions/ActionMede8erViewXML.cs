@@ -13,7 +13,6 @@ namespace TVRename
     using System.Xml;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
     public class ActionMede8erViewXML : Item, Action, ScanListItem, ActionWriteMetadata
     {
         public FileInfo Where;

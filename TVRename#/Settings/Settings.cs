@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using System.Xml;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
@@ -292,6 +291,7 @@ namespace TVRename
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
         public string OtherExtensionsString = "";
+        public ShowFilter Filter = new ShowFilter();
 
         public string[] OtherExtensionsArray
         {
@@ -617,6 +617,34 @@ namespace TVRename
 
 
                 }
+                else if (reader.Name == "ShowFilters" && !reader.IsEmptyElement)
+                {
+                    this.Filter = new ShowFilter();
+                    reader.Read();
+                    while (!reader.EOF)
+                    {
+                        if ((reader.Name == "ShowFilters") && (!reader.IsStartElement()))
+                            break;
+                        if (reader.Name == "ShowNameFilter")
+                        {
+                            Filter.ShowName = reader.GetAttribute("ShowName");
+                            reader.Read();
+                        }
+                        else if (reader.Name == "ShowStatusFilter")
+                        {
+                            Filter.ShowStatus = reader.GetAttribute("ShowStatus");
+                            reader.Read();
+                        }
+                        else if (reader.Name == "GenreFilter")
+                        {
+                            Filter.Genres.Add(reader.GetAttribute("Genre"));
+                            reader.Read();
+                        }
+                        else
+                            reader.ReadOuterXml();
+                    }
+                    reader.Read();
+                }
                 else
                     reader.ReadOuterXml();
             }
@@ -772,6 +800,43 @@ namespace TVRename
                     writer.WriteEndElement(); //ShowStatusTVWColor
                 }
                 writer.WriteEndElement(); // ShowStatusTVWColors
+            }
+
+            if (Filter != null)
+            {
+                writer.WriteStartElement("ShowFilters");
+
+                if (Filter.ShowName != null)
+                {
+                    writer.WriteStartElement("NameFilter");
+                    writer.WriteStartAttribute("Name");
+                    writer.WriteValue(Filter.ShowName);
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+
+                if (Filter.ShowStatus != null)
+                {
+                    writer.WriteStartElement("ShowStatusFilter");
+                    writer.WriteStartAttribute("ShowStatus");
+                    writer.WriteValue(Filter.ShowStatus);
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+
+                if (Filter.Genres.Count != 0)
+                {
+                    foreach (String Genre in Filter.Genres)
+                    {
+                        writer.WriteStartElement("GenreFilter");
+                        writer.WriteStartAttribute("Genre");
+                        writer.WriteValue(Genre);
+                        writer.WriteEndAttribute();
+                        writer.WriteEndElement();
+                    }
+                }
+
+                writer.WriteEndElement();
             }
 
             writer.WriteEndElement(); // settings

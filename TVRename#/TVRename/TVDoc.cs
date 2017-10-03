@@ -18,6 +18,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
 using System.Xml;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -67,6 +68,18 @@ namespace TVRename
                                        "Saison", // FR, DE
                                        "temporada" // ES
                                        }; // TODO: move into settings, and allow user to edit these
+
+        public List<String> getGenres()
+        {
+            List<String> allGenres = new List<string> { };
+            foreach (ShowItem si in ShowItems)
+            {
+                if (si.Genres != null) allGenres.AddRange(si.Genres);
+            }
+            List<String> distinctGenres = allGenres.Distinct().ToList();
+            distinctGenres.Sort();
+            return distinctGenres;
+        }
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
         {
