@@ -18,6 +18,7 @@ using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using TVRename.Forms;
+
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -1065,6 +1066,7 @@ namespace TVRename
 
             BinaryWriter bw = new BinaryWriter(new FileStream(path, System.IO.FileMode.Create));
             bw.Write(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(html));
+
             bw.Close();
 
             web.Navigate(LocalFileURLBase(path));

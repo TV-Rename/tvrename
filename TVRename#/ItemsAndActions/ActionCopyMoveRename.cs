@@ -19,6 +19,17 @@ using MoveFileOptions = Alphaleonis.Win32.Filesystem.MoveFileOptions;
 
 namespace TVRename
 {
+    using System;
+    using System.IO;
+    using System.Windows.Forms;
+    using File = Alphaleonis.Win32.Filesystem.File;
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+    using CopyProgressResult = Alphaleonis.Win32.Filesystem.CopyProgressResult;
+    using CopyProgressCallbackReason = Alphaleonis.Win32.Filesystem.CopyProgressCallbackReason;
+    using MoveFileOptions = Alphaleonis.Win32.Filesystem.MoveFileOptions;
+
     public class ActionCopyMoveRename : Item, Action, ScanListItem
     {
         #region Op enum
@@ -346,6 +357,7 @@ namespace TVRename
          }
 
     private void CopyItOurself(ref bool pause, TVRenameStats stats)
+
         {
             const int kArrayLength = 1 * 1024 * 1024;
             Byte[] dataArray = new Byte[kArrayLength];
