@@ -192,7 +192,7 @@ namespace TVRename
 
                 WriteInfo(writer, this.SI.TheSeries().GetOverview(), "plot");
 
-                string genre = String.Join(" / ", this.Episode.SI.TheSeries().GetGenres());
+                string genre = String.Join(" / ", this.SI.TheSeries().GetGenres());
                 if (!string.IsNullOrEmpty(genre))
                 {
                     XMLHelper.WriteElementToXML(writer,"genre",genre);
