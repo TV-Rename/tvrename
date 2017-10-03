@@ -24,6 +24,7 @@ namespace TVRename
     using System.Windows.Forms;
     using File = Alphaleonis.Win32.Filesystem.File;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
     using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using CopyProgressResult = Alphaleonis.Win32.Filesystem.CopyProgressResult;
