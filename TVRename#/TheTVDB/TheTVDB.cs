@@ -19,6 +19,9 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 using System.Linq;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
 
 // Talk to the TheTVDB web API, and get tv series info
 

@@ -10,6 +10,7 @@ namespace TVRename
     using System;
     using System.IO;
     using System.Windows.Forms;
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
     {
@@ -60,7 +61,7 @@ namespace TVRename
             {
                 // create folder if it does not exist. (Only really applies when .meta\ folder is being used.)
                 if (!this.Where.Directory.Exists)
-                    this.Where.Directory.Create();
+                    Directory.CreateDirectory(this.Where.Directory.FullName);
                 writer = new System.IO.StreamWriter(this.Where.FullName, false, System.Text.Encoding.GetEncoding(1252));
                 if (writer == null)
                     return false;

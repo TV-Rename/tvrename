@@ -11,6 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
     using System.Xml;
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionMede8erXML : Item, Action, ScanListItem, ActionWriteMetadata
     {
