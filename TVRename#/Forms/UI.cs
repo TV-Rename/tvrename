@@ -810,8 +810,12 @@ namespace TVRename
 
             body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
 
-            body += ImageSection("Series Banner", 758, 140, ser.GetSeasonWideBannerPath(snum));
-            body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
+            if(TVSettings.Instance.NeedToDownloadBannerFile())
+            {
+                body += ImageSection("Series Banner", 758, 140, ser.GetSeasonWideBannerPath(snum));
+                body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
+
+            }
 
             return body;
         }
