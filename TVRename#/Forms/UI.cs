@@ -816,6 +816,10 @@ namespace TVRename
                 body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
 
             }
+            else
+            {
+                body += "<h2>Images are not being downloaded for this series. Please see Options -> Settings -> Media Center to reconfigure.</h2>";
+            }
 
             return body;
         }

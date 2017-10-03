@@ -1015,8 +1015,8 @@ namespace TVRename
 
         public bool NeedToDownloadBannerFile(){
             // Return true iff we need to download season specific images
-            // There are 3 possible reasons
-            return (SeasonSpecificFolderJPG() || XBMCImages || SeriesJpg);
+            // There are 4 possible reasons
+            return (SeasonSpecificFolderJPG() || XBMCImages || SeriesJpg ||FanArtJpg);
         }
 
         public bool SeasonSpecificFolderJPG() {
