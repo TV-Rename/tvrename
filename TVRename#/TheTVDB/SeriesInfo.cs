@@ -507,6 +507,8 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "SeriesName", this.Name);
             XMLHelper.WriteElementToXML(writer, "lastupdated", this.Srv_LastUpdated);
             XMLHelper.WriteElementToXML(writer, "Language", this.LanguageId);
+            XMLHelper.WriteElementToXML(writer, "Airs_Time", this.AirsTime );
+            
 
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
             {

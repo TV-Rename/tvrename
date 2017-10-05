@@ -600,6 +600,10 @@ namespace TVRename
             try
             {
                 jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "fromTime", epochTime } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+
+                int numberOfResponses = ((JArray)jsonResponse["data"]).Count;
+                
+                System.Diagnostics.Debug.WriteLine("Obtianed " + numberOfResponses + " from lastupdated query - since (local) "+ Helpers.FromUnixTime(long.Parse(epochTime)).ToLocalTime());
             }
             catch (WebException ex)
             {
@@ -628,6 +632,83 @@ namespace TVRename
                 {
                     if (time > this.Series[ID].Srv_LastUpdated) // newer version on the server
                         this.Series[ID].Dirty = true; // mark as dirty, so it'll be fetched again later
+                    else
+                        System.Diagnostics.Debug.WriteLine(this.Series[ID].Name + " has a lastupdated of  " + Helpers.FromUnixTime(this.Series[ID].Srv_LastUpdated) + " server says "+ Helpers.FromUnixTime(time));
+
+                    //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
+
+                    //Now deal with obtaining any episodes for the series 
+                    //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
+                    //We push the results into a bag to use later
+                    //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
+                    List<JObject> episodeResponses = new List<JObject>();
+
+                    int pageNumber = 1;
+                    bool morePages = true;
+
+
+                    while (morePages)
+                    {
+                        String episodeUri = APIRoot + "/series/" + ID + "/episodes";
+                        JObject jsonEpisodeResponse = new JObject();
+                        try
+                        {
+                            jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
+                            episodeResponses.Add(jsonEpisodeResponse);
+                            int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
+                            
+                            System.Diagnostics.Debug.WriteLine("Page " + pageNumber + " of " + this.Series[ID].Name + " had " + numberOfResponses + " episodes listed");
+                            if (numberOfResponses < 100) { morePages = false; } else { pageNumber++; }
+
+
+                        }
+                        catch (WebException ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Error obtaining page " + pageNumber + " of " + episodeUri + ": " + ex.Message);
+                            //There may be exactly 100 or 200 episodes, may not be a problem
+                            morePages = false;
+                        }
+                    }
+                    int numberOfNewEpisodes = 0;
+                    int numberOfUpdatedEpisodes = 0;
+
+                    foreach (JObject response in episodeResponses)
+                    {
+                        foreach (JObject episodeData in response["data"])
+                        {
+                            long serverUpdateTime = (int)episodeData["lastUpdated"];
+                            int serverEpisodeId = (int)episodeData["id"];
+
+                            bool found = false;
+                            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in this.Series[ID].Seasons)
+                            {
+                                Season seas = kvp2.Value;
+
+                                foreach (Episode ep in seas.Episodes)
+                                {
+                                    if (ep.EpisodeID == serverEpisodeId)
+                                    {
+                                        if (ep.Srv_LastUpdated < serverUpdateTime) { 
+                                            ep.Dirty = true; // mark episode as dirty.
+                                            numberOfUpdatedEpisodes++;
+                                                }
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!found)
+                            {
+                                // must be a new episode
+                                this.LockEE();
+                                this.ExtraEpisodes.Add(new ExtraEp(ID, serverEpisodeId));
+                                this.UnlockEE();
+                                numberOfNewEpisodes++;
+                            }
+
+                        }
+                    }
+                    System.Diagnostics.Debug.WriteLine( this.Series[ID].Name + " had " + numberOfUpdatedEpisodes + " episodes updated and " + numberOfNewEpisodes+ " new episodes ");
                 }
             }
 
@@ -957,7 +1038,7 @@ namespace TVRename
 
         private SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool bannersToo)
         {
-            bool forceReload = this.ForceReloadOn.Contains(code);
+            bool forceReload = DoWeForceReloadFor(code);
 
             string txt = "";
             if (this.Series.ContainsKey(code))
@@ -1015,7 +1096,7 @@ namespace TVRename
             //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
             List<JObject> episodeResponses = new List<JObject>();
 
-            if (episodesToo) { 
+            if (episodesToo  || forceReload) { 
                 int pageNumber = 1;
                 bool morePages = true;
             
@@ -1081,7 +1162,7 @@ namespace TVRename
 
             List<JObject> bannerResponses = new List<JObject>();
             List<JObject> bannerDefaultLangResponses = new List<JObject>();
-            if (bannersToo )            {
+            if (bannersToo || forceReload )            {
                 // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
                 List<string> imageTypes = new List<string> { };
 
@@ -1216,8 +1297,6 @@ namespace TVRename
                 return false; // shouldn't happen
             this.Say(txt);
 
-            //MS_todo make use of language this.RequestLanguage - wait until https://trello.com/c/dyEhtfky/15-handle-multiple-languages-in-the-accept-language-header complete
-
             String uri = APIRoot + "/episodes/" + episodeID.ToString();
             JObject jsonResponse = new JObject();
             JObject jsonDefaultLangResponse = new JObject();
@@ -1243,9 +1322,6 @@ namespace TVRename
             {
                 Episode e; 
                 JObject jsonResponseData = (JObject)jsonResponse["data"];
-
-                //TODO - REMOVE DEBUGGING
-                //if ((episodeID > 311800) &&(episodeID < 311900)) System.Diagnostics.Debug.WriteLine(episodeID + "****"+ jsonResponseData.ToString());
 
                 if (inForeignLanguage())
                 {
@@ -1307,7 +1383,7 @@ namespace TVRename
 
         public bool EnsureUpdated(int code, bool bannersToo)
         {
-            if (!this.Series.ContainsKey(code) || (this.Series[code].Seasons.Count == 0))
+            if (DoWeForceReloadFor(code) || (this.Series[code].Seasons.Count == 0))
                 return this.DownloadSeriesNow(code, true, bannersToo) != null; // the whole lot!
 
             bool ok = true;
@@ -1323,7 +1399,7 @@ namespace TVRename
                 Season seas = kvp.Value;
                 foreach (Episode e in seas.Episodes)
                 {
-                    if (e.Dirty)
+                    if (e.Dirty && e.EpisodeID >0)
                     {
                         this.LockEE();
                         this.ExtraEpisodes.Add(new ExtraEp(e.SeriesID, e.EpisodeID));
@@ -1481,4 +1557,5 @@ namespace TVRename
         }
     }
 }
+
 
