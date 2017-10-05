@@ -31,7 +31,24 @@ namespace TVRename
         public int Compare(Item o)
         {
             ItemMissing miss = o as ItemMissing;
-            return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
+            //return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
+            if (o == null || miss == null)
+            {
+                return 0;
+            }
+
+            if (!this.Episode.SI.ShowName.Equals(miss.Episode.SI.ShowName))
+            {
+                return this.Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
+            }
+
+            if (!this.Episode.SeasonNumber.Equals(miss.Episode.SeasonNumber))
+            {
+                int compare = this.Episode.SeasonNumber.CompareTo(miss.Episode.SeasonNumber);
+                return compare;
+            }
+
+            return this.Episode.EpNum.CompareTo(miss.Episode.EpNum);
         }
 
         #endregion

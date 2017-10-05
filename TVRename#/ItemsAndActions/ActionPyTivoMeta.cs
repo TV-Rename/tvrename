@@ -12,6 +12,7 @@ namespace TVRename
     using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
+
     public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
     {
         public FileInfo Where;
@@ -81,13 +82,13 @@ namespace TVRename
             writer.WriteLine(string.Format("description : {0}", this.Episode.Overview));
             if (this.Episode.FirstAired != null)
                 writer.WriteLine(string.Format("originalAirDate : {0:yyyy-MM-dd}T00:00:00Z",this.Episode.FirstAired.Value));
-            writer.WriteLine(string.Format("callsign : {0}", this.Episode.SI.TheSeries().GetItem("Network")));
+            writer.WriteLine(string.Format("callsign : {0}", this.Episode.SI.TheSeries().getNetwork()));
 
             WriteEntries(writer, "vDirector", this.Episode.EpisodeDirector);
             WriteEntries(writer, "vWriter", this.Episode.Writer);
-            WriteEntries(writer, "vActor", this.Episode.SI.TheSeries().GetItem("Actors"));
+            WriteEntries(writer, "vActor", String.Join("|", this.Episode.SI.TheSeries().GetActors()));
             WriteEntries(writer, "vGuestStar", this.Episode.EpisodeGuestStars); // not worring about actors being repeated
-            WriteEntries(writer, "vProgramGenre", this.Episode.SI.TheSeries().GetItem("Genre"));
+            WriteEntries(writer, "vProgramGenre", String.Join("|", this.Episode.SI.TheSeries().GetGenres()));
 
             writer.Close();
             this.Done = true;

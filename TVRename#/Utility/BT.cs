@@ -14,6 +14,7 @@ using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 
+
 // Opens, understands, manipulates, and writes out BEncoded .torrent files, and uTorrent's resume.dat
 
 namespace TVRename
@@ -1085,25 +1086,33 @@ namespace TVRename
                     {
                         if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip))
                         {
-                            string saveTo = FileHelper.FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
-                            if (hasTargets)
+                            try
                             {
-                                // see if there is a target for this (the c'th) file
-                                for (int i = 0; i < targetList.Items.Count; i++)
+                                string saveTo = FileHelper.FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
+                                if (hasTargets)
                                 {
-                                    BTList l = (BTList) (targetList.Items[i]);
-                                    BTInteger n = (BTInteger) (l.Items[0]);
-                                    BTString dest = (BTString) (l.Items[1]);
-                                    if (n.Value == c)
+                                    // see if there is a target for this (the c'th) file
+                                    for (int i = 0; i < targetList.Items.Count; i++)
                                     {
-                                        saveTo = dest.AsString();
-                                        break;
+                                        BTList l = (BTList)(targetList.Items[i]);
+                                        BTInteger n = (BTInteger)(l.Items[0]);
+                                        BTString dest = (BTString)(l.Items[1]);
+                                        if (n.Value == c)
+                                        {
+                                            saveTo = dest.AsString();
+                                            break;
+                                        }
                                     }
                                 }
+                                int percent = (a.Count == 1) ? PercentBitsOn((BTString)(d2.GetItem("have"))) : -1;
+                                TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent);
+                                r.Add(te);
+
                             }
-                            int percent = (a.Count == 1) ? PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
-                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent);
-                            r.Add(te);
+                            catch (PathTooLongException ptle)
+                            {
+                                //this is not the file we are looking for
+                            }
                         }
                         c++;
                     }

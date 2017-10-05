@@ -33,13 +33,21 @@ namespace TVRename
 
                 if (forceRefresh || fileDoesntExist)
                 {
-                    //default to poster when we want season posters for the season specific folders;
-                    string itemToGet = (TVSettings.Instance.SeasonSpecificFolderJPG()) ? "poster" : TVSettings.Instance.ItemForFolderJpg();
+                    string downloadPath;
 
-                    string bannerPath = bannerPath = si.TheSeries().GetItem(itemToGet);
+                    if (TVSettings.Instance.SeasonSpecificFolderJPG())
+                    {
+                        //default to poster when we want season posters for the season specific folders;
+                        downloadPath = si.TheSeries().GetSeriesPosterPath();
+                    }
+                    else
+                    {
+                        downloadPath = si.TheSeries().GetImage(TVSettings.Instance.ItemForFolderJpg());
+                    }
 
-                    if (!string.IsNullOrEmpty(bannerPath))
-                        TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, false));
+
+                    if (!string.IsNullOrEmpty(downloadPath))
+                        TheActionList.Add(new ActionDownload(si, null, fi, downloadPath, false));
                     doneFolderJPG.Add(fi.FullName);
                 }
                 return TheActionList;
@@ -70,7 +78,7 @@ namespace TVRename
                     else
                     {
                         //We are getting a Show Level image
-                        bannerPath = si.TheSeries().GetItem(TVSettings.Instance.ItemForFolderJpg());
+                        bannerPath = si.TheSeries().GetImage(TVSettings.Instance.ItemForFolderJpg());
                     }
                     if (!string.IsNullOrEmpty(bannerPath))
                         TheActionList.Add(new ActionDownload(si, null, fi, bannerPath,

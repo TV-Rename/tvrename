@@ -192,11 +192,11 @@ namespace TVRename
 
 
             TheTVDB.Instance.GetLock("Preferences-OK");
-            foreach (var kvp in TheTVDB.Instance.LanguageList)
+            foreach (Language l in TheTVDB.Instance.LanguageList)
             {
-                if (kvp.Value == cbLanguages.Text)
+                if (l.name == cbLanguages.Text)
                 {
-                    S.PreferredLanguage = kvp.Key;
+                    S.PreferredLanguage = l.abbreviation;
                     break;
                 }
             }
@@ -444,7 +444,7 @@ namespace TVRename
             }
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
             List<ShowItem> shows = this.mDoc.GetShowItems(false);
-            foreach (var show in shows)
+            foreach (ShowItem show in shows)
             {
                 if(!showStatusList.Contains(show.ShowStatus))
                     showStatusList.Add(show.ShowStatus);
@@ -837,13 +837,12 @@ namespace TVRename
             this.cbLanguages.Items.Clear();
 
             String pref = "";
-            foreach (var kvp in TheTVDB.Instance.LanguageList)
+            foreach (Language l in TheTVDB.Instance.LanguageList)
             {
-                String name = kvp.Value;
-                this.cbLanguages.Items.Add(name);
+                this.cbLanguages.Items.Add(l.name);
 
-                if (EnterPreferredLanguage == kvp.Key)
-                    pref = kvp.Value;
+                if (EnterPreferredLanguage == l.abbreviation)
+                    pref = l.name;
             }
             this.cbLanguages.EndUpdate();
             this.cbLanguages.Text = pref;

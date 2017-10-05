@@ -8,6 +8,7 @@
 // For more information see http://thetvdb.com/wiki/index.php/API:banners.xml
 //  
 
+using Newtonsoft.Json.Linq;
 using System;
 using System.Windows.Forms;
 using System.Xml;
@@ -17,22 +18,18 @@ namespace TVRename
     public class Banner
     {
         public int BannerId;
+        public int LanguageId;
         public string BannerPath;
         public string BannerType;
-        public string BannerType2;
-        public string Language;
+        public string Resolution;
         public double Rating;
         public int RatingCount;
         public int SeasonID;
         public int SeriesID;
-        public string Colors;
         public string ThumbnailPath;
-        public string VignettePath;
-        public string SeriesName;
 
         public Season TheSeason;
         public SeriesInfo TheSeries;
-        private string mName;
         
         public Banner(Banner O)
         {
@@ -40,19 +37,15 @@ namespace TVRename
             this.BannerId = O.BannerId;
             this.BannerPath = O.BannerPath;
             this.BannerType = O.BannerType;
-            this.BannerType2 = O.BannerType2;
-            this.Language = O.Language;
+            this.LanguageId = O.LanguageId;
+            this.Resolution = O.Resolution;
             this.Rating = O.Rating;
             this.RatingCount = O.RatingCount;
             this.SeasonID = O.SeasonID;
             this.SeriesID = O.SeriesID;
 
-            this.Colors = O.Colors;
             this.ThumbnailPath = O.ThumbnailPath;
-            this.VignettePath = O.VignettePath;
-            this.SeriesName = O.SeriesName;
             
-            this.Name = O.Name;
             this.TheSeason = O.TheSeason;
             this.TheSeries = O.TheSeries;
 
@@ -105,10 +98,10 @@ namespace TVRename
                         this.BannerPath = XMLHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "BannerType")
                         this.BannerType = r.ReadElementContentAsString();
-                    else if (r.Name == "BannerType2")
-                        this.BannerType2 = r.ReadElementContentAsString();
-                    else if (r.Name == "Language")
-                        this.Language = r.ReadElementContentAsString();
+                    else if (r.Name == "LanguageId")
+                        this.LanguageId = r.ReadElementContentAsInt();
+                    else if (r.Name == "Resolution")
+                        this.Resolution = r.ReadElementContentAsString();
                     else if (r.Name == "Rating")
                         {
                         String sn = r.ReadElementContentAsString();
@@ -118,10 +111,7 @@ namespace TVRename
                         this.RatingCount  = r.ReadElementContentAsInt();
                     else if (r.Name == "Season")
                         this.SeasonID = r.ReadElementContentAsInt();
-                    else if (r.Name == "Colors") this.Colors = r.ReadElementContentAsString();
                     else if (r.Name == "ThumbnailPath") this.ThumbnailPath = r.ReadElementContentAsString();
-                    else if (r.Name == "VignettePath") this.VignettePath = r.ReadElementContentAsString();
-                    else if (r.Name == "SeriesName") this.SeriesName = r.ReadElementContentAsString();
                     else
                     {
                         if ((r.IsEmptyElement) || !r.IsStartElement())
@@ -140,8 +130,6 @@ namespace TVRename
                     message += "\r\nBanner ID: " + this.BannerId;
                 if (!string.IsNullOrEmpty(this.BannerPath))
                     message += "\r\nBanner Path: " + this.BannerPath;
-                if (!string.IsNullOrEmpty(this.Name))
-                    message += "\r\nName: " + this.Name;
 
                 message += "\r\n" + e.Message;
 
@@ -152,16 +140,38 @@ namespace TVRename
             }
         }
 
-        public string Name
+        public Banner(int seriesId, JObject json, int LangId)
         {
-            get
-            {
-                if ((this.mName == null) || (string.IsNullOrEmpty(this.mName)))
-                    return "Banner " + this.BannerId + " ("+this.BannerPath+")";
-                return this.mName;
-            }
-            set { this.mName = value; }
+            this.SetDefaults(null, null);
+            // {
+            //  "fileName": "string",
+            //  "id": 0,
+            //  "keyType": "string",
+            //  "languageId": 0,
+            //  "ratingsInfo": {
+            //      "average": 0,
+            //      "count": 0
+            //      },
+            //  "resolution": "string",
+            //  "subKey": "string",         //May Contain Season Number
+            //  "thumbnail": "string"
+            //  }
+
+            this.SeriesID = seriesId;
+
+            this.BannerPath = (string)json["fileName"];
+            this.BannerId = (int)json["id"];
+            this.BannerType = (string)json["keyType"];
+            this.LanguageId = LangId;//(json["languageId"] == null) ? -1 : (int)json["languageId"];
+            
+            double.TryParse((string)(json["ratingsInfo"]["average"]), out this.Rating);
+            this.RatingCount = (int)(json["ratingsInfo"]["count"]);
+
+            this.Resolution = (string)json["resolution"];
+            int.TryParse((string)json["subKey"], out this.SeasonID);
+            this.ThumbnailPath = (string)json["thumbnail"];
         }
+
 
         public int SeasonNumber
         {
@@ -177,15 +187,25 @@ namespace TVRename
         {
             return (this.BannerId == o.BannerId);
         }
-        
-        public bool isSeasonPoster()
+
+        public bool isSeriesPoster()
         {
-            return ((this.BannerType == "season") && (this.BannerType2 == "season"));
+            return ((this.BannerType == "poster"));
         }
 
-        public bool isWideSeason()
+        public bool isSeriesBanner()
         {
-            return ((this.BannerType == "season") && (this.BannerType2 == "seasonwide"));
+            return ((this.BannerType == "series"));
+        }
+
+        public bool isSeasonPoster()
+        {
+            return ((this.BannerType == "season") );
+        }
+
+        public bool isSeasonBanner()
+        {
+            return ((this.BannerType == "seasonwide") );
         }
 
         public bool isFanart()
@@ -202,17 +222,14 @@ namespace TVRename
             this.BannerId = -1;
             this.BannerPath = "";
             this.BannerType = "";
-            this.BannerType2 = "";
-            this.Language = "";
+            this.LanguageId = -1;
+            this.Resolution = "";
             this.Rating = -1;
             this.RatingCount = 0;
             this.SeasonID = -1;
             this.SeriesID = -1;
 
-            this.Colors = "";
             this.ThumbnailPath = "";
-            this.VignettePath = "";
-            this.SeriesName = "";
 
         }
                 
@@ -241,17 +258,15 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"id",this.BannerId);
             XMLHelper.WriteElementToXML(writer,"BannerPath",this.BannerPath);
             XMLHelper.WriteElementToXML(writer,"BannerType",this.BannerType);
-            XMLHelper.WriteElementToXML(writer,"BannerType2",this.BannerType2);
-            XMLHelper.WriteElementToXML(writer,"Language",this.Language);
+            XMLHelper.WriteElementToXML(writer, "LanguageId", this.LanguageId);
+            XMLHelper.WriteElementToXML(writer,"Resolution",this.Resolution);
             XMLHelper.WriteElementToXML(writer,"Rating",this.Rating);
             XMLHelper.WriteElementToXML(writer,"RatingCount",this.RatingCount);
             XMLHelper.WriteElementToXML(writer,"Season",this.SeasonID);  
-            XMLHelper.WriteElementToXML(writer,"Colors",this.Colors);
             XMLHelper.WriteElementToXML(writer,"ThumbnailPath",this.ThumbnailPath);
-            XMLHelper.WriteElementToXML(writer,"VignettePath",this.VignettePath);
-            XMLHelper.WriteElementToXML(writer,"SeriesName",this.SeriesName);
 
             writer.WriteEndElement(); //Banner
         }
     }
 }
+

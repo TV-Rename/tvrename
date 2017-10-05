@@ -49,8 +49,8 @@ namespace TVRename
             System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Downloading", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,8 +83,9 @@ namespace TVRename
             this.statisticsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbMyShows = new System.Windows.Forms.TabPage();
-            this.bnHideHTMLPanel = new System.Windows.Forms.Button();
+            this.btnFilter = new System.Windows.Forms.Button();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.bnHideHTMLPanel = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.MyShowTree = new System.Windows.Forms.TreeView();
             this.tabControl2 = new System.Windows.Forms.TabControl();
@@ -170,6 +171,7 @@ namespace TVRename
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -329,7 +331,7 @@ namespace TVRename
             this.torrentMatchToolStripMenuItem,
             this.uTorrentToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
             // 
             // flushCacheToolStripMenuItem
@@ -457,6 +459,7 @@ namespace TVRename
             // 
             // tbMyShows
             // 
+            this.tbMyShows.Controls.Add(this.btnFilter);
             this.tbMyShows.Controls.Add(this.bnHideHTMLPanel);
             this.tbMyShows.Controls.Add(this.splitContainer1);
             this.tbMyShows.Controls.Add(this.bnMyShowsCollapse);
@@ -475,17 +478,20 @@ namespace TVRename
             this.tbMyShows.Text = "My Shows";
             this.tbMyShows.UseVisualStyleBackColor = true;
             // 
-            // bnHideHTMLPanel
+            // btnFilter
             // 
-            this.bnHideHTMLPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnHideHTMLPanel.ImageKey = "FillRight.bmp";
-            this.bnHideHTMLPanel.ImageList = this.imageList1;
-            this.bnHideHTMLPanel.Location = new System.Drawing.Point(282, 479);
-            this.bnHideHTMLPanel.Name = "bnHideHTMLPanel";
-            this.bnHideHTMLPanel.Size = new System.Drawing.Size(25, 25);
-            this.bnHideHTMLPanel.TabIndex = 9;
-            this.bnHideHTMLPanel.UseVisualStyleBackColor = true;
-            this.bnHideHTMLPanel.Click += new System.EventHandler(this.bnHideHTMLPanel_Click);
+            this.btnFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnFilter.CausesValidation = false;
+            this.btnFilter.ImageKey = "filtre.png";
+            this.btnFilter.ImageList = this.imageList1;
+            this.btnFilter.Location = new System.Drawing.Point(251, 479);
+            this.btnFilter.Name = "btnFilter";
+            this.btnFilter.Size = new System.Drawing.Size(75, 25);
+            this.btnFilter.TabIndex = 10;
+            this.btnFilter.Text = "&Filter";
+            this.btnFilter.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnFilter.UseVisualStyleBackColor = true;
+            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
             // 
             // imageList1
             // 
@@ -509,6 +515,19 @@ namespace TVRename
             this.imageList1.Images.SetKeyName(15, "TVOff.bmp");
             this.imageList1.Images.SetKeyName(16, "FillLeft.bmp");
             this.imageList1.Images.SetKeyName(17, "FillRight.bmp");
+            this.imageList1.Images.SetKeyName(18, "filtre.png");
+            // 
+            // bnHideHTMLPanel
+            // 
+            this.bnHideHTMLPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnHideHTMLPanel.ImageKey = "FillRight.bmp";
+            this.bnHideHTMLPanel.ImageList = this.imageList1;
+            this.bnHideHTMLPanel.Location = new System.Drawing.Point(365, 479);
+            this.bnHideHTMLPanel.Name = "bnHideHTMLPanel";
+            this.bnHideHTMLPanel.Size = new System.Drawing.Size(25, 25);
+            this.bnHideHTMLPanel.TabIndex = 9;
+            this.bnHideHTMLPanel.UseVisualStyleBackColor = true;
+            this.bnHideHTMLPanel.Click += new System.EventHandler(this.bnHideHTMLPanel_Click);
             // 
             // splitContainer1
             // 
@@ -608,7 +627,7 @@ namespace TVRename
             this.bnMyShowsCollapse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsCollapse.ImageKey = "Control_TreeView.bmp";
             this.bnMyShowsCollapse.ImageList = this.imageList1;
-            this.bnMyShowsCollapse.Location = new System.Drawing.Point(251, 479);
+            this.bnMyShowsCollapse.Location = new System.Drawing.Point(334, 479);
             this.bnMyShowsCollapse.Name = "bnMyShowsCollapse";
             this.bnMyShowsCollapse.Size = new System.Drawing.Size(25, 25);
             this.bnMyShowsCollapse.TabIndex = 4;
@@ -620,7 +639,7 @@ namespace TVRename
             this.bnMyShowsVisitTVDB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsVisitTVDB.ImageKey = "PublishToWeb.bmp";
             this.bnMyShowsVisitTVDB.ImageList = this.imageList1;
-            this.bnMyShowsVisitTVDB.Location = new System.Drawing.Point(506, 479);
+            this.bnMyShowsVisitTVDB.Location = new System.Drawing.Point(571, 479);
             this.bnMyShowsVisitTVDB.Name = "bnMyShowsVisitTVDB";
             this.bnMyShowsVisitTVDB.Size = new System.Drawing.Size(85, 25);
             this.bnMyShowsVisitTVDB.TabIndex = 7;
@@ -634,7 +653,7 @@ namespace TVRename
             this.bnMyShowsOpenFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsOpenFolder.ImageKey = "OpenFolder.bmp";
             this.bnMyShowsOpenFolder.ImageList = this.imageList1;
-            this.bnMyShowsOpenFolder.Location = new System.Drawing.Point(425, 479);
+            this.bnMyShowsOpenFolder.Location = new System.Drawing.Point(490, 479);
             this.bnMyShowsOpenFolder.Name = "bnMyShowsOpenFolder";
             this.bnMyShowsOpenFolder.Size = new System.Drawing.Size(75, 25);
             this.bnMyShowsOpenFolder.TabIndex = 6;
@@ -648,7 +667,7 @@ namespace TVRename
             this.bnMyShowsRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnMyShowsRefresh.ImageKey = "Refresh.bmp";
             this.bnMyShowsRefresh.ImageList = this.imageList1;
-            this.bnMyShowsRefresh.Location = new System.Drawing.Point(331, 479);
+            this.bnMyShowsRefresh.Location = new System.Drawing.Point(396, 479);
             this.bnMyShowsRefresh.Name = "bnMyShowsRefresh";
             this.bnMyShowsRefresh.Size = new System.Drawing.Size(75, 25);
             this.bnMyShowsRefresh.TabIndex = 5;
@@ -1155,16 +1174,16 @@ namespace TVRename
             listViewGroup10.Header = "Next 7 Days";
             listViewGroup10.Name = "next7days";
             listViewGroup10.Tag = "1";
-            listViewGroup11.Header = "Later";
-            listViewGroup11.Name = "later";
-            listViewGroup11.Tag = "2";
-            listViewGroup12.Header = "Future Episodes";
-            listViewGroup12.Name = "futureEps";
+            listViewGroup11.Header = "Future Episodes";
+            listViewGroup11.Name = "futureEps";
+            listViewGroup12.Header = "Later";
+            listViewGroup12.Name = "later";
+            listViewGroup12.Tag = "2";
             this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup9,
             listViewGroup10,
-            listViewGroup12,
-            listViewGroup11});
+            listViewGroup11,
+            listViewGroup12});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -1401,6 +1420,7 @@ namespace TVRename
             this.tbMyShows.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
@@ -1537,5 +1557,6 @@ namespace TVRename
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.WebBrowser webBrowserImages;
+        private System.Windows.Forms.Button btnFilter;
     }
 }

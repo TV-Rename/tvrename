@@ -50,15 +50,11 @@ namespace TVRename
             foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in TheTVDB.Instance.GetSeriesDict())
             {
                 SeriesInfo si = ser.Value;
-                string actors = si.GetItem("Actors");
-                if (!string.IsNullOrEmpty(actors))
+                foreach (string act in si.GetActors())
                 {
-                    foreach (string act in actors.Split('|'))
-                    {
-                        string aa = act.Trim();
-                        if (!string.IsNullOrEmpty(aa))
-                            this.TheData.Set(si.Name, aa, true);
-                    }
+                    string aa = act.Trim();
+                    if (!string.IsNullOrEmpty(aa))
+                        this.TheData.Set(si.Name, aa, true);
                 }
 
                 if (this.cbGuestStars.Checked)
@@ -67,17 +63,12 @@ namespace TVRename
                     {
                         foreach (Episode ep in kvp.Value.Episodes)
                         {
-                            string guest = ep.GetItem("GuestStars");
-
-                            if (!string.IsNullOrEmpty(guest))
-                            {
-                                foreach (string g in guest.Split('|'))
+                                foreach (string g in ep.GetGuestStars())
                                 {
                                     string aa = g.Trim();
                                     if (!string.IsNullOrEmpty(aa))
                                         this.TheData.Set(si.Name, aa, false);
                                 }
-                            }
                         }
                     }
                 }

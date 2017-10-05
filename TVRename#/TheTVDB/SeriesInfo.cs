@@ -5,7 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -17,18 +19,32 @@ namespace TVRename
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
         public System.Collections.Generic.Dictionary<string, string> Items; // e.g. Overview, Banner, Poster, etc.
-        public string Language;
+        public int LanguageId;
         private string LastFiguredTZ;
         public string Name;
         public bool BannersLoaded;
 
         public System.Collections.Generic.Dictionary<int, Season> Seasons;
 
+        //All Banners
         public System.Collections.Generic.Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.
-        private System.Collections.Generic.Dictionary<int, Banner> Banners; // e.g. Dictionary of the best posters per series.
-        private System.Collections.Generic.Dictionary<int, Banner> LangBanners; // e.g. Dictionary of the best posters per series in the correct language.
-        private System.Collections.Generic.Dictionary<int, Banner> WideBanners; // e.g. Dictionary of the best wide banners per series.
-        private System.Collections.Generic.Dictionary<int, Banner> LangWideBanners; // e.g. Dictionary of the best wide banners per series in the correct language.
+
+        //Collections of Posters and Banners per season
+        private System.Collections.Generic.Dictionary<int, Banner> SeasonBanners; // e.g. Dictionary of the best posters per series.
+        private System.Collections.Generic.Dictionary<int, Banner> SeasonLangBanners; // e.g. Dictionary of the best posters per series in the correct language.
+        private System.Collections.Generic.Dictionary<int, Banner> SeasonWideBanners; // e.g. Dictionary of the best wide banners per series.
+        private System.Collections.Generic.Dictionary<int, Banner> SeasonLangWideBanners; // e.g. Dictionary of the best wide banners per series in the correct language.
+
+        //best Banner, Poster and Fanart loaded from the images files (in any language)
+        private int bestSeriesPosterId;
+        private int bestSeriesBannerId;
+        private int bestSeriesFanartId;
+
+        //best Banner, Poster and Fanart loaded from the images files (in our language)
+        private int bestSeriesLangPosterId;
+        private int bestSeriesLangBannerId;
+        private int bestSeriesLangFanartId;
+
 
         private TimeZone SeriesTZ;
 
@@ -52,6 +68,32 @@ namespace TVRename
             this.LoadXml(r);
         }
 
+        public SeriesInfo(JObject json,int langId)
+        {
+            this.SetToDefauts();
+            this.LanguageId = langId;
+            this.LoadJSON(json);
+
+            if (String.IsNullOrEmpty(this.Name)            ){
+                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
+                System.Diagnostics.Debug.Print(json.ToString());
+            }
+        }
+
+        public SeriesInfo(JObject json, JObject jsonInDefaultLang, int langId)
+        {
+            this.SetToDefauts();
+            this.LanguageId = langId;
+            this.LoadJSON(json,jsonInDefaultLang);
+            if (String.IsNullOrEmpty(this.Name)            ){
+                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
+                System.Diagnostics.Debug.Print(json.ToString());
+                System.Diagnostics.Debug.Print(jsonInDefaultLang .ToString());
+            }
+
+        }
+
+
         private void FigureOutTimeZone()
         {
             string tzstr = this.ShowTimeZone;
@@ -73,13 +115,30 @@ namespace TVRename
             return this.SeriesTZ;
         }
 
-        public string GetItem(string which)
+        public string[] GetActors()
+        {
+            String actors = getValueAcrossVersions("Actors","actors","");
+            
+            if (!string.IsNullOrEmpty(actors))
+            {
+                return actors.Split('|');
+
+            }
+            return new String[] { };
+        }
+
+
+        private string GetItem(string which) //MS making this private to avoid external classes having to worry about how the items colelction is keyed
         {
             if (this.Items.ContainsKey(which))
                 return this.Items[which];
             return "";
         }
 
+        public void setActors(IEnumerable<string> actors)
+        {
+            this.Items["Actors"] = String.Join("|", actors);
+        }
 
         public void SetToDefauts()
         {
@@ -90,27 +149,34 @@ namespace TVRename
             this.Seasons = new System.Collections.Generic.Dictionary<int, Season>();
 
             this.AllBanners = new System.Collections.Generic.Dictionary<int, Banner>();
-            this.Banners = new System.Collections.Generic.Dictionary<int, Banner>();
-            this.LangBanners = new System.Collections.Generic.Dictionary<int, Banner>();
-            this.WideBanners = new System.Collections.Generic.Dictionary<int, Banner>();
-            this.LangWideBanners = new System.Collections.Generic.Dictionary<int, Banner>();
+            this.SeasonBanners = new System.Collections.Generic.Dictionary<int, Banner>();
+            this.SeasonLangBanners = new System.Collections.Generic.Dictionary<int, Banner>();
+            this.SeasonWideBanners = new System.Collections.Generic.Dictionary<int, Banner>();
+            this.SeasonLangWideBanners = new System.Collections.Generic.Dictionary<int, Banner>();
 
             this.Dirty = false;
-            this.Name = ""; 
+            this.Name = "";
             this.AirsTime = null;
             this.TVDBCode = -1;
-            this.Language = "";
+            this.LanguageId = -1;
             this.BannersLoaded = false;
+
+            this.bestSeriesPosterId = -1;
+            this.bestSeriesBannerId = -1;
+            this.bestSeriesFanartId = -1;
+            this.bestSeriesLangPosterId = -1;
+            this.bestSeriesLangBannerId = -1;
+            this.bestSeriesLangFanartId = -1;
         }
-       
-        public void Merge(SeriesInfo o, String preferredLanguage)
+
+        public void Merge(SeriesInfo o, int preferredLanguageId)
         {
             if (o.TVDBCode != this.TVDBCode)
                 return; // that's not us!
             if (o.Srv_LastUpdated != 0 && o.Srv_LastUpdated < this.Srv_LastUpdated)
                 return; // older!?
 
-            bool betterLanguage = (o.Language == preferredLanguage) && (this.Language != preferredLanguage);
+            bool betterLanguage = ((o.LanguageId ==-1)|| (o.LanguageId == preferredLanguageId) && (this.LanguageId != preferredLanguageId));
 
             this.Srv_LastUpdated = o.Srv_LastUpdated;
 
@@ -118,12 +184,12 @@ namespace TVRename
             // "o" is always newer/better than us, if there is a choice
             if ((!string.IsNullOrEmpty(o.Name)) && betterLanguage)
                 this.Name = o.Name;
-           // this.Items.Clear();
+            // this.Items.Clear();
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in o.Items)
             {
                 // on offer is non-empty text, in a better language
                 // or text for something we don't have
-                if ((!string.IsNullOrEmpty(kvp.Value) && betterLanguage) || 
+                if ((!string.IsNullOrEmpty(kvp.Value) && betterLanguage) ||
                      (!this.Items.ContainsKey(kvp.Key) || string.IsNullOrEmpty(this.Items[kvp.Key])))
                     this.Items[kvp.Key] = kvp.Value;
             }
@@ -133,23 +199,32 @@ namespace TVRename
             if ((o.Seasons != null) && (o.Seasons.Count != 0))
                 this.Seasons = o.Seasons;
 
-            if ((o.Banners != null) && (o.Banners.Count != 0))
-                this.Banners = o.Banners;
+            if ((o.SeasonBanners != null) && (o.SeasonBanners.Count != 0))
+                this.SeasonBanners = o.SeasonBanners;
 
-            if ((o.LangBanners != null) && (o.LangBanners.Count != 0))
-                this.LangBanners = o.LangBanners;
+            if ((o.SeasonLangBanners != null) && (o.SeasonLangBanners.Count != 0))
+                this.SeasonLangBanners = o.SeasonLangBanners;
 
-            if ((o.LangWideBanners != null) && (o.LangWideBanners.Count != 0))
-                this.LangWideBanners = o.LangWideBanners;
+            if ((o.SeasonLangWideBanners != null) && (o.SeasonLangWideBanners.Count != 0))
+                this.SeasonLangWideBanners = o.SeasonLangWideBanners;
 
-            if ((o.WideBanners != null) && (o.WideBanners.Count != 0))
-                this.WideBanners = o.WideBanners;
-            
+            if ((o.SeasonWideBanners != null) && (o.SeasonWideBanners.Count != 0))
+                this.SeasonWideBanners = o.SeasonWideBanners;
+
             if ((o.AllBanners != null) && (o.AllBanners.Count != 0))
                 this.AllBanners = o.AllBanners;
 
+            if ((o.bestSeriesPosterId != -1)) this.bestSeriesPosterId = o.bestSeriesPosterId;
+            if ((o.bestSeriesBannerId != -1) ) this.bestSeriesBannerId = o.bestSeriesBannerId;
+            if ((o.bestSeriesFanartId != -1) ) this.bestSeriesFanartId = o.bestSeriesFanartId;
+            if ((o.bestSeriesLangPosterId != -1)) this.bestSeriesLangPosterId = o.bestSeriesLangPosterId;
+            if ((o.bestSeriesLangBannerId != -1)) this.bestSeriesLangBannerId = o.bestSeriesLangBannerId;
+            if ((o.bestSeriesLangFanartId != -1)) this.bestSeriesLangFanartId = o.bestSeriesLangFanartId;
+
+
+
             if (betterLanguage)
-                this.Language = o.Language;
+                this.LanguageId = o.LanguageId;
 
             this.Dirty = o.Dirty;
         }
@@ -189,8 +264,9 @@ namespace TVRename
                         this.Name = XMLHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "lastupdated")
                         this.Srv_LastUpdated = r.ReadElementContentAsLong();
-                    else if ((r.Name == "Language") || (r.Name == "language"))
-                        this.Language = r.ReadElementContentAsString();
+                    else if ((r.Name == "Language") || (r.Name == "language")) { string ignore = r.ReadElementContentAsString(); }
+                    else if ((r.Name == "LanguageId") || (r.Name == "languageId"))
+                        this.LanguageId = r.ReadElementContentAsInt();
                     else if (r.Name == "TimeZone")
                         this.ShowTimeZone = r.ReadElementContentAsString();
                     else if (r.Name == "Airs_Time")
@@ -218,7 +294,7 @@ namespace TVRename
                     else if (r.Name == "FirstAired")
                     {
                         string theDate = r.ReadElementContentAsString();
-    
+
                         try
                         {
                             this.FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
@@ -247,8 +323,8 @@ namespace TVRename
                     message += "\r\nTheTVDB Code: " + this.TVDBCode;
                 if (!string.IsNullOrEmpty(this.Name))
                     message += "\r\nName: " + this.Name;
-                if (!string.IsNullOrEmpty(this.Language))
-                    message += "\r\nLanguage: \"" + this.Language + "\"";
+
+                message += "\r\nLanguage: \"" + this.LanguageId + "\"";
 
                 message += "\r\n" + e.Message;
 
@@ -260,24 +336,187 @@ namespace TVRename
 
         // LoadXml
 
+        public void LoadJSON(JObject r)
+        {
+            //r should be a series of name/value pairs (ie a JArray of JPropertes)
+            //save them all into the Items array for safe keeping
+            foreach (JProperty seriesItems in r.Children<JProperty>())
+            {
+                if (seriesItems.Name == "aliases") this.Items[seriesItems.Name] = JSONHelper.flatten((JToken)seriesItems.Value, "|");
+                else if (seriesItems.Name == "genre") this.Items[seriesItems.Name] = JSONHelper.flatten((JToken)seriesItems.Value, "|");
+                else try
+                    {
+                        if (seriesItems.Value != null) this.Items[seriesItems.Name] = (string)seriesItems.Value;
+                    }
+                    catch (ArgumentException ae) {
+                        System.Diagnostics.Debug.Print("Could not parse Json for " + seriesItems.Name + " :" + ae.Message);
+                    }
+            }
+
+
+            this.TVDBCode = (int)r["id"];
+            if ((string)r["seriesName"] != null)
+            {
+                this.Name = (string)r["seriesName"];
+            }
+
+
+            long updateTime;
+            if (long.TryParse((string)r["lastUpdated"], out updateTime) )
+                this.Srv_LastUpdated = updateTime;
+            else
+                this.Srv_LastUpdated = 0;
+
+            string theDate = (string)r["firstAired"];
+            try
+            {
+                if (!String.IsNullOrEmpty(theDate)) {
+                    this.FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                    this.Items["firstAired"] = this.FirstAired.Value.ToString("yyyy-MM-dd");
+                    this.Items["Year"] = this.FirstAired.Value.ToString("yyyy");
+                }else
+                {
+                    this.FirstAired = null;
+                    this.Items["firstAired"] = "";
+                    this.Items["Year"] = "";
+                }
+            }
+            catch
+            {
+                this.FirstAired = null;
+                this.Items["firstAired"] = "";
+                this.Items["Year"] = "";
+            }
+
+
+            this.AirsTime = DateTime.Parse("20:00");
+            string theAirsTime = (string)r["airsTime"];
+            try
+            {
+                if (!string.IsNullOrEmpty(theAirsTime))
+                {
+                    this.Items["airsTime"] = theAirsTime;
+                    DateTime airsTime;
+                    if (DateTime.TryParse(theAirsTime, out airsTime) |
+                        DateTime.TryParse(theAirsTime.Replace('.', ':'), out airsTime))
+                        this.AirsTime = airsTime;
+                    else
+                        this.AirsTime = null;
+                }
+            }
+            catch (FormatException)
+            {
+            }
+
+        }
+
+        public void LoadJSON(JObject bestLanguageR, JObject backupLanguageR)
+        {
+            //Here we have two pieces of JSON. One in local language and one in the default language (English). 
+            //We will populate with the best language frst and then fillin any gaps with the backup Language
+            LoadJSON(bestLanguageR);
+
+            //backupLanguageR should be a series of name/value pairs (ie a JArray of JPropertes)
+            //TVDB asserts that name and overview are the fields that are localised
+
+            if ((string.IsNullOrWhiteSpace(this.Name) && ((string)backupLanguageR["seriesName"] != null)) ){
+                this.Name = (string)backupLanguageR["seriesName"];
+                this.Items["seriesName"] = this.Name;
+            }
+
+            if ((string.IsNullOrWhiteSpace(this.Items["overview"]) && ((string)backupLanguageR["overview"] != null)) ){
+                this.Items["overview"] = (string)backupLanguageR["overview"];
+            }
+
+            //Looking at the data then the aliases, banner and runtime are also different by language
+            
+            if ((string.IsNullOrWhiteSpace(this.Items["aliases"])))
+            {
+                this.Items["aliases"] = JSONHelper.flatten((JToken)backupLanguageR["aliases"], "|");
+            }
+
+            if ((string.IsNullOrWhiteSpace(this.Items["runtime"])))
+            {
+                this.Items["runtime"] = (string)backupLanguageR["runtime"];
+            }
+            if ((string.IsNullOrWhiteSpace(this.Items["banner"])))
+            {
+                this.Items["banner"] = (string)backupLanguageR["banner"];
+            }
+
+
+        }
+
+
+        public string getStatus() =>              getValueAcrossVersions("Status", "status", "Unknown");
+        public string getAirsTime() =>             getValueAcrossVersions("Airs_Time", "airsTime", "");
+        public string getAirsDay()=> getValueAcrossVersions("Airs_DayOfWeek", "airsDayOfWeek", "");
+        public string getNetwork() => getValueAcrossVersions("Network", "network", "");
+        public string GetOverview() => getValueAcrossVersions("Overview", "overview", "");
+        public string GetRuntime() => getValueAcrossVersions("Runtime", "runtime", "");
+        public string GetRating() => getValueAcrossVersions("Rating","rating",""); // check , "ContentRating"
+        public string GetIMDB() => getValueAcrossVersions("IMDB_ID", "imdb_id", "");
+        public string GetYear() => getValueAcrossVersions("Year", "year", "");
+        public string GetFirstAired() => getValueAcrossVersions("FirstAired", "firstAired", "");
+
+        public string[] GetGenres()
+        {
+
+            String genreString = getValueAcrossVersions("Genre", "genre", "");
+
+            if (!string.IsNullOrEmpty(genreString))
+            {
+                return genreString.Split('|');
+
+            }
+            return new String[] { };
+
+        }
+
+
+
+        public string GetImage(TVSettings.FolderJpgIsType type)
+        {
+            switch (type)
+            {
+                case TVSettings.FolderJpgIsType.Banner:
+                    return GetSeriesWideBannerPath(); 
+                case TVSettings.FolderJpgIsType.FanArt:
+                    return GetSeriesFanartPath();
+                case TVSettings.FolderJpgIsType.SeasonPoster:
+                    return GetSeriesPosterPath(); 
+                default:
+                    return GetSeriesPosterPath(); 
+            }
+        }
+        string getValueAcrossVersions(string oldTag, string newTag, string defaultValue)
+        {
+            //Need to cater for new and old style tags (TVDB interface v1 vs v2)
+            if (this.Items.ContainsKey(oldTag)) return this.Items[oldTag];
+            if (this.Items.ContainsKey(newTag)) return this.Items[newTag];
+            return defaultValue;
+        }
+
+
+
         public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Series");
 
-            XMLHelper.WriteElementToXML(writer,"id",this.TVDBCode);
-            XMLHelper.WriteElementToXML(writer,"SeriesName",this.Name);
-            XMLHelper.WriteElementToXML(writer,"lastupdated",this.Srv_LastUpdated);
-            XMLHelper.WriteElementToXML(writer,"Language",this.Language);
+            XMLHelper.WriteElementToXML(writer, "id", this.TVDBCode);
+            XMLHelper.WriteElementToXML(writer, "SeriesName", this.Name);
+            XMLHelper.WriteElementToXML(writer, "lastupdated", this.Srv_LastUpdated);
+            XMLHelper.WriteElementToXML(writer, "Language", this.LanguageId);
 
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
             {
-                XMLHelper.WriteElementToXML(writer,kvp.Key,kvp.Value);
+                XMLHelper.WriteElementToXML(writer, kvp.Key, kvp.Value);
             }
-            XMLHelper.WriteElementToXML(writer,"TimeZone",this.ShowTimeZone);
+            XMLHelper.WriteElementToXML(writer, "TimeZone", this.ShowTimeZone);
 
             if (this.FirstAired != null)
             {
-                XMLHelper.WriteElementToXML(writer,"FirstAired",this.FirstAired.Value.ToString("yyyy-MM-dd"));
+                XMLHelper.WriteElementToXML(writer, "FirstAired", this.FirstAired.Value.ToString("yyyy-MM-dd"));
             }
 
             writer.WriteEndElement(); // series
@@ -302,14 +541,60 @@ namespace TVRename
 
             System.Diagnostics.Debug.Assert(BannersLoaded);
 
-            if (this.LangBanners.ContainsKey(snum))
-                return this.LangBanners[snum].BannerPath;
+            if (this.SeasonLangBanners.ContainsKey(snum))
+                return this.SeasonLangBanners[snum].BannerPath;
 
-            if (this.Banners.ContainsKey(snum))
-                return this.Banners[snum].BannerPath;
+            if (this.SeasonBanners.ContainsKey(snum))
+                return this.SeasonBanners[snum].BannerPath;
 
             //if there is a problem then return the non-season specific poster by default
-            return GetItem("poster");
+            return GetSeriesPosterPath();
+                
+        }
+
+        public string GetSeriesWideBannerPath()
+        {
+            //firstly choose the one the TVDB recommended
+            if (!string.IsNullOrEmpty(GetItem("banner"))) return GetItem("banner");
+
+            //then try the best one we've found with the correct language
+            if (bestSeriesLangBannerId != -1) return AllBanners[bestSeriesLangBannerId].BannerPath;
+
+            //if there are none with the righ tlanguage then try one from another language
+            if (bestSeriesBannerId  != -1) return AllBanners[bestSeriesBannerId].BannerPath;
+
+            //give up
+            return "";
+        }
+
+        public string GetSeriesPosterPath()
+        {
+            //firstly choose the one the TVDB recommended
+            if (!string.IsNullOrEmpty(GetItem("poster"))) return GetItem("poster");
+
+            //then try the best one we've found with the correct language
+            if (bestSeriesLangPosterId != -1) return AllBanners[bestSeriesLangPosterId].BannerPath;
+
+            //if there are none with the righ tlanguage then try one from another language
+            if (bestSeriesPosterId != -1) return AllBanners[bestSeriesPosterId].BannerPath;
+
+            //give up
+            return "";
+        }
+
+        public string GetSeriesFanartPath()
+        {
+            //firstly choose the one the TVDB recommended
+            if (!string.IsNullOrEmpty(GetItem("fanart"))) return GetItem("fanart");
+
+            //then try the best one we've found with the correct language
+            if (bestSeriesLangFanartId != -1) return AllBanners[bestSeriesLangFanartId].BannerPath;
+
+            //if there are none with the righ tlanguage then try one from another language
+            if (bestSeriesFanartId != -1) return AllBanners[bestSeriesFanartId].BannerPath;
+
+            //give up
+            return "";
         }
 
         public string GetSeasonWideBannerPath(int snum)
@@ -320,46 +605,70 @@ namespace TVRename
 
             System.Diagnostics.Debug.Assert(BannersLoaded);
 
-            if (this.LangWideBanners.ContainsKey(snum))
-                return this.LangWideBanners[snum].BannerPath;
+            if (this.SeasonLangWideBanners.ContainsKey(snum))
+                return this.SeasonLangWideBanners[snum].BannerPath;
 
-            if (this.WideBanners.ContainsKey(snum))
-                return this.WideBanners[snum].BannerPath;
+            if (this.SeasonWideBanners.ContainsKey(snum))
+                return this.SeasonWideBanners[snum].BannerPath;
 
             //if there is a problem then return the non-season specific poster by default
-            return GetItem("banner");
+            return GetSeriesWideBannerPath();
         }
 
 
 
         public void AddOrUpdateBanner(Banner banner)
         {
-            if (AllBanners.ContainsKey(banner.BannerId)){
+            if (AllBanners.ContainsKey(banner.BannerId)) {
                 AllBanners[banner.BannerId] = banner;
             } else {
                 AllBanners.Add(banner.BannerId, banner);
             }
 
             if (banner.isSeasonPoster()) AddOrUpdateSeasonPoster(banner);
-            if (banner.isWideSeason()) AddOrUpdateWideSeason(banner);
+            if (banner.isSeasonBanner()) AddOrUpdateWideSeason(banner);
 
+            if (banner.isSeriesPoster()) this.bestSeriesPosterId = GetBestBannerId(banner, this.bestSeriesPosterId);
+            if (banner.isSeriesBanner()) this.bestSeriesBannerId = GetBestBannerId(banner, this.bestSeriesBannerId);
+            if (banner.isFanart()) this.bestSeriesFanartId = GetBestBannerId(banner, this.bestSeriesFanartId);
+
+            if (banner.LanguageId == this.LanguageId)
+            {
+                if (banner.isSeriesPoster()) this.bestSeriesLangPosterId = GetBestBannerId(banner, this.bestSeriesLangPosterId);
+                if (banner.isSeriesBanner()) this.bestSeriesLangBannerId = GetBestBannerId(banner, this.bestSeriesLangBannerId);
+                if (banner.isFanart()) this.bestSeriesLangFanartId = GetBestBannerId(banner, this.bestSeriesLangFanartId);
+
+            }
         }
 
-        
+        private int GetBestBannerId(Banner selectedBanner, int bestBannerId)
+        {
+            if (bestBannerId == -1) return selectedBanner.BannerId;
+
+            if (AllBanners[bestBannerId].Rating < selectedBanner.Rating)
+            {
+                //update banner - we have found a better one
+                return selectedBanner.BannerId;
+            }
+
+            return bestBannerId;
+        }
+
+
         public void AddOrUpdateSeasonPoster(Banner banner)
         {
-            AddUpdateIntoCollections(banner, this.Banners, this.LangBanners);
+            AddUpdateIntoCollections(banner, this.SeasonBanners, this.SeasonLangBanners);
         }
 
         public void AddOrUpdateWideSeason(Banner banner)
         {
-            AddUpdateIntoCollections(banner, this.WideBanners, this.LangWideBanners);
+            AddUpdateIntoCollections(banner, this.SeasonWideBanners, this.SeasonLangWideBanners);
         }
 
         private void AddUpdateIntoCollections(Banner banner, System.Collections.Generic.Dictionary<int, Banner> coll, System.Collections.Generic.Dictionary<int, Banner> langColl)
         {
             //update language specific cache if appropriate
-            if (banner.Language == this.Language)
+            if (banner.LanguageId == this.LanguageId)
             {
                 AddUpdateIntoCollection(banner,langColl);
             }

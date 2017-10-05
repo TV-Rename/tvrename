@@ -14,6 +14,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.Generic;
+using System.Net;
+using Newtonsoft.Json.Linq;
+using System.Web;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using Path = Alphaleonis.Win32.Filesystem.Path;
@@ -75,7 +78,7 @@ namespace TVRename
         public static void WriteElementToXML(XmlWriter writer, string elementName, string value)
         {
             writer.WriteStartElement(elementName);
-            writer.WriteValue(value);
+            writer.WriteValue(value??"");
             writer.WriteEndElement();
         }
         public static void WriteElementToXML(XmlWriter writer, string elementName, double value)
@@ -203,8 +206,103 @@ namespace TVRename
 
     }
 
+    public static class HTTPHelper
+    {
+        public static String HTTPRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
+            HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+            httpWebRequest.ContentType = contentType;
+            httpWebRequest.Method = method;
+            if (authToken != "")
+            {
+                httpWebRequest.Headers.Add("Authorization", "Bearer " + authToken);
+            }
+            if (lang != "")
+            {
+                httpWebRequest.Headers.Add("Accept-Language",lang);
+            }
+            if (method == "POST") { 
+                using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(json);
+                    streamWriter.Flush();
+                    streamWriter.Close();
+                }
+            }
+
+            String result;
+            HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+            return result;
+        }
+
+        public static JObject JsonHTTPPOSTRequest( String url, JObject request)
+        {
+            String response = HTTPHelper.HTTPRequest("POST",url, request.ToString(), "application/json");
+
+            return JObject.Parse(response);
+            
+        }
+
+        public static JObject JsonHTTPGETRequest(String url, Dictionary<string, string> parameters, String authToken, String lang="")
+        {
+            String response = HTTPHelper.HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
+
+            return JObject.Parse(response);
+
+        }
+
+        public static string getHTTPParameters(Dictionary<string, string> parameters)
+        {
+            if (parameters == null) return "";
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("?");
+
+            foreach (KeyValuePair<string,string>  item in parameters)
+            {
+                sb.Append(string.Format("{0}={1}&", item.Key, item.Value));
+            }
+            string finalUrl = sb.ToString();
+            return finalUrl.Remove(finalUrl.LastIndexOf("&"));
+        }
+
+    }
+
+    public static class JSONHelper {
+        public static String flatten(JToken ja,String delimiter = ",")
+        {
+            if (ja == null) return "";
+
+            
+            if (ja.Type == JTokenType.Array)
+            {
+                JArray ja2 = (JArray)ja;
+                string[] values = ja2.ToObject<string[]>();
+                return String.Join(delimiter, values);
+            }
+            else { return ""; }
+
+                
+            
+        }
+    }
+
+    public static class StringExtensions
+    {
+        public static bool Contains(this string source, string toCheck, StringComparison comp)
+        {
+            return source.IndexOf(toCheck, comp) >= 0;
+        }
+    }
+
+
     public static class Helpers
     {
+
+
 
         public static string pad(int i)
         {
@@ -218,11 +316,11 @@ namespace TVRename
             }
         }
 
-        public static bool SysOpen(string what)
+        public static bool SysOpen(string what, string arguments = null)
         {
             try
             {
-                System.Diagnostics.Process.Start(what);
+                System.Diagnostics.Process.Start(what, arguments);
                 return true;
             }
             catch

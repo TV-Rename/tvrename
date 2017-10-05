@@ -111,7 +111,7 @@ namespace TVRename
                 writer.WriteEndElement();  // rating
 
                 //Get the Series OverView
-                string sov = this.Episode.SI.TheSeries().GetItem("Overview");
+                string sov = this.Episode.SI.TheSeries().GetOverview();
                 if (!string.IsNullOrEmpty(sov))
                 {
                     XMLHelper.WriteElementToXML(writer,"plot",sov);
@@ -122,11 +122,11 @@ namespace TVRename
            
                 if (this.Episode.SI != null)
                 {
-                    WriteInfo(writer, this.Episode.SI, "ContentRating", "mpaa");
+                    WriteInfo(writer, this.Episode.SI.TheSeries().GetRating(), "mpaa");
                 }
 
                 //Runtime...taken from overall Series, not episode specific due to thetvdb
-                string rt = this.Episode.SI.TheSeries().GetItem("Runtime");
+                string rt = this.Episode.SI.TheSeries().GetRuntime();
                 if (!string.IsNullOrEmpty(rt))
                 {
                     XMLHelper.WriteElementToXML(writer,"runtime",rt + " min");
@@ -134,11 +134,9 @@ namespace TVRename
 
                 //Genres...taken from overall Series, not episode specific due to thetvdb
                 writer.WriteStartElement("genres");
-                string genre = this.Episode.SI.TheSeries().GetItem("Genre");
+                string genre = String.Join(" / ", this.Episode.SI.TheSeries().GetGenres());
                 if (!string.IsNullOrEmpty(genre))
                 {
-                    genre = genre.Trim('|');
-                    genre = genre.Replace("|", " / ");
                     XMLHelper.WriteElementToXML(writer,"genre",genre);
                 }
                 writer.WriteEndElement();  // genres
@@ -175,17 +173,13 @@ namespace TVRename
                 // actors...
                 if (this.Episode.SI != null)
                 {
-                    string actors = this.Episode.SI.TheSeries().GetItem("Actors");
-                    if (!string.IsNullOrEmpty(actors))
-                    {
-                        foreach (string aa in actors.Split('|'))
+                        foreach (string aa in this.Episode.SI.TheSeries().GetActors())
                         {
                             if (string.IsNullOrEmpty(aa))
                                 continue;
 
                             XMLHelper.WriteElementToXML(writer,"actor",aa);
                         }
-                    }
                 }
 
                 writer.WriteEndElement(); // cast
@@ -202,20 +196,18 @@ namespace TVRename
                 XMLHelper.WriteElementToXML(writer,"title",this.SI.ShowName);
               
                 writer.WriteStartElement("genres");
-                string genre = this.SI.TheSeries().GetItem("Genre");
+                string genre = String.Join(" / ", this.SI.TheSeries().GetGenres());
                 if (!string.IsNullOrEmpty(genre))
                 {
-                    genre = genre.Trim('|');
-                    genre = genre.Replace("|", " / ");
                     XMLHelper.WriteElementToXML(writer,"genre",genre);
                 }
                 writer.WriteEndElement();  // genres
 
-                WriteInfo(writer, this.SI, "FirstAired", "premiered");
-                WriteInfo(writer, this.SI, "Year", "year");
+                WriteInfo(writer, this.SI.TheSeries().GetFirstAired(), "premiered");
+                WriteInfo(writer, this.SI.TheSeries().GetYear(), "year");
 
                 writer.WriteStartElement("rating");
-                string rating = this.SI.TheSeries().GetItem("Rating");
+                string rating = this.SI.TheSeries().GetRating();
                 if (!string.IsNullOrEmpty(rating))
                 {
                     rating = rating.Trim('.');
@@ -224,35 +216,32 @@ namespace TVRename
                 }
                 writer.WriteEndElement();  // rating
 
-                WriteInfo(writer, this.SI, "Status", "status");
+                WriteInfo(writer, this.SI.TheSeries().getStatus(), "status");
 
-                WriteInfo(writer, this.SI, "ContentRating", "mpaa");
-                WriteInfo(writer, this.SI, "IMDB_ID", "id", "moviedb", "imdb");
+                WriteInfo(writer, this.SI.TheSeries().GetRating(), "mpaa");
+                WriteInfo(writer, this.SI.TheSeries().GetIMDB(), "id", "moviedb", "imdb");
 
                 XMLHelper.WriteElementToXML(writer,"tvdbid",this.SI.TheSeries().TVDBCode);
 
-                string rt = this.SI.TheSeries().GetItem("Runtime");
+                string rt = this.SI.TheSeries().GetRuntime();
                 if (!string.IsNullOrEmpty(rt))
                 {
                     XMLHelper.WriteElementToXML(writer,"runtime",rt + " min");
                 }
 
-                WriteInfo(writer, this.SI, "Overview", "plot");
+                WriteInfo(writer, this.SI.TheSeries().GetOverview(), "plot");
                 
                 writer.WriteStartElement("cast");
 
                 // actors...
-                string actors = this.SI.TheSeries().GetItem("Actors");
-                if (!string.IsNullOrEmpty(actors))
+                
+                foreach (string aa in this.SI.TheSeries().GetActors())
                 {
-                    foreach (string aa in actors.Split('|'))
-                    {
-                        if (string.IsNullOrEmpty(aa))
-                            continue;
-                        XMLHelper.WriteElementToXML(writer,"actor",aa);
-                    }
+                    if (string.IsNullOrEmpty(aa))
+                        continue;
+                    XMLHelper.WriteElementToXML(writer,"actor",aa);
                 }
-
+                
                 writer.WriteEndElement(); // cast
                 writer.WriteEndElement(); // movie
                 writer.WriteEndElement(); // tvshow
@@ -356,22 +345,21 @@ namespace TVRename
 
         #endregion
 
-        private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string elemName)
+        private static void WriteInfo(XmlWriter writer, string value, string elemName)
         {
-            WriteInfo(writer, si, whichItem, elemName, null, null);
+            WriteInfo(writer, value, elemName, null, null);
         }
 
-        private static void WriteInfo(XmlWriter writer, ShowItem si, string whichItem, string elemName, string attribute, string attributeVal)
+        private static void WriteInfo(XmlWriter writer, string value, string elemName, string attribute, string attributeVal)
         {
-            string t = si.TheSeries().GetItem(whichItem);
-            if (!string.IsNullOrEmpty(t))
+            if (!string.IsNullOrEmpty(value))
             {
                 writer.WriteStartElement(elemName);
                 if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
                 {
                     writer.WriteAttributeString(attribute, attributeVal);
                 }
-                writer.WriteValue(t);
+                writer.WriteValue(value);
                 writer.WriteEndElement();
             }
         }

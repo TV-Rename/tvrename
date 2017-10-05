@@ -18,6 +18,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
 using System.Xml;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -59,12 +60,26 @@ namespace TVRename
         private TVRenameStats mStats;
         public bool CurrentlyBusy = false;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
+        private bool DebugThreads = false;
+
         private List<Finder> Finders;
 
         string[] SeasonWords = new[] { "Season", // EN
                                        "Saison", // FR, DE
                                        "temporada" // ES
                                        }; // TODO: move into settings, and allow user to edit these
+
+        public List<String> getGenres()
+        {
+            List<String> allGenres = new List<string> { };
+            foreach (ShowItem si in ShowItems)
+            {
+                if (si.Genres != null) allGenres.AddRange(si.Genres);
+            }
+            List<String> distinctGenres = allGenres.Distinct().ToList();
+            distinctGenres.Sort();
+            return distinctGenres;
+        }
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
         {
@@ -435,10 +450,10 @@ namespace TVRename
             int code = (int) (codeIn);
 
             bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
-            
-            System.Diagnostics.Debug.Print("  Downloading " + code);
+
+            if (DebugThreads) System.Diagnostics.Debug.Print("  Downloading " + code);
             bool r = TheTVDB.Instance.EnsureUpdated(code, bannersToo);
-            System.Diagnostics.Debug.Print("  Finished " + code);
+            if (DebugThreads) System.Diagnostics.Debug.Print("  Finished " + code);
             if (!r)
             {
                 this.DownloadOK = false;
@@ -485,7 +500,7 @@ namespace TVRename
 
                 // for eachs of the ShowItems, make sure we've got downloaded data for it
 
-                int n2 = ShowItems.Count;
+                int totalItems = ShowItems.Count;
                 int n = 0;
                 List<int> codes = new List<int>();
                 this.LockShowItems();
@@ -500,8 +515,8 @@ namespace TVRename
 
                 foreach (int code in codes)
                 {
-                    this.DownloadPct = 100 * (n + 1) / (n2 + 1);
-                    this.DownloadsRemaining = n2 - n;
+                    this.DownloadPct = 100 * (n + 1) / (totalItems + 1);
+                    this.DownloadsRemaining = totalItems - n;
                     n++;
 
                     this.WorkerSemaphore.WaitOne(); // blocks until there is an available slot
@@ -510,7 +525,7 @@ namespace TVRename
                     t.Name = "GetThread:" + code;
                     t.Start(code); // will grab the semaphore as soon as we make it available
                     int nfr = this.WorkerSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
-                    System.Diagnostics.Debug.Print("Started " + code + " pool has " + nfr + " free");
+                    if (DebugThreads) System.Diagnostics.Debug.Print("Started " + code + " pool has " + nfr + " free");
                     Thread.Sleep(1); // allow the other thread a chance to run and grab
 
                     // tidy up any finished workers
@@ -603,7 +618,7 @@ namespace TVRename
             if (!this.DownloadDone && !this.Args.Hide) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
                 DownloadProgress dp = new DownloadProgress(this);
-                dp.ShowDialog();
+               dp.ShowDialog();
                 dp.Update();
             }
 
@@ -1467,7 +1482,7 @@ namespace TVRename
                         t.Start(new ProcessActionInfo(which, act));
 
                         int nfr = this.ActionSemaphores[which].Release(1); // release our hold on the semaphore, so that worker can grab it
-                        System.Diagnostics.Debug.Print("ActionProcessor[" + which + "] pool has " + nfr + " free");
+                        if (DebugThreads) System.Diagnostics.Debug.Print("ActionProcessor[" + which + "] pool has " + nfr + " free");
                     }
 
                     while (this.ActionStarting) // wait for thread to get the semaphore
@@ -1928,7 +1943,7 @@ namespace TVRename
                     this.TheActionList.Add(DownloadIdentifiers.ProcessShow(si)); 
                 }
 
-                //MS_TODO Put the bannerrefresh period into the settings file, we'l default to 3 months
+                //MS_TODO Put the bannerrefresh period into the settings file, we'll default to 3 months
                 DateTime cutOff = System.DateTime.Now.AddMonths(-3);
                 DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? System.DateTime.Now.AddMonths(-4);
                 bool timeForBannerUpdate = (cutOff.CompareTo(lastUpdate) == 1);
@@ -2105,6 +2120,13 @@ namespace TVRename
                                         {
                                             noAirdatesUntilNow = false;
                                             break;
+                                        }
+                                        else
+                                        {//If the show is in its first season and no episodes have air dates
+                                            if (lastSeason == 1)
+                                            {
+                                                noAirdatesUntilNow = false;
+                                            }
                                         }
                                     }
 
@@ -2298,7 +2320,7 @@ namespace TVRename
 
         private static bool FindSeasEpDateCheck(FileInfo fi, out int seas, out int ep, ShowItem si)
         {
-            if (fi == null)
+            if (fi == null || si == null)
             {
                 seas = -1;
                 ep = -1;

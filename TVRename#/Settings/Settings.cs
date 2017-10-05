@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using System.Xml;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
@@ -292,6 +291,7 @@ namespace TVRename
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
         public string OtherExtensionsString = "";
+        public ShowFilter Filter = new ShowFilter();
 
         public string[] OtherExtensionsArray
         {
@@ -364,7 +364,7 @@ namespace TVRename
                     this.BGDownload = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "OfflineMode")
                     this.OfflineMode = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "Replacements")
+                else if (reader.Name == "Replacements" && !reader.IsEmptyElement)
                 {
                     this.Replacements.Clear();
                     reader.Read();
@@ -384,7 +384,7 @@ namespace TVRename
                     }
                     reader.Read();
                 }
-                else if (reader.Name == "ExportWTWRSS")
+                else if (reader.Name == "ExportWTWRSS" && !reader.IsEmptyElement)
                     this.ExportWTWRSS = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportWTWRSSTo")
                     this.ExportWTWRSSTo = reader.ReadElementContentAsString();
@@ -535,7 +535,7 @@ namespace TVRename
                 else if (reader.Name == "EmptyMaxSizeMB")
                     this.Tidyup.EmptyMaxSizeMB = reader.ReadElementContentAsInt();
 
-                else if (reader.Name == "FNPRegexs")
+                else if (reader.Name == "FNPRegexs" && !reader.IsEmptyElement)
                 {
                     this.FNPRegexs.Clear();
                     reader.Read();
@@ -558,7 +558,7 @@ namespace TVRename
                     }
                     reader.Read();
                 }
-                else if (reader.Name == "RSSURLs")
+                else if (reader.Name == "RSSURLs" && !reader.IsEmptyElement)
                 {
                     this.RSSURLs.Clear();
                     reader.Read();
@@ -573,7 +573,7 @@ namespace TVRename
                     }
                     reader.Read();
                 }
-                else if (reader.Name == "ShowStatusTVWColors")
+                else if (reader.Name == "ShowStatusTVWColors" && !reader.IsEmptyElement)
                 {
                     this.ShowStatusColors = new ShowStatusColoringTypeList();
                     reader.Read();
@@ -616,6 +616,34 @@ namespace TVRename
                     reader.Read();
 
 
+                }
+                else if (reader.Name == "ShowFilters" && !reader.IsEmptyElement)
+                {
+                    this.Filter = new ShowFilter();
+                    reader.Read();
+                    while (!reader.EOF)
+                    {
+                        if ((reader.Name == "ShowFilters") && (!reader.IsStartElement()))
+                            break;
+                        if (reader.Name == "ShowNameFilter")
+                        {
+                            Filter.ShowName = reader.GetAttribute("ShowName");
+                            reader.Read();
+                        }
+                        else if (reader.Name == "ShowStatusFilter")
+                        {
+                            Filter.ShowStatus = reader.GetAttribute("ShowStatus");
+                            reader.Read();
+                        }
+                        else if (reader.Name == "GenreFilter")
+                        {
+                            Filter.Genres.Add(reader.GetAttribute("Genre"));
+                            reader.Read();
+                        }
+                        else
+                            reader.ReadOuterXml();
+                    }
+                    reader.Read();
                 }
                 else
                     reader.ReadOuterXml();
@@ -774,34 +802,52 @@ namespace TVRename
                 writer.WriteEndElement(); // ShowStatusTVWColors
             }
 
+            if (Filter != null)
+            {
+                writer.WriteStartElement("ShowFilters");
+
+                if (Filter.ShowName != null)
+                {
+                    writer.WriteStartElement("NameFilter");
+                    writer.WriteStartAttribute("Name");
+                    writer.WriteValue(Filter.ShowName);
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+
+                if (Filter.ShowStatus != null)
+                {
+                    writer.WriteStartElement("ShowStatusFilter");
+                    writer.WriteStartAttribute("ShowStatus");
+                    writer.WriteValue(Filter.ShowStatus);
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+
+                if (Filter.Genres.Count != 0)
+                {
+                    foreach (String Genre in Filter.Genres)
+                    {
+                        writer.WriteStartElement("GenreFilter");
+                        writer.WriteStartAttribute("Genre");
+                        writer.WriteValue(Genre);
+                        writer.WriteEndAttribute();
+                        writer.WriteEndElement();
+                    }
+                }
+
+                writer.WriteEndElement();
+            }
+
             writer.WriteEndElement(); // settings
         }
 
-        public string ItemForFolderJpg()
-        {
-            switch (this.FolderJpgIs)
-            {
-                case FolderJpgIsType.Banner:
-                    return "banner";
-                case FolderJpgIsType.FanArt:
-                    return "fanart";
-                case FolderJpgIsType.SeasonPoster:
-                    return "seasonPoster";
-                default:
-                    return "poster";
-            }
-        }
+        public FolderJpgIsType ItemForFolderJpg() => this.FolderJpgIs;
 
-        public string GetVideoExtensionsString()
-        {
-            return this.VideoExtensionsString;
-        }
-
-        public string GetOtherExtensionsString()
-        {
-            return this.OtherExtensionsString;
-        }
-
+        public string GetVideoExtensionsString() =>this.VideoExtensionsString;
+        
+        public string GetOtherExtensionsString() => this.OtherExtensionsString;
+        
         public static bool OKExtensionsString(string s)
         {
             if (string.IsNullOrEmpty(s))
@@ -969,8 +1015,8 @@ namespace TVRename
 
         public bool NeedToDownloadBannerFile(){
             // Return true iff we need to download season specific images
-            // There are 3 possible reasons
-            return (SeasonSpecificFolderJPG() || XBMCImages || SeriesJpg);
+            // There are 4 possible reasons
+            return (SeasonSpecificFolderJPG() || XBMCImages || SeriesJpg ||FanArtJpg);
         }
 
         public bool SeasonSpecificFolderJPG() {

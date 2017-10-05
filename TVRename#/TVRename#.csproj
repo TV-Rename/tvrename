@@ -10,13 +10,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TVRename</RootNamespace>
     <AssemblyName>TVRename</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>App\app.ico</ApplicationIcon>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,7 +31,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -40,7 +41,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
@@ -63,6 +64,10 @@
       <HintPath>..\Libs\Ionic.Utils.Zip.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net20\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="SourceGrid, Version=4.21.3441.17573, Culture=neutral, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\SourceGrid.dll</HintPath>
@@ -105,6 +110,12 @@
     <Compile Include="Finders\uTorrentFinder.cs" />
     <Compile Include="Finders\SABnzbdFinder.cs" />
     <Compile Include="Finders\Finder.cs" />
+    <Compile Include="Forms\Filters.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Filters.Designer.cs">
+      <DependentUpon>Filters.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ISplashForm.cs" />
     <Compile Include="Forms\SplashScreen.cs" />
     <Compile Include="Forms\TVRenameSplash.cs">
@@ -116,6 +127,7 @@
     <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
     <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
+    <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\ActorsGrid.cs">
       <SubType>Form</SubType>
@@ -326,6 +338,9 @@
       <DependentUpon>EditRules.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Filters.resx">
+      <DependentUpon>Filters.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FolderMonitor.resx">
       <DependentUpon>FolderMonitor.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -403,6 +418,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -457,6 +474,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />
+    <None Include="Resources\filtre.png" />
     <None Include="Resources\Black-Red_256x256.png" />
     <None Include="Resources\EditInformationHS.png" />
     <None Include="Resources\SearchWebHS.png" />
