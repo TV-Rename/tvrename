@@ -5,45 +5,16 @@ namespace TVRename
 {
     public class ShowFilter
     {
-        private String showStatus = null;
-        private List<String> genres = new List<String>();
-        private String showName = null;
+        public ShowFilter() { }
 
-        public ShowFilter()
-        {
-        }
+        public List<String> Genres { get; } = new List<String>();
 
-        public String ShowStatus
-        {
-            set
-            {
-                this.showStatus = value;
-            }
-            get
-            {
-                return showStatus;
-            }
-        }
+        public String ShowName { get; set; } 
 
-        public List<String> Genres
-        {
-            get
-            {
-                return genres;
-            }
-        }
+        public String ShowStatus { get; set; }
+        public String ShowNetwork { get; set; }
+        public String ShowRating { get; set; }
 
-        public String ShowName
-        {
-            get
-            {
-                return showName;
-            }
-            set
-            {
-                this.showName = value;
-            }
-        }
 
         public Boolean filter(ShowItem show)
         {
@@ -59,8 +30,21 @@ namespace TVRename
                 return false;
             }
 
+            //Filter on show status
+            if (ShowNetwork != null && !show.TheSeries().getNetwork().Equals(ShowNetwork))
+            {
+                return false;
+            }
+
+            //Filter on show status
+            if (ShowRating != null) 
+                if ( !show.TheSeries().GetRating().Equals(ShowRating))
+                {
+                    return false;
+                }
+
             //Filter on show genres
-            if (genres.Count != 0)
+            if (Genres.Count != 0)
             {
                 if (show.Genres == null)
                 {
@@ -79,3 +63,4 @@ namespace TVRename
         }
     }
 }
+

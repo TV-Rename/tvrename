@@ -81,6 +81,48 @@ namespace TVRename
             return distinctGenres;
         }
 
+        public List<String> getStatuses()
+        {
+            List<String> allStatuses = new List<string> { };
+            foreach (ShowItem si in ShowItems)
+            {
+                if (si.ShowStatus != null) allStatuses.Add(si.ShowStatus);
+            }
+            List<String> distinctStatuses = allStatuses.Distinct().ToList();
+            distinctStatuses.Sort();
+            return distinctStatuses;
+        }
+
+        public List<String> getNetworks()
+        {
+            List<String> allValues = new List<string> { };
+            foreach (ShowItem si in ShowItems)
+            {
+                if (si.TheSeries().getNetwork() != null) allValues.Add(si.TheSeries().getNetwork());
+            }
+            List<String> distinctValues = allValues.Distinct().ToList();
+            distinctValues.Sort();
+            return distinctValues;
+        }
+
+        public List<String> GetRatings()
+        {
+            List<String> allValues = new List<string> { };
+            foreach (ShowItem si in ShowItems)
+            {
+                if (si.TheSeries().GetRating() != null) allValues.Add(si.TheSeries().GetRating());
+            }
+            List<String> distinctValues = allValues.Distinct().ToList();
+            distinctValues.Sort();
+            return distinctValues;
+        }
+
+
+        public int getMinYear() => ShowItems.Min(si => Convert.ToInt32(si.TheSeries().GetYear()));
+
+        public int getMaxYear() => ShowItems.Max(si => Convert.ToInt32(si.TheSeries().GetYear()));
+
+
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
         {
             this.Args = args;
