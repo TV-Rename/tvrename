@@ -65,6 +65,7 @@ namespace TVRename.Forms
             this.clbGenre.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.clbGenre.CheckOnClick = true;
             this.clbGenre.FormattingEnabled = true;
             this.clbGenre.Location = new System.Drawing.Point(13, 132);
             this.clbGenre.MultiColumn = true;
