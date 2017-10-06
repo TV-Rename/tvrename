@@ -1174,32 +1174,42 @@ namespace TVRename
             {
                 foreach (JObject episodeData in response["data"])
                 {
-                    Episode e = new Episode(code,episodeData);
-                    if (e.OK())
-                    {
-                        if (!this.Series.ContainsKey(e.SeriesID))
-                            throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
-                        SeriesInfo ser = this.Series[e.SeriesID];
-                        Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
+                    //The episode does not contain enough data (specifically image filename), so we'll get the full version
+                    this.DownloadEpisodeNow(code, (int)episodeData["id"]);
 
-                        bool added = false;
-                        for (int i = 0; i < seas.Episodes.Count; i++)
-                        {
-                            Episode ep = seas.Episodes[i];
-                            if (ep.EpisodeID == e.EpisodeID)
-                            {
-                                seas.Episodes[i] = e;
-                                added = true;
-                                break;
-                            }
-                        }
-                        if (!added)
-                            seas.Episodes.Add(e);
-                        e.SetSeriesSeason(ser, seas);
+              /* All of this code was used when we tried to create an episode from the series response. Issue was that we ended up doubling up. 
+              Creating an imperfect episode and having to do a full refresh anyway.
 
-                        //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                        this.DownloadEpisodeNow(code, e.EpisodeID);
-                    }
+                COmmenting it out for now
+
+                                        Episode e = new Episode(code,episodeData);
+                                        if (e.OK())
+                                        {
+                                            if (!this.Series.ContainsKey(e.SeriesID))
+                                                throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
+                                            SeriesInfo ser = this.Series[e.SeriesID];
+                                            Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
+
+                                            bool added = false;
+                                            for (int i = 0; i < seas.Episodes.Count; i++)
+                                            {
+                                                Episode ep = seas.Episodes[i];
+                                                if (ep.EpisodeID == e.EpisodeID)
+                                                {
+                                                    seas.Episodes[i] = e;
+                                                    added = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (!added)
+                                                seas.Episodes.Add(e);
+                                            e.SetSeriesSeason(ser, seas);
+
+                                            //The episode does not contain enough data (specifically image filename), so we'll get the full version
+                                            this.DownloadEpisodeNow(code, e.EpisodeID);
+
+                                        }
+                                           */
 
                 }
             }
@@ -1433,10 +1443,7 @@ namespace TVRename
 
             bool ok = true;
 
-            if (this.Series[code].Dirty)
-                ok = (this.DownloadSeriesNow(code, false, bannersToo) != null) && ok;
-
-            if (bannersToo && !this.Series[code].BannersLoaded)
+            if ((this.Series[code].Dirty) || (bannersToo && !this.Series[code].BannersLoaded))
                 ok = (this.DownloadSeriesNow(code, false, bannersToo) != null) && ok;
 
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in this.Series[code].Seasons)
