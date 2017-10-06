@@ -593,125 +593,170 @@ namespace TVRename
                 return true; // that's it for now
             }
 
-            String epochTime = theTime.ToString();
+            long epochTime = theTime;
 
             String uri = APIRoot + "/updated/query";
-            JObject jsonResponse = new JObject();
-            try
-            {
-                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "fromTime", epochTime } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
 
-                int numberOfResponses = ((JArray)jsonResponse["data"]).Count;
-                
-                System.Diagnostics.Debug.WriteLine("Obtianed " + numberOfResponses + " from lastupdated query - since (local) "+ Helpers.FromUnixTime(long.Parse(epochTime)).ToLocalTime());
-            }
-            catch (WebException ex)
+            //We need to ask for updates in blocks of 7 days
+            //We'll keep asking until we get to a date within 7 days of today 
+            //(up to a maximum of 10 - if you are this far behind then you may need multiple refreshes)
+
+            List<JObject> updatesResponses = new List<JObject>();
+            
+            bool moreUpdates = true;
+            int numberofCallsMade = 0;
+
+            while (moreUpdates)
             {
-                System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
-                this.Say("");
-                this.LastError = ex.Message;
-                return false;
+                JObject jsonUdpateResponse = new JObject();
+
+                //If this date is in the last week then this needs to be the last call to the update
+                DateTime requestedTime = Helpers.FromUnixTime(epochTime).ToUniversalTime();
+                DateTime now = DateTime.UtcNow; 
+                if ((now-requestedTime).TotalDays  < 7)  { moreUpdates = false; }
+
+                try
+                {
+                    jsonUdpateResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "fromTime", epochTime.ToString() } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+
+                }
+                catch (WebException ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    this.Say("");
+                    this.LastError = ex.Message;
+                    moreUpdates = false;
+                    return false;
+                }
+                updatesResponses.Add(jsonUdpateResponse);
+                int numberOfResponses = ((JArray)jsonUdpateResponse["data"]).Count;
+                numberofCallsMade++;
+
+                IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long)a["lastUpdated"];
+                long? maxUpdateTime = updateTimes.Max();
+                if (maxUpdateTime != null)
+                {
+                    this.New_Srv_Time = (long)maxUpdateTime;
+                    System.Diagnostics.Debug.WriteLine("Obtianed " + numberOfResponses + " response from lastupdated query #" + numberofCallsMade + " - since (local) " + Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime());
+                    epochTime = this.New_Srv_Time;
+                }
+
+                //As a safety measure we check that no more than 10 calls are made
+                if (numberofCallsMade > 10) {
+                    moreUpdates = false;
+                    MessageBox.Show("We have run 10 weeks of updates but it appears the system may need to check again once this set have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(this.Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine+"If the dates keep getting closer then keep gettign 10 weeks of updates, otherwise consider a full refresh", "Long Running Update", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                }
+
+
             }
+
 
             this.Say("Processing Updates from TVDB");
 
-            // if updatetime > localtime for item, then remove it, so it will be downloaded later
-
-            IEnumerable<long> updateTimes = from a in jsonResponse["data"] select (long)a["lastUpdated"]; 
-            long? maxUpdateTime = updateTimes.Max();
-            if (maxUpdateTime != null) this.New_Srv_Time = (long)maxUpdateTime;
-
-
-            foreach (JObject series in jsonResponse["data"])
+            foreach (JObject jsonResponse in updatesResponses)
             {
 
-                int ID = (int)series["id"];
-                int time = (int)series["lastUpdated"];
 
-                if (this.Series.ContainsKey(ID)) // this is a series we have
+
+
+
+
+
+
+                // if updatetime > localtime for item, then remove it, so it will be downloaded later
+
+                foreach (JObject series in jsonResponse["data"])
                 {
-                    if (time > this.Series[ID].Srv_LastUpdated) // newer version on the server
-                        this.Series[ID].Dirty = true; // mark as dirty, so it'll be fetched again later
-                    else
-                        System.Diagnostics.Debug.WriteLine(this.Series[ID].Name + " has a lastupdated of  " + Helpers.FromUnixTime(this.Series[ID].Srv_LastUpdated) + " server says "+ Helpers.FromUnixTime(time));
 
-                    //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
+                    int ID = (int)series["id"];
+                    int time = (int)series["lastUpdated"];
 
-                    //Now deal with obtaining any episodes for the series 
-                    //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
-                    //We push the results into a bag to use later
-                    //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
-                    List<JObject> episodeResponses = new List<JObject>();
-
-                    int pageNumber = 1;
-                    bool morePages = true;
-
-
-                    while (morePages)
+                    if (this.Series.ContainsKey(ID)) // this is a series we have
                     {
-                        String episodeUri = APIRoot + "/series/" + ID + "/episodes";
-                        JObject jsonEpisodeResponse = new JObject();
-                        try
+                        if (time > this.Series[ID].Srv_LastUpdated) // newer version on the server
+                            this.Series[ID].Dirty = true; // mark as dirty, so it'll be fetched again later
+                        else
+                            System.Diagnostics.Debug.WriteLine(this.Series[ID].Name + " has a lastupdated of  " + Helpers.FromUnixTime(this.Series[ID].Srv_LastUpdated) + " server says " + Helpers.FromUnixTime(time));
+
+                        //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
+
+                        //Now deal with obtaining any episodes for the series 
+                        //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
+                        //We push the results into a bag to use later
+                        //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
+                        List<JObject> episodeResponses = new List<JObject>();
+
+                        int pageNumber = 1;
+                        bool morePages = true;
+
+
+                        while (morePages)
                         {
-                            jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
-                            episodeResponses.Add(jsonEpisodeResponse);
-                            int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
-                            
-                            System.Diagnostics.Debug.WriteLine("Page " + pageNumber + " of " + this.Series[ID].Name + " had " + numberOfResponses + " episodes listed");
-                            if (numberOfResponses < 100) { morePages = false; } else { pageNumber++; }
-
-
-                        }
-                        catch (WebException ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine("Error obtaining page " + pageNumber + " of " + episodeUri + ": " + ex.Message);
-                            //There may be exactly 100 or 200 episodes, may not be a problem
-                            morePages = false;
-                        }
-                    }
-                    int numberOfNewEpisodes = 0;
-                    int numberOfUpdatedEpisodes = 0;
-
-                    foreach (JObject response in episodeResponses)
-                    {
-                        foreach (JObject episodeData in response["data"])
-                        {
-                            long serverUpdateTime = (int)episodeData["lastUpdated"];
-                            int serverEpisodeId = (int)episodeData["id"];
-
-                            bool found = false;
-                            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in this.Series[ID].Seasons)
+                            String episodeUri = APIRoot + "/series/" + ID + "/episodes";
+                            JObject jsonEpisodeResponse = new JObject();
+                            try
                             {
-                                Season seas = kvp2.Value;
+                                jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
+                                episodeResponses.Add(jsonEpisodeResponse);
+                                int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
 
-                                foreach (Episode ep in seas.Episodes)
+                                System.Diagnostics.Debug.WriteLine("Page " + pageNumber + " of " + this.Series[ID].Name + " had " + numberOfResponses + " episodes listed");
+                                if (numberOfResponses < 100) { morePages = false; } else { pageNumber++; }
+
+
+                            }
+                            catch (WebException ex)
+                            {
+                                System.Diagnostics.Debug.WriteLine("Error obtaining page " + pageNumber + " of " + episodeUri + ": " + ex.Message);
+                                //There may be exactly 100 or 200 episodes, may not be a problem
+                                morePages = false;
+                            }
+                        }
+                        int numberOfNewEpisodes = 0;
+                        int numberOfUpdatedEpisodes = 0;
+
+                        foreach (JObject response in episodeResponses)
+                        {
+                            foreach (JObject episodeData in response["data"])
+                            {
+                                long serverUpdateTime = (int)episodeData["lastUpdated"];
+                                int serverEpisodeId = (int)episodeData["id"];
+
+                                bool found = false;
+                                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in this.Series[ID].Seasons)
                                 {
-                                    if (ep.EpisodeID == serverEpisodeId)
+                                    Season seas = kvp2.Value;
+
+                                    foreach (Episode ep in seas.Episodes)
                                     {
-                                        if (ep.Srv_LastUpdated < serverUpdateTime) { 
-                                            ep.Dirty = true; // mark episode as dirty.
-                                            numberOfUpdatedEpisodes++;
-                                                }
-                                        found = true;
-                                        break;
+                                        if (ep.EpisodeID == serverEpisodeId)
+                                        {
+                                            if (ep.Srv_LastUpdated < serverUpdateTime) {
+                                                ep.Dirty = true; // mark episode as dirty.
+                                                numberOfUpdatedEpisodes++;
+                                            }
+                                            found = true;
+                                            break;
+                                        }
                                     }
                                 }
-                            }
-                            if (!found)
-                            {
-                                // must be a new episode
-                                this.LockEE();
-                                this.ExtraEpisodes.Add(new ExtraEp(ID, serverEpisodeId));
-                                this.UnlockEE();
-                                numberOfNewEpisodes++;
-                            }
+                                if (!found)
+                                {
+                                    // must be a new episode
+                                    this.LockEE();
+                                    this.ExtraEpisodes.Add(new ExtraEp(ID, serverEpisodeId));
+                                    this.UnlockEE();
+                                    numberOfNewEpisodes++;
+                                }
 
+                            }
                         }
+                        System.Diagnostics.Debug.WriteLine(this.Series[ID].Name + " had " + numberOfUpdatedEpisodes + " episodes updated and " + numberOfNewEpisodes + " new episodes ");
                     }
-                    System.Diagnostics.Debug.WriteLine( this.Series[ID].Name + " had " + numberOfUpdatedEpisodes + " episodes updated and " + numberOfNewEpisodes+ " new episodes ");
                 }
             }
-
 
             this.Say("");
 
@@ -988,7 +1033,7 @@ namespace TVRename
                     {
                         string time = r.GetAttribute("time");
                         if (time != null)
-                            this.New_Srv_Time = int.Parse(time);
+                            this.New_Srv_Time = long.Parse(time);
                         r.Read();
                     }
                     else
@@ -1129,32 +1174,42 @@ namespace TVRename
             {
                 foreach (JObject episodeData in response["data"])
                 {
-                    Episode e = new Episode(code,episodeData);
-                    if (e.OK())
-                    {
-                        if (!this.Series.ContainsKey(e.SeriesID))
-                            throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
-                        SeriesInfo ser = this.Series[e.SeriesID];
-                        Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
+                    //The episode does not contain enough data (specifically image filename), so we'll get the full version
+                    this.DownloadEpisodeNow(code, (int)episodeData["id"]);
 
-                        bool added = false;
-                        for (int i = 0; i < seas.Episodes.Count; i++)
-                        {
-                            Episode ep = seas.Episodes[i];
-                            if (ep.EpisodeID == e.EpisodeID)
-                            {
-                                seas.Episodes[i] = e;
-                                added = true;
-                                break;
-                            }
-                        }
-                        if (!added)
-                            seas.Episodes.Add(e);
-                        e.SetSeriesSeason(ser, seas);
+              /* All of this code was used when we tried to create an episode from the series response. Issue was that we ended up doubling up. 
+              Creating an imperfect episode and having to do a full refresh anyway.
 
-                        //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                        this.DownloadEpisodeNow(code, e.EpisodeID);
-                    }
+                COmmenting it out for now
+
+                                        Episode e = new Episode(code,episodeData);
+                                        if (e.OK())
+                                        {
+                                            if (!this.Series.ContainsKey(e.SeriesID))
+                                                throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
+                                            SeriesInfo ser = this.Series[e.SeriesID];
+                                            Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
+
+                                            bool added = false;
+                                            for (int i = 0; i < seas.Episodes.Count; i++)
+                                            {
+                                                Episode ep = seas.Episodes[i];
+                                                if (ep.EpisodeID == e.EpisodeID)
+                                                {
+                                                    seas.Episodes[i] = e;
+                                                    added = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (!added)
+                                                seas.Episodes.Add(e);
+                                            e.SetSeriesSeason(ser, seas);
+
+                                            //The episode does not contain enough data (specifically image filename), so we'll get the full version
+                                            this.DownloadEpisodeNow(code, e.EpisodeID);
+
+                                        }
+                                           */
 
                 }
             }
@@ -1388,10 +1443,7 @@ namespace TVRename
 
             bool ok = true;
 
-            if (this.Series[code].Dirty)
-                ok = (this.DownloadSeriesNow(code, false, bannersToo) != null) && ok;
-
-            if (bannersToo && !this.Series[code].BannersLoaded)
+            if ((this.Series[code].Dirty) || (bannersToo && !this.Series[code].BannersLoaded))
                 ok = (this.DownloadSeriesNow(code, false, bannersToo) != null) && ok;
 
             foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in this.Series[code].Seasons)
