@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace TVRename.Forms
@@ -9,8 +10,13 @@ namespace TVRename.Forms
 
         public Filters(TVDoc doc)
         {
-            InitializeComponent();
             this.doc = doc;
+            InitializeComponent();
+            this.clbGenre.Items.AddRange(doc.getGenres().Cast<object>().ToArray());
+            this.cmbNetwork.Items.AddRange(doc.getNetworks().Cast<object>().ToArray());
+            this.cmbShowStatus.Items.AddRange(doc.getStatuses().Cast<object>().ToArray());
+            this.cmbRating.Items.AddRange(doc.GetRatings().Cast<object>().ToArray());
+
             setButtonStates();
         }
 
@@ -21,20 +27,22 @@ namespace TVRename.Forms
             {
                 //Filter By Show Names
                 Boolean filterByShowNames = filter.ShowName != null;
-                cbShowName.Checked = filterByShowNames;
-                tbShowName.Enabled = filterByShowNames;
                 tbShowName.Text = (filterByShowNames ? filter.ShowName : "");
 
                 //Filter By Show Status
                 Boolean filterByShowStatus = filter.ShowStatus != null;
-                cbShowStatus.Checked = filterByShowStatus;
-                cmbShowStatus.Enabled = filterByShowStatus;
-                cmbShowStatus.SelectedItem = (filterByShowStatus ? filter.ShowStatus : "Continuing");
+                cmbShowStatus.SelectedItem = (filterByShowStatus ? filter.ShowStatus : "");
+
+                //Filter By Show Rating
+                Boolean filterByShowRating = filter.ShowRating != null;
+                cmbRating.SelectedItem = (filterByShowRating ? filter.ShowRating : "");
+
+                //Filter By Show Network
+                Boolean filterByShowNetwork = filter.ShowNetwork != null;
+                cmbNetwork.SelectedItem = (filterByShowNetwork ? filter.ShowNetwork : "");
+
 
                 //Filter By Genre
-                Boolean filterByGenre = filter.Genres.Count != 0;
-                cbGenre.Checked = filterByGenre;
-                clbGenre.Enabled = filterByGenre;
                 foreach (String genre in filter.Genres)
                 {
                     int genre_index = clbGenre.Items.IndexOf(genre);
@@ -48,27 +56,16 @@ namespace TVRename.Forms
             ShowFilter filter = TVSettings.Instance.Filter;
 
             //Filter By Show Name
-            filter.ShowName = null;
-            if (cbShowName.Checked)
-            {
-                filter.ShowName = tbShowName.Text;
-            }
 
-            //Filter By Show Status
-            filter.ShowStatus = null;
-            if (cbShowStatus.Checked)
-            {
-                filter.ShowStatus = cmbShowStatus.SelectedItem.ToString();
-            }
+            filter.ShowName = String.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
+            filter.ShowStatus = String.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
+            filter.ShowNetwork  = String.IsNullOrEmpty(cmbNetwork.Text) ? null : cmbNetwork.SelectedItem.ToString();
+            filter.ShowRating = String.IsNullOrEmpty(cmbRating.Text) ? null : cmbRating.SelectedItem.ToString();
 
-            //Filter By Genre
             filter.Genres.Clear();
-            if (cbGenre.Checked)
+            foreach (String genre in clbGenre.CheckedItems)
             {
-                foreach (String genre in clbGenre.CheckedItems)
-                {
-                    filter.Genres.Add(genre);
-                }
+                filter.Genres.Add(genre);
             }
 
             this.doc.SetDirty();
@@ -82,24 +79,20 @@ namespace TVRename.Forms
             this.Close();
         }
 
-        private void cbShowStatus_CheckedChanged(object sender, EventArgs e)
+        private void bnReset_Click(object sender, EventArgs e)
         {
-            this.cmbShowStatus.Enabled = this.cbShowStatus.Checked;
+            tbShowName.Text = "";
+            cmbShowStatus.SelectedItem = "";
+            cmbNetwork.SelectedItem = "";
+            cmbRating.SelectedItem = "";
+            clbGenre.ClearSelected();
+
+            for (int i = 0; i < clbGenre.Items.Count; i++)
+            {
+                clbGenre.SetItemChecked(i, false);
+            }
         }
 
-        private void cbShowName_CheckedChanged(object sender, EventArgs e)
-        {
-            this.tbShowName.Enabled = this.cbShowName.Checked;
-        }
-
-        private void cbGenre_CheckedChanged(object sender, EventArgs e)
-        {
-            this.clbGenre.Enabled = this.cbGenre.Checked;
-        }
-
-        public bool filtersApplied()
-        {
-            return cbShowName.Enabled || cbShowStatus.Enabled || cbGenre.Enabled;
-        }
     }
 }
+

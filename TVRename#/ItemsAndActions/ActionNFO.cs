@@ -11,6 +11,7 @@ namespace TVRename
     using System.IO;
     using System.Windows.Forms;
     using System.Xml;
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionNFO : Item, Action, ScanListItem, ActionWriteMetadata
     {
@@ -191,11 +192,9 @@ namespace TVRename
 
                 WriteInfo(writer, this.SI.TheSeries().GetOverview(), "plot");
 
-                string genre = this.SI.TheSeries().GetGenre();
+                string genre = String.Join(" / ", this.SI.TheSeries().GetGenres());
                 if (!string.IsNullOrEmpty(genre))
                 {
-                    genre = genre.Trim('|');
-                    genre = genre.Replace("|", " / ");
                     XMLHelper.WriteElementToXML(writer,"genre",genre);
                 }
 

@@ -73,6 +73,11 @@ namespace TVRename
             this.SetToDefauts();
             this.LanguageId = langId;
             this.LoadJSON(json);
+
+            if (String.IsNullOrEmpty(this.Name)            ){
+                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
+                System.Diagnostics.Debug.Print(json.ToString());
+            }
         }
 
         public SeriesInfo(JObject json, JObject jsonInDefaultLang, int langId)
@@ -80,6 +85,12 @@ namespace TVRename
             this.SetToDefauts();
             this.LanguageId = langId;
             this.LoadJSON(json,jsonInDefaultLang);
+            if (String.IsNullOrEmpty(this.Name)            ){
+                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
+                System.Diagnostics.Debug.Print(json.ToString());
+                System.Diagnostics.Debug.Print(jsonInDefaultLang .ToString());
+            }
+
         }
 
 
@@ -344,7 +355,11 @@ namespace TVRename
 
 
             this.TVDBCode = (int)r["id"];
-            if ((string)r["seriesName"] != null) this.Name = (string)r["seriesName"];
+            if ((string)r["seriesName"] != null)
+            {
+                this.Name = (string)r["seriesName"];
+            }
+
 
             long updateTime;
             if (long.TryParse((string)r["lastUpdated"], out updateTime) )
@@ -439,13 +454,25 @@ namespace TVRename
         public string getNetwork() => getValueAcrossVersions("Network", "network", "");
         public string GetOverview() => getValueAcrossVersions("Overview", "overview", "");
         public string GetRuntime() => getValueAcrossVersions("Runtime", "runtime", "");
-        public string GetGenre() => getValueAcrossVersions("Genre", "genre", "");
         public string GetRating() => getValueAcrossVersions("Rating","rating",""); // check , "ContentRating"
         public string GetIMDB() => getValueAcrossVersions("IMDB_ID", "imdb_id", "");
         public string GetYear() => getValueAcrossVersions("Year", "year", "");
         public string GetFirstAired() => getValueAcrossVersions("FirstAired", "firstAired", "");
 
-        
+        public string[] GetGenres()
+        {
+
+            String genreString = getValueAcrossVersions("Genre", "genre", "");
+
+            if (!string.IsNullOrEmpty(genreString))
+            {
+                return genreString.Split('|');
+
+            }
+            return new String[] { };
+
+        }
+
 
 
         public string GetImage(TVSettings.FolderJpgIsType type)
@@ -480,6 +507,8 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "SeriesName", this.Name);
             XMLHelper.WriteElementToXML(writer, "lastupdated", this.Srv_LastUpdated);
             XMLHelper.WriteElementToXML(writer, "Language", this.LanguageId);
+            XMLHelper.WriteElementToXML(writer, "Airs_Time", this.AirsTime );
+            
 
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
             {

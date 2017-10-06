@@ -635,6 +635,16 @@ namespace TVRename
                             Filter.ShowStatus = reader.GetAttribute("ShowStatus");
                             reader.Read();
                         }
+                        else if (reader.Name == "ShowRatingFilter")
+                        {
+                            Filter.ShowRating = reader.GetAttribute("ShowRating");
+                            reader.Read();
+                        }
+                        else if (reader.Name == "ShowNetworkFilter")
+                        {
+                            Filter.ShowNetwork = reader.GetAttribute("ShowNetwork");
+                            reader.Read();
+                        }
                         else if (reader.Name == "GenreFilter")
                         {
                             Filter.Genres.Add(reader.GetAttribute("Genre"));
@@ -820,6 +830,24 @@ namespace TVRename
                     writer.WriteStartElement("ShowStatusFilter");
                     writer.WriteStartAttribute("ShowStatus");
                     writer.WriteValue(Filter.ShowStatus);
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+
+                if (Filter.ShowNetwork  != null)
+                {
+                    writer.WriteStartElement("ShowNetworkFilter");
+                    writer.WriteStartAttribute("ShowNetwork");
+                    writer.WriteValue(Filter.ShowNetwork );
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+
+                if (Filter.ShowRating  != null)
+                {
+                    writer.WriteStartElement("ShowRatingFilter");
+                    writer.WriteStartAttribute("ShowRating");
+                    writer.WriteValue(Filter.ShowRating);
                     writer.WriteEndAttribute();
                     writer.WriteEndElement();
                 }
@@ -1015,8 +1043,8 @@ namespace TVRename
 
         public bool NeedToDownloadBannerFile(){
             // Return true iff we need to download season specific images
-            // There are 3 possible reasons
-            return (SeasonSpecificFolderJPG() || XBMCImages || SeriesJpg);
+            // There are 4 possible reasons
+            return (SeasonSpecificFolderJPG() || XBMCImages || SeriesJpg ||FanArtJpg);
         }
 
         public bool SeasonSpecificFolderJPG() {

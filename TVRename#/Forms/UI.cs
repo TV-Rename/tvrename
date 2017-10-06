@@ -19,6 +19,12 @@ using System.Windows.Forms;
 using System.Xml;
 using TVRename.Forms;
 
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+using Path = Alphaleonis.Win32.Filesystem.Path;
+
 namespace TVRename
 {
     // right click commands
@@ -804,8 +810,16 @@ namespace TVRename
 
             body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName + "</A>" + seasText + "</h1>";
 
-            body += ImageSection("Series Banner", 758, 140, ser.GetSeasonWideBannerPath(snum));
-            body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
+            if(TVSettings.Instance.NeedToDownloadBannerFile())
+            {
+                body += ImageSection("Series Banner", 758, 140, ser.GetSeasonWideBannerPath(snum));
+                body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
+
+            }
+            else
+            {
+                body += "<h2>Images are not being downloaded for this series. Please see Options -> Settings -> Media Center to reconfigure.</h2>";
+            }
 
             return body;
         }
@@ -1058,8 +1072,9 @@ namespace TVRename
 
             web.Navigate("about:blank"); // make it close any file it might have open
 
-            BinaryWriter bw = new BinaryWriter(new FileStream(path, FileMode.Create));
+            BinaryWriter bw = new BinaryWriter(new FileStream(path, System.IO.FileMode.Create));
             bw.Write(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(html));
+
             bw.Close();
 
             web.Navigate(LocalFileURLBase(path));

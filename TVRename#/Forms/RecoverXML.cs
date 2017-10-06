@@ -7,6 +7,8 @@
 // 
 using System.Windows.Forms;
 using System.IO;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename
 {
