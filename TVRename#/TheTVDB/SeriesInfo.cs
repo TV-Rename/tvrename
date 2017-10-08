@@ -506,19 +506,31 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "id", this.TVDBCode);
             XMLHelper.WriteElementToXML(writer, "SeriesName", this.Name);
             XMLHelper.WriteElementToXML(writer, "lastupdated", this.Srv_LastUpdated);
-            XMLHelper.WriteElementToXML(writer, "Language", this.LanguageId);
+            XMLHelper.WriteElementToXML(writer, "LanguageId", this.LanguageId);
             XMLHelper.WriteElementToXML(writer, "Airs_Time", this.AirsTime );
-            
-
-            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
-            {
-                XMLHelper.WriteElementToXML(writer, kvp.Key, kvp.Value);
-            }
             XMLHelper.WriteElementToXML(writer, "TimeZone", this.ShowTimeZone);
 
             if (this.FirstAired != null)
             {
                 XMLHelper.WriteElementToXML(writer, "FirstAired", this.FirstAired.Value.ToString("yyyy-MM-dd"));
+            }
+
+
+            List<string> skip = new List<String>
+                                  {
+                                      "Airs_Time",
+                                      "lastupdated","lastUpdated",
+                                      "id","seriesName","seriesname",
+                                      "lastUpdated","lastupdated",
+                                      "FirstAired","firstAired"
+                                  };
+
+            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
+            {
+                if (!skip.Contains(kvp.Key))
+                {
+                    XMLHelper.WriteElementToXML(writer, kvp.Key, kvp.Value);
+                }
             }
 
             writer.WriteEndElement(); // series

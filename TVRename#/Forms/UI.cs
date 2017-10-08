@@ -364,9 +364,15 @@ namespace TVRename
             if (res == DialogResult.Yes)
             {
                 TheTVDB.Instance.ForgetEverything();
+
+                
+
                 this.FillMyShows();
                 this.FillEpGuideHTML();
                 this.FillWhenToWatchList();
+
+
+                backgroundDownloadToolStripMenuItem_Click(sender, e);
             }
         }
 

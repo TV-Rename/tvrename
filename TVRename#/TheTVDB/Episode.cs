@@ -7,6 +7,7 @@
 // 
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -455,10 +456,21 @@ namespace TVRename
                 XMLHelper.WriteElementToXML(writer,"FirstAired",this.FirstAired.Value.ToString("yyyy-MM-dd"));
             }
 
+            List<string> skip = new List<String>
+                                  {
+                                      "overview","Overview","seriesId","seriesid","lastupdated","lastUpdated","EpisodeName","episodeName","FirstAired","firstAired",
+                                      "GuestStars","guestStars","director","directors","EpisodeDirector","Writer","Writers"
+                                  };
+
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
             {
-                XMLHelper.WriteElementToXML(writer,kvp.Key,kvp.Value);
+                if (!skip.Contains(kvp.Key))
+                {
+                    XMLHelper.WriteElementToXML(writer, kvp.Key, kvp.Value);
+                }
             }
+
+
 
             writer.WriteEndElement(); //Episode
         }
