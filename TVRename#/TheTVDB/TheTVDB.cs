@@ -452,6 +452,9 @@ namespace TVRename
             this.Connected = false;
             this.SaveCache();
             this.Unlock("ForgetEverything");
+
+            //All series will be forgotten and will be fully refreshed, so we'll only need updates after this point
+            this.New_Srv_Time = DateTime.UtcNow.ToUnixTime();
         }
 
         public void ForgetShow(int id, bool makePlaceholder)
@@ -645,7 +648,7 @@ namespace TVRename
                 //As a safety measure we check that no more than 10 calls are made
                 if (numberofCallsMade > 10) {
                     moreUpdates = false;
-                    MessageBox.Show("We have run 10 weeks of updates but it appears the system may need to check again once this set have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(this.Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine+"If the dates keep getting closer then keep gettign 10 weeks of updates, otherwise consider a full refresh", "Long Running Update", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("We have run 10 weeks of updates but it appears the system may need to check again once this set have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(this.Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine+"If the dates keep getting closer then keep getting 10 weeks of updates, otherwise consider a full refresh", "Long Running Update", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 }
 
