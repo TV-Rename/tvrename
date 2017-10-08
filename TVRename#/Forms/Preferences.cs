@@ -139,8 +139,9 @@ namespace TVRename
 
             S.SearchRSS = this.cbSearchRSS.Checked;
             S.EpTBNs = this.cbEpTBNs.Checked;
-            S.NFOs = this.cbNFOs.Checked;
-            S.XBMCImages = this.cbXBMCImages.Checked;
+            S.NFOShows = this.cbNFOShows.Checked;
+            S.NFOEpisodes = this.cbNFOEpisodes.Checked;
+            S.KODIImages = this.cbKODIImages.Checked;
             S.pyTivoMeta = this.cbMeta.Checked;
             S.pyTivoMetaSubFolder = this.cbMetaSubfolder.Checked;
             S.FolderJpg = this.cbFolderJpg.Checked;
@@ -184,11 +185,11 @@ namespace TVRename
                 S.MonitoredFoldersScanType = TVSettings.ScanType.Full;
 
             if (this.rdEden.Checked)
-                S.SelectedXBMCType= TVSettings.XBMCType.Eden;
+                S.SelectedKODIType= TVSettings.KODIType.Eden;
             else if (this.rdFrodo.Checked)
-                S.SelectedXBMCType = TVSettings.XBMCType.Frodo;
+                S.SelectedKODIType = TVSettings.KODIType.Frodo;
             else
-                S.SelectedXBMCType = TVSettings.XBMCType.Both;
+                S.SelectedKODIType = TVSettings.KODIType.Both;
 
 
             TheTVDB.Instance.GetLock("Preferences-OK");
@@ -317,8 +318,9 @@ namespace TVRename
 
             this.cbSearchRSS.Checked = S.SearchRSS;
             this.cbEpTBNs.Checked = S.EpTBNs;
-            this.cbNFOs.Checked = S.NFOs;
-            this.cbXBMCImages.Checked = S.XBMCImages;
+            this.cbNFOShows.Checked = S.NFOShows;
+            this.cbNFOEpisodes.Checked = S.NFOEpisodes;
+            this.cbKODIImages.Checked = S.KODIImages;
             this.cbMeta.Checked = S.pyTivoMeta;
             this.cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
             this.cbFolderJpg.Checked = S.FolderJpg;
@@ -398,12 +400,12 @@ namespace TVRename
                     break;
             }
 
-            switch (S.SelectedXBMCType)
+            switch (S.SelectedKODIType)
             {
-                case TVSettings.XBMCType.Eden:
+                case TVSettings.KODIType.Eden:
                     this.rdEden.Checked = true;
                     break;
-                case TVSettings.XBMCType.Frodo:
+                case TVSettings.KODIType.Frodo:
                     this.rdFrodo.Checked = true;
                     break;
                 default:
@@ -1030,9 +1032,10 @@ namespace TVRename
 
             switch (v)
             {
-                case 1: // xbmc
+                case 1: // KODI
                     cbEpTBNs.Checked = true;
-                    cbNFOs.Checked = true;
+                    cbNFOShows.Checked = true;
+                    cbNFOEpisodes.Checked = true;
                     cbMeta.Checked = false;
                     cbMetaSubfolder.Checked = false;
                     cbSeriesJpg.Checked = false;
@@ -1042,12 +1045,13 @@ namespace TVRename
                     rbFolderSeasonPoster.Checked = true;
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = false;
-                    cbXBMCImages.Checked = true;
+                    cbKODIImages.Checked = true;
                     rdBoth.Checked = true;
                     break;
                 case 2: // pytivo
                     cbEpTBNs.Checked = false;
-                    cbNFOs.Checked = false;
+                    cbNFOShows.Checked = false;
+                    cbNFOEpisodes.Checked = false;
                     cbMeta.Checked = true;
                     cbMetaSubfolder.Checked = true;
                     cbSeriesJpg.Checked = false;
@@ -1057,11 +1061,12 @@ namespace TVRename
                     rbFolderPoster.Checked = true;
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = false;
-                    cbXBMCImages.Checked = false;
+                    cbKODIImages.Checked = false;
                     break;
                 case 3: // mede8er
                     cbEpTBNs.Checked = false;
-                    cbNFOs.Checked = false;
+                    cbNFOShows.Checked = false;
+                    cbNFOEpisodes.Checked = false;
                     cbMeta.Checked = false;
                     cbMetaSubfolder.Checked = false;
                     cbSeriesJpg.Checked = true;
@@ -1071,11 +1076,12 @@ namespace TVRename
                     rbFolderSeasonPoster.Checked = true;
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = true;
-                    cbXBMCImages.Checked = false;
+                    cbKODIImages.Checked = false;
                     break;
                 case 4: // none
                     cbEpTBNs.Checked = false;
-                    cbNFOs.Checked = false;
+                    cbNFOShows.Checked = false;
+                    cbNFOEpisodes.Checked = false;
                     cbMeta.Checked = false;
                     cbMetaSubfolder.Checked = false;
                     cbSeriesJpg.Checked = false;
@@ -1085,7 +1091,7 @@ namespace TVRename
                     rbFolderPoster.Checked = false;
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = false;
-                    cbXBMCImages.Checked = false;
+                    cbKODIImages.Checked = false;
                     break;
 #if DEBUG
                 default:

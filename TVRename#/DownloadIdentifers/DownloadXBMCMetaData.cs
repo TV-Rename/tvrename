@@ -7,11 +7,11 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class DownloadXBMCMetaData : DownloadIdentifier
+    class DownloadKODIMetaData : DownloadIdentifier
     {
         private static List<string> doneNFO;
 
-        public DownloadXBMCMetaData() 
+        public DownloadKODIMetaData() 
         {
             reset();
         }
@@ -25,7 +25,7 @@ namespace TVRename
         {
             if (file.FullName.EndsWith(".nfo", true, new CultureInfo("en")))
             {
-                DownloadXBMCMetaData.doneNFO.Add(file.FullName);
+                DownloadKODIMetaData.doneNFO.Add(file.FullName);
             }
             base.notifyComplete(file);
         }
@@ -33,7 +33,7 @@ namespace TVRename
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             // for each tv show, optionally write a tvshow.nfo file
-            if (TVSettings.Instance.NFOs)
+            if (TVSettings.Instance.NFOShows)
             {
                 ItemList TheActionList = new ItemList();
                 FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
@@ -43,12 +43,12 @@ namespace TVRename
                     // was it written before we fixed the bug in <episodeguideurl> ?
                                   (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
 
-                bool alreadyOnTheList = DownloadXBMCMetaData.doneNFO.Contains(tvshownfo.FullName);
+                bool alreadyOnTheList = DownloadKODIMetaData.doneNFO.Contains(tvshownfo.FullName);
 
                 if ((forceRefresh || needUpdate) && !alreadyOnTheList)
                 {
                     TheActionList.Add(new ActionNFO(tvshownfo, si));
-                    DownloadXBMCMetaData.doneNFO.Add(tvshownfo.FullName);
+                    DownloadKODIMetaData.doneNFO.Add(tvshownfo.FullName);
                 }
                 return TheActionList;
 
@@ -58,7 +58,7 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo,bool forceRefresh)
         {
-            if (TVSettings.Instance.NFOs)
+            if (TVSettings.Instance.NFOEpisodes)
             {
                 ItemList TheActionList = new ItemList();
 
@@ -70,7 +70,7 @@ namespace TVRename
                 if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)) || forceRefresh)
                 {
                     //If we do not already have plans to put the file into place
-                    if (!(DownloadXBMCMetaData.doneNFO.Contains(nfo.FullName)))
+                    if (!(DownloadKODIMetaData.doneNFO.Contains(nfo.FullName)))
                     {
                         TheActionList.Add(new ActionNFO(nfo, dbep));
                         doneNFO.Add(nfo.FullName);
