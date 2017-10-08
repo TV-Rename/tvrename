@@ -1335,6 +1335,12 @@ namespace TVRename
             mx.Run(TheActionList);
         }
 
+        public void ExportShowInfo()
+        {
+            ShowsTXT mx = new ShowsTXT();
+            mx.Run(this.ShowItems);
+        }
+
         public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
         {
             DateTime notBefore = DateTime.Now.AddDays(-nDaysPast);
@@ -1435,7 +1441,7 @@ namespace TVRename
             ActionQueue[] queues = new ActionQueue[4];
             queues[0] = new ActionQueue("Move/Copy", 1); // cross-filesystem moves (slow ones)
             queues[1] = new ActionQueue("Move", 2); // local rename/moves
-            queues[2] = new ActionQueue("Write Metadata", 4); // writing XBMC NFO files, etc.
+            queues[2] = new ActionQueue("Write Metadata", 4); // writing KODI NFO files, etc.
             queues[3] = new ActionQueue("Download", TVSettings.Instance.ParallelDownloads); // downloading torrents, banners, thumbnails
 
             foreach (ScanListItem sli in theList)

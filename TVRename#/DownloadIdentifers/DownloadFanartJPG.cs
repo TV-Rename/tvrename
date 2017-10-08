@@ -23,8 +23,8 @@ namespace TVRename
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
-            //We only want to do something if the fanart option is enabled. If the XBMC option is enabled then let it do the work.
-            if ((TVSettings.Instance.FanArtJpg) && !TVSettings.Instance.XBMCImages)
+            //We only want to do something if the fanart option is enabled. If the KODI option is enabled then let it do the work.
+            if ((TVSettings.Instance.FanArtJpg) && !TVSettings.Instance.KODIImages)
             {
                 ItemList TheActionList = new ItemList();
                 FileInfo fi = FileHelper.FileInFolder(si.AutoAdd_FolderBase, defaultFileName);

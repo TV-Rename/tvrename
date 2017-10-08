@@ -111,6 +111,8 @@ namespace TVRename
             S.ExportRenamingXMLTo = this.txtRenamingXML.Text;
             S.ExportFOXML = this.cbFOXML.Checked;
             S.ExportFOXMLTo = this.txtFOXML.Text;
+            S.ExportShowsTXT = this.cbShowsTXT.Checked;
+            S.ExportShowsTXTTo = this.txtShowsTXTTo.Text;
 
             S.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
             S.StartupTab = this.cbStartupTab.SelectedIndex;
@@ -139,8 +141,9 @@ namespace TVRename
 
             S.SearchRSS = this.cbSearchRSS.Checked;
             S.EpTBNs = this.cbEpTBNs.Checked;
-            S.NFOs = this.cbNFOs.Checked;
-            S.XBMCImages = this.cbXBMCImages.Checked;
+            S.NFOShows = this.cbNFOShows.Checked;
+            S.NFOEpisodes = this.cbNFOEpisodes.Checked;
+            S.KODIImages = this.cbKODIImages.Checked;
             S.pyTivoMeta = this.cbMeta.Checked;
             S.pyTivoMetaSubFolder = this.cbMetaSubfolder.Checked;
             S.FolderJpg = this.cbFolderJpg.Checked;
@@ -184,11 +187,11 @@ namespace TVRename
                 S.MonitoredFoldersScanType = TVSettings.ScanType.Full;
 
             if (this.rdEden.Checked)
-                S.SelectedXBMCType= TVSettings.XBMCType.Eden;
+                S.SelectedKODIType= TVSettings.KODIType.Eden;
             else if (this.rdFrodo.Checked)
-                S.SelectedXBMCType = TVSettings.XBMCType.Frodo;
+                S.SelectedKODIType = TVSettings.KODIType.Frodo;
             else
-                S.SelectedXBMCType = TVSettings.XBMCType.Both;
+                S.SelectedKODIType = TVSettings.KODIType.Both;
 
 
             TheTVDB.Instance.GetLock("Preferences-OK");
@@ -285,6 +288,10 @@ namespace TVRename
             this.cbMissingCSV.Checked = S.ExportMissingCSV;
             this.txtMissingCSV.Text = S.ExportMissingCSVTo;
 
+            this.cbShowsTXT.Checked = S.ExportShowsTXT ;
+            this.txtShowsTXTTo.Text = S.ExportShowsTXTTo;
+
+
             this.cbRenamingXML.Checked = S.ExportRenamingXML;
             this.txtRenamingXML.Text = S.ExportRenamingXMLTo;
 
@@ -317,8 +324,9 @@ namespace TVRename
 
             this.cbSearchRSS.Checked = S.SearchRSS;
             this.cbEpTBNs.Checked = S.EpTBNs;
-            this.cbNFOs.Checked = S.NFOs;
-            this.cbXBMCImages.Checked = S.XBMCImages;
+            this.cbNFOShows.Checked = S.NFOShows;
+            this.cbNFOEpisodes.Checked = S.NFOEpisodes;
+            this.cbKODIImages.Checked = S.KODIImages;
             this.cbMeta.Checked = S.pyTivoMeta;
             this.cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
             this.cbFolderJpg.Checked = S.FolderJpg;
@@ -398,12 +406,12 @@ namespace TVRename
                     break;
             }
 
-            switch (S.SelectedXBMCType)
+            switch (S.SelectedKODIType)
             {
-                case TVSettings.XBMCType.Eden:
+                case TVSettings.KODIType.Eden:
                     this.rdEden.Checked = true;
                     break;
-                case TVSettings.XBMCType.Frodo:
+                case TVSettings.KODIType.Frodo:
                     this.rdFrodo.Checked = true;
                     break;
                 default:
@@ -470,7 +478,7 @@ namespace TVRename
 
         private void Browse(TextBox txt, string DefaultExt, int FilterIndex)
         {
-            //rss =1, XML = 2, CSV = 3
+            //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5
             this.saveFile.FileName = txt.Text;
             this.saveFile.DefaultExt = DefaultExt;
             this.saveFile.FilterIndex = FilterIndex;
@@ -478,10 +486,6 @@ namespace TVRename
                 txt.Text = this.saveFile.FileName;
         }
 
-        private void bnBrowseWTWRSS_Click(object sender, System.EventArgs e)
-        {
-            this.Browse(this.txtWTWRSS,"rss",1);
-        }
 
         private void bnBrowseWTWXML_Click(object sender, System.EventArgs e)
         {
@@ -522,9 +526,20 @@ namespace TVRename
             this.Browse(this.txtMissingCSV,"csv",3);
         }
 
+
+        private void bnBrowseWTWRSS_Click(object sender, System.EventArgs e)
+        {
+            this.Browse(this.txtWTWRSS, "rss", 1);
+        }
+
         private void bnBrowseMissingXML_Click(object sender, System.EventArgs e)
         {
             this.Browse(this.txtMissingXML,"xml",2);
+        }
+
+        private void bnBrowseShowsTXT_Click(object sender, EventArgs e)
+        {
+            this.Browse(this.txtShowsTXTTo, "txt", 4);
         }
 
         private void bnBrowseRenamingXML_Click(object sender, System.EventArgs e)
@@ -562,6 +577,10 @@ namespace TVRename
             bool fo = this.cbFOXML.Checked;
             this.txtFOXML.Enabled = fo;
             this.bnBrowseFOXML.Enabled = fo;
+
+            bool stxt = this.cbShowsTXT.Checked;
+            this.txtShowsTXTTo.Enabled = stxt;
+            this.bnBrowseShowsTXT.Enabled = stxt;
 
             bool ren = this.cbRenamingXML.Checked;
             this.txtRenamingXML.Enabled = ren;
@@ -1030,9 +1049,10 @@ namespace TVRename
 
             switch (v)
             {
-                case 1: // xbmc
+                case 1: // KODI
                     cbEpTBNs.Checked = true;
-                    cbNFOs.Checked = true;
+                    cbNFOShows.Checked = true;
+                    cbNFOEpisodes.Checked = true;
                     cbMeta.Checked = false;
                     cbMetaSubfolder.Checked = false;
                     cbSeriesJpg.Checked = false;
@@ -1042,12 +1062,13 @@ namespace TVRename
                     rbFolderSeasonPoster.Checked = true;
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = false;
-                    cbXBMCImages.Checked = true;
+                    cbKODIImages.Checked = true;
                     rdBoth.Checked = true;
                     break;
                 case 2: // pytivo
                     cbEpTBNs.Checked = false;
-                    cbNFOs.Checked = false;
+                    cbNFOShows.Checked = false;
+                    cbNFOEpisodes.Checked = false;
                     cbMeta.Checked = true;
                     cbMetaSubfolder.Checked = true;
                     cbSeriesJpg.Checked = false;
@@ -1057,11 +1078,12 @@ namespace TVRename
                     rbFolderPoster.Checked = true;
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = false;
-                    cbXBMCImages.Checked = false;
+                    cbKODIImages.Checked = false;
                     break;
                 case 3: // mede8er
                     cbEpTBNs.Checked = false;
-                    cbNFOs.Checked = false;
+                    cbNFOShows.Checked = false;
+                    cbNFOEpisodes.Checked = false;
                     cbMeta.Checked = false;
                     cbMetaSubfolder.Checked = false;
                     cbSeriesJpg.Checked = true;
@@ -1071,11 +1093,12 @@ namespace TVRename
                     rbFolderSeasonPoster.Checked = true;
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = true;
-                    cbXBMCImages.Checked = false;
+                    cbKODIImages.Checked = false;
                     break;
                 case 4: // none
                     cbEpTBNs.Checked = false;
-                    cbNFOs.Checked = false;
+                    cbNFOShows.Checked = false;
+                    cbNFOEpisodes.Checked = false;
                     cbMeta.Checked = false;
                     cbMetaSubfolder.Checked = false;
                     cbSeriesJpg.Checked = false;
@@ -1085,7 +1108,7 @@ namespace TVRename
                     rbFolderPoster.Checked = false;
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = false;
-                    cbXBMCImages.Checked = false;
+                    cbKODIImages.Checked = false;
                     break;
 #if DEBUG
                 default:

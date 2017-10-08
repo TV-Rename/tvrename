@@ -2462,6 +2462,7 @@ namespace TVRename
                     ser.ShowTimeZone = aes.ShowTimeZone;
                 this.ShowAddedOrEdited(true);
                 this.SelectShow(si);
+
             }
             this.LessBusy();
         }
@@ -2471,6 +2472,8 @@ namespace TVRename
             this.mDoc.SetDirty();
             this.RefreshWTW(download);
             this.FillMyShows();
+
+            this.mDoc.ExportShowInfo(); //Save shows list to disk
         }
 
         private void bnMyShowsDelete_Click(object sender, System.EventArgs e)
@@ -2481,6 +2484,7 @@ namespace TVRename
                 return;
 
             this.DeleteShow(si);
+            this.mDoc.ExportShowInfo(); //Save shows list to disk
         }
 
         private void DeleteShow(ShowItem si)
@@ -2492,6 +2496,7 @@ namespace TVRename
             this.mDoc.GetShowItems(true).Remove(si);
             this.mDoc.UnlockShowItems();
             this.ShowAddedOrEdited(false);
+
         }
 
         private void bnMyShowsEdit_Click(object sender, System.EventArgs e)
