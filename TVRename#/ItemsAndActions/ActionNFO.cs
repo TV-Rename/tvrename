@@ -36,7 +36,7 @@ namespace TVRename
 
         public string Name
         {
-            get { return "Write XBMC Metadata"; }
+            get { return "Write KODI Metadata"; }
         }
 
         public bool Done { get; private set; }
