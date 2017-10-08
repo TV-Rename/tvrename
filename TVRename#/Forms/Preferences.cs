@@ -111,6 +111,8 @@ namespace TVRename
             S.ExportRenamingXMLTo = this.txtRenamingXML.Text;
             S.ExportFOXML = this.cbFOXML.Checked;
             S.ExportFOXMLTo = this.txtFOXML.Text;
+            S.ExportShowsTXT = this.cbShowsTXT.Checked;
+            S.ExportShowsTXTTo = this.txtShowsTXTTo.Text;
 
             S.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
             S.StartupTab = this.cbStartupTab.SelectedIndex;
@@ -285,6 +287,10 @@ namespace TVRename
             this.txtMissingXML.Text = S.ExportMissingXMLTo;
             this.cbMissingCSV.Checked = S.ExportMissingCSV;
             this.txtMissingCSV.Text = S.ExportMissingCSVTo;
+
+            this.cbShowsTXT.Checked = S.ExportShowsTXT ;
+            this.txtShowsTXTTo.Text = S.ExportShowsTXTTo;
+
 
             this.cbRenamingXML.Checked = S.ExportRenamingXML;
             this.txtRenamingXML.Text = S.ExportRenamingXMLTo;
@@ -472,7 +478,7 @@ namespace TVRename
 
         private void Browse(TextBox txt, string DefaultExt, int FilterIndex)
         {
-            //rss =1, XML = 2, CSV = 3
+            //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5
             this.saveFile.FileName = txt.Text;
             this.saveFile.DefaultExt = DefaultExt;
             this.saveFile.FilterIndex = FilterIndex;
@@ -480,10 +486,6 @@ namespace TVRename
                 txt.Text = this.saveFile.FileName;
         }
 
-        private void bnBrowseWTWRSS_Click(object sender, System.EventArgs e)
-        {
-            this.Browse(this.txtWTWRSS,"rss",1);
-        }
 
         private void bnBrowseWTWXML_Click(object sender, System.EventArgs e)
         {
@@ -524,9 +526,20 @@ namespace TVRename
             this.Browse(this.txtMissingCSV,"csv",3);
         }
 
+
+        private void bnBrowseWTWRSS_Click(object sender, System.EventArgs e)
+        {
+            this.Browse(this.txtWTWRSS, "rss", 1);
+        }
+
         private void bnBrowseMissingXML_Click(object sender, System.EventArgs e)
         {
             this.Browse(this.txtMissingXML,"xml",2);
+        }
+
+        private void bnBrowseShowsTXT_Click(object sender, EventArgs e)
+        {
+            this.Browse(this.txtShowsTXTTo, "txt", 4);
         }
 
         private void bnBrowseRenamingXML_Click(object sender, System.EventArgs e)
@@ -564,6 +577,10 @@ namespace TVRename
             bool fo = this.cbFOXML.Checked;
             this.txtFOXML.Enabled = fo;
             this.bnBrowseFOXML.Enabled = fo;
+
+            bool stxt = this.cbShowsTXT.Checked;
+            this.txtShowsTXTTo.Enabled = stxt;
+            this.bnBrowseShowsTXT.Enabled = stxt;
 
             bool ren = this.cbRenamingXML.Checked;
             this.txtRenamingXML.Enabled = ren;
