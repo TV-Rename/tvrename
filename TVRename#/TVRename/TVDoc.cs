@@ -1335,6 +1335,12 @@ namespace TVRename
             mx.Run(TheActionList);
         }
 
+        public void ExportShowInfo()
+        {
+            ShowsTXT mx = new ShowsTXT();
+            mx.Run(this.ShowItems);
+        }
+
         public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
         {
             DateTime notBefore = DateTime.Now.AddDays(-nDaysPast);

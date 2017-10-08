@@ -207,6 +207,10 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bnBrowseShowsTXT = new System.Windows.Forms.Button();
+            this.cbShowsTXT = new System.Windows.Forms.CheckBox();
+            this.txtShowsTXTTo = new System.Windows.Forms.TextBox();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -226,6 +230,7 @@ namespace TVRename
             this.groupBox6.SuspendLayout();
             this.tpTreeColoring.SuspendLayout();
             this.cmDefaults.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -403,7 +408,8 @@ namespace TVRename
             // 
             // saveFile
             // 
-            this.saveFile.Filter = "RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|CSV files (*.csv)|*.csv|All files" +
+            
+            this.saveFile.Filter = "RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|CSV files (*.csv)|*.csv|TXT files (*.txt)|*.txt|HTML files (*.html)|*.html|All files" +
     " (*.*)|*.*";
             // 
             // cbTxtToSub
@@ -809,6 +815,7 @@ namespace TVRename
             // 
             // tbAutoExport
             // 
+            this.tbAutoExport.Controls.Add(this.groupBox7);
             this.tbAutoExport.Controls.Add(this.groupBox5);
             this.tbAutoExport.Controls.Add(this.groupBox4);
             this.tbAutoExport.Controls.Add(this.bnBrowseMissingCSV);
@@ -829,7 +836,7 @@ namespace TVRename
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
             this.groupBox5.Controls.Add(this.cbFOXML);
             this.groupBox5.Controls.Add(this.txtFOXML);
-            this.groupBox5.Location = new System.Drawing.Point(6, 313);
+            this.groupBox5.Location = new System.Drawing.Point(6, 344);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(402, 55);
             this.groupBox5.TabIndex = 3;
@@ -870,7 +877,7 @@ namespace TVRename
             this.groupBox4.Controls.Add(this.bnBrowseRenamingXML);
             this.groupBox4.Controls.Add(this.cbRenamingXML);
             this.groupBox4.Controls.Add(this.txtRenamingXML);
-            this.groupBox4.Location = new System.Drawing.Point(6, 250);
+            this.groupBox4.Location = new System.Drawing.Point(6, 288);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(402, 57);
             this.groupBox4.TabIndex = 2;
@@ -908,7 +915,7 @@ namespace TVRename
             // 
             // bnBrowseMissingCSV
             // 
-            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(327, 226);
+            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(327, 257);
             this.bnBrowseMissingCSV.Name = "bnBrowseMissingCSV";
             this.bnBrowseMissingCSV.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingCSV.TabIndex = 2;
@@ -959,7 +966,7 @@ namespace TVRename
             // 
             // txtMissingCSV
             // 
-            this.txtMissingCSV.Location = new System.Drawing.Point(70, 229);
+            this.txtMissingCSV.Location = new System.Drawing.Point(70, 260);
             this.txtMissingCSV.Name = "txtMissingCSV";
             this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
             this.txtMissingCSV.TabIndex = 1;
@@ -968,7 +975,7 @@ namespace TVRename
             // cbMissingCSV
             // 
             this.cbMissingCSV.AutoSize = true;
-            this.cbMissingCSV.Location = new System.Drawing.Point(16, 231);
+            this.cbMissingCSV.Location = new System.Drawing.Point(16, 262);
             this.cbMissingCSV.Name = "cbMissingCSV";
             this.cbMissingCSV.Size = new System.Drawing.Size(47, 17);
             this.cbMissingCSV.TabIndex = 0;
@@ -1414,7 +1421,7 @@ namespace TVRename
             this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(17, 15);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(37, 13);
+            this.label12.Size = new System.Drawing.Size(33, 13);
             this.label12.TabIndex = 0;
             this.label12.Text = "KODI";
             // 
@@ -1973,6 +1980,46 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
+            // bnBrowseShowsTXT
+            // 
+            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(321, 19);
+            this.bnBrowseShowsTXT.Name = "bnBrowseShowsTXT";
+            this.bnBrowseShowsTXT.Size = new System.Drawing.Size(75, 23);
+            this.bnBrowseShowsTXT.TabIndex = 5;
+            this.bnBrowseShowsTXT.Text = "Browse...";
+            this.bnBrowseShowsTXT.UseVisualStyleBackColor = true;
+            this.bnBrowseShowsTXT.Click += new System.EventHandler(this.bnBrowseShowsTXT_Click);
+            // 
+            // cbShowsTXT
+            // 
+            this.cbShowsTXT.AutoSize = true;
+            this.cbShowsTXT.Location = new System.Drawing.Point(10, 23);
+            this.cbShowsTXT.Name = "cbShowsTXT";
+            this.cbShowsTXT.Size = new System.Drawing.Size(47, 17);
+            this.cbShowsTXT.TabIndex = 3;
+            this.cbShowsTXT.Text = "TXT";
+            this.cbShowsTXT.UseVisualStyleBackColor = true;
+            this.cbShowsTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            // 
+            // txtShowsTXTTo
+            // 
+            this.txtShowsTXTTo.Location = new System.Drawing.Point(64, 21);
+            this.txtShowsTXTTo.Name = "txtShowsTXTTo";
+            this.txtShowsTXTTo.Size = new System.Drawing.Size(251, 20);
+            this.txtShowsTXTTo.TabIndex = 4;
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.bnBrowseShowsTXT);
+            this.groupBox7.Controls.Add(this.cbShowsTXT);
+            this.groupBox7.Controls.Add(this.txtShowsTXTTo);
+            this.groupBox7.Location = new System.Drawing.Point(7, 180);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(402, 55);
+            this.groupBox7.TabIndex = 4;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "All Shows";
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2028,6 +2075,8 @@ namespace TVRename
             this.tpTreeColoring.ResumeLayout(false);
             this.tpTreeColoring.PerformLayout();
             this.cmDefaults.ResumeLayout(false);
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2214,5 +2263,9 @@ namespace TVRename
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox cbNFOEpisodes;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.Button bnBrowseShowsTXT;
+        private System.Windows.Forms.CheckBox cbShowsTXT;
+        private System.Windows.Forms.TextBox txtShowsTXTTo;
     }
 }

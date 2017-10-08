@@ -11,6 +11,12 @@ namespace TVRename
         public abstract string Location();
     }
 
+    abstract class ShowsExporter : Exporter
+    {
+        public abstract void Run(List<ShowItem> shows);
+    }
+
+
     abstract class MissingExporter : Exporter
     {
         public abstract void Run(ItemList TheActionList);
