@@ -11,11 +11,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.IO;
 
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
 namespace TVRename
 {
     /// <summary>

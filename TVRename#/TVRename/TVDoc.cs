@@ -20,9 +20,6 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
