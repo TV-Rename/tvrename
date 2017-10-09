@@ -4,8 +4,6 @@ using System.Text;
 using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {

@@ -17,10 +17,6 @@ using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using System.Web;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using Path = Alphaleonis.Win32.Filesystem.Path;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 // Helpful functions and classes
 

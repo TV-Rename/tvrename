@@ -4,7 +4,7 @@ using System.Text;
 using System.Net;
 using System.Windows.Forms;
 using System.IO;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+
 
 namespace TVRename
 {

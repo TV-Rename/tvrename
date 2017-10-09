@@ -9,14 +9,14 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+
 
 namespace TVRename
 {
     using System;
     using System.IO;
     using System.Windows.Forms;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    
 
     public class ActionDownload : Item, Action, ScanListItem
     {

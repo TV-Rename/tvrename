@@ -10,7 +10,7 @@ namespace TVRename
     using System;
     using System.IO;
     using System.Windows.Forms;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    
 
 
     public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
