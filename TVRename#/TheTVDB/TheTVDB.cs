@@ -15,9 +15,6 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 
 using Ionic.Utils.Zip;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Xml;

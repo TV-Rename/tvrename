@@ -8,9 +8,6 @@
 using System.IO;
 using System;
 using System.Windows.Forms;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
