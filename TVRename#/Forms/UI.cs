@@ -512,8 +512,8 @@ namespace TVRename
                 this.WriteColWidthsXML("AllInOne", writer);
 
                 writer.WriteStartElement("Splitter");
-                XMLHelper.WriteElementToXML(writer,"Distance",this.splitContainer1.SplitterDistance);
-                XMLHelper.WriteElementToXML(writer,"HTMLCollapsed",this.splitContainer1.Panel2Collapsed);
+                XMLHelper.WriteAttributeToXML(writer,"Distance",this.splitContainer1.SplitterDistance);
+                XMLHelper.WriteAttributeToXML(writer,"HTMLCollapsed",this.splitContainer1.Panel2Collapsed);
                 writer.WriteEndElement(); // splitter
 
                 writer.WriteEndElement(); // Layout
