@@ -7,7 +7,7 @@
 // 
 
 using System;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Xml;
 using System.Xml.Serialization;
 

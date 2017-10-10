@@ -13,13 +13,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml;
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
+using Directory = Alphaleonis.Win32.Filesystem.Directory;		
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
@@ -1669,7 +1673,7 @@ namespace TVRename
             {
                 if (!Directory.Exists(dirPath)) continue;
 
-                foreach (String filePath in Directory.GetFiles(dirPath,"*",SearchOption.AllDirectories)) 
+                foreach (String filePath in Directory.GetFiles(dirPath,"*", System.IO.SearchOption.AllDirectories)) 
                 {
                     if (!File.Exists(filePath)) continue;
 

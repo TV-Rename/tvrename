@@ -1,7 +1,7 @@
 ﻿using System;
 using System.CodeDom;
 using System.Diagnostics;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Security.AccessControl;
@@ -12,8 +12,14 @@ using System.Windows.Forms;
 namespace TVRename
 {
     using System;
-    using System.IO;
+    using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
+    using System.IO;
+
+    using File = Alphaleonis.Win32.Filesystem.File;		
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;		
+    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
+    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 
     public class ActionCopyMoveRename : Item, Action, ScanListItem
@@ -77,10 +83,10 @@ namespace TVRename
                 // ignored
             }
 
-            if (QuickOperation())
+            //if (QuickOperation())
                 this.OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
-            else
-                CopyItOurself(ref pause, stats); // do it ourself!
+            //else
+                //CopyItOurself(ref pause, stats); // do it ourself!
 
             // set NTFS permissions
             try
@@ -301,14 +307,25 @@ namespace TVRename
                     // XP won't actually do a rename if its only a case difference
                     string tempName = TempFor(this.To);
 
-                    From.MoveTo(tempName);
-                    File.Move(tempName, To.FullName);
+                    //From.MoveTo(tempName);
+                    //File.Move(tempName, To.FullName);
 
-               }
+                    // This step could be slow, so report progress
+                    if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0 )	)	 
+                        new Exception("Move operation aborted");
+                
+                    // This step very quick, so no progress reporting		
+                    Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName);
+
+
+            }
                 else
-                    From.MoveTo(To.FullName);
+                    //From.MoveTo(To.FullName);
+                    if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0  ))
+                        new Exception("Move operation aborted");
 
-                KeepTimestamps(this.From, this.To);
+                // AlphaFS doesn't reset file time stamps
+                //KeepTimestamps(this.From, this.To);
 
                 this.Done = true;
 
@@ -327,12 +344,12 @@ namespace TVRename
             }
         }
 
-//        private CopyProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, uint StreamNumber, CopyProgressCallbackReason CallbackReason, object UserData)
-  //       {
-    //         double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
-      //       this.PercentDone = pct > 100.0 ? 100.0 : pct;
-        //     return CopyProgressResult.Continue;
-         //}
+        private CopyMoveProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, Object UserData)
+        {
+             double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
+             this.PercentDone = pct > 100.0 ? 100.0 : pct;
+             return CopyMoveProgressResult.Continue;
+         }
 
     private void CopyItOurself(ref bool pause, TVRenameStats stats)
 
