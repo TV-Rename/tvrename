@@ -7,7 +7,7 @@
 // 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -19,7 +19,9 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 using System.Linq;
-
+using System.IO;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TheTVDB web API, and get tv series info
 
@@ -638,7 +640,7 @@ namespace TVRename
                 if (maxUpdateTime != null)
                 {
                     this.New_Srv_Time = (long)maxUpdateTime;
-                    System.Diagnostics.Debug.WriteLine("Obtianed " + numberOfResponses + " response from lastupdated query #" + numberofCallsMade + " - since (local) " + Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime());
+                    System.Diagnostics.Debug.WriteLine("Obtianed " + numberOfResponses + " responses from lastupdated query #" + numberofCallsMade + " - since (local) " + Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime());
                     epochTime = this.New_Srv_Time;
                 }
 
