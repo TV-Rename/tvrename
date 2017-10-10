@@ -7,7 +7,7 @@
 // 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -19,7 +19,9 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 using System.Linq;
-
+using System.IO;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 // Talk to the TheTVDB web API, and get tv series info
 
