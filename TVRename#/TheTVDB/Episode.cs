@@ -459,7 +459,7 @@ namespace TVRename
             List<string> skip = new List<String>
                                   {
                                       "overview","Overview","seriesId","seriesid","lastupdated","lastUpdated","EpisodeName","episodeName","FirstAired","firstAired",
-                                      "GuestStars","guestStars","director","directors","EpisodeDirector","Writer","Writers"
+                                      "GuestStars","guestStars","director","directors","EpisodeDirector","Writer","Writers","id","seasonid","Overview","Rating"
                                   };
 
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)

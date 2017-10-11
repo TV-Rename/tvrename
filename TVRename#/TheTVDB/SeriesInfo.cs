@@ -520,9 +520,10 @@ namespace TVRename
                                   {
                                       "Airs_Time",
                                       "lastupdated","lastUpdated",
-                                      "id","seriesName","seriesname",
+                                      "id","seriesName","seriesname","SeriesName",
                                       "lastUpdated","lastupdated",
-                                      "FirstAired","firstAired"
+                                      "FirstAired","firstAired",
+                                      "LanguageId","TimeZone"
                                   };
 
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
