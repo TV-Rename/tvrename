@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
@@ -18,12 +17,14 @@ using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using TVRename.Forms;
-
+using Alphaleonis.Win32.Filesystem;
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using File = Alphaleonis.Win32.Filesystem.File;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using FileMode = Alphaleonis.Win32.Filesystem.FileMode;
+using File = Alphaleonis.Win32.Filesystem.File;
 using Path = Alphaleonis.Win32.Filesystem.Path;
+using System.IO;
 
 namespace TVRename
 {
@@ -364,9 +365,15 @@ namespace TVRename
             if (res == DialogResult.Yes)
             {
                 TheTVDB.Instance.ForgetEverything();
+
+                
+
                 this.FillMyShows();
                 this.FillEpGuideHTML();
                 this.FillWhenToWatchList();
+
+
+                backgroundDownloadToolStripMenuItem_Click(sender, e);
             }
         }
 
@@ -512,8 +519,8 @@ namespace TVRename
                 this.WriteColWidthsXML("AllInOne", writer);
 
                 writer.WriteStartElement("Splitter");
-                XMLHelper.WriteElementToXML(writer,"Distance",this.splitContainer1.SplitterDistance);
-                XMLHelper.WriteElementToXML(writer,"HTMLCollapsed",this.splitContainer1.Panel2Collapsed);
+                XMLHelper.WriteAttributeToXML(writer,"Distance",this.splitContainer1.SplitterDistance);
+                XMLHelper.WriteAttributeToXML(writer,"HTMLCollapsed",this.splitContainer1.Panel2Collapsed);
                 writer.WriteEndElement(); // splitter
 
                 writer.WriteEndElement(); // Layout
@@ -2456,6 +2463,7 @@ namespace TVRename
                     ser.ShowTimeZone = aes.ShowTimeZone;
                 this.ShowAddedOrEdited(true);
                 this.SelectShow(si);
+
             }
             this.LessBusy();
         }
@@ -2465,6 +2473,8 @@ namespace TVRename
             this.mDoc.SetDirty();
             this.RefreshWTW(download);
             this.FillMyShows();
+
+            this.mDoc.ExportShowInfo(); //Save shows list to disk
         }
 
         private void bnMyShowsDelete_Click(object sender, System.EventArgs e)
@@ -2475,6 +2485,7 @@ namespace TVRename
                 return;
 
             this.DeleteShow(si);
+            this.mDoc.ExportShowInfo(); //Save shows list to disk
         }
 
         private void DeleteShow(ShowItem si)
@@ -2486,6 +2497,7 @@ namespace TVRename
             this.mDoc.GetShowItems(true).Remove(si);
             this.mDoc.UnlockShowItems();
             this.ShowAddedOrEdited(false);
+
         }
 
         private void bnMyShowsEdit_Click(object sender, System.EventArgs e)

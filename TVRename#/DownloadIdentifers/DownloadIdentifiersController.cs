@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -18,8 +17,8 @@ namespace TVRename
             Identifiers.Add(new DownloadMede8erMetaData());
             Identifiers.Add(new DownloadpyTivoMetaData());
             Identifiers.Add(new DownloadSeriesJPG());
-            Identifiers.Add(new DownloadXBMCMetaData());
-            Identifiers.Add(new DownloadXBMCImages());
+            Identifiers.Add(new DownloadKODIMetaData());
+            Identifiers.Add(new DownloadKODIImages());
         }
 
         public void notifyComplete(FileInfo file)

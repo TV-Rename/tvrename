@@ -8,10 +8,10 @@
 namespace TVRename
 {
     using System;
-    using System.IO;
+    using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
     using System.Xml;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    
 
     public class ActionMede8erViewXML : Item, Action, ScanListItem, ActionWriteMetadata
     {

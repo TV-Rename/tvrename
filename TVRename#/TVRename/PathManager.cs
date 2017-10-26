@@ -1,5 +1,5 @@
 using System;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename

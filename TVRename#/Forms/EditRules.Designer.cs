@@ -36,26 +36,26 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(EditRules)));
-            this.bnRuleUp = (new System.Windows.Forms.Button());
-            this.bnRuleDown = (new System.Windows.Forms.Button());
-            this.lvRuleList = (new System.Windows.Forms.ListView());
-            this.columnHeader3 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader4 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader5 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader6 = (new System.Windows.Forms.ColumnHeader());
-            this.bnDelRule = (new System.Windows.Forms.Button());
-            this.bnEdit = (new System.Windows.Forms.Button());
-            this.bnAddRule = (new System.Windows.Forms.Button());
-            this.label1 = (new System.Windows.Forms.Label());
-            this.label2 = (new System.Windows.Forms.Label());
-            this.label3 = (new System.Windows.Forms.Label());
-            this.lbEpsPreview = (new System.Windows.Forms.ListBox());
-            this.label4 = (new System.Windows.Forms.Label());
-            this.bnCancel = (new System.Windows.Forms.Button());
-            this.bnOK = (new System.Windows.Forms.Button());
-            this.txtShowName = (new System.Windows.Forms.Label());
-            this.txtSeasonNumber = (new System.Windows.Forms.Label());
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditRules));
+            this.bnRuleUp = new System.Windows.Forms.Button();
+            this.bnRuleDown = new System.Windows.Forms.Button();
+            this.lvRuleList = new System.Windows.Forms.ListView();
+            this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.bnDelRule = new System.Windows.Forms.Button();
+            this.bnEdit = new System.Windows.Forms.Button();
+            this.bnAddRule = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.lbEpsPreview = new System.Windows.Forms.ListBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.bnCancel = new System.Windows.Forms.Button();
+            this.bnOK = new System.Windows.Forms.Button();
+            this.txtShowName = new System.Windows.Forms.Label();
+            this.txtSeasonNumber = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // bnRuleUp
@@ -66,7 +66,7 @@ namespace TVRename
             this.bnRuleUp.TabIndex = 9;
             this.bnRuleUp.Text = "&Up";
             this.bnRuleUp.UseVisualStyleBackColor = true;
-            this.bnRuleUp.Click += new System.EventHandler(bnRuleUp_Click);
+            this.bnRuleUp.Click += new System.EventHandler(this.bnRuleUp_Click);
             // 
             // bnRuleDown
             // 
@@ -76,11 +76,15 @@ namespace TVRename
             this.bnRuleDown.TabIndex = 10;
             this.bnRuleDown.Text = "Do&wn";
             this.bnRuleDown.UseVisualStyleBackColor = true;
-            this.bnRuleDown.Click += new System.EventHandler(bnRuleDown_Click);
+            this.bnRuleDown.Click += new System.EventHandler(this.bnRuleDown_Click);
             // 
             // lvRuleList
             // 
-            this.lvRuleList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[4] { this.columnHeader3, this.columnHeader4, this.columnHeader5, this.columnHeader6 });
+            this.lvRuleList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.columnHeader6});
             this.lvRuleList.FullRowSelect = true;
             this.lvRuleList.HideSelection = false;
             this.lvRuleList.Location = new System.Drawing.Point(12, 73);
@@ -90,7 +94,7 @@ namespace TVRename
             this.lvRuleList.TabIndex = 5;
             this.lvRuleList.UseCompatibleStateImageBehavior = false;
             this.lvRuleList.View = System.Windows.Forms.View.Details;
-            this.lvRuleList.DoubleClick += new System.EventHandler(lvRuleList_DoubleClick);
+            this.lvRuleList.DoubleClick += new System.EventHandler(this.lvRuleList_DoubleClick);
             // 
             // columnHeader3
             // 
@@ -117,7 +121,7 @@ namespace TVRename
             this.bnDelRule.TabIndex = 8;
             this.bnDelRule.Text = "&Delete";
             this.bnDelRule.UseVisualStyleBackColor = true;
-            this.bnDelRule.Click += new System.EventHandler(bnDelRule_Click);
+            this.bnDelRule.Click += new System.EventHandler(this.bnDelRule_Click);
             // 
             // bnEdit
             // 
@@ -127,7 +131,7 @@ namespace TVRename
             this.bnEdit.TabIndex = 7;
             this.bnEdit.Text = "&Edit";
             this.bnEdit.UseVisualStyleBackColor = true;
-            this.bnEdit.Click += new System.EventHandler(bnEdit_Click);
+            this.bnEdit.Click += new System.EventHandler(this.bnEdit_Click);
             // 
             // bnAddRule
             // 
@@ -137,7 +141,7 @@ namespace TVRename
             this.bnAddRule.TabIndex = 6;
             this.bnAddRule.Text = "&Add";
             this.bnAddRule.UseVisualStyleBackColor = true;
-            this.bnAddRule.Click += new System.EventHandler(bnAddRule_Click);
+            this.bnAddRule.Click += new System.EventHandler(this.bnAddRule_Click);
             // 
             // label1
             // 
@@ -198,7 +202,7 @@ namespace TVRename
             this.bnCancel.TabIndex = 14;
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
-            this.bnCancel.Click += new System.EventHandler(bnCancel_Click);
+            this.bnCancel.Click += new System.EventHandler(this.bnCancel_Click);
             // 
             // bnOK
             // 
@@ -209,7 +213,7 @@ namespace TVRename
             this.bnOK.TabIndex = 13;
             this.bnOK.Text = "OK";
             this.bnOK.UseVisualStyleBackColor = true;
-            this.bnOK.Click += new System.EventHandler(bnOK_Click);
+            this.bnOK.Click += new System.EventHandler(this.bnOK_Click);
             // 
             // txtShowName
             // 
@@ -234,7 +238,7 @@ namespace TVRename
             // EditRules
             // 
             this.AcceptButton = this.bnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(424, 478);
@@ -255,6 +259,7 @@ namespace TVRename
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimizeBox = false;
             this.Name = "EditRules";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

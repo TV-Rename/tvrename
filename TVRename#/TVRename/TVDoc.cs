@@ -13,15 +13,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using File = Alphaleonis.Win32.Filesystem.File;
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
+using Directory = Alphaleonis.Win32.Filesystem.Directory;		
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -80,6 +81,48 @@ namespace TVRename
             distinctGenres.Sort();
             return distinctGenres;
         }
+
+        public List<String> getStatuses()
+        {
+            List<String> allStatuses = new List<string> { };
+            foreach (ShowItem si in ShowItems)
+            {
+                if (si.ShowStatus != null) allStatuses.Add(si.ShowStatus);
+            }
+            List<String> distinctStatuses = allStatuses.Distinct().ToList();
+            distinctStatuses.Sort();
+            return distinctStatuses;
+        }
+
+        public List<String> getNetworks()
+        {
+            List<String> allValues = new List<string> { };
+            foreach (ShowItem si in ShowItems)
+            {
+                if (si.TheSeries().getNetwork() != null) allValues.Add(si.TheSeries().getNetwork());
+            }
+            List<String> distinctValues = allValues.Distinct().ToList();
+            distinctValues.Sort();
+            return distinctValues;
+        }
+
+        public List<String> GetRatings()
+        {
+            List<String> allValues = new List<string> { };
+            foreach (ShowItem si in ShowItems)
+            {
+                if (si.TheSeries().GetRating() != null) allValues.Add(si.TheSeries().GetRating());
+            }
+            List<String> distinctValues = allValues.Distinct().ToList();
+            distinctValues.Sort();
+            return distinctValues;
+        }
+
+
+        public int getMinYear() => ShowItems.Min(si => Convert.ToInt32(si.TheSeries().GetYear()));
+
+        public int getMaxYear() => ShowItems.Max(si => Convert.ToInt32(si.TheSeries().GetYear()));
+
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
         {
@@ -1293,6 +1336,12 @@ namespace TVRename
             mx.Run(TheActionList);
         }
 
+        public void ExportShowInfo()
+        {
+            ShowsTXT mx = new ShowsTXT();
+            mx.Run(this.ShowItems);
+        }
+
         public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
         {
             DateTime notBefore = DateTime.Now.AddDays(-nDaysPast);
@@ -1393,7 +1442,7 @@ namespace TVRename
             ActionQueue[] queues = new ActionQueue[4];
             queues[0] = new ActionQueue("Move/Copy", 1); // cross-filesystem moves (slow ones)
             queues[1] = new ActionQueue("Move", 2); // local rename/moves
-            queues[2] = new ActionQueue("Write Metadata", 4); // writing XBMC NFO files, etc.
+            queues[2] = new ActionQueue("Write Metadata", 4); // writing KODI NFO files, etc.
             queues[3] = new ActionQueue("Download", TVSettings.Instance.ParallelDownloads); // downloading torrents, banners, thumbnails
 
             foreach (ScanListItem sli in theList)
@@ -1624,7 +1673,7 @@ namespace TVRename
             {
                 if (!Directory.Exists(dirPath)) continue;
 
-                foreach (String filePath in Directory.GetFiles(dirPath,"*",SearchOption.AllDirectories)) 
+                foreach (String filePath in Directory.GetFiles(dirPath,"*", System.IO.SearchOption.AllDirectories)) 
                 {
                     if (!File.Exists(filePath)) continue;
 

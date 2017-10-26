@@ -9,7 +9,7 @@
 using System;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -17,10 +17,13 @@ using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using System.Web;
-using File = Alphaleonis.Win32.Filesystem.File;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using Path = Alphaleonis.Win32.Filesystem.Path;
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
+using Path = Alphaleonis.Win32.Filesystem.Path;
+using System.IO;
 
 // Helpful functions and classes
 
@@ -315,6 +318,18 @@ namespace TVRename
                 return ("0" + i);
             }
         }
+
+        public static long ToUnixTime(this DateTime date)
+        {
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            return Convert.ToInt64((date.ToUniversalTime() - epoch).TotalSeconds);
+        }
+
+        public static DateTime FromUnixTime(long unixTime)
+        {
+            return epoch.AddSeconds(unixTime);
+        }
+        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public static bool SysOpen(string what, string arguments = null)
         {

@@ -7,8 +7,9 @@
 // 
 using System;
 using System.Drawing;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Windows.Forms;
+using System.IO;
 
 // Saves the widths of columns in a listview, and window position, for loading up with the
 // same layout next run.
