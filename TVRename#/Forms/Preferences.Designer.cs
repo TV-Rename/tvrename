@@ -95,6 +95,10 @@ namespace TVRename
             this.cbForceLower = new System.Windows.Forms.CheckBox();
             this.cbIgnoreSamples = new System.Windows.Forms.CheckBox();
             this.tbAutoExport = new System.Windows.Forms.TabPage();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.bnBrowseShowsTXT = new System.Windows.Forms.Button();
+            this.cbShowsTXT = new System.Windows.Forms.CheckBox();
+            this.txtShowsTXTTo = new System.Windows.Forms.TextBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.bnBrowseFOXML = new System.Windows.Forms.Button();
             this.cbFOXML = new System.Windows.Forms.CheckBox();
@@ -111,6 +115,8 @@ namespace TVRename
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.label33 = new System.Windows.Forms.Label();
+            this.cbAutoCreateFolders = new System.Windows.Forms.CheckBox();
             this.label28 = new System.Windows.Forms.Label();
             this.cbSearchRSS = new System.Windows.Forms.CheckBox();
             this.cbRenameCheck = new System.Windows.Forms.CheckBox();
@@ -207,15 +213,12 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.bnBrowseShowsTXT = new System.Windows.Forms.Button();
-            this.cbShowsTXT = new System.Windows.Forms.CheckBox();
-            this.txtShowsTXTTo = new System.Windows.Forms.TextBox();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
             this.tbFilesAndFolders.SuspendLayout();
             this.tbAutoExport.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -230,7 +233,6 @@ namespace TVRename
             this.groupBox6.SuspendLayout();
             this.tpTreeColoring.SuspendLayout();
             this.cmDefaults.SuspendLayout();
-            this.groupBox7.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -408,9 +410,8 @@ namespace TVRename
             // 
             // saveFile
             // 
-            
-            this.saveFile.Filter = "RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|CSV files (*.csv)|*.csv|TXT files (*.txt)|*.txt|HTML files (*.html)|*.html|All files" +
-    " (*.*)|*.*";
+            this.saveFile.Filter = "RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|CSV files (*.csv)|*.csv|TXT files" +
+    " (*.txt)|*.txt|HTML files (*.html)|*.html|All files (*.*)|*.*";
             // 
             // cbTxtToSub
             // 
@@ -831,6 +832,46 @@ namespace TVRename
             this.tbAutoExport.Text = "Automatic Export";
             this.tbAutoExport.UseVisualStyleBackColor = true;
             // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.bnBrowseShowsTXT);
+            this.groupBox7.Controls.Add(this.cbShowsTXT);
+            this.groupBox7.Controls.Add(this.txtShowsTXTTo);
+            this.groupBox7.Location = new System.Drawing.Point(7, 180);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(402, 55);
+            this.groupBox7.TabIndex = 4;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "All Shows";
+            // 
+            // bnBrowseShowsTXT
+            // 
+            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(321, 19);
+            this.bnBrowseShowsTXT.Name = "bnBrowseShowsTXT";
+            this.bnBrowseShowsTXT.Size = new System.Drawing.Size(75, 23);
+            this.bnBrowseShowsTXT.TabIndex = 5;
+            this.bnBrowseShowsTXT.Text = "Browse...";
+            this.bnBrowseShowsTXT.UseVisualStyleBackColor = true;
+            this.bnBrowseShowsTXT.Click += new System.EventHandler(this.bnBrowseShowsTXT_Click);
+            // 
+            // cbShowsTXT
+            // 
+            this.cbShowsTXT.AutoSize = true;
+            this.cbShowsTXT.Location = new System.Drawing.Point(10, 23);
+            this.cbShowsTXT.Name = "cbShowsTXT";
+            this.cbShowsTXT.Size = new System.Drawing.Size(47, 17);
+            this.cbShowsTXT.TabIndex = 3;
+            this.cbShowsTXT.Text = "TXT";
+            this.cbShowsTXT.UseVisualStyleBackColor = true;
+            this.cbShowsTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            // 
+            // txtShowsTXTTo
+            // 
+            this.txtShowsTXTTo.Location = new System.Drawing.Point(64, 21);
+            this.txtShowsTXTTo.Name = "txtShowsTXTTo";
+            this.txtShowsTXTTo.Size = new System.Drawing.Size(251, 20);
+            this.txtShowsTXTTo.TabIndex = 4;
+            // 
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
@@ -986,6 +1027,8 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.label33);
+            this.tpScanOptions.Controls.Add(this.cbAutoCreateFolders);
             this.tpScanOptions.Controls.Add(this.label28);
             this.tpScanOptions.Controls.Add(this.cbSearchRSS);
             this.tpScanOptions.Controls.Add(this.cbRenameCheck);
@@ -1001,6 +1044,25 @@ namespace TVRename
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(6, 202);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(80, 13);
+            this.label33.TabIndex = 9;
+            this.label33.Text = "Folder creation:";
+            // 
+            // cbAutoCreateFolders
+            // 
+            this.cbAutoCreateFolders.AutoSize = true;
+            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 218);
+            this.cbAutoCreateFolders.Name = "cbAutoCreateFolders";
+            this.cbAutoCreateFolders.Size = new System.Drawing.Size(192, 17);
+            this.cbAutoCreateFolders.TabIndex = 8;
+            this.cbAutoCreateFolders.Text = "&Automatically create missing folders";
+            this.cbAutoCreateFolders.UseVisualStyleBackColor = true;
             // 
             // label28
             // 
@@ -1980,46 +2042,6 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // bnBrowseShowsTXT
-            // 
-            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(321, 19);
-            this.bnBrowseShowsTXT.Name = "bnBrowseShowsTXT";
-            this.bnBrowseShowsTXT.Size = new System.Drawing.Size(75, 23);
-            this.bnBrowseShowsTXT.TabIndex = 5;
-            this.bnBrowseShowsTXT.Text = "Browse...";
-            this.bnBrowseShowsTXT.UseVisualStyleBackColor = true;
-            this.bnBrowseShowsTXT.Click += new System.EventHandler(this.bnBrowseShowsTXT_Click);
-            // 
-            // cbShowsTXT
-            // 
-            this.cbShowsTXT.AutoSize = true;
-            this.cbShowsTXT.Location = new System.Drawing.Point(10, 23);
-            this.cbShowsTXT.Name = "cbShowsTXT";
-            this.cbShowsTXT.Size = new System.Drawing.Size(47, 17);
-            this.cbShowsTXT.TabIndex = 3;
-            this.cbShowsTXT.Text = "TXT";
-            this.cbShowsTXT.UseVisualStyleBackColor = true;
-            this.cbShowsTXT.CheckedChanged += new System.EventHandler(this.EnableDisable);
-            // 
-            // txtShowsTXTTo
-            // 
-            this.txtShowsTXTTo.Location = new System.Drawing.Point(64, 21);
-            this.txtShowsTXTTo.Name = "txtShowsTXTTo";
-            this.txtShowsTXTTo.Size = new System.Drawing.Size(251, 20);
-            this.txtShowsTXTTo.TabIndex = 4;
-            // 
-            // groupBox7
-            // 
-            this.groupBox7.Controls.Add(this.bnBrowseShowsTXT);
-            this.groupBox7.Controls.Add(this.cbShowsTXT);
-            this.groupBox7.Controls.Add(this.txtShowsTXTTo);
-            this.groupBox7.Location = new System.Drawing.Point(7, 180);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(402, 55);
-            this.groupBox7.TabIndex = 4;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "All Shows";
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2048,6 +2070,8 @@ namespace TVRename
             this.tbFilesAndFolders.PerformLayout();
             this.tbAutoExport.ResumeLayout(false);
             this.tbAutoExport.PerformLayout();
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -2075,8 +2099,6 @@ namespace TVRename
             this.tpTreeColoring.ResumeLayout(false);
             this.tpTreeColoring.PerformLayout();
             this.cmDefaults.ResumeLayout(false);
-            this.groupBox7.ResumeLayout(false);
-            this.groupBox7.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2267,5 +2289,7 @@ namespace TVRename
         private System.Windows.Forms.Button bnBrowseShowsTXT;
         private System.Windows.Forms.CheckBox cbShowsTXT;
         private System.Windows.Forms.TextBox txtShowsTXTTo;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.CheckBox cbAutoCreateFolders;
     }
 }

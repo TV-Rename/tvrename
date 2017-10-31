@@ -248,6 +248,7 @@ namespace TVRename
         }
 
         public bool AutoSelectShowInMyShows = true;
+        public bool AutoCreateFolders = false;
         public bool BGDownload = false;
         public bool CheckuTorrent = false;
         public bool EpTBNs = false;
@@ -435,6 +436,8 @@ namespace TVRename
                     this.RenameTxtToSub = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ShowEpisodePictures")
                     this.ShowEpisodePictures = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "AutoCreateFolders")
+                    this.AutoCreateFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoSelectShowInMyShows")
                     this.AutoSelectShowInMyShows = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SpecialsFolderName")
@@ -753,6 +756,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"RenameTxtToSub",this.RenameTxtToSub);
             XMLHelper.WriteElementToXML(writer,"ParallelDownloads",this.ParallelDownloads);
             XMLHelper.WriteElementToXML(writer,"AutoSelectShowInMyShows",this.AutoSelectShowInMyShows);
+            XMLHelper.WriteElementToXML(writer, "AutoCreateFolders", this.AutoCreateFolders );
             XMLHelper.WriteElementToXML(writer,"ShowEpisodePictures",this.ShowEpisodePictures);
             XMLHelper.WriteElementToXML(writer,"SpecialsFolderName",this.SpecialsFolderName);
             XMLHelper.WriteElementToXML(writer,"uTorrentPath",this.uTorrentPath);

@@ -1815,6 +1815,9 @@ namespace TVRename
                                 if (this.Args.Hide && (whatToDo == FAResult.kfaNotSet))
                                     whatToDo = FAResult.kfaIgnoreOnce; // default in /hide mode is to ignore
 
+                                if (TVSettings.Instance.AutoCreateFolders)
+                                    whatToDo = FAResult.kfaCreate; 
+
                                 if (whatToDo == FAResult.kfaNotSet)
                                 {
                                     // no command line guidance, so ask the user

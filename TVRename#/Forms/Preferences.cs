@@ -131,6 +131,7 @@ namespace TVRename
             S.RenameTxtToSub = this.cbTxtToSub.Checked;
             S.ShowEpisodePictures = this.cbShowEpisodePictures.Checked;
             S.AutoSelectShowInMyShows = this.cbAutoSelInMyShows.Checked;
+            S.AutoCreateFolders = this.cbAutoCreateFolders.Checked ;  
             S.SpecialsFolderName = this.txtSpecialsFolderName.Text;
 
             S.ForceLowercaseFilenames = this.cbForceLower.Checked;
@@ -313,6 +314,7 @@ namespace TVRename
             this.chkShowInTaskbar.Checked = S.ShowInTaskbar;
             this.cbTxtToSub.Checked = S.RenameTxtToSub;
             this.cbShowEpisodePictures.Checked = S.ShowEpisodePictures;
+            this.cbAutoCreateFolders.Checked = S.AutoCreateFolders; 
             this.cbAutoSelInMyShows.Checked = S.AutoSelectShowInMyShows;
             this.txtSpecialsFolderName.Text = S.SpecialsFolderName;
             this.cbForceLower.Checked = S.ForceLowercaseFilenames;

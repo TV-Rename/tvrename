@@ -237,7 +237,7 @@ namespace TVRename
                     if (TVSettings.Instance.IgnoreSamples && dce.LowerName.Contains("sample") && ((dce.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
                         continue;
 
-                    matched = Regex.Match(dce.SimplifiedFullName, "\\b" + showname + "\\b", RegexOptions.IgnoreCase).Success;
+                    matched = Regex.Match(dce.SimplifiedFullName, "\\b" + showname.Trim() + "\\b", RegexOptions.IgnoreCase).Success;
 
                     // if we don't match the main name, then test the aliases
                     if (!matched)
@@ -245,7 +245,7 @@ namespace TVRename
                         foreach (string alias in me.Episode.SI.AliasNames)
                         {
                             string aliasName = Helpers.SimplifyName(alias);
-                            matched = Regex.Match(dce.SimplifiedFullName, "\\b" + aliasName + "\\b", RegexOptions.IgnoreCase).Success;
+                            matched = Regex.Match(dce.SimplifiedFullName, "\\b" + aliasName.Trim() + "\\b", RegexOptions.IgnoreCase).Success;
                             if (matched)
                                 break;
                         }
