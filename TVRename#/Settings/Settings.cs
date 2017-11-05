@@ -321,11 +321,11 @@ namespace TVRename
         {
             get { return VideoExtensionsString.Split(';'); }
         }
-
         public string VideoExtensionsString = "";
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
+        public bool RemoveDownloadDirectoriesFiles =false;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
         public String SABHostPort = "";
         public String SABAPIKey = "";
@@ -525,6 +525,8 @@ namespace TVRename
                     LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "RemoveDownloadDirectoriesFiles")
+                    this.RemoveDownloadDirectoriesFiles = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpJPGs")
                     this.EpJPGs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SeriesJpg")
@@ -779,6 +781,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);
+            XMLHelper.WriteElementToXML(writer, "RemoveDownloadDirectoriesFiles", this.RemoveDownloadDirectoriesFiles);
             XMLHelper.WriteElementToXML(writer,"SABAPIKey",this.SABAPIKey);
             XMLHelper.WriteElementToXML(writer,"CheckSABnzbd",this.CheckSABnzbd);
             XMLHelper.WriteElementToXML(writer,"SABHostPort",this.SABHostPort);

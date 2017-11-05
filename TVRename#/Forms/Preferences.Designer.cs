@@ -213,6 +213,7 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -1155,6 +1156,7 @@ namespace TVRename
             // 
             // tbFolderDeleting
             // 
+            this.tbFolderDeleting.Controls.Add(this.cbCleanUpDownloadDir);
             this.tbFolderDeleting.Controls.Add(this.label32);
             this.tbFolderDeleting.Controls.Add(this.label30);
             this.tbFolderDeleting.Controls.Add(this.txtEmptyMaxSize);
@@ -2042,6 +2044,16 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
+            // cbCleanUpDownloadDir
+            // 
+            this.cbCleanUpDownloadDir.AutoSize = true;
+            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(16, 244);
+            this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
+            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(276, 17);
+            this.cbCleanUpDownloadDir.TabIndex = 11;
+            this.cbCleanUpDownloadDir.Text = "Clean up already copied files from download directory";
+            this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2291,5 +2303,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtShowsTXTTo;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.CheckBox cbAutoCreateFolders;
+        private System.Windows.Forms.CheckBox cbCleanUpDownloadDir;
     }
 }

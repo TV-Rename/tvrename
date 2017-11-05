@@ -157,7 +157,9 @@ namespace TVRename
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
+
             S.MonitorFolders = this.cbMonitorFolder.Checked;
+            S.RemoveDownloadDirectoriesFiles = this.cbCleanUpDownloadDir.Checked;
 
             S.EpJPGs = this.cbEpThumbJpg.Checked;
             S.SeriesJpg = this.cbSeriesJpg.Checked;
@@ -339,6 +341,7 @@ namespace TVRename
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
             this.cbLookForAirdate.Checked = S.LookForDateInFilename;
             this.cbMonitorFolder.Checked = S.MonitorFolders;
+            this.cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
             this.cbMissing.Checked = S.MissingCheck;
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;

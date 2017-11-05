@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
+using System.Runtime.Serialization;
 
 namespace TVRename
 {
@@ -548,6 +549,8 @@ namespace TVRename
             return s;
         }
 
+
+
         public string GetSeasonBannerPath(int snum)
         {
             //We aim to return the season and language specific poster,
@@ -711,5 +714,39 @@ namespace TVRename
                 coll.Add(seasonOfNewBanner, banner);
         }
 
+        internal Episode getEpisode(int seasF, int epF)
+        {
+           foreach ( Season s in Seasons.Values)
+            {
+                if (s.SeasonNumber == seasF)
+                {
+                    foreach (Episode pe in s.Episodes)
+                    {
+                        if (pe.EpNum == epF) return pe;
+                    }
+                }
+            }
+            throw new EpisodeNotFoundException();
+        }
+
+        [Serializable]
+        public class EpisodeNotFoundException : Exception
+        {
+            public EpisodeNotFoundException()
+            {
+            }
+
+            public EpisodeNotFoundException(string message) : base(message)
+            {
+            }
+
+            public EpisodeNotFoundException(string message, Exception innerException) : base(message, innerException)
+            {
+            }
+
+            protected EpisodeNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
+        }
     }
 }
