@@ -1977,66 +1977,22 @@ namespace TVRename
                     if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
                         continue;
 
+                    List<ShowItem> matchingShows = new List<ShowItem>();
+
                     foreach (ShowItem si in showList)
                     {
                         //Check the show name
                         String simplifiedShowName = Helpers.SimplifyName(si.ShowName);
                         if (!(simplifiedShowName == "") && Helpers.Contains(simplifiedFileName, simplifiedShowName, StringComparison.OrdinalIgnoreCase))
                         {
-                            int seasF;
-                            int epF;
-
-                            if (TVDoc.FindSeasEp(fi, out seasF, out epF, si))
-                            {
-                                SeriesInfo s = si.TheSeries();
-                                try {
-                                    Episode ep = s.getEpisode(seasF, epF);
-                                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-
-                                    if (FindEpOnDisk(dfc, si, pep).Count > 0)
-                                    {
-
-                                        this.TheActionList.Add(new ActionDelete(fi, pep, TVSettings.Instance.Tidyup));
-                                        continue;
-                                    }
-                                } catch (SeriesInfo.EpisodeNotFoundException ex)
-                                {
-                                    //Ignore
-                                    continue;
-                                }
-                                
-                            }
-
+                            matchingShows.Add(si);
                         }
 
                         //Check the custom show name
                         String simplifiedCustomShowName = Helpers.SimplifyName(si.CustomShowName);
                         if (!(simplifiedCustomShowName == "") && si.UseCustomShowName && Helpers.Contains(simplifiedFileName, simplifiedCustomShowName, StringComparison.OrdinalIgnoreCase))
                         {
-                            int seasF;
-                            int epF;
-
-                            if (TVDoc.FindSeasEp(fi, out seasF, out epF, si))
-                            {
-                                SeriesInfo s = si.TheSeries();
-                                try
-                                {
-                                    Episode ep = s.getEpisode(seasF, epF);
-                                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-
-                                    if (FindEpOnDisk(dfc, si, pep).Count > 0)
-                                    {
-
-                                        this.TheActionList.Add(new ActionDelete(fi, pep, TVSettings.Instance.Tidyup));
-                                        continue;
-                                    }
-                                }
-                                catch (SeriesInfo.EpisodeNotFoundException ex)
-                                {
-                                    //Ignore
-                                    continue;
-                                }
-                            }
+                            matchingShows.Add(si);
                         }
 
                         //if neither has worked then consider the aliases provided
@@ -2045,40 +2001,73 @@ namespace TVRename
                             String simplifiedAlias = Helpers.SimplifyName(alias);
                             if (Helpers.Contains(simplifiedFileName, simplifiedAlias, StringComparison.OrdinalIgnoreCase))
                             {
-                                int seasF;
-                                int epF;
-
-                                if (TVDoc.FindSeasEp(fi, out seasF, out epF, si))
-                                {
-                                    SeriesInfo s = si.TheSeries();
-                                    try
-                                    {
-                                        Episode ep = s.getEpisode(seasF, epF);
-                                        ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-
-                                        if (FindEpOnDisk(dfc, si, pep).Count > 0)
-                                        {
-
-                                            this.TheActionList.Add(new ActionDelete(fi, pep, TVSettings.Instance.Tidyup));
-                                            continue;
-                                        }
-                                    }
-                                    catch (SeriesInfo.EpisodeNotFoundException ex)
-                                    {
-                                        //Ignore
-                                        continue;
-                                    }
-                                }
+                                matchingShows.Add(si);
                             }
 
                         }
-                }
-            }
 
-        }
+                }
+
+                if (matchingShows.Count > 0)
+                {
+                        bool fileCanBeRemoved = true;
+
+                        foreach (ShowItem si in matchingShows){
+                            if (fileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
+                        }
+
+                        if (fileCanBeRemoved)
+                        {
+                            int seasF;
+                            int epF;
+
+                            ShowItem si = matchingShows[0];//Choose the first series
+                            TVDoc.FindSeasEp(fi, out seasF, out epF, si);
+                            SeriesInfo s = si.TheSeries();
+                            Episode ep = s.getEpisode(seasF, epF);
+                            ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                            this.TheActionList.Add(new ActionDelete(fi, pep, TVSettings.Instance.Tidyup));
+                        }
+
+                    }
+
+                }
+
+            }
 
 
     }
+
+    public bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
+        {
+            int seasF;
+            int epF;
+
+            if (TVDoc.FindSeasEp(fi, out seasF, out epF, si))
+            {
+                SeriesInfo s = si.TheSeries();
+                try
+                {
+                    Episode ep = s.getEpisode(seasF, epF);
+                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+
+                    if (FindEpOnDisk(dfc, si, pep).Count > 0)
+                    {
+
+                        
+                        return false;
+                    }
+                }
+                catch (SeriesInfo.EpisodeNotFoundException ex)
+                {
+                    //Ignore execption, we may need the file
+                    return true;
+                }
+
+            }
+            //We may need the file
+            return true;
+        } 
 
         public void RenameAndMissingCheck(SetProgressDelegate prog, List<ShowItem> showList)
         {
