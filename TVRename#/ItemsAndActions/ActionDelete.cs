@@ -22,12 +22,11 @@ namespace TVRename
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 
-    public class ActionDelete : Item, Action, ScanListItem
+    public class ActionDelete : ActionFileOperation
     {
 
         public FileInfo toRemove;
-        private double _percent;
-        private readonly TidySettings _tidyup;
+        
 
         public ActionDelete(FileInfo remove, ProcessedEpisode ep, TidySettings tidyup)
         {
@@ -38,32 +37,22 @@ namespace TVRename
             
         }
 
-        #region Action Members
 
-        public bool Done { get; set; }
-        public bool Error { get; set; }
-        public string ErrorText { get; set; }
+        public override string Name => "Delete";
 
-        public string Name => "Delete";
+        public override string ProgressText => toRemove.Name;
 
-        public string ProgressText => toRemove.Name;
-
-        public double PercentDone
-        {
-            get { return Done ? 100.0 : _percent; }
-            set { _percent = value; }
-        }
 
         // 0.0 to 100.0
-        public long SizeOfWork => 100 ;
+        public override long SizeOfWork => 100 ;
 
-        public bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause, TVRenameStats stats)
         {
             try {
-                DeleteOrRecycleFile();
+                DeleteOrRecycleFile(toRemove );
                 if (_tidyup != null && _tidyup.DeleteEmpty)
                 {
-                    DoTidyup();
+                    DoTidyup(toRemove);
                 }
 
             }
@@ -76,108 +65,24 @@ namespace TVRename
             return !Error;
         }
 
-        private void DeleteOrRecycleFile()
-        {
-            if (toRemove  == null) return;
-            if (_tidyup.DeleteEmptyIsRecycle)
-            {
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(toRemove.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-            }
-            else
-            {
-                toRemove.Delete(true);
-            }
-        }
+        
 
 
 
-        private void DeleteOrRecycleFolder()
-        {
-            DirectoryInfo di = toRemove.Directory;
-            if (di == null) return;
-            if (_tidyup.DeleteEmptyIsRecycle)
-            {
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-            }
-            else
-            {
-                di.Delete();
-            }
-        }
 
 
-        private void DoTidyup()
-        {
-#if DEBUG
-            Debug.Assert(this._tidyup != null);
-            Debug.Assert(this._tidyup.DeleteEmpty);
-#else
-            if (_tidyup == null || !_tidyup.DeleteEmpty)
-                return;
-#endif
-            // See if we should now delete the folder we just moved that file from.
-            DirectoryInfo di = toRemove.Directory;
-            if (di == null)
-                return;
-
-            //if there are sub-directories then we shouldn't remove this one
-            if (di.GetDirectories().Length > 0)
-                return;
+       
+        public override string produces => toRemove.FullName;
 
 
-            FileInfo[] files = di.GetFiles();
-            if (files.Length == 0)
-            {
-                // its empty, so just delete it
-                di.Delete();
-                return;
-            }
-
-
-            if (_tidyup.EmptyIgnoreExtensions && !_tidyup.EmptyIgnoreWords)
-                return; // nope
-
-            foreach (FileInfo fi in files)
-            {
-                bool okToDelete = _tidyup.EmptyIgnoreExtensions &&
-                                 Array.FindIndex(_tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
-
-                if (okToDelete)
-                    continue; // onto the next file
-
-                // look in the filename
-                if (_tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word)))
-                    okToDelete = true;
-
-                if (!okToDelete)
-                    return;
-            }
-
-            if (_tidyup.EmptyMaxSizeCheck)
-            {
-                // how many MB are we deleting?
-                long totalBytes = files.Sum(fi => fi.Length);
-
-                if (totalBytes/(1024*1024) > _tidyup.EmptyMaxSizeMB)
-                    return; // too much
-            }
-            DeleteOrRecycleFolder();
-        }
-
-        #endregion
-
-        public string produces => toRemove.FullName;
-
-        #region Item Members
-
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
             ActionDelete cmr = o as ActionDelete;
 
             return (cmr != null) && FileHelper.Same(toRemove , cmr.toRemove);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ActionDelete cmr = o as ActionDelete;
 
@@ -187,17 +92,15 @@ namespace TVRename
             return string.Compare(this.toRemove.FullName , cmr.toRemove.FullName , StringComparison.Ordinal);
         }
 
-        #endregion
 
-        #region ScanListItem Members
         
-        public int IconNumber => 9;
+        public override int IconNumber => 9;
 
-        public ProcessedEpisode Episode { get; set; }
 
-        public IgnoreItem Ignore => toRemove  == null ? null : new IgnoreItem(toRemove.FullName);
 
-        public ListViewItem ScanListViewItem
+        public override IgnoreItem Ignore => toRemove  == null ? null : new IgnoreItem(toRemove.FullName);
+
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -232,18 +135,10 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup => "lvgActionDelete";
+        public override string ScanListViewGroup => "lvgActionDelete";
 
-        public string TargetFolder => toRemove?.DirectoryName;
+        public override string TargetFolder => toRemove?.DirectoryName;
 
-        #endregion
-
-        private CopyMoveProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, Object UserData)
-        {
-             double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
-             this.PercentDone = pct > 100.0 ? 100.0 : pct;
-             return CopyMoveProgressResult.Continue;
-         }
 
         // --------------------------------------------------------------------------------------------------------
 
