@@ -247,6 +247,11 @@ namespace TVRename
             Both
         }
 
+        public List<String> MonitorFoldersNames = new List<String>();
+        public List<String> IgnoreFoldersNames = new List<String>();
+        public List<String> SearchFoldersNames = new List<String>();
+
+
         public bool AutoSelectShowInMyShows = true;
         public bool AutoCreateFolders = false;
         public bool BGDownload = false;

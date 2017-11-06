@@ -1327,6 +1327,12 @@ namespace TVRename
             {
                 // not worried if stats loading fails
             }
+
+            //Set these on the settigns object so others can read them too - iealy shuld be refactored into the settings code
+            TVSettings.Instance.MonitorFoldersNames = this.MonitorFolders;
+            TVSettings.Instance.IgnoreFoldersNames  = this.IgnoreFolders ;
+            TVSettings.Instance.SearchFoldersNames = this.SearchFolders;
+
             return true;
         }
 
