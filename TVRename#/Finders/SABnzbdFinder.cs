@@ -60,7 +60,7 @@ namespace TVRename
             try
             {
                 SAB.result res = SAB.result.Deserialize(r);
-                if (res.status == "False")
+                if (res != null && res.status == "False")
                 {
                     MessageBox.Show(res.error, "SABnzbd Queue Check", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     prog.Invoke(startpct + totPct);

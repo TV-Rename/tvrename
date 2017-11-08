@@ -1327,6 +1327,12 @@ namespace TVRename
             {
                 // not worried if stats loading fails
             }
+
+            //Set these on the settigns object so others can read them too - iealy shuld be refactored into the settings code
+            TVSettings.Instance.MonitorFoldersNames = this.MonitorFolders;
+            TVSettings.Instance.IgnoreFoldersNames  = this.IgnoreFolders ;
+            TVSettings.Instance.SearchFoldersNames = this.SearchFolders;
+
             return true;
         }
 
@@ -1452,12 +1458,14 @@ namespace TVRename
                 if (action == null)
                     continue; // skip non-actions
 
-                if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
+                if ((action is ActionWriteMetadata) ) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownload) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
                 else if (action is ActionCopyMoveRename)
                     queues[(action as ActionCopyMoveRename).QuickOperation() ? 1 : 0].Actions.Add(action);
+                else if (action is ActionDelete)
+                    queues[1].Actions.Add(action);
                 else
                 {
 #if DEBUG
@@ -1815,6 +1823,9 @@ namespace TVRename
                                 if (this.Args.Hide && (whatToDo == FAResult.kfaNotSet))
                                     whatToDo = FAResult.kfaIgnoreOnce; // default in /hide mode is to ignore
 
+                                if (TVSettings.Instance.AutoCreateFolders)
+                                    whatToDo = FAResult.kfaCreate; 
+
                                 if (whatToDo == FAResult.kfaNotSet)
                                 {
                                     // no command line guidance, so ask the user
@@ -1943,6 +1954,126 @@ namespace TVRename
             this.RemoveIgnored();
 
         }
+
+        public void FindUnusedFilesInDLDirectory(List<ShowItem> showList)
+        {
+
+            //for each directory in settings directory
+            //for each file in directory
+            //for each saved show (order by recent)
+            //is file aready availabele? 
+            //if so add show to list of files to be removed
+
+            DirFilesCache dfc = new DirFilesCache();
+
+            foreach (String dirPath in SearchFolders)
+            {
+                if (!Directory.Exists(dirPath)) continue;
+
+                foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (!File.Exists(filePath)) continue;
+
+                    FileInfo fi = new FileInfo(filePath);
+                    String simplifiedFileName = Helpers.SimplifyName(fi.Name);
+
+                    if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                        continue; // move on
+
+                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                        continue;
+
+                    List<ShowItem> matchingShows = new List<ShowItem>();
+
+                    foreach (ShowItem si in showList)
+                    {
+                        //Check the show name
+                        String simplifiedShowName = Helpers.SimplifyName(si.ShowName);
+                        if (!(simplifiedShowName == "") && Helpers.Contains(simplifiedFileName, simplifiedShowName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            matchingShows.Add(si);
+                        }
+
+                        //Check the custom show name
+                        String simplifiedCustomShowName = Helpers.SimplifyName(si.CustomShowName);
+                        if (!(simplifiedCustomShowName == "") && si.UseCustomShowName && Helpers.Contains(simplifiedFileName, simplifiedCustomShowName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            matchingShows.Add(si);
+                        }
+
+                        //if neither has worked then consider the aliases provided
+                        foreach (String alias in si.AliasNames)
+                        {
+                            String simplifiedAlias = Helpers.SimplifyName(alias);
+                            if (Helpers.Contains(simplifiedFileName, simplifiedAlias, StringComparison.OrdinalIgnoreCase))
+                            {
+                                matchingShows.Add(si);
+                            }
+
+                        }
+
+                }
+
+                if (matchingShows.Count > 0)
+                {
+                        bool fileCanBeRemoved = true;
+
+                        foreach (ShowItem si in matchingShows){
+                            if (fileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
+                        }
+
+                        if (fileCanBeRemoved)
+                        {
+                            int seasF;
+                            int epF;
+
+                            ShowItem si = matchingShows[0];//Choose the first series
+                            TVDoc.FindSeasEp(fi, out seasF, out epF, si);
+                            SeriesInfo s = si.TheSeries();
+                            Episode ep = s.getEpisode(seasF, epF);
+                            ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                            this.TheActionList.Add(new ActionDelete(fi, pep, TVSettings.Instance.Tidyup));
+                        }
+
+                    }
+
+                }
+
+            }
+
+
+    }
+
+    public bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
+        {
+            int seasF;
+            int epF;
+
+            if (TVDoc.FindSeasEp(fi, out seasF, out epF, si))
+            {
+                SeriesInfo s = si.TheSeries();
+                try
+                {
+                    Episode ep = s.getEpisode(seasF, epF);
+                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+
+                    if (FindEpOnDisk(dfc, si, pep).Count > 0)
+                    {
+
+                        
+                        return false;
+                    }
+                }
+                catch (SeriesInfo.EpisodeNotFoundException ex)
+                {
+                    //Ignore execption, we may need the file
+                    return true;
+                }
+
+            }
+            //We may need the file
+            return true;
+        } 
 
         public void RenameAndMissingCheck(SetProgressDelegate prog, List<ShowItem> showList)
         {
@@ -2230,6 +2361,9 @@ namespace TVRename
 
             if (TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck)
                 this.RenameAndMissingCheck(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.MediaLibProg, specific);
+
+            if (TVSettings.Instance.RemoveDownloadDirectoriesFiles)
+                this.FindUnusedFilesInDLDirectory(specific);
 
             if (TVSettings.Instance.MissingCheck)
             {

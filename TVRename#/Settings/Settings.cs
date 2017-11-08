@@ -247,7 +247,13 @@ namespace TVRename
             Both
         }
 
+        public List<String> MonitorFoldersNames = new List<String>();
+        public List<String> IgnoreFoldersNames = new List<String>();
+        public List<String> SearchFoldersNames = new List<String>();
+
+
         public bool AutoSelectShowInMyShows = true;
+        public bool AutoCreateFolders = false;
         public bool BGDownload = false;
         public bool CheckuTorrent = false;
         public bool EpTBNs = false;
@@ -320,11 +326,11 @@ namespace TVRename
         {
             get { return VideoExtensionsString.Split(';'); }
         }
-
         public string VideoExtensionsString = "";
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
+        public bool RemoveDownloadDirectoriesFiles =false;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
         public String SABHostPort = "";
         public String SABAPIKey = "";
@@ -435,6 +441,8 @@ namespace TVRename
                     this.RenameTxtToSub = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ShowEpisodePictures")
                     this.ShowEpisodePictures = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "AutoCreateFolders")
+                    this.AutoCreateFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoSelectShowInMyShows")
                     this.AutoSelectShowInMyShows = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SpecialsFolderName")
@@ -522,6 +530,8 @@ namespace TVRename
                     LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "RemoveDownloadDirectoriesFiles")
+                    this.RemoveDownloadDirectoriesFiles = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpJPGs")
                     this.EpJPGs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SeriesJpg")
@@ -753,6 +763,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"RenameTxtToSub",this.RenameTxtToSub);
             XMLHelper.WriteElementToXML(writer,"ParallelDownloads",this.ParallelDownloads);
             XMLHelper.WriteElementToXML(writer,"AutoSelectShowInMyShows",this.AutoSelectShowInMyShows);
+            XMLHelper.WriteElementToXML(writer, "AutoCreateFolders", this.AutoCreateFolders );
             XMLHelper.WriteElementToXML(writer,"ShowEpisodePictures",this.ShowEpisodePictures);
             XMLHelper.WriteElementToXML(writer,"SpecialsFolderName",this.SpecialsFolderName);
             XMLHelper.WriteElementToXML(writer,"uTorrentPath",this.uTorrentPath);
@@ -775,6 +786,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);
+            XMLHelper.WriteElementToXML(writer, "RemoveDownloadDirectoriesFiles", this.RemoveDownloadDirectoriesFiles);
             XMLHelper.WriteElementToXML(writer,"SABAPIKey",this.SABAPIKey);
             XMLHelper.WriteElementToXML(writer,"CheckSABnzbd",this.CheckSABnzbd);
             XMLHelper.WriteElementToXML(writer,"SABHostPort",this.SABHostPort);

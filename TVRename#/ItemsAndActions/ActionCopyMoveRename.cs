@@ -22,7 +22,7 @@ namespace TVRename
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 
-    public class ActionCopyMoveRename : Item, Action, ScanListItem
+    public class ActionCopyMoveRename : ActionFileOperation
     {
         #region Op enum
 
@@ -38,8 +38,7 @@ namespace TVRename
         public FileInfo From;
         public Op Operation;
         public FileInfo To;
-        private double _percent;
-        private readonly TidySettings _tidyup;
+
 
         public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup)
         {
@@ -53,24 +52,17 @@ namespace TVRename
 
         #region Action Members
 
-        public bool Done { get; set; }
-        public bool Error { get; set; }
-        public string ErrorText { get; set; }
 
-        public string Name => IsMoveRename() ? "Move" : "Copy";
 
-        public string ProgressText => To.Name;
+        public override string Name => IsMoveRename() ? "Move" : "Copy";
 
-        public double PercentDone
-        {
-            get { return Done ? 100.0 : _percent; }
-            set { _percent = value; }
-        }
+        public override string ProgressText => To.Name;
+
 
         // 0.0 to 100.0
-        public long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
+        public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-        public bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause, TVRenameStats stats)
         {
             // read NTFS permissions (if any)
             FileSecurity security = null;
@@ -101,92 +93,19 @@ namespace TVRename
 
             if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
             {
-                DoTidyup();
+                DoTidyup(From );
             }
 
             return !Error;
         }
 
-        private void DeleteOrRecycleFolder()
-        {
-            DirectoryInfo di = From.Directory;
-            if (di == null) return;
-            if (_tidyup.DeleteEmptyIsRecycle)
-            {
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
-            }
-            else
-            {
-                di.Delete();
-            }
-        }
 
 
-        private void DoTidyup()
-        {
-#if DEBUG
-            Debug.Assert(this._tidyup != null);
-            Debug.Assert(this._tidyup.DeleteEmpty);
-#else
-            if (_tidyup == null || !_tidyup.DeleteEmpty)
-                return;
-#endif
-            // See if we should now delete the folder we just moved that file from.
-            DirectoryInfo di = From.Directory;
-            if (di == null)
-                return;
-
-            //if there are sub-directories then we shouldn't remove this one
-            if (di.GetDirectories().Length > 0)
-                return;
-
-
-            FileInfo[] files = di.GetFiles();
-            if (files.Length == 0)
-            {
-                // its empty, so just delete it
-                di.Delete();
-                return;
-            }
-
-
-            if (_tidyup.EmptyIgnoreExtensions && !_tidyup.EmptyIgnoreWords)
-                return; // nope
-
-            foreach (FileInfo fi in files)
-            {
-                bool okToDelete = _tidyup.EmptyIgnoreExtensions &&
-                                 Array.FindIndex(_tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
-
-                if (okToDelete)
-                    continue; // onto the next file
-
-                // look in the filename
-                if (_tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word)))
-                    okToDelete = true;
-
-                if (!okToDelete)
-                    return;
-            }
-
-            if (_tidyup.EmptyMaxSizeCheck)
-            {
-                // how many MB are we deleting?
-                long totalBytes = files.Sum(fi => fi.Length);
-
-                if (totalBytes/(1024*1024) > _tidyup.EmptyMaxSizeMB)
-                    return; // too much
-            }
-            DeleteOrRecycleFolder();
-        }
-
-        #endregion
-
-        public string produces => To.FullName;
+        public override string produces => To.FullName;
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
@@ -194,7 +113,7 @@ namespace TVRename
                    FileHelper.Same(To, cmr.To);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
@@ -213,13 +132,14 @@ namespace TVRename
 
         #region ScanListItem Members
 
-        public int IconNumber => IsMoveRename() ? 4 : 3;
+        public override int IconNumber => IsMoveRename() ? 4 : 3;
 
-        public ProcessedEpisode Episode { get; set; }
 
-        public IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
 
-        public ListViewItem ScanListViewItem
+        public override IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
+        #endregion
+
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -254,7 +174,7 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup
+        public override string ScanListViewGroup
         {
             get
             {
@@ -272,7 +192,7 @@ namespace TVRename
             }
         }
 
-        public string TargetFolder => To?.DirectoryName;
+        public override string TargetFolder => To?.DirectoryName;
 
         #endregion
 
@@ -346,12 +266,13 @@ namespace TVRename
 
         private CopyMoveProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, Object UserData)
         {
-             double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
-             this.PercentDone = pct > 100.0 ? 100.0 : pct;
-             return CopyMoveProgressResult.Continue;
-         }
+            double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
+            this.PercentDone = pct > 100.0 ? 100.0 : pct;
+            return CopyMoveProgressResult.Continue;
+        }
 
-    private void CopyItOurself(ref bool pause, TVRenameStats stats)
+
+        private void CopyItOurself(ref bool pause, TVRenameStats stats)
 
         {
             const int kArrayLength = 1 * 1024 * 1024;
