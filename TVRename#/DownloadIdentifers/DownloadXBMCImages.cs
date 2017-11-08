@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;
 using System.Globalization;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
+
 namespace TVRename
 {
-    class DownloadXBMCImages : DownloadIdentifier
+    class DownloadKODIImages : DownloadIdentifier
     {
         private List<string> donePosterJPG;
         private List<string> doneBannerJPG;
         private List<string> doneFanartJPG;
         private List<string> doneTBN;
 
-        public DownloadXBMCImages() 
+        public DownloadKODIImages() 
         {
             reset();
         }
@@ -35,14 +35,14 @@ namespace TVRename
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
-            //If we have XBMC New style images being downloaded then we want to check that 3 files exist
+            //If we have KODI New style images being downloaded then we want to check that 3 files exist
             //for the series:
             //http://wiki.xbmc.org/index.php?title=XBMC_v12_(Frodo)_FAQ#Local_images
             //poster
             //banner
             //fanart
 
-            if (TVSettings.Instance.XBMCImages)
+            if (TVSettings.Instance.KODIImages)
             {
                 ItemList TheActionList = new ItemList();
                 // base folder:
@@ -90,12 +90,12 @@ namespace TVRename
 
         public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            if (TVSettings.Instance.XBMCImages)
+            if (TVSettings.Instance.KODIImages)
             {
                 ItemList TheActionList = new ItemList();
                 if (TVSettings.Instance.DownloadFrodoImages())
                 {
-                    //If we have XBMC New style images being downloaded then we want to check that 3 files exist
+                    //If we have KODI New style images being downloaded then we want to check that 3 files exist
                     //for the series:
                     //http://wiki.xbmc.org/index.php?title=XBMC_v12_(Frodo)_FAQ#Local_images
                     //poster
@@ -158,7 +158,7 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (TVSettings.Instance.EpTBNs || TVSettings.Instance.XBMCImages)
+            if (TVSettings.Instance.EpTBNs || TVSettings.Instance.KODIImages)
             {
                 ItemList TheActionList = new ItemList();
                 string ban = dbep.GetFilename();

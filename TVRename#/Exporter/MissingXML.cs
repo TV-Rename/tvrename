@@ -23,7 +23,7 @@ namespace TVRename
                 //XmlWriterSettings settings = gcnew XmlWriterSettings();
                 settings.Indent = true;
                 settings.NewLineOnAttributes = true;
-                using (XmlWriter writer = XmlWriter.Create(TVSettings.Instance.ExportMissingXMLTo, settings))
+                using (XmlWriter writer = XmlWriter.Create(Location(), settings))
                 {
                     writer.WriteStartDocument();
                     

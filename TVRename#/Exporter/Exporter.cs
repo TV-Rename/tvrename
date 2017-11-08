@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace TVRename
 {
@@ -10,6 +10,12 @@ namespace TVRename
         public abstract bool Active();
         public abstract string Location();
     }
+
+    abstract class ShowsExporter : Exporter
+    {
+        public abstract void Run(List<ShowItem> shows);
+    }
+
 
     abstract class MissingExporter : Exporter
     {

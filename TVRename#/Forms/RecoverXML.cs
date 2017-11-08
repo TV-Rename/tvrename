@@ -6,10 +6,9 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 using System.Windows.Forms;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo ;
 namespace TVRename
 {
     /// <summary>

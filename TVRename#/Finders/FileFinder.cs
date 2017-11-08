@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo ;
 namespace TVRename
 {
     class FileFinder:Finder

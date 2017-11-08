@@ -7,6 +7,7 @@
 // 
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -247,7 +248,7 @@ namespace TVRename
             if ((string)r["airedSeasonID"] != null) { this.SeasonID = (int)r["airedSeasonID"]; }
             else
             {
-                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " called " + Name);
+                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " no airedSeasonID " );
                 System.Diagnostics.Debug.Print(r.ToString());
             }
 
@@ -258,8 +259,12 @@ namespace TVRename
             this.Name = (string)r["episodeName"];
 
             String sn = (string)r["airedSeason"];
-            int.TryParse(sn, out this.ReadSeasonNum);
-
+            if (sn == null) {
+                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " airedSeason = null");
+                System.Diagnostics.Debug.Print(r.ToString());
+            }
+            else { int.TryParse(sn, out this.ReadSeasonNum); }
+            
             this.EpisodeGuestStars = JSONHelper.flatten((JToken)r["guestStars"], "|");
             this.EpisodeDirector = JSONHelper.flatten((JToken)r["directors"], "|");
             this.Writer = JSONHelper.flatten((JToken)r["writers"], "|");
@@ -267,7 +272,7 @@ namespace TVRename
             try
             {
                 String contents = (string)r["firstAired"];
-                if (contents == "")
+                if (String.IsNullOrEmpty(contents))
                 {
                     //if (this.ReadSeasonNum > 0) System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
                     this.FirstAired = null;
@@ -340,7 +345,13 @@ namespace TVRename
 
         public bool OK()
         {
-            return ((this.SeriesID != -1) && (this.EpisodeID != -1) && (this.EpNum != -1) && ((this.SeasonID != -1) || (this.ReadSeasonNum != -1)));
+            bool returnVal = (this.SeriesID != -1) && (this.EpisodeID != -1) && (this.EpNum != -1) && (this.SeasonID != -1) && (this.ReadSeasonNum != -1);
+            if (!returnVal)
+            {
+                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + SeriesID + " for EpNum " + EpNum + " for SeasonID " + SeasonID + " for ReadSeasonNum " + ReadSeasonNum);
+            }
+
+            return returnVal;
         }
 
         public void SetDefaults(SeriesInfo ser, Season seas)
@@ -357,6 +368,7 @@ namespace TVRename
             this.Name = "";
             this.EpisodeID = -1;
             this.SeriesID = -1;
+            this.ReadSeasonNum  = -1;
             this.EpNum = -1;
             this.FirstAired = null;
             this.Srv_LastUpdated = -1;
@@ -444,10 +456,21 @@ namespace TVRename
                 XMLHelper.WriteElementToXML(writer,"FirstAired",this.FirstAired.Value.ToString("yyyy-MM-dd"));
             }
 
+            List<string> skip = new List<String>
+                                  {
+                                      "overview","Overview","seriesId","seriesid","lastupdated","lastUpdated","EpisodeName","episodeName","FirstAired","firstAired",
+                                      "GuestStars","guestStars","director","directors","EpisodeDirector","Writer","Writers","id","seasonid","Overview","Rating"
+                                  };
+
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
             {
-                XMLHelper.WriteElementToXML(writer,kvp.Key,kvp.Value);
+                if (!skip.Contains(kvp.Key))
+                {
+                    XMLHelper.WriteElementToXML(writer, kvp.Key, kvp.Value);
+                }
             }
+
+
 
             writer.WriteEndElement(); //Episode
         }

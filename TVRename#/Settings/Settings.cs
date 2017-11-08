@@ -7,7 +7,7 @@
 // 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -240,7 +240,7 @@ namespace TVRename
 
         #endregion
 
-        public enum XBMCType
+        public enum KODIType
         {
             Eden,
             Frodo,
@@ -262,6 +262,8 @@ namespace TVRename
         public string ExportMissingCSVTo = "";
         public bool ExportMissingXML = false;
         public string ExportMissingXMLTo = "";
+        public bool ExportShowsTXT = false;
+        public string ExportShowsTXTTo = "";
         public int ExportRSSMaxDays = 7;
         public int ExportRSSMaxShows = 10;
         public int ExportRSSDaysPast = 0;
@@ -275,7 +277,7 @@ namespace TVRename
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
         public ScanType MonitoredFoldersScanType = ScanType.Full;
-        public XBMCType SelectedXBMCType = XBMCType.Both;
+        public KODIType SelectedKODIType = KODIType.Both;
         public bool ForceLowercaseFilenames = false;
         public bool IgnoreSamples = true;
         public bool KeepTogether = true;
@@ -283,8 +285,9 @@ namespace TVRename
         public bool LeaveOriginals = false;
         public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
-        public bool NFOs = false;
-        public bool XBMCImages = false;
+        public bool NFOShows = false;
+        public bool NFOEpisodes = false;
+        public bool KODIImages = false;
         public bool pyTivoMeta = false;
         public bool pyTivoMetaSubFolder = false;
         public CustomName NamingStyle = new CustomName();
@@ -445,7 +448,7 @@ namespace TVRename
                 else if (reader.Name == "PreferredLanguage")
                     this.PreferredLanguage = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWDoubleClick")
-                    this.WTWDoubleClick = (WTWDoubleClickAction) reader.ReadElementContentAsInt();
+                    this.WTWDoubleClick = (WTWDoubleClickAction)reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportMissingXML")
                     this.ExportMissingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingXMLTo")
@@ -462,6 +465,10 @@ namespace TVRename
                     this.ExportFOXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportFOXMLTo")
                     this.ExportFOXMLTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportShowsTXT")
+                    this.ExportShowsTXT = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportShowsTXTTo")
+                    this.ExportShowsTXTTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "ForceLowercaseFilenames")
                     this.ForceLowercaseFilenames = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "IgnoreSamples")
@@ -478,10 +485,17 @@ namespace TVRename
                     this.SearchRSS = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpImgs")
                     this.EpTBNs = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "NFOs")
-                    this.NFOs = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "XBMCImages")
-                    this.XBMCImages = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "NFOs") //support legacy tag
+                {
+                    this.NFOShows = reader.ReadElementContentAsBoolean();
+                    this.NFOEpisodes = this.NFOShows;
+                }
+                else if (reader.Name == "NFOShows")
+                    this.NFOShows = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "NFOEpisodes")
+                    this.NFOEpisodes = reader.ReadElementContentAsBoolean();
+                else if ((reader.Name == "XBMCImages") || (reader.Name == "KODIImages")) //Backward Compatibilty
+                    this.KODIImages = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMeta")
                     this.pyTivoMeta = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMetaSubFolder")
@@ -492,8 +506,8 @@ namespace TVRename
                     this.FolderJpgIs = (FolderJpgIsType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "MonitoredFoldersScanType")
                     this.MonitoredFoldersScanType = (ScanType)reader.ReadElementContentAsInt();
-                else if (reader.Name == "SelectedXBMCType")
-                    this.SelectedXBMCType = (XBMCType)reader.ReadElementContentAsInt();
+                else if ((reader.Name == "SelectedXBMCType") || (reader.Name == "SelectedKODIType"))
+                    this.SelectedKODIType = (KODIType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameCheck")
                     this.RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
@@ -635,6 +649,16 @@ namespace TVRename
                             Filter.ShowStatus = reader.GetAttribute("ShowStatus");
                             reader.Read();
                         }
+                        else if (reader.Name == "ShowRatingFilter")
+                        {
+                            Filter.ShowRating = reader.GetAttribute("ShowRating");
+                            reader.Read();
+                        }
+                        else if (reader.Name == "ShowNetworkFilter")
+                        {
+                            Filter.ShowNetwork = reader.GetAttribute("ShowNetwork");
+                            reader.Read();
+                        }
                         else if (reader.Name == "GenreFilter")
                         {
                             Filter.Genres.Add(reader.GetAttribute("Genre"));
@@ -709,6 +733,8 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"ExportMissingCSVTo",this.ExportMissingCSVTo);
             XMLHelper.WriteElementToXML(writer,"ExportRenamingXML",this.ExportRenamingXML);
             XMLHelper.WriteElementToXML(writer,"ExportRenamingXMLTo",this.ExportRenamingXMLTo);
+            XMLHelper.WriteElementToXML(writer,"ExportShowsTXT", this.ExportShowsTXT);
+            XMLHelper.WriteElementToXML(writer, "ExportShowsTXTTo", this.ExportShowsTXTTo);
             XMLHelper.WriteElementToXML(writer,"ExportFOXML",this.ExportFOXML);
             XMLHelper.WriteElementToXML(writer,"ExportFOXMLTo",this.ExportFOXMLTo);
             XMLHelper.WriteElementToXML(writer,"StartupTab2",TabNameForNumber(this.StartupTab));
@@ -733,14 +759,15 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"ResumeDatPath",this.ResumeDatPath);
             XMLHelper.WriteElementToXML(writer,"SearchRSS",this.SearchRSS);
             XMLHelper.WriteElementToXML(writer,"EpImgs",this.EpTBNs);
-            XMLHelper.WriteElementToXML(writer,"NFOs",this.NFOs);
-            XMLHelper.WriteElementToXML(writer,"XBMCImages",this.XBMCImages);
+            XMLHelper.WriteElementToXML(writer,"NFOShows",this.NFOShows);
+            XMLHelper.WriteElementToXML(writer,"NFOEpisodes", this.NFOEpisodes);
+            XMLHelper.WriteElementToXML(writer,"KODIImages",this.KODIImages);
             XMLHelper.WriteElementToXML(writer,"pyTivoMeta",this.pyTivoMeta);
             XMLHelper.WriteElementToXML(writer,"pyTivoMetaSubFolder",this.pyTivoMetaSubFolder);
             XMLHelper.WriteElementToXML(writer,"FolderJpg",this.FolderJpg);
             XMLHelper.WriteElementToXML(writer,"FolderJpgIs",(int) this.FolderJpgIs);
             XMLHelper.WriteElementToXML(writer,"MonitoredFoldersScanType",(int)this.MonitoredFoldersScanType);
-            XMLHelper.WriteElementToXML(writer,"SelectedXBMCType",(int)this.SelectedXBMCType);
+            XMLHelper.WriteElementToXML(writer,"SelectedKODIType",(int)this.SelectedKODIType);
             XMLHelper.WriteElementToXML(writer,"CheckuTorrent",this.CheckuTorrent);
             XMLHelper.WriteElementToXML(writer,"RenameCheck",this.RenameCheck);
             XMLHelper.WriteElementToXML(writer,"MissingCheck",this.MissingCheck);
@@ -820,6 +847,24 @@ namespace TVRename
                     writer.WriteStartElement("ShowStatusFilter");
                     writer.WriteStartAttribute("ShowStatus");
                     writer.WriteValue(Filter.ShowStatus);
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+
+                if (Filter.ShowNetwork  != null)
+                {
+                    writer.WriteStartElement("ShowNetworkFilter");
+                    writer.WriteStartAttribute("ShowNetwork");
+                    writer.WriteValue(Filter.ShowNetwork );
+                    writer.WriteEndAttribute();
+                    writer.WriteEndElement();
+                }
+
+                if (Filter.ShowRating  != null)
+                {
+                    writer.WriteStartElement("ShowRatingFilter");
+                    writer.WriteStartAttribute("ShowRating");
+                    writer.WriteValue(Filter.ShowRating);
                     writer.WriteEndAttribute();
                     writer.WriteEndElement();
                 }
@@ -1016,7 +1061,7 @@ namespace TVRename
         public bool NeedToDownloadBannerFile(){
             // Return true iff we need to download season specific images
             // There are 4 possible reasons
-            return (SeasonSpecificFolderJPG() || XBMCImages || SeriesJpg ||FanArtJpg);
+            return (SeasonSpecificFolderJPG() || KODIImages || SeriesJpg ||FanArtJpg);
         }
 
         public bool SeasonSpecificFolderJPG() {
@@ -1025,12 +1070,12 @@ namespace TVRename
 
         public bool DownloadFrodoImages()
         {
-            return (XBMCImages && (SelectedXBMCType == XBMCType.Both || SelectedXBMCType == XBMCType.Frodo));
+            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Frodo));
         }
 
         public bool DownloadEdenImages()
         {
-            return (XBMCImages && (SelectedXBMCType == XBMCType.Both || SelectedXBMCType == XBMCType.Eden)); 
+            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Eden)); 
         }
     }
 }

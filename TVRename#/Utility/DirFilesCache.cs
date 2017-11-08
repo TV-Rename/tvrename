@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 // Will cache the file lists of contents of single directories.  Will return the cached
 // data, or read cache and return it.
@@ -40,7 +38,7 @@ namespace TVRename
                 FileInfo[] files = di.GetFiles();
                 Cache[folder] = files;
                 return files;
-            } catch (IOException) {
+            } catch (System.IO.IOException) {
                 System.Diagnostics.Debug.Print("IOException occurred trying to access " + folder);
                 return null;
             }

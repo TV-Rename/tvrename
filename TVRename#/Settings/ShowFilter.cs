@@ -5,77 +5,47 @@ namespace TVRename
 {
     public class ShowFilter
     {
-        private String showStatus = null;
-        private List<String> genres = new List<String>();
-        private String showName = null;
+        public ShowFilter() { }
 
-        public ShowFilter()
-        {
-        }
+        public List<String> Genres { get; } = new List<String>();
 
-        public String ShowStatus
-        {
-            set
-            {
-                this.showStatus = value;
-            }
-            get
-            {
-                return showStatus;
-            }
-        }
+        public String ShowName { get; set; } 
 
-        public List<String> Genres
-        {
-            get
-            {
-                return genres;
-            }
-        }
+        public String ShowStatus { get; set; }
+        public String ShowNetwork { get; set; }
+        public String ShowRating { get; set; }
 
-        public String ShowName
-        {
-            get
-            {
-                return showName;
-            }
-            set
-            {
-                this.showName = value;
-            }
-        }
 
         public Boolean filter(ShowItem show)
         {
+
             //Filter on show name
-            if (ShowName != null && !show.ShowName.Contains(ShowName , StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
+            Boolean isNameOK = (ShowName == null) || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
 
             //Filter on show status
-            if (ShowStatus != null && !show.ShowStatus.Equals(ShowStatus))
-            {
-                return false;
-            }
+            Boolean isStatusOK = (ShowStatus == null) || show.ShowStatus.Equals(ShowStatus);
+
+            //Filter on show network
+            Boolean isNetworkOK = (ShowNetwork == null) || show.TheSeries().getNetwork().Equals(ShowNetwork);
+
+            //Filter on show rating
+            Boolean isRatingOK = (ShowRating == null) || show.TheSeries().GetRating().Equals(ShowRating);
 
             //Filter on show genres
-            if (genres.Count != 0)
-            {
-                if (show.Genres == null)
+            Boolean areGenresIgnored = (Genres.Count == 0);
+
+            Boolean doAnyGenresMatch = false; //assume false
+            if (!areGenresIgnored )
                 {
-                    return false;
-                }
-                List<String> showGenres = new List<String>(show.Genres);
-                foreach (String filterGenre in Genres)
+                foreach (String showGenre in show.Genres)
                 {
-                    if (!showGenres.Contains(filterGenre))
-                    {
-                        return false;
-                    }
+                    foreach (String filterGenre in this.Genres)
+                        if (showGenre == filterGenre) doAnyGenresMatch = true;
                 }
             }
-            return true;
+
+            return isNameOK && isStatusOK && isNetworkOK && isRatingOK && (areGenresIgnored || doAnyGenresMatch );
         }
     }
 }
+

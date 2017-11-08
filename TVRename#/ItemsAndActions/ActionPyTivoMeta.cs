@@ -8,10 +8,11 @@
 namespace TVRename
 {
     using System;
-    using System.IO;
+    using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
+    using System.IO;
+    using Directory = Alphaleonis.Win32.Filesystem.Directory;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
 
     public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
     {
