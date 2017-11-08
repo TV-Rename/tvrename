@@ -168,6 +168,7 @@ namespace TVRename
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
+            this.filterTextBox = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -542,6 +543,7 @@ namespace TVRename
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.MyShowTree);
+            this.splitContainer1.Panel1.Controls.Add(this.filterTextBox);
             this.splitContainer1.Panel1MinSize = 100;
             // 
             // splitContainer1.Panel2
@@ -1398,6 +1400,16 @@ namespace TVRename
             this.quickTimer.Interval = 1;
             this.quickTimer.Tick += new System.EventHandler(this.quickTimer_Tick);
             // 
+            // filterTextBox
+            // 
+            this.filterTextBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.filterTextBox.Location = new System.Drawing.Point(0, 0);
+            this.filterTextBox.Name = "filterTextBox";
+            this.filterTextBox.Size = new System.Drawing.Size(276, 20);
+            this.filterTextBox.TabIndex = 1;
+            this.filterTextBox.SizeChanged += new System.EventHandler(this.filterTextBox_SizeChanged);
+            this.filterTextBox.TextChanged += new System.EventHandler(this.filterTextBox_TextChanged);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1562,5 +1574,6 @@ namespace TVRename
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.WebBrowser webBrowserImages;
         private System.Windows.Forms.Button btnFilter;
+        private System.Windows.Forms.TextBox filterTextBox;
     }
 }

@@ -336,6 +336,18 @@ namespace TVRename
             foreach (TabPage tp in this.tabControl1.TabPages) // grr! TODO: why does it go white?
                 tp.BackColor = System.Drawing.SystemColors.Control;
 
+            // MAH: Create a "Clear" button in the Filter Text Box
+            var filterButton = new Button();
+            filterButton.Size = new Size(16, 16);
+            filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+            filterButton.Cursor = Cursors.Default;
+            filterButton.Image = Properties.Resources.DeleteSmall;
+            filterButton.Name = "Clear";
+            filterButton.Click += filterButton_Click;
+            filterTextBox.Controls.Add(filterButton);
+            // Send EM_SETMARGINS to prevent text from disappearing underneath the button
+            SendMessage(filterTextBox.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
+
             this.Show();
             this.UI_LocationChanged(null, null);
             this.UI_SizeChanged(null, null);
@@ -347,6 +359,16 @@ namespace TVRename
                 this.BGDownloadTimer.Start();
 
             this.quickTimer.Start();
+        }
+
+        // MAH: Added in support of the Filter TextBox Button
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+
+        // MAH: Added in support of the Filter TextBox Button
+        private void filterButton_Click(object sender, EventArgs e)
+        {
+            filterTextBox.Clear();
         }
 
         private ListView ListViewByName(string name)
@@ -620,8 +642,10 @@ namespace TVRename
             ShowFilter filter = TVSettings.Instance.Filter;
             foreach (ShowItem si in sil)
             {
-                if (filter.filter(si))
-                {
+                if (filter.filter(si)
+                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.ShowName.ToUpperInvariant().Contains(filterTextBox.Text.ToUpperInvariant())
+                       | si.CustomShowName.ToUpperInvariant().Contains(filterTextBox.Text.ToUpperInvariant())))
+                    {
                     TreeNode tvn = this.AddShowItemToTree(si);
                     if (expanded.Contains(si))
                         tvn.Expand();
@@ -3582,6 +3606,23 @@ namespace TVRename
             // If we're not draging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
             if (!(lvi?.Tag is ItemMissing) || !e.Data.GetDataPresent(DataFormats.FileDrop))
                 e.Effect = DragDropEffects.None;
+        }
+
+        private void filterTextBox_TextChanged(object sender, EventArgs e)
+        {
+            FillMyShows();
+        }
+
+        private void filterTextBox_SizeChanged(object sender, EventArgs e)
+        {
+            // MAH: move the "Clear" button in the Filter Text Box
+            if (filterTextBox.Controls.ContainsKey("Clear"))
+            {
+                var filterButton = filterTextBox.Controls["Clear"];
+                filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+                // Send EM_SETMARGINS to prevent text from disappearing underneath the button
+                SendMessage(filterTextBox.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
+            }
         }
     }
 }
