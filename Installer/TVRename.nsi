@@ -71,7 +71,8 @@ Section "TVRename" SecTVRename
   File "..\TVRename#\bin\Release\Ionic.Utils.Zip.dll"
   File "..\TVRename#\bin\Release\Newtonsoft.Json.dll"
   File "..\TVRename#\bin\Release\SourceGrid.dll"
-
+  File "..\TVRename#\bin\Release\AlphaFS.dll"
+  
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk" "$INSTDIR\TVRename.exe"
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk" "$INSTDIR\TVRename.exe" /recover
@@ -98,6 +99,7 @@ Section "Uninstall"
   Delete "$INSTDIR\Ionic.Utils.Zip.dll"
   Delete "$INSTDIR\Newtonsoft.Json.dll"
   Delete "$INSTDIR\SourceGrid.dll"
+  Delete "$INSTDIR\AlphaFS.dll"
   Delete "$INSTDIR\Uninstall.exe"
   RmDir "$INSTDIR"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk"

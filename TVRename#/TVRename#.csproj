@@ -478,6 +478,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />
+    <None Include="Resources\ButtonSmall_Delete.png" />
     <None Include="Resources\filtre.png" />
     <None Include="Resources\Black-Red_256x256.png" />
     <None Include="Resources\EditInformationHS.png" />
