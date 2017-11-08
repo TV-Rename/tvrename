@@ -2984,6 +2984,9 @@ namespace TVRename
         {
             this.InternalCheckChange = true;
 
+            // Save where the list is currently scrolled too
+            var currentTop = this.lvAction.GetScrollVerticalPos();
+
             if (this.lvAction.VirtualMode)
                 this.lvAction.VirtualListSize = this.mDoc.TheActionList.Count;
             else
@@ -2998,6 +3001,9 @@ namespace TVRename
                 }
                 this.lvAction.EndUpdate();
             }
+
+            // Restore the scrolled to position
+            this.lvAction.SetScrollVerticalPos(currentTop);
 
             // do nice totals for each group
             int missingCount = 0;
@@ -3527,6 +3533,43 @@ namespace TVRename
                 this.FillMyShows();
             }
         }
+
+        private void lvAction_DragDrop(object sender, DragEventArgs e)
+        {
+            // Get a list of filenames being dragged
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            // Establish item in list being dragged to, and exit if no item matched
+            Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
+            ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
+            if (lvi == null) return;
+
+            // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
+            if (files.Length > 0 & lvi.Tag is ItemMissing)
+            {
+                // Only want the first file if multiple files were dragged across.
+                FileInfo from = new FileInfo(files[0]);
+                ItemMissing mi = (ItemMissing)lvi.Tag;
+                this.mDoc.TheActionList.Add(
+                    new ActionCopyMoveRename(
+                        TVSettings.Instance.LeaveOriginals
+                            ? ActionCopyMoveRename.Op.Copy
+                            : ActionCopyMoveRename.Op.Move, from,
+                        new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode, TVSettings.Instance.Tidyup));
+                // and remove old Missing item
+                this.mDoc.TheActionList.Remove(mi);
+                this.FillActionList();
+            }
+        }
+
+        private void lvAction_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+            Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
+            ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
+            // If we're not draging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
+            if (!(lvi?.Tag is ItemMissing) || !e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.None;
+        }
     }
 }
-
