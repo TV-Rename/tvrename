@@ -4,7 +4,9 @@ using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo ;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using System.Linq;
+
 namespace TVRename
 {
     class FileFinder:Finder
@@ -213,15 +215,12 @@ namespace TVRename
         // if so, add a rcitem for copy to "fi"
         public bool FindMissingEp(DirCache dirCache, ItemMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
         {
-            string showname = me.Episode.SI.ShowName;
             int season = me.Episode.SeasonNumber;
 
             //String ^toName = FilenameFriendly(Settings->NamingStyle->NameFor(me->PE));
             int epnum = me.Episode.EpNum;
 
             // TODO: find a 'best match', or use first ?
-
-            showname = Helpers.SimplifyName(showname);
 
             foreach (DirCacheEntry dce in dirCache)
             {
@@ -237,19 +236,8 @@ namespace TVRename
                     if (TVSettings.Instance.IgnoreSamples && dce.LowerName.Contains("sample") && ((dce.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
                         continue;
 
-                    matched = Regex.Match(dce.SimplifiedFullName, "\\b" + showname.Trim() + "\\b", RegexOptions.IgnoreCase).Success;
-
-                    // if we don't match the main name, then test the aliases
-                    if (!matched)
-                    {
-                        foreach (string alias in me.Episode.SI.AliasNames)
-                        {
-                            string aliasName = Helpers.SimplifyName(alias);
-                            matched = Regex.Match(dce.SimplifiedFullName, "\\b" + aliasName.Trim() + "\\b", RegexOptions.IgnoreCase).Success;
-                            if (matched)
-                                break;
-                        }
-                    }
+                    //do any of the possible names for the series match the filename?
+                    matched = (me.Episode.SI.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(dce.SimplifiedFullName,name)));
 
                     if (matched)
                     {

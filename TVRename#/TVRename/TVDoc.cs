@@ -1464,7 +1464,7 @@ namespace TVRename
                     queues[3].Actions.Add(action);
                 else if (action is ActionCopyMoveRename)
                     queues[(action as ActionCopyMoveRename).QuickOperation() ? 1 : 0].Actions.Add(action);
-                else if (action is ActionDelete)
+                else if ((action is ActionDeleteFile) || (action is ActionDeleteDirectory))
                     queues[1].Actions.Add(action);
                 else
                 {
@@ -1681,52 +1681,45 @@ namespace TVRename
             {
                 if (!Directory.Exists(dirPath)) continue;
 
-                foreach (String filePath in Directory.GetFiles(dirPath,"*", System.IO.SearchOption.AllDirectories)) 
+                foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
                 {
                     if (!File.Exists(filePath)) continue;
 
                     FileInfo fi = new FileInfo(filePath);
-                    String simplifiedFileName = Helpers.SimplifyName(fi.Name);
 
                     if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
                         continue; // move on
 
-                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName,"sample",StringComparison.OrdinalIgnoreCase)  && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
                         continue;
 
                     foreach (ShowItem si in this.ShowItems)
                     {
                         if (showsToScan.Contains(si)) continue;
-                        
-                        //Check the show name
-                        String simplifiedShowName = Helpers.SimplifyName(si.ShowName);
-                        if (!(simplifiedShowName == "") && Helpers.Contains (simplifiedFileName,simplifiedShowName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            showsToScan.Add(si);
-                            continue;
-                        }
-                        
-                        //Check the custom show name
-                        String simplifiedCustomShowName = Helpers.SimplifyName(si.CustomShowName);
-                        if (!(simplifiedCustomShowName == "") && si.UseCustomShowName && Helpers.Contains (simplifiedFileName,simplifiedCustomShowName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            showsToScan.Add(si);
-                            continue;
-                        }
 
-                        //if neither has worked then consider the aliases provided
-                        foreach (String alias in si.AliasNames){
-                            String simplifiedAlias = Helpers.SimplifyName(alias);
-                            if (Helpers.Contains (simplifiedFileName,simplifiedAlias, StringComparison.OrdinalIgnoreCase))
-                            {
-                                showsToScan.Add(si);
-                                break;
-                            }
-                        }
+                        if (si.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
+                            showsToScan.Add(si);
                     }
                 }
-            }
 
+                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (!Directory.Exists(subDirPath)) continue;
+
+                    DirectoryInfo di = new DirectoryInfo(subDirPath);
+
+                    List<ShowItem> matchingShows = new List<ShowItem>();
+
+                    foreach (ShowItem si in ShowItems)
+                    {
+                        if (showsToScan.Contains(si)) continue;
+
+                        if (si.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
+                            showsToScan.Add(si);
+                    }
+
+                }
+            }
             if (lpe != null)
             {
                 foreach (ProcessedEpisode pe in lpe)
@@ -1975,7 +1968,6 @@ namespace TVRename
                     if (!File.Exists(filePath)) continue;
 
                     FileInfo fi = new FileInfo(filePath);
-                    String simplifiedFileName = Helpers.SimplifyName(fi.Name);
 
                     if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
                         continue; // move on
@@ -1987,52 +1979,70 @@ namespace TVRename
 
                     foreach (ShowItem si in showList)
                     {
-                        //Check the show name
-                        String simplifiedShowName = Helpers.SimplifyName(si.ShowName);
-                        if (!(simplifiedShowName == "") && Helpers.Contains(simplifiedFileName, simplifiedShowName, StringComparison.OrdinalIgnoreCase))
-                        {
+                        if (si.getSimplifiedPossibleShowNames().Any( name => FileHelper.SimplifyAndCheckFilename(fi.Name , name)))
                             matchingShows.Add(si);
-                        }
+                    }
 
-                        //Check the custom show name
-                        String simplifiedCustomShowName = Helpers.SimplifyName(si.CustomShowName);
-                        if (!(simplifiedCustomShowName == "") && si.UseCustomShowName && Helpers.Contains(simplifiedFileName, simplifiedCustomShowName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            matchingShows.Add(si);
-                        }
+                    if (matchingShows.Count > 0)
+                    {
+                            bool fileCanBeRemoved = true;
 
-                        //if neither has worked then consider the aliases provided
-                        foreach (String alias in si.AliasNames)
-                        {
-                            String simplifiedAlias = Helpers.SimplifyName(alias);
-                            if (Helpers.Contains(simplifiedFileName, simplifiedAlias, StringComparison.OrdinalIgnoreCase))
+                            foreach (ShowItem si in matchingShows){
+                                if (fileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
+                            }
+
+                            if (fileCanBeRemoved)
                             {
-                                matchingShows.Add(si);
+                                int seasF;
+                                int epF;
+
+                                ShowItem si = matchingShows[0];//Choose the first series
+                                TVDoc.FindSeasEp(fi, out seasF, out epF, si);
+                                SeriesInfo s = si.TheSeries();
+                                Episode ep = s.getEpisode(seasF, epF);
+                                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                                this.TheActionList.Add(new ActionDeleteFile(fi, pep, TVSettings.Instance.Tidyup));
                             }
 
                         }
 
-                }
+                    }
 
-                if (matchingShows.Count > 0)
+
+                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
                 {
-                        bool fileCanBeRemoved = true;
+                    if (!Directory.Exists(subDirPath)) continue;
 
-                        foreach (ShowItem si in matchingShows){
-                            if (fileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
+                    DirectoryInfo di = new DirectoryInfo(subDirPath);
+
+                    List<ShowItem> matchingShows = new List<ShowItem>();
+
+                    foreach (ShowItem si in showList)
+                    {
+                        if (si.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
+                            matchingShows.Add(si);
+                    }
+
+                    if (matchingShows.Count > 0)
+                    {
+                        bool dirCanBeRemoved = true;
+
+                        foreach (ShowItem si in matchingShows)
+                        {
+                            if (fileNeeded(di, si, dfc)) dirCanBeRemoved = false;
                         }
 
-                        if (fileCanBeRemoved)
+                        if (dirCanBeRemoved)
                         {
                             int seasF;
                             int epF;
 
                             ShowItem si = matchingShows[0];//Choose the first series
-                            TVDoc.FindSeasEp(fi, out seasF, out epF, si);
+                            TVDoc.FindSeasEp(di, out seasF, out epF, si);
                             SeriesInfo s = si.TheSeries();
                             Episode ep = s.getEpisode(seasF, epF);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-                            this.TheActionList.Add(new ActionDelete(fi, pep, TVSettings.Instance.Tidyup));
+                            this.TheActionList.Add(new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup));
                         }
 
                     }
@@ -2042,9 +2052,11 @@ namespace TVRename
             }
 
 
-    }
+        }
 
-    public bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
+
+
+        public bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
         {
             int seasF;
             int epF;
@@ -2073,7 +2085,38 @@ namespace TVRename
             }
             //We may need the file
             return true;
-        } 
+        }
+
+        public bool fileNeeded(DirectoryInfo di, ShowItem si, DirFilesCache dfc)
+        {
+            int seasF;
+            int epF;
+
+            if (TVDoc.FindSeasEp(di, out seasF, out epF, si))
+            {
+                SeriesInfo s = si.TheSeries();
+                try
+                {
+                    Episode ep = s.getEpisode(seasF, epF);
+                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+
+                    if (FindEpOnDisk(dfc, si, pep).Count > 0)
+                    {
+
+
+                        return false;
+                    }
+                }
+                catch (SeriesInfo.EpisodeNotFoundException ex)
+                {
+                    //Ignore execption, we may need the file
+                    return true;
+                }
+
+            }
+            //We may need the file
+            return true;
+        }
 
         public void RenameAndMissingCheck(SetProgressDelegate prog, List<ShowItem> showList)
         {
@@ -2589,6 +2632,22 @@ namespace TVRename
             filename = filename.Substring(0, l - le);
             return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, si, rexps);
         }
+
+        public static bool FindSeasEp(DirectoryInfo di, out int seas, out int ep, ShowItem si)
+        {
+
+            List<FilenameProcessorRE> rexps = TVSettings.Instance.FNPRegexs;
+
+            if (di == null)
+            {
+                seas = -1;
+                ep = -1;
+                return false;
+            }
+
+            return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, si, rexps);
+        }
+
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, ShowItem si, List<FilenameProcessorRE> rexps)
         {

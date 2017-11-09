@@ -93,7 +93,7 @@ namespace TVRename
 
             if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
             {
-                DoTidyup(From );
+                DoTidyup(From.Directory  );
             }
 
             return !Error;

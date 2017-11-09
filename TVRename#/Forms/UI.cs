@@ -25,6 +25,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
+using System.Linq;
 
 namespace TVRename
 {
@@ -643,8 +644,8 @@ namespace TVRename
             foreach (ShowItem si in sil)
             {
                 if (filter.filter(si)
-                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.ShowName.ToUpperInvariant().Contains(filterTextBox.Text.ToUpperInvariant())
-                       | si.CustomShowName.ToUpperInvariant().Contains(filterTextBox.Text.ToUpperInvariant())))
+                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.getSimplifiedPossibleShowNames().Any(name => name.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
+                       ))
                     {
                     TreeNode tvn = this.AddShowItemToTree(si);
                     if (expanded.Contains(si))
@@ -3085,7 +3086,7 @@ namespace TVRename
                     metaCount++;
                 else if (Action is ItemuTorrenting || Action is ItemSABnzbd)
                     dlCount++;
-                else if (Action is ActionDelete)
+                else if (Action is ActionDeleteFile || Action is ActionDeleteDirectory)
                     removeCount++;
             }
             this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";

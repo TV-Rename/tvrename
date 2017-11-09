@@ -207,6 +207,12 @@ namespace TVRename
             return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showname) : showname) + "\\b", RegexOptions.IgnoreCase).Success;
         }
 
+
+        public static bool SimplifyAndCheckFilename(string filename, string showname)
+        {
+            return SimplifyAndCheckFilename(filename, showname,true,true);
+        }
+
     }
 
     public static class HTTPHelper
@@ -368,7 +374,7 @@ namespace TVRename
             n = n.Replace("and", "");
             n = n.Replace("!", "");
             n = Regex.Replace(n, "[_\\W]+", " ");
-            return n;
+            return n.Trim();
         }
 
         public static string RemoveDiacritics(string stIn)

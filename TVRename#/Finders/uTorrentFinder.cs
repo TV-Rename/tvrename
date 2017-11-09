@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using System.Linq;
 
 namespace TVRename
 {
@@ -51,7 +52,6 @@ namespace TVRename
 
                 ItemMissing Action = (ItemMissing)(Action1);
 
-                string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName);
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -59,19 +59,8 @@ namespace TVRename
                     if (!TVSettings.Instance.UsefulExtension(file.Extension, false)) // not a usefile file extension
                         continue;
 
-                    Boolean matched = FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false); // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
-
-                    //check for any show aliases too
-                    if (!matched)
-                    {
-                        foreach (string alias in Action.Episode.SI.AliasNames)
-                        {
-                            string aliasName = Helpers.SimplifyName(alias);
-                            matched = FileHelper.SimplifyAndCheckFilename(file.FullName, aliasName, true, false); // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
-                            if (matched)
-                                break;
-                        }
-                    }
+                    //do any of the possible names for the series match the filename?
+                    Boolean matched = (Action.Episode.SI.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
 
                     if (matched) 
                     {

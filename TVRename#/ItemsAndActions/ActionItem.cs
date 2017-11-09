@@ -126,9 +126,8 @@ namespace TVRename
             }
         }
 
-        protected void DeleteOrRecycleFolder(FileInfo file)
+        protected void DeleteOrRecycleFolder(DirectoryInfo di)
         {
-            DirectoryInfo di = file.Directory;
             if (di == null) return;
             if (_tidyup.DeleteEmptyIsRecycle)
             {
@@ -140,7 +139,7 @@ namespace TVRename
             }
         }
 
-        protected void DoTidyup(FileInfo file)
+        protected void DoTidyup(DirectoryInfo di)
         {
 #if DEBUG
             Debug.Assert(this._tidyup != null);
@@ -150,7 +149,6 @@ namespace TVRename
                 return;
 #endif
             // See if we should now delete the folder we just moved that file from.
-            DirectoryInfo di = file.Directory;
             if (di == null)
                 return;
 
@@ -203,7 +201,7 @@ namespace TVRename
                 if (totalBytes / (1024 * 1024) > _tidyup.EmptyMaxSizeMB)
                     return; // too much
             }
-            DeleteOrRecycleFolder(file);
+            DeleteOrRecycleFolder(di);
         }
         public ProcessedEpisode Episode { get; set; }
         public abstract string Name { get; }

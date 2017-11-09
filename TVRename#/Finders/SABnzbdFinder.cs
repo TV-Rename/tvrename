@@ -117,7 +117,6 @@ namespace TVRename
                         //    continue;
 
                         if (FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false))
-                        // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
                         {
                             int seasF;
                             int epF;
