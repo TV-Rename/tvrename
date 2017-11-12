@@ -25,6 +25,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
+using System.Linq;
 
 namespace TVRename
 {
@@ -336,6 +337,18 @@ namespace TVRename
             foreach (TabPage tp in this.tabControl1.TabPages) // grr! TODO: why does it go white?
                 tp.BackColor = System.Drawing.SystemColors.Control;
 
+            // MAH: Create a "Clear" button in the Filter Text Box
+            var filterButton = new Button();
+            filterButton.Size = new Size(16, 16);
+            filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+            filterButton.Cursor = Cursors.Default;
+            filterButton.Image = Properties.Resources.DeleteSmall;
+            filterButton.Name = "Clear";
+            filterButton.Click += filterButton_Click;
+            filterTextBox.Controls.Add(filterButton);
+            // Send EM_SETMARGINS to prevent text from disappearing underneath the button
+            SendMessage(filterTextBox.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
+
             this.Show();
             this.UI_LocationChanged(null, null);
             this.UI_SizeChanged(null, null);
@@ -347,6 +360,16 @@ namespace TVRename
                 this.BGDownloadTimer.Start();
 
             this.quickTimer.Start();
+        }
+
+        // MAH: Added in support of the Filter TextBox Button
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
+
+        // MAH: Added in support of the Filter TextBox Button
+        private void filterButton_Click(object sender, EventArgs e)
+        {
+            filterTextBox.Clear();
         }
 
         private ListView ListViewByName(string name)
@@ -620,8 +643,10 @@ namespace TVRename
             ShowFilter filter = TVSettings.Instance.Filter;
             foreach (ShowItem si in sil)
             {
-                if (filter.filter(si))
-                {
+                if (filter.filter(si)
+                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.getSimplifiedPossibleShowNames().Any(name => name.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
+                       ))
+                    {
                     TreeNode tvn = this.AddShowItemToTree(si);
                     if (expanded.Contains(si))
                         tvn.Expand();
@@ -2996,6 +3021,9 @@ namespace TVRename
         {
             this.InternalCheckChange = true;
 
+            // Save where the list is currently scrolled too
+            var currentTop = this.lvAction.GetScrollVerticalPos();
+
             if (this.lvAction.VirtualMode)
                 this.lvAction.VirtualListSize = this.mDoc.TheActionList.Count;
             else
@@ -3011,12 +3039,16 @@ namespace TVRename
                 this.lvAction.EndUpdate();
             }
 
+            // Restore the scrolled to position
+            this.lvAction.SetScrollVerticalPos(currentTop);
+
             // do nice totals for each group
             int missingCount = 0;
             int renameCount = 0;
             int copyCount = 0;
             long copySize = 0;
             int moveCount = 0;
+            int removeCount = 0;
             long moveSize = 0;
             int rssCount = 0;
             int downloadCount = 0;
@@ -3054,15 +3086,18 @@ namespace TVRename
                     metaCount++;
                 else if (Action is ItemuTorrenting || Action is ItemSABnzbd)
                     dlCount++;
+                else if (Action is ActionDeleteFile || Action is ActionDeleteDirectory)
+                    removeCount++;
             }
             this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
             this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
             this.lvAction.Groups[2].Header = "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
             this.lvAction.Groups[3].Header = "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
-            this.lvAction.Groups[4].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
-            this.lvAction.Groups[5].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
-            this.lvAction.Groups[6].Header = "Media Center Metadata (" + metaCount + " " + itemitems(metaCount) + ")";
-            this.lvAction.Groups[7].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
+            this.lvAction.Groups[4].Header = "Remove (" + removeCount + " " + itemitems(removeCount)  + ")";
+            this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
+            this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
+            this.lvAction.Groups[7].Header = "Media Center Metadata (" + metaCount + " " + itemitems(metaCount) + ")";
+            this.lvAction.Groups[8].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
 
             this.InternalCheckChange = false;
 
@@ -3539,6 +3574,60 @@ namespace TVRename
                 this.FillMyShows();
             }
         }
+
+        private void lvAction_DragDrop(object sender, DragEventArgs e)
+        {
+            // Get a list of filenames being dragged
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+
+            // Establish item in list being dragged to, and exit if no item matched
+            Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
+            ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
+            if (lvi == null) return;
+
+            // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
+            if (files.Length > 0 & lvi.Tag is ItemMissing)
+            {
+                // Only want the first file if multiple files were dragged across.
+                FileInfo from = new FileInfo(files[0]);
+                ItemMissing mi = (ItemMissing)lvi.Tag;
+                this.mDoc.TheActionList.Add(
+                    new ActionCopyMoveRename(
+                        TVSettings.Instance.LeaveOriginals
+                            ? ActionCopyMoveRename.Op.Copy
+                            : ActionCopyMoveRename.Op.Move, from,
+                        new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode, TVSettings.Instance.Tidyup));
+                // and remove old Missing item
+                this.mDoc.TheActionList.Remove(mi);
+                this.FillActionList();
+            }
+        }
+
+        private void lvAction_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Effect = DragDropEffects.All;
+            Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
+            ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
+            // If we're not draging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
+            if (!(lvi?.Tag is ItemMissing) || !e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void filterTextBox_TextChanged(object sender, EventArgs e)
+        {
+            FillMyShows();
+        }
+
+        private void filterTextBox_SizeChanged(object sender, EventArgs e)
+        {
+            // MAH: move the "Clear" button in the Filter Text Box
+            if (filterTextBox.Controls.ContainsKey("Clear"))
+            {
+                var filterButton = filterTextBox.Controls["Clear"];
+                filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+                // Send EM_SETMARGINS to prevent text from disappearing underneath the button
+                SendMessage(filterTextBox.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
+            }
+        }
     }
 }
-

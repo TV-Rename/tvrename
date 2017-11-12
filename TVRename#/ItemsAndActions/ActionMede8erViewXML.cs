@@ -11,7 +11,7 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
     using System.Xml;
-    
+
 
     public class ActionMede8erViewXML : Item, Action, ScanListItem, ActionWriteMetadata
     {
@@ -23,6 +23,7 @@ namespace TVRename
         {
             this.SI = si;
             this.Where = nfo;
+            snum = -1;
         }
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum)
@@ -74,7 +75,6 @@ namespace TVRename
             XmlWriter writer;
             try
             {
-                //                XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings);
                 writer = XmlWriter.Create(this.Where.FullName, settings);
                 if (writer == null)
                     return false;
@@ -86,7 +86,24 @@ namespace TVRename
             }
 
             writer.WriteStartElement("FolderTag");
-            XMLHelper.WriteElementToXML(writer, "ViewMode", "Movie");
+            // is it a show or season folder
+            if (snum >= 0)
+            {
+                // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
+                if (TVSettings.Instance.EpJPGs)
+                {
+                    XMLHelper.WriteElementToXML(writer, "ViewMode", "Photo");
+                }
+                else
+                {
+                    XMLHelper.WriteElementToXML(writer, "ViewMode", "List");
+                }
+                XMLHelper.WriteElementToXML(writer, "ViewType", "Video");
+            }
+            else
+            {
+                XMLHelper.WriteElementToXML(writer, "ViewMode", "Preview");
+            }
             writer.WriteEndElement();
 
             writer.Close();
@@ -107,7 +124,7 @@ namespace TVRename
         {
             ActionMede8erViewXML nfo = o as ActionMede8erViewXML;
 
-            return (this.Where.FullName ).CompareTo(nfo.Where.FullName );
+            return (this.Where.FullName).CompareTo(nfo.Where.FullName);
         }
 
         #endregion

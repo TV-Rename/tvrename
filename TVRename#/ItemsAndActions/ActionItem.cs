@@ -7,7 +7,21 @@
 // 
 namespace TVRename
 {
+    using System;
+    using System.CodeDom;
+    using System.Diagnostics;
+    using Alphaleonis.Win32.Filesystem;
+    using System.Linq;
+    using System.Security.AccessControl;
+    using System.Threading;
+    using System.Web.UI.WebControls;
     using System.Windows.Forms;
+
+    using File = Alphaleonis.Win32.Filesystem.File;
+    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
+    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+
 
     public interface Item
     {
@@ -82,5 +96,125 @@ namespace TVRename
             this.Actions = new System.Collections.Generic.List<Action>();
             this.ActionPosition = 0;
         }
+    }
+
+    public abstract class ActionFileOperation : Item, Action, ScanListItem
+    {
+        protected double _percent;
+        protected TidySettings _tidyup;
+
+        public bool Done { get; set; }
+        public bool Error { get; set; }
+        public string ErrorText { get; set; }
+
+        public double PercentDone
+        {
+            get { return Done ? 100.0 : _percent; }
+            set { _percent = value; }
+        }
+
+        protected void DeleteOrRecycleFile(FileInfo file )
+        {
+            if (file == null) return;
+            if (_tidyup.DeleteEmptyIsRecycle)
+            {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            else
+            {
+                file.Delete(true);
+            }
+        }
+
+        protected void DeleteOrRecycleFolder(DirectoryInfo di)
+        {
+            if (di == null) return;
+            if (_tidyup.DeleteEmptyIsRecycle)
+            {
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+            }
+            else
+            {
+                di.Delete();
+            }
+        }
+
+        protected void DoTidyup(DirectoryInfo di)
+        {
+#if DEBUG
+            Debug.Assert(this._tidyup != null);
+            Debug.Assert(this._tidyup.DeleteEmpty);
+#else
+            if (_tidyup == null || !_tidyup.DeleteEmpty)
+                return;
+#endif
+            // See if we should now delete the folder we just moved that file from.
+            if (di == null)
+                return;
+
+            //if there are sub-directories then we shouldn't remove this one
+            if (di.GetDirectories().Length > 0)
+                return;
+
+            //if the directory is the root download folder do not delete
+            if (TVSettings.Instance.MonitorFolders && TVSettings.Instance.SearchFoldersNames.Contains(di.FullName))
+                return;
+
+            // Do not delete any monitor folders either
+            if (TVSettings.Instance.MonitorFoldersNames.Contains(di.FullName))
+                return;
+
+
+            FileInfo[] files = di.GetFiles();
+            if (files.Length == 0)
+            {
+                // its empty, so just delete it
+                di.Delete();
+                return;
+            }
+
+
+            if (_tidyup.EmptyIgnoreExtensions && !_tidyup.EmptyIgnoreWords)
+                return; // nope
+
+            foreach (FileInfo fi in files)
+            {
+                bool okToDelete = _tidyup.EmptyIgnoreExtensions &&
+                                 Array.FindIndex(_tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
+
+                if (okToDelete)
+                    continue; // onto the next file
+
+                // look in the filename
+                if (_tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word)))
+                    okToDelete = true;
+
+                if (!okToDelete)
+                    return;
+            }
+
+            if (_tidyup.EmptyMaxSizeCheck)
+            {
+                // how many MB are we deleting?
+                long totalBytes = files.Sum(fi => fi.Length);
+
+                if (totalBytes / (1024 * 1024) > _tidyup.EmptyMaxSizeMB)
+                    return; // too much
+            }
+            DeleteOrRecycleFolder(di);
+        }
+        public ProcessedEpisode Episode { get; set; }
+        public abstract string Name { get; }
+        public abstract string ProgressText { get; }
+        public abstract long SizeOfWork { get; }
+        public abstract string produces { get; }
+        public abstract ListViewItem ScanListViewItem { get; }
+        public abstract string TargetFolder { get; }
+        public abstract string ScanListViewGroup { get; }
+        public abstract int IconNumber { get; }
+        public abstract IgnoreItem Ignore { get; }
+        public abstract int Compare(Item o);
+        public abstract bool SameAs(Item o);
+        public abstract bool Go(ref bool pause, TVRenameStats stats);
     }
 }

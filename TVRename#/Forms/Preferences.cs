@@ -131,6 +131,7 @@ namespace TVRename
             S.RenameTxtToSub = this.cbTxtToSub.Checked;
             S.ShowEpisodePictures = this.cbShowEpisodePictures.Checked;
             S.AutoSelectShowInMyShows = this.cbAutoSelInMyShows.Checked;
+            S.AutoCreateFolders = this.cbAutoCreateFolders.Checked ;  
             S.SpecialsFolderName = this.txtSpecialsFolderName.Text;
 
             S.ForceLowercaseFilenames = this.cbForceLower.Checked;
@@ -156,7 +157,9 @@ namespace TVRename
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
+
             S.MonitorFolders = this.cbMonitorFolder.Checked;
+            S.RemoveDownloadDirectoriesFiles = this.cbCleanUpDownloadDir.Checked;
 
             S.EpJPGs = this.cbEpThumbJpg.Checked;
             S.SeriesJpg = this.cbSeriesJpg.Checked;
@@ -313,6 +316,7 @@ namespace TVRename
             this.chkShowInTaskbar.Checked = S.ShowInTaskbar;
             this.cbTxtToSub.Checked = S.RenameTxtToSub;
             this.cbShowEpisodePictures.Checked = S.ShowEpisodePictures;
+            this.cbAutoCreateFolders.Checked = S.AutoCreateFolders; 
             this.cbAutoSelInMyShows.Checked = S.AutoSelectShowInMyShows;
             this.txtSpecialsFolderName.Text = S.SpecialsFolderName;
             this.cbForceLower.Checked = S.ForceLowercaseFilenames;
@@ -337,6 +341,7 @@ namespace TVRename
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
             this.cbLookForAirdate.Checked = S.LookForDateInFilename;
             this.cbMonitorFolder.Checked = S.MonitorFolders;
+            this.cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
             this.cbMissing.Checked = S.MissingCheck;
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;

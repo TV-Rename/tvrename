@@ -9,6 +9,7 @@ using System;
 using Alphaleonis.Win32.Filesystem;
 using System.Xml;
 using System.Collections.Generic;
+using System.Linq;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -312,6 +313,27 @@ namespace TVRename
                     return ser.Name;
                 return "<" + this.TVDBCode + " not downloaded>";
             }
+        }
+
+        public List<String> getSimplifiedPossibleShowNames()
+        {
+            List<String> possibles = new List<String>();
+
+            String simplifiedShowName = Helpers.SimplifyName(this.ShowName);
+            if (!(simplifiedShowName == "")) { possibles.Add( simplifiedShowName); }
+
+            //Check the custom show name too
+            if (this.UseCustomShowName)
+            {
+                String simplifiedCustomShowName = Helpers.SimplifyName(this.CustomShowName);
+                if (!(simplifiedCustomShowName == "")) { possibles.Add(simplifiedCustomShowName); }
+            }
+
+            //Also add the aliases provided
+            possibles.AddRange(from alias in this.AliasNames select Helpers.SimplifyName(alias));
+
+            return possibles;
+
         }
 
         public string ShowStatus

@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 // Starting from:
@@ -82,6 +85,31 @@ namespace TVRename
         {
             if (e.KeyCode == Keys.Space)
                 this._keyCheck = false;
+        }
+
+        // The 'TopItem' function doesn't work in a ListView if groups are enabled. This is meant to be a workaround.
+        // Problem is, it just doesn't work and I don't know why!
+        const Int32 LVM_FIRST = 0x1000;
+        const Int32 LVM_SCROLL = LVM_FIRST + 20;
+        private const int SB_HORZ = 0;
+        private const int SB_VERT = 1;
+
+        [DllImport("user32.dll")]
+        static extern int GetScrollPos(IntPtr hWnd, int nBar);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        public int GetScrollVerticalPos()
+        {
+            return GetScrollPos(this.Handle, SB_VERT);
+        }
+
+        public void SetScrollVerticalPos(int position)
+        {
+            var currentPos = GetScrollPos(this.Handle, SB_VERT);
+            var delta = -(currentPos - position);
+            SendMessage(this.Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
         }
     }
 }
