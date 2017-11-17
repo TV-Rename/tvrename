@@ -1294,7 +1294,7 @@ namespace TVRename
                     continue;
 
                 // see if the show name matches...
-                if (Regex.Match(simplifiedfname, "\\b" + m.TheSeries.Name + "\\b", RegexOptions.IgnoreCase).Success)
+                if ( FileHelper.SimplifyAndCheckFilename(simplifiedfname, m.TheSeries.Name,false,true))
                 {
                     // see if season and episode match
                     int seasF;

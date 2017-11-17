@@ -60,7 +60,7 @@ namespace TVRename
             try
             {
                 SAB.result res = SAB.result.Deserialize(r);
-                if (res.status == "False")
+                if (res != null && res.status == "False")
                 {
                     MessageBox.Show(res.error, "SABnzbd Queue Check", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     prog.Invoke(startpct + totPct);
@@ -117,7 +117,6 @@ namespace TVRename
                         //    continue;
 
                         if (FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false))
-                        // if (Regex::Match(simplifiedfname,"\\b"+showname+"\\b",RegexOptions::IgnoreCase)->Success)
                         {
                             int seasF;
                             int epF;
