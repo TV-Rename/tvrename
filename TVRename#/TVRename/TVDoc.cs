@@ -99,7 +99,7 @@ namespace TVRename
             List<String> allValues = new List<string> { };
             foreach (ShowItem si in ShowItems)
             {
-                if (si.TheSeries().getNetwork() != null) allValues.Add(si.TheSeries().getNetwork());
+                if (si.TheSeries()?.getNetwork() != null) allValues.Add(si.TheSeries().getNetwork());
             }
             List<String> distinctValues = allValues.Distinct().ToList();
             distinctValues.Sort();
@@ -111,7 +111,7 @@ namespace TVRename
             List<String> allValues = new List<string> { };
             foreach (ShowItem si in ShowItems)
             {
-                if (si.TheSeries().GetRating() != null) allValues.Add(si.TheSeries().GetRating());
+                if (si.TheSeries()?.GetRating() != null) allValues.Add(si.TheSeries().GetRating());
             }
             List<String> distinctValues = allValues.Distinct().ToList();
             distinctValues.Sort();
@@ -1784,6 +1784,7 @@ namespace TVRename
                         // generate new filename info
                         bool goAgain = false;
                         DirectoryInfo di = null;
+                        bool firstAttempt = true;
                         do
                         {
                             goAgain = false;
@@ -1816,8 +1817,12 @@ namespace TVRename
                                 if (this.Args.Hide && (whatToDo == FAResult.kfaNotSet))
                                     whatToDo = FAResult.kfaIgnoreOnce; // default in /hide mode is to ignore
 
-                                if (TVSettings.Instance.AutoCreateFolders)
-                                    whatToDo = FAResult.kfaCreate; 
+                                if (TVSettings.Instance.AutoCreateFolders && firstAttempt )
+                                {
+                                    whatToDo = FAResult.kfaCreate;
+                                    firstAttempt = false;
+                                }
+                                    
 
                                 if (whatToDo == FAResult.kfaNotSet)
                                 {
@@ -1840,8 +1845,15 @@ namespace TVRename
                                 }
                                 else if (whatToDo == FAResult.kfaCreate)
                                 {
-                                    Directory.CreateDirectory(folder);
+                                    try {
+                                        Directory.CreateDirectory(folder);
+                                    }
+                                    catch (System.IO.IOException ioe)
+                                    {
+                                    }
                                     goAgain = true;
+
+
                                 }
                                 else if (whatToDo == FAResult.kfaIgnoreAlways)
                                 {

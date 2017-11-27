@@ -26,10 +26,10 @@ namespace TVRename
             Boolean isStatusOK = (ShowStatus == null) || show.ShowStatus.Equals(ShowStatus);
 
             //Filter on show network
-            Boolean isNetworkOK = (ShowNetwork == null) || show.TheSeries().getNetwork().Equals(ShowNetwork);
+            Boolean isNetworkOK = (ShowNetwork == null) || (show.TheSeries() == null ) || show.TheSeries().getNetwork().Equals(ShowNetwork);
 
             //Filter on show rating
-            Boolean isRatingOK = (ShowRating == null) || show.TheSeries().GetRating().Equals(ShowRating);
+            Boolean isRatingOK = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().GetRating().Equals(ShowRating);
 
             //Filter on show genres
             Boolean areGenresIgnored = (Genres.Count == 0);
@@ -37,7 +37,10 @@ namespace TVRename
             Boolean doAnyGenresMatch = false; //assume false
             if (!areGenresIgnored )
                 {
-                foreach (String showGenre in show.Genres)
+                if (show.Genres == null)
+                {
+                    doAnyGenresMatch = false;
+                } else                 foreach(String showGenre in show.Genres)
                 {
                     foreach (String filterGenre in this.Genres)
                         if (showGenre == filterGenre) doAnyGenresMatch = true;

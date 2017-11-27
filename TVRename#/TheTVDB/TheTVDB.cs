@@ -631,8 +631,25 @@ namespace TVRename
                     moreUpdates = false;
                     return false;
                 }
+
+                int numberOfResponses =0;
+                try
+                {
+                    numberOfResponses = ((JArray)jsonUdpateResponse["data"]).Count;
+
+                }
+                catch (InvalidCastException ex) {
+                    System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    this.Say("");
+                    this.LastError = ex.Message;
+                    moreUpdates = false;
+                    MessageBox.Show("Unable to get latest updates from TVDB " + Environment.NewLine + "Trying to get updates since " + Helpers.FromUnixTime(epochTime).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the date is very old, please consider a full refresh", "Error obtaining updates from TVDB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return true;
+                }
+
+
                 updatesResponses.Add(jsonUdpateResponse);
-                int numberOfResponses = ((JArray)jsonUdpateResponse["data"]).Count;
                 numberofCallsMade++;
 
                 IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long)a["lastUpdated"];
