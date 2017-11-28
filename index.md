@@ -1,5 +1,4 @@
-### Welcome to GitHub Pages.
-This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here [using GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/), select a template crafted by a designer, and publish. After your page is generated, you can check out the new `gh-pages` branch locally. If you’re using GitHub Desktop, simply sync your repository and you’ll see the new branch.
+### Welcome to TV Rename.
 
 ### About
 What this program is, and some screenshots. [here](http://www.tvrename.com/about.html)
@@ -19,7 +18,7 @@ Download the latest installer, and alpha/beta versions from here. Release notes 
 Available on Github. 
 
 MS .NET 2.0 framework - Used by TVRename. The TVRename installer will check for this and let you know if it is needed.
-(here)[http://www.microsoft.com/downloads/details.aspx?familyid=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5&displaylang=en:new=true]
+[here](http://www.microsoft.com/downloads/details.aspx?familyid=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5&displaylang=en:new=true)
 
 TVRename makes use of data from TheTVDB.com. Please visit their site, and consider helping by contributing information and artwork for episodes and series. It also uses DotNET Zip, SourceGrid, and has had significant speed improvements as a result of using Red Gate's ANTS profiler, and JetBrains' dotTrace. JetBrains' ReSharper is also used for improving the code. 
 
