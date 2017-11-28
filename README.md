@@ -3,11 +3,11 @@
 
 Say you've downloaded a few TV episodes, and they have names like:
 
-  *    Grey's.Anatomy.S03E04.blah.xvid.avi*
+>  *Grey's.Anatomy.S03E04.blah.xvid.avi*
 
 and you want them named more like:
 
-  *    Greys Anatomy - S03E04 - What I Am.avi*
+> *Greys Anatomy - S03E04 - What I Am.avi*
 
 ..this this is the program for you!
 
