@@ -21,10 +21,5 @@ Please raise bugs on GITHub [issues tracker](https://github.com/TV-Rename/tvrena
 ### Feature Requests
 Please raise new Ideas for Features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0).
 
-MS .NET 2.0 framework - Used by TVRename. The TVRename installer will check for this and let you know if it is needed.
-[here](http://www.microsoft.com/downloads/details.aspx?familyid=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5&displaylang=en:new=true)
-
-TVRename makes use of data from TheTVDB.com. Please visit their site, and consider helping by contributing information and artwork for episodes and series. It also uses DotNET Zip, SourceGrid, and has had significant speed improvements as a result of using Red Gate's ANTS profiler, and JetBrains' dotTrace. JetBrains' ReSharper is also used for improving the code. 
-
 ### Buy me a drink
 If this program has saved you time, or you use it regularly, then [buy me a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or drink of your choice).
