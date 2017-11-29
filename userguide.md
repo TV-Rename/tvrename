@@ -30,7 +30,7 @@ Further Help, Bugs, and Suggestions
 First we'll start with what you're going to end up with. This shows a number of shows we are currently watching. The first four in the list have aired, and the first two of those are on disk locally. We can also see what's coming up in the next few days, and further ahead. There is a episode summary for the currently selected episode, and a calendar showing when shows are airing. At the very bottom, in the status bar, is a countdown to the next show that is airing.
 
 
-Beginner's Overview
+## Beginner's Overview
 The first time you use this program, you will probably be wanting to do one of the following two things:
 
 (1) Get an existing collection of shows under control. In this case, I'd start with the "Folder Monitor" (or "Shows and Folders"), followed by "Rename", then "Missing Check", and "Finding and Organising". If you have a lot of shows, choose "Update Codes" from the "Tools" menu before you start.
@@ -39,7 +39,7 @@ The first time you use this program, you will probably be wanting to do one of t
 
 Whatever manipulation TVRename does to your files, it will never change the season or episode number. If the names get screwed up, the season and episode number will be unchanged, meaning that the problem should be (fairly easily) fixable after changing some settings, or adding new rules. At least, that's the theory. :)
 
-Tips and Tricks
+## Tips and Tricks
 Most items can be double-clicked, to do the most "useful" thing for them.
 Folders, shows, and episodes can be right-clicked for appropriate actions.
 Column headers can be clicked to sort by that column.
