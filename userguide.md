@@ -4,28 +4,28 @@ Note: This user guide is written based on the older, 2.0, version of the softwar
 If you need any further help, sign up to the forums and post a message there.
 
 ## Contents
-Introduction
-Beginner's Overview
-Tips and Tricks
-Shows and Folders
-Add/Edit Show
-Add/Modify Rule
-Add/Edit Folder
-Episode Guide
-Renaming
-Missing
-Finding and Organising
-Folder Monitor
-Torrent Match
-When to Watch
-Preferences
-Buy Me A Drink!
-Flush Cache
-Mark Old Shows
-Statistics
-Update Codes
-Files
-Further Help, Bugs, and Suggestions
+* Introduction
+* Beginner's Overview
+* Tips and Tricks
+* Shows and Folders
+* Add/Edit Show
+* Add/Modify Rule
+* Add/Edit Folder
+* Episode Guide
+* Renaming
+* Missing
+* Finding and Organising
+* Folder Monitor
+* Torrent Match
+* When to Watch
+* Preferences
+* Buy Me A Drink!
+* Flush Cache
+* Mark Old Shows
+* Statistics
+* Update Codes
+* Files
+* Further Help, Bugs, and Suggestions
 ## Introduction
 First we'll start with what you're going to end up with. This shows a number of shows we are currently watching. The first four in the list have aired, and the first two of those are on disk locally. We can also see what's coming up in the next few days, and further ahead. There is a episode summary for the currently selected episode, and a calendar showing when shows are airing. At the very bottom, in the status bar, is a countdown to the next show that is airing.
 
@@ -219,7 +219,7 @@ If processing is successful, you will be taken to the rename or finding and orgn
 
 It's not possible to rename the files in (a multiple file) torrent, to match what you have on disk. Changing the names affects the hash, which makes it a different torrent from the tracker's point of view. Because of this, TVRename renames the files on disk instead.
 
-When to Watch
+## When to Watch
 For shows which have the "Show next airdate" option set, they will be listed here if tv.com has airdate information available. The time and date are adjusted to be in the timezone that you have Windows set to be.
 
 Click on the columns to sort by them. Right-click on items to do useful related actions. For shows that have aired, an icon is shown to indicate if it is on disk (double-clicking will open it), or needs to be searched for. Double-clicking a item that isn't on disk will open the specified torrent search engine for it.
@@ -234,7 +234,7 @@ The "When to Watch" display is automatically refreshed from time to time, and TV
 
 
 
-Preferences
+## Preferences
 The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename.
 
 The "days count as recent" specifies how many days to show for "Aired in the last N days" in the "When to Watch" tab. The "Startup tab" is what TVRename shows when you open it. The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!
@@ -260,19 +260,19 @@ This will delete all the files in the local cache of pages downloaded from tv.co
 
 
 
-Mark Old Shows
+## Mark Old Shows
 This lets you quickly manage which shows are old, i.e.: their data is never flushed from the cache or retrieved more than once from tv.com.
 
 Tick the boxes, or click Auto to automatically tick any shows older than the specified time period. The age is defined as how long it has been since the last known airdate and now. Auto will not un-tick any shows.
 
 
 
-Statistics
+## Statistics
 Just how useful has TVRename been? "Episodes on disk" is the number of episodes found the last time a "missing check" was done. "Total Episodes" is the count from the tv.com episode guide for all the shows you have.
 
 
 
-Update Codes
+## Update Codes
 This will pre-load the cache for tv.com codes by using the "Update Codes" option on the "Tools" menu. This will download from TVRename's website data for about 14000 shows, but it is only updated very very infrequently. Perhaps once or twice a year.
 
 
