@@ -1,5 +1,3 @@
-### Welcome to TV Rename.
-
 ### About
 What this program is, and some screenshots. [here](http://www.tvrename.com/about.html)
 
@@ -15,7 +13,13 @@ Notification of new versions, and release notes are [here](https://groups.google
 Download the latest installer, and alpha/beta versions from here. Release notes are here. TVRename runs on Windows XP, Vista, and 7. 
 
 ### Source Code 
-Available on Github. 
+Download TVRename, program or source code, from the [GitHub page](https://github.com/TV-Rename/tvrename).
+
+### Issues and Bugs
+Please raise bugs on GITHub [issues tracker](https://github.com/TV-Rename/tvrename/issues).
+
+### Feature Requests
+Please raise new Ideas for Features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0).
 
 MS .NET 2.0 framework - Used by TVRename. The TVRename installer will check for this and let you know if it is needed.
 [here](http://www.microsoft.com/downloads/details.aspx?familyid=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5&displaylang=en:new=true)
