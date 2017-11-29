@@ -3,29 +3,6 @@ Note: This user guide is written based on the older, 2.0, version of the softwar
 
 If you need any further help, sign up to the forums and post a message there.
 
-## Contents
-* Introduction
-* Beginner's Overview
-* Tips and Tricks
-* Shows and Folders
-* Add/Edit Show
-* Add/Modify Rule
-* Add/Edit Folder
-* Episode Guide
-* Renaming
-* Missing
-* Finding and Organising
-* Folder Monitor
-* Torrent Match
-* When to Watch
-* Preferences
-* Buy Me A Drink!
-* Flush Cache
-* Mark Old Shows
-* Statistics
-* Update Codes
-* Files
-* Further Help, Bugs, and Suggestions
 ## Introduction
 First we'll start with what you're going to end up with. This shows a number of shows we are currently watching. The first four in the list have aired, and the first two of those are on disk locally. We can also see what's coming up in the next few days, and further ahead. There is a episode summary for the currently selected episode, and a calendar showing when shows are airing. At the very bottom, in the status bar, is a countdown to the next show that is airing.
 ![When To Watch](images/userguide/whentowatch.png)
@@ -255,18 +232,6 @@ Below is an example of the RSS output being displayed in a Vista sidebar gadget.
 I'm a thirsty man, so I need lots of drinks. :)
 
 ![buymeadrink](images/UserGuide/buymeadrink.png)
-
-## Flush Cache
-This will delete all the files in the local cache of pages downloaded from tv.com. Doing this means that on the next check, rename, or refresh, all data will be re-downloaded from tv.com.
-
-![flushcache](images/UserGuide/flushcache.png)
-
-## Mark Old Shows
-This lets you quickly manage which shows are old, i.e.: their data is never flushed from the cache or retrieved more than once from tv.com.
-
-Tick the boxes, or click Auto to automatically tick any shows older than the specified time period. The age is defined as how long it has been since the last known airdate and now. Auto will not un-tick any shows.
-
-![markoldshows](images/UserGuide/markoldshows.png)
 
 ## Statistics
 Just how useful has TVRename been? "Episodes on disk" is the number of episodes found the last time a "missing check" was done. "Total Episodes" is the count from the tv.com episode guide for all the shows you have.
