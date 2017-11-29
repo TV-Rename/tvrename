@@ -1,6 +1,3 @@
-# TV Rename
-*Organise your TV videos with ease*
-
 Say you've downloaded a few TV episodes, and they have names like:
 
 >  *Grey's.Anatomy.S03E04.blah.xvid.avi*
