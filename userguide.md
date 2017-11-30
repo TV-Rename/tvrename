@@ -24,6 +24,7 @@ Whatever manipulation TVRename does to your files, it will never change the seas
 * If you double-click on a tab to select it, it will automatically do the "Find", "Check", or "Refresh" action for that tab.
 * After making changes, you need to save before exiting (TVRename will prompt you). If you screw something up, just exit without saving and your settings will be restored.
 * TVRename stores a lot of data in XML files. See the files section for more information on what there is, and where it is.
+
 ## Shows and Folders
 This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
 In this image, you can see a number of shows, each of which can have zero, one, or more folders associated with it.
@@ -56,6 +57,7 @@ Buttons for the bottom half:
  * Edit - Edit the selected folder's details.
  * Remove - Remove the selected folder(s).
  * Open - Open in Windows Explorer the current folder.
+
 ## Add/Edit Show
 Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
 ![addeditshow](images/UserGuide/addeditshow.png)
@@ -238,25 +240,17 @@ Just how useful has TVRename been? "Episodes on disk" is the number of episodes 
 
 ![statistics](images/UserGuide/statistics.png)
 
-## Update Codes
-This will pre-load the cache for tv.com codes by using the "Update Codes" option on the "Tools" menu. This will download from TVRename's website data for about 14000 shows, but it is only updated very very infrequently. Perhaps once or twice a year.
-
-![updatecodes](images/UserGuide/updatecodes.png)
-
 ## Files
 Files on your computer that TVRename creates and uses:
 
 %temp%\TVRenameCache
 Cache of pages downloaded from tv.com. TVRename keeps this under control, deleting old files. Alternatively, you can force it to be emptied by choosing "Flush Cache" from the "Tools" menu. You can manually delete files from here, if you want, without any side effects (apart from TVRename downloading it fresh the next time it needs it.)
 
-\Documents and Settings\<username>\Application Data\TVRename\TVRename\2.0\ (Windows XP)
-\Users\<username>\AppData\Roaming\TVRename\TVRename\2.0\ (Vista)
+\Documents and Settings\<username>\Application Data\TVRename\TVRename\2.1\ (Windows XP)
+\Users\<username>\AppData\Roaming\TVRename\TVRename\2.1\ (Vista)
 This folder contains TVRename's settings:
 
 * TVRenameSettings.xml - Pretty much everything. All your shows, folders, and settings. This is only overwritten when you choose "Save". Older, backup, copies of the settings file are also kept in here.
 * Layout.xml - TVRename's window position, column sizes, and statistics are saved here.
  * TVcomShowCache.xml - Locally cached tv.com show code information.
 The only thing saved to the registry is uninstall information, used by the "Add/Remove" control panel.
-
-## Further Help, Bugs, and Suggestions
-Visit the forums, and make a post there or PM sstteevvee. If you've found a bug, you can also use the "Bug Report" item on the "Help" menu. Fill in the boxes, then click "Create". Once it is done gathering diagnostic information, copy and paste the text in an email to the address indicated.
