@@ -1,5 +1,5 @@
 ## About
-What this program is, and some screenshots. [here](about) TVRename runs on Windows XP, Vista, and 7. 
+What this program is, and some screenshots. [here](screenshots) TVRename runs on Windows XP, Vista, and 7. 
 
 ## User Guide
 How to use TVRename. [here](userguide)
