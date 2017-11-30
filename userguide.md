@@ -251,9 +251,9 @@ Files on your computer that TVRename creates and uses:
 **or**
 \Users\<username>\AppData\Roaming\TVRename\TVRename\2.1\ (Vista)
 
-This folder contains TVRename's settings:
+This folder contains TVRename's settings files:
 
--* **TVRenameSettings.xml** - Pretty much everything. All your shows, folders, and settings. This is only overwritten when you choose "Save". Older, backup, copies of the settings file are also kept in here.
+* **TVRenameSettings.xml** - Pretty much everything. All your shows, folders, and settings. This is only overwritten when you choose "Save". Older, backup, copies of the settings file are also kept in here.
 * **Layout.xml** - TVRename's window position, column sizes, and statistics are saved here.
 * **TVcomShowCache.xml** - Locally cached tv.com show code information.
 
