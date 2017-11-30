@@ -29,6 +29,7 @@ Whatever manipulation TVRename does to your files, it will never change the seas
 ## Shows and Folders
 This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
 In this image, you can see a number of shows, each of which can have zero, one, or more folders associated with it.
+
 ![Shows and Folders](images/UserGuide/showsandfolders.png)
 
 In the top half of the screen, from left to right:
@@ -42,18 +43,17 @@ In the top half of the screen, from left to right:
  * Old - A show marked as "Old" won't have its data repeatedly downloaded from tv.com, after it is cached for the first time.
 
 Buttons for the top half:
-
  * Add - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
  * Edit - Edit the currently selected show.
  * Remove - Remove the currently selected show(s).
  * Visit tv.com - Visit the tv.com page for this season of this show.
-After clicking on a show in the top half, the bottom half becomes useful. From left to right:
 
+After clicking on a show in the top half, the bottom half becomes useful. From left to right:
  * Folder - The folder on your computer that this show is in.
  * Check Type - Whether or not we check for missing episodes, etc. This is covered more in the "Add/Edit Folder" section.
  * Naming Style - How you like your shows to be named. The default is set in the Preferences dialog, but can be individually overridden for individual folders.
-Buttons for the bottom half:
 
+Buttons for the bottom half:
  * Add - Add a new folder to the currently selected show.
  * Edit - Edit the selected folder's details.
  * Remove - Remove the selected folder(s).
@@ -61,6 +61,7 @@ Buttons for the bottom half:
 
 ## Add/Edit Show
 Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
+
 ![addeditshow](images/UserGuide/addeditshow.png)
 ![tvcomsearch](images/UserGuide/tvcomsearch.png)
 	
@@ -84,6 +85,7 @@ In this example, episodes 16 and 17 were aired as a double episode, meaning you 
 
 ## Add/Modify Rule
 This is the dialog for adding or editing a rule for a show's season. Choose the operation at the top, then enter the appropriate values below.
+
 ![addmodifyrule](images/UserGuide/addmodifyrule.png)
 
 
@@ -100,6 +102,7 @@ After adding a rule, you can go to the "Episode Guide" tab, select the show, and
 You can drag amd drop a new folder from explorer onto a line in the Shows list to add it to that show, or into the folder area below the shows. Note that you can have multiple folders for a show.
 
 To add/edit a folder you click on the appropriate button, which displays this dialog:
+
 ![addeditfolder](images/UserGuide/addeditfolder.png)
 
 
@@ -244,10 +247,8 @@ Just how useful has TVRename been? "Episodes on disk" is the number of episodes 
 ## Files
 Files on your computer that TVRename creates and uses:
 
-%temp%\TVRenameCache
-Cache of pages downloaded from tv.com. TVRename keeps this under control, deleting old files. Alternatively, you can force it to be emptied by choosing "Flush Cache" from the "Tools" menu. You can manually delete files from here, if you want, without any side effects (apart from TVRename downloading it fresh the next time it needs it.)
-
 \Documents and Settings\<username>\Application Data\TVRename\TVRename\2.1\ (Windows XP)
+or
 \Users\<username>\AppData\Roaming\TVRename\TVRename\2.1\ (Vista)
 This folder contains TVRename's settings:
 
