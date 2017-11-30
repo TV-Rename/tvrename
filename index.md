@@ -4,10 +4,10 @@ What this program is, and some screenshots. [here](screenshots) TVRename runs on
 ## User Guide
 How to use TVRename. [here](userguide)
 
-## Forums
+## Support & Forums
 Read about the latest versions, make suggestions, and report bugs [here](https://groups.google.com/forum/#!forum/tvrename). 
 
-## Release Forums
+## Downloads & Release Notes (Release Forums)
 Notification of new versions, and release notes are [here](https://groups.google.com/forum/#!forum/tvrename-releases). 
 Download the latest installer, and alpha/beta versions from here. Release notes are here. 
 
@@ -17,8 +17,8 @@ Please raise bugs on GITHub [issues tracker](https://github.com/TV-Rename/tvrena
 ## Feature Requests
 Please raise new Ideas for Features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0).
 
-## Source Code 
-Download TVRename, program or source code, from the [GitHub page](https://github.com/TV-Rename/tvrename).
+## Technical Details
+If you are technically minded further information is available [here](technical)
 
 ## Buy me a drink
 If this program has saved you time, or you use it regularly, then [buy me a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or drink of your choice).
