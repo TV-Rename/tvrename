@@ -1,4 +1,5 @@
 This is a fairly brief overview of TVRename and how to use it. I'm not very good at writing documentation (and it's not something that's anywhere near as fun as writing code), so this may be somewhat brief. Any suggestions for improvements, or offers to write better documentation, are welcome. :)
+
 Note: This user guide is written based on the older, 2.0, version of the software. Most of the features are the same, or similar. The main changes have been to how you enter in your shows ("Shows and Folders"), and the use of thetvdb.com as the database - rather than tv.com.
 
 If you need any further help, sign up to the forums and post a message there.
