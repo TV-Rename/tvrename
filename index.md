@@ -22,3 +22,6 @@ Download TVRename, program or source code, from the [GitHub page](https://github
 
 ## Buy me a drink
 If this program has saved you time, or you use it regularly, then [buy me a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or drink of your choice).
+
+## Further Help, Bugs, and Suggestions
+Visit the forums, and make a post there or PM sstteevvee. If you've found a bug, you can also use the "Bug Report" item on the "Help" menu. Fill in the boxes, then click "Create". Once it is done gathering diagnostic information, copy and paste the text in an email to the address indicated.
