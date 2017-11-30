@@ -2,7 +2,8 @@ title: TV Rename
 description: Organise your TV videos with ease
 google_analytics: 
 show_downloads: false
-theme: jekyll-theme-leap-day
+remote_theme: mmistakes/minimal-mistakes
+
 
 gems:
   - jekyll-mentions
