@@ -449,7 +449,7 @@ namespace TVRename
         {
             get
             {
-                return this.TheSeries().GetGenres();
+                return this.TheSeries()?.GetGenres();
             }
         }
 
