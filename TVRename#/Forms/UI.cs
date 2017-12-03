@@ -26,6 +26,7 @@ using File = Alphaleonis.Win32.Filesystem.File;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace TVRename
 {
@@ -672,7 +673,7 @@ namespace TVRename
 
         private static string QuickStartGuide()
         {
-            return "http://tvrename.com/quickstart-2.2.html";
+            return "https://tv-rename.github.io/tvrename/quickstart";
         }
 
         private void ShowQuickStartGuide()
@@ -2827,6 +2828,39 @@ namespace TVRename
             new ActorsGrid(this.mDoc).ShowDialog();
         }
 
+        private void findDoubleEpsToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            StringBuilder output = new StringBuilder();
+
+            foreach (ShowItem si in this.mDoc.ShowItems){
+                foreach (KeyValuePair<int,List<ProcessedEpisode>> kvp in si.SeasonEpisodes ) {
+
+                    //Ignore specials seasons
+                    if (kvp.Key == 0) continue;
+
+                    //Ignore seasons that all aired on same date
+                    DateTime? seasonMinAirDate = (from pep in kvp.Value select pep.FirstAired).Min();
+                    DateTime? seasonMaxAirDate= (from pep in kvp.Value select pep.FirstAired).Max();
+                    if ((seasonMaxAirDate.HasValue) && seasonMinAirDate.HasValue && seasonMaxAirDate == seasonMinAirDate)
+                        continue;
+
+                    //Search through each pair of episodes for the same season
+                    foreach (ProcessedEpisode pep in kvp.Value)
+                    {
+                        foreach (ProcessedEpisode comparePep in kvp.Value)
+                        {
+                            if (pep.FirstAired.HasValue && comparePep.FirstAired.HasValue && pep.FirstAired == comparePep.FirstAired && pep.EpisodeID < comparePep.EpisodeID )
+                            {
+                                output.AppendLine(si.ShowName + " - Season: " + kvp.Key + " - " + pep.FirstAired.ToString() + " - " + pep.EpNum + " - " + comparePep.EpNum);
+                            }
+                        }
+                    }
+                }
+            }
+            //MessageBox.Show(output.ToString());
+            System.Diagnostics.Debug.Print(output.ToString());
+        }
+
         private void quickTimer_Tick(object sender, System.EventArgs e)
         {
             this.quickTimer.Stop();
@@ -3628,6 +3662,16 @@ namespace TVRename
                 // Send EM_SETMARGINS to prevent text from disappearing underneath the button
                 SendMessage(filterTextBox.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
             }
+        }
+
+        private void visitSupportForumToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Helpers.SysOpen("https://groups.google.com/forum/#!forum/tvrename");
+        }
+
+        private void epGuideHTML_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+
         }
     }
 }
