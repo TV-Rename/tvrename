@@ -29,7 +29,7 @@ See the **[Quick start guide](quickstart)** for further information on how to ge
 * After making changes, you need to save before exiting (TVRename will prompt you). If you screw something up, just exit without saving and your settings will be restored.
 * TVRename stores a lot of data in XML files. See the files section for more information on what there is, and where it is.
 
-## Shows and Folders
+## My Shows
 This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
 In this image, you can see a number of shows, each of which can have zero, one, or more folders associated with it.
 
@@ -62,7 +62,7 @@ Buttons for the bottom half:
  * **Remove** - Remove the selected folder(s).
  * **Open** - Open in Windows Explorer the current folder.
 
-## Add/Edit Show
+### Add/Edit Show
 Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
 
 ![addeditshow](images/UserGuide/addeditshow.png)
@@ -86,7 +86,7 @@ The rules section lets you manipulate the tv.com episode guide to suit how you h
 
 In this example, episodes 16 and 17 were aired as a double episode, meaning you have only one file on disk for both. The rule merges the two episodes into one. This affects the display in the "Episode Guide" tab, as well as what is checked for and how the files are renamed.
 
-## Add/Modify Rule
+### Add/Modify Rule
 This is the dialog for adding or editing a rule for a show's season. Choose the operation at the top, then enter the appropriate values below.
 
 ![addmodifyrule](images/UserGuide/addmodifyrule.png)
@@ -143,14 +143,17 @@ You can select items in the list and press the Delete key on your keyboard to re
 
 ![renaming](images/UserGuide/renaming.png)
 
-## Missing
+## Scanning
+
+### Scan Types
+
 This shows you where ther are gaps in your collection. Click the check button, and TVRename will look through your folders and list what you are missing.
 
 The "arrow-down" button in the bottom left lets you choose your preferred torrent search engine. Clicking on the button in the bottom left will search for the currently selected missing episode(s) on that site. Double-clicking an item in the list will also search.
 
 ![missing](images/UserGuide/missing.png)
 
-## Finding and Organising
+## Scan Results
 After doing a "missing" check, "finding and organising" will search, on your computer, for those missing files.
 
 Add a number of "search folders". Either use the "Add" button, or drag and drop folders from Windows Explorer into this list. The "Open" button will open an Explorer window for the selected folder. Folders added to this list automatically have their subfolders searched.
@@ -164,6 +167,21 @@ Once you are satisfied with the list of things to do, click on "Move/Copy" and T
 While files are being copied and/or moved, the dialog below is shown. Press "Pause" to temporarily pause the copy/move operation. Click it again to resume. "Cancel" will stop immediately. The disk space shown is for the drive that the current file is being copied/moved to.
 
 ![copymoveprogress](images/UserGuide/copymoveprogress.png)
+
+## When to Watch
+For shows which have the "Show next airdate" option set, they will be listed here if tv.com has airdate information available. The time and date are adjusted to be in the timezone that you have Windows set to be.
+
+Click on the columns to sort by them. Right-click on items to do useful related actions. For shows that have aired, an icon is shown to indicate if it is on disk (double-clicking will open it), or needs to be searched for. Double-clicking a item that isn't on disk will open the specified torrent search engine for it.
+
+Click on the calendar to see what is airing on a particular day. Dates with shows airing are in bold. Click on a show to see its episode summary below. The refresh button will make sure that the information is up-to-date.
+
+"Aired in the last N days" and "Next 7 days" are self-explanatory. "Later" shows the next airing episode of any show you're interested in that isn't in the next week. "Future Episodes" are all known episodes after anything in the two preceding categories.
+
+You can turn this grouping off by clicking on the "How Long" column header, and on by clicking on "Air Date".
+
+The "When to Watch" display is automatically refreshed from time to time, and TVRename will download in the background any updates needed from tv.com. Background downloading can be disabled from the Options menu, and will also be disabled if you're in Offline Mode.
+
+![watch](images/UserGuide/whentowatch.png)
 
 ## Folder Monitor
 This is admittedly probably the most confusing, non-obvious, but most useful window there is. :)
@@ -204,21 +222,6 @@ If processing is successful, you will be taken to the rename or finding and orgn
 ![torrentmatch2](images/UserGuide/torrentmatch2.png)
 
 It's not possible to rename the files in (a multiple file) torrent, to match what you have on disk. Changing the names affects the hash, which makes it a different torrent from the tracker's point of view. Because of this, TVRename renames the files on disk instead.
-
-## When to Watch
-For shows which have the "Show next airdate" option set, they will be listed here if tv.com has airdate information available. The time and date are adjusted to be in the timezone that you have Windows set to be.
-
-Click on the columns to sort by them. Right-click on items to do useful related actions. For shows that have aired, an icon is shown to indicate if it is on disk (double-clicking will open it), or needs to be searched for. Double-clicking a item that isn't on disk will open the specified torrent search engine for it.
-
-Click on the calendar to see what is airing on a particular day. Dates with shows airing are in bold. Click on a show to see its episode summary below. The refresh button will make sure that the information is up-to-date.
-
-"Aired in the last N days" and "Next 7 days" are self-explanatory. "Later" shows the next airing episode of any show you're interested in that isn't in the next week. "Future Episodes" are all known episodes after anything in the two preceding categories.
-
-You can turn this grouping off by clicking on the "How Long" column header, and on by clicking on "Air Date".
-
-The "When to Watch" display is automatically refreshed from time to time, and TVRename will download in the background any updates needed from tv.com. Background downloading can be disabled from the Options menu, and will also be disabled if you're in Offline Mode.
-
-![watch](images/UserGuide/whentowatch.png)
 
 ## Preferences
 The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename.
