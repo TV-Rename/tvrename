@@ -1,4 +1,4 @@
-## Files
+## Configuration Files
 Files on your computer that TVRename creates and uses:
 
  **(Windows XP)** \Documents and Settings\<username>\Application Data\TVRename\TVRename\2.1\ 
