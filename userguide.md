@@ -205,7 +205,12 @@ In the example here, if the user clicked "Done" then only Seinfeld would be adde
 
 ![foldermonitor](images/UserGuide/foldermonitor.png)
 
+## Tools
+
+See the **[Tools](tools)** section for further information on some of the additional tools and features of the software
+
 ## Preferences
 
 See the **[Settings Guide](settings)** for further information on how to configure TV Rename
+
 
