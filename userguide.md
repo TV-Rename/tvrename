@@ -248,9 +248,11 @@ Just how useful has TVRename been? "Episodes on disk" is the number of episodes 
 ## Files
 Files on your computer that TVRename creates and uses:
 
-\Documents and Settings\<username>\Application Data\TVRename\TVRename\2.1\ (Windows XP)
+ **(Windows XP)** \Documents and Settings\<username>\Application Data\TVRename\TVRename\2.1\ 
+
 **or**
-\Users\<username>\AppData\Roaming\TVRename\TVRename\2.1\ (Vista)
+
+ **(Vista)** \Users\<username>\AppData\Roaming\TVRename\TVRename\2.1\ 
 
 This folder contains TVRename's settings files:
 
