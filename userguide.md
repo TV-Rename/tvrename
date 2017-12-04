@@ -12,8 +12,15 @@ First we'll start with what you're going to end up with. This shows a number of 
 # Beginner's Overview
 The first time you use this program, you will probably be wanting to do one of the following two things:
 
-1. **Automatically** Get an existing collection of shows under control. In this case, I'd start with the "Folder Monitor" (or "Shows and Folders"), followed by "Rename", then "Missing Check", and "Finding and Organising". If you have a lot of shows, choose "Update Codes" from the "Tools" menu before you start.
-2. **Manually** Set up new shows you want to keep track of. For this, add shows to "Shows and Folders", then do a "Missing Check", and/or visit the "When to Watch" tab.
+1. **Automatically** Get an existing collection of shows under control. In this case, I'd start with the "Folder Monitor" 
+2. **Manually** Set up new shows you want to keep track in the 'My Shows' area
+
+Once you have your shows setup:
+
+1. Go through the preferences and settings to make are things are how you want them
+2. Do a Full Scan
+3. Go throug the results list and check TV Rename has got it right
+4. Sit back and let TV Rename do all the hard work for you!
 
 Whatever manipulation TVRename does to your files, it will never change the season or episode number. If the names get screwed up, the season and episode number will be unchanged, meaning that the problem should be (fairly easily) fixable after changing some settings, or adding new rules. At least, that's the theory. :)
 
@@ -31,36 +38,19 @@ See the **[Quick start guide](quickstart)** for further information on how to ge
 
 # My Shows
 This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
-In this image, you can see a number of shows, each of which can have zero, one, or more folders associated with it.
+In this image, you can see a number of shows, each of which can have a folder associated with it.
 
-![Shows and Folders](images/screenshots/MySHows.PNG)
+![Shows and Folders](images/screenshots/MyShows.PNG)
 
-In the top half of the screen, from left to right:
- * **Show** - The show's name.
- * **Season** - The season.
- * **tvdb.com code** - As data is taken from tv.com, this is their code/reference number for the show. TVRename will help you find this easily.
- * **Show next airdate** - If you want to see this show listed on the "When to Watch" tab.
- * **Ignore** - Whether or not we ignore Pilots, Specials, or Movies. This is discussed further in the "Add/Edit Show" section.
- * **Rules** - If there are any rules applied to manipulate the data from tv.com to suit how you want to number and group your episodes.
- * **Folders** - The number of folders on your computer that have this show in it.
- * **Old** - A show marked as "Old" won't have its data repeatedly downloaded from tv.com, after it is cached for the first time.
-
-Buttons for the top half:
+Buttons:
  * **Add** - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
  * **Edit** - Edit the currently selected show.
- * **Remove** - Remove the currently selected show(s).
+ * **Delete** - Remove the currently selected show(s).
+ * **Filter** - Filter the listed shows base don entered criteria.
+ * Expand all
+ * Hide Details Panel
+ * **Open** - Opens the folder for the TV show.
  * **Visit tvdb.com** - Visit the tv.com page for this season of this show.
-
-After clicking on a show in the top half, the bottom half becomes useful. From left to right:
- * **Folder** - The folder on your computer that this show is in.
- * **Check Type** - Whether or not we check for missing episodes, etc. This is covered more in the "Add/Edit Folder" section.
- * **Naming Style** - How you like your shows to be named. The default is set in the Preferences dialog, but can be individually overridden for individual folders.
-
-Buttons for the bottom half:
- * **Add** - Add a new folder to the currently selected show.
- * **Edit** - Edit the selected folder's details.
- * **Remove** - Remove the selected folder(s).
- * **Open** - Open in Windows Explorer the current folder.
 
 ## Add/Edit Show
 Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
@@ -101,28 +91,12 @@ This is the dialog for adding or editing a rule for a show's season. Choose the 
 * **Split** - Turn one episode into many, renumbering episode after the split to accomodate them.
 After adding a rule, you can go to the "Episode Guide" tab, select the show, and then click "Refresh". You will then be able to see (and check) the effects of the rules you've created.
 
-## Add/Edit Folder
-You can drag amd drop a new folder from explorer onto a line in the Shows list to add it to that show, or into the folder area below the shows. Note that you can have multiple folders for a show.
-
-To add/edit a folder you click on the appropriate button, which displays this dialog:
-
-![addeditfolder](images/UserGuide/addeditfolder.png)
-
-
-The folder is the folder on your computer where this season of this show lives. The naming style chooses how you like your filenames to be, and the systemwide default (for newly added folders) can be set in the Preferences dialog.
-
-The missing episode radiobuttons choose whether or not you want to check if you are missing episodes from your collection. no wont, all will check for everything that has aired to date, and only recent will look for episodes since the earliest one in the folder (or start of season, if you have none.)
-
-The rename files radiobuttons choose wether or not this folder is subject to checking on the "Rename Files" tab.
-
-The fetch button will immediately get the thumbnail for this show from tv.com, and save it in the specified folder as "folder.jpg". Clicking remove will delete the thumbnail file.
-
 ## Episode Guide
-Once you have set up your shows, you can visit the episode guide to see the information from tv.com, after modification by any rules you may have added.
+Once you have set up your shows, you can visit the episode guide to see the information from tvdb.com, after modification by any rules you may have added.
 
 Select the show from the combo box. If you've recently edited the show in the "shows and folders" tab, the display may be empty. In this case, click on the Refresh button.
 
-Visit TV.com will open your web browser on the tv.com page for this season of this show. Clicking on the show name will take you to the show summary page.
+"Visit TVDB" will open your web browser on the tv.com page for this season of this show. Clicking on the show name will take you to the show summary page.
 
 The rightmost button lets you choose your preferred torrent search engine. This is used when you click on one of the "Search" links in the episode guide.
 
@@ -150,7 +124,7 @@ This shows you where ther are gaps in your collection. Click the check button, a
 
 The "arrow-down" button in the bottom left lets you choose your preferred torrent search engine. Clicking on the button in the bottom left will search for the currently selected missing episode(s) on that site. Double-clicking an item in the list will also search.
 
-![Scan Results](images/screensots/ScanResults.PNG)
+![Scan Results](images/screenshots/ScanResults.PNG)
 
 
 After doing a "missing" check, "finding and organising" will search, on your computer, for those missing files.
@@ -187,29 +161,6 @@ You can turn this grouping off by clicking on the "How Long" column header, and 
 The "When to Watch" display is automatically refreshed from time to time, and TVRename will download in the background any updates needed from tv.com. Background downloading can be disabled from the Options menu, and will also be disabled if you're in Offline Mode.
 
 ![watch](images/UserGuide/whentowatch.png)
-
-# Folder Monitor
-This is admittedly probably the most confusing, non-obvious, but most useful window there is. :)
-
-This will monitor your media collection for new shows (folders), that TVRename hasn't seen before, and help you to quickly add them to the "Shows and Folders" tab.
-
-Before using this, make sure your preferred renaming style is set in the preferences dialog. If this is your first time using TVRename, you might also want to choose "Update Codes" from the Tools menu, which will make things go faster later on.
-
-Add (or drag+drop) folders to the "monitor folders" list in the top left. Click the Check button, and TVRename will recursively search for new folders. The middle list will then be filled. Using its existing cache of tvdb.com codes, it will automatically guess and fill in the season number and code for each folder.
-
-Click on a show to edit it. You can then type a tvdb.com code, or part of a show name, to find the tvdb.com code in the list. If it isn't showing up, type in part of the name and press the Search button. This searches on tvdb.com, and will add any results to the local code cache.
-
-After entering the code, or clicking on the show in the list, enter (or correct) the season number. Changes are immediately applied to the "New shows and folders" list. If you select multiple folders, all will be updated simultaneously.
-
-**Visit tvdb.com** will take you to the tvdb.com page, so you can check it is the right show. Guess will re-guess the show details.
-
-Clicking Remove, or pressing delete on your keyboard will remove the selected folder(s) from the list. It will be re-detected the next tiem you do a Check here. Click Ignore to add the folder to the "Ignored Folders" list. Ignore All will ignore all folders in the list.
-
-Open will open an Explorer window in that folder. Clicking on Done will then take all the shows with tvdb.com codes and season numbers, and add/merge them into your shows and folders lists.
-
-In the example here, if the user clicked "Done" then only Seinfeld would be added. The other two shows are missing either the season number, or tvdb.com code.
-
-![foldermonitor](images/UserGuide/foldermonitor.png)
 
 ## Tools
 
