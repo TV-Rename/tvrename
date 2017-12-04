@@ -12,8 +12,8 @@ First we'll start with what you're going to end up with. This shows a number of 
 ## Beginner's Overview
 The first time you use this program, you will probably be wanting to do one of the following two things:
 
-1. Get an existing collection of shows under control. In this case, I'd start with the "Folder Monitor" (or "Shows and Folders"), followed by "Rename", then "Missing Check", and "Finding and Organising". If you have a lot of shows, choose "Update Codes" from the "Tools" menu before you start.
-2. Set up new shows you want to keep track of. For this, add shows to "Shows and Folders", then do a "Missing Check", and/or visit the "When to Watch" tab.
+1. **Automatically** Get an existing collection of shows under control. In this case, I'd start with the "Folder Monitor" (or "Shows and Folders"), followed by "Rename", then "Missing Check", and "Finding and Organising". If you have a lot of shows, choose "Update Codes" from the "Tools" menu before you start.
+2. **Manually** Set up new shows you want to keep track of. For this, add shows to "Shows and Folders", then do a "Missing Check", and/or visit the "When to Watch" tab.
 
 Whatever manipulation TVRename does to your files, it will never change the season or episode number. If the names get screwed up, the season and episode number will be unchanged, meaning that the problem should be (fairly easily) fixable after changing some settings, or adding new rules. At least, that's the theory. :)
 
@@ -36,31 +36,31 @@ In this image, you can see a number of shows, each of which can have zero, one, 
 ![Shows and Folders](images/UserGuide/showsandfolders.png)
 
 In the top half of the screen, from left to right:
- * Show - The show's name.
- * Season - The season.
- * tv.com code - As data is taken from tv.com, this is their code/reference number for the show. TVRename will help you find this easily.
- * Show next airdate - If you want to see this show listed on the "When to Watch" tab.
- * Ignore - Whether or not we ignore Pilots, Specials, or Movies. This is discussed further in the "Add/Edit Show" section.
- * Rules - If there are any rules applied to manipulate the data from tv.com to suit how you want to number and group your episodes.
- * Folders - The number of folders on your computer that have this show in it.
- * Old - A show marked as "Old" won't have its data repeatedly downloaded from tv.com, after it is cached for the first time.
+ * **Show** - The show's name.
+ * **Season** - The season.
+ * **tv.com code** - As data is taken from tv.com, this is their code/reference number for the show. TVRename will help you find this easily.
+ * **Show next airdate** - If you want to see this show listed on the "When to Watch" tab.
+ * **Ignore** - Whether or not we ignore Pilots, Specials, or Movies. This is discussed further in the "Add/Edit Show" section.
+ * **Rules** - If there are any rules applied to manipulate the data from tv.com to suit how you want to number and group your episodes.
+ * **Folders** - The number of folders on your computer that have this show in it.
+ * **Old** - A show marked as "Old" won't have its data repeatedly downloaded from tv.com, after it is cached for the first time.
 
 Buttons for the top half:
- * Add - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
- * Edit - Edit the currently selected show.
- * Remove - Remove the currently selected show(s).
- * Visit tv.com - Visit the tv.com page for this season of this show.
+ * **Add** - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
+ * **Edit** - Edit the currently selected show.
+ * **Remove** - Remove the currently selected show(s).
+ * **Visit tv.com** - Visit the tv.com page for this season of this show.
 
 After clicking on a show in the top half, the bottom half becomes useful. From left to right:
- * Folder - The folder on your computer that this show is in.
- * Check Type - Whether or not we check for missing episodes, etc. This is covered more in the "Add/Edit Folder" section.
- * Naming Style - How you like your shows to be named. The default is set in the Preferences dialog, but can be individually overridden for individual folders.
+ * **Folder** - The folder on your computer that this show is in.
+ * **Check Type** - Whether or not we check for missing episodes, etc. This is covered more in the "Add/Edit Folder" section.
+ * **Naming Style** - How you like your shows to be named. The default is set in the Preferences dialog, but can be individually overridden for individual folders.
 
 Buttons for the bottom half:
- * Add - Add a new folder to the currently selected show.
- * Edit - Edit the selected folder's details.
- * Remove - Remove the selected folder(s).
- * Open - Open in Windows Explorer the current folder.
+ * **Add** - Add a new folder to the currently selected show.
+ * **Edit** - Edit the selected folder's details.
+ * **Remove** - Remove the selected folder(s).
+ * **Open** - Open in Windows Explorer the current folder.
 
 ## Add/Edit Show
 Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
@@ -92,13 +92,13 @@ This is the dialog for adding or editing a rule for a show's season. Choose the 
 ![addmodifyrule](images/UserGuide/addmodifyrule.png)
 
 
-* Ignore - Keep the specified episode in the guide, but don't check for it (or rename it) on disk locally.
-* Rename - Manually set the name of an episode.
-* Remove - Make a an episode disappear. All episodes above will be renumbered down to fill the gap.
-* Swap - Swap the position of two episodes.
-* Merge - These episodes are all on disk locally as one multi-episode file.
-* Insert - Manually add an episode into the season. Episodes after are renumbered to accomodate it.
-* Split - Turn one episode into many, renumbering episode after the split to accomodate them.
+* **Ignore** - Keep the specified episode in the guide, but don't check for it (or rename it) on disk locally.
+* **Rename** - Manually set the name of an episode.
+* **Remove** - Make a an episode disappear. All episodes above will be renumbered down to fill the gap.
+* **Swap** - Swap the position of two episodes.
+* **Merge** - These episodes are all on disk locally as one multi-episode file.
+* **Insert** - Manually add an episode into the season. Episodes after are renumbered to accomodate it.
+* **Split** - Turn one episode into many, renumbering episode after the split to accomodate them.
 After adding a rule, you can go to the "Episode Guide" tab, select the show, and then click "Refresh". You will then be able to see (and check) the effects of the rules you've created.
 
 ## Add/Edit Folder
