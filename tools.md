@@ -1,9 +1,9 @@
 ## Folder Monitor
 This is admittedly probably the most confusing, non-obvious, but most useful window there is. :)
 
-This will monitor your media collection for new shows (folders), that TVRename hasn't seen before, and help you to quickly add them to the "Shows and Folders" tab.
+This will monitor your media collection for new shows (folders), that TVRename hasn't seen before, and help you to quickly add them to the "My Shows" tab.
 
-Before using this, make sure your preferred renaming style is set in the preferences dialog. If this is your first time using TVRename, you might also want to choose "Update Codes" from the Tools menu, which will make things go faster later on.
+Before using this, make sure your preferred renaming style is set in the preferences dialog.
 
 Add (or drag+drop) folders to the "monitor folders" list in the top left. Click the Check button, and TVRename will recursively search for new folders. The middle list will then be filled. Using its existing cache of tvdb.com codes, it will automatically guess and fill in the season number and code for each folder.
 
