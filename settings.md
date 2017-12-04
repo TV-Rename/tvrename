@@ -1,6 +1,14 @@
 # Preferences Dialog
 
 ## General
+The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename.
+
+The "days count as recent" specifies how many days to show for "Aired in the last N days" in the "When to Watch" tab. The "Startup tab" is what TVRename shows when you open it. The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!
+
+"Use sequential number matching" will match episodes based on their overall airing order. Because this causes a lot of false matches, it is off by default. For example, Seinfeld S08E02 is the 136th episode aired, so with this option "Seinfeld - 136 - The Soul Mate.avi" will be seen at S08E02.
+
+"Find Extensions" sets the extensions of media files to look for. Separate them each with a semicolon, don't use spaces, and make sure you put the dot in!
+
 ![General Preferences](images/screenshots/Preferences-General.PNG)
 ## Files & Folders
 ![Files & Folders Preferences](images/screenshots/Preferences-FilesAndFolders.PNG)
