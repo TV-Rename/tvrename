@@ -7,7 +7,7 @@ If you need any further help, sign up to the forums and post a message there.
 # Introduction
 First we'll start with what you're going to end up with. This shows a number of shows we are currently watching. The first four in the list have aired, and the first two of those are on disk locally. We can also see what's coming up in the next few days, and further ahead. There is a episode summary for the currently selected episode, and a calendar showing when shows are airing. At the very bottom, in the status bar, is a countdown to the next show that is airing.
 
-![When To Watch](images/UserGuide/whentowatch.png)
+![When To Watch](images/screenshots/WhenToWatch.PNG)
 
 # Beginner's Overview
 The first time you use this program, you will probably be wanting to do one of the following two things:
@@ -33,12 +33,12 @@ See the **[Quick start guide](quickstart)** for further information on how to ge
 This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
 In this image, you can see a number of shows, each of which can have zero, one, or more folders associated with it.
 
-![Shows and Folders](images/UserGuide/showsandfolders.png)
+![Shows and Folders](images/screenshots/MySHows.PNG)
 
 In the top half of the screen, from left to right:
  * **Show** - The show's name.
  * **Season** - The season.
- * **tv.com code** - As data is taken from tv.com, this is their code/reference number for the show. TVRename will help you find this easily.
+ * **tvdb.com code** - As data is taken from tv.com, this is their code/reference number for the show. TVRename will help you find this easily.
  * **Show next airdate** - If you want to see this show listed on the "When to Watch" tab.
  * **Ignore** - Whether or not we ignore Pilots, Specials, or Movies. This is discussed further in the "Add/Edit Show" section.
  * **Rules** - If there are any rules applied to manipulate the data from tv.com to suit how you want to number and group your episodes.
@@ -49,7 +49,7 @@ Buttons for the top half:
  * **Add** - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
  * **Edit** - Edit the currently selected show.
  * **Remove** - Remove the currently selected show(s).
- * **Visit tv.com** - Visit the tv.com page for this season of this show.
+ * **Visit tvdb.com** - Visit the tv.com page for this season of this show.
 
 After clicking on a show in the top half, the bottom half becomes useful. From left to right:
  * **Folder** - The folder on your computer that this show is in.
@@ -134,15 +134,25 @@ The episode guide also includes indication of whether or not the show has been a
 
 # Scanning
 
+TV Rename will scan your shows and look for missing/outdated files. For anything missing/wrong it will try and fix the issues automatically 
+
 ## Scan Types
+
+There are 3 types of scan you can choose from :
+
+ 1. **Full** - A full scan of all shows
+ 2. **Recent** - Scan of all the shows that have aird in the last 7 days
+ 3. **Quick** - Scan just the shows that are in the last 7 days and have a missing episode on disk. Plus any shows that match a media file in the download directory.
+
+## Scan Results
 
 This shows you where ther are gaps in your collection. Click the check button, and TVRename will look through your folders and list what you are missing.
 
 The "arrow-down" button in the bottom left lets you choose your preferred torrent search engine. Clicking on the button in the bottom left will search for the currently selected missing episode(s) on that site. Double-clicking an item in the list will also search.
 
-![missing](images/UserGuide/missing.png)
+![Scan Results](images/screensots/ScanResults.PNG)
 
-## Scan Results
+
 After doing a "missing" check, "finding and organising" will search, on your computer, for those missing files.
 
 Add a number of "search folders". Either use the "Add" button, or drag and drop folders from Windows Explorer into this list. The "Open" button will open an Explorer window for the selected folder. Folders added to this list automatically have their subfolders searched.
@@ -150,8 +160,6 @@ Add a number of "search folders". Either use the "Add" button, or drag and drop 
 Press the "Find" button to search for missing episodes. TVRename will list the episodes it found, and the appropriate move (on the same device) or copy (across different devices) operation to get them to where they should be. If you choose "Leave Originals", it will always copy the files to their new location.
 
 Once you are satisfied with the list of things to do, click on "Move/Copy" and TVRename will do it.
-
-![findingandorganising](images/UserGuide/findingandorganising.png)
 
 While files are being copied and/or moved, the dialog below is shown. Press "Pause" to temporarily pause the copy/move operation. Click it again to resume. "Cancel" will stop immediately. The disk space shown is for the drive that the current file is being copied/moved to.
 
@@ -164,8 +172,6 @@ TVRename attempts to intelligently determine a show's season and episode number 
 A folder can be excluded from a rename check by setting rename files to no in the add/edit folder dialog, accessed from the shows and folders tab.
 
 You can select items in the list and press the Delete key on your keyboard to remove them from the list. Once you are happy with the changes offered, click the Rename button at the bottom, and TVRename will make the changes.
-
-![renaming](images/UserGuide/renaming.png)
 
 # When to Watch
 For shows which have the "Show next airdate" option set, they will be listed here if tv.com has airdate information available. The time and date are adjusted to be in the timezone that you have Windows set to be.
