@@ -1,6 +1,7 @@
 # Preferences Dialog
 
 ## General
+
 The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename.
 
 The "days count as recent" specifies how many days to show for "Aired in the last N days" in the "When to Watch" tab. The "Startup tab" is what TVRename shows when you open it. The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!
@@ -13,6 +14,8 @@ The "days count as recent" specifies how many days to show for "Aired in the las
 ## Files & Folders
 ![Files & Folders Preferences](images/screenshots/Preferences-FilesAndFolders.PNG)
 ## Automatic Export
+"RSS Export" will save a RSS-reader compatible XML file to the location you specify. It can then be read by something like XBOX Media Center, or the Vista RSS Widget. You can limit how many days or shows are written to the file. The RSS file is updated whenever the "When to watch" tab is manually or automatically refreshed.
+
 ![Export Preferences](images/screenshots/Preferences-Export.PNG)
 ## Scan Options
 ![Scan Preferences](images/screenshots/Preferences-Scan.PNG)
