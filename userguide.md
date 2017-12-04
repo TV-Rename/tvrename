@@ -17,6 +17,8 @@ The first time you use this program, you will probably be wanting to do one of t
 
 Whatever manipulation TVRename does to your files, it will never change the season or episode number. If the names get screwed up, the season and episode number will be unchanged, meaning that the problem should be (fairly easily) fixable after changing some settings, or adding new rules. At least, that's the theory. :)
 
+See the **[Quick start guide](quickstart)** for further information on how to get TV Rename up and running 
+
 ## Tips and Tricks
 * Most items can be double-clicked, to do the most "useful" thing for them.
 * Folders, shows, and episodes can be right-clicked for appropriate actions.
