@@ -1,11 +1,11 @@
-# Screenshots
+# Main Screens
 Here you set up what shows you are interested in, and where they are on your computer:
 
 ## Episode Guide
 Read the epsiode guides for your shows:
 ![Episode Guide](images/screenshots/MyShows.PNG)
 
-## Identify and Fix any issues 
+## Scan Results
 Search your download directories for missing episodes, and move/copy them to where they should be; rename files to "nice" names, in one of a number of selectable styles; see if any episodes are missing from your collection
 
 ![Scan Results](images/screenshots/ScanResults.PNG)
@@ -13,6 +13,8 @@ Search your download directories for missing episodes, and move/copy them to whe
 ## When to Watch
 See what is airing when:
 ![When to Watch](images/screenshots/WhenToWatch.PNG)
+
+# Additional Tools
 
 ## Auto Scan
 Picks up when new folders are added to your library, and makes it easy to add them to your "Shows and Folders" list.
