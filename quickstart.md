@@ -13,23 +13,23 @@ Here are the basic steps you need to do:
 
 **Preferences**
 
-3. Go to the "My Shows" tab and browse the series and episode information for your shows. You can edit the show itself to control how TVRename manages that particular show, or edit a season to override the episode information fetched from TheTVDB.
+3. Go to the **"My Shows"** tab and browse the series and episode information for your shows. You can edit the show itself to control how TVRename manages that particular show, or edit a season to override the episode information fetched from TheTVDB.
 
-4. In Options>Preferences, go to "Search Folders" and set where you download new episodes to. Also visit Options>Filename Template Editor to set how TVRename will rename your files.
+4. In Options>Preferences, go to **"Search Folders"** and set where you download new episodes to. Also visit Options>Filename Template Editor to set how TVRename will rename your files.
 
 **Initial Scan**
 
-5. Go to the "Scan" tab, and click "Scan". TVRename will download any show information needed from TheTVDB, and check your media library. You can control what actions will be performed by clicking "Options..." before doing a scan.
+5. Go to the **"Scan"** tab, and click "Scan". TVRename will download any show information needed from TheTVDB, and check your media library. You can control what actions will be performed by clicking "Options..." before doing a scan.
 
 6. After a scan, review the suggested changes and other information. Any ticked item will be actioned, so untick things you aren't sure about, or use the checkboxes in the bottom-right of the screen. Right-click on selected items for more actions.
 
-7. Click "Do Checked" at the bottom of the Scan tab to have TVRename perform the ticked actions. It will move, rename, download, etc. as necessary.
+7. Click **"Do Checked"** at the bottom of the Scan tab to have TVRename perform the ticked actions. It will move, rename, download, etc. as necessary.
 
 **Ongoing Monitoring**
 
-8. Go to the "When to watch" tab to see all known future airdates of shows you are interested in.
+8. Go to the **"When to watch"** tab to see all known future airdates of shows you are interested in.
 
-9. Link TV Rename to your download folders and setup the auto-scan funciton. This will mean that TV Rename will automatically scan whenever a new file is made available .
+9. Link TV Rename to your **download folders** and setup the auto-scan funciton. This will mean that TV Rename will automatically scan whenever a new file is made available .
 
 Whatever manipulation TVRename does to your files, it will never change the season or episode number. If the names get screwed up, the season and episode number will be unchanged. This means that the problem should be (fairly easily) fixable after changing some settings, or adding new rules.
 
