@@ -4,12 +4,12 @@ This is a fairly brief overview of TVRename and how to use it. I'm not very good
 
 If you need any further help, sign up to the forums and post a message there.
 
-## Introduction
+# Introduction
 First we'll start with what you're going to end up with. This shows a number of shows we are currently watching. The first four in the list have aired, and the first two of those are on disk locally. We can also see what's coming up in the next few days, and further ahead. There is a episode summary for the currently selected episode, and a calendar showing when shows are airing. At the very bottom, in the status bar, is a countdown to the next show that is airing.
 
 ![When To Watch](images/UserGuide/whentowatch.png)
 
-## Beginner's Overview
+# Beginner's Overview
 The first time you use this program, you will probably be wanting to do one of the following two things:
 
 1. **Automatically** Get an existing collection of shows under control. In this case, I'd start with the "Folder Monitor" (or "Shows and Folders"), followed by "Rename", then "Missing Check", and "Finding and Organising". If you have a lot of shows, choose "Update Codes" from the "Tools" menu before you start.
@@ -19,7 +19,7 @@ Whatever manipulation TVRename does to your files, it will never change the seas
 
 See the **[Quick start guide](quickstart)** for further information on how to get TV Rename up and running 
 
-## Tips and Tricks
+# Tips and Tricks
 * Most items can be double-clicked, to do the most "useful" thing for them.
 * Folders, shows, and episodes can be right-clicked for appropriate actions.
 * Column headers can be clicked to sort by that column.
@@ -29,7 +29,7 @@ See the **[Quick start guide](quickstart)** for further information on how to ge
 * After making changes, you need to save before exiting (TVRename will prompt you). If you screw something up, just exit without saving and your settings will be restored.
 * TVRename stores a lot of data in XML files. See the files section for more information on what there is, and where it is.
 
-## My Shows
+# My Shows
 This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
 In this image, you can see a number of shows, each of which can have zero, one, or more folders associated with it.
 
@@ -62,7 +62,7 @@ Buttons for the bottom half:
  * **Remove** - Remove the selected folder(s).
  * **Open** - Open in Windows Explorer the current folder.
 
-### Add/Edit Show
+## Add/Edit Show
 Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
 
 ![addeditshow](images/UserGuide/addeditshow.png)
@@ -86,7 +86,7 @@ The rules section lets you manipulate the tv.com episode guide to suit how you h
 
 In this example, episodes 16 and 17 were aired as a double episode, meaning you have only one file on disk for both. The rule merges the two episodes into one. This affects the display in the "Episode Guide" tab, as well as what is checked for and how the files are renamed.
 
-### Add/Modify Rule
+## Add/Modify Rule
 This is the dialog for adding or editing a rule for a show's season. Choose the operation at the top, then enter the appropriate values below.
 
 ![addmodifyrule](images/UserGuide/addmodifyrule.png)
@@ -132,20 +132,9 @@ The episode guide also includes indication of whether or not the show has been a
 
 ![episodeguide](images/UserGuide/episodeguide.png)
 
-## Renaming
-Click on the check button, and TVRename will, after downloading any needed information from tv.com, go through your folders and see if any files need to be renamed.
+# Scanning
 
-TVRename attempts to intelligently determine a show's season and episode number from it's filename, and handles most common naming styles.
-
-A folder can be excluded from a rename check by setting rename files to no in the add/edit folder dialog, accessed from the shows and folders tab.
-
-You can select items in the list and press the Delete key on your keyboard to remove them from the list. Once you are happy with the changes offered, click the Rename button at the bottom, and TVRename will make the changes.
-
-![renaming](images/UserGuide/renaming.png)
-
-## Scanning
-
-### Scan Types
+## Scan Types
 
 This shows you where ther are gaps in your collection. Click the check button, and TVRename will look through your folders and list what you are missing.
 
@@ -168,7 +157,17 @@ While files are being copied and/or moved, the dialog below is shown. Press "Pau
 
 ![copymoveprogress](images/UserGuide/copymoveprogress.png)
 
-## When to Watch
+Click on the check button, and TVRename will, after downloading any needed information from tv.com, go through your folders and see if any files need to be renamed.
+
+TVRename attempts to intelligently determine a show's season and episode number from it's filename, and handles most common naming styles.
+
+A folder can be excluded from a rename check by setting rename files to no in the add/edit folder dialog, accessed from the shows and folders tab.
+
+You can select items in the list and press the Delete key on your keyboard to remove them from the list. Once you are happy with the changes offered, click the Rename button at the bottom, and TVRename will make the changes.
+
+![renaming](images/UserGuide/renaming.png)
+
+# When to Watch
 For shows which have the "Show next airdate" option set, they will be listed here if tv.com has airdate information available. The time and date are adjusted to be in the timezone that you have Windows set to be.
 
 Click on the columns to sort by them. Right-click on items to do useful related actions. For shows that have aired, an icon is shown to indicate if it is on disk (double-clicking will open it), or needs to be searched for. Double-clicking a item that isn't on disk will open the specified torrent search engine for it.
@@ -183,7 +182,7 @@ The "When to Watch" display is automatically refreshed from time to time, and TV
 
 ![watch](images/UserGuide/whentowatch.png)
 
-## Folder Monitor
+# Folder Monitor
 This is admittedly probably the most confusing, non-obvious, but most useful window there is. :)
 
 This will monitor your media collection for new shows (folders), that TVRename hasn't seen before, and help you to quickly add them to the "Shows and Folders" tab.
@@ -223,7 +222,7 @@ If processing is successful, you will be taken to the rename or finding and orgn
 
 It's not possible to rename the files in (a multiple file) torrent, to match what you have on disk. Changing the names affects the hash, which makes it a different torrent from the tracker's point of view. Because of this, TVRename renames the files on disk instead.
 
-## Preferences
+# Preferences
 The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename.
 
 The "days count as recent" specifies how many days to show for "Aired in the last N days" in the "When to Watch" tab. The "Startup tab" is what TVRename shows when you open it. The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!
@@ -240,16 +239,6 @@ Below is an example of the RSS output being displayed in a Vista sidebar gadget.
 
 ![rsswidget2](images/UserGuide/rsswidget2.png)
 	     	
-## Buy Me A Drink!
-I'm a thirsty man, so I need lots of drinks. :)
-
-![buymeadrink](images/UserGuide/buymeadrink.png)
-
-## Statistics
-Just how useful has TVRename been? "Episodes on disk" is the number of episodes found the last time a "missing check" was done. "Total Episodes" is the count from the tv.com episode guide for all the shows you have.
-
-![statistics](images/UserGuide/statistics.png)
-
 ## Files
 Files on your computer that TVRename creates and uses:
 
