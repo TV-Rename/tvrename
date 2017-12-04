@@ -1,5 +1,5 @@
 ## About
-What this program is, and some screenshots. [here](screenshots) TVRename runs on Windows XP, Vista, and 7. 
+What this program is, and some screenshots. [here](screenshots) TVRename runs on Windows XP, Vista, 7 and 10. 
 
 ## User Guide
 How to use TVRename. [here](userguide)
@@ -24,4 +24,7 @@ If you are technically minded further information is available [here](technical)
 If this program has saved you time, or you use it regularly, then [buy me a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or drink of your choice).
 
 ## Further Help, Bugs, and Suggestions
-Visit the forums, and make a post there or PM sstteevvee. If you've found a bug, you can also use the "Bug Report" item on the "Help" menu. Fill in the boxes, then click "Create". Once it is done gathering diagnostic information, copy and paste the text in an email to the address indicated.
+* Visit the [forums](https://groups.google.com/forum/#!forum/tvrename), and make a post there. 
+* You can also use the "Bug Report" item on the "Help" menu. Fill in the boxes, then click "Create". Once it is done gathering diagnostic information, copy and paste the text in an email to the forum above for help.
+* If you've found a bug that has been verified by the team, then raise on the [bug tracker](https://github.com/TV-Rename/tvrename/issues).
+* If you want a quick resolution then packaging up your [configuration files](https://tv-rename.github.io/tvrename/userguide#files) will help speed diagnosis. It is advisable to send these only to the person helping you with your issue as they may contain personal information.
