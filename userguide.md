@@ -1,6 +1,6 @@
 This is a fairly brief overview of TVRename and how to use it. I'm not very good at writing documentation (and it's not something that's anywhere near as fun as writing code), so this may be somewhat brief. Any suggestions for improvements, or offers to write better documentation, are welcome. :)
 
-**Note:** This user guide is written based on the older, 2.0, version of the software. Most of the features are the same, or similar. The main changes have been to how you enter in your shows ("Shows and Folders"), and the use of thetvdb.com as the database - rather than tv.com.
+**Note:** Some of this user guide is written based on the older, 2.0, version of the software. Most of the features are the same, or similar. The main changes have been to how you enter in your shows ("Shows and Folders"), and the use of thetvdb.com as the database - rather than tv.com.
 
 If you need any further help, sign up to the forums and post a message there.
 
@@ -222,7 +222,7 @@ If processing is successful, you will be taken to the rename or finding and orgn
 
 It's not possible to rename the files in (a multiple file) torrent, to match what you have on disk. Changing the names affects the hash, which makes it a different torrent from the tracker's point of view. Because of this, TVRename renames the files on disk instead.
 
-# Preferences
+## Preferences
 The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename.
 
 The "days count as recent" specifies how many days to show for "Aired in the last N days" in the "When to Watch" tab. The "Startup tab" is what TVRename shows when you open it. The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!
@@ -239,19 +239,3 @@ Below is an example of the RSS output being displayed in a Vista sidebar gadget.
 
 ![rsswidget2](images/UserGuide/rsswidget2.png)
 	     	
-## Files
-Files on your computer that TVRename creates and uses:
-
- **(Windows XP)** \Documents and Settings\<username>\Application Data\TVRename\TVRename\2.1\ 
-
-**or**
-
- **(Vista)** \Users\<username>\AppData\Roaming\TVRename\TVRename\2.1\ 
-
-This folder contains TVRename's settings files:
-
-* **TVRenameSettings.xml** - Pretty much everything. All your shows, folders, and settings. This is only overwritten when you choose "Save". Older, backup, copies of the settings file are also kept in here.
-* **Layout.xml** - TVRename's window position, column sizes, and statistics are saved here.
-* **TVcomShowCache.xml** - Locally cached tv.com show code information.
-
-The only thing saved to the **registry** is uninstall information, used by the "Add/Remove" control panel.
