@@ -94,7 +94,7 @@ The episode guide also includes indication of whether or not the show has been a
 
 ![episodeguide](images/UserGuide/episodeguide.png)
 
-# Scanning
+# Scan
 
 TV Rename will scan your shows and look for missing/outdated files. For anything missing/wrong it will try and fix the issues automatically 
 
@@ -114,9 +114,6 @@ The "arrow-down" button in the bottom left lets you choose your preferred torren
 
 ![Scan Results](images/screenshots/ScanResults.PNG)
 
-
-After doing a "missing" check, "finding and organising" will search, on your computer, for those missing files.
-
 Add a number of "search folders". Either use the "Add" button, or drag and drop folders from Windows Explorer into this list. The "Open" button will open an Explorer window for the selected folder. Folders added to this list automatically have their subfolders searched.
 
 Press the "Find" button to search for missing episodes. TVRename will list the episodes it found, and the appropriate move (on the same device) or copy (across different devices) operation to get them to where they should be. If you choose "Leave Originals", it will always copy the files to their new location.
@@ -127,7 +124,7 @@ While files are being copied and/or moved, the dialog below is shown. Press "Pau
 
 ![copymoveprogress](images/UserGuide/copymoveprogress.png)
 
-Click on the check button, and TVRename will, after downloading any needed information from tv.com, go through your folders and see if any files need to be renamed.
+Click on the check button, and TVRename will, after downloading any needed information from tvdb.com, go through your folders and see if any files need to be renamed.
 
 TVRename attempts to intelligently determine a show's season and episode number from it's filename, and handles most common naming styles.
 
@@ -150,11 +147,11 @@ The "When to Watch" display is automatically refreshed from time to time, and TV
 
 ![watch](images/UserGuide/whentowatch.png)
 
-## Tools
+# Tools
 
 See the **[Tools](tools)** section for further information on some of the additional tools and features of the software
 
-## Preferences
+# Preferences
 
 See the **[Settings Guide](settings)** for further information on how to configure TV Rename
 
