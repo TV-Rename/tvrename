@@ -1,3 +1,26 @@
+## Folder Monitor
+This is admittedly probably the most confusing, non-obvious, but most useful window there is. :)
+
+This will monitor your media collection for new shows (folders), that TVRename hasn't seen before, and help you to quickly add them to the "Shows and Folders" tab.
+
+Before using this, make sure your preferred renaming style is set in the preferences dialog. If this is your first time using TVRename, you might also want to choose "Update Codes" from the Tools menu, which will make things go faster later on.
+
+Add (or drag+drop) folders to the "monitor folders" list in the top left. Click the Check button, and TVRename will recursively search for new folders. The middle list will then be filled. Using its existing cache of tvdb.com codes, it will automatically guess and fill in the season number and code for each folder.
+
+Click on a show to edit it. You can then type a tvdb.com code, or part of a show name, to find the tvdb.com code in the list. If it isn't showing up, type in part of the name and press the Search button. This searches on tvdb.com, and will add any results to the local code cache.
+
+After entering the code, or clicking on the show in the list, enter (or correct) the season number. Changes are immediately applied to the "New shows and folders" list. If you select multiple folders, all will be updated simultaneously.
+
+**Visit tvdb.com** will take you to the tvdb.com page, so you can check it is the right show. Guess will re-guess the show details.
+
+Clicking Remove, or pressing delete on your keyboard will remove the selected folder(s) from the list. It will be re-detected the next tiem you do a Check here. Click Ignore to add the folder to the "Ignored Folders" list. Ignore All will ignore all folders in the list.
+
+Open will open an Explorer window in that folder. Clicking on Done will then take all the shows with tvdb.com codes and season numbers, and add/merge them into your shows and folders lists.
+
+In the example here, if the user clicked "Done" then only Seinfeld would be added. The other two shows are missing either the season number, or tvdb.com code.
+
+![foldermonitor](images/UserGuide/foldermonitor.png)
+
 ## Exporters
 "RSS Export" will save a RSS-reader compatible XML file to the location you specify. It can then be read by something like XBOX Media Center, or the Vista RSS Widget. You can limit how many days or shows are written to the file. The RSS file is updated whenever the "When to watch" tab is manually or automatically refreshed.
 
