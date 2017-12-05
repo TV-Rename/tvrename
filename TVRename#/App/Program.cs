@@ -25,7 +25,10 @@ public static class GlobalMembersTVRename
         // Enabling Windows XP visual effects before any controls are created
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        
+
+        //Update RegVersion to bring the WebBrowser up to speed
+        RegistryHelper.UpdateBrowserEmulationVersion();
+
         // Sort out the command line arguments
         CommandLineArgs clargs = new CommandLineArgs(args);
 
