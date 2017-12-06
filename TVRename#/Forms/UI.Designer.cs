@@ -39,19 +39,19 @@ namespace TVRename
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Remove", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Media Center Metadata", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Downloading", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup13 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup14 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup15 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup16 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup17 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup18 = new System.Windows.Forms.ListViewGroup("Remove", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup19 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup20 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup21 = new System.Windows.Forms.ListViewGroup("Media Center Metadata", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup22 = new System.Windows.Forms.ListViewGroup("Downloading", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -89,11 +89,11 @@ namespace TVRename
             this.bnHideHTMLPanel = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.MyShowTree = new System.Windows.Forms.TreeView();
+            this.filterTextBox = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.epGuideHTML = new System.Windows.Forms.WebBrowser();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.webBrowserImages = new System.Windows.Forms.WebBrowser();
             this.bnMyShowsCollapse = new System.Windows.Forms.Button();
             this.bnMyShowsVisitTVDB = new System.Windows.Forms.Button();
             this.bnMyShowsOpenFolder = new System.Windows.Forms.Button();
@@ -150,6 +150,7 @@ namespace TVRename
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
+            this.visitSupportForumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lvAction = new TVRename.MyListView();
             this.columnHeader48 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader49 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -169,7 +170,7 @@ namespace TVRename
             this.columnHeader33 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader34 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader35 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.filterTextBox = new System.Windows.Forms.TextBox();
+            this.webBrowserImages = new System.Windows.Forms.WebBrowser();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -398,6 +399,7 @@ namespace TVRename
             this.bugReportToolStripMenuItem,
             this.buyMeADrinkToolStripMenuItem,
             this.visitWebsiteToolStripMenuItem,
+            this.visitSupportForumToolStripMenuItem,
             this.quickstartGuideToolStripMenuItem,
             this.statisticsToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
@@ -407,14 +409,14 @@ namespace TVRename
             // bugReportToolStripMenuItem
             // 
             this.bugReportToolStripMenuItem.Name = "bugReportToolStripMenuItem";
-            this.bugReportToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.bugReportToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.bugReportToolStripMenuItem.Text = "Bug &Report";
             this.bugReportToolStripMenuItem.Click += new System.EventHandler(this.bugReportToolStripMenuItem_Click);
             // 
             // buyMeADrinkToolStripMenuItem
             // 
             this.buyMeADrinkToolStripMenuItem.Name = "buyMeADrinkToolStripMenuItem";
-            this.buyMeADrinkToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.buyMeADrinkToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.buyMeADrinkToolStripMenuItem.Text = "&Buy Me A Drink";
             this.buyMeADrinkToolStripMenuItem.Click += new System.EventHandler(this.buyMeADrinkToolStripMenuItem_Click);
             // 
@@ -422,7 +424,7 @@ namespace TVRename
             // 
             this.visitWebsiteToolStripMenuItem.Image = global::TVRename.Properties.Resources.Web;
             this.visitWebsiteToolStripMenuItem.Name = "visitWebsiteToolStripMenuItem";
-            this.visitWebsiteToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.visitWebsiteToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.visitWebsiteToolStripMenuItem.Text = "&Visit Website";
             this.visitWebsiteToolStripMenuItem.Click += new System.EventHandler(this.visitWebsiteToolStripMenuItem_Click);
             // 
@@ -430,7 +432,7 @@ namespace TVRename
             // 
             this.quickstartGuideToolStripMenuItem.Image = global::TVRename.Properties.Resources.Help;
             this.quickstartGuideToolStripMenuItem.Name = "quickstartGuideToolStripMenuItem";
-            this.quickstartGuideToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.quickstartGuideToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.quickstartGuideToolStripMenuItem.Text = "&Quickstart Guide";
             this.quickstartGuideToolStripMenuItem.Click += new System.EventHandler(this.quickstartGuideToolStripMenuItem_Click);
             // 
@@ -438,7 +440,7 @@ namespace TVRename
             // 
             this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.graphhs;
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics";
             this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
@@ -560,12 +562,22 @@ namespace TVRename
             this.MyShowTree.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.MyShowTree.Dock = System.Windows.Forms.DockStyle.Fill;
             this.MyShowTree.HideSelection = false;
-            this.MyShowTree.Location = new System.Drawing.Point(0, 0);
+            this.MyShowTree.Location = new System.Drawing.Point(0, 20);
             this.MyShowTree.Name = "MyShowTree";
-            this.MyShowTree.Size = new System.Drawing.Size(276, 466);
+            this.MyShowTree.Size = new System.Drawing.Size(276, 446);
             this.MyShowTree.TabIndex = 0;
             this.MyShowTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.MyShowTree_AfterSelect);
             this.MyShowTree.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MyShowTree_MouseClick);
+            // 
+            // filterTextBox
+            // 
+            this.filterTextBox.Dock = System.Windows.Forms.DockStyle.Top;
+            this.filterTextBox.Location = new System.Drawing.Point(0, 0);
+            this.filterTextBox.Name = "filterTextBox";
+            this.filterTextBox.Size = new System.Drawing.Size(276, 20);
+            this.filterTextBox.TabIndex = 1;
+            this.filterTextBox.SizeChanged += new System.EventHandler(this.filterTextBox_SizeChanged);
+            this.filterTextBox.TextChanged += new System.EventHandler(this.filterTextBox_TextChanged);
             // 
             // tabControl2
             // 
@@ -600,6 +612,7 @@ namespace TVRename
             this.epGuideHTML.Size = new System.Drawing.Size(618, 431);
             this.epGuideHTML.TabIndex = 6;
             this.epGuideHTML.WebBrowserShortcutsEnabled = false;
+            this.epGuideHTML.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.epGuideHTML_DocumentCompleted);
             this.epGuideHTML.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // tabPage2
@@ -612,18 +625,6 @@ namespace TVRename
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Images";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // webBrowserImages
-            // 
-            this.webBrowserImages.AllowWebBrowserDrop = false;
-            this.webBrowserImages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowserImages.Location = new System.Drawing.Point(3, 3);
-            this.webBrowserImages.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowserImages.Name = "webBrowserImages";
-            this.webBrowserImages.Size = new System.Drawing.Size(618, 431);
-            this.webBrowserImages.TabIndex = 0;
-            this.webBrowserImages.WebBrowserShortcutsEnabled = false;
-            this.webBrowserImages.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // bnMyShowsCollapse
             // 
@@ -924,118 +925,6 @@ namespace TVRename
             this.bnActionBTSearch.UseVisualStyleBackColor = true;
             this.bnActionBTSearch.Click += new System.EventHandler(this.bnActionBTSearch_Click);
             // 
-            // lvAction
-            // 
-            this.lvAction.AllowDrop = true;
-            this.lvAction.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvAction.CheckBoxes = true;
-            this.lvAction.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader48,
-            this.columnHeader49,
-            this.columnHeader51,
-            this.columnHeader52,
-            this.columnHeader53,
-            this.columnHeader54,
-            this.columnHeader55,
-            this.columnHeader56,
-            this.columnHeader58});
-            this.lvAction.FullRowSelect = true;
-            listViewGroup1.Header = "Missing";
-            listViewGroup1.Name = "lvgActionMissing";
-            listViewGroup2.Header = "Rename";
-            listViewGroup2.Name = "lvgActionRename";
-            listViewGroup3.Header = "Copy";
-            listViewGroup3.Name = "lvgActionCopy";
-            listViewGroup4.Header = "Move";
-            listViewGroup4.Name = "lvgActionMove";
-            listViewGroup5.Header = "Remove";
-            listViewGroup5.Name = "lvgActionDelete";
-            listViewGroup6.Header = "Download RSS";
-            listViewGroup6.Name = "lvgActionDownloadRSS";
-            listViewGroup7.Header = "Download";
-            listViewGroup7.Name = "lvgActionDownload";
-            listViewGroup8.Header = "Media Center Metadata";
-            listViewGroup8.Name = "lvgActionMeta";
-            listViewGroup9.Header = "Downloading";
-            listViewGroup9.Name = "lvgDownloading";
-            this.lvAction.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-             listViewGroup1,
-             listViewGroup2,
-             listViewGroup3,
-             listViewGroup4,
-             listViewGroup5,
-             listViewGroup6,
-             listViewGroup7,
-             listViewGroup8,
-             listViewGroup9});
-            this.lvAction.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvAction.HideSelection = false;
-            this.lvAction.Location = new System.Drawing.Point(0, 35);
-            this.lvAction.Name = "lvAction";
-            this.lvAction.ShowItemToolTips = true;
-            this.lvAction.Size = new System.Drawing.Size(920, 435);
-            this.lvAction.SmallImageList = this.ilIcons;
-            this.lvAction.TabIndex = 2;
-            this.lvAction.UseCompatibleStateImageBehavior = false;
-            this.lvAction.View = System.Windows.Forms.View.Details;
-            this.lvAction.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvAction_ItemCheck);
-            this.lvAction.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvAction_ItemChecked);
-            this.lvAction.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.lvAction_RetrieveVirtualItem);
-            this.lvAction.SelectedIndexChanged += new System.EventHandler(this.lvAction_SelectedIndexChanged);
-            this.lvAction.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvAction_DragDrop);
-            this.lvAction.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvAction_DragEnter);
-            this.lvAction.DragOver += new System.Windows.Forms.DragEventHandler(this.lvAction_DragEnter);
-            this.lvAction.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvAction_KeyDown);
-            this.lvAction.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvAction_MouseClick);
-            this.lvAction.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvAction_MouseDoubleClick);
-            // 
-            // columnHeader48
-            // 
-            this.columnHeader48.Text = "Show";
-            this.columnHeader48.Width = 155;
-            // 
-            // columnHeader49
-            // 
-            this.columnHeader49.Text = "Season";
-            this.columnHeader49.Width = 50;
-            // 
-            // columnHeader51
-            // 
-            this.columnHeader51.Text = "Episode";
-            this.columnHeader51.Width = 50;
-            // 
-            // columnHeader52
-            // 
-            this.columnHeader52.Text = "Date";
-            this.columnHeader52.Width = 70;
-            // 
-            // columnHeader53
-            // 
-            this.columnHeader53.Text = "Folder";
-            this.columnHeader53.Width = 180;
-            // 
-            // columnHeader54
-            // 
-            this.columnHeader54.Text = "Episode/Filename";
-            this.columnHeader54.Width = 180;
-            // 
-            // columnHeader55
-            // 
-            this.columnHeader55.Text = "Folder/Filename";
-            this.columnHeader55.Width = 180;
-            // 
-            // columnHeader56
-            // 
-            this.columnHeader56.Text = "Filename";
-            this.columnHeader56.Width = 180;
-            // 
-            // columnHeader58
-            // 
-            this.columnHeader58.Text = "Errors";
-            this.columnHeader58.Width = 180;
-            // 
             // ilIcons
             // 
             this.ilIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilIcons.ImageStream")));
@@ -1321,7 +1210,125 @@ namespace TVRename
             // 
             this.quickTimer.Interval = 1;
             this.quickTimer.Tick += new System.EventHandler(this.quickTimer_Tick);
-            
+            // 
+            // visitSupportForumToolStripMenuItem
+            // 
+            this.visitSupportForumToolStripMenuItem.Name = "visitSupportForumToolStripMenuItem";
+            this.visitSupportForumToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.visitSupportForumToolStripMenuItem.Text = "Visit Support Forum";
+            this.visitSupportForumToolStripMenuItem.Click += new System.EventHandler(this.visitSupportForumToolStripMenuItem_Click);
+            // 
+            // lvAction
+            // 
+            this.lvAction.AllowDrop = true;
+            this.lvAction.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvAction.CheckBoxes = true;
+            this.lvAction.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader48,
+            this.columnHeader49,
+            this.columnHeader51,
+            this.columnHeader52,
+            this.columnHeader53,
+            this.columnHeader54,
+            this.columnHeader55,
+            this.columnHeader56,
+            this.columnHeader58});
+            this.lvAction.FullRowSelect = true;
+            listViewGroup14.Header = "Missing";
+            listViewGroup14.Name = "lvgActionMissing";
+            listViewGroup15.Header = "Rename";
+            listViewGroup15.Name = "lvgActionRename";
+            listViewGroup16.Header = "Copy";
+            listViewGroup16.Name = "lvgActionCopy";
+            listViewGroup17.Header = "Move";
+            listViewGroup17.Name = "lvgActionMove";
+            listViewGroup18.Header = "Remove";
+            listViewGroup18.Name = "lvgActionDelete";
+            listViewGroup19.Header = "Download RSS";
+            listViewGroup19.Name = "lvgActionDownloadRSS";
+            listViewGroup20.Header = "Download";
+            listViewGroup20.Name = "lvgActionDownload";
+            listViewGroup21.Header = "Media Center Metadata";
+            listViewGroup21.Name = "lvgActionMeta";
+            listViewGroup22.Header = "Downloading";
+            listViewGroup22.Name = "lvgDownloading";
+            this.lvAction.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            listViewGroup14,
+            listViewGroup15,
+            listViewGroup16,
+            listViewGroup17,
+            listViewGroup18,
+            listViewGroup19,
+            listViewGroup20,
+            listViewGroup21,
+            listViewGroup22});
+            this.lvAction.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lvAction.HideSelection = false;
+            this.lvAction.Location = new System.Drawing.Point(0, 35);
+            this.lvAction.Name = "lvAction";
+            this.lvAction.ShowItemToolTips = true;
+            this.lvAction.Size = new System.Drawing.Size(920, 435);
+            this.lvAction.SmallImageList = this.ilIcons;
+            this.lvAction.TabIndex = 2;
+            this.lvAction.UseCompatibleStateImageBehavior = false;
+            this.lvAction.View = System.Windows.Forms.View.Details;
+            this.lvAction.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvAction_ItemCheck);
+            this.lvAction.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvAction_ItemChecked);
+            this.lvAction.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.lvAction_RetrieveVirtualItem);
+            this.lvAction.SelectedIndexChanged += new System.EventHandler(this.lvAction_SelectedIndexChanged);
+            this.lvAction.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvAction_DragDrop);
+            this.lvAction.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvAction_DragEnter);
+            this.lvAction.DragOver += new System.Windows.Forms.DragEventHandler(this.lvAction_DragEnter);
+            this.lvAction.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvAction_KeyDown);
+            this.lvAction.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvAction_MouseClick);
+            this.lvAction.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvAction_MouseDoubleClick);
+            // 
+            // columnHeader48
+            // 
+            this.columnHeader48.Text = "Show";
+            this.columnHeader48.Width = 155;
+            // 
+            // columnHeader49
+            // 
+            this.columnHeader49.Text = "Season";
+            this.columnHeader49.Width = 50;
+            // 
+            // columnHeader51
+            // 
+            this.columnHeader51.Text = "Episode";
+            this.columnHeader51.Width = 50;
+            // 
+            // columnHeader52
+            // 
+            this.columnHeader52.Text = "Date";
+            this.columnHeader52.Width = 70;
+            // 
+            // columnHeader53
+            // 
+            this.columnHeader53.Text = "Folder";
+            this.columnHeader53.Width = 180;
+            // 
+            // columnHeader54
+            // 
+            this.columnHeader54.Text = "Episode/Filename";
+            this.columnHeader54.Width = 180;
+            // 
+            // columnHeader55
+            // 
+            this.columnHeader55.Text = "Folder/Filename";
+            this.columnHeader55.Width = 180;
+            // 
+            // columnHeader56
+            // 
+            this.columnHeader56.Text = "Filename";
+            this.columnHeader56.Width = 180;
+            // 
+            // columnHeader58
+            // 
+            this.columnHeader58.Text = "Errors";
+            this.columnHeader58.Width = 180;
             // 
             // lvWhenToWatch
             // 
@@ -1338,21 +1345,21 @@ namespace TVRename
             this.columnHeader34,
             this.columnHeader35});
             this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup10.Header = "Recently Aired";
-            listViewGroup10.Name = "justPassed";
-            listViewGroup11.Header = "Next 7 Days";
-            listViewGroup11.Name = "next7days";
-            listViewGroup11.Tag = "1";
-            listViewGroup12.Header = "Future Episodes";
-            listViewGroup12.Name = "futureEps";
-            listViewGroup13.Header = "Later";
-            listViewGroup13.Name = "later";
-            listViewGroup13.Tag = "2";
+            listViewGroup1.Header = "Recently Aired";
+            listViewGroup1.Name = "justPassed";
+            listViewGroup2.Header = "Next 7 Days";
+            listViewGroup2.Name = "next7days";
+            listViewGroup2.Tag = "1";
+            listViewGroup3.Header = "Future Episodes";
+            listViewGroup3.Name = "futureEps";
+            listViewGroup4.Header = "Later";
+            listViewGroup4.Name = "later";
+            listViewGroup4.Tag = "2";
             this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup10,
-            listViewGroup11,
-            listViewGroup12,
-            listViewGroup13});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -1405,17 +1412,18 @@ namespace TVRename
             // 
             this.columnHeader35.Text = "Episode Name";
             this.columnHeader35.Width = 360;
-
-            // filterTextBox
             // 
-            this.filterTextBox.Dock = System.Windows.Forms.DockStyle.Top;
-            this.filterTextBox.Location = new System.Drawing.Point(0, 0);
-            this.filterTextBox.Name = "filterTextBox";
-            this.filterTextBox.Size = new System.Drawing.Size(276, 20);
-            this.filterTextBox.TabIndex = 1;
-            this.filterTextBox.SizeChanged += new System.EventHandler(this.filterTextBox_SizeChanged);
-            this.filterTextBox.TextChanged += new System.EventHandler(this.filterTextBox_TextChanged);
-
+            // webBrowserImages
+            // 
+            this.webBrowserImages.AllowWebBrowserDrop = false;
+            this.webBrowserImages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowserImages.Location = new System.Drawing.Point(3, 3);
+            this.webBrowserImages.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowserImages.Name = "webBrowserImages";
+            this.webBrowserImages.Size = new System.Drawing.Size(618, 431);
+            this.webBrowserImages.TabIndex = 0;
+            this.webBrowserImages.WebBrowserShortcutsEnabled = false;
+            this.webBrowserImages.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // UI
             // 
@@ -1442,6 +1450,7 @@ namespace TVRename
             this.tabControl1.ResumeLayout(false);
             this.tbMyShows.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
@@ -1579,8 +1588,9 @@ namespace TVRename
         private System.Windows.Forms.TabControl tabControl2;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.WebBrowser webBrowserImages;
         private System.Windows.Forms.Button btnFilter;
         private System.Windows.Forms.TextBox filterTextBox;
+        private System.Windows.Forms.ToolStripMenuItem visitSupportForumToolStripMenuItem;
+        private System.Windows.Forms.WebBrowser webBrowserImages;
     }
 }

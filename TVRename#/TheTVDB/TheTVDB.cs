@@ -656,7 +656,8 @@ namespace TVRename
                 long? maxUpdateTime = updateTimes.Max();
                 if (maxUpdateTime != null)
                 {
-                    this.New_Srv_Time = (long)maxUpdateTime;
+                    this.New_Srv_Time =  Math.Max(this.New_Srv_Time,Math.Max( (long)maxUpdateTime, this.Srv_Time)); // just in case the new update time is no better than the prior one
+
                     System.Diagnostics.Debug.WriteLine("Obtianed " + numberOfResponses + " responses from lastupdated query #" + numberofCallsMade + " - since (local) " + Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime());
                     epochTime = this.New_Srv_Time;
                 }
