@@ -143,6 +143,33 @@ namespace TVRename
             writer.WriteValue(value);
             writer.WriteEndAttribute();
         }
+
+        public static void WriteInfo(XmlWriter writer, string elemName, string attribute, string attributeVal, string value)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                writer.WriteStartElement(elemName);
+                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
+                {
+                    writer.WriteAttributeString(attribute, attributeVal);
+                }
+                writer.WriteValue(value);
+                writer.WriteEndElement();
+            }
+        }
+
+        public static void WriteInfo(XmlWriter writer, string elemName, string attribute, string attributeVal)
+        {
+            if (!string.IsNullOrEmpty(attributeVal))
+            {
+                writer.WriteStartElement(elemName);
+                if (!String.IsNullOrEmpty(attribute) && !String.IsNullOrEmpty(attributeVal))
+                {
+                    writer.WriteAttributeString(attribute, attributeVal);
+                }
+                writer.WriteEndElement();
+            }
+        }
     }
 
     public static class FileHelper

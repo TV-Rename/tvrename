@@ -1012,7 +1012,7 @@ namespace TVRename
                                 eis.RemoveAt(n1); // remove old one
                                 for (int i = 0; i < nn2; i++) // make n2 new parts
                                 {
-                                    ProcessedEpisode pe2 = new ProcessedEpisode(ei, si)
+                                    ProcessedEpisode pe2 = new ProcessedEpisode(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
                                                                {
                                                                    Name = nameBase + " (Part " + (i + 1) + ")",
                                                                    EpNum = -2,
@@ -1031,11 +1031,14 @@ namespace TVRename
                                 ProcessedEpisode oldFirstEI = eis[n1];
                                 string combinedName = eis[n1].Name + " + ";
                                 string combinedSummary = eis[n1].Overview + "<br/><br/>";
+                                List<Episode> alleps = new List<Episode>();
+                                alleps.Add( eis[n1]);
                                 //int firstNum = eis[n1]->TVcomEpCount();
                                 for (int i = n1 + 1; i <= n2; i++)
                                 {
                                     combinedName += eis[i].Name;
                                     combinedSummary += eis[i].Overview;
+                                    alleps.Add(eis[i]);
                                     if (i != n2)
                                     {
                                         combinedName += " + ";
@@ -1047,7 +1050,7 @@ namespace TVRename
 
                                 eis.RemoveAt(n1);
 
-                                ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si)
+                                ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si, alleps)
                                                            {
                                                                Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt),
                                                                EpNum = -2
