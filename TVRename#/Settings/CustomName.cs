@@ -160,7 +160,7 @@ namespace TVRename
             name = name.Replace("\\[", "[");
             name = name.Replace("\\]", "]");
 
-            return name;
+            return name.Trim();
         }
     }
 }
