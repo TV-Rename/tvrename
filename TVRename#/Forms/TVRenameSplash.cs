@@ -13,15 +13,11 @@ namespace TVRename
         public TVRenameSplash()
         {
             InitializeComponent();
+            lblVersion.Text = Version.DisplayVersionString();
         }
         public void UpdateStatus(string status) { lblStatus.Text = status; }
         public void UpdateProgress(int progress) { prgComplete.Value = progress; }
         public void UpdateInfo(string info) { lblInfo.Text = info; }
-
-        private void TVRenameSplash_Load(object sender, EventArgs e)
-        {
-
-        }
 
     }
 }
