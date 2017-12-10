@@ -87,15 +87,15 @@ namespace TVRename
                     if (IsMoveRename())
                     {
                         // This step could be slow, so report progress
-                        if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0))
-                            new Exception("Move operation aborted");
+                        CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                        if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
                     }
                     else
                     {
                         //we are copying
                         // This step could be slow, so report progress
-                        if (!(Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null).ErrorCode == 0))
-                            new Exception("Copy operation aborted");
+                        CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
+                        if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
                     }
 
 
@@ -104,13 +104,11 @@ namespace TVRename
 
 
                 }
-                else
+                else { 
                     //From.MoveTo(To.FullName);
-                    if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0))
-                    new Exception("Move operation aborted");
-
-                // AlphaFS doesn't reset file time stamps
-                //KeepTimestamps(this.From, this.To);
+                    CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                    if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
+                }
 
                 this.Done = true;
 
@@ -282,154 +280,6 @@ namespace TVRename
             return CopyMoveProgressResult.Continue;
         }
 
-
-        private void CopyItOurself(ref bool pause, TVRenameStats stats)
-
-        {
-            const int kArrayLength = 1 * 1024 * 1024;
-            Byte[] dataArray = new Byte[kArrayLength];
-
-            bool useWin32 = Version.OnWindows() && !Version.OnMono();
-
-            Win32FileIO.WinFileIO copier = null;
-
-            BinaryReader msr = null;
-            BinaryWriter msw = null;
-
-            try
-            {
-                long thisFileCopied = 0;
-                long thisFileSize = this.SourceFileSize();
-
-                string tempName = TempFor(this.To);
-                if (File.Exists(tempName))
-                    File.Delete(tempName);
-
-                if (useWin32)
-                {
-                    copier = new Win32FileIO.WinFileIO(dataArray);
-                    copier.OpenForReading(this.From.FullName);
-                    copier.OpenForWriting(tempName);
-                }
-                else
-                {
-                    msr = new BinaryReader(new FileStream(this.From.FullName, System.IO.FileMode.Open, FileAccess.Read));
-                    msw = new BinaryWriter(new FileStream(tempName, System.IO.FileMode.CreateNew));
-                }
-
-                for (;;)
-                {
-                    int bytesRead = useWin32 ? copier.ReadBlocks(kArrayLength) : msr.Read(dataArray, 0, kArrayLength);
-                    if (bytesRead == 0)
-                        break;
-
-                    if (useWin32)
-                    {
-                        copier.WriteBlocks(bytesRead);
-                    }
-                    else
-                    {
-                        msw.Write(dataArray, 0, bytesRead);
-                    }
-                    thisFileCopied += bytesRead;
-
-                    double pct = (thisFileSize != 0) ? (100.0 * thisFileCopied / thisFileSize) : this.Done ? 100 : 0;
-                    if (pct > 100.0)
-                        pct = 100.0;
-                    this.PercentDone = pct;
-
-                    while (pause)
-                        System.Threading.Thread.Sleep(100);
-                }
-
-                if (useWin32)
-                {
-                    copier.Close();
-                }
-                else
-                {
-                    msr.Close();
-                    msw.Close();
-                }
-
-                // rename temp version to final name
-                if (this.To.Exists)
-                    this.To.Delete(); // outta ma way!
-                File.Move(tempName, this.To.FullName);
-
-                KeepTimestamps(this.From, this.To);
-
-                // if that was a move/rename, delete the source
-                if (this.IsMoveRename())
-                    this.From.Delete();
-
-                switch (Operation)
-                {
-                    case Op.Move:
-                        stats.FilesMoved++;
-                        break;
-                    case Op.Rename:
-                        stats.FilesRenamed++;
-                        break;
-                    case Op.Copy:
-                        stats.FilesCopied++;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                this.Done = true;
-            } // try
-            catch (System.Threading.ThreadAbortException)
-            {
-                if (useWin32)
-                {
-                    this.NicelyStopAndCleanUp_Win32(copier);
-                }
-                else
-                {
-                    this.NicelyStopAndCleanUp_Streams(msr, msw);
-                }
-                return;
-            }
-            catch (Exception ex)
-            {
-                // handle any exception type
-                this.Error = true;
-                this.Done = true;
-                this.ErrorText = ex.Message;
-                if (useWin32)
-                {
-                    this.NicelyStopAndCleanUp_Win32(copier);
-                }
-                else
-                {
-                    this.NicelyStopAndCleanUp_Streams(msr, msw);
-                }
-            }
-        }
-
-
-        private void NicelyStopAndCleanUp_Win32(Win32FileIO.WinFileIO copier)
-        {
-            if (copier != null) copier.Close();
-            string tempName = TempFor(this.To);
-            if (File.Exists(tempName))
-                File.Delete(tempName);
-        }
-
-        private void NicelyStopAndCleanUp_Streams(BinaryReader msr, BinaryWriter msw)
-        {
-            if (msw != null)
-            {
-                msw.Close();
-                string tempName = TempFor(this.To);
-                if (File.Exists(tempName))
-                    File.Delete(tempName);
-            }
-            if (msr != null)
-                msr.Close();
-        }
 
 
         // --------------------------------------------------------------------------------------------------------
