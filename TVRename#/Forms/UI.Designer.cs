@@ -612,7 +612,6 @@ namespace TVRename
             this.epGuideHTML.Size = new System.Drawing.Size(618, 431);
             this.epGuideHTML.TabIndex = 6;
             this.epGuideHTML.WebBrowserShortcutsEnabled = false;
-            this.epGuideHTML.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.epGuideHTML_DocumentCompleted);
             this.epGuideHTML.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // tabPage2

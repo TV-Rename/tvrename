@@ -242,7 +242,10 @@ namespace TVRename
             return SimplifyAndCheckFilename(filename, showname,true,true);
         }
 
-    }
+        internal static string TempPath(string v) => Path.GetTempPath() + v;
+
+    
+}
 
     public static class HTTPHelper
     {
