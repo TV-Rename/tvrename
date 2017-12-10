@@ -230,15 +230,26 @@ namespace TVRename
                     //From.MoveTo(tempName);
                     //File.Move(tempName, To.FullName);
 
-                    // This step could be slow, so report progress
-                    if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0 )	)	 
-                        new Exception("Move operation aborted");
-                
+                    if (IsMoveRename())
+                    {
+                        // This step could be slow, so report progress
+                        if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0))
+                            new Exception("Move operation aborted");
+                    }
+                    else
+                    {
+                        //we are copying
+                        // This step could be slow, so report progress
+                        if (!(Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null).ErrorCode == 0))
+                            new Exception("Copy operation aborted");
+                    }
+
+
                     // This step very quick, so no progress reporting		
                     Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName);
 
 
-            }
+                }
                 else
                     //From.MoveTo(To.FullName);
                     if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0  ))
