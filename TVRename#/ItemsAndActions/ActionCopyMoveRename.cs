@@ -231,18 +231,26 @@ namespace TVRename
                     //File.Move(tempName, To.FullName);
 
                     // This step could be slow, so report progress
-                    if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0 )	)	 
-                        new Exception("Move operation aborted");
-                
+                    CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                    if (moveResult.ErrorCode != 0)
+                    {
+                        throw new Exception(moveResult.ErrorMessage);
+                    }
+
                     // This step very quick, so no progress reporting		
                     Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName);
 
 
-            }
+                }
                 else
+                {
                     //From.MoveTo(To.FullName);
-                    if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0  ))
-                        new Exception("Move operation aborted");
+                    CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                    if (moveResult.ErrorCode != 0)
+                    {
+                        throw new Exception(moveResult.ErrorMessage);
+                    }
+                }
 
                 // AlphaFS doesn't reset file time stamps
                 //KeepTimestamps(this.From, this.To);
