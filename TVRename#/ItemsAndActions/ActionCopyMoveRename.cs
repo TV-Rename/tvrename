@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Alphaleonis.Win32.Filesystem;
+using System;
 using System.CodeDom;
 using System.Diagnostics;
-using Alphaleonis.Win32.Filesystem;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
 using System.Security.AccessControl;
@@ -11,15 +11,14 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    using System;
     using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
+    using System;
     using System.IO;
-
+    using System.Windows.Forms;
+    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using File = Alphaleonis.Win32.Filesystem.File;		
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;		
     using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 
     public class ActionCopyMoveRename : ActionFileOperation
@@ -75,10 +74,68 @@ namespace TVRename
                 // ignored
             }
 
-            //if (QuickOperation())
-                this.OSMoveRename(stats); // ask the OS to do it for us, since it's easy and quick!
-            //else
-                //CopyItOurself(ref pause, stats); // do it ourself!
+            try
+            {
+                if (FileHelper.Same(this.From, this.To))
+                {
+                    // XP won't actually do a rename if its only a case difference
+                    string tempName = TempFor(this.To);
+
+                    //From.MoveTo(tempName);
+                    //File.Move(tempName, To.FullName);
+
+                    if (IsMoveRename())
+                    {
+                        // This step could be slow, so report progress
+                        if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0))
+                            new Exception("Move operation aborted");
+                    }
+                    else
+                    {
+                        //we are copying
+                        // This step could be slow, so report progress
+                        if (!(Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null).ErrorCode == 0))
+                            new Exception("Copy operation aborted");
+                    }
+
+
+                    // This step very quick, so no progress reporting		
+                    Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName, MoveOptions.ReplaceExisting);
+
+
+                }
+                else
+                    //From.MoveTo(To.FullName);
+                    if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0))
+                    new Exception("Move operation aborted");
+
+                // AlphaFS doesn't reset file time stamps
+                //KeepTimestamps(this.From, this.To);
+
+                this.Done = true;
+
+                switch (Operation)
+                {
+                    case Op.Move:
+                        stats.FilesMoved++;
+                        break;
+                    case Op.Rename:
+                        stats.FilesRenamed++;
+                        break;
+                    case Op.Copy:
+                        stats.FilesCopied++;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+            }
+            catch (System.Exception e)
+            {
+                this.Done = true;
+                this.Error = true;
+                this.ErrorText = e.Message;
+            }
 
             // set NTFS permissions
             try
@@ -216,63 +273,6 @@ namespace TVRename
             to.LastAccessTimeUtc = from.LastAccessTimeUtc;
             to.LastWriteTime = from.LastWriteTime;
             to.LastWriteTimeUtc = from.LastWriteTimeUtc;
-        }
-
-        private void OSMoveRename(TVRenameStats stats)
-        {
-            try
-            {
-                if (FileHelper.Same(this.From, this.To))
-                {
-                    // XP won't actually do a rename if its only a case difference
-                    string tempName = TempFor(this.To);
-
-                    //From.MoveTo(tempName);
-                    //File.Move(tempName, To.FullName);
-
-                    if (IsMoveRename())
-                    {
-                        // This step could be slow, so report progress
-                        if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0))
-                            new Exception("Move operation aborted");
-                    }
-                    else
-                    {
-                        //we are copying
-                        // This step could be slow, so report progress
-                        if (!(Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null).ErrorCode == 0))
-                            new Exception("Copy operation aborted");
-                    }
-
-
-                    // This step very quick, so no progress reporting		
-                    Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName);
-
-
-                }
-                else
-                    //From.MoveTo(To.FullName);
-                    if (!(Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null).ErrorCode == 0  ))
-                        new Exception("Move operation aborted");
-
-                // AlphaFS doesn't reset file time stamps
-                //KeepTimestamps(this.From, this.To);
-
-                this.Done = true;
-
-                System.Diagnostics.Debug.Assert((this.Operation == ActionCopyMoveRename.Op.Move) || (this.Operation == ActionCopyMoveRename.Op.Rename));
-
-                if (this.Operation == ActionCopyMoveRename.Op.Move)
-                    stats.FilesMoved++;
-                else if (this.Operation == ActionCopyMoveRename.Op.Rename)
-                    stats.FilesRenamed++;
-            }
-            catch (System.Exception e)
-            {
-                this.Done = true;
-                this.Error = true;
-                this.ErrorText = e.Message;
-            }
         }
 
         private CopyMoveProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, Object UserData)
