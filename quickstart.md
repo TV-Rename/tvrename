@@ -11,8 +11,10 @@ Lets get started...
 
 **Setup Steps**
 1. Add the contents of your existing "Media Library".
-* Go to **Tools>Folder Monitor** and whilst on the *Folder* tab click the **Add** button. Browse to the root directory of your "Media Library" and click **OK**. The path will be added to the *Monitor Folders* list.
-* Click **Check >>**, then do a "Auto ID All". TVRename will scan your media library, and match up show names against TheTVDB, and also guess if you have a "flat" structure with all your seasons in one folder, or separated out. When finished, click "Add & Close" to add all identified folders to "My Shows".
+ * Go to **Tools>Folder Monitor** and whilst on the *Folder* tab click the **Add** button. Browse to the root directory of your "Media Library" and click **OK**. The path will be added to the *Monitor Folders* list.
+ * Click the **\[Check >>\]** button, the selected path will be scanned and the found content displayed in the *Scan Results* tab.
+ * Whilst displaying the *Scan Results* tab click the **\[Auto ID All\]** button and TVRename will attempt to match the found information against the TVDB (http://thetvdb.com), and try to guess if the shows found in the library have a "flat" structure with all a shows seasons in one folder, or a "tree" structure with sub folders for each season and specials.
+ * Once the match process has finished, click **\[Add & Close\]** and all the identified folders/shows will be added to the *My Shows* tab.
 
 1.  You can **manually add shows** one-by-one (even if they don't have a folder on disk somewhere) by clicking the **Add** button at the bottom of the "My Shows" tab. Enter the show name, and click search to find it's ID code. Enter the base folder for the show in your media library, and select whether or not you have a sub-folder for each season.
 
