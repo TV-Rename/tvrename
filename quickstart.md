@@ -1,5 +1,5 @@
 # Quickstart Guide
-***Welcome to TVRename!***
+### Welcome to TVRename!
 
 This guide will help you to quickly get TVRename up and running.
 
