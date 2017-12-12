@@ -21,16 +21,12 @@ Lets get started...
 
 2. **Set your Preferences**
  * In **Options>Preferences**, go to the *Search Folders* tab and set the download location for new episodes. Also visit **Options>Filename Template Editor** to set how TVRename will rename your files.
-
-1. Go through the preferences and settings to make are things are how you want them
-
-**Initial Scan**
-
-5. Go to the **"Scan"** tab, and click "Full Scan". TVRename will download any show information needed from TheTVDB, and check your media library. You can control what actions will be performed by clicking "Options..." before doing a scan.
-
-6. After a scan, review the suggested changes and other information. Any ticked item will be actioned, so untick things you aren't sure about, or use the checkboxes in the bottom-right of the screen. Right-click on selected items for more actions.
-
-7. Click **"Do Checked"** at the bottom of the Scan tab to have TVRename perform the ticked actions. It will move, rename, download, etc. as necessary.
+ * Take a look at other tabs in **Options>Preferences** to get an idea of the changes that can be made to TVRenames behaviour.
+ 
+3. **Run a Scan**
+ * Go to the *Scan* tab, and click **\[ Full Scan \]**. TVRename will download any needed show information from TheTVDB, and examinre the contents of the media library. Settings in **Options...** will change the behaviour here.
+ * When the scan is complete, review TVRenames suggested changes and other information. Any ticked item will be actioned, so untick things you aren't sure about, or use the checkboxes in the bottom-right of the screen. Right-click on selected items for more actions.
+ * Click **\[ Do Checked \]** and TVRename will process the ticked actions. It will move and rename as necessary.
 
 **Ongoing Monitoring**
 
