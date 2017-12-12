@@ -1,15 +1,22 @@
 # Quickstart Guide
 *Welcome to TVRename!*
 
-This is a quick guide to help get you going. This page can always be accessed by going to the Help menu, and choosing "Quickstart Guide".
+This guide will help you to quickly get TVRename up and running.
 
-Here are the basic steps you need to do:
+This page can always be accessed by going to the TVRename Help menu, and choosing "Quickstart Guide".
 
-**Setup**
+(This guide assumes that you already have the beginings of a "Media Library" - *a directory somewhere on your PC or a NAS or whatever, with a bunch of recordings in it*.
 
-1. Go to **Tools>Folder Monitor**. This will let you add a lot of folders quickly, and semi-automatically. After setting where the base of your media library is, tell it to "Check", then do a "Auto ID All". TVRename will scan your media library, and match up show names against TheTVDB, and also guess if you have a "flat" structure with all your seasons in one folder, or separated out. When finished, click "Add & Close" to add all identified folders to "My Shows".
+Lets get started...
 
-1.  You can **manually add shows** one-by-one (even if they don't have a folder on disk somewhere) by clicking the "Add" button at the bottom of the "My Shows" tab. Enter the show name, and click search to find it's ID code. Enter the base folder for the show in your media library, and select whether or not you have a sub-folder for each season.
+**Setup Steps**
+1. Add the contents of your existing "Media Library".
+ * Go to **Tools>Folder Monitor** and whilst on the *Folder* tab click the **\[Add\]** button. Browse to the root directory of your "Media Library" and click **OK**. The path will be added to the *Monitor Folders* list.
+ * Click the **\[Check >>\]** button, the selected path will be scanned and the found content automatically displayed in the *Scan Results* tab.
+ * Whilst displaying the *Scan Results* tab click the **\[Auto ID All\]** button and TVRename will attempt to match the found information against the TVDB (http://thetvdb.com), and try to guess if the shows found in the library have a "flat" structure with all the shows episodes in one folder, or a "tree" structure with sub folders for each season and specials.
+ * Once the match process has finished, click **\[Add & Close\]** and all the identified folders/shows will be added to the *My Shows* tab.
+
+1.  You can **manually add shows** one-by-one (even if they don't have a folder on disk somewhere) by clicking the **\[Add\]** button at the bottom of the "My Shows" tab. Enter the show name, and click search to find it's ID code. Enter the base folder for the show in your media library, and select whether or not you have a sub-folder for each season.
 
 **Preferences**
 
