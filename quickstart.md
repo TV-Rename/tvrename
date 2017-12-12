@@ -34,7 +34,7 @@ Lets get started...
 
 ### 5. Sit back, relax, and let TV Rename do all the hard work for you!
 
-Whatever manipulation TVRename does to your files, it will never change the season or episode number. Even in the unlikely event of the names getting screwed up, the season and episode numbers will remain unchanged. This means that the problem should be (fairly easily) fixable using somethin like the (free for personal use) **Bulk Rename Utility** after changing some settings, or adding new rules.
+Whatever manipulation TVRename does to your files, it will never change the season or episode number. Even in the unlikely event of the names getting screwed up, the season and episode numbers will remain unchanged making the problem fairly easily fixable using somethin like the (free for personal use) **Bulk Rename Utility**.
 
 ## Links
 * Online [user guide](userguide), where the features of TVRename are covered in more detail. The user guide is written for version 2.1, but is still mostly relevant.
