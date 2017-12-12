@@ -5,7 +5,7 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
- // "Doc" is short for "Document", from the "Document" and "View" model way of thinking of things.
+// "Doc" is short for "Document", from the "Document" and "View" model way of thinking of things.
 // All the processing and work should be done in here, nothing in UI.cs
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
@@ -20,10 +20,11 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
-using Directory = Alphaleonis.Win32.Filesystem.Directory;		
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using System.Text;
 
 namespace TVRename
 {
@@ -59,7 +60,43 @@ namespace TVRename
         private bool mDirty;
         private Thread mDownloaderThread;
         private TVRenameStats mStats;
-        public bool CurrentlyBusy = false;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
+
+        private bool CurrentlyBusy = false;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
+        private bool busyWithAutomatedScan = false;
+        private bool doScanWhenFree = false;  // The type of scan that has been requested and should be done once we are free
+        private TVSettings.ScanType scantypeToDoWhenFree;  // The type of scan that has been requested and should be done once we are free
+
+        private void notBusyAnymore()
+        {
+            CurrentlyBusy = false;
+            busyWithAutomatedScan = false;
+            if (doScanWhenFree)
+            {
+                doScanWhenFree = false;
+                switch (scantypeToDoWhenFree )
+                {
+                    case TVRename.TVSettings.ScanType.Full:
+                        ActionGo(true,true);
+                        ExportMissingXML();
+                        break;
+                    case TVRename.TVSettings.ScanType.Recent:
+                        ActionGo(getRecentShows(),true,true  );
+                        break;
+                    case TVRename.TVSettings.ScanType.Quick:
+                        QuickScan(true,true);
+                        break;
+                }
+            }
+        }
+
+        public bool CanScan(TVSettings.ScanType scantype)        {
+            if ((CurrentlyBusy) && (busyWithAutomatedScan))       {
+                //RECORD THAT WE HAVE TO DO A SCAN UPON COMPLETION
+                doScanWhenFree = true;
+                scantypeToDoWhenFree = scantype;
+            }
+            return !CurrentlyBusy;
+        }
 
         private bool DebugThreads = false;
 
@@ -1012,7 +1049,7 @@ namespace TVRename
                                 eis.RemoveAt(n1); // remove old one
                                 for (int i = 0; i < nn2; i++) // make n2 new parts
                                 {
-                                    ProcessedEpisode pe2 = new ProcessedEpisode(ei, si)
+                                    ProcessedEpisode pe2 = new ProcessedEpisode(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
                                                                {
                                                                    Name = nameBase + " (Part " + (i + 1) + ")",
                                                                    EpNum = -2,
@@ -1031,11 +1068,14 @@ namespace TVRename
                                 ProcessedEpisode oldFirstEI = eis[n1];
                                 string combinedName = eis[n1].Name + " + ";
                                 string combinedSummary = eis[n1].Overview + "<br/><br/>";
+                                List<Episode> alleps = new List<Episode>();
+                                alleps.Add( eis[n1]);
                                 //int firstNum = eis[n1]->TVcomEpCount();
                                 for (int i = n1 + 1; i <= n2; i++)
                                 {
                                     combinedName += eis[i].Name;
                                     combinedSummary += eis[i].Overview;
+                                    alleps.Add(eis[i]);
                                     if (i != n2)
                                     {
                                         combinedName += " + ";
@@ -1047,7 +1087,7 @@ namespace TVRename
 
                                 eis.RemoveAt(n1);
 
-                                ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si)
+                                ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si, alleps)
                                                            {
                                                                Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt),
                                                                EpNum = -2
@@ -1577,8 +1617,11 @@ namespace TVRename
             this.ActionSemaphores = null;
         }
 
-        public void DoActions(ScanListItemList theList)
+        public void DoActions(ScanListItemList theList, bool automatedScan)
         {
+            CurrentlyBusy = true;
+            this.busyWithAutomatedScan = automatedScan;
+
             if (theList == null)
                 return;
 
@@ -1605,6 +1648,7 @@ namespace TVRename
             this.ActionProcessorThread.Join();
 
             theList.RemoveAll(x => (x is Action) && (x as Action).Done && !(x as Action).Error);
+            notBusyAnymore();
         }
 
         public bool ListHasMissingItems(ItemList l)
@@ -1617,9 +1661,15 @@ namespace TVRename
             return false;
         }
 
-        public void ActionGo(List<ShowItem> shows)
+        public void ActionGo() => ActionGo(null,false,false);
+
+        public void ActionGo(bool doActions, bool automatedScan) => ActionGo(null, doActions,automatedScan );
+
+        public void ActionGo(List<ShowItem> shows, bool doActions, bool automatedScan) 
         {
             this.CurrentlyBusy = true;
+            this.busyWithAutomatedScan = automatedScan;
+
             if (TVSettings.Instance.MissingCheck && !this.CheckAllFoldersExist(shows)) // only check for folders existing for missing check
                 return;
 
@@ -1656,83 +1706,104 @@ namespace TVRename
             this.ScanProgDlg = null;
             
             DownloadIdentifiers.reset();
-            
-            this.CurrentlyBusy = false;
-        }
 
-        public void QuickScan()
-        {
-            QuickScan(null);
-        }
-
-        public void QuickScan(List<ProcessedEpisode> lpe)
-        {
-            
-            //for each directory in settings directory
-                //for each file in directory
-                    //for each saved show (order by recent)
-                    //does show match selected file?
-                    //if so add series to list of series scanned
-            this.CurrentlyBusy = true;
-            
-            List<ShowItem> showsToScan = new List<ShowItem>();
-
-            foreach (String dirPath in SearchFolders)
+            if(doActions )
             {
-                if (!Directory.Exists(dirPath)) continue;
+                doAllActions(automatedScan );
+            }
 
-                foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+            notBusyAnymore();
+        }
+
+        public void doAllActions( bool automatedScan)
+        {
+
+            ScanListItemList theList = new ScanListItemList();
+
+            foreach (Item action in TheActionList)
+            {
+                if (action is ScanListItem)
                 {
-                    if (!File.Exists(filePath)) continue;
+                    theList.Add((ScanListItem)(action));
 
-                    FileInfo fi = new FileInfo(filePath);
+                }
+            }
 
-                    if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
-                        continue; // move on
+            DoActions(theList,automatedScan );
+        }
 
-                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+
+        public void QuickScan() =>            QuickScan(true,true, false, false);
+
+        public void QuickScan(bool doActions, bool automatedScan) => QuickScan(true, true, doActions,automatedScan );
+
+        private void findDoubleEps()
+        {
+            StringBuilder output = new StringBuilder();
+
+            foreach (ShowItem si in this.ShowItems)
+            {
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+
+                    //Ignore specials seasons
+                    if (kvp.Key == 0) continue;
+
+                    //Ignore seasons that all aired on same date
+                    DateTime? seasonMinAirDate = (from pep in kvp.Value select pep.FirstAired).Min();
+                    DateTime? seasonMaxAirDate = (from pep in kvp.Value select pep.FirstAired).Max();
+                    if ((seasonMaxAirDate.HasValue) && seasonMinAirDate.HasValue && seasonMaxAirDate == seasonMinAirDate)
                         continue;
 
-                    foreach (ShowItem si in this.ShowItems)
+                    //Search through each pair of episodes for the same season
+                    foreach (ProcessedEpisode pep in kvp.Value)
                     {
-                        if (showsToScan.Contains(si)) continue;
-
-                        if (si.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
-                            showsToScan.Add(si);
+                        foreach (ProcessedEpisode comparePep in kvp.Value)
+                        {
+                            if (pep.FirstAired.HasValue && comparePep.FirstAired.HasValue && pep.FirstAired == comparePep.FirstAired && pep.EpisodeID < comparePep.EpisodeID)
+                            {
+                                output.AppendLine(si.ShowName + " - Season: " + kvp.Key + " - " + pep.FirstAired.ToString() + " - " + pep.EpNum + " - " + comparePep.EpNum);
+                            }
+                        }
                     }
-                }
-
-                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
-                {
-                    if (!Directory.Exists(subDirPath)) continue;
-
-                    DirectoryInfo di = new DirectoryInfo(subDirPath);
-
-                    List<ShowItem> matchingShows = new List<ShowItem>();
-
-                    foreach (ShowItem si in ShowItems)
-                    {
-                        if (showsToScan.Contains(si)) continue;
-
-                        if (si.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
-                            showsToScan.Add(si);
-                    }
-
                 }
             }
-            if (lpe != null)
+            //MessageBox.Show(output.ToString());
+            System.Diagnostics.Debug.Print(output.ToString());
+        }
+
+        public void QuickScan(bool doMissingRecents, bool doFilesInDownloadDir, bool doActions, bool automatedScan)
+        {
+
+            this.CurrentlyBusy = true;
+            this.busyWithAutomatedScan = automatedScan;
+
+            List<ShowItem> showsToScan =new List<ShowItem> { };
+            if (doFilesInDownloadDir) showsToScan = getShowsThatHaveDownloads();
+
+            if (doMissingRecents) { 
+                List<ProcessedEpisode>  lpe = GetMissingEps();
+                if (lpe != null)
+                {
+                    foreach (ProcessedEpisode pe in lpe)
+                    {
+                        if (!showsToScan.Contains(pe.SI)) showsToScan.Add(pe.SI);
+                    }
+                }
+            }
+
+
+            ActionGo(showsToScan,doActions,automatedScan);
+
+            if (doActions)
             {
-                foreach (ProcessedEpisode pe in lpe)
-                {
-                    if (!showsToScan.Contains(pe.SI)) showsToScan.Add(pe.SI);
-                }
+                doAllActions(automatedScan );
             }
 
-            
 
-            this.CurrentlyBusy = false;
+            notBusyAnymore();
 
-            ActionGo(showsToScan);
+
         }
 
         public bool CheckAllFoldersExist(List<ShowItem> showlist)
@@ -1960,6 +2031,8 @@ namespace TVRename
 
         }
 
+        public void doQuickScanAndActions() => QuickScan(true, true, true, true);
+        
         public void FindUnusedFilesInDLDirectory(List<ShowItem> showList)
         {
 
@@ -2614,6 +2687,147 @@ namespace TVRename
             return ((ep != -1) && (seas != -1));
         }
 
+        public List<ProcessedEpisode> GetMissingEps()
+        {
+            int dd = TVSettings.Instance.WTWRecentDays;
+            DirFilesCache dfc = new DirFilesCache();
+            return GetMissingEps(dfc, getRecentAndFutureEps(dfc,dd));
+         }
+
+
+        public List<ProcessedEpisode> getRecentAndFutureEps(DirFilesCache dfc,int days)
+        {
+            List<ProcessedEpisode> returnList = new List<ProcessedEpisode> { };
+
+            foreach (ShowItem si in this.GetShowItems(true))
+            {
+                if (!si.ShowNextAirdate)
+                    continue;
+
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+                    if (si.IgnoreSeasons.Contains(kvp.Key))
+                        continue; // ignore this season
+
+                    List<ProcessedEpisode> eis = kvp.Value;
+
+                    bool nextToAirFound = false;
+
+                    foreach (ProcessedEpisode ei in eis)
+                    {
+                        DateTime? dt = ei.GetAirDateDT(true);
+                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                        {
+                            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
+                            if (ts.TotalHours >= (-24 * days)) // in the future (or fairly recent)
+                            {
+                                if ((ts.TotalHours >= 0) && (!nextToAirFound))
+                                {
+                                    nextToAirFound = true;
+                                    ei.NextToAir = true;
+                                }
+                                else
+                                    ei.NextToAir = false;
+                                returnList.Add(ei);
+                            }
+                        }
+                    }
+                }
+
+            }
+            return returnList;
+        }
+
+        public List<ProcessedEpisode> GetMissingEps(DirFilesCache dfc, List<ProcessedEpisode> lpe)
+        {
+            List<ProcessedEpisode> missing = new List<ProcessedEpisode>();
+
+            foreach (ProcessedEpisode pe in lpe)
+            {
+                List<FileInfo> fl = this.FindEpOnDisk(dfc, pe);
+
+                bool foundOnDisk = ((fl != null) && (fl.Count > 0));
+                bool alreadyAired = pe.GetAirDateDT(true).Value.CompareTo(DateTime.Now) < 0;
+
+
+                if (!foundOnDisk && alreadyAired && (pe.SI.DoMissingCheck))
+                {
+                    missing.Add(pe);
+                }
+            }
+            return missing;
+        }
+
+        private List<ShowItem>  getShowsThatHaveDownloads()
+        {
+            //for each directory in settings directory
+            //for each file in directory
+            //for each saved show (order by recent)
+            //does show match selected file?
+            //if so add series to list of series scanned
+
+
+            List<ShowItem> showsToScan = new List<ShowItem>();
+
+            foreach (String dirPath in SearchFolders)
+            {
+                if (!Directory.Exists(dirPath)) continue;
+
+                foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (!File.Exists(filePath)) continue;
+
+                    FileInfo fi = new FileInfo(filePath);
+
+                    if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                        continue; // move on
+
+                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                        continue;
+
+                    foreach (ShowItem si in this.ShowItems)
+                    {
+                        if (showsToScan.Contains(si)) continue;
+
+                        if (si.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
+                            showsToScan.Add(si);
+                    }
+                }
+
+                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (!Directory.Exists(subDirPath)) continue;
+
+                    DirectoryInfo di = new DirectoryInfo(subDirPath);
+
+                    List<ShowItem> matchingShows = new List<ShowItem>();
+
+                    foreach (ShowItem si in ShowItems)
+                    {
+                        if (showsToScan.Contains(si)) continue;
+
+                        if (si.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
+                            showsToScan.Add(si);
+                    }
+
+                }
+            }
+
+            return showsToScan;
+        }
+
+        internal void ForceRefresh(List<ShowItem> sis)
+        {
+            if (sis != null)
+            {
+                foreach (ShowItem si in sis)
+                {
+                    TheTVDB.Instance.ForgetShow(si.TVDBCode, true);
+                }
+            }
+            this.DoDownloadsFG();
+        }
+
         public static bool FindSeasEp(FileInfo fi, ShowItem si)
         {
             int s;
@@ -2705,6 +2919,8 @@ namespace TVRename
                 catch (FormatException)
                 {
                 }
+                catch (ArgumentException)
+                { } 
             }
 
             return ((seas != -1) || (ep != -1));
@@ -2734,6 +2950,46 @@ namespace TVRename
                     return si;
             }
             return null;
+        }
+
+        internal List<ShowItem> getRecentShows()
+        {
+            // only scan "recent" shows
+            List<ShowItem> shows = new List<ShowItem>();
+            int dd = TVSettings.Instance.WTWRecentDays;
+
+            // for each show, see if any episodes were aired in "recent" days...
+            foreach (ShowItem si in this.GetShowItems(true))
+            {
+                bool added = false;
+
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+                    if (added)
+                        break;
+
+                    if (si.IgnoreSeasons.Contains(kvp.Key))
+                        continue; // ignore this season
+
+                    List<ProcessedEpisode> eis = kvp.Value;
+
+                    foreach (ProcessedEpisode ei in eis)
+                    {
+                        DateTime? dt = ei.GetAirDateDT(true);
+                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                        {
+                            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
+                            if ((ts.TotalHours >= (-24 * dd)) && (ts.TotalHours <= 0)) // fairly recent?
+                            {
+                                shows.Add(si);
+                                added = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return shows;
         }
     }
 }

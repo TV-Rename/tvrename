@@ -30,6 +30,11 @@ namespace TVRename
         public bool NextToAir;
         public int OverallNumber;
         public ShowItem SI;
+        public ProcessedEpisodeType type;
+        public List<Episode> sourceEpisodes;
+
+        public enum ProcessedEpisodeType { single, split, merged};
+
 
         public ProcessedEpisode(SeriesInfo ser, Season seas, ShowItem si)
             : base(ser, seas)
@@ -39,6 +44,7 @@ namespace TVRename
             this.Ignore = false;
             this.EpNum2 = this.EpNum;
             this.SI = si;
+            this.type = ProcessedEpisodeType.single;
         }
 
         public ProcessedEpisode(ProcessedEpisode O)
@@ -49,6 +55,7 @@ namespace TVRename
             this.Ignore = O.Ignore;
             this.SI = O.SI;
             this.OverallNumber = O.OverallNumber;
+            this.type = O.type;
         }
 
         public ProcessedEpisode(Episode e, ShowItem si)
@@ -59,7 +66,33 @@ namespace TVRename
             this.EpNum2 = this.EpNum;
             this.Ignore = false;
             this.SI = si;
+            this.type = ProcessedEpisodeType.single;
         }
+        public ProcessedEpisode(Episode e, ShowItem si, ProcessedEpisodeType t)
+            : base(e)
+        {
+            this.OverallNumber = -1;
+            this.NextToAir = false;
+            this.EpNum2 = this.EpNum;
+            this.Ignore = false;
+            this.SI = si;
+            this.type = t;
+        }
+
+        public ProcessedEpisode(Episode e, ShowItem si, List<Episode> episodes)
+            : base(e)
+        {
+            this.OverallNumber = -1;
+            this.NextToAir = false;
+            this.EpNum2 = this.EpNum;
+            this.Ignore = false;
+            this.SI = si;
+            this.sourceEpisodes = episodes;
+            this.type = ProcessedEpisodeType.merged ;
+        }
+
+
+
 
         public string NumsAsString()
         {

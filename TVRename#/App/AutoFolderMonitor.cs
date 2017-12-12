@@ -69,7 +69,7 @@ namespace TVRename
             this.StopMonitor();
             
             //We only wish to do a scan now if we are not already undertaking one
-            if (!mDoc.CurrentlyBusy) {
+            if (mDoc.CanScan(TVSettings.Instance.MonitoredFoldersScanType)) {
                 if (mUI != null)
                 {
                     switch (TVSettings.Instance.MonitoredFoldersScanType)
@@ -95,7 +95,7 @@ namespace TVRename
             }
             else
             {
-                System.Diagnostics.Debug.Print("Auto scan cancelled as the system is already busy");
+                System.Diagnostics.Debug.Print("Auto scan delayed as the system is already busy");
             }
             this.StartMonitor();
         }
