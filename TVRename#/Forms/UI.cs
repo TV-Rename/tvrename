@@ -207,9 +207,11 @@ namespace TVRename
             this.IPCDoAll += this.ActionAll;
             this.IPCQuit += this.Close;
 
-            this.AFMFullScan += this.ScanAndDoAll;
-            this.AFMQuickScan += this.QuickScanAndDoAll; 
-            this.AFMRecentScan += this.ScanRecentAndDoAll;
+            this.AFMFullScan += this.ScanAll;
+            this.AFMQuickScan += this.QuickScan; 
+            this.AFMRecentScan += this.ScanRecent;
+
+            this.AFMDoAll += this.ActionAll;
 
             int retries = 2;
             while (retries > 0)
@@ -252,9 +254,6 @@ namespace TVRename
             } // retry loop
         }
 
-        private void ScanRecentAndDoAll() => this.mDoc.ActionGo(this.mDoc.getRecentShows(), true,true);
-        
-        private void QuickScanAndDoAll() => QuickScan(true,true);
 
         public void SetProgressActual(int p)
         {
@@ -1272,7 +1271,7 @@ namespace TVRename
                     this.bnWTWBTSearch_Click(null, null);
                     break;
                 case TVSettings.WTWDoubleClickAction.Scan:
-                    this.Scan(new List<ShowItem> {ei.SI},false,false);
+                    this.Scan(new List<ShowItem> {ei.SI});
                     this.tabControl1.SelectTab(this.tbAllInOne);
                     break;
             }
@@ -1820,7 +1819,7 @@ namespace TVRename
                         {
                             if (mLastShowsClicked != null)
                             {
-                                this.Scan(mLastShowsClicked,false,false);
+                                this.Scan(mLastShowsClicked);
                                 this.tabControl1.SelectTab(this.tbAllInOne);
                             }
                             break;
@@ -1886,7 +1885,7 @@ namespace TVRename
                         }
                         break;
                     case RightClickCommands.kActionAction:
-                        this.ActionAction(false,false);
+                        this.ActionAction(false);
                         break;
                     case RightClickCommands.kActionBrowseForFile:
                         {
@@ -2810,33 +2809,30 @@ namespace TVRename
             this.mDoc.ExportMissingXML(); //Save missing shows to XML
         }
 
-        private void ScanAll() => ScanAll(false,false);
-
-        private void ScanAndDoAll() => ScanAll(true,true);
-
-        private void ScanAll(bool doIt, bool automatedScan)
+        private void ScanAll()
         {
             this.tabControl1.SelectedTab = this.tbAllInOne;
-            this.Scan(null,doIt,automatedScan);
+            this.Scan(null);
         }
 
-        private void ScanRecent(bool doIt, bool automatedScan)
+        private void ScanRecent()
         {
-            Scan(this.mDoc.getRecentShows(),doIt,automatedScan);
+            Scan(this.mDoc.getRecentShows());
         }
 
-        private void Scan(List<ShowItem> shows, bool doIt, bool automatedScan)
+        private void Scan(List<ShowItem> shows)
         {
             this.MoreBusy();
-            this.mDoc.ActionGo(shows,doIt,automatedScan);
+            this.mDoc.ActionGo(shows);
             this.LessBusy();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
         }
 
-        private void QuickScan(bool doIt, bool automatedScan)        {
+        private void QuickScan()
+        {
             this.MoreBusy();
-            this.mDoc.QuickScan(doIt,automatedScan );
+            this.mDoc.QuickScan();
             this.LessBusy();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
@@ -2995,19 +2991,19 @@ namespace TVRename
 
         private void bnActionAction_Click(object sender, System.EventArgs e)
         {
-            this.ActionAction(true,false);
+            this.ActionAction(true);
         }
 
         private void ActionAll()
         {
-            this.ActionAction(true,true);
+            this.ActionAction(true);
         }
 
-        private void ActionAction(bool checkedNotSelected, bool automatedScan)
+        private void ActionAction(bool checkedNotSelected)
         {
-            
+            this.mDoc.CurrentlyBusy = true;
             LVResults lvr = new LVResults(this.lvAction, checkedNotSelected);
-            this.mDoc.DoActions(lvr.FlatList,automatedScan);
+            this.mDoc.DoActions(lvr.FlatList);
             // remove items from master list, unless it had an error
             foreach (Item i2 in (new LVResults(this.lvAction, checkedNotSelected)).FlatList)
             {
@@ -3019,6 +3015,7 @@ namespace TVRename
 
             this.FillActionList();
             this.RefreshWTW(false);
+            this.mDoc.CurrentlyBusy = false;
         }
 
         private void folderMonitorToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -3442,9 +3439,9 @@ namespace TVRename
             }
         }
 
-        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.ScanRecent(false,false);
+        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.ScanRecent();
         
-        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.QuickScan(false,false);
+        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.QuickScan();
         
         private void btnFilter_Click(object sender, EventArgs e)
         {
