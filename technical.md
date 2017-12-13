@@ -33,3 +33,6 @@ It also uses
 * and JetBrains' [dotTrace](http://www.jetbrains.com/profiler/). 
 * JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving the code. 
 * AlphaFS for advanved file operations
+
+and
+* https://www.vecteezy.com/vector-art/73089-retro-television for our great logo - thanks
