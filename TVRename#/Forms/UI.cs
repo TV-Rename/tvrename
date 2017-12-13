@@ -2807,7 +2807,7 @@ namespace TVRename
         private void bnActionCheck_Click(object sender, System.EventArgs e)
         {
             this.ScanAll();
-            this.mDoc.ExportMissingXML(); //Save missing shows to XML
+            
         }
 
         private void ScanAll() => ScanAll(false,false);
@@ -2818,6 +2818,7 @@ namespace TVRename
         {
             this.tabControl1.SelectedTab = this.tbAllInOne;
             this.Scan(null,doIt,automatedScan);
+            this.mDoc.ExportMissingXML(); //Save missing shows to XML
         }
 
         private void ScanRecent(bool doIt, bool automatedScan)
