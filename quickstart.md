@@ -18,7 +18,7 @@ Lets get started...
 
  2. Click the **\[ Check >> \]** button, the selected path will be scanned and the found content automatically displayed in the *Scan Results* tab.
  
- 3. Whilst displaying the *Scan Results* tab click the **\[ Auto ID All \]** button and TVRename will attempt to match the found information against [The TVDB](http://thetvdb.com), and try to guess if the shows found in the library have a "flat" structure with all the shows episodes in one folder, or a "tree" structure with sub folders for each season and specials.
+ 3. Whilst displaying the *Scan Results* tab click the **\[ Auto ID All \]** button and TVRename will attempt to match the found information against [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and try to guess if the shows found in the library have a "flat" structure with all the shows episodes in one folder, or a "tree" structure with sub folders for each season and specials.
  Any shows not identified will not have an entry in the **Show** column or the **thetvdb code** column; these can be fixed manually by highlighting the relevant row in the table and clicking **\[ Edit \]** and searching again.
 
  4. Once the match process has finished, click **\[ Add & Close \]** and all the identified folders/shows will be added to the *My Shows* tab. *My Shows* should now be populated with the TV shows that have been found.
