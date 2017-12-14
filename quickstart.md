@@ -31,7 +31,7 @@ Lets get started...
 
  1. In **Options>Preferences**, go to the *Search Folders* tab and set the download location for new episodes. Also visit **Options>Filename Template Editor** to set how TVRename will rename your files.
 
- 2. Take a look at other tabs in **Options>Preferences** to get an idea of the changes that can be made to TVRenames behaviour.
+ 2. Take a look at the other tabs in **Options>Preferences** to get an idea of the changes that can be made to TVRenames behaviour.
  
 ### 3. Run a Scan...
 
