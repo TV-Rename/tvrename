@@ -23,7 +23,7 @@ Lets get started...
 
  4. Once the match process has finished, click **\[ Add & Close \]** and all the identified folders/shows will be added to the *My Shows* tab. *My Shows* should now be populated with the TV shows that have been found.
  
- 5. You can manually add individual shows (even if they don't have a specific folder) by clicking the **\[ Add \]** button at the bottom of the *My Shows* tab. Enter the show name, and click **\[ Search \]** to find it. Enter the base folder for the show in your media library, and select whether or not you have a sub-folder for each season.
+ 5. You can manually add individual shows (even if they don't have a specific folder) by clicking the **\[ Add \]** button at the bottom of the *My Shows* tab. Enter the show name, and click **\[ Search \]** to find it. Enter the base folder for the show in your Media Library, and select whether or not you have a sub-folder for each season.
 
  6. Go back to the *My Shows* tab and browse the series information for your shows. Here you can edit the show itself to control how TVRename manages it, or edit a season to override episode information fetched from TheTVDB.
 
@@ -35,7 +35,7 @@ Lets get started...
  
 ### 3. Run a Scan...
 
- 1. Go to the *Scan* tab, and click **\[ Full Scan \]**. TVRename will download any needed show information from TheTVDB, and examinre the contents of the media library. Settings in **Options...** will change the behaviour here.
+ 1. Go to the *Scan* tab, and click **\[ Full Scan \]**. TVRename will download any needed show information from TheTVDB, and examinre the contents of the Media Library. Settings in **Options...** will change the behaviour here.
 
  2. When the scan is complete, review TVRenames suggested changes and other information. Any ticked item will be actioned, so untick things you aren't sure about, or use the checkboxes in the bottom-right of the screen. Right-click on selected items for more actions.
 
