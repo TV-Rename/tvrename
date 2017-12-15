@@ -20,6 +20,7 @@ namespace TVRename
         private const int FADE_SPEED = 50;
         private const int WAIT_TIME = 2000;
         private static ManualResetEvent windowCreated;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static double CheckOpacity()
         {
@@ -129,6 +130,7 @@ namespace TVRename
         {
             if (displayForm != null && ((Form)displayForm).IsHandleCreated)
                 displayForm.Invoke(new UpdateText(displayForm.UpdateStatus), new object[] { status });
+            logger.Info("Splash screen update status: {0}",status);
         }
 
         public static void UpdateProgress(int progress)
@@ -141,6 +143,7 @@ namespace TVRename
         {
             if (displayForm != null && ((Form)displayForm).IsHandleCreated)
                 displayForm.Invoke(new UpdateText(displayForm.UpdateInfo), new object[] { info });
+            logger.Info("Splash screen update info: {0}", info);
         }
     }
 }

@@ -62,6 +62,9 @@ namespace TVRename
         private TVRenameStats mStats;
         public bool CurrentlyBusy = false;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
+
         private bool DebugThreads = false;
 
         private List<Finder> Finders;
@@ -183,7 +186,7 @@ namespace TVRename
                              System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(1);
                              System.Diagnostics.StackFrame sf = st.GetFrame(0);
                              string msg = sf.GetMethod().DeclaringType.FullName + "::" + sf.GetMethod().Name;
-                             System.Diagnostics.Debug.Print("LockShowItems " + msg);
+                            logger.Info("LockShowItems " + msg);
             #endif
                              Monitor.Enter(ShowItems);
                     */
@@ -197,7 +200,7 @@ namespace TVRename
                     System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(1);
                     System.Diagnostics.StackFrame sf = st.GetFrame(0);
                     string msg = sf.GetMethod().DeclaringType.FullName + "::" + sf.GetMethod().Name;
-                    System.Diagnostics.Debug.Print("UnlockShowItems " + msg);
+                   logger.Info("UnlockShowItems " + msg);
     #endif
 
                     Monitor.Exit(ShowItems);
@@ -495,9 +498,9 @@ namespace TVRename
 
             bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
-            if (DebugThreads) System.Diagnostics.Debug.Print("  Downloading " + code);
+            threadslogger.Trace("  Downloading " + code);
             bool r = TheTVDB.Instance.EnsureUpdated(code, bannersToo);
-            if (DebugThreads) System.Diagnostics.Debug.Print("  Finished " + code);
+            threadslogger.Trace("  Finished " + code);
             if (!r)
             {
                 this.DownloadOK = false;
@@ -569,7 +572,7 @@ namespace TVRename
                     t.Name = "GetThread:" + code;
                     t.Start(code); // will grab the semaphore as soon as we make it available
                     int nfr = this.WorkerSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
-                    if (DebugThreads) System.Diagnostics.Debug.Print("Started " + code + " pool has " + nfr + " free");
+                    threadslogger.Trace("Started " + code + " pool has " + nfr + " free");
                     Thread.Sleep(1); // allow the other thread a chance to run and grab
 
                     // tidy up any finished workers
@@ -1544,7 +1547,7 @@ namespace TVRename
                         t.Start(new ProcessActionInfo(which, act));
 
                         int nfr = this.ActionSemaphores[which].Release(1); // release our hold on the semaphore, so that worker can grab it
-                        if (DebugThreads) System.Diagnostics.Debug.Print("ActionProcessor[" + which + "] pool has " + nfr + " free");
+                        threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
                     }
 
                     while (this.ActionStarting) // wait for thread to get the semaphore
@@ -1714,7 +1717,7 @@ namespace TVRename
                 }
             }
             //MessageBox.Show(output.ToString());
-            System.Diagnostics.Debug.Print(output.ToString());
+           logger.Info(output.ToString());
         }
         public void QuickScan() => QuickScan(true, true);
 
@@ -1927,7 +1930,7 @@ namespace TVRename
             this.LockShowItems();
 
             DirFilesCache dfc = new DirFilesCache();
-            System.Diagnostics.Debug.Print(DateTime.Now.ToLongTimeString() + " Force Update Images: " + si.ShowName);
+            logger.Info(DateTime.Now.ToLongTimeString() + " Force Update Images: " + si.ShowName);
 
             if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations().Count > 0))
             {
@@ -2176,7 +2179,7 @@ namespace TVRename
                 if (this.ActionCancel)
                     return;
 
-                System.Diagnostics.Debug.Print(DateTime.Now.ToLongTimeString() + " Rename and missing check: " + si.ShowName);
+                logger.Info(DateTime.Now.ToLongTimeString() + " Rename and missing check: " + si.ShowName);
                 c++;
 
                 prog.Invoke(100 * c / showList.Count);
@@ -2933,3 +2936,4 @@ namespace TVRename
         }
     }
 }
+

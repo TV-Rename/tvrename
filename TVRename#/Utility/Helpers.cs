@@ -249,6 +249,8 @@ namespace TVRename
 
     public static class HTTPHelper
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static String HTTPRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
@@ -261,6 +263,9 @@ namespace TVRename
             {
                 httpWebRequest.Headers.Add("Accept-Language",lang);
             }
+
+            logger.Trace("Obtaining {0}", url);
+
             if (method == "POST") { 
                 using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
@@ -276,6 +281,7 @@ namespace TVRename
             {
                 result = streamReader.ReadToEnd();
             }
+            logger.Trace("Returned {0}", result);
             return result;
         }
 
