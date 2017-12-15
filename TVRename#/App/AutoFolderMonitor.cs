@@ -55,11 +55,13 @@ namespace TVRename
                 watcher.IncludeSubdirectories = true;
                 watcher.EnableRaisingEvents = true;
                 Watchers.Add(watcher);
+                logger.Trace("Starting logger for {0}", efi);
             }
         }
 
         void watcher_Changed(object sender, FileSystemEventArgs e)
         {
+            logger.Trace("Restarted delay timer");
             mScanDelayTimer.Stop();
             mScanDelayTimer.Start();
         }
@@ -72,6 +74,7 @@ namespace TVRename
             //We only wish to do a scan now if we are not already undertaking one
             if (!mDoc.CurrentlyBusy)
             {
+                logger.Info("Auto scan fired");
                 if (mUI != null)
                 {
                     switch (TVSettings.Instance.MonitoredFoldersScanType)

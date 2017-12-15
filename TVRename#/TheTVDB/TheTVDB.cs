@@ -203,10 +203,12 @@ namespace TVRename
         private void Say(string s)
         {
             this.CurrentDLTask = s;
+            logger.Info(s);
         }
 
         public bool LoadCache(FileInfo loadFrom)
         {
+            logger.Info("Loading Cache from: {0}", loadFrom.FullName);
             if ((loadFrom == null) || !loadFrom.Exists)
                 return true; // that's ok
 
@@ -243,6 +245,7 @@ namespace TVRename
 
         public void SaveCache()
         {
+            logger.Info("Saving Cache to: {0}", this.CacheFile.FullName);
             if (!this.GetLock("SaveCache"))
                 return;
 
@@ -480,8 +483,6 @@ namespace TVRename
         {
             this.Say("TheTVDB Languages");
 
-
-
             JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/languages", null, this.authenticationToken);
 
             this.LanguageList.Clear();
@@ -497,13 +498,8 @@ namespace TVRename
 
             }
 
-
             this.Say("");
             return true;
-
-
-
-
         }
 
         private bool login()
