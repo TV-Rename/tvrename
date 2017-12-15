@@ -7,14 +7,9 @@ namespace TVRename
 {
     class MissingXML : MissingExporter
     {
-        public override bool Active()
-        {
-            return TVSettings.Instance.ExportMissingXML;
-        }
-        public override string Location()
-        {
-            return TVSettings.Instance.ExportMissingXMLTo;
-        }
+        public override bool Active() =>TVSettings.Instance.ExportMissingXML;
+        public override string Location() =>TVSettings.Instance.ExportMissingXMLTo;
+        
         public override void Run(ItemList TheActionList)
         {
             if (TVSettings.Instance.ExportMissingXML)

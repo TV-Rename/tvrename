@@ -9,6 +9,8 @@ namespace TVRename
     {
         public abstract bool Active();
         public abstract string Location();
+        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
     }
 
     abstract class ShowsExporter : Exporter
@@ -25,6 +27,7 @@ namespace TVRename
     abstract class UpcomingExporter : Exporter
     {
         protected TVDoc mDoc;
+        
 
         public UpcomingExporter(TVDoc doc)
         {
@@ -60,8 +63,11 @@ namespace TVRename
             if (this.Active())
             {
                 StreamWriter file = new StreamWriter(Location());
-                file.Write(produce());
+                String contents = produce();
+                file.Write(contents);
                 file.Close();
+                logger.Info("Output File to :{0}", Location());
+                logger.Trace("contents of File are :{0}", contents);
             }
         }
 
