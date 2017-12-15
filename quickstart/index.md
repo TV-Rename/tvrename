@@ -2,9 +2,9 @@
 
 ## Welcome to TVRename!
 
-This guide will help you to get up and running with TVRename.
+This guide will help you through the basics of getting TVRename up and running.
 
-The guide can be found by going to the TVRename **Help** menu, and choosing **\[ Quickstart Guide \]** or by browsing to [www.tvrename.com/quickstart](http://www.tvrename.com/quickstart "Browse the TVRename Quickstart Guide online").
+The guide can be found by going to the TVRename **Help** menu, and choosing **\[ Quickstart Guide \]** or by browsing to [www.tvrename.com/quickstart](http://www.tvrename.com/quickstart "Visit the TVRename Quickstart Guide online").
 
 (This guide assumes that you already have the beginings of a "Media Library" - *a directory somewhere on your PC or a NAS or whatever, with a bunch of TV recordings in it*.)
 
