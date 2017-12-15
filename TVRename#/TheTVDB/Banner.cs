@@ -30,7 +30,9 @@ namespace TVRename
 
         public Season TheSeason;
         public SeriesInfo TheSeries;
-        
+
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public Banner(Banner O)
         {
 

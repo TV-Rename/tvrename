@@ -11,14 +11,9 @@ namespace TVRename
     {
         public UpcomingXML(TVDoc i) : base(i) { }
 
-        public override bool Active()
-        {
-            return TVSettings.Instance.ExportWTWXML;
-        }
-        public override string Location()
-        {
-            return TVSettings.Instance.ExportWTWXMLTo;
-        }
+        public override bool Active()=> TVSettings.Instance.ExportWTWXML;
+        public override string Location() => TVSettings.Instance.ExportWTWXMLTo;
+
         protected override bool  generate(System.IO.Stream str, List<ProcessedEpisode> elist)
         {
             DirFilesCache dfc = new DirFilesCache();
@@ -79,6 +74,7 @@ namespace TVRename
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
+                logger.Error(e);
                 return false;
             }
 

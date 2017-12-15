@@ -203,7 +203,7 @@ namespace TVRename
         private void Say(string s)
         {
             this.CurrentDLTask = s;
-            logger.Info(s);
+            logger.Info("Status on screen updated: {0}",s);
         }
 
         public bool LoadCache(FileInfo loadFrom)

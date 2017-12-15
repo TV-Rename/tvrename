@@ -1171,6 +1171,7 @@ namespace TVRename
             // backup old settings before writing new ones
 
             FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
+            logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
 
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -1213,6 +1214,7 @@ namespace TVRename
 
         public bool LoadXMLSettings(FileInfo from)
         {
+            logger.Info("Loading Settings from {0}", from.FullName);
             if (from == null)
                 return true;
 
@@ -1435,7 +1437,11 @@ namespace TVRename
 
             Action action = info.TheAction;
             if (action != null)
+            {
+                logger.Trace("Triggering Action: {0} - {1} - {32", action.Name, action.produces, action.ToString());
                 action.Go(ref this.ActionPause, mStats);
+            }
+                
 
             this.ActionSemaphores[info.SemaphoreNumber].Release(1);
         }
@@ -1478,6 +1484,7 @@ namespace TVRename
 #if DEBUG
                     System.Diagnostics.Debug.Fail("Unknown action type for making processing queue");
 #endif
+                    logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
                     queues[3].Actions.Add(action); // put it in this queue by default
                 }
             }
@@ -1499,7 +1506,11 @@ namespace TVRename
             this.ActionSemaphores = new Semaphore[N];
 
             for (int i = 0; i < N; i++)
+            {
                 this.ActionSemaphores[i] = new Semaphore(queues[i].ParallelLimit, queues[i].ParallelLimit); // allow up to numWorkers working at once
+                logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name, queues[i].ParallelLimit, i);
+            }
+                
 
             try
             {
@@ -1614,6 +1625,16 @@ namespace TVRename
             this.ActionProcessorThread.Join();
 
             theList.RemoveAll(x => (x is Action) && (x as Action).Done && !(x as Action).Error);
+
+                foreach (ScanListItem sli in theList)
+                {
+                    if (sli is Action) {
+                        Action slia = (Action)sli;
+                        logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name , slia.ToString(),slia.ErrorText);
+                    }
+                }
+
+
         }
 
         public bool ListHasMissingItems(ItemList l)
@@ -1862,6 +1883,7 @@ namespace TVRename
                                     try
                                     {
                                         Directory.CreateDirectory(folder);
+                                        logger.Info("Creating directory as it is missing: {0}",folder);
                                     }
                                     catch (System.IO.IOException ioe)
                                     {

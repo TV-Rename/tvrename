@@ -7,29 +7,28 @@ namespace TVRename
 {
     class ShowsTXT : ShowsExporter
     {
-        public override bool Active()
-        {
-            return TVSettings.Instance.ExportShowsTXT;
-        }
-        public override string Location()
-        {
-            return TVSettings.Instance.ExportShowsTXTTo;
-        }
+        public override bool Active() =>TVSettings.Instance.ExportShowsTXT;
+        public override string Location() =>TVSettings.Instance.ExportShowsTXTTo;
 
         public override void Run(List<ShowItem> shows)
         {
             if (TVSettings.Instance.ExportShowsTXT )
             {
-
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+                try
                 {
-                    foreach (ShowItem si in shows)
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
                     {
-                        file.WriteLine(si.ShowName);
+                        foreach (ShowItem si in shows)
+                        {
+                            file.WriteLine(si.ShowName);
+                        }
+
                     }
-
                 }
-
+                catch (Exception e)
+                {
+                    logger.Error(e);
+                }
             }
         }
     }

@@ -190,6 +190,7 @@ namespace TVRename
 
         private static volatile TVSettings instance;
         private static object syncRoot = new Object();
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVSettings Instance
         {
@@ -347,6 +348,7 @@ namespace TVRename
 
         public void load(XmlReader reader)
         {
+            
             this.SetToDefaults();
 
             reader.Read();
