@@ -12,6 +12,7 @@ namespace TVRename
         private UI mUI;
         private List<System.IO.FileSystemWatcher> Watchers = new List<System.IO.FileSystemWatcher>();
         private System.Timers.Timer mScanDelayTimer;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public AutoFolderMonitor(TVDoc Doc, UI ui)
         {
@@ -96,7 +97,7 @@ namespace TVRename
             }
             else
             {
-                System.Diagnostics.Debug.Print("Auto scan cancelled as the system is already busy");
+               logger.Info("Auto scan cancelled as the system is already busy");
             }
             this.StartMonitor();
         }

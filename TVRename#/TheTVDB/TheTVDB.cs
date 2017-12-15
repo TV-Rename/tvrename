@@ -96,6 +96,8 @@ namespace TVRename
         private static String DefaultLanguage = "en"; //Default backup language
 
         private CommandLineArgs Args;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
@@ -176,7 +178,7 @@ namespace TVRename
 
         public bool GetLock(string whoFor)
         {
-            //System.Diagnostics.Debug.Print("Lock Series for " + whoFor);
+            logger.Trace("Lock Series for " + whoFor);
             bool ok = Monitor.TryEnter(Series, 10000);
             System.Diagnostics.Debug.Assert(ok);
             return ok;
@@ -192,7 +194,7 @@ namespace TVRename
             //#if defined(DEBUG)
             //            System.Diagnostics::Debug::Assert(whoFor == whoHad);
             //#endif
-            //System.Diagnostics.Debug.Print("Unlock series for (" + whoFor + ")");
+            logger.Trace("Unlock series for (" + whoFor + ")");
             // WhoHasLock->RemoveAt(n);
             //
             Monitor.Exit(Series);
@@ -430,13 +432,13 @@ namespace TVRename
                 //str->Read(r, 0, (int)str->Length);
 
                 if (!url.EndsWith(".zip"))
-                    System.Diagnostics.Debug.Print("Downloaded " + theURL + ", " + r.Length + " bytes");
+                   logger.Info("Downloaded " + theURL + ", " + r.Length + " bytes");
 
                 return r;
             }
             catch (WebException e)
             {
-                System.Diagnostics.Debug.Print(this.CurrentDLTask + " : " + e.Message + " : " + theURL);
+               logger.Warn(this.CurrentDLTask + " : " + e.Message + " : " + theURL);
                 this.LastError = this.CurrentDLTask + " : " + e.Message;
                 return null;
             }
@@ -531,8 +533,8 @@ namespace TVRename
 
             this.authenticationToken = (string)jsonResponse["token"];
 
-            System.Diagnostics.Debug.WriteLine("refreshed token at " + System.DateTime.UtcNow);
-            System.Diagnostics.Debug.WriteLine("New Token " + this.authenticationToken);
+            logger.Info("refreshed token at " + System.DateTime.UtcNow);
+            logger.Info("New Token " + this.authenticationToken);
             this.Say("");
             return true;
         }
@@ -624,8 +626,8 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
+                    logger.Warn(ex.Message);
                     this.Say("");
                     this.LastError = ex.Message;
                     moreUpdates = false;
@@ -639,8 +641,8 @@ namespace TVRename
 
                 }
                 catch (InvalidCastException ex) {
-                    System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
+                    logger.Warn(ex.Message);
                     this.Say("");
                     this.LastError = ex.Message;
                     moreUpdates = false;
@@ -658,7 +660,7 @@ namespace TVRename
                 {
                     this.New_Srv_Time =  Math.Max(this.New_Srv_Time,Math.Max( (long)maxUpdateTime, this.Srv_Time)); // just in case the new update time is no better than the prior one
 
-                    System.Diagnostics.Debug.WriteLine("Obtianed " + numberOfResponses + " responses from lastupdated query #" + numberofCallsMade + " - since (local) " + Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime());
+                    logger.Info("Obtianed " + numberOfResponses + " responses from lastupdated query #" + numberofCallsMade + " - since (local) " + Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime());
                     epochTime = this.New_Srv_Time;
                 }
 
@@ -698,7 +700,7 @@ namespace TVRename
                         if (time > this.Series[ID].Srv_LastUpdated) // newer version on the server
                             this.Series[ID].Dirty = true; // mark as dirty, so it'll be fetched again later
                         else
-                            System.Diagnostics.Debug.WriteLine(this.Series[ID].Name + " has a lastupdated of  " + Helpers.FromUnixTime(this.Series[ID].Srv_LastUpdated) + " server says " + Helpers.FromUnixTime(time));
+                            logger.Info(this.Series[ID].Name + " has a lastupdated of  " + Helpers.FromUnixTime(this.Series[ID].Srv_LastUpdated) + " server says " + Helpers.FromUnixTime(time));
 
                         //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
 
@@ -722,14 +724,14 @@ namespace TVRename
                                 episodeResponses.Add(jsonEpisodeResponse);
                                 int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
 
-                                System.Diagnostics.Debug.WriteLine("Page " + pageNumber + " of " + this.Series[ID].Name + " had " + numberOfResponses + " episodes listed");
+                                logger.Info("Page " + pageNumber + " of " + this.Series[ID].Name + " had " + numberOfResponses + " episodes listed");
                                 if (numberOfResponses < 100) { morePages = false; } else { pageNumber++; }
 
 
                             }
                             catch (WebException ex)
                             {
-                                System.Diagnostics.Debug.WriteLine("Error obtaining page " + pageNumber + " of " + episodeUri + ": " + ex.Message);
+                                logger.Info("Error obtaining page " + pageNumber + " of " + episodeUri + ": " + ex.Message);
                                 //There may be exactly 100 or 200 episodes, may not be a problem
                                 morePages = false;
                             }
@@ -773,7 +775,7 @@ namespace TVRename
 
                             }
                         }
-                        System.Diagnostics.Debug.WriteLine(this.Series[ID].Name + " had " + numberOfUpdatedEpisodes + " episodes updated and " + numberOfNewEpisodes + " new episodes ");
+                        logger.Info(this.Series[ID].Name + " had " + numberOfUpdatedEpisodes + " episodes updated and " + numberOfNewEpisodes + " new episodes ");
                     }
                 }
             }
@@ -1083,8 +1085,8 @@ namespace TVRename
                         name += "ID #" + codeHint.Value + " ";
                     }
                     //MessageBox.Show(name + message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    System.Diagnostics.Debug.Print(name + message);
-                    System.Diagnostics.Debug.Print(str.ToString());
+                   logger.Error(name + message);
+                   logger.Error(str.ToString());
                     throw new TVDBException(name + message);
                 }
                 return false;
@@ -1131,7 +1133,7 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
+                logger.Error("Error obtaining " + uri + ": " + ex.Message);
                 this.Say("");
                 this.LastError = ex.Message;
                 return null;
@@ -1175,15 +1177,15 @@ namespace TVRename
                         jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
                         episodeResponses.Add(jsonEpisodeResponse);
                         int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
-                        //System.Diagnostics.Debug.WriteLine(code + "****" + jsonEpisodeResponse.ToString());
-                        System.Diagnostics.Debug.WriteLine("Page " + pageNumber + " of " + si.Name + " had " + numberOfResponses + " episodes listed");
+                        //logger.Info(code + "****" + jsonEpisodeResponse.ToString());
+                        logger.Info("Page " + pageNumber + " of " + si.Name + " had " + numberOfResponses + " episodes listed");
                         if (numberOfResponses < 100) { morePages = false; } else { pageNumber++; }
                         
 
                     }
                     catch (WebException ex)
                     {
-                        System.Diagnostics.Debug.WriteLine("Error obtaining page "+pageNumber +" of " + episodeUri + ": " + ex.Message);
+                        logger.Info("Error obtaining page "+pageNumber +" of " + episodeUri + ": " + ex.Message);
                         //There may be exactly 100 or 200 episodes, may not be a problem
                         morePages = false;
                     }
@@ -1267,7 +1269,7 @@ namespace TVRename
                     }
                     catch (WebException WebEx)
                     {
-                        System.Diagnostics.Debug.WriteLine("Looking for " + imageType + " images (in local language), but none found for seriesId " + code);
+                        logger.Info("Looking for " + imageType + " images (in local language), but none found for seriesId " + code);
                     }
 
                 }
@@ -1302,7 +1304,7 @@ namespace TVRename
                         }
                         catch (WebException WebEx)
                         {
-                            System.Diagnostics.Debug.WriteLine("Looking for " + imageType + " images, but none found for seriesId " + code);
+                            logger.Info("Looking for " + imageType + " images, but none found for seriesId " + code);
                         }
                     }
 
@@ -1383,7 +1385,7 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
+                logger.Error("Error obtaining " + uri + ": " + ex.Message);
                 this.LastError = ex.Message;
                 this.Say ("");
                 return false;
@@ -1435,7 +1437,7 @@ namespace TVRename
             }
             catch (TVDBException e)
             {
-                System.Diagnostics.Debug.Print("Could not parse TVDB Response " + e.Message);
+               logger.Error("Could not parse TVDB Response " + e.Message);
                 this.LastError = e.Message;
                 this.Say("");
                 return false;
@@ -1523,7 +1525,7 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                System.Diagnostics.Debug.WriteLine("Error obtaining " + uri + ": " + ex.Message);
+                logger.Error("Error obtaining " + uri + ": " + ex.Message);
                 this.LastError = ex.Message;
                 this.Say("");
                 return;

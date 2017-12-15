@@ -26,6 +26,7 @@ namespace TVRename
         public bool BannersLoaded;
 
         public System.Collections.Generic.Dictionary<int, Season> Seasons;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         //All Banners
         public System.Collections.Generic.Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.
@@ -76,8 +77,8 @@ namespace TVRename
             this.LoadJSON(json);
 
             if (String.IsNullOrEmpty(this.Name)            ){
-                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
-                System.Diagnostics.Debug.Print(json.ToString());
+               logger.Warn("Issue with series " + this.TVDBCode );
+               logger.Warn(json.ToString());
             }
         }
 
@@ -87,9 +88,9 @@ namespace TVRename
             this.LanguageId = langId;
             this.LoadJSON(json,jsonInDefaultLang);
             if (String.IsNullOrEmpty(this.Name)            ){
-                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
-                System.Diagnostics.Debug.Print(json.ToString());
-                System.Diagnostics.Debug.Print(jsonInDefaultLang .ToString());
+               logger.Warn("Issue with series " + this.TVDBCode );
+               logger.Warn(json.ToString());
+               logger.Info(jsonInDefaultLang .ToString());
             }
 
         }
@@ -350,7 +351,7 @@ namespace TVRename
                         if (seriesItems.Value != null) this.Items[seriesItems.Name] = (string)seriesItems.Value;
                     }
                     catch (ArgumentException ae) {
-                        System.Diagnostics.Debug.Print("Could not parse Json for " + seriesItems.Name + " :" + ae.Message);
+                       logger.Warn("Could not parse Json for " + seriesItems.Name + " :" + ae.Message);
                     }
             }
 

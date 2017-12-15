@@ -35,6 +35,7 @@ namespace TVRename
         [XmlIgnoreAttribute] public int NS_NumberOfEpisodesExpected = 0;
         [XmlIgnoreAttribute] public int NS_NumberOfSeasons = 0;
         [XmlIgnoreAttribute] public int NS_NumberOfShows = 0;
+        [XmlIgnoreAttribute] private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats Load()
         {
@@ -69,7 +70,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.Print(e.Message + " " + e.StackTrace);
+               logger.Fatal(e.Message + " " + e.StackTrace);
                 return null;
             }
 
