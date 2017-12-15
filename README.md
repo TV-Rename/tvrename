@@ -1,4 +1,4 @@
 # TVRrename
-*Organise your TV videos with ease...*
+## *Organise your TV videos with ease...* ##
 
-Developing and testing for the the TVRename website
+Developing and testing for the the new TVRename website with impunity
