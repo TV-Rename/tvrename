@@ -22,9 +22,10 @@ The guide can be found under  **Help>Quickstart Guide** in TVRename or by browsi
  4. Once the match process has finished, click `Add & Close` and all the identified shows will be added to the *My Shows* tab.
  *My Shows* should now be populated with the TV shows that have been recognised.
  
- 5. You can manually add shows (even if they don't have a specific folder) by clicking the **\[ Add \]** button at the bottom of the *My Shows* tab. Enter the show name, and click **\[ Search \]** to find it. Enter the base folder for the show in your media library, and select whether or not you have a sub-folder for each season.
+ 5. You can manually add shows by clicking the `Add` button in the *My Shows* tab. Enter the show name, and click `Search` to find it. 
+ Enter the base directory for the show in your media library, and select whether or not you have a sub-directory for each season.
 
- 6. Go back to the *My Shows* tab and browse the series information for your shows. Here you can edit the show itself to control how TVRename manages it, or edit a season to override episode information fetched from TheTVDB.
+ 6. Go back to the *My Shows* tab and browse the series information. Here, by right clicking on a show, you can edit the show itself to control how TVRename manages it, or edit a season to override episode information fetched from TheTVDB.
 
 ### 2. Set your Preferences...
 
@@ -34,11 +35,11 @@ The guide can be found under  **Help>Quickstart Guide** in TVRename or by browsi
  
 ### 3. Run a Scan...
 
- 1. Go to the *Scan* tab, and click **\[ Full Scan \]**. TVRename will download any needed show information from TheTVDB, and examinre the contents of the media library. Settings in **Options...** will change the behaviour here.
+ 1. Go to the *Scan* tab, and click `Full Scan`. TVRename will download any needed show information from TheTVDB, and examine the contents of the media library. Settings in **Options...** will change the behaviour here.
 
- 2. When the scan is complete, review TVRenames suggested changes and other information. Any ticked item will be actioned, so untick things you aren't sure about, or use the checkboxes in the bottom-right of the screen. Right-click on selected items for more actions.
+ 2. When the scan is complete, review TVRenames suggested changes and other information. Any ticked item will be actioned, so untick things you're not sure about, or use the checkboxes in the bottom-right of the screen. Right-click on selected items for more actions.
 
- 3. Click **\[ Do Checked \]** and TVRename will process the ticked actions, moving and renaming files as necessary.
+ 3. Click `Do Checked` and TVRename will process the ticked actions, moving and renaming files as necessary.
 
 ### 4. Ongoing Monitoring...
 
@@ -48,9 +49,8 @@ The guide can be found under  **Help>Quickstart Guide** in TVRename or by browsi
 
 ### 5. Sit back, relax, and let TV Rename do all the hard work for you!
 
-Whatever manipulation TVRename does to your files, it will never change the season or episode number.
-
-Even in the unlikely event of the names getting screwed up, the season and episode numbers will remain unchanged making the problem fairly easily fixable using something like the (free for personal use) **Bulk Rename Utility**.
+***REMEMBER:** Whatever changes TVRename makes to your files the season and episode number will remain untouched.*
+*In the unlikely event of the filenames getting screwed up, the problem should be easily fixable using something like the (free for personal use) **Bulk Rename Utility**.*
 
 ## Links
 * Online [user guide](userguide), where the features of TVRename are covered in more detail. The user guide is written for version 2.1, but is still mostly relevant.
