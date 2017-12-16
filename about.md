@@ -18,7 +18,7 @@ and you want them named more like:
 ..then this is the tool for you!
 
 **But wait.. Theres more!!!**
- * Rename files, using data from thetvdb.com
+ * Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com")
  * Check if you're missing episodes in your collection
  * Tell you how long until the next episode of a show airs
  * Monitor your "library" for new episodes and seasons of shows
@@ -27,5 +27,6 @@ and you want them named more like:
  * Create web searches to help find missing files
  * Un-name files, using names in a .torrent file
 
-To do all this great stuff TVRename makes extensive use of [TheTVDB](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
+To do all this great stuff TVRename makes extensive use of [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
+
  **PLEASE SUPPORT THEM IN ANY WAY YOU CAN**
