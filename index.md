@@ -7,8 +7,8 @@ Get up and running with TVRename... *[Click here!](quickstart "Read The TVRename
 ## User Guide
 TVRename in lots more detail... *[Click here!](userguide "Read The TVRename User Guide")*
 
-## Tips 'n' Tricks
-TVRename's "Did you know you could... "
+## [**Tips 'n' Tricks**](tips-tricks "Read Tips 'n' Tricks") (& FAQ's)
+TVRename's "Did you knows..." *[Click here!](tips-tricks "Read The Tips 'n' Tricks")*
 
 ## Support & Forums
 Read about the latest versions, make suggestions, and report bugs [here](https://groups.google.com/forum/#!forum/tvrename). 
