@@ -28,6 +28,6 @@ and you want them named like:
  * Create web searches to help find missing files
  * Un-name files, using names in a .torrent file
 
-To do all this clever stuff TVRename makes extensive use of [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
+To do all this clever stuff TVRename makes extensive use of data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
 
  **PLEASE SUPPORT THEM IN ANY WAY YOU CAN**
