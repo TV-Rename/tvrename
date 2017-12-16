@@ -28,4 +28,4 @@ and you want them named more like:
  * Un-name files, using names in a .torrent file
 
 To do all this great stuff TVRename makes extensive use of [TheTVDB](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
- **PLEASE SUPPORT THEM IN ANY WAY YOU CAN**  
+ **PLEASE SUPPORT THEM IN ANY WAY YOU CAN**
