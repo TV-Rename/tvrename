@@ -6,7 +6,7 @@ OK, before we get into all the really cool stuff TVRename can do let's get what 
 (But it can help you find stuff to download!)
 
 ## What TVRename is...
-On the surface TVRename will "Fix" the names of downloaded TV Show files
+On the surface TVRename will "fix" the names of downloaded TV Show files
 
 Say you've downloaded a few TV episodes, and they have names like:
 
@@ -18,7 +18,7 @@ and you want them named more like:
 
 ..then this is the tool for you!
 
-**But wait.. Theres more!!!**
+## But wait.. Theres more!!!
  * Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com")
  * Check if you're missing episodes in your collection
  * Tell you how long until the next episode of a show airs
