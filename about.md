@@ -24,10 +24,10 @@ and you want them named like:
  * Tell you how long until the next episode of a show airs
  * Monitor your "library" for new episodes and seasons of shows
  * Monitor your download directories for new files
- * Copy (or move) files from your "Downloads" directory (and other locations) to fill the "holes" in your collection
- * Create web searches to help find missing files
- * Un-name files, using names in a .torrent file
+ * Copy (or move) files from your "Downloads" directory (and other locations) to your media library
+ * Create web searches to help find missing files in shows
+ * Restore filenames to those originally found in a .torrent files
 
 To do all this clever stuff TVRename makes extensive use of data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
 
- **PLEASE SUPPORT THEM IN ANY WAY YOU CAN**
+ **PLEASE SUPPORT THEM IN ANY WAY YOU CAN!!**
