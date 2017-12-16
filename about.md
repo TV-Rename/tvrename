@@ -1,3 +1,10 @@
+## About TVRename
+### What TVRename isn't...
+OK, before we get into all the really cool stuff TVRename can do let's get what it doesn't do out the way.
+# TVRename does NOT download TV Shows
+(But it can help you find stuff to download!)
+
+### What TVRename is...
 Say you've downloaded a few TV episodes, and they have names like:
 
 >  *Grey's.Anatomy.S03E04.blah.xvid.avi*
