@@ -1,12 +1,11 @@
-## About TVRename
-### What TVRename isn't...
+## What TVRename isn't...
 OK, before we get into all the really cool stuff TVRename can do let's get what it doesn't do out the way...
 
 **TVRename does NOT download TV Shows**
 
 (But it can help you find stuff to download!)
 
-### What TVRename is...
+## What TVRename is...
 On the surface TVRename will "Fix" the names of downloaded TV Show files
 
 Say you've downloaded a few TV episodes, and they have names like:
@@ -29,6 +28,6 @@ and you want them named more like:
  * Create web searches to help find missing files
  * Un-name files, using names in a .torrent file
 
-To do all this great stuff TVRename makes extensive use of [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
+To do all this clever stuff TVRename makes extensive use of [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
 
  **PLEASE SUPPORT THEM IN ANY WAY YOU CAN**
