@@ -1,7 +1,7 @@
-## About
-What this program is, and some screenshots. [here](screenshots) TVRename runs on Windows XP, Vista, 7 and 10. 
+## [**About...**](about "Read more about TVRename") 
+TVRename is a TV Show management tool that runs on Windows XP and later... *[Read more about it here!](about "Read more about TVRename")*
 
-## [**Quickstart Guide**](quickstart "Read TVRename Quickstart Guide")
+## [**Quickstart Guide...**](quickstart "Read TVRename Quickstart Guide")
 Get up and running with TVRename... *[Click here!](quickstart "Read The TVRename Quickstart Guide")*
 
 ## User Guide
