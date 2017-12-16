@@ -23,9 +23,9 @@ and you want them named like:
  * Check if you're missing TV Show episodes in your collection
  * Tell you how long until the next episode of a TV Show airs
  * Monitor your media library for new episodes and seasons of shows
- * Monitor your download directories for new files
+ * Monitor your download directories for TV Show files
  * Copy (or move) files from your download directories (and other locations) to your media library
- * Create web searches to help find missing files in shows
+ * Create web searches to help find missing TV Show files
  * Restore filenames to those originally found in a .torrent files
 
 To do all this clever stuff TVRename makes extensive use of data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
