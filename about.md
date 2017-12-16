@@ -12,7 +12,7 @@ Say you've downloaded a few TV episodes, and they have names like:
 
 >  *Grey's.Anatomy.S03E04.blah.xvid.avi*
 
-and you want them named more like:
+and you want them named like:
 
 > *Greys Anatomy - S03E04 - What I Am.avi*
 
