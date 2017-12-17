@@ -24,13 +24,14 @@ and you want them named like:
 * Monitor your download directories for TV Show files
 * Restore downloaded file names to those originally found in the .torrent files used to download them
 
+> ***"Media Library"** - a directory somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it.*
+
 **Once TVRename knows about your Media Library it can: -**
 * Copy (or move) files from your download directories (and other locations) to your Media Library
 * Check if you're missing TV Show episodes/seasons in your Media Library
 * Quickly create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of a TV Show airs
 
-> **"Media Library"** - a directory somewhere on your PC or NAS or whatever, with a bunch of TV recordings in it.
 
 To do all this clever stuff TVRename makes extensive use of data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
 
