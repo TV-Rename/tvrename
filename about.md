@@ -10,7 +10,7 @@ Say you've downloaded a few TV Show episodes, they will probably have names like
 
 > ***Grey's.Anatomy.S03E04.blah.xvid.avi***
 
-and you want them named like:
+and you want them named with the show and episode name and the season and episode number like:
 
 > ***Greys Anatomy - S03E04 - What I Am.avi***
 
