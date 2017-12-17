@@ -22,7 +22,7 @@ and you want them named like:
 * Monitor your download directories for TV Show files
 * Restore downloaded file names to those originally found in the .torrent files used to download them
 
-> ***"Media Library"** - a directory somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it.*
+> ***"Media Library"** - a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
 
 **Once TVRename knows about your Media Library it can: -**
 * Copy (or move) files from your download directories (and other locations) to your Media Library
