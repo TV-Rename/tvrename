@@ -53,7 +53,3 @@ To return to this page click `Quickstart Guide` in TVRename's **Help**, or brows
 *It is highly unlikely that the names of the recordings will get screwed up, but, should it happen, the problem should be easily fixable after changing some settings, or adding new rules. At least, that's the theory. :)*
 
 *If all else fails using something like the (free for personal use) **[Bulk Rename Utility](http://www.bulkrenameutility.co.uk "Visit www.bulkrenameutility.co.uk")** should do the trick.*
-
-## Links
-* Online [user guide](userguide), where the features of TVRename are covered in more detail. The user guide is written for version 2.1, but is still mostly relevant.
-* The [forums](https://groups.google.com/forum/#!forum/tvrename), for keeping up with new versions and developments, asking for help, suggesting new features, and making bug reports.
