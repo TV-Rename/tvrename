@@ -16,7 +16,7 @@ To return to this page click `Quickstart Guide` in TVRename's **Help**, or brows
 
  2. Click the `Check >>` button, the selected path will be scanned and any recognised found content automatically displayed in the ***Scan Results*** tab.
  
- 3. Whilst displaying the ccccc ccccc ccccc ccccc ccccc ***Scan Results*** tab click `Auto ID All` and TVRename will attempt to match the found content against [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and try to guess if the show is part of a "flat" structure with all the episodes in one directory, or a "tree" structure with sub directories for each season and specials.
+ 3. Whilst displaying the ccccc ccccc ccccc ccccc ***Scan Results*** tab click `Auto ID All` and TVRename will attempt to match the found content against [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and try to guess if the show is part of a "flat" structure with all the episodes in one directory, or a "tree" structure with sub directories for each season and specials.
  Any shows not identified will not have an entry in the **Show** column or the **thetvdb code** column; these can be fixed manually by highlighting the relevant row in the table and clicking `Edit` and using `Search`. 
 
  4. Once the match process has finished, click `Add & Close` and all the identified shows will be added to the ***My Shows*** tab.
