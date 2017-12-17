@@ -26,10 +26,9 @@ But you want them named with the show and episode name and the season and episod
 
 **Once TVRename knows about your Media Library it can: -**
 * Copy (or move) files from your download directories (and other locations) to your Media Library
-* Check if you're missing TV Show episodes/seasons in your Media Library
-* Quickly create web searches to help you find missing TV Show files
+* List any missing TV Show episodes/seasons in your Media Library
+* Create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of a TV Show airs
-
 
 To do all this clever stuff TVRename makes extensive use of data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist!
 
