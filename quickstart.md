@@ -14,7 +14,7 @@ To return to this page click `Quickstart Guide` in TVRename's **Help**, or brows
 
  1. Go to **Tools>Folder Monitor** and whilst on the ***Folder*** tab click `Add`. Browse to the root directory of your "Media Library" and click `OK`. The path will be added to the ***Monitor Folders*** list.
 
- 2. Click the `Check >>` button, the selected path will be scanned and any recognised found content automatically displayed in the ***Scan Results*** tab.
+ 2. Click the `Check >>` button, the selected path will be scanned and any recognised content automatically displayed in the ***Scan Results*** tab.
  
  3. Whilst displaying the ***Scan Results*** tab click `Auto ID All` and TVRename will attempt to match the found content against [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and try to guess if the show is part of a "flat" structure with all the episodes in one directory, or a "tree" structure with sub directories for each season and specials.
  Any shows not identified will not have an entry in the **Show** column or the **thetvdb code** column; these can be fixed manually by highlighting the relevant row in the table and clicking `Edit` and using `Search`. 
