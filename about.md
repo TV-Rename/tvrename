@@ -25,7 +25,7 @@ But you want them named with the show and episode name and the season and episod
 > ***"Media Library"** - a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
 
 **Once TVRename knows about your Media Library it can: -**
-* Copy (or move) files from your download directories (and other locations) to your Media Library
+* Copy (or move) files from monitored directories to your Media Library
 * List any missing TV Show episodes/seasons in your Media Library
 * Create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of a TV Show airs
