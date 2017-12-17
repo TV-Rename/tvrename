@@ -6,7 +6,7 @@ This guide will help you through the basics setting up TVRename.
 
 To return to this page click `Quickstart Guide` in TVRename's **Help**, or browse to [www.tvrename.com/quickstart](http://www.tvrename.com/quickstart "Browse the TVRename Quickstart Guide online").
 
-> This guide assumes you already have the beginings of a "Media Library" - *a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
+> This guide assumes you already have the beginings of a "Media Library" - *a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them). TVRename doesnt care how these directories are laid out, however to us mere humans probably one directory per show or one directory per show with one sub-directory per season makes sense in terms of being able to find stuff later.*
 
 ## Basic Setup
 
