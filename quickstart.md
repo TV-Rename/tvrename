@@ -19,13 +19,13 @@ To return to this page click `Quickstart Guide` in TVRename's **Help**, or brows
  3. Whilst displaying the ***Scan Results*** tab click `Auto ID All` and TVRename will attempt to match the found content against [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and try to guess if the show is part of a "flat" structure with all the episodes in one directory, or a "tree" structure with sub directories for each season and specials.
  Any shows not identified will not have an entry in the **Show** column or the **thetvdb code** column; these can be fixed manually by highlighting the relevant row in the table and clicking `Edit` and using `Search`. 
 
- 4. Once the match process has finished, click `Add & Close` and all the identified shows will be added to the *My Shows* tab.
- *My Shows* should now be populated with the TV shows that have been recognised.
+ 4. Once the match process has finished, click `Add & Close` and all the identified shows will be added to the ***My Shows*** tab.
+ ***My Shows*** should now be populated with the TV shows that have been recognised.
  
- 5. You can manually add shows by clicking the `Add` button in the *My Shows* tab. Enter the show name, and click `Search` to find it. 
+ 5. You can manually add shows by clicking the `Add` button in the ***My Shows*** tab. Enter the show name, and click `Search` to find it. 
  Enter the base directory for the show in your Media Library, and select whether or not you have a sub-directory for each season.
 
- 6. Go back to the *My Shows* tab and browse the series information. Here, by right clicking on a show, you can edit the show itself to control how TVRename manages it, or edit a season to override episode information fetched from TheTVDB.
+ 6. Go back to the ***My Shows*** tab and browse the series information. Here, by right clicking on a show, you can edit the show itself to control how TVRename manages it, or edit a season to override episode information fetched from TheTVDB.
 
 ### 2. Set your Preferences...
 
@@ -45,7 +45,7 @@ To return to this page click `Quickstart Guide` in TVRename's **Help**, or brows
 
  1. Go to the ***When to watch*** tab to see all known future information (including airdates) of shows you are following.
  
- 2. In the *Search Folders* tab of **Options>Preferences** ticking the "Monitor folders for changes" box will tell TVRename to automatically scan whenever a new file is made available.
+ 2. In the ***Search Folders*** tab of **Options>Preferences** ticking the "Monitor folders for changes" box will tell TVRename to automatically scan whenever a new file is made available.
 
 ### 5. Sit back, relax, and let TV Rename do all the hard work for you!
 
