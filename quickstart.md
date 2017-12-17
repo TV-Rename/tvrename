@@ -6,7 +6,7 @@ This guide will help you through the basics setting up TVRename.
 
 To return to this page follow the `Quickstart Guide` link in TVRename's **Help**, or browse to [www.tvrename.com/quickstart](http://www.tvrename.com/quickstart "Browse the TVRename Quickstart Guide online").
 
-(This guide assumes you already have the beginings of a "Media Library" - *a directory somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it*.)
+> This guide assumes you already have the beginings of a "Media Library" - *a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
 
 ## Basic Setup
 
@@ -23,7 +23,7 @@ To return to this page follow the `Quickstart Guide` link in TVRename's **Help**
  *My Shows* should now be populated with the TV shows that have been recognised.
  
  5. You can manually add shows by clicking the `Add` button in the *My Shows* tab. Enter the show name, and click `Search` to find it. 
- Enter the base directory for the show in your media library, and select whether or not you have a sub-directory for each season.
+ Enter the base directory for the show in your Media Library, and select whether or not you have a sub-directory for each season.
 
  6. Go back to the *My Shows* tab and browse the series information. Here, by right clicking on a show, you can edit the show itself to control how TVRename manages it, or edit a season to override episode information fetched from TheTVDB.
 
@@ -35,7 +35,7 @@ To return to this page follow the `Quickstart Guide` link in TVRename's **Help**
  
 ### 3. Run a Scan...
 
- 1. Go to the *Scan* tab, and click `Full Scan`. TVRename will download any needed show information from TheTVDB, and examine the contents of the media library. Settings in **Options...** will change the behaviour here.
+ 1. Go to the *Scan* tab, and click `Full Scan`. TVRename will download any needed show information from [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and examine the contents of the Media Library. Settings in **Options...** will change the behaviour here.
 
  2. When the scan is complete, review TVRenames suggested changes and other information. Any ticked item will be actioned, so untick things you're not sure about, or use the checkboxes in the bottom-right of the screen. Right-click on selected items for more actions.
 
