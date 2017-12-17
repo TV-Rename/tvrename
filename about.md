@@ -19,7 +19,7 @@ But you want them named with the show and episode name and the season and episod
 ## But wait.. Theres more!
 **TVRename can: -**
 * Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and rules you can configure
-* Monitor your download directories for TV Show files
+* Monitor specified directories for TV Show files
 * Restore downloaded file names to those originally found in the .torrent files used to download them
 
 > ***"Media Library"** - a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
