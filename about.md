@@ -12,7 +12,7 @@ Say you've downloaded a few TV Show episodes, they will probably have names like
 
 But you want them named with the show and episode name and the season and episode number like: -
 
-> ***Greys Anatomy - S03E04 - What I Am.avi***
+> ***Grey's Anatomy - S03E04 - What I Am.avi***
 
 ...then this is the tool for you!
 
