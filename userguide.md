@@ -1,11 +1,20 @@
-This is a fairly brief overview of TVRename and how to use it. I'm not very good at writing documentation (and it's not something that's anywhere near as fun as writing code), so this may be somewhat brief. Any suggestions for improvements, or offers to write better documentation, are welcome. :)
+# User Guide
+## Introduction...
+As I write this guide Version 2.24 of TVRename is out-in-the-wild and Version 2.3 is in beta making it "quite interesting" trying to keep stuff up to date. I'll do my best but any suggestions for improvements, or offers of help are more than welcome. :)
 
-**Note:** Some of this user guide is written based on the older, 2.0, version of the software. Most of the features are the same, or similar. The main changes have been to how you enter in your shows ("Shows and Folders"), and the use of thetvdb.com as the database - rather than tv.com.
+**Note:** Comparing the Live and Beta versions most of the features are the same, or similar. The most recent changes have been to enterng show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com
 
-If you need any further help, sign up to the forums and post a message there.
+If you need any help, please sign up to the [forums](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum") and ask there.
 
-# Introduction
+If you're totally new to TVRename and have little idea what it can do you're probably better off reading the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3 minute read and will help you get started).
+
+## Lets (not) start at the begining...
+In true technical manual fashion we're going to start at the end because, in this case, it makes sense to see where your going as an aid to understanding how to get there.
+
+
+
 First we'll start with what you're going to end up with. This shows a number of shows we are currently watching. The first four in the list have aired, and the first two of those are on disk locally. We can also see what's coming up in the next few days, and further ahead. There is a episode summary for the currently selected episode, and a calendar showing when shows are airing. At the very bottom, in the status bar, is a countdown to the next show that is airing.
+
 
 ![When To Watch](images/screenshots/WhenToWatch.PNG)
 
