@@ -75,7 +75,12 @@ Select the show from the combo box. If you've recently edited the show in the "s
 
 "Visit TVDB" will open your web browser on the tv.com page for this season of this show. Clicking on the show name will take you to the show summary page.
 
-The rightmost button lets you choose your preferred torrent search engine. This is used when you click on one of the "Search" links in the episode guide.
+##TVRename User Guide
+###Introduction...
+
+Welcome to this, the latest incarnation of the userguide, as I write this Version 2.24 is out in the wild and Version 2.3 is in beta, so this will be as up-to-date as I can make it, but currently the target is a moveable feast.
+
+If you haven't got the first idea of what TVRename is and how it worksThe rightmost button lets you choose your preferred torrent search engine. This is used when you click on one of the "Search" links in the episode guide.
 
 If TVRename has found the corresponding episode on disk, a watch link will be displayed. That will open the video file in the associated Windows movie player.
 
