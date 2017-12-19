@@ -27,7 +27,7 @@ The next section tells us what shows found in the Media Library will be airing n
 
 "Future Episodes" looks further ahead and lists the first new episode of each show found in the Media Library not already listed.
 
-"Later" picks up everything else that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about matching yourMedia Library content.
+"Later" picks up everything else that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about matching your Media Library content.
 
 The two panels below show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). This calendar interacts with the main panel in that clicking on a bold date will highlight the show/episode in the list above, and clicking on a show/episode in the main panel will cause the calendar to display that date.
 
