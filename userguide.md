@@ -27,13 +27,13 @@ The next section tells us what shows found in the Media Library will be airing n
 
 "Future Episodes" looks further ahead and lists the first new episode of each show found in the Media Library not already listed.
 
-"Later" picks up everything else that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about matching your Media Library content.
+"Later" picks up all the future episode information matching shows in your Media Library that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
 
-The two panels below show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). This calendar interacts with the main panel in that clicking on a bold date will highlight the show/episode in the list above, and clicking on a show/episode in the main panel will cause the calendar to display that date.
+The two panels below show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). The calendar interacts with the main panel. Clicking on a bold date will highlight the episode matching the date in the list above, and clicking on an episode in the main panel will cause the calendar to display that date.
 
-At the very bottom, in the status bar, is a countdown to the next show/episode that is airing.
+At the very bottom, the status bar displays the next show/episode airing.
 
-The information presented here is only as good as that found at [The TVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and help maintain their content - everybody benefits!
+The content presented by TVRename is only as good as that found at [The TVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and helping to maintain their content - everybody benefits!
 
 ## My Shows
 This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
