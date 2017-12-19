@@ -1,10 +1,10 @@
-## [**About TVRename...**](about "Read more about TVRename") 
+## [**About TVRename**](about "Read more about TVRename") 
 TVRename is a TV Show management tool that runs on Windows XP and later... *[Read more about it here!](about "Read more about TVRename")*
 
-## [**Quickstart Guide...**](quickstart "Read The Quickstart Guide")
+## [**Quickstart Guide**](quickstart "Read The Quickstart Guide")
 Get up and running with TVRename... *[Click here!](quickstart "Read The Quickstart Guide")*
 
-## [**User Guide...**](userguide "Read The User Guide")
+## [**User Guide**](userguide "Read The User Guide")
 TVRename in lots more detail... *[Click here!](userguide "Read The User Guide")*
 
 ## [**Tips 'n' Tricks**](tips-tricks "Read Tips 'n' Tricks") (& FAQ's)

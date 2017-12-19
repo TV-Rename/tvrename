@@ -1,6 +1,6 @@
 # User Guide
 ## Introduction...
-As I write this guide Version 2.24 of TVRename is out-in-the-wild and Version 2.3 is in beta making it "quite interesting" trying to keep stuff up to date. I'll do my best but any suggestions for improvements, or offers of help are more than welcome. :)
+As I write this guide Version 2.24 of TVRename is out-in-the-wild and Version 2.3 is in beta making it "quite interesting" trying to keep stuff up to date. We'll do our best but any suggestions for improvements, or offers of help are more than welcome. :)
 
 **Note:** Comparing the live and beta versions most of the features are the same, or similar. The most recent changes have been regarding enterng show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com.
 
@@ -28,7 +28,7 @@ The next section tells us what shows found in the Media Library will be airing n
 
 "Later" shows the rest of the future episode information matching shows in your Media Library that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
 
-The next two panels show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). The calendar interacts with the main panel. Clicking on a bold date will highlight the episode matching the date in the list above, and clicking on an episode in the main panel will cause the calendar to display that date. In either case the episode summary will be updated (if there is one)
+The next two panels show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). The calendar interacts with the main panel. Clicking on a bold date will highlight the episode matching the date in the list above, and clicking on an episode in the main panel will cause the calendar to display that date. In either case the episode summary will be updated (if there is one).
 
 At the very bottom, the status bar displays the next show/episode airing and how long you've got to wait for it!
 
@@ -37,26 +37,26 @@ At the very bottom, the status bar displays the next show/episode airing and how
 *In keeping with our jumping-about policy lets look at My Shows next.*
 
 ## "My Shows"...
-This is where you tell TV Rename about the TV Shows you are watching (or have watched), where it can find them and how they are structured.
+This is where you tell TV Rename about the TV Shows you are watching (or have watched), where they can be found and how they are structured.
 
-In essence this tab allows you to configure the "interface" between  [The TVDB](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidently there can be multiple storage locations including local paths on your computer, local drives, mapped network shares and UNC paths. The only restriction being that a TV Show cannot be spread across locations.
+In essence this tab (along with some of the preferences) allows you to configure the interaction between  [The TVDB](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidently there can be multiple storage locations including local paths on your computer (including local drives), mapped network shares and UNC paths. The only restriction being that a TV Show cannot be spread across multiple locations.
 .
 In this image, you can see a number of shows, each of which can have a folder associated with it.
 
 ![Shows and Folders](images/screenshots/MyShows.PNG)
 
 Buttons:
- * **Add** - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
- * **Edit** - Edit the currently selected show.
- * **Delete** - Remove the currently selected show(s).
- * **Filter** - Filter the listed shows base don entered criteria.
+ * `Add` - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
+ * `Edit` - Edit the currently selected show.
+ * `Delete` - Remove the currently selected show(s).
+ * `Filter` - Filter the listed shows base don entered criteria.
  * Expand all
  * Hide Details Panel
  * **Open** - Opens the folder for the TV show.
  * **Visit tvdb.com** - Visit the tv.com page for this season of this show.
 
-## Add/Edit Show
-Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
+### Add/Edit Show
+Clicking on the `Add` or `Edit` button for a show, in the "Shows and Folders" tab, opens this dialog.
 
 ![addeditshow](images/UserGuide/addeditshow.png)
 ![tvcomsearch](images/UserGuide/tvcomsearch.png)
