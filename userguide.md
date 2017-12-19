@@ -2,19 +2,18 @@
 ## Introduction...
 As I write this guide Version 2.24 of TVRename is out-in-the-wild and Version 2.3 is in beta making it "quite interesting" trying to keep stuff up to date. I'll do my best but any suggestions for improvements, or offers of help are more than welcome. :)
 
-**Note:** Comparing the Live and Beta versions most of the features are the same, or similar. The most recent changes have been to enterng show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com
+**Note:** Comparing the live and beta versions most of the features are the same, or similar. The most recent changes have been regarding enterng show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com.
 
-If you need any help, please sign up to the [forums](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum") and ask there.
+If you're new to TVRename you're should probably read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get up and running).
 
-If you're new to TVRename and have little idea what it can do you're probably better off reading the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get started).
+If you need help, please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to help.
 
 ## Lets (not) start at the begining...
-In true technical manual fashion we're going to start at the end because, in this case, it makes sense to see where your going to help make sense of how to get there.
+In true technical manual fashion we're going to start at the end because, as is so often the case, it makes sense to see where your going to help figure out how to get there.
 
 ## "When to watch"...
 
-Once you have TVRename up and running just the way you want it you'll probably spend most of your time here.
-
+Once you have TVRename up and running and behaving the way you want you'll probably spend most of your time here. If you wish you can make this tab open by default by changing the startup tab in the *General* tab of **Options>Preferences**.
 ![When To Watch](images/userguide/when-to-watch-01.png)
 
 Looking at the list in the main panel we see details of recent and future show episodes matching TV Shows found in the Media Library.
@@ -27,16 +26,21 @@ The next section tells us what shows found in the Media Library will be airing n
 
 "Future Episodes" looks further ahead and lists the first new episode of each show found in the Media Library not already listed.
 
-"Later" picks up all the future episode information matching shows in your Media Library that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
+"Later" shows the rest of the future episode information matching shows in your Media Library that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
 
-The two panels below show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). The calendar interacts with the main panel. Clicking on a bold date will highlight the episode matching the date in the list above, and clicking on an episode in the main panel will cause the calendar to display that date.
+The next two panels show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). The calendar interacts with the main panel. Clicking on a bold date will highlight the episode matching the date in the list above, and clicking on an episode in the main panel will cause the calendar to display that date. In either case the episode summary will be updated (if there is one)
 
-At the very bottom, the status bar displays the next show/episode airing.
+At the very bottom, the status bar displays the next show/episode airing and how long you've got to wait for it!
 
-The content presented by TVRename is only as good as that found at [The TVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and helping to maintain their content - everybody benefits!
+**The content presented by TVRename is only as good as that found at [The TVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and helping to maintain their content - everybody benefits!**
 
-## My Shows
-This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
+*In keeping with our jumping-about policy lets look at My Shows next.*
+
+## "My Shows"...
+This is where you tell TV Rename about the TV Shows you are watching (or have watched), where it can find them and how they are structured.
+
+In essence this tab allows you to configure the "interface" between  [The TVDB](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidently there can be multiple storage locations including local paths on your computer, local drives, mapped network shares and UNC paths. The only restriction being that a TV Show cannot be spread across locations.
+.
 In this image, you can see a number of shows, each of which can have a folder associated with it.
 
 ![Shows and Folders](images/screenshots/MyShows.PNG)
