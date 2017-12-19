@@ -6,23 +6,36 @@ As I write this guide Version 2.24 of TVRename is out-in-the-wild and Version 2.
 
 If you need any help, please sign up to the [forums](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum") and ask there.
 
-If you're totally new to TVRename and have little idea what it can do you're probably better off reading the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3 minute read and will help you get started).
+If you're new to TVRename and have little idea what it can do you're probably better off reading the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get started).
 
 ## Lets (not) start at the begining...
-In true technical manual fashion we're going to start at the end because, in this case, it makes sense to see where your going as an aid to understanding how to get there.
+In true technical manual fashion we're going to start at the end because, in this case, it makes sense to see where your going to help make sense of how to get there.
 
+## "When to watch"...
 
+Once you have TVRename up and running just the way you want it you'll probably spend most of your time here.
 
-First we'll start with what you're going to end up with. This shows a number of shows we are currently watching. The first four in the list have aired, and the first two of those are on disk locally. We can also see what's coming up in the next few days, and further ahead. There is a episode summary for the currently selected episode, and a calendar showing when shows are airing. At the very bottom, in the status bar, is a countdown to the next show that is airing.
+![When To Watch](images/userguide/when-to-watch-01.png)
 
+Looking at the list in the main panel we see details of recent and future show episodes matching TV Shows found in the Media Library.
 
-![When To Watch](images/screenshots/WhenToWatch.PNG)
+At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the *General* tab of **Options>Preferences** if you wish).
 
-# Beginner's Overview
+In this example there are two shows listed. The disk icon to the left of "The Gifted" indicates that the episode was found in the Media Library and the magnifing glass to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured under **Options>Search Engines**).
 
-See the **[Quick start guide](quickstart)** for further information on how to get TV Rename up and running 
+The next section tells us what shows found in the Media Library will be airing new episodes in the "Next 7 Days".
 
-# My Shows
+"Future Episodes" looks further ahead and lists the first new episode of each show found in the Media Library not already listed.
+
+"Later" picks up everything else that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about matching yourMedia Library content.
+
+The two panels below show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). This calendar interacts with the main panel in that clicking on a bold date will highlight the show/episode in the list above, and clicking on a show/episode in the main panel will cause the calendar to display that date.
+
+At the very bottom, in the status bar, is a countdown to the next show/episode that is airing.
+
+The information presented here is only as good as that found at [The TVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and help maintain their content - everybody benefits!
+
+## My Shows
 This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
 In this image, you can see a number of shows, each of which can have a folder associated with it.
 
