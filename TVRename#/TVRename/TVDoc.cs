@@ -528,7 +528,8 @@ namespace TVRename
         public void Downloader()
         {
             // do background downloads of webpages
-
+            logger.Info("*******************************");
+            logger.Info("Starting Background Download...");
             try
             {
                 if (ShowItems.Count == 0)
@@ -555,7 +556,9 @@ namespace TVRename
                     codes.Add(si.TVDBCode);
                 this.UnlockShowItems();
 
+                
                 int numWorkers = TVSettings.Instance.ParallelDownloads;
+                logger.Info("Setting up {0} threads to download information from TVDB.com",numWorkers);
                 this.Workers = new List<Thread>();
 
                 this.WorkerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
@@ -654,6 +657,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.OfflineMode)
                 return true; // don't do internet in offline mode!
+            logger.Info("Doing downloads in the foreground...");
 
             this.StartBGDownloadThread(true);
 
@@ -1598,6 +1602,8 @@ namespace TVRename
 
         public void DoActions(ScanListItemList theList)
         {
+            logger.Info("**********************");
+            logger.Info("Doing Selected Actions....");
             if (theList == null)
                 return;
 
@@ -1952,7 +1958,8 @@ namespace TVRename
             this.LockShowItems();
 
             DirFilesCache dfc = new DirFilesCache();
-            logger.Info(DateTime.Now.ToLongTimeString() + " Force Update Images: " + si.ShowName);
+            logger.Info("*******************************");
+            logger.Info("Force Update Images: " + si.ShowName);
 
             if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations().Count > 0))
             {
@@ -2201,7 +2208,7 @@ namespace TVRename
                 if (this.ActionCancel)
                     return;
 
-                logger.Info(DateTime.Now.ToLongTimeString() + " Rename and missing check: " + si.ShowName);
+                logger.Info("Rename and missing check: " + si.ShowName);
                 c++;
 
                 prog.Invoke(100 * c / showList.Count);
