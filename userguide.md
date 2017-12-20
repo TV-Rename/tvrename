@@ -1,47 +1,62 @@
-This is a fairly brief overview of TVRename and how to use it. I'm not very good at writing documentation (and it's not something that's anywhere near as fun as writing code), so this may be somewhat brief. Any suggestions for improvements, or offers to write better documentation, are welcome. :)
+# User Guide
+## Introduction...
+As I write this guide Version 2.24 of TVRename is out-in-the-wild and Version 2.3 is in beta making it "quite interesting" trying to keep stuff up to date. We'll do our best but any suggestions for improvements, or offers of help are more than welcome. :)
 
-**Note:** Some of this user guide is written based on the older, 2.0, version of the software. Most of the features are the same, or similar. The main changes have been to how you enter in your shows ("Shows and Folders"), and the use of thetvdb.com as the database - rather than tv.com.
+**Note:** Comparing the live and beta versions most of the features are the same, or similar. The most recent changes have been regarding enterng show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com.
 
-If you need any further help, sign up to the forums and post a message there.
+If you're new to TVRename you're should probably read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get up and running).
 
-# Introduction
-First we'll start with what you're going to end up with. This shows a number of shows we are currently watching. The first four in the list have aired, and the first two of those are on disk locally. We can also see what's coming up in the next few days, and further ahead. There is a episode summary for the currently selected episode, and a calendar showing when shows are airing. At the very bottom, in the status bar, is a countdown to the next show that is airing.
+If you need help, please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to help.
 
-![When To Watch](images/screenshots/WhenToWatch.PNG)
+## Lets (not) start at the begining...
+In true technical manual fashion we're going to start at the end because, as is so often the case, it makes sense to see where your going to help figure out how to get there.
 
-# Beginner's Overview
+## "When to watch"...
 
-See the **[Quick start guide](quickstart)** for further information on how to get TV Rename up and running 
+Once you have TVRename up and running and behaving the way you want you'll probably spend most of your time here. If you wish you can make this tab open by default by changing the startup tab in the *General* tab of **Options>Preferences**.
+![When To Watch](images/userguide/when-to-watch-01.png)
 
-# Tips and Tricks
-* Most items can be double-clicked, to do the most "useful" thing for them.
-* Folders, shows, and episodes can be right-clicked for appropriate actions.
-* Column headers can be clicked to sort by that column.
-* Folder lists support drag and drop of folders from Explorer, for quick and easy addition.
-* You cen remove items from the renaming and finding and organising lists by selecting them, and pressing "Delete" on your keyboard.
-* If you double-click on a tab to select it, it will automatically do the "Find", "Check", or "Refresh" action for that tab.
-* After making changes, you need to save before exiting (TVRename will prompt you). If you screw something up, just exit without saving and your settings will be restored.
-* TVRename stores a lot of data in XML files. See the files section for more information on what there is, and where it is.
-* Whatever manipulation TVRename does to your files, it will never change the season or episode number. If the names get screwed up, the season and episode number will be unchanged, meaning that the problem should be (fairly easily) fixable after changing some settings, or adding new rules. At least, that's the theory. :)
+Looking at the list in the main panel we see details of recent and future show episodes matching TV Shows found in the Media Library.
 
-# My Shows
-This is where you tell TV Rename which shows you are interested in, and where they are stored on your computer. It can be a local drive, or a mapped network share.
+At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the *General* tab of **Options>Preferences** if you wish).
+
+In this example there are two shows listed. The disk icon to the left of "The Gifted" indicates that the episode was found in the Media Library and the magnifing glass to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured under **Options>Search Engines**).
+
+The next section tells us what shows found in the Media Library will be airing new episodes in the "Next 7 Days".
+
+"Future Episodes" looks further ahead and lists the first new episode of each show found in the Media Library not already listed.
+
+"Later" shows the rest of the future episode information matching shows in your Media Library that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
+
+The next two panels show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). The calendar interacts with the main panel. Clicking on a bold date will highlight the episode matching the date in the list above, and clicking on an episode in the main panel will cause the calendar to display that date. In either case the episode summary will be updated (if there is one).
+
+At the very bottom, the status bar displays the next show/episode airing and how long you've got to wait for it!
+
+**The content presented by TVRename is only as good as that found at [The TVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and helping to maintain their content - everybody benefits!**
+
+*In keeping with our jumping-about policy lets look at My Shows next.*
+
+## "My Shows"...
+This is where you tell TV Rename about the TV Shows you are watching (or have watched), where they can be found and how they are structured.
+
+In essence this tab (along with some of the preferences) allows you to configure the interaction between  [The TVDB](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidently there can be multiple storage locations including local paths on your computer (including local drives), mapped network shares and UNC paths. The only restriction being that a TV Show cannot be spread across multiple locations.
+.
 In this image, you can see a number of shows, each of which can have a folder associated with it.
 
 ![Shows and Folders](images/screenshots/MyShows.PNG)
 
 Buttons:
- * **Add** - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
- * **Edit** - Edit the currently selected show.
- * **Delete** - Remove the currently selected show(s).
- * **Filter** - Filter the listed shows base don entered criteria.
+ * `Add` - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
+ * `Edit` - Edit the currently selected show.
+ * `Delete` - Remove the currently selected show(s).
+ * `Filter` - Filter the listed shows base don entered criteria.
  * Expand all
  * Hide Details Panel
  * **Open** - Opens the folder for the TV show.
  * **Visit tvdb.com** - Visit the tv.com page for this season of this show.
 
-## Add/Edit Show
-Clicking on the "Add" or "Edit" button for a show, in the "Shows and Folders" tab, opens this dialog.
+### Add/Edit Show
+Clicking on the `Add` or `Edit` button for a show, in the "Shows and Folders" tab, opens this dialog.
 
 ![addeditshow](images/UserGuide/addeditshow.png)
 ![tvcomsearch](images/UserGuide/tvcomsearch.png)
@@ -86,7 +101,12 @@ Select the show from the combo box. If you've recently edited the show in the "s
 
 "Visit TVDB" will open your web browser on the tv.com page for this season of this show. Clicking on the show name will take you to the show summary page.
 
-The rightmost button lets you choose your preferred torrent search engine. This is used when you click on one of the "Search" links in the episode guide.
+##TVRename User Guide
+###Introduction...
+
+Welcome to this, the latest incarnation of the userguide, as I write this Version 2.24 is out in the wild and Version 2.3 is in beta, so this will be as up-to-date as I can make it, but currently the target is a moveable feast.
+
+If you haven't got the first idea of what TVRename is and how it worksThe rightmost button lets you choose your preferred torrent search engine. This is used when you click on one of the "Search" links in the episode guide.
 
 If TVRename has found the corresponding episode on disk, a watch link will be displayed. That will open the video file in the associated Windows movie player.
 

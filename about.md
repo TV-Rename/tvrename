@@ -1,19 +1,33 @@
-Say you've downloaded a few TV episodes, and they have names like:
+# What TVRename isn't
+OK, before we get into all the really cool stuff TVRename can do let's get what it doesn't do out of the way...
 
->  *Grey's.Anatomy.S03E04.blah.xvid.avi*
+**TVRename does NOT download TV Shows** (But it can help you find TV Shows to download!)
 
-and you want them named more like:
+# What TVRename is
+On the surface TVRename will "fix" the names of downloaded TV Show files: -
 
-> *Greys Anatomy - S03E04 - What I Am.avi*
+Say you've downloaded a few TV Show episodes, they will probably have names like: -
 
-..this this is the program for you!
+> ***Grey's.Anatomy.S03E04.blah.xvid.avi***
 
-**But wait.. Theres more!!!**
+But you want them named with the show and episode name and the season and episode number like: -
 
- * Rename files, using data from thetvdb.com
- * Check if you're missing episodes in your collection
- * Tell you how long until the next time a show airs
- * Monitor your library of folders for new shows and seasons
- * Monitor your download directories for new files
- * Copy files from where you download them to, to fill in gaps in your main collection
- * Un-name files, using names in a .torrent file
+> ***Grey's Anatomy - S03E04 - What I Am.avi***
+
+...then this is the tool for you!
+
+## But wait.. Theres more!
+**TVRename can: -**
+* Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and rules you can configure
+* Monitor specified directories for TV Show files
+* Restore downloaded file names to those originally found in the .torrent files used to download them
+
+> ***"Media Library"** - a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
+
+**Once TVRename knows about your Media Library it can: -**
+* Copy (or move) files from monitored directories to your Media Library
+* List any missing TV Show episodes/seasons in your Media Library
+* Create web searches to help you find missing TV Show files
+* Tell you how long you'll have to wait until the next episode of a TV Show airs
+
+**To do all this clever stuff TVRename makes extensive use of data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist! Please support them!**
