@@ -18,12 +18,11 @@ The folks at TVRename use two google groups for help and support.
 ## [**TVRename Releases**](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TVRename Releases Forum")
 ***The Release Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TVRename Releases Forum"). You can also download the latest version as well as alphas and betas.. 
 
-# Issues and Bugs* 
+# Issues and Bugs
 * Start by visiting the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename Forum"), and make a post there. 
 * You can also use **Help>Bug Report** in the application. Fill in the form and click ```Create```. Once the diagnostic information has been gathered, copy and paste the information to the forum above.
-* If you've found a bug that has been verified by the team, then raise on the [bug tracker](https://github.com/TV-Rename/tvrename/issues).
-* If you need a quick resolution then packaging up your configuration files will help speed diagnosis. It is advisable to send these only to the person helping you with your issue as they may contain personal information.
-* For the more technical among you, you can also raise issues and bugs at [TVRename on GitHub](https://github.com/TV-Rename/tvrename/issues "Visit TVRename on GitHub").
+* If you've found a bug that has been verified by the team, then raise it on the [bug tracker](https://github.com/TV-Rename/tvrename/issues).
+* If you need a quick resolution then packaging up your configuration files and sending them to us will help speed diagnosis. **For securities sake it is advisable to send this only to the person helping you with your problem**.
 
 # [**Feature Requests**](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall")
 ***Our Latest Feature...*** Please raise  ideas for features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall").
