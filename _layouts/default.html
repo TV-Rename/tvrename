@@ -51,9 +51,9 @@
       <nav>
         <ul>
           {% if page.url == '/' %}
-          	<li><img src="images/home-no-link.png" height="122" width="100" /></li>
+            <li><img src="images/home-no-link.png" height="122" width="100" /></li>
           {% else %}
-            <li><img src="images/home-link.png" height="122" width="100" /></li>
+            <li><a href="{{ site.baseurl }}/index.html"><img src="images/home-link.png" height="122" width="100" /></a></li>
           {% endif %}
 	      </ul>
       </nav>
