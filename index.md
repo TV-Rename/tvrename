@@ -22,7 +22,7 @@ The folks at TVRename use two google groups for help and support.
 * Start by visiting the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename Forum"), and make a post there. 
 * You can also use **Help>Bug Report** in the application. Fill in the form and click ```Create```. Once the diagnostic information has been gathered, copy and paste it to the [TVRename Forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename Forum").
 * If you've found a bug that has been verified by the team, then raise it on the [bug tracker](https://github.com/TV-Rename/tvrename/issues).
-* If you need a quick resolution then packaging up your configuration files and sending them to us will help speed diagnosis. **For securities sake it is advisable to send this only to the person helping you with your problem**.
+* If you need a quick resolution then packaging up your configuration files and sending them to us will help speed diagnosis. **For security it is advisable to send this only to the person helping you with your problem**.
 
 # [**Feature Requests**](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall")
 ***Our Latest Feature...*** Please raise  ideas for features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall").
