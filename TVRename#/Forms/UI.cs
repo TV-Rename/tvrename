@@ -103,6 +103,9 @@ namespace TVRename
         protected Season mLastSeasonClicked;
         protected List<ShowItem> mLastShowsClicked;
 
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+
         public UI(TVDoc doc)
         {
 
@@ -2822,6 +2825,8 @@ namespace TVRename
 
         private void Scan(List<ShowItem> shows)
         {
+            logger.Info("*******************************");
+            logger.Info("Starting Scan for {0} shows...",shows.Count>0? shows.Count.ToString() :"all");
             this.MoreBusy();
             this.mDoc.ActionGo(shows);
             this.LessBusy();
@@ -2831,6 +2836,8 @@ namespace TVRename
 
         private void QuickScan()
         {
+            logger.Info("*******************************");
+            logger.Info("Starting QuickScan...");
             this.MoreBusy();
             this.mDoc.QuickScan();
             this.LessBusy();
