@@ -4,7 +4,7 @@ OK, before we get into all the really cool stuff TVRename can do let's get what 
 **TVRename does NOT download TV Shows** (But it can help you find TV Shows to download!)
 
 # What TVRename is
-On the surface TVRename will "fix" the names of downloaded TV Show files: -
+On the surface TVRename will "fix" the names of downloaded TV Show files...
 
 Say you've downloaded a few TV Show episodes, they will probably have names like: -
 

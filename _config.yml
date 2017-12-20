@@ -4,5 +4,6 @@ google_analytics: UA-110543541-1
 show_downloads: false
 theme: jekyll-theme-leap-day
 
-gems:
+plugins:
+  - jemoji
   - jekyll-mentions
