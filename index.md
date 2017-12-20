@@ -1,4 +1,4 @@
-# [**About TVRename**](about "Read more about TVRename") 
+:# [**About TVRename**](about "Read more about TVRename") 
 TVRename is a TV Show management tool that runs on Windows XP and later... *[Read more about it here!](about "Read more about TVRename")*
 
 # [**Quickstart Guide**](quickstart "Read The Quickstart Guide")
@@ -10,18 +10,19 @@ TVRename in lots more detail... *[Click here!](userguide "Read The User Guide")*
 # [**Tips 'n' Tricks**](tips-tricks "Read Tips 'n' Tricks") (& FAQ's)
 TVRename's "Did you knows..." *[Click here!](tips-tricks "Read Tips 'n' Tricks")*
 
-# Support & Forums
-Read about the latest versions, make suggestions, and report bugs [here](https://groups.google.com/forum/#!forum/tvrename). 
-
-# Downloads & Release Notes (Release Forums)
-Notification of new versions, and release notes are [here](https://groups.google.com/forum/#!forum/tvrename-releases). 
-Download the latest installer, and alpha/beta versions from here. Release notes are here. 
+# Forums
+The folks at TVRename use two google groups for help and support.
+## [**TVRename**](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename Forum")
+***The Main Forum*** - You can ask for help , make suggestions, and report something you think may be a bug [here](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename
+ Forum"). 
+## [**TVRename Releases**](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TVRename Releases Forum")
+***The Release Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TVRename Releases Forum"). You can also download the latest version as well as alphas and betas.. 
 
 # Issues and Bugs
-Please raise bugs on GITHub [issues tracker](https://github.com/TV-Rename/tvrename/issues).
+For the more technical among you, you can also raise issues and bugs at [TVRename on GitHub](https://github.com/TV-Rename/tvrename/issues "Visit TVRename on GitHub").
 
-# Feature Requests
-Please raise new Ideas for Features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0).
+# [**Feature Requests**](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall")
+***Our Latest Feature...*** - Please raise  ideas for features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall").
 
 # [**Under the Hood**](technical "read the Technical Guide")
 Get the oily rag out, its time to get down and dirty... [Read all the technical stuff](technical "Read the Technical Guide").
