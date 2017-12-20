@@ -18,20 +18,18 @@ The folks at TVRename use two google groups for help and support.
 ## [**TVRename Releases**](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TVRename Releases Forum")
 ***The Release Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TVRename Releases Forum"). You can also download the latest version as well as alphas and betas.. 
 
-# Issues and Bugs
-For the more technical among you, you can also raise issues and bugs at [TVRename on GitHub](https://github.com/TV-Rename/tvrename/issues "Visit TVRename on GitHub").
+# Issues and Bugs* 
+* Start by visiting the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename Forum"), and make a post there. 
+* You can also use **Help>Bug Report** in the application. Fill in the form and click ```Create```. Once the diagnostic information has been gathered, copy and paste the information to the forum above.
+* If you've found a bug that has been verified by the team, then raise on the [bug tracker](https://github.com/TV-Rename/tvrename/issues).
+* If you need a quick resolution then packaging up your configuration files will help speed diagnosis. It is advisable to send these only to the person helping you with your issue as they may contain personal information.
+* For the more technical among you, you can also raise issues and bugs at [TVRename on GitHub](https://github.com/TV-Rename/tvrename/issues "Visit TVRename on GitHub").
 
 # [**Feature Requests**](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall")
-***Our Latest Feature...*** - Please raise  ideas for features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall").
+***Our Latest Feature...*** Please raise  ideas for features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall").
 
 # [**Under the Hood**](technical "read the Technical Guide")
 Get the oily rag out, its time to get down and dirty... [Read all the technical stuff](technical "Read the Technical Guide").
 
-# Buy me a drink
-If this program has saved you time, or you use it regularly, then [buy me a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or drink of your choice).
-
-# Further Help, Bugs, and Suggestions
-* Visit the [forums](https://groups.google.com/forum/#!forum/tvrename), and make a post there. 
-* You can also use the "Bug Report" item on the "Help" menu. Fill in the boxes, then click "Create". Once it is done gathering diagnostic information, copy and paste the text in an email to the forum above for help.
-* If you've found a bug that has been verified by the team, then raise on the [bug tracker](https://github.com/TV-Rename/tvrename/issues).
-* If you want a quick resolution then packaging up your [configuration files](https://tv-rename.github.io/tvrename/userguide#files) will help speed diagnosis. It is advisable to send these only to the person helping you with your issue as they may contain personal information.
+# Buy us a drink
+If this program has saved you time, or you use it regularly, then [buy us a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or other drink of your choice).
