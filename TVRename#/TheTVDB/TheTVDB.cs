@@ -14,7 +14,6 @@ using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 
-using Ionic.Utils.Zip;
 using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Xml;
