@@ -19,9 +19,13 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 public static class GlobalMembersTVRename
 {
+
+    private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
     [STAThread]
     private static int Main(string[] args)
     {
+        logger.Info("TV Rename Started with args: {0}",args);
         // Enabling Windows XP visual effects before any controls are created
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -39,6 +43,7 @@ public static class GlobalMembersTVRename
         if (!createdNew)
         {
             // we're already running
+            logger.Warn("TV Rename is alrady running");
 
             // tell the already running copy to come to the foreground
             IpcClientChannel clientChannel = new IpcClientChannel();
@@ -120,6 +125,9 @@ public static class GlobalMembersTVRename
         catch (System.Exception ex)
         {
             MessageBox.Show("Error while setting the User-Defined File Path:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            logger.Error("Error while setting the User-Defined File Path - EXITING: {0}",clargs.UserFilePath);
+            logger.Error(ex);
+
             Environment.Exit(1);
         }
 
