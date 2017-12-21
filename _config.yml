@@ -5,6 +5,4 @@ show_downloads: false
 theme: jekyll-theme-leap-day
 
 plugins:
-  - jemoji
   - jekyll-mentions
-  - jekyll-last-modified-at
