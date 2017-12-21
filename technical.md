@@ -15,7 +15,11 @@ And on Windows 7 and later: -
 
 > \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\2.1\\
 
-In either case the 2.1 directory contains the same set of files as follows: -
+In either case the 2.1 directory contains the same set of files.
+
+**If you wish to make a backup your TVRename setup a copy of this directory is all you need!**
+
+It contains: -
 
 **Layout.xml** - contains TVRename's window position and size as well as column widths.
 
