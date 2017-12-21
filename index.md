@@ -7,7 +7,7 @@ Get up and running with TVRename... *[Click here!](quickstart "Read The Quicksta
 # [User Guide](userguide "Read The User Guide")
 TVRename in lots more detail... *[Click here!](userguide "Read The User Guide")*
 
-# [Tips 'n' Tricks](tips-tricks "Read Tips 'n' Tricks") (& FAQ's)
+# [Tips 'n' Tricks](tips-tricks "Read Tips 'n' Tricks")
 TVRename's "Did you knows..." *[Click here!](tips-tricks "Read Tips 'n' Tricks")*
 
 # Forums
