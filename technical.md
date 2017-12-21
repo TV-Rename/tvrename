@@ -1,35 +1,46 @@
+# Under the Hood
+***Right then, spanners at the ready, here we go!***
+
+## The Registry
+The only thing TVRename saves to the registry is installation information which is used by Windows "Apps and Features" to uninstall the program. But Hey, why would you want to?
+
 ## Configuration Files
-Files on your computer that TVRename creates and uses:
+**All** the configuration information and locally cached data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is stored in a series of (mainly XML) files under the users Application Directory.
 
- **(Windows XP)** \Documents and Settings\<username>\Application Data\TVRename\TVRename\2.1\ 
+On Windows XP this is: -
 
-**or**
+> \\Documents and Settings\\\<username\>\\Application Data\\TVRename\\TVRename\\2.1\\ 
 
- **(Vista, 7, 9, 10)** \Users\<username>\AppData\Roaming\TVRename\TVRename\2.1\ 
+And on Windows 7 and later: -
 
-This folder contains TVRename's settings files:
+> \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\2.1\\
 
-* **TVRenameSettings.xml** - Pretty much everything. All your shows, folders, and settings. This is only overwritten when you choose "Save". Older, backup, copies of the settings file are also kept in here.
-* **Layout.xml** - TVRename's window position and column sizes are saved here.
-* **Statistics.xml** - TVRename's  statistics are saved here.
-* **TheTVDB.xml** - Locally cached tvdb.com show information.
+In either case the 2.1 directory contains the same set of files as follows: -
 
-The only thing saved to the **registry** is uninstall information, used by the "Add/Remove" control panel.
+**Layout.xml** - contains TVRename's window position and size as well as column widths.
 
-## Source Code 
-Download TVRename, program or source code, from the [GitHub page](https://github.com/TV-Rename/tvrename).
+**Statistics.xml** - contains TVRename's historical statistics.
 
-## Framework
-MS .NET 2.0 framework - Used by TVRename. The TVRename installer will check for this and let you know if it is needed.
-[here](http://www.microsoft.com/downloads/details.aspx?familyid=0856EACB-4362-4B0D-8EDD-AAB15C5E04F5&displaylang=en:new=true)
+**TheTVDB.xml** -  contains the locally cached tvdb.com show information.
 
-## Credit
-TVRename makes use of data from [TheTVDB.com](http://thetvdb.com/). Please visit their site, and consider helping by contributing information and artwork for episodes and series.
+**TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of the TVDB.xml file. A new file gets created here everytime you click ***File>Save*** (FIFO).
 
-It also uses
+**TVRename.ico** - the icon resource for TVRename at resolutions of 48x48, 32x32 and 16x16.
+
+**TVRenameSettings.xml** - Everything else not mentioned is stored in here. All your shows, Media Library paths, directory sturutures and settings. As with TheTVDB.xml this is only overwritten when you choose **File>Save**.
+
+**TVRenameSettings.xml.0 - TVRenameSettings.xml.9** - backup copies of TVRenameSettings.xml (FIFO).
+
+# Source Code 
+You can find TVRename's source code (along with executables and this website) in [The TVRename GitHub Repository](https://github.com/TV-Rename/tvrename).
+
+# Framework
+TVRename uses the Microsoft .NET Framework. The installer will check for this and let you know if it is needed. It can be downloaded [here](https://www.microsoft.com/net/download/windows).
+
+# Credits
+* TVRename pulls data from [TheTVDB.com](http://thetvdb.com/) using their API. Please visit their site, register, and help by contributing information and artwork for TV Series and Episodes.
 * [DotNET Zip](http://www.codeplex.com/DotNetZip), 
 * [SourceGrid](http://www.codeplex.com/sourcegrid/), 
-* and has had significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), 
-* and JetBrains' [dotTrace](http://www.jetbrains.com/profiler/). 
-* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving the code. 
-* AlphaFS for advanved file operations
+* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
+* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance. 
+* AlphaFS is used for advanved file operations
