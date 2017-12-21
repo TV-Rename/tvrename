@@ -10,3 +10,22 @@
     padding: 2px;
     white-space: nowrap;
 }
+
+h1, h2 {
+   color: #3399cc;
+}
+	
+h1 a:link, a:visited {
+    font-weight: bold;
+}
+h1 a:hover, a:active {
+    border-bottom: 3px solid #3399cc;
+}
+
+h2 a:link, a:visited {
+    font-weight: bold;
+}
+
+h2 a:hover, a:active {
+    border-bottom: 3px solid #3399cc;
+}
