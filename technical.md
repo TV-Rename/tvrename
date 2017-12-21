@@ -42,9 +42,14 @@ You can find TVRename's source code (along with executables and this website) in
 TVRename uses the Microsoft .NET Framework. The installer will check for this and let you know if it is needed. It can be downloaded [here](https://www.microsoft.com/net/download/windows).
 
 # Credits
-* TVRename pulls data from [TheTVDB.com](http://thetvdb.com/) using their API. Please visit their site, register, and help by contributing information and artwork for TV Series and Episodes.
-* [DotNET Zip](http://www.codeplex.com/DotNetZip), 
-* [SourceGrid](http://www.codeplex.com/sourcegrid/), 
-* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
-* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance. 
-* AlphaFS is used for advanved file operations
+TVRename pulls data from [TheTVDB.com](http://thetvdb.com/) using their API. Please visit their site, register, and help by contributing information and artwork for TV Series and Episodes.
+
+[DotNET Zip](http://www.codeplex.com/DotNetZip), 
+
+[SourceGrid](http://www.codeplex.com/sourcegrid/), 
+
+TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
+
+JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance. 
+
+[AlphaFS](http://alphafs.alphaleonis.com/) is used for advanved .NET file operations.

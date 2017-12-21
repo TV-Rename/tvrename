@@ -29,3 +29,10 @@ h2 a:link, a:visited {
 h2 a:hover, a:active {
     border-bottom: 3px solid #3399cc;
 }
+p a:link, a:visited {
+    font-weight: bold;
+}
+
+p a:hover, a:active {
+    border-bottom: 1px solid #3399cc;
+}
