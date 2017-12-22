@@ -3,6 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    
+    <link rel="shortcut icon" type="image/x-icon" href="{{ site.baseurl }}/images/favicon.ico" >
 
 {% seo %}
     <link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
@@ -16,13 +18,14 @@
   </head>
   <body>
 
-      <header>
+    <header>
         
-        <h1><img src="images/tv3white.svg" height="46" width="36" />&nbsp;{{ site.title | default: site.github.repository_name }}</h1>
-        <p>{{ site.description | default: site.github.project_tagline }}</p>
-      </header>
+      <h1><img src="images/tv-white.svg" height="46" width="36" />&nbsp;{{ site.title | default: site.github.repository_name }}</h1>
+       <p>{{ site.description | default: site.github.project_tagline }}</p>
 
-      <div id="banner">
+     </header>
+
+     <div id="banner">
 
         <a href="{{ site.github.repository_url }}" class="button fork"><strong>View On GitHub</strong></a>
         {% if site.show_downloads %}
@@ -43,28 +46,29 @@
               <li><a href="http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0" class="button">Feature Tracker</a></li>
             </ul>
           </div>
-</div><!-- end banner -->
+     </div><!-- end banner -->
 
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
+     <div class="wrapper">
+       <nav>
+         <ul>
+           {% if page.url == '/' %}
+             <li><img src="images/home-no-link.png" height="122" width="100" /></li>
+          {% else %}
+            <li><a href="{{ site.baseurl }}/index.html"><img src="images/home-link.png" height="122" width="100" /></a></li>
+          {% endif %}
+              <li><a href="/about" class="button">Overview</a></li>
+              <li><a href="/screenshots" class="button">Screenshots</a></li>
+              <li><a href="/userguide" class="button">User Guide</a></li>
+              <li><a href="/technical" class="button">Technical Guide</a></li>
+	      </ul>
       </nav>
       <section>
         {{ content }}
 
       </section>
       <footer>
-          <div class="links">
-            <span>Pages:</span>
-            <ul>
-              <li><a href="/" class="button">Home</a></li>
-              <li><a href="/about" class="button">Overview</a></li>
-              <li><a href="/screenshots" class="button">Screenshots</a></li>
-              <li><a href="/userguide" class="button">User Guide</a></li>
-              <li><a href="/technical" class="button">Technical Guide</a></li>
-
-            </ul>
-          </div>
+<!--	<span><em>Last updated: {{ page.last_modified_at }}</em></span> 
+-->
       </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
