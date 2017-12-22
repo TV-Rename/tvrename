@@ -63,4 +63,5 @@ It also uses
 * [AlphaFS](http://alphafs.alphaleonis.com/) is used for advanced .NET file operations.
 
 and
-* https://www.vecteezy.com/vector-art/73089-retro-television for our great logo - thanks
+
+* [Retro TV Logo Vector Graphics by Vecteezy!](https://www.vecteezy.com/vector-art/73089-retro-television) for our great logo
