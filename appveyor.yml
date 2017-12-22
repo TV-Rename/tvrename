@@ -1,0 +1,51 @@
+image: Visual Studio 2017
+
+configuration: Release
+platform: Any CPU
+
+clone_depth: 1
+
+skip_non_tags: true
+
+cache:
+- packages -> **\packages.config
+
+init:
+  - ps: Update-AppveyorBuild -Version "$($env:APPVEYOR_REPO_TAG_NAME.TrimStart("v"))"
+
+assembly_info:
+  patch: true
+  file: TVRename#\Properties\AssemblyInfo.cs
+  assembly_version: '$(appveyor_build_version)'
+  assembly_file_version: '$(appveyor_build_version)'
+  assembly_informational_version: '2.1' # Used for settings path
+
+test: off
+
+before_build:
+- cmd: nuget restore
+
+build:
+  verbosity: minimal
+
+after_build:
+- cmd: curl -fsS -o Inetc.zip http://nsis.sourceforge.net/mediawiki/images/c/c9/Inetc.zip
+- cmd: curl -fsS -o Registry.zip http://nsis.sourceforge.net/mediawiki/images/4/47/Registry.zip
+- cmd: 7z x -r -aoa -sdel Inetc.zip -o"%PROGRAMFILES(x86)%\NSIS"
+- cmd: 7z x -r -aoa -sdel Registry.zip -o"%PROGRAMFILES(x86)%\NSIS" Desktop
+- cmd: '"%PROGRAMFILES(x86)%\NSIS\makensis" /WX /DVERSION="%APPVEYOR_BUILD_VERSION%" Installer\TVRename.nsi'
+
+artifacts:
+- path: 'Installer\TVRename-$(appveyor_build_version).exe'
+  name: 'TVRename-$(appveyor_build_version)'
+
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: LXb1x464/z4u7tR3LQGsmluXZx+Q0XooJVLoFRCvtuOvg0x7dZ7RbKuZjTiZG6Eg
+  description: 'TV Rename $(appveyor_build_version)'
+  artifact: 'TVRename-$(appveyor_build_version)'
+  draft: true
+  # force_update: true
+  on:
+    appveyor_repo_tag: true
