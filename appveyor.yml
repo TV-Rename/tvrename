@@ -10,17 +10,26 @@ cache:
 init:
 - ps: >-
     $tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+
     $tag
+
     Update-AppveyorBuild -Version "$($tag)"
+
     $version = $tag.Split("-", 2)
+
     $short = $version[0].TrimEnd(".0")
+
     $friendly = $short
+
     If ($parts[1]) {
       $end = (Get-Culture).TextInfo.ToTitleCase($parts[1].Replace("rc", "RC"))
       $friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
     }
+
     $env:APPVEYOR_BUILD_VERSION_SHORT = $short
+
     $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $friendly
+
     $env
 
 assembly_info:
