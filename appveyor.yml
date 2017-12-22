@@ -11,26 +11,22 @@ init:
 - ps: >-
     $env:tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
 
-    $env:tag
-
     Update-AppveyorBuild -Version "$($env:tag)"
 
-    $version = $env:tag.Split("-", 2)
+    $env:version = $env:tag.Split("-", 2)
 
-    $version
+    $env:short = $env:version[0].TrimEnd(".0")
 
-    $short = $version[0].TrimEnd(".0")
+    $env:friendly = $env:short
 
-    $friendly = $short
-
-    If ($parts[1]) {
-      $end = (Get-Culture).TextInfo.ToTitleCase($parts[1].Replace("rc", "RC"))
-      $friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
+    If ($env:version[1]) {
+      $env:end = (Get-Culture).TextInfo.ToTitleCase($env:version[1].Replace("rc", "RC"))
+      $env:friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
     }
 
-    $env:APPVEYOR_BUILD_VERSION_SHORT = $short
+    $env:APPVEYOR_BUILD_VERSION_SHORT = $env:short
 
-    $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $friendly
+    $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $env:friendly
 
     $env
 
