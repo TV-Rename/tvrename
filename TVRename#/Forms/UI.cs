@@ -2829,7 +2829,7 @@ namespace TVRename
         private void Scan(List<ShowItem> shows)
         {
             logger.Info("*******************************");
-            logger.Info("Starting Scan for {0} shows...",shows.Count>0? shows.Count.ToString() :"all");
+            logger.Info("Starting Scan for {0} shows...",shows?.Count>0? shows.Count.ToString() :"all");
             this.MoreBusy();
             this.mDoc.ActionGo(shows);
             this.LessBusy();
