@@ -13,14 +13,14 @@ init:
 
     Update-AppveyorBuild -Version "$($env:tag)"
 
-    $env:version = $env:tag -split '-'
+    $version = $env:tag -split '-'
 
-    $env:short = $env:version[0]
+    $env:short = $version[0]
 
     $env:friendly = $env:short
 
-    If ($env:version[1]) {
-      $env:end = (Get-Culture).TextInfo.ToTitleCase($env:version[1])
+    If ($version[1]) {
+      $env:end = (Get-Culture).TextInfo.ToTitleCase($version[1])
       $env:friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
     }
 
@@ -28,7 +28,7 @@ init:
 
     $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $env:friendly
 
-- cmd: set
+    Get-ChildItem Env:
 
 assembly_info:
   patch: true
