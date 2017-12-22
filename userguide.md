@@ -165,7 +165,7 @@ You can turn this grouping off by clicking on the "How Long" column header, and 
 
 The "When to Watch" display is automatically refreshed from time to time, and TVRename will download in the background any updates needed from tv.com. Background downloading can be disabled from the Options menu, and will also be disabled if you're in Offline Mode.
 
-![watch](images/userguide/whentowatch.png)
+![watch](images/userguide/when-to-watch-01.png)
 
 # Tools
 
