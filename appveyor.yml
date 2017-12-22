@@ -9,26 +9,30 @@ cache:
 
 init:
 - ps: >-
-    $env:tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+    $tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
 
-    Update-AppveyorBuild -Version "$($env:tag)"
+    Update-AppveyorBuild -Version "$($tag)"
 
-    $version = $env:tag -split '-'
+    $version = $tag -split '-'
 
-    $env:short = $version[0]
+    $short = $version[0]
 
-    $env:friendly = $env:short
+    $friendly = $short
 
     If ($version[1]) {
-      $env:end = (Get-Culture).TextInfo.ToTitleCase($version[1])
-      $env:friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
+      $end = (Get-Culture).TextInfo.ToTitleCase($version[1])
+      $friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
     }
 
-    $env:APPVEYOR_BUILD_VERSION_SHORT = $env:short
+    $env:APPVEYOR_BUILD_VERSION_SHORT = $short
 
-    $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $env:friendly
+    $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $friendly
 
-    Get-ChildItem Env:
+    $env:APPVEYOR_BUILD_VERSION
+
+    $env:APPVEYOR_BUILD_VERSION_SHORT
+
+    $env:APPVEYOR_BUILD_VERSION_FRIENDLY
 
 assembly_info:
   patch: true
