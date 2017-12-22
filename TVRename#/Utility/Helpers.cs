@@ -351,6 +351,9 @@ namespace TVRename
 
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
+
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private enum BrowserEmulationVersion
         {
             Default = 0,
@@ -397,13 +400,15 @@ namespace TVRename
                     }
                 }
             }
-            catch (SecurityException)
+            catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
+                logger.Error(se);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
+                logger.Error(uae);
             }
 
             return result;
@@ -434,13 +439,15 @@ namespace TVRename
                     }
                 }
             }
-            catch (SecurityException)
+            catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
+                logger.Error(se);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
+                logger.Error(uae);
             }
 
             return result;
@@ -473,23 +480,27 @@ namespace TVRename
                     {
                         // if it's a valid value, update or create the value
                         key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
+                        logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
                     }
                     else
                     {
                         // otherwise, remove the existing value
                         key.DeleteValue(programName, false);
+                        logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
                     }
 
                     result = true;
                 }
             }
-            catch (SecurityException)
+            catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
+                logger.Error(se);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
+                logger.Error(uae);
             }
 
             return result;
@@ -501,6 +512,7 @@ namespace TVRename
             BrowserEmulationVersion emulationCode;
 
             ieVersion = GetInternetExplorerMajorVersion();
+            logger.Warn("IE Version {0} is identified",ieVersion );
 
             if (ieVersion >= 11)
             {
@@ -532,6 +544,7 @@ namespace TVRename
         {
             if (!IsBrowserEmulationSet())
             {
+                logger.Warn("Updating the registry to ensure that the latest browser version is used");
                 SetBrowserEmulationVersion();
             }
         }
@@ -542,6 +555,7 @@ namespace TVRename
     public static class Helpers
     {
 
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static string pad(int i)
         {
@@ -574,26 +588,18 @@ namespace TVRename
                 System.Diagnostics.Process.Start(what, arguments);
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                logger.Error(e);
                 return false;
             }
         }
 
-        public static Color WarningColor()
-        {
-            return Color.FromArgb(255, 210, 210);
-        }
+        public static Color WarningColor() => Color.FromArgb(255, 210, 210);
 
-        public static bool Contains(string source, string toCheck, StringComparison comp)
-        {
-            return source.IndexOf(toCheck, comp) >= 0;
-        }
-
-        public static string TranslateColorToHtml(Color c)
-        {
-            return String.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
-        }
+        public static bool Contains(string source, string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
+        
+        public static string TranslateColorToHtml(Color c) =>String.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
         
         public static string SimplifyName(string n)
         {

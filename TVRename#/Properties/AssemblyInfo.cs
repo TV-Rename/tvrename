@@ -5,11 +5,11 @@ using System.Resources;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TVRename")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("TV Rename")]
+[assembly: AssemblyDescription("TV Rename")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("TVRename")]
-[assembly: AssemblyProduct("TVRename")]
+[assembly: AssemblyCompany("TVRename")] // used in settings path, so be careful about changing
+[assembly: AssemblyProduct("TVRename")] // used in settings path, so be careful about changing
 [assembly: AssemblyCopyright("Copyright © 2007-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -37,6 +37,7 @@ using System.Resources;
 // ** Do not change the version here!  Set it in "version.cs"
 
 
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("2.1")] // used in settings path, so be careful about changing
+[assembly: AssemblyVersion("2.3.0.0")]
+[assembly: AssemblyFileVersion("2.3")]
+[assembly: AssemblyInformationalVersion("2.1")] // used in settings path, so be careful about changing
 [assembly: NeutralResourcesLanguageAttribute("")]

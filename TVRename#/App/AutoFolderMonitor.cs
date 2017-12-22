@@ -74,6 +74,7 @@ namespace TVRename
             //We only wish to do a scan now if we are not already undertaking one
             if (!mDoc.CurrentlyBusy)
             {
+                logger.Info("*******************************");
                 logger.Info("Auto scan fired");
                 if (mUI != null)
                 {

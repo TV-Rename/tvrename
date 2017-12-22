@@ -28,14 +28,6 @@ namespace TVRename
             return Environment.OSVersion.Platform == PlatformID.Win32NT;
         }
 
-        public static string PersonalTag()
-        {
-            // NOTE: If you're doing your own branch/patch version number, please put your name or nickname here,
-            // to indicate that it is not an official release.  Also, talk to me (tvrename@tvrename.com) so that 
-            // I can consider merging your changes into the main version!
-            return ""; // e.g. "-ss", "-foo".
-        }
-
         public static string DisplayVersionString()
         {
             // all versions while developing are marked (dev)
@@ -59,10 +51,9 @@ namespace TVRename
             // Version 2.2.0b2 released 14 April 2010, r108
             // Version 2.2.0b1 released 9 April 2010, r94
 
-            // NOTE: If you're doing your own branch/patch version number, please put your name or nickname or something in brackets afterwards
-            // to indicate that it is not an official release, or talk to me (tvrename@tvrename.com) so any versions I make don't duplicate
-            // a version number you may have created.
-            string v = "2.3b3" + PersonalTag();
+	        System.Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+	        string v = $"{version.Major}.{version.Minor}.{version.Build}";
+	        if (version.Revision > 0) v += "." + version.Revision;
 #if DEBUG
             v += " ** Debug Build **";
 #endif
