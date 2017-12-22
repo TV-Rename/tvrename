@@ -56,11 +56,17 @@
           {% else %}
             <li><a href="{{ site.baseurl }}/index.html"><img src="images/home-link.png" height="122" width="100" /></a></li>
           {% endif %}
+              <li><a href="/about" class="button">Overview</a></li>
+              <li><a href="/screenshots" class="button">Screenshots</a></li>
+              <li><a href="/userguide" class="button">User Guide</a></li>
+              <li><a href="/technical" class="button">Technical Guide</a></li>
+		 <li>&nbsp;</li>
+		 <li>&nbsp;</li>
+		 <li><u>Contents</u></li>
 	      </ul>
       </nav>
       <section>
         {{ content }}
-
       </section>
       <footer>
 <!--	<span><em>Last updated: {{ page.last_modified_at }}</em></span> 
