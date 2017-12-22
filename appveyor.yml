@@ -17,7 +17,7 @@ init:
 
     $env
 
-    $env:short = $env:version[0].TrimEnd(".0")
+    $env:short = $env:version[0]
 
     $env:friendly = $env:short
 
