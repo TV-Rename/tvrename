@@ -285,6 +285,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
+                logger.Debug(e, "Failed to parse firstAired");
                 this.FirstAired = null;
 
             }

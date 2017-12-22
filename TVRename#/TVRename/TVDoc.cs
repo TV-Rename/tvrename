@@ -65,8 +65,6 @@ namespace TVRename
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
 
-        private bool DebugThreads = false;
-
         private List<Finder> Finders;
 
         string[] SeasonWords = new[] { "Season", // EN
@@ -1896,6 +1894,8 @@ namespace TVRename
                                     }
                                     catch (System.IO.IOException ioe)
                                     {
+                                        logger.Info("Could not directory: {0}", folder);
+                                        logger.Info(ioe);
                                     }
                                     goAgain = true;
 
@@ -2136,7 +2136,7 @@ namespace TVRename
                         return false;
                     }
                 }
-                catch (SeriesInfo.EpisodeNotFoundException ex)
+                catch (SeriesInfo.EpisodeNotFoundException)
                 {
                     //Ignore execption, we may need the file
                     return true;
@@ -2167,7 +2167,7 @@ namespace TVRename
                         return false;
                     }
                 }
-                catch (SeriesInfo.EpisodeNotFoundException ex)
+                catch (SeriesInfo.EpisodeNotFoundException )
                 {
                     //Ignore execption, we may need the file
                     return true;
