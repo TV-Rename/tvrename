@@ -74,6 +74,7 @@ Section "TVRename" SecTVRename
   File "..\TVRename#\bin\Release\SourceGrid.dll"
   File "..\TVRename#\bin\Release\AlphaFS.dll"
   File "..\TVRename#\bin\Release\NLog.dll"
+  File "..\TVRename#\NLog.config"	
   
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk" "$INSTDIR\TVRename.exe"
@@ -103,6 +104,8 @@ Section "Uninstall"
   Delete "$INSTDIR\AlphaFS.dll"
   Delete "$INSTDIR\NLog.dll"
   Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\NLog.config"
+	
   RmDir "$INSTDIR"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk"
