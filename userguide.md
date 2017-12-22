@@ -58,8 +58,8 @@ Buttons:
 ### Add/Edit Show
 Clicking on the `Add` or `Edit` button for a show, in the "Shows and Folders" tab, opens this dialog.
 
-![addeditshow](images/UserGuide/addeditshow.png)
-![tvcomsearch](images/UserGuide/tvcomsearch.png)
+![addeditshow](images/userguide/addeditshow.png)
+![tvcomsearch](images/userguide/tvcomsearch.png)
 	
 In this example, we are setting up TVRename for the show "Grey's Anatomy", season 4.
 
@@ -82,7 +82,7 @@ In this example, episodes 16 and 17 were aired as a double episode, meaning you 
 ## Add/Modify Rule
 This is the dialog for adding or editing a rule for a show's season. Choose the operation at the top, then enter the appropriate values below.
 
-![addmodifyrule](images/UserGuide/addmodifyrule.png)
+![addmodifyrule](images/userguide/addmodifyrule.png)
 
 
 * **Ignore** - Keep the specified episode in the guide, but don't check for it (or rename it) on disk locally.
@@ -112,7 +112,7 @@ If TVRename has found the corresponding episode on disk, a watch link will be di
 
 The episode guide also includes indication of whether or not the show has been aired, or how long until it airs. The "time to do" display is adjusted from the timezone on tv.com's page, to that of your computer.
 
-![episodeguide](images/UserGuide/episodeguide.png)
+![episodeguide](images/userguide/episodeguide.png)
 
 # Scan
 
@@ -142,7 +142,7 @@ Once you are satisfied with the list of things to do, click on "Move/Copy" and T
 
 While files are being copied and/or moved, the dialog below is shown. Press "Pause" to temporarily pause the copy/move operation. Click it again to resume. "Cancel" will stop immediately. The disk space shown is for the drive that the current file is being copied/moved to.
 
-![copymoveprogress](images/UserGuide/copymoveprogress.png)
+![copymoveprogress](images/userguide/copymoveprogress.png)
 
 Click on the check button, and TVRename will, after downloading any needed information from tvdb.com, go through your folders and see if any files need to be renamed.
 
@@ -165,7 +165,7 @@ You can turn this grouping off by clicking on the "How Long" column header, and 
 
 The "When to Watch" display is automatically refreshed from time to time, and TVRename will download in the background any updates needed from tv.com. Background downloading can be disabled from the Options menu, and will also be disabled if you're in Offline Mode.
 
-![watch](images/UserGuide/whentowatch.png)
+![watch](images/userguide/whentowatch.png)
 
 # Tools
 
