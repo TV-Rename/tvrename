@@ -33,6 +33,19 @@ It contains: -
 
 **TVRenameSettings.xml.0 - TVRenameSettings.xml.9** - backup copies of TVRenameSettings.xml (FIFO).
 
+
+## Log Files
+
+Log files were added in version 2.3:
+* Location is at \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\log\\
+* Log files are saved off into the archive directory every time the app is run or every 24 hours
+* Log archive is at \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\log\\archive
+* Logging setting are based on nlog and the configuration file [nlog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config) stored in the TV Rename program directory
+  * See [here](https://github.com/nlog/NLog/wiki/Configuration-file) for guidance on how to adjust the log fie to get more information 
+
+When raising a bug then please upload a log file that illustrates the issue (where possible)
+
+
 # Source Code 
 You can find TVRename's source code (along with executables and this website) in [The TVRename GitHub Repository](https://github.com/TV-Rename/tvrename).
 
@@ -42,20 +55,11 @@ TVRename uses the Microsoft .NET Framework. The installer will check for this an
 # Credits
 TVRename pulls data from [TheTVDB.com](http://thetvdb.com/) using their API. Please visit their site, register, and help by contributing information and artwork for TV Series and Episodes.
 
-[DotNET Zip](http://www.codeplex.com/DotNetZip), 
-
-[SourceGrid](http://www.codeplex.com/sourcegrid/), 
-
-TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
-
-JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance. 
-
 It also uses
 * [DotNET Zip](http://www.codeplex.com/DotNetZip), 
 * [SourceGrid](http://www.codeplex.com/sourcegrid/), 
-* and has had significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), 
-* and JetBrains' [dotTrace](http://www.jetbrains.com/profiler/). 
-* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving the code. 
+* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
+* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance. 
 * [AlphaFS](http://alphafs.alphaleonis.com/) is used for advanced .NET file operations.
 
 and
