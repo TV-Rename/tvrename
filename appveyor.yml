@@ -25,6 +25,7 @@ init:
     }
 
     $env:APPVEYOR_BUILD_VERSION_SHORT = $env:short
+
     $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $env:friendly
 
 - cmd: set
