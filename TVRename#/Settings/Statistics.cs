@@ -70,8 +70,8 @@ namespace TVRename
             }
             catch (Exception e)
             {
-               logger.Fatal(e.Message + " " + e.StackTrace);
-                return null;
+               logger.Fatal(e);
+               return new TVRenameStats(); 
             }
 
             return sc;

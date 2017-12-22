@@ -2404,6 +2404,8 @@ namespace TVRename
 
         private void bnMyShowsAdd_Click(object sender, System.EventArgs e)
         {
+            logger.Info("****************");
+            logger.Info("Adding New Show");
             this.MoreBusy();
             ShowItem si = new ShowItem();
             TheTVDB.Instance.GetLock( "AddShow");
@@ -2419,8 +2421,9 @@ namespace TVRename
                     ser.ShowTimeZone = aes.ShowTimeZone;
                 this.ShowAddedOrEdited(true);
                 this.SelectShow(si);
+                logger.Info("Added new show called {0}",ser.Name );
+            } else logger.Info("Cancelled adding new show");
 
-            }
             this.LessBusy();
         }
 
