@@ -15,12 +15,12 @@ init:
 
     $version = $tag -split '-'
 
-    $short = $version[0]
+    $short = $version[0].TrimEnd(".0")
 
     $friendly = $short
 
     If ($version[1]) {
-      $end = (Get-Culture).TextInfo.ToTitleCase($version[1])
+      $end = (Get-Culture).TextInfo.ToTitleCase($version[1].Replace("rc", "RC"))
       $friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
     }
 
@@ -54,7 +54,7 @@ after_build:
 - cmd: curl -fsS -o Registry.zip http://nsis.sourceforge.net/mediawiki/images/4/47/Registry.zip
 - cmd: 7z x -r -aoa -sdel Inetc.zip -o"%PROGRAMFILES(x86)%\NSIS"
 - cmd: 7z x -r -aoa -sdel Registry.zip -o"%PROGRAMFILES(x86)%\NSIS" Desktop
-- cmd: '"%PROGRAMFILES(x86)%\NSIS\makensis" /WX /DVERSION="%APPVEYOR_BUILD_VERSION_FRIENDLY%" Installer\TVRename.nsi'
+- cmd: '"%PROGRAMFILES(x86)%\NSIS\makensis" /WX /DVERSION="%APPVEYOR_BUILD_VERSION%" Installer\TVRename.nsi'
 
 artifacts:
 - path: 'Installer\TVRename-$(appveyor_build_version).exe'
