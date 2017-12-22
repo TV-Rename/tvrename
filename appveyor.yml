@@ -39,7 +39,7 @@ assembly_info:
   file: TVRename#\Properties\AssemblyInfo.cs
   # assembly_version: '$(APPVEYOR_BUILD_VERSION_SHORT)'
   # assembly_file_version: '$(APPVEYOR_BUILD_VERSION_FRIENDLY)'
-  # assembly_informational_version: '2.1' # Used for settings path
+  assembly_informational_version: '2.1' # Used for settings path
 
 test: off
 
