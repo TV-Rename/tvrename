@@ -13,7 +13,7 @@ init:
 
     Update-AppveyorBuild -Version "$($env:tag)"
 
-    $env:version = $env:tag.Split("-", 2)
+    $env:version = $env:tag -split '-'
 
     $env:short = $env:version[0]
 
