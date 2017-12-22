@@ -2,14 +2,14 @@
 ***Right then, spanners at the ready, here we go!***
 
 ## The Registry
-The only thing TVRename saves to the registry is installation information which is used by Windows "Apps and Features" to uninstall the program. But Hey, why would you want to?
+The only thing TVRename saves to the registry is installation information which is used by Windows "Apps and Features" to uninstall the program. But Hey, why would you want to do that?
 
 ## Configuration Files
 **All** the configuration information and locally cached data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is stored in a series of (mainly XML) files under the users Application Directory.
 
 On Windows XP this is: -
 
-> \\Documents and Settings\\\<username\>\\Application Data\\TVRename\\TVRename\\2.1\\ 
+> \\Documents and Settings\\\<username\>\\Application Data\\TVRename\\TVRename\\2.1\\
 
 And on Windows 7 and later: -
 
@@ -17,7 +17,7 @@ And on Windows 7 and later: -
 
 In either case the 2.1 directory contains the same set of files.
 
-**If you wish to make a backup your TVRename setup a copy of this directory is all you need!**
+**If you wish to make a backup of your TVRename setup a copy of this directory is all you need!**
 
 It contains: -
 
@@ -41,23 +41,22 @@ Log files were added in version 2.3:
 * Logging setting are based on NLog and the configuration file [NLog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config "Look at NLog.config in the TVRename Repo") stored in the TV Rename program directory.
 * Read the [NLog Wiki](https://github.com/nlog/NLog/wiki/Configuration-file "Visit the NLog Wiki") for guidance on how to adjust the log fie to get more information.
 
-When raising a bug then please upload a log file that illustrates the issue (where possible).
+When raising a bug please upload a log file that illustrates the issue (where possible).
 
-
-# Source Code 
-You can find TVRename's source code (along with executables and this website) in [The TVRename GitHub Repository](https://github.com/TV-Rename/tvrename).
+# Source Code
+You can find TVRename's source code (along with executables and this website) in [The TVRename GitHub Repository](https://github.com/TV-Rename/tvrename "Visit The repository").
 
 # Framework
-TVRename uses the Microsoft .NET Framework. The installer will check for this and let you know if it is needed. It can be downloaded [here](https://www.microsoft.com/net/download/windows).
+TVRename uses the Microsoft .NET Framework. The installer will check for this and let you know if it is needed. It can be downloaded from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").
 
 # Credits
-TVRename pulls data from [TheTVDB.com](http://thetvdb.com/) using their API. Please visit their site, register, and help by contributing information and artwork for TV Series and Episodes.
+TVRename pulls data from [TheTVDB.com](http://thetvdb.com/ "Visit TheTVDB.com") using their API. **Please visit their site, register, and help by contributing information and artwork for TV Series and Episodes.**
 
 It also uses
-* [DotNET Zip](http://www.codeplex.com/DotNetZip), 
-* [SourceGrid](http://www.codeplex.com/sourcegrid/), 
-* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
-* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance. 
+* [DotNET Zip](http://www.codeplex.com/DotNetZip),
+* [SourceGrid](http://www.codeplex.com/sourcegrid/),
+* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm "Visit Red Gate"), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
+* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance.
 * [AlphaFS](http://alphafs.alphaleonis.com/) is used for advanced .NET file operations.
 
 and
