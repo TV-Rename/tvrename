@@ -9,13 +9,15 @@ cache:
 
 init:
 - ps: >-
-    $tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+    $env:tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
 
-    $tag
+    $env:tag
 
-    Update-AppveyorBuild -Version "$($tag)"
+    Update-AppveyorBuild -Version "$($env:tag)"
 
-    $version = $tag.Split("-", 2)
+    $version = $env:tag.Split("-", 2)
+
+    $version
 
     $short = $version[0].TrimEnd(".0")
 
