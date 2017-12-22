@@ -5,6 +5,7 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
@@ -105,9 +106,48 @@ public static class GlobalMembersTVRename
 
         // Starting TVRename...
 
+        new  TVRenameProgram().Run(args);
+        GC.KeepAlive(mutex);
+
+#if !DEBUG
+		}
+		catch (Exception e)
+		{
+		  ShowException se = new ShowException(e);
+		  se.ShowDialog();
+		}
+#endif
+
+        return 0;
+    }
+}
+
+class TVRenameProgram : WindowsFormsApplicationBase
+{
+    private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+    protected override void OnCreateSplashScreen()
+    {
+        this.SplashScreen = new TVRenameSplash();
+    }
+
+    void updateSplashStatus(String text)
+    {
+        SplashScreen.Invoke((System.Action)delegate
+        {
+            ((TVRenameSplash)SplashScreen).UpdateStatus(text);
+        });
+    }
+    protected override void OnCreateMainForm()
+    {
+        updateSplashStatus("Initalising");
+
         // Check arguments for forced recover
         bool ok = true;
         string recoverText = "";
+        // Sort out the command line arguments
+        CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
+
 
         if (clargs.ForceRecover)
         {
@@ -116,7 +156,6 @@ public static class GlobalMembersTVRename
         }
 
         // Load settings files
-        TVDoc doc = null;
         try
         {
             if (!string.IsNullOrEmpty(clargs.UserFilePath))
@@ -125,7 +164,7 @@ public static class GlobalMembersTVRename
         catch (System.Exception ex)
         {
             MessageBox.Show("Error while setting the User-Defined File Path:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            logger.Error("Error while setting the User-Defined File Path - EXITING: {0}",clargs.UserFilePath);
+            logger.Error("Error while setting the User-Defined File Path - EXITING: {0}", clargs.UserFilePath);
             logger.Error(ex);
 
             Environment.Exit(1);
@@ -133,6 +172,7 @@ public static class GlobalMembersTVRename
 
         FileInfo tvdbFile = PathManager.TVDBFile;
         FileInfo settingsFile = PathManager.TVDocSettingsFile;
+        TVDoc doc = null;
 
         do // loop until no problems loading settings & tvdb cache files
         {
@@ -145,7 +185,8 @@ public static class GlobalMembersTVRename
                     settingsFile = rec.SettingsFile;
                 }
                 else
-                    return 1;
+                    //TODO : throw an error to be caught
+                    return;
             }
 
             // try loading using current settings files, and set up the main
@@ -169,20 +210,13 @@ public static class GlobalMembersTVRename
             }
         } while (!ok);
 
+
+        // Do your time consuming stuff here...
+        UI ui = new UI(doc,(TVRenameSplash)this.SplashScreen);
+
         // Show user interface
-        UI theUI = new UI(doc);
-        Application.Run(theUI);
-        GC.KeepAlive(mutex);
-
-#if !DEBUG
-		}
-		catch (Exception e)
-		{
-		  ShowException se = new ShowException(e);
-		  se.ShowDialog();
-		}
-#endif
-
-        return 0;
+        this.MainForm = ui;
+        
+        
     }
 }
