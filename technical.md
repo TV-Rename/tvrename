@@ -21,29 +21,27 @@ In either case the 2.1 directory contains the same set of files.
 
 It contains: -
 
-**Layout.xml** - contains TVRename's window position and size as well as column widths.
+**Layout.xml** - TVRename's window position and size as well as column widths.
 
-**Statistics.xml** - contains TVRename's historical statistics.
+**Statistics.xml** - TVRename's historical statistics.
 
-**TheTVDB.xml** -  contains the locally cached tvdb.com show information.
-
-**TVRenameSettings.xml** - Everything else not mentioned is stored in here. All your shows, Media Library paths, directory structures and settings. As with TheTVDB.xml this is only overwritten when you choose **File>Save**.
+**TheTVDB.xml** -  The locally cached tvdb.com show information.
 
 **TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of the TVDB.xml file. A new file gets created here every time you click ***File>Save*** (FIFO).
 
+**TVRenameSettings.xml** - Everything else not mentioned is stored in here. All your shows, Media Library paths, directory structures and settings. As with TheTVDB.xml this is only overwritten when you choose **File>Save**.
+
 **TVRenameSettings.xml.0 - TVRenameSettings.xml.9** - backup copies of TVRenameSettings.xml (FIFO).
 
-
 ## Log Files
-
 Log files were added in version 2.3:
 * Location is at \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\log\\
-* Log files are saved off into the archive directory every time the app is run or every 24 hours
-* Log archive is at \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\log\\archive
-* Logging setting are based on nlog and the configuration file [nlog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config) stored in the TV Rename program directory
-  * See [here](https://github.com/nlog/NLog/wiki/Configuration-file) for guidance on how to adjust the log fie to get more information 
+* Log files are saved off into the archive directory every time the app is run or every 24 hours.
+* Log archive is at \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\log\\archive.
+* Logging setting are based on NLog and the configuration file [NLog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config "Look at NLog.config in the TVRename Repo") stored in the TV Rename program directory.
+* Read the [NLog Wiki](https://github.com/nlog/NLog/wiki/Configuration-file "Visit the NLog Wiki") for guidance on how to adjust the log fie to get more information.
 
-When raising a bug then please upload a log file that illustrates the issue (where possible)
+When raising a bug then please upload a log file that illustrates the issue (where possible).
 
 
 # Source Code 
@@ -64,4 +62,4 @@ It also uses
 
 and
 
-* [Retro TV Logo Vector Graphics by Vecteezy!](https://www.vecteezy.com/vector-art/73089-retro-television) for our great logo
+* [Retro TV Logo Vector Graphics by Vecteezy!](https://www.vecteezy.com/vector-art/73089-retro-television) for our great logo.

@@ -27,8 +27,8 @@ We use two google groups for help and support.
 # [Feature Requests](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall")
 ***Our Latest Feature...*** Please raise  ideas for features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TVRenames Idea Wall").
 
-# [Under the Hood](technical "read the Technical Guide")
-Get the oily rag out, its time to get your hands dirty... [Read all the technical stuff](technical "Read the Technical Guide").
+# [Under the Hood](technical "Read the Technical Guide")
+Get the oily rag out, its time to get your hands dirty... [Read the Technical Guide](technical "Read the Technical Guide").
 
 # Buy us a drink
 If this program has saved you time, or you use it regularly, then [buy us a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or other drink of your choice).
