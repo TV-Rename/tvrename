@@ -1,23 +1,44 @@
 image: Visual Studio 2017
-
 configuration: Release
 platform: Any CPU
-
-clone_depth: 1
-
 skip_non_tags: true
+clone_depth: 1
 
 cache:
 - packages -> **\packages.config
 
 init:
-  - ps: Update-AppveyorBuild -Version "$($env:APPVEYOR_REPO_TAG_NAME.TrimStart("v"))"
+- ps: >-
+    $tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+
+    Update-AppveyorBuild -Version "$($tag)"
+
+    $version = $tag -split '-'
+
+    $short = $version[0].TrimEnd(".0")
+
+    $friendly = $short
+
+    If ($version[1]) {
+      $end = (Get-Culture).TextInfo.ToTitleCase($version[1].Replace("rc", "RC"))
+      $friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
+    }
+
+    $env:APPVEYOR_BUILD_VERSION_SHORT = $short
+
+    $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $friendly
+
+    $env:APPVEYOR_BUILD_VERSION
+
+    $env:APPVEYOR_BUILD_VERSION_SHORT
+
+    $env:APPVEYOR_BUILD_VERSION_FRIENDLY
 
 assembly_info:
   patch: true
   file: TVRename#\Properties\AssemblyInfo.cs
-  assembly_version: '$(appveyor_build_version)'
-  assembly_file_version: '$(appveyor_build_version)'
+  # assembly_version: '$(APPVEYOR_BUILD_VERSION_SHORT)'
+  # assembly_file_version: '$(APPVEYOR_BUILD_VERSION_FRIENDLY)'
   assembly_informational_version: '2.1' # Used for settings path
 
 test: off
@@ -42,10 +63,7 @@ artifacts:
 deploy:
 - provider: GitHub
   auth_token:
-    secure: N9IXwzwtulNUU5FVDy1+z7ZKbYuSWhtrrTosnaoLApyLas6XEd1whQNZYnpYKBnJ
-  description: 'TV Rename $(appveyor_build_version)'
+    secure: LXb1x464/z4u7tR3LQGsmluXZx+Q0XooJVLoFRCvtuOvg0x7dZ7RbKuZjTiZG6Eg
   artifact: 'TVRename-$(appveyor_build_version)'
-  draft: true
-  # force_update: true
   on:
     appveyor_repo_tag: true
