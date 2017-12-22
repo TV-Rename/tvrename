@@ -995,6 +995,8 @@ namespace TVRename
         public bool TestMode;
         public string Type;
 
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public BTResume(SetProgressDelegate setprog, string resumeDatFile)
             : base(setprog)
         {
@@ -1111,6 +1113,7 @@ namespace TVRename
                             catch (PathTooLongException ptle)
                             {
                                 //this is not the file we are looking for
+                                logger.Debug(ptle);
                             }
                         }
                         c++;

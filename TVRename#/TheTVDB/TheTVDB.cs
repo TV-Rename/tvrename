@@ -622,7 +622,7 @@ namespace TVRename
                 catch (WebException ex)
                 {
                     logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
-                    logger.Warn(ex.Message);
+                    logger.Warn(ex);
                     this.Say("");
                     this.LastError = ex.Message;
                     moreUpdates = false;
@@ -1128,7 +1128,8 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                logger.Error("Error obtaining {0}", uri);
+                logger.Error (ex);
                 this.Say("");
                 this.LastError = ex.Message;
                 return null;
@@ -1251,9 +1252,12 @@ namespace TVRename
                 }
                 catch (WebException ex) {
                     //no images for chosen language
+                    logger.Trace("No images found for {0} in language {1}", APIRoot + "/series/" + code + "/images", TVSettings.Instance.PreferredLanguage);
+                    logger.Warn(ex.Message);
+
                 }
-                
-                
+
+
 
                 foreach (string imageType in imageTypes)
                 {
@@ -1265,6 +1269,7 @@ namespace TVRename
                     catch (WebException WebEx)
                     {
                         logger.Info("Looking for " + imageType + " images (in local language), but none found for seriesId " + code);
+                        logger.Info(WebEx);
                     }
 
                 }
@@ -1286,6 +1291,8 @@ namespace TVRename
                     }
                     catch (WebException ex)
                     {
+                        logger.Info("Looking for images, but none found for seriesId {0} in {1}", code ,DefaultLanguage );
+
                         //no images for chosen language
                     }
 
@@ -1300,6 +1307,7 @@ namespace TVRename
                         catch (WebException WebEx)
                         {
                             logger.Info("Looking for " + imageType + " images, but none found for seriesId " + code);
+                            logger.Info(WebEx);
                         }
                     }
 

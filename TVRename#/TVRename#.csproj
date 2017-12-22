@@ -475,7 +475,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="App\Version.cs" />
-    <Compile Include="Utility\Win32FileIO.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />
