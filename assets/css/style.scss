@@ -4,10 +4,10 @@
 @import "{{ site.theme }}";
 .highlighter-rouge {
     color: #000000;
-    background-color: #cfcfcf;
-    border-radius: 2px;
-    border: 1px solid #000000;
-    padding: 2px;
+    background-color: lightgray;
+    border-radius: 1px;
+    border: 1px solid darkgray;
+    padding: 3px;
     white-space: nowrap;
 }
 
