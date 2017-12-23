@@ -105,15 +105,11 @@ namespace TVRename
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-
-        public UI(TVDoc doc)
+        public UI(TVDoc doc, TVRenameSplash splash)
         {
 
-            SplashScreen.Show(new TVRenameSplash());
-            SplashScreen.UpdateStatus("Initalising");
-
             this.mDoc = doc;
-
+            
             this.Busy = 0;
             this.mLastEpClicked = null;
             this.mLastFolderClicked = null;
@@ -151,21 +147,20 @@ namespace TVRename
             }
 
             this.Text = this.Text + " " + Version.DisplayVersionString();
-            //SplashScreen.UpdateInfo(Version.DisplayVersionString());
 
-            SplashScreen.UpdateStatus("Filling Shows");
+            updateSplashStatus(splash,"Filling Shows");
             this.FillMyShows();
             this.UpdateSearchButton();
             this.ClearInfoWindows();
-            SplashScreen.UpdateProgress(12);
-            SplashScreen.UpdateStatus("Updating WTW");
+            updateSplashPercent(splash, 12);
+            updateSplashStatus(splash, "Updating WTW");
             this.mDoc.DoWhenToWatch(true);
-            SplashScreen.UpdateProgress(50); 
+            updateSplashPercent(splash, 50); 
             this.FillWhenToWatchList();
-            SplashScreen.UpdateProgress(90); 
-            SplashScreen.UpdateStatus("Write Upcoming");
+            updateSplashPercent(splash, 90);
+            updateSplashStatus(splash, "Write Upcoming");
             this.mDoc.WriteUpcoming();
-            SplashScreen.UpdateStatus("Setting Notifications");
+            updateSplashStatus(splash, "Setting Notifications");
             this.ShowHideNotificationIcon();
 
             int t = TVSettings.Instance.StartupTab;
@@ -173,15 +168,31 @@ namespace TVRename
                 this.tabControl1.SelectedIndex = TVSettings.Instance.StartupTab;
             this.tabControl1_SelectedIndexChanged(null, null);
 
-            SplashScreen.UpdateStatus("Starting Monitor");
+            updateSplashStatus(splash, "Starting Monitor");
 
             this.mAutoFolderMonitor = new TVRename.AutoFolderMonitor(mDoc,this);
             if (TVSettings.Instance.MonitorFolders)
                 this.mAutoFolderMonitor.StartMonitor();
 
-            SplashScreen.Close();
-
+            //splash.Close();
         }
+
+        void updateSplashStatus(TVRenameSplash SplashScreen, String text)
+        {
+            SplashScreen.Invoke((System.Action)delegate
+            {
+                SplashScreen.UpdateStatus(text);
+            });
+        }
+
+        void updateSplashPercent(TVRenameSplash SplashScreen,int num)
+        {
+            SplashScreen.Invoke((System.Action)delegate
+            {
+                SplashScreen.UpdateProgress (num);
+            });
+        }
+
 
         public void ClearInfoWindows() =>ClearInfoWindows("");
 

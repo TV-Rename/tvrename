@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace TVRename
 {
@@ -48,6 +50,35 @@ namespace TVRename
             Unattended = Array.IndexOf(args, "/unattended") != -1;
 
             foreach (string arg in args)
+            {
+                if (arg.StartsWith("/userfilepath:"))
+                {
+                    UserFilePath = arg.Substring(arg.IndexOf(":") + 1);
+                }
+            }
+        }
+
+        public CommandLineArgs(ReadOnlyCollection<string> commandLineArgs)
+        {
+            Hide = commandLineArgs.Contains("/hide", StringComparer.OrdinalIgnoreCase);
+
+            if (commandLineArgs.Contains("/createmissing", StringComparer.OrdinalIgnoreCase) )
+                MissingFolder = MissingFolderBehaviour.Create;
+            else if (commandLineArgs.Contains("/ignoremissing", StringComparer.OrdinalIgnoreCase))
+                MissingFolder = MissingFolderBehaviour.Ignore;
+            else
+                MissingFolder = MissingFolderBehaviour.Ask;
+
+            RenameCheck = !commandLineArgs.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase); 
+            Quit = commandLineArgs.Contains("/quit", StringComparer.OrdinalIgnoreCase);
+            ForceRecover = commandLineArgs.Contains("/recover", StringComparer.OrdinalIgnoreCase);
+
+            DoAll = commandLineArgs.Contains("/doall", StringComparer.OrdinalIgnoreCase); 
+            Scan = commandLineArgs.Contains("/scan", StringComparer.OrdinalIgnoreCase); 
+
+            Unattended = commandLineArgs.Contains("/unattended", StringComparer.OrdinalIgnoreCase); 
+
+            foreach (string arg in commandLineArgs)
             {
                 if (arg.StartsWith("/userfilepath:"))
                 {
