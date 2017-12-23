@@ -5,7 +5,7 @@
 The only thing TV Rename saves to the registry is installation information which is used by Windows "Apps and Features" to uninstall the program. But Hey, why would you want to do that?
 
 ## Configuration Files
-**All** the configuration information and locally cached data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is stored in a series of (mainly XML) files under the users Application Directory.
+All the configuration information and locally cached data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is stored in a series of (mainly XML) files under the users Application Directory.
 
 On Windows XP this is: -
 
