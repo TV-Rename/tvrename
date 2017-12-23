@@ -38,6 +38,8 @@ p a:hover, a:active {
     border-bottom: 1px solid #3399cc;
 }
 
+ul { list-style-image: url("/images/bullet.png"); }
+
 li a:link, a:visited {
     font-weight: bold;
 }
