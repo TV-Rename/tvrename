@@ -163,7 +163,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
         }
         catch (System.Exception ex)
         {
-            MessageBox.Show("Error while setting the User-Defined File Path:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if ((!clargs.Unattended) && (!clargs.Hide)) MessageBox.Show("Error while setting the User-Defined File Path:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             logger.Error("Error while setting the User-Defined File Path - EXITING: {0}", clargs.UserFilePath);
             logger.Error(ex);
 

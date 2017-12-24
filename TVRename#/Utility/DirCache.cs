@@ -54,12 +54,13 @@ namespace TVRename
         {
             return this.BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
         }
+        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders)
         {
             if (!Directory.Exists(folder))
             {
-                MessageBox.Show("The search folder \"" + folder + " does not exist.\n", "Folder does not exist", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                logger.Error("The search folder \"" + folder + " does not exist.\n");
                 return count;
             }
 
@@ -67,7 +68,7 @@ namespace TVRename
             {
                 if (folder.Length >= 248)
                 {
-                    MessageBox.Show("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder, "Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    logger.Error ("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder);
                     return count;
                 }
 
@@ -82,7 +83,7 @@ namespace TVRename
                 {
                     count++;
                     if ((ff.Name.Length + folder.Length) >= 260)
-                        MessageBox.Show("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder, "File+Path name too long", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        logger.Error("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder);
                     else
                         this.Add(new DirCacheEntry(ff));
                     if ((prog != null) && (totalFiles != 0))
@@ -96,8 +97,9 @@ namespace TVRename
                         count = this.BuildDirCache(prog, count, totalFiles, di2.FullName, subFolders);
                 }
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException e)
             {
+                logger.Info(e);
             }
             catch
             {

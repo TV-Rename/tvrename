@@ -13,6 +13,8 @@ namespace TVRename
     {
         public FileFinder(TVDoc i) : base(i) { }
 
+        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public override bool Active()
         {
             return TVSettings.Instance.SearchLocally;
@@ -179,7 +181,10 @@ namespace TVRename
                 catch (System.IO.PathTooLongException e)
                 {
                     string t = "Path or filename too long. " + Action.From.FullName + ", " + e.Message;
-                    MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    logger.Warn(e, "Path or filename too long. " + Action.From.FullName);
+
+                    if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    
                 }
             }
 
@@ -273,20 +278,19 @@ namespace TVRename
                 catch (System.IO.PathTooLongException e)
                 {
                     string t = "Path too long. " + dce.TheFile.FullName + ", " + e.Message;
-                    t += ".  Try to display more info?";
-                    DialogResult dr = MessageBox.Show(t, "Path too long", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                    if (dr == DialogResult.Yes)
-                    {
-                        t = "DirectoryName " + dce.TheFile.DirectoryName + ", File name: " + dce.TheFile.Name;
-                        t += matched ? ", matched.  " : ", no match.  ";
-                        if (matched)
-                        {
-                            t += "Show: " + me.Episode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
-                            t += "To: " + me.TheFileNoExt;
-                        }
+                    logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
 
-                        MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    t += ".  More information is available in the log file";
+                    if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                    t = "DirectoryName " + dce.TheFile.DirectoryName + ", File name: " + dce.TheFile.Name;
+                    t += matched ? ", matched.  " : ", no match.  ";
+                    if (matched)
+                    {
+                        t += "Show: " + me.Episode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
+                        t += "To: " + me.TheFileNoExt;
                     }
+                    logger.Warn(t);
                 }
             }
 
@@ -296,3 +300,5 @@ namespace TVRename
     
     }
 }
+
+

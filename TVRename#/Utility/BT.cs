@@ -609,7 +609,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "TVRename Torrent Reader", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                logger.Error(e);
                 return null;
             }
 
@@ -620,6 +620,8 @@ namespace TVRename
 
             return f;
         }
+        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
     }
 
     public abstract class BTCore
