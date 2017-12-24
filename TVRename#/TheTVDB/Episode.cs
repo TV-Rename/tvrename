@@ -156,10 +156,8 @@ namespace TVRename
                 if (!string.IsNullOrEmpty(this.Name))
                     message += "\r\nName: " + this.Name;
 
-                message += "\r\n" + e.Message;
 
-                if (!args.Unattended) 
-                    MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Error(e, message);
 
                 throw new TVDBException(e.Message);
             }

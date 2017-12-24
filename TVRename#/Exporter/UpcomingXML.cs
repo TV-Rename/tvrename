@@ -73,7 +73,7 @@ namespace TVRename
             } // try
             catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(e.Message);
                 logger.Error(e);
                 return false;
             }

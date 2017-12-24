@@ -80,7 +80,6 @@ namespace TVRename
                 worker.WorkerReportsProgress = false;
                 worker.WorkerSupportsCancellation = true;
                 worker.DoWork += worker_DoWork;
-                worker.RunWorkerCompleted += worker_RunWorkerCompleted;
 
                 fader = new System.Timers.Timer(FADE_SPEED);
                 fader.Elapsed += new System.Timers.ElapsedEventHandler(fader_Elapsed);
@@ -111,12 +110,6 @@ namespace TVRename
             // if the form is fading in or out keep the timer going
             if (splashForm.Opacity > 0 && splashForm.Opacity < 1)
                 fader.Start();
-        }
-
-        private static void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            // Runs on main thread
-            //MessageBox.Show("done");
         }
 
         private static void worker_DoWork(object sender, DoWorkEventArgs e)

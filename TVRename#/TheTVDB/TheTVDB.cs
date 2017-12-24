@@ -636,12 +636,16 @@ namespace TVRename
 
                 }
                 catch (InvalidCastException ex) {
-                    logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
-                    logger.Warn(ex.Message);
+                    
                     this.Say("");
                     this.LastError = ex.Message;
                     moreUpdates = false;
-                    MessageBox.Show("Unable to get latest updates from TVDB " + Environment.NewLine + "Trying to get updates since " + Helpers.FromUnixTime(epochTime).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the date is very old, please consider a full refresh", "Error obtaining updates from TVDB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    String msg = "Unable to get latest updates from TVDB " + Environment.NewLine + "Trying to get updates since " + Helpers.FromUnixTime(epochTime).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the date is very old, please consider a full refresh";
+                    logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
+                    logger.Warn(ex,msg);
+
+                    if ((!this.Args.Unattended) && (!this.Args.Hide))  MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return true;
                 }
 
@@ -662,7 +666,9 @@ namespace TVRename
                 //As a safety measure we check that no more than 10 calls are made
                 if (numberofCallsMade > 10) {
                     moreUpdates = false;
-                    MessageBox.Show("We have run 10 weeks of updates but it appears the system may need to check again once this set have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(this.Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine+"If the dates keep getting closer then keep getting 10 weeks of updates, otherwise consider a full refresh", "Long Running Update", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    String errorMessage = "We have run 10 weeks of updates but it appears the system may need to check again once this set have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(this.Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the dates keep getting closer then keep getting 10 weeks of updates, otherwise consider a full refresh";
+                    logger.Warn(errorMessage);
+                    if ((!this.Args.Unattended) && (!this.Args.Hide))  MessageBox.Show(errorMessage , "Long Running Update", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 }
 
@@ -874,22 +880,20 @@ namespace TVRename
             }
             catch (XmlException e)
             {
-                if (!this.Args.Unattended)
+                string message = "Error processing data from TheTVDB (banner file).";
+                message += "\r\n" + e.Message;
+                String name = "";
+                if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
                 {
-                    string message = "Error processing data from TheTVDB (banner file).";
-                    message += "\r\n" + e.Message;
-                    String name = "";
-                    if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
-                    {
-                        name += "Show \"" + Series[codeHint.Value].Name + "\" ";
-                    }
-                    if (codeHint.HasValue)
-                    {
-                        name += "ID #" + codeHint.Value + " ";
-                    }
-                    MessageBox.Show(name + message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // throw new TVDBException(e.Message);
+                    name += "Show \"" + Series[codeHint.Value].Name + "\" ";
                 }
+                if (codeHint.HasValue)
+                {
+                    name += "ID #" + codeHint.Value + " ";
+                }
+
+                logger.Error(e, name +"-"+ message);
+
                 return false;
             }
             finally
@@ -1061,29 +1065,26 @@ namespace TVRename
             {
 
 
-                if (!this.Args.Unattended)
-                {
-                    str.Position = 0;
-                    StreamReader sr = new StreamReader(str);
-                    string myStr = sr.ReadToEnd();
+                str.Position = 0;
+                StreamReader sr = new StreamReader(str);
+                string myStr = sr.ReadToEnd();
 
-                    string message = "Error processing data from TheTVDB (top level).";
-                    message += "\r\n" + myStr;
-                    message += "\r\n" + e.Message;
-                    String name = "";
-                    if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
-                    {
-                        name += "Show \"" + Series[codeHint.Value].Name + "\" ";
-                    }
-                    if (codeHint.HasValue)
-                    {
-                        name += "ID #" + codeHint.Value + " ";
-                    }
-                    //MessageBox.Show(name + message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                   logger.Error(name + message);
-                   logger.Error(str.ToString());
-                    throw new TVDBException(name + message);
+                string message = "Error processing data from TheTVDB (top level).";
+                message += "\r\n" + myStr;
+                message += "\r\n" + e.Message;
+                String name = "";
+                if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
+                {
+                    name += "Show \"" + Series[codeHint.Value].Name + "\" ";
                 }
+                if (codeHint.HasValue)
+                {
+                    name += "ID #" + codeHint.Value + " ";
+                }
+
+                logger.Error(name + message);
+                logger.Error(str.ToString());
+                throw new TVDBException(name + message);
                 return false;
             }
             finally

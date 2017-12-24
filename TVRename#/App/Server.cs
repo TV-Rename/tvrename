@@ -17,6 +17,8 @@ namespace TVRename
 {
     public class TVRenameServer
     {
+        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public TVRenameServer(TVDoc doc)
         {
             for (;;)
@@ -94,7 +96,7 @@ namespace TVRename
                 } // try
                 catch (SocketException e)
                 {
-                    System.Windows.Forms.MessageBox.Show(e.ToString());
+                    logger.Error(e);
                 }
                 catch (ThreadAbortException)
                 {

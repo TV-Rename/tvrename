@@ -682,7 +682,8 @@ namespace TVRename
 
             if (!this.DownloadOK)
             {
-                if (!this.Args.Unattended)
+                logger.Warn(TheTVDB.Instance.LastError);
+                if ((!this.Args.Unattended) && (!this.Args.Hide))
                     MessageBox.Show(TheTVDB.Instance.LastError, "Error while downloading", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 TheTVDB.Instance.LastError = "";
             }
@@ -1744,7 +1745,7 @@ namespace TVRename
                     }
                 }
             }
-            //MessageBox.Show(output.ToString());
+            
            logger.Info(output.ToString());
         }
         public void QuickScan() => QuickScan(true, true);
