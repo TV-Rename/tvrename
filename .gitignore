@@ -1,11 +1,5 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/Backup
-/TVRename#/obj/Debug
-/TVRename#/bin/Debug
+﻿/.vs
+/Installer/*.exe
 /packages
-/.vs/TVRename#/v15
-/TVRename#/obj/Release
-/TVRename#/bin/Release
+/TVRename#/obj
+/TVRename#/bin

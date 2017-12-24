@@ -3,6 +3,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+Unicode true
 SetCompressor /solid lzma
 
 !define ADDREMOVECP_NAME "TV Rename"
@@ -11,10 +12,11 @@ SetCompressor /solid lzma
 !define REGUNINSTKEY TVRename
 
 Name "${PRODUCTNAME}"
+Caption "${PRODUCTNAME} ${VERSION} Setup"
 
 BrandingText /TRIMLEFT " "
 !define MUI_ICON "..\TVRename#\App\app.ico"
-!define MUI_UNICON "uninstall.ico"
+!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
 
 !include "MUI.nsh"
 !include "DotNet4Client.nsh"
@@ -28,7 +30,7 @@ Var STARTMENU_FOLDER
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
 ;General
-OutFile "TVRename2.3.x.exe"
+OutFile "TVRename-${VERSION}.exe"
 
 ;Folder selection page
 InstallDir "$PROGRAMFILES\${DEF_INSTALL_DIR}"
@@ -71,6 +73,8 @@ Section "TVRename" SecTVRename
   File "..\TVRename#\bin\Release\Newtonsoft.Json.dll"
   File "..\TVRename#\bin\Release\SourceGrid.dll"
   File "..\TVRename#\bin\Release\AlphaFS.dll"
+  File "..\TVRename#\bin\Release\NLog.dll"
+  File "..\TVRename#\NLog.config"	
   
   CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
   CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk" "$INSTDIR\TVRename.exe"
@@ -98,7 +102,10 @@ Section "Uninstall"
   Delete "$INSTDIR\Newtonsoft.Json.dll"
   Delete "$INSTDIR\SourceGrid.dll"
   Delete "$INSTDIR\AlphaFS.dll"
+  Delete "$INSTDIR\NLog.dll"
   Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\NLog.config"
+	
   RmDir "$INSTDIR"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename.lnk"
   Delete "$SMPROGRAMS\$STARTMENU_FOLDER\TV Rename (Recover).lnk"
@@ -114,12 +121,6 @@ Section "Uninstall"
 nothanks:
 
 SectionEnd
-
-
-!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SECDOTNET} $(DESC_LONGDOTNET)
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
-
 
 ;--------------------------------
 ; .NET Stuff
