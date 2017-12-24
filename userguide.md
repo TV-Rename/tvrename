@@ -11,7 +11,7 @@ If you need help, please sign up to the [forum](https://groups.google.com/forum/
 ## Lets (not) start at the begining...
 In true technical manual fashion we're going to start at the end because, as is so often the case, it makes sense to see where your going to help figure out how to get there.
 
-## "When to watch"...
+## When to watch
 
 Once you have TV Rename up and running and behaving the way you want you'll probably spend most of your time here. If you wish you can make this tab open by default by changing the startup tab in the *General* tab of **Options>Preferences**.
 ![When To Watch](images/userguide/when-to-watch-01.png)
@@ -36,7 +36,7 @@ At the very bottom, the status bar displays the next show/episode airing and how
 
 *In keeping with our jumping-about policy lets look at My Shows next.*
 
-## "My Shows"...
+## My Shows
 This is where you tell TV Rename about the TV Shows you are watching (or have watched), where they can be found and how they are structured.
 
 In essence this tab (along with some of the preferences) allows you to configure the interaction between  [The TVDB](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidently there can be multiple storage locations including local paths on your computer (including local drives), mapped network shares and UNC paths. The only restriction being that a TV Show cannot be spread across multiple locations.
