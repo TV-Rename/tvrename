@@ -34,7 +34,7 @@ It contains: -
 **TVRenameSettings.xml.0 - TVRenameSettings.xml.9** - backup copies of TV RenameSettings.xml (FIFO).
 
 ## Log Files
-Logging was added in version 2.3, the main logfile (TVRename.log) can be found in: -
+Logging was added in version 2.3. The main logfile (TVRename.log) can be found in: -
 > \\Documents and Settings\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
 
 or
@@ -43,7 +43,7 @@ or
 
 Depending on your version of Windows.
 
-Log files are rotated into an "archive" directory (in the same location as TVRename.log) every time TV Rename is run or every 24 hours, whichever is the sooner.
+Log files are rotated into an "archive" directory (in the same location as TVRename.log) every time TV Rename is run or every 24 hours, whichever is sooner.
 
 As with **TheTVDB.xml** and **TVRenameSettings.xml** a maximum of ten backup copies of the log file are kept (**TVRename00.log** - **TVRename09.log**) on a first-in-first-out basis.
 
