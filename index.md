@@ -12,10 +12,10 @@ TV Rename's "Did you knows..." *[Click here!](tips-tricks "Read Tips 'n' Tricks"
 
 # Forums
 We use two google groups for help and support.
-## ["TVRename"](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")
+### ["TVRename"](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")
 ***The Main Forum*** - You can ask for help , make suggestions, and report something you think may be a bug [here](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename
  Forum"). 
-## ["TVRename Releases"](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")
+### ["TVRename Releases"](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")
 ***The Releases Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum"). You can download the latest version here, as well as alphas and betas.. 
 
 # Issues and Bugs
