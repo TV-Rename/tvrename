@@ -60,7 +60,7 @@ You can find TV Rename's source code (along with executables and this website) i
 TV Rename uses the Microsoft .NET Framework. The installer will check for this and let you know if it is needed. It can be downloaded from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").
 
 # Credits
-TV Rename pulls data from [TheTVDB.com](http://thetvdb.com/ "Visit TheTVDB.com") using their API. **Please visit their site, register, and help by contributing information and artwork for TV Series and Episodes.**
+TV Rename pulls data from [TheTVDB.com](http://thetvdb.com/ "Visit TheTVDB.com") using their API. **Please visit their site, register, and help out by contributing information and artwork for TV Series and Episodes.**
 
 It also uses
 * [DotNET Zip](http://www.codeplex.com/DotNetZip),
