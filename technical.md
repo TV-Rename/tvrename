@@ -27,24 +27,31 @@ It contains: -
 
 **TheTVDB.xml** -  The locally cached tvdb.com show season and episode information for everything listed in the ***My Shows*** tab.
 
-**TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of the TVDB.xml file. A new file gets created here every time you click ***File>Save*** (FIFO).
+**TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of the TVDB.xml file. A new file gets created here every time you click ***File>Save*** on a first-in-first-out (FIFO) basis.
 
 **TVRenameSettings.xml** - Everything else not mentioned is stored in here. All your shows, Media Library paths, directory structures and settings. As with TheTVDB.xml this is only overwritten when you choose **File>Save**.
 
 **TVRenameSettings.xml.0 - TVRenameSettings.xml.9** - backup copies of TV RenameSettings.xml (FIFO).
 
 ## Log Files
-Logging was added in version 2.3, the main logfile can be found in: -
+Logging was added in version 2.3, the main logfile (TVRename.log) can be found in: -
 > \\Documents and Settings\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
-or
-> \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
-Depending on your version of Windows
-* Log files are saved off into the archive directory every time the app is run or every 24 hours.
-* Log archive is at \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\log\\archive.
-* Logging setting are based on NLog and the configuration file [NLog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config "Look at NLog.config in the TVRename Repo") stored in the TV Rename program directory.
-* Read the [NLog Wiki](https://github.com/nlog/NLog/wiki/Configuration-file "Visit the NLog Wiki") for guidance on how to adjust the log fie to get more information.
 
-When raising a bug please upload a log file that illustrates the issue (where possible).
+or
+
+> \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
+
+Depending on your version of Windows.
+
+Log files are rotated into an "archive" directory (in the same location as TVRename.log) every time TV Rename is run or every 24 hours, whichever is the sooner.
+
+As with **TheTVDB.xml** and **TVRenameSettings.xml** a maximum of ten backup copies of the log file are kept (**TVRename00.log** - **TVRename09.log**) on a first-in-first-out basis.
+
+Logging uses NLog, the configuration file ([NLog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config "Look at NLog.config in the TVRename Repo")) is stored in the TV Rename program directory.
+
+You can read the [NLog Wiki](https://github.com/nlog/NLog/wiki/Configuration-file "Visit the NLog Wiki") for guidance on how to adjust the configuration file to collect more information.
+
+When raising a bug please include a log file that illustrates the issue if you can, it will help us find a solution quickly.
 
 # Source Code
 You can find TV Rename's source code (along with executables and this website) in [The TV Rename GitHub Repository](https://github.com/TV-Rename/tvrename "Visit The repository").
