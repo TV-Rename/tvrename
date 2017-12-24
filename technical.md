@@ -25,7 +25,7 @@ It contains: -
 
 **Statistics.xml** - TV Rename's historical statistics.
 
-**TheTVDB.xml** -  The locally cached tvdb.com show information.
+**TheTVDB.xml** -  The locally cached tvdb.com show season and episode information for everythin listed in the My Shows tab.
 
 **TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of the TVDB.xml file. A new file gets created here every time you click ***File>Save*** (FIFO).
 
