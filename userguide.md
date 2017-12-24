@@ -19,7 +19,7 @@ Looking at the list in the main panel we see details of recent and future show e
 
 At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the *General* tab of **Options>Preferences** if you wish).
 
-In this example there are two shows listed. The disk icon to the left of "The Gifted" indicates that the episode was found in the Media Library and the magnifing glass to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured under **Options>Search Engines**).
+In this example there are two shows listed. The disk icon to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode was found in the Media Library and the magnifing glass to the left of "Maigret (2016)" indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured under **Options>Search Engines**).
 
 The next section tells us what shows found in the Media Library will be airing new episodes in the "Next 7 Days".
 
@@ -36,19 +36,22 @@ At the very bottom, the status bar displays the next show/episode airing and how
 *In keeping with our jumping-about policy lets look at My Shows next.*
 
 ## "My Shows"
-This is where you tell TV Rename about the TV Shows you are watching (or have watched), where they can be found and how they are structured.
+My Shows is where you tell TV Rename about the TV Shows you are watching (or have watched), where they can be found and how they are structured.
 
 In essence this tab (along with some of the preferences) allows you to configure the interaction between  [The TVDB](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidently there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they always get the same path or drive letter assigned to them each time they are used. 
 
-In this image, you can see a number of shows, each of which can have a folder associated with it.
+Here, you can see a number of shows listed in the left hand panel of the window. These are the shows that TV Rename is monitoring, if a show is in your "Media Library" it will have further information associated with it (its "home" directory in the "Media Library" for example, but there is much more). In the right hand panel you can read details about the highlighted show gleaned from [The TVDB](http://thetvdb.com "Visit thetvdb.com"). 
 
-![Shows and Folders](images/screenshots/MyShows.PNG)
+![My Shows](images/userguide/my-shows-01.png)
 
-Buttons:
- * `Add` - Add a new show to the list. Remember to add folders to it separately if you need to monitor them it on disk as well. You don't need to add a folder if you only want its airdate to show up on the "When to Watch" tab.
+Below these panels are a series of buttons which allow you to manage the content. They are: -
+ * `Add` - Adds a new show to the list. Remember you will need to add folders to for the show separately if you need to monitor it in the "Media Library". You don't need to add a folder if you only want to see the shows airdates in the ["When to Watch"](#when-to-watch "go to "When to Watch") tab.
+
  * `Edit` - Edit the currently selected show.
+
  * `Delete` - Remove the currently selected show(s).
- * `Filter` - Filter the listed shows base don entered criteria.
+
+ * `Filter` - Filter the listed shows based on entered criteria.
  * Expand all
  * Hide Details Panel
  * **Open** - Opens the folder for the TV show.
