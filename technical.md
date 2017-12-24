@@ -34,8 +34,11 @@ It contains: -
 **TVRenameSettings.xml.0 - TVRenameSettings.xml.9** - backup copies of TV RenameSettings.xml (FIFO).
 
 ## Log Files
-Log files were added in version 2.3:
-* Location is at \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\log\\
+Logging was added in version 2.3, the main logfile can be found in: -
+> \\Documents and Settings\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
+or
+> \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
+Depending on your version of Windows
 * Log files are saved off into the archive directory every time the app is run or every 24 hours.
 * Log archive is at \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\log\\archive.
 * Logging setting are based on NLog and the configuration file [NLog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config "Look at NLog.config in the TVRename Repo") stored in the TV Rename program directory.
