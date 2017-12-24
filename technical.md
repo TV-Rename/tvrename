@@ -37,11 +37,11 @@ It contains: -
 Logging was added in version 2.3. The main logfile (TVRename.log) can be found in: -
 > \\Documents and Settings\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
 
-or
+on Windows XP or: -
 
 > \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
 
-Depending on your version of Windows.
+On Windows 7 and later.
 
 Log files are rotated into an "archive" directory (in the same location as TVRename.log) every time TV Rename is run or every 24 hours, whichever is sooner.
 

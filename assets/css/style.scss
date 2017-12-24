@@ -51,6 +51,28 @@ li a:hover, a:active {
     border-bottom: 1px solid #3399cc;
 }
 
+#banner {
+    height: 64px;
+}
+
+#banner .downloads span {
+    padding-top: 8px;
+}
+
+#banner .fork {
+    margin-top: 14px;
+}
+
+#banner ul {
+    margin: 0;
+    height: 0;
+}
+
+#banner ul li .button {
+    width: 100px;
+    padding: 4px 0;
+}
+
 .wrapper nav {
     top: 190px;
 }
