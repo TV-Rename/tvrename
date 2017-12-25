@@ -8,8 +8,8 @@ using System.Resources;
 [assembly: AssemblyTitle("TV Rename")]
 [assembly: AssemblyDescription("TV Rename")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("TVRename")] // used in settings path, so be careful about changing
-[assembly: AssemblyProduct("TVRename")] // used in settings path, so be careful about changing
+[assembly: AssemblyCompany("TV Rename")]
+[assembly: AssemblyProduct("TV Rename")]
 [assembly: AssemblyCopyright("Copyright © 2007-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -38,6 +38,6 @@ using System.Resources;
 
 
 [assembly: AssemblyVersion("2.3.0.0")]
-[assembly: AssemblyFileVersion("2.3")]
-[assembly: AssemblyInformationalVersion("2.1")] // used in settings path, so be careful about changing
+[assembly: AssemblyFileVersion("2.3.0")]
+[assembly: AssemblyInformationalVersion("2.3 RC")]
 [assembly: NeutralResourcesLanguageAttribute("")]
