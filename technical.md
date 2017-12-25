@@ -63,12 +63,13 @@ TV Rename uses the Microsoft .NET Framework. The installer will check for this a
 TV Rename pulls data from [TheTVDB.com](http://thetvdb.com/ "Visit TheTVDB.com") using their API. **Please visit their site, register, and help out by contributing information and artwork for TV Series and Episodes.**
 
 It also uses
-* [DotNET Zip](http://www.codeplex.com/DotNetZip),
-* [SourceGrid](http://www.codeplex.com/sourcegrid/),
-* TV Rename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm "Visit Red Gate"), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
-* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance.
+* [DotNET Zip](http://www.codeplex.com/DotNetZip), 
+* [SourceGrid](http://www.codeplex.com/sourcegrid/), 
+* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/). 
+* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance. 
 * [AlphaFS](http://alphafs.alphaleonis.com/) is used for advanced .NET file operations.
 
 and
 
 * [Retro TV Logo Vector Graphics by Vecteezy!](https://www.vecteezy.com/vector-art/73089-retro-television) for our great logo.
+

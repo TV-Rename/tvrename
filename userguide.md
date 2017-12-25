@@ -72,7 +72,10 @@ Clicking the `Edit` button with a show highlighted will open the same window pre
 Clicking `Edit` with the **season** of a show highlighted will open the *Edit Season Rules* window - *more on this later...*
 
 Most of the information required to setup a new show needs to be entered in the ***Basics*** tab (illustrated).
-	
+
+![addeditshow](images/userguide/addeditshow.png)
+![tvcomsearch](images/userguide/tvcomsearch.png)
+
 In the following example, we'll add a new show called "The Good Doctor" to TV Rename.
 
 ![Add/Edit Show - Search Results](images/userguide/add-edit-show-02.png){:.pic-r}
