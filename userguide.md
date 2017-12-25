@@ -75,7 +75,18 @@ Most of the information required to setup a new show needs to be entered in the 
 	
 In the following example, we'll add a new show called "The Good Doctor" to TV Rename.
 
+![Add/Edit Show - Search Results](images/userguide/add-edit-show-02.png){:.pic-r}
 The first step is to enter TheTVDB's code for the show. If you know it, you can type it directly into the box, otherwise type the show's name (e.g. "The Good Doctor") and click on `Search`. TV Rename will search for matches to the text in TheTVDB's database, cache the results locally and display the matches. The search also works with partial show names. For example you could search for just "Doctor", but "Doctor" being fairly common in TV Show titles, returns over 80 results (including ours!), and you will have to delve into the list to find the show you want.
+
+If all you want to do is see the details of the show then you're done! Just clicj `OK` at the bottom of the window and TV Rename will pull the necessary data from TheTVDB to populate the ***My Shows*** tab.
+
+Once the update is complete ***My Shows*** includes "The Good Doctor" and looks like this: -
+
+
+
+
+
+
 
 
 
