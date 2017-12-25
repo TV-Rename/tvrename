@@ -10,6 +10,9 @@ TV Rename in lots more detail... *[Click here!](userguide "Read The User Guide")
 # [Tips 'n' Tricks](tips-tricks "Read Tips 'n' Tricks")
 TV Rename's "Did you knows..." *[Click here!](tips-tricks "Read Tips 'n' Tricks")*
 
+# [Command Line Interface](cmd-line "Read about using the CLI")
+Things you can do from the [command line](cmd-line "Read about using the CLI"). 
+
 # Forums
 We use two google groups for help and support.
 ### ["TVRename"](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")
