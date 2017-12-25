@@ -27,7 +27,7 @@
 
      <div id="banner">
 
-        <a href="{{ site.github.repository_url }}" class="button fork"><strong>View On GitHub</strong></a>
+        <a href="{{ site.github.repository_url }}" title="Visit TV Renames GitHub pages" class="button fork"><strong>View On GitHub</strong></a>
         {% if site.show_downloads %}
           <div class="downloads">
             <span>Downloads:</span>
@@ -40,10 +40,17 @@
               <div class="downloads">
             <span>Links:</span>
             <ul>
-              <li><a href="https://groups.google.com/forum/#!forum/tvrename-releases" class="button">Download</a></li>
-              <li><a href="https://groups.google.com/forum/#!forum/tvrename" class="button">Support</a></li>
-              <li><a href="https://github.com/TV-Rename/tvrename/issues" class="button">Bug Tracker</a></li>
-              <li><a href="http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0" class="button">Feature Tracker</a></li>
+              <li><a title="Visit TV Rename's Releases Forum" href="https://groups.google.com/forum/#!forum/tvrename-releases" class="button">Download</a></li>
+              <li><a title="Visit TV Rename's Main Forun" href="https://groups.google.com/forum/#!forum/tvrename" class="button">Support</a></li>
+              <li><a title="Visit TV Rename's GitHub Issues Page" href="https://github.com/TV-Rename/tvrename/issues" class="button">Bug Tracker</a></li>
+              <li><a title="Visit TV Rename's Idea Wall" href="http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0" class="button">Feature Tracker</a></li>
+            </ul>
+            <br />
+            <ul style="float: right; margin-top: 6px;">
+              <li><a title="Read About TV Rename" href="about" class="button">Overview</a></li>
+              <li><a title="TV Rename Screenshots" href="screenshots" class="button">Screenshots</a></li>
+              <li><a title="Read the User Guide" href="userguide" class="button">User Guide</a></li>
+              <li><a title="Read the Technical Guide" href="technical" class="button">Technical Guide</a></li>
             </ul>
           </div>
      </div><!-- end banner -->
@@ -52,25 +59,19 @@
        <nav>
          <ul>
            {% if page.url == '/' %}
-             <li><img src="images/home-no-link.png" height="122" width="100" /></li>
+             <li><img alt="Home button" src="images/home-no-link.png" height="122" width="100" /></li>
           {% else %}
-            <li><a href="{{ site.baseurl }}/index.html"><img src="images/home-link.png" height="122" width="100" /></a></li>
+            <li><a alt="Home Button" title="Return to Home Page" style="border-bottom:none;" href="{{ site.baseurl }}/index.html"><img src="images/home-link.png" height="122" width="100" /></a></li>
           {% endif %}
-              <li><a href="/about" class="button">Overview</a></li>
-              <li><a href="/screenshots" class="button">Screenshots</a></li>
-              <li><a href="/userguide" class="button">User Guide</a></li>
-              <li><a href="/technical" class="button">Technical Guide</a></li>
-		 <li>&nbsp;</li>
-		 <li>&nbsp;</li>
-		 <li><u>Contents</u></li>
-	      </ul>
+           <li style="font-weight:700; font-style: italic; font-size: 1.2em; color: #3399cc">On this page...</li>
+        </ul>
+
       </nav>
       <section>
         {{ content }}
       </section>
       <footer>
-<!--	<span><em>Last updated: {{ page.last_modified_at }}</em></span> 
--->
+	<span> --{{ page.last_modified_at }}-- </span>
       </footer>
     </div>
     <!--[if !IE]><script>fixScale(document);</script><![endif]-->
