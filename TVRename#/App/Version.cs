@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,8 @@
 // 
 
 using System;
+using System.Linq;
+using System.Reflection;
 
 namespace TVRename
 {
@@ -19,7 +21,7 @@ namespace TVRename
         public static bool OnMono()
         {
             if (!OnMonoCached.HasValue)
-                OnMonoCached = System.Type.GetType("Mono.Runtime") != null;
+                OnMonoCached = Type.GetType("Mono.Runtime") != null;
             return OnMonoCached.Value;
         }
 
@@ -51,9 +53,7 @@ namespace TVRename
             // Version 2.2.0b2 released 14 April 2010, r108
             // Version 2.2.0b1 released 9 April 2010, r94
 
-	        System.Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-	        string v = $"{version.Major}.{version.Minor}.{version.Build}";
-	        if (version.Revision > 0) v += "." + version.Revision;
+            string v = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false).Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
 #if DEBUG
             v += " ** Debug Build **";
 #endif
