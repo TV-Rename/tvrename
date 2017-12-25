@@ -1,22 +1,22 @@
-#### Command Line Interface.
+#### Command Line Interface
 
 ### These are the options you need to know!
 
-It TV Rename is already running using the cli will instruct that session to initiate new activity.
+If TV Rename is already running using the cli will tell that instance to initiate new activity.
 
 ## Main Options
 
 {:.cli}
 /scan
-* Tells TV Rename to run a scan.
+* Tell TV Rename to run a scan.
 
 {:.cli}
 /doall
-* Tells TV Rename execute all the actions it can (including a scan).
+* Tell TV Rename execute all the actions it can (including a scan).
 
 {:.cli}
 /quit
-* Tells a hidden TV Rename session to exit.
+* Tell a hidden TV Rename session to exit.
 
 ## Hidden Behaviour
 
