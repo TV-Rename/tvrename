@@ -1,4 +1,4 @@
-# About TV Rename
+#### About TV Rename
 
 ## What TV Rename isn't
 OK, before we get into all the really cool stuff TV Rename can do, let's get what it doesn't do out of the way...

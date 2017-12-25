@@ -26,7 +26,7 @@
     padding: 0 0 10px 25px;
 }
 
-h1, h2 {
+h1, h2, h4 {
    color: #3399cc;
 }
 	
@@ -46,6 +46,10 @@ h2 a:hover, a:active {
     border-bottom: 3px solid #3399cc;
 }
 
+h4 {
+    font-size: 28px;
+    font-weight: bold;
+}
 p a:link, a:visited {
     font-weight: bold;
 }
