@@ -30,7 +30,7 @@ It TV Rename is already running using the cli will instruct that session to init
 /unattended
 * Depreciated - "/hide" has the same functionality.
 
-## Override options
+## Override Options
 
 {:.cli}
 /createmissing  
@@ -45,7 +45,7 @@ It TV Rename is already running using the cli will instruct that session to init
 * Allows a request to an existing TV Rename session to scan without renaming.
 
  
-# Settings Files
+## Settings Files
 
 {:.cli}
 /recover
