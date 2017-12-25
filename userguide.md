@@ -65,17 +65,19 @@ Below these panels are a series of buttons which allow you to manage the content
 
 ### Add/Edit Show
 ![Add/Edit Show](images/userguide/add-edit-show-01.png){:.pic-l}
-Clicking on the `Add` button will open the "Add/Edit Show" window ready to add another show. 
+Clicking on the `Add` button will open the *Add/Edit Show* window ready to add another show. 
 
 Clicking the `Edit` button with a show highlighted will open the same window pre-populated with that shows details. 
 
-Clicking `Edit` with the **season** of a show highlighted will open the "Edit Season Rules" window - *more on this later...*
+Clicking `Edit` with the **season** of a show highlighted will open the *Edit Season Rules* window - *more on this later...*
 
-Most of the information required to setup a new show needs to be entered in the *Basics* tab (illustrated) so lets start there.
+Most of the information required to setup a new show needs to be entered in the ***Basics*** tab (illustrated).
 	
-In this example, we are setting up TV Rename for the show "Grey's Anatomy", season 4.
+In the following example, we'll add a new show called "The Good Doctor" to TV Rename.
 
-The first thing is entering the **tv.com code**. If you know it, you can type it in directly. Otherwise, type part of the show's name (e.g. "Grey"). If it still doesn't show, click on "Search" and TV Rename will search for what you typed on tv.com. Downloaded results from searching are cached locally for future use.
+The first step is to enter TheTVDB's code for the show. If you know it, you can type it directly into the box, otherwise type the show's name (e.g. "The Good Doctor") and click on `Search`. TV Rename will search for matches to the text in TheTVDB's database, cache the results locally and display the matches. The search also works with partial show names. For example you could search for just "Doctor", but "Doctor" being fairly common in TV Show titles, returns over 80 results (including ours!), and you will have to delve into the list to find the show you want.
+
+
 
 You can pre-load the cache for tv.com codes by using the "Update Codes" option on the "Tools" menu. This will download from TV Rename's website data for about 14000 shows, but it is only updated very infrequently.
 
