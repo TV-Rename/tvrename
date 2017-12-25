@@ -12,12 +12,13 @@ If you need help, please sign up to the [forum](https://groups.google.com/forum/
 In true technical manual fashion we're going to start at the end because, as is so often the case, it makes sense to see where your going to help figure out how to get there.
 
 ## "When to watch"
-Once you have TV Rename up and running and behaving the way you want you'll probably spend most of your time here. If you wish you can make this tab open by default by changing the startup tab in the *General* tab of **Options>Preferences**.
+Once you have TV Rename up and running and behaving the way you want you'll probably spend most of your time here. If you wish you can make this tab open by default by changing the startup tab in the ***General*** tab of **Options>Preferences**.
+
 ![When To Watch](images/userguide/when-to-watch-01.png)
 
 Looking at the list in the main panel we see details of recent and future show episodes matching TV Shows found in the Media Library.
 
-At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the *General* tab of **Options>Preferences** if you wish).
+At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the ***General*** tab of **Options>Preferences** if you wish).
 
 In this example there are two shows listed. The disk icon to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode was found in the Media Library and the magnifing glass to the left of "Maigret (2016)" indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured under **Options>Search Engines**).
 
@@ -46,7 +47,7 @@ Here, you can see a number of shows listed in the left hand panel of the window.
 
 Below these panels are a series of buttons which allow you to manage the content. They are: -
 
-* {:.no-icon} `Add` - Adds a new show to the list. Remember you will need to add folders to for the show separately if you need to monitor it in the "Media Library". You don't need to add a folder if you only want to see the shows airdates in the ["When to Watch"](#when-to-watch "go to "When to Watch") tab.
+* {:.no-icon} `Add` - Adds a new show to the list. Remember you will need to add folders to for the show separately if you need to monitor it in the "Media Library". You don't need to add a folder if you only want to see the shows airdates in the ***[When to Watch](#when-to-watch "go to "When to Watch")*** tab.
 
 * {:.no-icon} `Edit` - Edit the currently selected show.
 
@@ -66,9 +67,11 @@ Below these panels are a series of buttons which allow you to manage the content
 ![Add/Edit Show](images/userguide/add-edit-show-01.png){:.pic-l}
 Clicking on the `Add` button will open the "Add/Edit Show" window ready to add another show. 
 
-Clicking the `Edit` button with a show highlighted will open the same window pre-populated with that shows details. Clicking `Edit` with the **season** of a show highlighted will open the "Edit Season Rules" window - *more on this later...*
+Clicking the `Edit` button with a show highlighted will open the same window pre-populated with that shows details. 
 
-Most of the information required to setup a new show needs to be entered in the *Basics* tab (illustrated) so we'll start there.
+Clicking `Edit` with the **season** of a show highlighted will open the "Edit Season Rules" window - *more on this later...*
+
+Most of the information required to setup a new show needs to be entered in the *Basics* tab (illustrated) so lets start there.
 	
 In this example, we are setting up TV Rename for the show "Grey's Anatomy", season 4.
 

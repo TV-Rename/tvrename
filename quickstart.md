@@ -12,7 +12,7 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
 ### 1. Add content from your "Media Library"...
 
- 1. Go to **Tools>Folder Monitor** and whilst on the ***Folder*** tab click `Add`. Browse to the root directory of your "Media Library" and click `OK`. The path will be added to the ***Monitor Folders*** list.
+ 1. Go to **Tools>Folder Monitor** and whilst on the ***Folder*** tab of the newly opened *Folder Monitor* window click `Add`. Browse to the root directory of your "Media Library" and click `OK`. The path will be added to the ***Monitor Folders*** list.
 
  2. Click the `Check >>` button, the selected path will be scanned and any recognised content automatically displayed in the ***Scan Results*** tab.
  
