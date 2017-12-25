@@ -8,7 +8,7 @@ If you're new to TV Rename you're should probably read the [Quickstart Guide](qu
 
 If you need help, please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to help.
 
-## Lets (not) start at the begining...
+### Lets (not) start at the begining...
 In true technical manual fashion we're going to start at the end because, as is so often the case, it makes sense to see where your going to help figure out how to get there.
 
 ## "When to watch"
@@ -45,23 +45,30 @@ Here, you can see a number of shows listed in the left hand panel of the window.
 ![My Shows](images/userguide/my-shows-01.png)
 
 Below these panels are a series of buttons which allow you to manage the content. They are: -
- * `Add` - Adds a new show to the list. Remember you will need to add folders to for the show separately if you need to monitor it in the "Media Library". You don't need to add a folder if you only want to see the shows airdates in the ["When to Watch"](#when-to-watch "go to "When to Watch") tab.
 
- * `Edit` - Edit the currently selected show.
+* {:.no-icon} `Add` - Adds a new show to the list. Remember you will need to add folders to for the show separately if you need to monitor it in the "Media Library". You don't need to add a folder if you only want to see the shows airdates in the ["When to Watch"](#when-to-watch "go to "When to Watch") tab.
 
- * `Delete` - Remove the currently selected show(s).
+* {:.no-icon} `Edit` - Edit the currently selected show.
 
- * `Filter` - Filter the listed shows based on entered criteria.
- * Expand all
- * Hide Details Panel
- * **Open** - Opens the folder for the TV show.
- * **Visit tvdb.com** - Visit the tv.com page for this season of this show.
+* {:.no-icon} `Delete` - Remove the currently selected show(s).
+
+* {:.no-icon} `Filter` - Filter the listed shows based on the entered criteria.
+
+* {:.no-icon} `Expand` - Toggle between a collapsed view of the show list (just the show names) and an expanded view (show names, seasons and specials).
+
+* {:.no-icon} `Details` - Toggle between showing and hiding the Detais Panel. If the panel is hidden the Show List panel expands to fill the tab.
+
+* {:.no-icon} `Open` - Opens the directory fore the highlighted show or season in explorer.
+
+* {:.no-icon} `Visit TVDB` - Visit The TVDB page for highlighted show or season.
 
 ### Add/Edit Show
-Clicking on the `Add` or `Edit` button for a show, in the "Shows and Folders" tab, opens this dialog.
+![Add/Edit Show](images/userguide/add-edit-show-01.png){:.pic-l}
+Clicking on the `Add` button will open the "Add/Edit Show" window ready to add another show. 
 
-![addeditshow](images/userguide/addeditshow.png)
-![tvcomsearch](images/userguide/tvcomsearch.png)
+Clicking the `Edit` button with a show highlighted will open the same window pre-populated with that shows details. Clicking `Edit` with the **season** of a show highlighted will open the "Edit Season Rules" window - *more on this later...*
+
+Most of the information required to setup a new show needs to be entered in the *Basics* tab (illustrated) so we'll start there.
 	
 In this example, we are setting up TV Rename for the show "Grey's Anatomy", season 4.
 
