@@ -1,7 +1,7 @@
 # About TV Rename
 
 ## What TV Rename isn't
-OK, before we get into all the really cool stuff TV Rename can do let's get what it doesn't do out of the way...
+OK, before we get into all the really cool stuff TV Rename can do, let's get what it doesn't do out of the way...
 
 **TV Rename does NOT download TV Shows** (But it can help you find TV Shows to download!)
 

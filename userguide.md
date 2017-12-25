@@ -72,7 +72,10 @@ Clicking the `Edit` button with a show highlighted will open the same window pre
 Clicking `Edit` with the **season** of a show highlighted will open the *Edit Season Rules* window - *more on this later...*
 
 Most of the information required to setup a new show needs to be entered in the ***Basics*** tab (illustrated).
-	
+
+![addeditshow](images/userguide/addeditshow.png)
+![tvcomsearch](images/userguide/tvcomsearch.png)
+
 In the following example, we'll add a new show called "The Good Doctor" to TV Rename.
 
 The first step is to enter TheTVDB's code for the show. If you know it, you can type it directly into the box, otherwise type the show's name (e.g. "The Good Doctor") and click on `Search`. TV Rename will search for matches to the text in TheTVDB's database, cache the results locally and display the matches. The search also works with partial show names. For example you could search for just "Doctor", but "Doctor" being fairly common in TV Show titles, returns over 80 results (including ours!), and you will have to delve into the list to find the show you want.
