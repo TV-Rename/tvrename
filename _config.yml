@@ -6,4 +6,3 @@ theme: jekyll-theme-leap-day
 
 plugins:
   - jekyll-mentions
-  - jekyll-last-modified-at
