@@ -21,14 +21,12 @@ We use two google groups for help and support.
 ### ["TVRename Releases"](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")
 ***The Releases Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum"). You can download the latest version here, as well as alphas and betas.. 
 
-# Issues and Bugs
-1. Start by visiting the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum"), and make a post there. 
+# Issues, Bugs and Feature&#160;Requests
+1. Start by visiting the [support forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum"), and make a post there. 
 2. You can also use **Help>Bug Report** in the application. Fill in the form and click ```Create```. Once the diagnostic information has been gathered, copy and paste it to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum").
 3. If you've found a bug that has been verified by the team, please raise it on the [bug tracker](https://github.com/TV-Rename/tvrename/issues "Visit the GitHub Bugtracker").
-4. If you need a quick resolution then packaging up your configuration files and sending them to us will help speed diagnosis. **For security reasons it is advisable to send the package to justthe person helping you with your problem**.
-
-# [Feature Requests](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Rename's Idea Wall")
-***Our Latest Feature...*** Please raise  ideas for features (or vote on existing ideas) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Rename's Idea Wall").
+4. If you need a quick resolution then packaging up your configuration files and sending them to us will help speed diagnosis. **For security reasons it is advisable to only send the package to the person helping you with your problem**.
+5. Feature requests can also be raised (and voted on) on our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Rename's Idea Wall").
 
 # [Under the Hood](technical "Read the Technical Guide")
 Get the oily rag out, its time to get your hands dirty... [Read the Technical Guide](technical "Read the Technical Guide").
