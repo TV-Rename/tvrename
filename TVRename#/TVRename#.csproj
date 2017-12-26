@@ -281,7 +281,6 @@
     <Compile Include="Forms\IgnoreEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Settings\Layout.cs" />
     <Compile Include="Forms\MissingFolderAction.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -425,15 +424,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Compile Include="Forms\RecoverXML.cs">
       <SubType>Form</SubType>
     </Compile>
