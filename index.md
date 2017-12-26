@@ -11,18 +11,18 @@ TV Rename in lots more detail... *[Click here!](userguide "Read The User Guide")
 TV Rename's "Did you knows..." *[Click here!](tips-tricks "Read Tips 'n' Tricks")*
 
 # [Command Line Interface](cmd-line "Read about using the CLI")
-Things you can do from the [command line](cmd-line "Read about using the CLI"). 
+Things you can do from the [command line](cmd-line "Read about using the CLI").
 
 # Forums
 We use two google groups for help and support.
 ### ["TVRename"](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")
 ***The Main Forum*** - You can ask for help , make suggestions, and report something you think may be a bug [here](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename
- Forum"). 
+ Forum").
 ### ["TVRename Releases"](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")
-***The Releases Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum"). You can download the latest version here, as well as alphas and betas.. 
+***The Releases Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum"). You can download the latest version here, as well as alphas and betas..
 
 # Issues, Bugs and Feature&#160;Requests
-1. Start by visiting the [support forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum"), and make a post there. 
+1. Start by visiting the [support forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum"), and make a post there.
 2. You can also use **Help>Bug Report** in the application. Fill in the form and click ```Create```. Once the diagnostic information has been gathered, copy and paste it to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum").
 3. If you've found a bug that has been verified by the team, please raise it on the [bug tracker](https://github.com/TV-Rename/tvrename/issues "Visit the GitHub Bugtracker").
 4. If you need a quick resolution then packaging up your configuration files and sending them to us will help speed diagnosis. **For security reasons it is advisable to only send the package to the person helping you with your problem**.
@@ -32,4 +32,4 @@ We use two google groups for help and support.
 Get the oily rag out, its time to get your hands dirty... [Read the Technical Guide](technical "Read the Technical Guide").
 
 # Buy us a drink
-If this program has saved you time, or you use it regularly, then [buy us a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or other beverage of your choice!).
+If this program has helped you out, saved you time, or you use it regularly, then [buy us a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or other beverage of your choice!).
