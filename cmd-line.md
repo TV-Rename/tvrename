@@ -2,7 +2,7 @@
 
 ### These are the options you need to know!
 
-If TV Rename is already running using the cli will tell that instance to initiate new activity.
+If TV Rename is already running any CLI activity will be directed towards the running instance.
 
 ## Main Options
 
