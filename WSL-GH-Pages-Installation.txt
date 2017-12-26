@@ -1,8 +1,8 @@
 | This procedure gets around the symbolic link issues with WSL and git by
 | mounting a windows directory containing the repo on WSL
 
-Installation
-============
+Installation...
+===============
 
 Install the Ubuntu App from the Microsoft Store
 
@@ -40,7 +40,7 @@ sudo mount --bind /mnt/c/Users/<username>/tvrename tvrename
 #
 git clone https://www.github.com/andy-abtec/tvrename.git tvrename
 #
-# GitHub repo cloned into the local tvrename directory
+# GitHub repo cloned into the shared local tvrename directory
 #
 cd tvrenane
 #
@@ -48,25 +48,29 @@ vi Gemfile
 	source 'https://rubygems.org'
 	gem 'github-pages', group: :jekyll_plugins
 #
-# To update...
-#
+
+To update...
+============
+
 sudo apt-get update -y && sudo apt-get upgrade -y
 #
 # Then...
 #
 bundle update
 #
-# To launch the local web server...
-#
+
+To launch the local web server...
+=================================
+
 bundle exec jekyll serve
 #
 
 Shrink this window down but leave it somewhere the last few lines can
 be monitored. Errors with the Jekyll server will be displayed here.
 
-And browse to http://127.0.0.1:4000 on Windows
+Browse to http://127.0.0.1:4000 on Windows
 
-Fire up a second WSL session and cd th tvrename
+Fire up a second WSL session and cd to tvrename
 
 The git commands can be run here
 
