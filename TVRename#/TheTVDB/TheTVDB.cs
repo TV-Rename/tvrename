@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -1085,7 +1085,6 @@ namespace TVRename
                 logger.Error(name + message);
                 logger.Error(str.ToString());
                 throw new TVDBException(name + message);
-                return false;
             }
             finally
             {
@@ -1290,7 +1289,7 @@ namespace TVRename
 
                         }
                     }
-                    catch (WebException ex)
+                    catch (WebException)
                     {
                         logger.Info("Looking for images, but none found for seriesId {0} in {1}", code ,DefaultLanguage );
 
