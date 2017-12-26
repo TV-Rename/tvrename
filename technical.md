@@ -1,8 +1,8 @@
 #### Under the Hood
 ***Right then, spanners at the ready, here we go!***
 
-## TV Rename and the Command&nbsp;Line
-A number of TV Rename's functions can be accessed using the command line. You can find more details [here](cmd-line "Read about Command Lind functionality").
+## [TV Rename and the Command&#160;Line](cmd-line "Read about Command Line functionality")
+A number of TV Rename's functions can be accessed using the command line. You can find more details [here](cmd-line "Read about Command Line functionality").
 
 ## The Registry
 The only thing TV Rename saves to the registry is installation information which is used by Windows "Apps and Features" to uninstall the program. But Hey, why would you want to do that?
