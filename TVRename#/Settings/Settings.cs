@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -712,7 +712,7 @@ namespace TVRename
 
             // ResumeDatPath
             FileInfo f2 =
-                new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
+                new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"uTorrent\resume.dat"));
             this.ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
