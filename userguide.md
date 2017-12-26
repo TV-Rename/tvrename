@@ -82,7 +82,7 @@ Once the update is complete ***My Shows*** includes "The Good Doctor" and looks 
 ![My Shows - New Show Added](images/userguide/my-shows-02.png)
 Additionally the ***When to Watch*** tab will now list any future episode dates.
 
-Lets go back and tweak "The Good Doctor" to include it in our "Media Library". Assuming the show is listed in ***My Shows***, make sure it is highlighted and click `Edit` to recall the partially populated *Add/Edit Show*. If it isn't in the ***My Shows*** follow the steps above to get the show name populated and then carry on as described below. 
+Lets go back and tweak "The Good Doctor" to include it in our "Media Library". Assuming the show is listed in ***My Shows***, make sure it is highlighted and click `Edit` to recall the partially populated *Add/Edit Show*. If it isn't listed in ***My Shows*** follow the steps above to get the show name populated and then carry on as described below (the "click `OK`" is unnecessary). 
 
 
 
