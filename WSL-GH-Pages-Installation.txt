@@ -79,6 +79,7 @@ The git commands can be run here
 #
 git config --global user.email "<Email registered with Repo>"
 git config --global user.name "<Repo username>"
+git config --global credential.helper cache
 #
 
 Files can be edited copied etc in the Windows environment (C:\Users\<username>\tvrename)
