@@ -1,6 +1,6 @@
-# Quickstart Guide
+#### Quickstart Guide
 
-## Welcome to TV Rename!
+# Welcome to TV Rename!
 
 This guide will help you through the basics setting up TV Rename.
 
@@ -8,9 +8,9 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
 > This guide assumes you already have the beginings of a "Media Library" - *a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them). TV Rename doesn't care how these directories are organised, however to us mere humans probably one directory per show or one directory per show with one sub-directory per season makes sense in terms of being able to find stuff later.*
 
-## Basic Setup
+# Basic Setup
 
-### 1. Add content from your "Media Library"...
+## 1. Add content from your "Media Library"
 
  1. Go to **Tools>Folder Monitor** and whilst on the ***Folder*** tab of the newly opened *Folder Monitor* window click `Add`. Browse to the root directory of your "Media Library" and click `OK`. The path will be added to the ***Monitor Folders*** list.
 
@@ -27,13 +27,13 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
  6. Go back to the ***My Shows*** tab and browse the series information. Here, by right clicking on a show, you can edit the show itself to control how TV Rename manages it, or edit a season to override episode information fetched from TheTVDB.
 
-### 2. Set your Preferences...
+## 2. Set your Preferences
 
  1. In **Options>Preferences**, go to the ***Search Folders*** tab and set the download location for new episodes. Also visit **Options>Filename Template Editor** to set how TV Rename will rename your files.
 
  2. Take a look at the other tabs in **Options>Preferences** to get an idea of the changes that can be made to TV Renames behaviour.
  
-### 3. Run a Scan...
+## 3. Run a Scan
 
  1. Go to the ***Scan*** tab, and click `Full Scan`. TV Rename will download any needed show information from [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and examine the contents of the Media Library. Settings in **Options...** will change the behaviour here.
 
@@ -41,13 +41,13 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
  3. Click `Do Checked` and TV Rename will process the ticked actions, moving and renaming files as necessary.
 
-### 4. Ongoing Monitoring...
+## 4. Ongoing Monitoring
 
  1. Go to the ***When to watch*** tab to see all known future information (including airdates) of shows you are following.
  
  2. In the ***Search Folders*** tab of **Options>Preferences** ticking the "Monitor folders for changes" box will tell TV Rename to automatically scan whenever a new file is made available.
 
-### 5. Sit back, relax, and let TV Rename do all the hard work for you!
+## 5. Sit back, relax, and let TV Rename do all the hard work for you!
 
 ***Whatever changes TV Rename makes to your recording names the season and episode details will remain untouched.***
 *It is highly unlikely that the names of the recordings will get screwed up, but, should it happen, the problem should be easily fixable after changing some settings, or adding new rules. At least, that's the theory. :)*
