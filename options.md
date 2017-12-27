@@ -30,7 +30,7 @@ Both boxes can be ticked, in which case you get both functionalities.
 ---|---|---
 | "Show in Taskbar" | ***Ticked***
 
-*Show episode pictures in episode guides* does "what-it-says-on-the-tin", if it is ticked screen grabs from show episodes will be shown with the episode descriptions in the *My Shows* tab. If it is unticked they will not be displayed.
+*Show episode pictures in episode guides* does what-it-says-on-the-tin, if it is ticked screen grabs from show episodes will be displayed with the episode descriptions in the *My Shows* tab. If it is unticked they will not be displayed.
 
 *Default: **Ticked***
 
