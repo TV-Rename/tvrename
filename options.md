@@ -20,16 +20,17 @@ Luckily the "out-of-the-box" defaults work well, and should you whish to change 
 
 *Default: **My Shows***
 
-The *Show Notification Area* and *Show in Taskbar* interact, one of them **must** be ticked.<br />
-If *Show in Taskbar* is selected the TV Rename icon appears in the Windows taskbar.
-<br />If *Show Notification Area* is selected the TV Rename icon appears in the System Tray. Right-clicking it will show an "Upcoming Shows" list, and double clicking restores the window.<br />
+The *Show Notification Area* and *Show in Taskbar* interact, one of them **must** be ticked. If you try to untick both the option you are changing clears, but the other one automatically sets.
+
+If *Show in Taskbar* is selected TV Rename's icon appears in the Windows taskbar.
+<br />If *Show Notification Area* is selected TV Rename's icon appears in the System Tray. Right-clicking it will show an "Upcoming Shows" list, and double clicking restores the main window.<br />
 Both boxes can be ticked, in which case you get both functionalities.
 
 *Defaults:* | "Show Notification Area" | ***Unticked***
 ---|---|---
 | "Show in Taskbar" | ***Ticked***
 
-*Show episode pictures in episode guides* does "just what it says on the tin", if it is ticked screen grabs from show episodes will be shown with the episode descriptions in the *My Shows* tab. If it is unticked they will not be displayed.
+*Show episode pictures in episode guides* does "what-it-says-on-the-tin", if it is ticked screen grabs from show episodes will be shown with the episode descriptions in the *My Shows* tab. If it is unticked they will not be displayed.
 
 *Default: **Ticked***
 
