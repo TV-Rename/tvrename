@@ -427,7 +427,6 @@
     <Compile Include="Forms\RecoverXML.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Utility\RSS.cs" />
     <Compile Include="Forms\ScanProgress.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -470,7 +469,6 @@
     <Content Include="App\app.ico" />
     <None Include="Resources\tv3white.png" />
     <None Include="Resources\ButtonSmall_Delete.png" />
-    <None Include="Resources\filtre.png" />
     <None Include="Resources\Black-Red_256x256.png" />
     <None Include="Resources\EditInformationHS.png" />
     <None Include="Resources\SearchWebHS.png" />
