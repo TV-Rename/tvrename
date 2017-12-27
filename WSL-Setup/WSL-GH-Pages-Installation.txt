@@ -12,9 +12,9 @@ Then in the WSL Window: -
 #
 sudo apt-get update -y && sudo apt-get upgrade -y
 #
-sudo apt-get install ruby ruby-dev build-essential 
+sudo apt-get install ruby ruby-dev build-essential
 #
-sudo apt-get inatall zlib1g-dev
+sudo apt-get install zlib1g-dev
 #
 sudo apt-get install libcurl4-openssl-dev
 #
@@ -71,15 +71,14 @@ be monitored. Errors with the Jekyll server will be displayed here.
 Browse to http://127.0.0.1:4000 on Windows
 
 Fire up a second WSL session and cd to tvrename
-
 The git commands can be run here
 
 #
 # To stop the prompting when running git push etc.
 #
-git config --global user.email "<Email registered with Repo>"
-git config --global user.name "<Repo username>"
-git config --global credential.helper cache
+git config user.email "<Email registered with Repo>"
+git config user.name "<Repo username>"
+git config credential.helper store
 #
 
-Files can be edited copied etc in the Windows environment (C:\Users\<username>\tvrename)
+Files can be edited copied etc. in the Windows environment (C:\Users\<username>\tvrename)
