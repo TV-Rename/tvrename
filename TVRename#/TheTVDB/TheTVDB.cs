@@ -1289,7 +1289,7 @@ namespace TVRename
 
                         }
                     }
-                    catch (WebException)
+                    catch (WebException ex)
                     {
                         logger.Info("Looking for images, but none found for seriesId {0} in {1}", code ,DefaultLanguage );
                         logger.Info(ex);
