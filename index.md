@@ -26,7 +26,7 @@ We use two google groups for help and support.
 2. You can also use **Help>Bug Report** in the application. Fill in the form and click ```Create```. Once the diagnostic information has been gathered, copy and paste it to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum").
 3. If you've found a bug that has been verified by the team, please raise it on the [bug tracker](https://github.com/TV-Rename/tvrename/issues "Visit the GitHub Bugtracker").
 4. If you need a quick resolution then packaging up your configuration files and sending them to us will help speed diagnosis. **For security reasons it is advisable to only send the package to the person helping you with your problem**.
-5. You can also visit our [idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Rename's Idea Wall") to suggest new features and vote on existing ideas 
+5. You can also visit our "[idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Rename's Idea Wall")" to suggest new features and vote on other suggestions. 
 
 # [Under the Hood](technical "Read the Technical Guide")
 Get the oily rag out, its time to get your hands dirty... [Read the Technical Guide](technical "Read the Technical Guide").

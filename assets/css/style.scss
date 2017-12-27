@@ -29,13 +29,13 @@
 .cli {
     font-family: "Lucida Console", Monaco, monospace;
     font-size: 14px;
-    font-weight: bold; 
+    font-weight: bold;
 }
 
-h1, h2, h4 {
+h1, h2, h4, h5 {
    color: #3399cc;
 }
-	
+
 h1 a:link, a:visited {
     font-weight: bold;
 }
@@ -56,6 +56,12 @@ h4 {
     font-size: 28px;
     font-weight: bold;
 }
+
+h5 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
 p a:link, a:visited {
     font-weight: bold;
 }
@@ -74,6 +80,16 @@ li a:link, a:visited {
 
 li a:hover, a:active {
     border-bottom: 1px solid #3399cc;
+}
+
+table {
+    width: 0;
+}
+
+th, td, td:first-child {
+  padding: 0 5px;
+  font-weight: normal;
+  border: none;
 }
 
 #banner {
