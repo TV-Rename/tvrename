@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -39,7 +39,7 @@ namespace TVRename
 
         private void RecoverXML_Load(object sender, System.EventArgs e)
         {
-            this.SettingsList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
+            this.SettingsList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.SettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
             this.DBList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TVDBFileName + "*");
 
             this.lbSettings.Items.Add("Default settings");

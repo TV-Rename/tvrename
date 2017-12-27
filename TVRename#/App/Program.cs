@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -171,7 +171,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
         }
 
         FileInfo tvdbFile = PathManager.TVDBFile;
-        FileInfo settingsFile = PathManager.TVDocSettingsFile;
+        FileInfo settingsFile = PathManager.SettingsFile;
         TVDoc doc = null;
 
         do // loop until no problems loading settings & tvdb cache files

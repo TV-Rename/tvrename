@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -445,7 +445,7 @@ namespace TVRename
             };
 
 
-            string fn = PathManager.UILayoutFile.FullName;
+            string fn = PathManager.LayoutFile.FullName;
             if (!File.Exists(fn))
                 return true;
 
@@ -524,7 +524,7 @@ namespace TVRename
                 NewLineOnAttributes = true
             };
 
-            using (XmlWriter writer = XmlWriter.Create(PathManager.UILayoutFile.FullName, settings))
+            using (XmlWriter writer = XmlWriter.Create(PathManager.LayoutFile.FullName, settings))
             {
 
                 writer.WriteStartDocument();
