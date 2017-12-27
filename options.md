@@ -1,6 +1,6 @@
 #### Options and Preferences
 
-One of TV Rename's strongest (and most confusing) features is its configurability. For the newcomer to the application especially, it's very easy to get "lost" in the plethora of options and preferences, and give up.
+One of TV Rename's strongest (and most confusing) features is its configurability. For the newcomer especially, it's very easy to get "lost" in the plethora of options and preferences, and give up.
 
 Luckily the "out-of-the-box" defaults work well, and should you whish to change any settings, all the stuff you can "fiddle with" is described here.
 
