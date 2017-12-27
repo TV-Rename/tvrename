@@ -5,7 +5,8 @@ I'm really glad you're reading this, because we need volunteer developers to hel
 Here are some important resources:
 
   * [TV Rename website](http://www.tvrename.com/)
-  * Mailing list: Join our [developer list](http://groups.google.com/group/opengovernment/)
+  * Join our [support forum](https://groups.google.com/forum/#!forum/tvrename)
+  * Vote on [feature suggestions](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0)
 
 ## Testing
 
@@ -27,5 +28,5 @@ Start reading our code and you'll get the hang of it. We optimize for readabilit
 
   * We use [EditorConfig](http://editorconfig.org/) for this project, please install the extention for your editor.
   * We indent using four spaces (soft tabs), EditorConfig will take care of this.
-  * We ALWAYS put spaces after list items and method parameters (`[1, 2, 3]`, not `[1,2,3]`), around operators (`x += 1`, not `x+=1`), and around hash arrows.
+  * We always put spaces after list items and method parameters (`[1, 2, 3]`, not `[1,2,3]`), around operators (`x += 1`, not `x+=1`), and around hash arrows.
   * This is open source software. Consider the people who will read your code, and make it look nice for them. It's sort of like driving a car: Perhaps you love doing donuts when you're alone, but with passengers the goal is to make the ride as smooth as possible.
