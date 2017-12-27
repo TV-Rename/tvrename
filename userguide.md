@@ -2,7 +2,7 @@
 ## Introduction
 As I write this guide Version 2.24 of TV Rename is out-in-the-wild and Version 2.3 is in beta making it "quite interesting" trying to keep stuff up to date. We'll do our best but any suggestions for improvements, or offers of help are more than welcome.
 
-**Note:** Comparing the live and beta versions most of the features are the same, or similar. The most recent changes have been regarding enterng show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com.
+**Note:** Comparing the live and beta versions most of the features are the same, or similar. The most recent changes have been regarding entering show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com.
 
 If you're new to TV Rename you're should probably read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get up and running).
 
@@ -20,7 +20,7 @@ Looking at the list in the main panel we see details of recent and future show e
 
 At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the ***General*** tab of **Options>Preferences** if you wish).
 
-In this example there are two shows listed. The disk icon to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode was found in the Media Library and the magnifing glass to the left of "Maigret (2016)" indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured under **Options>Search Engines**).
+In this example there are two shows listed. The disk icon to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode was found in the Media Library and the magnifying glass to the left of "Maigret (2016)" indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured under **Options>Search Engines**).
 
 The next section tells us what shows found in the Media Library will be airing new episodes in the "Next 7 Days".
 
@@ -151,13 +151,13 @@ There are 3 types of scan you can choose from :
 
 ## Scan Results
 
-This shows you where ther are gaps in your collection. Click the check button, and TV Rename will look through your folders and list what you are missing.
+This shows you where there are gaps in your collection. Click the check button, and TV Rename will look through your folders and list what you are missing.
 
 The "arrow-down" button in the bottom left lets you choose your preferred torrent search engine. Clicking on the button in the bottom left will search for the currently selected missing episode(s) on that site. Double-clicking an item in the list will also search.
 
 ![Scan Results](images/screenshots/ScanResults.PNG)
 
-Add a number of "search folders". Either use the "Add" button, or drag and drop folders from Windows Explorer into this list. The "Open" button will open an Explorer window for the selected folder. Folders added to this list automatically have their subfolders searched.
+Add a number of "search folders". Either use the "Add" button, or drag and drop folders from Windows Explorer into this list. The "Open" button will open an Explorer window for the selected folder. Folders added to this list automatically have their sub folders searched.
 
 Press the "Find" button to search for missing episodes. TV Rename will list the episodes it found, and the appropriate move (on the same device) or copy (across different devices) operation to get them to where they should be. If you choose "Leave Originals", it will always copy the files to their new location.
 
