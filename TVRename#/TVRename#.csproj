@@ -427,7 +427,6 @@
     <Compile Include="Forms\RecoverXML.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Utility\RSS.cs" />
     <Compile Include="Forms\ScanProgress.cs">
       <SubType>Form</SubType>
     </Compile>
