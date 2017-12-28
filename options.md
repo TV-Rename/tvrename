@@ -34,8 +34,9 @@ Both boxes can be ticked, in which case you get both functionalities.
 
 *Default: **Ticked***
 
+*Automatically select show and season in My Shows*
 
-
+*Default: **Ticked***
 
 ##### Files & Folders
 | Field | Explanation |
