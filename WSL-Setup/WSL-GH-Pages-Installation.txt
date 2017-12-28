@@ -1,5 +1,5 @@
 | This procedure gets around the symbolic link issues with WSL and git by
-| mounting a windows directory containing the repo on WSL
+| mounting a windows folder containing the repo on WSL
 
 Installation...
 ===============
@@ -36,11 +36,11 @@ mkdir tvrename
 #
 sudo mount --bind /mnt/c/Users/<username>/tvrename tvrename
 #
-# Contents of the Windows directory is now available in WSL
+# Contents of the Windows folder is now available in WSL
 #
 git clone https://www.github.com/andy-abtec/tvrename.git tvrename
 #
-# GitHub repo cloned into the shared local tvrename directory
+# GitHub repo cloned into the shared local tvrename folder
 #
 cd tvrenane
 #

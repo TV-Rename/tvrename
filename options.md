@@ -109,9 +109,9 @@ This screen tells TV Rename what filenames to look out for when searchign for a 
  * A folder can be specified to test the results of the Regular Expression
  * Each can have some notes to remind the user why that expression was added
 
-![File Name Processors](images/screenshots/FileNameProcessors.PNG)
+### AWAITING UPDATE
 ## Search Engines
-![SearchEngines](images/screenshots/SearchEngines.PNG)
+### AWAITING UPDATE
 
 * {ShowName} - Name of the Show
 * {Season} - Number of the season
@@ -130,4 +130,4 @@ This screen tells TV Rename what filenames to look out for when searchign for a 
 ## Template Editor
 This is where we define the format of the filenames we rename to. It uses the same codes as above.
 
-![Template Editor](images/screenshots/TemplateEditor.PNG)
+### AWAITING UPDATE

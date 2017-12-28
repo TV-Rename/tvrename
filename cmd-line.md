@@ -23,7 +23,7 @@ If TV Rename is already running any CLI activity will be directed towards the ru
 {:.cli}
 /hide
 * Hides the User Interface and associated message boxes from view. 
-* Defaults to not add missing directories (providing "/createmissing" is not set).
+* Defaults to not add missing folders (providing "/createmissing" is not set).
 * Exits once actions complete.
  
 {:.cli}
@@ -34,11 +34,11 @@ If TV Rename is already running any CLI activity will be directed towards the ru
 
 {:.cli}
 /createmissing  
-* Creates directories if they are missing.
+* Creates folders if they are missing.
 
 {:.cli}
 /ignoremissing  
-* Ignore missing directories.                  
+* Ignore missing folders.                  
                   
 {:.cli}
 /norenamecheck
@@ -53,4 +53,4 @@ If TV Rename is already running any CLI activity will be directed towards the ru
 
 {:.cli}
 /userfilepath:BLAH
-* Sets a custom directory path for the settings files.
+* Sets a custom folder path for the settings files.

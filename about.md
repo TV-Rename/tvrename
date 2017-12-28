@@ -21,13 +21,13 @@ But you want them named with the show and episode name and the season and episod
 ## But wait.. Theres more!
 **TV Rename can: -**
 * Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and rules you can configure
-* Monitor specified directories for TV Show files
+* Monitor specified folders for TV Show files
 * Restore downloaded file names to those originally found in the .torrent files used to download them
 
-> ***"Media Library"** - a directory (or directories) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
+> ***"Media Library"** - a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
 
 **Once TV Rename knows about your Media Library it can: -**
-* Copy (or move) files from monitored directories to your Media Library
+* Copy (or move) files from monitored folders to your Media Library
 * List any missing TV Show episodes/seasons in your Media Library
 * Create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of a TV Show airs
