@@ -1,7 +1,7 @@
 #### Under the Hood
 ***Right then, spanners at the ready, here we go!***
 
-## [TV Rename and the Command&#160;Line](cmd-line "Read about Command Line functionality")
+## [TV Rename and the Command&nbsp;Line](cmd-line "Read about Command Line functionality")
 A number of TV Rename's functions can be accessed using the command line. You can find more details [here](cmd-line "Read about Command Line functionality").
 
 ## The Registry
@@ -50,7 +50,7 @@ Log files are rotated into an "archive" directory (in the same location as TVRen
 
 As with **TheTVDB.xml** and **TVRenameSettings.xml** a maximum of ten backup copies of the log file are kept (**TVRename00.log** - **TVRename09.log**) on a first-in-first-out basis.
 
-Logging uses NLog, the configuration file ([NLog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config "Look at NLog.config in the TVRename Repo")) is stored in the TV Rename program directory.
+Logging uses NLog, the configuration file ([NLog.config](https://github.com/TV-Rename/tvrename/blob/master/TVRename%23/NLog.config "Look at NLog.config in the TV-Rename Repo")) is stored in the TV Rename program directory.
 
 You can read the [NLog Wiki](https://github.com/nlog/NLog/wiki/Configuration-file "Visit the NLog Wiki") for guidance on how to adjust the configuration file to collect more information.
 

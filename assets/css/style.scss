@@ -110,10 +110,24 @@ th, td, td:first-child {
 }
 
 #banner ul li .button {
-    width: 110px;
+    width: 121px;
     padding: 4px 0;
 }
 
 .wrapper nav {
     top: 190px;
+}
+
+footer span a {
+    color:#666;
+    font-size: 22px;
+}
+
+footer span a:hover {
+    border-bottom: 2px solid #666;
+}
+
+footer span img {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
 }

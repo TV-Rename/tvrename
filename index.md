@@ -21,7 +21,7 @@ We use two google groups for help and support.
 ### ["TVRename Releases"](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")
 ***The Releases Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum"). You can download the latest version here, as well as alphas and betas..
 
-# Issues, Bugs and Feature&#160;Requests
+# Issues, Bugs and Feature&nbsp;Requests
 1. Start by visiting the [support forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum"), and make a post there.
 2. You can also use **Help>Bug Report** in the application. Fill in the form and click ```Create```. Once the diagnostic information has been gathered, copy and paste it to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum").
 3. If you've found a bug that has been verified by the team, please raise it on the [bug tracker](https://github.com/TV-Rename/tvrename/issues "Visit the GitHub Bugtracker").
