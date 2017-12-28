@@ -60,7 +60,7 @@ When raising a bug please include a log file that illustrates the issue if you c
 You can find TV Rename's source code (along with executables and this website) in [The TV Rename GitHub Repository](https://github.com/TV-Rename/tvrename "Visit The repository").
 
 # Framework
-TV Rename uses the Microsoft .NET Framework. The installer will check for this and let you know if it is needed. It can be downloaded from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").
+TV Rename uses the Microsoft .NET Framework. The installer will check for this and let you know if it is needed. It's a free download from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").
 
 # Credits
 TV Rename pulls data from [TheTVDB.com](http://thetvdb.com/ "Visit TheTVDB.com") using their API. **Please visit their site, register, and help out by contributing information and artwork for TV Series and Episodes.**

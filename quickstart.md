@@ -39,9 +39,11 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
  
 ## 3. Run a Scan
 
+![Scan](images/main-window/scan-01.png)
+
  1. Go to the ***Scan*** tab, and click `Full Scan`. TV Rename will download any needed show information from [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and examine the contents of the Media Library. Settings in **Options...** will change the behaviour here.
 
- 2. When the scan is complete, review TV Rename's suggested changes and other information. Any ticked item will be actioned, so untick things you're not sure about, or use the checkboxes in the bottom-right of the screen. Right-click on selected items for more actions.
+ 2. When the scan is complete, review TV Rename's suggested changes and other information. Any ticked item will be actioned, so un-tick things you're not sure about, or use the check boxes in the bottom-right of the screen. Right-click on selected items for more actions.
 
  3. Click `Do Checked` and TV Rename will process the ticked actions, moving and renaming files as necessary.
 
