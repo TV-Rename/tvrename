@@ -5,7 +5,7 @@
 A number of TV Rename's functions can be accessed using the command line. You can find more details [here](cmd-line "Read about Command Line functionality").
 
 ## The Registry
-The only thing TV Rename saves to the registry is installation information which is used by Windows "Apps and Features" to uninstall the program. But Hey, why would you want to do that?
+The only thing TV Rename saves to the registry is installation information which is used by Windows "Apps and Features" to uninstall the program. But hey, why would you want to do that?
 
 ## Configuration Files
 All the configuration information and locally cached data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is stored in a series of (mainly XML) files under the users Application folder.
@@ -14,7 +14,7 @@ On Windows XP this is: -
 
 > \\Documents and Settings\\\<username\>\\Application Data\\TVRename\\TVRename\\2.1\\
 
-And on Windows 7 and later: -
+And on Windows Vista and later: -
 
 > \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\2.1\\
 
@@ -44,7 +44,7 @@ on Windows XP or: -
 
 > \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
 
-On Windows 7 and later.
+On Windows Vista and later.
 
 Log files are rotated into an "archive" folder (in the same location as TVRename.log) every time TV Rename is run or every 24 hours, whichever is sooner.
 
@@ -65,12 +65,13 @@ TV Rename uses the Microsoft .NET Framework. The installer will check for this a
 # Credits
 TV Rename pulls data from [TheTVDB.com](http://thetvdb.com/ "Visit TheTVDB.com") using their API. **Please visit their site, register, and help out by contributing information and artwork for TV Series and Episodes.**
 
-It also uses
-* [DotNET Zip](http://www.codeplex.com/DotNetZip),
-* [SourceGrid](http://www.codeplex.com/sourcegrid/),
-* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](http://www.red-gate.com/products/ants_profiler/index.htm), and JetBrain's [dotTrace](http://www.jetbrains.com/profiler/).
-* JetBrains' [ReSharper](http://www.jetbrains.com/resharper/) is also used for improving code performance.
-* [AlphaFS](http://alphafs.alphaleonis.com/) is used for advanced .NET file operations.
+It also uses: -
+* [Json.NET](https://www.newtonsoft.com/json),
+* [AlphaFS](http://alphafs.alphaleonis.com/) is used for advanced .NET file operations,
+* [NLog](http://nlog-project.org/) open-source logging for .NET,
+* [SourceGrid](https://sourcegrid.codeplex.com/),
+* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](https://www.red-gate.com/products/dotnet-development/ants-performance-profiler/), and JetBrain's [dotTrace](https://www.jetbrains.com/profiler/).
+* JetBrains' [ReSharper](https://www.jetbrains.com/resharper/) is also used for improving code performance.
 
 and
 
