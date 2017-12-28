@@ -82,6 +82,14 @@ li a:hover, a:active {
     border-bottom: 1px solid #3399cc;
 }
 
+li.tag-h1 a:hover, a:active {
+    border-bottom: 2px solid #333;
+} 
+
+li.tag-h2 a:hover, a:active {
+    border-bottom: 1px solid #333;
+} 
+
 table {
     width: 0;
 }
