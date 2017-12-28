@@ -33,7 +33,7 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
 ![Options>Preferences>Search Folders](images/options/preferences-search-folders-01.png){:.pic-r}
 
- 1. In **Options>Preferences**, go to the ***Search Folders*** tab and set the download location for new episodes. Also visit **Options>Filename Template Editor** to set how TV Rename will rename your files.
+ 1. In **Options>Preferences**, go to the ***Search Folders*** tab and `Add` the download location for new episodes. Also visit **Options>Filename Template Editor** to set how TV Rename will rename your files.
 
  2. Take a look at the other tabs in **Options>Preferences** to get an idea of the changes that can be made to TV Renames behaviour.
  
