@@ -31,5 +31,11 @@ We use two google groups for help and support.
 # [Under the Hood](technical "Read the Technical Guide")
 Get the oily rag out, its time to get your hands dirty... [Read the Technical Guide](technical "Read the Technical Guide").
 
-# Buy us a drink
-If this program has helped you out, saved you time, or you use it regularly, then [buy us a drink](https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8) to say thanks! Suggested amount is the price you'd pay for a beer (or other beverage of your choice!).
+# Document Conventions
+Text indicating a window name is *Italic*, eg: *Folder Monitor*
+
+Text indicating a tab in a window is ***Bold Italic***, eg: ***When to watch***
+
+Text indicating navigation through the menu system is **Bold** and may include a **>** to indicate a sub menu, eg: **Tools>Folder Monitor**
+
+Text indicating a button looks like `A Button`
