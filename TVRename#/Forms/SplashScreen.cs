@@ -76,9 +76,11 @@ namespace TVRename
             // TODO: Add error handling
             if (_worker == null)
             {
-                _worker = new BackgroundWorker();
-                _worker.WorkerReportsProgress = false;
-                _worker.WorkerSupportsCancellation = true;
+                _worker = new BackgroundWorker
+                {
+                    WorkerReportsProgress = false,
+                    WorkerSupportsCancellation = true
+                };
                 _worker.DoWork += worker_DoWork;
 
                 _fader = new Timer(FadeSpeed);

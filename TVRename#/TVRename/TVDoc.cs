@@ -140,9 +140,9 @@ namespace TVRename
             _mDirty = false;
             TheActionList = new ItemList();
 
-            MonitorFolders = new List<String>();
+            MonitorFolders = new List<string>();
             IgnoreFolders = new List<String>();
-            SearchFolders = new List<String>();
+            SearchFolders = new List<string>();
 
             ShowItems = new List<ShowItem>();
             AddItems = new FolderMonitorEntryList();
@@ -153,11 +153,13 @@ namespace TVRename
             ActionCancel = false;
             ScanProgDlg = null;
 
-            _finders = new List<Finder>();
-            _finders.Add(new FileFinder(this));
-            _finders.Add(new RssFinder(this));
-            _finders.Add(new UTorrentFinder(this));
-            _finders.Add(new SaBnzbdFinder(this));
+            _finders = new List<Finder>
+            {
+                new FileFinder(this),
+                new RssFinder(this),
+                new UTorrentFinder(this),
+                new SaBnzbdFinder(this)
+            };
 
 
             LoadOk = ((settingsFile == null) || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
@@ -1416,10 +1418,12 @@ namespace TVRename
 
         public void WriteUpcoming()
         {
-            List<UpcomingExporter> lup = new List<UpcomingExporter>();
+            List<UpcomingExporter> lup = new List<UpcomingExporter>
+            {
+                new UpcomingRss(this),
+                new UpcomingXML(this)
+            };
 
-            lup.Add(new UpcomingRss(this));
-            lup.Add(new UpcomingXML(this));
 
             foreach (UpcomingExporter ue in lup)
             {

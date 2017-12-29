@@ -135,8 +135,7 @@ namespace TVRename
             Connected = false;
             _extraEpisodes = new List<ExtraEp>();
 
-            LanguageList = new List<Language>();
-            LanguageList.Add(new Language(7,"en","English","English"));
+            LanguageList = new List<Language> {new Language(7, "en", "English", "English")};
 
             WebsiteRoot = "http://thetvdb.com";
             _apiRoot = "https://api.thetvdb.com";

@@ -8,15 +8,17 @@ namespace TVRename
         private readonly List<DownloadIdentifier> _identifiers;
         
         public DownloadIdentifiersController() {
-            _identifiers = new List<DownloadIdentifier>();
-            _identifiers.Add(new DownloadFolderJPG());
-            _identifiers.Add(new DownloadEpisodeJPG());
-            _identifiers.Add(new DownloadFanartJPG());
-            _identifiers.Add(new DownloadMede8ErMetaData());
-            _identifiers.Add(new DownloadpyTivoMetaData());
-            _identifiers.Add(new DownloadSeriesJPG());
-            _identifiers.Add(new DownloadKodiMetaData());
-            _identifiers.Add(new DownloadKodiImages());
+            _identifiers = new List<DownloadIdentifier>
+            {
+                new DownloadFolderJPG(),
+                new DownloadEpisodeJPG(),
+                new DownloadFanartJPG(),
+                new DownloadMede8ErMetaData(),
+                new DownloadpyTivoMetaData(),
+                new DownloadSeriesJPG(),
+                new DownloadKodiMetaData(),
+                new DownloadKodiImages()
+            };
         }
 
         public void NotifyComplete(FileInfo file)

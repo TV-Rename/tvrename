@@ -114,10 +114,9 @@ namespace TVRename
 
                     if (numberMatch || (!numeric && (simpleS.Contains(Regex.Replace(what, "[^\\w ]", "")))) || (numeric && show.Contains(what)))
                     {
-                        ListViewItem lvi = new ListViewItem();
-                        lvi.Text = num.ToString();
+                        ListViewItem lvi = new ListViewItem {Text = num.ToString()};
                         lvi.SubItems.Add(show);
-                        lvi.SubItems.Add(kvp.Value.FirstAired != null ? kvp.Value.FirstAired.Value.Year.ToString() : "");
+                        lvi.SubItems.Add(kvp.Value.FirstAired?.Year.ToString() ?? "");
 
                         lvi.Tag = num;
                         if (numberMatch)

@@ -22,8 +22,7 @@ namespace TVRename
         {
             InitializeComponent();
 
-            _mTccf = new TheTVDBCodeFinder("");
-            _mTccf.Dock = DockStyle.Fill;
+            _mTccf = new TheTVDBCodeFinder("") {Dock = DockStyle.Fill};
             _mTccf.SelectionChanged += CodeChanged;
             _mTccf.lvMatches.DoubleClick += MatchDoubleClick;
 

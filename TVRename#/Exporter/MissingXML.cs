@@ -12,10 +12,12 @@ namespace TVRename
         {
             if (TVSettings.Instance.ExportMissingXML)
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
-                //XmlWriterSettings settings = gcnew XmlWriterSettings();
-                settings.Indent = true;
-                settings.NewLineOnAttributes = true;
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    NewLineOnAttributes = true
+                };
+                
                 using (XmlWriter writer = XmlWriter.Create(Location(), settings))
                 {
                     writer.WriteStartDocument();

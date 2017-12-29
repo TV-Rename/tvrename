@@ -82,13 +82,11 @@ namespace TVRename
             // header row
 
             ColumnHeader h;
-            h = new ColumnHeader("Name");
-            h.AutomaticSortEnabled = false;
+            h = new ColumnHeader("Name") {AutomaticSortEnabled = false};
             _grid1[0, 0] = h;
             _grid1[0, 0].View = titleModel;
 
-            h = new ColumnHeader("URL");
-            h.AutomaticSortEnabled = false;
+            h = new ColumnHeader("URL") {AutomaticSortEnabled = false};
             _grid1[0, 1] = h;
             _grid1[0, 1].View = titleModel;
         }

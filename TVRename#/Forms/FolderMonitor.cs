@@ -183,8 +183,7 @@ namespace TVRename
             FmpUpto = "Checking folders";
             FmpPercent = 0;
 
-            Thread fmpshower = new Thread(FmpShower);
-            fmpshower.Name = "Folder Monitor Progress (Folder Check)";
+            Thread fmpshower = new Thread(FmpShower) {Name = "Folder Monitor Progress (Folder Check)"};
             fmpshower.Start();
 
             while ((Fmp == null) || (!Fmp.Ready))

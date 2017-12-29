@@ -73,8 +73,7 @@ namespace TVRename
             lvRuleList.Items.Clear();
             foreach (ShowRule sr in _workingRuleSet)
             {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = sr.ActionInWords();
+                ListViewItem lvi = new ListViewItem {Text = sr.ActionInWords()};
                 lvi.SubItems.Add(sr.First == -1 ? "" : sr.First.ToString());
                 lvi.SubItems.Add(sr.Second == -1 ? "" : sr.Second.ToString());
                 lvi.SubItems.Add(sr.UserSuppliedText);

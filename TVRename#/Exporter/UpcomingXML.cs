@@ -20,10 +20,12 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             try
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.NewLineOnAttributes = true;
-                settings.Encoding = Encoding.ASCII;
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    NewLineOnAttributes = true,
+                    Encoding = Encoding.ASCII
+                };
                 using (XmlWriter writer = XmlWriter.Create(str, settings))
                 {
                     writer.WriteStartDocument();

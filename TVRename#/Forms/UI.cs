@@ -347,13 +347,15 @@ namespace TVRename
                 tp.BackColor = SystemColors.Control;
 
             // MAH: Create a "Clear" button in the Filter Text Box
-            var filterButton = new Button();
-            filterButton.Size = new Size(16, 16);
-            filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, (filterTextBox.ClientSize.Height - 16) / 2 + 1);
-            filterButton.Cursor = Cursors.Default;
-            filterButton.Image = Resources.DeleteSmall;
-            filterButton.Name = "Clear";
+            var filterButton = new Button
+            {
+                Size = new Size(16, 16),
+                Cursor = Cursors.Default,
+                Image = Resources.DeleteSmall,
+                Name = "Clear"
+            };
             filterButton.Click += filterButton_Click;
+            filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, (filterTextBox.ClientSize.Height - 16) / 2 + 1);
             filterTextBox.Controls.Add(filterButton);
             // Send EM_SETMARGINS to prevent text from disappearing underneath the button
             SendMessage(filterTextBox.Handle, 0xd3, (IntPtr)2, (IntPtr)(filterButton.Width << 16));
@@ -612,8 +614,7 @@ namespace TVRename
             menuSearchSites.Items.Clear();
             for (int i = 0; i < _mDoc.GetSearchers().Count(); i++)
             {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(_mDoc.GetSearchers().Name(i));
-                tsi.Tag = i;
+                ToolStripMenuItem tsi = new ToolStripMenuItem(_mDoc.GetSearchers().Name(i)) {Tag = i};
                 menuSearchSites.Items.Add(tsi);
             }
             return menuSearchSites;
