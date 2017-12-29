@@ -65,7 +65,7 @@ namespace TVRename
                 // some folders may come up multiple times
                 {
 
-                    string bannerPath = "";
+                    string bannerPath;
 
                     if (TVSettings.Instance.SeasonSpecificFolderJPG())
                     {

@@ -957,8 +957,7 @@ namespace TVRename
                     ShowStatusColoringType ssct = cboShowStatus.SelectedItem as ShowStatusColoringType;
                     if (!ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty && ssct != null)
                     {
-                        ListViewItem item = null;
-                        item = lvwDefinedColors.FindItemWithText(ssct.Text);
+                        ListViewItem item = lvwDefinedColors.FindItemWithText(ssct.Text);
                         if (item == null)
                         {
                             item = new ListViewItem();

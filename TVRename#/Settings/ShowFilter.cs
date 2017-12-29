@@ -37,14 +37,12 @@ namespace TVRename
             Boolean doAnyGenresMatch = false; //assume false
             if (!areGenresIgnored )
                 {
-                if (show.Genres == null)
-                {
-                    doAnyGenresMatch = false;
-                } else                 foreach(String showGenre in show.Genres)
-                {
-                    foreach (String filterGenre in Genres)
-                        if (showGenre == filterGenre) doAnyGenresMatch = true;
-                }
+                if (show.Genres != null)
+                    foreach (String showGenre in show.Genres)
+                    {
+                        foreach (String filterGenre in Genres)
+                            if (showGenre == filterGenre) doAnyGenresMatch = true;
+                    }
             }
 
             return isNameOk && isStatusOk && isNetworkOk && isRatingOk && (areGenresIgnored || doAnyGenresMatch );

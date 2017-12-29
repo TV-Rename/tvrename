@@ -56,7 +56,7 @@ namespace TVRename
                 return null;
 
             XmlReaderSettings settings = new XmlReaderSettings {IgnoreComments = true, IgnoreWhitespace = true};
-            TVRenameStats sc = null;
+            TVRenameStats sc;
 
             try
             {

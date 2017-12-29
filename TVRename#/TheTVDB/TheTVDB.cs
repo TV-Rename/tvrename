@@ -222,10 +222,7 @@ namespace TVRename
             {
                 LoadErr = loadFrom.Name + " : " + e.Message;
 
-                if (fs != null)
-                    fs.Close();
-
-                fs = null;
+                fs?.Close();
 
                 return false;
             }
@@ -603,7 +600,7 @@ namespace TVRename
 
             while (moreUpdates)
             {
-                JObject jsonUdpateResponse = new JObject();
+                JObject jsonUdpateResponse;
 
                 //If this date is in the last week then this needs to be the last call to the update
                 DateTime requestedTime = Helpers.FromUnixTime(epochTime).ToUniversalTime();
@@ -621,11 +618,10 @@ namespace TVRename
                     _logger.Warn(ex);
                     Say("");
                     LastError = ex.Message;
-                    moreUpdates = false;
                     return false;
                 }
 
-                int numberOfResponses =0;
+                int numberOfResponses;
                 try
                 {
                     numberOfResponses = ((JArray)jsonUdpateResponse["data"]).Count;
@@ -635,7 +631,6 @@ namespace TVRename
                     
                     Say("");
                     LastError = ex.Message;
-                    moreUpdates = false;
 
                     String msg = "Unable to get latest updates from TVDB " + Environment.NewLine + "Trying to get updates since " + Helpers.FromUnixTime(epochTime).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the date is very old, please consider a full refresh";
                     _logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
@@ -714,7 +709,7 @@ namespace TVRename
                         while (morePages)
                         {
                             String episodeUri = _apiRoot + "/series/" + id + "/episodes";
-                            JObject jsonEpisodeResponse = new JObject();
+                            JObject jsonEpisodeResponse;
                             try
                             {
                                 jsonEpisodeResponse = HttpHelper.JsonHttpgetRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, _authenticationToken);
@@ -1015,11 +1010,12 @@ namespace TVRename
         {
             bool forceReload = DoWeForceReloadFor(code);
 
-            string txt = "";
+            string txt;
             if (_series.ContainsKey(code))
                 txt = _series[code].Name;
             else
                 txt = "Code " + code;
+
             if (episodesToo)
                 txt += " (Everything)";
             else
@@ -1031,7 +1027,7 @@ namespace TVRename
             Say(txt);
 
             String uri = _apiRoot + "/series/" + code;
-            JObject jsonResponse = new JObject();
+            JObject jsonResponse ;
             JObject jsonDefaultLangResponse = new JObject();
             try
             {
@@ -1080,7 +1076,7 @@ namespace TVRename
                 while (morePages)
                 {
                     String episodeUri = _apiRoot + "/series/" + code + "/episodes";
-                    JObject jsonEpisodeResponse = new JObject();
+                    JObject jsonEpisodeResponse;
                     try
                     {
                         jsonEpisodeResponse = HttpHelper.JsonHttpgetRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, _authenticationToken);
@@ -1277,7 +1273,7 @@ namespace TVRename
         {
             bool forceReload = _forceReloadOn.Contains(seriesId);
 
-            string txt = "";
+            string txt;
             if (_series.ContainsKey(seriesId))
             {
                 Episode ep = FindEpisodeById(episodeId);
@@ -1292,7 +1288,7 @@ namespace TVRename
             Say(txt);
 
             String uri = _apiRoot + "/episodes/" + episodeId.ToString();
-            JObject jsonResponse = new JObject();
+            JObject jsonResponse;
             JObject jsonDefaultLangResponse = new JObject();
 
             try {
@@ -1433,7 +1429,7 @@ namespace TVRename
             }
 
             String uri = _apiRoot + "/search/series";
-            JObject jsonResponse = new JObject();
+            JObject jsonResponse ;
             JObject jsonDefaultLangResponse = new JObject();
             try
             {

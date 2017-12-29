@@ -341,8 +341,7 @@ namespace TVRename
             bool hasSeasonFolders = false;
             try
             {
-                string folderName = null;
-                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName);
+                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out string folderName);
                 bool hasSubFolders = di2.GetDirectories().Length > 0;
                 if (!alreadyHaveIt && (!hasSubFolders || hasSeasonFolders))
                 {
@@ -1323,7 +1322,6 @@ namespace TVRename
                 }
 
                 reader.Close();
-                reader = null;
             }
             catch (Exception e)
             {
@@ -1824,7 +1822,7 @@ namespace TVRename
                         String folder = folderFe;
 
                         // generate new filename info
-                        bool goAgain = false;
+                        bool goAgain;
                         DirectoryInfo di = null;
                         bool firstAttempt = true;
                         do
@@ -1838,7 +1836,6 @@ namespace TVRename
                                 }
                                 catch
                                 {
-                                    goAgain = false;
                                     break;
                                 }
                             }
@@ -2510,26 +2507,23 @@ namespace TVRename
                     if (f.Active() && ListHasMissingItems(TheActionList))
                     {
 
-                        int startPos = 0;
+                        int startPos;
                         int endpos = 0;
 
                         switch (f.DisplayType())
                         {
                             case Finder.FinderDisplayType.Local:
                                 currentLocalFinderId++;
-                                startPos = 100 * (currentLocalFinderId - 1) / activeLocalFinders;
                                 startPos = 100 * (currentLocalFinderId) / activeLocalFinders;
                                 f.Check(ScanProgDlg == null ? noProgress : ScanProgDlg.LocalSearchProg, startPos, endpos);
                                 break;
                             case Finder.FinderDisplayType.Downloading:
                                 currentDownloadingFinderId++;
-                                startPos = 100 * (currentDownloadingFinderId - 1) / activeDownloadingFinders;
                                 startPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
                                 f.Check(ScanProgDlg == null ? noProgress : ScanProgDlg.DownloadingProg, startPos, endpos);
                                 break;
                             case Finder.FinderDisplayType.Rss:
                                 currentRssFinderId++;
-                                startPos = 100 * (currentRssFinderId - 1) / activeRssFinders;
                                 startPos = 100 * (currentRssFinderId) / activeRssFinders;
                                 f.Check(ScanProgDlg == null ? noProgress : ScanProgDlg.RssProg, startPos, endpos);
                                 break;

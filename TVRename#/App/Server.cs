@@ -36,7 +36,7 @@ namespace TVRename
 
                     // Buffer for reading data
                     Byte[] bytes = new Byte[256];
-                    string data = null;
+                    string data;
 
                     // Enter the listening loop.
                     while (true)
@@ -44,7 +44,6 @@ namespace TVRename
                         // Perform a blocking call to accept requests.
                         // You could also user server.AcceptSocket() here.
                         TcpClient client = server.AcceptTcpClient();
-                        data = null;
 
                         // Get a stream Object* for reading and writing
                         NetworkStream stream = client.GetStream();

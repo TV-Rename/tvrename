@@ -833,7 +833,7 @@ namespace TVRename
 
             Season s = ser.Seasons[snum];
 
-            List<ProcessedEpisode> eis = null;
+            List<ProcessedEpisode> eis;
             // int snum = s.SeasonNumber;
             if (si.SeasonEpisodes.ContainsKey(snum))
                 eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
@@ -975,7 +975,7 @@ namespace TVRename
 
             Season s = ser.Seasons[snum];
 
-            List<ProcessedEpisode> eis = null;
+            List<ProcessedEpisode> eis;
             // int snum = s.SeasonNumber;
             if (si.SeasonEpisodes.ContainsKey(snum))
                 eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
@@ -1522,7 +1522,6 @@ namespace TVRename
                 if (addSep)
                 {
                     showRightClickMenu.Items.Add(new ToolStripSeparator());
-                    addSep = false;
                 }
                 tsi = new ToolStripMenuItem("Visit thetvdb.com");
                 tsi.Tag = (int)RightClickCommands.KVisitTVDBEpisode;
@@ -1533,7 +1532,6 @@ namespace TVRename
                 if (addSep)
                 {
                     showRightClickMenu.Items.Add(new ToolStripSeparator());
-                    addSep = false;
                 }
                 tsi = new ToolStripMenuItem("Visit thetvdb.com");
                 tsi.Tag = (int)RightClickCommands.KVisitTVDBSeason;
@@ -1541,11 +1539,6 @@ namespace TVRename
             }
             else if (si != null)
             {
-                if (addSep)
-                {
-                    showRightClickMenu.Items.Add(new ToolStripSeparator());
-                    addSep = false;
-                }
                 tsi = new ToolStripMenuItem("Visit thetvdb.com");
                 tsi.Tag = (int)RightClickCommands.KVisitTVDBSeries;
                 showRightClickMenu.Items.Add(tsi);

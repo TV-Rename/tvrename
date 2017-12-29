@@ -49,7 +49,7 @@ namespace TVRename
         {
             cbTags.Items.Clear();
             cbPresets.Items.Clear();
-            ProcessedEpisode pe = null;
+            ProcessedEpisode pe;
             if (lvTest.SelectedItems.Count == 0)
                 pe = ((_eps != null) && (_eps.Count > 0)) ? _eps[0] : null;
             else

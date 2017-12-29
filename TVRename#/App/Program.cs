@@ -38,8 +38,7 @@ public static class GlobalMembersTVRename
         CommandLineArgs clargs = new CommandLineArgs(args);
 
         // see if we're already running
-        bool createdNew = false;
-        System.Threading.Mutex mutex = new System.Threading.Mutex(true, "TVRenameMutex", out createdNew);
+        System.Threading.Mutex mutex = new System.Threading.Mutex(true, "TVRenameMutex", out bool createdNew);
 
         if (!createdNew)
         {
@@ -172,7 +171,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
 
         FileInfo tvdbFile = PathManager.TVDBFile;
         FileInfo settingsFile = PathManager.TVDocSettingsFile;
-        TVDoc doc = null;
+        TVDoc doc;
 
         do // loop until no problems loading settings & tvdb cache files
         {

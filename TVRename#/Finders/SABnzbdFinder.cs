@@ -68,7 +68,7 @@ namespace TVRename
                 // wasn't a result/error combo.  this is good!
             }
 
-            SAB.Queue sq = null;
+            SAB.Queue sq;
             try
             {
                 sq = SAB.Queue.Deserialize(r);

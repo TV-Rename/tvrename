@@ -601,7 +601,7 @@ namespace TVRename
         {
             BtFile f = new BtFile();
 
-            FileStream sr = null;
+            FileStream sr;
             try
             {
                 sr = new FileStream(filename, FileMode.Open, FileAccess.Read);
@@ -678,7 +678,7 @@ namespace TVRename
                 if (theHash == null)
                 {
                     // not cached, figure it out ourselves
-                    FileStream sr = null;
+                    FileStream sr;
                     try
                     {
                         sr = new FileStream(fiTemp.FullName, FileMode.Open);
