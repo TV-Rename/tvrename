@@ -16,11 +16,11 @@ namespace TVRename
         private delegate void UpdateInt(int number);
         private static Timer _fader;
         private static double _opacityIncrement = .05;
-        private static readonly double _opacityDecrement = .125;
+        private static readonly double OpacityDecrement = .125;
         private const int FadeSpeed = 50;
         private const int WaitTime = 2000;
         private static ManualResetEvent _windowCreated;
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public static double CheckOpacity()
         {
@@ -66,7 +66,7 @@ namespace TVRename
         {
             if (_worker != null && _worker.IsBusy && _fader != null)
             {
-                _opacityIncrement = -_opacityDecrement;
+                _opacityIncrement = -OpacityDecrement;
                 _fader.Start();
             }
         }
@@ -94,23 +94,26 @@ namespace TVRename
             //Form UI thread
             _fader.Stop();
             Form splashForm = _displayForm as Form;
-            if (_opacityIncrement > 0 && splashForm.Opacity < 1)
+            if (splashForm != null && (_opacityIncrement > 0 && splashForm.Opacity < 1))
             {
                 splashForm.Opacity += _opacityIncrement;
             }
             else
             {
-                if (splashForm.Opacity > -_opacityIncrement)
+                if (splashForm != null && splashForm.Opacity > -_opacityIncrement)
                     splashForm.Opacity += _opacityIncrement;
                 else //Opacity is 0 so close the form
                 {
-                    splashForm.Opacity = 0;
-                    splashForm.Close();
+                    if (splashForm != null)
+                    {
+                        splashForm.Opacity = 0;
+                        splashForm.Close();
+                    }
                 }
             }
 
             // if the form is fading in or out keep the timer going
-            if (splashForm.Opacity > 0 && splashForm.Opacity < 1)
+            if (splashForm != null && (splashForm.Opacity > 0 && splashForm.Opacity < 1))
                 _fader.Start();
         }
 
@@ -125,7 +128,7 @@ namespace TVRename
         {
             if (_displayForm != null && ((Form)_displayForm).IsHandleCreated)
                 _displayForm.Invoke(new UpdateText(_displayForm.UpdateStatus), new object[] { status });
-            _logger.Info("Splash screen update status: {0}",status);
+            Logger.Info("Splash screen update status: {0}",status);
         }
 
         public static void UpdateProgress(int progress)
@@ -138,7 +141,7 @@ namespace TVRename
         {
             if (_displayForm != null && ((Form)_displayForm).IsHandleCreated)
                 _displayForm.Invoke(new UpdateText(_displayForm.UpdateInfo), new object[] { info });
-            _logger.Info("Splash screen update info: {0}", info);
+            Logger.Info("Splash screen update info: {0}", info);
         }
     }
 }

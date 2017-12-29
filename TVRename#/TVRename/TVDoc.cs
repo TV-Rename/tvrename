@@ -63,8 +63,8 @@ namespace TVRename
         private TVRenameStats _mStats;
         public bool CurrentlyBusy;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
-        private static readonly Logger _threadslogger = LogManager.GetLogger("threads");
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Threadslogger = LogManager.GetLogger("threads");
 
         private readonly List<Finder> _finders;
 
@@ -303,7 +303,7 @@ namespace TVRename
             catch (UnauthorizedAccessException uae)
             {
                 // e.g. recycle bin, system volume information
-                _logger.Warn(uae, "Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",di.FullName);
+                Logger.Warn(uae, "Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",di.FullName);
             }
  
 
@@ -481,7 +481,7 @@ namespace TVRename
             ItemList newList = new ItemList();
             bool r = btp.RenameFilesOnDiskToMatchTorrent(torrent, folder, tvTree, newList, copyNotMove, copyDest, args);
 
-            foreach (ITem i in newList)
+            foreach (Item i in newList)
                 TheActionList.Add(i);
 
             return r;
@@ -499,9 +499,9 @@ namespace TVRename
 
             bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
-            _threadslogger.Trace("  Downloading " + code);
+            Threadslogger.Trace("  Downloading " + code);
             bool r = TheTVDB.Instance.EnsureUpdated(code, bannersToo);
-            _threadslogger.Trace("  Finished " + code);
+            Threadslogger.Trace("  Finished " + code);
             if (!r)
             {
                 _downloadOk = false;
@@ -529,8 +529,8 @@ namespace TVRename
         public void Downloader()
         {
             // do background downloads of webpages
-            _logger.Info("*******************************");
-            _logger.Info("Starting Background Download...");
+            Logger.Info("*******************************");
+            Logger.Info("Starting Background Download...");
             try
             {
                 if (ShowItems.Count == 0)
@@ -559,7 +559,7 @@ namespace TVRename
 
                 
                 int numWorkers = TVSettings.Instance.ParallelDownloads;
-                _logger.Info("Setting up {0} threads to download information from TVDB.com",numWorkers);
+                Logger.Info("Setting up {0} threads to download information from TVDB.com",numWorkers);
                 Workers = new List<Thread>();
 
                 WorkerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
@@ -576,7 +576,7 @@ namespace TVRename
                     t.Name = "GetThread:" + code;
                     t.Start(code); // will grab the semaphore as soon as we make it available
                     int nfr = WorkerSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
-                    _threadslogger.Trace("Started " + code + " pool has " + nfr + " free");
+                    Threadslogger.Trace("Started " + code + " pool has " + nfr + " free");
                     Thread.Sleep(1); // allow the other thread a chance to run and grab
 
                     // tidy up any finished workers
@@ -656,7 +656,7 @@ namespace TVRename
         {
             if (TVSettings.Instance.OfflineMode)
                 return true; // don't do internet in offline mode!
-            _logger.Info("Doing downloads in the foreground...");
+            Logger.Info("Doing downloads in the foreground...");
 
             StartBgDownloadThread(true);
 
@@ -680,7 +680,7 @@ namespace TVRename
 
             if (!_downloadOk)
             {
-                _logger.Warn(TheTVDB.Instance.LastError);
+                Logger.Warn(TheTVDB.Instance.LastError);
                 if ((!Args.Unattended) && (!Args.Hide))
                     MessageBox.Show(TheTVDB.Instance.LastError, "Error while downloading", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 TheTVDB.Instance.LastError = "";
@@ -1165,7 +1165,7 @@ namespace TVRename
                 }
             }
             // assume last folder element is the show name
-            showName = showName.Substring(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString()) + 1);
+            showName = showName.Substring(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal) + 1);
 
             return showName;
         }
@@ -1175,7 +1175,7 @@ namespace TVRename
             // backup old settings before writing new ones
 
             FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
-            _logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
+            Logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
 
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -1216,11 +1216,9 @@ namespace TVRename
             Stats().Save();
         }
 
-        public bool LoadXMLSettings(FileInfo from)
+        private bool LoadXMLSettings(FileInfo from)
         {
-            _logger.Info("Loading Settings from {0}", from.FullName);
-            if (from == null)
-                return true;
+            Logger.Info("Loading Settings from {0}", from.FullName);
 
             try
             {
@@ -1443,7 +1441,7 @@ namespace TVRename
             IAction action = info.TheAction;
             if (action != null)
             {
-                _logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action);
+                Logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action);
                 action.Go(ref ActionPause, _mStats);
             }
                 
@@ -1489,7 +1487,7 @@ namespace TVRename
 #if DEBUG
                     Debug.Fail("Unknown action type for making processing queue");
 #endif
-                    _logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
+                    Logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
                     queues[3].Actions.Add(action); // put it in this queue by default
                 }
             }
@@ -1502,8 +1500,6 @@ namespace TVRename
             Debug.Assert(queuesIn is ActionQueue[]);
 #endif
             ActionQueue[] queues = queuesIn as ActionQueue[];
-            if (queues == null)
-                return;
 
             int n = queues.Length;
 
@@ -1513,7 +1509,7 @@ namespace TVRename
             for (int i = 0; i < n; i++)
             {
                 _actionSemaphores[i] = new Semaphore(queues[i].ParallelLimit, queues[i].ParallelLimit); // allow up to numWorkers working at once
-                _logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name, queues[i].ParallelLimit, i);
+                Logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name, queues[i].ParallelLimit, i);
             }
                 
 
@@ -1563,7 +1559,7 @@ namespace TVRename
                         t.Start(new ProcessActionInfo(which, act));
 
                         int nfr = _actionSemaphores[which].Release(1); // release our hold on the semaphore, so that worker can grab it
-                        _threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
+                        Threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
                     }
 
                     while (_actionStarting) // wait for thread to get the semaphore
@@ -1603,8 +1599,8 @@ namespace TVRename
 
         public void DoActions(ScanListItemList theList)
         {
-            _logger.Info("**********************");
-            _logger.Info("Doing Selected Actions....");
+            Logger.Info("**********************");
+            Logger.Info("Doing Selected Actions....");
             if (theList == null)
                 return;
 
@@ -1637,7 +1633,7 @@ namespace TVRename
                 {
                     if (sli is IAction) {
                         IAction slia = (IAction)sli;
-                        _logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name , slia,slia.ErrorText);
+                        Logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name , slia,slia.ErrorText);
                     }
                 }
 
@@ -1646,7 +1642,7 @@ namespace TVRename
 
         public bool ListHasMissingItems(ItemList l)
         {
-            foreach (ITem i in l)
+            foreach (Item i in l)
             {
                 if (i is ItemMissing)
                     return true;
@@ -1702,7 +1698,7 @@ namespace TVRename
 
             ScanListItemList theList = new ScanListItemList();
 
-            foreach (ITem action in TheActionList)
+            foreach (Item action in TheActionList)
             {
                 if (action is IScanListItem)
                 {
@@ -1747,7 +1743,7 @@ namespace TVRename
                 }
             }
             
-           _logger.Info(output.ToString());
+           Logger.Info(output.ToString());
         }
         public void QuickScan() => QuickScan(true, true);
 
@@ -1892,12 +1888,12 @@ namespace TVRename
                                     try
                                     {
                                         Directory.CreateDirectory(folder);
-                                        _logger.Info("Creating directory as it is missing: {0}",folder);
+                                        Logger.Info("Creating directory as it is missing: {0}",folder);
                                     }
                                     catch (IOException ioe)
                                     {
-                                        _logger.Info("Could not directory: {0}", folder);
-                                        _logger.Info(ioe);
+                                        Logger.Info("Could not directory: {0}", folder);
+                                        Logger.Info(ioe);
                                     }
                                     goAgain = true;
 
@@ -1940,7 +1936,7 @@ namespace TVRename
         public void RemoveIgnored()
         {
             ItemList toRemove = new ItemList();
-            foreach (ITem item in TheActionList)
+            foreach (Item item in TheActionList)
             {
                 IScanListItem act = item as IScanListItem;
                 foreach (IgnoreItem ii in Ignore)
@@ -1952,7 +1948,7 @@ namespace TVRename
                     }
                 }
             }
-            foreach (ITem action in toRemove)
+            foreach (Item action in toRemove)
                 TheActionList.Remove(action);
         }
 
@@ -1963,8 +1959,8 @@ namespace TVRename
             LockShowItems();
 
             DirFilesCache dfc = new DirFilesCache();
-            _logger.Info("*******************************");
-            _logger.Info("Force Update Images: " + si.ShowName);
+            Logger.Info("*******************************");
+            Logger.Info("Force Update Images: " + si.ShowName);
 
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AllFolderLocations().Count > 0))
             {
@@ -2213,7 +2209,7 @@ namespace TVRename
                 if (ActionCancel)
                     return;
 
-                _logger.Info("Rename and missing check: " + si.ShowName);
+                Logger.Info("Rename and missing check: " + si.ShowName);
                 c++;
 
                 prog.Invoke(100 * c / showList.Count);
@@ -2579,7 +2575,7 @@ namespace TVRename
 
             bool nameIsNumber = (Regex.Match(showNameHint, "^[0-9]+$").Success);
 
-            int p = filename.IndexOf(showNameHint);
+            int p = filename.IndexOf(showNameHint, StringComparison.Ordinal);
 
             if (p == 0)
             {
@@ -2773,8 +2769,6 @@ namespace TVRename
 
                     DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-                    List<ShowItem> matchingShows = new List<ShowItem>();
-
                     foreach (ShowItem si in ShowItems)
                     {
                         if (showsToScan.Contains(si)) continue;
@@ -2799,13 +2793,6 @@ namespace TVRename
                 }
             }
             DoDownloadsFg();
-        }
-
-        public static bool FindSeasEp(FileInfo fi, ShowItem si)
-        {
-            int s;
-            int e;
-            return FindSeasEp(fi, out s, out e, si);
         }
 
         public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si)

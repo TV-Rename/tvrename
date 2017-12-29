@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
+using NLog;
 
 namespace TVRename
 {
@@ -32,7 +34,7 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (ITem action1 in TheActionList)
+            foreach (Item action1 in TheActionList)
             {
                 if (ActionCancel)
                     return;
@@ -58,10 +60,10 @@ namespace TVRename
                     }
                 }
             }
-            foreach (ITem i in toRemove)
+            foreach (Item i in toRemove)
                 TheActionList.Remove(i);
 
-            foreach (ITem action in newItems)
+            foreach (Item action in newItems)
                 TheActionList.Add(action);
 
             prog.Invoke(100);
@@ -76,6 +78,7 @@ namespace TVRename
         public string ShowName;
         public string Title;
         public string Url;
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public RssItem(string url, string title, int season, int episode, string showName)
         {
@@ -214,8 +217,9 @@ namespace TVRename
                 if (m.Success)
                     episode = int.Parse(m.Groups[1].ToString());
             }
-            catch
+            catch (Exception e)
             {
+                Logger.Error(e);
             }
 
             if ((season != -1) && (episode != -1))
@@ -223,6 +227,8 @@ namespace TVRename
 
             return true;
         }
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
     }
+
 
 }

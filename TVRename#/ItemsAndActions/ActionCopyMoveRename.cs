@@ -144,7 +144,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(ITem o)
+        public override bool SameAs(Item o)
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
@@ -152,7 +152,7 @@ namespace TVRename
                    FileHelper.Same(To, cmr.To);
         }
 
-        public override int Compare(ITem o)
+        public override int Compare(Item o)
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 

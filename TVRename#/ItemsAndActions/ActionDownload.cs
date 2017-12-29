@@ -16,7 +16,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    public class ActionDownload : ITem, IAction, IScanListItem
+    public class ActionDownload : Item, IAction, IScanListItem
     {
         private readonly string _path;
         private readonly FileInfo _destination;
@@ -155,15 +155,15 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(ITem o)
+        public bool SameAs(Item o)
         {
             return (o is ActionDownload) && ((o as ActionDownload)._destination == _destination);
         }
 
-        public int Compare(ITem o)
+        public int Compare(Item o)
         {
             ActionDownload dl = o as ActionDownload;
-            return dl == null ? 0 : _destination.FullName.CompareTo(dl._destination.FullName);
+            return dl == null ? 0 : String.Compare(_destination.FullName, dl._destination.FullName, StringComparison.Ordinal);
         }
 
         #endregion

@@ -1000,7 +1000,7 @@ namespace TVRename
         public bool TestMode;
         public string Type;
 
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public BtResume(SetProgressDelegate setprog, string resumeDatFile)
             : base(setprog)
@@ -1118,7 +1118,7 @@ namespace TVRename
                             catch (PathTooLongException ptle)
                             {
                                 //this is not the file we are looking for
-                                _logger.Debug(ptle);
+                                Logger.Debug(ptle);
                             }
                         }
                         c++;
@@ -1271,7 +1271,7 @@ namespace TVRename
             // returns true if we found a match (if actSetPrio is on, true also means we have set a priority for this file)
             string simplifiedfname = Helpers.SimplifyName(nameInTorrent);
 
-            foreach (ITem action1 in MissingList)
+            foreach (Item action1 in MissingList)
             {
                 if ((!(action1 is ItemMissing)) && (!(action1 is ItemuTorrenting)) && (!(action1 is ItemSaBnzbd)))
                     continue;

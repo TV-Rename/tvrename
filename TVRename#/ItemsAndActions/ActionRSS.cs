@@ -15,7 +15,7 @@ using Alphaleonis.Win32.Filesystem;
 namespace TVRename
 {
     // MS_TODO: derive this from ActionDownload?
-    public class ActionRss : ITem, IAction, IScanListItem
+    public class ActionRss : Item, IAction, IScanListItem
     {
         public RssItem Rss;
         public string TheFileNoExt;
@@ -95,15 +95,15 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(ITem o)
+        public bool SameAs(Item o)
         {
             return (o is ActionRss) && ((o as ActionRss).Rss == Rss);
         }
 
-        public int Compare(ITem o)
+        public int Compare(Item o)
         {
             ActionRss rss = o as ActionRss;
-            return rss == null ? 0 : Rss.Url.CompareTo(rss.Rss.Url);
+            return rss == null ? 0 : String.Compare(Rss.Url, rss.Rss.Url, StringComparison.Ordinal);
         }
 
         #endregion

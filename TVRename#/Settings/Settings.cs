@@ -193,7 +193,7 @@ namespace TVRename
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile TVSettings _instance;
-        private static readonly object _syncRoot = new Object();
+        private static readonly object SyncRoot = new Object();
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public static TVSettings Instance
@@ -202,7 +202,7 @@ namespace TVRename
             {
                 if (_instance == null)
                 {
-                    lock (_syncRoot)
+                    lock (SyncRoot)
                     {
                         if (_instance == null)
                             _instance = new TVSettings();

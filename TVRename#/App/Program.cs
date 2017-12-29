@@ -24,12 +24,12 @@ using TVRename;
 public static class GlobalMembersTVRename
 {
 
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     [STAThread]
     private static int Main(string[] args)
     {
-        _logger.Info("TV Rename Started with args: {0}",args);
+        Logger.Info("TV Rename Started with args: {0}",args);
         // Enabling Windows XP visual effects before any controls are created
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -46,7 +46,7 @@ public static class GlobalMembersTVRename
         if (!createdNew)
         {
             // we're already running
-            _logger.Warn("TV Rename is alrady running");
+            Logger.Warn("TV Rename is alrady running");
 
             // tell the already running copy to come to the foreground
             IpcClientChannel clientChannel = new IpcClientChannel();
@@ -126,7 +126,7 @@ public static class GlobalMembersTVRename
 
 class TVRenameProgram : WindowsFormsApplicationBase
 {
-    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+    private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
     protected override void OnCreateSplashScreen()
     {
@@ -166,8 +166,8 @@ class TVRenameProgram : WindowsFormsApplicationBase
         catch (Exception ex)
         {
             if ((!clargs.Unattended) && (!clargs.Hide)) MessageBox.Show("Error while setting the User-Defined File Path:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            _logger.Error("Error while setting the User-Defined File Path - EXITING: {0}", clargs.UserFilePath);
-            _logger.Error(ex);
+            Logger.Error("Error while setting the User-Defined File Path - EXITING: {0}", clargs.UserFilePath);
+            Logger.Error(ex);
 
             Environment.Exit(1);
         }

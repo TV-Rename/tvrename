@@ -12,7 +12,7 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    public class ItemMissing : ITem, IScanListItem
+    public class ItemMissing : Item, IScanListItem
     {
         public string TheFileNoExt;
 
@@ -24,12 +24,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(ITem o)
+        public bool SameAs(Item o)
         {
             return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, TheFileNoExt) == 0);
         }
 
-        public int Compare(ITem o)
+        public int Compare(Item o)
         {
             ItemMissing miss = o as ItemMissing;
             //return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);

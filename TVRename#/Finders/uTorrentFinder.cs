@@ -37,7 +37,7 @@ namespace TVRename
             int c = TheActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct + totPct * n / c);
-            foreach (ITem action1 in TheActionList)
+            foreach (Item action1 in TheActionList)
             {
                 if (ActionCancel)
                     return;
@@ -75,10 +75,10 @@ namespace TVRename
                 }
             }
 
-            foreach (ITem i in toRemove)
+            foreach (Item i in toRemove)
                 TheActionList.Remove(i);
 
-            foreach (ITem action in newList)
+            foreach (Item action in newList)
                 TheActionList.Add(action);
 
             prog.Invoke(startpct + totPct);

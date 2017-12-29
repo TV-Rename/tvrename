@@ -10,18 +10,18 @@ using System.Collections.Generic;
 
 namespace TVRename
 {
-    public class ActionItemSorter : IComparer<ITem>
+    public class ActionItemSorter : IComparer<Item>
     {
         #region IComparer<Item> Members
 
-        public virtual int Compare(ITem x, ITem y)
+        public virtual int Compare(Item x, Item y)
         {
             return (x.GetType() == y.GetType()) ? x.Compare(y) : (TypeNumber(x) - TypeNumber(y));
         }
 
         #endregion
 
-        private static int TypeNumber(ITem a)
+        private static int TypeNumber(Item a)
         {
             if (a is ItemMissing)
                 return 1;

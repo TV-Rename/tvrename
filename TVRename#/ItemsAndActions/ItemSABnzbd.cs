@@ -13,29 +13,28 @@ using TVRename.SAB;
 
 namespace TVRename
 {
-    public class ItemSaBnzbd : ITem, IScanListItem
+    public class ItemSaBnzbd : Item, IScanListItem
     {
-        public string DesiredLocationNoExt;
-        public QueueSlotsSlot Entry;
+        public readonly string DesiredLocationNoExt;
+        private readonly QueueSlotsSlot _entry;
 
         public ItemSaBnzbd(QueueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
         {
             Episode = pe;
             DesiredLocationNoExt = desiredLocationNoExt;
-            Entry = qss;
+            _entry = qss;
         }
 
         #region Item Members
 
-        public bool SameAs(ITem o)
+        public bool SameAs(Item o)
         {
-            return (o is ItemSaBnzbd) && Entry == (o as ItemSaBnzbd).Entry;
+            return (o is ItemSaBnzbd bnzbd) && _entry == bnzbd._entry;
         }
 
-        public int Compare(ITem o)
+        public int Compare(Item o)
         {
-            ItemSaBnzbd ut = o as ItemSaBnzbd;
-            if (ut == null)
+            if (!(o is ItemSaBnzbd ut))
                 return 0;
 
             if (Episode == null)
@@ -43,7 +42,7 @@ namespace TVRename
             if (ut.Episode == null)
                 return -1;
 
-            return (DesiredLocationNoExt).CompareTo(ut.DesiredLocationNoExt);
+            return String.Compare((DesiredLocationNoExt), ut.DesiredLocationNoExt, StringComparison.Ordinal);
         }
 
         #endregion
@@ -54,9 +53,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(Entry.Filename))
+                if (string.IsNullOrEmpty(_entry.Filename))
                     return null;
-                return new FileInfo(Entry.Filename).DirectoryName;
+                return new FileInfo(_entry.Filename).DirectoryName;
             }
         }
 
@@ -87,10 +86,10 @@ namespace TVRename
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(Entry.Filename);
-                String txt = Entry.Status + ", " + (int) (0.5 + 100 - 100 * Entry.Mbleft / Entry.Mb) + "% Complete";
-                if (Entry.Status == "Downloading")
-                    txt += ", " + Entry.Timeleft + " left";
+                lvi.SubItems.Add(_entry.Filename);
+                String txt = _entry.Status + ", " + (int) (0.5 + 100 - 100 * _entry.Mbleft / _entry.Mb) + "% Complete";
+                if (_entry.Status == "Downloading")
+                    txt += ", " + _entry.Timeleft + " left";
                 
                 lvi.SubItems.Add(txt);
 

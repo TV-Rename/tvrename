@@ -40,7 +40,7 @@ namespace TVRename
         [XmlIgnore] public int NsNumberOfEpisodesExpected = 0;
         [XmlIgnore] public int NsNumberOfSeasons = 0;
         [XmlIgnore] public int NsNumberOfShows = 0;
-        [XmlIgnore] private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        [XmlIgnore] private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats Load()
         {
@@ -75,7 +75,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-               _logger.Fatal(e);
+               Logger.Fatal(e);
                return new TVRenameStats(); 
             }
 
@@ -85,7 +85,7 @@ namespace TVRename
         private void SaveToFile(String toFile)
         {
             DirectoryInfo di = new FileInfo(toFile).Directory;
-            if (!di.Exists)
+            if (di != null && !di.Exists)
                 di.Create();
 
             XmlWriterSettings settings = new XmlWriterSettings {Indent = true, NewLineOnAttributes = true};

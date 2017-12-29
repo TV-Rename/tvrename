@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
     class DownloadEpisodeJPG : DownloadIdentifier
     {
-        private List<string> _doneJPG;
         private const string DefaultExtension = ".jpg";
 
         public DownloadEpisodeJPG() 
@@ -42,9 +40,8 @@ namespace TVRename
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void Reset()
+        public sealed override void Reset()
         {
-            _doneJPG = new List<string>();
             base.Reset();
         }
     }

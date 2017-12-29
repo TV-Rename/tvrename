@@ -97,7 +97,8 @@ namespace TVRename
             {
                 foreach (string s in kvp.Value)
                 {
-                    ListViewItem lvi = new ListViewItem {Text = kvp.Key.ToString()};
+                    ListViewItem lvi = new ListViewItem();
+                    lvi.Text = kvp.Key.ToString();
                     lvi.SubItems.Add(s);
 
                     lvSeasonFolders.Items.Add(lvi);
@@ -251,7 +252,8 @@ namespace TVRename
 
         private void bnAdd_Click(object sender, EventArgs e)
         {
-            ListViewItem lvi = new ListViewItem {Text = txtSeasonNumber.Text};
+            ListViewItem lvi = new ListViewItem();
+            lvi.Text = txtSeasonNumber.Text;
             lvi.SubItems.Add(txtFolder.Text);
 
             lvSeasonFolders.Items.Add(lvi);

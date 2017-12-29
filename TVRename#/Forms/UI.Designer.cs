@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    partial class Ui
+    sealed partial class Ui
     {
         /// <summary>
         /// Required designer variable.

@@ -31,7 +31,7 @@ namespace TVRename
         public Season TheSeason;
         public SeriesInfo TheSeries;
 
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Banner(Banner o)
         {
@@ -58,7 +58,7 @@ namespace TVRename
             SetDefaults(ser, seas);
         }
 
-        public Banner(SeriesInfo ser, Season seas, int? codeHint, XmlReader r, CommandLineArgs args)
+        public Banner(SeriesInfo ser, Season seas, int codeHint, XmlReader r, CommandLineArgs args)
         {
             // <Banner>
             //        <id>708811</id>
@@ -78,7 +78,7 @@ namespace TVRename
             {
                 SetDefaults(ser, seas);
 
-                SeriesId = (int) codeHint;
+                SeriesId = codeHint;
 
                 r.Read();
                 if (r.Name != "Banner")
@@ -133,7 +133,7 @@ namespace TVRename
                 if (!string.IsNullOrEmpty(BannerPath))
                     message += "\r\nBanner Path: " + BannerPath;
 
-                _logger.Error(e, message);
+                Logger.Error(e, message);
                 
                 throw new TVDBException(e.Message);
             }

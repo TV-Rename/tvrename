@@ -13,7 +13,7 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    public class ActionMede8ErViewXML : ITem, IAction, IScanListItem, IActionWriteMetadata
+    public class ActionMede8ErViewXML : Item, IAction, IScanListItem, IActionWriteMetadata
     {
         public FileInfo Where;
         public ShowItem Si; // if for an entire show, rather than specific episode
@@ -76,8 +76,6 @@ namespace TVRename
             try
             {
                 writer = XmlWriter.Create(Where.FullName, settings);
-                if (writer == null)
-                    return false;
             }
             catch (Exception)
             {
@@ -115,16 +113,16 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(ITem o)
+        public bool SameAs(Item o)
         {
-            return (o is ActionMede8ErViewXML) && ((o as ActionMede8ErViewXML).Where == Where);
+            return (o is ActionMede8ErViewXML) && (((ActionMede8ErViewXML) o).Where == Where);
         }
 
-        public int Compare(ITem o)
+        public int Compare(Item o)
         {
             ActionMede8ErViewXML nfo = o as ActionMede8ErViewXML;
 
-            return (Where.FullName).CompareTo(nfo.Where.FullName);
+            return String.Compare((Where.FullName), nfo.Where.FullName, StringComparison.Ordinal);
         }
 
         #endregion

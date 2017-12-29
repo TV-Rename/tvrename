@@ -53,7 +53,7 @@ namespace TVRename
             {
                 if (arg.StartsWith("/userfilepath:"))
                 {
-                    UserFilePath = arg.Substring(arg.IndexOf(":") + 1);
+                    UserFilePath = arg.Substring(arg.IndexOf(":", StringComparison.Ordinal) + 1);
                 }
             }
         }
@@ -82,7 +82,7 @@ namespace TVRename
             {
                 if (arg.StartsWith("/userfilepath:"))
                 {
-                    UserFilePath = arg.Substring(arg.IndexOf(":") + 1);
+                    UserFilePath = arg.Substring(arg.IndexOf(":", StringComparison.Ordinal) + 1);
                 }
             }
         }

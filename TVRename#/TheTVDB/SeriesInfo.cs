@@ -29,7 +29,7 @@ namespace TVRename
         public bool BannersLoaded;
 
         public Dictionary<int, Season> Seasons;
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         //All Banners
         public Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.
@@ -79,8 +79,8 @@ namespace TVRename
             LoadJson(json);
 
             if (String.IsNullOrEmpty(Name)            ){
-               _logger.Warn("Issue with series " + TVDBCode );
-               _logger.Warn(json.ToString());
+               Logger.Warn("Issue with series " + TVDBCode );
+               Logger.Warn(json.ToString());
             }
         }
 
@@ -90,9 +90,9 @@ namespace TVRename
             LanguageId = langId;
             LoadJson(json,jsonInDefaultLang);
             if (String.IsNullOrEmpty(Name)            ){
-               _logger.Warn("Issue with series " + TVDBCode );
-               _logger.Warn(json.ToString());
-               _logger.Info(jsonInDefaultLang .ToString());
+               Logger.Warn("Issue with series " + TVDBCode );
+               Logger.Warn(json.ToString());
+               Logger.Info(jsonInDefaultLang .ToString());
             }
 
         }
@@ -293,7 +293,7 @@ namespace TVRename
                         }
                         catch (FormatException)
                         {
-                            _logger.Trace("Failed to parse time: {0} ", theTime);
+                            Logger.Trace("Failed to parse time: {0} ", theTime);
                         }
                     }
                     else if (r.Name == "FirstAired")
@@ -308,7 +308,7 @@ namespace TVRename
                         }
                         catch
                         {
-                            _logger.Trace("Failed to parse date: {0} ", theDate);
+                            Logger.Trace("Failed to parse date: {0} ", theDate);
                             FirstAired = null;
                             Items["FirstAired"] = "";
                             Items["Year"] = "";
@@ -334,7 +334,7 @@ namespace TVRename
 
                 message += "\r\n" + e.Message;
 
-                _logger.Error(e,message);
+                Logger.Error(e,message);
 
                 throw new TVDBException(e.Message);
             }
@@ -355,7 +355,7 @@ namespace TVRename
                         if (seriesItems.Value != null) Items[seriesItems.Name] = (string)seriesItems.Value;
                     }
                     catch (ArgumentException ae) {
-                       _logger.Warn("Could not parse Json for " + seriesItems.Name + " :" + ae.Message);
+                       Logger.Warn("Could not parse Json for " + seriesItems.Name + " :" + ae.Message);
                     }
             }
 

@@ -16,19 +16,20 @@ using Microsoft.VisualBasic.FileIO;
 
 namespace TVRename
 {
-    public interface ITem
+    // ReSharper disable once InconsistentNaming
+    public interface Item
     {
-        int Compare(ITem o); // for sorting items in scan list (ActionItemSorter)
-        bool SameAs(ITem o); // are we the same thing as that other one?
+        int Compare(Item o); // for sorting items in scan list (ActionItemSorter)
+        bool SameAs(Item o); // are we the same thing as that other one?
     }
 
-    public class ItemList : List<ITem>
+    public class ItemList : List<Item>
     {
         public void Add(ItemList il)
         {
             if (il != null) 
             {
-                foreach (ITem i in il)
+                foreach (Item i in il)
                 {
                     Add(i);
                 }
@@ -91,7 +92,7 @@ namespace TVRename
         }
     }
 
-    public abstract class ActionFileOperation : ITem, IAction, IScanListItem
+    public abstract class ActionFileOperation : Item, IAction, IScanListItem
     {
         protected double Percent;
         protected TidySettings Tidyup;
@@ -206,8 +207,8 @@ namespace TVRename
         public abstract string ScanListViewGroup { get; }
         public abstract int IconNumber { get; }
         public abstract IgnoreItem Ignore { get; }
-        public abstract int Compare(ITem o);
-        public abstract bool SameAs(ITem o);
+        public abstract int Compare(Item o);
+        public abstract bool SameAs(Item o);
         public abstract bool Go(ref bool pause, TVRenameStats stats);
     }
 }

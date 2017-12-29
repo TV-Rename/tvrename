@@ -12,7 +12,7 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    public class ItemuTorrenting : ITem, IScanListItem
+    public class ItemuTorrenting : Item, IScanListItem
     {
         public string DesiredLocationNoExt;
         public TorrentEntry Entry;
@@ -26,12 +26,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(ITem o)
+        public bool SameAs(Item o)
         {
             return (o is ItemuTorrenting) && Entry == (o as ItemuTorrenting).Entry;
         }
 
-        public int Compare(ITem o)
+        public int Compare(Item o)
         {
             ItemuTorrenting ut = o as ItemuTorrenting;
             if (ut == null)
@@ -42,7 +42,7 @@ namespace TVRename
             if (ut.Episode == null)
                 return -1;
 
-            return (DesiredLocationNoExt).CompareTo(ut.DesiredLocationNoExt);
+            return String.Compare((DesiredLocationNoExt), ut.DesiredLocationNoExt, StringComparison.Ordinal);
         }
 
         #endregion

@@ -83,7 +83,7 @@ namespace TVRename
             }
 
             Debug.Assert(sq != null); // shouldn't happen
-            if (sq == null || sq.Slots == null || sq.Slots.Length == 0) // empty queue
+            if ( sq.Slots == null || sq.Slots.Length == 0) // empty queue
                 return;
 
             ItemList newList = new ItemList();
@@ -91,7 +91,7 @@ namespace TVRename
             int c = TheActionList.Count + 2;
             int n = 1;
 
-            foreach (ITem action1 in TheActionList)
+            foreach (Item action1 in TheActionList)
             {
                 if (ActionCancel)
                     return;
@@ -130,10 +130,10 @@ namespace TVRename
                 }
             }
 
-            foreach (ITem i in toRemove)
+            foreach (Item i in toRemove)
                 TheActionList.Remove(i);
 
-            foreach (ITem action in newList)
+            foreach (Item action in newList)
                 TheActionList.Add(action);
 
             prog.Invoke(startpct + totPct);

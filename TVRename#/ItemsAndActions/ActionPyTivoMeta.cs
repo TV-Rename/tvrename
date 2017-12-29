@@ -15,7 +15,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    public class ActionPyTivoMeta : ITem, IAction, IScanListItem, IActionWriteMetadata
+    public class ActionPyTivoMeta : Item, IAction, IScanListItem, IActionWriteMetadata
     {
         public FileInfo Where;
 
@@ -66,8 +66,6 @@ namespace TVRename
                 if (!Where.Directory.Exists)
                     Directory.CreateDirectory(Where.Directory.FullName);
                 writer = new StreamWriter(Where.FullName, false, Encoding.GetEncoding(1252));
-                if (writer == null)
-                    return false;
             }
             catch (Exception)
             {
@@ -115,12 +113,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(ITem o)
+        public bool SameAs(Item o)
         {
             return (o is ActionPyTivoMeta) && ((o as ActionPyTivoMeta).Where == Where);
         }
 
-        public int Compare(ITem o)
+        public int Compare(Item o)
         {
             ActionPyTivoMeta nfo = o as ActionPyTivoMeta;
 
@@ -128,7 +126,7 @@ namespace TVRename
                 return 1;
             if (nfo?.Episode == null)
                 return -1;
-            return (Where.FullName + Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+            return String.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion

@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 // Sorting IComparer classes used by the ListViews in UI.cs
@@ -34,7 +35,9 @@ namespace TVRename
         {
             ListViewItem lvi1 = x as ListViewItem;
             ListViewItem lvi2 = y as ListViewItem;
-            return string.Compare(lvi1.SubItems[_col].Text, lvi2.SubItems[_col].Text);
+            Debug.Assert(lvi1 != null, nameof(lvi1) + " != null");
+            Debug.Assert(lvi2 != null, nameof(lvi2) + " != null");
+            return String.CompareOrdinal(lvi1.SubItems[_col].Text, lvi2.SubItems[_col].Text);
         }
 
         #endregion
@@ -51,7 +54,7 @@ namespace TVRename
 
             try
             {
-                d1 = ((Episode) ((x as ListViewItem).Tag)).GetAirDateDt(true);
+                d1 = ((Episode) (((ListViewItem) x)?.Tag))?.GetAirDateDt(true);
             }
             catch
             {
@@ -60,7 +63,7 @@ namespace TVRename
 
             try
             {
-                d2 = ((Episode) ((y as ListViewItem).Tag)).GetAirDateDt(true);
+                d2 = ((Episode) (((ListViewItem) y)?.Tag))?.GetAirDateDt(true);
             }
             catch
             {
@@ -102,8 +105,8 @@ namespace TVRename
 
             try
             {
-                string t1 = (x as ListViewItem).SubItems[_col].Text;
-                string t2 = (y as ListViewItem).SubItems[_col].Text;
+                string t1 = ((ListViewItem) x)?.SubItems[_col].Text;
+                string t2 = ((ListViewItem) y)?.SubItems[_col].Text;
 
                 DateTime now = DateTime.Now;
 
@@ -145,8 +148,8 @@ namespace TVRename
         {
             int one;
             int two;
-            string s1 = ((x as ListViewItem).SubItems)[_col].Text;
-            string s2 = ((y as ListViewItem).SubItems)[_col].Text;
+            string s1 = ((x as ListViewItem)?.SubItems)?[_col].Text;
+            string s2 = ((y as ListViewItem)?.SubItems)?[_col].Text;
             if (string.IsNullOrEmpty(s1))
                 s1 = "-1";
             if (string.IsNullOrEmpty(s2))

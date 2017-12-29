@@ -48,7 +48,7 @@ namespace TVRename
 
             c = 0;
             int totalN = TheActionList.Count;
-            foreach (ITem action1 in TheActionList)
+            foreach (Item action1 in TheActionList)
             {
                 if (ActionCancel)
                     return;
@@ -106,10 +106,10 @@ namespace TVRename
                 }
             }
 
-            foreach (ITem i in toRemove)
+            foreach (Item i in toRemove)
                 TheActionList.Remove(i);
 
-            foreach (ITem i in newList)
+            foreach (Item i in newList)
                 TheActionList.Add(i);
 
             //                 if (Settings->ExportFOXML)
@@ -124,7 +124,7 @@ namespace TVRename
 
             ItemList extras = new ItemList();
 
-            foreach (ITem action1 in actionlist)
+            foreach (Item action1 in actionlist)
             {
                 if (!(action1 is ActionCopyMoveRename))
                     continue;
@@ -147,7 +147,7 @@ namespace TVRename
                     {
                         // do case insensitive replace
                         string n = fi.Name;
-                        int p = n.ToUpper().IndexOf(basename.ToUpper());
+                        int p = n.ToUpper().IndexOf(basename.ToUpper(), StringComparison.Ordinal);
                         string newName = n.Substring(0, p) + toname + n.Substring(p + basename.Length);
                         if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
@@ -158,7 +158,7 @@ namespace TVRename
 
                         // check this item isn't already in our to-do list
                         bool doNotAdd = false;
-                        foreach (ITem ai2 in actionlist)
+                        foreach (Item ai2 in actionlist)
                         {
                             if (!(ai2 is ActionCopyMoveRename))
                                 continue;
@@ -187,11 +187,11 @@ namespace TVRename
                 }
             }
 
-            foreach (ITem action in extras)
+            foreach (Item action in extras)
             {
                 // check we don't already have this in our list and, if we don't add it!
                 bool have = false;
-                foreach (ITem action2 in actionlist)
+                foreach (Item action2 in actionlist)
                 {
                     if (action2.SameAs(action))
                     {

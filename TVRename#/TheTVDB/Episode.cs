@@ -36,7 +36,7 @@ namespace TVRename
         public Season TheSeason;
         public SeriesInfo TheSeries;
         private string _mName;
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public Episode(Episode o)
         {
@@ -120,7 +120,7 @@ namespace TVRename
                             String contents = r.ReadElementContentAsString();
                             if (contents == "")
                             {
-                               _logger.Info ("Please confirm, but we are assuming that " + Name +"(episode Id =" +EpisodeId + ") has no airdate");
+                               Logger.Info ("Please confirm, but we are assuming that " + Name +"(episode Id =" +EpisodeId + ") has no airdate");
                                 FirstAired = null;
                             } else { 
                                 FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new CultureInfo(""));
@@ -159,7 +159,7 @@ namespace TVRename
                     message += "\r\nName: " + Name;
 
 
-                _logger.Error(e, message);
+                Logger.Error(e, message);
 
                 throw new TVDBException(e.Message);
             }
@@ -227,17 +227,17 @@ namespace TVRename
                 }
                 catch (ArgumentException ae)
                 {
-                   _logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   Logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
                 catch (NullReferenceException ae)
                 {
-                   _logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   Logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
                 catch (InvalidCastException ae)
                 {
-                   _logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   Logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
             }
@@ -249,8 +249,8 @@ namespace TVRename
             if ((string)r["airedSeasonID"] != null) { SeasonId = (int)r["airedSeasonID"]; }
             else
             {
-               _logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " no airedSeasonID " );
-               _logger.Error(r.ToString());
+               Logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " no airedSeasonID " );
+               Logger.Error(r.ToString());
             }
 
             EpNum = (int)r["airedEpisodeNumber"];
@@ -261,8 +261,8 @@ namespace TVRename
 
             String sn = (string)r["airedSeason"];
             if (sn == null) {
-               _logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " airedSeason = null");
-               _logger.Error(r.ToString());
+               Logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " airedSeason = null");
+               Logger.Error(r.ToString());
             }
             else { int.TryParse(sn, out ReadSeasonNum); }
             
@@ -285,7 +285,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                _logger.Debug(e, "Failed to parse firstAired");
+                Logger.Debug(e, "Failed to parse firstAired");
                 FirstAired = null;
 
             }
@@ -350,7 +350,7 @@ namespace TVRename
             bool returnVal = (SeriesId != -1) && (EpisodeId != -1) && (EpNum != -1) && (SeasonId != -1) && (ReadSeasonNum != -1);
             if (!returnVal)
             {
-               _logger.Warn("Issue with episode " + EpisodeId + " for series " + SeriesId + " for EpNum " + EpNum + " for SeasonID " + SeasonId + " for ReadSeasonNum " + ReadSeasonNum);
+               Logger.Warn("Issue with episode " + EpisodeId + " for series " + SeriesId + " for EpNum " + EpNum + " for SeasonID " + SeasonId + " for ReadSeasonNum " + ReadSeasonNum);
             }
 
             return returnVal;

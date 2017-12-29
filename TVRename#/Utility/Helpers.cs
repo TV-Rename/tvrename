@@ -205,7 +205,7 @@ namespace TVRename
 
         public static bool Same(FileInfo a, FileInfo b)
         {
-            return String.Compare(a.FullName, b.FullName, true) == 0; // true->ignore case
+            return String.Compare(a.FullName, b.FullName, StringComparison.OrdinalIgnoreCase) == 0; // true->ignore case
         }
 
         public static bool Same(DirectoryInfo a, DirectoryInfo b)
@@ -217,7 +217,7 @@ namespace TVRename
             if (!n2.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 n2 = n2 + Path.DirectorySeparatorChar;
 
-            return String.Compare(n1, n2, true) == 0; // true->ignore case
+            return String.Compare(n1, n2, StringComparison.OrdinalIgnoreCase) == 0; // true->ignore case
         }
 
         public static FileInfo FileInFolder(string dir, string fn)
@@ -249,7 +249,7 @@ namespace TVRename
 
     public static class HttpHelper
     {
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public static String HttpRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -264,7 +264,7 @@ namespace TVRename
                 httpWebRequest.Headers.Add("Accept-Language",lang);
             }
 
-            _logger.Trace("Obtaining {0}", url);
+            Logger.Trace("Obtaining {0}", url);
 
             if (method == "POST") { 
                 using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
@@ -281,7 +281,7 @@ namespace TVRename
             {
                 result = streamReader.ReadToEnd();
             }
-            _logger.Trace("Returned {0}", result);
+            Logger.Trace("Returned {0}", result);
             return result;
         }
 
@@ -313,7 +313,7 @@ namespace TVRename
                 sb.Append(string.Format("{0}={1}&", item.Key, item.Value));
             }
             string finalUrl = sb.ToString();
-            return finalUrl.Remove(finalUrl.LastIndexOf("&"));
+            return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
 
     }
@@ -353,7 +353,7 @@ namespace TVRename
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
 
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private enum BrowserEmulationVersion
         {
@@ -404,12 +404,12 @@ namespace TVRename
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                _logger.Error(se);
+                Logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                _logger.Error(uae);
+                Logger.Error(uae);
             }
 
             return result;
@@ -443,12 +443,12 @@ namespace TVRename
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                _logger.Error(se);
+                Logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                _logger.Error(uae);
+                Logger.Error(uae);
             }
 
             return result;
@@ -481,13 +481,13 @@ namespace TVRename
                     {
                         // if it's a valid value, update or create the value
                         key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
-                        _logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
+                        Logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
                     }
                     else
                     {
                         // otherwise, remove the existing value
                         key.DeleteValue(programName, false);
-                        _logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
+                        Logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
                     }
 
                     result = true;
@@ -496,12 +496,12 @@ namespace TVRename
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                _logger.Error(se);
+                Logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                _logger.Error(uae);
+                Logger.Error(uae);
             }
 
             return result;
@@ -509,11 +509,10 @@ namespace TVRename
 
         private static bool SetBrowserEmulationVersion()
         {
-            int ieVersion;
             BrowserEmulationVersion emulationCode;
 
-            ieVersion = GetInternetExplorerMajorVersion();
-            _logger.Warn("IE Version {0} is identified",ieVersion );
+            int ieVersion = GetInternetExplorerMajorVersion();
+            Logger.Warn("IE Version {0} is identified",ieVersion );
 
             if (ieVersion >= 11)
             {
@@ -545,7 +544,7 @@ namespace TVRename
         {
             if (!IsBrowserEmulationSet())
             {
-                _logger.Warn("Updating the registry to ensure that the latest browser version is used");
+                Logger.Warn("Updating the registry to ensure that the latest browser version is used");
                 SetBrowserEmulationVersion();
             }
         }
@@ -556,7 +555,7 @@ namespace TVRename
     public static class Helpers
     {
 
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public static string Pad(int i)
         {
@@ -589,7 +588,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                _logger.Error(e);
+                Logger.Error(e);
                 return false;
             }
         }

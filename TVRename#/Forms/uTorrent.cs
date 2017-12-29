@@ -43,7 +43,7 @@ namespace TVRename
 
             bool en = false;
             // are there any missing items in the to-do list?
-            foreach (ITem i in _mDoc.TheActionList)
+            foreach (Item i in _mDoc.TheActionList)
             {
                 if (i is ItemMissing)
                 {

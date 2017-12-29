@@ -13,7 +13,7 @@ namespace TVRename
     public class DirFilesCache
     {
         private readonly Dictionary<String, FileInfo[]> _cache = new Dictionary<string, FileInfo[]>();
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public FileInfo[] Get(String folder)
         {
@@ -43,7 +43,7 @@ namespace TVRename
                 _cache[folder] = files;
                 return files;
             } catch (IOException) {
-               _logger.Error ("IOException occurred trying to access " + folder);
+               Logger.Error ("IOException occurred trying to access " + folder);
                 return null;
             }
         }

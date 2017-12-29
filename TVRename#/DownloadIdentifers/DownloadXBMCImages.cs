@@ -176,7 +176,7 @@ namespace TVRename
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void Reset()
+        public sealed override void Reset()
         {
             _doneBannerJPG = new List<String>();
             _donePosterJPG = new List<String>();

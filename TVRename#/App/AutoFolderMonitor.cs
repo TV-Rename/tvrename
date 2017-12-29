@@ -13,7 +13,7 @@ namespace TVRename
         private readonly Ui _mUi;
         private readonly List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
         private readonly Timer _mScanDelayTimer;
-        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public AutoFolderMonitor(TVDoc doc, Ui ui)
         {
@@ -56,13 +56,13 @@ namespace TVRename
                 watcher.IncludeSubdirectories = true;
                 watcher.EnableRaisingEvents = true;
                 _watchers.Add(watcher);
-                _logger.Trace("Starting logger for {0}", efi);
+                Logger.Trace("Starting logger for {0}", efi);
             }
         }
 
         void watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            _logger.Trace("Restarted delay timer");
+            Logger.Trace("Restarted delay timer");
             _mScanDelayTimer.Stop();
             _mScanDelayTimer.Start();
         }
@@ -75,8 +75,8 @@ namespace TVRename
             //We only wish to do a scan now if we are not already undertaking one
             if (!_mDoc.CurrentlyBusy)
             {
-                _logger.Info("*******************************");
-                _logger.Info("Auto scan fired");
+                Logger.Info("*******************************");
+                Logger.Info("Auto scan fired");
                 if (_mUi != null)
                 {
                     switch (TVSettings.Instance.MonitoredFoldersScanType)
@@ -102,7 +102,7 @@ namespace TVRename
             }
             else
             {
-               _logger.Info("Auto scan cancelled as the system is already busy");
+               Logger.Info("Auto scan cancelled as the system is already busy");
             }
             StartMonitor();
         }

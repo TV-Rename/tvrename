@@ -79,7 +79,7 @@ namespace TVRename
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void Reset()
+        public sealed override void Reset()
         {
             _doneNfo = new List<String>();
             base.Reset();

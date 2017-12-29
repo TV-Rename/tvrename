@@ -103,9 +103,6 @@ namespace TVRename
             {
                 Logger.Info(e);
             }
-            catch
-            {
-            }
             return count;
         }
     }

@@ -94,14 +94,14 @@ namespace TVRename
             return !Error;
         }
        
-        public override bool SameAs(ITem o)
+        public override bool SameAs(Item o)
         {
             ActionDeleteFile cmr = o as ActionDeleteFile;
 
             return (cmr != null) && FileHelper.Same(ToRemove , cmr.ToRemove);
         }
 
-        public override int Compare(ITem o)
+        public override int Compare(Item o)
         {
             ActionDeleteFile cmr = o as ActionDeleteFile;
 
@@ -160,14 +160,14 @@ namespace TVRename
             return !Error;
         }
 
-        public override bool SameAs(ITem o)
+        public override bool SameAs(Item o)
         {
             ActionDeleteDirectory cmr = o as ActionDeleteDirectory;
 
             return (cmr != null) && FileHelper.Same(ToRemove, cmr.ToRemove);
         }
 
-        public override int Compare(ITem o)
+        public override int Compare(Item o)
         {
             ActionDeleteDirectory cmr = o as ActionDeleteDirectory;
 

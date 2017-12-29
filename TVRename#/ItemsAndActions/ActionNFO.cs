@@ -13,7 +13,7 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    public class ActionNfo : ITem, IAction, IScanListItem, IActionWriteMetadata
+    public class ActionNfo : Item, IAction, IScanListItem, IActionWriteMetadata
     {
         public ShowItem Si; // if for an entire show, rather than specific episode
         public FileInfo Where;
@@ -175,8 +175,6 @@ namespace TVRename
             {
                 //                XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings);
                 writer = XmlWriter.Create(Where.FullName, settings);
-                if (writer == null)
-                    return false;
             }
             catch (Exception)
             {
@@ -261,12 +259,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(ITem o)
+        public bool SameAs(Item o)
         {
             return (o is ActionNfo) && ((o as ActionNfo).Where == Where);
         }
 
-        public int Compare(ITem o)
+        public int Compare(Item o)
         {
             ActionNfo nfo = o as ActionNfo;
 
@@ -274,7 +272,7 @@ namespace TVRename
                 return 1;
             if (nfo?.Episode == null)
                 return -1;
-            return (Where.FullName + Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+            return String.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion

@@ -10,6 +10,3 @@
 
 // Download and process a .RSS feed, primarily for getting .torrent files
 
-namespace TVRename
-{
-}

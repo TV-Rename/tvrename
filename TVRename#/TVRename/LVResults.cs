@@ -84,7 +84,7 @@ namespace TVRename
             if (sel.Count == 0)
                 return;
 
-            Type firstType = ((ITem) (sel[0].Tag)).GetType();
+            Type firstType = ((Item) (sel[0].Tag)).GetType();
 
             AllSameType = true;
             foreach (ListViewItem lvi in sel)
@@ -92,7 +92,7 @@ namespace TVRename
                 if (lvi == null)
                     continue;
 
-                ITem action = (ITem) (lvi.Tag);
+                Item action = (Item) (lvi.Tag);
                 if (action is IScanListItem)
                     FlatList.Add(action as IScanListItem);
 
