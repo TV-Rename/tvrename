@@ -1,42 +1,160 @@
 #### Options and Preferences
 
+![The Options Menu](images/options/menu-01.png){:.pic-l}
 One of TV Rename's strongest (and most confusing) features is its configurability. For the newcomer especially, it's very easy to get "lost" in the plethora of options and preferences, and give up.
 
 Luckily the "out-of-the-box" defaults work well, and should you wish to change any settings, all the stuff you can "fiddle with" is described here.
 
-# Preferences
+As you can see from the image above there are a number of options, each of which is discussed below.
 
-##### General
+{:.center}
+[Offline Operation](#offline-operation)&nbsp;-&nbsp;[Automatic Background Download](#automatic-background-download)&nbsp;-&nbsp;[Preferences](#preferences "Delve into the preferences")
+
+{:.center}
+[Ignore List]()&nbsp;-&nbsp;[Filename Template Editor]()&nbsp;-&nbsp;[Search Engines]()&nbsp;-&nbsp;[Filename Processors]()
+
+## Offline Operation
+
+{:.toplink}
+[Return to Top]()
+
+## Automatic Background Download
+
+{:.toplink}
+[Return to Top]()
+
+## Preferences
+
+![The Preferences Tabs](images/options/preferences-tabs-01.png){:.pic-l}
+As can be seen from the image there are a large number of tabs in "Preferences", each of which is discussed in below.<br />
+
+{:.center}
+[Media Center](#media-center)&nbsp;-&nbsp;[Search Folders](#search-folders)&nbsp;-&nbsp;[&#181;Torrent / NZB](#&#181;torrent--nzb)&nbsp;-&nbsp;[Tree Coloring](#tree-coloring)
+
+{:.center}
+[General](#general)&nbsp;-&nbsp;[Files and Folders](#files-and-folders)&nbsp;-&nbsp;[Automatic Export](#automatic-export)&nbsp;-&nbsp;[Scan Options](#scan-options)&nbsp;-&nbsp;[Folder Deleting](#folder-deleting)
+
+{:.toplink}
+[Return to Top]()
+
+### Media Center
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+### Search Folders
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+### &#181;Torrent / NZB
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+### Tree Coloring
+![Preferences - the Tree Coloring tab](images/options/preferences-tree-coloring-01.png){:.pic-l}
+If you're like me and have a large catalogue of old TV Shows, the ***My Shows*** tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. ***Tree Coloring*** to the rescue...
+
+Tree coloring allows you to change the color of the text on the left hand pane of the ***My Shows*** tab depending on the status of the show or the show season. To create a record:-
+* Expand the "Status:" drop-down and select the status you wish to match from the list.
+* Select a color to associate with the status by either entering a web-safe color name or code in the "Text Color:" box or clicking `Select Colour` and choosing from the pallet.
+* Click the `Add` button and your new entry will appear the box above.
+
+For example: to make finished shows less obtrusive in ***My Shows*** expand the "Status:" drop-down and select "Show Status: Ended", in the "Text Color:" box type "#808080" and click `Add`. Back in the  ***My Shows*** text for shows that have finished will be light grey and less obtrusive.
+
+If you wish to remove a rule from the list just select it and click `Remove`.
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+### General
 ![Preferences - the General tab](images/options/preferences-general-01.png){:.pic-l}
-*When to watch* "X" *days count as recent* - Specifies how many recent days are listed for the for "Aired in the last N days" section of the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab.
+*When to watch* "X" *days count as recent*<br />
+Specifies how many recent days are listed for the for "Aired in the last N days" section of the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab.
 
 *Default: **7 days***
 
-*Double-click in When to Watch does:* - Controls the double-click action in the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab. Options are Search and Scan.
+*Double-click in When to Watch does:*<br />
+Controls the double-click action in the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab. Options are Search and Scan.
 
 *Default: **Search***
 
-*Startup Tab:* - Selects which tab you wish open when TV Rename loads. ***My Shows***, ***Search*** or ***When to Watch***.
+{:.clear}
+*Startup Tab:*<br />
+Selects which tab you wish open when TV Rename loads. ***My Shows***, ***Search*** or ***When to Watch***.
 
 *Default: **My Shows***
 
 The *Show Notification Area* and *Show in Taskbar* interact, one of them **must** be ticked. If you try to un-tick both the option you are changing clears, but the other one automatically sets.
 
-If *Show in Taskbar* is selected TV Rename's icon appears in the Windows taskbar.
-<br />If *Show Notification Area* is selected TV Rename's icon appears in the System Tray. Right-clicking it will show an "Upcoming Shows" list, and double clicking restores the main window.<br />
+If *Show in Taskbar* is selected TV Rename's icon appears in the Windows taskbar.<br />
+If *Show Notification Area* is selected TV Rename's icon appears in the System Tray. Right-clicking it will show an "Upcoming Shows" list, and double clicking restores the main window.<br />
 Both boxes can be ticked, in which case you get both functionalities.
 
 | *Defaults:* | "Show Notification Area" | ***Un-ticked*** |
 |-------------|--------------------------|-----------------|
 |             | "Show in Taskbar"        | ***Ticked***    |
 
-*Show episode pictures in episode guides* does what-it-says-on-the-tin, if it is ticked screen grabs from show episodes will be displayed with the episode descriptions in the *My Shows* tab. If it is un-ticked they will not be displayed.
+*Show episode pictures in episode guides*<br />
+Does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the ***My Shows*** tab. If un-ticked only the episode description is displayed.
 
 *Default: **Ticked***
 
-*Automatically select show and season in My Shows*
+*Download up to "X" shows simultaneously from TheTVDB*<br />
+Sets the number of concurrent connections to TheTVDB API. It can be set in the range to 1 to 8.
+
+*Default: **4***
+
+*Automatically select show and season in My Shows*<br />
+If ticked this works for both the ***When to watch*** and ***Scan*** tabs. If an item is selected in either of these tabs the ***My Shows*** tab is automatically updated to highlight the indicated show and season.
 
 *Default: **Ticked***
+
+*Look for airdate in filenames*<br />
+If ticked this provides a second method of identifying show episodes by looking for a date (in a number of formats) in the shows filename and comparing that against the air-date.
+
+The supported date formats are: "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy" and "MM-dd-yy"
+
+And the "date separators" can be any of: - / . , " " (a space)
+
+*Default: **Un-ticked***
+
+*Prefered language:*<br />
+This option sets the language for returned data then requesting information from TheTVDB API. TV Rename will request "English" If the selected language is not available.
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+### Files and Folders
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+### Automatic Export
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+### Scan options
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+### Folder Deleting
+
+{:.toplink}
+[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+
+## Ignore List
+
+## Filename Template Editor
+
+## Search Engines
+
+## Filename Processors
+
+
 
 ##### Files & Folders
 | Field | Explanation |
@@ -101,8 +219,8 @@ The "Default Naming Style" is what is used for new folders that you add, so if y
 
 # Season Settings
 
-
 # Other Settings
+
 ## File Name Processors
 This screen tells TV Rename what filenames to look out for when searchign for a missing file. To really understand it you need to understand is [Regular Expressions](https://regexone.com/). Once you understand them you can see that this is a list of regular expressions that cature the season and episode number from the filename. Each one can work on just the filename "Show S01E07.avi", or on the whole filename "C:/files/showName/S01E02.avi".
 

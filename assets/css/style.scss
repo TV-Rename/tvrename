@@ -32,8 +32,36 @@
     font-weight: bold;
 }
 
+.clear {
+    clear: both;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.center a {
+    font-weight: bold;
+}
+.center a:hover {
+    border-bottom: 1px solid #3399cc;
+}
+
+.toplink {
+    margin-right: auto;
+    text-align: right;
+}
+
+.toplink a {
+    font-size: 10px;
+    font-style: italic;
+    font-weight: normal;
+}
+
 h1, h2, h4, h5 {
-   color: #3399cc;
+    color: #3399cc;
 }
 
 h1 a:link, a:visited {
@@ -62,11 +90,11 @@ h5 {
     font-weight: bold;
 }
 
-p a:link, a:visited {
+p a {
     font-weight: bold;
 }
 
-p a:hover, a:active {
+p a:hover {
     border-bottom: 1px solid #3399cc;
 }
 
