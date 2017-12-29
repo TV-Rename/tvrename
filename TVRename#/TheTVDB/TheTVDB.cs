@@ -796,13 +796,15 @@ namespace TVRename
                         totaleps++;
                     }
                 }
-                if ((totaleps>0) && ((100 * totaldirty /totaleps)>=10)) // 10%
+
+                float percentDirty = 100 * totaldirty / totaleps;
+                if ((totaleps>0) && ((percentDirty) >=10)) // 10%
                 {
                     kvp.Value.Dirty = true;
                     kvp.Value.Seasons.Clear();
-                    logger.Info("Planning to download all of {0} as {1}% of the episodes need to be updated", kvp.Value.Name, totaldirty / totaleps * 100);
+                    logger.Info("Planning to download all of {0} as {1}% of the episodes need to be updated", kvp.Value.Name, percentDirty);
                 }
-                else logger.Trace("Not planning to download all of {0} as {1}% of the episodes need to be updated and that's less than the 10% limit to upgrade.", kvp.Value.Name, totaldirty / totaleps * 100);
+                else logger.Trace("Not planning to download all of {0} as {1}% of the episodes need to be updated and that's less than the 10% limit to upgrade.", kvp.Value.Name, percentDirty);
             }
 
 
