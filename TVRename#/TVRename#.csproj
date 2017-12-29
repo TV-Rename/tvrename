@@ -117,6 +117,12 @@
     <Compile Include="Forms\Filters.Designer.cs">
       <DependentUpon>Filters.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ShowSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ShowSummary.Designer.cs">
+      <DependentUpon>ShowSummary.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ISplashForm.cs" />
     <Compile Include="Forms\SplashScreen.cs" />
     <Compile Include="Forms\TVRenameSplash.cs">
