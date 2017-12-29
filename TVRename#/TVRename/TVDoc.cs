@@ -2570,7 +2570,7 @@ namespace TVRename
 
             filename = filename.Replace(".", " "); // turn dots into spaces
 
-            if ((showNameHint == null) || (string.IsNullOrEmpty(showNameHint)))
+            if (string.IsNullOrEmpty(showNameHint))
                 return filename;
 
             bool nameIsNumber = (Regex.Match(showNameHint, "^[0-9]+$").Success);
@@ -2630,7 +2630,7 @@ namespace TVRename
                 foreach (Episode epi in kvp.Value.Episodes)
                 {
                     DateTime? dt = epi.GetAirDateDt(false); // file will have local timezone date, not ours
-                    if ((dt == null) || (!dt.HasValue))
+                    if (dt == null)
                         continue;
 
                     TimeSpan closestDate = TimeSpan.MaxValue;

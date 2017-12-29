@@ -302,7 +302,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
             {
                 ProcessedEpisode pe = lvi.Tag as ProcessedEpisode;
-                if (pe != null && !String.IsNullOrEmpty(pe.Si.CustomSearchUrl))
+                if (!String.IsNullOrEmpty(pe?.Si.CustomSearchUrl))
                 {
                     customWtw = true;
                     break;
@@ -313,7 +313,7 @@ namespace TVRename
             foreach (ListViewItem lvi in _lvAction.SelectedItems)
             {
                 ProcessedEpisode pe = lvi.Tag as ProcessedEpisode;
-                if (pe != null && !String.IsNullOrEmpty(pe.Si.CustomSearchUrl))
+                if (!String.IsNullOrEmpty(pe?.Si.CustomSearchUrl))
                 {
                     customAction = true;
                     break;
@@ -1933,7 +1933,7 @@ namespace TVRename
                                 foreach (ITem ai in MLastActionsClicked)
                                 {
                                     IScanListItem er = ai as IScanListItem;
-                                    if ((er == null) || (er.Episode == null))
+                                    if (er?.Episode == null)
                                         continue;
 
                                     int snum = er.Episode.SeasonNumber;
@@ -1947,7 +1947,7 @@ namespace TVRename
                                     {
                                         IScanListItem er2 = action as IScanListItem;
 
-                                        if ((er2 != null) && (er2.Episode != null) && (er2.Episode.SeasonNumber == snum))
+                                        if (er2?.Episode != null && (er2.Episode.SeasonNumber == snum))
                                             if (er2.TargetFolder == er.TargetFolder) //ie if they are for the same series
                                                 remove.Add(action);
                                     }
@@ -3134,7 +3134,7 @@ namespace TVRename
             foreach (ITem ai in lvr.FlatList)
                 MLastActionsClicked.Add(ai);
 
-            if ((lvr.Count == 1) && (_lvAction.FocusedItem != null) && (_lvAction.FocusedItem.Tag != null))
+            if ((lvr.Count == 1) && _lvAction.FocusedItem?.Tag != null)
             {
                 IScanListItem action = _lvAction.FocusedItem.Tag as IScanListItem;
                 if (action != null)
@@ -3252,7 +3252,7 @@ namespace TVRename
             foreach (ListViewItem lvi in _lvAction.Items)
             {
                 ITem i = (ITem)(lvi.Tag);
-                if ((i != null) && (i is ActionCopyMoveRename) && (((ActionCopyMoveRename)i).Operation == ActionCopyMoveRename.Op.Rename))
+                if (i is ActionCopyMoveRename && (((ActionCopyMoveRename)i).Operation == ActionCopyMoveRename.Op.Rename))
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
@@ -3272,7 +3272,7 @@ namespace TVRename
             foreach (ListViewItem lvi in _lvAction.Items)
             {
                 ITem i = (ITem)(lvi.Tag);
-                if ((i != null) && (i is ActionCopyMoveRename) && (((ActionCopyMoveRename)i).Operation != ActionCopyMoveRename.Op.Rename))
+                if (i is ActionCopyMoveRename && (((ActionCopyMoveRename)i).Operation != ActionCopyMoveRename.Op.Rename))
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
@@ -3292,7 +3292,7 @@ namespace TVRename
             foreach (ListViewItem lvi in _lvAction.Items)
             {
                 ITem i = (ITem)(lvi.Tag);
-                if ((i != null) && (i is ActionNfo))
+                if (i is ActionNfo)
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
@@ -3312,7 +3312,7 @@ namespace TVRename
             foreach (ListViewItem lvi in _lvAction.Items)
             {
                 ITem i = (ITem)(lvi.Tag);
-                if ((i != null) && (i is ActionPyTivoMeta))
+                if (i is ActionPyTivoMeta)
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
@@ -3332,7 +3332,7 @@ namespace TVRename
             foreach (ListViewItem lvi in _lvAction.Items)
             {
                 ITem i = (ITem)(lvi.Tag);
-                if ((i != null) && (i is ActionRss))
+                if (i is ActionRss)
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
@@ -3352,7 +3352,7 @@ namespace TVRename
             foreach (ListViewItem lvi in _lvAction.Items)
             {
                 ITem i = (ITem)(lvi.Tag);
-                if ((i != null) && (i is ActionDownload))
+                if (i is ActionDownload)
                     lvi.Checked = cs == CheckState.Checked;
             }
             InternalCheckChange = false;
@@ -3392,8 +3392,8 @@ namespace TVRename
 
             foreach (ITem i in lvr.FlatList)
             {
-                IScanListItem sli = i as IScanListItem;
-                if ((sli != null) && (sli.Episode != null))
+                IScanListItem sli = (IScanListItem) i;
+                if (sli?.Episode != null)
                     _mDoc.DoBtSearch(sli.Episode);
             }
         }

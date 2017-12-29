@@ -292,7 +292,7 @@ namespace TVRename
         {
             get
             {
-                if ((_mName == null) || (string.IsNullOrEmpty(_mName)))
+                if (string.IsNullOrEmpty(_mName))
                     return "Episode " + EpNum;
                 return _mName;
             }

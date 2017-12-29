@@ -1278,7 +1278,7 @@ namespace TVRename
             {
                 Episode ep = FindEpisodeById(episodeId);
                 string eptxt =  "New Episode Id = "+ episodeId;
-                if ((ep != null) && (ep.TheSeason != null))
+                if (ep?.TheSeason != null)
                     eptxt = string.Format("S{0:00}E{1:00}", ep.TheSeason.SeasonNumber, ep.EpNum);
 
                 txt = _series[seriesId].Name + " (" + eptxt + ")";
