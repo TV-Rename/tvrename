@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
 
@@ -9,8 +9,8 @@ namespace TVRename
 {
     public class DirFilesCache
     {
-        private Dictionary<String, FileInfo[]> _cache = new Dictionary<string, FileInfo[]>();
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly Dictionary<String, FileInfo[]> _cache = new Dictionary<string, FileInfo[]>();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public FileInfo[] Get(String folder)
         {

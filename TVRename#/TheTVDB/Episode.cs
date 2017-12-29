@@ -33,7 +33,7 @@ namespace TVRename
         public Season TheSeason;
         public SeriesInfo TheSeries;
         private string _mName;
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public Episode(Episode o)
         {

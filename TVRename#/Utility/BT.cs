@@ -996,7 +996,7 @@ namespace TVRename
         public bool TestMode;
         public string Type;
 
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public BtResume(SetProgressDelegate setprog, string resumeDatFile)
             : base(setprog)

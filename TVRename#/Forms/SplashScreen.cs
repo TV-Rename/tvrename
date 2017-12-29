@@ -13,11 +13,11 @@ namespace TVRename
         private delegate void UpdateInt(int number);
         private static System.Timers.Timer _fader;
         private static double _opacityIncrement = .05;
-        private static double _opacityDecrement = .125;
+        private static readonly double _opacityDecrement = .125;
         private const int FadeSpeed = 50;
         private const int WaitTime = 2000;
         private static ManualResetEvent _windowCreated;
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static double CheckOpacity()
         {

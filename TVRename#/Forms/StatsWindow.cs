@@ -20,7 +20,7 @@ namespace TVRename
     /// </summary>
     public partial class StatsWindow : Form
     {
-        private TVRenameStats _stats;
+        private readonly TVRenameStats _stats;
 
         public StatsWindow(TVRenameStats s)
         {

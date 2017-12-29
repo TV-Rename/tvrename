@@ -21,7 +21,7 @@ namespace TVRename
     /// </summary>
     public partial class ShowException : Form
     {
-        private Exception _mException;
+        private readonly Exception _mException;
 
         public ShowException(Exception e)
         {

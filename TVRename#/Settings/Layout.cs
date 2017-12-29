@@ -175,7 +175,7 @@ namespace TVRename
 
     public class Layout
     {
-        private System.Collections.Generic.List<LayoutInfo> _mLayouts;
+        private readonly System.Collections.Generic.List<LayoutInfo> _mLayouts;
 
         public Layout()
         {

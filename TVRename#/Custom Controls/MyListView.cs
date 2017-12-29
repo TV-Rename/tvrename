@@ -27,7 +27,7 @@ namespace TVRename
     {
         private bool _checkEnable;
         private bool _keyCheck;
-        private bool _menuCheck;
+        private readonly bool _menuCheck;
         private bool _onMouseDown;
 
         public MyListView()

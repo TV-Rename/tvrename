@@ -246,7 +246,7 @@ namespace TVRename
 
     public static class HttpHelper
     {
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static String HttpRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -349,7 +349,7 @@ namespace TVRename
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
 
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private enum BrowserEmulationVersion
         {
@@ -552,7 +552,7 @@ namespace TVRename
     public static class Helpers
     {
 
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static string Pad(int i)
         {

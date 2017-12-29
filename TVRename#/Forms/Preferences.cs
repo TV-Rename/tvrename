@@ -28,11 +28,11 @@ namespace TVRename
     {
         delegate void LoadLanguageDoneDel();
 
-        private TVDoc _mDoc;
+        private readonly TVDoc _mDoc;
         private Thread _loadLanguageThread;
         private String _enterPreferredLanguage; // hold here until background language download task is done
 
-        private LoadLanguageDoneDel _loadLanguageDone;
+        private readonly LoadLanguageDoneDel _loadLanguageDone;
 
         public Preferences(TVDoc doc, bool goToScanOpts)
         {

@@ -20,7 +20,7 @@ namespace TVRename
     /// </summary>
     public partial class DownloadProgress : Form
     {
-        private TVDoc _mDoc;
+        private readonly TVDoc _mDoc;
 
         public DownloadProgress(TVDoc doc)
         {

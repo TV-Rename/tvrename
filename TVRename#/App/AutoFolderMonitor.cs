@@ -7,11 +7,11 @@ namespace TVRename
 {
     public class AutoFolderMonitor
     {
-        private TVDoc _mDoc;
-        private Ui _mUi;
-        private List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
-        private System.Timers.Timer _mScanDelayTimer;
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly TVDoc _mDoc;
+        private readonly Ui _mUi;
+        private readonly List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
+        private readonly System.Timers.Timer _mScanDelayTimer;
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public AutoFolderMonitor(TVDoc doc, Ui ui)
         {

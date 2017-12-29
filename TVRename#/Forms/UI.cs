@@ -99,7 +99,7 @@ namespace TVRename
         protected Season MLastSeasonClicked;
         protected List<ShowItem> MLastShowsClicked;
 
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public Ui(TVDoc doc, TVRenameSplash splash)
         {

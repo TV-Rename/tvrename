@@ -25,7 +25,7 @@ namespace TVRename
         public bool BannersLoaded;
 
         public Dictionary<int, Season> Seasons;
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         //All Banners
         public Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.

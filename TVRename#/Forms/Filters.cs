@@ -6,7 +6,7 @@ namespace TVRename.Forms
 {
     public partial class Filters : Form
     {
-        private TVDoc _doc;
+        private readonly TVDoc _doc;
 
         public Filters(TVDoc doc)
         {

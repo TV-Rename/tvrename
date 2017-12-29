@@ -21,8 +21,8 @@ namespace TVRename
     public partial class IgnoreEdit : Form
     {
         private System.Collections.Generic.List<IgnoreItem> _displayedSet;
-        private System.Collections.Generic.List<IgnoreItem> _ignore;
-        private TVDoc _mDoc;
+        private readonly System.Collections.Generic.List<IgnoreItem> _ignore;
+        private readonly TVDoc _mDoc;
 
         public IgnoreEdit(TVDoc doc)
         {

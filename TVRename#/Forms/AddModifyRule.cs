@@ -21,7 +21,7 @@ namespace TVRename
     /// </summary>
     public partial class AddModifyRule : Form
     {
-        private ShowRule _mRule;
+        private readonly ShowRule _mRule;
 
         public AddModifyRule(ShowRule rule)
         {

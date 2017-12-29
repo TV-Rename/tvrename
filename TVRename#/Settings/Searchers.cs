@@ -23,7 +23,7 @@ namespace TVRename
         }
 
         public string CurrentSearch;
-        private List<Choice> _choices = new List<Choice>();
+        private readonly List<Choice> _choices = new List<Choice>();
 
         public Searchers()
         {

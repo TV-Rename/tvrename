@@ -13,7 +13,7 @@ namespace TVRename
     {
         public bool StopNow = false;
         public bool Ready = false;
-        private FolderMonitor _mFm;
+        private readonly FolderMonitor _mFm;
 
         public FolderMonitorProgress(FolderMonitor thefm)
         {

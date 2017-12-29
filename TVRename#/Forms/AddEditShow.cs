@@ -28,8 +28,8 @@ namespace TVRename
     public partial class AddEditShow : Form
     {
         public string ShowTimeZone;
-        private ShowItem _mSi;
-        private TheTVDBCodeFinder _mTccf;
+        private readonly ShowItem _mSi;
+        private readonly TheTVDBCodeFinder _mTccf;
 
         public AddEditShow(ShowItem si)
         {

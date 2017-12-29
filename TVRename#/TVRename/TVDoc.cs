@@ -32,7 +32,7 @@ namespace TVRename
         public List<string> IgnoreFolders;
         public List<string> SearchFolders;
         public List<IgnoreItem> Ignore;
-        private DownloadIdentifiersController _downloadIdentifiers;
+        private readonly DownloadIdentifiersController _downloadIdentifiers;
 
         public bool ActionCancel;
         public bool ActionPause;
@@ -59,12 +59,12 @@ namespace TVRename
         private TVRenameStats _mStats;
         public bool CurrentlyBusy = false;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-        private static NLog.Logger _threadslogger = NLog.LogManager.GetLogger("threads");
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _threadslogger = NLog.LogManager.GetLogger("threads");
 
-        private List<Finder> _finders;
+        private readonly List<Finder> _finders;
 
-        string[] _seasonWords = new[] { "Season", // EN
+        readonly string[] _seasonWords = new[] { "Season", // EN
                                        "Saison", // FR, DE
                                        "temporada" // ES
                                        }; // TODO: move into settings, and allow user to edit these

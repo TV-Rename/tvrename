@@ -22,7 +22,7 @@ namespace TVRename
     /// </summary>
     public partial class UpcomingPopup : Form
     {
-        private TVDoc _mDoc;
+        private readonly TVDoc _mDoc;
 
         public UpcomingPopup(TVDoc doc)
         {

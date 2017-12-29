@@ -21,7 +21,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 public static class GlobalMembersTVRename
 {
 
-    private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
     [STAThread]
     private static int Main(string[] args)
@@ -123,7 +123,7 @@ public static class GlobalMembersTVRename
 
 class TVRenameProgram : WindowsFormsApplicationBase
 {
-    private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
     protected override void OnCreateSplashScreen()
     {

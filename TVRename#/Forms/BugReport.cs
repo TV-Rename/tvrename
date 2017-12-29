@@ -25,7 +25,7 @@ namespace TVRename
     /// </summary>
     public partial class BugReport : Form
     {
-        private TVDoc _mDoc;
+        private readonly TVDoc _mDoc;
 
         public BugReport(TVDoc doc)
         {

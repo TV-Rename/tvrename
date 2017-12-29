@@ -88,17 +88,17 @@ namespace TVRename
         private string _authenticationToken; //The JSON Web token issued by TVDB
 
         public String RequestLanguage = "en"; // Set and updated by TVDoc
-        private static String _defaultLanguage = "en"; //Default backup language
+        private static readonly String _defaultLanguage = "en"; //Default backup language
 
         private CommandLineArgs _args;
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
 
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile TheTVDB _instance;
-        private static object _syncRoot = new Object();
+        private static readonly object _syncRoot = new Object();
 
         public static TheTVDB Instance
         {

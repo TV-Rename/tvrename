@@ -14,7 +14,7 @@ namespace TVRename
     {
         public int Code;
 
-        private TheTVDBCodeFinder _mTccf;
+        private readonly TheTVDBCodeFinder _mTccf;
 
         public FolderMonitorEdit(FolderMonitorEntry hint)
         {

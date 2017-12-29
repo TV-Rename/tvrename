@@ -35,7 +35,7 @@ namespace TVRename
         [XmlIgnoreAttribute] public int NsNumberOfEpisodesExpected = 0;
         [XmlIgnoreAttribute] public int NsNumberOfSeasons = 0;
         [XmlIgnoreAttribute] public int NsNumberOfShows = 0;
-        [XmlIgnoreAttribute] private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        [XmlIgnoreAttribute] private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats Load()
         {

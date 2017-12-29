@@ -5,7 +5,7 @@ namespace TVRename
 {
     class DownloadIdentifiersController
     {
-        private List<DownloadIdentifier> _identifiers;
+        private readonly List<DownloadIdentifier> _identifiers;
         
         public DownloadIdentifiersController() {
             _identifiers = new List<DownloadIdentifier>();

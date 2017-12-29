@@ -25,8 +25,8 @@ namespace TVRename
         private SourceGrid.Grid _grid1;
         //array<SourceGrid::Cells::Editors::EditorBase ^> ^MyEditors;
 
-        private ProcessedEpisode _sampleEpisode;
-        private Searchers _mSearchers;
+        private readonly ProcessedEpisode _sampleEpisode;
+        private readonly Searchers _mSearchers;
 
         public AddEditSearchEngine(Searchers s, ProcessedEpisode pe)
         {

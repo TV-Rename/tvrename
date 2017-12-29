@@ -24,9 +24,9 @@ namespace TVRename
     /// </summary>
     public partial class UTorrent : Form
     {
-        private SetProgressDelegate _setProg;
+        private readonly SetProgressDelegate _setProg;
 
-        private TVDoc _mDoc;
+        private readonly TVDoc _mDoc;
         private System.IO.FileSystemWatcher _watcher;
 
         public UTorrent(TVDoc doc, SetProgressDelegate progdel)

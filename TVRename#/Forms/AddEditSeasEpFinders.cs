@@ -26,8 +26,8 @@ namespace TVRename
     /// </summary>
     public partial class AddEditSeasEpFinders : Form
     {
-        private List<FilenameProcessorRe> _rex;
-        private List<ShowItem> _sil;
+        private readonly List<FilenameProcessorRe> _rex;
+        private readonly List<ShowItem> _sil;
 
         public AddEditSeasEpFinders(List<FilenameProcessorRe> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder)
         {
@@ -310,7 +310,7 @@ namespace TVRename
 
         public class ChangedCont : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private AddEditSeasEpFinders _p;
+            private readonly AddEditSeasEpFinders _p;
 
             public ChangedCont(AddEditSeasEpFinders p)
             {

@@ -15,7 +15,7 @@ namespace TVRename
 {
     public class TextSorter : IComparer
     {
-        private int _col;
+        private readonly int _col;
 
         public TextSorter()
         {
@@ -80,7 +80,7 @@ namespace TVRename
 
     public class DaySorter : IComparer
     {
-        private int _col;
+        private readonly int _col;
 
         public DaySorter()
         {
@@ -126,7 +126,7 @@ namespace TVRename
 
     public class NumberAsTextSorter : IComparer
     {
-        private int _col;
+        private readonly int _col;
 
         public NumberAsTextSorter()
         {
