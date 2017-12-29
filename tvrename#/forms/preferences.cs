@@ -750,7 +750,7 @@ namespace TVRename
             ReplacementsGrid[r, 0] = new SourceGrid.Cells.Cell(from, typeof(string));
             ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
             ReplacementsGrid[r, 2] = new CheckBox(null, ins);
-            if (!string.IsNullOrEmpty(from) && (TVSettings.CompulsoryReplacements().IndexOf(from) != -1))
+            if (!string.IsNullOrEmpty(from) && (TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) != -1))
             {
                 ReplacementsGrid[r, 0].Editor.EnableEdit = false;
                 ReplacementsGrid[r, 0].View = roModel;
@@ -947,7 +947,7 @@ namespace TVRename
                 // don't delete compulsory items
                 int n = rowsIndex[0];
                 string from = (string) (ReplacementsGrid[n, 0].Value);
-                if (string.IsNullOrEmpty(from) || (TVSettings.CompulsoryReplacements().IndexOf(from) == -1))
+                if (string.IsNullOrEmpty(from) || TVSettings.CompulsoryReplacements().IndexOf(@from, StringComparison.Ordinal) == -1)
                     ReplacementsGrid.Rows.Remove(n);
             }
         }
