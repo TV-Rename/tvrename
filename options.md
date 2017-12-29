@@ -44,7 +44,7 @@ As can be seen from the image there are a large number of tabs in "Preferences",
 
 ### Search Folders
 ![Preferences - the Search Folders tab](images/options/preferences-search-folders-02.png){:.pic-l}
-The ***Search Folders*** tab is used to tell TV Rename where to look for tv show episode files BEFORE they are processed. Logical entries in here would be your downloads folder (if you download tv show episodes from the internet) or maybe your desktop (if you rip tv show episodes from DVD or Bluray). Or both!
+The ***Search Folders*** tab is used to tell TV Rename where to look for TV show episode files BEFORE they are processed. Logical entries in here would be your downloads folder (if you download TV show episodes from the internet) or maybe your desktop (if you rip TV show episodes from DVD or Blu-ray). Or both!
 
 Three buttons are available at the bottom of the tab. `Add` opens an explorer style window so you can browse to the folder location you wish to add and click `OK`, `Remove` removes a highlighted row from the panel and `Open` opens an explorer window targeting the row highlighted in the panel.
 
@@ -147,14 +147,13 @@ This option sets the language for returned data when requesting information from
 ![Preferences - the Automatic Export tab](images/options/preferences-auto-export-01.png){:.pic-l}
 Ticking the "RSS" box in the "When to watch"  section of the panel will save a RSS-reader compatible XML file to the location you specify (by typing or browsing). This file can then be read by something like XBOX Media Center, or a Windows  RSS App.
 
-Ticking the "XML" box in the "When to watch"  section of the panel will save an standard XML file to the location you specify (by typing or browsing).
+Ticking the "XML" box in the "When to watch" section of the panel will save a standard XML file to the location you specify (by typing or browsing).
 
 In either case you can limit how many days or shows are written to the file. The files are updated whenever the "When to watch" tab is manually or automatically refreshed.
 
+Ticking the XML" box in the "Missing" section of the panel, will save a standard XML containing the missing episodes detected during a scan to the location you specify (by typing or browsing)
+
 *Default: **All un-ticked***
-
-
-
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -171,7 +170,52 @@ In either case you can limit how many days or shows are written to the file. The
 
 ## Ignore List
 
+{:.toplink}
+[Return to Top]()
+
 ## Filename Template Editor
+![Preferences - the Filename Template Editor tab](images/options/filename-template-editor-01.png){:.pic-l}
+This is where the format of the filenames that TV Rename will rename to are defined.
+
+To help illustrate the results the "Sample and Test:" panel contains the processed entries from the show and season selected in the ***My Shows*** tab.
+
+The "Naming template:" text box displays a tokenised version of the filename which can be edited directly or populated using the "Tags:" drop-down, or overwritten with a record selected from the "Presets:" drop-down. Any changes in the "Naming Template:" are automatically reflected in the "Sample and Test:" panel.   
+
+The available tags with their definitions are listed below: -
+
+|{ShowName}   |Name of the Show                                                         |
+|-------------|-------------------------------------------------------------------------|
+|{Season}     |Number of the season                                                     |
+|-------------|-------------------------------------------------------------------------|
+|{Season:2}   |Number of the season forced to 2 characters with a leading zero          |
+|-------------|-------------------------------------------------------------------------|
+|{Episode}    |Number of the episode (within series), eg S01E03                         |
+|-------------|-------------------------------------------------------------------------|
+|{Episode2}   |Number of the second episode of a pair (within series), eg S01E04-E05    |
+|             | created by the default S{Season:2}E{Episode}[-E{Episode2}])             |
+|-------------|-------------------------------------------------------------------------|
+|{EpisodeName}|Name of the Episode                                                      |
+|-------------|-------------------------------------------------------------------------|
+|{Number}     |Overall number of the episode                                            |
+|-------------|-------------------------------------------------------------------------|
+|{Number:2}   |Overall number of the episode forced to 2 characters with a leading zero |
+|-------------|-------------------------------------------------------------------------|
+|{Number:3}   |Overall number of the episode forced to 3 characters with leading zero(s)|
+|-------------|-------------------------------------------------------------------------|
+|{ShortDate}  |Air date in short format, eg 25/12/2017                                  |
+|-------------|-------------------------------------------------------------------------|
+|{LongDate}   |Air date in lomg format, eg 25 December 2017                             |
+|-------------|-------------------------------------------------------------------------|
+|{YMDDate}    |Air date in YMD format, eg 2017/12/25                                    |
+|-------------|-------------------------------------------------------------------------|
+|{AllEpisodes}|All episodes - E01E02 etc                                                |
+
+| *Default:* | ***{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}*** |
+|------------|------------------------------------------------------------------------|
+|            | (the second preset).                                                   |
+
+{:.toplink}
+[Return to Top]()
 
 ## Search Engines
 
@@ -254,21 +298,3 @@ This screen tells TV Rename what filenames to look out for when searchign for a 
 ## Search Engines
 ### AWAITING UPDATE
 
-* {ShowName} - Name of the Show
-* {Season} - Number of the season
-* {Season:2} - Number of the season forced to 2 characters with a leading zero
-* {Episode} - Number of the episode (within series)
-* {Episode2} - Number of the episode (within series)
-* {EpisodeName} - Name of the Episode
-* {Number} - Overall number of the episode
-* {Number:2} - Overall number of the episode forced to 2 characters with a leading zero
-* {Number:3} - Overall number of the episode forced to 3 characters with leading zero(s)
-* {ShortDate} - Airdate in d format
-* {LongDate} - Airdate in D format
-* {YMDDate} - Airdate in yyyy/MM/dd format
-* {AllEpisodes} - ALl episodes - E01E02 etc
-
-## Template Editor
-This is where we define the format of the filenames we rename to. It uses the same codes as above.
-
-### AWAITING UPDATE
