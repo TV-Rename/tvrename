@@ -714,10 +714,9 @@ namespace TVRename
                         while (morePages)
                         {
                             String episodeUri = _apiRoot + "/series/" + id + "/episodes";
-                            JObject jsonEpisodeResponse;
                             try
                             {
-                                jsonEpisodeResponse = HttpHelper.JsonHttpgetRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, _authenticationToken);
+                                JObject jsonEpisodeResponse = HttpHelper.JsonHttpgetRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, _authenticationToken);
                                 episodeResponses.Add(jsonEpisodeResponse);
                                 int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
 
@@ -1081,10 +1080,9 @@ namespace TVRename
                 while (morePages)
                 {
                     String episodeUri = _apiRoot + "/series/" + code + "/episodes";
-                    JObject jsonEpisodeResponse;
                     try
                     {
-                        jsonEpisodeResponse = HttpHelper.JsonHttpgetRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, _authenticationToken);
+                        JObject jsonEpisodeResponse = HttpHelper.JsonHttpgetRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, _authenticationToken);
                         episodeResponses.Add(jsonEpisodeResponse);
                         int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
                         //logger.Info(code + "****" + jsonEpisodeResponse.ToString());

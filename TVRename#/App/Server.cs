@@ -39,7 +39,6 @@ namespace TVRename
 
                     // Buffer for reading data
                     Byte[] bytes = new Byte[256];
-                    string data;
 
                     // Enter the listening loop.
                     while (true)
@@ -59,7 +58,7 @@ namespace TVRename
                         while (!done && ((i = stream.Read(bytes, 0, bytes.Length)) > 0))
                         {
                             // Translate data bytes to a ASCII String*.
-                            data = Encoding.ASCII.GetString(bytes, 0, i);
+                            string data = Encoding.ASCII.GetString(bytes, 0, i);
 
                             for (int p = 0; p < data.Length; p++)
                             {
