@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    public partial class TVRenameSplash : Form, ISplashForm
+    public partial class TVRenameSplash : Form
     {
         public TVRenameSplash()
         {

@@ -120,8 +120,6 @@
     <Compile Include="Forms\Filters.Designer.cs">
       <DependentUpon>Filters.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ISplashForm.cs" />
-    <Compile Include="Forms\SplashScreen.cs" />
     <Compile Include="Forms\TVRenameSplash.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -434,7 +432,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings\Searchers.cs" />
-    <Compile Include="App\Server.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Forms\ShowException.cs">
       <SubType>Form</SubType>
