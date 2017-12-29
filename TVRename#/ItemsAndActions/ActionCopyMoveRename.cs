@@ -1,16 +1,10 @@
-using Alphaleonis.Win32.Filesystem;
+using System;
 using System.Security.AccessControl;
+using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    using Alphaleonis.Win32.Filesystem;
-    using System;
-    using System.Windows.Forms;
-    using File = File;		
-    using FileInfo = FileInfo;		
-    using FileSystemInfo = FileSystemInfo;		
-
-
     public class ActionCopyMoveRename : ActionFileOperation
     {
         #region Op enum

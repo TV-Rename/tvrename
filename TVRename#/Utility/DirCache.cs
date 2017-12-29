@@ -5,15 +5,18 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using Alphaleonis.Win32.Filesystem;
+
 using System;
+using System.Collections.Generic;
+using Alphaleonis.Win32.Filesystem;
+using NLog;
 
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
 
 namespace TVRename
 {
-    public class DirCache : System.Collections.Generic.List<DirCacheEntry>
+    public class DirCache : List<DirCacheEntry>
     {
         public DirCache()
         {
@@ -53,7 +56,7 @@ namespace TVRename
         {
             return BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
         }
-        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
         private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders)
         {

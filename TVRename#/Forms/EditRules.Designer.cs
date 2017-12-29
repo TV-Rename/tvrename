@@ -1,10 +1,13 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
 //
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 //
+
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -13,7 +16,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -271,27 +274,27 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Button bnRuleUp;
-        private System.Windows.Forms.Button bnRuleDown;
-        private System.Windows.Forms.ListView lvRuleList;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.ColumnHeader columnHeader4;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
-        private System.Windows.Forms.Button bnDelRule;
-        private System.Windows.Forms.Button bnEdit;
-        private System.Windows.Forms.Button bnAddRule;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ListBox lbEpsPreview;
+        private Button bnRuleUp;
+        private Button bnRuleDown;
+        private ListView lvRuleList;
+        private ColumnHeader columnHeader3;
+        private ColumnHeader columnHeader4;
+        private ColumnHeader columnHeader5;
+        private ColumnHeader columnHeader6;
+        private Button bnDelRule;
+        private Button bnEdit;
+        private Button bnAddRule;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private ListBox lbEpsPreview;
 
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button bnCancel;
+        private Label label4;
+        private Button bnCancel;
 
-        private System.Windows.Forms.Button bnOK;
+        private Button bnOK;
 
-        private System.Windows.Forms.Label txtShowName;
-        private System.Windows.Forms.Label txtSeasonNumber;
+        private Label txtShowName;
+        private Label txtSeasonNumber;
     }
 }

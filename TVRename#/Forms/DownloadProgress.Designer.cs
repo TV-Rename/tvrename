@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class DownloadProgress
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -114,13 +117,13 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Button bnCancel;
+        private Button bnCancel;
 
-        private System.Windows.Forms.ProgressBar pbProgressBar;
+        private ProgressBar pbProgressBar;
 
-        private System.Windows.Forms.Label label2;
+        private Label label2;
 
-        private System.Windows.Forms.Label txtCurrent;
-        private System.Windows.Forms.Timer tmrUpdate;
+        private Label txtCurrent;
+        private Timer tmrUpdate;
     }
 }

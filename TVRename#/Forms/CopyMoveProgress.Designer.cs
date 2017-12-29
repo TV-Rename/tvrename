@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class CopyMoveProgress
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -257,23 +260,23 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.ProgressBar pbDiskSpace;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label txtDiskSpace;
-        private System.Windows.Forms.Label txtTotal;
-        private System.Windows.Forms.Label txtFile;
-        private System.Windows.Forms.Timer copyTimer;
-        private System.Windows.Forms.CheckBox cbPause;
+        private ProgressBar pbDiskSpace;
+        private Label label4;
+        private Label txtDiskSpace;
+        private Label txtTotal;
+        private Label txtFile;
+        private Timer copyTimer;
+        private CheckBox cbPause;
 
-        private System.Windows.Forms.ProgressBar pbFile;
-        private System.Windows.Forms.ProgressBar pbGroup;
-        private System.Windows.Forms.Button bnCancel;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label txtFilename;
+        private ProgressBar pbFile;
+        private ProgressBar pbGroup;
+        private Button bnCancel;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label txtFilename;
         private ListViewFlickerFree lvProgress;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
+        private ColumnHeader columnHeader1;
+        private ColumnHeader columnHeader2;
     }
 }

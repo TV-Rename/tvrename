@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Collections.Generic;
+
 namespace TVRename
 {
     // "FolderMonitorItem" represents a folder found by doing a Check in the Folder monitor dialog
@@ -27,7 +30,7 @@ namespace TVRename
         }
     }
 
-    public class FolderMonitorEntryList : System.Collections.Generic.List<FolderMonitorEntry>
+    public class FolderMonitorEntryList : List<FolderMonitorEntry>
     {
     }
 }

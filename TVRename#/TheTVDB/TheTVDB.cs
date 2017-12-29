@@ -5,18 +5,24 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Net.Cache;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
-using Newtonsoft.Json.Linq;
 using System.Xml;
-using System.Linq;
-using System.IO;
+using Newtonsoft.Json.Linq;
+using NLog;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Timer = System.Timers.Timer;
 
 // Talk to the TheTVDB web API, and get tv series info
 
@@ -37,16 +43,16 @@ namespace TVRename
 
     public static class KeepTVDBAliveTimer
     {
-        static System.Timers.Timer _timer; // From System.Timers
+        static Timer _timer; // From System.Timers
 
         static public void Start()
         {
-            _timer = new System.Timers.Timer(23 * 60 * 60 * 1000); // Set up the timer for 23 hours 
-            _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+            _timer = new Timer(23 * 60 * 60 * 1000); // Set up the timer for 23 hours 
+            _timer.Elapsed += _timer_Elapsed;
             _timer.Enabled = true; // Enable it
         }
 
-        static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        static void _timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             TheTVDB.Instance.RefreshToken();
         }
@@ -91,7 +97,7 @@ namespace TVRename
         private static readonly String _defaultLanguage = "en"; //Default backup language
 
         private CommandLineArgs _args;
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
 
         //We are using the singleton design pattern
@@ -121,7 +127,7 @@ namespace TVRename
         {
             _args = args;
 
-            System.Diagnostics.Debug.Assert(cacheFile != null);
+            Debug.Assert(cacheFile != null);
             _cacheFile = cacheFile;
 
             LastError = "";
@@ -175,7 +181,7 @@ namespace TVRename
         {
             _logger.Trace("Lock Series for " + whoFor);
             bool ok = Monitor.TryEnter(_series, 10000);
-            System.Diagnostics.Debug.Assert(ok);
+            Debug.Assert(ok);
             return ok;
             //            WhoHasLock->Add(whoFor);
         }
@@ -416,7 +422,7 @@ namespace TVRename
             WebClient wc = new WebClient();
 
             if (forceReload)
-                wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
+                wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.Reload);
 
             try
             {
@@ -1146,7 +1152,7 @@ namespace TVRename
             List<JObject> bannerDefaultLangResponses = new List<JObject>();
             if (bannersToo || forceReload )            {
                 // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
-                List<string> imageTypes = new List<string> { };
+                List<string> imageTypes = new List<string>();
 
                 try
                 {
@@ -1184,7 +1190,7 @@ namespace TVRename
                 }
                 if (InForeignLanguage())
                 {
-                    List<string> imageDefaultLangTypes = new List<string> { };
+                    List<string> imageDefaultLangTypes = new List<string>();
 
                     try
                     {
@@ -1233,7 +1239,7 @@ namespace TVRename
             {
                 foreach (JObject bannerData in response["data"])
                 {
-                    Banner b = new Banner((int)si.TVDBCode, bannerData,GetLanguageId());
+                    Banner b = new Banner(si.TVDBCode, bannerData,GetLanguageId());
                     if (!_series.ContainsKey(b.SeriesId)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
                     SeriesInfo ser = _series[b.SeriesId];
                     ser.AddOrUpdateBanner(b);
@@ -1244,7 +1250,7 @@ namespace TVRename
             {
                 foreach (JObject bannerData in response["data"])
                 {
-                    Banner b = new Banner((int)si.TVDBCode, bannerData, GetDefaultLanguageId());
+                    Banner b = new Banner(si.TVDBCode, bannerData, GetDefaultLanguageId());
                     if (!_series.ContainsKey(b.SeriesId)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
                     SeriesInfo ser = _series[b.SeriesId];
                     ser.AddOrUpdateBanner(b);
@@ -1252,13 +1258,13 @@ namespace TVRename
             }
 
 
-            _series[(int)si.TVDBCode].BannersLoaded = true;
+            _series[si.TVDBCode].BannersLoaded = true;
 
 
             //Get the actors too then well need another call for that
             JObject jsonActorsResponse = HttpHelper.JsonHttpgetRequest(_apiRoot + "/series/" + code + "/actors", null, _authenticationToken);
             IEnumerable<string> seriesActors = from a in jsonActorsResponse["data"] select (string)a["name"];
-            _series[(int)si.TVDBCode].SetActors(seriesActors);
+            _series[si.TVDBCode].SetActors(seriesActors);
 
             _forceReloadOn.Remove(code);
 
@@ -1287,7 +1293,7 @@ namespace TVRename
                 return false; // shouldn't happen
             Say(txt);
 
-            String uri = _apiRoot + "/episodes/" + episodeId.ToString();
+            String uri = _apiRoot + "/episodes/" + episodeId;
             JObject jsonResponse;
             JObject jsonDefaultLangResponse = new JObject();
 
@@ -1497,8 +1503,7 @@ namespace TVRename
 
             if (summaryPage || (seasid <= 0) || !_series.ContainsKey(code))
                 return WebsiteRoot + "/?tab=series&id=" + code;
-            else
-                return WebsiteRoot + "/?tab=season&seriesid=" + code + "&seasonid=" + seasid;
+            return WebsiteRoot + "/?tab=season&seriesid=" + code + "&seasonid=" + seasid;
         }
 
         public string WebsiteUrl(int seriesId, int seasonId, int episodeId)

@@ -5,10 +5,12 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
 
 // Saves the widths of columns in a listview, and window position, for loading up with the
 // same layout next run.
@@ -29,7 +31,7 @@ namespace TVRename
 
     public class LayoutInfo
     {
-        public System.Collections.Generic.List<int> MColWidths;
+        public List<int> MColWidths;
         public Point MLocation;
         public bool MLocked;
         public bool MMaximised;
@@ -38,7 +40,7 @@ namespace TVRename
 
         public LayoutInfo()
         {
-            MColWidths = new System.Collections.Generic.List<int>();
+            MColWidths = new List<int>();
             MWindowId = WindowId.KUnknown;
             MMaximised = false;
             MSize = new Size(-1, -1);
@@ -175,11 +177,11 @@ namespace TVRename
 
     public class Layout
     {
-        private readonly System.Collections.Generic.List<LayoutInfo> _mLayouts;
+        private readonly List<LayoutInfo> _mLayouts;
 
         public Layout()
         {
-            _mLayouts = new System.Collections.Generic.List<LayoutInfo>();
+            _mLayouts = new List<LayoutInfo>();
             Load();
         }
 

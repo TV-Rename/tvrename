@@ -5,15 +5,26 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.Windows.Forms;
+using DevAge.Drawing;
+using DevAge.Drawing.VisualElements;
+using SourceGrid;
+using SourceGrid.Cells.Controllers;
+using SourceGrid.Cells.Views;
+using ColumnHeader = SourceGrid.Cells.ColumnHeader;
+using ContentAlignment = DevAge.Drawing.ContentAlignment;
+using Image = SourceGrid.Exporter.Image;
+using RowHeader = SourceGrid.Cells.RowHeader;
 
 namespace TVRename
 {
-    using SourceGrid.Cells;
-
     /// <summary>
     /// Summary for ActorsGrid
     ///
@@ -165,33 +176,33 @@ namespace TVRename
 
         private void FillGrid()
         {
-            SourceGrid.Cells.Views.Cell colTitleModel = new SourceGrid.Cells.Views.Cell
+            Cell colTitleModel = new Cell
             {
                 ElementText = new RotatedText(-90.0f),
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
-                TextAlignment = DevAge.Drawing.ContentAlignment.BottomCenter
+                TextAlignment = ContentAlignment.BottomCenter
             };
 
-            SourceGrid.Cells.Views.Cell topleftTitleModel = new SourceGrid.Cells.Views.Cell
+            Cell topleftTitleModel = new Cell
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
-                TextAlignment = DevAge.Drawing.ContentAlignment.BottomLeft
+                TextAlignment = ContentAlignment.BottomLeft
             };
 
-            SourceGrid.Cells.Views.Cell isActorModel = new SourceGrid.Cells.Views.Cell
+            Cell isActorModel = new Cell
             {
                 BackColor = Color.Green,
                 ForeColor = Color.Green,
-                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                TextAlignment = ContentAlignment.MiddleLeft
             };
 
-            SourceGrid.Cells.Views.Cell isGuestModel = new SourceGrid.Cells.Views.Cell
+            Cell isGuestModel = new Cell
             {
                 BackColor = Color.LightGreen,
                 ForeColor = Color.LightGreen,
-                TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                TextAlignment = ContentAlignment.MiddleLeft
             };
 
             grid1.Columns.Clear();
@@ -275,24 +286,24 @@ namespace TVRename
                 {
                     if (_theData.Data[r][c].HasValue)
                     {
-                        grid1[r + 1, c + 1] = new Cell("Y")
+                        grid1[r + 1, c + 1] = new SourceGrid.Cells.Cell("Y")
                         {
                             View = _theData.Data[r][c].Value ? isActorModel : isGuestModel
                         };
                         grid1[r + 1, c + 1].AddController(new CellClickEvent(_theData.Cols[c], _theData.Rows[r]));
                     }
                     else
-                        grid1[r + 1, c + 1] = new Cell("");
+                        grid1[r + 1, c + 1] = new SourceGrid.Cells.Cell("");
                 }
             }
 
             for (int c = 0; c < _theData.DataC; c++)
-                grid1[rows - 1, c + 1] = new Cell(_theData.ColScore(c));
+                grid1[rows - 1, c + 1] = new SourceGrid.Cells.Cell(_theData.ColScore(c));
 
             for (int r = 0; r < _theData.DataR; r++)
-                grid1[r + 1, cols - 1] = new Cell(_theData.RowScore(r, null));
+                grid1[r + 1, cols - 1] = new SourceGrid.Cells.Cell(_theData.RowScore(r, null));
 
-            grid1[_theData.DataR + 1, _theData.DataC + 1] = new Cell("");
+            grid1[_theData.DataR + 1, _theData.DataC + 1] = new SourceGrid.Cells.Cell("");
 
             grid1.AutoSizeCells();
         }
@@ -315,9 +326,9 @@ namespace TVRename
             if (saveFile.ShowDialog() != DialogResult.OK)
                 return;
 
-            SourceGrid.Exporter.Image image = new SourceGrid.Exporter.Image();
+            Image image = new Image();
             Bitmap b = image.Export(grid1, grid1.CompleteRange);
-            b.Save(saveFile.FileName, System.Drawing.Imaging.ImageFormat.Png);
+            b.Save(saveFile.FileName, ImageFormat.Png);
         }
 
         private void DoSort()
@@ -345,7 +356,7 @@ namespace TVRename
 
         #region Nested type: CellClickEvent
 
-        private class CellClickEvent : SourceGrid.Cells.Controllers.ControllerBase
+        private class CellClickEvent : ControllerBase
         {
             private readonly string _show;
             private readonly string _who;
@@ -356,7 +367,7 @@ namespace TVRename
                 _show = show;
             }
 
-            public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
+            public override void OnClick(CellContext sender, EventArgs e)
             {
                 Helpers.SysOpen("http://www.imdb.com/find?s=nm&q=" + _who);
             }
@@ -657,7 +668,7 @@ namespace TVRename
 
         #region Nested type: RotatedText
 
-        public class RotatedText : DevAge.Drawing.VisualElements.TextGDI
+        public class RotatedText : TextGDI
         {
             public float Angle;
 
@@ -666,16 +677,16 @@ namespace TVRename
                 Angle = angle;
             }
 
-            protected override void OnDraw(DevAge.Drawing.GraphicsCache graphics, RectangleF area)
+            protected override void OnDraw(GraphicsCache graphics, RectangleF area)
             {
-                System.Drawing.Drawing2D.GraphicsState state = graphics.Graphics.Save();
+                GraphicsState state = graphics.Graphics.Save();
                 try
                 {
                     float width2 = area.Width / 2;
                     float height2 = area.Height / 2;
 
                     //For a better drawing use the clear type rendering
-                    graphics.Graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+                    graphics.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 
                     //Move the origin to the center of the cell (for a more easy rotation)
                     graphics.Graphics.TranslateTransform(area.X + width2, area.Y + height2);
@@ -698,7 +709,7 @@ namespace TVRename
 
         #region Nested type: SideClickEvent
 
-        private class SideClickEvent : SourceGrid.Cells.Controllers.ControllerBase
+        private class SideClickEvent : ControllerBase
         {
             private readonly ActorsGrid _g;
             private readonly string _show;
@@ -709,7 +720,7 @@ namespace TVRename
                 _g = g;
             }
 
-            public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
+            public override void OnClick(CellContext sender, EventArgs e)
             {
                 if (_show == null)
                     _g.DoSort();
@@ -722,7 +733,7 @@ namespace TVRename
 
         #region Nested type: SortColsByCountEvent
 
-        private class SortColsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
+        private class SortColsByCountEvent : ControllerBase
         {
             private readonly ActorsGrid _g;
 
@@ -731,7 +742,7 @@ namespace TVRename
                 _g = g;
             }
 
-            public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
+            public override void OnClick(CellContext sender, EventArgs e)
             {
                 _g.SortColsByCount();
             }
@@ -741,7 +752,7 @@ namespace TVRename
 
         #region Nested type: SortRowsByCountEvent
 
-        private class SortRowsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
+        private class SortRowsByCountEvent : ControllerBase
         {
             private readonly ActorsGrid _g;
 
@@ -750,7 +761,7 @@ namespace TVRename
                 _g = g;
             }
 
-            public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
+            public override void OnClick(CellContext sender, EventArgs e)
             {
                 _g.SortRowsByCount();
             }
@@ -760,7 +771,7 @@ namespace TVRename
 
         #region Nested type: TopClickEvent
 
-        private class TopClickEvent : SourceGrid.Cells.Controllers.ControllerBase
+        private class TopClickEvent : ControllerBase
         {
             private readonly string _actor;
             private readonly ActorsGrid _g;
@@ -771,7 +782,7 @@ namespace TVRename
                 _actor = act;
             }
 
-            public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
+            public override void OnClick(CellContext sender, EventArgs e)
             {
                 _g.ActorToTop(_actor);
             }

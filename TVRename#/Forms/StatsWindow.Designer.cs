@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class StatsWindow
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -365,32 +368,32 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label txtFM;
-        private System.Windows.Forms.Label txtFC;
-        private System.Windows.Forms.Label txtRCD;
-        private System.Windows.Forms.Label txtMCD;
-        private System.Windows.Forms.Label txtFAOD;
-        private System.Windows.Forms.Label txtAAS;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private Label label5;
+        private Label label6;
+        private Label label7;
+        private Label txtFM;
+        private Label txtFC;
+        private Label txtRCD;
+        private Label txtMCD;
+        private Label txtFAOD;
+        private Label txtAAS;
 
-        private System.Windows.Forms.Label txtTM;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label txtFR;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label txtNOS;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label txtNOSeas;
+        private Label txtTM;
+        private Button button1;
+        private Label label8;
+        private Label txtFR;
+        private Label label9;
+        private Label txtNOS;
+        private Label label11;
+        private Label txtNOSeas;
 
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label txtEOD;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label txtTE;
+        private Label label13;
+        private Label txtEOD;
+        private Label label10;
+        private Label txtTE;
     }
 }

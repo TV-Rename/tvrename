@@ -5,9 +5,13 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using System.Windows.Forms;
+
+using System;
+using System.Collections.Generic;
 using System.Threading;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
+using Path = System.IO.Path;
 
 namespace TVRename
 {
@@ -46,7 +50,7 @@ namespace TVRename
             Fmp = null;
         }
 
-        private void bnClose_Click(object sender, System.EventArgs e)
+        private void bnClose_Click(object sender, EventArgs e)
         {
             bool confirmClose = false;
             foreach (FolderMonitorEntry fme in _mDoc.AddItems)
@@ -90,7 +94,7 @@ namespace TVRename
             lstFMIgnoreFolders.EndUpdate();
         }
 
-        private void bnRemoveMonFolder_Click(object sender, System.EventArgs e)
+        private void bnRemoveMonFolder_Click(object sender, EventArgs e)
         {
             for (int i = lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
             {
@@ -101,7 +105,7 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void bnRemoveIgFolder_Click(object sender, System.EventArgs e)
+        private void bnRemoveIgFolder_Click(object sender, EventArgs e)
         {
             for (int i = lstFMIgnoreFolders.SelectedIndices.Count - 1; i >= 0; i--)
             {
@@ -112,7 +116,7 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void bnAddMonFolder_Click(object sender, System.EventArgs e)
+        private void bnAddMonFolder_Click(object sender, EventArgs e)
         {
             folderBrowser.SelectedPath = "";
             if (lstFMMonitorFolders.SelectedIndex != -1)
@@ -129,7 +133,7 @@ namespace TVRename
             }
         }
 
-        private void bnAddIgFolder_Click(object sender, System.EventArgs e)
+        private void bnAddIgFolder_Click(object sender, EventArgs e)
         {
             folderBrowser.SelectedPath = "";
             if (lstFMIgnoreFolders.SelectedIndex != -1)
@@ -143,29 +147,29 @@ namespace TVRename
             }
         }
 
-        private void bnOpenMonFolder_Click(object sender, System.EventArgs e)
+        private void bnOpenMonFolder_Click(object sender, EventArgs e)
         {
             if (lstFMMonitorFolders.SelectedIndex != -1)
                 Helpers.SysOpen(_mDoc.MonitorFolders[lstFMMonitorFolders.SelectedIndex]);
         }
 
-        private void bnOpenIgFolder_Click(object sender, System.EventArgs e)
+        private void bnOpenIgFolder_Click(object sender, EventArgs e)
         {
             if (lstFMIgnoreFolders.SelectedIndex != -1)
                 Helpers.SysOpen(_mDoc.MonitorFolders[lstFMIgnoreFolders.SelectedIndex]);
         }
 
-        private void lstFMMonitorFolders_DoubleClick(object sender, System.EventArgs e)
+        private void lstFMMonitorFolders_DoubleClick(object sender, EventArgs e)
         {
             bnOpenMonFolder_Click(null, null);
         }
 
-        private void lstFMIgnoreFolders_DoubleClick(object sender, System.EventArgs e)
+        private void lstFMIgnoreFolders_DoubleClick(object sender, EventArgs e)
         {
 
         }
 
-        private void bnCheck_Click(object sender, System.EventArgs e)
+        private void bnCheck_Click(object sender, EventArgs e)
         {
             DoCheck();
         }
@@ -256,7 +260,7 @@ namespace TVRename
                 bnRemoveIgFolder_Click(null, null);
         }
 
-        private void bnFullAuto_Click(object sender, System.EventArgs e)
+        private void bnFullAuto_Click(object sender, EventArgs e)
         {
             if (_mDoc.AddItems.Count == 0)
                 return;
@@ -284,7 +288,7 @@ namespace TVRename
                 if (ai.CodeKnown)
                     continue;
 
-                int p = ai.Folder.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
+                int p = ai.Folder.LastIndexOf(Path.DirectorySeparatorChar);
                 FmpUpto = ai.Folder.Substring(p + 1); // +1 makes -1 "not found" result ok
                 
                 _mDoc.MonitorGuessShowItem(ai);
@@ -297,7 +301,7 @@ namespace TVRename
             FmpStopNow = true;
         }
 
-        private void bnRemoveNewFolder_Click(object sender, System.EventArgs e)
+        private void bnRemoveNewFolder_Click(object sender, EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
@@ -309,7 +313,7 @@ namespace TVRename
             FillFmNewShowList(false);
         }
 
-        private void bnIgnoreNewFolder_Click(object sender, System.EventArgs e)
+        private void bnIgnoreNewFolder_Click(object sender, EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
@@ -361,7 +365,7 @@ namespace TVRename
                 bnRemoveNewFolder_Click(null, null);
         }
 
-        private void bnNewFolderOpen_Click(object sender, System.EventArgs e)
+        private void bnNewFolderOpen_Click(object sender, EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
@@ -372,7 +376,7 @@ namespace TVRename
 
         private void FillFmNewShowList(bool keepSel)
         {
-            System.Collections.Generic.List<int> sel = new System.Collections.Generic.List<int>();
+            List<int> sel = new List<int>();
             if (keepSel)
             {
                 foreach (int i in lvFMNewShows.SelectedIndices)
@@ -428,7 +432,7 @@ namespace TVRename
             }
         }
 
-        private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
+        private void bnFolderMonitorDone_Click(object sender, EventArgs e)
         {
             if (_mDoc.AddItems.Count > 0)
             {
@@ -519,7 +523,7 @@ namespace TVRename
         //    this.FillFMNewShowList(false);
         //}
 
-        private void bnVisitTVcom_Click(object sender, System.EventArgs e)
+        private void bnVisitTVcom_Click(object sender, EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
@@ -533,7 +537,7 @@ namespace TVRename
                 Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(code, -1, false));
         }
 
-        private void bnCheck2_Click(object sender, System.EventArgs e)
+        private void bnCheck2_Click(object sender, EventArgs e)
         {
             DoCheck();
         }
@@ -543,7 +547,7 @@ namespace TVRename
             bnEditEntry_Click(null, null);
         }
 
-        private void bnEditEntry_Click(object sender, System.EventArgs e)
+        private void bnEditEntry_Click(object sender, EventArgs e)
         {
             if (lvFMNewShows.SelectedItems.Count == 0)
                 return;

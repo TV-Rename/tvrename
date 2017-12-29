@@ -5,10 +5,13 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
+using NLog;
 
 // Start of code for putting an ical or "upcoming shows" server into tvrename itself, rather
 // than exporting to a file somewhere
@@ -17,7 +20,7 @@ namespace TVRename
 {
     public class TVRenameServer
     {
-        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public TVRenameServer(TVDoc doc)
         {
@@ -56,7 +59,7 @@ namespace TVRename
                         while (!done && ((i = stream.Read(bytes, 0, bytes.Length)) > 0))
                         {
                             // Translate data bytes to a ASCII String*.
-                            data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                            data = Encoding.ASCII.GetString(bytes, 0, i);
 
                             for (int p = 0; p < data.Length; p++)
                             {
@@ -76,7 +79,7 @@ namespace TVRename
                                         if (!string.IsNullOrEmpty(getLine)) // this line is blank, and we have a GET line saved
                                         {
                                             string res = ProcessLine(getLine, doc);
-                                            Byte[] msg = System.Text.Encoding.ASCII.GetBytes(res);
+                                            Byte[] msg = Encoding.ASCII.GetBytes(res);
                                             stream.Write(msg, 0, msg.Length);
                                             getLine = "";
                                             done = true;

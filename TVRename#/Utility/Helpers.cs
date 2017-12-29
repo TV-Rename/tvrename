@@ -7,21 +7,24 @@
 // 
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
+using System.Net;
+using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using System.Collections.Generic;
-using System.Net;
-using Newtonsoft.Json.Linq;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using File = Alphaleonis.Win32.Filesystem.File;
-using Path = Alphaleonis.Win32.Filesystem.Path;
-using System.IO;
 using Microsoft.Win32;
-using System.Security;
+using Newtonsoft.Json.Linq;
+using NLog;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Path = Alphaleonis.Win32.Filesystem.Path;
+
 // ReSharper disable UnusedMember.Local
 
 // Helpful functions and classes
@@ -246,7 +249,7 @@ namespace TVRename
 
     public static class HttpHelper
     {
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public static String HttpRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -327,10 +330,11 @@ namespace TVRename
                 string[] values = ja2.ToObject<string[]>();
                 return String.Join(delimiter, values);
             }
-            else { return ""; }
 
-                
-            
+            return "";
+
+
+
         }
     }
 
@@ -349,7 +353,7 @@ namespace TVRename
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
 
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         private enum BrowserEmulationVersion
         {
@@ -552,7 +556,7 @@ namespace TVRename
     public static class Helpers
     {
 
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public static string Pad(int i)
         {
@@ -560,10 +564,8 @@ namespace TVRename
             {
                 return (i.ToString());
             }
-            else
-            {
-                return ("0" + i);
-            }
+
+            return ("0" + i);
         }
 
         public static long ToUnixTime(this DateTime date)
@@ -582,7 +584,7 @@ namespace TVRename
         {
             try
             {
-                System.Diagnostics.Process.Start(what, arguments);
+                Process.Start(what, arguments);
                 return true;
             }
             catch (Exception e)

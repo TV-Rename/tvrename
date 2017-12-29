@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class FolderMonitor
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -486,40 +489,40 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Button bnCheck1;
-        private System.Windows.Forms.Button bnOpenMonFolder;
-        private System.Windows.Forms.Button bnRemoveMonFolder;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox lstFMMonitorFolders;
-        private System.Windows.Forms.Button bnAddMonFolder;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Button bnOpenIgFolder;
-        private System.Windows.Forms.Button bnAddIgFolder;
-        private System.Windows.Forms.Button bnRemoveIgFolder;
-        private System.Windows.Forms.ListBox lstFMIgnoreFolders;
-        private System.Windows.Forms.Button bnVisitTVcom;
-        private System.Windows.Forms.Button bnFullAuto;
+        private Button bnCheck1;
+        private Button bnOpenMonFolder;
+        private Button bnRemoveMonFolder;
+        private Label label2;
+        private ListBox lstFMMonitorFolders;
+        private Button bnAddMonFolder;
+        private Label label7;
+        private Button bnOpenIgFolder;
+        private Button bnAddIgFolder;
+        private Button bnRemoveIgFolder;
+        private ListBox lstFMIgnoreFolders;
+        private Button bnVisitTVcom;
+        private Button bnFullAuto;
         private ListViewFlickerFree lvFMNewShows;
-        private System.Windows.Forms.ColumnHeader columnHeader42;
-        private System.Windows.Forms.ColumnHeader columnHeader43;
-        private System.Windows.Forms.ColumnHeader columnHeader44;
-        private System.Windows.Forms.ColumnHeader columnHeader45;
-        private System.Windows.Forms.Button bnFolderMonitorDone;
+        private ColumnHeader columnHeader42;
+        private ColumnHeader columnHeader43;
+        private ColumnHeader columnHeader44;
+        private ColumnHeader columnHeader45;
+        private Button bnFolderMonitorDone;
 
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button bnRemoveNewFolder;
-        private System.Windows.Forms.Button bnNewFolderOpen;
-        private System.Windows.Forms.Button bnIgnoreNewFolder;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowser;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tbFolders;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TabPage tbIgnore;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TabPage tbResults;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button bnClose;
-        private System.Windows.Forms.Button bnEditEntry;
-        private System.Windows.Forms.Button bnCheck2;
+        private Label label6;
+        private Button bnRemoveNewFolder;
+        private Button bnNewFolderOpen;
+        private Button bnIgnoreNewFolder;
+        private FolderBrowserDialog folderBrowser;
+        private TabControl tabControl1;
+        private TabPage tbFolders;
+        private Label label1;
+        private TabPage tbIgnore;
+        private Label label3;
+        private TabPage tbResults;
+        private Label label4;
+        private Button bnClose;
+        private Button bnEditEntry;
+        private Button bnCheck2;
     }
 }

@@ -5,18 +5,20 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
+using TVRename.SAB;
+
 namespace TVRename
 {
-    using System;
-    using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
-
     public class ItemSaBnzbd : ITem, IScanListItem
     {
         public string DesiredLocationNoExt;
-        public SAB.QueueSlotsSlot Entry;
+        public QueueSlotsSlot Entry;
 
-        public ItemSaBnzbd(SAB.QueueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
+        public ItemSaBnzbd(QueueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
         {
             Episode = pe;
             DesiredLocationNoExt = desiredLocationNoExt;

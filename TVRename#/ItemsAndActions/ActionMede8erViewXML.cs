@@ -5,14 +5,14 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Windows.Forms;
+using System.Xml;
+using Alphaleonis.Win32.Filesystem;
+
 namespace TVRename
 {
-    using System;
-    using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
-    using System.Xml;
-
-
     public class ActionMede8ErViewXML : ITem, IAction, IScanListItem, IActionWriteMetadata
     {
         public FileInfo Where;

@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class Ui
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -1467,129 +1470,129 @@ namespace TVRename
         }
         #endregion
 
-        private System.Windows.Forms.Button bnMyShowsCollapse;
-        private System.Windows.Forms.TabPage tbAllInOne;
-        private System.Windows.Forms.Button bnActionCheck;
+        private Button bnMyShowsCollapse;
+        private TabPage tbAllInOne;
+        private Button bnActionCheck;
 
-        private System.Windows.Forms.Button bnActionAction;
-        private System.Windows.Forms.ColumnHeader columnHeader48;
-        private System.Windows.Forms.ColumnHeader columnHeader49;
+        private Button bnActionAction;
+        private ColumnHeader columnHeader48;
+        private ColumnHeader columnHeader49;
 
-        private System.Windows.Forms.ColumnHeader columnHeader51;
-        private System.Windows.Forms.ColumnHeader columnHeader52;
-        private System.Windows.Forms.ColumnHeader columnHeader53;
-        private System.Windows.Forms.ColumnHeader columnHeader54;
-        private System.Windows.Forms.ColumnHeader columnHeader55;
-        private System.Windows.Forms.ColumnHeader columnHeader56;
+        private ColumnHeader columnHeader51;
+        private ColumnHeader columnHeader52;
+        private ColumnHeader columnHeader53;
+        private ColumnHeader columnHeader54;
+        private ColumnHeader columnHeader55;
+        private ColumnHeader columnHeader56;
 
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem folderMonitorToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem torrentMatchToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator3;
+        private ToolStripMenuItem folderMonitorToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator4;
+        private ToolStripMenuItem torrentMatchToolStripMenuItem;
 
-        private System.Windows.Forms.ColumnHeader columnHeader58;
-        private System.Windows.Forms.Button bnActionWhichSearch;
-        private System.Windows.Forms.Button bnActionBTSearch;
-        private System.Windows.Forms.Button bnActionIgnore;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button bnActionOptions;
-        private System.Windows.Forms.Button bnRemoveSel;
-        private System.Windows.Forms.ToolStripMenuItem ignoreListToolStripMenuItem;
-        private System.Windows.Forms.CheckBox cbNFO;
-        private System.Windows.Forms.CheckBox cbDownload;
-        private System.Windows.Forms.CheckBox cbRSS;
-        private System.Windows.Forms.CheckBox cbCopyMove;
-        private System.Windows.Forms.CheckBox cbRename;
-        private System.Windows.Forms.CheckBox cbAll;
+        private ColumnHeader columnHeader58;
+        private Button bnActionWhichSearch;
+        private Button bnActionBTSearch;
+        private Button bnActionIgnore;
+        private Label label1;
+        private Button bnActionOptions;
+        private Button bnRemoveSel;
+        private ToolStripMenuItem ignoreListToolStripMenuItem;
+        private CheckBox cbNFO;
+        private CheckBox cbDownload;
+        private CheckBox cbRSS;
+        private CheckBox cbCopyMove;
+        private CheckBox cbRename;
+        private CheckBox cbAll;
 
-        private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem visitWebsiteToolStripMenuItem;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tbWTW;
-        private System.Windows.Forms.ColumnHeader columnHeader5;
-        private System.Windows.Forms.ColumnHeader columnHeader6;
-        private System.Windows.Forms.ColumnHeader columnHeader7;
-        private System.Windows.Forms.ColumnHeader columnHeader8;
+        private MenuStrip menuStrip1;
+        private ToolStripMenuItem fileToolStripMenuItem;
+        private ToolStripMenuItem exitToolStripMenuItem;
+        private ToolStripMenuItem helpToolStripMenuItem;
+        private ToolStripMenuItem visitWebsiteToolStripMenuItem;
+        private TabControl tabControl1;
+        private TabPage tbWTW;
+        private ColumnHeader columnHeader5;
+        private ColumnHeader columnHeader6;
+        private ColumnHeader columnHeader7;
+        private ColumnHeader columnHeader8;
         private ListViewFlickerFree lvWhenToWatch;
-        private System.Windows.Forms.ColumnHeader columnHeader29;
-        private System.Windows.Forms.ColumnHeader columnHeader30;
-        private System.Windows.Forms.ColumnHeader columnHeader31;
-        private System.Windows.Forms.ColumnHeader columnHeader32;
-        private System.Windows.Forms.ColumnHeader columnHeader33;
-        private System.Windows.Forms.ColumnHeader columnHeader34;
-        private System.Windows.Forms.ColumnHeader columnHeader35;
-        private System.Windows.Forms.ColumnHeader columnHeader25;
-        private System.Windows.Forms.ColumnHeader columnHeader26;
-        private System.Windows.Forms.ColumnHeader columnHeader27;
-        private System.Windows.Forms.ColumnHeader columnHeader28;
-        private System.Windows.Forms.TextBox txtWhenToWatchSynopsis;
-        private System.Windows.Forms.MonthCalendar calCalendar;
-        private System.Windows.Forms.OpenFileDialog openFile;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowser;
-        private System.Windows.Forms.Button bnWhenToWatchCheck;
-        private System.Windows.Forms.ContextMenuStrip menuSearchSites;
-        private System.Windows.Forms.Timer refreshWTWTimer;
-        private System.Windows.Forms.Button bnWTWChooseSite;
-        private System.Windows.Forms.Button bnWTWBTSearch;
-        private System.Windows.Forms.NotifyIcon notifyIcon1;
-        private System.Windows.Forms.ColumnHeader columnHeader36;
-        private System.Windows.Forms.ToolStripMenuItem buyMeADrinkToolStripMenuItem;
-        private System.Windows.Forms.ContextMenuStrip showRightClickMenu;
-        private System.Windows.Forms.ContextMenuStrip folderRightClickMenu;
-        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.Timer statusTimer;
-        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem backgroundDownloadToolStripMenuItem;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem offlineOperationToolStripMenuItem;
-        private System.Windows.Forms.Label tsNextShowTxt;
-        private System.Windows.Forms.Label txtDLStatusLabel;
-        private System.Windows.Forms.ProgressBar pbProgressBarx;
-        private System.Windows.Forms.Timer BGDownloadTimer;
-        private System.Windows.Forms.ToolStripMenuItem bugReportToolStripMenuItem;
-        private System.Windows.Forms.ImageList ilIcons;
-        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
-        private System.Windows.Forms.SaveFileDialog saveFile;
-        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem flushCacheToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem backgroundDownloadNowToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem statisticsToolStripMenuItem;
-        private System.Windows.Forms.TabPage tbMyShows;
-        private System.Windows.Forms.Button bnMyShowsAdd;
-        private System.Windows.Forms.TreeView MyShowTree;
-        private System.Windows.Forms.WebBrowser epGuideHTML;
-        private System.Windows.Forms.Button bnMyShowsRefresh;
-        private System.Windows.Forms.Button bnMyShowsDelete;
-        private System.Windows.Forms.Button bnMyShowsEdit;
-        private System.Windows.Forms.Button bnMyShowsVisitTVDB;
-        private System.Windows.Forms.Button bnMyShowsOpenFolder;
-        private System.Windows.Forms.ToolStripMenuItem quickstartGuideToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem filenameTemplateEditorToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem searchEnginesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem filenameProcessorsToolStripMenuItem;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private ColumnHeader columnHeader29;
+        private ColumnHeader columnHeader30;
+        private ColumnHeader columnHeader31;
+        private ColumnHeader columnHeader32;
+        private ColumnHeader columnHeader33;
+        private ColumnHeader columnHeader34;
+        private ColumnHeader columnHeader35;
+        private ColumnHeader columnHeader25;
+        private ColumnHeader columnHeader26;
+        private ColumnHeader columnHeader27;
+        private ColumnHeader columnHeader28;
+        private TextBox txtWhenToWatchSynopsis;
+        private MonthCalendar calCalendar;
+        private OpenFileDialog openFile;
+        private FolderBrowserDialog folderBrowser;
+        private Button bnWhenToWatchCheck;
+        private ContextMenuStrip menuSearchSites;
+        private Timer refreshWTWTimer;
+        private Button bnWTWChooseSite;
+        private Button bnWTWBTSearch;
+        private NotifyIcon notifyIcon1;
+        private ColumnHeader columnHeader36;
+        private ToolStripMenuItem buyMeADrinkToolStripMenuItem;
+        private ContextMenuStrip showRightClickMenu;
+        private ContextMenuStrip folderRightClickMenu;
+        private ToolStripMenuItem saveToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator1;
+        private Timer statusTimer;
+        private ToolStripMenuItem optionsToolStripMenuItem;
+        private ToolStripMenuItem backgroundDownloadToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator2;
+        private ToolStripMenuItem preferencesToolStripMenuItem;
+        private ToolStripMenuItem offlineOperationToolStripMenuItem;
+        private Label tsNextShowTxt;
+        private Label txtDLStatusLabel;
+        private ProgressBar pbProgressBarx;
+        private Timer BGDownloadTimer;
+        private ToolStripMenuItem bugReportToolStripMenuItem;
+        private ImageList ilIcons;
+        private ToolStripMenuItem exportToolStripMenuItem;
+        private SaveFileDialog saveFile;
+        private ToolStripMenuItem toolsToolStripMenuItem;
+        private ToolStripMenuItem flushCacheToolStripMenuItem;
+        private ToolStripMenuItem backgroundDownloadNowToolStripMenuItem;
+        private ToolStripMenuItem statisticsToolStripMenuItem;
+        private TabPage tbMyShows;
+        private Button bnMyShowsAdd;
+        private TreeView MyShowTree;
+        private WebBrowser epGuideHTML;
+        private Button bnMyShowsRefresh;
+        private Button bnMyShowsDelete;
+        private Button bnMyShowsEdit;
+        private Button bnMyShowsVisitTVDB;
+        private Button bnMyShowsOpenFolder;
+        private ToolStripMenuItem quickstartGuideToolStripMenuItem;
+        private ToolStripMenuItem filenameTemplateEditorToolStripMenuItem;
+        private ToolStripMenuItem searchEnginesToolStripMenuItem;
+        private ToolStripMenuItem filenameProcessorsToolStripMenuItem;
+        private TableLayoutPanel tableLayoutPanel2;
 
-        private System.Windows.Forms.Timer tmrShowUpcomingPopup;
-        private System.Windows.Forms.ToolStripMenuItem actorsToolStripMenuItem;
-        private System.Windows.Forms.Timer quickTimer;
-        private System.Windows.Forms.ToolStripMenuItem uTorrentToolStripMenuItem;
-        private System.Windows.Forms.CheckBox cbMeta;
-        private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.Button bnHideHTMLPanel;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Button bnActionRecentCheck;
-        private System.Windows.Forms.Button btnActionQuickScan;
-        private System.Windows.Forms.TabControl tabControl2;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
-        private System.Windows.Forms.Button btnFilter;
-        private System.Windows.Forms.TextBox filterTextBox;
-        private System.Windows.Forms.ToolStripMenuItem visitSupportForumToolStripMenuItem;
-        private System.Windows.Forms.WebBrowser webBrowserImages;
+        private Timer tmrShowUpcomingPopup;
+        private ToolStripMenuItem actorsToolStripMenuItem;
+        private Timer quickTimer;
+        private ToolStripMenuItem uTorrentToolStripMenuItem;
+        private CheckBox cbMeta;
+        private ImageList imageList1;
+        private Button bnHideHTMLPanel;
+        private SplitContainer splitContainer1;
+        private Button bnActionRecentCheck;
+        private Button btnActionQuickScan;
+        private TabControl tabControl2;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private Button btnFilter;
+        private TextBox filterTextBox;
+        private ToolStripMenuItem visitSupportForumToolStripMenuItem;
+        private WebBrowser webBrowserImages;
     }
 }

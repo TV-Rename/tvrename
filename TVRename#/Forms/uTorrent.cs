@@ -8,8 +8,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
@@ -27,7 +30,7 @@ namespace TVRename
         private readonly SetProgressDelegate _setProg;
 
         private readonly TVDoc _mDoc;
-        private System.IO.FileSystemWatcher _watcher;
+        private FileSystemWatcher _watcher;
 
         public UTorrent(TVDoc doc, SetProgressDelegate progdel)
         {
@@ -217,12 +220,12 @@ namespace TVRename
             EnableDisable();
         }
 
-        private void watcher_Changed(object sender, System.IO.FileSystemEventArgs e)
+        private void watcher_Changed(object sender, FileSystemEventArgs e)
         {
             RefreshResumeDat();
         }
 
-        private void WatcherError(object unnamedParameter1, System.IO.ErrorEventArgs unnamedParameter2)
+        private void WatcherError(object unnamedParameter1, ErrorEventArgs unnamedParameter2)
         {
             while (!_watcher.EnableRaisingEvents)
             {
@@ -233,7 +236,7 @@ namespace TVRename
                 }
                 catch
                 {
-                    System.Threading.Thread.Sleep(500);
+                    Thread.Sleep(500);
                 }
             }
         }
@@ -251,7 +254,7 @@ namespace TVRename
                 _watcher.EnableRaisingEvents = false;
         }
 
-        private void watcher_Created(object sender, System.IO.FileSystemEventArgs e)
+        private void watcher_Created(object sender, FileSystemEventArgs e)
         {
             RefreshResumeDat();
         }

@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class IgnoreEdit
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -143,13 +146,13 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Button bnOK;
-        private System.Windows.Forms.Button bnCancel;
-        private System.Windows.Forms.ListBox lbItems;
+        private Button bnOK;
+        private Button bnCancel;
+        private ListBox lbItems;
 
-        private System.Windows.Forms.Button bnRemove;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtFilter;
-        private System.Windows.Forms.Timer timer1;
+        private Button bnRemove;
+        private Label label1;
+        private TextBox txtFilter;
+        private Timer timer1;
     }
 }

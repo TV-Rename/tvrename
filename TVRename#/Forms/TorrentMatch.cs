@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
@@ -34,18 +36,18 @@ namespace TVRename
             TabBtEnableDisable();
         }
 
-        private void bnClose_Click(object sender, System.EventArgs e)
+        private void bnClose_Click(object sender, EventArgs e)
         {
             Close();
         }
 
-        private void bnGo_Click(object sender, System.EventArgs e)
+        private void bnGo_Click(object sender, EventArgs e)
         {
             _mDoc.RenameFilesToMatchTorrent(txtTorrentFile.Text, txtFolder.Text, tmatchTree, _setProgress, rbBTCopyTo.Checked, 
                                                 txtBTSecondLocation.Text, _mDoc.Args);
         }
 
-        private void rbBTRenameFiles_CheckedChanged(object sender, System.EventArgs e)
+        private void rbBTRenameFiles_CheckedChanged(object sender, EventArgs e)
         {
             TabBtEnableDisable();
         }
@@ -59,17 +61,17 @@ namespace TVRename
             bnBTSecondOpen.Enabled = e;
         }
 
-        private void rbBTCopyTo_CheckedChanged(object sender, System.EventArgs e)
+        private void rbBTCopyTo_CheckedChanged(object sender, EventArgs e)
         {
             TabBtEnableDisable();
         }
 
-        private void bnBTOpenFolder_Click(object sender, System.EventArgs e)
+        private void bnBTOpenFolder_Click(object sender, EventArgs e)
         {
             Helpers.SysOpen(txtFolder.Text);
         }
 
-        private void bnBrowseFolder_Click(object sender, System.EventArgs e)
+        private void bnBrowseFolder_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtFolder.Text))
                 folderBrowser.SelectedPath = txtFolder.Text;
@@ -83,7 +85,7 @@ namespace TVRename
                 txtFolder.Text = folderBrowser.SelectedPath;
         }
 
-        private void bnBrowseTorrent_Click(object sender, System.EventArgs e)
+        private void bnBrowseTorrent_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtTorrentFile.Text))
             {
@@ -111,7 +113,7 @@ namespace TVRename
                 txtTorrentFile.Text = openFile.FileName;
         }
 
-        private void bnBTSecondBrowse_Click(object sender, System.EventArgs e)
+        private void bnBTSecondBrowse_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtBTSecondLocation.Text))
                 folderBrowser.SelectedPath = txtBTSecondLocation.Text;
@@ -125,7 +127,7 @@ namespace TVRename
                 txtFolder.Text = folderBrowser.SelectedPath;
         }
 
-        private void bnBTSecondOpen_Click(object sender, System.EventArgs e)
+        private void bnBTSecondOpen_Click(object sender, EventArgs e)
         {
             Helpers.SysOpen(txtBTSecondLocation.Text);
         }

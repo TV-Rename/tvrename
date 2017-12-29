@@ -5,9 +5,11 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using System.Windows.Forms;
-using System.Text.RegularExpressions;
+
+using System;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -39,7 +41,7 @@ namespace TVRename
             comboBox2.SelectedIndex = 0;
         }
 
-        private void button1_Click(object sender, System.EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             double amount = 5.00; // default amount
 

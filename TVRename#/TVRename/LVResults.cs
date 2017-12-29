@@ -5,10 +5,13 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+
 namespace TVRename
 {
-    using System.Windows.Forms;
-
     public class LvResults
     {
         #region WhichResults enum
@@ -24,15 +27,15 @@ namespace TVRename
 
         public bool AllSameType;
 
-        public System.Collections.Generic.List<ActionCopyMoveRename> CopyMove;
+        public List<ActionCopyMoveRename> CopyMove;
         public int Count;
-        public System.Collections.Generic.List<ActionDownload> Download;
+        public List<ActionDownload> Download;
         public ScanListItemList FlatList;
-        public System.Collections.Generic.List<ItemMissing> Missing;
-        public System.Collections.Generic.List<ActionNfo> Nfo;
-        public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
-        public System.Collections.Generic.List<ActionRss> Rss;
-        public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
+        public List<ItemMissing> Missing;
+        public List<ActionNfo> Nfo;
+        public List<ActionPyTivoMeta> PyTivoMeta;
+        public List<ActionRss> Rss;
+        public List<ActionCopyMoveRename> Rename;
         //public System.Collections.Generic.List<ItemuTorrenting> uTorrenting;
 
         public LvResults(ListView lv, bool isChecked) // if not checked, then selected items
@@ -48,16 +51,16 @@ namespace TVRename
         public void Go(ListView lv, WhichResults which)
         {
             //this.uTorrenting = new System.Collections.Generic.List<ItemuTorrenting>();
-            Missing = new System.Collections.Generic.List<ItemMissing>();
-            Rss = new System.Collections.Generic.List<ActionRss>();
-            CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
-            Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
-            Download = new System.Collections.Generic.List<ActionDownload>();
-            Nfo = new System.Collections.Generic.List<ActionNfo>();
-            PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
+            Missing = new List<ItemMissing>();
+            Rss = new List<ActionRss>();
+            CopyMove = new List<ActionCopyMoveRename>();
+            Rename = new List<ActionCopyMoveRename>();
+            Download = new List<ActionDownload>();
+            Nfo = new List<ActionNfo>();
+            PyTivoMeta = new List<ActionPyTivoMeta>();
             FlatList = new ScanListItemList();
 
-            System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
+            List<ListViewItem> sel = new List<ListViewItem>();
             if (which == WhichResults.Checked)
             {
                 ListView.CheckedListViewItemCollection ss = lv.CheckedItems;
@@ -81,7 +84,7 @@ namespace TVRename
             if (sel.Count == 0)
                 return;
 
-            System.Type firstType = ((ITem) (sel[0].Tag)).GetType();
+            Type firstType = ((ITem) (sel[0].Tag)).GetType();
 
             AllSameType = true;
             foreach (ListViewItem lvi in sel)

@@ -5,24 +5,28 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Text;
 using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
+using NLog;
 using TVRename.Forms;
+using TVRename.Properties;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
-using System.IO;
-using System.Linq;
-using System.Text;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
@@ -99,7 +103,7 @@ namespace TVRename
         protected Season MLastSeasonClicked;
         protected List<ShowItem> MLastShowsClicked;
 
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public Ui(TVDoc doc, TVRenameSplash splash)
         {
@@ -175,7 +179,7 @@ namespace TVRename
 
         void UpdateSplashStatus(TVRenameSplash splashScreen, String text)
         {
-            splashScreen.Invoke((System.Action)delegate
+            splashScreen.Invoke((Action)delegate
             {
                 splashScreen.UpdateStatus(text);
             });
@@ -183,7 +187,7 @@ namespace TVRename
 
         void UpdateSplashPercent(TVRenameSplash splashScreen,int num)
         {
-            splashScreen.Invoke((System.Action)delegate
+            splashScreen.Invoke((Action)delegate
             {
                 splashScreen.UpdateProgress (num);
             });
@@ -347,7 +351,7 @@ namespace TVRename
             filterButton.Size = new Size(16, 16);
             filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, (filterTextBox.ClientSize.Height - 16) / 2 + 1);
             filterButton.Cursor = Cursors.Default;
-            filterButton.Image = Properties.Resources.DeleteSmall;
+            filterButton.Image = Resources.DeleteSmall;
             filterButton.Name = "Clear";
             filterButton.Click += filterButton_Click;
             filterTextBox.Controls.Add(filterButton);
@@ -368,7 +372,7 @@ namespace TVRename
         }
 
         // MAH: Added in support of the Filter TextBox Button
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 
         // MAH: Added in support of the Filter TextBox Button
@@ -1460,7 +1464,7 @@ namespace TVRename
 
         public void RightClickOnMyShows(ShowItem si, Point pt)
         {
-            MLastShowsClicked = new List<ShowItem>() { si };
+            MLastShowsClicked = new List<ShowItem> { si };
             MLastEpClicked = null;
             MLastSeasonClicked = null;
             MLastActionsClicked = null;
@@ -1469,7 +1473,7 @@ namespace TVRename
 
         public void RightClickOnMyShows(Season seas, Point pt)
         {
-            MLastShowsClicked =  new List<ShowItem>() { _mDoc.GetShowItem(seas.TheSeries.TVDBCode) };
+            MLastShowsClicked =  new List<ShowItem> { _mDoc.GetShowItem(seas.TheSeries.TVDBCode) };
             MLastEpClicked = null;
             MLastSeasonClicked = seas;
             MLastActionsClicked = null;
@@ -2477,7 +2481,6 @@ namespace TVRename
             if (si2 != null)
             {
                 EditShow(si2);
-                return;
             }
         }
 
@@ -2558,7 +2561,7 @@ namespace TVRename
                 // nuke currently selected show to force getting it fresh
                 TreeNode n = MyShowTree.SelectedNode;
                 ShowItem si = TreeNodeToShowItem(n);
-                ForceRefresh(new List<ShowItem>() { si });
+                ForceRefresh(new List<ShowItem> { si });
             }
             else
             {
@@ -2854,12 +2857,9 @@ namespace TVRename
             long gb = ((gb1 / 2) + size) / gb1;
             if (gb > 1)
                 return gb + " GB";
-            else
-            {
-                long mb1 = 1024 * 1024;
-                long mb = ((mb1 / 2) + size) / mb1;
-                return mb + " MB";
-            }
+            long mb1 = 1024 * 1024;
+            long mb = ((mb1 / 2) + size) / mb1;
+            return mb + " MB";
         }
 
         private static string Itemitems(int n)
@@ -3143,7 +3143,7 @@ namespace TVRename
                     if (action.Episode != null)
                     {
                         MLastSeasonClicked = action.Episode.TheSeason;
-                        MLastShowsClicked = new List<ShowItem>() { action.Episode.Si };
+                        MLastShowsClicked = new List<ShowItem> { action.Episode.Si };
                     }
                     else
                     {

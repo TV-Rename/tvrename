@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class CustomNameDesigner
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -195,21 +198,21 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtTemplate;
+        private Label label1;
+        private TextBox txtTemplate;
 
-        private System.Windows.Forms.ComboBox cbPresets;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ListView lvTest;
-        private System.Windows.Forms.ColumnHeader columnHeader1;
-        private System.Windows.Forms.ColumnHeader columnHeader2;
-        private System.Windows.Forms.ColumnHeader columnHeader3;
-        private System.Windows.Forms.Button bnOK;
+        private ComboBox cbPresets;
+        private Label label2;
+        private Label label3;
+        private ListView lvTest;
+        private ColumnHeader columnHeader1;
+        private ColumnHeader columnHeader2;
+        private ColumnHeader columnHeader3;
+        private Button bnOK;
 
-        private System.Windows.Forms.Button bnCancel;
+        private Button bnCancel;
 
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox cbTags;
+        private Label label4;
+        private ComboBox cbTags;
     }
 }

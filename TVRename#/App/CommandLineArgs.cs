@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -11,7 +11,7 @@ namespace TVRename
             Ask,
             Ignore,
             Create
-        };
+        }
 
         // holds boolean settings set on the command line
         public bool Hide;

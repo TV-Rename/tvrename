@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using NLog;
 
 namespace TVRename
 {
@@ -9,7 +10,7 @@ namespace TVRename
     {
         public abstract bool Active();
         public abstract string Location();
-        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
     }
 

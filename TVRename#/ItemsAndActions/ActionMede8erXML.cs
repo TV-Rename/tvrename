@@ -5,14 +5,14 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Windows.Forms;
+using System.Xml;
+using Alphaleonis.Win32.Filesystem;
+
 namespace TVRename
 {
-    using System;
-    using System.Windows.Forms;
-    using System.Xml;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
-
     public class ActionMede8ErXML : ITem, IAction, IScanListItem, IActionWriteMetadata
     {
            public ShowItem Si; // if for an entire show, rather than specific episode

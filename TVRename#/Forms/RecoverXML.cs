@@ -5,9 +5,12 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
 using System.Windows.Forms;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo ;
+using Alphaleonis.Win32.Filesystem;
+using Path = System.IO.Path;
+
 namespace TVRename
 {
     /// <summary>
@@ -36,10 +39,10 @@ namespace TVRename
                 lbHint.Text = hint + "\r\n ";
         }
 
-        private void RecoverXML_Load(object sender, System.EventArgs e)
+        private void RecoverXML_Load(object sender, EventArgs e)
         {
-            _settingsList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
-            _dbList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TVDBFileName + "*");
+            _settingsList = new DirectoryInfo(Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
+            _dbList = new DirectoryInfo(Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TVDBFileName + "*");
 
             lbSettings.Items.Add("Default settings");
             if ((_settingsList != null) && _settingsList.Length > 0)
@@ -58,7 +61,7 @@ namespace TVRename
             }
         }
 
-        private void bnOK_Click(object sender, System.EventArgs e)
+        private void bnOK_Click(object sender, EventArgs e)
         {
             // we added a 'none' item at the top of the list, so adjust for that
 
@@ -76,7 +79,7 @@ namespace TVRename
             Close();
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        private void bnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();

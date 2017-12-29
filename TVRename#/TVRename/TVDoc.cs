@@ -11,17 +11,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
-using Alphaleonis.Win32.Filesystem;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using System.Linq;
 using System.Xml;
+using NLog;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using System.Text;
+using Path = System.IO.Path;
 
 namespace TVRename
 {
@@ -57,21 +61,21 @@ namespace TVRename
         private bool _mDirty;
         private Thread _mDownloaderThread;
         private TVRenameStats _mStats;
-        public bool CurrentlyBusy = false;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
+        public bool CurrentlyBusy;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
-        private static readonly NLog.Logger _threadslogger = NLog.LogManager.GetLogger("threads");
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger _threadslogger = LogManager.GetLogger("threads");
 
         private readonly List<Finder> _finders;
 
-        readonly string[] _seasonWords = new[] { "Season", // EN
+        readonly string[] _seasonWords = { "Season", // EN
                                        "Saison", // FR, DE
                                        "temporada" // ES
                                        }; // TODO: move into settings, and allow user to edit these
 
         public List<String> GetGenres()
         {
-            List<String> allGenres = new List<string> { };
+            List<String> allGenres = new List<string>();
             foreach (ShowItem si in ShowItems)
             {
                 if (si.Genres != null) allGenres.AddRange(si.Genres);
@@ -83,7 +87,7 @@ namespace TVRename
 
         public List<String> GetStatuses()
         {
-            List<String> allStatuses = new List<string> { };
+            List<String> allStatuses = new List<string>();
             foreach (ShowItem si in ShowItems)
             {
                 if (si.ShowStatus != null) allStatuses.Add(si.ShowStatus);
@@ -95,7 +99,7 @@ namespace TVRename
 
         public List<String> GetNetworks()
         {
-            List<String> allValues = new List<string> { };
+            List<String> allValues = new List<string>();
             foreach (ShowItem si in ShowItems)
             {
                 if (si.TheSeries()?.GetNetwork() != null) allValues.Add(si.TheSeries().GetNetwork());
@@ -107,7 +111,7 @@ namespace TVRename
 
         public List<String> GetRatings()
         {
-            List<String> allValues = new List<string> { };
+            List<String> allValues = new List<string>();
             foreach (ShowItem si in ShowItems)
             {
                 if (si.TheSeries()?.GetRating() != null) allValues.Add(si.TheSeries().GetRating());
@@ -176,7 +180,6 @@ namespace TVRename
 
         private void LockShowItems()
         {
-            return;
             /*#if DEBUG
                              System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(1);
                              System.Diagnostics.StackFrame sf = st.GetFrame(0);
@@ -189,7 +192,6 @@ namespace TVRename
 
         public void UnlockShowItems()
         {
-            return;
             /*
     #if DEBUG
                     System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(1);
@@ -235,7 +237,7 @@ namespace TVRename
             if (lockThem)
                 LockShowItems();
 
-            ShowItems.Sort(new Comparison<ShowItem>(ShowItem.CompareShowItemNames));
+            ShowItems.Sort(ShowItem.CompareShowItemNames);
             return ShowItems;
         }
 
@@ -487,7 +489,7 @@ namespace TVRename
 
         public void GetThread(Object codeIn)
         {
-            System.Diagnostics.Debug.Assert(WorkerSemaphore != null);
+            Debug.Assert(WorkerSemaphore != null);
 
             WorkerSemaphore.WaitOne(); // don't start until we're allowed to
 
@@ -591,13 +593,11 @@ namespace TVRename
                 TheTVDB.Instance.UpdatesDoneOk();
                 DownloadDone = true;
                 _downloadOk = true;
-                return;
             }
             catch (ThreadAbortException)
             {
                 DownloadDone = true;
                 _downloadOk = false;
-                return;
             }
             finally
             {
@@ -888,11 +888,11 @@ namespace TVRename
 
             if (si.DvdOrder)
             {
-                eis.Sort(new Comparison<ProcessedEpisode>(ProcessedEpisode.DvdOrderSorter));
+                eis.Sort(ProcessedEpisode.DvdOrderSorter);
                 Renumber(eis);
             }
             else
-                eis.Sort(new Comparison<ProcessedEpisode>(ProcessedEpisode.EpNumberSorter));
+                eis.Sort(ProcessedEpisode.EpNumberSorter);
 
             if (si.CountSpecials && ser.Seasons.ContainsKey(0))
             {
@@ -1163,7 +1163,7 @@ namespace TVRename
                 }
             }
             // assume last folder element is the show name
-            showName = showName.Substring(showName.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString()) + 1);
+            showName = showName.Substring(showName.LastIndexOf(Path.DirectorySeparatorChar.ToString()) + 1);
 
             return showName;
         }
@@ -1439,7 +1439,7 @@ namespace TVRename
             IAction action = info.TheAction;
             if (action != null)
             {
-                _logger.Trace("Triggering Action: {0} - {1} - {32", action.Name, action.Produces, action.ToString());
+                _logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action);
                 action.Go(ref ActionPause, _mStats);
             }
                 
@@ -1483,7 +1483,7 @@ namespace TVRename
                 else
                 {
 #if DEBUG
-                    System.Diagnostics.Debug.Fail("Unknown action type for making processing queue");
+                    Debug.Fail("Unknown action type for making processing queue");
 #endif
                     _logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
                     queues[3].Actions.Add(action); // put it in this queue by default
@@ -1495,7 +1495,7 @@ namespace TVRename
         public void ActionProcessor(Object queuesIn)
         {
 #if DEBUG
-            System.Diagnostics.Debug.Assert(queuesIn is ActionQueue[]);
+            Debug.Assert(queuesIn is ActionQueue[]);
 #endif
             ActionQueue[] queues = queuesIn as ActionQueue[];
             if (queues == null)
@@ -1633,7 +1633,7 @@ namespace TVRename
                 {
                     if (sli is IAction) {
                         IAction slia = (IAction)sli;
-                        _logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name , slia.ToString(),slia.ErrorText);
+                        _logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name , slia,slia.ErrorText);
                     }
                 }
 
@@ -1736,7 +1736,7 @@ namespace TVRename
                         {
                             if (pep.FirstAired.HasValue && comparePep.FirstAired.HasValue && pep.FirstAired == comparePep.FirstAired && pep.EpisodeId < comparePep.EpisodeId)
                             {
-                                output.AppendLine(si.ShowName + " - Season: " + kvp.Key + " - " + pep.FirstAired.ToString() + " - " + pep.EpNum + " - " + comparePep.EpNum);
+                                output.AppendLine(si.ShowName + " - Season: " + kvp.Key + " - " + pep.FirstAired + " - " + pep.EpNum + " - " + comparePep.EpNum);
                             }
                         }
                     }
@@ -1752,7 +1752,7 @@ namespace TVRename
 
             CurrentlyBusy = true;
 
-            List<ShowItem> showsToScan = new List<ShowItem> { };
+            List<ShowItem> showsToScan = new List<ShowItem>();
             if (doFilesInDownloadDir) showsToScan = GetShowsThatHaveDownloads();
 
             if (doMissingRecents)
@@ -1882,14 +1882,15 @@ namespace TVRename
                                     UnlockShowItems();
                                     return false;
                                 }
-                                else if (whatToDo == FaResult.KfaCreate)
+
+                                if (whatToDo == FaResult.KfaCreate)
                                 {
                                     try
                                     {
                                         Directory.CreateDirectory(folder);
                                         _logger.Info("Creating directory as it is missing: {0}",folder);
                                     }
-                                    catch (System.IO.IOException ioe)
+                                    catch (IOException ioe)
                                     {
                                         _logger.Info("Could not directory: {0}", folder);
                                         _logger.Info(ioe);
@@ -2019,7 +2020,7 @@ namespace TVRename
             {
                 if (!Directory.Exists(dirPath)) continue;
 
-                foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                foreach (String filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
                 {
                     if (!File.Exists(filePath)) continue;
 
@@ -2066,7 +2067,7 @@ namespace TVRename
                 }
 
 
-                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", SearchOption.AllDirectories))
                 {
                     if (!Directory.Exists(subDirPath)) continue;
 
@@ -2401,12 +2402,11 @@ namespace TVRename
                                             noAirdatesUntilNow = false;
                                             break;
                                         }
-                                        else
-                                        {//If the show is in its first season and no episodes have air dates
-                                            if (lastSeason == 1)
-                                            {
-                                                noAirdatesUntilNow = false;
-                                            }
+
+                                        //If the show is in its first season and no episodes have air dates
+                                        if (lastSeason == 1)
+                                        {
+                                            noAirdatesUntilNow = false;
                                         }
                                     }
 
@@ -2419,7 +2419,7 @@ namespace TVRename
                                         (si.ForceCheckNoAirdate && !dtOk))
                                     {
                                         // then add it as officially missing
-                                        TheActionList.Add(new ItemMissing(dbep, folder + System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(dbep, null, folder.Length))));
+                                        TheActionList.Add(new ItemMissing(dbep, folder + Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(dbep, null, folder.Length))));
                                     }
                                 }
                                 else
@@ -2611,7 +2611,7 @@ namespace TVRename
             // check for YMD, DMY, and MDY
             // only check against airdates we expect for the given show
             SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
-            string[] dateFormats = new[] { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy" };
+            string[] dateFormats = { "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy" };
             string filename = fi.Name;
             // force possible date separators to a dash
             filename = filename.Replace("/", "-");
@@ -2666,7 +2666,7 @@ namespace TVRename
 
         public List<ProcessedEpisode> GetRecentAndFutureEps(DirFilesCache dfc, int days)
         {
-            List<ProcessedEpisode> returnList = new List<ProcessedEpisode> { };
+            List<ProcessedEpisode> returnList = new List<ProcessedEpisode>();
 
             foreach (ShowItem si in GetShowItems(true))
             {
@@ -2742,7 +2742,7 @@ namespace TVRename
             {
                 if (!Directory.Exists(dirPath)) continue;
 
-                foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                foreach (String filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
                 {
                     if (!File.Exists(filePath)) continue;
 
@@ -2763,7 +2763,7 @@ namespace TVRename
                     }
                 }
 
-                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", SearchOption.AllDirectories))
                 {
                     if (!Directory.Exists(subDirPath)) continue;
 
@@ -2852,7 +2852,7 @@ namespace TVRename
 
             filename = SeFinderSimplifyFilename(filename, showNameHint);
 
-            string fullPath = directory + System.IO.Path.DirectorySeparatorChar + filename; // construct full path with sanitised filename
+            string fullPath = directory + Path.DirectorySeparatorChar + filename; // construct full path with sanitised filename
 
             if ((filename.Length > 256) || (fullPath.Length > 256))
                 return false;
@@ -2907,7 +2907,7 @@ namespace TVRename
                 SemaphoreNumber = n;
                 TheAction = a;
             }
-        };
+        }
 
         #endregion
 

@@ -8,6 +8,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -282,13 +284,13 @@ namespace TVRename
             {
                 try
                 {
-                    ok = System.IO.Directory.Exists(txtFolder.Text);
+                    ok = Directory.Exists(txtFolder.Text);
                 }
                 catch
                 {
                 }
             }
-            txtFolder.BackColor = ok ? System.Drawing.SystemColors.Window : Helpers.WarningColor();
+            txtFolder.BackColor = ok ? SystemColors.Window : Helpers.WarningColor();
         }
 
         private void chkCustomShowName_CheckedChanged(object sender, EventArgs e)

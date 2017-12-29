@@ -5,14 +5,17 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using Microsoft.VisualBasic.ApplicationServices;
+
 using System;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
+using System.Threading;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
+using Microsoft.VisualBasic.ApplicationServices;
+using NLog;
 using TVRename;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
 // Check the mutex that we're not already running, start the main UI, pass in commandline arguments
@@ -21,7 +24,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 public static class GlobalMembersTVRename
 {
 
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     [STAThread]
     private static int Main(string[] args)
@@ -38,7 +41,7 @@ public static class GlobalMembersTVRename
         CommandLineArgs clargs = new CommandLineArgs(args);
 
         // see if we're already running
-        System.Threading.Mutex mutex = new System.Threading.Mutex(true, "TVRenameMutex", out bool createdNew);
+        Mutex mutex = new Mutex(true, "TVRenameMutex", out bool createdNew);
 
         if (!createdNew)
         {
@@ -123,7 +126,7 @@ public static class GlobalMembersTVRename
 
 class TVRenameProgram : WindowsFormsApplicationBase
 {
-    private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+    private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     protected override void OnCreateSplashScreen()
     {
@@ -132,7 +135,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
 
     void UpdateSplashStatus(String text)
     {
-        SplashScreen.Invoke((System.Action)delegate
+        SplashScreen.Invoke((Action)delegate
         {
             ((TVRenameSplash)SplashScreen).UpdateStatus(text);
         });

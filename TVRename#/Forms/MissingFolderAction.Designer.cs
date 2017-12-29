@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class MissingFolderAction
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -203,18 +206,18 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button bnIgnoreOnce;
-        private System.Windows.Forms.Button bnIgnoreAlways;
-        private System.Windows.Forms.Button bnCreate;
-        private System.Windows.Forms.Label txtShow;
-        private System.Windows.Forms.Label txtSeason;
-        private System.Windows.Forms.Label txtFolder;
-        private System.Windows.Forms.Button bnRetry;
-        private System.Windows.Forms.Button bnCancel;
-        private System.Windows.Forms.Button bnBrowse;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowser;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Button bnIgnoreOnce;
+        private Button bnIgnoreAlways;
+        private Button bnCreate;
+        private Label txtShow;
+        private Label txtSeason;
+        private Label txtFolder;
+        private Button bnRetry;
+        private Button bnCancel;
+        private Button bnBrowse;
+        private FolderBrowserDialog folderBrowser;
     }
 }

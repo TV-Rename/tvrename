@@ -1,15 +1,9 @@
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
     abstract class DownloadIdentifier
     {
-        
-        public DownloadIdentifier()
-        {
-            
-        }
-
         public enum DownloadType
         {
             DownloadImage,

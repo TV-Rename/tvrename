@@ -1,11 +1,14 @@
-﻿namespace TVRename
+using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace TVRename
 {
     partial class TVRenameSplash
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -130,11 +133,11 @@
 
         #endregion
 
-        private System.Windows.Forms.Label lblName;
-        private System.Windows.Forms.ProgressBar prgComplete;
-        private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.Label lblInfo;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label lblVersion;
+        private Label lblName;
+        private ProgressBar prgComplete;
+        private Label lblStatus;
+        private Label lblInfo;
+        private PictureBox pictureBox1;
+        private Label lblVersion;
     }
 }

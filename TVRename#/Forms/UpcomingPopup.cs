@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -30,7 +31,7 @@ namespace TVRename
             InitializeComponent();
         }
 
-        private void UpcomingPopup_Load(object sender, System.EventArgs e)
+        private void UpcomingPopup_Load(object sender, EventArgs e)
         {
             int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
             int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
@@ -40,7 +41,7 @@ namespace TVRename
             FillSelf();
         }
 
-        private void TimerOfDeath_Tick(object sender, System.EventArgs e)
+        private void TimerOfDeath_Tick(object sender, EventArgs e)
         {
             Close();
         }
@@ -86,13 +87,13 @@ namespace TVRename
             lvUpcoming.EndUpdate();
         }
 
-        private void lvUpcoming_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void lvUpcoming_SelectedIndexChanged(object sender, EventArgs e)
         {
             lvUpcoming.SelectedIndices.Clear();
             hiddenButton.Select();
         }
 
-        private void lvUpcoming_Enter(object sender, System.EventArgs e)
+        private void lvUpcoming_Enter(object sender, EventArgs e)
         {
             hiddenButton.Select();
         }

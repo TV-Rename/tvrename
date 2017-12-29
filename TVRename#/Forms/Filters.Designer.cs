@@ -1,4 +1,5 @@
-﻿using System.Linq;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace TVRename.Forms
 {
@@ -7,7 +8,7 @@ namespace TVRename.Forms
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -191,17 +192,17 @@ namespace TVRename.Forms
 
         #endregion
 
-        private System.Windows.Forms.TextBox tbShowName;
-        private System.Windows.Forms.ComboBox cmbShowStatus;
-        private System.Windows.Forms.CheckedListBox clbGenre;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnOk;
-        private System.Windows.Forms.Button bnReset;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox cmbRating;
-        private System.Windows.Forms.ComboBox cmbNetwork;
-        private System.Windows.Forms.Label label4;
+        private TextBox tbShowName;
+        private ComboBox cmbShowStatus;
+        private CheckedListBox clbGenre;
+        private Button btnCancel;
+        private Button btnOk;
+        private Button bnReset;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private ComboBox cmbRating;
+        private ComboBox cmbNetwork;
+        private Label label4;
     }
 }

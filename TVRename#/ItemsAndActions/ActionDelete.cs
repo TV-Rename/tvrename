@@ -1,12 +1,9 @@
+using System;
+using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    using System;
-    using System.Windows.Forms;
-    using FileInfo = FileInfo;
-    using DirectoryInfo = DirectoryInfo;
-
     public abstract class ActionDelete : ActionFileOperation
     {
         public override string Name => "Delete";

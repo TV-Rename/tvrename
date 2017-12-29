@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
-using System.Xml;
 using System.Windows.Forms;
+using System.Xml;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -14,7 +15,7 @@ namespace TVRename
         public override bool Active()=> TVSettings.Instance.ExportWtwxml;
         public override string Location() => TVSettings.Instance.ExportWtwxmlTo;
 
-        protected override bool  Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
+        protected override bool  Generate(Stream str, List<ProcessedEpisode> elist)
         {
             DirFilesCache dfc = new DirFilesCache();
             try

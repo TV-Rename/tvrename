@@ -5,13 +5,18 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Drawing;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;		
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;		
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
+using SourceGrid;
+using SourceGrid.Cells.Controllers;
+using SourceGrid.Cells.Views;
+using CheckBox = SourceGrid.Cells.CheckBox;
+using ColumnHeader = SourceGrid.Cells.ColumnHeader;
+using ContentAlignment = DevAge.Drawing.ContentAlignment;
 
 namespace TVRename
 {
@@ -50,19 +55,19 @@ namespace TVRename
 
         public void SetupGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+            Cell titleModel = new Cell
                                                          {
                                                              BackColor = Color.SteelBlue,
                                                              ForeColor = Color.White,
-                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                             TextAlignment = ContentAlignment.MiddleLeft
                                                          };
 
-            SourceGrid.Cells.Views.Cell titleModelC = new SourceGrid.Cells.Views.Cell
+            Cell titleModelC = new Cell
                                                           {
                                                               BackColor = Color.SteelBlue,
                                                               ForeColor = Color.White,
                                                               TextAlignment =
-                                                                  DevAge.Drawing.ContentAlignment.MiddleCenter
+                                                                  ContentAlignment.MiddleCenter
                                                           };
 
             Grid1.Columns.Clear();
@@ -87,23 +92,23 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            SourceGrid.Cells.ColumnHeader h;
-            h = new SourceGrid.Cells.ColumnHeader("Enabled");
+            ColumnHeader h;
+            h = new ColumnHeader("Enabled");
             h.AutomaticSortEnabled = false;
             Grid1[0, 0] = h;
             Grid1[0, 0].View = titleModelC;
 
-            h = new SourceGrid.Cells.ColumnHeader("Regex");
+            h = new ColumnHeader("Regex");
             h.AutomaticSortEnabled = false;
             Grid1[0, 1] = h;
             Grid1[0, 1].View = titleModel;
 
-            h = new SourceGrid.Cells.ColumnHeader("Full Path");
+            h = new ColumnHeader("Full Path");
             h.AutomaticSortEnabled = false;
             Grid1[0, 2] = h;
             Grid1[0, 2].View = titleModelC;
 
-            h = new SourceGrid.Cells.ColumnHeader("Notes");
+            h = new ColumnHeader("Notes");
             h.AutomaticSortEnabled = false;
             Grid1[0, 3] = h;
             Grid1[0, 3].View = titleModel;
@@ -111,7 +116,7 @@ namespace TVRename
             Grid1.Selection.SelectionChanged += SelectionChanged;
         }
 
-        public void SelectionChanged(Object sender, SourceGrid.RangeRegionChangedEventArgs e)
+        public void SelectionChanged(Object sender, RangeRegionChangedEventArgs e)
         {
             StartTimer();
         }
@@ -121,9 +126,9 @@ namespace TVRename
             int r = Grid1.RowsCount;
             Grid1.RowsCount = r + 1;
 
-            Grid1[r, 0] = new SourceGrid.Cells.CheckBox(null, true);
+            Grid1[r, 0] = new CheckBox(null, true);
             Grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
-            Grid1[r, 2] = new SourceGrid.Cells.CheckBox(null, false);
+            Grid1[r, 2] = new CheckBox(null, false);
             Grid1[r, 3] = new SourceGrid.Cells.Cell("", typeof(string));
 
             ChangedCont changed = new ChangedCont(this);
@@ -141,9 +146,9 @@ namespace TVRename
             int i = 1;
             foreach (FilenameProcessorRe re in list)
             {
-                Grid1[i, 0] = new SourceGrid.Cells.CheckBox(null, re.Enabled);
+                Grid1[i, 0] = new CheckBox(null, re.Enabled);
                 Grid1[i, 1] = new SourceGrid.Cells.Cell(re.Re, typeof(string));
-                Grid1[i, 2] = new SourceGrid.Cells.CheckBox(null, re.UseFullPath);
+                Grid1[i, 2] = new CheckBox(null, re.UseFullPath);
                 Grid1[i, 3] = new SourceGrid.Cells.Cell(re.Notes, typeof(string));
 
                 ChangedCont changed = new ChangedCont(this);
@@ -184,7 +189,7 @@ namespace TVRename
         private void bnAdd_Click(object sender, EventArgs e)
         {
             AddNewRow();
-            Grid1.Selection.Focus(new SourceGrid.Position(Grid1.RowsCount - 1, 1), true);
+            Grid1.Selection.Focus(new Position(Grid1.RowsCount - 1, 1), true);
             StartTimer();
         }
 
@@ -244,8 +249,8 @@ namespace TVRename
                 txtFolder.BackColor = Helpers.WarningColor();
                 return;
             }
-            else
-                txtFolder.BackColor = SystemColors.Window;
+
+            txtFolder.BackColor = SystemColors.Window;
 
             if (Grid1.RowsCount <= 1) // 1 for header
                 return; // empty
@@ -308,7 +313,7 @@ namespace TVRename
 
         #region Nested type: ChangedCont
 
-        public class ChangedCont : SourceGrid.Cells.Controllers.ControllerBase
+        public class ChangedCont : ControllerBase
         {
             private readonly AddEditSeasEpFinders _p;
 
@@ -317,7 +322,7 @@ namespace TVRename
                 _p = p;
             }
 
-            public override void OnValueChanged(SourceGrid.CellContext sender, EventArgs e)
+            public override void OnValueChanged(CellContext sender, EventArgs e)
             {
                 _p.StartTimer();
             }

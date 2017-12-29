@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace TVRename
 {
@@ -14,7 +15,7 @@ namespace TVRename
             {
                 try
                 {
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
+                    using (StreamWriter file = new StreamWriter(Location()))
                     {
                         foreach (ShowItem si in shows)
                         {

@@ -5,9 +5,11 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Web;
 
 // This builds the filenames to rename to, for any given episode (or multi-episode episode)
 
@@ -113,8 +115,8 @@ namespace TVRename
             string epname = pe.Name;
             if (urlEncode)
             {
-                showname = System.Web.HttpUtility.UrlEncode(showname);
-                epname = System.Web.HttpUtility.UrlEncode(epname);
+                showname = HttpUtility.UrlEncode(showname);
+                epname = HttpUtility.UrlEncode(epname);
             }
 
             name = name.Replace("{ShowName}", showname);
@@ -134,7 +136,7 @@ namespace TVRename
                 name = name.Replace("{LongDate}", dt.ToString("D"));
                 string ymd = dt.ToString("yyyy/MM/dd");
                 if (urlEncode)
-                    ymd = System.Web.HttpUtility.UrlEncode(ymd);
+                    ymd = HttpUtility.UrlEncode(ymd);
                 name = name.Replace("{YMDDate}", ymd);
             }
             else
@@ -143,7 +145,7 @@ namespace TVRename
                 name = name.Replace("{LongDate}", "------");
                 string ymd = "----/--/--";
                 if (urlEncode)
-                    ymd = System.Web.HttpUtility.UrlEncode(ymd);
+                    ymd = HttpUtility.UrlEncode(ymd);
                 name = name.Replace("{YMDDate}", ymd);
             }
 

@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Net;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
+using Alphaleonis.Win32.Filesystem;
+using NLog;
+using TVRename.SAB;
 
 namespace TVRename
 {
@@ -19,7 +21,7 @@ namespace TVRename
             return FinderDisplayType.Downloading;
         }
 
-        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
@@ -55,7 +57,7 @@ namespace TVRename
 
             try
             {
-                SAB.Result res = SAB.Result.Deserialize(r);
+                Result res = Result.Deserialize(r);
                 if (res != null && res.Status == "False")
                 {
                     Logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.Error );
@@ -68,10 +70,10 @@ namespace TVRename
                 // wasn't a result/error combo.  this is good!
             }
 
-            SAB.Queue sq;
+            Queue sq;
             try
             {
-                sq = SAB.Queue.Deserialize(r);
+                sq = Queue.Deserialize(r);
             }
             catch (Exception e)
             {
@@ -80,7 +82,7 @@ namespace TVRename
                 return;
             }
 
-            System.Diagnostics.Debug.Assert(sq != null); // shouldn't happen
+            Debug.Assert(sq != null); // shouldn't happen
             if (sq == null || sq.Slots == null || sq.Slots.Length == 0) // empty queue
                 return;
 
@@ -104,7 +106,7 @@ namespace TVRename
 
                 string showname = Helpers.SimplifyName(action.Episode.Si.ShowName);
 
-                foreach (SAB.QueueSlotsSlot te in sq.Slots)
+                foreach (QueueSlotsSlot te in sq.Slots)
                 {
                     //foreach (queueSlotsSlot te in qs)
                     {

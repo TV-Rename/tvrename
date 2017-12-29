@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -94,7 +95,7 @@ namespace TVRename
         {
             _rexps = rexps;
 
-            System.Net.WebClient wc = new System.Net.WebClient();
+            WebClient wc = new WebClient();
             try
             {
                 byte[] r = wc.DownloadData(url);

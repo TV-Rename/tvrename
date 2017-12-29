@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class ShowException
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -95,9 +98,9 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.TextBox txtText;
+        private TextBox txtText;
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Label label1;
+        private Button button1;
+        private Label label1;
     }
 }

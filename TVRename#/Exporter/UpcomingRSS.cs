@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -11,7 +12,7 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportWtwrss;
         public override string Location() => TVSettings.Instance.ExportWtwrssTo;
 
-        protected override bool Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
+        protected override bool Generate(Stream str, List<ProcessedEpisode> elist)
         {
             if (elist == null)
                 return false;

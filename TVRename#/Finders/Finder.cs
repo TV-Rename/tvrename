@@ -3,7 +3,7 @@ namespace TVRename
     abstract class Finder
     {
         protected ItemList TheActionList;
-        protected bool ActionCancel = false;
+        protected bool ActionCancel;
         protected TVDoc MDoc;
 
         public Finder(TVDoc doc)
@@ -11,7 +11,7 @@ namespace TVRename
             MDoc = doc;
         }
 
-        public enum FinderDisplayType { Local, Downloading, Rss};
+        public enum FinderDisplayType { Local, Downloading, Rss}
 
         public abstract void Check(SetProgressDelegate prog, int startpct, int totPct);
         

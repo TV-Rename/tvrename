@@ -5,20 +5,24 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using System.Windows.Forms;
+using NLog;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using File = Alphaleonis.Win32.Filesystem.File;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using Path = Alphaleonis.Win32.Filesystem.Path;
 
 // Opens, understands, manipulates, and writes out BEncoded .torrent files, and uTorrent's resume.dat
 
 namespace TVRename
 {
-    using System.IO;
-    using Directory = Alphaleonis.Win32.Filesystem.Directory;
-    using File = Alphaleonis.Win32.Filesystem.File;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-    using Path = Alphaleonis.Win32.Filesystem.Path;
-
     public enum BtChunk
     {
         KError,
@@ -86,7 +90,7 @@ namespace TVRename
 
         public void SetString(string s)
         {
-            Data = System.Text.Encoding.UTF8.GetBytes(s);
+            Data = Encoding.UTF8.GetBytes(s);
         }
 
         public override string AsText()
@@ -96,7 +100,7 @@ namespace TVRename
 
         public string AsString()
         {
-            System.Text.Encoding enc = System.Text.Encoding.UTF8;
+            Encoding enc = Encoding.UTF8;
             return enc.GetString(Data);
         }
 
@@ -132,7 +136,7 @@ namespace TVRename
         {
             // Byte strings are encoded as follows: <string length encoded in base ten ASCII>:<string data>
 
-            Byte[] len = System.Text.Encoding.ASCII.GetBytes(Data.Length.ToString());
+            Byte[] len = Encoding.ASCII.GetBytes(Data.Length.ToString());
             sw.Write(len, 0, len.Length);
             sw.WriteByte((byte) ':');
             sw.Write(Data, 0, Data.Length);
@@ -376,7 +380,7 @@ namespace TVRename
         public override void Write(Stream sw)
         {
             sw.WriteByte((byte) 'i');
-            byte[] b = System.Text.Encoding.ASCII.GetBytes(Value.ToString());
+            byte[] b = Encoding.ASCII.GetBytes(Value.ToString());
             sw.Write(b, 0, b.Length);
             sw.WriteByte((byte) 'e');
         }
@@ -457,8 +461,8 @@ namespace TVRename
 
         public BtDictionary GetDict()
         {
-            System.Diagnostics.Debug.Assert(Items.Count == 1);
-            System.Diagnostics.Debug.Assert(Items[0].Type == BtChunk.KDictionary);
+            Debug.Assert(Items.Count == 1);
+            Debug.Assert(Items[0].Type == BtChunk.KDictionary);
 
             // our first (and only) Item will be a dictionary of stuff
             return (BtDictionary) (Items[0]);
@@ -619,7 +623,7 @@ namespace TVRename
 
             return f;
         }
-        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
     }
 
@@ -693,7 +697,7 @@ namespace TVRename
                     int n = sr.Read(thePiece, 0, (int) pieceSize);
                     sr.Close();
 
-                    System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed();
+                    SHA1Managed sha1 = new SHA1Managed();
 
                     theHash = sha1.ComputeHash(thePiece, 0, n);
                     CacheThis(fiTemp.FullName, whereInFile, pieceSize, fileSize, theHash);
@@ -996,7 +1000,7 @@ namespace TVRename
         public bool TestMode;
         public string Type;
 
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public BtResume(SetProgressDelegate setprog, string resumeDatFile)
             : base(setprog)
@@ -1045,7 +1049,7 @@ namespace TVRename
                 if ((it.Type != BtChunk.KDictionaryItem))
                     continue;
 
-                BtDictionaryItem dictitem = (BtDictionaryItem) (it);
+                BtDictionaryItem dictitem = it;
 
                 if ((dictitem.Key == ".fileguard") || (dictitem.Data.Type != BtChunk.KDictionary))
                     continue;
@@ -1255,7 +1259,7 @@ namespace TVRename
             ResumeDat.GetDict().RemoveItem(".fileguard");
             MemoryStream ms = new MemoryStream();
             ResumeDat.Write(ms);
-            System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed();
+            SHA1Managed sha1 = new SHA1Managed();
             byte[] theHash = sha1.ComputeHash(ms.GetBuffer(), 0, (int) ms.Length);
             ms.Close();
             string newfg = BtString.CharsToHex(theHash, 0, 20);
@@ -1446,8 +1450,7 @@ namespace TVRename
             // if it is a .!ut file, we can remove the extension
             if (s.EndsWith(".!ut"))
                 return s.Remove(s.Length - 4);
-            else
-                return s;
+            return s;
         }
 
         public void AddResult(string type, string torrent, string num, string prio, string location)

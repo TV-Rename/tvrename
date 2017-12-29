@@ -5,14 +5,16 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+
 namespace TVRename
 {
-    using System;
-    using System.Windows.Forms;
-    using System.IO;
-    using Directory = Alphaleonis.Win32.Filesystem.Directory;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
     public class ActionPyTivoMeta : ITem, IAction, IScanListItem, IActionWriteMetadata
     {
         public FileInfo Where;
@@ -63,7 +65,7 @@ namespace TVRename
                 // create folder if it does not exist. (Only really applies when .meta\ folder is being used.)
                 if (!Where.Directory.Exists)
                     Directory.CreateDirectory(Where.Directory.FullName);
-                writer = new StreamWriter(Where.FullName, false, System.Text.Encoding.GetEncoding(1252));
+                writer = new StreamWriter(Where.FullName, false, Encoding.GetEncoding(1252));
                 if (writer == null)
                     return false;
             }
@@ -74,15 +76,15 @@ namespace TVRename
             }
 
             // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata
-            writer.WriteLine(string.Format("title : {0}", Episode.Si.ShowName));
-            writer.WriteLine(string.Format("seriesTitle : {0}", Episode.Si.ShowName));
-            writer.WriteLine(string.Format("episodeTitle : {0}", Episode.Name));
-            writer.WriteLine(string.Format("episodeNumber : {0}{1:0#}", Episode.SeasonNumber, Episode.EpNum));
+            writer.WriteLine("title : {0}", Episode.Si.ShowName);
+            writer.WriteLine("seriesTitle : {0}", Episode.Si.ShowName);
+            writer.WriteLine("episodeTitle : {0}", Episode.Name);
+            writer.WriteLine("episodeNumber : {0}{1:0#}", Episode.SeasonNumber, Episode.EpNum);
             writer.WriteLine("isEpisode : true");
-            writer.WriteLine(string.Format("description : {0}", Episode.Overview));
+            writer.WriteLine("description : {0}", Episode.Overview);
             if (Episode.FirstAired != null)
-                writer.WriteLine(string.Format("originalAirDate : {0:yyyy-MM-dd}T00:00:00Z",Episode.FirstAired.Value));
-            writer.WriteLine(string.Format("callsign : {0}", Episode.Si.TheSeries().GetNetwork()));
+                writer.WriteLine("originalAirDate : {0:yyyy-MM-dd}T00:00:00Z", Episode.FirstAired.Value);
+            writer.WriteLine("callsign : {0}", Episode.Si.TheSeries().GetNetwork());
 
             WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
             WriteEntries(writer, "vWriter", Episode.Writer);
@@ -100,12 +102,12 @@ namespace TVRename
             if (string.IsNullOrEmpty(entries))
                 return;
             if (!entries.Contains("|"))
-                writer.WriteLine(string.Format("{0} : {1}", heading, entries));
+                writer.WriteLine("{0} : {1}", heading, entries);
             else
             {
                 foreach (string entry in entries.Split('|'))
                     if (!string.IsNullOrEmpty(entry))
-                        writer.WriteLine(string.Format("{0} : {1}", heading, entry));
+                        writer.WriteLine("{0} : {1}", heading, entry);
             }
         }
 

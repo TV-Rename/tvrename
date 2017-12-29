@@ -5,11 +5,15 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using Newtonsoft.Json.Linq;
+
 using System;
 using System.Collections.Generic;
-using System.Xml;
+using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.Serialization;
+using System.Xml;
+using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace TVRename
 {
@@ -25,7 +29,7 @@ namespace TVRename
         public bool BannersLoaded;
 
         public Dictionary<int, Season> Seasons;
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         //All Banners
         public Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.
@@ -298,7 +302,7 @@ namespace TVRename
 
                         try
                         {
-                            FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                            FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
                             Items["FirstAired"] = FirstAired.Value.ToString("yyyy-MM-dd");
                             Items["Year"] = FirstAired.Value.ToString("yyyy");
                         }
@@ -344,8 +348,8 @@ namespace TVRename
             //save them all into the Items array for safe keeping
             foreach (JProperty seriesItems in r.Children<JProperty>())
             {
-                if (seriesItems.Name == "aliases") Items[seriesItems.Name] = JsonHelper.Flatten((JToken)seriesItems.Value, "|");
-                else if (seriesItems.Name == "genre") Items[seriesItems.Name] = JsonHelper.Flatten((JToken)seriesItems.Value, "|");
+                if (seriesItems.Name == "aliases") Items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
+                else if (seriesItems.Name == "genre") Items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
                 else try
                     {
                         if (seriesItems.Value != null) Items[seriesItems.Name] = (string)seriesItems.Value;
@@ -373,7 +377,7 @@ namespace TVRename
             try
             {
                 if (!String.IsNullOrEmpty(theDate)) {
-                    FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                    FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
                     Items["firstAired"] = FirstAired.Value.ToString("yyyy-MM-dd");
                     Items["Year"] = FirstAired.Value.ToString("yyyy");
                 }else
@@ -434,7 +438,7 @@ namespace TVRename
             
             if ((string.IsNullOrWhiteSpace(Items["aliases"])))
             {
-                Items["aliases"] = JsonHelper.Flatten((JToken)backupLanguageR["aliases"], "|");
+                Items["aliases"] = JsonHelper.Flatten(backupLanguageR["aliases"], "|");
             }
 
             if ((string.IsNullOrWhiteSpace(Items["runtime"])))
@@ -558,7 +562,7 @@ namespace TVRename
             //if not then a season specific one is best
             //if not then the poster is the fallback
 
-            System.Diagnostics.Debug.Assert(BannersLoaded);
+            Debug.Assert(BannersLoaded);
 
             if (_seasonLangBanners.ContainsKey(snum))
                 return _seasonLangBanners[snum].BannerPath;
@@ -622,7 +626,7 @@ namespace TVRename
             //if not then a season specific one is best
             //if not then the poster is the fallback
 
-            System.Diagnostics.Debug.Assert(BannersLoaded);
+            Debug.Assert(BannersLoaded);
 
             if (_seasonLangWideBanners.ContainsKey(snum))
                 return _seasonLangWideBanners[snum].BannerPath;

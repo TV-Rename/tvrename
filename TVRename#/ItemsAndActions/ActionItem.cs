@@ -5,23 +5,24 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
+using Microsoft.VisualBasic.FileIO;
+
 namespace TVRename
 {
-    using System;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Windows.Forms;
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-
-
     public interface ITem
     {
         int Compare(ITem o); // for sorting items in scan list (ActionItemSorter)
         bool SameAs(ITem o); // are we the same thing as that other one?
     }
 
-    public class ItemList : System.Collections.Generic.List<ITem>
+    public class ItemList : List<ITem>
     {
         public void Add(ItemList il)
         {
@@ -60,7 +61,7 @@ namespace TVRename
         ProcessedEpisode Episode { get; } // associated episode
     }
 
-    public class ScanListItemList : System.Collections.Generic.List<IScanListItem>
+    public class ScanListItemList : List<IScanListItem>
     {
         public void Add(ScanListItemList slil)
         {
@@ -76,7 +77,7 @@ namespace TVRename
 
     public class ActionQueue
     {
-        public System.Collections.Generic.List<IAction> Actions; // The contents of this queue
+        public List<IAction> Actions; // The contents of this queue
         public int ParallelLimit; // Number of tasks in the queue than can be run at once
         public string Name; // Name of this queue
         public int ActionPosition; // Position in the queue list of the next item to process
@@ -85,7 +86,7 @@ namespace TVRename
         {
             Name = name;
             ParallelLimit = parallelLimit;
-            Actions = new System.Collections.Generic.List<IAction>();
+            Actions = new List<IAction>();
             ActionPosition = 0;
         }
     }
@@ -110,7 +111,7 @@ namespace TVRename
             if (file == null) return;
             if (Tidyup.DeleteEmptyIsRecycle)
             {
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                FileSystem.DeleteFile(file.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             }
             else
             {
@@ -123,7 +124,7 @@ namespace TVRename
             if (di == null) return;
             if (Tidyup.DeleteEmptyIsRecycle)
             {
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                FileSystem.DeleteDirectory(di.FullName, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
             }
             else
             {

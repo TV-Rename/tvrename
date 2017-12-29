@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class UTorrent
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -345,34 +348,34 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Button bnClose;
-        private System.Windows.Forms.Label lbDPMatch;
-        private System.Windows.Forms.Label lbDPMissing;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowser;
+        private Button bnClose;
+        private Label lbDPMatch;
+        private Label lbDPMissing;
+        private FolderBrowserDialog folderBrowser;
 
-        private System.Windows.Forms.CheckBox cbUTSetPrio;
-        private System.Windows.Forms.CheckBox cbUTMatchMissing;
-        private System.Windows.Forms.CheckBox cbUTUseHashing;
-        private System.Windows.Forms.CheckBox chkUTTest;
-        private System.Windows.Forms.CheckBox chkUTSearchSubfolders;
-        private System.Windows.Forms.Button bnUTNone;
-        private System.Windows.Forms.Button bnUTGo;
-        private System.Windows.Forms.Button bnUTRefresh;
-        private System.Windows.Forms.Button bnUTAll;
-        private System.Windows.Forms.Button bnUTBrowseSearchFolder;
+        private CheckBox cbUTSetPrio;
+        private CheckBox cbUTMatchMissing;
+        private CheckBox cbUTUseHashing;
+        private CheckBox chkUTTest;
+        private CheckBox chkUTSearchSubfolders;
+        private Button bnUTNone;
+        private Button bnUTGo;
+        private Button bnUTRefresh;
+        private Button bnUTAll;
+        private Button bnUTBrowseSearchFolder;
 
-        private System.Windows.Forms.TextBox txtUTSearchFolder;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.Label label13;
+        private TextBox txtUTSearchFolder;
+        private Label label15;
+        private Label label13;
 
 
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.CheckedListBox lbUTTorrents;
-        private System.Windows.Forms.ListView lvUTResults;
-        private System.Windows.Forms.ColumnHeader columnHeader50;
-        private System.Windows.Forms.ColumnHeader columnHeader48;
-        private System.Windows.Forms.ColumnHeader columnHeader49;
-        private System.Windows.Forms.ColumnHeader columnHeader51;
-        private System.Windows.Forms.ColumnHeader columnHeader52;
+        private Label label11;
+        private CheckedListBox lbUTTorrents;
+        private ListView lvUTResults;
+        private ColumnHeader columnHeader50;
+        private ColumnHeader columnHeader48;
+        private ColumnHeader columnHeader49;
+        private ColumnHeader columnHeader51;
+        private ColumnHeader columnHeader52;
     }
 }

@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class RecoverXML
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -216,21 +219,21 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.Label lbHint;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.Button bnCancel;
+        private Label lbHint;
+        private TableLayoutPanel tableLayoutPanel2;
+        private Button bnCancel;
 
-        private System.Windows.Forms.Button bnOK;
-        private System.Windows.Forms.ListBox lbSettings;
+        private Button bnOK;
+        private ListBox lbSettings;
 
 
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ListBox lbDB;
+        private TableLayoutPanel tableLayoutPanel1;
+        private Panel panel2;
+        private Label label2;
+        private ListBox lbDB;
 
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label3;
+        private Panel panel1;
+        private Label label1;
+        private Label label3;
     }
 }

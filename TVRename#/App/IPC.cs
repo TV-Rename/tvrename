@@ -1,7 +1,7 @@
+using System;
+
 namespace TVRename
 {
-    using System;
-
     internal class IPCMethods : MarshalByRefObject
     {
         private static Ui _theUi;

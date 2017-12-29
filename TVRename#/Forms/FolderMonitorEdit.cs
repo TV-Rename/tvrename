@@ -5,11 +5,13 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.IO;
+using System.Windows.Forms;
+
 namespace TVRename
 {
-    using System;
-    using System.Windows.Forms;
-
     public partial class FolderMonitorEdit : Form
     {
         public int Code;
@@ -35,7 +37,7 @@ namespace TVRename
             else
             {
                 string s = hint.Folder;
-                int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
+                int p = s.LastIndexOf(Path.DirectorySeparatorChar);
                 _mTccf.SetHint(s.Substring(p+1));
             }
             Code = -1;

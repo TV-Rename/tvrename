@@ -5,10 +5,13 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using Newtonsoft.Json.Linq;
+
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml;
+using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace TVRename
 {
@@ -33,7 +36,7 @@ namespace TVRename
         public Season TheSeason;
         public SeriesInfo TheSeries;
         private string _mName;
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public Episode(Episode o)
         {
@@ -120,7 +123,7 @@ namespace TVRename
                                _logger.Info ("Please confirm, but we are assuming that " + Name +"(episode Id =" +EpisodeId + ") has no airdate");
                                 FirstAired = null;
                             } else { 
-                                FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                                FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new CultureInfo(""));
                             }
                         }
                         catch
@@ -212,8 +215,8 @@ namespace TVRename
             {
                 try
                 {
-                    JToken currentData = (JToken)episodeItems.Value;
-                    if (currentData.Type == JTokenType.Array) Items[episodeItems.Name] = JsonHelper.Flatten((JToken)currentData);
+                    JToken currentData = episodeItems.Value;
+                    if (currentData.Type == JTokenType.Array) Items[episodeItems.Name] = JsonHelper.Flatten(currentData);
                     else if (currentData.Type != JTokenType.Object) //Ignore objects here as it is always the 'language' attribute that we do not need
                     {
                         JValue currentValue = (JValue)episodeItems.Value;
@@ -263,9 +266,9 @@ namespace TVRename
             }
             else { int.TryParse(sn, out ReadSeasonNum); }
             
-            EpisodeGuestStars = JsonHelper.Flatten((JToken)r["guestStars"], "|");
-            EpisodeDirector = JsonHelper.Flatten((JToken)r["directors"], "|");
-            Writer = JsonHelper.Flatten((JToken)r["writers"], "|");
+            EpisodeGuestStars = JsonHelper.Flatten(r["guestStars"], "|");
+            EpisodeDirector = JsonHelper.Flatten(r["directors"], "|");
+            Writer = JsonHelper.Flatten(r["writers"], "|");
 
             try
             {
@@ -277,7 +280,7 @@ namespace TVRename
                 }
                 else
                 {
-                    FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
+                    FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new CultureInfo(""));
                 }
             }
             catch (Exception e)
@@ -401,18 +404,15 @@ namespace TVRename
             TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
             if (ts.TotalHours < 0)
                 return "Aired";
-            else
+            int h = ts.Hours;
+            if (ts.TotalHours >= 1)
             {
-                int h = ts.Hours;
-                if (ts.TotalHours >= 1)
-                {
-                    if (ts.Minutes >= 30)
-                        h += 1;
-                    return ts.Days + "d " + h + "h"; // +ts->Minutes+"m "+ts->Seconds+"s";
-                }
-                else
-                    return Math.Round(ts.TotalMinutes) + "min";
+                if (ts.Minutes >= 30)
+                    h += 1;
+                return ts.Days + "d " + h + "h"; // +ts->Minutes+"m "+ts->Seconds+"s";
             }
+
+            return Math.Round(ts.TotalMinutes) + "min";
         }
 
         public string DayOfWeek()

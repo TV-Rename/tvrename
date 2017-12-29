@@ -6,11 +6,10 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-
-
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
@@ -104,7 +103,7 @@ namespace TVRename
             }
         }
 
-        private void cbPresets_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void cbPresets_SelectedIndexChanged(object sender, EventArgs e)
         {
             int n = cbPresets.SelectedIndex;
             if (n == -1)
@@ -114,13 +113,13 @@ namespace TVRename
             cbPresets.SelectedIndex = -1;
         }
 
-        private void txtTemplate_TextChanged(object sender, System.EventArgs e)
+        private void txtTemplate_TextChanged(object sender, EventArgs e)
         {
             _cn.StyleString = txtTemplate.Text;
             FillExamples();
         }
 
-        private void cbTags_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void cbTags_SelectedIndexChanged(object sender, EventArgs e)
         {
             int n = cbTags.SelectedIndex;
             if (n == -1)
@@ -133,7 +132,7 @@ namespace TVRename
             cbTags.SelectedIndex = -1;
         }
 
-        private void lvTest_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void lvTest_SelectedIndexChanged(object sender, EventArgs e)
         {
             FillCombos();
         }

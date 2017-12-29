@@ -5,6 +5,10 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Collections.Generic;
+
 namespace TVRename
 {
     public class Season
@@ -14,10 +18,10 @@ namespace TVRename
             Aired, // Season completely aired ... no further shows in this season scheduled to date
             PartiallyAired, // Season partially aired ... there are further shows in this season which are unaired to date
             NoneAired, // Season completely unaired ... no show of this season as aired yet
-            NoEpisodes,
+            NoEpisodes
         }
 
-        public System.Collections.Generic.List<Episode> Episodes;
+        public List<Episode> Episodes;
         public int SeasonId;
         public int SeasonNumber;
         public SeriesInfo TheSeries;
@@ -27,7 +31,7 @@ namespace TVRename
             TheSeries = theSeries;
             SeasonNumber = number;
             SeasonId = seasonid;
-            Episodes = new System.Collections.Generic.List<Episode>();
+            Episodes = new List<Episode>();
         }
 
         public SeasonStatus Status
@@ -40,25 +44,23 @@ namespace TVRename
                     {
                         return SeasonStatus.Aired;
                     }
-                    else if (HasAiredEpisodes && HasUnairedEpisodes)
+
+                    if (HasAiredEpisodes && HasUnairedEpisodes)
                     {
                         return SeasonStatus.PartiallyAired;
                     }
-                    else if (!HasAiredEpisodes && HasUnairedEpisodes)
+
+                    if (!HasAiredEpisodes && HasUnairedEpisodes)
                     {
                         return SeasonStatus.NoneAired;
                     }
-                    else
-                    {
-                        // Can happen if a Season has Episodes WITHOUT Airdates. 
-                        //System.Diagnostics.Debug.Assert(false, string.Format("That is weird ... we have 'episodes' in '{0}' Season {1}, but none are aired, nor unaired. That case shouldn't actually occur !", this.TheSeries.Name,SeasonNumber));
-                        return SeasonStatus.NoEpisodes;
-                    }
-                }
-                else
-                {
+
+                    // Can happen if a Season has Episodes WITHOUT Airdates. 
+                    //System.Diagnostics.Debug.Assert(false, string.Format("That is weird ... we have 'episodes' in '{0}' Season {1}, but none are aired, nor unaired. That case shouldn't actually occur !", this.TheSeries.Name,SeasonNumber));
                     return SeasonStatus.NoEpisodes;
                 }
+
+                return SeasonStatus.NoEpisodes;
             }
         }
 
@@ -80,7 +82,7 @@ namespace TVRename
                     {
                         if (e.GetAirDateDt(true).HasValue)
                         {
-                            if (e.GetAirDateDt(true).Value > System.DateTime.Now)
+                            if (e.GetAirDateDt(true).Value > DateTime.Now)
                                 return true;
                         }
                     }
@@ -99,7 +101,7 @@ namespace TVRename
                     {
                         if (e.GetAirDateDt(true).HasValue)
                         {
-                            if (e.GetAirDateDt(true).Value < System.DateTime.Now)
+                            if (e.GetAirDateDt(true).Value < DateTime.Now)
                                 return true;
                         }
                     }

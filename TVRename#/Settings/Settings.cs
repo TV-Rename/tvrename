@@ -5,11 +5,15 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Collections.Generic;
-using Alphaleonis.Win32.Filesystem;
+using System.Drawing;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
+using Alphaleonis.Win32.Filesystem;
+using NLog;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -17,11 +21,11 @@ namespace TVRename
 {   
     public class TidySettings
     {
-        public bool DeleteEmpty = false; // Delete empty folders after move
+        public bool DeleteEmpty; // Delete empty folders after move
         public bool DeleteEmptyIsRecycle = true; // Recycle, rather than delete
-        public bool EmptyIgnoreWords = false;
+        public bool EmptyIgnoreWords;
         public string EmptyIgnoreWordList = "sample";
-        public bool EmptyIgnoreExtensions = false;
+        public bool EmptyIgnoreExtensions;
         public string EmptyIgnoreExtensionList = ".nzb;.nfo;.par2;.txt;.srt";
         public bool EmptyMaxSizeCheck = true;
         public int EmptyMaxSizeMb = 100;
@@ -72,11 +76,11 @@ namespace TVRename
         }
     }
 
-    public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, System.Drawing.Color>
+    public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, Color>
     {
         public bool IsShowStatusDefined(string showStatus)
         {
-            foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+            foreach (KeyValuePair<ShowStatusColoringType, Color> e in this)
             {
                 if (!e.Key.IsMetaType && e.Key.IsShowLevel &&
                     e.Key.Status.Equals(showStatus, StringComparison.CurrentCultureIgnoreCase))
@@ -87,9 +91,9 @@ namespace TVRename
             return false;
         }
 
-        public System.Drawing.Color GetEntry(bool meta, bool showLevel, string status)
+        public Color GetEntry(bool meta, bool showLevel, string status)
         {
-            foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+            foreach (KeyValuePair<ShowStatusColoringType, Color> e in this)
             {
                 if (e.Key.IsMetaType == meta && e.Key.IsShowLevel == showLevel &&
                     e.Key.Status.Equals(status, StringComparison.CurrentCultureIgnoreCase))
@@ -97,7 +101,7 @@ namespace TVRename
                     return e.Value;
                 }
             }
-            return System.Drawing.Color.Empty;
+            return Color.Empty;
         }
     }
 
@@ -190,7 +194,7 @@ namespace TVRename
 
         private static volatile TVSettings _instance;
         private static readonly object _syncRoot = new Object();
-        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Logger _logger = LogManager.GetCurrentClassLogger();
 
         public static TVSettings Instance
         {
@@ -254,52 +258,52 @@ namespace TVRename
 
 
         public bool AutoSelectShowInMyShows = true;
-        public bool AutoCreateFolders = false;
-        public bool BgDownload = false;
-        public bool CheckuTorrent = false;
-        public bool EpTbNs = false;
-        public bool EpJpGs = false;
-        public bool SeriesJpg = false;
-        public bool ShrinkLargeMede8ErImages = false;
-        public bool FanArtJpg = false;
-        public bool Mede8ErXML = false;
-        public bool ExportFoxml = false;
+        public bool AutoCreateFolders;
+        public bool BgDownload;
+        public bool CheckuTorrent;
+        public bool EpTbNs;
+        public bool EpJpGs;
+        public bool SeriesJpg;
+        public bool ShrinkLargeMede8ErImages;
+        public bool FanArtJpg;
+        public bool Mede8ErXML;
+        public bool ExportFoxml;
         public string ExportFoxmlTo = "";
-        public bool ExportMissingCsv = false;
+        public bool ExportMissingCsv;
         public string ExportMissingCsvTo = "";
-        public bool ExportMissingXML = false;
+        public bool ExportMissingXML;
         public string ExportMissingXMLTo = "";
-        public bool ExportShowsTxt = false;
+        public bool ExportShowsTxt;
         public string ExportShowsTxtTo = "";
         public int ExportRssMaxDays = 7;
         public int ExportRssMaxShows = 10;
-        public int ExportRssDaysPast = 0;
-        public bool ExportRenamingXML = false;
+        public int ExportRssDaysPast;
+        public bool ExportRenamingXML;
         public string ExportRenamingXMLTo = "";
-        public bool ExportWtwrss = false;
+        public bool ExportWtwrss;
         public string ExportWtwrssTo = "";
-        public bool ExportWtwxml = false;
+        public bool ExportWtwxml;
         public string ExportWtwxmlTo = "";
         public List<FilenameProcessorRe> FnpRegexs = DefaultFnpList();
-        public bool FolderJpg = false;
+        public bool FolderJpg;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
         public ScanType MonitoredFoldersScanType = ScanType.Full;
         public KodiType SelectedKodiType = KodiType.Both;
-        public bool ForceLowercaseFilenames = false;
+        public bool ForceLowercaseFilenames;
         public bool IgnoreSamples = true;
         public bool KeepTogether = true;
-        public bool LeadingZeroOnSeason = false;
-        public bool LeaveOriginals = false;
-        public bool LookForDateInFilename = false;
+        public bool LeadingZeroOnSeason;
+        public bool LeaveOriginals;
+        public bool LookForDateInFilename;
         public bool MissingCheck = true;
-        public bool NfoShows = false;
-        public bool NfoEpisodes = false;
-        public bool KodiImages = false;
-        public bool PyTivoMeta = false;
-        public bool PyTivoMetaSubFolder = false;
+        public bool NfoShows;
+        public bool NfoEpisodes;
+        public bool KodiImages;
+        public bool PyTivoMeta;
+        public bool PyTivoMetaSubFolder;
         public CustomName NamingStyle = new CustomName();
-        public bool NotificationAreaIcon = false;
-        public bool OfflineMode = false;
+        public bool NotificationAreaIcon;
+        public bool OfflineMode;
         public string OtherExtensionsString = "";
         public ShowFilter Filter = new ShowFilter();
 
@@ -311,16 +315,16 @@ namespace TVRename
         public int ParallelDownloads = 4;
         public List<string> RssurLs = DefaultRssurlList();
         public bool RenameCheck = true;
-        public bool RenameTxtToSub = false;
+        public bool RenameTxtToSub;
         public List<Replacement> Replacements = DefaultListRe();
         public string ResumeDatPath = "";
         public int SampleFileMaxSizeMb = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
-        public bool SearchRss = false;
+        public bool SearchRss;
         public bool ShowEpisodePictures = true;
         public bool ShowInTaskbar = true;
         public string SpecialsFolderName = "Specials";
-        public int StartupTab = 0;
+        public int StartupTab;
         public Searchers TheSearchers = new Searchers();
 
         public string[] VideoExtensionsArray
@@ -330,12 +334,12 @@ namespace TVRename
         public string VideoExtensionsString = "";
         public int WtwRecentDays = 7;
         public string UTorrentPath = "";
-        public bool MonitorFolders = false;
-        public bool RemoveDownloadDirectoriesFiles =false;
+        public bool MonitorFolders;
+        public bool RemoveDownloadDirectoriesFiles;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
         public String SabHostPort = "";
         public String SabapiKey = "";
-        public bool CheckSaBnzbd = false;
+        public bool CheckSaBnzbd;
         public String PreferredLanguage = "en";
         public WtwDoubleClickAction WtwDoubleClick;
 
@@ -627,7 +631,7 @@ namespace TVRename
                             {
                                 try
                                 {
-                                    System.Drawing.Color c = System.Drawing.ColorTranslator.FromHtml(color);
+                                    Color c = ColorTranslator.FromHtml(color);
                                     ShowStatusColors.Add(type, c);
                                 }
                                 catch
@@ -695,7 +699,7 @@ namespace TVRename
 
             // have a guess at utorrent's path
             string[] guesses = new string[3];
-            guesses[0] = System.Windows.Forms.Application.StartupPath + "\\..\\uTorrent\\uTorrent.exe";
+            guesses[0] = Application.StartupPath + "\\..\\uTorrent\\uTorrent.exe";
             guesses[1] = "c:\\Program Files\\uTorrent\\uTorrent.exe";
             guesses[2] = "c:\\Program Files (x86)\\uTorrent\\uTorrent.exe";
 
@@ -712,7 +716,7 @@ namespace TVRename
 
             // ResumeDatPath
             FileInfo f2 =
-                new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
+                new FileInfo(Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
             ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
@@ -827,7 +831,7 @@ namespace TVRename
             if (ShowStatusColors != null)
             {
                 writer.WriteStartElement("ShowStatusTVWColors");
-                foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in ShowStatusColors)
+                foreach (KeyValuePair<ShowStatusColoringType, Color> e in ShowStatusColors)
                 {
                     writer.WriteStartElement("ShowStatusTVWColor");
                     // TODO ... Write Meta Flags

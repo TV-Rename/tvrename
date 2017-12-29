@@ -5,12 +5,14 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
+using DriveInfo = System.IO.DriveInfo;
+
 namespace TVRename
 {
-    using System;
-    using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
-
     /// <summary>
     /// Summary for CopyMoveProgress
     ///
@@ -131,11 +133,11 @@ namespace TVRename
 
                 if (toRoot != null)
                 {
-                    System.IO.DriveInfo di;
+                    DriveInfo di;
                     try
                     {
                         // try to get root of drive
-                        di = new System.IO.DriveInfo(toRoot.ToString());
+                        di = new DriveInfo(toRoot.ToString());
                     }
                     catch (ArgumentException)
                     {

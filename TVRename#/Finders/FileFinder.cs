@@ -1,8 +1,10 @@
 using System;
-using System.Windows.Forms;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
+using NLog;
+using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
@@ -10,7 +12,7 @@ namespace TVRename
     {
         public FileFinder(TVDoc i) : base(i) { }
 
-        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static Logger Logger = LogManager.GetCurrentClassLogger();
 
         public override bool Active()
         {
@@ -175,7 +177,7 @@ namespace TVRename
                         }
                     }
                 }
-                catch (System.IO.PathTooLongException e)
+                catch (PathTooLongException e)
                 {
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                     Logger.Warn(e, "Path or filename too long. " + action.From.FullName);
@@ -272,7 +274,7 @@ namespace TVRename
                         }
                     }
                 }
-                catch (System.IO.PathTooLongException e)
+                catch (PathTooLongException e)
                 {
                     string t = "Path too long. " + dce.TheFile.FullName + ", " + e.Message;
                     Logger.Warn(e, "Path too long. " + dce.TheFile.FullName);

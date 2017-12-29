@@ -8,9 +8,10 @@
 // For more information see http://thetvdb.com/wiki/index.php/API:banners.xml
 //  
 
-using Newtonsoft.Json.Linq;
 using System;
 using System.Xml;
+using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace TVRename
 {
@@ -30,7 +31,7 @@ namespace TVRename
         public Season TheSeason;
         public SeriesInfo TheSeries;
 
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public Banner(Banner o)
         {

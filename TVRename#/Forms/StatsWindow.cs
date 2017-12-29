@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -28,7 +30,7 @@ namespace TVRename
             InitializeComponent();
         }
 
-        private void StatsWindow_Load(object sender, System.EventArgs e)
+        private void StatsWindow_Load(object sender, EventArgs e)
         {
             txtFM.Text = _stats.FilesMoved.ToString();
             txtFR.Text = _stats.FilesRenamed.ToString();
@@ -45,7 +47,7 @@ namespace TVRename
             txtTE.Text = _stats.NsNumberOfEpisodesExpected.ToString();
         }
 
-        private void button1_Click(object sender, System.EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
             Close();

@@ -5,9 +5,12 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using System;
 
-using Microsoft.Win32; // for RegistryKey
+using System;
+using System.Diagnostics;
+using Microsoft.Win32;
+
+// for RegistryKey
 
 // Do conversions between timezones, handling daylight savings time (summer time) at both ends.
 // Standard DateTime and DateTimeOffset classes in .NET 2.0 can't do this.
@@ -34,7 +37,7 @@ namespace TVRename
         public TimeZone(Byte[] bytes)
         {
 #if DEBUG
-            System.Diagnostics.Debug.Assert(bytes.Length == 44);
+            Debug.Assert(bytes.Length == 44);
 #endif
             // decode bytes from a Win32 TIMEZONEINFO struct
 
@@ -70,8 +73,7 @@ namespace TVRename
 
             if (rk == null)
                 return null;
-            else
-                return new TimeZone((Byte[]) rk.GetValue("TZI"));
+            return new TimeZone((Byte[]) rk.GetValue("TZI"));
         }
 
         public static string DefaultTimeZone()

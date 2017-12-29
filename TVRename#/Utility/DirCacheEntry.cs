@@ -5,9 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
-using System;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
+using System;
+using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {

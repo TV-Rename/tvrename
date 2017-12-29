@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -12,7 +14,7 @@ namespace TVRename
     public partial class FolderMonitorProgress : Form
     {
         public bool StopNow = false;
-        public bool Ready = false;
+        public bool Ready;
         private readonly FolderMonitor _mFm;
 
         public FolderMonitorProgress(FolderMonitor thefm)
@@ -22,13 +24,13 @@ namespace TVRename
             timer1_Tick(null, null); // force immediate initial update
         }
 
-        public void bnCancel_Click(object sender, System.EventArgs e)
+        public void bnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Abort;
             _mFm.FmpStopNow = true;
         }
 
-        private void timer1_Tick(object sender, System.EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             if (_mFm == null)
                 return;
@@ -47,7 +49,7 @@ namespace TVRename
 
         }
 
-        private void FolderMonitorProgress_Load(object sender, System.EventArgs e)
+        private void FolderMonitorProgress_Load(object sender, EventArgs e)
         {
             Ready = true;
         }

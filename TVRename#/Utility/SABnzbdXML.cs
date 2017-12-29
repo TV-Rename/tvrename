@@ -14,17 +14,20 @@
 // xsd.exe sab.xsd /c /edb
 
 using System;
-using System.Xml.Serialization;
+using System.CodeDom.Compiler;
+using System.ComponentModel;
 using System.IO;
+using System.Xml.Schema;
+using System.Xml.Serialization;
 
 namespace TVRename.SAB
 {
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-    [SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [XmlTypeAttribute(AnonymousType = true)]
-    [XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public class Queue : object, System.ComponentModel.INotifyPropertyChanged
+    [GeneratedCode("xsd", "2.0.50727.1432")]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public class Queue : object, INotifyPropertyChanged
     {
         public static Queue Deserialize(byte[] data)
         {
@@ -151,7 +154,7 @@ namespace TVRename.SAB
 
         private QueueCategories[] _categoriesField;
 
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Uniconfig
         {
             get { return _uniconfigField; }
@@ -163,7 +166,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string CacheSize
         {
             get { return _cacheSizeField; }
@@ -175,7 +178,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string ActiveLang
         {
             get { return _activeLangField; }
@@ -187,7 +190,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Paused
         {
             get { return _pausedField; }
@@ -199,7 +202,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Session
         {
             get { return _sessionField; }
@@ -211,7 +214,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string RestartReq
         {
             get { return _restartReqField; }
@@ -223,7 +226,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string PowerOptions
         {
             get { return _powerOptionsField; }
@@ -235,7 +238,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Speed
         {
             get { return _speedField; }
@@ -247,7 +250,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Helpuri
         {
             get { return _helpuriField; }
@@ -259,7 +262,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Size
         {
             get { return _sizeField; }
@@ -271,7 +274,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Uptime
         {
             get { return _uptimeField; }
@@ -283,7 +286,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string RefreshRate
         {
             get { return _refreshRateField; }
@@ -295,7 +298,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string MyHome
         {
             get { return _myHomeField; }
@@ -307,7 +310,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Limit
         {
             get { return _limitField; }
@@ -319,7 +322,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string HaveQuota
         {
             get { return _haveQuotaField; }
@@ -331,7 +334,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Isverbose
         {
             get { return _isverboseField; }
@@ -343,7 +346,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Start
         {
             get { return _startField; }
@@ -355,7 +358,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Finish
         {
             get { return _finishField; }
@@ -367,7 +370,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Version
         {
             get { return _versionField; }
@@ -379,7 +382,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string NewRelUrl
         {
             get { return _newRelUrlField; }
@@ -391,7 +394,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string MyLcldata
         {
             get { return _myLcldataField; }
@@ -403,7 +406,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string ColorScheme
         {
             get { return _colorSchemeField; }
@@ -415,7 +418,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Diskspacetotal1
         {
             get { return _diskspacetotal1Field; }
@@ -427,7 +430,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Nt
         {
             get { return _ntField; }
@@ -439,7 +442,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Status
         {
             get { return _statusField; }
@@ -451,7 +454,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string LastWarning
         {
             get { return _lastWarningField; }
@@ -463,7 +466,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string HaveWarnings
         {
             get { return _haveWarningsField; }
@@ -475,7 +478,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string CacheArt
         {
             get { return _cacheArtField; }
@@ -487,7 +490,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Sizeleft
         {
             get { return _sizeleftField; }
@@ -499,7 +502,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Finishaction
         {
             get { return _finishactionField; }
@@ -511,7 +514,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string PausedAll
         {
             get { return _pausedAllField; }
@@ -523,7 +526,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Quota
         {
             get { return _quotaField; }
@@ -535,7 +538,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string NewzbinUrl
         {
             get { return _newzbinUrlField; }
@@ -547,7 +550,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string NewRelease
         {
             get { return _newReleaseField; }
@@ -559,7 +562,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string PauseInt
         {
             get { return _pauseIntField; }
@@ -571,7 +574,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Mbleft
         {
             get { return _mbleftField; }
@@ -583,7 +586,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Diskspace1
         {
             get { return _diskspace1Field; }
@@ -595,7 +598,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Scripts
         {
             get { return _scriptsField; }
@@ -607,7 +610,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Darwin
         {
             get { return _darwinField; }
@@ -619,7 +622,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Timeleft
         {
             get { return _timeleftField; }
@@ -631,7 +634,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Mb
         {
             get { return _mbField; }
@@ -643,7 +646,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Noofslots
         {
             get { return _noofslotsField; }
@@ -655,7 +658,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Eta
         {
             get { return _etaField; }
@@ -667,7 +670,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Diskspacetotal2
         {
             get { return _diskspacetotal2Field; }
@@ -679,7 +682,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string NzbQuota
         {
             get { return _nzbQuotaField; }
@@ -691,7 +694,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Loadavg
         {
             get { return _loadavgField; }
@@ -703,7 +706,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string CacheMax
         {
             get { return _cacheMaxField; }
@@ -715,7 +718,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Kbpersec
         {
             get { return _kbpersecField; }
@@ -727,7 +730,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Speedlimit
         {
             get { return _speedlimitField; }
@@ -739,7 +742,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Webdir
         {
             get { return _webdirField; }
@@ -751,7 +754,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string QueueDetails
         {
             get { return _queueDetailsField; }
@@ -763,7 +766,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string LeftQuota
         {
             get { return _leftQuotaField; }
@@ -775,7 +778,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Diskspace2
         {
             get { return _diskspace2Field; }
@@ -787,9 +790,9 @@ namespace TVRename.SAB
         }
 
        
-        [XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        [XmlArrayItemAttribute("slot", typeof (QueueSlotsSlot),
-            Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+        [XmlArray(Form = XmlSchemaForm.Unqualified)]
+        [XmlArrayItem("slot", typeof (QueueSlotsSlot),
+            Form = XmlSchemaForm.Unqualified, IsNullable = false)]
         public QueueSlotsSlot[] Slots
         {
             get { return _slotsField; }
@@ -801,7 +804,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute("categories", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement("categories", Form = XmlSchemaForm.Unqualified)]
         public QueueCategories[] Categories
         {
             get { return _categoriesField; }
@@ -812,24 +815,24 @@ namespace TVRename.SAB
             }
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
 
    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-    [SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [XmlTypeAttribute(AnonymousType = true)]
-    public class QueueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged
+    [GeneratedCode("xsd", "2.0.50727.1432")]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public class QueueSlotsSlot : object, INotifyPropertyChanged
     {
 
         private string _statusField;
@@ -871,7 +874,7 @@ namespace TVRename.SAB
         private string _sizeField;
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Status
         {
             get { return _statusField; }
@@ -883,7 +886,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Index
         {
             get { return _indexField; }
@@ -895,7 +898,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Eta
         {
             get { return _etaField; }
@@ -907,7 +910,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Missing
         {
             get { return _missingField; }
@@ -919,7 +922,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string AvgAge
         {
             get { return _avgAgeField; }
@@ -931,7 +934,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Script
         {
             get { return _scriptField; }
@@ -943,7 +946,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Msgid
         {
             get { return _msgidField; }
@@ -955,7 +958,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Verbosity
         {
             get { return _verbosityField; }
@@ -967,7 +970,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public double Mb
         {
             get { return _mbField; }
@@ -979,7 +982,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Sizeleft
         {
             get { return _sizeleftField; }
@@ -991,7 +994,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Filename
         {
             get { return _filenameField; }
@@ -1003,7 +1006,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Priority
         {
             get { return _priorityField; }
@@ -1015,7 +1018,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Cat
         {
             get { return _catField; }
@@ -1027,7 +1030,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public double Mbleft
         {
             get { return _mbleftField; }
@@ -1039,7 +1042,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Timeleft
         {
             get { return _timeleftField; }
@@ -1051,7 +1054,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Percentage
         {
             get { return _percentageField; }
@@ -1063,7 +1066,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string NzoId
         {
             get { return _nzoIdField; }
@@ -1075,7 +1078,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Unpackopts
         {
             get { return _unpackoptsField; }
@@ -1087,7 +1090,7 @@ namespace TVRename.SAB
         }
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Size
         {
             get { return _sizeField; }
@@ -1098,30 +1101,30 @@ namespace TVRename.SAB
             }
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
 
    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-    [SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [XmlTypeAttribute(AnonymousType = true)]
-    public class QueueCategories : object, System.ComponentModel.INotifyPropertyChanged
+    [GeneratedCode("xsd", "2.0.50727.1432")]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public class QueueCategories : object, INotifyPropertyChanged
     {
 
         private string _categoryField;
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Category
         {
             get { return _categoryField; }
@@ -1132,22 +1135,22 @@ namespace TVRename.SAB
             }
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
 
-    [SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [XmlTypeAttribute(AnonymousType = true)]
-    public class Result : object, System.ComponentModel.INotifyPropertyChanged
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    public class Result : object, INotifyPropertyChanged
     {
         public static Result Deserialize(byte[] data)
         {
@@ -1168,7 +1171,7 @@ namespace TVRename.SAB
         private string _errorField;
 
        
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Status
         {
             get { return _statusField; }
@@ -1179,7 +1182,7 @@ namespace TVRename.SAB
             }
         }
 
-        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElement(Form = XmlSchemaForm.Unqualified)]
         public string Error
         {
             get { return _errorField; }
@@ -1190,31 +1193,31 @@ namespace TVRename.SAB
             }
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }
 
    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-    [SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [XmlTypeAttribute(AnonymousType = true)]
-    [XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public class NewDataSet : object, System.ComponentModel.INotifyPropertyChanged
+    [GeneratedCode("xsd", "2.0.50727.1432")]
+    [Serializable]
+    [DesignerCategory("code")]
+    [XmlType(AnonymousType = true)]
+    [XmlRoot(Namespace = "", IsNullable = false)]
+    public class NewDataSet : object, INotifyPropertyChanged
     {
 
         private Queue[] _itemsField;
 
        
-        [XmlElementAttribute("queue")]
+        [XmlElement("queue")]
         public Queue[] Items
         {
             get { return _itemsField; }
@@ -1225,14 +1228,14 @@ namespace TVRename.SAB
             }
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
     }

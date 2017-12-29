@@ -7,18 +7,23 @@
 // 
 
 using System;
-using Alphaleonis.Win32.Filesystem;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Xml;
 using System.Xml.Serialization;
+using Alphaleonis.Win32.Filesystem;
+using NLog;
+using DirectoryInfo = System.IO.DirectoryInfo;
+using FileInfo = System.IO.FileInfo;
 
 // Keeps count of some statistics.
 
 namespace TVRename
 {
     [Serializable]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [DesignerCategory("code")]
     
-    [XmlRootAttribute("Statistics", Namespace = "")]
+    [XmlRoot("Statistics", Namespace = "")]
     public class TVRenameStats
     {
         public int AutoAddedShows = 0;
@@ -31,11 +36,11 @@ namespace TVRename
         public int TorrentsMatched = 0;
 
         // The following aren't saved, but are calculated when we do a scan
-        [XmlIgnoreAttribute] public int NsNumberOfEpisodes = -1; // -1 = unknown
-        [XmlIgnoreAttribute] public int NsNumberOfEpisodesExpected = 0;
-        [XmlIgnoreAttribute] public int NsNumberOfSeasons = 0;
-        [XmlIgnoreAttribute] public int NsNumberOfShows = 0;
-        [XmlIgnoreAttribute] private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        [XmlIgnore] public int NsNumberOfEpisodes = -1; // -1 = unknown
+        [XmlIgnore] public int NsNumberOfEpisodesExpected = 0;
+        [XmlIgnore] public int NsNumberOfSeasons = 0;
+        [XmlIgnore] public int NsNumberOfShows = 0;
+        [XmlIgnore] private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats Load()
         {
@@ -64,7 +69,7 @@ namespace TVRename
                 {
                     XmlSerializer xs = new XmlSerializer(typeof (TVRenameStats));
                     sc = (TVRenameStats) xs.Deserialize(reader);
-                    System.Diagnostics.Debug.Assert(sc != null);
+                    Debug.Assert(sc != null);
                     reader.Close();
                 }
             }
@@ -79,7 +84,7 @@ namespace TVRename
 
         private void SaveToFile(String toFile)
         {
-            System.IO.DirectoryInfo di = new System.IO.FileInfo(toFile).Directory;
+            DirectoryInfo di = new FileInfo(toFile).Directory;
             if (!di.Exists)
                 di.Create();
 

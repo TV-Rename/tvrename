@@ -5,10 +5,11 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Windows.Forms;
+
 namespace TVRename
 {
-    using System.Windows.Forms;
-
     // Thanks to http://stackoverflow.com/questions/442817/c-flickering-listview-on-update
     public class ListViewFlickerFree : ListView
     {

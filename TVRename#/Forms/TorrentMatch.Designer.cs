@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -7,6 +7,9 @@
 //
 
 
+using System.ComponentModel;
+using System.Windows.Forms;
+
 namespace TVRename
 {
     partial class TorrentMatch
@@ -14,7 +17,7 @@ namespace TVRename
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -255,24 +258,24 @@ namespace TVRename
 
         #endregion
 
-        private System.Windows.Forms.OpenFileDialog openFile;
+        private OpenFileDialog openFile;
 
-        private System.Windows.Forms.RadioButton rbBTRenameFiles;
-        private System.Windows.Forms.RadioButton rbBTCopyTo;
-        private System.Windows.Forms.Button bnBTSecondOpen;
-        private System.Windows.Forms.Button bnBTOpenFolder;
-        private System.Windows.Forms.TreeView tmatchTree;
-        private System.Windows.Forms.Button bnGo;
-        private System.Windows.Forms.Button bnBTSecondBrowse;
-        private System.Windows.Forms.Button bnBrowseFolder;
-        private System.Windows.Forms.TextBox txtBTSecondLocation;
-        private System.Windows.Forms.TextBox txtFolder;
-        private System.Windows.Forms.Button bnBrowseTorrent;
-        private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox txtTorrentFile;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button bnClose;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowser;
+        private RadioButton rbBTRenameFiles;
+        private RadioButton rbBTCopyTo;
+        private Button bnBTSecondOpen;
+        private Button bnBTOpenFolder;
+        private TreeView tmatchTree;
+        private Button bnGo;
+        private Button bnBTSecondBrowse;
+        private Button bnBrowseFolder;
+        private TextBox txtBTSecondLocation;
+        private TextBox txtFolder;
+        private Button bnBrowseTorrent;
+        private Label label14;
+        private Label label3;
+        private TextBox txtTorrentFile;
+        private Label label4;
+        private Button bnClose;
+        private FolderBrowserDialog folderBrowser;
     }
 }

@@ -1,11 +1,14 @@
-﻿namespace TVRename
+using System.ComponentModel;
+using System.Windows.Forms;
+
+namespace TVRename
 {
     partial class FolderMonitorEdit
     {
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private IContainer components = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -99,9 +102,9 @@
 
         #endregion
 
-        private System.Windows.Forms.Panel pnlCF;
-        private System.Windows.Forms.Button bnOK;
-        private System.Windows.Forms.Button bnCancel;
-        private System.Windows.Forms.Label label1;
+        private Panel pnlCF;
+        private Button bnOK;
+        private Button bnCancel;
+        private Label label1;
     }
 }

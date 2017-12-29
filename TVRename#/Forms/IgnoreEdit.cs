@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -20,14 +23,14 @@ namespace TVRename
     /// </summary>
     public partial class IgnoreEdit : Form
     {
-        private System.Collections.Generic.List<IgnoreItem> _displayedSet;
-        private readonly System.Collections.Generic.List<IgnoreItem> _ignore;
+        private List<IgnoreItem> _displayedSet;
+        private readonly List<IgnoreItem> _ignore;
         private readonly TVDoc _mDoc;
 
         public IgnoreEdit(TVDoc doc)
         {
             _mDoc = doc;
-            _ignore = new System.Collections.Generic.List<IgnoreItem>();
+            _ignore = new List<IgnoreItem>();
 
             foreach (IgnoreItem ii in _mDoc.Ignore)
                 _ignore.Add(ii);
@@ -37,14 +40,14 @@ namespace TVRename
             FillList();
         }
 
-        private void bnOK_Click(object sender, System.EventArgs e)
+        private void bnOK_Click(object sender, EventArgs e)
         {
             _mDoc.Ignore = _ignore;
             _mDoc.SetDirty();
             Close();
         }
 
-        private void bnRemove_Click(object sender, System.EventArgs e)
+        private void bnRemove_Click(object sender, EventArgs e)
         {
             foreach (int i in lbItems.SelectedIndices)
                 foreach (IgnoreItem iitest in _ignore)
@@ -64,7 +67,7 @@ namespace TVRename
             string f = txtFilter.Text.ToLower();
             bool all = string.IsNullOrEmpty(f);
 
-            _displayedSet = new System.Collections.Generic.List<IgnoreItem>();
+            _displayedSet = new List<IgnoreItem>();
 
             foreach (IgnoreItem ii in _ignore)
             {
@@ -79,12 +82,12 @@ namespace TVRename
             lbItems.EndUpdate();
         }
 
-        private void txtFilter_TextChanged(object sender, System.EventArgs e)
+        private void txtFilter_TextChanged(object sender, EventArgs e)
         {
             timer1.Start();
         }
 
-        private void timer1_Tick(object sender, System.EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             timer1.Stop();
             FillList();

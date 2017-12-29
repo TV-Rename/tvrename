@@ -6,18 +6,16 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    using System;
-    using System.Windows.Forms;
-    using FileInfo = FileInfo;
-    using System.IO;
-
     public class ActionDownload : ITem, IAction, IScanListItem
     {
         private readonly string _path;
@@ -74,8 +72,8 @@ namespace TVRename
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
 
-            float nPercentW = ((float)width / (float)sourceWidth);
-            float nPercentH = ((float)height / (float)sourceHeight);
+            float nPercentW = (width / (float)sourceWidth);
+            float nPercentH = (height / (float)sourceHeight);
 
             //float nPercent = Math.Min(nPercentH, nPercentW);
             int destWidth, destHeight;

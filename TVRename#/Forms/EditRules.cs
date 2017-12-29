@@ -6,6 +6,7 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -48,7 +49,7 @@ namespace TVRename
             FillRuleList(false, 0);
         }
 
-        private void bnAddRule_Click(object sender, System.EventArgs e)
+        private void bnAddRule_Click(object sender, EventArgs e)
         {
             ShowRule sr = new ShowRule();
             AddModifyRule ar = new AddModifyRule(sr);
@@ -97,7 +98,7 @@ namespace TVRename
             FillPreview();
         }
 
-        private void bnEdit_Click(object sender, System.EventArgs e)
+        private void bnEdit_Click(object sender, EventArgs e)
         {
             if (lvRuleList.SelectedItems.Count == 0)
                 return;
@@ -107,7 +108,7 @@ namespace TVRename
             FillRuleList(false, 0);
         }
 
-        private void bnDelRule_Click(object sender, System.EventArgs e)
+        private void bnDelRule_Click(object sender, EventArgs e)
         {
             if (lvRuleList.SelectedItems.Count == 0)
                 return;
@@ -117,7 +118,7 @@ namespace TVRename
             FillRuleList(false, 0);
         }
 
-        private void bnRuleUp_Click(object sender, System.EventArgs e)
+        private void bnRuleUp_Click(object sender, EventArgs e)
         {
             if (lvRuleList.SelectedIndices.Count != 1)
                 return;
@@ -132,7 +133,7 @@ namespace TVRename
             FillRuleList(true, -1);
         }
 
-        private void bnRuleDown_Click(object sender, System.EventArgs e)
+        private void bnRuleDown_Click(object sender, EventArgs e)
         {
             if (lvRuleList.SelectedIndices.Count != 1)
                 return;
@@ -146,18 +147,18 @@ namespace TVRename
             FillRuleList(true, +1);
         }
 
-        private void lvRuleList_DoubleClick(object sender, System.EventArgs e)
+        private void lvRuleList_DoubleClick(object sender, EventArgs e)
         {
             bnEdit_Click(null, null);
         }
 
-        private void bnOK_Click(object sender, System.EventArgs e)
+        private void bnOK_Click(object sender, EventArgs e)
         {
             _mSi.SeasonRules[_mSeasonNumber] = _workingRuleSet;
             Close();
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        private void bnCancel_Click(object sender, EventArgs e)
         {
             Close();
         }

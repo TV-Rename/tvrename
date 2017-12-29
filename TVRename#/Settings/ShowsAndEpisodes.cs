@@ -5,11 +5,14 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
-using Alphaleonis.Win32.Filesystem;
-using System.Xml;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
+using System.Xml;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 
@@ -33,7 +36,7 @@ namespace TVRename
         public ProcessedEpisodeType Type;
         public List<Episode> SourceEpisodes;
 
-        public enum ProcessedEpisodeType { Single, Split, Merged};
+        public enum ProcessedEpisodeType { Single, Split, Merged}
 
 
         public ProcessedEpisode(SeriesInfo ser, Season seas, ShowItem si)
@@ -98,11 +101,10 @@ namespace TVRename
         {
             if (EpNum == EpNum2)
                 return EpNum.ToString();
-            else
-                return EpNum + "-" + EpNum2;
+            return EpNum + "-" + EpNum2;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static int EpNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.EpNum;
@@ -111,7 +113,7 @@ namespace TVRename
             return ep1 - ep2;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static int DvdOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.EpNum;
@@ -396,24 +398,22 @@ namespace TVRename
                     {
                         return ShowAirStatus.Aired;
                     }
-                    else if (HasUnairedEpisodes && !HasAiredEpisodes)
+
+                    if (HasUnairedEpisodes && !HasAiredEpisodes)
                     {
                         return ShowAirStatus.NoneAired;
                     }
-                    else if (HasAiredEpisodes && HasUnairedEpisodes)
+
+                    if (HasAiredEpisodes && HasUnairedEpisodes)
                     {
                         return ShowAirStatus.PartiallyAired;
                     }
-                    else
-                    {
-                        //System.Diagnostics.Debug.Assert(false, "That is weird ... we have 'seasons and episodes' but none are aired, nor unaired. That case shouldn't actually occur !");
-                        return ShowAirStatus.NoEpisodesOrSeasons;
-                    }
-                }
-                else
-                {
+
+                    //System.Diagnostics.Debug.Assert(false, "That is weird ... we have 'seasons and episodes' but none are aired, nor unaired. That case shouldn't actually occur !");
                     return ShowAirStatus.NoEpisodesOrSeasons;
                 }
+
+                return ShowAirStatus.NoEpisodesOrSeasons;
             }
         }
 
@@ -519,8 +519,7 @@ namespace TVRename
         {
             if (SeasonRules.ContainsKey(n))
                 return SeasonRules[n];
-            else
-                return null;
+            return null;
         }
 
         public string AutoFolderNameForSeason(int n)
@@ -530,8 +529,8 @@ namespace TVRename
             if (string.IsNullOrEmpty(r))
                 return "";
 
-            if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
-                r += System.IO.Path.DirectorySeparatorChar.ToString();
+            if (!r.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                r += Path.DirectorySeparatorChar.ToString();
             if (AutoAddFolderPerSeason)
             {
                 if (n == 0)
@@ -653,7 +652,7 @@ namespace TVRename
 
         public static string Tts(string s) // trim trailing slash
         {
-            return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
+            return s.TrimEnd(Path.DirectorySeparatorChar);
         }
 
         public Dictionary<int, List<string>> AllFolderLocations(bool manualToo)

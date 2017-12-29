@@ -1,7 +1,10 @@
    using System;
-   using System.Windows.Forms;
-   using System.Threading;
    using System.ComponentModel;
+   using System.Threading;
+   using System.Timers;
+   using System.Windows.Forms;
+   using NLog;
+   using Timer = System.Timers.Timer;
 
 namespace TVRename
 {
@@ -11,13 +14,13 @@ namespace TVRename
         private static ISplashForm _displayForm;
         private delegate void UpdateText(string text);
         private delegate void UpdateInt(int number);
-        private static System.Timers.Timer _fader;
+        private static Timer _fader;
         private static double _opacityIncrement = .05;
         private static readonly double _opacityDecrement = .125;
         private const int FadeSpeed = 50;
         private const int WaitTime = 2000;
         private static ManualResetEvent _windowCreated;
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public static double CheckOpacity()
         {
@@ -78,13 +81,13 @@ namespace TVRename
                 _worker.WorkerSupportsCancellation = true;
                 _worker.DoWork += worker_DoWork;
 
-                _fader = new System.Timers.Timer(FadeSpeed);
-                _fader.Elapsed += new System.Timers.ElapsedEventHandler(fader_Elapsed);
+                _fader = new Timer(FadeSpeed);
+                _fader.Elapsed += fader_Elapsed;
             }
             return true;
         }
 
-        static void fader_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        static void fader_Elapsed(object sender, ElapsedEventArgs e)
         {
             //Form UI thread
             _fader.Stop();

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Timers;
+using NLog;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
 
@@ -10,16 +12,16 @@ namespace TVRename
         private readonly TVDoc _mDoc;
         private readonly Ui _mUi;
         private readonly List<FileSystemWatcher> _watchers = new List<FileSystemWatcher>();
-        private readonly System.Timers.Timer _mScanDelayTimer;
-        private static readonly NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly Timer _mScanDelayTimer;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public AutoFolderMonitor(TVDoc doc, Ui ui)
         {
             _mDoc = doc;
             _mUi = ui;
 
-            _mScanDelayTimer = new System.Timers.Timer(1000);
-            _mScanDelayTimer.Elapsed += new System.Timers.ElapsedEventHandler(mScanDelayTimer_Elapsed);
+            _mScanDelayTimer = new Timer(1000);
+            _mScanDelayTimer.Elapsed += mScanDelayTimer_Elapsed;
             _mScanDelayTimer.Stop();
         }
 
@@ -46,9 +48,9 @@ namespace TVRename
 
 
                 FileSystemWatcher watcher = new FileSystemWatcher(efi);
-                watcher.Changed += new FileSystemEventHandler(watcher_Changed);
-                watcher.Created += new FileSystemEventHandler(watcher_Changed);
-                watcher.Renamed += new RenamedEventHandler(watcher_Changed);
+                watcher.Changed += watcher_Changed;
+                watcher.Created += watcher_Changed;
+                watcher.Renamed += watcher_Changed;
                 //watcher.Deleted += new FileSystemEventHandler(watcher_Changed);
                 //watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime;
                 watcher.IncludeSubdirectories = true;
@@ -65,7 +67,7 @@ namespace TVRename
             _mScanDelayTimer.Start();
         }
 
-        void mScanDelayTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void mScanDelayTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _mScanDelayTimer.Stop();
             StopMonitor();

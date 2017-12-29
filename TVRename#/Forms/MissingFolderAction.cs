@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 
@@ -53,37 +55,37 @@ namespace TVRename
             }
         }
 
-        private void bnIgnoreOnce_Click(object sender, System.EventArgs e)
+        private void bnIgnoreOnce_Click(object sender, EventArgs e)
         {
             Result = FaResult.KfaIgnoreOnce;
             Close();
         }
 
-        private void bnIgnoreAlways_Click(object sender, System.EventArgs e)
+        private void bnIgnoreAlways_Click(object sender, EventArgs e)
         {
             Result = FaResult.KfaIgnoreAlways;
             Close();
         }
 
-        private void bnCreate_Click(object sender, System.EventArgs e)
+        private void bnCreate_Click(object sender, EventArgs e)
         {
             Result = FaResult.KfaCreate;
             Close();
         }
 
-        private void bnRetry_Click(object sender, System.EventArgs e)
+        private void bnRetry_Click(object sender, EventArgs e)
         {
             Result = FaResult.KfaRetry;
             Close();
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        private void bnCancel_Click(object sender, EventArgs e)
         {
             Result = FaResult.KfaCancel;
             Close();
         }
 
-        private void bnBrowse_Click(object sender, System.EventArgs e)
+        private void bnBrowse_Click(object sender, EventArgs e)
         {
             folderBrowser.SelectedPath = FolderName;
             if (folderBrowser.ShowDialog() == DialogResult.OK)

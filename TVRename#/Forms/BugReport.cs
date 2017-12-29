@@ -6,11 +6,12 @@
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
 
+using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Text;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using System.IO;
+using System.Text;
+using System.Windows.Forms;
+using Directory = Alphaleonis.Win32.Filesystem.Directory;
 
 namespace TVRename
 {
@@ -33,7 +34,7 @@ namespace TVRename
             InitializeComponent();
         }
 
-        private void bnCreate_Click(object sender, System.EventArgs e)
+        private void bnCreate_Click(object sender, EventArgs e)
         {
             txtEmailText.Text = "Working... This may take a while.";
             txtEmailText.Update();
@@ -129,7 +130,7 @@ namespace TVRename
             txtEmailText.Text = txt.ToString();
         }
 
-        private void bnCopy_Click(object sender, System.EventArgs e)
+        private void bnCopy_Click(object sender, EventArgs e)
         {
             Clipboard.SetDataObject(txtEmailText.Text);
         }

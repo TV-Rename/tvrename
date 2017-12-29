@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -72,13 +74,13 @@ namespace TVRename
             PctuTorrent = p;
         }
 
-        private void ScanProgress_Load(object sender, System.EventArgs e)
+        private void ScanProgress_Load(object sender, EventArgs e)
         {
             Ready = true;
             timer1.Start();
         }
 
-        private void timer1_Tick(object sender, System.EventArgs e)
+        private void timer1_Tick(object sender, EventArgs e)
         {
             UpdateProg();
             timer1.Start();

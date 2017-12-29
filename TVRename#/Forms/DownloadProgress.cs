@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -29,14 +31,14 @@ namespace TVRename
             _mDoc = doc;
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        private void bnCancel_Click(object sender, EventArgs e)
         {
             tmrUpdate.Stop();
             _mDoc.StopBgDownloadThread();
             DialogResult = DialogResult.Abort;
         }
 
-        private void tmrUpdate_Tick(object sender, System.EventArgs e)
+        private void tmrUpdate_Tick(object sender, EventArgs e)
         {
             if (_mDoc.DownloadDone)
                 Close();
@@ -44,7 +46,7 @@ namespace TVRename
                 UpdateStuff();
         }
 
-        private void DownloadProgress_Load(object sender, System.EventArgs e)
+        private void DownloadProgress_Load(object sender, EventArgs e)
         {
             //UpdateStuff();
         }
