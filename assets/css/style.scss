@@ -40,11 +40,10 @@
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    font-weight: bold;
+    color: #ffcc00;
 }
 
-.center a {
-    font-weight: bold;
-}
 .center a:hover {
     border-bottom: 1px solid #3399cc;
 }
@@ -52,11 +51,11 @@
 .toplink {
     margin-right: auto;
     text-align: right;
+    color: #ffcc00;
 }
 
 .toplink a {
     font-size: 10px;
-    font-style: italic;
     font-weight: normal;
 }
 

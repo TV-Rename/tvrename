@@ -8,10 +8,10 @@ Luckily the "out-of-the-box" defaults work well, and should you wish to change a
 As you can see from the image above there are a number of options, each of which is discussed below.
 
 {:.center}
-[Offline Operation](#offline-operation)&nbsp;-&nbsp;[Automatic Background Download](#automatic-background-download)&nbsp;-&nbsp;[Preferences](#preferences "Delve into the preferences")
+[Offline Operation](#offline-operation)&nbsp;&#9670;&nbsp;[Automatic Background Download](#automatic-background-download)&nbsp;&#9670;&nbsp;[Preferences](#preferences "Delve into the preferences")
 
 {:.center}
-[Ignore List]()&nbsp;-&nbsp;[Filename Template Editor]()&nbsp;-&nbsp;[Search Engines]()&nbsp;-&nbsp;[Filename Processors]()
+[Ignore List]()&nbsp;&#9670;&nbsp;[Filename Template Editor]()&nbsp;&#9670;&nbsp;[Search Engines]()&nbsp;&#9670;&nbsp;[Filename Processors]()
 
 ## Offline Operation
 
@@ -29,10 +29,10 @@ As you can see from the image above there are a number of options, each of which
 As can be seen from the image there are a large number of tabs in "Preferences", each of which is discussed in below.<br />
 
 {:.center}
-[Media Center](#media-center)&nbsp;-&nbsp;[Search Folders](#search-folders)&nbsp;-&nbsp;[&#181;Torrent / NZB](#&#181;torrent--nzb)&nbsp;-&nbsp;[Tree Coloring](#tree-coloring)
+[Media Center](#media-center)&nbsp;&#9670;&nbsp;[Search Folders](#search-folders)&nbsp;&#9670;&nbsp;[&#181;Torrent / NZB](#&#181;torrent--nzb)&nbsp;&#9670;&nbsp;[Tree Coloring](#tree-coloring)
 
 {:.center}
-[General](#general)&nbsp;-&nbsp;[Files and Folders](#files-and-folders)&nbsp;-&nbsp;[Automatic Export](#automatic-export)&nbsp;-&nbsp;[Scan Options](#scan-options)&nbsp;-&nbsp;[Folder Deleting](#folder-deleting)
+[General](#general)&nbsp;&#9670;&nbsp;[Files and Folders](#files-and-folders)&nbsp;&#9670;&nbsp;[Automatic Export](#automatic-export)&nbsp;&#9670;&nbsp;[Scan Options](#scan-options)&nbsp;&#9670;&nbsp;[Folder Deleting](#folder-deleting)
 
 {:.toplink}
 [Return to Top]()
@@ -40,33 +40,45 @@ As can be seen from the image there are a large number of tabs in "Preferences",
 ### Media Center
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### Search Folders
+![Preferences - the Search Folders tab](images/options/preferences-search-folders-02.png){:.pic-l}
+The ***Search Folders*** tab is used to tell TV Rename where to look for tv show episode files BEFORE they are processed. Logical entries in here would be your downloads folder (if you download tv show episodes from the internet) or maybe your desktop (if you rip tv show episodes from DVD or Bluray). Or both!
+
+Three buttons are available at the bottom of the tab. `Add` opens an explorer style window so you can browse to the folder location you wish to add and click `OK`, `Remove` removes a highlighted row from the panel and `Open` opens an explorer window targeting the row highlighted in the panel.
+
+At the top of the tab the "Monitor folders for changes" tick box tell TV Rename to automatically check for new files in the identified locations and the "Scan Type" radio buttons tell TV Rename the type of scan to perform if anything is found by the folder monitor.
+
+| *Defaults:* | "Folder Monitor" | ***Un-ticked*** |
+|-------------|------------------|-----------------|
+|             | "Scan type"      | ***Full***      |
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### &#181;Torrent / NZB
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### Tree Coloring
 ![Preferences - the Tree Coloring tab](images/options/preferences-tree-coloring-01.png){:.pic-l}
-If you're like me and have a large catalogue of old TV Shows, the ***My Shows*** tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. ***Tree Coloring*** to the rescue...
+If you're like me and have a large catalogue of old TV Shows, the ***My&nbsp;Shows*** tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. ***Tree Coloring*** to the rescue...
 
-Tree coloring allows you to change the color of the text on the left hand pane of the ***My Shows*** tab depending on the status of the show or the show season. To create a record:-
+Tree coloring allows you to change the color of the text on the left hand pane of the ***My&nbsp;Shows*** tab depending on the status of the show or the show season.
+
+To create a record:-
 * Expand the "Status:" drop-down and select the status you wish to match from the list.
 * Select a color to associate with the status by either entering a web-safe color name or code in the "Text Color:" box or clicking `Select Colour` and choosing from the pallet.
 * Click the `Add` button and your new entry will appear the box above.
 
-For example: to make finished shows less obtrusive in ***My Shows*** expand the "Status:" drop-down and select "Show Status: Ended", in the "Text Color:" box type "#808080" and click `Add`. Back in the  ***My Shows*** text for shows that have finished will be light grey and less obtrusive.
+For example: to make finished shows less obtrusive in ***My&nbsp;Shows*** expand the "Status:" drop-down and select "Show Status: Ended", in the "Text Color:" box type "#808080" and click `Add`. Back in the  ***My&nbsp;Shows*** text for shows that have finished will be light grey and less obtrusive.
 
 If you wish to remove a rule from the list just select it and click `Remove`.
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### General
 ![Preferences - the General tab](images/options/preferences-general-01.png){:.pic-l}
@@ -82,7 +94,7 @@ Controls the double-click action in the ***[When to Watch](userguide#when-to-wat
 
 {:.clear}
 *Startup Tab:*<br />
-Selects which tab you wish open when TV Rename loads. ***My Shows***, ***Search*** or ***When to Watch***.
+Selects which tab you wish open when TV Rename loads. ***My&nbsp;Shows***, ***Search*** or ***When to Watch***.
 
 *Default: **My Shows***
 
@@ -97,7 +109,7 @@ Both boxes can be ticked, in which case you get both functionalities.
 |             | "Show in Taskbar"        | ***Ticked***    |
 
 *Show episode pictures in episode guides*<br />
-Does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the ***My Shows*** tab. If un-ticked only the episode description is displayed.
+Does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the ***My&nbsp;Shows*** tab. If un-ticked only the episode description is displayed.
 
 *Default: **Ticked***
 
@@ -106,8 +118,8 @@ Sets the number of concurrent connections to TheTVDB API. It can be set in the r
 
 *Default: **4***
 
-*Automatically select show and season in My Shows*<br />
-If ticked this works for both the ***When to watch*** and ***Scan*** tabs. If an item is selected in either of these tabs the ***My Shows*** tab is automatically updated to highlight the indicated show and season.
+*Automatically select show and season in My&nbsp;Shows*<br />
+If ticked this works for both the ***When to watch*** and ***Scan*** tabs. If an item is selected in either of these tabs the ***My&nbsp;Shows*** tab is automatically updated to highlight the indicated show and season.
 
 *Default: **Ticked***
 
@@ -121,30 +133,41 @@ And the "date separators" can be any of: - / . , " " (a space)
 *Default: **Un-ticked***
 
 *Prefered language:*<br />
-This option sets the language for returned data then requesting information from TheTVDB API. TV Rename will request "English" If the selected language is not available.
+This option sets the language for returned data when requesting information from TheTVDB API. TV Rename will request "English" If the selected language is not available.
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### Files and Folders
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### Automatic Export
+![Preferences - the Automatic Export tab](images/options/preferences-auto-export-01.png){:.pic-l}
+Ticking the "RSS" box in the "When to watch"  section of the panel will save a RSS-reader compatible XML file to the location you specify (by typing or browsing). This file can then be read by something like XBOX Media Center, or a Windows  RSS App.
+
+Ticking the "XML" box in the "When to watch"  section of the panel will save an standard XML file to the location you specify (by typing or browsing).
+
+In either case you can limit how many days or shows are written to the file. The files are updated whenever the "When to watch" tab is manually or automatically refreshed.
+
+*Default: **All un-ticked***
+
+
+
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### Scan options
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### Folder Deleting
 
 {:.toplink}
-[Return to Preferences](#preferences)&nbsp;&nbsp;[Return to Top]()
+[Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ## Ignore List
 
@@ -163,7 +186,6 @@ This option sets the language for returned data then requesting information from
 | x | "Find Extensions" sets the extensions of media files to look for. Separate them each with a semicolon, don't use spaces, and make sure you put the dot in! |
 
 ##### Automatic Export
-"RSS Export" will save a RSS-reader compatible XML file to the location you specify. It can then be read by something like XBOX Media Center, or the Vista RSS Widget. You can limit how many days or shows are written to the file. The RSS file is updated whenever the "When to watch" tab is manually or automatically refreshed.
 
 | Field | Explanation |
 |-------|-----------------|
