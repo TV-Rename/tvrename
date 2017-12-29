@@ -5,13 +5,18 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using System.Drawing;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+using Alphaleonis.Win32.Filesystem;
+using SourceGrid.Cells.Views;
+using CheckBox = SourceGrid.Cells.CheckBox;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
+using ContentAlignment = DevAge.Drawing.ContentAlignment;
 
 namespace TVRename
 {
@@ -348,7 +353,7 @@ namespace TVRename
             cbFantArtJpg.Checked = s.FanArtJpg;
 
 #if DEBUG
-            System.Diagnostics.Debug.Assert(s.Tidyup != null);
+            Debug.Assert(s.Tidyup != null);
 #endif
             cbDeleteEmpty.Checked = s.Tidyup.DeleteEmpty;
             cbRecycleNotDelete.Checked = s.Tidyup.DeleteEmptyIsRecycle;
@@ -688,11 +693,11 @@ namespace TVRename
 
         private void SetupReplacementsGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+            Cell titleModel = new Cell
                                                          {
                                                              BackColor = Color.SteelBlue,
                                                              ForeColor = Color.White,
-                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                             TextAlignment = ContentAlignment.MiddleLeft
                                                          };
 
             ReplacementsGrid.Columns.Clear();
@@ -738,13 +743,13 @@ namespace TVRename
 
         private void AddNewReplacementRow(string from, string to, bool ins)
         {
-            SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell {ForeColor = Color.Gray};
+            Cell roModel = new Cell {ForeColor = Color.Gray};
 
             int r = ReplacementsGrid.RowsCount;
             ReplacementsGrid.RowsCount = r + 1;
             ReplacementsGrid[r, 0] = new SourceGrid.Cells.Cell(from, typeof(string));
             ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
-            ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
+            ReplacementsGrid[r, 2] = new CheckBox(null, ins);
             if (!string.IsNullOrEmpty(from) && (TVSettings.CompulsoryReplacements().IndexOf(from) != -1))
             {
                 ReplacementsGrid[r, 0].Editor.EnableEdit = false;
@@ -754,11 +759,11 @@ namespace TVRename
 
         private void SetupRssGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
+            Cell titleModel = new Cell
                                                          {
                                                              BackColor = Color.SteelBlue,
                                                              ForeColor = Color.White,
-                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                                                             TextAlignment = ContentAlignment.MiddleLeft
                                                          };
 
             RSSGrid.Columns.Clear();
@@ -1112,7 +1117,7 @@ namespace TVRename
                     break;
 #if DEBUG
                 default:
-                    System.Diagnostics.Debug.Fail("Unknown default selected.");
+                    Debug.Fail("Unknown default selected.");
                     break;
 #endif
             }
