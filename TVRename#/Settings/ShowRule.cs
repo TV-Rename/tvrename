@@ -33,12 +33,12 @@ namespace TVRename
 
         public ShowRule()
         {
-            this.SetToDefaults();
+            SetToDefaults();
         }
 
         public ShowRule(XmlReader reader)
         {
-            this.SetToDefaults();
+            SetToDefaults();
             reader.Read();
             while (reader.Name != "Rule")
                 return;
@@ -47,13 +47,13 @@ namespace TVRename
             while (reader.Name != "Rule")
             {
                 if (reader.Name == "DoWhatNow")
-                    this.DoWhatNow = (RuleAction) reader.ReadElementContentAsInt();
+                    DoWhatNow = (RuleAction) reader.ReadElementContentAsInt();
                 else if (reader.Name == "First")
-                    this.First = reader.ReadElementContentAsInt();
+                    First = reader.ReadElementContentAsInt();
                 else if (reader.Name == "Second")
-                    this.Second = reader.ReadElementContentAsInt();
+                    Second = reader.ReadElementContentAsInt();
                 else if (reader.Name == "Text")
-                    this.UserSuppliedText = reader.ReadElementContentAsString();
+                    UserSuppliedText = reader.ReadElementContentAsString();
                 else
                     reader.ReadOuterXml();
             }
@@ -61,32 +61,32 @@ namespace TVRename
 
         public ShowRule(ShowRule O)
         {
-            this.DoWhatNow = O.DoWhatNow;
-            this.First = O.First;
-            this.Second = O.Second;
-            this.UserSuppliedText = O.UserSuppliedText;
+            DoWhatNow = O.DoWhatNow;
+            First = O.First;
+            Second = O.Second;
+            UserSuppliedText = O.UserSuppliedText;
         }
 
         public void SetToDefaults()
         {
-            this.DoWhatNow = RuleAction.kIgnoreEp;
-            this.First = this.Second = -1;
-            this.UserSuppliedText = "";
+            DoWhatNow = RuleAction.kIgnoreEp;
+            First = Second = -1;
+            UserSuppliedText = "";
         }
 
         public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("Rule");
-            XMLHelper.WriteElementToXML(writer,"DoWhatNow",(int) this.DoWhatNow);
-            XMLHelper.WriteElementToXML(writer,"First",this.First);
-            XMLHelper.WriteElementToXML(writer,"Second",this.Second);           
-            XMLHelper.WriteElementToXML(writer,"Text",this.UserSuppliedText);
+            XMLHelper.WriteElementToXML(writer,"DoWhatNow",(int) DoWhatNow);
+            XMLHelper.WriteElementToXML(writer,"First",First);
+            XMLHelper.WriteElementToXML(writer,"Second",Second);           
+            XMLHelper.WriteElementToXML(writer,"Text",UserSuppliedText);
             writer.WriteEndElement(); // Rule
         }
 
         public string ActionInWords()
         {
-            switch (this.DoWhatNow)
+            switch (DoWhatNow)
             {
                 case RuleAction.kIgnoreEp:
                     return "Ignore";

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -16,14 +16,14 @@ namespace TVRename
             return TVSettings.Instance.SearchRSS;
         }
 
-        public override Finder.FinderDisplayType DisplayType()
+        public override FinderDisplayType DisplayType()
         {
             return FinderDisplayType.RSS;
         }
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
-            int c = this.TheActionList.Count + 2;
+            int c = TheActionList.Count + 2;
             int n = 1;
             prog.Invoke(100 * n / c);
             RSSItemList RSSList = new RSSItemList();
@@ -33,9 +33,9 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (Item Action1 in this.TheActionList)
+            foreach (Item Action1 in TheActionList)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 n++;
@@ -60,10 +60,10 @@ namespace TVRename
                 }
             }
             foreach (Item i in toRemove)
-                this.TheActionList.Remove(i);
+                TheActionList.Remove(i);
 
             foreach (Item Action in newItems)
-                this.TheActionList.Add(Action);
+                TheActionList.Add(Action);
 
             prog.Invoke(100);
 
@@ -80,21 +80,21 @@ namespace TVRename
 
         public RSSItem(string url, string title, int season, int episode, string showName)
         {
-            this.URL = url;
-            this.Season = season;
-            this.Episode = episode;
-            this.Title = title;
-            this.ShowName = showName;
+            URL = url;
+            Season = season;
+            Episode = episode;
+            Title = title;
+            ShowName = showName;
         }
     }
 
-    public class RSSItemList : System.Collections.Generic.List<RSSItem>
+    public class RSSItemList : List<RSSItem>
     {
         private List<FilenameProcessorRE> Rexps; // only trustable while in DownloadRSS or its called functions
 
         public bool DownloadRSS(string URL, List<FilenameProcessorRE> rexps)
         {
-            this.Rexps = rexps;
+            Rexps = rexps;
 
             System.Net.WebClient wc = new System.Net.WebClient();
             try
@@ -128,7 +128,7 @@ namespace TVRename
 
                     if (reader.Name == "channel")
                     {
-                        if (!this.ReadChannel(reader.ReadSubtree()))
+                        if (!ReadChannel(reader.ReadSubtree()))
                             return false;
                         reader.Read();
                     }
@@ -144,7 +144,7 @@ namespace TVRename
             }
             finally
             {
-                this.Rexps = null;
+                Rexps = null;
             }
 
             return true;
@@ -160,7 +160,7 @@ namespace TVRename
                     break;
                 if (r.Name == "item")
                 {
-                    if (!this.ReadItem(r.ReadSubtree()))
+                    if (!ReadItem(r.ReadSubtree()))
                         return false;
                     r.Read();
                 }
@@ -203,7 +203,7 @@ namespace TVRename
             int episode = -1;
             string showName = "";
 
-            TVDoc.FindSeasEp("", title, out season, out episode, null, this.Rexps);
+            TVDoc.FindSeasEp("", title, out season, out episode, null, Rexps);
 
             try
             {
@@ -222,7 +222,7 @@ namespace TVRename
             }
 
             if ((season != -1) && (episode != -1))
-                this.Add(new RSSItem(link, title, season, episode, showName));
+                Add(new RSSItem(link, title, season, episode, showName));
 
             return true;
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
@@ -16,7 +16,7 @@ namespace TVRename
             return TVSettings.Instance.CheckuTorrent;
         }
 
-        public override Finder.FinderDisplayType DisplayType()
+        public override FinderDisplayType DisplayType()
         {
             return FinderDisplayType.Downloading;
         }
@@ -36,12 +36,12 @@ namespace TVRename
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = this.TheActionList.Count + 2;
+            int c = TheActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct + totPct * n / c);
-            foreach (Item Action1 in this.TheActionList)
+            foreach (Item Action1 in TheActionList)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 n++;
@@ -78,10 +78,10 @@ namespace TVRename
             }
 
             foreach (Item i in toRemove)
-                this.TheActionList.Remove(i);
+                TheActionList.Remove(i);
 
             foreach (Item Action in newList)
-                this.TheActionList.Add(Action);
+                TheActionList.Add(Action);
 
             prog.Invoke(startpct + totPct);
 

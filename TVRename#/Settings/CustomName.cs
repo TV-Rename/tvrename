@@ -19,17 +19,17 @@ namespace TVRename
 
         public CustomName(CustomName O)
         {
-            this.StyleString = O.StyleString;
+            StyleString = O.StyleString;
         }
 
         public CustomName(string s)
         {
-            this.StyleString = s;
+            StyleString = s;
         }
 
         public CustomName()
         {
-            this.StyleString = DefaultStyle();
+            StyleString = DefaultStyle();
         }
 
         public static string DefaultStyle()
@@ -67,7 +67,7 @@ namespace TVRename
         {
             // set folderNameLength to have the filename truncated if the total path length is too long
 
-            string r = NameForNoExt(pe, this.StyleString);
+            string r = NameForNoExt(pe, StyleString);
 
             int maxLenOK = 200 - (folderNameLength + ((extension != null) ? extension.Length : 0));
             if (r.Length > maxLenOK)

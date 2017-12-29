@@ -1,4 +1,4 @@
-﻿using Alphaleonis.Win32.Filesystem;
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.CodeDom;
 using System.Diagnostics;
@@ -15,10 +15,10 @@ namespace TVRename
     using System;
     using System.IO;
     using System.Windows.Forms;
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-    using File = Alphaleonis.Win32.Filesystem.File;		
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;		
-    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
+    using DirectoryInfo = DirectoryInfo;
+    using File = File;		
+    using FileInfo = FileInfo;		
+    using FileSystemInfo = FileSystemInfo;		
 
 
     public class ActionCopyMoveRename : ActionFileOperation
@@ -76,10 +76,10 @@ namespace TVRename
 
             try
             {
-                if (FileHelper.Same(this.From, this.To))
+                if (FileHelper.Same(From, To))
                 {
                     // XP won't actually do a rename if its only a case difference
-                    string tempName = TempFor(this.To);
+                    string tempName = TempFor(To);
 
                     //From.MoveTo(tempName);
                     //File.Move(tempName, To.FullName);
@@ -87,30 +87,30 @@ namespace TVRename
                     if (IsMoveRename())
                     {
                         // This step could be slow, so report progress
-                        CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                        CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
                         if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
                     }
                     else
                     {
                         //we are copying
                         // This step could be slow, so report progress
-                        CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
+                        CopyMoveResult moveResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
                         if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
                     }
 
 
                     // This step very quick, so no progress reporting		
-                    Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName, MoveOptions.ReplaceExisting);
+                    File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
 
 
                 }
                 else { 
                     //From.MoveTo(To.FullName);
-                    CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                    CopyMoveResult moveResult = File.Move(From.FullName, To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
                     if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
                 }
 
-                this.Done = true;
+                Done = true;
 
                 switch (Operation)
                 {
@@ -128,11 +128,11 @@ namespace TVRename
                 }
 
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                this.Done = true;
-                this.Error = true;
-                this.ErrorText = e.Message;
+                Done = true;
+                Error = true;
+                ErrorText = e.Message;
             }
 
             // set NTFS permissions
@@ -276,7 +276,7 @@ namespace TVRename
         private CopyMoveProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, Object UserData)
         {
             double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
-            this.PercentDone = pct > 100.0 ? 100.0 : pct;
+            PercentDone = pct > 100.0 ? 100.0 : pct;
             return CopyMoveProgressResult.Continue;
         }
 

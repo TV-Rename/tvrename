@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -20,7 +20,7 @@ namespace TVRename
             return TVSettings.Instance.SearchLocally;
         }
 
-        public override Finder.FinderDisplayType DisplayType()
+        public override FinderDisplayType DisplayType()
         {
             return FinderDisplayType.Local;
         }
@@ -33,38 +33,38 @@ namespace TVRename
             ItemList toRemove = new ItemList();
 
             int fileCount = 0;
-            foreach (string s in this.mDoc.SearchFolders)
+            foreach (string s in mDoc.SearchFolders)
                 fileCount += DirCache.CountFiles(s, true);
 
             int c = 0;
 
             DirCache dirCache = new DirCache();
-            foreach (String s in this.mDoc.SearchFolders)
+            foreach (String s in mDoc.SearchFolders)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 c = dirCache.AddFolder(prog, c, fileCount, s, true);
             }
 
             c = 0;
-            int totalN = this.TheActionList.Count;
-            foreach (Item action1 in this.TheActionList)
+            int totalN = TheActionList.Count;
+            foreach (Item action1 in TheActionList)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 prog.Invoke(50 + 50 * (++c) / (totalN + 1)); // second 50% of progress bar
 
                 if (action1 is ItemMissing)
                 {
-                    if (this.FindMissingEp(dirCache, (ItemMissing)(action1), newList, ActionCopyMoveRename.Op.Copy))
+                    if (FindMissingEp(dirCache, (ItemMissing)(action1), newList, ActionCopyMoveRename.Op.Copy))
                         toRemove.Add(action1);
                 }
             }
 
             if (TVSettings.Instance.KeepTogether)
-                this.KeepTogether(newList);
+                KeepTogether(newList);
 
             prog.Invoke(100);
 
@@ -108,10 +108,10 @@ namespace TVRename
             }
 
             foreach (Item i in toRemove)
-                this.TheActionList.Remove(i);
+                TheActionList.Remove(i);
 
             foreach (Item i in newList)
-                this.TheActionList.Add(i);
+                TheActionList.Add(i);
 
             //                 if (Settings->ExportFOXML)
             //				ExportFOXML(Settings->ExportFOXMLTo);
@@ -183,7 +183,7 @@ namespace TVRename
                     string t = "Path or filename too long. " + Action.From.FullName + ", " + e.Message;
                     logger.Warn(e, "Path or filename too long. " + Action.From.FullName);
 
-                    if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!mDoc.Args.Unattended) && (!mDoc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     
                 }
             }
@@ -229,7 +229,7 @@ namespace TVRename
 
             foreach (DirCacheEntry dce in dirCache)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return true;
 
                 bool matched = false;
@@ -255,7 +255,7 @@ namespace TVRename
 
                             // don't remove the base search folders
                             bool doTidyup = true;
-                            foreach (String folder in this.mDoc.SearchFolders)
+                            foreach (String folder in mDoc.SearchFolders)
                             {
                                 // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
                                 if (String.Compare(folder.ToLower().TrimEnd('\\'), fi.Directory.FullName.ToLower().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0)
@@ -281,7 +281,7 @@ namespace TVRename
                     logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
 
                     t += ".  More information is available in the log file";
-                    if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!mDoc.Args.Unattended) && (!mDoc.Args.Hide)) MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                     t = "DirectoryName " + dce.TheFile.DirectoryName + ", File name: " + dce.TheFile.Name;
                     t += matched ? ", matched.  " : ", no match.  ";

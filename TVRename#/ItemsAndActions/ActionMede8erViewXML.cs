@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -21,21 +21,21 @@ namespace TVRename
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si)
         {
-            this.SI = si;
-            this.Where = nfo;
+            SI = si;
+            Where = nfo;
             snum = -1;
         }
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum)
         {
-            this.SI = si;
-            this.Where = nfo;
+            SI = si;
+            Where = nfo;
             this.snum = snum;
         }
 
         public string produces
         {
-            get { return this.Where.FullName; }
+            get { return Where.FullName; }
         }
 
         #region Action Members
@@ -51,12 +51,12 @@ namespace TVRename
 
         public string ProgressText
         {
-            get { return this.Where.Name; }
+            get { return Where.Name; }
         }
 
         public double PercentDone
         {
-            get { return this.Done ? 100 : 0; }
+            get { return Done ? 100 : 0; }
         }
 
         public long SizeOfWork
@@ -75,13 +75,13 @@ namespace TVRename
             XmlWriter writer;
             try
             {
-                writer = XmlWriter.Create(this.Where.FullName, settings);
+                writer = XmlWriter.Create(Where.FullName, settings);
                 if (writer == null)
                     return false;
             }
             catch (Exception)
             {
-                this.Done = true;
+                Done = true;
                 return true;
             }
 
@@ -107,7 +107,7 @@ namespace TVRename
             writer.WriteEndElement();
 
             writer.Close();
-            this.Done = true;
+            Done = true;
             return true;
         }
 
@@ -117,14 +117,14 @@ namespace TVRename
 
         public bool SameAs(Item o)
         {
-            return (o is ActionMede8erViewXML) && ((o as ActionMede8erViewXML).Where == this.Where);
+            return (o is ActionMede8erViewXML) && ((o as ActionMede8erViewXML).Where == Where);
         }
 
         public int Compare(Item o)
         {
             ActionMede8erViewXML nfo = o as ActionMede8erViewXML;
 
-            return (this.Where.FullName).CompareTo(nfo.Where.FullName);
+            return (Where.FullName).CompareTo(nfo.Where.FullName);
         }
 
         #endregion
@@ -135,9 +135,9 @@ namespace TVRename
         {
             get
             {
-                if (this.Where == null)
+                if (Where == null)
                     return null;
-                return new IgnoreItem(this.Where.FullName);
+                return new IgnoreItem(Where.FullName);
             }
         }
 
@@ -147,13 +147,13 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = this.SI.ShowName;
+                lvi.Text = SI.ShowName;
                 if (snum > 0) { lvi.SubItems.Add(snum.ToString()); } else { lvi.SubItems.Add(""); }
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.Where.DirectoryName);
-                lvi.SubItems.Add(this.Where.Name);
+                lvi.SubItems.Add(Where.DirectoryName);
+                lvi.SubItems.Add(Where.Name);
 
                 lvi.Tag = this;
 
@@ -165,9 +165,9 @@ namespace TVRename
         {
             get
             {
-                if (this.Where == null)
+                if (Where == null)
                     return null;
-                return this.Where.DirectoryName;
+                return Where.DirectoryName;
             }
         }
 

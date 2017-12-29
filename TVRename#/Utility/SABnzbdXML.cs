@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -21,10 +21,10 @@ using System.IO;
 namespace TVRename.SAB
 {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-    [System.SerializableAttribute()]
+    [SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    [XmlTypeAttribute(AnonymousType = true)]
+    [XmlRootAttribute(Namespace = "", IsNullable = false)]
     public class queue : object, System.ComponentModel.INotifyPropertyChanged
     {
         public static queue Deserialize(byte[] data)
@@ -152,664 +152,664 @@ namespace TVRename.SAB
 
         private queueCategories[] categoriesField;
 
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string uniconfig
         {
-            get { return this.uniconfigField; }
+            get { return uniconfigField; }
             set
             {
-                this.uniconfigField = value;
-                this.RaisePropertyChanged("uniconfig");
+                uniconfigField = value;
+                RaisePropertyChanged("uniconfig");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cache_size
         {
-            get { return this.cache_sizeField; }
+            get { return cache_sizeField; }
             set
             {
-                this.cache_sizeField = value;
-                this.RaisePropertyChanged("cache_size");
+                cache_sizeField = value;
+                RaisePropertyChanged("cache_size");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string active_lang
         {
-            get { return this.active_langField; }
+            get { return active_langField; }
             set
             {
-                this.active_langField = value;
-                this.RaisePropertyChanged("active_lang");
+                active_langField = value;
+                RaisePropertyChanged("active_lang");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string paused
         {
-            get { return this.pausedField; }
+            get { return pausedField; }
             set
             {
-                this.pausedField = value;
-                this.RaisePropertyChanged("paused");
+                pausedField = value;
+                RaisePropertyChanged("paused");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string session
         {
-            get { return this.sessionField; }
+            get { return sessionField; }
             set
             {
-                this.sessionField = value;
-                this.RaisePropertyChanged("session");
+                sessionField = value;
+                RaisePropertyChanged("session");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string restart_req
         {
-            get { return this.restart_reqField; }
+            get { return restart_reqField; }
             set
             {
-                this.restart_reqField = value;
-                this.RaisePropertyChanged("restart_req");
+                restart_reqField = value;
+                RaisePropertyChanged("restart_req");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string power_options
         {
-            get { return this.power_optionsField; }
+            get { return power_optionsField; }
             set
             {
-                this.power_optionsField = value;
-                this.RaisePropertyChanged("power_options");
+                power_optionsField = value;
+                RaisePropertyChanged("power_options");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string speed
         {
-            get { return this.speedField; }
+            get { return speedField; }
             set
             {
-                this.speedField = value;
-                this.RaisePropertyChanged("speed");
+                speedField = value;
+                RaisePropertyChanged("speed");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string helpuri
         {
-            get { return this.helpuriField; }
+            get { return helpuriField; }
             set
             {
-                this.helpuriField = value;
-                this.RaisePropertyChanged("helpuri");
+                helpuriField = value;
+                RaisePropertyChanged("helpuri");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string size
         {
-            get { return this.sizeField; }
+            get { return sizeField; }
             set
             {
-                this.sizeField = value;
-                this.RaisePropertyChanged("size");
+                sizeField = value;
+                RaisePropertyChanged("size");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string uptime
         {
-            get { return this.uptimeField; }
+            get { return uptimeField; }
             set
             {
-                this.uptimeField = value;
-                this.RaisePropertyChanged("uptime");
+                uptimeField = value;
+                RaisePropertyChanged("uptime");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string refresh_rate
         {
-            get { return this.refresh_rateField; }
+            get { return refresh_rateField; }
             set
             {
-                this.refresh_rateField = value;
-                this.RaisePropertyChanged("refresh_rate");
+                refresh_rateField = value;
+                RaisePropertyChanged("refresh_rate");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string my_home
         {
-            get { return this.my_homeField; }
+            get { return my_homeField; }
             set
             {
-                this.my_homeField = value;
-                this.RaisePropertyChanged("my_home");
+                my_homeField = value;
+                RaisePropertyChanged("my_home");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string limit
         {
-            get { return this.limitField; }
+            get { return limitField; }
             set
             {
-                this.limitField = value;
-                this.RaisePropertyChanged("limit");
+                limitField = value;
+                RaisePropertyChanged("limit");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string have_quota
         {
-            get { return this.have_quotaField; }
+            get { return have_quotaField; }
             set
             {
-                this.have_quotaField = value;
-                this.RaisePropertyChanged("have_quota");
+                have_quotaField = value;
+                RaisePropertyChanged("have_quota");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string isverbose
         {
-            get { return this.isverboseField; }
+            get { return isverboseField; }
             set
             {
-                this.isverboseField = value;
-                this.RaisePropertyChanged("isverbose");
+                isverboseField = value;
+                RaisePropertyChanged("isverbose");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string start
         {
-            get { return this.startField; }
+            get { return startField; }
             set
             {
-                this.startField = value;
-                this.RaisePropertyChanged("start");
+                startField = value;
+                RaisePropertyChanged("start");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string finish
         {
-            get { return this.finishField; }
+            get { return finishField; }
             set
             {
-                this.finishField = value;
-                this.RaisePropertyChanged("finish");
+                finishField = value;
+                RaisePropertyChanged("finish");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string version
         {
-            get { return this.versionField; }
+            get { return versionField; }
             set
             {
-                this.versionField = value;
-                this.RaisePropertyChanged("version");
+                versionField = value;
+                RaisePropertyChanged("version");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string new_rel_url
         {
-            get { return this.new_rel_urlField; }
+            get { return new_rel_urlField; }
             set
             {
-                this.new_rel_urlField = value;
-                this.RaisePropertyChanged("new_rel_url");
+                new_rel_urlField = value;
+                RaisePropertyChanged("new_rel_url");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string my_lcldata
         {
-            get { return this.my_lcldataField; }
+            get { return my_lcldataField; }
             set
             {
-                this.my_lcldataField = value;
-                this.RaisePropertyChanged("my_lcldata");
+                my_lcldataField = value;
+                RaisePropertyChanged("my_lcldata");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string color_scheme
         {
-            get { return this.color_schemeField; }
+            get { return color_schemeField; }
             set
             {
-                this.color_schemeField = value;
-                this.RaisePropertyChanged("color_scheme");
+                color_schemeField = value;
+                RaisePropertyChanged("color_scheme");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspacetotal1
         {
-            get { return this.diskspacetotal1Field; }
+            get { return diskspacetotal1Field; }
             set
             {
-                this.diskspacetotal1Field = value;
-                this.RaisePropertyChanged("diskspacetotal1");
+                diskspacetotal1Field = value;
+                RaisePropertyChanged("diskspacetotal1");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nt
         {
-            get { return this.ntField; }
+            get { return ntField; }
             set
             {
-                this.ntField = value;
-                this.RaisePropertyChanged("nt");
+                ntField = value;
+                RaisePropertyChanged("nt");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
         {
-            get { return this.statusField; }
+            get { return statusField; }
             set
             {
-                this.statusField = value;
-                this.RaisePropertyChanged("status");
+                statusField = value;
+                RaisePropertyChanged("status");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string last_warning
         {
-            get { return this.last_warningField; }
+            get { return last_warningField; }
             set
             {
-                this.last_warningField = value;
-                this.RaisePropertyChanged("last_warning");
+                last_warningField = value;
+                RaisePropertyChanged("last_warning");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string have_warnings
         {
-            get { return this.have_warningsField; }
+            get { return have_warningsField; }
             set
             {
-                this.have_warningsField = value;
-                this.RaisePropertyChanged("have_warnings");
+                have_warningsField = value;
+                RaisePropertyChanged("have_warnings");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cache_art
         {
-            get { return this.cache_artField; }
+            get { return cache_artField; }
             set
             {
-                this.cache_artField = value;
-                this.RaisePropertyChanged("cache_art");
+                cache_artField = value;
+                RaisePropertyChanged("cache_art");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string sizeleft
         {
-            get { return this.sizeleftField; }
+            get { return sizeleftField; }
             set
             {
-                this.sizeleftField = value;
-                this.RaisePropertyChanged("sizeleft");
+                sizeleftField = value;
+                RaisePropertyChanged("sizeleft");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string finishaction
         {
-            get { return this.finishactionField; }
+            get { return finishactionField; }
             set
             {
-                this.finishactionField = value;
-                this.RaisePropertyChanged("finishaction");
+                finishactionField = value;
+                RaisePropertyChanged("finishaction");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string paused_all
         {
-            get { return this.paused_allField; }
+            get { return paused_allField; }
             set
             {
-                this.paused_allField = value;
-                this.RaisePropertyChanged("paused_all");
+                paused_allField = value;
+                RaisePropertyChanged("paused_all");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string quota
         {
-            get { return this.quotaField; }
+            get { return quotaField; }
             set
             {
-                this.quotaField = value;
-                this.RaisePropertyChanged("quota");
+                quotaField = value;
+                RaisePropertyChanged("quota");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string newzbin_url
         {
-            get { return this.newzbin_urlField; }
+            get { return newzbin_urlField; }
             set
             {
-                this.newzbin_urlField = value;
-                this.RaisePropertyChanged("newzbin_url");
+                newzbin_urlField = value;
+                RaisePropertyChanged("newzbin_url");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string new_release
         {
-            get { return this.new_releaseField; }
+            get { return new_releaseField; }
             set
             {
-                this.new_releaseField = value;
-                this.RaisePropertyChanged("new_release");
+                new_releaseField = value;
+                RaisePropertyChanged("new_release");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string pause_int
         {
-            get { return this.pause_intField; }
+            get { return pause_intField; }
             set
             {
-                this.pause_intField = value;
-                this.RaisePropertyChanged("pause_int");
+                pause_intField = value;
+                RaisePropertyChanged("pause_int");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string mbleft
         {
-            get { return this.mbleftField; }
+            get { return mbleftField; }
             set
             {
-                this.mbleftField = value;
-                this.RaisePropertyChanged("mbleft");
+                mbleftField = value;
+                RaisePropertyChanged("mbleft");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspace1
         {
-            get { return this.diskspace1Field; }
+            get { return diskspace1Field; }
             set
             {
-                this.diskspace1Field = value;
-                this.RaisePropertyChanged("diskspace1");
+                diskspace1Field = value;
+                RaisePropertyChanged("diskspace1");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string scripts
         {
-            get { return this.scriptsField; }
+            get { return scriptsField; }
             set
             {
-                this.scriptsField = value;
-                this.RaisePropertyChanged("scripts");
+                scriptsField = value;
+                RaisePropertyChanged("scripts");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string darwin
         {
-            get { return this.darwinField; }
+            get { return darwinField; }
             set
             {
-                this.darwinField = value;
-                this.RaisePropertyChanged("darwin");
+                darwinField = value;
+                RaisePropertyChanged("darwin");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string timeleft
         {
-            get { return this.timeleftField; }
+            get { return timeleftField; }
             set
             {
-                this.timeleftField = value;
-                this.RaisePropertyChanged("timeleft");
+                timeleftField = value;
+                RaisePropertyChanged("timeleft");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string mb
         {
-            get { return this.mbField; }
+            get { return mbField; }
             set
             {
-                this.mbField = value;
-                this.RaisePropertyChanged("mb");
+                mbField = value;
+                RaisePropertyChanged("mb");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string noofslots
         {
-            get { return this.noofslotsField; }
+            get { return noofslotsField; }
             set
             {
-                this.noofslotsField = value;
-                this.RaisePropertyChanged("noofslots");
+                noofslotsField = value;
+                RaisePropertyChanged("noofslots");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string eta
         {
-            get { return this.etaField; }
+            get { return etaField; }
             set
             {
-                this.etaField = value;
-                this.RaisePropertyChanged("eta");
+                etaField = value;
+                RaisePropertyChanged("eta");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspacetotal2
         {
-            get { return this.diskspacetotal2Field; }
+            get { return diskspacetotal2Field; }
             set
             {
-                this.diskspacetotal2Field = value;
-                this.RaisePropertyChanged("diskspacetotal2");
+                diskspacetotal2Field = value;
+                RaisePropertyChanged("diskspacetotal2");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nzb_quota
         {
-            get { return this.nzb_quotaField; }
+            get { return nzb_quotaField; }
             set
             {
-                this.nzb_quotaField = value;
-                this.RaisePropertyChanged("nzb_quota");
+                nzb_quotaField = value;
+                RaisePropertyChanged("nzb_quota");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string loadavg
         {
-            get { return this.loadavgField; }
+            get { return loadavgField; }
             set
             {
-                this.loadavgField = value;
-                this.RaisePropertyChanged("loadavg");
+                loadavgField = value;
+                RaisePropertyChanged("loadavg");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cache_max
         {
-            get { return this.cache_maxField; }
+            get { return cache_maxField; }
             set
             {
-                this.cache_maxField = value;
-                this.RaisePropertyChanged("cache_max");
+                cache_maxField = value;
+                RaisePropertyChanged("cache_max");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string kbpersec
         {
-            get { return this.kbpersecField; }
+            get { return kbpersecField; }
             set
             {
-                this.kbpersecField = value;
-                this.RaisePropertyChanged("kbpersec");
+                kbpersecField = value;
+                RaisePropertyChanged("kbpersec");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string speedlimit
         {
-            get { return this.speedlimitField; }
+            get { return speedlimitField; }
             set
             {
-                this.speedlimitField = value;
-                this.RaisePropertyChanged("speedlimit");
+                speedlimitField = value;
+                RaisePropertyChanged("speedlimit");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string webdir
         {
-            get { return this.webdirField; }
+            get { return webdirField; }
             set
             {
-                this.webdirField = value;
-                this.RaisePropertyChanged("webdir");
+                webdirField = value;
+                RaisePropertyChanged("webdir");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string queue_details
         {
-            get { return this.queue_detailsField; }
+            get { return queue_detailsField; }
             set
             {
-                this.queue_detailsField = value;
-                this.RaisePropertyChanged("queue_details");
+                queue_detailsField = value;
+                RaisePropertyChanged("queue_details");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string left_quota
         {
-            get { return this.left_quotaField; }
+            get { return left_quotaField; }
             set
             {
-                this.left_quotaField = value;
-                this.RaisePropertyChanged("left_quota");
+                left_quotaField = value;
+                RaisePropertyChanged("left_quota");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspace2
         {
-            get { return this.diskspace2Field; }
+            get { return diskspace2Field; }
             set
             {
-                this.diskspace2Field = value;
-                this.RaisePropertyChanged("diskspace2");
+                diskspace2Field = value;
+                RaisePropertyChanged("diskspace2");
             }
         }
 
        
-        [System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        [System.Xml.Serialization.XmlArrayItemAttribute("slot", typeof (queueSlotsSlot),
+        [XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlArrayItemAttribute("slot", typeof (queueSlotsSlot),
             Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
         public queueSlotsSlot[] slots
         {
-            get { return this.slotsField; }
+            get { return slotsField; }
             set
             {
-                this.slotsField = value;
-                this.RaisePropertyChanged("slots");
+                slotsField = value;
+                RaisePropertyChanged("slots");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute("categories", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute("categories", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public queueCategories[] categories
         {
-            get { return this.categoriesField; }
+            get { return categoriesField; }
             set
             {
-                this.categoriesField = value;
-                this.RaisePropertyChanged("categories");
+                categoriesField = value;
+                RaisePropertyChanged("categories");
             }
         }
 
@@ -817,7 +817,7 @@ namespace TVRename.SAB
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
@@ -827,9 +827,9 @@ namespace TVRename.SAB
 
    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-    [System.SerializableAttribute()]
+    [SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public class queueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged
     {
 
@@ -872,230 +872,230 @@ namespace TVRename.SAB
         private string sizeField;
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
         {
-            get { return this.statusField; }
+            get { return statusField; }
             set
             {
-                this.statusField = value;
-                this.RaisePropertyChanged("status");
+                statusField = value;
+                RaisePropertyChanged("status");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string index
         {
-            get { return this.indexField; }
+            get { return indexField; }
             set
             {
-                this.indexField = value;
-                this.RaisePropertyChanged("index");
+                indexField = value;
+                RaisePropertyChanged("index");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string eta
         {
-            get { return this.etaField; }
+            get { return etaField; }
             set
             {
-                this.etaField = value;
-                this.RaisePropertyChanged("eta");
+                etaField = value;
+                RaisePropertyChanged("eta");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string missing
         {
-            get { return this.missingField; }
+            get { return missingField; }
             set
             {
-                this.missingField = value;
-                this.RaisePropertyChanged("missing");
+                missingField = value;
+                RaisePropertyChanged("missing");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string avg_age
         {
-            get { return this.avg_ageField; }
+            get { return avg_ageField; }
             set
             {
-                this.avg_ageField = value;
-                this.RaisePropertyChanged("avg_age");
+                avg_ageField = value;
+                RaisePropertyChanged("avg_age");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string script
         {
-            get { return this.scriptField; }
+            get { return scriptField; }
             set
             {
-                this.scriptField = value;
-                this.RaisePropertyChanged("script");
+                scriptField = value;
+                RaisePropertyChanged("script");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string msgid
         {
-            get { return this.msgidField; }
+            get { return msgidField; }
             set
             {
-                this.msgidField = value;
-                this.RaisePropertyChanged("msgid");
+                msgidField = value;
+                RaisePropertyChanged("msgid");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string verbosity
         {
-            get { return this.verbosityField; }
+            get { return verbosityField; }
             set
             {
-                this.verbosityField = value;
-                this.RaisePropertyChanged("verbosity");
+                verbosityField = value;
+                RaisePropertyChanged("verbosity");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public double mb
         {
-            get { return this.mbField; }
+            get { return mbField; }
             set
             {
-                this.mbField = value;
-                this.RaisePropertyChanged("mb");
+                mbField = value;
+                RaisePropertyChanged("mb");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string sizeleft
         {
-            get { return this.sizeleftField; }
+            get { return sizeleftField; }
             set
             {
-                this.sizeleftField = value;
-                this.RaisePropertyChanged("sizeleft");
+                sizeleftField = value;
+                RaisePropertyChanged("sizeleft");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string filename
         {
-            get { return this.filenameField; }
+            get { return filenameField; }
             set
             {
-                this.filenameField = value;
-                this.RaisePropertyChanged("filename");
+                filenameField = value;
+                RaisePropertyChanged("filename");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string priority
         {
-            get { return this.priorityField; }
+            get { return priorityField; }
             set
             {
-                this.priorityField = value;
-                this.RaisePropertyChanged("priority");
+                priorityField = value;
+                RaisePropertyChanged("priority");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cat
         {
-            get { return this.catField; }
+            get { return catField; }
             set
             {
-                this.catField = value;
-                this.RaisePropertyChanged("cat");
+                catField = value;
+                RaisePropertyChanged("cat");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public double mbleft
         {
-            get { return this.mbleftField; }
+            get { return mbleftField; }
             set
             {
-                this.mbleftField = value;
-                this.RaisePropertyChanged("mbleft");
+                mbleftField = value;
+                RaisePropertyChanged("mbleft");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string timeleft
         {
-            get { return this.timeleftField; }
+            get { return timeleftField; }
             set
             {
-                this.timeleftField = value;
-                this.RaisePropertyChanged("timeleft");
+                timeleftField = value;
+                RaisePropertyChanged("timeleft");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string percentage
         {
-            get { return this.percentageField; }
+            get { return percentageField; }
             set
             {
-                this.percentageField = value;
-                this.RaisePropertyChanged("percentage");
+                percentageField = value;
+                RaisePropertyChanged("percentage");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nzo_id
         {
-            get { return this.nzo_idField; }
+            get { return nzo_idField; }
             set
             {
-                this.nzo_idField = value;
-                this.RaisePropertyChanged("nzo_id");
+                nzo_idField = value;
+                RaisePropertyChanged("nzo_id");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string unpackopts
         {
-            get { return this.unpackoptsField; }
+            get { return unpackoptsField; }
             set
             {
-                this.unpackoptsField = value;
-                this.RaisePropertyChanged("unpackopts");
+                unpackoptsField = value;
+                RaisePropertyChanged("unpackopts");
             }
         }
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string size
         {
-            get { return this.sizeField; }
+            get { return sizeField; }
             set
             {
-                this.sizeField = value;
-                this.RaisePropertyChanged("size");
+                sizeField = value;
+                RaisePropertyChanged("size");
             }
         }
 
@@ -1103,7 +1103,7 @@ namespace TVRename.SAB
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
@@ -1113,23 +1113,23 @@ namespace TVRename.SAB
 
    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-    [System.SerializableAttribute()]
+    [SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public class queueCategories : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private string categoryField;
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string category
         {
-            get { return this.categoryField; }
+            get { return categoryField; }
             set
             {
-                this.categoryField = value;
-                this.RaisePropertyChanged("category");
+                categoryField = value;
+                RaisePropertyChanged("category");
             }
         }
 
@@ -1137,7 +1137,7 @@ namespace TVRename.SAB
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
@@ -1145,9 +1145,9 @@ namespace TVRename.SAB
         }
     }
 
-    [System.SerializableAttribute()]
+    [SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+    [XmlTypeAttribute(AnonymousType = true)]
     public class result : object, System.ComponentModel.INotifyPropertyChanged
     {
         public static result Deserialize(byte[] data)
@@ -1169,25 +1169,25 @@ namespace TVRename.SAB
         private string errorField;
 
        
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
         {
-            get { return this.statusField; }
+            get { return statusField; }
             set
             {
-                this.statusField = value;
-                this.RaisePropertyChanged("status");
+                statusField = value;
+                RaisePropertyChanged("status");
             }
         }
 
-        [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string error
         {
-            get { return this.errorField; }
+            get { return errorField; }
             set
             {
-                this.errorField = value;
-                this.RaisePropertyChanged("error");
+                errorField = value;
+                RaisePropertyChanged("error");
             }
         }
 
@@ -1195,7 +1195,7 @@ namespace TVRename.SAB
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
@@ -1205,24 +1205,24 @@ namespace TVRename.SAB
 
    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
-    [System.SerializableAttribute()]
+    [SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
+    [XmlTypeAttribute(AnonymousType = true)]
+    [XmlRootAttribute(Namespace = "", IsNullable = false)]
     public class NewDataSet : object, System.ComponentModel.INotifyPropertyChanged
     {
 
         private queue[] itemsField;
 
        
-        [System.Xml.Serialization.XmlElementAttribute("queue")]
+        [XmlElementAttribute("queue")]
         public queue[] Items
         {
-            get { return this.itemsField; }
+            get { return itemsField; }
             set
             {
-                this.itemsField = value;
-                this.RaisePropertyChanged("Items");
+                itemsField = value;
+                RaisePropertyChanged("Items");
             }
         }
 
@@ -1230,7 +1230,7 @@ namespace TVRename.SAB
 
         protected void RaisePropertyChanged(string propertyName)
         {
-            System.ComponentModel.PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
             if ((propertyChanged != null))
             {
                 propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));

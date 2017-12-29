@@ -24,24 +24,24 @@ namespace TVRename
 
         public DownloadProgress(TVDoc doc)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.mDoc = doc;
+            mDoc = doc;
         }
 
         private void bnCancel_Click(object sender, System.EventArgs e)
         {
-            this.tmrUpdate.Stop();
-            this.mDoc.StopBGDownloadThread();
-            this.DialogResult = DialogResult.Abort;
+            tmrUpdate.Stop();
+            mDoc.StopBGDownloadThread();
+            DialogResult = DialogResult.Abort;
         }
 
         private void tmrUpdate_Tick(object sender, System.EventArgs e)
         {
-            if (this.mDoc.DownloadDone)
-                this.Close();
+            if (mDoc.DownloadDone)
+                Close();
             else
-                this.UpdateStuff();
+                UpdateStuff();
         }
 
         private void DownloadProgress_Load(object sender, System.EventArgs e)
@@ -51,8 +51,8 @@ namespace TVRename
 
         private void UpdateStuff()
         {
-            this.txtCurrent.Text = TheTVDB.Instance.CurrentDLTask;
-            this.pbProgressBar.Value = this.mDoc.DownloadPct;
+            txtCurrent.Text = TheTVDB.Instance.CurrentDLTask;
+            pbProgressBar.Value = mDoc.DownloadPct;
         }
     }
 }

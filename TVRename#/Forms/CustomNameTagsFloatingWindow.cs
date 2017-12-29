@@ -22,7 +22,7 @@ namespace TVRename
     {
         public CustomNameTagsFloatingWindow(ProcessedEpisode pe)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             foreach (string s in CustomName.Tags)
             {
@@ -30,7 +30,7 @@ namespace TVRename
                 if (pe != null)
                     txt += " - " + CustomName.NameForNoExt(pe, s);
 
-                this.label1.Text += txt + "\r\n";
+                label1.Text += txt + "\r\n";
             }
         }
     }

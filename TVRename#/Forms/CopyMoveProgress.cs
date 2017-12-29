@@ -37,10 +37,10 @@ namespace TVRename
 
         public CopyMoveProgress(TVDoc doc, ActionQueue[] todo)
         {
-            this.mDoc = doc;
-            this.mToDo = todo;
-            this.InitializeComponent();
-            this.copyTimer.Start();
+            mDoc = doc;
+            mToDo = todo;
+            InitializeComponent();
+            copyTimer.Start();
         }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace TVRename
         /// </summary>
         ~CopyMoveProgress()
         {
-            this.copyTimer.Stop();
+            copyTimer.Stop();
         }
 
         private void SetPercentages(double file, double group)
@@ -62,17 +62,17 @@ namespace TVRename
             if (group < 0)
                 group = 0;
 
-            this.txtFile.Text = ((int) Math.Round(file)) + "% Done";
-            this.txtTotal.Text = ((int) Math.Round(group)) + "% Done";
+            txtFile.Text = ((int) Math.Round(file)) + "% Done";
+            txtTotal.Text = ((int) Math.Round(group)) + "% Done";
 
             // progress bars go 0 to 1000
-            this.pbFile.Value = (int) (10.0 * file);
-            this.pbGroup.Value = (int) (10.0 * group);
-            this.pbFile.Update();
-            this.pbGroup.Update();
-            this.txtFile.Update();
-            this.txtTotal.Update();
-            this.Update();
+            pbFile.Value = (int) (10.0 * file);
+            pbGroup.Value = (int) (10.0 * group);
+            pbFile.Update();
+            pbGroup.Update();
+            txtFile.Update();
+            txtTotal.Update();
+            Update();
             BringToFront();
         }
 
@@ -81,13 +81,13 @@ namespace TVRename
             // update each listview item, for non-empty queues
             bool allDone = true;
 
-            this.lvProgress.BeginUpdate();
-            int top = this.lvProgress.TopItem != null ? this.lvProgress.TopItem.Index : 0;
+            lvProgress.BeginUpdate();
+            int top = lvProgress.TopItem != null ? lvProgress.TopItem.Index : 0;
             ActionCopyMoveRename activeCMAction = null;
             long workDone = 0;
             long totalWork = 0;
-            this.lvProgress.Items.Clear();
-            foreach (ActionQueue aq in this.mToDo)
+            lvProgress.Items.Clear();
+            foreach (ActionQueue aq in mToDo)
             {
                 if (aq.Actions.Count == 0)
                     continue;
@@ -109,16 +109,16 @@ namespace TVRename
                         ListViewItem lvi = new ListViewItem(action.Name);
                         lvi.SubItems.Add(action.ProgressText);
 
-                        this.lvProgress.Items.Add(lvi);
+                        lvProgress.Items.Add(lvi);
                     }
                 }
             }
 
-            if (top >= this.lvProgress.Items.Count)
-                top = this.lvProgress.Items.Count - 1;
+            if (top >= lvProgress.Items.Count)
+                top = lvProgress.Items.Count - 1;
             if (top >= 0)
-                this.lvProgress.TopItem = this.lvProgress.Items[top];
-            this.lvProgress.EndUpdate();
+                lvProgress.TopItem = lvProgress.Items[top];
+            lvProgress.EndUpdate();
 
             int diskValue = 0;
             string diskText = "--- GB free";
@@ -137,7 +137,7 @@ namespace TVRename
                         // try to get root of drive
                         di = new System.IO.DriveInfo(toRoot.ToString());
                     }
-                    catch (System.ArgumentException)
+                    catch (ArgumentException)
                     {
                         di = null;
                     }
@@ -152,54 +152,54 @@ namespace TVRename
                     fileText = activeCMAction.ProgressText;
                 }
 
-                this.txtFilename.Text = fileText;
-                this.pbDiskSpace.Value = diskValue;
-                this.txtDiskSpace.Text = diskText;
+                txtFilename.Text = fileText;
+                pbDiskSpace.Value = diskValue;
+                txtDiskSpace.Text = diskText;
 
-                this.SetPercentages(activeCMAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
+                SetPercentages(activeCMAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
             }
 
             return allDone;
         }
 
-        private void copyTimer_Tick(object sender, System.EventArgs e)
+        private void copyTimer_Tick(object sender, EventArgs e)
         {
-            this.copyTimer.Stop();
+            copyTimer.Stop();
 
             //this.UpdateOldStyle();
-            bool allDone = this.UpdateNewStyle();
+            bool allDone = UpdateNewStyle();
 
             if (allDone)
             {
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                DialogResult = DialogResult.OK;
+                Close();
             }
             else
-                this.copyTimer.Start();
+                copyTimer.Start();
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        private void bnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
-        private void cbPause_CheckedChanged(object sender, System.EventArgs e)
+        private void cbPause_CheckedChanged(object sender, EventArgs e)
         {
-            this.mDoc.ActionPause = this.cbPause.Checked;
+            mDoc.ActionPause = cbPause.Checked;
 
-            bool en = !(this.cbPause.Checked);
-            this.pbFile.Enabled = en;
-            this.pbGroup.Enabled = en;
-            this.pbDiskSpace.Enabled = en;
-            this.txtFile.Enabled = en;
-            this.txtTotal.Enabled = en;
-            this.txtDiskSpace.Enabled = en;
-            this.label1.Enabled = en;
-            this.label2.Enabled = en;
-            this.label4.Enabled = en;
-            this.label3.Enabled = en;
-            this.txtFilename.Enabled = en;
+            bool en = !(cbPause.Checked);
+            pbFile.Enabled = en;
+            pbGroup.Enabled = en;
+            pbDiskSpace.Enabled = en;
+            txtFile.Enabled = en;
+            txtTotal.Enabled = en;
+            txtDiskSpace.Enabled = en;
+            label1.Enabled = en;
+            label2.Enabled = en;
+            label4.Enabled = en;
+            label3.Enabled = en;
+            txtFilename.Enabled = en;
         }
     }
 }

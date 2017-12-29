@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -17,15 +17,15 @@ namespace TVRename
 
         public ItemMissing(ProcessedEpisode pe, string whereItShouldBeNoExt)
         {
-            this.Episode = pe;
-            this.TheFileNoExt = whereItShouldBeNoExt;
+            Episode = pe;
+            TheFileNoExt = whereItShouldBeNoExt;
         }
 
         #region Item Members
 
         public bool SameAs(Item o)
         {
-            return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, this.TheFileNoExt) == 0);
+            return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, TheFileNoExt) == 0);
         }
 
         public int Compare(Item o)
@@ -37,18 +37,18 @@ namespace TVRename
                 return 0;
             }
 
-            if (!this.Episode.SI.ShowName.Equals(miss.Episode.SI.ShowName))
+            if (!Episode.SI.ShowName.Equals(miss.Episode.SI.ShowName))
             {
-                return this.Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
+                return Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
             }
 
-            if (!this.Episode.SeasonNumber.Equals(miss.Episode.SeasonNumber))
+            if (!Episode.SeasonNumber.Equals(miss.Episode.SeasonNumber))
             {
-                int compare = this.Episode.SeasonNumber.CompareTo(miss.Episode.SeasonNumber);
+                int compare = Episode.SeasonNumber.CompareTo(miss.Episode.SeasonNumber);
                 return compare;
             }
 
-            return this.Episode.EpNum.CompareTo(miss.Episode.EpNum);
+            return Episode.EpNum.CompareTo(miss.Episode.EpNum);
         }
 
         #endregion
@@ -61,9 +61,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.TheFileNoExt))
+                if (string.IsNullOrEmpty(TheFileNoExt))
                     return null;
-                return new IgnoreItem(this.TheFileNoExt);
+                return new IgnoreItem(TheFileNoExt);
             }
         }
 
@@ -72,19 +72,19 @@ namespace TVRename
             get
             {
                 ListViewItem lvi = new ListViewItem {
-                                                        Text = this.Episode.SI.ShowName
+                                                        Text = Episode.SI.ShowName
                                                     };
 
-                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
-                lvi.SubItems.Add(this.Episode.NumsAsString());
+                lvi.SubItems.Add(Episode.SeasonNumber.ToString());
+                lvi.SubItems.Add(Episode.NumsAsString());
 
-                DateTime? dt = this.Episode.GetAirDateDT(true);
+                DateTime? dt = Episode.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                FileInfo fi = new FileInfo(this.TheFileNoExt);
+                FileInfo fi = new FileInfo(TheFileNoExt);
                 lvi.SubItems.Add(fi.DirectoryName);
                 lvi.SubItems.Add(fi.Name);
 
@@ -103,9 +103,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.TheFileNoExt))
+                if (string.IsNullOrEmpty(TheFileNoExt))
                     return null;
-                return new FileInfo(this.TheFileNoExt).DirectoryName;
+                return new FileInfo(TheFileNoExt).DirectoryName;
             }
         }
 

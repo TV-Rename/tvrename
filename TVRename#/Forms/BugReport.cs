@@ -33,18 +33,18 @@ namespace TVRename
 
         public BugReport(TVDoc doc)
         {
-            this.mDoc = doc;
-            this.InitializeComponent();
+            mDoc = doc;
+            InitializeComponent();
         }
 
         private void bnCreate_Click(object sender, System.EventArgs e)
         {
-            this.txtEmailText.Text = "Working... This may take a while.";
-            this.txtEmailText.Update();
+            txtEmailText.Text = "Working... This may take a while.";
+            txtEmailText.Update();
 
             StringBuilder txt = new StringBuilder();
             
-            if (this.cbSettings.Checked)
+            if (cbSettings.Checked)
             {
                 txt.Append("==== Settings Files ====" + "\r\n");
                 txt.Append("\r\n");
@@ -64,7 +64,7 @@ namespace TVRename
                 txt.Append("\r\n");
             }
 
-            if (this.cbFOScan.Checked || this.cbFolderScan.Checked)
+            if (cbFOScan.Checked || cbFolderScan.Checked)
             {
                 txt.Append("==== Filename processors ====\r\n");
                 foreach (FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
@@ -72,13 +72,13 @@ namespace TVRename
                 txt.Append("\r\n");
             }
 
-            if (this.cbFOScan.Checked)
+            if (cbFOScan.Checked)
             {
                 txt.Append("==== Finding & Organising Directory Scan ====" + "\r\n");
                 txt.Append("\r\n");
 
                 DirCache dirC = new DirCache();
-                foreach (string efi in this.mDoc.SearchFolders)
+                foreach (string efi in mDoc.SearchFolders)
                     dirC.AddFolder(null, 0, 0, efi, true);
 
                 foreach (DirCacheEntry fi in dirC)
@@ -92,13 +92,13 @@ namespace TVRename
                 txt.Append("\r\n");
             }
 
-            if (this.cbFolderScan.Checked)
+            if (cbFolderScan.Checked)
             {
                 txt.Append("==== Media Folders Directory Scan ====" + "\r\n");
 
-                foreach (ShowItem si in this.mDoc.GetShowItems(true))
+                foreach (ShowItem si in mDoc.GetShowItems(true))
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                    foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
                         int snum = kvp.Key;
                         if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations().ContainsKey(snum))
@@ -125,17 +125,17 @@ namespace TVRename
                     }
                     txt.Append("\r\n");
                 }
-                this.mDoc.UnlockShowItems();
+                mDoc.UnlockShowItems();
 
                 txt.Append("\r\n");
             }
 
-            this.txtEmailText.Text = txt.ToString();
+            txtEmailText.Text = txt.ToString();
         }
 
         private void bnCopy_Click(object sender, System.EventArgs e)
         {
-            Clipboard.SetDataObject(this.txtEmailText.Text);
+            Clipboard.SetDataObject(txtEmailText.Text);
         }
 
         private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

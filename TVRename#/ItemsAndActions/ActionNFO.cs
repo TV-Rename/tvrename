@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -23,16 +23,16 @@ namespace TVRename
 
         public ActionNFO(FileInfo nfo, ProcessedEpisode pe)
         {
-            this.SI = null;
-            this.Episode = pe;
-            this.Where = nfo;
+            SI = null;
+            Episode = pe;
+            Where = nfo;
         }
 
         public ActionNFO(FileInfo nfo, ShowItem si)
         {
-            this.SI = si;
-            this.Episode = null;
-            this.Where = nfo;
+            SI = si;
+            Episode = null;
+            Where = nfo;
         }
 
         #region Action Members
@@ -48,12 +48,12 @@ namespace TVRename
 
         public string ProgressText
         {
-            get { return this.Where.Name; }
+            get { return Where.Name; }
         }
 
         public double PercentDone
         {
-            get { return this.Done ? 100 : 0; }
+            get { return Done ? 100 : 0; }
         }
 
         public long SizeOfWork
@@ -63,7 +63,7 @@ namespace TVRename
 
         public string produces
         {
-            get { return this.Where.FullName; }
+            get { return Where.FullName; }
         }
 
         private void writeEpisodeDetailsFor(Episode episode, XmlWriter writer)
@@ -82,9 +82,9 @@ namespace TVRename
                 writer.WriteValue(episode.FirstAired.Value.ToString("yyyy-MM-dd"));
             writer.WriteEndElement();
 
-            if (this.Episode.SI != null)
+            if (Episode.SI != null)
             {
-                XMLHelper.WriteElementToXML(writer, "mpaa", this.Episode.SI.TheSeries().GetRating());
+                XMLHelper.WriteElementToXML(writer, "mpaa", Episode.SI.TheSeries().GetRating());
             }
 
             //Director(s)
@@ -118,9 +118,9 @@ namespace TVRename
             {
                 string RecurringActors = "";
 
-                if (this.Episode.SI != null)
+                if (Episode.SI != null)
                 {
-                    RecurringActors = String.Join("|", this.Episode.SI.TheSeries().GetActors());
+                    RecurringActors = String.Join("|", Episode.SI.TheSeries().GetActors());
                 }
 
                 string GuestActors = episode.EpisodeGuestStars;
@@ -145,9 +145,9 @@ namespace TVRename
             }
 
             // actors...
-            if (this.Episode.SI != null)
+            if (Episode.SI != null)
             {
-                foreach (string aa in this.Episode.SI.TheSeries().GetActors())
+                foreach (string aa in Episode.SI.TheSeries().GetActors())
                 {
                     if (string.IsNullOrEmpty(aa))
                         continue;
@@ -177,49 +177,49 @@ namespace TVRename
             try
             {
                 //                XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings);
-                writer = XmlWriter.Create(this.Where.FullName, settings);
+                writer = XmlWriter.Create(Where.FullName, settings);
                 if (writer == null)
                     return false;
             }
             catch (Exception)
             {
-                this.Done = true;
+                Done = true;
                 return true;
             }
 
-            if (this.Episode != null) // specific episode
+            if (Episode != null) // specific episode
             {
-                if (this.Episode.type == ProcessedEpisode.ProcessedEpisodeType.merged)
+                if (Episode.type == ProcessedEpisode.ProcessedEpisodeType.merged)
                 {
-                    foreach (Episode ep in this.Episode.sourceEpisodes) writeEpisodeDetailsFor(ep, writer);
+                    foreach (Episode ep in Episode.sourceEpisodes) writeEpisodeDetailsFor(ep, writer);
                 }
-                else writeEpisodeDetailsFor(this.Episode, writer);
+                else writeEpisodeDetailsFor(Episode, writer);
             }
-            else if (this.SI != null) // show overview (tvshow.nfo)
+            else if (SI != null) // show overview (tvshow.nfo)
             {
                 // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
 
                 writer.WriteStartElement("tvshow");
 
-                XMLHelper.WriteElementToXML(writer,"title",this.SI.ShowName);
+                XMLHelper.WriteElementToXML(writer,"title",SI.ShowName);
 
-                XMLHelper.WriteElementToXML(writer, "episodeguideurl", TheTVDB.BuildURL(true, true, this.SI.TVDBCode, TheTVDB.Instance.RequestLanguage));
+                XMLHelper.WriteElementToXML(writer, "episodeguideurl", TheTVDB.BuildURL(true, true, SI.TVDBCode, TheTVDB.Instance.RequestLanguage));
 
-                XMLHelper.WriteElementToXML(writer, "plot", this.SI.TheSeries().GetOverview());
+                XMLHelper.WriteElementToXML(writer, "plot", SI.TheSeries().GetOverview());
 
-                string genre = String.Join(" / ", this.SI.TheSeries().GetGenres());
+                string genre = String.Join(" / ", SI.TheSeries().GetGenres());
                 if (!string.IsNullOrEmpty(genre))
                 {
                     XMLHelper.WriteElementToXML(writer,"genre",genre);
                 }
 
-                XMLHelper.WriteElementToXML(writer, "premiered", this.SI.TheSeries().GetFirstAired());
-                XMLHelper.WriteElementToXML(writer, "year", this.SI.TheSeries().GetYear());
-                XMLHelper.WriteElementToXML(writer, "rating", this.SI.TheSeries().GetRating());
-                XMLHelper.WriteElementToXML(writer, "status", this.SI.TheSeries().getStatus());
+                XMLHelper.WriteElementToXML(writer, "premiered", SI.TheSeries().GetFirstAired());
+                XMLHelper.WriteElementToXML(writer, "year", SI.TheSeries().GetYear());
+                XMLHelper.WriteElementToXML(writer, "rating", SI.TheSeries().GetRating());
+                XMLHelper.WriteElementToXML(writer, "status", SI.TheSeries().getStatus());
 
                 // actors...
-                    foreach (string aa in this.SI.TheSeries().GetActors() )
+                    foreach (string aa in SI.TheSeries().GetActors() )
                     {
                         if (string.IsNullOrEmpty(aa))
                             continue;
@@ -229,12 +229,12 @@ namespace TVRename
                         writer.WriteEndElement(); // actor
                     }
 
-                XMLHelper.WriteElementToXML(writer, "mpaa", this.SI.TheSeries().GetRating());
-                XMLHelper.WriteInfo(writer, "id", "moviedb","imdb", this.SI.TheSeries().GetIMDB());
+                XMLHelper.WriteElementToXML(writer, "mpaa", SI.TheSeries().GetRating());
+                XMLHelper.WriteInfo(writer, "id", "moviedb","imdb", SI.TheSeries().GetIMDB());
 
-                XMLHelper.WriteElementToXML(writer,"tvdbid",this.SI.TheSeries().TVDBCode);
+                XMLHelper.WriteElementToXML(writer,"tvdbid",SI.TheSeries().TVDBCode);
 
-                string rt = this.SI.TheSeries().GetRuntime();
+                string rt = SI.TheSeries().GetRuntime();
                 if (!string.IsNullOrEmpty(rt))
                 {
                     XMLHelper.WriteElementToXML(writer,"runtime",rt + " minutes");
@@ -249,13 +249,13 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                this.ErrorText = e.Message;
-                this.Error = true;
-                this.Done = true;
+                ErrorText = e.Message;
+                Error = true;
+                Done = true;
                 return false;     
             }
 
-            this.Done = true;
+            Done = true;
             return true;
         }
 
@@ -266,18 +266,18 @@ namespace TVRename
 
         public bool SameAs(Item o)
         {
-            return (o is ActionNFO) && ((o as ActionNFO).Where == this.Where);
+            return (o is ActionNFO) && ((o as ActionNFO).Where == Where);
         }
 
         public int Compare(Item o)
         {
             ActionNFO nfo = o as ActionNFO;
 
-            if (this.Episode == null)
+            if (Episode == null)
                 return 1;
             if (nfo == null || nfo.Episode == null)
                 return -1;
-            return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+            return (Where.FullName + Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
         }
 
         #endregion
@@ -288,9 +288,9 @@ namespace TVRename
         {
             get
             {
-                if (this.Where == null)
+                if (Where == null)
                     return null;
-                return new IgnoreItem(this.Where.FullName);
+                return new IgnoreItem(Where.FullName);
             }
         }
 
@@ -300,12 +300,12 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                if (this.Episode != null)
+                if (Episode != null)
                 {
-                    lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
-                    DateTime? dt = this.Episode.GetAirDateDT(true);
+                    lvi.Text = Episode.SI.ShowName;
+                    lvi.SubItems.Add(Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(Episode.NumsAsString());
+                    DateTime? dt = Episode.GetAirDateDT(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
                         lvi.SubItems.Add(dt.Value.ToShortDateString());
                     else
@@ -313,14 +313,14 @@ namespace TVRename
                 }
                 else
                 {
-                    lvi.Text = this.SI.ShowName;
+                    lvi.Text = SI.ShowName;
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");
                 }
 
-                lvi.SubItems.Add(this.Where.DirectoryName);
-                lvi.SubItems.Add(this.Where.Name);
+                lvi.SubItems.Add(Where.DirectoryName);
+                lvi.SubItems.Add(Where.Name);
 
                 lvi.Tag = this;
 
@@ -333,9 +333,9 @@ namespace TVRename
         {
             get
             {
-                if (this.Where == null)
+                if (Where == null)
                     return null;
-                return this.Where.DirectoryName;
+                return Where.DirectoryName;
             }
         }
 

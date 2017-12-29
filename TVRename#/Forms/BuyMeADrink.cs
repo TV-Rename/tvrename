@@ -24,19 +24,19 @@ namespace TVRename
     {
         public BuyMeADrink()
         {
-            this.InitializeComponent();
-            this.label1.Text = "If this program has saved you time, and you use it regularly, then please consider buying me a drink to say thanks!\r\r" + "Type in (or choose) an amount, then hit the button to go to Paypal.";
-            this.comboBox1.Items.Add("$" + ((double) 1).ToString(".00"));
-            this.comboBox1.Items.Add("$" + ((double) 2).ToString(".00"));
-            this.comboBox1.Items.Add("$" + ((double) 5).ToString(".00"));
-            this.comboBox1.Items.Add("$" + ((double) 10).ToString(".00"));
-            this.comboBox1.Items.Add("$" + ((double) 20).ToString(".00"));
+            InitializeComponent();
+            label1.Text = "If this program has saved you time, and you use it regularly, then please consider buying me a drink to say thanks!\r\r" + "Type in (or choose) an amount, then hit the button to go to Paypal.";
+            comboBox1.Items.Add("$" + ((double) 1).ToString(".00"));
+            comboBox1.Items.Add("$" + ((double) 2).ToString(".00"));
+            comboBox1.Items.Add("$" + ((double) 5).ToString(".00"));
+            comboBox1.Items.Add("$" + ((double) 10).ToString(".00"));
+            comboBox1.Items.Add("$" + ((double) 20).ToString(".00"));
 
-            this.comboBox2.Items.Add("AUD");
-            this.comboBox2.Items.Add("USD");
+            comboBox2.Items.Add("AUD");
+            comboBox2.Items.Add("USD");
 
-            this.comboBox1.SelectedIndex = 2;
-            this.comboBox2.SelectedIndex = 0;
+            comboBox1.SelectedIndex = 2;
+            comboBox2.SelectedIndex = 0;
         }
 
         private void button1_Click(object sender, System.EventArgs e)
@@ -45,14 +45,14 @@ namespace TVRename
 
             try
             {
-                string s = Regex.Replace(this.comboBox1.Text, "\\$", "");
+                string s = Regex.Replace(comboBox1.Text, "\\$", "");
                 amount = double.Parse(s);
             }
             catch
             {
             }
 
-            string currency = this.comboBox2.Text;
+            string currency = comboBox2.Text;
 
             CultureInfo usCI = new CultureInfo("en-US", false);
 

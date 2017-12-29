@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -22,7 +22,7 @@ namespace TVRename
                 {
                     Indent = true,
                     NewLineOnAttributes = true,
-                    Encoding = System.Text.Encoding.ASCII
+                    Encoding = Encoding.ASCII
                 };
                 using (XmlWriter writer = XmlWriter.Create(str, settings))
                 {

@@ -30,7 +30,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 namespace TVRename
 {
 
-    public class TVDBException : System.Exception
+    public class TVDBException : Exception
     {
         // Thrown if an error occurs in the XML when reading TheTVDB.xml
         public TVDBException(String message)
@@ -78,14 +78,14 @@ namespace TVRename
         private FileInfo CacheFile;
         public bool Connected;
         public string CurrentDLTask;
-        private System.Collections.Generic.List<ExtraEp> ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
-        private System.Collections.Generic.List<int> ForceReloadOn;
+        private List<ExtraEp> ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
+        private List<int> ForceReloadOn;
         public List<Language> LanguageList;
         public string LastError;
         public string LoadErr;
         public bool LoadOK;
         private long New_Srv_Time;
-        private System.Collections.Generic.Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
+        private Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
         private long Srv_Time; // only update this after a 100% successful download
         // private List<String> WhoHasLock;
         private string APIRoot;
@@ -126,53 +126,53 @@ namespace TVRename
             Args = args;
 
             System.Diagnostics.Debug.Assert(cacheFile != null);
-            this.CacheFile = cacheFile;
+            CacheFile = cacheFile;
 
-            this.LastError = "";
+            LastError = "";
             // this.WhoHasLock = new List<String>();
-            this.Connected = false;
-            this.ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
+            Connected = false;
+            ExtraEpisodes = new List<ExtraEp>();
 
-            this.LanguageList = new List<Language>();
-            this.LanguageList.Add(new Language(7,"en","English","English"));
+            LanguageList = new List<Language>();
+            LanguageList.Add(new Language(7,"en","English","English"));
 
-            this.WebsiteRoot = "http://thetvdb.com";
-            this.APIRoot = "https://api.thetvdb.com";
+            WebsiteRoot = "http://thetvdb.com";
+            APIRoot = "https://api.thetvdb.com";
 
-            this.Series = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
-            this.New_Srv_Time = this.Srv_Time = 0;
+            Series = new Dictionary<int, SeriesInfo>();
+            New_Srv_Time = Srv_Time = 0;
 
-            this.LoadOK = (loadFrom == null) || this.LoadCache(loadFrom);
+            LoadOK = (loadFrom == null) || LoadCache(loadFrom);
 
-            this.ForceReloadOn = new System.Collections.Generic.List<int>();
+            ForceReloadOn = new List<int>();
         }
 
         private void LockEE()
         {
-            Monitor.Enter(this.ExtraEpisodes);
+            Monitor.Enter(ExtraEpisodes);
         }
 
         private void UnlockEE()
         {
-            Monitor.Exit(this.ExtraEpisodes);
+            Monitor.Exit(ExtraEpisodes);
         }
 
         public bool HasSeries(int id)
         {
-            return this.Series.ContainsKey(id);
+            return Series.ContainsKey(id);
         }
 
         public SeriesInfo GetSeries(int id)
         {
-            if (!this.HasSeries(id))
+            if (!HasSeries(id))
                 return null;
 
-            return this.Series[id];
+            return Series[id];
         }
 
-        public System.Collections.Generic.Dictionary<int, SeriesInfo> GetSeriesDict()
+        public Dictionary<int, SeriesInfo> GetSeriesDict()
         {
-            return this.Series;
+            return Series;
         }
 
         public bool GetLock(string whoFor)
@@ -201,7 +201,7 @@ namespace TVRename
 
         private void Say(string s)
         {
-            this.CurrentDLTask = s;
+            CurrentDLTask = s;
             logger.Info("Status on screen updated: {0}",s);
         }
 
@@ -215,16 +215,16 @@ namespace TVRename
             try
             {
                 fs = loadFrom.Open(FileMode.Open);
-                bool r = this.ProcessXML(fs, null);
+                bool r = ProcessXML(fs, null);
                 fs.Close();
                 fs = null;
                 if (r)
-                    this.UpdatesDoneOK();
+                    UpdatesDoneOK();
                 return r;
             }
             catch (Exception e)
             {
-                this.LoadErr = loadFrom.Name + " : " + e.Message;
+                LoadErr = loadFrom.Name + " : " + e.Message;
 
                 if (fs != null)
                     fs.Close();
@@ -239,39 +239,39 @@ namespace TVRename
         {
             // call when all downloading and updating is done.  updates local Srv_Time with the tentative
             // new_srv_time value.
-            this.Srv_Time = this.New_Srv_Time;
+            Srv_Time = New_Srv_Time;
         }
 
         public void SaveCache()
         {
-            logger.Info("Saving Cache to: {0}", this.CacheFile.FullName);
-            if (!this.GetLock("SaveCache"))
+            logger.Info("Saving Cache to: {0}", CacheFile.FullName);
+            if (!GetLock("SaveCache"))
                 return;
 
-            if (this.CacheFile.Exists)
+            if (CacheFile.Exists)
             {
                 double hours = 999.9;
-                if (File.Exists(this.CacheFile.FullName + ".0"))
+                if (File.Exists(CacheFile.FullName + ".0"))
                 {
                     // see when the last rotate was, and only rotate if its been at least an hour since the last save
-                    DateTime dt = File.GetLastWriteTime(this.CacheFile.FullName + ".0");
+                    DateTime dt = File.GetLastWriteTime(CacheFile.FullName + ".0");
                     hours = DateTime.Now.Subtract(dt).TotalHours;
                 }
                 if (hours >= 24.0) // rotate the save file daily
                 {
                     for (int i = 8; i >= 0; i--)
                     {
-                        string fn = this.CacheFile.FullName + "." + i;
+                        string fn = CacheFile.FullName + "." + i;
                         if (File.Exists(fn))
                         {
-                            string fn2 = this.CacheFile.FullName + "." + (i + 1);
+                            string fn2 = CacheFile.FullName + "." + (i + 1);
                             if (File.Exists(fn2))
                                 File.Delete(fn2);
                             File.Move(fn, fn2);
                         }
                     }
 
-                    File.Copy(this.CacheFile.FullName, this.CacheFile.FullName + ".0");
+                    File.Copy(CacheFile.FullName, CacheFile.FullName + ".0");
                 }
             }
 
@@ -282,18 +282,18 @@ namespace TVRename
                 Indent = true,
                 NewLineOnAttributes = true
             };
-            using (XmlWriter writer = XmlWriter.Create(this.CacheFile.FullName, settings))
+            using (XmlWriter writer = XmlWriter.Create(CacheFile.FullName, settings))
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Data");
-                XMLHelper.WriteAttributeToXML(writer, "time", this.Srv_Time);
+                XMLHelper.WriteAttributeToXML(writer, "time", Srv_Time);
 
-                foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
+                foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
                 {
                     if (kvp.Value.Srv_LastUpdated != 0)
                     {
                         kvp.Value.WriteXml(writer);
-                        foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                        foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
                         {
                             Season seas = kvp2.Value;
                             foreach (Episode e in seas.Episodes)
@@ -316,7 +316,7 @@ namespace TVRename
 
                 writer.WriteStartElement("BannersCache");
 
-                foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
+                foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
                 {
                     writer.WriteStartElement("BannersItem");
 
@@ -326,7 +326,7 @@ namespace TVRename
 
                     //We need to write out all banners that we have in any of the collections. 
 
-                    foreach (System.Collections.Generic.KeyValuePair<int, Banner> kvp3 in kvp.Value.AllBanners)
+                    foreach (KeyValuePair<int, Banner> kvp3 in kvp.Value.AllBanners)
                     {
                         Banner ban = kvp3.Value;
                         ban.WriteXml(writer);
@@ -342,19 +342,19 @@ namespace TVRename
                 writer.WriteEndDocument();
                 writer.Close();
             }
-            this.Unlock("SaveCache");
+            Unlock("SaveCache");
         }
 
         public SeriesInfo FindSeriesForName(string showName)
         {
-            this.Search(showName);
+            Search(showName);
 
             if (string.IsNullOrEmpty(showName))
                 return null;
 
             showName = showName.ToLower();
 
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in this.Series)
+            foreach (KeyValuePair<int, SeriesInfo> ser in Series)
             {
                 if (ser.Value.Name.ToLower() == showName)
                     return ser.Value;
@@ -365,32 +365,32 @@ namespace TVRename
 
         public Episode FindEpisodeByID(int id)
         {
-            if (!this.GetLock("FindEpisodeByID"))
+            if (!GetLock("FindEpisodeByID"))
                 return null;
 
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series.ToList())
+            foreach (KeyValuePair<int, SeriesInfo> kvp in Series.ToList())
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
                 {
                     Season seas = kvp2.Value;
                     foreach (Episode e in seas.Episodes)
                     {
                         if (e.EpisodeID == id)
                         {
-                            this.Unlock("FindEpisodeByID");
+                            Unlock("FindEpisodeByID");
                             return e;
                         }
                     }
                 }
             }
-            this.Unlock("FindEpisodeByID");
+            Unlock("FindEpisodeByID");
             return null;
         }
 
         public bool Connect()
         {
-            this.Connected = this.login() && this.GetLanguages();
-            return this.Connected;
+            Connected = login() && GetLanguages();
+            return Connected;
         }
 
         public static string BuildURL(bool withHttpAndKey, bool episodesToo, int code, string lang)
@@ -408,7 +408,7 @@ namespace TVRename
 
 
         public byte[] GetTVDBDownload(string url, bool forceReload = false) {
-            string mirr = this.WebsiteRoot;
+            string mirr = WebsiteRoot;
 
             if (url.StartsWith("/"))
                 url = url.Substring(1);
@@ -420,7 +420,7 @@ namespace TVRename
             theURL += url;
 
 
-            System.Net.WebClient wc = new System.Net.WebClient();
+            WebClient wc = new WebClient();
 
             if (forceReload)
                 wc.CachePolicy = new System.Net.Cache.RequestCachePolicy(System.Net.Cache.RequestCacheLevel.Reload);
@@ -440,51 +440,51 @@ namespace TVRename
             }
             catch (WebException e)
             {
-               logger.Warn(this.CurrentDLTask + " : " + e.Message + " : " + theURL);
-                this.LastError = this.CurrentDLTask + " : " + e.Message;
+               logger.Warn(CurrentDLTask + " : " + e.Message + " : " + theURL);
+                LastError = CurrentDLTask + " : " + e.Message;
                 return null;
             }
         }
 
         public void ForgetEverything()
         {
-            if (!this.GetLock("ForgetEverything"))
+            if (!GetLock("ForgetEverything"))
                 return;
 
-            this.Series.Clear();
-            this.Connected = false;
-            this.SaveCache();
-            this.Unlock("ForgetEverything");
+            Series.Clear();
+            Connected = false;
+            SaveCache();
+            Unlock("ForgetEverything");
 
             //All series will be forgotten and will be fully refreshed, so we'll only need updates after this point
-            this.New_Srv_Time = DateTime.UtcNow.ToUnixTime();
+            New_Srv_Time = DateTime.UtcNow.ToUnixTime();
         }
 
         public void ForgetShow(int id, bool makePlaceholder)
         {
-            if (!this.GetLock("ForgetShow"))
+            if (!GetLock("ForgetShow"))
                 return;
 
-            if (this.Series.ContainsKey(id))
+            if (Series.ContainsKey(id))
             {
-                string name = this.Series[id].Name;
-                this.Series.Remove(id);
+                string name = Series[id].Name;
+                Series.Remove(id);
                 if (makePlaceholder)
                 {
-                    this.MakePlaceholderSeries(id, name);
-                    this.ForceReloadOn.Add(id);
+                    MakePlaceholderSeries(id, name);
+                    ForceReloadOn.Add(id);
                 }
             }
-            this.Unlock("ForgetShow");
+            Unlock("ForgetShow");
         }
 
         private bool GetLanguages()
         {
-            this.Say("TheTVDB Languages");
+            Say("TheTVDB Languages");
 
-            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/languages", null, this.authenticationToken);
+            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/languages", null, authenticationToken);
 
-            this.LanguageList.Clear();
+            LanguageList.Clear();
 
             foreach (JObject languageJSON in jsonResponse["data"]) {
                 int ID = (int)languageJSON["id"];
@@ -493,27 +493,27 @@ namespace TVRename
                 string abbrev = (string)languageJSON["abbreviation"];
 
                 if ((ID != -1) && (!string.IsNullOrEmpty(name)) && (!string.IsNullOrEmpty(abbrev)))
-                    this.LanguageList.Add(new Language(ID, abbrev, name, englishName));
+                    LanguageList.Add(new Language(ID, abbrev, name, englishName));
 
             }
 
-            this.Say("");
+            Say("");
             return true;
         }
 
         private bool login()
         {
-            this.Say("Connecting to TVDB");
+            Say("Connecting to TVDB");
 
             JObject request = new JObject(new JProperty("apikey", APIKey()));
 
             JObject jsonResponse = HTTPHelper.JsonHTTPPOSTRequest(APIRoot + "/login", request);
 
-            this.authenticationToken = (string)jsonResponse["token"];
+            authenticationToken = (string)jsonResponse["token"];
 
             KeepTVDBAliveTimer.Start();
 
-            this.Say("");
+            Say("");
             return true;
 
         }
@@ -521,42 +521,42 @@ namespace TVRename
         public bool refreshToken()
         {
             
-            this.Say("Reconnecting to TVDB");
+            Say("Reconnecting to TVDB");
 
 
-            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/refresh_token", null, this.authenticationToken);
+            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/refresh_token", null, authenticationToken);
 
-            this.authenticationToken = (string)jsonResponse["token"];
+            authenticationToken = (string)jsonResponse["token"];
 
-            logger.Info("refreshed token at " + System.DateTime.UtcNow);
-            logger.Info("New Token " + this.authenticationToken);
-            this.Say("");
+            logger.Info("refreshed token at " + DateTime.UtcNow);
+            logger.Info("New Token " + authenticationToken);
+            Say("");
             return true;
         }
 
 
         public bool GetUpdates()
         {
-            this.Say("Updates list");
+            Say("Updates list");
 
-            if (!this.Connected && !this.Connect())
+            if (!Connected && !Connect())
             {
-                this.Say("");
+                Say("");
                 return false;
             }
 
-            long theTime = this.Srv_Time;
+            long theTime = Srv_Time;
 
             if (theTime == 0)
             {
                 // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
                 // This will only happen the first time we do an update, so a false _all update isn't too bad.
-                foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
+                foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
                 {
                     SeriesInfo ser = kvp.Value;
                     if ((theTime == 0) || ((ser.Srv_LastUpdated != 0) && (ser.Srv_LastUpdated < theTime)))
                         theTime = ser.Srv_LastUpdated;
-                    foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                    foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
                     {
                         Season seas = kvp2.Value;
 
@@ -571,12 +571,12 @@ namespace TVRename
 
             // anything with a srv_lastupdated of 0 should be marked as dirty
             // typically, this'll be placeholder series
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
+            foreach (KeyValuePair<int, SeriesInfo> kvp in Series)
             {
                 SeriesInfo ser = kvp.Value;
                 if ((ser.Srv_LastUpdated == 0) || (ser.Seasons.Count == 0))
                     ser.Dirty = true;
-                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
                 {
                     foreach (Episode ep in kvp2.Value.Episodes)
                     {
@@ -588,7 +588,7 @@ namespace TVRename
 
             if (theTime == 0)
             {
-                this.Say("");
+                Say("");
                 return true; // that's it for now
             }
 
@@ -616,15 +616,15 @@ namespace TVRename
 
                 try
                 {
-                    jsonUdpateResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "fromTime", epochTime.ToString() } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                    jsonUdpateResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "fromTime", epochTime.ToString() } }, authenticationToken, TVSettings.Instance.PreferredLanguage);
 
                 }
                 catch (WebException ex)
                 {
                     logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
                     logger.Warn(ex);
-                    this.Say("");
-                    this.LastError = ex.Message;
+                    Say("");
+                    LastError = ex.Message;
                     moreUpdates = false;
                     return false;
                 }
@@ -637,15 +637,15 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex) {
                     
-                    this.Say("");
-                    this.LastError = ex.Message;
+                    Say("");
+                    LastError = ex.Message;
                     moreUpdates = false;
 
                     String msg = "Unable to get latest updates from TVDB " + Environment.NewLine + "Trying to get updates since " + Helpers.FromUnixTime(epochTime).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the date is very old, please consider a full refresh";
                     logger.Warn("Error obtaining " + uri + ": from lastupdated query -since(local) " + Helpers.FromUnixTime(epochTime).ToLocalTime());
                     logger.Warn(ex,msg);
 
-                    if ((!this.Args.Unattended) && (!this.Args.Hide))  MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    if ((!Args.Unattended) && (!Args.Hide))  MessageBox.Show(msg, "Error obtaining updates from TVDB", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return true;
                 }
 
@@ -657,18 +657,18 @@ namespace TVRename
                 long? maxUpdateTime = updateTimes.Max();
                 if (maxUpdateTime != null)
                 {
-                    this.New_Srv_Time =  Math.Max(this.New_Srv_Time,Math.Max( (long)maxUpdateTime, this.Srv_Time)); // just in case the new update time is no better than the prior one
+                    New_Srv_Time =  Math.Max(New_Srv_Time,Math.Max( (long)maxUpdateTime, Srv_Time)); // just in case the new update time is no better than the prior one
 
-                    logger.Info("Obtianed " + numberOfResponses + " responses from lastupdated query #" + numberofCallsMade + " - since (local) " + Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime());
-                    epochTime = this.New_Srv_Time;
+                    logger.Info("Obtianed " + numberOfResponses + " responses from lastupdated query #" + numberofCallsMade + " - since (local) " + Helpers.FromUnixTime(epochTime).ToLocalTime() + " - to (local) " + Helpers.FromUnixTime(New_Srv_Time).ToLocalTime());
+                    epochTime = New_Srv_Time;
                 }
 
                 //As a safety measure we check that no more than 10 calls are made
                 if (numberofCallsMade > 10) {
                     moreUpdates = false;
-                    String errorMessage = "We have run 10 weeks of updates but it appears the system may need to check again once this set have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(this.Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the dates keep getting closer then keep getting 10 weeks of updates, otherwise consider a full refresh";
+                    String errorMessage = "We have run 10 weeks of updates but it appears the system may need to check again once this set have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the dates keep getting closer then keep getting 10 weeks of updates, otherwise consider a full refresh";
                     logger.Warn(errorMessage);
-                    if ((!this.Args.Unattended) && (!this.Args.Hide))  MessageBox.Show(errorMessage , "Long Running Update", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    if ((!Args.Unattended) && (!Args.Hide))  MessageBox.Show(errorMessage , "Long Running Update", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
                 }
 
@@ -676,7 +676,7 @@ namespace TVRename
             }
 
 
-            this.Say("Processing Updates from TVDB");
+            Say("Processing Updates from TVDB");
 
             foreach (JObject jsonResponse in updatesResponses)
             {
@@ -696,12 +696,12 @@ namespace TVRename
                     int ID = (int)series["id"];
                     int time = (int)series["lastUpdated"];
 
-                    if (this.Series.ContainsKey(ID)) // this is a series we have
+                    if (Series.ContainsKey(ID)) // this is a series we have
                     {
-                        if (time > this.Series[ID].Srv_LastUpdated) // newer version on the server
-                            this.Series[ID].Dirty = true; // mark as dirty, so it'll be fetched again later
+                        if (time > Series[ID].Srv_LastUpdated) // newer version on the server
+                            Series[ID].Dirty = true; // mark as dirty, so it'll be fetched again later
                         else
-                            logger.Info(this.Series[ID].Name + " has a lastupdated of  " + Helpers.FromUnixTime(this.Series[ID].Srv_LastUpdated) + " server says " + Helpers.FromUnixTime(time));
+                            logger.Info(Series[ID].Name + " has a lastupdated of  " + Helpers.FromUnixTime(Series[ID].Srv_LastUpdated) + " server says " + Helpers.FromUnixTime(time));
 
                         //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
 
@@ -721,11 +721,11 @@ namespace TVRename
                             JObject jsonEpisodeResponse = new JObject();
                             try
                             {
-                                jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
+                                jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, authenticationToken);
                                 episodeResponses.Add(jsonEpisodeResponse);
                                 int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
 
-                                logger.Info("Page " + pageNumber + " of " + this.Series[ID].Name + " had " + numberOfResponses + " episodes listed");
+                                logger.Info("Page " + pageNumber + " of " + Series[ID].Name + " had " + numberOfResponses + " episodes listed");
                                 if (numberOfResponses < 100) { morePages = false; } else { pageNumber++; }
 
 
@@ -748,7 +748,7 @@ namespace TVRename
                                 int serverEpisodeId = (int)episodeData["id"];
 
                                 bool found = false;
-                                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in this.Series[ID].Seasons)
+                                foreach (KeyValuePair<int, Season> kvp2 in Series[ID].Seasons)
                                 {
                                     Season seas = kvp2.Value;
 
@@ -768,20 +768,20 @@ namespace TVRename
                                 if (!found)
                                 {
                                     // must be a new episode
-                                    this.LockEE();
-                                    this.ExtraEpisodes.Add(new ExtraEp(ID, serverEpisodeId));
-                                    this.UnlockEE();
+                                    LockEE();
+                                    ExtraEpisodes.Add(new ExtraEp(ID, serverEpisodeId));
+                                    UnlockEE();
                                     numberOfNewEpisodes++;
                                 }
 
                             }
                         }
-                        logger.Info(this.Series[ID].Name + " had " + numberOfUpdatedEpisodes + " episodes updated and " + numberOfNewEpisodes + " new episodes ");
+                        logger.Info(Series[ID].Name + " had " + numberOfUpdatedEpisodes + " episodes updated and " + numberOfNewEpisodes + " new episodes ");
                     }
                 }
             }
 
-            this.Say("");
+            Say("");
 
             return true;
         }
@@ -863,7 +863,7 @@ namespace TVRename
             //We are only interested in ones that are season speicific posters; these have bannerType and BannerType2 of season.
             //There may be many posters per season - we need to get the best one. This is decided by the Rating field.
 
-            if (!this.GetLock("ProcessTVDBBannerResponse"))
+            if (!GetLock("ProcessTVDBBannerResponse"))
                 return false;
 
             try
@@ -898,7 +898,7 @@ namespace TVRename
             }
             finally
             {
-                this.Unlock("ProcessTVDBBannerResponse");
+                Unlock("ProcessTVDBBannerResponse");
             }
             return true;
         }
@@ -921,17 +921,17 @@ namespace TVRename
                 {
                     Banner b = new Banner(null, null, codeHint, r.ReadSubtree(), Args);
 
-                    if (!this.Series.ContainsKey(b.SeriesID))
+                    if (!Series.ContainsKey(b.SeriesID))
                         throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
 
-                    SeriesInfo ser = this.Series[b.SeriesID];
+                    SeriesInfo ser = Series[b.SeriesID];
 
                     ser.AddOrUpdateBanner(b);
 
                     r.Read();
 
                 } else if ((r.Name == "Banners") && !r.IsStartElement()) {
-                    this.Series[(int)codeHint].BannersLoaded = true;
+                    Series[(int)codeHint].BannersLoaded = true;
                     break; // that's it.
                 }
 
@@ -944,7 +944,7 @@ namespace TVRename
         }
         private int getLanguageId() {
             foreach (Language l in LanguageList) { 
-                if (l.abbreviation == this.RequestLanguage) return l.id;
+                if (l.abbreviation == RequestLanguage) return l.id;
             }
 
             return -1;
@@ -980,7 +980,7 @@ namespace TVRename
             // ...
             //</Data>
 
-            if (!this.GetLock("ProcessTVDBResponse"))
+            if (!GetLock("ProcessTVDBResponse"))
                 return false;
 
             try
@@ -1008,10 +1008,10 @@ namespace TVRename
                         // first).
 
                         SeriesInfo si = new SeriesInfo(r.ReadSubtree());
-                        if (this.Series.ContainsKey(si.TVDBCode))
-                            this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
+                        if (Series.ContainsKey(si.TVDBCode))
+                            Series[si.TVDBCode].Merge(si, getLanguageId());
                         else
-                            this.Series[si.TVDBCode] = si;
+                            Series[si.TVDBCode] = si;
                         r.Read();
                     }
                     else if (r.Name == "Episode")
@@ -1019,9 +1019,9 @@ namespace TVRename
                         Episode e = new Episode(null, null, r.ReadSubtree(), Args);
                         if (e.OK())
                         {
-                            if (!this.Series.ContainsKey(e.SeriesID))
+                            if (!Series.ContainsKey(e.SeriesID))
                                 throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
-                            SeriesInfo ser = this.Series[e.SeriesID];
+                            SeriesInfo ser = Series[e.SeriesID];
                             Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
 
                             bool added = false;
@@ -1054,7 +1054,7 @@ namespace TVRename
                     {
                         string time = r.GetAttribute("time");
                         if (time != null)
-                            this.New_Srv_Time = long.Parse(time);
+                            New_Srv_Time = long.Parse(time);
                         r.Read();
                     }
                     else
@@ -1089,14 +1089,14 @@ namespace TVRename
             }
             finally
             {
-                this.Unlock("ProcessTVDBResponse");
+                Unlock("ProcessTVDBResponse");
             }
             return true;
         }
 
         public bool DoWeForceReloadFor(int code)
         {
-            return this.ForceReloadOn.Contains(code) || !this.Series.ContainsKey(code);
+            return ForceReloadOn.Contains(code) || !Series.ContainsKey(code);
         }
 
         private SeriesInfo DownloadSeriesNow(int code, bool episodesToo, bool bannersToo)
@@ -1104,8 +1104,8 @@ namespace TVRename
             bool forceReload = DoWeForceReloadFor(code);
 
             string txt = "";
-            if (this.Series.ContainsKey(code))
-                txt = this.Series[code].Name;
+            if (Series.ContainsKey(code))
+                txt = Series[code].Name;
             else
                 txt = "Code " + code;
             if (episodesToo)
@@ -1116,23 +1116,23 @@ namespace TVRename
             if (bannersToo)
                 txt += " plus banners";
 
-            this.Say(txt);
+            Say(txt);
 
             String uri = APIRoot + "/series/" + code;
             JObject jsonResponse = new JObject();
             JObject jsonDefaultLangResponse = new JObject();
             try
             {
-                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, authenticationToken, TVSettings.Instance.PreferredLanguage);
 
-                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, DefaultLanguage );
+                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, authenticationToken, DefaultLanguage );
             }
             catch (WebException ex)
             {
                 logger.Error("Error obtaining {0}", uri);
                 logger.Error (ex);
-                this.Say("");
-                this.LastError = ex.Message;
+                Say("");
+                LastError = ex.Message;
                 return null;
             }
 
@@ -1148,10 +1148,10 @@ namespace TVRename
                 si = new SeriesInfo(seriesData, getLanguageId());
             }
 
-            if (this.Series.ContainsKey(si.TVDBCode))
-                this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
+            if (Series.ContainsKey(si.TVDBCode))
+                Series[si.TVDBCode].Merge(si, getLanguageId());
             else
-                this.Series[si.TVDBCode] = si;
+                Series[si.TVDBCode] = si;
 
 
             //Now deal with obtaining any episodes for the series (we then group them into seasons)
@@ -1171,7 +1171,7 @@ namespace TVRename
                     JObject jsonEpisodeResponse = new JObject();
                     try
                     {
-                        jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
+                        jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, authenticationToken);
                         episodeResponses.Add(jsonEpisodeResponse);
                         int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
                         //logger.Info(code + "****" + jsonEpisodeResponse.ToString());
@@ -1194,7 +1194,7 @@ namespace TVRename
                 foreach (JObject episodeData in response["data"])
                 {
                     //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                    this.DownloadEpisodeNow(code, (int)episodeData["id"]);
+                    DownloadEpisodeNow(code, (int)episodeData["id"]);
 
               /* All of this code was used when we tried to create an episode from the series response. Issue was that we ended up doubling up. 
               Creating an imperfect episode and having to do a full refresh anyway.
@@ -1242,7 +1242,7 @@ namespace TVRename
 
                 try
                 {
-                    JObject jsonEpisodeSearchResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                    JObject jsonEpisodeSearchResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, authenticationToken, TVSettings.Instance.PreferredLanguage);
                     JObject a = (JObject)jsonEpisodeSearchResponse["data"];
 
                     foreach (KeyValuePair<string, JToken> imageType in a)
@@ -1264,7 +1264,7 @@ namespace TVRename
                 {
                     try
                     {
-                        JObject jsonImageResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                        JObject jsonImageResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, authenticationToken, TVSettings.Instance.PreferredLanguage);
                         bannerResponses.Add(jsonImageResponse);
                     }
                     catch (WebException WebEx)
@@ -1280,7 +1280,7 @@ namespace TVRename
 
                     try
                     {
-                        JObject jsonEpisodeSearchDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, this.authenticationToken, DefaultLanguage);
+                        JObject jsonEpisodeSearchDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images", null, authenticationToken, DefaultLanguage);
 
                         JObject adl = (JObject)jsonEpisodeSearchDefaultLangResponse["data"];
 
@@ -1303,7 +1303,7 @@ namespace TVRename
 
                         try
                         {
-                            JObject jsonImageDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, this.authenticationToken, DefaultLanguage);
+                            JObject jsonImageDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/images/query", new Dictionary<string, string> { { "keyType", imageType } }, authenticationToken, DefaultLanguage);
                             bannerDefaultLangResponses.Add(jsonImageDefaultLangResponse);
                         }
                         catch (WebException WebEx)
@@ -1326,8 +1326,8 @@ namespace TVRename
                 foreach (JObject bannerData in response["data"])
                 {
                     Banner b = new Banner((int)si.TVDBCode, bannerData,getLanguageId());
-                    if (!this.Series.ContainsKey(b.SeriesID)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
-                    SeriesInfo ser = this.Series[b.SeriesID];
+                    if (!Series.ContainsKey(b.SeriesID)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                    SeriesInfo ser = Series[b.SeriesID];
                     ser.AddOrUpdateBanner(b);
                 }
             }
@@ -1337,67 +1337,67 @@ namespace TVRename
                 foreach (JObject bannerData in response["data"])
                 {
                     Banner b = new Banner((int)si.TVDBCode, bannerData, getDefaultLanguageId());
-                    if (!this.Series.ContainsKey(b.SeriesID)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
-                    SeriesInfo ser = this.Series[b.SeriesID];
+                    if (!Series.ContainsKey(b.SeriesID)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                    SeriesInfo ser = Series[b.SeriesID];
                     ser.AddOrUpdateBanner(b);
                 }
             }
 
 
-            this.Series[(int)si.TVDBCode].BannersLoaded = true;
+            Series[(int)si.TVDBCode].BannersLoaded = true;
 
 
             //Get the actors too then well need another call for that
-            JObject jsonActorsResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/actors", null, this.authenticationToken);
+            JObject jsonActorsResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/actors", null, authenticationToken);
             IEnumerable<string> seriesActors = from a in jsonActorsResponse["data"] select (string)a["name"];
-            this.Series[(int)si.TVDBCode].setActors(seriesActors);
+            Series[(int)si.TVDBCode].setActors(seriesActors);
 
-            this.ForceReloadOn.Remove(code);
+            ForceReloadOn.Remove(code);
 
-            return (this.Series.ContainsKey(code)) ? this.Series[code] : null;
+            return (Series.ContainsKey(code)) ? Series[code] : null;
 
 
         }
 
-        private bool inForeignLanguage() => !(DefaultLanguage == this.RequestLanguage);
+        private bool inForeignLanguage() => !(DefaultLanguage == RequestLanguage);
 
         private bool DownloadEpisodeNow(int seriesID, int episodeID)
         {
-            bool forceReload = this.ForceReloadOn.Contains(seriesID);
+            bool forceReload = ForceReloadOn.Contains(seriesID);
 
             string txt = "";
-            if (this.Series.ContainsKey(seriesID))
+            if (Series.ContainsKey(seriesID))
             {
-                Episode ep = this.FindEpisodeByID(episodeID);
+                Episode ep = FindEpisodeByID(episodeID);
                 string eptxt =  "New Episode Id = "+ episodeID;
                 if ((ep != null) && (ep.TheSeason != null))
                     eptxt = string.Format("S{0:00}E{1:00}", ep.TheSeason.SeasonNumber, ep.EpNum);
 
-                txt = this.Series[seriesID].Name + " (" + eptxt + ")";
+                txt = Series[seriesID].Name + " (" + eptxt + ")";
             }
             else
                 return false; // shouldn't happen
-            this.Say(txt);
+            Say(txt);
 
             String uri = APIRoot + "/episodes/" + episodeID.ToString();
             JObject jsonResponse = new JObject();
             JObject jsonDefaultLangResponse = new JObject();
 
             try {
-                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, authenticationToken, TVSettings.Instance.PreferredLanguage);
 
-                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, DefaultLanguage);
+                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, authenticationToken, DefaultLanguage);
             }
             catch (WebException ex)
             {
                 logger.Error("Error obtaining " + uri + ": " + ex.Message);
-                this.LastError = ex.Message;
-                this.Say ("");
+                LastError = ex.Message;
+                Say ("");
                 return false;
             }
 
             
-            if (!this.GetLock("ProcessTVDBResponse"))
+            if (!GetLock("ProcessTVDBResponse"))
                 return false;
 
             try
@@ -1419,9 +1419,9 @@ namespace TVRename
 
                 if (e.OK())
                 {
-                    if (!this.Series.ContainsKey(e.SeriesID))
+                    if (!Series.ContainsKey(e.SeriesID))
                         throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
-                    SeriesInfo ser = this.Series[e.SeriesID];
+                    SeriesInfo ser = Series[e.SeriesID];
                     Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
 
                     bool added = false;
@@ -1443,13 +1443,13 @@ namespace TVRename
             catch (TVDBException e)
             {
                logger.Error("Could not parse TVDB Response " + e.Message);
-                this.LastError = e.Message;
-                this.Say("");
+                LastError = e.Message;
+                Say("");
                 return false;
             }
             finally
             {
-                this.Unlock("ProcessTVDBResponse");
+                Unlock("ProcessTVDBResponse");
             }
             return true;
         }
@@ -1458,47 +1458,47 @@ namespace TVRename
         {
             if (string.IsNullOrEmpty(name))
                 name = "";
-            this.Series[code] = new SeriesInfo(name, code);
-            this.Series[code].Dirty = true;
-            return this.Series[code];
+            Series[code] = new SeriesInfo(name, code);
+            Series[code].Dirty = true;
+            return Series[code];
         }
 
         public bool EnsureUpdated(int code, bool bannersToo)
         {
-            if (DoWeForceReloadFor(code) || (this.Series[code].Seasons.Count == 0))
-                return this.DownloadSeriesNow(code, true, bannersToo) != null; // the whole lot!
+            if (DoWeForceReloadFor(code) || (Series[code].Seasons.Count == 0))
+                return DownloadSeriesNow(code, true, bannersToo) != null; // the whole lot!
 
             bool ok = true;
 
-            if ((this.Series[code].Dirty) || (bannersToo && !this.Series[code].BannersLoaded))
-                ok = (this.DownloadSeriesNow(code, false, bannersToo) != null) && ok;
+            if ((Series[code].Dirty) || (bannersToo && !Series[code].BannersLoaded))
+                ok = (DownloadSeriesNow(code, false, bannersToo) != null) && ok;
 
-            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in this.Series[code].Seasons)
+            foreach (KeyValuePair<int, Season> kvp in Series[code].Seasons)
             {
                 Season seas = kvp.Value;
                 foreach (Episode e in seas.Episodes)
                 {
                     if (e.Dirty && e.EpisodeID >0)
                     {
-                        this.LockEE();
-                        this.ExtraEpisodes.Add(new ExtraEp(e.SeriesID, e.EpisodeID));
-                        this.UnlockEE();
+                        LockEE();
+                        ExtraEpisodes.Add(new ExtraEp(e.SeriesID, e.EpisodeID));
+                        UnlockEE();
                     }
                 }
             }
 
-            this.LockEE();
-            foreach (ExtraEp ee in this.ExtraEpisodes)
+            LockEE();
+            foreach (ExtraEp ee in ExtraEpisodes)
             {
                 if ((ee.SeriesID == code) && (!ee.Done))
                 {
-                    ok = this.DownloadEpisodeNow(ee.SeriesID, ee.EpisodeID) && ok;
+                    ok = DownloadEpisodeNow(ee.SeriesID, ee.EpisodeID) && ok;
                     ee.Done = true;
                 }
             }
-            this.UnlockEE();
+            UnlockEE();
 
-            this.ForceReloadOn.Remove(code);
+            ForceReloadOn.Remove(code);
 
             return ok;
         }
@@ -1509,14 +1509,14 @@ namespace TVRename
 
             bool isNumber = Regex.Match(text, "^[0-9]+$").Success;
             if (isNumber)
-                this.DownloadSeriesNow(int.Parse(text), false, false);
+                DownloadSeriesNow(int.Parse(text), false, false);
 
             // but, the number could also be a name, so continue searching as usual
             //text = text.Replace(".", " ");
 
-            if (!this.Connected && !this.Connect())
+            if (!Connected && !Connect())
             {
-                this.Say("Failed to Connect");
+                Say("Failed to Connect");
                 return;
             }
 
@@ -1525,18 +1525,18 @@ namespace TVRename
             JObject jsonDefaultLangResponse = new JObject();
             try
             {
-                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
-                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken,  DefaultLanguage);
+                jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, authenticationToken, TVSettings.Instance.PreferredLanguage);
+                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, authenticationToken,  DefaultLanguage);
             }
             catch (WebException ex)
             {
                 logger.Error("Error obtaining " + uri + ": " + ex.Message);
-                this.LastError = ex.Message;
-                this.Say("");
+                LastError = ex.Message;
+                Say("");
                 return;
             }
 
-            if (this.GetLock("ProcessTVDBResponse"))
+            if (GetLock("ProcessTVDBResponse"))
             {
 
 
@@ -1551,10 +1551,10 @@ namespace TVRename
                     // first).
 
                     SeriesInfo si = new SeriesInfo(series, getLanguageId());
-                    if (this.Series.ContainsKey(si.TVDBCode))
-                        this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
+                    if (Series.ContainsKey(si.TVDBCode))
+                        Series[si.TVDBCode].Merge(si, getLanguageId());
                     else
-                        this.Series[si.TVDBCode] = si;
+                        Series[si.TVDBCode] = si;
                 }
                 if (inForeignLanguage())
                 {
@@ -1570,14 +1570,14 @@ namespace TVRename
                         // first).
 
                         SeriesInfo si = new SeriesInfo(series, getLanguageId());
-                        if (this.Series.ContainsKey(si.TVDBCode))
-                            this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
+                        if (Series.ContainsKey(si.TVDBCode))
+                            Series[si.TVDBCode].Merge(si, getLanguageId());
                         else
-                            this.Series[si.TVDBCode] = si;
+                            Series[si.TVDBCode] = si;
                     }
                 }
             }
-            this.Unlock("ProcessTVDBResponse");
+            Unlock("ProcessTVDBResponse");
 
 
         }
@@ -1587,16 +1587,16 @@ namespace TVRename
             // Summary: http://www.thetvdb.com/?tab=series&id=75340&lid=7
             // Season 3: http://www.thetvdb.com/?tab=season&seriesid=75340&seasonid=28289&lid=7
 
-            if (summaryPage || (seasid <= 0) || !this.Series.ContainsKey(code))
-                return this.WebsiteRoot + "/?tab=series&id=" + code;
+            if (summaryPage || (seasid <= 0) || !Series.ContainsKey(code))
+                return WebsiteRoot + "/?tab=series&id=" + code;
             else
-                return this.WebsiteRoot + "/?tab=season&seriesid=" + code + "&seasonid=" + seasid;
+                return WebsiteRoot + "/?tab=season&seriesid=" + code + "&seasonid=" + seasid;
         }
 
         public string WebsiteURL(int SeriesID, int SeasonID, int EpisodeID)
         {
             // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
-            return this.WebsiteRoot + "/?tab=episode&seriesid=" + SeriesID + "&seasonid=" + SeasonID + "&id=" + EpisodeID;
+            return WebsiteRoot + "/?tab=episode&seriesid=" + SeriesID + "&seasonid=" + SeasonID + "&id=" + EpisodeID;
         }
 
         
@@ -1605,15 +1605,15 @@ namespace TVRename
         // Next episode to air of a given show		
         public Episode NextAiring(int code)
         {
-            if (!this.Series.ContainsKey(code) || (this.Series[code].Seasons.Count == 0))
+            if (!Series.ContainsKey(code) || (Series[code].Seasons.Count == 0))
                 return null; // DownloadSeries(code, true);
 
             Episode next = null;
             DateTime today = DateTime.Now;
             DateTime mostSoonAfterToday = new DateTime(0);
 
-            SeriesInfo ser = this.Series[code];
-            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in ser.Seasons)
+            SeriesInfo ser = Series[code];
+            foreach (KeyValuePair<int, Season> kvp2 in ser.Seasons)
             {
                 Season s = kvp2.Value;
 

@@ -24,17 +24,17 @@ namespace TVRename
 
         public TheTVDBCodeFinder(string initialHint)
         {
-            this.mInternal = false;
+            mInternal = false;
 
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.txtFindThis.Text = initialHint;
+            txtFindThis.Text = initialHint;
 
             if (string.IsNullOrEmpty(initialHint))
             {
                 ListViewItem lvi = new ListViewItem("");
                 lvi.SubItems.Add("Enter the show's name, and click \"Search\"");
-                this.lvMatches.Items.Add(lvi);
+                lvMatches.Items.Add(lvi);
             }
         }
 
@@ -42,20 +42,20 @@ namespace TVRename
 
         public void SetHint(string s)
         {
-            this.mInternal = true;
-            this.txtFindThis.Text = s;
-            this.mInternal = false;
-            this.DoFind(true);
+            mInternal = true;
+            txtFindThis.Text = s;
+            mInternal = false;
+            DoFind(true);
         }
 
         public int SelectedCode()
         {
             try
             {
-                if (this.lvMatches.SelectedItems.Count == 0)
-                    return int.Parse(this.txtFindThis.Text);
+                if (lvMatches.SelectedItems.Count == 0)
+                    return int.Parse(txtFindThis.Text);
 
-                return (int) (this.lvMatches.SelectedItems[0].Tag);
+                return (int) (lvMatches.SelectedItems[0].Tag);
             }
             catch
             {
@@ -65,22 +65,22 @@ namespace TVRename
 
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
-            if (!this.mInternal)
-                this.DoFind(false);
+            if (!mInternal)
+                DoFind(false);
         }
 
         private void DoFind(bool chooseOnlyMatch)
         {
-            if (this.mInternal)
+            if (mInternal)
                 return;
 
-            this.lvMatches.BeginUpdate();
+            lvMatches.BeginUpdate();
 
-            string what = this.txtFindThis.Text;
+            string what = txtFindThis.Text;
             what = Helpers.RemoveDiacritics(what);
             what = what.Replace(".", " ");
 
-            this.lvMatches.Items.Clear();
+            lvMatches.Items.Clear();
             if (!string.IsNullOrEmpty(what))
             {
                 what = what.ToLower();
@@ -121,58 +121,58 @@ namespace TVRename
                         lvi.Tag = num;
                         if (numberMatch)
                             lvi.Selected = true;
-                        this.lvMatches.Items.Add(lvi);
+                        lvMatches.Items.Add(lvi);
                     }
                 }
                 TheTVDB.Instance.Unlock("DoFind");
 
-                if ((this.lvMatches.Items.Count == 1) && numeric)
-                    this.lvMatches.Items[0].Selected = true;
+                if ((lvMatches.Items.Count == 1) && numeric)
+                    lvMatches.Items[0].Selected = true;
 
-                int n = this.lvMatches.Items.Count;
-                this.txtSearchStatus.Text = "Found " + n + " show" + ((n != 1) ? "s" : "");
+                int n = lvMatches.Items.Count;
+                txtSearchStatus.Text = "Found " + n + " show" + ((n != 1) ? "s" : "");
             }
             else
-                this.txtSearchStatus.Text = "";
+                txtSearchStatus.Text = "";
 
-            this.lvMatches.EndUpdate();
+            lvMatches.EndUpdate();
 
-            if ((this.lvMatches.Items.Count == 1) && chooseOnlyMatch)
-                this.lvMatches.Items[0].Selected = true;
+            if ((lvMatches.Items.Count == 1) && chooseOnlyMatch)
+                lvMatches.Items[0].Selected = true;
         }
 
         private void bnGoSearch_Click(object sender, EventArgs e)
         {
             // search on thetvdb.com site
-            this.txtSearchStatus.Text = "Searching on TheTVDB.com";
-            this.txtSearchStatus.Update();
+            txtSearchStatus.Text = "Searching on TheTVDB.com";
+            txtSearchStatus.Update();
 
             //String ^url = "http://www.tv.com/search.php?stype=program&qs="+txtFindThis->Text+"&type=11&stype=search&tag=search%3Bbutton";
 
-            if (!String.IsNullOrEmpty(this.txtFindThis.Text))
+            if (!String.IsNullOrEmpty(txtFindThis.Text))
             {
-                TheTVDB.Instance.Search(this.txtFindThis.Text);
-                this.DoFind(true);
+                TheTVDB.Instance.Search(txtFindThis.Text);
+                DoFind(true);
             }
         }
 
         private void lvMatches_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.SelectionChanged != null)
-                this.SelectionChanged(sender, e);
+            if (SelectionChanged != null)
+                SelectionChanged(sender, e);
         }
 
         public void TakeFocus()
         {
-            this.Focus();
-            this.txtFindThis.Focus();
+            Focus();
+            txtFindThis.Focus();
         }
 
         private void txtFindThis_KeyDown(object sender, KeyEventArgs e)
         {
             if ((e.KeyCode == Keys.Enter) || (e.KeyCode == Keys.Return))
             {
-                this.bnGoSearch_Click(null, null);
+                bnGoSearch_Click(null, null);
                 e.Handled = true;
             }
         }

@@ -26,68 +26,68 @@ namespace TVRename
 
         public IgnoreEdit(TVDoc doc)
         {
-            this.mDoc = doc;
-            this.Ignore = new System.Collections.Generic.List<IgnoreItem>();
+            mDoc = doc;
+            Ignore = new System.Collections.Generic.List<IgnoreItem>();
 
-            foreach (IgnoreItem ii in this.mDoc.Ignore)
-                this.Ignore.Add(ii);
+            foreach (IgnoreItem ii in mDoc.Ignore)
+                Ignore.Add(ii);
 
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.FillList();
+            FillList();
         }
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            this.mDoc.Ignore = this.Ignore;
-            this.mDoc.SetDirty();
-            this.Close();
+            mDoc.Ignore = Ignore;
+            mDoc.SetDirty();
+            Close();
         }
 
         private void bnRemove_Click(object sender, System.EventArgs e)
         {
-            foreach (int i in this.lbItems.SelectedIndices)
-                foreach (IgnoreItem iitest in this.Ignore)
-                    if (this.lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
+            foreach (int i in lbItems.SelectedIndices)
+                foreach (IgnoreItem iitest in Ignore)
+                    if (lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
                     {
-                        this.Ignore.Remove(iitest);
+                        Ignore.Remove(iitest);
                         break;
                     }
-            this.FillList();
+            FillList();
         }
 
         private void FillList()
         {
-            this.lbItems.BeginUpdate();
-            this.lbItems.Items.Clear();
+            lbItems.BeginUpdate();
+            lbItems.Items.Clear();
 
-            string f = this.txtFilter.Text.ToLower();
+            string f = txtFilter.Text.ToLower();
             bool all = string.IsNullOrEmpty(f);
 
-            this.DisplayedSet = new System.Collections.Generic.List<IgnoreItem>();
+            DisplayedSet = new System.Collections.Generic.List<IgnoreItem>();
 
-            foreach (IgnoreItem ii in this.Ignore)
+            foreach (IgnoreItem ii in Ignore)
             {
                 string s = ii.FileAndPath;
                 if (all || s.ToLower().Contains(f))
                 {
-                    this.lbItems.Items.Add(s);
-                    this.DisplayedSet.Add(ii);
+                    lbItems.Items.Add(s);
+                    DisplayedSet.Add(ii);
                 }
             }
 
-            this.lbItems.EndUpdate();
+            lbItems.EndUpdate();
         }
 
         private void txtFilter_TextChanged(object sender, System.EventArgs e)
         {
-            this.timer1.Start();
+            timer1.Start();
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            this.timer1.Stop();
-            this.FillList();
+            timer1.Stop();
+            FillList();
         }
     }
 }

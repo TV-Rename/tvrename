@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -31,7 +31,7 @@ namespace TVRename
 
         public UpcomingExporter(TVDoc doc)
         {
-            this.mDoc = doc;
+            mDoc = doc;
         }
 
         public string produce() 
@@ -46,9 +46,9 @@ namespace TVRename
                 MemoryStream ms = new MemoryStream(); //duplicated the IF statement one for RSS and one for XML so that both can be generated.
                 List<ProcessedEpisode> lpe = mDoc.NextNShows(TVSettings.Instance.ExportRSSMaxShows, TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
                 if (lpe != null)
-                    if (this.generate(ms,lpe ))
+                    if (generate(ms,lpe ))
                     {
-                        return System.Text.Encoding.ASCII.GetString(ms.ToArray());
+                        return Encoding.ASCII.GetString(ms.ToArray());
                     }
                
             }
@@ -60,7 +60,7 @@ namespace TVRename
 
         public void Run()
         {
-            if (this.Active())
+            if (Active())
             {
                 StreamWriter file = new StreamWriter(Location());
                 String contents = produce();

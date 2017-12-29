@@ -19,12 +19,12 @@ namespace TVRename
 
         public TextSorter()
         {
-            this.col = 0;
+            col = 0;
         }
 
         public TextSorter(int column)
         {
-            this.col = column;
+            col = column;
         }
 
         #region IComparer Members
@@ -33,7 +33,7 @@ namespace TVRename
         {
             ListViewItem lvi1 = x as ListViewItem;
             ListViewItem lvi2 = y as ListViewItem;
-            return string.Compare(lvi1.SubItems[this.col].Text, lvi2.SubItems[this.col].Text);
+            return string.Compare(lvi1.SubItems[col].Text, lvi2.SubItems[col].Text);
         }
 
         #endregion
@@ -84,12 +84,12 @@ namespace TVRename
 
         public DaySorter()
         {
-            this.col = 0;
+            col = 0;
         }
 
         public DaySorter(int column)
         {
-            this.col = column;
+            col = column;
         }
 
         #region IComparer Members
@@ -101,8 +101,8 @@ namespace TVRename
 
             try
             {
-                string t1 = (x as ListViewItem).SubItems[this.col].Text;
-                string t2 = (y as ListViewItem).SubItems[this.col].Text;
+                string t1 = (x as ListViewItem).SubItems[col].Text;
+                string t2 = (y as ListViewItem).SubItems[col].Text;
 
                 DateTime now = DateTime.Now;
 
@@ -130,12 +130,12 @@ namespace TVRename
 
         public NumberAsTextSorter()
         {
-            this.col = 0;
+            col = 0;
         }
 
         public NumberAsTextSorter(int column)
         {
-            this.col = column;
+            col = column;
         }
 
         #region IComparer Members
@@ -144,8 +144,8 @@ namespace TVRename
         {
             int one;
             int two;
-            string s1 = ((x as ListViewItem).SubItems)[this.col].Text;
-            string s2 = ((y as ListViewItem).SubItems)[this.col].Text;
+            string s1 = ((x as ListViewItem).SubItems)[col].Text;
+            string s2 = ((y as ListViewItem).SubItems)[col].Text;
             if (string.IsNullOrEmpty(s1))
                 s1 = "-1";
             if (string.IsNullOrEmpty(s2))

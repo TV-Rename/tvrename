@@ -287,7 +287,7 @@ namespace TVRename
 
         public static JObject JsonHTTPPOSTRequest( String url, JObject request)
         {
-            String response = HTTPHelper.HTTPRequest("POST",url, request.ToString(), "application/json");
+            String response = HTTPRequest("POST",url, request.ToString(), "application/json");
 
             return JObject.Parse(response);
             
@@ -295,7 +295,7 @@ namespace TVRename
 
         public static JObject JsonHTTPGETRequest(String url, Dictionary<string, string> parameters, String authToken, String lang="")
         {
-            String response = HTTPHelper.HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
+            String response = HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
 
             return JObject.Parse(response);
 

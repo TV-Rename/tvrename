@@ -39,162 +39,162 @@ namespace TVRename
 
         public Preferences(TVDoc doc, bool goToScanOpts)
         {
-            this.InitializeComponent();
-            this.LoadLanguageDone += this.LoadLanguageDoneFunc;
+            InitializeComponent();
+            LoadLanguageDone += LoadLanguageDoneFunc;
 
-            this.SetupRSSGrid();
-            this.SetupReplacementsGrid();
+            SetupRSSGrid();
+            SetupReplacementsGrid();
 
-            this.mDoc = doc;
+            mDoc = doc;
 
             if (goToScanOpts)
-                this.tabControl1.SelectedTab = this.tpScanOptions;
+                tabControl1.SelectedTab = tpScanOptions;
         }
 
-        private void OKButton_Click(object sender, System.EventArgs e)
+        private void OKButton_Click(object sender, EventArgs e)
         {
-            if (!TVSettings.OKExtensionsString(this.txtEmptyIgnoreExtensions.Text))
+            if (!TVSettings.OKExtensionsString(txtEmptyIgnoreExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.tabControl1.SelectedTab = tbFolderDeleting;
-                this.txtVideoExtensions.Focus();
+                tabControl1.SelectedTab = tbFolderDeleting;
+                txtVideoExtensions.Focus();
                 return;
             }
 
-            if (!TVSettings.OKExtensionsString(this.txtVideoExtensions.Text))
+            if (!TVSettings.OKExtensionsString(txtVideoExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.tabControl1.SelectedTab = tbFilesAndFolders;
-                this.txtVideoExtensions.Focus();
+                tabControl1.SelectedTab = tbFilesAndFolders;
+                txtVideoExtensions.Focus();
                 return;
             }
-            if (!TVSettings.OKExtensionsString(this.txtVideoExtensions.Text))
+            if (!TVSettings.OKExtensionsString(txtVideoExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.tabControl1.SelectedTab = tbFilesAndFolders;
-                this.txtVideoExtensions.Focus();
+                tabControl1.SelectedTab = tbFilesAndFolders;
+                txtVideoExtensions.Focus();
                 return;
             }
-            if (!TVSettings.OKExtensionsString(this.txtOtherExtensions.Text))
+            if (!TVSettings.OKExtensionsString(txtOtherExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.tabControl1.SelectedTab = tbFilesAndFolders;
-                this.txtOtherExtensions.Focus();
+                tabControl1.SelectedTab = tbFilesAndFolders;
+                txtOtherExtensions.Focus();
                 return;
             }
             TVSettings S = TVSettings.Instance;
 
             S.Replacements.Clear();
-            for (int i = 1; i < this.ReplacementsGrid.RowsCount; i++)
+            for (int i = 1; i < ReplacementsGrid.RowsCount; i++)
             {
-                string from = (string) (this.ReplacementsGrid[i, 0].Value);
-                string to = (string) (this.ReplacementsGrid[i, 1].Value);
-                bool ins = (bool) (this.ReplacementsGrid[i, 2].Value);
+                string from = (string) (ReplacementsGrid[i, 0].Value);
+                string to = (string) (ReplacementsGrid[i, 1].Value);
+                bool ins = (bool) (ReplacementsGrid[i, 2].Value);
                 if (!string.IsNullOrEmpty(from))
                     S.Replacements.Add(new Replacement(from, to, ins));
             }
 
-            S.ExportWTWRSS = this.cbWTWRSS.Checked;
-            S.ExportWTWRSSTo = this.txtWTWRSS.Text;
-            S.ExportWTWXML = this.cbWTWXML.Checked;
-            S.ExportWTWXMLTo = this.txtWTWXML.Text;
-            S.ExportMissingXML = this.cbMissingXML.Checked;
-            S.ExportMissingXMLTo = this.txtMissingXML.Text;
-            S.ExportMissingCSV = this.cbMissingCSV.Checked;
-            S.ExportMissingCSVTo = this.txtMissingCSV.Text;
-            S.ExportRenamingXML = this.cbRenamingXML.Checked;
-            S.ExportRenamingXMLTo = this.txtRenamingXML.Text;
-            S.ExportFOXML = this.cbFOXML.Checked;
-            S.ExportFOXMLTo = this.txtFOXML.Text;
-            S.ExportShowsTXT = this.cbShowsTXT.Checked;
-            S.ExportShowsTXTTo = this.txtShowsTXTTo.Text;
+            S.ExportWTWRSS = cbWTWRSS.Checked;
+            S.ExportWTWRSSTo = txtWTWRSS.Text;
+            S.ExportWTWXML = cbWTWXML.Checked;
+            S.ExportWTWXMLTo = txtWTWXML.Text;
+            S.ExportMissingXML = cbMissingXML.Checked;
+            S.ExportMissingXMLTo = txtMissingXML.Text;
+            S.ExportMissingCSV = cbMissingCSV.Checked;
+            S.ExportMissingCSVTo = txtMissingCSV.Text;
+            S.ExportRenamingXML = cbRenamingXML.Checked;
+            S.ExportRenamingXMLTo = txtRenamingXML.Text;
+            S.ExportFOXML = cbFOXML.Checked;
+            S.ExportFOXMLTo = txtFOXML.Text;
+            S.ExportShowsTXT = cbShowsTXT.Checked;
+            S.ExportShowsTXTTo = txtShowsTXTTo.Text;
 
-            S.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
-            S.StartupTab = this.cbStartupTab.SelectedIndex;
-            S.NotificationAreaIcon = this.cbNotificationIcon.Checked;
-            S.VideoExtensionsString = this.txtVideoExtensions.Text;
-            S.OtherExtensionsString = this.txtOtherExtensions.Text;
-            S.ExportRSSMaxDays = Convert.ToInt32(this.txtExportRSSMaxDays.Text);
-            S.ExportRSSMaxShows = Convert.ToInt32(this.txtExportRSSMaxShows.Text);
-            S.ExportRSSDaysPast = Convert.ToInt32(this.txtExportRSSDaysPast.Text);
-            S.KeepTogether = this.cbKeepTogether.Checked;
-            S.LeadingZeroOnSeason = this.cbLeadingZero.Checked;
-            S.ShowInTaskbar = this.chkShowInTaskbar.Checked;
-            S.RenameTxtToSub = this.cbTxtToSub.Checked;
-            S.ShowEpisodePictures = this.cbShowEpisodePictures.Checked;
-            S.AutoSelectShowInMyShows = this.cbAutoSelInMyShows.Checked;
-            S.AutoCreateFolders = this.cbAutoCreateFolders.Checked ;  
-            S.SpecialsFolderName = this.txtSpecialsFolderName.Text;
+            S.WTWRecentDays = Convert.ToInt32(txtWTWDays.Text);
+            S.StartupTab = cbStartupTab.SelectedIndex;
+            S.NotificationAreaIcon = cbNotificationIcon.Checked;
+            S.VideoExtensionsString = txtVideoExtensions.Text;
+            S.OtherExtensionsString = txtOtherExtensions.Text;
+            S.ExportRSSMaxDays = Convert.ToInt32(txtExportRSSMaxDays.Text);
+            S.ExportRSSMaxShows = Convert.ToInt32(txtExportRSSMaxShows.Text);
+            S.ExportRSSDaysPast = Convert.ToInt32(txtExportRSSDaysPast.Text);
+            S.KeepTogether = cbKeepTogether.Checked;
+            S.LeadingZeroOnSeason = cbLeadingZero.Checked;
+            S.ShowInTaskbar = chkShowInTaskbar.Checked;
+            S.RenameTxtToSub = cbTxtToSub.Checked;
+            S.ShowEpisodePictures = cbShowEpisodePictures.Checked;
+            S.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
+            S.AutoCreateFolders = cbAutoCreateFolders.Checked ;  
+            S.SpecialsFolderName = txtSpecialsFolderName.Text;
 
-            S.ForceLowercaseFilenames = this.cbForceLower.Checked;
-            S.IgnoreSamples = this.cbIgnoreSamples.Checked;
+            S.ForceLowercaseFilenames = cbForceLower.Checked;
+            S.IgnoreSamples = cbIgnoreSamples.Checked;
 
-            S.uTorrentPath = this.txtRSSuTorrentPath.Text;
-            S.ResumeDatPath = this.txtUTResumeDatPath.Text;
-            S.SABHostPort = this.txtSABHostPort.Text;
-            S.SABAPIKey = this.txtSABAPIKey.Text;
-            S.CheckSABnzbd = this.cbCheckSABnzbd.Checked;
+            S.uTorrentPath = txtRSSuTorrentPath.Text;
+            S.ResumeDatPath = txtUTResumeDatPath.Text;
+            S.SABHostPort = txtSABHostPort.Text;
+            S.SABAPIKey = txtSABAPIKey.Text;
+            S.CheckSABnzbd = cbCheckSABnzbd.Checked;
 
-            S.SearchRSS = this.cbSearchRSS.Checked;
-            S.EpTBNs = this.cbEpTBNs.Checked;
-            S.NFOShows = this.cbNFOShows.Checked;
-            S.NFOEpisodes = this.cbNFOEpisodes.Checked;
-            S.KODIImages = this.cbKODIImages.Checked;
-            S.pyTivoMeta = this.cbMeta.Checked;
-            S.pyTivoMetaSubFolder = this.cbMetaSubfolder.Checked;
-            S.FolderJpg = this.cbFolderJpg.Checked;
-            S.RenameCheck = this.cbRenameCheck.Checked;
-            S.MissingCheck = this.cbMissing.Checked;
-            S.SearchLocally = this.cbSearchLocally.Checked;
-            S.LeaveOriginals = this.cbLeaveOriginals.Checked;
-            S.CheckuTorrent = this.cbCheckuTorrent.Checked;
-            S.LookForDateInFilename = this.cbLookForAirdate.Checked;
+            S.SearchRSS = cbSearchRSS.Checked;
+            S.EpTBNs = cbEpTBNs.Checked;
+            S.NFOShows = cbNFOShows.Checked;
+            S.NFOEpisodes = cbNFOEpisodes.Checked;
+            S.KODIImages = cbKODIImages.Checked;
+            S.pyTivoMeta = cbMeta.Checked;
+            S.pyTivoMetaSubFolder = cbMetaSubfolder.Checked;
+            S.FolderJpg = cbFolderJpg.Checked;
+            S.RenameCheck = cbRenameCheck.Checked;
+            S.MissingCheck = cbMissing.Checked;
+            S.SearchLocally = cbSearchLocally.Checked;
+            S.LeaveOriginals = cbLeaveOriginals.Checked;
+            S.CheckuTorrent = cbCheckuTorrent.Checked;
+            S.LookForDateInFilename = cbLookForAirdate.Checked;
 
-            S.MonitorFolders = this.cbMonitorFolder.Checked;
-            S.RemoveDownloadDirectoriesFiles = this.cbCleanUpDownloadDir.Checked;
+            S.MonitorFolders = cbMonitorFolder.Checked;
+            S.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
 
-            S.EpJPGs = this.cbEpThumbJpg.Checked;
-            S.SeriesJpg = this.cbSeriesJpg.Checked;
-            S.Mede8erXML = this.cbXMLFiles.Checked;
-            S.ShrinkLargeMede8erImages = this.cbShrinkLarge.Checked;
-            S.FanArtJpg = this.cbFantArtJpg.Checked;
+            S.EpJPGs = cbEpThumbJpg.Checked;
+            S.SeriesJpg = cbSeriesJpg.Checked;
+            S.Mede8erXML = cbXMLFiles.Checked;
+            S.ShrinkLargeMede8erImages = cbShrinkLarge.Checked;
+            S.FanArtJpg = cbFantArtJpg.Checked;
 
-            S.Tidyup.DeleteEmpty = this.cbDeleteEmpty.Checked;
-            S.Tidyup.DeleteEmptyIsRecycle = this.cbRecycleNotDelete.Checked;
-            S.Tidyup.EmptyIgnoreWords = this.cbEmptyIgnoreWords.Checked;
-            S.Tidyup.EmptyIgnoreWordList = this.txtEmptyIgnoreWords.Text;
-            S.Tidyup.EmptyIgnoreExtensions = this.cbEmptyIgnoreExtensions.Checked;
-            S.Tidyup.EmptyIgnoreExtensionList = this.txtEmptyIgnoreExtensions.Text;
-            S.Tidyup.EmptyMaxSizeCheck = this.cbEmptyMaxSize.Checked;
-            int.TryParse(this.txtEmptyMaxSize.Text, out S.Tidyup.EmptyMaxSizeMB);
+            S.Tidyup.DeleteEmpty = cbDeleteEmpty.Checked;
+            S.Tidyup.DeleteEmptyIsRecycle = cbRecycleNotDelete.Checked;
+            S.Tidyup.EmptyIgnoreWords = cbEmptyIgnoreWords.Checked;
+            S.Tidyup.EmptyIgnoreWordList = txtEmptyIgnoreWords.Text;
+            S.Tidyup.EmptyIgnoreExtensions = cbEmptyIgnoreExtensions.Checked;
+            S.Tidyup.EmptyIgnoreExtensionList = txtEmptyIgnoreExtensions.Text;
+            S.Tidyup.EmptyMaxSizeCheck = cbEmptyMaxSize.Checked;
+            int.TryParse(txtEmptyMaxSize.Text, out S.Tidyup.EmptyMaxSizeMB);
 
-            if (this.rbFolderFanArt.Checked)
+            if (rbFolderFanArt.Checked)
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
-            else if (this.rbFolderBanner.Checked)
+            else if (rbFolderBanner.Checked)
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.Banner;
-            else if (this.rbFolderSeasonPoster.Checked)
+            else if (rbFolderSeasonPoster.Checked)
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.SeasonPoster;
             else
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.Poster;
 
-            if (this.rdoQuickScan.Checked)
+            if (rdoQuickScan.Checked)
                 S.MonitoredFoldersScanType = TVSettings.ScanType.Quick;
-            else if (this.rdoRecentScan.Checked)
+            else if (rdoRecentScan.Checked)
                 S.MonitoredFoldersScanType = TVSettings.ScanType.Recent;
             else
                 S.MonitoredFoldersScanType = TVSettings.ScanType.Full;
 
-            if (this.rdEden.Checked)
+            if (rdEden.Checked)
                 S.SelectedKODIType= TVSettings.KODIType.Eden;
-            else if (this.rdFrodo.Checked)
+            else if (rdFrodo.Checked)
                 S.SelectedKODIType = TVSettings.KODIType.Frodo;
             else
                 S.SelectedKODIType = TVSettings.KODIType.Both;
@@ -219,7 +219,7 @@ namespace TVRename
 
             try
             {
-                S.SampleFileMaxSizeMB = int.Parse(this.txtMaxSampleSize.Text);
+                S.SampleFileMaxSizeMB = int.Parse(txtMaxSampleSize.Text);
             }
             catch
             {
@@ -228,7 +228,7 @@ namespace TVRename
 
             try
             {
-                S.ParallelDownloads = int.Parse(this.txtParallelDownloads.Text);
+                S.ParallelDownloads = int.Parse(txtParallelDownloads.Text);
             }
             catch
             {
@@ -242,9 +242,9 @@ namespace TVRename
 
             // RSS URLs
             S.RSSURLs.Clear();
-            for (int i = 1; i < this.RSSGrid.RowsCount; i++)
+            for (int i = 1; i < RSSGrid.RowsCount; i++)
             {
-                string url = (string) (this.RSSGrid[i, 0].Value);
+                string url = (string) (RSSGrid[i, 0].Value);
                 if (!string.IsNullOrEmpty(url))
                     S.RSSURLs.Add(url);
             }
@@ -256,181 +256,181 @@ namespace TVRename
                     item.Tag is ShowStatusColoringType)
                 {
                     S.ShowStatusColors.Add(item.Tag as ShowStatusColoringType,
-                                           System.Drawing.ColorTranslator.FromHtml(item.SubItems[1].Text));
+                                           ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
             }
 
-            this.mDoc.SetDirty();
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            mDoc.SetDirty();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
-        private void Preferences_Load(object sender, System.EventArgs e)
+        private void Preferences_Load(object sender, EventArgs e)
         {
-            this.SetupLanguages();
+            SetupLanguages();
 
             TVSettings S = TVSettings.Instance;
             int r = 1;
 
             foreach (Replacement R in S.Replacements)
             {
-                this.AddNewReplacementRow(R.This, R.That, R.CaseInsensitive);
+                AddNewReplacementRow(R.This, R.That, R.CaseInsensitive);
                 r++;
             }
 
-            this.txtMaxSampleSize.Text = S.SampleFileMaxSizeMB.ToString();
+            txtMaxSampleSize.Text = S.SampleFileMaxSizeMB.ToString();
 
-            this.cbWTWRSS.Checked = S.ExportWTWRSS;
-            this.txtWTWRSS.Text = S.ExportWTWRSSTo;
-            this.txtWTWDays.Text = S.WTWRecentDays.ToString();
-            this.cbWTWXML.Checked = S.ExportWTWXML;
-            this.txtWTWXML.Text = S.ExportWTWXMLTo;
-            this.txtExportRSSMaxDays.Text = S.ExportRSSMaxDays.ToString();
-            this.txtExportRSSMaxShows.Text = S.ExportRSSMaxShows.ToString();
-            this.txtExportRSSDaysPast.Text = S.ExportRSSDaysPast.ToString();
+            cbWTWRSS.Checked = S.ExportWTWRSS;
+            txtWTWRSS.Text = S.ExportWTWRSSTo;
+            txtWTWDays.Text = S.WTWRecentDays.ToString();
+            cbWTWXML.Checked = S.ExportWTWXML;
+            txtWTWXML.Text = S.ExportWTWXMLTo;
+            txtExportRSSMaxDays.Text = S.ExportRSSMaxDays.ToString();
+            txtExportRSSMaxShows.Text = S.ExportRSSMaxShows.ToString();
+            txtExportRSSDaysPast.Text = S.ExportRSSDaysPast.ToString();
 
-            this.cbMissingXML.Checked = S.ExportMissingXML;
-            this.txtMissingXML.Text = S.ExportMissingXMLTo;
-            this.cbMissingCSV.Checked = S.ExportMissingCSV;
-            this.txtMissingCSV.Text = S.ExportMissingCSVTo;
+            cbMissingXML.Checked = S.ExportMissingXML;
+            txtMissingXML.Text = S.ExportMissingXMLTo;
+            cbMissingCSV.Checked = S.ExportMissingCSV;
+            txtMissingCSV.Text = S.ExportMissingCSVTo;
 
-            this.cbShowsTXT.Checked = S.ExportShowsTXT ;
-            this.txtShowsTXTTo.Text = S.ExportShowsTXTTo;
+            cbShowsTXT.Checked = S.ExportShowsTXT ;
+            txtShowsTXTTo.Text = S.ExportShowsTXTTo;
 
 
-            this.cbRenamingXML.Checked = S.ExportRenamingXML;
-            this.txtRenamingXML.Text = S.ExportRenamingXMLTo;
+            cbRenamingXML.Checked = S.ExportRenamingXML;
+            txtRenamingXML.Text = S.ExportRenamingXMLTo;
 
-            this.cbFOXML.Checked = S.ExportFOXML;
-            this.txtFOXML.Text = S.ExportFOXMLTo;
+            cbFOXML.Checked = S.ExportFOXML;
+            txtFOXML.Text = S.ExportFOXMLTo;
 
-            this.cbStartupTab.SelectedIndex = S.StartupTab;
-            this.cbNotificationIcon.Checked = S.NotificationAreaIcon;
-            this.txtVideoExtensions.Text = S.GetVideoExtensionsString();
-            this.txtOtherExtensions.Text = S.GetOtherExtensionsString();
+            cbStartupTab.SelectedIndex = S.StartupTab;
+            cbNotificationIcon.Checked = S.NotificationAreaIcon;
+            txtVideoExtensions.Text = S.GetVideoExtensionsString();
+            txtOtherExtensions.Text = S.GetOtherExtensionsString();
 
-            this.cbKeepTogether.Checked = S.KeepTogether;
-            this.cbKeepTogether_CheckedChanged(null, null);
+            cbKeepTogether.Checked = S.KeepTogether;
+            cbKeepTogether_CheckedChanged(null, null);
 
-            this.cbLeadingZero.Checked = S.LeadingZeroOnSeason;
-            this.chkShowInTaskbar.Checked = S.ShowInTaskbar;
-            this.cbTxtToSub.Checked = S.RenameTxtToSub;
-            this.cbShowEpisodePictures.Checked = S.ShowEpisodePictures;
-            this.cbAutoCreateFolders.Checked = S.AutoCreateFolders; 
-            this.cbAutoSelInMyShows.Checked = S.AutoSelectShowInMyShows;
-            this.txtSpecialsFolderName.Text = S.SpecialsFolderName;
-            this.cbForceLower.Checked = S.ForceLowercaseFilenames;
-            this.cbIgnoreSamples.Checked = S.IgnoreSamples;
-            this.txtRSSuTorrentPath.Text = S.uTorrentPath;
-            this.txtUTResumeDatPath.Text = S.ResumeDatPath;
-            this.txtSABHostPort.Text = S.SABHostPort;
-            this.txtSABAPIKey.Text = S.SABAPIKey;
-            this.cbCheckSABnzbd.Checked = S.CheckSABnzbd;
+            cbLeadingZero.Checked = S.LeadingZeroOnSeason;
+            chkShowInTaskbar.Checked = S.ShowInTaskbar;
+            cbTxtToSub.Checked = S.RenameTxtToSub;
+            cbShowEpisodePictures.Checked = S.ShowEpisodePictures;
+            cbAutoCreateFolders.Checked = S.AutoCreateFolders; 
+            cbAutoSelInMyShows.Checked = S.AutoSelectShowInMyShows;
+            txtSpecialsFolderName.Text = S.SpecialsFolderName;
+            cbForceLower.Checked = S.ForceLowercaseFilenames;
+            cbIgnoreSamples.Checked = S.IgnoreSamples;
+            txtRSSuTorrentPath.Text = S.uTorrentPath;
+            txtUTResumeDatPath.Text = S.ResumeDatPath;
+            txtSABHostPort.Text = S.SABHostPort;
+            txtSABAPIKey.Text = S.SABAPIKey;
+            cbCheckSABnzbd.Checked = S.CheckSABnzbd;
 
-            this.txtParallelDownloads.Text = S.ParallelDownloads.ToString();
+            txtParallelDownloads.Text = S.ParallelDownloads.ToString();
 
-            this.cbSearchRSS.Checked = S.SearchRSS;
-            this.cbEpTBNs.Checked = S.EpTBNs;
-            this.cbNFOShows.Checked = S.NFOShows;
-            this.cbNFOEpisodes.Checked = S.NFOEpisodes;
-            this.cbKODIImages.Checked = S.KODIImages;
-            this.cbMeta.Checked = S.pyTivoMeta;
-            this.cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
-            this.cbFolderJpg.Checked = S.FolderJpg;
-            this.cbRenameCheck.Checked = S.RenameCheck;
-            this.cbCheckuTorrent.Checked = S.CheckuTorrent;
-            this.cbLookForAirdate.Checked = S.LookForDateInFilename;
-            this.cbMonitorFolder.Checked = S.MonitorFolders;
-            this.cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
-            this.cbMissing.Checked = S.MissingCheck;
-            this.cbSearchLocally.Checked = S.SearchLocally;
-            this.cbLeaveOriginals.Checked = S.LeaveOriginals;
-            this.EnterPreferredLanguage = S.PreferredLanguage;
+            cbSearchRSS.Checked = S.SearchRSS;
+            cbEpTBNs.Checked = S.EpTBNs;
+            cbNFOShows.Checked = S.NFOShows;
+            cbNFOEpisodes.Checked = S.NFOEpisodes;
+            cbKODIImages.Checked = S.KODIImages;
+            cbMeta.Checked = S.pyTivoMeta;
+            cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
+            cbFolderJpg.Checked = S.FolderJpg;
+            cbRenameCheck.Checked = S.RenameCheck;
+            cbCheckuTorrent.Checked = S.CheckuTorrent;
+            cbLookForAirdate.Checked = S.LookForDateInFilename;
+            cbMonitorFolder.Checked = S.MonitorFolders;
+            cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
+            cbMissing.Checked = S.MissingCheck;
+            cbSearchLocally.Checked = S.SearchLocally;
+            cbLeaveOriginals.Checked = S.LeaveOriginals;
+            EnterPreferredLanguage = S.PreferredLanguage;
 
-            this.cbEpThumbJpg.Checked = S.EpJPGs;
-            this.cbSeriesJpg.Checked = S.SeriesJpg;
-            this.cbXMLFiles.Checked = S.Mede8erXML;
-            this.cbShrinkLarge.Checked = S.ShrinkLargeMede8erImages;
-            this.cbFantArtJpg.Checked = S.FanArtJpg;
+            cbEpThumbJpg.Checked = S.EpJPGs;
+            cbSeriesJpg.Checked = S.SeriesJpg;
+            cbXMLFiles.Checked = S.Mede8erXML;
+            cbShrinkLarge.Checked = S.ShrinkLargeMede8erImages;
+            cbFantArtJpg.Checked = S.FanArtJpg;
 
 #if DEBUG
             System.Diagnostics.Debug.Assert(S.Tidyup != null);
 #endif
-            this.cbDeleteEmpty.Checked = S.Tidyup.DeleteEmpty;
-            this.cbRecycleNotDelete.Checked = S.Tidyup.DeleteEmptyIsRecycle;
-            this.cbEmptyIgnoreWords.Checked = S.Tidyup.EmptyIgnoreWords;
-            this.txtEmptyIgnoreWords.Text = S.Tidyup.EmptyIgnoreWordList;
-            this.cbEmptyIgnoreExtensions.Checked = S.Tidyup.EmptyIgnoreExtensions;
-            this.txtEmptyIgnoreExtensions.Text = S.Tidyup.EmptyIgnoreExtensionList;
-            this.cbEmptyMaxSize.Checked = S.Tidyup.EmptyMaxSizeCheck;
-            this.txtEmptyMaxSize.Text = S.Tidyup.EmptyMaxSizeMB.ToString();
+            cbDeleteEmpty.Checked = S.Tidyup.DeleteEmpty;
+            cbRecycleNotDelete.Checked = S.Tidyup.DeleteEmptyIsRecycle;
+            cbEmptyIgnoreWords.Checked = S.Tidyup.EmptyIgnoreWords;
+            txtEmptyIgnoreWords.Text = S.Tidyup.EmptyIgnoreWordList;
+            cbEmptyIgnoreExtensions.Checked = S.Tidyup.EmptyIgnoreExtensions;
+            txtEmptyIgnoreExtensions.Text = S.Tidyup.EmptyIgnoreExtensionList;
+            cbEmptyMaxSize.Checked = S.Tidyup.EmptyMaxSizeCheck;
+            txtEmptyMaxSize.Text = S.Tidyup.EmptyMaxSizeMB.ToString();
 
 
             switch (S.WTWDoubleClick)
             {
                 case TVSettings.WTWDoubleClickAction.Search:
                 default:
-                    this.rbWTWSearch.Checked = true;
+                    rbWTWSearch.Checked = true;
                     break;
                 case TVSettings.WTWDoubleClickAction.Scan:
-                    this.rbWTWScan.Checked = true;
+                    rbWTWScan.Checked = true;
                     break;
             }
 
-            this.EnableDisable(null, null);
-            this.ScanOptEnableDisable();
+            EnableDisable(null, null);
+            ScanOptEnableDisable();
 
-            this.FillSearchFolderList();
+            FillSearchFolderList();
 
             foreach (string s in S.RSSURLs)
-                this.AddNewRSSRow(s);
+                AddNewRSSRow(s);
 
             switch (S.FolderJpgIs)
             {
                 case TVSettings.FolderJpgIsType.FanArt:
-                    this.rbFolderFanArt.Checked = true;
+                    rbFolderFanArt.Checked = true;
                     break;
                 case TVSettings.FolderJpgIsType.Banner:
-                    this.rbFolderBanner.Checked = true;
+                    rbFolderBanner.Checked = true;
                     break;
                 case TVSettings.FolderJpgIsType.SeasonPoster:
-                    this.rbFolderSeasonPoster.Checked = true;
+                    rbFolderSeasonPoster.Checked = true;
                     break;
                 default:
-                    this.rbFolderPoster.Checked = true;
+                    rbFolderPoster.Checked = true;
                     break;
             }
 
             switch (S.MonitoredFoldersScanType)
             {
                 case TVSettings.ScanType.Quick:
-                    this.rdoQuickScan.Checked = true;
+                    rdoQuickScan.Checked = true;
                     break;
                 case TVSettings.ScanType.Recent:
-                    this.rdoRecentScan.Checked = true;
+                    rdoRecentScan.Checked = true;
                     break;
                 default:
-                    this.rdoFullScan.Checked = true;
+                    rdoFullScan.Checked = true;
                     break;
             }
 
             switch (S.SelectedKODIType)
             {
                 case TVSettings.KODIType.Eden:
-                    this.rdEden.Checked = true;
+                    rdEden.Checked = true;
                     break;
                 case TVSettings.KODIType.Frodo:
-                    this.rdFrodo.Checked = true;
+                    rdFrodo.Checked = true;
                     break;
                 default:
-                    this.rdBoth.Checked = true;
+                    rdBoth.Checked = true;
                     break;
             }
 
             if (S.ShowStatusColors != null)
             {
                 foreach (
-                    System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in
+                    KeyValuePair<ShowStatusColoringType, Color> showStatusColor in
                         S.ShowStatusColors)
                 {
                     ListViewItem item = new ListViewItem();
@@ -438,7 +438,7 @@ namespace TVRename
                     item.Tag = showStatusColor.Key;
                     item.SubItems.Add(TranslateColorToHtml(showStatusColor.Value));
                     item.ForeColor = showStatusColor.Value;
-                    this.lvwDefinedColors.Items.Add(item);
+                    lvwDefinedColors.Items.Add(item);
                 }
             }
 
@@ -455,11 +455,11 @@ namespace TVRename
             {
                 ShowStatusColoringType t = new ShowStatusColoringType(true, true, status);
                 //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Show Seasons Status: " + status, new ShowStatusColoringType(true, true, status));
-                this.cboShowStatus.Items.Add(t);
+                cboShowStatus.Items.Add(t);
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
-            System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            List<ShowItem> shows = this.mDoc.GetShowItems(false);
+            List<string> showStatusList = new List<string>();
+            List<ShowItem> shows = mDoc.GetShowItems(false);
             foreach (ShowItem show in shows)
             {
                 if(!showStatusList.Contains(show.ShowStatus))
@@ -469,7 +469,7 @@ namespace TVRename
             {
                 ShowStatusColoringType t = new ShowStatusColoringType(false, true, status);
                 //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Show  Status: " + status, new ShowStatusColoringType(false, true, status));
-                this.cboShowStatus.Items.Add(t);
+                cboShowStatus.Items.Add(t);
             }
             //this.cboShowStatus.Items.Add(new System.Collections.Generic.KeyValuePair<string, object>("Show Seasons Status: Custom", null));
             // Seasons
@@ -477,186 +477,186 @@ namespace TVRename
             {
                 ShowStatusColoringType t = new ShowStatusColoringType(true, false, status);
                 //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Seasons Status: " + status, new ShowStatusColoringType(true, false, status));
-                this.cboShowStatus.Items.Add(t);
+                cboShowStatus.Items.Add(t);
                 //this.cboShowStatus.Items.Add("Seasons Status: " + status);
             }
-            this.cboShowStatus.DisplayMember = "Text";
+            cboShowStatus.DisplayMember = "Text";
             //this.cboShowStatus.ValueMember = ";
         }
 
         private void Browse(TextBox txt, string DefaultExt, int FilterIndex)
         {
             //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5
-            this.saveFile.FileName = txt.Text;
-            this.saveFile.DefaultExt = DefaultExt;
-            this.saveFile.FilterIndex = FilterIndex;
-            if (this.saveFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                txt.Text = this.saveFile.FileName;
+            saveFile.FileName = txt.Text;
+            saveFile.DefaultExt = DefaultExt;
+            saveFile.FilterIndex = FilterIndex;
+            if (saveFile.ShowDialog() == DialogResult.OK)
+                txt.Text = saveFile.FileName;
         }
 
 
-        private void bnBrowseWTWXML_Click(object sender, System.EventArgs e)
+        private void bnBrowseWTWXML_Click(object sender, EventArgs e)
         {
-            this.Browse(this.txtWTWXML,"xml",2);
+            Browse(txtWTWXML,"xml",2);
         }
 
-        private void txtNumberOnlyKeyPress(object sender, System.Windows.Forms.KeyPressEventArgs e)
+        private void txtNumberOnlyKeyPress(object sender, KeyPressEventArgs e)
         {
             // digits only
             if ((e.KeyChar >= 32) && (!Char.IsDigit(e.KeyChar)))
                 e.Handled = true;
         }
 
-        private void CancelButton_Click(object sender, System.EventArgs e)
+        private void CancelButton_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
-        private void cbNotificationIcon_CheckedChanged(object sender, System.EventArgs e)
+        private void cbNotificationIcon_CheckedChanged(object sender, EventArgs e)
         {
-            if (!this.cbNotificationIcon.Checked)
-                this.chkShowInTaskbar.Checked = true;
+            if (!cbNotificationIcon.Checked)
+                chkShowInTaskbar.Checked = true;
         }
 
-        private void chkShowInTaskbar_CheckedChanged(object sender, System.EventArgs e)
+        private void chkShowInTaskbar_CheckedChanged(object sender, EventArgs e)
         {
-            if (!this.chkShowInTaskbar.Checked)
-                this.cbNotificationIcon.Checked = true;
+            if (!chkShowInTaskbar.Checked)
+                cbNotificationIcon.Checked = true;
         }
 
-        private void cbKeepTogether_CheckedChanged(object sender, System.EventArgs e)
+        private void cbKeepTogether_CheckedChanged(object sender, EventArgs e)
         {
-            this.cbTxtToSub.Enabled = this.cbKeepTogether.Checked;
+            cbTxtToSub.Enabled = cbKeepTogether.Checked;
         }
 
-        private void bnBrowseMissingCSV_Click(object sender, System.EventArgs e)
+        private void bnBrowseMissingCSV_Click(object sender, EventArgs e)
         {
-            this.Browse(this.txtMissingCSV,"csv",3);
+            Browse(txtMissingCSV,"csv",3);
         }
 
 
-        private void bnBrowseWTWRSS_Click(object sender, System.EventArgs e)
+        private void bnBrowseWTWRSS_Click(object sender, EventArgs e)
         {
-            this.Browse(this.txtWTWRSS, "rss", 1);
+            Browse(txtWTWRSS, "rss", 1);
         }
 
-        private void bnBrowseMissingXML_Click(object sender, System.EventArgs e)
+        private void bnBrowseMissingXML_Click(object sender, EventArgs e)
         {
-            this.Browse(this.txtMissingXML,"xml",2);
+            Browse(txtMissingXML,"xml",2);
         }
 
         private void bnBrowseShowsTXT_Click(object sender, EventArgs e)
         {
-            this.Browse(this.txtShowsTXTTo, "txt", 4);
+            Browse(txtShowsTXTTo, "txt", 4);
         }
 
-        private void bnBrowseRenamingXML_Click(object sender, System.EventArgs e)
+        private void bnBrowseRenamingXML_Click(object sender, EventArgs e)
         {
-            this.Browse(this.txtRenamingXML,"xml",2);
+            Browse(txtRenamingXML,"xml",2);
         }
 
-        private void bnBrowseFOXML_Click(object sender, System.EventArgs e)
+        private void bnBrowseFOXML_Click(object sender, EventArgs e)
         {
-            this.Browse(this.txtFOXML,"xml",2);
+            Browse(txtFOXML,"xml",2);
         }
 
-        private void EnableDisable(object sender, System.EventArgs e)
+        private void EnableDisable(object sender, EventArgs e)
         {
-            this.txtWTWRSS.Enabled = this.cbWTWRSS.Checked;
-            this.bnBrowseWTWRSS.Enabled = this.cbWTWRSS.Checked;
+            txtWTWRSS.Enabled = cbWTWRSS.Checked;
+            bnBrowseWTWRSS.Enabled = cbWTWRSS.Checked;
 
-            this.txtWTWXML.Enabled = this.cbWTWXML.Checked;
-            this.bnBrowseWTWXML.Enabled = this.cbWTWXML.Checked;
+            txtWTWXML.Enabled = cbWTWXML.Checked;
+            bnBrowseWTWXML.Enabled = cbWTWXML.Checked;
 
             bool wtw;
-            if ((this.cbWTWRSS.Checked) || (this.cbWTWXML.Checked))
+            if ((cbWTWRSS.Checked) || (cbWTWXML.Checked))
                 wtw = true;
             else
                 wtw = false;
 
-            this.label4.Enabled = wtw;
-            this.label15.Enabled = wtw;
-            this.label16.Enabled = wtw;
-            this.label17.Enabled = wtw;
-            this.txtExportRSSMaxDays.Enabled = wtw;
-            this.txtExportRSSMaxShows.Enabled = wtw;
-            this.txtExportRSSDaysPast.Enabled = wtw;
+            label4.Enabled = wtw;
+            label15.Enabled = wtw;
+            label16.Enabled = wtw;
+            label17.Enabled = wtw;
+            txtExportRSSMaxDays.Enabled = wtw;
+            txtExportRSSMaxShows.Enabled = wtw;
+            txtExportRSSDaysPast.Enabled = wtw;
 
-            bool fo = this.cbFOXML.Checked;
-            this.txtFOXML.Enabled = fo;
-            this.bnBrowseFOXML.Enabled = fo;
+            bool fo = cbFOXML.Checked;
+            txtFOXML.Enabled = fo;
+            bnBrowseFOXML.Enabled = fo;
 
-            bool stxt = this.cbShowsTXT.Checked;
-            this.txtShowsTXTTo.Enabled = stxt;
-            this.bnBrowseShowsTXT.Enabled = stxt;
+            bool stxt = cbShowsTXT.Checked;
+            txtShowsTXTTo.Enabled = stxt;
+            bnBrowseShowsTXT.Enabled = stxt;
 
-            bool ren = this.cbRenamingXML.Checked;
-            this.txtRenamingXML.Enabled = ren;
-            this.bnBrowseRenamingXML.Enabled = ren;
+            bool ren = cbRenamingXML.Checked;
+            txtRenamingXML.Enabled = ren;
+            bnBrowseRenamingXML.Enabled = ren;
 
-            bool misx = this.cbMissingXML.Checked;
-            this.txtMissingXML.Enabled = misx;
-            this.bnBrowseMissingXML.Enabled = misx;
+            bool misx = cbMissingXML.Checked;
+            txtMissingXML.Enabled = misx;
+            bnBrowseMissingXML.Enabled = misx;
 
-            bool misc = this.cbMissingCSV.Checked;
-            this.txtMissingCSV.Enabled = misc;
-            this.bnBrowseMissingCSV.Enabled = misc;
+            bool misc = cbMissingCSV.Checked;
+            txtMissingCSV.Enabled = misc;
+            bnBrowseMissingCSV.Enabled = misc;
         }
 
-        private void bnAddSearchFolder_Click(object sender, System.EventArgs e)
+        private void bnAddSearchFolder_Click(object sender, EventArgs e)
         {
-            int n = this.lbSearchFolders.SelectedIndex;
-            this.folderBrowser.SelectedPath = n != -1 ? this.mDoc.SearchFolders[n] : "";
+            int n = lbSearchFolders.SelectedIndex;
+            folderBrowser.SelectedPath = n != -1 ? mDoc.SearchFolders[n] : "";
 
-            if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (folderBrowser.ShowDialog() == DialogResult.OK)
             {
-                this.mDoc.SearchFolders.Add(this.folderBrowser.SelectedPath);
-                this.mDoc.SetDirty();
+                mDoc.SearchFolders.Add(folderBrowser.SelectedPath);
+                mDoc.SetDirty();
             }
 
-            this.FillSearchFolderList();
+            FillSearchFolderList();
         }
 
-        private void bnRemoveSearchFolder_Click(object sender, System.EventArgs e)
+        private void bnRemoveSearchFolder_Click(object sender, EventArgs e)
         {
-            int n = this.lbSearchFolders.SelectedIndex;
+            int n = lbSearchFolders.SelectedIndex;
             if (n == -1)
                 return;
 
-            this.mDoc.SearchFolders.RemoveAt(n);
-            this.mDoc.SetDirty();
+            mDoc.SearchFolders.RemoveAt(n);
+            mDoc.SetDirty();
 
-            this.FillSearchFolderList();
+            FillSearchFolderList();
         }
 
-        private void bnOpenSearchFolder_Click(object sender, System.EventArgs e)
+        private void bnOpenSearchFolder_Click(object sender, EventArgs e)
         {
-            int n = this.lbSearchFolders.SelectedIndex;
+            int n = lbSearchFolders.SelectedIndex;
             if (n == -1)
                 return;
-            Helpers.SysOpen(this.mDoc.SearchFolders[n]);
+            Helpers.SysOpen(mDoc.SearchFolders[n]);
         }
 
         private void FillSearchFolderList()
         {
-            this.lbSearchFolders.Items.Clear();
-            this.mDoc.SearchFolders.Sort();
-            foreach (string efi in this.mDoc.SearchFolders)
-                this.lbSearchFolders.Items.Add(efi);
+            lbSearchFolders.Items.Clear();
+            mDoc.SearchFolders.Sort();
+            foreach (string efi in mDoc.SearchFolders)
+                lbSearchFolders.Items.Add(efi);
         }
 
-        private void lbSearchFolders_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void lbSearchFolders_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
-                this.bnRemoveSearchFolder_Click(null, null);
+                bnRemoveSearchFolder_Click(null, null);
         }
 
-        private void lbSearchFolders_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
+        private void lbSearchFolders_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lbSearchFolders_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+        private void lbSearchFolders_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             for (int i = 0; i < files.Length; i++)
@@ -666,30 +666,30 @@ namespace TVRename
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
-                        this.mDoc.SearchFolders.Add(path.ToLower());
+                        mDoc.SearchFolders.Add(path.ToLower());
                 }
                 catch
                 {
                 }
             }
-            this.mDoc.SetDirty();
-            this.FillSearchFolderList();
+            mDoc.SetDirty();
+            FillSearchFolderList();
         }
 
-        private void bnRSSBrowseuTorrent_Click(object sender, System.EventArgs e)
+        private void bnRSSBrowseuTorrent_Click(object sender, EventArgs e)
         {
-            this.openFile.FileName = this.txtRSSuTorrentPath.Text;
-            this.openFile.Filter = "utorrent.exe|utorrent.exe|All Files (*.*)|*.*";
-            if (this.openFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                this.txtRSSuTorrentPath.Text = this.openFile.FileName;
+            openFile.FileName = txtRSSuTorrentPath.Text;
+            openFile.Filter = "utorrent.exe|utorrent.exe|All Files (*.*)|*.*";
+            if (openFile.ShowDialog() == DialogResult.OK)
+                txtRSSuTorrentPath.Text = openFile.FileName;
         }
 
-        private void bnUTBrowseResumeDat_Click(object sender, System.EventArgs e)
+        private void bnUTBrowseResumeDat_Click(object sender, EventArgs e)
         {
-            this.openFile.FileName = this.txtUTResumeDatPath.Text;
-            this.openFile.Filter = "resume.dat|resume.dat|All Files (*.*)|*.*";
-            if (this.openFile.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                this.txtUTResumeDatPath.Text = this.openFile.FileName;
+            openFile.FileName = txtUTResumeDatPath.Text;
+            openFile.Filter = "resume.dat|resume.dat|All Files (*.*)|*.*";
+            if (openFile.ShowDialog() == DialogResult.OK)
+                txtUTResumeDatPath.Text = openFile.FileName;
         }
 
         private void SetupReplacementsGrid()
@@ -701,60 +701,60 @@ namespace TVRename
                                                              TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
                                                          };
 
-            this.ReplacementsGrid.Columns.Clear();
-            this.ReplacementsGrid.Rows.Clear();
+            ReplacementsGrid.Columns.Clear();
+            ReplacementsGrid.Rows.Clear();
 
-            this.ReplacementsGrid.RowsCount = 1;
-            this.ReplacementsGrid.ColumnsCount = 3;
-            this.ReplacementsGrid.FixedRows = 1;
-            this.ReplacementsGrid.FixedColumns = 0;
-            this.ReplacementsGrid.Selection.EnableMultiSelection = false;
+            ReplacementsGrid.RowsCount = 1;
+            ReplacementsGrid.ColumnsCount = 3;
+            ReplacementsGrid.FixedRows = 1;
+            ReplacementsGrid.FixedColumns = 0;
+            ReplacementsGrid.Selection.EnableMultiSelection = false;
 
-            this.ReplacementsGrid.Columns[0].AutoSizeMode = SourceGrid.AutoSizeMode.EnableStretch | SourceGrid.AutoSizeMode.EnableAutoSize;
-            this.ReplacementsGrid.Columns[1].AutoSizeMode = SourceGrid.AutoSizeMode.EnableStretch | SourceGrid.AutoSizeMode.EnableAutoSize;
-            this.ReplacementsGrid.Columns[2].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize;
+            ReplacementsGrid.Columns[0].AutoSizeMode = SourceGrid.AutoSizeMode.EnableStretch | SourceGrid.AutoSizeMode.EnableAutoSize;
+            ReplacementsGrid.Columns[1].AutoSizeMode = SourceGrid.AutoSizeMode.EnableStretch | SourceGrid.AutoSizeMode.EnableAutoSize;
+            ReplacementsGrid.Columns[2].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize;
 
-            this.ReplacementsGrid.Columns[2].Width = 80;
+            ReplacementsGrid.Columns[2].Width = 80;
 
-            this.ReplacementsGrid.AutoStretchColumnsToFitWidth = true;
-            this.ReplacementsGrid.Columns.StretchToFit();
+            ReplacementsGrid.AutoStretchColumnsToFitWidth = true;
+            ReplacementsGrid.Columns.StretchToFit();
 
-            this.ReplacementsGrid.Columns[0].Width = this.ReplacementsGrid.Columns[0].Width - 8; // allow for scrollbar
-            this.ReplacementsGrid.Columns[1].Width = this.ReplacementsGrid.Columns[1].Width - 8;
+            ReplacementsGrid.Columns[0].Width = ReplacementsGrid.Columns[0].Width - 8; // allow for scrollbar
+            ReplacementsGrid.Columns[1].Width = ReplacementsGrid.Columns[1].Width - 8;
 
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            SourceGrid.Cells.ColumnHeader h;
-            h = new SourceGrid.Cells.ColumnHeader("Search");
+            ColumnHeader h;
+            h = new ColumnHeader("Search");
             h.AutomaticSortEnabled = false;
-            this.ReplacementsGrid[0, 0] = h;
-            this.ReplacementsGrid[0, 0].View = titleModel;
+            ReplacementsGrid[0, 0] = h;
+            ReplacementsGrid[0, 0].View = titleModel;
 
-            h = new SourceGrid.Cells.ColumnHeader("Replace");
+            h = new ColumnHeader("Replace");
             h.AutomaticSortEnabled = false;
-            this.ReplacementsGrid[0, 1] = h;
-            this.ReplacementsGrid[0, 1].View = titleModel;
+            ReplacementsGrid[0, 1] = h;
+            ReplacementsGrid[0, 1].View = titleModel;
 
-            h = new SourceGrid.Cells.ColumnHeader("Case Ins.");
+            h = new ColumnHeader("Case Ins.");
             h.AutomaticSortEnabled = false;
-            this.ReplacementsGrid[0, 2] = h;
-            this.ReplacementsGrid[0, 2].View = titleModel;
+            ReplacementsGrid[0, 2] = h;
+            ReplacementsGrid[0, 2].View = titleModel;
         }
 
         private void AddNewReplacementRow(string from, string to, bool ins)
         {
             SourceGrid.Cells.Views.Cell roModel = new SourceGrid.Cells.Views.Cell {ForeColor = Color.Gray};
 
-            int r = this.ReplacementsGrid.RowsCount;
-            this.ReplacementsGrid.RowsCount = r + 1;
-            this.ReplacementsGrid[r, 0] = new SourceGrid.Cells.Cell(from, typeof(string));
-            this.ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
-            this.ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
+            int r = ReplacementsGrid.RowsCount;
+            ReplacementsGrid.RowsCount = r + 1;
+            ReplacementsGrid[r, 0] = new SourceGrid.Cells.Cell(from, typeof(string));
+            ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
+            ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
             if (!string.IsNullOrEmpty(from) && (TVSettings.CompulsoryReplacements().IndexOf(from) != -1))
             {
-                this.ReplacementsGrid[r, 0].Editor.EnableEdit = false;
-                this.ReplacementsGrid[r, 0].View = roModel;
+                ReplacementsGrid[r, 0].Editor.EnableEdit = false;
+                ReplacementsGrid[r, 0].View = roModel;
             }
         }
 
@@ -767,65 +767,65 @@ namespace TVRename
                                                              TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
                                                          };
 
-            this.RSSGrid.Columns.Clear();
-            this.RSSGrid.Rows.Clear();
+            RSSGrid.Columns.Clear();
+            RSSGrid.Rows.Clear();
 
-            this.RSSGrid.RowsCount = 1;
-            this.RSSGrid.ColumnsCount = 1;
-            this.RSSGrid.FixedRows = 1;
-            this.RSSGrid.FixedColumns = 0;
-            this.RSSGrid.Selection.EnableMultiSelection = false;
+            RSSGrid.RowsCount = 1;
+            RSSGrid.ColumnsCount = 1;
+            RSSGrid.FixedRows = 1;
+            RSSGrid.FixedColumns = 0;
+            RSSGrid.Selection.EnableMultiSelection = false;
 
-            this.RSSGrid.Columns[0].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize | SourceGrid.AutoSizeMode.EnableStretch;
+            RSSGrid.Columns[0].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize | SourceGrid.AutoSizeMode.EnableStretch;
 
-            this.RSSGrid.AutoStretchColumnsToFitWidth = true;
-            this.RSSGrid.Columns.StretchToFit();
+            RSSGrid.AutoStretchColumnsToFitWidth = true;
+            RSSGrid.Columns.StretchToFit();
 
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            ColumnHeader h = new SourceGrid.Cells.ColumnHeader("URL");
+            ColumnHeader h = new ColumnHeader("URL");
             h.AutomaticSortEnabled = false;
-            this.RSSGrid[0, 0] = h;
-            this.RSSGrid[0, 0].View = titleModel;
+            RSSGrid[0, 0] = h;
+            RSSGrid[0, 0].View = titleModel;
         }
 
         private void AddNewRSSRow(string text)
         {
-            int r = this.RSSGrid.RowsCount;
-            this.RSSGrid.RowsCount = r + 1;
-            this.RSSGrid[r, 0] = new SourceGrid.Cells.Cell(text, typeof(string));
+            int r = RSSGrid.RowsCount;
+            RSSGrid.RowsCount = r + 1;
+            RSSGrid[r, 0] = new SourceGrid.Cells.Cell(text, typeof(string));
         }
 
-        private void bnRSSAdd_Click(object sender, System.EventArgs e)
+        private void bnRSSAdd_Click(object sender, EventArgs e)
         {
-            this.AddNewRSSRow(null);
+            AddNewRSSRow(null);
         }
 
-        private void bnRSSRemove_Click(object sender, System.EventArgs e)
-        {
-            // multiselection is off, so we can cheat...
-            int[] rowsIndex = this.RSSGrid.Selection.GetSelectionRegion().GetRowsIndex();
-            if (rowsIndex.Length > 0)
-                this.RSSGrid.Rows.Remove(rowsIndex[0]);
-        }
-
-        private void bnRSSGo_Click(object sender, System.EventArgs e)
+        private void bnRSSRemove_Click(object sender, EventArgs e)
         {
             // multiselection is off, so we can cheat...
-            int[] rowsIndex = this.RSSGrid.Selection.GetSelectionRegion().GetRowsIndex();
+            int[] rowsIndex = RSSGrid.Selection.GetSelectionRegion().GetRowsIndex();
+            if (rowsIndex.Length > 0)
+                RSSGrid.Rows.Remove(rowsIndex[0]);
+        }
+
+        private void bnRSSGo_Click(object sender, EventArgs e)
+        {
+            // multiselection is off, so we can cheat...
+            int[] rowsIndex = RSSGrid.Selection.GetSelectionRegion().GetRowsIndex();
 
             if (rowsIndex.Length > 0)
-                Helpers.SysOpen((string) (this.RSSGrid[rowsIndex[0], 0].Value));
+                Helpers.SysOpen((string) (RSSGrid[rowsIndex[0], 0].Value));
         }
 
         private void SetupLanguages()
         {
-            this.cbLanguages.Items.Clear();
-            this.cbLanguages.Items.Add("Please wait...");
-            this.cbLanguages.SelectedIndex = 0;
-            this.cbLanguages.Update();
-            this.cbLanguages.Enabled = false;
+            cbLanguages.Items.Clear();
+            cbLanguages.Items.Add("Please wait...");
+            cbLanguages.SelectedIndex = 0;
+            cbLanguages.Update();
+            cbLanguages.Enabled = false;
 
             LoadLanguageThread = new Thread(LoadLanguage);
             LoadLanguageThread.Start();
@@ -848,7 +848,7 @@ namespace TVRename
             }
             TheTVDB.Instance.Unlock("Preferences-LoadLanguages");
             if (!aborted)
-                this.BeginInvoke(LoadLanguageDone);
+                BeginInvoke(LoadLanguageDone);
         }
 
         private void LoadLanguageDoneFunc()
@@ -860,20 +860,20 @@ namespace TVRename
         private void FillLanguageList()
         {
             TheTVDB.Instance.GetLock( "Preferences-FLL");
-            this.cbLanguages.BeginUpdate();
-            this.cbLanguages.Items.Clear();
+            cbLanguages.BeginUpdate();
+            cbLanguages.Items.Clear();
 
             String pref = "";
             foreach (Language l in TheTVDB.Instance.LanguageList)
             {
-                this.cbLanguages.Items.Add(l.name);
+                cbLanguages.Items.Add(l.name);
 
                 if (EnterPreferredLanguage == l.abbreviation)
                     pref = l.name;
             }
-            this.cbLanguages.EndUpdate();
-            this.cbLanguages.Text = pref;
-            this.cbLanguages.Enabled = true;
+            cbLanguages.EndUpdate();
+            cbLanguages.Text = pref;
+            cbLanguages.Enabled = true;
 
             TheTVDB.Instance.Unlock("Preferences-FLL");
         }
@@ -905,78 +905,78 @@ namespace TVRename
             }
         }*/
 
-        private void cbMissing_CheckedChanged(object sender, System.EventArgs e)
+        private void cbMissing_CheckedChanged(object sender, EventArgs e)
         {
-            this.ScanOptEnableDisable();
+            ScanOptEnableDisable();
         }
 
         private void ScanOptEnableDisable()
         {
-            bool e = this.cbMissing.Checked;
-            this.tbMediaCenter.Enabled = e;
+            bool e = cbMissing.Checked;
+            tbMediaCenter.Enabled = e;
 
-            this.cbSearchRSS.Enabled = e;
-            this.cbSearchLocally.Enabled = e;
-            this.cbCheckuTorrent.Enabled = e;
+            cbSearchRSS.Enabled = e;
+            cbSearchLocally.Enabled = e;
+            cbCheckuTorrent.Enabled = e;
 
-            bool e2 = e && this.cbSearchLocally.Checked;
-            this.cbLeaveOriginals.Enabled = e2;
-            this.cbCheckSABnzbd.Enabled = e2;
+            bool e2 = e && cbSearchLocally.Checked;
+            cbLeaveOriginals.Enabled = e2;
+            cbCheckSABnzbd.Enabled = e2;
         }
 
-        private void cbSearchLocally_CheckedChanged(object sender, System.EventArgs e)
+        private void cbSearchLocally_CheckedChanged(object sender, EventArgs e)
         {
-            this.ScanOptEnableDisable();
+            ScanOptEnableDisable();
         }
 
         private void cbMeta_CheckedChanged(object sender, EventArgs e)
         {
-            this.ScanOptEnableDisable();
+            ScanOptEnableDisable();
         }
 
-        private void bnReplaceAdd_Click(object sender, System.EventArgs e)
+        private void bnReplaceAdd_Click(object sender, EventArgs e)
         {
-            this.AddNewReplacementRow(null, null, false);
+            AddNewReplacementRow(null, null, false);
         }
 
-        private void bnReplaceRemove_Click(object sender, System.EventArgs e)
+        private void bnReplaceRemove_Click(object sender, EventArgs e)
         {
             // multiselection is off, so we can cheat...
-            int[] rowsIndex = this.ReplacementsGrid.Selection.GetSelectionRegion().GetRowsIndex();
+            int[] rowsIndex = ReplacementsGrid.Selection.GetSelectionRegion().GetRowsIndex();
             if (rowsIndex.Length > 0)
             {
                 // don't delete compulsory items
                 int n = rowsIndex[0];
-                string from = (string) (this.ReplacementsGrid[n, 0].Value);
+                string from = (string) (ReplacementsGrid[n, 0].Value);
                 if (string.IsNullOrEmpty(from) || (TVSettings.CompulsoryReplacements().IndexOf(from) == -1))
-                    this.ReplacementsGrid.Rows.Remove(n);
+                    ReplacementsGrid.Rows.Remove(n);
             }
         }
 
         private void btnAddShowStatusColoring_Click(object sender, EventArgs e)
         {
-            if (this.cboShowStatus.SelectedItem != null && !string.IsNullOrEmpty(this.txtShowStatusColor.Text))
+            if (cboShowStatus.SelectedItem != null && !string.IsNullOrEmpty(txtShowStatusColor.Text))
             {
                 try
                 {
-                    ShowStatusColoringType ssct = this.cboShowStatus.SelectedItem as ShowStatusColoringType;
-                    if (!ColorTranslator.FromHtml(this.txtShowStatusColor.Text).IsEmpty && ssct != null)
+                    ShowStatusColoringType ssct = cboShowStatus.SelectedItem as ShowStatusColoringType;
+                    if (!ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty && ssct != null)
                     {
                         ListViewItem item = null;
-                        item = this.lvwDefinedColors.FindItemWithText(ssct.Text);
+                        item = lvwDefinedColors.FindItemWithText(ssct.Text);
                         if (item == null)
                         {
                             item = new ListViewItem();
-                            item.SubItems.Add(this.txtShowStatusColor.Text);
-                            this.lvwDefinedColors.Items.Add(item);
+                            item.SubItems.Add(txtShowStatusColor.Text);
+                            lvwDefinedColors.Items.Add(item);
                         }
 
                         item.Text = ssct.Text;
-                        item.SubItems[1].Text = this.txtShowStatusColor.Text;
-                        item.ForeColor = ColorTranslator.FromHtml(this.txtShowStatusColor.Text);
+                        item.SubItems[1].Text = txtShowStatusColor.Text;
+                        item.ForeColor = ColorTranslator.FromHtml(txtShowStatusColor.Text);
                         item.Tag = ssct;
-                        this.txtShowStatusColor.Text = string.Empty;
-                        this.txtShowStatusColor.ForeColor = Color.Black;
+                        txtShowStatusColor.Text = string.Empty;
+                        txtShowStatusColor.ForeColor = Color.Black;
                     }
                 }
                 catch { }
@@ -987,7 +987,7 @@ namespace TVRename
         {
             try
             {
-                colorDialog.Color = System.Drawing.ColorTranslator.FromHtml(this.txtShowStatusColor.Text);
+                colorDialog.Color = ColorTranslator.FromHtml(txtShowStatusColor.Text);
             }
             catch
             {
@@ -995,8 +995,8 @@ namespace TVRename
             }
             if (colorDialog.ShowDialog(this) == DialogResult.OK)
             {
-                this.txtShowStatusColor.Text =  TranslateColorToHtml(colorDialog.Color);
-                this.txtShowStatusColor.ForeColor = colorDialog.Color;
+                txtShowStatusColor.Text =  TranslateColorToHtml(colorDialog.Color);
+                txtShowStatusColor.ForeColor = colorDialog.Color;
             }
         }
 
@@ -1017,14 +1017,14 @@ namespace TVRename
 
         private void lvwDefinedColors_SelectedIndexChanged(object sender, EventArgs e)
         {
-            bnRemoveDefinedColor.Enabled = this.lvwDefinedColors.SelectedItems.Count == 1;
+            bnRemoveDefinedColor.Enabled = lvwDefinedColors.SelectedItems.Count == 1;
         }
 
         private void RemoveSelectedDefinedColor()
         {
-            if (this.lvwDefinedColors.SelectedItems.Count == 1)
+            if (lvwDefinedColors.SelectedItems.Count == 1)
             {
-                this.lvwDefinedColors.Items.Remove(this.lvwDefinedColors.SelectedItems[0]);
+                lvwDefinedColors.Items.Remove(lvwDefinedColors.SelectedItems[0]);
             }
         }
 
@@ -1032,11 +1032,11 @@ namespace TVRename
         {
             try
             {
-                this.txtShowStatusColor.ForeColor = ColorTranslator.FromHtml(this.txtShowStatusColor.Text);
+                txtShowStatusColor.ForeColor = ColorTranslator.FromHtml(txtShowStatusColor.Text);
             }
             catch
             {
-                this.txtShowStatusColor.ForeColor = Color.Black;
+                txtShowStatusColor.ForeColor = Color.Black;
             }
         }
 
@@ -1128,7 +1128,7 @@ namespace TVRename
 
         private void bnMCPresets_Click(object sender, EventArgs e)
         {
-            Point pt = this.PointToScreen(bnMCPresets.Location);
+            Point pt = PointToScreen(bnMCPresets.Location);
             cmDefaults.Show(pt);
         }
 

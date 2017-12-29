@@ -128,7 +128,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
 
     protected override void OnCreateSplashScreen()
     {
-        this.SplashScreen = new TVRenameSplash();
+        SplashScreen = new TVRenameSplash();
     }
 
     void updateSplashStatus(String text)
@@ -146,7 +146,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
         bool ok = true;
         string recoverText = "";
         // Sort out the command line arguments
-        CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
+        CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
 
 
         if (clargs.ForceRecover)
@@ -161,7 +161,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
             if (!string.IsNullOrEmpty(clargs.UserFilePath))
                 PathManager.SetUserDefinedBasePath(clargs.UserFilePath);
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             if ((!clargs.Unattended) && (!clargs.Hide)) MessageBox.Show("Error while setting the User-Defined File Path:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             logger.Error("Error while setting the User-Defined File Path - EXITING: {0}", clargs.UserFilePath);
@@ -212,10 +212,10 @@ class TVRenameProgram : WindowsFormsApplicationBase
 
 
         // Do your time consuming stuff here...
-        UI ui = new UI(doc,(TVRenameSplash)this.SplashScreen);
+        UI ui = new UI(doc,(TVRenameSplash)SplashScreen);
 
         // Show user interface
-        this.MainForm = ui;
+        MainForm = ui;
         
         
     }

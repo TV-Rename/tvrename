@@ -15,9 +15,9 @@ namespace TVRename
 
         public ExtraEp(int series, int episode)
         {
-            this.SeriesID = series;
-            this.EpisodeID = episode;
-            this.Done = false;
+            SeriesID = series;
+            EpisodeID = episode;
+            Done = false;
         }
     }
 }

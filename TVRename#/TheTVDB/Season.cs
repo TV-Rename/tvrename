@@ -24,10 +24,10 @@ namespace TVRename
 
         public Season(SeriesInfo theSeries, int number, int seasonid)
         {
-            this.TheSeries = theSeries;
-            this.SeasonNumber = number;
-            this.SeasonID = seasonid;
-            this.Episodes = new System.Collections.Generic.List<Episode>();
+            TheSeries = theSeries;
+            SeasonNumber = number;
+            SeasonID = seasonid;
+            Episodes = new System.Collections.Generic.List<Episode>();
         }
 
         public SeasonStatus Status
@@ -66,7 +66,7 @@ namespace TVRename
         {
             get
             {
-                return this.Episodes != null && this.Episodes.Count > 0;
+                return Episodes != null && Episodes.Count > 0;
             }
         }
 
@@ -76,7 +76,7 @@ namespace TVRename
             {
                 if (HasEpisodes)
                 {
-                    foreach (Episode e in this.Episodes)
+                    foreach (Episode e in Episodes)
                     {
                         if (e.GetAirDateDT(true).HasValue)
                         {
@@ -95,7 +95,7 @@ namespace TVRename
             {
                 if (HasEpisodes)
                 {
-                    foreach (Episode e in this.Episodes)
+                    foreach (Episode e in Episodes)
                     {
                         if (e.GetAirDateDT(true).HasValue)
                         {
@@ -110,12 +110,12 @@ namespace TVRename
 
         public string GetBannerPath()
         {
-            return this.TheSeries.GetSeasonBannerPath(this.SeasonNumber);
+            return TheSeries.GetSeasonBannerPath(SeasonNumber);
         }
 
         public string GetWideBannerPath()
         {
-            return this.TheSeries.GetSeasonWideBannerPath(this.SeasonNumber);
+            return TheSeries.GetSeasonWideBannerPath(SeasonNumber);
         }
 
     }

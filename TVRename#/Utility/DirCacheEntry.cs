@@ -26,16 +26,16 @@ namespace TVRename
 
         public DirCacheEntry(FileInfo f)
         {
-            this.TheFile = f;
-            this.SimplifiedFullName = Helpers.SimplifyName(f.FullName);
-            this.LowerName = f.Name.ToLower();
-            this.Length = f.Length;
+            TheFile = f;
+            SimplifiedFullName = Helpers.SimplifyName(f.FullName);
+            LowerName = f.Name.ToLower();
+            Length = f.Length;
 
             if (TVSettings.Instance == null)
                 return;
 
-            this.HasUsefulExtension_NotOthersToo = TVSettings.Instance.UsefulExtension(f.Extension, false);
-            this.HasUsefulExtension_OthersToo = this.HasUsefulExtension_NotOthersToo | TVSettings.Instance.UsefulExtension(f.Extension, true);
+            HasUsefulExtension_NotOthersToo = TVSettings.Instance.UsefulExtension(f.Extension, false);
+            HasUsefulExtension_OthersToo = HasUsefulExtension_NotOthersToo | TVSettings.Instance.UsefulExtension(f.Extension, true);
         }
     }
 }

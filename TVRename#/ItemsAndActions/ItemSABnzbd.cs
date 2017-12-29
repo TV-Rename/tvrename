@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -18,16 +18,16 @@ namespace TVRename
 
         public ItemSABnzbd(SAB.queueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
         {
-            this.Episode = pe;
-            this.DesiredLocationNoExt = desiredLocationNoExt;
-            this.Entry = qss;
+            Episode = pe;
+            DesiredLocationNoExt = desiredLocationNoExt;
+            Entry = qss;
         }
 
         #region Item Members
 
         public bool SameAs(Item o)
         {
-            return (o is ItemSABnzbd) && this.Entry == (o as ItemSABnzbd).Entry;
+            return (o is ItemSABnzbd) && Entry == (o as ItemSABnzbd).Entry;
         }
 
         public int Compare(Item o)
@@ -36,12 +36,12 @@ namespace TVRename
             if (ut == null)
                 return 0;
 
-            if (this.Episode == null)
+            if (Episode == null)
                 return 1;
             if (ut.Episode == null)
                 return -1;
 
-            return (this.DesiredLocationNoExt).CompareTo(ut.DesiredLocationNoExt);
+            return (DesiredLocationNoExt).CompareTo(ut.DesiredLocationNoExt);
         }
 
         #endregion
@@ -52,9 +52,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.Entry.filename))
+                if (string.IsNullOrEmpty(Entry.filename))
                     return null;
-                return new FileInfo(this.Entry.filename).DirectoryName;
+                return new FileInfo(Entry.filename).DirectoryName;
             }
         }
 
@@ -64,9 +64,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.DesiredLocationNoExt))
+                if (string.IsNullOrEmpty(DesiredLocationNoExt))
                     return null;
-                return new IgnoreItem(this.DesiredLocationNoExt);
+                return new IgnoreItem(DesiredLocationNoExt);
             }
         }
 
@@ -76,19 +76,19 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = this.Episode.SI.ShowName;
-                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
-                lvi.SubItems.Add(this.Episode.NumsAsString());
-                DateTime? dt = this.Episode.GetAirDateDT(true);
+                lvi.Text = Episode.SI.ShowName;
+                lvi.SubItems.Add(Episode.SeasonNumber.ToString());
+                lvi.SubItems.Add(Episode.NumsAsString());
+                DateTime? dt = Episode.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.Entry.filename);
-                String txt = this.Entry.status + ", " + (int) (0.5 + 100 - 100 * Entry.mbleft / Entry.mb) + "% Complete";
-                if (this.Entry.status == "Downloading")
-                    txt += ", " + this.Entry.timeleft + " left";
+                lvi.SubItems.Add(Entry.filename);
+                String txt = Entry.status + ", " + (int) (0.5 + 100 - 100 * Entry.mbleft / Entry.mb) + "% Complete";
+                if (Entry.status == "Downloading")
+                    txt += ", " + Entry.timeleft + " left";
                 
                 lvi.SubItems.Add(txt);
 

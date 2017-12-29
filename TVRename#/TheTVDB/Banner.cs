@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -36,26 +36,26 @@ namespace TVRename
         public Banner(Banner O)
         {
 
-            this.BannerId = O.BannerId;
-            this.BannerPath = O.BannerPath;
-            this.BannerType = O.BannerType;
-            this.LanguageId = O.LanguageId;
-            this.Resolution = O.Resolution;
-            this.Rating = O.Rating;
-            this.RatingCount = O.RatingCount;
-            this.SeasonID = O.SeasonID;
-            this.SeriesID = O.SeriesID;
+            BannerId = O.BannerId;
+            BannerPath = O.BannerPath;
+            BannerType = O.BannerType;
+            LanguageId = O.LanguageId;
+            Resolution = O.Resolution;
+            Rating = O.Rating;
+            RatingCount = O.RatingCount;
+            SeasonID = O.SeasonID;
+            SeriesID = O.SeriesID;
 
-            this.ThumbnailPath = O.ThumbnailPath;
+            ThumbnailPath = O.ThumbnailPath;
             
-            this.TheSeason = O.TheSeason;
-            this.TheSeries = O.TheSeries;
+            TheSeason = O.TheSeason;
+            TheSeries = O.TheSeries;
 
         }
 
         public Banner(SeriesInfo ser, Season seas)
         {
-            this.SetDefaults(ser, seas);
+            SetDefaults(ser, seas);
         }
 
         public Banner(SeriesInfo ser, Season seas, int? codeHint, XmlReader r, CommandLineArgs args)
@@ -76,9 +76,9 @@ namespace TVRename
 
             try
             {
-                this.SetDefaults(ser, seas);
+                SetDefaults(ser, seas);
 
-                this.SeriesID = (int) codeHint;
+                SeriesID = (int) codeHint;
 
                 r.Read();
                 if (r.Name != "Banner")
@@ -91,29 +91,29 @@ namespace TVRename
                         break;
 
                     if (r.Name == "id")
-                        this.BannerId = r.ReadElementContentAsInt();
+                        BannerId = r.ReadElementContentAsInt();
                     else if (r.Name == "seriesid")
-                        this.SeriesID = r.ReadElementContentAsInt(); // thetvdb series id
+                        SeriesID = r.ReadElementContentAsInt(); // thetvdb series id
                     else if (r.Name == "seasonid")
-                        this.SeasonID = r.ReadElementContentAsInt();
+                        SeasonID = r.ReadElementContentAsInt();
                     else if (r.Name == "BannerPath")
-                        this.BannerPath = XMLHelper.ReadStringFixQuotesAndSpaces(r);
+                        BannerPath = XMLHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "BannerType")
-                        this.BannerType = r.ReadElementContentAsString();
+                        BannerType = r.ReadElementContentAsString();
                     else if (r.Name == "LanguageId")
-                        this.LanguageId = r.ReadElementContentAsInt();
+                        LanguageId = r.ReadElementContentAsInt();
                     else if (r.Name == "Resolution")
-                        this.Resolution = r.ReadElementContentAsString();
+                        Resolution = r.ReadElementContentAsString();
                     else if (r.Name == "Rating")
                         {
                         String sn = r.ReadElementContentAsString();
-                        double.TryParse(sn, out this.Rating);
+                        double.TryParse(sn, out Rating);
                         }
                     else if (r.Name == "RatingCount")
-                        this.RatingCount  = r.ReadElementContentAsInt();
+                        RatingCount  = r.ReadElementContentAsInt();
                     else if (r.Name == "Season")
-                        this.SeasonID = r.ReadElementContentAsInt();
-                    else if (r.Name == "ThumbnailPath") this.ThumbnailPath = r.ReadElementContentAsString();
+                        SeasonID = r.ReadElementContentAsInt();
+                    else if (r.Name == "ThumbnailPath") ThumbnailPath = r.ReadElementContentAsString();
                     else
                     {
                         if ((r.IsEmptyElement) || !r.IsStartElement())
@@ -126,12 +126,12 @@ namespace TVRename
             catch (XmlException e)
             {
                 string message = "Error processing data from TheTVDB for a banner.";
-                if (this.SeriesID != -1)
-                    message += "\r\nSeries ID: " + this.SeriesID;
-                if (this.BannerId != -1)
-                    message += "\r\nBanner ID: " + this.BannerId;
-                if (!string.IsNullOrEmpty(this.BannerPath))
-                    message += "\r\nBanner Path: " + this.BannerPath;
+                if (SeriesID != -1)
+                    message += "\r\nSeries ID: " + SeriesID;
+                if (BannerId != -1)
+                    message += "\r\nBanner ID: " + BannerId;
+                if (!string.IsNullOrEmpty(BannerPath))
+                    message += "\r\nBanner Path: " + BannerPath;
 
                 logger.Error(e, message);
                 
@@ -141,7 +141,7 @@ namespace TVRename
 
         public Banner(int seriesId, JObject json, int LangId)
         {
-            this.SetDefaults(null, null);
+            SetDefaults(null, null);
             // {
             //  "fileName": "string",
             //  "id": 0,
@@ -156,19 +156,19 @@ namespace TVRename
             //  "thumbnail": "string"
             //  }
 
-            this.SeriesID = seriesId;
+            SeriesID = seriesId;
 
-            this.BannerPath = (string)json["fileName"];
-            this.BannerId = (int)json["id"];
-            this.BannerType = (string)json["keyType"];
-            this.LanguageId = LangId;//(json["languageId"] == null) ? -1 : (int)json["languageId"];
+            BannerPath = (string)json["fileName"];
+            BannerId = (int)json["id"];
+            BannerType = (string)json["keyType"];
+            LanguageId = LangId;//(json["languageId"] == null) ? -1 : (int)json["languageId"];
             
-            double.TryParse((string)(json["ratingsInfo"]["average"]), out this.Rating);
-            this.RatingCount = (int)(json["ratingsInfo"]["count"]);
+            double.TryParse((string)(json["ratingsInfo"]["average"]), out Rating);
+            RatingCount = (int)(json["ratingsInfo"]["count"]);
 
-            this.Resolution = (string)json["resolution"];
-            int.TryParse((string)json["subKey"], out this.SeasonID);
-            this.ThumbnailPath = (string)json["thumbnail"];
+            Resolution = (string)json["resolution"];
+            int.TryParse((string)json["subKey"], out SeasonID);
+            ThumbnailPath = (string)json["thumbnail"];
         }
 
 
@@ -176,66 +176,66 @@ namespace TVRename
         {
             get
             {
-                if (this.TheSeason != null)
-                    return this.TheSeason.SeasonNumber;
+                if (TheSeason != null)
+                    return TheSeason.SeasonNumber;
                 return -1;
             }
         }
 
         public bool SameAs(Banner  o)
         {
-            return (this.BannerId == o.BannerId);
+            return (BannerId == o.BannerId);
         }
 
         public bool isSeriesPoster()
         {
-            return ((this.BannerType == "poster"));
+            return ((BannerType == "poster"));
         }
 
         public bool isSeriesBanner()
         {
-            return ((this.BannerType == "series"));
+            return ((BannerType == "series"));
         }
 
         public bool isSeasonPoster()
         {
-            return ((this.BannerType == "season") );
+            return ((BannerType == "season") );
         }
 
         public bool isSeasonBanner()
         {
-            return ((this.BannerType == "seasonwide") );
+            return ((BannerType == "seasonwide") );
         }
 
         public bool isFanart()
         {
-            return ((this.BannerType == "fanart") );
+            return ((BannerType == "fanart") );
         }
 
         public void SetDefaults(SeriesInfo ser, Season seas)
         {
-            this.TheSeason = seas;
-            this.TheSeries = ser;
+            TheSeason = seas;
+            TheSeries = ser;
 
 
-            this.BannerId = -1;
-            this.BannerPath = "";
-            this.BannerType = "";
-            this.LanguageId = -1;
-            this.Resolution = "";
-            this.Rating = -1;
-            this.RatingCount = 0;
-            this.SeasonID = -1;
-            this.SeriesID = -1;
+            BannerId = -1;
+            BannerPath = "";
+            BannerType = "";
+            LanguageId = -1;
+            Resolution = "";
+            Rating = -1;
+            RatingCount = 0;
+            SeasonID = -1;
+            SeriesID = -1;
 
-            this.ThumbnailPath = "";
+            ThumbnailPath = "";
 
         }
                 
         public void SetSeriesSeason(SeriesInfo ser, Season seas)
         {
-            this.TheSeason = seas;
-            this.TheSeries = ser;
+            TheSeason = seas;
+            TheSeries = ser;
         }
 
         public void WriteXml(XmlWriter writer)
@@ -254,15 +254,15 @@ namespace TVRename
 
             writer.WriteStartElement("Banner");
 
-            XMLHelper.WriteElementToXML(writer,"id",this.BannerId);
-            XMLHelper.WriteElementToXML(writer,"BannerPath",this.BannerPath);
-            XMLHelper.WriteElementToXML(writer,"BannerType",this.BannerType);
-            XMLHelper.WriteElementToXML(writer, "LanguageId", this.LanguageId);
-            XMLHelper.WriteElementToXML(writer,"Resolution",this.Resolution);
-            XMLHelper.WriteElementToXML(writer,"Rating",this.Rating);
-            XMLHelper.WriteElementToXML(writer,"RatingCount",this.RatingCount);
-            XMLHelper.WriteElementToXML(writer,"Season",this.SeasonID);  
-            XMLHelper.WriteElementToXML(writer,"ThumbnailPath",this.ThumbnailPath);
+            XMLHelper.WriteElementToXML(writer,"id",BannerId);
+            XMLHelper.WriteElementToXML(writer,"BannerPath",BannerPath);
+            XMLHelper.WriteElementToXML(writer,"BannerType",BannerType);
+            XMLHelper.WriteElementToXML(writer, "LanguageId", LanguageId);
+            XMLHelper.WriteElementToXML(writer,"Resolution",Resolution);
+            XMLHelper.WriteElementToXML(writer,"Rating",Rating);
+            XMLHelper.WriteElementToXML(writer,"RatingCount",RatingCount);
+            XMLHelper.WriteElementToXML(writer,"Season",SeasonID);  
+            XMLHelper.WriteElementToXML(writer,"ThumbnailPath",ThumbnailPath);
 
             writer.WriteEndElement(); //Banner
         }

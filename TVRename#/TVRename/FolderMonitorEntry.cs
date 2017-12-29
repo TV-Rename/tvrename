@@ -15,15 +15,15 @@ namespace TVRename
         public bool HasSeasonFoldersGuess;
         public string SeasonFolderName;
 
-        public bool CodeKnown { get { return !this.CodeUnknown; } }
+        public bool CodeKnown { get { return !CodeUnknown; } }
         public bool CodeUnknown { get { return TVDBCode == -1; } }
 
         public FolderMonitorEntry(string folder, bool seasonFolders, string seasonFolderName)
         {
-            this.Folder = folder;
-            this.TVDBCode = -1;
-            this.HasSeasonFoldersGuess = seasonFolders;
-            this.SeasonFolderName = seasonFolderName;
+            Folder = folder;
+            TVDBCode = -1;
+            HasSeasonFoldersGuess = seasonFolders;
+            SeasonFolderName = seasonFolderName;
         }
     }
 

@@ -24,31 +24,31 @@ namespace TVRename
 
         public StatsWindow(TVRenameStats s)
         {
-            this.Stats = s;
-            this.InitializeComponent();
+            Stats = s;
+            InitializeComponent();
         }
 
         private void StatsWindow_Load(object sender, System.EventArgs e)
         {
-            this.txtFM.Text = this.Stats.FilesMoved.ToString();
-            this.txtFR.Text = this.Stats.FilesRenamed.ToString();
-            this.txtFC.Text = this.Stats.FilesCopied.ToString();
-            this.txtRCD.Text = this.Stats.RenameChecksDone.ToString();
-            this.txtMCD.Text = this.Stats.MissingChecksDone.ToString();
-            this.txtFAOD.Text = this.Stats.FindAndOrganisesDone.ToString();
-            this.txtAAS.Text = this.Stats.AutoAddedShows.ToString();
-            this.txtTM.Text = this.Stats.TorrentsMatched.ToString();
-            this.txtNOS.Text = this.Stats.NS_NumberOfShows.ToString();
-            this.txtNOSeas.Text = this.Stats.NS_NumberOfSeasons.ToString();
-            int noe = this.Stats.NS_NumberOfEpisodes;
-            this.txtEOD.Text = ((noe == -1) ? "?" : noe.ToString());
-            this.txtTE.Text = this.Stats.NS_NumberOfEpisodesExpected.ToString();
+            txtFM.Text = Stats.FilesMoved.ToString();
+            txtFR.Text = Stats.FilesRenamed.ToString();
+            txtFC.Text = Stats.FilesCopied.ToString();
+            txtRCD.Text = Stats.RenameChecksDone.ToString();
+            txtMCD.Text = Stats.MissingChecksDone.ToString();
+            txtFAOD.Text = Stats.FindAndOrganisesDone.ToString();
+            txtAAS.Text = Stats.AutoAddedShows.ToString();
+            txtTM.Text = Stats.TorrentsMatched.ToString();
+            txtNOS.Text = Stats.NS_NumberOfShows.ToString();
+            txtNOSeas.Text = Stats.NS_NumberOfSeasons.ToString();
+            int noe = Stats.NS_NumberOfEpisodes;
+            txtEOD.Text = ((noe == -1) ? "?" : noe.ToString());
+            txtTE.Text = Stats.NS_NumberOfEpisodesExpected.ToString();
         }
 
         private void button1_Click(object sender, System.EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }

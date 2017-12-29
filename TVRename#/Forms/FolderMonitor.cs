@@ -35,24 +35,24 @@ namespace TVRename
 
         public FolderMonitor(TVDoc doc)
         {
-            this.mDoc = doc;
+            mDoc = doc;
 
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.FillFolderStringLists();
+            FillFolderStringLists();
         }
 
         public void FMPShower()
         {
-            this.FMP = new FolderMonitorProgress(this);
-            this.FMP.ShowDialog();
-            this.FMP = null;
+            FMP = new FolderMonitorProgress(this);
+            FMP.ShowDialog();
+            FMP = null;
         }
 
         private void bnClose_Click(object sender, System.EventArgs e)
         {
             bool confirmClose = false;
-            foreach (FolderMonitorEntry fme in this.mDoc.AddItems)
+            foreach (FolderMonitorEntry fme in mDoc.AddItems)
             {
                 if (fme.CodeKnown)
                 {
@@ -68,99 +68,99 @@ namespace TVRename
                 }
             }
 
-            this.Close();
+            Close();
         }
 
         private void FillFolderStringLists()
         {
-            this.mDoc.MonitorFolders.Sort();
-            this.mDoc.IgnoreFolders.Sort();
+            mDoc.MonitorFolders.Sort();
+            mDoc.IgnoreFolders.Sort();
             
-            this.lstFMMonitorFolders.BeginUpdate();
-            this.lstFMMonitorFolders.Items.Clear();
+            lstFMMonitorFolders.BeginUpdate();
+            lstFMMonitorFolders.Items.Clear();
             
-            foreach (string folder in this.mDoc.MonitorFolders)
-                this.lstFMMonitorFolders.Items.Add(folder);
+            foreach (string folder in mDoc.MonitorFolders)
+                lstFMMonitorFolders.Items.Add(folder);
 
-            this.lstFMMonitorFolders.EndUpdate();
+            lstFMMonitorFolders.EndUpdate();
 
-            this.lstFMIgnoreFolders.BeginUpdate();
-            this.lstFMIgnoreFolders.Items.Clear();
+            lstFMIgnoreFolders.BeginUpdate();
+            lstFMIgnoreFolders.Items.Clear();
 
-            foreach (string folder in this.mDoc.IgnoreFolders)
-                this.lstFMIgnoreFolders.Items.Add(folder);
+            foreach (string folder in mDoc.IgnoreFolders)
+                lstFMIgnoreFolders.Items.Add(folder);
 
-            this.lstFMIgnoreFolders.EndUpdate();
+            lstFMIgnoreFolders.EndUpdate();
         }
 
         private void bnRemoveMonFolder_Click(object sender, System.EventArgs e)
         {
-            for (int i = this.lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
+            for (int i = lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
             {
-                int n = this.lstFMMonitorFolders.SelectedIndices[i];
-                this.mDoc.MonitorFolders.RemoveAt(n);
+                int n = lstFMMonitorFolders.SelectedIndices[i];
+                mDoc.MonitorFolders.RemoveAt(n);
             }
-            this.mDoc.SetDirty();
-            this.FillFolderStringLists();
+            mDoc.SetDirty();
+            FillFolderStringLists();
         }
 
         private void bnRemoveIgFolder_Click(object sender, System.EventArgs e)
         {
-            for (int i = this.lstFMIgnoreFolders.SelectedIndices.Count - 1; i >= 0; i--)
+            for (int i = lstFMIgnoreFolders.SelectedIndices.Count - 1; i >= 0; i--)
             {
-                int n = this.lstFMIgnoreFolders.SelectedIndices[i];
-                this.mDoc.IgnoreFolders.RemoveAt(n);
+                int n = lstFMIgnoreFolders.SelectedIndices[i];
+                mDoc.IgnoreFolders.RemoveAt(n);
             }
-            this.mDoc.SetDirty();
-            this.FillFolderStringLists();
+            mDoc.SetDirty();
+            FillFolderStringLists();
         }
 
         private void bnAddMonFolder_Click(object sender, System.EventArgs e)
         {
-            this.folderBrowser.SelectedPath = "";
-            if (this.lstFMMonitorFolders.SelectedIndex != -1)
+            folderBrowser.SelectedPath = "";
+            if (lstFMMonitorFolders.SelectedIndex != -1)
             {
-                int n = this.lstFMMonitorFolders.SelectedIndex;
-                this.folderBrowser.SelectedPath = this.mDoc.MonitorFolders[n];
+                int n = lstFMMonitorFolders.SelectedIndex;
+                folderBrowser.SelectedPath = mDoc.MonitorFolders[n];
             }
 
-            if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (folderBrowser.ShowDialog() == DialogResult.OK)
             {
-                this.mDoc.MonitorFolders.Add(this.folderBrowser.SelectedPath.ToLower());
-                this.mDoc.SetDirty();
-                this.FillFolderStringLists();
+                mDoc.MonitorFolders.Add(folderBrowser.SelectedPath.ToLower());
+                mDoc.SetDirty();
+                FillFolderStringLists();
             }
         }
 
         private void bnAddIgFolder_Click(object sender, System.EventArgs e)
         {
-            this.folderBrowser.SelectedPath = "";
-            if (this.lstFMIgnoreFolders.SelectedIndex != -1)
-                this.folderBrowser.SelectedPath = this.mDoc.IgnoreFolders[this.lstFMIgnoreFolders.SelectedIndex];
+            folderBrowser.SelectedPath = "";
+            if (lstFMIgnoreFolders.SelectedIndex != -1)
+                folderBrowser.SelectedPath = mDoc.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex];
 
-            if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (folderBrowser.ShowDialog() == DialogResult.OK)
             {
-                this.mDoc.IgnoreFolders.Add(this.folderBrowser.SelectedPath.ToLower());
-                this.mDoc.SetDirty();
-                this.FillFolderStringLists();
+                mDoc.IgnoreFolders.Add(folderBrowser.SelectedPath.ToLower());
+                mDoc.SetDirty();
+                FillFolderStringLists();
             }
         }
 
         private void bnOpenMonFolder_Click(object sender, System.EventArgs e)
         {
-            if (this.lstFMMonitorFolders.SelectedIndex != -1)
-                Helpers.SysOpen(this.mDoc.MonitorFolders[this.lstFMMonitorFolders.SelectedIndex]);
+            if (lstFMMonitorFolders.SelectedIndex != -1)
+                Helpers.SysOpen(mDoc.MonitorFolders[lstFMMonitorFolders.SelectedIndex]);
         }
 
         private void bnOpenIgFolder_Click(object sender, System.EventArgs e)
         {
-            if (this.lstFMIgnoreFolders.SelectedIndex != -1)
-                Helpers.SysOpen(this.mDoc.MonitorFolders[this.lstFMIgnoreFolders.SelectedIndex]);
+            if (lstFMIgnoreFolders.SelectedIndex != -1)
+                Helpers.SysOpen(mDoc.MonitorFolders[lstFMIgnoreFolders.SelectedIndex]);
         }
 
         private void lstFMMonitorFolders_DoubleClick(object sender, System.EventArgs e)
         {
-            this.bnOpenMonFolder_Click(null, null);
+            bnOpenMonFolder_Click(null, null);
         }
 
         private void lstFMIgnoreFolders_DoubleClick(object sender, System.EventArgs e)
@@ -170,7 +170,7 @@ namespace TVRename
 
         private void bnCheck_Click(object sender, System.EventArgs e)
         {
-            this.DoCheck();
+            DoCheck();
         }
 
         private void DoCheck()
@@ -178,36 +178,36 @@ namespace TVRename
             tabControl1.SelectedTab = tbResults;
             tabControl1.Update();
 
-            this.FMPStopNow = false;
-            this.FMPUpto = "Checking folders";
-            this.FMPPercent = 0;
+            FMPStopNow = false;
+            FMPUpto = "Checking folders";
+            FMPPercent = 0;
 
-            Thread fmpshower = new Thread(this.FMPShower);
+            Thread fmpshower = new Thread(FMPShower);
             fmpshower.Name = "Folder Monitor Progress (Folder Check)";
             fmpshower.Start();
 
-            while ((this.FMP == null) || (!this.FMP.Ready))
+            while ((FMP == null) || (!FMP.Ready))
                 Thread.Sleep(10);
 
-            this.mDoc.MonitorCheckFolders(ref this.FMPStopNow, ref this.FMPPercent);
+            mDoc.MonitorCheckFolders(ref FMPStopNow, ref FMPPercent);
             
-            this.FMPStopNow = true;
+            FMPStopNow = true;
 
-            this.FillFMNewShowList(false);
+            FillFMNewShowList(false);
 
         }
 
-        private void lstFMMonitorFolders_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
+        private void lstFMMonitorFolders_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMIgnoreFolders_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
+        private void lstFMIgnoreFolders_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMMonitorFolders_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+        private void lstFMMonitorFolders_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             for (int i = 0; i < files.Length; i++)
@@ -217,17 +217,17 @@ namespace TVRename
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
-                        this.mDoc.MonitorFolders.Add(path.ToLower());
+                        mDoc.MonitorFolders.Add(path.ToLower());
                 }
                 catch
                 {
                 }
             }
-            this.mDoc.SetDirty();
-            this.FillFolderStringLists();
+            mDoc.SetDirty();
+            FillFolderStringLists();
         }
 
-        private void lstFMIgnoreFolders_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+        private void lstFMIgnoreFolders_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             for (int i = 0; i < files.Length; i++)
@@ -237,107 +237,107 @@ namespace TVRename
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
-                        this.mDoc.IgnoreFolders.Add(path.ToLower());
+                        mDoc.IgnoreFolders.Add(path.ToLower());
                 }
                 catch
                 {
                 }
             }
-            this.mDoc.SetDirty();
-            this.FillFolderStringLists();
+            mDoc.SetDirty();
+            FillFolderStringLists();
         }
 
-        private void lstFMMonitorFolders_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void lstFMMonitorFolders_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
-                this.bnRemoveMonFolder_Click(null, null);
+                bnRemoveMonFolder_Click(null, null);
         }
 
-        private void lstFMIgnoreFolders_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void lstFMIgnoreFolders_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
-                this.bnRemoveIgFolder_Click(null, null);
+                bnRemoveIgFolder_Click(null, null);
         }
 
         private void bnFullAuto_Click(object sender, System.EventArgs e)
         {
-            if (this.mDoc.AddItems.Count == 0)
+            if (mDoc.AddItems.Count == 0)
                 return;
 
-            this.FMPStopNow = false;
-            this.FMPUpto = "Identifying shows";
-            this.FMPPercent = 0;
+            FMPStopNow = false;
+            FMPUpto = "Identifying shows";
+            FMPPercent = 0;
 
-            Thread fmpshower = new Thread(this.FMPShower) {Name = "Folder Monitor Progress (Full Auto)"};
+            Thread fmpshower = new Thread(FMPShower) {Name = "Folder Monitor Progress (Full Auto)"};
             fmpshower.Start();
 
-            while ((this.FMP == null) || (!this.FMP.Ready))
+            while ((FMP == null) || (!FMP.Ready))
                 Thread.Sleep(10);
 
             int n = 0;
-            int n2 = this.mDoc.AddItems.Count;
+            int n2 = mDoc.AddItems.Count;
 
-            foreach (FolderMonitorEntry ai in this.mDoc.AddItems)
+            foreach (FolderMonitorEntry ai in mDoc.AddItems)
             {
-                this.FMPPercent = 100 * n++ / n2;
+                FMPPercent = 100 * n++ / n2;
 
-               if (this.FMPStopNow)
+               if (FMPStopNow)
                    break;
 
                 if (ai.CodeKnown)
                     continue;
 
                 int p = ai.Folder.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-                this.FMPUpto = ai.Folder.Substring(p + 1); // +1 makes -1 "not found" result ok
+                FMPUpto = ai.Folder.Substring(p + 1); // +1 makes -1 "not found" result ok
                 
-                this.mDoc.MonitorGuessShowItem(ai);
+                mDoc.MonitorGuessShowItem(ai);
                 
                 // update our display
-                this.UpdateFMListItem(ai, true);
-                this.lvFMNewShows.Update();
-                this.Update();
+                UpdateFMListItem(ai, true);
+                lvFMNewShows.Update();
+                Update();
             }
-            this.FMPStopNow = true;
+            FMPStopNow = true;
         }
 
         private void bnRemoveNewFolder_Click(object sender, System.EventArgs e)
         {
-            if (this.lvFMNewShows.SelectedItems.Count == 0)
+            if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
-            foreach (ListViewItem lvi in this.lvFMNewShows.SelectedItems)
+            foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
             {
                 FolderMonitorEntry ai = (FolderMonitorEntry)(lvi.Tag);
-                this.mDoc.AddItems.Remove(ai);
+                mDoc.AddItems.Remove(ai);
             }
-            this.FillFMNewShowList(false);
+            FillFMNewShowList(false);
         }
 
         private void bnIgnoreNewFolder_Click(object sender, System.EventArgs e)
         {
-            if (this.lvFMNewShows.SelectedItems.Count == 0)
+            if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
 
             DialogResult res = MessageBox.Show("Add selected folders to the folder monitor ignore list?", "Folder Monitor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != DialogResult.Yes)
                 return;
 
-            foreach (ListViewItem lvi in this.lvFMNewShows.SelectedItems)
+            foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
             {
                 FolderMonitorEntry ai = (FolderMonitorEntry)(lvi.Tag);
-                this.mDoc.IgnoreFolders.Add(ai.Folder.ToLower());
-                this.mDoc.AddItems.Remove(ai);
+                mDoc.IgnoreFolders.Add(ai.Folder.ToLower());
+                mDoc.AddItems.Remove(ai);
             }
-            this.mDoc.SetDirty();
-            this.FillFMNewShowList(false);
-            this.FillFolderStringLists();
+            mDoc.SetDirty();
+            FillFMNewShowList(false);
+            FillFolderStringLists();
         }
 
-        private void lvFMNewShows_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
+        private void lvFMNewShows_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lvFMNewShows_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+        private void lvFMNewShows_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             for (int i = 0; i < files.Length; i++)
@@ -348,8 +348,8 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        this.mDoc.MonitorAddSingleFolder(di, true);
-                        this.FillFMNewShowList(true);
+                        mDoc.MonitorAddSingleFolder(di, true);
+                        FillFMNewShowList(true);
                     }
                 }
                 catch
@@ -358,17 +358,17 @@ namespace TVRename
             }
         }
 
-        private void lvFMNewShows_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        private void lvFMNewShows_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
-                this.bnRemoveNewFolder_Click(null, null);
+                bnRemoveNewFolder_Click(null, null);
         }
 
         private void bnNewFolderOpen_Click(object sender, System.EventArgs e)
         {
-            if (this.lvFMNewShows.SelectedItems.Count == 0)
+            if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
-            FolderMonitorEntry ai = this.lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
+            FolderMonitorEntry ai = lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
             if (ai != null)
                 Helpers.SysOpen(ai.Folder);
         }
@@ -378,31 +378,31 @@ namespace TVRename
             System.Collections.Generic.List<int> sel = new System.Collections.Generic.List<int>();
             if (keepSel)
             {
-                foreach (int i in this.lvFMNewShows.SelectedIndices)
+                foreach (int i in lvFMNewShows.SelectedIndices)
                     sel.Add(i);
             }
 
-            this.lvFMNewShows.BeginUpdate();
-            this.lvFMNewShows.Items.Clear();
+            lvFMNewShows.BeginUpdate();
+            lvFMNewShows.Items.Clear();
 
-            foreach (FolderMonitorEntry ai in this.mDoc.AddItems)
+            foreach (FolderMonitorEntry ai in mDoc.AddItems)
             {
                 ListViewItem lvi = new ListViewItem();
                 UpdateResultEntry(ai, lvi);
-                this.lvFMNewShows.Items.Add(lvi);
+                lvFMNewShows.Items.Add(lvi);
             }
 
             if (keepSel)
             {
                 foreach (int i in sel)
                 {
-                    if (i < this.lvFMNewShows.Items.Count)
-                        this.lvFMNewShows.Items[i].Selected = true;
+                    if (i < lvFMNewShows.Items.Count)
+                        lvFMNewShows.Items[i].Selected = true;
                 }
             }
 
-            this.lvFMNewShows.EndUpdate();
-            this.lvFMNewShows.Update();
+            lvFMNewShows.EndUpdate();
+            lvFMNewShows.Update();
         }
 
         private void UpdateResultEntry(FolderMonitorEntry ai, ListViewItem lvi)
@@ -417,7 +417,7 @@ namespace TVRename
 
         private void UpdateFMListItem(FolderMonitorEntry ai, bool makevis)
         {
-            foreach (ListViewItem lvi in this.lvFMNewShows.Items)
+            foreach (ListViewItem lvi in lvFMNewShows.Items)
             {
                 if (lvi.Tag != ai) // haven't found the entry yet
                     continue;
@@ -433,16 +433,16 @@ namespace TVRename
 
         private void bnFolderMonitorDone_Click(object sender, System.EventArgs e)
         {
-            if (this.mDoc.AddItems.Count > 0)
+            if (mDoc.AddItems.Count > 0)
             {
                 DialogResult res = MessageBox.Show("Add identified shows to \"My Shows\"?", "Folder Monitor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res != DialogResult.Yes)
                     return;
 
-                this.mDoc.MonitorAddAllToMyShows();
+                mDoc.MonitorAddAllToMyShows();
             }
 
-            this.Close();
+            Close();
         }
 
         //private void ProcessAddItems(FolderMonitorEntryList toAdd)
@@ -527,7 +527,7 @@ namespace TVRename
             if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
 
-            FolderMonitorEntry fme = this.lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
+            FolderMonitorEntry fme = lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
             if (fme == null)
                 return;
 
@@ -538,7 +538,7 @@ namespace TVRename
 
         private void bnCheck2_Click(object sender, System.EventArgs e)
         {
-            this.DoCheck();
+            DoCheck();
         }
 
         private void lvFMNewShows_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -551,9 +551,9 @@ namespace TVRename
             if (lvFMNewShows.SelectedItems.Count == 0)
                 return;
 
-            FolderMonitorEntry fme = this.lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
+            FolderMonitorEntry fme = lvFMNewShows.SelectedItems[0].Tag as FolderMonitorEntry;
             EditEntry(fme);
-            this.UpdateFMListItem(fme, true);
+            UpdateFMListItem(fme, true);
         }
 
         private void EditEntry(FolderMonitorEntry fme)

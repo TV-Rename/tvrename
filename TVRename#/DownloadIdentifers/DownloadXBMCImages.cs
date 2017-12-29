@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
@@ -28,7 +28,7 @@ namespace TVRename
         {
             if (file.Name.EndsWith(".tbn", true, new CultureInfo("en")))
             {
-                this.doneTBN.Add(file.FullName);
+                doneTBN.Add(file.FullName);
             } 
             base.notifyComplete(file);
         }
@@ -168,7 +168,7 @@ namespace TVRename
                     basefn = basefn.Substring(0, basefn.Length - filo.Extension.Length); //remove extension
                     FileInfo imgtbn = FileHelper.FileInFolder(filo.Directory, basefn + ".tbn");
                     if (!imgtbn.Exists ||forceRefresh)
-                        if (!(this.doneTBN.Contains(imgtbn.FullName))){
+                        if (!(doneTBN.Contains(imgtbn.FullName))){
                             TheActionList.Add(new ActionDownload(dbep.SI, dbep, imgtbn, ban));
                             doneTBN.Add(filo.FullName);
                         }

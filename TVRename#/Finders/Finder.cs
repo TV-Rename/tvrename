@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -12,7 +12,7 @@ namespace TVRename
 
         public Finder(TVDoc doc)
         {
-            this.mDoc = doc;
+            mDoc = doc;
         }
 
         public enum FinderDisplayType { Local, Downloading, RSS};
@@ -23,7 +23,7 @@ namespace TVRename
 
         public abstract FinderDisplayType DisplayType();
 
-        public void setActionList(ItemList actionList) { this.TheActionList = actionList; }
+        public void setActionList(ItemList actionList) { TheActionList = actionList; }
 
         public void interrupt() { ActionCancel = true; }
         public void reset() { ActionCancel = false; }

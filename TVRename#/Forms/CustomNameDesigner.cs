@@ -34,54 +34,54 @@ namespace TVRename
 
         public CustomNameDesigner(List<ProcessedEpisode> pel, CustomName cn, TVDoc doc)
         {
-            this.Eps = pel;
-            this.CN = cn;
-            this.mDoc = doc;
+            Eps = pel;
+            CN = cn;
+            mDoc = doc;
 
-            this.InitializeComponent();
+            InitializeComponent();
 
-            if (this.Eps == null)
-                this.lvTest.Enabled = false;
-            this.txtTemplate.Text = this.CN.StyleString;
+            if (Eps == null)
+                lvTest.Enabled = false;
+            txtTemplate.Text = CN.StyleString;
 
-            this.FillExamples();
-            this.FillCombos();
+            FillExamples();
+            FillCombos();
         }
 
         private void FillCombos()
         {
-            this.cbTags.Items.Clear();
-            this.cbPresets.Items.Clear();
+            cbTags.Items.Clear();
+            cbPresets.Items.Clear();
             ProcessedEpisode pe = null;
-            if (this.lvTest.SelectedItems.Count == 0)
-                pe = ((this.Eps != null) && (this.Eps.Count > 0)) ? this.Eps[0] : null;
+            if (lvTest.SelectedItems.Count == 0)
+                pe = ((Eps != null) && (Eps.Count > 0)) ? Eps[0] : null;
             else
-                pe = (ProcessedEpisode) (this.lvTest.SelectedItems[0].Tag);
+                pe = (ProcessedEpisode) (lvTest.SelectedItems[0].Tag);
 
             foreach (string s in CustomName.Tags)
             {
                 string txt = s;
                 if (pe != null)
                     txt += " - " + CustomName.NameForNoExt(pe, s);
-                this.cbTags.Items.Add(txt);
+                cbTags.Items.Add(txt);
             }
 
             foreach (string s in CustomName.Presets)
             {
-                this.cbPresets.Items.Add(pe != null ? CustomName.NameForNoExt(pe, s) : s);
+                cbPresets.Items.Add(pe != null ? CustomName.NameForNoExt(pe, s) : s);
             }
         }
 
         private void FillExamples()
         {
-            if (this.Eps == null)
+            if (Eps == null)
                 return;
 
-            this.lvTest.Items.Clear();
-            foreach (ProcessedEpisode pe in this.Eps)
+            lvTest.Items.Clear();
+            foreach (ProcessedEpisode pe in Eps)
             {
                 ListViewItem lvi = new ListViewItem();
-                string fn = TVSettings.Instance.FilenameFriendly(this.CN.NameForExt(pe, null, 0));
+                string fn = TVSettings.Instance.FilenameFriendly(CN.NameForExt(pe, null, 0));
                 lvi.Text = fn;
 
                 bool ok = false;
@@ -103,42 +103,42 @@ namespace TVRename
                 }
                 if (!ok || !ok1 || !ok2)
                     lvi.BackColor = Helpers.WarningColor();
-                this.lvTest.Items.Add(lvi);
+                lvTest.Items.Add(lvi);
             }
         }
 
         private void cbPresets_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            int n = this.cbPresets.SelectedIndex;
+            int n = cbPresets.SelectedIndex;
             if (n == -1)
                 return;
 
-            this.txtTemplate.Text = CustomName.Presets[n];
-            this.cbPresets.SelectedIndex = -1;
+            txtTemplate.Text = CustomName.Presets[n];
+            cbPresets.SelectedIndex = -1;
         }
 
         private void txtTemplate_TextChanged(object sender, System.EventArgs e)
         {
-            this.CN.StyleString = this.txtTemplate.Text;
-            this.FillExamples();
+            CN.StyleString = txtTemplate.Text;
+            FillExamples();
         }
 
         private void cbTags_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            int n = this.cbTags.SelectedIndex;
+            int n = cbTags.SelectedIndex;
             if (n == -1)
                 return;
 
-            int p = this.txtTemplate.SelectionStart;
-            string s = this.txtTemplate.Text;
-            this.txtTemplate.Text = s.Substring(0, p) + CustomName.Tags[this.cbTags.SelectedIndex] + s.Substring(p);
+            int p = txtTemplate.SelectionStart;
+            string s = txtTemplate.Text;
+            txtTemplate.Text = s.Substring(0, p) + CustomName.Tags[cbTags.SelectedIndex] + s.Substring(p);
 
-            this.cbTags.SelectedIndex = -1;
+            cbTags.SelectedIndex = -1;
         }
 
         private void lvTest_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            this.FillCombos();
+            FillCombos();
         }
     }
 }

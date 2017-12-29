@@ -76,7 +76,7 @@ namespace TVRename
                                     {
                                         if (!string.IsNullOrEmpty(getLine)) // this line is blank, and we have a GET line saved
                                         {
-                                            string res = this.ProcessLine(getLine, doc);
+                                            string res = ProcessLine(getLine, doc);
                                             Byte[] msg = System.Text.Encoding.ASCII.GetBytes(res);
                                             stream.Write(msg, 0, msg.Length);
                                             getLine = "";

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.CodeDom;
 using System.Diagnostics;
 using Alphaleonis.Win32.Filesystem;
@@ -16,10 +16,10 @@ namespace TVRename
     using System.Windows.Forms;
     using System.IO;
 
-    using File = Alphaleonis.Win32.Filesystem.File;		
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;		
-    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+    using File = File;		
+    using FileInfo = FileInfo;		
+    using FileSystemInfo = FileSystemInfo;		
+    using DirectoryInfo = DirectoryInfo;
 
     public abstract class ActionDelete : ActionFileOperation
     {
@@ -57,8 +57,8 @@ namespace TVRename
                         lvi.SubItems.Add("");
                 }
 
-                lvi.SubItems.Add(this.TargetFolder);
-                lvi.SubItems.Add(this.ProgressText);
+                lvi.SubItems.Add(TargetFolder);
+                lvi.SubItems.Add(ProgressText);
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
 
@@ -102,12 +102,12 @@ namespace TVRename
                 }
 
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                this.Error = true;
-                this.ErrorText = e.Message;
+                Error = true;
+                ErrorText = e.Message;
             }
-            this.Done = true;
+            Done = true;
             return !Error;
         }
        
@@ -125,10 +125,10 @@ namespace TVRename
             if (cmr == null || toRemove.Directory == null || cmr.toRemove.Directory == null )
                 return 0;
 
-            return string.Compare(this.toRemove.FullName , cmr.toRemove.FullName , StringComparison.Ordinal);
+            return string.Compare(toRemove.FullName , cmr.toRemove.FullName , StringComparison.Ordinal);
         }
 
-        public bool SameSource(ActionDeleteFile o) => FileHelper.Same(this.toRemove , o.toRemove);
+        public bool SameSource(ActionDeleteFile o) => FileHelper.Same(toRemove , o.toRemove);
 
     }
 
@@ -168,12 +168,12 @@ namespace TVRename
                 }
 
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                this.Error = true;
-                this.ErrorText = e.Message;
+                Error = true;
+                ErrorText = e.Message;
             }
-            this.Done = true;
+            Done = true;
             return !Error;
         }
 
@@ -191,10 +191,10 @@ namespace TVRename
             if (cmr == null || toRemove.Parent.FullName == null || cmr.toRemove.Parent.FullName == null)
                 return 0;
 
-            return string.Compare(this.toRemove.FullName, cmr.toRemove.FullName, StringComparison.Ordinal);
+            return string.Compare(toRemove.FullName, cmr.toRemove.FullName, StringComparison.Ordinal);
         }
 
-        public bool SameSource(ActionDeleteDirectory o) => FileHelper.Same(this.toRemove, o.toRemove);
+        public bool SameSource(ActionDeleteDirectory o) => FileHelper.Same(toRemove, o.toRemove);
 
 
     }

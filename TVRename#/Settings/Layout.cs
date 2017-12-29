@@ -39,41 +39,41 @@ namespace TVRename
 
         public LayoutInfo()
         {
-            this.mColWidths = new System.Collections.Generic.List<int>();
-            this.mWindowID = WindowID.kUnknown;
-            this.mMaximised = false;
-            this.mSize = new Size(-1, -1);
-            this.mLocation = new Point(-1, -1);
-            this.mLocked = true;
+            mColWidths = new System.Collections.Generic.List<int>();
+            mWindowID = WindowID.kUnknown;
+            mMaximised = false;
+            mSize = new Size(-1, -1);
+            mLocation = new Point(-1, -1);
+            mLocked = true;
         }
 
         public bool Locked()
         {
-            return this.mLocked;
+            return mLocked;
         }
 
         public void Unlock()
         {
-            this.mLocked = false;
+            mLocked = false;
         }
 
         public void Lock()
         {
-            this.mLocked = true;
+            mLocked = true;
         }
 
         public void Save(StreamWriter sw)
         {
-            sw.WriteLine("WindowID=" + (int) this.mWindowID);
-            sw.WriteLine("Maximised=" + (this.mMaximised ? "1" : "0"));
-            if (!this.mMaximised)
+            sw.WriteLine("WindowID=" + (int) mWindowID);
+            sw.WriteLine("Maximised=" + (mMaximised ? "1" : "0"));
+            if (!mMaximised)
             {
-                sw.WriteLine("Size=" + this.mSize.Width + " " + this.mSize.Height);
-                sw.WriteLine("Location=" + this.mLocation.X + " " + this.mLocation.Y);
+                sw.WriteLine("Size=" + mSize.Width + " " + mSize.Height);
+                sw.WriteLine("Location=" + mLocation.X + " " + mLocation.Y);
             }
             sw.Write("ColWidths=");
-            for (int i = 0; i < this.mColWidths.Count; i++)
-                sw.Write(this.mColWidths[i] + " ");
+            for (int i = 0; i < mColWidths.Count; i++)
+                sw.Write(mColWidths[i] + " ");
             sw.WriteLine();
             sw.WriteLine("--");
         }
@@ -99,18 +99,18 @@ namespace TVRename
                         {
                             int n = int.Parse(l1.Substring(0, p));
                             l1 = l1.Substring(p + 1);
-                            this.mColWidths.Add(n);
+                            mColWidths.Add(n);
                         }
                         break;
                     case "Maximised":
-                        this.mMaximised = l1 == "1";
+                        mMaximised = l1 == "1";
                         break;
                     case "Size":
                         {
                             p = l1.IndexOf(' ');
                             int x = int.Parse(l1.Substring(0, p));
                             int y = int.Parse(l1.Substring(p + 1));
-                            this.mSize = new System.Drawing.Size(x, y);
+                            mSize = new Size(x, y);
                         }
                         break;
                     case "Location":
@@ -118,13 +118,13 @@ namespace TVRename
                             p = l1.IndexOf(' ');
                             int x = int.Parse(l1.Substring(0, p));
                             int y = int.Parse(l1.Substring(p + 1));
-                            this.mLocation = new Point(x, y);
+                            mLocation = new Point(x, y);
                         }
                         break;
                     case "WindowID":
                         {
                             int n = int.Parse(l1);
-                            this.mWindowID = (WindowID) n;
+                            mWindowID = (WindowID) n;
                         }
                         break;
                 }
@@ -134,42 +134,42 @@ namespace TVRename
 
         public void SetFrom(Form f, ListView lv)
         {
-            if (this.mLocked)
+            if (mLocked)
                 return;
 
-            this.mLocked = true;
+            mLocked = true;
 
             if (f != null)
             {
-                this.mSize = f.Size;
-                this.mLocation = f.Location;
-                this.mMaximised = f.WindowState == FormWindowState.Maximized;
+                mSize = f.Size;
+                mLocation = f.Location;
+                mMaximised = f.WindowState == FormWindowState.Maximized;
             }
 
-            this.mColWidths.Clear();
+            mColWidths.Clear();
             if (lv != null)
             {
                 for (int i = 0; i < lv.Columns.Count; i++)
-                    this.mColWidths.Add(lv.Columns[i].Width);
+                    mColWidths.Add(lv.Columns[i].Width);
             }
 
-            this.mLocked = false;
+            mLocked = false;
         }
 
         public void Fixup(Form f, ListView lv)
         {
             if (f != null)
             {
-                if (this.mSize != new Size(-1, -1))
-                    f.Size = this.mSize;
-                if (this.mLocation != new Point(-1, -1))
-                    f.Location = this.mLocation;
-                f.WindowState = this.mMaximised ? FormWindowState.Maximized : FormWindowState.Normal;
+                if (mSize != new Size(-1, -1))
+                    f.Size = mSize;
+                if (mLocation != new Point(-1, -1))
+                    f.Location = mLocation;
+                f.WindowState = mMaximised ? FormWindowState.Maximized : FormWindowState.Normal;
             }
             if (lv != null)
             {
-                for (int i = 0; i < Math.Min(this.mColWidths.Count, lv.Columns.Count); i++)
-                    lv.Columns[i].Width = this.mColWidths[i];
+                for (int i = 0; i < Math.Min(mColWidths.Count, lv.Columns.Count); i++)
+                    lv.Columns[i].Width = mColWidths[i];
             }
         }
     }
@@ -180,20 +180,20 @@ namespace TVRename
 
         public Layout()
         {
-            this.mLayouts = new System.Collections.Generic.List<LayoutInfo>();
-            this.Load();
+            mLayouts = new System.Collections.Generic.List<LayoutInfo>();
+            Load();
         }
 
         public LayoutInfo Get(WindowID id)
         {
-            for (int i = 0; i < this.mLayouts.Count; i++)
+            for (int i = 0; i < mLayouts.Count; i++)
             {
-                if (this.mLayouts[i].mWindowID == id)
-                    return this.mLayouts[i];
+                if (mLayouts[i].mWindowID == id)
+                    return mLayouts[i];
             }
             LayoutInfo li = new LayoutInfo();
             li.mWindowID = id;
-            this.mLayouts.Add(li);
+            mLayouts.Add(li);
             return li;
         }
 
@@ -202,15 +202,15 @@ namespace TVRename
             StreamWriter sw = new StreamWriter(PathManager.LayoutFile.FullName);
             sw.WriteLine("Version=2");
 
-            for (int i = 0; i < this.mLayouts.Count; i++)
-                this.mLayouts[i].Save(sw);
+            for (int i = 0; i < mLayouts.Count; i++)
+                mLayouts[i].Save(sw);
 
             sw.Close();
         }
 
         public void Load()
         {
-            System.IO.StreamReader sr;
+            StreamReader sr;
             try
             {
                 sr = new StreamReader(PathManager.LayoutFile.FullName);
@@ -237,16 +237,16 @@ namespace TVRename
                 LayoutInfo li = new LayoutInfo();
                 if (li.Load(sr))
                 {
-                    for (int i = 0; i < this.mLayouts.Count; i++)
+                    for (int i = 0; i < mLayouts.Count; i++)
                     {
-                        if (this.mLayouts[i].mWindowID == li.mWindowID)
+                        if (mLayouts[i].mWindowID == li.mWindowID)
                         {
-                            this.mLayouts.RemoveAt(i);
+                            mLayouts.RemoveAt(i);
                             break;
                         }
                     }
 
-                    this.mLayouts.Add(li);
+                    mLayouts.Add(li);
                 }
                 else
                     break;

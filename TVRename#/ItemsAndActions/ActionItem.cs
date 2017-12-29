@@ -37,7 +37,7 @@ namespace TVRename
             {
                 foreach (Item i in il)
                 {
-                    this.Add(i);
+                    Add(i);
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace TVRename
             {
                 foreach (ScanListItem sli in slil)
                 {
-                    this.Add(sli);
+                    Add(sli);
                 }
             }
         }
@@ -91,10 +91,10 @@ namespace TVRename
 
         public ActionQueue(string name, int parallelLimit)
         {
-            this.Name = name;
-            this.ParallelLimit = parallelLimit;
-            this.Actions = new System.Collections.Generic.List<Action>();
-            this.ActionPosition = 0;
+            Name = name;
+            ParallelLimit = parallelLimit;
+            Actions = new System.Collections.Generic.List<Action>();
+            ActionPosition = 0;
         }
     }
 
@@ -142,8 +142,8 @@ namespace TVRename
         protected void DoTidyup(DirectoryInfo di)
         {
 #if DEBUG
-            Debug.Assert(this._tidyup != null);
-            Debug.Assert(this._tidyup.DeleteEmpty);
+            Debug.Assert(_tidyup != null);
+            Debug.Assert(_tidyup.DeleteEmpty);
 #else
             if (_tidyup == null || !_tidyup.DeleteEmpty)
                 return;

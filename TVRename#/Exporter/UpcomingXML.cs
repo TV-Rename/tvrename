@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -22,7 +22,7 @@ namespace TVRename
                 XmlWriterSettings settings = new XmlWriterSettings();
                 settings.Indent = true;
                 settings.NewLineOnAttributes = true;
-                settings.Encoding = System.Text.Encoding.ASCII;
+                settings.Encoding = Encoding.ASCII;
                 using (XmlWriter writer = XmlWriter.Create(str, settings))
                 {
                     writer.WriteStartDocument();
@@ -73,7 +73,7 @@ namespace TVRename
             } // try
             catch (Exception e)
             {
-                if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(e.Message);
+                if ((!mDoc.Args.Unattended) && (!mDoc.Args.Hide)) MessageBox.Show(e.Message);
                 logger.Error(e);
                 return false;
             }
