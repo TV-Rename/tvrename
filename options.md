@@ -11,7 +11,7 @@ As you can see from the image above there are a number of options, each of which
 [Offline Operation](#offline-operation)&nbsp;&#9670;&nbsp;[Automatic Background Download](#automatic-background-download)&nbsp;&#9670;&nbsp;[Preferences](#preferences "Delve into the preferences")
 
 {:.center}
-[Ignore List]()&nbsp;&#9670;&nbsp;[Filename Template Editor]()&nbsp;&#9670;&nbsp;[Search Engines]()&nbsp;&#9670;&nbsp;[Filename Processors]()
+[Ignore List](#ignore-list)&nbsp;&#9670;&nbsp;[Filename Template Editor](#filename-template-editor)&nbsp;&#9670;&nbsp;[Search Engines](#search-engines)&nbsp;&#9670;&nbsp;[Filename Processors]()
 
 ## Offline Operation
 
