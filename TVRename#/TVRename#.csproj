@@ -55,6 +55,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>GlobalMembersTVRename</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AlphaFS, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4d31a58f7d7ad5c9, processorArchitecture=MSIL">
       <HintPath>..\packages\AlphaFS.2.1.3\lib\net40\AlphaFS.dll</HintPath>
@@ -117,8 +120,6 @@
     <Compile Include="Forms\Filters.Designer.cs">
       <DependentUpon>Filters.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ISplashForm.cs" />
-    <Compile Include="Forms\SplashScreen.cs" />
     <Compile Include="Forms\TVRenameSplash.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -431,7 +432,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings\Searchers.cs" />
-    <Compile Include="App\Server.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Forms\ShowException.cs">
       <SubType>Form</SubType>
