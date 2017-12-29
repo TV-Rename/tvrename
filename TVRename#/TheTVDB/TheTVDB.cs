@@ -55,10 +55,10 @@ namespace TVRename
     public class Language
     {
         public Language(int id, string abbreviation, string name, string englishName) {
-            this.Id = id;
-            this.Abbreviation = abbreviation;
-            this.Name = name;
-            this.EnglishName = englishName;
+            Id = id;
+            Abbreviation = abbreviation;
+            Name = name;
+            EnglishName = englishName;
 
             
         }

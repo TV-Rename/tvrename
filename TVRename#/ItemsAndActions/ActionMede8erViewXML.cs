@@ -30,7 +30,7 @@ namespace TVRename
         {
             Si = si;
             Where = nfo;
-            this.Snum = snum;
+            Snum = snum;
         }
 
         public string Produces

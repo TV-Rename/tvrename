@@ -10,7 +10,7 @@ namespace TVRename.Forms
 
         public Filters(TVDoc doc)
         {
-            this._doc = doc;
+            _doc = doc;
             InitializeComponent();
             clbGenre.Items.AddRange(doc.GetGenres().Cast<object>().ToArray());
             cmbNetwork.Items.AddRange(doc.GetNetworks().Cast<object>().ToArray());
