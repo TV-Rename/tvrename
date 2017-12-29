@@ -1711,6 +1711,8 @@ namespace TVRename
 
             DoActions(theList);
         }
+
+        // ReSharper disable once UnusedMember.Local for this method. It is part of some work to try and identify double part episodes automatically
         private void FindDoubleEps()
         {
             StringBuilder output = new StringBuilder();

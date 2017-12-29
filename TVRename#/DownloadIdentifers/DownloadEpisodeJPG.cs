@@ -30,7 +30,7 @@ namespace TVRename
                     string basefn = filo.Name;
                     basefn = basefn.Substring(0, basefn.Length - filo.Extension.Length); //remove extension
 
-                    FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + ".jpg");
+                    FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + DefaultExtension);
 
                     if (forceRefresh || !imgjpg.Exists)
                         theActionList.Add(new ActionDownload(dbep.Si, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8ErImages));

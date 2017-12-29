@@ -22,6 +22,7 @@ using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
 using Microsoft.Win32;
 using System.Security;
+// ReSharper disable UnusedMember.Local
 
 // Helpful functions and classes
 
