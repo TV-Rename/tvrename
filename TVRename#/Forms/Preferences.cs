@@ -249,8 +249,7 @@ namespace TVRename
             s.ShowStatusColors = new ShowStatusColoringTypeList();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
-                if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
-                    item.Tag is ShowStatusColoringType)
+                if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag is ShowStatusColoringType)
                 {
                     s.ShowStatusColors.Add(item.Tag as ShowStatusColoringType,
                                            ColorTranslator.FromHtml(item.SubItems[1].Text));
@@ -1045,8 +1044,7 @@ namespace TVRename
 
         private void cmDefaults_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-            int v;
-            if (e.ClickedItem == null || !(e.ClickedItem.Tag is String) || !int.TryParse(e.ClickedItem.Tag as String, out v))
+            if (!(e.ClickedItem?.Tag is string) || !int.TryParse(e.ClickedItem.Tag as String, out int v))
                 return;
 
             switch (v)

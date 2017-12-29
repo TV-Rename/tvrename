@@ -72,7 +72,7 @@ namespace TVRename
 
             chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
 
-            ShowTimeZone = ((si == null) || (si.TheSeries() == null))
+            ShowTimeZone = (si?.TheSeries() == null)
                                     ? TimeZone.DefaultTimeZone()
                                     : si.TheSeries().ShowTimeZone;
 
