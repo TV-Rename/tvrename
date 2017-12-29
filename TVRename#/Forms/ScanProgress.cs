@@ -23,10 +23,10 @@ namespace TVRename
         public bool Finished;
         public bool Ready;
 
-        public int pctLocalSearch;
-        public int pctMediaLib;
-        public int pctRSS;
-        public int pctuTorrent;
+        public int PctLocalSearch;
+        public int PctMediaLib;
+        public int PctRss;
+        public int PctuTorrent;
 
         public ScanProgress(bool mediaLib, bool searchLocal, bool downloading, bool rss)
         {
@@ -42,34 +42,34 @@ namespace TVRename
 
         public void UpdateProg()
         {
-            pbMediaLib.Value = ((pctMediaLib < 0) ? 0 : ((pctMediaLib > 100) ? 100 : pctMediaLib));
+            pbMediaLib.Value = ((PctMediaLib < 0) ? 0 : ((PctMediaLib > 100) ? 100 : PctMediaLib));
             pbMediaLib.Update();
-            pbLocalSearch.Value = ((pctLocalSearch < 0) ? 0 : ((pctLocalSearch > 100) ? 100 : pctLocalSearch));
+            pbLocalSearch.Value = ((PctLocalSearch < 0) ? 0 : ((PctLocalSearch > 100) ? 100 : PctLocalSearch));
             pbLocalSearch.Update();
-            pbRSS.Value = ((pctRSS < 0) ? 0 : ((pctRSS > 100) ? 100 : pctRSS));
+            pbRSS.Value = ((PctRss < 0) ? 0 : ((PctRss > 100) ? 100 : PctRss));
             pbRSS.Update();
-            pbDownloading.Value = ((pctuTorrent < 0) ? 0 : ((pctuTorrent > 100) ? 100 : pctuTorrent));
+            pbDownloading.Value = ((PctuTorrent < 0) ? 0 : ((PctuTorrent > 100) ? 100 : PctuTorrent));
             pbDownloading.Update();
         }
 
         public void MediaLibProg(int p)
         {
-            pctMediaLib = p;
+            PctMediaLib = p;
         }
 
         public void LocalSearchProg(int p)
         {
-            pctLocalSearch = p;
+            PctLocalSearch = p;
         }
 
-        public void RSSProg(int p)
+        public void RssProg(int p)
         {
-            pctRSS = p;
+            PctRss = p;
         }
 
         public void DownloadingProg(int p)
         {
-            pctuTorrent = p;
+            PctuTorrent = p;
         }
 
         private void ScanProgress_Load(object sender, System.EventArgs e)

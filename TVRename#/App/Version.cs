@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -16,13 +16,13 @@ namespace TVRename
     // Are we running under Mono, rather than MS.NET ?
     public static class Version
     {
-        private static bool? OnMonoCached;
+        private static bool? _onMonoCached;
 
         public static bool OnMono()
         {
-            if (!OnMonoCached.HasValue)
-                OnMonoCached = Type.GetType("Mono.Runtime") != null;
-            return OnMonoCached.Value;
+            if (!_onMonoCached.HasValue)
+                _onMonoCached = Type.GetType("Mono.Runtime") != null;
+            return _onMonoCached.Value;
         }
 
         public static bool OnWindows()

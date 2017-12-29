@@ -79,7 +79,7 @@ namespace TVRename
             return "Eastern Standard Time";
         }
 
-        public static DateTime AdjustTZTimeToLocalTime(DateTime dt, TimeZone theirTimeZone) // set tz to 0 to not correct for timezone
+        public static DateTime AdjustTzTimeToLocalTime(DateTime dt, TimeZone theirTimeZone) // set tz to 0 to not correct for timezone
         {
             if (theirTimeZone == null)
                 return dt;
@@ -95,21 +95,21 @@ namespace TVRename
             int thisYear = DateTime.Now.Year;
 
             // some timezones don't observe any DST.  the changeover dates seem to be all zeroes in that case.
-            bool theyHaveDST = !((theirTimeZone.DaylightDate.wMonth == 0) && (theirTimeZone.DaylightDate.wDay == 0) && (theirTimeZone.DaylightDate.wHour == 0) && (theirTimeZone.DaylightDate.wMinute == 0) && (theirTimeZone.DaylightDate.wSecond == 0) && (theirTimeZone.DaylightDate.wMilliseconds == 0) && (theirTimeZone.StandardDate.wMonth == 0) && (theirTimeZone.StandardDate.wDay == 0) && (theirTimeZone.StandardDate.wHour == 0) && (theirTimeZone.StandardDate.wMinute == 0) && (theirTimeZone.StandardDate.wSecond == 0) && (theirTimeZone.StandardDate.wMilliseconds == 0));
+            bool theyHaveDst = !((theirTimeZone.DaylightDate.WMonth == 0) && (theirTimeZone.DaylightDate.WDay == 0) && (theirTimeZone.DaylightDate.WHour == 0) && (theirTimeZone.DaylightDate.WMinute == 0) && (theirTimeZone.DaylightDate.WSecond == 0) && (theirTimeZone.DaylightDate.WMilliseconds == 0) && (theirTimeZone.StandardDate.WMonth == 0) && (theirTimeZone.StandardDate.WDay == 0) && (theirTimeZone.StandardDate.WHour == 0) && (theirTimeZone.StandardDate.WMinute == 0) && (theirTimeZone.StandardDate.WSecond == 0) && (theirTimeZone.StandardDate.WMilliseconds == 0));
 
             DateTime themNow = DateTime.UtcNow.AddMinutes(-theirTimeZone.Bias); // tz->bias in minutes. +300 = 5 hours _behind_ UTC
 
-            if (theyHaveDST)
+            if (theyHaveDst)
             {
-                DateTime theirDSTStart = new DateTime(thisYear, theirTimeZone.DaylightDate.wMonth, theirTimeZone.DaylightDate.wDay, theirTimeZone.DaylightDate.wHour, theirTimeZone.DaylightDate.wMinute, theirTimeZone.DaylightDate.wSecond);
-                DateTime theirDSTEnd = new DateTime(thisYear, theirTimeZone.StandardDate.wMonth, theirTimeZone.StandardDate.wDay, theirTimeZone.StandardDate.wHour, theirTimeZone.StandardDate.wMinute, theirTimeZone.StandardDate.wSecond);
+                DateTime theirDstStart = new DateTime(thisYear, theirTimeZone.DaylightDate.WMonth, theirTimeZone.DaylightDate.WDay, theirTimeZone.DaylightDate.WHour, theirTimeZone.DaylightDate.WMinute, theirTimeZone.DaylightDate.WSecond);
+                DateTime theirDstEnd = new DateTime(thisYear, theirTimeZone.StandardDate.WMonth, theirTimeZone.StandardDate.WDay, theirTimeZone.StandardDate.WHour, theirTimeZone.StandardDate.WMinute, theirTimeZone.StandardDate.WSecond);
 
-                if (theirDSTEnd.CompareTo(theirDSTStart) < 0)
-                    theirDSTStart -= new TimeSpan(365, 0, 0, 0, 0);
+                if (theirDstEnd.CompareTo(theirDstStart) < 0)
+                    theirDstStart -= new TimeSpan(365, 0, 0, 0, 0);
 
-                if (themNow.CompareTo(theirDSTStart) > 0)
+                if (themNow.CompareTo(theirDstStart) > 0)
                     themNow = themNow.AddMinutes(-theirTimeZone.DaylightBias);
-                if (themNow.CompareTo(theirDSTEnd) > 0)
+                if (themNow.CompareTo(theirDstEnd) > 0)
                     themNow = themNow.AddMinutes(theirTimeZone.DaylightBias);
             }
 
@@ -134,14 +134,14 @@ namespace TVRename
 
         public class SysTime
         {
-            public short wDay;
-            public short wDayOfWeek;
-            public short wHour;
-            public short wMilliseconds;
-            public short wMinute;
-            public short wMonth;
-            public short wSecond;
-            public short wYear;
+            public short WDay;
+            public short WDayOfWeek;
+            public short WHour;
+            public short WMilliseconds;
+            public short WMinute;
+            public short WMonth;
+            public short WSecond;
+            public short WYear;
 
             public SysTime(Byte[] bytes, int pos)
             {
@@ -154,14 +154,14 @@ namespace TVRename
                 int sec = bytes[pos + 12] + (bytes[pos + 13] << 8);
                 int msec = bytes[pos + 14] + (bytes[pos + 15] << 8);
 
-                wYear = (short) y;
-                wMonth = (short) m;
-                wDayOfWeek = (short) dow;
-                wDay = (short) day;
-                wHour = (short) hr;
-                wMinute = (short) min;
-                wSecond = (short) sec;
-                wMilliseconds = (short) msec;
+                WYear = (short) y;
+                WMonth = (short) m;
+                WDayOfWeek = (short) dow;
+                WDay = (short) day;
+                WHour = (short) hr;
+                WMinute = (short) min;
+                WSecond = (short) sec;
+                WMilliseconds = (short) msec;
             }
         }
 

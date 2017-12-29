@@ -8,7 +8,7 @@ namespace TVRename
         public override bool Active() =>TVSettings.Instance.ExportMissingXML;
         public override string Location() =>TVSettings.Instance.ExportMissingXMLTo;
         
-        public override void Run(ItemList TheActionList)
+        public override void Run(ItemList theActionList)
         {
             if (TVSettings.Instance.ExportMissingXML)
             {
@@ -24,22 +24,22 @@ namespace TVRename
                     XMLHelper.WriteAttributeToXML(writer,"Version","2.1");
                     writer.WriteStartElement("MissingItems");
 
-                    foreach (Item Action in TheActionList)
+                    foreach (ITem action in theActionList)
                     {
-                        if (Action is ItemMissing)
+                        if (action is ItemMissing)
                         {
-                            ItemMissing Missing = (ItemMissing)(Action);
+                            ItemMissing missing = (ItemMissing)(action);
                             writer.WriteStartElement("MissingItem");
 
-                            XMLHelper.WriteElementToXML(writer,"id",Missing.Episode.SI.TVDBCode);
-                            XMLHelper.WriteElementToXML(writer, "title",Missing.Episode.TheSeries.Name);
-                            XMLHelper.WriteElementToXML(writer, "season", Helpers.pad(Missing.Episode.SeasonNumber));
-                            XMLHelper.WriteElementToXML(writer, "episode", Helpers.pad(Missing.Episode.EpNum));
-                            XMLHelper.WriteElementToXML(writer, "episodeName",Missing.Episode.Name);
-                            XMLHelper.WriteElementToXML(writer, "description",Missing.Episode.Overview);
+                            XMLHelper.WriteElementToXML(writer,"id",missing.Episode.Si.TVDBCode);
+                            XMLHelper.WriteElementToXML(writer, "title",missing.Episode.TheSeries.Name);
+                            XMLHelper.WriteElementToXML(writer, "season", Helpers.Pad(missing.Episode.SeasonNumber));
+                            XMLHelper.WriteElementToXML(writer, "episode", Helpers.Pad(missing.Episode.EpNum));
+                            XMLHelper.WriteElementToXML(writer, "episodeName",missing.Episode.Name);
+                            XMLHelper.WriteElementToXML(writer, "description",missing.Episode.Overview);
 
                             writer.WriteStartElement("pubDate");
-                            DateTime? dt = Missing.Episode.GetAirDateDT(true);
+                            DateTime? dt = missing.Episode.GetAirDateDt(true);
                             if (dt != null)
                                 writer.WriteValue(dt.Value.ToString("F"));
                             writer.WriteEndElement();

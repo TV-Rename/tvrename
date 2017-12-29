@@ -11,7 +11,7 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
-    public class ItemMissing : Item, ScanListItem
+    public class ItemMissing : ITem, IScanListItem
     {
         public string TheFileNoExt;
 
@@ -23,12 +23,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public bool SameAs(ITem o)
         {
             return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, TheFileNoExt) == 0);
         }
 
-        public int Compare(Item o)
+        public int Compare(ITem o)
         {
             ItemMissing miss = o as ItemMissing;
             //return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
@@ -37,9 +37,9 @@ namespace TVRename
                 return 0;
             }
 
-            if (!Episode.SI.ShowName.Equals(miss.Episode.SI.ShowName))
+            if (!Episode.Si.ShowName.Equals(miss.Episode.Si.ShowName))
             {
-                return Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
+                return Episode.Si.ShowName.CompareTo(miss.Episode.Si.ShowName);
             }
 
             if (!Episode.SeasonNumber.Equals(miss.Episode.SeasonNumber))
@@ -72,13 +72,13 @@ namespace TVRename
             get
             {
                 ListViewItem lvi = new ListViewItem {
-                                                        Text = Episode.SI.ShowName
+                                                        Text = Episode.Si.ShowName
                                                     };
 
                 lvi.SubItems.Add(Episode.SeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
 
-                DateTime? dt = Episode.GetAirDateDT(true);
+                DateTime? dt = Episode.GetAirDateDt(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else

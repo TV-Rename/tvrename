@@ -5,17 +5,17 @@ namespace TVRename
 {
     class DownloadFolderJPG : DownloadIdentifier
     {
-        private List<string> doneFolderJPG;
-        private const string defaultFileName = "folder.jpg";
+        private List<string> _doneFolderJPG;
+        private const string DefaultFileName = "folder.jpg";
 
         public DownloadFolderJPG() 
         {
-            reset();
+            Reset();
         }
 
         public override DownloadType GetDownloadType()
         {
-            return DownloadType.downloadImage;
+            return DownloadType.DownloadImage;
         }
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
@@ -24,9 +24,9 @@ namespace TVRename
 
             if (TVSettings.Instance.FolderJpg)
             {
-                ItemList TheActionList = new ItemList();
-                FileInfo fi = FileHelper.FileInFolder(si.AutoAdd_FolderBase, defaultFileName);
-                bool fileDoesntExist = !doneFolderJPG.Contains(fi.FullName) && !fi.Exists;
+                ItemList theActionList = new ItemList();
+                FileInfo fi = FileHelper.FileInFolder(si.AutoAddFolderBase, DefaultFileName);
+                bool fileDoesntExist = !_doneFolderJPG.Contains(fi.FullName) && !fi.Exists;
 
                 if (forceRefresh || fileDoesntExist)
                 {
@@ -44,10 +44,10 @@ namespace TVRename
 
 
                     if (!string.IsNullOrEmpty(downloadPath))
-                        TheActionList.Add(new ActionDownload(si, null, fi, downloadPath, false));
-                    doneFolderJPG.Add(fi.FullName);
+                        theActionList.Add(new ActionDownload(si, null, fi, downloadPath, false));
+                    _doneFolderJPG.Add(fi.FullName);
                 }
-                return TheActionList;
+                return theActionList;
 
             }
             return null;
@@ -59,9 +59,9 @@ namespace TVRename
             {
                 // season folders JPGs
 
-                ItemList TheActionList = new ItemList();
-                FileInfo fi = FileHelper.FileInFolder(folder, defaultFileName);
-                if (!doneFolderJPG.Contains(fi.FullName) && (!fi.Exists|| forceRefresh))
+                ItemList theActionList = new ItemList();
+                FileInfo fi = FileHelper.FileInFolder(folder, DefaultFileName);
+                if (!_doneFolderJPG.Contains(fi.FullName) && (!fi.Exists|| forceRefresh))
                 // some folders may come up multiple times
                 {
 
@@ -78,20 +78,20 @@ namespace TVRename
                         bannerPath = si.TheSeries().GetImage(TVSettings.Instance.ItemForFolderJpg());
                     }
                     if (!string.IsNullOrEmpty(bannerPath))
-                        TheActionList.Add(new ActionDownload(si, null, fi, bannerPath,
-                                                                  TVSettings.Instance.ShrinkLargeMede8erImages));
-                    doneFolderJPG.Add(fi.FullName);
+                        theActionList.Add(new ActionDownload(si, null, fi, bannerPath,
+                                                                  TVSettings.Instance.ShrinkLargeMede8ErImages));
+                    _doneFolderJPG.Add(fi.FullName);
                 }
-                return TheActionList;
+                return theActionList;
             }
 
             
             return base.ProcessSeason(si,folder,snum,forceRefresh);
         }
-        public override void reset()
+        public override void Reset()
         {
-            doneFolderJPG  = new List<string>();
-            base.reset();
+            _doneFolderJPG  = new List<string>();
+            base.Reset();
         }
     }
 

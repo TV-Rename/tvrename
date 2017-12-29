@@ -20,17 +20,17 @@ namespace TVRename
     /// </summary>
     public partial class IgnoreEdit : Form
     {
-        private System.Collections.Generic.List<IgnoreItem> DisplayedSet;
-        private System.Collections.Generic.List<IgnoreItem> Ignore;
-        private TVDoc mDoc;
+        private System.Collections.Generic.List<IgnoreItem> _displayedSet;
+        private System.Collections.Generic.List<IgnoreItem> _ignore;
+        private TVDoc _mDoc;
 
         public IgnoreEdit(TVDoc doc)
         {
-            mDoc = doc;
-            Ignore = new System.Collections.Generic.List<IgnoreItem>();
+            _mDoc = doc;
+            _ignore = new System.Collections.Generic.List<IgnoreItem>();
 
-            foreach (IgnoreItem ii in mDoc.Ignore)
-                Ignore.Add(ii);
+            foreach (IgnoreItem ii in _mDoc.Ignore)
+                _ignore.Add(ii);
 
             InitializeComponent();
 
@@ -39,18 +39,18 @@ namespace TVRename
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            mDoc.Ignore = Ignore;
-            mDoc.SetDirty();
+            _mDoc.Ignore = _ignore;
+            _mDoc.SetDirty();
             Close();
         }
 
         private void bnRemove_Click(object sender, System.EventArgs e)
         {
             foreach (int i in lbItems.SelectedIndices)
-                foreach (IgnoreItem iitest in Ignore)
+                foreach (IgnoreItem iitest in _ignore)
                     if (lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
                     {
-                        Ignore.Remove(iitest);
+                        _ignore.Remove(iitest);
                         break;
                     }
             FillList();
@@ -64,15 +64,15 @@ namespace TVRename
             string f = txtFilter.Text.ToLower();
             bool all = string.IsNullOrEmpty(f);
 
-            DisplayedSet = new System.Collections.Generic.List<IgnoreItem>();
+            _displayedSet = new System.Collections.Generic.List<IgnoreItem>();
 
-            foreach (IgnoreItem ii in Ignore)
+            foreach (IgnoreItem ii in _ignore)
             {
                 string s = ii.FileAndPath;
                 if (all || s.ToLower().Contains(f))
                 {
                     lbItems.Items.Add(s);
-                    DisplayedSet.Add(ii);
+                    _displayedSet.Add(ii);
                 }
             }
 

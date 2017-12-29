@@ -5,50 +5,50 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class DownloadKODIMetaData : DownloadIdentifier
+    class DownloadKodiMetaData : DownloadIdentifier
     {
-        private static List<string> doneNFO;
+        private static List<string> _doneNfo;
 
-        public DownloadKODIMetaData() 
+        public DownloadKodiMetaData() 
         {
-            reset();
+            Reset();
         }
 
         public override DownloadType GetDownloadType()
         {
-            return DownloadType.downloadMetaData;
+            return DownloadType.DownloadMetaData;
         }
 
-        public override void notifyComplete(FileInfo file)
+        public override void NotifyComplete(FileInfo file)
         {
             if (file.FullName.EndsWith(".nfo", true, new CultureInfo("en")))
             {
-                doneNFO.Add(file.FullName);
+                _doneNfo.Add(file.FullName);
             }
-            base.notifyComplete(file);
+            base.NotifyComplete(file);
         }
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             // for each tv show, optionally write a tvshow.nfo file
-            if (TVSettings.Instance.NFOShows)
+            if (TVSettings.Instance.NfoShows)
             {
-                ItemList TheActionList = new ItemList();
-                FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
+                ItemList theActionList = new ItemList();
+                FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAddFolderBase, "tvshow.nfo");
 
                 bool needUpdate = !tvshownfo.Exists ||
-                                  (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime)) ||
+                                  (si.TheSeries().SrvLastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime)) ||
                     // was it written before we fixed the bug in <episodeguideurl> ?
                                   (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
 
-                bool alreadyOnTheList = doneNFO.Contains(tvshownfo.FullName);
+                bool alreadyOnTheList = _doneNfo.Contains(tvshownfo.FullName);
 
                 if ((forceRefresh || needUpdate) && !alreadyOnTheList)
                 {
-                    TheActionList.Add(new ActionNFO(tvshownfo, si));
-                    doneNFO.Add(tvshownfo.FullName);
+                    theActionList.Add(new ActionNfo(tvshownfo, si));
+                    _doneNfo.Add(tvshownfo.FullName);
                 }
-                return TheActionList;
+                return theActionList;
 
             }
             return base.ProcessShow(si, forceRefresh);
@@ -56,33 +56,33 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo,bool forceRefresh)
         {
-            if (TVSettings.Instance.NFOEpisodes)
+            if (TVSettings.Instance.NfoEpisodes)
             {
-                ItemList TheActionList = new ItemList();
+                ItemList theActionList = new ItemList();
 
                 string fn = filo.Name;
                 fn = fn.Substring(0, fn.Length - filo.Extension.Length);
                 fn += ".nfo";
                 FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
-                if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)) || forceRefresh)
+                if (!nfo.Exists || (dbep.SrvLastUpdated > TimeZone.Epoch(nfo.LastWriteTime)) || forceRefresh)
                 {
                     //If we do not already have plans to put the file into place
-                    if (!(doneNFO.Contains(nfo.FullName)))
+                    if (!(_doneNfo.Contains(nfo.FullName)))
                     {
-                        TheActionList.Add(new ActionNFO(nfo, dbep));
-                        doneNFO.Add(nfo.FullName);
+                        theActionList.Add(new ActionNfo(nfo, dbep));
+                        _doneNfo.Add(nfo.FullName);
                     }
                 }
-                return TheActionList;
+                return theActionList;
             }
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void reset()
+        public override void Reset()
         {
-            doneNFO = new List<String>();
-            base.reset();
+            _doneNfo = new List<String>();
+            base.Reset();
         }
 
     }

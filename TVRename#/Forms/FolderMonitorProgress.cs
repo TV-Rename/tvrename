@@ -13,11 +13,11 @@ namespace TVRename
     {
         public bool StopNow = false;
         public bool Ready = false;
-        private FolderMonitor mFM;
+        private FolderMonitor _mFm;
 
         public FolderMonitorProgress(FolderMonitor thefm)
         {
-            mFM = thefm;
+            _mFm = thefm;
             InitializeComponent();
             timer1_Tick(null, null); // force immediate initial update
         }
@@ -25,22 +25,22 @@ namespace TVRename
         public void bnCancel_Click(object sender, System.EventArgs e)
         {
             DialogResult = DialogResult.Abort;
-            mFM.FMPStopNow = true;
+            _mFm.FmpStopNow = true;
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            if (mFM == null)
+            if (_mFm == null)
                 return;
 
             timer1.Stop();
 
             BringToFront();
 
-            pbProgress.Value = mFM.FMPPercent;
-            lbMessage.Text = mFM.FMPUpto;
+            pbProgress.Value = _mFm.FmpPercent;
+            lbMessage.Text = _mFm.FmpUpto;
             
-            if (mFM.FMPStopNow)
+            if (_mFm.FmpStopNow)
                 Close();
 
             timer1.Start();

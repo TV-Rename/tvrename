@@ -31,11 +31,11 @@ namespace TVRename
         public int TorrentsMatched = 0;
 
         // The following aren't saved, but are calculated when we do a scan
-        [XmlIgnoreAttribute] public int NS_NumberOfEpisodes = -1; // -1 = unknown
-        [XmlIgnoreAttribute] public int NS_NumberOfEpisodesExpected = 0;
-        [XmlIgnoreAttribute] public int NS_NumberOfSeasons = 0;
-        [XmlIgnoreAttribute] public int NS_NumberOfShows = 0;
-        [XmlIgnoreAttribute] private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        [XmlIgnoreAttribute] public int NsNumberOfEpisodes = -1; // -1 = unknown
+        [XmlIgnoreAttribute] public int NsNumberOfEpisodesExpected = 0;
+        [XmlIgnoreAttribute] public int NsNumberOfSeasons = 0;
+        [XmlIgnoreAttribute] public int NsNumberOfShows = 0;
+        [XmlIgnoreAttribute] private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats Load()
         {
@@ -70,7 +70,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-               logger.Fatal(e);
+               _logger.Fatal(e);
                return new TVRenameStats(); 
             }
 

@@ -7,37 +7,37 @@ namespace TVRename
 
         public DownloadpyTivoMetaData() 
         {
-            reset();
+            Reset();
         }
 
         public override DownloadType GetDownloadType()
         {
-            return DownloadType.downloadMetaData;
+            return DownloadType.DownloadMetaData;
         }
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (TVSettings.Instance.pyTivoMeta)
+            if (TVSettings.Instance.PyTivoMeta)
             {
-                ItemList TheActionList = new ItemList(); 
+                ItemList theActionList = new ItemList(); 
                 string fn = filo.Name;
                 fn += ".txt";
                 string folder = filo.DirectoryName;
-                if (TVSettings.Instance.pyTivoMetaSubFolder)
+                if (TVSettings.Instance.PyTivoMetaSubFolder)
                     folder += "\\.meta";
                 FileInfo meta = FileHelper.FileInFolder(folder, fn);
 
-                if (!meta.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(meta.LastWriteTime)))
-                    TheActionList.Add(new ActionPyTivoMeta(meta, dbep));
+                if (!meta.Exists || (dbep.SrvLastUpdated > TimeZone.Epoch(meta.LastWriteTime)))
+                    theActionList.Add(new ActionPyTivoMeta(meta, dbep));
 
-                return TheActionList;
+                return theActionList;
             }
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void reset()
+        public override void Reset()
         {
-            base.reset();
+            base.Reset();
         }
 
     }

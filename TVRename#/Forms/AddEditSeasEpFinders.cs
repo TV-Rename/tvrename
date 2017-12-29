@@ -26,20 +26,20 @@ namespace TVRename
     /// </summary>
     public partial class AddEditSeasEpFinders : Form
     {
-        private List<FilenameProcessorRE> Rex;
-        private List<ShowItem> SIL;
+        private List<FilenameProcessorRe> _rex;
+        private List<ShowItem> _sil;
 
-        public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder)
+        public AddEditSeasEpFinders(List<FilenameProcessorRe> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder)
         {
-            Rex = rex;
-            SIL = sil;
+            _rex = rex;
+            _sil = sil;
             
             InitializeComponent();
 
             SetupGrid();
-            FillGrid(Rex);
+            FillGrid(_rex);
 
-            foreach (ShowItem si in SIL)
+            foreach (ShowItem si in _sil)
             {
                 cbShowList.Items.Add(si.ShowName);
                 if (si == initialShow)
@@ -131,7 +131,7 @@ namespace TVRename
                 Grid1[r, c].AddController(changed);
         }
 
-        public void FillGrid(List<FilenameProcessorRE> list)
+        public void FillGrid(List<FilenameProcessorRe> list)
         {
             while (Grid1.Rows.Count > 1) // leave header row
                 Grid1.Rows.Remove(1);
@@ -139,10 +139,10 @@ namespace TVRename
             Grid1.RowsCount = list.Count + 1;
 
             int i = 1;
-            foreach (FilenameProcessorRE re in list)
+            foreach (FilenameProcessorRe re in list)
             {
                 Grid1[i, 0] = new SourceGrid.Cells.CheckBox(null, re.Enabled);
-                Grid1[i, 1] = new SourceGrid.Cells.Cell(re.RE, typeof(string));
+                Grid1[i, 1] = new SourceGrid.Cells.Cell(re.Re, typeof(string));
                 Grid1[i, 2] = new SourceGrid.Cells.CheckBox(null, re.UseFullPath);
                 Grid1[i, 3] = new SourceGrid.Cells.Cell(re.Notes, typeof(string));
 
@@ -156,7 +156,7 @@ namespace TVRename
             StartTimer();
         }
 
-        private FilenameProcessorRE REForRow(int i)
+        private FilenameProcessorRe ReForRow(int i)
         {
             if ((i < 1) || (i >= Grid1.RowsCount)) // row 0 is header
                 return null;
@@ -167,17 +167,17 @@ namespace TVRename
 
             if (string.IsNullOrEmpty(regex))
                 return null;
-            return new FilenameProcessorRE(en, regex, fullPath, notes);
+            return new FilenameProcessorRe(en, regex, fullPath, notes);
         }
 
         private void bnOK_Click(object sender, EventArgs e)
         {
-            Rex.Clear();
+            _rex.Clear();
             for (int i = 1; i < Grid1.RowsCount; i++) // skip header row
             {
-                FilenameProcessorRE re = REForRow(i);
+                FilenameProcessorRe re = ReForRow(i);
                 if (re != null)
-                    Rex.Add(re);
+                    _rex.Add(re);
             }
         }
 
@@ -252,13 +252,13 @@ namespace TVRename
 
             lvPreview.Enabled = true;
 
-            List<FilenameProcessorRE> rel = new List<FilenameProcessorRE>();
+            List<FilenameProcessorRe> rel = new List<FilenameProcessorRe>();
 
             if (chkTestAll.Checked)
             {
                 for (int i = 1; i < Grid1.RowsCount; i++)
                 {
-                    FilenameProcessorRE re = REForRow(i);
+                    FilenameProcessorRe re = ReForRow(i);
                     if (re != null)
                         rel.Add(re);
                 }
@@ -269,7 +269,7 @@ namespace TVRename
                 if (rowsIndex.Length == 0)
                     return;
 
-                FilenameProcessorRE re2 = REForRow(rowsIndex[0]);
+                FilenameProcessorRe re2 = ReForRow(rowsIndex[0]);
                 if (re2 != null)
                     rel.Add(re2);
                 else
@@ -286,7 +286,7 @@ namespace TVRename
                 if (!TVSettings.Instance.UsefulExtension(fi.Extension, true))
                     continue; // move on
 
-                ShowItem si = cbShowList.SelectedIndex >= 0 ? SIL[cbShowList.SelectedIndex] : null;
+                ShowItem si = cbShowList.SelectedIndex >= 0 ? _sil[cbShowList.SelectedIndex] : null;
                 bool r = TVDoc.FindSeasEp(fi, out seas, out ep, si, rel, false);
                 ListViewItem lvi = new ListViewItem();
                 lvi.Text = fi.Name;
@@ -303,23 +303,23 @@ namespace TVRename
         {
             DialogResult dr = MessageBox.Show("Restore to default matching expressions?", "Filename Processors", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (dr == DialogResult.Yes)
-                FillGrid(TVSettings.DefaultFNPList());
+                FillGrid(TVSettings.DefaultFnpList());
         }
 
         #region Nested type: ChangedCont
 
         public class ChangedCont : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private AddEditSeasEpFinders P;
+            private AddEditSeasEpFinders _p;
 
             public ChangedCont(AddEditSeasEpFinders p)
             {
-                P = p;
+                _p = p;
             }
 
             public override void OnValueChanged(SourceGrid.CellContext sender, EventArgs e)
             {
-                P.StartTimer();
+                _p.StartTimer();
             }
         }
 

@@ -5,18 +5,18 @@ using System.Xml;
 
 namespace TVRename
 {
-    class RSSFinder:Finder
+    class RssFinder:Finder
     {
-        public RSSFinder(TVDoc i) : base(i) { }
+        public RssFinder(TVDoc i) : base(i) { }
 
         public override bool Active()
         {
-            return TVSettings.Instance.SearchRSS;
+            return TVSettings.Instance.SearchRss;
         }
 
         public override FinderDisplayType DisplayType()
         {
-            return FinderDisplayType.RSS;
+            return FinderDisplayType.Rss;
         }
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
@@ -24,14 +24,14 @@ namespace TVRename
             int c = TheActionList.Count + 2;
             int n = 1;
             prog.Invoke(100 * n / c);
-            RSSItemList RSSList = new RSSItemList();
-            foreach (string s in TVSettings.Instance.RSSURLs)
-                RSSList.DownloadRSS(s, TVSettings.Instance.FNPRegexs);
+            RssItemList rssList = new RssItemList();
+            foreach (string s in TVSettings.Instance.RssurLs)
+                rssList.DownloadRss(s, TVSettings.Instance.FnpRegexs);
 
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (Item Action1 in TheActionList)
+            foreach (ITem action1 in TheActionList)
             {
                 if (ActionCancel)
                     return;
@@ -39,46 +39,46 @@ namespace TVRename
                 n++;
                 prog.Invoke(100 * n / c);
 
-                if (!(Action1 is ItemMissing))
+                if (!(action1 is ItemMissing))
                     continue;
 
-                ItemMissing Action = (ItemMissing)(Action1);
+                ItemMissing action = (ItemMissing)(action1);
 
-                ProcessedEpisode pe = Action.Episode;
-                string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName);
+                ProcessedEpisode pe = action.Episode;
+                string simpleShowName = Helpers.SimplifyName(pe.Si.ShowName);
                 string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
 
-                foreach (RSSItem rss in RSSList)
+                foreach (RssItem rss in rssList)
                 {
                     if ((FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) || (string.IsNullOrEmpty(rss.ShowName) && FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false))) && (rss.Season == pe.SeasonNumber) && (rss.Episode == pe.EpNum))
                     {
-                        newItems.Add(new ActionRSS(rss, Action.TheFileNoExt, pe));
-                        toRemove.Add(Action1);
+                        newItems.Add(new ActionRss(rss, action.TheFileNoExt, pe));
+                        toRemove.Add(action1);
                     }
                 }
             }
-            foreach (Item i in toRemove)
+            foreach (ITem i in toRemove)
                 TheActionList.Remove(i);
 
-            foreach (Item Action in newItems)
-                TheActionList.Add(Action);
+            foreach (ITem action in newItems)
+                TheActionList.Add(action);
 
             prog.Invoke(100);
 
         }
     
     }
-    public class RSSItem
+    public class RssItem
     {
         public int Episode;
         public int Season;
         public string ShowName;
         public string Title;
-        public string URL;
+        public string Url;
 
-        public RSSItem(string url, string title, int season, int episode, string showName)
+        public RssItem(string url, string title, int season, int episode, string showName)
         {
-            URL = url;
+            Url = url;
             Season = season;
             Episode = episode;
             Title = title;
@@ -86,18 +86,18 @@ namespace TVRename
         }
     }
 
-    public class RSSItemList : List<RSSItem>
+    public class RssItemList : List<RssItem>
     {
-        private List<FilenameProcessorRE> Rexps; // only trustable while in DownloadRSS or its called functions
+        private List<FilenameProcessorRe> _rexps; // only trustable while in DownloadRSS or its called functions
 
-        public bool DownloadRSS(string URL, List<FilenameProcessorRE> rexps)
+        public bool DownloadRss(string url, List<FilenameProcessorRe> rexps)
         {
-            Rexps = rexps;
+            _rexps = rexps;
 
             System.Net.WebClient wc = new System.Net.WebClient();
             try
             {
-                byte[] r = wc.DownloadData(URL);
+                byte[] r = wc.DownloadData(url);
 
                 MemoryStream ms = new MemoryStream(r);
 
@@ -142,7 +142,7 @@ namespace TVRename
             }
             finally
             {
-                Rexps = null;
+                _rexps = null;
             }
 
             return true;
@@ -201,7 +201,7 @@ namespace TVRename
             int episode = -1;
             string showName = "";
 
-            TVDoc.FindSeasEp("", title, out season, out episode, null, Rexps);
+            TVDoc.FindSeasEp("", title, out season, out episode, null, _rexps);
 
             try
             {
@@ -220,7 +220,7 @@ namespace TVRename
             }
 
             if ((season != -1) && (episode != -1))
-                Add(new RSSItem(link, title, season, episode, showName));
+                Add(new RssItem(link, title, season, episode, showName));
 
             return true;
         }

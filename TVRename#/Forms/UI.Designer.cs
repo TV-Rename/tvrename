@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -9,7 +9,7 @@
 
 namespace TVRename
 {
-    partial class UI
+    partial class Ui
     {
         /// <summary>
         /// Required designer variable.
@@ -38,7 +38,7 @@ namespace TVRename
         public void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Ui));
             System.Windows.Forms.ListViewGroup listViewGroup14 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup15 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup16 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
@@ -151,7 +151,7 @@ namespace TVRename
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
             this.visitSupportForumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lvAction = new TVRename.MyListView();
+            this._lvAction = new TVRename.MyListView();
             this.columnHeader48 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader49 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader51 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -737,7 +737,7 @@ namespace TVRename
             this.tbAllInOne.Controls.Add(this.bnActionOptions);
             this.tbAllInOne.Controls.Add(this.bnActionWhichSearch);
             this.tbAllInOne.Controls.Add(this.bnActionBTSearch);
-            this.tbAllInOne.Controls.Add(this.lvAction);
+            this.tbAllInOne.Controls.Add(this._lvAction);
             this.tbAllInOne.Controls.Add(this.bnActionAction);
             this.tbAllInOne.Controls.Add(this.bnActionRecentCheck);
             this.tbAllInOne.Controls.Add(this.bnActionCheck);
@@ -1219,12 +1219,12 @@ namespace TVRename
             // 
             // lvAction
             // 
-            this.lvAction.AllowDrop = true;
-            this.lvAction.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this._lvAction.AllowDrop = true;
+            this._lvAction.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lvAction.CheckBoxes = true;
-            this.lvAction.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this._lvAction.CheckBoxes = true;
+            this._lvAction.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader48,
             this.columnHeader49,
             this.columnHeader51,
@@ -1234,7 +1234,7 @@ namespace TVRename
             this.columnHeader55,
             this.columnHeader56,
             this.columnHeader58});
-            this.lvAction.FullRowSelect = true;
+            this._lvAction.FullRowSelect = true;
             listViewGroup14.Header = "Missing";
             listViewGroup14.Name = "lvgActionMissing";
             listViewGroup15.Header = "Rename";
@@ -1253,7 +1253,7 @@ namespace TVRename
             listViewGroup21.Name = "lvgActionMeta";
             listViewGroup22.Header = "Downloading";
             listViewGroup22.Name = "lvgDownloading";
-            this.lvAction.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
+            this._lvAction.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup14,
             listViewGroup15,
             listViewGroup16,
@@ -1263,26 +1263,26 @@ namespace TVRename
             listViewGroup20,
             listViewGroup21,
             listViewGroup22});
-            this.lvAction.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lvAction.HideSelection = false;
-            this.lvAction.Location = new System.Drawing.Point(0, 35);
-            this.lvAction.Name = "lvAction";
-            this.lvAction.ShowItemToolTips = true;
-            this.lvAction.Size = new System.Drawing.Size(920, 435);
-            this.lvAction.SmallImageList = this.ilIcons;
-            this.lvAction.TabIndex = 2;
-            this.lvAction.UseCompatibleStateImageBehavior = false;
-            this.lvAction.View = System.Windows.Forms.View.Details;
-            this.lvAction.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvAction_ItemCheck);
-            this.lvAction.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvAction_ItemChecked);
-            this.lvAction.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.lvAction_RetrieveVirtualItem);
-            this.lvAction.SelectedIndexChanged += new System.EventHandler(this.lvAction_SelectedIndexChanged);
-            this.lvAction.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvAction_DragDrop);
-            this.lvAction.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvAction_DragEnter);
-            this.lvAction.DragOver += new System.Windows.Forms.DragEventHandler(this.lvAction_DragEnter);
-            this.lvAction.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvAction_KeyDown);
-            this.lvAction.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvAction_MouseClick);
-            this.lvAction.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvAction_MouseDoubleClick);
+            this._lvAction.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this._lvAction.HideSelection = false;
+            this._lvAction.Location = new System.Drawing.Point(0, 35);
+            this._lvAction.Name = "_lvAction";
+            this._lvAction.ShowItemToolTips = true;
+            this._lvAction.Size = new System.Drawing.Size(920, 435);
+            this._lvAction.SmallImageList = this.ilIcons;
+            this._lvAction.TabIndex = 2;
+            this._lvAction.UseCompatibleStateImageBehavior = false;
+            this._lvAction.View = System.Windows.Forms.View.Details;
+            this._lvAction.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.lvAction_ItemCheck);
+            this._lvAction.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.lvAction_ItemChecked);
+            this._lvAction.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.lvAction_RetrieveVirtualItem);
+            this._lvAction.SelectedIndexChanged += new System.EventHandler(this.lvAction_SelectedIndexChanged);
+            this._lvAction.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvAction_DragDrop);
+            this._lvAction.DragEnter += new System.Windows.Forms.DragEventHandler(this.lvAction_DragEnter);
+            this._lvAction.DragOver += new System.Windows.Forms.DragEventHandler(this.lvAction_DragEnter);
+            this._lvAction.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lvAction_KeyDown);
+            this._lvAction.MouseClick += new System.Windows.Forms.MouseEventHandler(this.lvAction_MouseClick);
+            this._lvAction.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lvAction_MouseDoubleClick);
             // 
             // columnHeader48
             // 
@@ -1435,7 +1435,7 @@ namespace TVRename
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.MainMenuStrip = this.menuStrip1;
-            this.Name = "UI";
+            this.Name = "Ui";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "TV Rename";

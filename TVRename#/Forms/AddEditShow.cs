@@ -28,12 +28,12 @@ namespace TVRename
     public partial class AddEditShow : Form
     {
         public string ShowTimeZone;
-        private ShowItem mSI;
-        private TheTVDBCodeFinder mTCCF;
+        private ShowItem _mSi;
+        private TheTVDBCodeFinder _mTccf;
 
         public AddEditShow(ShowItem si)
         {
-            mSI = si;
+            _mSi = si;
             InitializeComponent();
 
             cbTimeZone.BeginUpdate();
@@ -44,12 +44,12 @@ namespace TVRename
 
             cbTimeZone.EndUpdate();
 
-            mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
-            mTCCF.Dock = DockStyle.Fill;
+            _mTccf = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
+            _mTccf.Dock = DockStyle.Fill;
             //mTCCF->SelectionChanged += gcnew System::EventHandler(this, &AddEditShow::lvMatches_ItemSelectionChanged);
 
             pnlCF.SuspendLayout();
-            pnlCF.Controls.Add(mTCCF);
+            pnlCF.Controls.Add(_mTccf);
             pnlCF.ResumeLayout();
 
             chkCustomShowName.Checked = si.UseCustomShowName;
@@ -60,9 +60,9 @@ namespace TVRename
             cbSequentialMatching.Checked = si.UseSequentialMatch;
             chkShowNextAirdate.Checked = si.ShowNextAirdate;
             chkSpecialsCount.Checked = si.CountSpecials;
-            chkFolderPerSeason.Checked = si.AutoAdd_FolderPerSeason;
-            txtSeasonFolderName.Text = si.AutoAdd_SeasonFolderName;
-            txtBaseFolder.Text = si.AutoAdd_FolderBase;
+            chkFolderPerSeason.Checked = si.AutoAddFolderPerSeason;
+            txtSeasonFolderName.Text = si.AutoAddSeasonFolderName;
+            txtBaseFolder.Text = si.AutoAddFolderBase;
             chkAutoFolders.Checked = si.AutoAddNewSeasons;
             chkFolderPerSeason_CheckedChanged(null, null);
 
@@ -77,7 +77,7 @@ namespace TVRename
                                     : si.TheSeries().ShowTimeZone;
 
             cbTimeZone.Text = ShowTimeZone;
-            chkDVDOrder.Checked = si.DVDOrder;
+            chkDVDOrder.Checked = si.DvdOrder;
             cbIncludeFuture.Checked = si.ForceCheckFuture;
             cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
 
@@ -107,9 +107,9 @@ namespace TVRename
             txtSeasonNumber_TextChanged(null, null);
             txtFolder_TextChanged(null, null);
 
-            ActiveControl = mTCCF; // set initial focus to the code entry/show finder control
+            ActiveControl = _mTccf; // set initial focus to the code entry/show finder control
 
-            foreach (string aliasName in mSI.AliasNames)
+            foreach (string aliasName in _mSi.AliasNames)
             {
                 lbShowAlias.Items.Add(aliasName);
             }
@@ -122,27 +122,27 @@ namespace TVRename
             }
             txtTagList.Text = tl.ToString();
 
-            cbUseCustomSearch.Checked = !String.IsNullOrEmpty(si.CustomSearchURL);
-            txtSearchURL.Text = si.CustomSearchURL ?? "";
+            cbUseCustomSearch.Checked = !String.IsNullOrEmpty(si.CustomSearchUrl);
+            txtSearchURL.Text = si.CustomSearchUrl ?? "";
             EnableDisableCustomSearch();
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (!OKToClose())
+            if (!OkToClose())
             {
                 DialogResult = DialogResult.None;
                 return;
             }
 
-            SetmSI();
+            SetmSi();
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        private bool OKToClose()
+        private bool OkToClose()
         {
-            if (!TheTVDB.Instance.HasSeries(mTCCF.SelectedCode()))
+            if (!TheTVDB.Instance.HasSeries(_mTccf.SelectedCode()))
             {
                 DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -153,63 +153,63 @@ namespace TVRename
             return true;
         }
 
-        private void SetmSI()
+        private void SetmSi()
         {
-            int code = mTCCF.SelectedCode();
+            int code = _mTccf.SelectedCode();
 
             string tz = (cbTimeZone.SelectedItem != null) ? cbTimeZone.SelectedItem.ToString() : "";
 
-            mSI.CustomShowName = txtCustomShowName.Text;
-            mSI.UseCustomShowName = chkCustomShowName.Checked;
+            _mSi.CustomShowName = txtCustomShowName.Text;
+            _mSi.UseCustomShowName = chkCustomShowName.Checked;
             ShowTimeZone = tz; //TODO: move to somewhere else. make timezone manager for tvdb?
-            mSI.ShowNextAirdate = chkShowNextAirdate.Checked;
-            mSI.PadSeasonToTwoDigits = chkPadTwoDigits.Checked;
-            mSI.TVDBCode = code;
+            _mSi.ShowNextAirdate = chkShowNextAirdate.Checked;
+            _mSi.PadSeasonToTwoDigits = chkPadTwoDigits.Checked;
+            _mSi.TVDBCode = code;
             //todo mSI->SeasonNumber = seasnum;
-            mSI.CountSpecials = chkSpecialsCount.Checked;
+            _mSi.CountSpecials = chkSpecialsCount.Checked;
             //                                 mSI->Rules = mWorkingRuleSet;  // TODO
-            mSI.DoRename = cbDoRenaming.Checked;
-            mSI.DoMissingCheck = cbDoMissingCheck.Checked;
+            _mSi.DoRename = cbDoRenaming.Checked;
+            _mSi.DoMissingCheck = cbDoMissingCheck.Checked;
 
-            mSI.AutoAddNewSeasons = chkAutoFolders.Checked;
-            mSI.AutoAdd_FolderPerSeason = chkFolderPerSeason.Checked;
-            mSI.AutoAdd_SeasonFolderName = txtSeasonFolderName.Text;
-            mSI.AutoAdd_FolderBase = txtBaseFolder.Text;
+            _mSi.AutoAddNewSeasons = chkAutoFolders.Checked;
+            _mSi.AutoAddFolderPerSeason = chkFolderPerSeason.Checked;
+            _mSi.AutoAddSeasonFolderName = txtSeasonFolderName.Text;
+            _mSi.AutoAddFolderBase = txtBaseFolder.Text;
 
-            mSI.DVDOrder = chkDVDOrder.Checked;
-            mSI.ForceCheckFuture = cbIncludeFuture.Checked;
-            mSI.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
-            mSI.CustomSearchURL = txtSearchURL.Text;
+            _mSi.DvdOrder = chkDVDOrder.Checked;
+            _mSi.ForceCheckFuture = cbIncludeFuture.Checked;
+            _mSi.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
+            _mSi.CustomSearchUrl = txtSearchURL.Text;
 
-            mSI.UseSequentialMatch = cbSequentialMatching.Checked;
+            _mSi.UseSequentialMatch = cbSequentialMatching.Checked;
 
             string slist = txtIgnoreSeasons.Text;
-            mSI.IgnoreSeasons.Clear();
+            _mSi.IgnoreSeasons.Clear();
             foreach (Match match in Regex.Matches(slist, "\\b[0-9]+\\b"))
-                mSI.IgnoreSeasons.Add(int.Parse(match.Value));
+                _mSi.IgnoreSeasons.Add(int.Parse(match.Value));
 
-            mSI.ManualFolderLocations.Clear();
+            _mSi.ManualFolderLocations.Clear();
             foreach (ListViewItem lvi in lvSeasonFolders.Items)
             {
                 try
                 {
                     int seas = int.Parse(lvi.Text);
-                    if (!mSI.ManualFolderLocations.ContainsKey(seas))
-                        mSI.ManualFolderLocations.Add(seas, new List<String>());
+                    if (!_mSi.ManualFolderLocations.ContainsKey(seas))
+                        _mSi.ManualFolderLocations.Add(seas, new List<String>());
 
-                    mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
+                    _mSi.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
                 }
                 catch
                 {
                 }
             }
 
-            mSI.AliasNames.Clear();
+            _mSi.AliasNames.Clear();
             foreach (string showAlias in lbShowAlias.Items)
             {
-                if (!mSI.AliasNames.Contains(showAlias))
+                if (!_mSi.AliasNames.Contains(showAlias))
                 {
-                    mSI.AliasNames.Add(showAlias);
+                    _mSi.AliasNames.Add(showAlias);
                 }
             }
         }

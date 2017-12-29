@@ -5,13 +5,13 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class SABnzbdFinder :Finder
+    class SaBnzbdFinder :Finder
     {
-        public SABnzbdFinder(TVDoc i) : base(i) { }
+        public SaBnzbdFinder(TVDoc i) : base(i) { }
 
         public override bool Active()
         {
-            return TVSettings.Instance.CheckSABnzbd;
+            return TVSettings.Instance.CheckSaBnzbd;
         }
 
         public override FinderDisplayType DisplayType()
@@ -19,12 +19,12 @@ namespace TVRename
             return FinderDisplayType.Downloading;
         }
 
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
-            if (String.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || String.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
+            if (String.IsNullOrEmpty(TVSettings.Instance.SabapiKey) || String.IsNullOrEmpty(TVSettings.Instance.SabHostPort))
             {
                 prog.Invoke(startpct + totPct);
                 return;
@@ -34,14 +34,14 @@ namespace TVRename
 
             // Something like:
             // http://localhost:8080/sabnzbd/api?mode=queue&apikey=xxx&start=0&limit=8888&output=xml
-            String theURL = "http://" + TVSettings.Instance.SABHostPort +
-                            "/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey=" + TVSettings.Instance.SABAPIKey;
+            String theUrl = "http://" + TVSettings.Instance.SabHostPort +
+                            "/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey=" + TVSettings.Instance.SabapiKey;
 
             WebClient wc = new WebClient();
             byte[] r = null;
             try
             {
-                r = wc.DownloadData(theURL);
+                r = wc.DownloadData(theUrl);
             }
             catch (WebException)
             {
@@ -55,10 +55,10 @@ namespace TVRename
 
             try
             {
-                SAB.result res = SAB.result.Deserialize(r);
-                if (res != null && res.status == "False")
+                SAB.Result res = SAB.Result.Deserialize(r);
+                if (res != null && res.Status == "False")
                 {
-                    logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
+                    Logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.Error );
                     prog.Invoke(startpct + totPct);
                     return;
                 }
@@ -68,20 +68,20 @@ namespace TVRename
                 // wasn't a result/error combo.  this is good!
             }
 
-            SAB.queue sq = null;
+            SAB.Queue sq = null;
             try
             {
-                sq = SAB.queue.Deserialize(r);
+                sq = SAB.Queue.Deserialize(r);
             }
             catch (Exception e)
             {
-                logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
+                Logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
                 prog.Invoke(startpct + totPct);
                 return;
             }
 
             System.Diagnostics.Debug.Assert(sq != null); // shouldn't happen
-            if (sq == null || sq.slots == null || sq.slots.Length == 0) // empty queue
+            if (sq == null || sq.Slots == null || sq.Slots.Length == 0) // empty queue
                 return;
 
             ItemList newList = new ItemList();
@@ -89,7 +89,7 @@ namespace TVRename
             int c = TheActionList.Count + 2;
             int n = 1;
 
-            foreach (Item Action1 in TheActionList)
+            foreach (ITem action1 in TheActionList)
             {
                 if (ActionCancel)
                     return;
@@ -97,18 +97,18 @@ namespace TVRename
                 n++;
                 prog.Invoke(startpct + totPct * n / c);
 
-                if (!(Action1 is ItemMissing))
+                if (!(action1 is ItemMissing))
                     continue;
 
-                ItemMissing Action = (ItemMissing)(Action1);
+                ItemMissing action = (ItemMissing)(action1);
 
-                string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName);
+                string showname = Helpers.SimplifyName(action.Episode.Si.ShowName);
 
-                foreach (SAB.queueSlotsSlot te in sq.slots)
+                foreach (SAB.QueueSlotsSlot te in sq.Slots)
                 {
                     //foreach (queueSlotsSlot te in qs)
                     {
-                        FileInfo file = new FileInfo(te.filename);
+                        FileInfo file = new FileInfo(te.Filename);
                         //if (!TVSettings.Instance.UsefulExtension(file.Extension, false)) // not a usefile file extension
                         //    continue;
 
@@ -116,11 +116,11 @@ namespace TVRename
                         {
                             int seasF;
                             int epF;
-                            if (TVDoc.FindSeasEp(file, out seasF, out epF, Action.Episode.SI) &&
-                                (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
+                            if (TVDoc.FindSeasEp(file, out seasF, out epF, action.Episode.Si) &&
+                                (seasF == action.Episode.SeasonNumber) && (epF == action.Episode.EpNum))
                             {
-                                toRemove.Add(Action1);
-                                newList.Add(new ItemSABnzbd(te, Action.Episode, Action.TheFileNoExt));
+                                toRemove.Add(action1);
+                                newList.Add(new ItemSaBnzbd(te, action.Episode, action.TheFileNoExt));
                                 break;
                             }
                         }
@@ -128,11 +128,11 @@ namespace TVRename
                 }
             }
 
-            foreach (Item i in toRemove)
+            foreach (ITem i in toRemove)
                 TheActionList.Remove(i);
 
-            foreach (Item Action in newList)
-                TheActionList.Add(Action);
+            foreach (ITem action in newList)
+                TheActionList.Add(action);
 
             prog.Invoke(startpct + totPct);
         }

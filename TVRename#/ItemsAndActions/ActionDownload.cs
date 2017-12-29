@@ -18,22 +18,22 @@ namespace TVRename
     using FileInfo = FileInfo;
     using System.IO;
 
-    public class ActionDownload : Item, Action, ScanListItem
+    public class ActionDownload : ITem, IAction, IScanListItem
     {
-        private readonly string Path;
-        private readonly FileInfo Destination;
-        private readonly ShowItem SI;
-        private readonly bool ShrinkLargeMede8erImage;
+        private readonly string _path;
+        private readonly FileInfo _destination;
+        private readonly ShowItem _si;
+        private readonly bool _shrinkLargeMede8ErImage;
 
         public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path) : this(si, pe, dest, path, false) { }
 
-        public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path, bool mede8erShrink)
+        public ActionDownload(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path, bool mede8ErShrink)
         {
             Episode = pe;
-            SI = si;
-            Destination = dest;
-            Path = path;
-            ShrinkLargeMede8erImage = mede8erShrink;
+            _si = si;
+            _destination = dest;
+            _path = path;
+            _shrinkLargeMede8ErImage = mede8ErShrink;
         }
 
         #region Action Members
@@ -49,7 +49,7 @@ namespace TVRename
 
         public string ProgressText
         {
-            get { return Destination.Name; }
+            get { return _destination.Name; }
         }
 
         public double PercentDone
@@ -57,9 +57,9 @@ namespace TVRename
             get { return Done ? 100 : 0; }
         }
 
-        public string produces
+        public string Produces
         {
-            get { return Destination.FullName; }
+            get { return _destination.FullName; }
         }
 
         // 0 to 100
@@ -69,26 +69,26 @@ namespace TVRename
         }
 
         // http://www.codeproject.com/Articles/2941/Resizing-a-Photographic-image-with-GDI-for-NET
-        static Image MaxSize(Image imgPhoto, int Width, int Height)
+        static Image MaxSize(Image imgPhoto, int width, int height)
         {
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
 
-            float nPercentW = ((float)Width / (float)sourceWidth);
-            float nPercentH = ((float)Height / (float)sourceHeight);
+            float nPercentW = ((float)width / (float)sourceWidth);
+            float nPercentH = ((float)height / (float)sourceHeight);
 
             //float nPercent = Math.Min(nPercentH, nPercentW);
             int destWidth, destHeight;
 
             if (nPercentH < nPercentW)
             {
-                destHeight = Height;
+                destHeight = height;
                 destWidth = (int)(sourceWidth * nPercentH);
             }
             else
             {
                 destHeight = (int)(sourceHeight * nPercentW);
-                destWidth = Width;
+                destWidth = width;
             }
 
             Bitmap bmPhoto = new Bitmap(destWidth, destHeight, PixelFormat.Format24bppRgb);
@@ -109,16 +109,16 @@ namespace TVRename
 
         public bool Go(ref bool pause, TVRenameStats stats)
         {
-            byte[] theData = TheTVDB.Instance.GetTVDBDownload(Path);
+            byte[] theData = TheTVDB.Instance.GetTVDBDownload(_path);
             if ((theData == null) || (theData.Length == 0))
             {
-                ErrorText = "Unable to download " + Path;
+                ErrorText = "Unable to download " + _path;
                 Error = true;
                 Done = true;
                 return false;
             }
 
-            if (ShrinkLargeMede8erImage)
+            if (_shrinkLargeMede8ErImage)
             {
                 // shrink images down to a maximum size of 156x232
                 Image im = new Bitmap(new MemoryStream(theData));
@@ -136,7 +136,7 @@ namespace TVRename
 
             try
             {
-                FileStream fs = new FileStream(Destination.FullName, FileMode.Create);
+                FileStream fs = new FileStream(_destination.FullName, FileMode.Create);
                 fs.Write(theData, 0, theData.Length);
                 fs.Close();
             }
@@ -157,15 +157,15 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public bool SameAs(ITem o)
         {
-            return (o is ActionDownload) && ((o as ActionDownload).Destination == Destination);
+            return (o is ActionDownload) && ((o as ActionDownload)._destination == _destination);
         }
 
-        public int Compare(Item o)
+        public int Compare(ITem o)
         {
             ActionDownload dl = o as ActionDownload;
-            return dl == null ? 0 : Destination.FullName.CompareTo(dl.Destination.FullName);
+            return dl == null ? 0 : _destination.FullName.CompareTo(dl._destination.FullName);
         }
 
         #endregion
@@ -183,9 +183,9 @@ namespace TVRename
         {
             get
             {
-                if (Destination == null)
+                if (_destination == null)
                     return null;
-                return new IgnoreItem(Destination.FullName);
+                return new IgnoreItem(_destination.FullName);
             }
         }
 
@@ -194,7 +194,7 @@ namespace TVRename
             get
             {
                 ListViewItem lvi = new ListViewItem {
-                                                        Text = (Episode != null) ? Episode.SI.ShowName : ((SI != null) ? SI.ShowName : "")
+                                                        Text = (Episode != null) ? Episode.Si.ShowName : ((_si != null) ? _si.ShowName : "")
                                                     };
 
                 lvi.SubItems.Add(Episode != null ? Episode.SeasonNumber.ToString() : "");
@@ -202,7 +202,7 @@ namespace TVRename
 
                 if (Episode != null)
                 {
-                    DateTime? dt = Episode.GetAirDateDT(true);
+                    DateTime? dt = Episode.GetAirDateDt(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                         lvi.SubItems.Add(dt.Value.ToShortDateString());
                     else
@@ -211,13 +211,13 @@ namespace TVRename
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(Destination.DirectoryName);
-                lvi.SubItems.Add(Path);
+                lvi.SubItems.Add(_destination.DirectoryName);
+                lvi.SubItems.Add(_path);
 
-                if (string.IsNullOrEmpty(Path))
+                if (string.IsNullOrEmpty(_path))
                     lvi.BackColor = Helpers.WarningColor();
 
-                lvi.SubItems.Add(Destination.Name);
+                lvi.SubItems.Add(_destination.Name);
 
                 lvi.Tag = this;
 
@@ -234,9 +234,9 @@ namespace TVRename
         {
             get
             {
-                if (Destination == null)
+                if (_destination == null)
                     return null;
-                return Destination.DirectoryName;
+                return _destination.DirectoryName;
             }
         }
 

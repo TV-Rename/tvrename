@@ -11,7 +11,7 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
-    public class ItemuTorrenting : Item, ScanListItem
+    public class ItemuTorrenting : ITem, IScanListItem
     {
         public string DesiredLocationNoExt;
         public TorrentEntry Entry;
@@ -25,12 +25,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public bool SameAs(ITem o)
         {
             return (o is ItemuTorrenting) && Entry == (o as ItemuTorrenting).Entry;
         }
 
-        public int Compare(Item o)
+        public int Compare(ITem o)
         {
             ItemuTorrenting ut = o as ItemuTorrenting;
             if (ut == null)
@@ -76,10 +76,10 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = Episode.SI.ShowName;
+                lvi.Text = Episode.Si.ShowName;
                 lvi.SubItems.Add(Episode.SeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
-                DateTime? dt = Episode.GetAirDateDT(true);
+                DateTime? dt = Episode.GetAirDateDt(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
@@ -101,7 +101,7 @@ namespace TVRename
             get { return "lvgDownloading"; }
         }
 
-        int ScanListItem.IconNumber
+        int IScanListItem.IconNumber
         {
             get { return 2; }
         }

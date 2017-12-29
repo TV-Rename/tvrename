@@ -22,11 +22,11 @@ namespace TVRename
     /// </summary>
     public partial class UpcomingPopup : Form
     {
-        private TVDoc mDoc;
+        private TVDoc _mDoc;
 
         public UpcomingPopup(TVDoc doc)
         {
-            mDoc = doc;
+            _mDoc = doc;
             InitializeComponent();
         }
 
@@ -52,7 +52,7 @@ namespace TVRename
 
             const int kN = 5;
 
-            List<ProcessedEpisode> next5 = mDoc.NextNShows(kN, 0, 9999);
+            List<ProcessedEpisode> next5 = _mDoc.NextNShows(kN, 0, 9999);
 
             if (next5 != null)
             {

@@ -89,27 +89,27 @@ namespace TVRename
 
         // The 'TopItem' function doesn't work in a ListView if groups are enabled. This is meant to be a workaround.
         // Problem is, it just doesn't work and I don't know why!
-        const Int32 LVM_FIRST = 0x1000;
-        const Int32 LVM_SCROLL = LVM_FIRST + 20;
-        private const int SB_HORZ = 0;
-        private const int SB_VERT = 1;
+        const Int32 LvmFirst = 0x1000;
+        const Int32 LvmScroll = LvmFirst + 20;
+        private const int SbHorz = 0;
+        private const int SbVert = 1;
 
         [DllImport("user32.dll")]
         static extern int GetScrollPos(IntPtr hWnd, int nBar);
 
         [DllImport("user32.dll")]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         public int GetScrollVerticalPos()
         {
-            return GetScrollPos(Handle, SB_VERT);
+            return GetScrollPos(Handle, SbVert);
         }
 
         public void SetScrollVerticalPos(int position)
         {
-            var currentPos = GetScrollPos(Handle, SB_VERT);
+            var currentPos = GetScrollPos(Handle, SbVert);
             var delta = -(currentPos - position);
-            SendMessage(Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
+            SendMessage(Handle, LvmScroll, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
         }
     }
 }

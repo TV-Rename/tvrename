@@ -54,11 +54,11 @@ namespace TVRename
 
             string currency = comboBox2.Text;
 
-            CultureInfo usCI = new CultureInfo("en-US", false);
+            CultureInfo usCi = new CultureInfo("en-US", false);
 
-            string paypalURL = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&amount=" + amount.ToString("N", usCI) + "&tax=0&currency_code=" + currency + "&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8";
+            string paypalUrl = "https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=paypal%40tvrename%2ecom&item_name=TVRename%20thank-you%20drink&no_shipping=0&no_note=1&amount=" + amount.ToString("N", usCi) + "&tax=0&currency_code=" + currency + "&lc=AU&bn=PP%2dDonationsBF&charset=UTF%2d8";
 
-            Helpers.SysOpen(paypalURL);
+            Helpers.SysOpen(paypalUrl);
         }
 
     }

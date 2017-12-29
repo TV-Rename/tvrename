@@ -6,24 +6,24 @@ namespace TVRename
 {
     class DownloadEpisodeJPG : DownloadIdentifier
     {
-        private List<string> doneJPG;
-        private const string defaultExtension = ".jpg";
+        private List<string> _doneJPG;
+        private const string DefaultExtension = ".jpg";
 
         public DownloadEpisodeJPG() 
         {
-            reset();
+            Reset();
         }
 
         public override DownloadType GetDownloadType()
         {
-            return DownloadType.downloadImage;
+            return DownloadType.DownloadImage;
         }
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (TVSettings.Instance.EpJPGs)
+            if (TVSettings.Instance.EpJpGs)
             {
-                ItemList TheActionList = new ItemList(); 
+                ItemList theActionList = new ItemList(); 
                 string ban = dbep.GetFilename();
                 if (!string.IsNullOrEmpty(ban))
                 {
@@ -33,20 +33,20 @@ namespace TVRename
                     FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + ".jpg");
 
                     if (forceRefresh || !imgjpg.Exists)
-                        TheActionList.Add(new ActionDownload(dbep.SI, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
+                        theActionList.Add(new ActionDownload(dbep.Si, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8ErImages));
                 }
 
-                return TheActionList;
+                return theActionList;
 
             }
 
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void reset()
+        public override void Reset()
         {
-            doneJPG = new List<string>();
-            base.reset();
+            _doneJPG = new List<string>();
+            base.Reset();
         }
     }
 

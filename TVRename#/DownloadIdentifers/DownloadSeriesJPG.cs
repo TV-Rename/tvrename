@@ -5,43 +5,43 @@ namespace TVRename
 {
     class DownloadSeriesJPG : DownloadIdentifier
     {
-        private List<string> doneJPG;
-        private const string defaultFileName = "series.jpg";
+        private List<string> _doneJPG;
+        private const string DefaultFileName = "series.jpg";
 
         public DownloadSeriesJPG() 
         {
-            reset();
+            Reset();
         }
 
         public override DownloadType GetDownloadType()
         {
-            return DownloadType.downloadImage;
+            return DownloadType.DownloadImage;
         }
 
         public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
             if (TVSettings.Instance.SeriesJpg)
             {
-                ItemList TheActionList = new ItemList();
-                FileInfo fi = FileHelper.FileInFolder(folder, defaultFileName);
-                if (forceRefresh ||(!doneJPG.Contains(fi.FullName) && !fi.Exists))
+                ItemList theActionList = new ItemList();
+                FileInfo fi = FileHelper.FileInFolder(folder, DefaultFileName);
+                if (forceRefresh ||(!_doneJPG.Contains(fi.FullName) && !fi.Exists))
                 {
                     string bannerPath = si.TheSeries().GetSeasonBannerPath(snum);
                     if (!string.IsNullOrEmpty(bannerPath))
-                        TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, TVSettings.Instance.ShrinkLargeMede8erImages));
-                    doneJPG.Add(fi.FullName);
+                        theActionList.Add(new ActionDownload(si, null, fi, bannerPath, TVSettings.Instance.ShrinkLargeMede8ErImages));
+                    _doneJPG.Add(fi.FullName);
                 }
-                return TheActionList;
+                return theActionList;
             }
 
 
             return base.ProcessSeason(si, folder, snum, forceRefresh);
         }
 
-        public override void reset()
+        public override void Reset()
         {
-            doneJPG  = new List<string>();
-            base.reset();
+            _doneJPG  = new List<string>();
+            base.Reset();
         }
     }
 

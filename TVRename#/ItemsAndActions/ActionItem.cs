@@ -15,19 +15,19 @@ namespace TVRename
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 
-    public interface Item
+    public interface ITem
     {
-        int Compare(Item o); // for sorting items in scan list (ActionItemSorter)
-        bool SameAs(Item o); // are we the same thing as that other one?
+        int Compare(ITem o); // for sorting items in scan list (ActionItemSorter)
+        bool SameAs(ITem o); // are we the same thing as that other one?
     }
 
-    public class ItemList : System.Collections.Generic.List<Item>
+    public class ItemList : System.Collections.Generic.List<ITem>
     {
         public void Add(ItemList il)
         {
             if (il != null) 
             {
-                foreach (Item i in il)
+                foreach (ITem i in il)
                 {
                     Add(i);
                 }
@@ -37,7 +37,7 @@ namespace TVRename
 
     }
 
-    public interface Action // Something we can do
+    public interface IAction // Something we can do
     {
         string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
         bool Done { get; } // All work has been completed for this item, and can be removed from to-do list.  set to true on completion, even on error.
@@ -47,10 +47,10 @@ namespace TVRename
         double PercentDone { get; } // 0.0 to 100.0
         long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
         bool Go( ref bool pause, TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
-        string produces { get; } //What does this action produce? typically a filename
+        string Produces { get; } //What does this action produce? typically a filename
     }
 
-    public interface ScanListItem // something shown in the list on the Scan tab (not always an Action)
+    public interface IScanListItem // something shown in the list on the Scan tab (not always an Action)
     {
         ListViewItem ScanListViewItem { get; } // to add to Scan ListView
         string TargetFolder { get; } // return a list of folders for right-click menu
@@ -60,13 +60,13 @@ namespace TVRename
         ProcessedEpisode Episode { get; } // associated episode
     }
 
-    public class ScanListItemList : System.Collections.Generic.List<ScanListItem>
+    public class ScanListItemList : System.Collections.Generic.List<IScanListItem>
     {
         public void Add(ScanListItemList slil)
         {
             if (slil != null)
             {
-                foreach (ScanListItem sli in slil)
+                foreach (IScanListItem sli in slil)
                 {
                     Add(sli);
                 }
@@ -76,7 +76,7 @@ namespace TVRename
 
     public class ActionQueue
     {
-        public System.Collections.Generic.List<Action> Actions; // The contents of this queue
+        public System.Collections.Generic.List<IAction> Actions; // The contents of this queue
         public int ParallelLimit; // Number of tasks in the queue than can be run at once
         public string Name; // Name of this queue
         public int ActionPosition; // Position in the queue list of the next item to process
@@ -85,15 +85,15 @@ namespace TVRename
         {
             Name = name;
             ParallelLimit = parallelLimit;
-            Actions = new System.Collections.Generic.List<Action>();
+            Actions = new System.Collections.Generic.List<IAction>();
             ActionPosition = 0;
         }
     }
 
-    public abstract class ActionFileOperation : Item, Action, ScanListItem
+    public abstract class ActionFileOperation : ITem, IAction, IScanListItem
     {
-        protected double _percent;
-        protected TidySettings _tidyup;
+        protected double Percent;
+        protected TidySettings Tidyup;
 
         public bool Done { get; set; }
         public bool Error { get; set; }
@@ -101,14 +101,14 @@ namespace TVRename
 
         public double PercentDone
         {
-            get { return Done ? 100.0 : _percent; }
-            set { _percent = value; }
+            get { return Done ? 100.0 : Percent; }
+            set { Percent = value; }
         }
 
         protected void DeleteOrRecycleFile(FileInfo file )
         {
             if (file == null) return;
-            if (_tidyup.DeleteEmptyIsRecycle)
+            if (Tidyup.DeleteEmptyIsRecycle)
             {
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
@@ -121,7 +121,7 @@ namespace TVRename
         protected void DeleteOrRecycleFolder(DirectoryInfo di)
         {
             if (di == null) return;
-            if (_tidyup.DeleteEmptyIsRecycle)
+            if (Tidyup.DeleteEmptyIsRecycle)
             {
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
@@ -134,8 +134,8 @@ namespace TVRename
         protected void DoTidyup(DirectoryInfo di)
         {
 #if DEBUG
-            Debug.Assert(_tidyup != null);
-            Debug.Assert(_tidyup.DeleteEmpty);
+            Debug.Assert(Tidyup != null);
+            Debug.Assert(Tidyup.DeleteEmpty);
 #else
             if (_tidyup == null || !_tidyup.DeleteEmpty)
                 return;
@@ -166,31 +166,31 @@ namespace TVRename
             }
 
 
-            if (_tidyup.EmptyIgnoreExtensions && !_tidyup.EmptyIgnoreWords)
+            if (Tidyup.EmptyIgnoreExtensions && !Tidyup.EmptyIgnoreWords)
                 return; // nope
 
             foreach (FileInfo fi in files)
             {
-                bool okToDelete = _tidyup.EmptyIgnoreExtensions &&
-                                 Array.FindIndex(_tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
+                bool okToDelete = Tidyup.EmptyIgnoreExtensions &&
+                                 Array.FindIndex(Tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
 
                 if (okToDelete)
                     continue; // onto the next file
 
                 // look in the filename
-                if (_tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word)))
+                if (Tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word)))
                     okToDelete = true;
 
                 if (!okToDelete)
                     return;
             }
 
-            if (_tidyup.EmptyMaxSizeCheck)
+            if (Tidyup.EmptyMaxSizeCheck)
             {
                 // how many MB are we deleting?
                 long totalBytes = files.Sum(fi => fi.Length);
 
-                if (totalBytes / (1024 * 1024) > _tidyup.EmptyMaxSizeMB)
+                if (totalBytes / (1024 * 1024) > Tidyup.EmptyMaxSizeMb)
                     return; // too much
             }
             DeleteOrRecycleFolder(di);
@@ -199,14 +199,14 @@ namespace TVRename
         public abstract string Name { get; }
         public abstract string ProgressText { get; }
         public abstract long SizeOfWork { get; }
-        public abstract string produces { get; }
+        public abstract string Produces { get; }
         public abstract ListViewItem ScanListViewItem { get; }
         public abstract string TargetFolder { get; }
         public abstract string ScanListViewGroup { get; }
         public abstract int IconNumber { get; }
         public abstract IgnoreItem Ignore { get; }
-        public abstract int Compare(Item o);
-        public abstract bool SameAs(Item o);
+        public abstract int Compare(ITem o);
+        public abstract bool SameAs(ITem o);
         public abstract bool Go(ref bool pause, TVRenameStats stats);
     }
 }

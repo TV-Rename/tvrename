@@ -31,7 +31,7 @@ namespace TVRename
 
         public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup)
         {
-            _tidyup = tidyup;
+            Tidyup = tidyup;
             PercentDone = 0;
             Episode = ep;
             Operation = operation;
@@ -136,7 +136,7 @@ namespace TVRename
                 // ignored
             }
 
-            if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
+            if (Operation == Op.Move && Tidyup != null && Tidyup.DeleteEmpty)
             {
                 DoTidyup(From.Directory  );
             }
@@ -146,11 +146,11 @@ namespace TVRename
 
 
 
-        public override string produces => To.FullName;
+        public override string Produces => To.FullName;
 
         #region Item Members
 
-        public override bool SameAs(Item o)
+        public override bool SameAs(ITem o)
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
@@ -158,7 +158,7 @@ namespace TVRename
                    FileHelper.Same(To, cmr.To);
         }
 
-        public override int Compare(Item o)
+        public override int Compare(ITem o)
         {
             ActionCopyMoveRename cmr = o as ActionCopyMoveRename;
 
@@ -203,7 +203,7 @@ namespace TVRename
 		            lvi.Text = Episode.TheSeries.Name;
 		            lvi.SubItems.Add(Episode.SeasonNumber.ToString());
 		            lvi.SubItems.Add(Episode.NumsAsString());
-		            DateTime? dt = Episode.GetAirDateDT(true);
+		            DateTime? dt = Episode.GetAirDateDt(true);
 		            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
 			            lvi.SubItems.Add(dt.Value.ToShortDateString());
 		            else
@@ -263,9 +263,9 @@ namespace TVRename
             to.LastWriteTimeUtc = from.LastWriteTimeUtc;
         }
 
-        private CopyMoveProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, Object UserData)
+        private CopyMoveProgressResult CopyProgressCallback(long totalFileSize, long totalBytesTransferred, long streamSize, long streamBytesTransferred, int streamNumber, CopyMoveProgressCallbackReason callbackReason, Object userData)
         {
-            double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
+            double pct = totalBytesTransferred * 100.0 / totalFileSize;
             PercentDone = pct > 100.0 ? 100.0 : pct;
             return CopyMoveProgressResult.Continue;
         }

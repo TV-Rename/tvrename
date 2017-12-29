@@ -20,25 +20,25 @@ namespace TVRename
     /// </summary>
     public partial class DownloadProgress : Form
     {
-        private TVDoc mDoc;
+        private TVDoc _mDoc;
 
         public DownloadProgress(TVDoc doc)
         {
             InitializeComponent();
 
-            mDoc = doc;
+            _mDoc = doc;
         }
 
         private void bnCancel_Click(object sender, System.EventArgs e)
         {
             tmrUpdate.Stop();
-            mDoc.StopBGDownloadThread();
+            _mDoc.StopBgDownloadThread();
             DialogResult = DialogResult.Abort;
         }
 
         private void tmrUpdate_Tick(object sender, System.EventArgs e)
         {
-            if (mDoc.DownloadDone)
+            if (_mDoc.DownloadDone)
                 Close();
             else
                 UpdateStuff();
@@ -51,8 +51,8 @@ namespace TVRename
 
         private void UpdateStuff()
         {
-            txtCurrent.Text = TheTVDB.Instance.CurrentDLTask;
-            pbProgressBar.Value = mDoc.DownloadPct;
+            txtCurrent.Text = TheTVDB.Instance.CurrentDlTask;
+            pbProgressBar.Value = _mDoc.DownloadPct;
         }
     }
 }

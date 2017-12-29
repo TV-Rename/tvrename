@@ -21,17 +21,17 @@ namespace TVRename
     /// </summary>
     public partial class TorrentMatch : Form
     {
-        private SetProgressDelegate SetProgress;
-        private TVDoc mDoc;
+        private SetProgressDelegate _setProgress;
+        private TVDoc _mDoc;
 
         public TorrentMatch(TVDoc doc, SetProgressDelegate prog)
         {
-            SetProgress = prog;
-            mDoc = doc;
+            _setProgress = prog;
+            _mDoc = doc;
 
             InitializeComponent();
 
-            TabBTEnableDisable();
+            TabBtEnableDisable();
         }
 
         private void bnClose_Click(object sender, System.EventArgs e)
@@ -41,16 +41,16 @@ namespace TVRename
 
         private void bnGo_Click(object sender, System.EventArgs e)
         {
-            mDoc.RenameFilesToMatchTorrent(txtTorrentFile.Text, txtFolder.Text, tmatchTree, SetProgress, rbBTCopyTo.Checked, 
-                                                txtBTSecondLocation.Text, mDoc.Args);
+            _mDoc.RenameFilesToMatchTorrent(txtTorrentFile.Text, txtFolder.Text, tmatchTree, _setProgress, rbBTCopyTo.Checked, 
+                                                txtBTSecondLocation.Text, _mDoc.Args);
         }
 
         private void rbBTRenameFiles_CheckedChanged(object sender, System.EventArgs e)
         {
-            TabBTEnableDisable();
+            TabBtEnableDisable();
         }
 
-        private void TabBTEnableDisable()
+        private void TabBtEnableDisable()
         {
             bool e = rbBTCopyTo.Checked;
 
@@ -61,7 +61,7 @@ namespace TVRename
 
         private void rbBTCopyTo_CheckedChanged(object sender, System.EventArgs e)
         {
-            TabBTEnableDisable();
+            TabBtEnableDisable();
         }
 
         private void bnBTOpenFolder_Click(object sender, System.EventArgs e)

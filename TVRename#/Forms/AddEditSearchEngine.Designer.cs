@@ -43,7 +43,7 @@ namespace TVRename
             this.bnCancel = (new System.Windows.Forms.Button());
             this.bnOK = (new System.Windows.Forms.Button());
             this.bnTags = (new System.Windows.Forms.Button());
-            this.Grid1 = (new SourceGrid.Grid());
+            this._grid1 = (new SourceGrid.Grid());
             this.SuspendLayout();
             // 
             // bnAdd
@@ -104,16 +104,16 @@ namespace TVRename
             // 
             // Grid1
             // 
-            this.Grid1.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.Grid1.BackColor = System.Drawing.SystemColors.Window;
-            this.Grid1.Location = new System.Drawing.Point(12, 12);
-            this.Grid1.Name = "Grid1";
-            this.Grid1.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
-            this.Grid1.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.Grid1.Size = new System.Drawing.Size(664, 321);
-            this.Grid1.TabIndex = 4;
-            this.Grid1.TabStop = true;
-            this.Grid1.ToolTipText = "";
+            this._grid1.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this._grid1.BackColor = System.Drawing.SystemColors.Window;
+            this._grid1.Location = new System.Drawing.Point(12, 12);
+            this._grid1.Name = "_grid1";
+            this._grid1.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
+            this._grid1.SelectionMode = SourceGrid.GridSelectionMode.Cell;
+            this._grid1.Size = new System.Drawing.Size(664, 321);
+            this._grid1.TabIndex = 4;
+            this._grid1.TabStop = true;
+            this._grid1.ToolTipText = "";
             // 
             // AddEditSearchEngine
             // 
@@ -122,7 +122,7 @@ namespace TVRename
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(688, 378);
-            this.Controls.Add(this.Grid1);
+            this.Controls.Add(this._grid1);
             this.Controls.Add(this.bnTags);
             this.Controls.Add(this.bnOK);
             this.Controls.Add(this.bnCancel);

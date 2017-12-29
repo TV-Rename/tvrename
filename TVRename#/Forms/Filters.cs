@@ -6,21 +6,21 @@ namespace TVRename.Forms
 {
     public partial class Filters : Form
     {
-        private TVDoc doc;
+        private TVDoc _doc;
 
         public Filters(TVDoc doc)
         {
-            this.doc = doc;
+            this._doc = doc;
             InitializeComponent();
-            clbGenre.Items.AddRange(doc.getGenres().Cast<object>().ToArray());
-            cmbNetwork.Items.AddRange(doc.getNetworks().Cast<object>().ToArray());
-            cmbShowStatus.Items.AddRange(doc.getStatuses().Cast<object>().ToArray());
+            clbGenre.Items.AddRange(doc.GetGenres().Cast<object>().ToArray());
+            cmbNetwork.Items.AddRange(doc.GetNetworks().Cast<object>().ToArray());
+            cmbShowStatus.Items.AddRange(doc.GetStatuses().Cast<object>().ToArray());
             cmbRating.Items.AddRange(doc.GetRatings().Cast<object>().ToArray());
 
-            setButtonStates();
+            SetButtonStates();
         }
 
-        private void setButtonStates()
+        private void SetButtonStates()
         {
             ShowFilter filter = TVSettings.Instance.Filter;
             if (filter != null)
@@ -45,8 +45,8 @@ namespace TVRename.Forms
                 //Filter By Genre
                 foreach (String genre in filter.Genres)
                 {
-                    int genre_index = clbGenre.Items.IndexOf(genre);
-                    clbGenre.SetItemChecked(genre_index, true);
+                    int genreIndex = clbGenre.Items.IndexOf(genre);
+                    clbGenre.SetItemChecked(genreIndex, true);
                 }
             }
         }
@@ -68,7 +68,7 @@ namespace TVRename.Forms
                 filter.Genres.Add(genre);
             }
 
-            doc.SetDirty();
+            _doc.SetDirty();
             DialogResult = DialogResult.OK;
             Close();
         }

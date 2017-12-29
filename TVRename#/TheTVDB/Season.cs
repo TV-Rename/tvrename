@@ -18,7 +18,7 @@ namespace TVRename
         }
 
         public System.Collections.Generic.List<Episode> Episodes;
-        public int SeasonID;
+        public int SeasonId;
         public int SeasonNumber;
         public SeriesInfo TheSeries;
 
@@ -26,7 +26,7 @@ namespace TVRename
         {
             TheSeries = theSeries;
             SeasonNumber = number;
-            SeasonID = seasonid;
+            SeasonId = seasonid;
             Episodes = new System.Collections.Generic.List<Episode>();
         }
 
@@ -78,9 +78,9 @@ namespace TVRename
                 {
                     foreach (Episode e in Episodes)
                     {
-                        if (e.GetAirDateDT(true).HasValue)
+                        if (e.GetAirDateDt(true).HasValue)
                         {
-                            if (e.GetAirDateDT(true).Value > System.DateTime.Now)
+                            if (e.GetAirDateDt(true).Value > System.DateTime.Now)
                                 return true;
                         }
                     }
@@ -97,9 +97,9 @@ namespace TVRename
                 {
                     foreach (Episode e in Episodes)
                     {
-                        if (e.GetAirDateDT(true).HasValue)
+                        if (e.GetAirDateDt(true).HasValue)
                         {
-                            if (e.GetAirDateDT(true).Value < System.DateTime.Now)
+                            if (e.GetAirDateDt(true).Value < System.DateTime.Now)
                                 return true;
                         }
                     }

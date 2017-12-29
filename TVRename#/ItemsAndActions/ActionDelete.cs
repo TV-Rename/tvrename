@@ -36,7 +36,7 @@ namespace TVRename
                     lvi.Text = Episode.TheSeries.Name;
                     lvi.SubItems.Add(Episode.SeasonNumber.ToString());
                     lvi.SubItems.Add(Episode.NumsAsString());
-                    DateTime? dt = Episode.GetAirDateDT(true);
+                    DateTime? dt = Episode.GetAirDateDt(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                         lvi.SubItems.Add(dt.Value.ToShortDateString());
                     else
@@ -57,33 +57,33 @@ namespace TVRename
     public class ActionDeleteFile : ActionDelete
     {
 
-        public FileInfo toRemove;
+        public FileInfo ToRemove;
         
 
         public ActionDeleteFile(FileInfo remove, ProcessedEpisode ep, TidySettings tidyup)
         {
-            _tidyup = tidyup;
+            Tidyup = tidyup;
             PercentDone = 0;
             Episode = ep;
-            toRemove = remove;
+            ToRemove = remove;
             
         }
         
-        public override string ProgressText => toRemove.Name;
-        public override string produces => toRemove.FullName;
-        public override IgnoreItem Ignore => toRemove == null ? null : new IgnoreItem(toRemove.FullName);
-        public override string TargetFolder => toRemove?.DirectoryName;
+        public override string ProgressText => ToRemove.Name;
+        public override string Produces => ToRemove.FullName;
+        public override IgnoreItem Ignore => ToRemove == null ? null : new IgnoreItem(ToRemove.FullName);
+        public override string TargetFolder => ToRemove?.DirectoryName;
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
             try
             {
-                if (toRemove.Exists)
+                if (ToRemove.Exists)
                 {
-                    DeleteOrRecycleFile(toRemove);
-                    if (_tidyup != null && _tidyup.DeleteEmpty)
+                    DeleteOrRecycleFile(ToRemove);
+                    if (Tidyup != null && Tidyup.DeleteEmpty)
                     {
-                        DoTidyup(toRemove.Directory);
+                        DoTidyup(ToRemove.Directory);
                     }
                 }
 
@@ -97,59 +97,59 @@ namespace TVRename
             return !Error;
         }
        
-        public override bool SameAs(Item o)
+        public override bool SameAs(ITem o)
         {
             ActionDeleteFile cmr = o as ActionDeleteFile;
 
-            return (cmr != null) && FileHelper.Same(toRemove , cmr.toRemove);
+            return (cmr != null) && FileHelper.Same(ToRemove , cmr.ToRemove);
         }
 
-        public override int Compare(Item o)
+        public override int Compare(ITem o)
         {
             ActionDeleteFile cmr = o as ActionDeleteFile;
 
-            if (cmr == null || toRemove.Directory == null || cmr.toRemove.Directory == null )
+            if (cmr == null || ToRemove.Directory == null || cmr.ToRemove.Directory == null )
                 return 0;
 
-            return string.Compare(toRemove.FullName , cmr.toRemove.FullName , StringComparison.Ordinal);
+            return string.Compare(ToRemove.FullName , cmr.ToRemove.FullName , StringComparison.Ordinal);
         }
 
-        public bool SameSource(ActionDeleteFile o) => FileHelper.Same(toRemove , o.toRemove);
+        public bool SameSource(ActionDeleteFile o) => FileHelper.Same(ToRemove , o.ToRemove);
 
     }
 
     public class ActionDeleteDirectory : ActionDelete
     {
 
-        public DirectoryInfo toRemove;
+        public DirectoryInfo ToRemove;
 
 
         public ActionDeleteDirectory(DirectoryInfo remove, ProcessedEpisode ep, TidySettings tidyup)
         {
-            _tidyup = tidyup;
+            Tidyup = tidyup;
             PercentDone = 0;
             Episode = ep;
-            toRemove = remove;
+            ToRemove = remove;
 
         }
 
 
-        public override string ProgressText => toRemove.Name;
-        public override string produces => toRemove.FullName;
-        public override IgnoreItem Ignore => toRemove == null ? null : new IgnoreItem(toRemove.FullName);
-        public override string TargetFolder => toRemove?.Parent.FullName;
+        public override string ProgressText => ToRemove.Name;
+        public override string Produces => ToRemove.FullName;
+        public override IgnoreItem Ignore => ToRemove == null ? null : new IgnoreItem(ToRemove.FullName);
+        public override string TargetFolder => ToRemove?.Parent.FullName;
 
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
             try
             {
-                if (toRemove.Exists)
+                if (ToRemove.Exists)
                 {
-                    DeleteOrRecycleFolder(toRemove);
-                    if (_tidyup != null && _tidyup.DeleteEmpty)
+                    DeleteOrRecycleFolder(ToRemove);
+                    if (Tidyup != null && Tidyup.DeleteEmpty)
                     {
-                        DoTidyup(toRemove.Parent);
+                        DoTidyup(ToRemove.Parent);
                     }
                 }
 
@@ -163,24 +163,24 @@ namespace TVRename
             return !Error;
         }
 
-        public override bool SameAs(Item o)
+        public override bool SameAs(ITem o)
         {
             ActionDeleteDirectory cmr = o as ActionDeleteDirectory;
 
-            return (cmr != null) && FileHelper.Same(toRemove, cmr.toRemove);
+            return (cmr != null) && FileHelper.Same(ToRemove, cmr.ToRemove);
         }
 
-        public override int Compare(Item o)
+        public override int Compare(ITem o)
         {
             ActionDeleteDirectory cmr = o as ActionDeleteDirectory;
 
-            if (cmr == null || toRemove.Parent.FullName == null || cmr.toRemove.Parent.FullName == null)
+            if (cmr == null || ToRemove.Parent.FullName == null || cmr.ToRemove.Parent.FullName == null)
                 return 0;
 
-            return string.Compare(toRemove.FullName, cmr.toRemove.FullName, StringComparison.Ordinal);
+            return string.Compare(ToRemove.FullName, cmr.ToRemove.FullName, StringComparison.Ordinal);
         }
 
-        public bool SameSource(ActionDeleteDirectory o) => FileHelper.Same(toRemove, o.toRemove);
+        public bool SameSource(ActionDeleteDirectory o) => FileHelper.Same(ToRemove, o.ToRemove);
 
 
     }

@@ -22,25 +22,25 @@ namespace TVRename
     /// </summary>
     public partial class EditRules : Form
     {
-        private CustomName NameStyle;
-        private List<ShowRule> WorkingRuleSet;
-        private List<ProcessedEpisode> mOriginalEps;
-        private ShowItem mSI;
-        private int mSeasonNumber;
+        private CustomName _nameStyle;
+        private List<ShowRule> _workingRuleSet;
+        private List<ProcessedEpisode> _mOriginalEps;
+        private ShowItem _mSi;
+        private int _mSeasonNumber;
 
         public EditRules(ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomName style)
         {
-            NameStyle = style;
+            _nameStyle = style;
             InitializeComponent();
 
-            mSI = si;
-            mOriginalEps = originalEpList;
-            mSeasonNumber = seasonNumber;
+            _mSi = si;
+            _mOriginalEps = originalEpList;
+            _mSeasonNumber = seasonNumber;
 
             if (si.SeasonRules.ContainsKey(seasonNumber))
-                WorkingRuleSet = new List<ShowRule>(si.SeasonRules[seasonNumber]);
+                _workingRuleSet = new List<ShowRule>(si.SeasonRules[seasonNumber]);
             else
-                WorkingRuleSet = new List<ShowRule>();
+                _workingRuleSet = new List<ShowRule>();
 
             txtShowName.Text = si.ShowName;
             txtSeasonNumber.Text = seasonNumber.ToString();
@@ -55,7 +55,7 @@ namespace TVRename
 
             bool res = ar.ShowDialog() == DialogResult.OK;
             if (res)
-                WorkingRuleSet.Add(sr);
+                _workingRuleSet.Add(sr);
 
             FillRuleList(false, 0);
         }
@@ -70,7 +70,7 @@ namespace TVRename
             }
 
             lvRuleList.Items.Clear();
-            foreach (ShowRule sr in WorkingRuleSet)
+            foreach (ShowRule sr in _workingRuleSet)
             {
                 ListViewItem lvi = new ListViewItem();
                 lvi.Text = sr.ActionInWords();
@@ -113,7 +113,7 @@ namespace TVRename
                 return;
             ShowRule sr = (ShowRule) (lvRuleList.SelectedItems[0].Tag);
 
-            WorkingRuleSet.Remove(sr);
+            _workingRuleSet.Remove(sr);
             FillRuleList(false, 0);
         }
 
@@ -125,9 +125,9 @@ namespace TVRename
             if (p <= 0)
                 return;
 
-            ShowRule sr = WorkingRuleSet[p];
-            WorkingRuleSet.RemoveAt(p);
-            WorkingRuleSet.Insert(p - 1, sr);
+            ShowRule sr = _workingRuleSet[p];
+            _workingRuleSet.RemoveAt(p);
+            _workingRuleSet.Insert(p - 1, sr);
 
             FillRuleList(true, -1);
         }
@@ -140,9 +140,9 @@ namespace TVRename
             if (p >= (lvRuleList.Items.Count - 1))
                 return;
 
-            ShowRule sr = WorkingRuleSet[p];
-            WorkingRuleSet.RemoveAt(p);
-            WorkingRuleSet.Insert(p + 1, sr);
+            ShowRule sr = _workingRuleSet[p];
+            _workingRuleSet.RemoveAt(p);
+            _workingRuleSet.Insert(p + 1, sr);
             FillRuleList(true, +1);
         }
 
@@ -153,7 +153,7 @@ namespace TVRename
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            mSI.SeasonRules[mSeasonNumber] = WorkingRuleSet;
+            _mSi.SeasonRules[_mSeasonNumber] = _workingRuleSet;
             Close();
         }
 
@@ -166,18 +166,18 @@ namespace TVRename
         {
             List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
 
-            if (mOriginalEps != null)
+            if (_mOriginalEps != null)
             {
-                foreach (ProcessedEpisode pe in mOriginalEps)
+                foreach (ProcessedEpisode pe in _mOriginalEps)
                     pel.Add(new ProcessedEpisode(pe));
 
-                TVDoc.ApplyRules(pel, WorkingRuleSet, mSI);
+                TVDoc.ApplyRules(pel, _workingRuleSet, _mSi);
             }
 
             lbEpsPreview.BeginUpdate();
             lbEpsPreview.Items.Clear();
             foreach (ProcessedEpisode pe in pel)
-                lbEpsPreview.Items.Add(NameStyle.NameForExt(pe, null, 0));
+                lbEpsPreview.Items.Add(_nameStyle.NameForExt(pe, null, 0));
             lbEpsPreview.EndUpdate();
         }
     }

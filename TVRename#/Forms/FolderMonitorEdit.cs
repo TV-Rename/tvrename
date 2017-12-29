@@ -14,29 +14,29 @@ namespace TVRename
     {
         public int Code;
 
-        private TheTVDBCodeFinder mTCCF;
+        private TheTVDBCodeFinder _mTccf;
 
         public FolderMonitorEdit(FolderMonitorEntry hint)
         {
             InitializeComponent();
 
-            mTCCF = new TheTVDBCodeFinder("");
-            mTCCF.Dock = DockStyle.Fill;
-            mTCCF.SelectionChanged += CodeChanged;
-            mTCCF.lvMatches.DoubleClick += MatchDoubleClick;
+            _mTccf = new TheTVDBCodeFinder("");
+            _mTccf.Dock = DockStyle.Fill;
+            _mTccf.SelectionChanged += CodeChanged;
+            _mTccf.lvMatches.DoubleClick += MatchDoubleClick;
 
 
             pnlCF.SuspendLayout();
-            pnlCF.Controls.Add(mTCCF);
+            pnlCF.Controls.Add(_mTccf);
             pnlCF.ResumeLayout();
 
             if (hint.CodeKnown)
-                mTCCF.SetHint(hint.TVDBCode.ToString());
+                _mTccf.SetHint(hint.TVDBCode.ToString());
             else
             {
                 string s = hint.Folder;
                 int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-                mTCCF.SetHint(s.Substring(p+1));
+                _mTccf.SetHint(s.Substring(p+1));
             }
             Code = -1;
         }
@@ -59,7 +59,7 @@ namespace TVRename
         private void bnOK_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;
-            Code = mTCCF.SelectedCode();
+            Code = _mTccf.SelectedCode();
             Close();
         }
     }

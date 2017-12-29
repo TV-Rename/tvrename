@@ -9,7 +9,7 @@ namespace TVRename
 {
     using System.Windows.Forms;
 
-    public class LVResults
+    public class LvResults
     {
         #region WhichResults enum
 
@@ -29,18 +29,18 @@ namespace TVRename
         public System.Collections.Generic.List<ActionDownload> Download;
         public ScanListItemList FlatList;
         public System.Collections.Generic.List<ItemMissing> Missing;
-        public System.Collections.Generic.List<ActionNFO> NFO;
+        public System.Collections.Generic.List<ActionNfo> Nfo;
         public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
-        public System.Collections.Generic.List<ActionRSS> RSS;
+        public System.Collections.Generic.List<ActionRss> Rss;
         public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
         //public System.Collections.Generic.List<ItemuTorrenting> uTorrenting;
 
-        public LVResults(ListView lv, bool isChecked) // if not checked, then selected items
+        public LvResults(ListView lv, bool isChecked) // if not checked, then selected items
         {
             Go(lv, isChecked ? WhichResults.Checked : WhichResults.Selected);
         }
 
-        public LVResults(ListView lv, WhichResults which)
+        public LvResults(ListView lv, WhichResults which)
         {
             Go(lv, which);
         }
@@ -49,11 +49,11 @@ namespace TVRename
         {
             //this.uTorrenting = new System.Collections.Generic.List<ItemuTorrenting>();
             Missing = new System.Collections.Generic.List<ItemMissing>();
-            RSS = new System.Collections.Generic.List<ActionRSS>();
+            Rss = new System.Collections.Generic.List<ActionRss>();
             CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
             Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
             Download = new System.Collections.Generic.List<ActionDownload>();
-            NFO = new System.Collections.Generic.List<ActionNFO>();
+            Nfo = new System.Collections.Generic.List<ActionNfo>();
             PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
             FlatList = new ScanListItemList();
 
@@ -81,7 +81,7 @@ namespace TVRename
             if (sel.Count == 0)
                 return;
 
-            System.Type firstType = ((Item) (sel[0].Tag)).GetType();
+            System.Type firstType = ((ITem) (sel[0].Tag)).GetType();
 
             AllSameType = true;
             foreach (ListViewItem lvi in sel)
@@ -89,9 +89,9 @@ namespace TVRename
                 if (lvi == null)
                     continue;
 
-                Item action = (Item) (lvi.Tag);
-                if (action is ScanListItem)
-                    FlatList.Add(action as ScanListItem);
+                ITem action = (ITem) (lvi.Tag);
+                if (action is IScanListItem)
+                    FlatList.Add(action as IScanListItem);
 
                 if (action.GetType() != firstType)
                     AllSameType = false;
@@ -106,12 +106,12 @@ namespace TVRename
                 }
                 else if (action is ActionDownload)
                     Download.Add((ActionDownload) (action));
-                else if (action is ActionRSS)
-                    RSS.Add((ActionRSS) (action));
+                else if (action is ActionRss)
+                    Rss.Add((ActionRss) (action));
                 else if (action is ItemMissing)
                     Missing.Add((ItemMissing) (action));
-                else if (action is ActionNFO)
-                    NFO.Add((ActionNFO) (action));
+                else if (action is ActionNfo)
+                    Nfo.Add((ActionNfo) (action));
                 else if (action is ActionPyTivoMeta)
                     PyTivoMeta.Add((ActionPyTivoMeta) (action));
                 //else if (action is ItemuTorrenting)

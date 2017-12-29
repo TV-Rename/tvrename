@@ -13,27 +13,27 @@ namespace TVRename
     using System.Xml;
 
 
-    public class ActionMede8erViewXML : Item, Action, ScanListItem, ActionWriteMetadata
+    public class ActionMede8ErViewXML : ITem, IAction, IScanListItem, IActionWriteMetadata
     {
         public FileInfo Where;
-        public ShowItem SI; // if for an entire show, rather than specific episode
-        public int snum;
+        public ShowItem Si; // if for an entire show, rather than specific episode
+        public int Snum;
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si)
+        public ActionMede8ErViewXML(FileInfo nfo, ShowItem si)
         {
-            SI = si;
+            Si = si;
             Where = nfo;
-            snum = -1;
+            Snum = -1;
         }
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum)
+        public ActionMede8ErViewXML(FileInfo nfo, ShowItem si, int snum)
         {
-            SI = si;
+            Si = si;
             Where = nfo;
-            this.snum = snum;
+            this.Snum = snum;
         }
 
-        public string produces
+        public string Produces
         {
             get { return Where.FullName; }
         }
@@ -87,10 +87,10 @@ namespace TVRename
 
             writer.WriteStartElement("FolderTag");
             // is it a show or season folder
-            if (snum >= 0)
+            if (Snum >= 0)
             {
                 // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
-                if (TVSettings.Instance.EpJPGs)
+                if (TVSettings.Instance.EpJpGs)
                 {
                     XMLHelper.WriteElementToXML(writer, "ViewMode", "Photo");
                 }
@@ -115,14 +115,14 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public bool SameAs(ITem o)
         {
-            return (o is ActionMede8erViewXML) && ((o as ActionMede8erViewXML).Where == Where);
+            return (o is ActionMede8ErViewXML) && ((o as ActionMede8ErViewXML).Where == Where);
         }
 
-        public int Compare(Item o)
+        public int Compare(ITem o)
         {
-            ActionMede8erViewXML nfo = o as ActionMede8erViewXML;
+            ActionMede8ErViewXML nfo = o as ActionMede8ErViewXML;
 
             return (Where.FullName).CompareTo(nfo.Where.FullName);
         }
@@ -147,8 +147,8 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = SI.ShowName;
-                if (snum > 0) { lvi.SubItems.Add(snum.ToString()); } else { lvi.SubItems.Add(""); }
+                lvi.Text = Si.ShowName;
+                if (Snum > 0) { lvi.SubItems.Add(Snum.ToString()); } else { lvi.SubItems.Add(""); }
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
 
@@ -161,7 +161,7 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder
+        string IScanListItem.TargetFolder
         {
             get
             {

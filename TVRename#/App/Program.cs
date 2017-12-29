@@ -21,12 +21,12 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 public static class GlobalMembersTVRename
 {
 
-    private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
     [STAThread]
     private static int Main(string[] args)
     {
-        logger.Info("TV Rename Started with args: {0}",args);
+        _logger.Info("TV Rename Started with args: {0}",args);
         // Enabling Windows XP visual effects before any controls are created
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
@@ -44,7 +44,7 @@ public static class GlobalMembersTVRename
         if (!createdNew)
         {
             // we're already running
-            logger.Warn("TV Rename is alrady running");
+            _logger.Warn("TV Rename is alrady running");
 
             // tell the already running copy to come to the foreground
             IpcClientChannel clientChannel = new IpcClientChannel();
@@ -124,14 +124,14 @@ public static class GlobalMembersTVRename
 
 class TVRenameProgram : WindowsFormsApplicationBase
 {
-    private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+    private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
     protected override void OnCreateSplashScreen()
     {
         SplashScreen = new TVRenameSplash();
     }
 
-    void updateSplashStatus(String text)
+    void UpdateSplashStatus(String text)
     {
         SplashScreen.Invoke((System.Action)delegate
         {
@@ -140,7 +140,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
     }
     protected override void OnCreateMainForm()
     {
-        updateSplashStatus("Initalising");
+        UpdateSplashStatus("Initalising");
 
         // Check arguments for forced recover
         bool ok = true;
@@ -164,8 +164,8 @@ class TVRenameProgram : WindowsFormsApplicationBase
         catch (Exception ex)
         {
             if ((!clargs.Unattended) && (!clargs.Hide)) MessageBox.Show("Error while setting the User-Defined File Path:" + Environment.NewLine + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            logger.Error("Error while setting the User-Defined File Path - EXITING: {0}", clargs.UserFilePath);
-            logger.Error(ex);
+            _logger.Error("Error while setting the User-Defined File Path - EXITING: {0}", clargs.UserFilePath);
+            _logger.Error(ex);
 
             Environment.Exit(1);
         }
@@ -181,7 +181,7 @@ class TVRenameProgram : WindowsFormsApplicationBase
                 RecoverXML rec = new RecoverXML(recoverText);
                 if (rec.ShowDialog() == DialogResult.OK)
                 {
-                    tvdbFile = rec.DBFile;
+                    tvdbFile = rec.DbFile;
                     settingsFile = rec.SettingsFile;
                 }
                 else
@@ -191,28 +191,28 @@ class TVRenameProgram : WindowsFormsApplicationBase
 
             // try loading using current settings files, and set up the main
             // classes
-            TheTVDB.Instance.setup(tvdbFile, PathManager.TVDBFile, clargs);
+            TheTVDB.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
 
             doc = new TVDoc(settingsFile, clargs);
 
             if (!ok)
                 doc.SetDirty();
 
-            ok = doc.LoadOK;
+            ok = doc.LoadOk;
 
             if (!ok)
             {
                 recoverText = "";
-                if (!doc.LoadOK && !String.IsNullOrEmpty(doc.LoadErr))
+                if (!doc.LoadOk && !String.IsNullOrEmpty(doc.LoadErr))
                     recoverText += doc.LoadErr;
-                if (!TheTVDB.Instance.LoadOK && !String.IsNullOrEmpty(TheTVDB.Instance.LoadErr))
+                if (!TheTVDB.Instance.LoadOk && !String.IsNullOrEmpty(TheTVDB.Instance.LoadErr))
                     recoverText += "\r\n" + TheTVDB.Instance.LoadErr;
             }
         } while (!ok);
 
 
         // Do your time consuming stuff here...
-        UI ui = new UI(doc,(TVRenameSplash)SplashScreen);
+        Ui ui = new Ui(doc,(TVRenameSplash)SplashScreen);
 
         // Show user interface
         MainForm = ui;

@@ -11,12 +11,12 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
-    public class ItemSABnzbd : Item, ScanListItem
+    public class ItemSaBnzbd : ITem, IScanListItem
     {
         public string DesiredLocationNoExt;
-        public SAB.queueSlotsSlot Entry;
+        public SAB.QueueSlotsSlot Entry;
 
-        public ItemSABnzbd(SAB.queueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
+        public ItemSaBnzbd(SAB.QueueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
         {
             Episode = pe;
             DesiredLocationNoExt = desiredLocationNoExt;
@@ -25,14 +25,14 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public bool SameAs(ITem o)
         {
-            return (o is ItemSABnzbd) && Entry == (o as ItemSABnzbd).Entry;
+            return (o is ItemSaBnzbd) && Entry == (o as ItemSaBnzbd).Entry;
         }
 
-        public int Compare(Item o)
+        public int Compare(ITem o)
         {
-            ItemSABnzbd ut = o as ItemSABnzbd;
+            ItemSaBnzbd ut = o as ItemSaBnzbd;
             if (ut == null)
                 return 0;
 
@@ -52,9 +52,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(Entry.filename))
+                if (string.IsNullOrEmpty(Entry.Filename))
                     return null;
-                return new FileInfo(Entry.filename).DirectoryName;
+                return new FileInfo(Entry.Filename).DirectoryName;
             }
         }
 
@@ -76,19 +76,19 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = Episode.SI.ShowName;
+                lvi.Text = Episode.Si.ShowName;
                 lvi.SubItems.Add(Episode.SeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
-                DateTime? dt = Episode.GetAirDateDT(true);
+                DateTime? dt = Episode.GetAirDateDt(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(Entry.filename);
-                String txt = Entry.status + ", " + (int) (0.5 + 100 - 100 * Entry.mbleft / Entry.mb) + "% Complete";
-                if (Entry.status == "Downloading")
-                    txt += ", " + Entry.timeleft + " left";
+                lvi.SubItems.Add(Entry.Filename);
+                String txt = Entry.Status + ", " + (int) (0.5 + 100 - 100 * Entry.Mbleft / Entry.Mb) + "% Complete";
+                if (Entry.Status == "Downloading")
+                    txt += ", " + Entry.Timeleft + " left";
                 
                 lvi.SubItems.Add(txt);
 
@@ -105,7 +105,7 @@ namespace TVRename
             get { return "lvgDownloading"; }
         }
 
-        int ScanListItem.IconNumber
+        int IScanListItem.IconNumber
         {
             get { return 8; }
         }

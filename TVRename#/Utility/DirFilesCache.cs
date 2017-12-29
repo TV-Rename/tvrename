@@ -9,14 +9,14 @@ namespace TVRename
 {
     public class DirFilesCache
     {
-        private Dictionary<String, FileInfo[]> Cache = new Dictionary<string, FileInfo[]>();
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private Dictionary<String, FileInfo[]> _cache = new Dictionary<string, FileInfo[]>();
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public FileInfo[] Get(String folder)
         {
-            if (Cache.ContainsKey(folder))
+            if (_cache.ContainsKey(folder))
             {
-                return Cache[folder];
+                return _cache[folder];
             }
 
             DirectoryInfo di;
@@ -26,28 +26,28 @@ namespace TVRename
             }
             catch
             {
-                Cache[folder] = null;
+                _cache[folder] = null;
                 return null;
             }
             if (!di.Exists)
             {
-                Cache[folder] = null;
+                _cache[folder] = null;
                 return null;
             }
             
             try {
                 FileInfo[] files = di.GetFiles();
-                Cache[folder] = files;
+                _cache[folder] = files;
                 return files;
             } catch (System.IO.IOException) {
-               logger.Error ("IOException occurred trying to access " + folder);
+               _logger.Error ("IOException occurred trying to access " + folder);
                 return null;
             }
         }
 
         public void Clear()
         {
-            Cache.Clear();
+            _cache.Clear();
         }
     }
 }

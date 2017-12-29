@@ -15,16 +15,16 @@ namespace TVRename
 {
     public class TextSorter : IComparer
     {
-        private int col;
+        private int _col;
 
         public TextSorter()
         {
-            col = 0;
+            _col = 0;
         }
 
         public TextSorter(int column)
         {
-            col = column;
+            _col = column;
         }
 
         #region IComparer Members
@@ -33,13 +33,13 @@ namespace TVRename
         {
             ListViewItem lvi1 = x as ListViewItem;
             ListViewItem lvi2 = y as ListViewItem;
-            return string.Compare(lvi1.SubItems[col].Text, lvi2.SubItems[col].Text);
+            return string.Compare(lvi1.SubItems[_col].Text, lvi2.SubItems[_col].Text);
         }
 
         #endregion
     }
 
-    public class DateSorterWTW : IComparer
+    public class DateSorterWtw : IComparer
     {
         #region IComparer Members
 
@@ -50,7 +50,7 @@ namespace TVRename
 
             try
             {
-                d1 = ((Episode) ((x as ListViewItem).Tag)).GetAirDateDT(true);
+                d1 = ((Episode) ((x as ListViewItem).Tag)).GetAirDateDt(true);
             }
             catch
             {
@@ -59,7 +59,7 @@ namespace TVRename
 
             try
             {
-                d2 = ((Episode) ((y as ListViewItem).Tag)).GetAirDateDT(true);
+                d2 = ((Episode) ((y as ListViewItem).Tag)).GetAirDateDt(true);
             }
             catch
             {
@@ -80,16 +80,16 @@ namespace TVRename
 
     public class DaySorter : IComparer
     {
-        private int col;
+        private int _col;
 
         public DaySorter()
         {
-            col = 0;
+            _col = 0;
         }
 
         public DaySorter(int column)
         {
-            col = column;
+            _col = column;
         }
 
         #region IComparer Members
@@ -101,8 +101,8 @@ namespace TVRename
 
             try
             {
-                string t1 = (x as ListViewItem).SubItems[col].Text;
-                string t2 = (y as ListViewItem).SubItems[col].Text;
+                string t1 = (x as ListViewItem).SubItems[_col].Text;
+                string t2 = (y as ListViewItem).SubItems[_col].Text;
 
                 DateTime now = DateTime.Now;
 
@@ -126,16 +126,16 @@ namespace TVRename
 
     public class NumberAsTextSorter : IComparer
     {
-        private int col;
+        private int _col;
 
         public NumberAsTextSorter()
         {
-            col = 0;
+            _col = 0;
         }
 
         public NumberAsTextSorter(int column)
         {
-            col = column;
+            _col = column;
         }
 
         #region IComparer Members
@@ -144,8 +144,8 @@ namespace TVRename
         {
             int one;
             int two;
-            string s1 = ((x as ListViewItem).SubItems)[col].Text;
-            string s2 = ((y as ListViewItem).SubItems)[col].Text;
+            string s1 = ((x as ListViewItem).SubItems)[_col].Text;
+            string s2 = ((y as ListViewItem).SubItems)[_col].Text;
             if (string.IsNullOrEmpty(s1))
                 s1 = "-1";
             if (string.IsNullOrEmpty(s2))

@@ -19,16 +19,16 @@ namespace TVRename
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using Path = Alphaleonis.Win32.Filesystem.Path;
 
-    public enum BTChunk
+    public enum BtChunk
     {
-        kError,
-        kDictionary,
-        kDictionaryItem,
-        kList,
-        kListOrDictionaryEnd,
-        kInteger,
-        kString,
-        kBTEOF
+        KError,
+        KDictionary,
+        KDictionaryItem,
+        KList,
+        KListOrDictionaryEnd,
+        KInteger,
+        KString,
+        KBteof
     }
 
     public class TorrentEntry // represents a torrent downloading in uTorrent
@@ -45,11 +45,11 @@ namespace TVRename
         }
     }
 
-    public abstract class BTItem
+    public abstract class BtItem
     {
-        public BTChunk Type; // from enum
+        public BtChunk Type; // from enum
 
-        protected BTItem(BTChunk type)
+        protected BtItem(BtChunk type)
         {
             Type = type;
         }
@@ -68,18 +68,18 @@ namespace TVRename
         public abstract void Write(Stream sw);
     }
 
-    public class BTString : BTItem
+    public class BtString : BtItem
     {
         public byte[] Data;
 
-        public BTString(string s)
-            : base(BTChunk.kString)
+        public BtString(string s)
+            : base(BtChunk.KString)
         {
             SetString(s);
         }
 
-        public BTString()
-            : base(BTChunk.kString)
+        public BtString()
+            : base(BtChunk.KString)
         {
             Data = new byte[0];
         }
@@ -139,10 +139,10 @@ namespace TVRename
         }
     }
 
-    public class BTEOF : BTItem
+    public class Bteof : BtItem
     {
-        public BTEOF()
-            : base(BTChunk.kBTEOF)
+        public Bteof()
+            : base(BtChunk.KBteof)
         {
         }
 
@@ -151,12 +151,12 @@ namespace TVRename
         }
     }
 
-    public class BTError : BTItem
+    public class BtError : BtItem
     {
         public string Message;
 
-        public BTError()
-            : base(BTChunk.kError)
+        public BtError()
+            : base(BtChunk.KError)
         {
             Message = "";
         }
@@ -177,10 +177,10 @@ namespace TVRename
         }
     }
 
-    public class BTListOrDictionaryEnd : BTItem
+    public class BtListOrDictionaryEnd : BtItem
     {
-        public BTListOrDictionaryEnd()
-            : base(BTChunk.kListOrDictionaryEnd)
+        public BtListOrDictionaryEnd()
+            : base(BtChunk.KListOrDictionaryEnd)
         {
         }
 
@@ -190,18 +190,18 @@ namespace TVRename
         }
     }
 
-    public class BTDictionaryItem : BTItem
+    public class BtDictionaryItem : BtItem
     {
-        public BTItem Data;
+        public BtItem Data;
         public string Key;
 
-        public BTDictionaryItem()
-            : base(BTChunk.kDictionaryItem)
+        public BtDictionaryItem()
+            : base(BtChunk.KDictionaryItem)
         {
         }
 
-        public BTDictionaryItem(string k, BTItem d)
-            : base(BTChunk.kDictionaryItem)
+        public BtDictionaryItem(string k, BtItem d)
+            : base(BtChunk.KDictionaryItem)
         {
             Key = k;
             Data = d;
@@ -209,19 +209,19 @@ namespace TVRename
 
         public override string AsText()
         {
-            if ((Key == "pieces") && (Data.Type == BTChunk.kString))
+            if ((Key == "pieces") && (Data.Type == BtChunk.KString))
                 return "<File hash data>";
             return string.Concat(Key, "=>", Data.AsText());
         }
 
         public override void Tree(TreeNodeCollection tn)
         {
-            if ((Key == "pieces") && (Data.Type == BTChunk.kString))
+            if ((Key == "pieces") && (Data.Type == BtChunk.KString))
             {
                 // 20 byte chunks of SHA1 hash values
                 TreeNode n = new TreeNode("Key=" + Key);
                 tn.Add(n);
-                n.Nodes.Add(new TreeNode("<File hash data>" + ((BTString) Data).PieceAsNiceString(0)));
+                n.Nodes.Add(new TreeNode("<File hash data>" + ((BtString) Data).PieceAsNiceString(0)));
             }
             else
             {
@@ -233,19 +233,19 @@ namespace TVRename
 
         public override void Write(Stream sw)
         {
-            new BTString(Key).Write(sw);
+            new BtString(Key).Write(sw);
             Data.Write(sw);
         }
     }
 
-    public class BTDictionary : BTItem
+    public class BtDictionary : BtItem
     {
-        public List<BTDictionaryItem> Items;
+        public List<BtDictionaryItem> Items;
 
-        public BTDictionary()
-            : base(BTChunk.kDictionary)
+        public BtDictionary()
+            : base(BtChunk.KDictionary)
         {
-            Items = new List<BTDictionaryItem>();
+            Items = new List<BtDictionaryItem>();
         }
 
         public override string AsText()
@@ -282,12 +282,12 @@ namespace TVRename
             return false;
         }
 
-        public BTItem GetItem(string key)
+        public BtItem GetItem(string key)
         {
             return GetItem(key, false);
         }
 
-        public BTItem GetItem(string key, bool ignoreCase)
+        public BtItem GetItem(string key, bool ignoreCase)
         {
             for (int i = 0; i < Items.Count; i++)
             {
@@ -300,20 +300,20 @@ namespace TVRename
         public override void Write(Stream sw)
         {
             sw.WriteByte((byte) 'd');
-            foreach (BTDictionaryItem i in Items)
+            foreach (BtDictionaryItem i in Items)
                 i.Write(sw);
             sw.WriteByte((byte) 'e');
         }
     }
 
-    public class BTList : BTItem
+    public class BtList : BtItem
     {
-        public List<BTItem> Items;
+        public List<BtItem> Items;
 
-        public BTList()
-            : base(BTChunk.kList)
+        public BtList()
+            : base(BtChunk.KList)
         {
-            Items = new List<BTItem>();
+            Items = new List<BtItem>();
         }
 
         public override string AsText()
@@ -340,24 +340,24 @@ namespace TVRename
         public override void Write(Stream sw)
         {
             sw.WriteByte((byte) 'l');
-            foreach (BTItem i in Items)
+            foreach (BtItem i in Items)
                 i.Write(sw);
             sw.WriteByte((byte) 'e');
         }
     }
 
-    public class BTInteger : BTItem
+    public class BtInteger : BtItem
     {
         public Int64 Value;
 
-        public BTInteger()
-            : base(BTChunk.kInteger)
+        public BtInteger()
+            : base(BtChunk.KInteger)
         {
             Value = 0;
         }
 
-        public BTInteger(Int64 n)
-            : base(BTChunk.kInteger)
+        public BtInteger(Int64 n)
+            : base(BtChunk.KInteger)
         {
             Value = n;
         }
@@ -382,51 +382,51 @@ namespace TVRename
         }
     }
 
-    public class BTFile
+    public class BtFile
     {
-        public List<BTItem> Items;
+        public List<BtItem> Items;
 
-        public BTFile()
+        public BtFile()
         {
-            Items = new List<BTItem>();
+            Items = new List<BtItem>();
         }
 
         public List<string> AllFilesInTorrent()
         {
             List<string> r = new List<String>();
 
-            BTItem bti = GetItem("info");
-            if ((bti == null) || (bti.Type != BTChunk.kDictionary))
+            BtItem bti = GetItem("info");
+            if ((bti == null) || (bti.Type != BtChunk.KDictionary))
                 return null;
 
-            BTDictionary infoDict = (BTDictionary) (bti);
+            BtDictionary infoDict = (BtDictionary) (bti);
 
             bti = infoDict.GetItem("files");
 
             if (bti == null) // single file torrent
             {
                 bti = infoDict.GetItem("name");
-                if ((bti == null) || (bti.Type != BTChunk.kString))
+                if ((bti == null) || (bti.Type != BtChunk.KString))
                     return null;
-                r.Add(((BTString) bti).AsString());
+                r.Add(((BtString) bti).AsString());
             }
             else
             {
                 // multiple file torrent
-                BTList fileList = (BTList) (bti);
+                BtList fileList = (BtList) (bti);
 
-                foreach (BTItem it in fileList.Items)
+                foreach (BtItem it in fileList.Items)
                 {
-                    BTDictionary file = (BTDictionary) (it);
-                    BTItem thePath = file.GetItem("path");
-                    if (thePath.Type != BTChunk.kList)
+                    BtDictionary file = (BtDictionary) (it);
+                    BtItem thePath = file.GetItem("path");
+                    if (thePath.Type != BtChunk.KList)
                         return null;
-                    BTList pathList = (BTList) (thePath);
+                    BtList pathList = (BtList) (thePath);
                     // want the last of the items in the list, which is the filename itself
                     int n = pathList.Items.Count - 1;
                     if (n < 0)
                         return null;
-                    BTString fileName = (BTString) (pathList.Items[n]);
+                    BtString fileName = (BtString) (pathList.Items[n]);
                     r.Add(fileName.AsString());
                 }
             }
@@ -450,65 +450,65 @@ namespace TVRename
                 Items[i].Tree(n.Nodes);
         }
 
-        public BTItem GetItem(string key)
+        public BtItem GetItem(string key)
         {
             return GetItem(key, false);
         }
 
-        public BTDictionary GetDict()
+        public BtDictionary GetDict()
         {
             System.Diagnostics.Debug.Assert(Items.Count == 1);
-            System.Diagnostics.Debug.Assert(Items[0].Type == BTChunk.kDictionary);
+            System.Diagnostics.Debug.Assert(Items[0].Type == BtChunk.KDictionary);
 
             // our first (and only) Item will be a dictionary of stuff
-            return (BTDictionary) (Items[0]);
+            return (BtDictionary) (Items[0]);
         }
 
-        public BTItem GetItem(string key, bool ignoreCase)
+        public BtItem GetItem(string key, bool ignoreCase)
         {
             if (Items.Count == 0)
                 return null;
-            BTDictionary btd = GetDict();
+            BtDictionary btd = GetDict();
             return btd.GetItem(key, ignoreCase);
         }
 
         public void Write(Stream sw)
         {
-            foreach (BTItem i in Items)
+            foreach (BtItem i in Items)
                 i.Write(sw);
         }
     }
 
     public class HashCacheItem
     {
-        public Int64 fileSize;
-        public Int64 pieceSize;
-        public byte[] theHash;
-        public Int64 whereInFile;
+        public Int64 FileSize;
+        public Int64 PieceSize;
+        public byte[] TheHash;
+        public Int64 WhereInFile;
 
         public HashCacheItem(Int64 wif, Int64 ps, Int64 fs, byte[] h)
         {
-            whereInFile = wif;
-            pieceSize = ps;
-            fileSize = fs;
-            theHash = h;
+            WhereInFile = wif;
+            PieceSize = ps;
+            FileSize = fs;
+            TheHash = h;
         }
     }
 
     public class BEncodeLoader
     {
-        public BTItem ReadString(Stream sr, Int64 length)
+        public BtItem ReadString(Stream sr, Int64 length)
         {
             BinaryReader br = new BinaryReader(sr);
 
             byte[] c = br.ReadBytes((int) length);
 
-            BTString bts = new BTString();
+            BtString bts = new BtString();
             bts.Data = c;
             return bts;
         }
 
-        public BTItem ReadInt(FileStream sr)
+        public BtItem ReadInt(FileStream sr)
         {
             Int64 r = 0;
             int c;
@@ -523,30 +523,30 @@ namespace TVRename
             if (neg)
                 r = -r;
 
-            BTInteger bti = new BTInteger();
+            BtInteger bti = new BtInteger();
             bti.Value = r;
             return bti;
         }
 
-        public BTItem ReadDictionary(FileStream sr)
+        public BtItem ReadDictionary(FileStream sr)
         {
-            BTDictionary d = new BTDictionary();
+            BtDictionary d = new BtDictionary();
             for (;;)
             {
-                BTItem next = ReadNext(sr);
-                if ((next.Type == BTChunk.kListOrDictionaryEnd) || (next.Type == BTChunk.kBTEOF))
+                BtItem next = ReadNext(sr);
+                if ((next.Type == BtChunk.KListOrDictionaryEnd) || (next.Type == BtChunk.KBteof))
                     return d;
 
-                if (next.Type != BTChunk.kString)
+                if (next.Type != BtChunk.KString)
                 {
-                    BTError e = new BTError();
+                    BtError e = new BtError();
                     e.Message = "Didn't get string as first of pair in dictionary";
                     return e;
                 }
 
-                BTDictionaryItem di = new BTDictionaryItem
+                BtDictionaryItem di = new BtDictionaryItem
                                           {
-                                              Key = ((BTString)next).AsString(),
+                                              Key = ((BtString)next).AsString(),
                                               Data = ReadNext(sr)
                                           };
 
@@ -554,23 +554,23 @@ namespace TVRename
             }
         }
 
-        public BTItem ReadList(FileStream sr)
+        public BtItem ReadList(FileStream sr)
         {
-            BTList ll = new BTList();
+            BtList ll = new BtList();
             for (;;)
             {
-                BTItem next = ReadNext(sr);
-                if (next.Type == BTChunk.kListOrDictionaryEnd)
+                BtItem next = ReadNext(sr);
+                if (next.Type == BtChunk.KListOrDictionaryEnd)
                     return ll;
 
                 ll.Items.Add(next);
             }
         }
 
-        public BTItem ReadNext(FileStream sr)
+        public BtItem ReadNext(FileStream sr)
         {
             if (sr.Length == sr.Position)
-                return new BTEOF();
+                return new Bteof();
 
             // Read the next character from the stream to see what is next
 
@@ -582,7 +582,7 @@ namespace TVRename
             if (c == 'i')
                 return ReadInt(sr); // integer
             if (c == 'e')
-                return new BTListOrDictionaryEnd(); // end of list/dictionary/etc.
+                return new BtListOrDictionaryEnd(); // end of list/dictionary/etc.
             if ((c >= '0') && (c <= '9')) // digits mean it is a string of the specified length
             {
                 string r = Convert.ToString(c - '0');
@@ -591,15 +591,15 @@ namespace TVRename
                 return ReadString(sr, Convert.ToInt32(r));
             }
                 
-            BTError e = new BTError {
+            BtError e = new BtError {
                                         Message = String.Concat("Error: unknown BEncode item type: ", c)
                                     };
             return e;
         }
 
-        public BTFile Load(string filename)
+        public BtFile Load(string filename)
         {
-            BTFile f = new BTFile();
+            BtFile f = new BtFile();
 
             FileStream sr = null;
             try
@@ -608,7 +608,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Error(e);
+                Logger.Error(e);
                 return null;
             }
 
@@ -619,11 +619,11 @@ namespace TVRename
 
             return f;
         }
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     }
 
-    public abstract class BTCore
+    public abstract class BtCore
     {
         protected int CacheChecks;
         protected int CacheHits;
@@ -635,7 +635,7 @@ namespace TVRename
         protected Dictionary<string, List<HashCacheItem>> HashCache;
         protected SetProgressDelegate SetProg;
 
-        protected BTCore(SetProgressDelegate setprog)
+        protected BtCore(SetProgressDelegate setprog)
         {
             SetProg = setprog;
 
@@ -730,10 +730,10 @@ namespace TVRename
             {
                 foreach (HashCacheItem h in HashCache[filename])
                 {
-                    if ((h.whereInFile == whereInFile) && (h.pieceSize == piecesize) && (h.fileSize == fileSize))
+                    if ((h.WhereInFile == whereInFile) && (h.PieceSize == piecesize) && (h.FileSize == fileSize))
                     {
                         CacheHits++;
-                        return h.theHash;
+                        return h.TheHash;
                     }
                 }
             }
@@ -759,42 +759,42 @@ namespace TVRename
                 tvTree.Nodes.Clear();
 
             BEncodeLoader bel = new BEncodeLoader();
-            BTFile btFile = bel.Load(torrentFile);
+            BtFile btFile = bel.Load(torrentFile);
 
             if (btFile == null)
                 return false;
 
-            BTItem bti = btFile.GetItem("info");
-            if ((bti == null) || (bti.Type != BTChunk.kDictionary))
+            BtItem bti = btFile.GetItem("info");
+            if ((bti == null) || (bti.Type != BtChunk.KDictionary))
                 return false;
 
-            BTDictionary infoDict = (BTDictionary) (bti);
+            BtDictionary infoDict = (BtDictionary) (bti);
 
             bti = infoDict.GetItem("piece length");
-            if ((bti == null) || (bti.Type != BTChunk.kInteger))
+            if ((bti == null) || (bti.Type != BtChunk.KInteger))
                 return false;
 
-            Int64 pieceSize = ((BTInteger) bti).Value;
+            Int64 pieceSize = ((BtInteger) bti).Value;
 
             bti = infoDict.GetItem("pieces");
-            if ((bti == null) || (bti.Type != BTChunk.kString))
+            if ((bti == null) || (bti.Type != BtChunk.KString))
                 return false;
 
-            BTString torrentPieces = (BTString) (bti);
+            BtString torrentPieces = (BtString) (bti);
 
             bti = infoDict.GetItem("files");
 
             if (bti == null) // single file torrent
             {
                 bti = infoDict.GetItem("name");
-                if ((bti == null) || (bti.Type != BTChunk.kString))
+                if ((bti == null) || (bti.Type != BtChunk.KString))
                     return false;
 
-                BTString di = (BTString) (bti);
+                BtString di = (BtString) (bti);
                 string nameInTorrent = di.AsString();
 
-                BTItem fileSizeI = infoDict.GetItem("length");
-                Int64 fileSize = ((BTInteger) fileSizeI).Value;
+                BtItem fileSizeI = infoDict.GetItem("length");
+                Int64 fileSize = ((BtInteger) fileSizeI).Value;
 
                 NewTorrentEntry(torrentFile, -1);
                 if (DoHashChecking)
@@ -816,31 +816,31 @@ namespace TVRename
                 Int64 overallPosition = 0;
                 Int64 lastPieceLeftover = 0;
 
-                if (bti.Type != BTChunk.kList)
+                if (bti.Type != BtChunk.KList)
                     return false;
 
-                BTList fileList = (BTList) (bti);
+                BtList fileList = (BtList) (bti);
 
                 // list of dictionaries
                 for (int i = 0; i < fileList.Items.Count; i++)
                 {
                     Prog(100 * i / fileList.Items.Count);
-                    if (fileList.Items[i].Type != BTChunk.kDictionary)
+                    if (fileList.Items[i].Type != BtChunk.KDictionary)
                         return false;
 
-                    BTDictionary file = (BTDictionary) (fileList.Items[i]);
-                    BTItem thePath = file.GetItem("path");
-                    if (thePath.Type != BTChunk.kList)
+                    BtDictionary file = (BtDictionary) (fileList.Items[i]);
+                    BtItem thePath = file.GetItem("path");
+                    if (thePath.Type != BtChunk.KList)
                         return false;
-                    BTList pathList = (BTList) (thePath);
+                    BtList pathList = (BtList) (thePath);
                     // want the last of the items in the list, which is the filename itself
                     int n = pathList.Items.Count - 1;
                     if (n < 0)
                         return false;
-                    BTString fileName = (BTString) (pathList.Items[n]);
+                    BtString fileName = (BtString) (pathList.Items[n]);
 
-                    BTItem fileSizeI = file.GetItem("length");
-                    Int64 fileSize = ((BTInteger) fileSizeI).Value;
+                    BtItem fileSizeI = file.GetItem("length");
+                    Int64 fileSize = ((BtInteger) fileSizeI).Value;
 
                     int pieceNum = (int) (overallPosition / pieceSize);
                     if (overallPosition % pieceSize != 0)
@@ -887,7 +887,7 @@ namespace TVRename
 
     // btcore
 
-    public class BTFileRenamer : BTCore
+    public class BtFileRenamer : BtCore
     {
         // Hash and file caches
 
@@ -902,7 +902,7 @@ namespace TVRename
 
         public ItemList RenameListOut;
         
-        public BTFileRenamer(SetProgressDelegate setprog)
+        public BtFileRenamer(SetProgressDelegate setprog)
             : base(setprog)
         {
         }
@@ -974,9 +974,9 @@ namespace TVRename
 
     // BTProcessor
 
-    public class BTResume : BTCore
+    public class BtResume : BtCore
     {
-        private static class BTPrio { public const int Normal = 0x08, Skip = 0x80; }
+        private static class BtPrio { public const int Normal = 0x08, Skip = 0x80; }
 
         public bool Altered;
         public bool DoMatchMissing;
@@ -987,35 +987,35 @@ namespace TVRename
         public bool PrioWasSet;
         public ListView Results;
 
-        public BTFile ResumeDat; // resume file, if we're using it
+        public BtFile ResumeDat; // resume file, if we're using it
         public string ResumeDatPath;
 
-        public List<FilenameProcessorRE> Rexps; // used by MatchMissing
+        public List<FilenameProcessorRe> Rexps; // used by MatchMissing
         public bool SearchSubFolders;
         public bool SetPrios;
         public bool TestMode;
         public string Type;
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public BTResume(SetProgressDelegate setprog, string resumeDatFile)
+        public BtResume(SetProgressDelegate setprog, string resumeDatFile)
             : base(setprog)
         {
             ResumeDatPath = resumeDatFile;
         }
 
-        public BTDictionary GetTorrentDict(string torrentFile)
+        public BtDictionary GetTorrentDict(string torrentFile)
         {
             // find dictionary for the specified torrent file
 
-            BTItem it = ResumeDat.GetDict().GetItem(torrentFile, true);
-            if ((it == null) || (it.Type != BTChunk.kDictionary))
+            BtItem it = ResumeDat.GetDict().GetItem(torrentFile, true);
+            if ((it == null) || (it.Type != BtChunk.KDictionary))
                 return null;
-            BTDictionary dict = (BTDictionary) (it);
+            BtDictionary dict = (BtDictionary) (it);
             return dict;
         }
 
-        public static int PercentBitsOn(BTString s)
+        public static int PercentBitsOn(BtString s)
         {
             int totalBits = 0;
             int bitsOn = 0;
@@ -1040,24 +1040,24 @@ namespace TVRename
             List<TorrentEntry> r = new List<TorrentEntry>();
 
             BEncodeLoader bel = new BEncodeLoader();
-            foreach (BTDictionaryItem it in ResumeDat.GetDict().Items)
+            foreach (BtDictionaryItem it in ResumeDat.GetDict().Items)
             {
-                if ((it.Type != BTChunk.kDictionaryItem))
+                if ((it.Type != BtChunk.KDictionaryItem))
                     continue;
 
-                BTDictionaryItem dictitem = (BTDictionaryItem) (it);
+                BtDictionaryItem dictitem = (BtDictionaryItem) (it);
 
-                if ((dictitem.Key == ".fileguard") || (dictitem.Data.Type != BTChunk.kDictionary))
+                if ((dictitem.Key == ".fileguard") || (dictitem.Data.Type != BtChunk.KDictionary))
                     continue;
 
                 string torrentFile = dictitem.Key;
-                BTDictionary d2 = (BTDictionary) (dictitem.Data);
+                BtDictionary d2 = (BtDictionary) (dictitem.Data);
 
-                BTItem p = d2.GetItem("prio");
-                if ((p == null) || (p.Type != BTChunk.kString))
+                BtItem p = d2.GetItem("prio");
+                if ((p == null) || (p.Type != BtChunk.KString))
                     continue;
 
-                BTString prioString = (BTString) (p);
+                BtString prioString = (BtString) (p);
                 string directoryName = Path.GetDirectoryName(ResumeDatPath) + System.IO.Path.DirectorySeparatorChar;
 
                 if (!File.Exists(torrentFile)) // if the torrent file doesn't exist
@@ -1066,7 +1066,7 @@ namespace TVRename
                 if (!File.Exists(torrentFile))
                     continue; // can't find it.  give up!
                 
-                BTFile tor = bel.Load(torrentFile);
+                BtFile tor = bel.Load(torrentFile);
                 if (tor == null)
                     continue;
 
@@ -1076,17 +1076,17 @@ namespace TVRename
                     int c = 0;
 
                     p = d2.GetItem("path");
-                    if ((p == null) || (p.Type != BTChunk.kString))
+                    if ((p == null) || (p.Type != BtChunk.KString))
                         continue;
-                    string defaultFolder = ((BTString) p).AsString();
+                    string defaultFolder = ((BtString) p).AsString();
 
-                    BTItem targets = d2.GetItem("targets");
-                    bool hasTargets = ((targets != null) && (targets.Type == BTChunk.kList));
-                    BTList targetList = (BTList) (targets);
+                    BtItem targets = d2.GetItem("targets");
+                    bool hasTargets = ((targets != null) && (targets.Type == BtChunk.KList));
+                    BtList targetList = (BtList) (targets);
 
                     foreach (string s in a)
                     {
-                        if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip))
+                        if ((c < prioString.Data.Length) && (prioString.Data[c] != BtPrio.Skip))
                         {
                             try
                             {
@@ -1096,9 +1096,9 @@ namespace TVRename
                                     // see if there is a target for this (the c'th) file
                                     for (int i = 0; i < targetList.Items.Count; i++)
                                     {
-                                        BTList l = (BTList)(targetList.Items[i]);
-                                        BTInteger n = (BTInteger)(l.Items[0]);
-                                        BTString dest = (BTString)(l.Items[1]);
+                                        BtList l = (BtList)(targetList.Items[i]);
+                                        BtInteger n = (BtInteger)(l.Items[0]);
+                                        BtString dest = (BtString)(l.Items[1]);
                                         if (n.Value == c)
                                         {
                                             saveTo = dest.AsString();
@@ -1106,7 +1106,7 @@ namespace TVRename
                                         }
                                     }
                                 }
-                                int percent = (a.Count == 1) ? PercentBitsOn((BTString)(d2.GetItem("have"))) : -1;
+                                int percent = (a.Count == 1) ? PercentBitsOn((BtString)(d2.GetItem("have"))) : -1;
                                 TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent);
                                 r.Add(te);
 
@@ -1114,7 +1114,7 @@ namespace TVRename
                             catch (PathTooLongException ptle)
                             {
                                 //this is not the file we are looking for
-                                logger.Debug(ptle);
+                                _logger.Debug(ptle);
                             }
                         }
                         c++;
@@ -1127,20 +1127,20 @@ namespace TVRename
 
         public string GetResumePrio(string torrentFile, int fileNum)
         {
-            BTDictionary dict = GetTorrentDict(torrentFile);
+            BtDictionary dict = GetTorrentDict(torrentFile);
             if (dict == null)
                 return "";
-            BTItem p = dict.GetItem("prio");
-            if ((p == null) || (p.Type != BTChunk.kString))
+            BtItem p = dict.GetItem("prio");
+            if ((p == null) || (p.Type != BtChunk.KString))
                 return "";
-            BTString prioString = (BTString) (p);
+            BtString prioString = (BtString) (p);
             if ((fileNum < 0) || (fileNum > prioString.Data.Length))
                 return "";
 
             int pr = prioString.Data[fileNum];
-            if (pr == BTPrio.Normal)
+            if (pr == BtPrio.Normal)
                 return "Normal";
-            if (pr == BTPrio.Skip)
+            if (pr == BtPrio.Skip)
                 return "Skip";
             return pr.ToString();
         }
@@ -1152,13 +1152,13 @@ namespace TVRename
 
             if (fileNum == -1)
                 fileNum = 0;
-            BTDictionary dict = GetTorrentDict(torrentFile);
+            BtDictionary dict = GetTorrentDict(torrentFile);
             if (dict == null)
                 return;
-            BTItem p = dict.GetItem("prio");
-            if ((p == null) || (p.Type != BTChunk.kString))
+            BtItem p = dict.GetItem("prio");
+            if ((p == null) || (p.Type != BtChunk.KString))
                 return;
-            BTString prioString = (BTString) (p);
+            BtString prioString = (BtString) (p);
             if ((fileNum < 0) || (fileNum > prioString.Data.Length))
                 return;
 
@@ -1168,9 +1168,9 @@ namespace TVRename
             prioString.Data[fileNum] = newPrio;
 
             string ps;
-            if (newPrio == BTPrio.Skip)
+            if (newPrio == BtPrio.Skip)
                 ps = "Skip";
-            else if (newPrio == BTPrio.Normal)
+            else if (newPrio == BtPrio.Normal)
                 ps = "Normal";
             else
                 ps = newPrio.ToString();
@@ -1178,9 +1178,9 @@ namespace TVRename
 
         public void AlterResume(string torrentFile, int fileNum, string toHere)
         {
-            toHere = RemoveUT(toHere);
+            toHere = RemoveUt(toHere);
 
-            BTDictionary dict = GetTorrentDict(torrentFile);
+            BtDictionary dict = GetTorrentDict(torrentFile);
             if (dict == null)
                 return;
 
@@ -1188,48 +1188,48 @@ namespace TVRename
 
             if (fileNum == -1) // single file torrent
             {
-                BTItem p = dict.GetItem("path");
+                BtItem p = dict.GetItem("path");
                 if (p == null)
-                    dict.Items.Add(new BTDictionaryItem("path", new BTString(toHere)));
+                    dict.Items.Add(new BtDictionaryItem("path", new BtString(toHere)));
                 else
                 {
-                    if (p.Type != BTChunk.kString)
+                    if (p.Type != BtChunk.KString)
                         return;
-                    ((BTString) p).SetString(toHere);
+                    ((BtString) p).SetString(toHere);
                 }
             }
             else
             {
                 // multiple file torrent, uses a list called "targets"
-                BTItem p = dict.GetItem("targets");
-                BTList theList = null;
+                BtItem p = dict.GetItem("targets");
+                BtList theList = null;
                 if (p == null)
                 {
-                    theList = new BTList();
-                    dict.Items.Add(new BTDictionaryItem("targets", theList));
+                    theList = new BtList();
+                    dict.Items.Add(new BtDictionaryItem("targets", theList));
                 }
                 else
                 {
-                    if (p.Type != BTChunk.kList)
+                    if (p.Type != BtChunk.KList)
                         return;
-                    theList = (BTList) (p);
+                    theList = (BtList) (p);
                 }
                 if (theList == null)
                     return;
 
                 // the list contains two element lists, of integer/string which are filenumber/path
 
-                BTList thisFileList = null;
+                BtList thisFileList = null;
                 // see if this file is already in the list
                 for (int i = 0; i < theList.Items.Count; i++)
                 {
-                    if (theList.Items[i].Type != BTChunk.kList)
+                    if (theList.Items[i].Type != BtChunk.KList)
                         return;
 
-                    BTList l2 = (BTList) (theList.Items[i]);
-                    if ((l2.Items.Count != 2) || (l2.Items[0].Type != BTChunk.kInteger) || (l2.Items[1].Type != BTChunk.kString))
+                    BtList l2 = (BtList) (theList.Items[i]);
+                    if ((l2.Items.Count != 2) || (l2.Items[0].Type != BtChunk.KInteger) || (l2.Items[1].Type != BtChunk.KString))
                         return;
-                    int n = (int) ((BTInteger) (l2.Items[0])).Value;
+                    int n = (int) ((BtInteger) (l2.Items[0])).Value;
                     if (n == fileNum)
                     {
                         thisFileList = l2;
@@ -1238,13 +1238,13 @@ namespace TVRename
                 }
                 if (thisFileList == null) // didn't find it
                 {
-                    thisFileList = new BTList();
-                    thisFileList.Items.Add(new BTInteger(fileNum));
-                    thisFileList.Items.Add(new BTString(toHere));
+                    thisFileList = new BtList();
+                    thisFileList.Items.Add(new BtInteger(fileNum));
+                    thisFileList.Items.Add(new BtString(toHere));
                     theList.Items.Add(thisFileList);
                 }
                 else
-                    thisFileList.Items[1] = new BTString(toHere);
+                    thisFileList.Items[1] = new BtString(toHere);
             }
         }
 
@@ -1258,8 +1258,8 @@ namespace TVRename
             System.Security.Cryptography.SHA1Managed sha1 = new System.Security.Cryptography.SHA1Managed();
             byte[] theHash = sha1.ComputeHash(ms.GetBuffer(), 0, (int) ms.Length);
             ms.Close();
-            string newfg = BTString.CharsToHex(theHash, 0, 20);
-            ResumeDat.GetDict().Items.Add(new BTDictionaryItem(".fileguard", new BTString(newfg)));
+            string newfg = BtString.CharsToHex(theHash, 0, 20);
+            ResumeDat.GetDict().Items.Add(new BtDictionaryItem(".fileguard", new BtString(newfg)));
         }
 
         public FileInfo MatchMissing(string torrentFile, int torrentFileNum, string nameInTorrent)
@@ -1267,31 +1267,31 @@ namespace TVRename
             // returns true if we found a match (if actSetPrio is on, true also means we have set a priority for this file)
             string simplifiedfname = Helpers.SimplifyName(nameInTorrent);
 
-            foreach (Item Action1 in MissingList)
+            foreach (ITem action1 in MissingList)
             {
-                if ((!(Action1 is ItemMissing)) && (!(Action1 is ItemuTorrenting)) && (!(Action1 is ItemSABnzbd)))
+                if ((!(action1 is ItemMissing)) && (!(action1 is ItemuTorrenting)) && (!(action1 is ItemSaBnzbd)))
                     continue;
 
                 ProcessedEpisode m = null;
                 string name = null;
 
-                if (Action1 is ItemMissing)
+                if (action1 is ItemMissing)
                 {
-                    ItemMissing Action = (ItemMissing) (Action1);
-                    m = Action.Episode;
-                    name = Action.TheFileNoExt;
+                    ItemMissing action = (ItemMissing) (action1);
+                    m = action.Episode;
+                    name = action.TheFileNoExt;
                 }
-                else if (Action1 is ItemuTorrenting)
+                else if (action1 is ItemuTorrenting)
                 {
-                    ItemuTorrenting Action = (ItemuTorrenting) (Action1);
-                    m = Action.Episode;
-                    name = Action.DesiredLocationNoExt;
+                    ItemuTorrenting action = (ItemuTorrenting) (action1);
+                    m = action.Episode;
+                    name = action.DesiredLocationNoExt;
                 }
-                else if (Action1 is ItemSABnzbd)
+                else if (action1 is ItemSaBnzbd)
                 {
-                    ItemSABnzbd Action = (ItemSABnzbd)(Action1);
-                    m = Action.Episode;
-                    name = Action.DesiredLocationNoExt;
+                    ItemSaBnzbd action = (ItemSaBnzbd)(action1);
+                    m = action.Episode;
+                    name = action.DesiredLocationNoExt;
                 }
 
                 if ((m == null) || string.IsNullOrEmpty(name))
@@ -1303,7 +1303,7 @@ namespace TVRename
                     // see if season and episode match
                     int seasF;
                     int epF;
-                    if (TVDoc.FindSeasEp("", simplifiedfname, out seasF, out epF, m.SI, Rexps) && (seasF == m.SeasonNumber) && (epF == m.EpNum))
+                    if (TVDoc.FindSeasEp("", simplifiedfname, out seasF, out epF, m.Si, Rexps) && (seasF == m.SeasonNumber) && (epF == m.EpNum))
                     {
                         // match!
                         // get extension from nameInTorrent
@@ -1311,7 +1311,7 @@ namespace TVRename
                         string ext = (p == -1) ? "" : nameInTorrent.Substring(p);
                         AlterResume(torrentFile, torrentFileNum, name + ext);
                         if (SetPrios)
-                            SetResumePrio(torrentFile, torrentFileNum, BTPrio.Normal);
+                            SetResumePrio(torrentFile, torrentFileNum, BtPrio.Normal);
                         return new FileInfo(name + ext);
                     }
                 }
@@ -1348,7 +1348,7 @@ namespace TVRename
             AlterResume(torrentFile, numberInTorrent, onDisk.FullName); // make resume.dat point to the file we found
 
             if (SetPrios)
-                SetResumePrio(torrentFile, numberInTorrent, BTPrio.Normal);
+                SetResumePrio(torrentFile, numberInTorrent, BtPrio.Normal);
 
             return true;
         }
@@ -1358,7 +1358,7 @@ namespace TVRename
             Type = "Not Found";
 
             if (SetPrios)
-                SetResumePrio(torrentFile, numberInTorrent, BTPrio.Skip);
+                SetResumePrio(torrentFile, numberInTorrent, BtPrio.Skip);
             return true;
         }
 
@@ -1377,7 +1377,7 @@ namespace TVRename
 
             if (SetPrios && !PrioWasSet)
             {
-                SetResumePrio(torrentFile, numberInTorrent, BTPrio.Skip);
+                SetResumePrio(torrentFile, numberInTorrent, BtPrio.Skip);
                 Type = "Not Missing";
             }
 
@@ -1394,8 +1394,8 @@ namespace TVRename
             return (ResumeDat != null);
         }
 
-        public bool DoWork(List<string> Torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, 
-                           bool searchSubFolders, ItemList missingList, List<FilenameProcessorRE> rexps, CommandLineArgs args)
+        public bool DoWork(List<string> torrents, string searchFolder, ListView results, bool hashSearch, bool matchMissing, bool setPrios, bool testMode, 
+                           bool searchSubFolders, ItemList missingList, List<FilenameProcessorRe> rexps, CommandLineArgs args)
         {
             Rexps = rexps;
 
@@ -1426,7 +1426,7 @@ namespace TVRename
             if (hashSearch)
                 BuildFileCache(searchFolder, searchSubFolders);
 
-            foreach (string tf in Torrents)
+            foreach (string tf in torrents)
             {
                 r = ProcessTorrentFile(tf, null, args);
                 if (!r) // stop on the first failure
@@ -1441,7 +1441,7 @@ namespace TVRename
             return r;
         }
 
-        public static string RemoveUT(string s)
+        public static string RemoveUt(string s)
         {
             // if it is a .!ut file, we can remove the extension
             if (s.EndsWith(".!ut"))
@@ -1462,7 +1462,7 @@ namespace TVRename
             lvi.SubItems.Add(torrent);
             lvi.SubItems.Add(num);
             lvi.SubItems.Add(prio);
-            lvi.SubItems.Add(RemoveUT(location));
+            lvi.SubItems.Add(RemoveUt(location));
 
             Results.Items.Add(lvi);
             lvi.EnsureVisible();

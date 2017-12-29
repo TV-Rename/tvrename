@@ -25,17 +25,17 @@ namespace TVRename
     /// </summary>
     public partial class ActorsGrid : Form
     {
-        private int Internal;
-        private DataArr TheData;
-        private TVDoc mDoc;
+        private int _internal;
+        private DataArr _theData;
+        private TVDoc _mDoc;
 
         public ActorsGrid(TVDoc doc)
         {
-            Internal = 0;
+            _internal = 0;
 
             InitializeComponent();
 
-            mDoc = doc;
+            _mDoc = doc;
 
             BuildData();
             DoSort();
@@ -46,7 +46,7 @@ namespace TVRename
             // find actors that have been in more than one thing
             // Dictionary<String^, List<String> ^> ^whoInWhat = gcnew Dictionary<String^, List<String> ^>;
             TheTVDB.Instance.GetLock("Actors");
-            TheData = new DataArr(TheTVDB.Instance.GetSeriesDict().Count);
+            _theData = new DataArr(TheTVDB.Instance.GetSeriesDict().Count);
             foreach (KeyValuePair<int, SeriesInfo> ser in TheTVDB.Instance.GetSeriesDict())
             {
                 SeriesInfo si = ser.Value;
@@ -54,7 +54,7 @@ namespace TVRename
                 {
                     string aa = act.Trim();
                     if (!string.IsNullOrEmpty(aa))
-                        TheData.Set(si.Name, aa, true);
+                        _theData.Set(si.Name, aa, true);
                 }
 
                 if (cbGuestStars.Checked)
@@ -67,7 +67,7 @@ namespace TVRename
                                 {
                                     string aa = g.Trim();
                                     if (!string.IsNullOrEmpty(aa))
-                                        TheData.Set(si.Name, aa, false);
+                                        _theData.Set(si.Name, aa, false);
                                 }
                         }
                     }
@@ -75,63 +75,63 @@ namespace TVRename
             }
 
             TheTVDB.Instance.Unlock("Actors");
-            TheData.RemoveEmpties();
+            _theData.RemoveEmpties();
         }
 
         private void SortByName()
         {
-            Internal++;
+            _internal++;
             rbName.Checked = true;
-            Internal--;
-            TheData.SortRows(false);
-            TheData.SortCols(false);
+            _internal--;
+            _theData.SortRows(false);
+            _theData.SortCols(false);
         }
 
         private void SortByTotals()
         {
-            Internal++;
+            _internal++;
             rbTotals.Checked = true;
-            Internal--;
-            TheData.SortRows(true);
-            TheData.SortCols(true);
+            _internal--;
+            _theData.SortRows(true);
+            _theData.SortCols(true);
         }
 
         private void SortRowsByCount()
         {
-            Internal++;
+            _internal++;
             rbCustom.Checked = true;
-            Internal--;
-            TheData.SortRows(true);
+            _internal--;
+            _theData.SortRows(true);
             FillGrid();
         }
 
         private void SortColsByCount()
         {
-            Internal++;
+            _internal++;
             rbCustom.Checked = true;
-            Internal--;
-            TheData.SortCols(true);
+            _internal--;
+            _theData.SortCols(true);
             FillGrid();
         }
 
         private void ActorToTop(string a)
         {
-            Internal++;
+            _internal++;
             rbCustom.Checked = true;
-            Internal--;
+            _internal--;
 
-            TheData.MoveColToTop(a);
+            _theData.MoveColToTop(a);
 
             // also move the shows they've been in to the top, too
-            int c = TheData.Cols.IndexOf(a);
+            int c = _theData.Cols.IndexOf(a);
             if (c != 0)
                 return; // uh oh!
             int end = 0;
-            for (int r = TheData.DataR - 1; r >= end; r--)
+            for (int r = _theData.DataR - 1; r >= end; r--)
             {
-                if (TheData.Data[r][0].HasValue)
+                if (_theData.Data[r][0].HasValue)
                 {
-                    TheData.MoveRowToTop(TheData.Rows[r++]);
+                    _theData.MoveRowToTop(_theData.Rows[r++]);
                     end++;
                 }
             }
@@ -140,22 +140,22 @@ namespace TVRename
 
         private void ShowToTop(string s)
         {
-            Internal++;
+            _internal++;
             rbCustom.Checked = true;
-            Internal--;
+            _internal--;
 
-            TheData.MoveRowToTop(s);
+            _theData.MoveRowToTop(s);
 
             // also move the actors in this show to the top, too
-            int r = TheData.Rows.IndexOf(s);
+            int r = _theData.Rows.IndexOf(s);
             if (r != 0)
                 return; // uh oh!
             int end = 0;
-            for (int c = TheData.DataC - 1; c >= end; c--)
+            for (int c = _theData.DataC - 1; c >= end; c--)
             {
-                if (TheData.Data[0][c].HasValue)
+                if (_theData.Data[0][c].HasValue)
                 {
-                    TheData.MoveColToTop(TheData.Cols[c++]);
+                    _theData.MoveColToTop(_theData.Cols[c++]);
                     end++;
                 }
             }
@@ -197,8 +197,8 @@ namespace TVRename
             grid1.Columns.Clear();
             grid1.Rows.Clear();
 
-            int rows = TheData.DataR + 2; // title and total
-            int cols = TheData.DataC + 2;
+            int rows = _theData.DataR + 2; // title and total
+            int cols = _theData.DataC + 2;
 
             grid1.ColumnsCount = cols;
             grid1.RowsCount = rows;
@@ -226,9 +226,9 @@ namespace TVRename
             grid1[0, 0].View = topleftTitleModel;
             grid1[0, 0].AddController(new SideClickEvent(this, null)); // default sort
 
-            for (int c = 0; c < TheData.DataC; c++)
+            for (int c = 0; c < _theData.DataC; c++)
             {
-                h = new ColumnHeader(TheData.Cols[c])
+                h = new ColumnHeader(_theData.Cols[c])
                 {
                     AutomaticSortEnabled = false,
                     ResizeEnabled = false
@@ -238,7 +238,7 @@ namespace TVRename
                 // h->SortComparer = gcnew SourceGrid::MultiColumnsComparer(c, 0); // TODO: remove?
                 grid1[0, c + 1] = h;
                 grid1[0, c + 1].View = colTitleModel;
-                grid1[0, c + 1].AddController(new TopClickEvent(this, TheData.Cols[c]));
+                grid1[0, c + 1].AddController(new TopClickEvent(this, _theData.Cols[c]));
             }
 
             int totalCol = grid1.ColumnsCount - 1;
@@ -254,45 +254,45 @@ namespace TVRename
             grid1[0, totalCol].View = colTitleModel;
             grid1[0, totalCol].AddController(new SortRowsByCountEvent(this));
 
-            for (int r = 0; r < TheData.DataR; r++)
+            for (int r = 0; r < _theData.DataR; r++)
             {
-                grid1[r + 1, 0] = new RowHeader(TheData.Rows[r])
+                grid1[r + 1, 0] = new RowHeader(_theData.Rows[r])
                 {
                     ResizeEnabled = false
                 };
-                grid1[r + 1, 0].AddController(new SideClickEvent(this, TheData.Rows[r]));
+                grid1[r + 1, 0].AddController(new SideClickEvent(this, _theData.Rows[r]));
             }
 
-            grid1[TheData.DataR + 1, 0] = new RowHeader("Totals")
+            grid1[_theData.DataR + 1, 0] = new RowHeader("Totals")
             {
                 ResizeEnabled = false
             };
-            grid1[TheData.DataR + 1, 0].AddController(new SortColsByCountEvent(this));
+            grid1[_theData.DataR + 1, 0].AddController(new SortColsByCountEvent(this));
 
-            for (int c = 0; c < TheData.DataC; c++)
+            for (int c = 0; c < _theData.DataC; c++)
             {
-                for (int r = 0; r < TheData.DataR; r++)
+                for (int r = 0; r < _theData.DataR; r++)
                 {
-                    if (TheData.Data[r][c].HasValue)
+                    if (_theData.Data[r][c].HasValue)
                     {
                         grid1[r + 1, c + 1] = new Cell("Y")
                         {
-                            View = TheData.Data[r][c].Value ? isActorModel : isGuestModel
+                            View = _theData.Data[r][c].Value ? isActorModel : isGuestModel
                         };
-                        grid1[r + 1, c + 1].AddController(new CellClickEvent(TheData.Cols[c], TheData.Rows[r]));
+                        grid1[r + 1, c + 1].AddController(new CellClickEvent(_theData.Cols[c], _theData.Rows[r]));
                     }
                     else
                         grid1[r + 1, c + 1] = new Cell("");
                 }
             }
 
-            for (int c = 0; c < TheData.DataC; c++)
-                grid1[rows - 1, c + 1] = new Cell(TheData.ColScore(c));
+            for (int c = 0; c < _theData.DataC; c++)
+                grid1[rows - 1, c + 1] = new Cell(_theData.ColScore(c));
 
-            for (int r = 0; r < TheData.DataR; r++)
-                grid1[r + 1, cols - 1] = new Cell(TheData.RowScore(r, null));
+            for (int r = 0; r < _theData.DataR; r++)
+                grid1[r + 1, cols - 1] = new Cell(_theData.RowScore(r, null));
 
-            grid1[TheData.DataR + 1, TheData.DataC + 1] = new Cell("");
+            grid1[_theData.DataR + 1, _theData.DataC + 1] = new Cell("");
 
             grid1.AutoSizeCells();
         }
@@ -331,14 +331,14 @@ namespace TVRename
 
         private void rbName_CheckedChanged(object sender, EventArgs e)
         {
-            if (Internal != 0)
+            if (_internal != 0)
                 return;
             DoSort();
         }
 
         private void rbTotals_CheckedChanged(object sender, EventArgs e)
         {
-            if (Internal != 0)
+            if (_internal != 0)
                 return;
             DoSort();
         }
@@ -347,18 +347,18 @@ namespace TVRename
 
         private class CellClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly string Show;
-            private readonly string Who;
+            private readonly string _show;
+            private readonly string _who;
 
             public CellClickEvent(string who, string show)
             {
-                Who = who;
-                Show = show;
+                _who = who;
+                _show = show;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                Helpers.SysOpen("http://www.imdb.com/find?s=nm&q=" + Who);
+                Helpers.SysOpen("http://www.imdb.com/find?s=nm&q=" + _who);
             }
         }
 
@@ -368,8 +368,8 @@ namespace TVRename
 
         private class DataArr
         {
-            private int AllocC;
-            private int AllocR;
+            private int _allocC;
+            private int _allocR;
             public readonly List<string> Cols;
             public bool?[][] Data;
             public int DataC;
@@ -380,11 +380,11 @@ namespace TVRename
             {
                 Rows = new List<String>();
                 Cols = new List<String>();
-                AllocR = rowCountPreAlloc;
-                AllocC = rowCountPreAlloc * 10;
-                Data = new bool?[AllocR][];
-                for (int i = 0; i < AllocR; i++)
-                    Data[i] = new bool?[AllocC];
+                _allocR = rowCountPreAlloc;
+                _allocC = rowCountPreAlloc * 10;
+                Data = new bool?[_allocR][];
+                for (int i = 0; i < _allocR; i++)
+                    Data[i] = new bool?[_allocC];
                 DataR = DataC = 0;
             }
 
@@ -440,15 +440,15 @@ namespace TVRename
             {
                 int newr = Rows.Count;
                 int newc = Cols.Count;
-                if ((newr > AllocR) || (newc > AllocC)) // need to enlarge array
+                if ((newr > _allocR) || (newc > _allocC)) // need to enlarge array
                 {
-                    if (newr > AllocR)
-                        AllocR = newr * 2;
-                    if (newc > AllocC)
-                        AllocC = newc * 2;
-                    bool?[][] newarr = new bool?[AllocR][];
-                    for (int i = 0; i < AllocR; i++)
-                        newarr[i] = new bool?[AllocC];
+                    if (newr > _allocR)
+                        _allocR = newr * 2;
+                    if (newc > _allocC)
+                        _allocC = newc * 2;
+                    bool?[][] newarr = new bool?[_allocR][];
+                    for (int i = 0; i < _allocR; i++)
+                        newarr[i] = new bool?[_allocC];
 
                     for (int r = 0; r < DataR; r++)
                     {
@@ -533,8 +533,8 @@ namespace TVRename
                 Cols.RemoveRange(countC, Cols.Count - countC);
 
                 Data = newarr;
-                AllocR = DataR = countR;
-                AllocC = DataC = countC;
+                _allocR = DataR = countR;
+                _allocC = DataC = countC;
             }
 
             public void Set(string row, string col, bool isActor) // isActor = false means guest star
@@ -700,21 +700,21 @@ namespace TVRename
 
         private class SideClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly ActorsGrid G;
-            private readonly string Show;
+            private readonly ActorsGrid _g;
+            private readonly string _show;
 
             public SideClickEvent(ActorsGrid g, string show)
             {
-                Show = show;
-                G = g;
+                _show = show;
+                _g = g;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                if (Show == null)
-                    G.DoSort();
+                if (_show == null)
+                    _g.DoSort();
                 else
-                    G.ShowToTop(Show);
+                    _g.ShowToTop(_show);
             }
         }
 
@@ -724,16 +724,16 @@ namespace TVRename
 
         private class SortColsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly ActorsGrid G;
+            private readonly ActorsGrid _g;
 
             public SortColsByCountEvent(ActorsGrid g)
             {
-                G = g;
+                _g = g;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                G.SortColsByCount();
+                _g.SortColsByCount();
             }
         }
 
@@ -743,16 +743,16 @@ namespace TVRename
 
         private class SortRowsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly ActorsGrid G;
+            private readonly ActorsGrid _g;
 
             public SortRowsByCountEvent(ActorsGrid g)
             {
-                G = g;
+                _g = g;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                G.SortRowsByCount();
+                _g.SortRowsByCount();
             }
         }
 
@@ -762,18 +762,18 @@ namespace TVRename
 
         private class TopClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly string Actor;
-            private readonly ActorsGrid G;
+            private readonly string _actor;
+            private readonly ActorsGrid _g;
 
             public TopClickEvent(ActorsGrid g, string act)
             {
-                G = g;
-                Actor = act;
+                _g = g;
+                _actor = act;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                G.ActorToTop(Actor);
+                _g.ActorToTop(_actor);
             }
         }
 

@@ -24,15 +24,15 @@ namespace TVRename.SAB
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true)]
     [XmlRootAttribute(Namespace = "", IsNullable = false)]
-    public class queue : object, System.ComponentModel.INotifyPropertyChanged
+    public class Queue : object, System.ComponentModel.INotifyPropertyChanged
     {
-        public static queue Deserialize(byte[] data)
+        public static Queue Deserialize(byte[] data)
         {
             MemoryStream ms = new MemoryStream(data);
-            XmlSerializer serializer = new XmlSerializer(typeof (queue));
+            XmlSerializer serializer = new XmlSerializer(typeof (Queue));
             try
             {
-                queue r = (queue) serializer.Deserialize(ms);
+                Queue r = (Queue) serializer.Deserialize(ms);
                 return r;
             }
             catch
@@ -41,773 +41,773 @@ namespace TVRename.SAB
             }
         }
 
-        private string uniconfigField;
+        private string _uniconfigField;
 
-        private string cache_sizeField;
+        private string _cacheSizeField;
 
-        private string active_langField;
+        private string _activeLangField;
 
-        private string pausedField;
+        private string _pausedField;
 
-        private string sessionField;
+        private string _sessionField;
 
-        private string restart_reqField;
+        private string _restartReqField;
 
-        private string power_optionsField;
+        private string _powerOptionsField;
 
-        private string speedField;
+        private string _speedField;
 
-        private string helpuriField;
+        private string _helpuriField;
 
-        private string sizeField;
+        private string _sizeField;
 
-        private string uptimeField;
+        private string _uptimeField;
 
-        private string refresh_rateField;
+        private string _refreshRateField;
 
-        private string my_homeField;
+        private string _myHomeField;
 
-        private string limitField;
+        private string _limitField;
 
-        private string have_quotaField;
+        private string _haveQuotaField;
 
-        private string isverboseField;
+        private string _isverboseField;
 
-        private string startField;
+        private string _startField;
 
-        private string finishField;
+        private string _finishField;
 
-        private string versionField;
+        private string _versionField;
 
-        private string new_rel_urlField;
+        private string _newRelUrlField;
 
-        private string my_lcldataField;
+        private string _myLcldataField;
 
-        private string color_schemeField;
+        private string _colorSchemeField;
 
-        private string diskspacetotal1Field;
+        private string _diskspacetotal1Field;
 
-        private string ntField;
+        private string _ntField;
 
-        private string statusField;
+        private string _statusField;
 
-        private string last_warningField;
+        private string _lastWarningField;
 
-        private string have_warningsField;
+        private string _haveWarningsField;
 
-        private string cache_artField;
+        private string _cacheArtField;
 
-        private string sizeleftField;
+        private string _sizeleftField;
 
-        private string finishactionField;
+        private string _finishactionField;
 
-        private string paused_allField;
+        private string _pausedAllField;
 
-        private string quotaField;
+        private string _quotaField;
 
-        private string newzbin_urlField;
+        private string _newzbinUrlField;
 
-        private string new_releaseField;
+        private string _newReleaseField;
 
-        private string pause_intField;
+        private string _pauseIntField;
 
-        private string mbleftField;
+        private string _mbleftField;
 
-        private string diskspace1Field;
+        private string _diskspace1Field;
 
-        private string scriptsField;
+        private string _scriptsField;
 
-        private string darwinField;
+        private string _darwinField;
 
-        private string timeleftField;
+        private string _timeleftField;
 
-        private string mbField;
+        private string _mbField;
 
-        private string noofslotsField;
+        private string _noofslotsField;
 
-        private string etaField;
+        private string _etaField;
 
-        private string diskspacetotal2Field;
+        private string _diskspacetotal2Field;
 
-        private string nzb_quotaField;
+        private string _nzbQuotaField;
 
-        private string loadavgField;
+        private string _loadavgField;
 
-        private string cache_maxField;
+        private string _cacheMaxField;
 
-        private string kbpersecField;
+        private string _kbpersecField;
 
-        private string speedlimitField;
+        private string _speedlimitField;
 
-        private string webdirField;
+        private string _webdirField;
 
-        private string queue_detailsField;
+        private string _queueDetailsField;
 
-        private string left_quotaField;
+        private string _leftQuotaField;
 
-        private string diskspace2Field;
+        private string _diskspace2Field;
 
-        private queueSlotsSlot[] slotsField;
+        private QueueSlotsSlot[] _slotsField;
 
-        private queueCategories[] categoriesField;
+        private QueueCategories[] _categoriesField;
 
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string uniconfig
+        public string Uniconfig
         {
-            get { return uniconfigField; }
+            get { return _uniconfigField; }
             set
             {
-                uniconfigField = value;
+                _uniconfigField = value;
                 RaisePropertyChanged("uniconfig");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string cache_size
+        public string CacheSize
         {
-            get { return cache_sizeField; }
+            get { return _cacheSizeField; }
             set
             {
-                cache_sizeField = value;
+                _cacheSizeField = value;
                 RaisePropertyChanged("cache_size");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string active_lang
+        public string ActiveLang
         {
-            get { return active_langField; }
+            get { return _activeLangField; }
             set
             {
-                active_langField = value;
+                _activeLangField = value;
                 RaisePropertyChanged("active_lang");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string paused
+        public string Paused
         {
-            get { return pausedField; }
+            get { return _pausedField; }
             set
             {
-                pausedField = value;
+                _pausedField = value;
                 RaisePropertyChanged("paused");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string session
+        public string Session
         {
-            get { return sessionField; }
+            get { return _sessionField; }
             set
             {
-                sessionField = value;
+                _sessionField = value;
                 RaisePropertyChanged("session");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string restart_req
+        public string RestartReq
         {
-            get { return restart_reqField; }
+            get { return _restartReqField; }
             set
             {
-                restart_reqField = value;
+                _restartReqField = value;
                 RaisePropertyChanged("restart_req");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string power_options
+        public string PowerOptions
         {
-            get { return power_optionsField; }
+            get { return _powerOptionsField; }
             set
             {
-                power_optionsField = value;
+                _powerOptionsField = value;
                 RaisePropertyChanged("power_options");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string speed
+        public string Speed
         {
-            get { return speedField; }
+            get { return _speedField; }
             set
             {
-                speedField = value;
+                _speedField = value;
                 RaisePropertyChanged("speed");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string helpuri
+        public string Helpuri
         {
-            get { return helpuriField; }
+            get { return _helpuriField; }
             set
             {
-                helpuriField = value;
+                _helpuriField = value;
                 RaisePropertyChanged("helpuri");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string size
+        public string Size
         {
-            get { return sizeField; }
+            get { return _sizeField; }
             set
             {
-                sizeField = value;
+                _sizeField = value;
                 RaisePropertyChanged("size");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string uptime
+        public string Uptime
         {
-            get { return uptimeField; }
+            get { return _uptimeField; }
             set
             {
-                uptimeField = value;
+                _uptimeField = value;
                 RaisePropertyChanged("uptime");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string refresh_rate
+        public string RefreshRate
         {
-            get { return refresh_rateField; }
+            get { return _refreshRateField; }
             set
             {
-                refresh_rateField = value;
+                _refreshRateField = value;
                 RaisePropertyChanged("refresh_rate");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string my_home
+        public string MyHome
         {
-            get { return my_homeField; }
+            get { return _myHomeField; }
             set
             {
-                my_homeField = value;
+                _myHomeField = value;
                 RaisePropertyChanged("my_home");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string limit
+        public string Limit
         {
-            get { return limitField; }
+            get { return _limitField; }
             set
             {
-                limitField = value;
+                _limitField = value;
                 RaisePropertyChanged("limit");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string have_quota
+        public string HaveQuota
         {
-            get { return have_quotaField; }
+            get { return _haveQuotaField; }
             set
             {
-                have_quotaField = value;
+                _haveQuotaField = value;
                 RaisePropertyChanged("have_quota");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string isverbose
+        public string Isverbose
         {
-            get { return isverboseField; }
+            get { return _isverboseField; }
             set
             {
-                isverboseField = value;
+                _isverboseField = value;
                 RaisePropertyChanged("isverbose");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string start
+        public string Start
         {
-            get { return startField; }
+            get { return _startField; }
             set
             {
-                startField = value;
+                _startField = value;
                 RaisePropertyChanged("start");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string finish
+        public string Finish
         {
-            get { return finishField; }
+            get { return _finishField; }
             set
             {
-                finishField = value;
+                _finishField = value;
                 RaisePropertyChanged("finish");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string version
+        public string Version
         {
-            get { return versionField; }
+            get { return _versionField; }
             set
             {
-                versionField = value;
+                _versionField = value;
                 RaisePropertyChanged("version");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string new_rel_url
+        public string NewRelUrl
         {
-            get { return new_rel_urlField; }
+            get { return _newRelUrlField; }
             set
             {
-                new_rel_urlField = value;
+                _newRelUrlField = value;
                 RaisePropertyChanged("new_rel_url");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string my_lcldata
+        public string MyLcldata
         {
-            get { return my_lcldataField; }
+            get { return _myLcldataField; }
             set
             {
-                my_lcldataField = value;
+                _myLcldataField = value;
                 RaisePropertyChanged("my_lcldata");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string color_scheme
+        public string ColorScheme
         {
-            get { return color_schemeField; }
+            get { return _colorSchemeField; }
             set
             {
-                color_schemeField = value;
+                _colorSchemeField = value;
                 RaisePropertyChanged("color_scheme");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string diskspacetotal1
+        public string Diskspacetotal1
         {
-            get { return diskspacetotal1Field; }
+            get { return _diskspacetotal1Field; }
             set
             {
-                diskspacetotal1Field = value;
+                _diskspacetotal1Field = value;
                 RaisePropertyChanged("diskspacetotal1");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string nt
+        public string Nt
         {
-            get { return ntField; }
+            get { return _ntField; }
             set
             {
-                ntField = value;
+                _ntField = value;
                 RaisePropertyChanged("nt");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string status
+        public string Status
         {
-            get { return statusField; }
+            get { return _statusField; }
             set
             {
-                statusField = value;
+                _statusField = value;
                 RaisePropertyChanged("status");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string last_warning
+        public string LastWarning
         {
-            get { return last_warningField; }
+            get { return _lastWarningField; }
             set
             {
-                last_warningField = value;
+                _lastWarningField = value;
                 RaisePropertyChanged("last_warning");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string have_warnings
+        public string HaveWarnings
         {
-            get { return have_warningsField; }
+            get { return _haveWarningsField; }
             set
             {
-                have_warningsField = value;
+                _haveWarningsField = value;
                 RaisePropertyChanged("have_warnings");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string cache_art
+        public string CacheArt
         {
-            get { return cache_artField; }
+            get { return _cacheArtField; }
             set
             {
-                cache_artField = value;
+                _cacheArtField = value;
                 RaisePropertyChanged("cache_art");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string sizeleft
+        public string Sizeleft
         {
-            get { return sizeleftField; }
+            get { return _sizeleftField; }
             set
             {
-                sizeleftField = value;
+                _sizeleftField = value;
                 RaisePropertyChanged("sizeleft");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string finishaction
+        public string Finishaction
         {
-            get { return finishactionField; }
+            get { return _finishactionField; }
             set
             {
-                finishactionField = value;
+                _finishactionField = value;
                 RaisePropertyChanged("finishaction");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string paused_all
+        public string PausedAll
         {
-            get { return paused_allField; }
+            get { return _pausedAllField; }
             set
             {
-                paused_allField = value;
+                _pausedAllField = value;
                 RaisePropertyChanged("paused_all");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string quota
+        public string Quota
         {
-            get { return quotaField; }
+            get { return _quotaField; }
             set
             {
-                quotaField = value;
+                _quotaField = value;
                 RaisePropertyChanged("quota");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string newzbin_url
+        public string NewzbinUrl
         {
-            get { return newzbin_urlField; }
+            get { return _newzbinUrlField; }
             set
             {
-                newzbin_urlField = value;
+                _newzbinUrlField = value;
                 RaisePropertyChanged("newzbin_url");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string new_release
+        public string NewRelease
         {
-            get { return new_releaseField; }
+            get { return _newReleaseField; }
             set
             {
-                new_releaseField = value;
+                _newReleaseField = value;
                 RaisePropertyChanged("new_release");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string pause_int
+        public string PauseInt
         {
-            get { return pause_intField; }
+            get { return _pauseIntField; }
             set
             {
-                pause_intField = value;
+                _pauseIntField = value;
                 RaisePropertyChanged("pause_int");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string mbleft
+        public string Mbleft
         {
-            get { return mbleftField; }
+            get { return _mbleftField; }
             set
             {
-                mbleftField = value;
+                _mbleftField = value;
                 RaisePropertyChanged("mbleft");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string diskspace1
+        public string Diskspace1
         {
-            get { return diskspace1Field; }
+            get { return _diskspace1Field; }
             set
             {
-                diskspace1Field = value;
+                _diskspace1Field = value;
                 RaisePropertyChanged("diskspace1");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string scripts
+        public string Scripts
         {
-            get { return scriptsField; }
+            get { return _scriptsField; }
             set
             {
-                scriptsField = value;
+                _scriptsField = value;
                 RaisePropertyChanged("scripts");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string darwin
+        public string Darwin
         {
-            get { return darwinField; }
+            get { return _darwinField; }
             set
             {
-                darwinField = value;
+                _darwinField = value;
                 RaisePropertyChanged("darwin");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string timeleft
+        public string Timeleft
         {
-            get { return timeleftField; }
+            get { return _timeleftField; }
             set
             {
-                timeleftField = value;
+                _timeleftField = value;
                 RaisePropertyChanged("timeleft");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string mb
+        public string Mb
         {
-            get { return mbField; }
+            get { return _mbField; }
             set
             {
-                mbField = value;
+                _mbField = value;
                 RaisePropertyChanged("mb");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string noofslots
+        public string Noofslots
         {
-            get { return noofslotsField; }
+            get { return _noofslotsField; }
             set
             {
-                noofslotsField = value;
+                _noofslotsField = value;
                 RaisePropertyChanged("noofslots");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string eta
+        public string Eta
         {
-            get { return etaField; }
+            get { return _etaField; }
             set
             {
-                etaField = value;
+                _etaField = value;
                 RaisePropertyChanged("eta");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string diskspacetotal2
+        public string Diskspacetotal2
         {
-            get { return diskspacetotal2Field; }
+            get { return _diskspacetotal2Field; }
             set
             {
-                diskspacetotal2Field = value;
+                _diskspacetotal2Field = value;
                 RaisePropertyChanged("diskspacetotal2");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string nzb_quota
+        public string NzbQuota
         {
-            get { return nzb_quotaField; }
+            get { return _nzbQuotaField; }
             set
             {
-                nzb_quotaField = value;
+                _nzbQuotaField = value;
                 RaisePropertyChanged("nzb_quota");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string loadavg
+        public string Loadavg
         {
-            get { return loadavgField; }
+            get { return _loadavgField; }
             set
             {
-                loadavgField = value;
+                _loadavgField = value;
                 RaisePropertyChanged("loadavg");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string cache_max
+        public string CacheMax
         {
-            get { return cache_maxField; }
+            get { return _cacheMaxField; }
             set
             {
-                cache_maxField = value;
+                _cacheMaxField = value;
                 RaisePropertyChanged("cache_max");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string kbpersec
+        public string Kbpersec
         {
-            get { return kbpersecField; }
+            get { return _kbpersecField; }
             set
             {
-                kbpersecField = value;
+                _kbpersecField = value;
                 RaisePropertyChanged("kbpersec");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string speedlimit
+        public string Speedlimit
         {
-            get { return speedlimitField; }
+            get { return _speedlimitField; }
             set
             {
-                speedlimitField = value;
+                _speedlimitField = value;
                 RaisePropertyChanged("speedlimit");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string webdir
+        public string Webdir
         {
-            get { return webdirField; }
+            get { return _webdirField; }
             set
             {
-                webdirField = value;
+                _webdirField = value;
                 RaisePropertyChanged("webdir");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string queue_details
+        public string QueueDetails
         {
-            get { return queue_detailsField; }
+            get { return _queueDetailsField; }
             set
             {
-                queue_detailsField = value;
+                _queueDetailsField = value;
                 RaisePropertyChanged("queue_details");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string left_quota
+        public string LeftQuota
         {
-            get { return left_quotaField; }
+            get { return _leftQuotaField; }
             set
             {
-                left_quotaField = value;
+                _leftQuotaField = value;
                 RaisePropertyChanged("left_quota");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string diskspace2
+        public string Diskspace2
         {
-            get { return diskspace2Field; }
+            get { return _diskspace2Field; }
             set
             {
-                diskspace2Field = value;
+                _diskspace2Field = value;
                 RaisePropertyChanged("diskspace2");
             }
         }
 
        
         [XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        [XmlArrayItemAttribute("slot", typeof (queueSlotsSlot),
+        [XmlArrayItemAttribute("slot", typeof (QueueSlotsSlot),
             Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-        public queueSlotsSlot[] slots
+        public QueueSlotsSlot[] Slots
         {
-            get { return slotsField; }
+            get { return _slotsField; }
             set
             {
-                slotsField = value;
+                _slotsField = value;
                 RaisePropertyChanged("slots");
             }
         }
 
        
         [XmlElementAttribute("categories", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public queueCategories[] categories
+        public QueueCategories[] Categories
         {
-            get { return categoriesField; }
+            get { return _categoriesField; }
             set
             {
-                categoriesField = value;
+                _categoriesField = value;
                 RaisePropertyChanged("categories");
             }
         }
@@ -829,271 +829,271 @@ namespace TVRename.SAB
     [SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true)]
-    public class queueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged
+    public class QueueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged
     {
 
-        private string statusField;
+        private string _statusField;
 
-        private string indexField;
+        private string _indexField;
 
-        private string etaField;
+        private string _etaField;
 
-        private string missingField;
+        private string _missingField;
 
-        private string avg_ageField;
+        private string _avgAgeField;
 
-        private string scriptField;
+        private string _scriptField;
 
-        private string msgidField;
+        private string _msgidField;
 
-        private string verbosityField;
+        private string _verbosityField;
 
-        private double mbField;
+        private double _mbField;
 
-        private string sizeleftField;
+        private string _sizeleftField;
 
-        private string filenameField;
+        private string _filenameField;
 
-        private string priorityField;
+        private string _priorityField;
 
-        private string catField;
+        private string _catField;
 
-        private double mbleftField;
+        private double _mbleftField;
 
-        private string timeleftField;
+        private string _timeleftField;
 
-        private string percentageField;
+        private string _percentageField;
 
-        private string nzo_idField;
+        private string _nzoIdField;
 
-        private string unpackoptsField;
+        private string _unpackoptsField;
 
-        private string sizeField;
+        private string _sizeField;
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string status
+        public string Status
         {
-            get { return statusField; }
+            get { return _statusField; }
             set
             {
-                statusField = value;
+                _statusField = value;
                 RaisePropertyChanged("status");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string index
+        public string Index
         {
-            get { return indexField; }
+            get { return _indexField; }
             set
             {
-                indexField = value;
+                _indexField = value;
                 RaisePropertyChanged("index");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string eta
+        public string Eta
         {
-            get { return etaField; }
+            get { return _etaField; }
             set
             {
-                etaField = value;
+                _etaField = value;
                 RaisePropertyChanged("eta");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string missing
+        public string Missing
         {
-            get { return missingField; }
+            get { return _missingField; }
             set
             {
-                missingField = value;
+                _missingField = value;
                 RaisePropertyChanged("missing");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string avg_age
+        public string AvgAge
         {
-            get { return avg_ageField; }
+            get { return _avgAgeField; }
             set
             {
-                avg_ageField = value;
+                _avgAgeField = value;
                 RaisePropertyChanged("avg_age");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string script
+        public string Script
         {
-            get { return scriptField; }
+            get { return _scriptField; }
             set
             {
-                scriptField = value;
+                _scriptField = value;
                 RaisePropertyChanged("script");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string msgid
+        public string Msgid
         {
-            get { return msgidField; }
+            get { return _msgidField; }
             set
             {
-                msgidField = value;
+                _msgidField = value;
                 RaisePropertyChanged("msgid");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string verbosity
+        public string Verbosity
         {
-            get { return verbosityField; }
+            get { return _verbosityField; }
             set
             {
-                verbosityField = value;
+                _verbosityField = value;
                 RaisePropertyChanged("verbosity");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public double mb
+        public double Mb
         {
-            get { return mbField; }
+            get { return _mbField; }
             set
             {
-                mbField = value;
+                _mbField = value;
                 RaisePropertyChanged("mb");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string sizeleft
+        public string Sizeleft
         {
-            get { return sizeleftField; }
+            get { return _sizeleftField; }
             set
             {
-                sizeleftField = value;
+                _sizeleftField = value;
                 RaisePropertyChanged("sizeleft");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string filename
+        public string Filename
         {
-            get { return filenameField; }
+            get { return _filenameField; }
             set
             {
-                filenameField = value;
+                _filenameField = value;
                 RaisePropertyChanged("filename");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string priority
+        public string Priority
         {
-            get { return priorityField; }
+            get { return _priorityField; }
             set
             {
-                priorityField = value;
+                _priorityField = value;
                 RaisePropertyChanged("priority");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string cat
+        public string Cat
         {
-            get { return catField; }
+            get { return _catField; }
             set
             {
-                catField = value;
+                _catField = value;
                 RaisePropertyChanged("cat");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public double mbleft
+        public double Mbleft
         {
-            get { return mbleftField; }
+            get { return _mbleftField; }
             set
             {
-                mbleftField = value;
+                _mbleftField = value;
                 RaisePropertyChanged("mbleft");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string timeleft
+        public string Timeleft
         {
-            get { return timeleftField; }
+            get { return _timeleftField; }
             set
             {
-                timeleftField = value;
+                _timeleftField = value;
                 RaisePropertyChanged("timeleft");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string percentage
+        public string Percentage
         {
-            get { return percentageField; }
+            get { return _percentageField; }
             set
             {
-                percentageField = value;
+                _percentageField = value;
                 RaisePropertyChanged("percentage");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string nzo_id
+        public string NzoId
         {
-            get { return nzo_idField; }
+            get { return _nzoIdField; }
             set
             {
-                nzo_idField = value;
+                _nzoIdField = value;
                 RaisePropertyChanged("nzo_id");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string unpackopts
+        public string Unpackopts
         {
-            get { return unpackoptsField; }
+            get { return _unpackoptsField; }
             set
             {
-                unpackoptsField = value;
+                _unpackoptsField = value;
                 RaisePropertyChanged("unpackopts");
             }
         }
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string size
+        public string Size
         {
-            get { return sizeField; }
+            get { return _sizeField; }
             set
             {
-                sizeField = value;
+                _sizeField = value;
                 RaisePropertyChanged("size");
             }
         }
@@ -1115,19 +1115,19 @@ namespace TVRename.SAB
     [SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true)]
-    public class queueCategories : object, System.ComponentModel.INotifyPropertyChanged
+    public class QueueCategories : object, System.ComponentModel.INotifyPropertyChanged
     {
 
-        private string categoryField;
+        private string _categoryField;
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string category
+        public string Category
         {
-            get { return categoryField; }
+            get { return _categoryField; }
             set
             {
-                categoryField = value;
+                _categoryField = value;
                 RaisePropertyChanged("category");
             }
         }
@@ -1147,15 +1147,15 @@ namespace TVRename.SAB
     [SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlTypeAttribute(AnonymousType = true)]
-    public class result : object, System.ComponentModel.INotifyPropertyChanged
+    public class Result : object, System.ComponentModel.INotifyPropertyChanged
     {
-        public static result Deserialize(byte[] data)
+        public static Result Deserialize(byte[] data)
         {
             MemoryStream ms = new MemoryStream(data);
-            XmlSerializer serializer = new XmlSerializer(typeof(result));
+            XmlSerializer serializer = new XmlSerializer(typeof(Result));
             try
             {
-                result r = (result)serializer.Deserialize(ms);
+                Result r = (Result)serializer.Deserialize(ms);
                 return r;
             }
             catch
@@ -1164,28 +1164,28 @@ namespace TVRename.SAB
             }
         }
 
-        private string statusField;
-        private string errorField;
+        private string _statusField;
+        private string _errorField;
 
        
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string status
+        public string Status
         {
-            get { return statusField; }
+            get { return _statusField; }
             set
             {
-                statusField = value;
+                _statusField = value;
                 RaisePropertyChanged("status");
             }
         }
 
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string error
+        public string Error
         {
-            get { return errorField; }
+            get { return _errorField; }
             set
             {
-                errorField = value;
+                _errorField = value;
                 RaisePropertyChanged("error");
             }
         }
@@ -1211,16 +1211,16 @@ namespace TVRename.SAB
     public class NewDataSet : object, System.ComponentModel.INotifyPropertyChanged
     {
 
-        private queue[] itemsField;
+        private Queue[] _itemsField;
 
        
         [XmlElementAttribute("queue")]
-        public queue[] Items
+        public Queue[] Items
         {
-            get { return itemsField; }
+            get { return _itemsField; }
             set
             {
-                itemsField = value;
+                _itemsField = value;
                 RaisePropertyChanged("Items");
             }
         }

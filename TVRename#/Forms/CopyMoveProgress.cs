@@ -32,13 +32,13 @@ namespace TVRename
 
         #endregion
 
-        private readonly TVDoc mDoc;
-        private readonly ActionQueue[] mToDo;
+        private readonly TVDoc _mDoc;
+        private readonly ActionQueue[] _mToDo;
 
         public CopyMoveProgress(TVDoc doc, ActionQueue[] todo)
         {
-            mDoc = doc;
-            mToDo = todo;
+            _mDoc = doc;
+            _mToDo = todo;
             InitializeComponent();
             copyTimer.Start();
         }
@@ -83,16 +83,16 @@ namespace TVRename
 
             lvProgress.BeginUpdate();
             int top = lvProgress.TopItem != null ? lvProgress.TopItem.Index : 0;
-            ActionCopyMoveRename activeCMAction = null;
+            ActionCopyMoveRename activeCmAction = null;
             long workDone = 0;
             long totalWork = 0;
             lvProgress.Items.Clear();
-            foreach (ActionQueue aq in mToDo)
+            foreach (ActionQueue aq in _mToDo)
             {
                 if (aq.Actions.Count == 0)
                     continue;
 
-                foreach (Action action in aq.Actions)
+                foreach (IAction action in aq.Actions)
                 {
                     if (!action.Done)
                         allDone = false;
@@ -104,7 +104,7 @@ namespace TVRename
                     if (!action.Done)
                     {
                         if ((action is ActionCopyMoveRename) && (action.PercentDone > 0))
-                            activeCMAction = action as ActionCopyMoveRename;
+                            activeCmAction = action as ActionCopyMoveRename;
 
                         ListViewItem lvi = new ListViewItem(action.Name);
                         lvi.SubItems.Add(action.ProgressText);
@@ -124,9 +124,9 @@ namespace TVRename
             string diskText = "--- GB free";
             string fileText = "";
 
-            if (activeCMAction != null)
+            if (activeCmAction != null)
             {
-                string folder = activeCMAction.TargetFolder;
+                string folder = activeCmAction.TargetFolder;
                 DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
 
                 if (toRoot != null)
@@ -149,14 +149,14 @@ namespace TVRename
                         diskText = ((int) (di.TotalFreeSpace / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
                     }
 
-                    fileText = activeCMAction.ProgressText;
+                    fileText = activeCmAction.ProgressText;
                 }
 
                 txtFilename.Text = fileText;
                 pbDiskSpace.Value = diskValue;
                 txtDiskSpace.Text = diskText;
 
-                SetPercentages(activeCMAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
+                SetPercentages(activeCmAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
             }
 
             return allDone;
@@ -186,7 +186,7 @@ namespace TVRename
 
         private void cbPause_CheckedChanged(object sender, EventArgs e)
         {
-            mDoc.ActionPause = cbPause.Checked;
+            _mDoc.ActionPause = cbPause.Checked;
 
             bool en = !(cbPause.Checked);
             pbFile.Enabled = en;

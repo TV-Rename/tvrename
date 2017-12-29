@@ -9,7 +9,7 @@
 
 namespace TVRename
 {
-    partial class uTorrent
+    partial class UTorrent
     {
         /// <summary>
         /// Required designer variable.
@@ -37,7 +37,7 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(uTorrent)));
+            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(UTorrent)));
             this.bnUTBrowseSearchFolder = (new System.Windows.Forms.Button());
             this.bnUTAll = (new System.Windows.Forms.Button());
             this.bnUTRefresh = (new System.Windows.Forms.Button());
@@ -62,9 +62,9 @@ namespace TVRename
             this.bnClose = (new System.Windows.Forms.Button());
             this.lbDPMatch = (new System.Windows.Forms.Label());
             this.lbDPMissing = (new System.Windows.Forms.Label());
-            this.watcher = (new System.IO.FileSystemWatcher());
+            this._watcher = (new System.IO.FileSystemWatcher());
             this.folderBrowser = (new System.Windows.Forms.FolderBrowserDialog());
-            ((System.ComponentModel.ISupportInitialize)(this.watcher)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this._watcher)).BeginInit();
             this.SuspendLayout();
             // 
             // bnUTBrowseSearchFolder
@@ -295,12 +295,12 @@ namespace TVRename
             // 
             // watcher
             // 
-            this.watcher.EnableRaisingEvents = true;
-            this.watcher.Filter = "resume.dat";
-            this.watcher.NotifyFilter = (System.IO.NotifyFilters)(((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.LastAccess) | System.IO.NotifyFilters.CreationTime));
-            this.watcher.SynchronizingObject = this;
-            this.watcher.Created += new System.IO.FileSystemEventHandler(watcher_Created);
-            this.watcher.Changed += new System.IO.FileSystemEventHandler(watcher_Changed);
+            this._watcher.EnableRaisingEvents = true;
+            this._watcher.Filter = "resume.dat";
+            this._watcher.NotifyFilter = (System.IO.NotifyFilters)(((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.LastAccess) | System.IO.NotifyFilters.CreationTime));
+            this._watcher.SynchronizingObject = this;
+            this._watcher.Created += new System.IO.FileSystemEventHandler(watcher_Created);
+            this._watcher.Changed += new System.IO.FileSystemEventHandler(watcher_Changed);
             // 
             // folderBrowser
             // 
@@ -332,11 +332,11 @@ namespace TVRename
             this.Controls.Add(this.label11);
             this.Controls.Add(this.lbUTTorrents);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "uTorrent";
+            this.Name = "UTorrent";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "TVRename - µTorrent";
-            ((System.ComponentModel.ISupportInitialize)(this.watcher)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this._watcher)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

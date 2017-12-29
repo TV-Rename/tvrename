@@ -22,25 +22,25 @@ namespace TVRename
     ///          the designers will not be able to interact properly with localized
     ///          resources associated with this form.
     /// </summary>
-    public partial class uTorrent : Form
+    public partial class UTorrent : Form
     {
-        private SetProgressDelegate SetProg;
+        private SetProgressDelegate _setProg;
 
-        private TVDoc mDoc;
-        private System.IO.FileSystemWatcher watcher;
+        private TVDoc _mDoc;
+        private System.IO.FileSystemWatcher _watcher;
 
-        public uTorrent(TVDoc doc, SetProgressDelegate progdel)
+        public UTorrent(TVDoc doc, SetProgressDelegate progdel)
         {
-            mDoc = doc;
-            SetProg = progdel;
+            _mDoc = doc;
+            _setProg = progdel;
 
             InitializeComponent();
 
-            watcher.Error += WatcherError;
+            _watcher.Error += WatcherError;
 
             bool en = false;
             // are there any missing items in the to-do list?
-            foreach (Item i in mDoc.TheActionList)
+            foreach (ITem i in _mDoc.TheActionList)
             {
                 if (i is ItemMissing)
                 {
@@ -59,13 +59,13 @@ namespace TVRename
             RefreshResumeDat();
         }
 
-        private void UTSelectNone()
+        private void UtSelectNone()
         {
             for (int i = 0; i < lbUTTorrents.Items.Count; i++)
                 lbUTTorrents.SetItemChecked(i, false);
         }
 
-        private void UTSelectAll()
+        private void UtSelectAll()
         {
             for (int i = 0; i < lbUTTorrents.Items.Count; i++)
                 lbUTTorrents.SetItemChecked(i, true);
@@ -73,12 +73,12 @@ namespace TVRename
 
         private void bnUTAll_Click(object sender, EventArgs e)
         {
-            UTSelectAll();
+            UtSelectAll();
         }
 
         private void bnUTNone_Click(object sender, EventArgs e)
         {
-            UTSelectNone();
+            UtSelectNone();
         }
 
         private bool CheckResumeDatPath()
@@ -107,17 +107,17 @@ namespace TVRename
             if (!File.Exists(file))
                 return;
             BEncodeLoader bel = new BEncodeLoader();
-            BTFile resumeDat = bel.Load(file);
+            BtFile resumeDat = bel.Load(file);
             if (resumeDat == null)
                 return;
-            BTDictionary dict = resumeDat.GetDict();
+            BtDictionary dict = resumeDat.GetDict();
             for (int i = 0; i < dict.Items.Count; i++)
             {
-                BTItem it = dict.Items[i];
-                if (it.Type == BTChunk.kDictionaryItem)
+                BtItem it = dict.Items[i];
+                if (it.Type == BtChunk.KDictionaryItem)
                 {
-                    BTDictionaryItem d2 = (BTDictionaryItem) (it);
-                    if ((d2.Key != ".fileguard") && (d2.Data.Type == BTChunk.kDictionary))
+                    BtDictionaryItem d2 = (BtDictionaryItem) (it);
+                    if ((d2.Key != ".fileguard") && (d2.Data.Type == BtChunk.KDictionary))
                         lbUTTorrents.Items.Add(d2.Key);
                 }
             }
@@ -159,7 +159,7 @@ namespace TVRename
 
             lvUTResults.Items.Clear();
 
-            BTResume btp = new BTResume(SetProg, resumeDatFile);
+            BtResume btp = new BtResume(_setProg, resumeDatFile);
 
             List<string> sl = new List<String>();
 
@@ -167,8 +167,8 @@ namespace TVRename
                 sl.Add(torrent);
 
             btp.DoWork(sl, searchFolder, lvUTResults, cbUTUseHashing.Checked, cbUTMatchMissing.Checked, cbUTSetPrio.Checked, 
-                       testMode, chkUTSearchSubfolders.Checked, mDoc.TheActionList, TVSettings.Instance.FNPRegexs,
-                       mDoc.Args);
+                       testMode, chkUTSearchSubfolders.Checked, _mDoc.TheActionList, TVSettings.Instance.FnpRegexs,
+                       _mDoc.Args);
 
             if (!testMode)
                 RestartUTorrent();
@@ -222,9 +222,9 @@ namespace TVRename
             RefreshResumeDat();
         }
 
-        private void WatcherError(object UnnamedParameter1, System.IO.ErrorEventArgs UnnamedParameter2)
+        private void WatcherError(object unnamedParameter1, System.IO.ErrorEventArgs unnamedParameter2)
         {
-            while (!watcher.EnableRaisingEvents)
+            while (!_watcher.EnableRaisingEvents)
             {
                 try
                 {
@@ -243,12 +243,12 @@ namespace TVRename
             FileInfo f = new FileInfo(TVSettings.Instance.ResumeDatPath);
             if (f.Exists && f.Directory != null)
             {
-                watcher.Path = f.Directory.Name;
-                watcher.Filter = "resume.dat";
-                watcher.EnableRaisingEvents = true;
+                _watcher.Path = f.Directory.Name;
+                _watcher.Filter = "resume.dat";
+                _watcher.EnableRaisingEvents = true;
             }
             else
-                watcher.EnableRaisingEvents = false;
+                _watcher.EnableRaisingEvents = false;
         }
 
         private void watcher_Created(object sender, System.IO.FileSystemEventArgs e)

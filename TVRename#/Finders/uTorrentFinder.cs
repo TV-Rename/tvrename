@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace TVRename
 {
-    class uTorrentFinder:Finder
+    class UTorrentFinder:Finder
     {
-        public uTorrentFinder(TVDoc i) : base(i) { }
+        public UTorrentFinder(TVDoc i) : base(i) { }
 
         public override bool Active()
         {
@@ -27,7 +27,7 @@ namespace TVRename
             if (string.IsNullOrEmpty(resDatFile) || !File.Exists(resDatFile))
                 return;
 
-            BTResume btr = new BTResume(prog, resDatFile);
+            BtResume btr = new BtResume(prog, resDatFile);
             if (!btr.LoadResumeDat())
                 return;
 
@@ -38,7 +38,7 @@ namespace TVRename
             int c = TheActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct + totPct * n / c);
-            foreach (Item Action1 in TheActionList)
+            foreach (ITem action1 in TheActionList)
             {
                 if (ActionCancel)
                     return;
@@ -46,10 +46,10 @@ namespace TVRename
                 n++;
                 prog.Invoke(100 * n / c);
 
-                if (!(Action1 is ItemMissing))
+                if (!(action1 is ItemMissing))
                     continue;
 
-                ItemMissing Action = (ItemMissing)(Action1);
+                ItemMissing action = (ItemMissing)(action1);
 
 
                 foreach (TorrentEntry te in downloading)
@@ -59,16 +59,16 @@ namespace TVRename
                         continue;
 
                     //do any of the possible names for the series match the filename?
-                    Boolean matched = (Action.Episode.SI.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
+                    Boolean matched = (action.Episode.Si.GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
 
                     if (matched) 
                     {
                         int seasF;
                         int epF;
-                        if (TVDoc.FindSeasEp(file, out seasF, out epF, Action.Episode.SI) && (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
+                        if (TVDoc.FindSeasEp(file, out seasF, out epF, action.Episode.Si) && (seasF == action.Episode.SeasonNumber) && (epF == action.Episode.EpNum))
                         {
-                            toRemove.Add(Action1);
-                            newList.Add(new ItemuTorrenting(te, Action.Episode, Action.TheFileNoExt));
+                            toRemove.Add(action1);
+                            newList.Add(new ItemuTorrenting(te, action.Episode, action.TheFileNoExt));
                             break;
                         }
                     }
@@ -76,11 +76,11 @@ namespace TVRename
                 }
             }
 
-            foreach (Item i in toRemove)
+            foreach (ITem i in toRemove)
                 TheActionList.Remove(i);
 
-            foreach (Item Action in newList)
-                TheActionList.Add(Action);
+            foreach (ITem action in newList)
+                TheActionList.Add(action);
 
             prog.Invoke(startpct + totPct);
 

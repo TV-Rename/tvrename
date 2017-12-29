@@ -9,7 +9,7 @@ namespace TVRename
     {
         public abstract bool Active();
         public abstract string Location();
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     }
 
@@ -21,20 +21,20 @@ namespace TVRename
 
     abstract class MissingExporter : Exporter
     {
-        public abstract void Run(ItemList TheActionList);
+        public abstract void Run(ItemList theActionList);
     }
 
     abstract class UpcomingExporter : Exporter
     {
-        protected TVDoc mDoc;
+        protected TVDoc MDoc;
         
 
         public UpcomingExporter(TVDoc doc)
         {
-            mDoc = doc;
+            MDoc = doc;
         }
 
-        public string produce() 
+        public string Produce() 
         {
             try
             {
@@ -44,9 +44,9 @@ namespace TVRename
                 // just me :P
                 
                 MemoryStream ms = new MemoryStream(); //duplicated the IF statement one for RSS and one for XML so that both can be generated.
-                List<ProcessedEpisode> lpe = mDoc.NextNShows(TVSettings.Instance.ExportRSSMaxShows, TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
+                List<ProcessedEpisode> lpe = MDoc.NextNShows(TVSettings.Instance.ExportRssMaxShows, TVSettings.Instance.ExportRssDaysPast, TVSettings.Instance.ExportRssMaxDays);
                 if (lpe != null)
-                    if (generate(ms,lpe ))
+                    if (Generate(ms,lpe ))
                     {
                         return Encoding.ASCII.GetString(ms.ToArray());
                     }
@@ -63,15 +63,15 @@ namespace TVRename
             if (Active())
             {
                 StreamWriter file = new StreamWriter(Location());
-                String contents = produce();
+                String contents = Produce();
                 file.Write(contents);
                 file.Close();
-                logger.Info("Output File to :{0}", Location());
-                logger.Trace("contents of File are :{0}", contents);
+                Logger.Info("Output File to :{0}", Location());
+                Logger.Trace("contents of File are :{0}", contents);
             }
         }
 
-        protected abstract bool generate(Stream str, List<ProcessedEpisode> elist);
+        protected abstract bool Generate(Stream str, List<ProcessedEpisode> elist);
     }
 
 }

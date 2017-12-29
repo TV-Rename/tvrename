@@ -21,18 +21,18 @@ namespace TVRename
     /// </summary>
     public partial class ShowException : Form
     {
-        private Exception mException;
+        private Exception _mException;
 
         public ShowException(Exception e)
         {
             InitializeComponent();
 
-            mException = e;
+            _mException = e;
         }
 
         private void ShowException_Load(object sender, EventArgs e)
         {
-            string t = mException.Message + "\r\n\r\n" + mException.StackTrace;
+            string t = _mException.Message + "\r\n\r\n" + _mException.StackTrace;
             txtText.Text = t;
         }
 

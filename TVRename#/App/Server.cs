@@ -17,7 +17,7 @@ namespace TVRename
 {
     public class TVRenameServer
     {
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public TVRenameServer(TVDoc doc)
         {
@@ -96,7 +96,7 @@ namespace TVRename
                 } // try
                 catch (SocketException e)
                 {
-                    logger.Error(e);
+                    Logger.Error(e);
                 }
                 catch (ThreadAbortException)
                 {
@@ -122,7 +122,7 @@ namespace TVRename
             if (parts[1].EndsWith("/upcoming.xml"))
             {
                 UpcomingXML uXML = new UpcomingXML(doc);
-                return uXML.produce();
+                return uXML.Produce();
             }
             return Err();
         }

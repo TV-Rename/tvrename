@@ -53,13 +53,13 @@ namespace TVRename
         {
             return BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
         }
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders)
         {
             if (!Directory.Exists(folder))
             {
-                logger.Error("The search folder \"" + folder + " does not exist.\n");
+                Logger.Error("The search folder \"" + folder + " does not exist.\n");
                 return count;
             }
 
@@ -67,7 +67,7 @@ namespace TVRename
             {
                 if (folder.Length >= 248)
                 {
-                    logger.Error ("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder);
+                    Logger.Error ("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder);
                     return count;
                 }
 
@@ -82,7 +82,7 @@ namespace TVRename
                 {
                     count++;
                     if ((ff.Name.Length + folder.Length) >= 260)
-                        logger.Error("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder);
+                        Logger.Error("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder);
                     else
                         Add(new DirCacheEntry(ff));
                     if ((prog != null) && (totalFiles != 0))
@@ -98,7 +98,7 @@ namespace TVRename
             }
             catch (UnauthorizedAccessException e)
             {
-                logger.Info(e);
+                Logger.Info(e);
             }
             catch
             {

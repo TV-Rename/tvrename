@@ -29,11 +29,11 @@ namespace TVRename
         public bool Ignore;
         public bool NextToAir;
         public int OverallNumber;
-        public ShowItem SI;
-        public ProcessedEpisodeType type;
-        public List<Episode> sourceEpisodes;
+        public ShowItem Si;
+        public ProcessedEpisodeType Type;
+        public List<Episode> SourceEpisodes;
 
-        public enum ProcessedEpisodeType { single, split, merged};
+        public enum ProcessedEpisodeType { Single, Split, Merged};
 
 
         public ProcessedEpisode(SeriesInfo ser, Season seas, ShowItem si)
@@ -43,19 +43,19 @@ namespace TVRename
             OverallNumber = -1;
             Ignore = false;
             EpNum2 = EpNum;
-            SI = si;
-            type = ProcessedEpisodeType.single;
+            Si = si;
+            Type = ProcessedEpisodeType.Single;
         }
 
-        public ProcessedEpisode(ProcessedEpisode O)
-            : base(O)
+        public ProcessedEpisode(ProcessedEpisode o)
+            : base(o)
         {
-            NextToAir = O.NextToAir;
-            EpNum2 = O.EpNum2;
-            Ignore = O.Ignore;
-            SI = O.SI;
-            OverallNumber = O.OverallNumber;
-            type = O.type;
+            NextToAir = o.NextToAir;
+            EpNum2 = o.EpNum2;
+            Ignore = o.Ignore;
+            Si = o.Si;
+            OverallNumber = o.OverallNumber;
+            Type = o.Type;
         }
 
         public ProcessedEpisode(Episode e, ShowItem si)
@@ -65,8 +65,8 @@ namespace TVRename
             NextToAir = false;
             EpNum2 = EpNum;
             Ignore = false;
-            SI = si;
-            type = ProcessedEpisodeType.single;
+            Si = si;
+            Type = ProcessedEpisodeType.Single;
         }
         public ProcessedEpisode(Episode e, ShowItem si, ProcessedEpisodeType t)
             : base(e)
@@ -75,8 +75,8 @@ namespace TVRename
             NextToAir = false;
             EpNum2 = EpNum;
             Ignore = false;
-            SI = si;
-            type = t;
+            Si = si;
+            Type = t;
         }
 
         public ProcessedEpisode(Episode e, ShowItem si, List<Episode> episodes)
@@ -86,9 +86,9 @@ namespace TVRename
             NextToAir = false;
             EpNum2 = EpNum;
             Ignore = false;
-            SI = si;
-            sourceEpisodes = episodes;
-            type = ProcessedEpisodeType.merged ;
+            Si = si;
+            SourceEpisodes = episodes;
+            Type = ProcessedEpisodeType.Merged ;
         }
 
 
@@ -103,7 +103,7 @@ namespace TVRename
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
-        public static int EPNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
+        public static int EpNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.EpNum;
             int ep2 = e2.EpNum;
@@ -112,7 +112,7 @@ namespace TVRename
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
-        public static int DVDOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
+        public static int DvdOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.EpNum;
             int ep2 = e2.EpNum;
@@ -144,13 +144,13 @@ namespace TVRename
     public class ShowItem
     {
         public bool AutoAddNewSeasons;
-        public string AutoAdd_FolderBase; // TODO: use magical renaming tokens here
-        public bool AutoAdd_FolderPerSeason;
-        public string AutoAdd_SeasonFolderName; // TODO: use magical renaming tokens here
+        public string AutoAddFolderBase; // TODO: use magical renaming tokens here
+        public bool AutoAddFolderPerSeason;
+        public string AutoAddSeasonFolderName; // TODO: use magical renaming tokens here
 
         public bool CountSpecials;
         public string CustomShowName;
-        public bool DVDOrder; // sort by DVD order, not the default sort we get
+        public bool DvdOrder; // sort by DVD order, not the default sort we get
         public bool DoMissingCheck;
         public bool DoRename;
         public bool ForceCheckFuture;
@@ -165,18 +165,18 @@ namespace TVRename
         public bool UseCustomShowName;
         public bool UseSequentialMatch;
         public List<string> AliasNames = new List<string>();
-        public String CustomSearchURL;
+        public String CustomSearchUrl;
 
-        private DateTime? bannersLastUpdatedOnDisk;
+        private DateTime? _bannersLastUpdatedOnDisk;
         public DateTime? BannersLastUpdatedOnDisk
         {
             get
             {
-                return bannersLastUpdatedOnDisk;
+                return _bannersLastUpdatedOnDisk;
             }
             set
             {
-                bannersLastUpdatedOnDisk = value;
+                _bannersLastUpdatedOnDisk = value;
             }
         }
 
@@ -185,10 +185,10 @@ namespace TVRename
             SetDefaults();
         }
 
-        public ShowItem(int tvDBCode)
+        public ShowItem(int tvDbCode)
         {
             SetDefaults();
-            TVDBCode = tvDBCode;
+            TVDBCode = tvDbCode;
         }
 
         public ShowItem(XmlReader reader)
@@ -223,19 +223,19 @@ namespace TVRename
                 else if (reader.Name == "AutoAddNewSeasons")
                     AutoAddNewSeasons = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderBase")
-                    AutoAdd_FolderBase = reader.ReadElementContentAsString();
+                    AutoAddFolderBase = reader.ReadElementContentAsString();
                 else if (reader.Name == "FolderPerSeason")
-                    AutoAdd_FolderPerSeason = reader.ReadElementContentAsBoolean();
+                    AutoAddFolderPerSeason = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SeasonFolderName")
-                    AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
+                    AutoAddSeasonFolderName = reader.ReadElementContentAsString();
                 else if (reader.Name == "DoRename")
                     DoRename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DoMissingCheck")
                     DoMissingCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DVDOrder")
-                    DVDOrder = reader.ReadElementContentAsBoolean();
+                    DvdOrder = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CustomSearchURL")
-                    CustomSearchURL = reader.ReadElementContentAsString();
+                    CustomSearchUrl = reader.ReadElementContentAsString();
                 else if (reader.Name == "ForceCheckAll") // removed 2.2.0b2
                     ForceCheckNoAirdate = ForceCheckFuture = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ForceCheckFuture")
@@ -348,7 +348,7 @@ namespace TVRename
             }
         }
 
-        public List<String> getSimplifiedPossibleShowNames()
+        public List<String> GetSimplifiedPossibleShowNames()
         {
             List<String> possibles = new List<String>();
 
@@ -373,7 +373,7 @@ namespace TVRename
         {
             get{
                 SeriesInfo ser = TheSeries();
-                if (ser != null ) return ser.getStatus();
+                if (ser != null ) return ser.GetStatus();
                 return "Unknown";
             }
         }
@@ -501,14 +501,14 @@ namespace TVRename
             //                NamingStyle = (int)NStyle.DefaultStyle();
             AutoAddNewSeasons = true;
             PadSeasonToTwoDigits = false;
-            AutoAdd_FolderBase = "";
-            AutoAdd_FolderPerSeason = true;
-            AutoAdd_SeasonFolderName = "Season ";
+            AutoAddFolderBase = "";
+            AutoAddFolderPerSeason = true;
+            AutoAddSeasonFolderName = "Season ";
             DoRename = true;
             DoMissingCheck = true;
             CountSpecials = false;
-            DVDOrder = false;
-            CustomSearchURL = "";
+            DvdOrder = false;
+            CustomSearchUrl = "";
             ForceCheckNoAirdate = false;
             ForceCheckFuture = false;
             BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
@@ -526,19 +526,19 @@ namespace TVRename
         public string AutoFolderNameForSeason(int n)
         {
             bool leadingZero = TVSettings.Instance.LeadingZeroOnSeason || PadSeasonToTwoDigits;
-            string r = AutoAdd_FolderBase;
+            string r = AutoAddFolderBase;
             if (string.IsNullOrEmpty(r))
                 return "";
 
             if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
                 r += System.IO.Path.DirectorySeparatorChar.ToString();
-            if (AutoAdd_FolderPerSeason)
+            if (AutoAddFolderPerSeason)
             {
                 if (n == 0)
                     r += TVSettings.Instance.SpecialsFolderName;
                 else
                 {
-                    r += AutoAdd_SeasonFolderName;
+                    r += AutoAddSeasonFolderName;
                     if ((n < 10) && leadingZero)
                         r += "0";
                     r += n.ToString();
@@ -573,13 +573,13 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"ShowNextAirdate",ShowNextAirdate);
             XMLHelper.WriteElementToXML(writer,"TVDBID",TVDBCode);
             XMLHelper.WriteElementToXML(writer,"AutoAddNewSeasons",AutoAddNewSeasons);
-            XMLHelper.WriteElementToXML(writer,"FolderBase",AutoAdd_FolderBase);
-            XMLHelper.WriteElementToXML(writer,"FolderPerSeason",AutoAdd_FolderPerSeason);
-            XMLHelper.WriteElementToXML(writer,"SeasonFolderName",AutoAdd_SeasonFolderName);
+            XMLHelper.WriteElementToXML(writer,"FolderBase",AutoAddFolderBase);
+            XMLHelper.WriteElementToXML(writer,"FolderPerSeason",AutoAddFolderPerSeason);
+            XMLHelper.WriteElementToXML(writer,"SeasonFolderName",AutoAddSeasonFolderName);
             XMLHelper.WriteElementToXML(writer,"DoRename",DoRename);
             XMLHelper.WriteElementToXML(writer,"DoMissingCheck",DoMissingCheck);
             XMLHelper.WriteElementToXML(writer,"CountSpecials",CountSpecials);
-            XMLHelper.WriteElementToXML(writer,"DVDOrder",DVDOrder);
+            XMLHelper.WriteElementToXML(writer,"DVDOrder",DvdOrder);
             XMLHelper.WriteElementToXML(writer,"ForceCheckNoAirdate",ForceCheckNoAirdate);
             XMLHelper.WriteElementToXML(writer,"ForceCheckFuture",ForceCheckFuture);
             XMLHelper.WriteElementToXML(writer,"UseSequentialMatch",UseSequentialMatch);
@@ -601,7 +601,7 @@ namespace TVRename
             }
             writer.WriteEndElement();
 
-            XMLHelper.WriteElementToXML(writer, "CustomSearchURL",CustomSearchURL);
+            XMLHelper.WriteElementToXML(writer, "CustomSearchURL",CustomSearchUrl);
 
             foreach (KeyValuePair<int, List<ShowRule>> kvp in SeasonRules)
             {
@@ -651,7 +651,7 @@ namespace TVRename
             return AllFolderLocations( true);
         }
 
-        public static string TTS(string s) // trim trailing slash
+        public static string Tts(string s) // trim trailing slash
         {
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
@@ -667,11 +667,11 @@ namespace TVRename
                     if (!fld.ContainsKey(kvp.Key))
                         fld[kvp.Key] = new List<String>();
                     foreach (string s in kvp.Value)
-                        fld[kvp.Key].Add(TTS(s));
+                        fld[kvp.Key].Add(Tts(s));
                 }
             }
 
-            if (AutoAddNewSeasons && (!string.IsNullOrEmpty(AutoAdd_FolderBase)))
+            if (AutoAddNewSeasons && (!string.IsNullOrEmpty(AutoAddFolderBase)))
             {
                 int highestThereIs = -1;
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
@@ -690,7 +690,7 @@ namespace TVRename
                         if (!fld.ContainsKey(i))
                             fld[i] = new List<String>();
                         if (!fld[i].Contains(newName))
-                            fld[i].Add(TTS(newName));
+                            fld[i].Add(Tts(newName));
                     }
                 }
             }

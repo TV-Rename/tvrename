@@ -5,13 +5,13 @@ using System.Xml;
 
 namespace TVRename
 {
-    class UpcomingRSS :UpcomingExporter
+    class UpcomingRss :UpcomingExporter
     {
-        public UpcomingRSS(TVDoc i) : base(i) { }
-        public override bool Active() =>TVSettings.Instance.ExportWTWRSS;
-        public override string Location() => TVSettings.Instance.ExportWTWRSSTo;
+        public UpcomingRss(TVDoc i) : base(i) { }
+        public override bool Active() =>TVSettings.Instance.ExportWtwrss;
+        public override string Location() => TVSettings.Instance.ExportWtwrssTo;
 
-        protected override bool generate(System.IO.Stream str, List<ProcessedEpisode> elist)
+        protected override bool Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
         {
             if (elist == null)
                 return false;
@@ -41,11 +41,11 @@ namespace TVRename
                         writer.WriteStartElement("item");
                         
                         XMLHelper.WriteElementToXML(writer,"title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + niceName);
-                        XMLHelper.WriteElementToXML(writer, "link", TheTVDB.Instance.WebsiteURL(ei.TheSeries.TVDBCode, ei.SeasonID, false));
+                        XMLHelper.WriteElementToXML(writer, "link", TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TVDBCode, ei.SeasonId, false));
                         XMLHelper.WriteElementToXML(writer,"description",niceName + "<br/>" + ei.Overview);
 
                         writer.WriteStartElement("pubDate");
-                        DateTime? dt = ei.GetAirDateDT(true);
+                        DateTime? dt = ei.GetAirDateDt(true);
                         if (dt != null)
                             writer.WriteValue(dt.Value.ToString("r"));
                         writer.WriteEndElement(); //pubDate
@@ -61,7 +61,7 @@ namespace TVRename
             } // try
             catch (Exception e)
             {
-                logger.Error(e);
+                Logger.Error(e);
                 return false;
             }
 

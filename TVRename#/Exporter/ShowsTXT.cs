@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace TVRename
 {
-    class ShowsTXT : ShowsExporter
+    class ShowsTxt : ShowsExporter
     {
-        public override bool Active() =>TVSettings.Instance.ExportShowsTXT;
-        public override string Location() =>TVSettings.Instance.ExportShowsTXTTo;
+        public override bool Active() =>TVSettings.Instance.ExportShowsTxt;
+        public override string Location() =>TVSettings.Instance.ExportShowsTxtTo;
 
         public override void Run(List<ShowItem> shows)
         {
-            if (TVSettings.Instance.ExportShowsTXT )
+            if (TVSettings.Instance.ExportShowsTxt )
             {
                 try
                 {
@@ -25,7 +25,7 @@ namespace TVRename
                 }
                 catch (Exception e)
                 {
-                    logger.Error(e);
+                    Logger.Error(e);
                 }
             }
         }

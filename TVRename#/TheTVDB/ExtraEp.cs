@@ -10,13 +10,13 @@ namespace TVRename
     public class ExtraEp
     {
         public bool Done;
-        public int EpisodeID;
-        public int SeriesID;
+        public int EpisodeId;
+        public int SeriesId;
 
         public ExtraEp(int series, int episode)
         {
-            SeriesID = series;
-            EpisodeID = episode;
+            SeriesId = series;
+            EpisodeId = episode;
             Done = false;
         }
     }

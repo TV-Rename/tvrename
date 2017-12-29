@@ -20,11 +20,11 @@ namespace TVRename
     /// </summary>
     public partial class TheTVDBCodeFinder : UserControl
     {
-        private bool mInternal;
+        private bool _mInternal;
 
         public TheTVDBCodeFinder(string initialHint)
         {
-            mInternal = false;
+            _mInternal = false;
 
             InitializeComponent();
 
@@ -42,9 +42,9 @@ namespace TVRename
 
         public void SetHint(string s)
         {
-            mInternal = true;
+            _mInternal = true;
             txtFindThis.Text = s;
-            mInternal = false;
+            _mInternal = false;
             DoFind(true);
         }
 
@@ -65,13 +65,13 @@ namespace TVRename
 
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
-            if (!mInternal)
+            if (!_mInternal)
                 DoFind(false);
         }
 
         private void DoFind(bool chooseOnlyMatch)
         {
-            if (mInternal)
+            if (_mInternal)
                 return;
 
             lvMatches.BeginUpdate();

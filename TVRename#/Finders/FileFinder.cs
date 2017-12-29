@@ -10,7 +10,7 @@ namespace TVRename
     {
         public FileFinder(TVDoc i) : base(i) { }
 
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public override bool Active()
         {
@@ -30,13 +30,13 @@ namespace TVRename
             ItemList toRemove = new ItemList();
 
             int fileCount = 0;
-            foreach (string s in mDoc.SearchFolders)
+            foreach (string s in MDoc.SearchFolders)
                 fileCount += DirCache.CountFiles(s, true);
 
             int c = 0;
 
             DirCache dirCache = new DirCache();
-            foreach (String s in mDoc.SearchFolders)
+            foreach (String s in MDoc.SearchFolders)
             {
                 if (ActionCancel)
                     return;
@@ -46,7 +46,7 @@ namespace TVRename
 
             c = 0;
             int totalN = TheActionList.Count;
-            foreach (Item action1 in TheActionList)
+            foreach (ITem action1 in TheActionList)
             {
                 if (ActionCancel)
                     return;
@@ -104,10 +104,10 @@ namespace TVRename
                 }
             }
 
-            foreach (Item i in toRemove)
+            foreach (ITem i in toRemove)
                 TheActionList.Remove(i);
 
-            foreach (Item i in newList)
+            foreach (ITem i in newList)
                 TheActionList.Add(i);
 
             //                 if (Settings->ExportFOXML)
@@ -115,30 +115,30 @@ namespace TVRename
 
         }
 
-        public void KeepTogether(ItemList Actionlist)
+        public void KeepTogether(ItemList actionlist)
         {
             // for each of the items in rcl, do the same copy/move if for other items with the same
             // base name, but different extensions
 
             ItemList extras = new ItemList();
 
-            foreach (Item Action1 in Actionlist)
+            foreach (ITem action1 in actionlist)
             {
-                if (!(Action1 is ActionCopyMoveRename))
+                if (!(action1 is ActionCopyMoveRename))
                     continue;
 
-                ActionCopyMoveRename Action = (ActionCopyMoveRename)(Action1);
+                ActionCopyMoveRename action = (ActionCopyMoveRename)(action1);
 
                 try
                 {
-                    DirectoryInfo sfdi = Action.From.Directory;
-                    string basename = Action.From.Name;
+                    DirectoryInfo sfdi = action.From.Directory;
+                    string basename = action.From.Name;
                     int l = basename.Length;
-                    basename = basename.Substring(0, l - Action.From.Extension.Length);
+                    basename = basename.Substring(0, l - action.From.Extension.Length);
 
-                    string toname = Action.To.Name;
+                    string toname = action.To.Name;
                     int l2 = toname.Length;
-                    toname = toname.Substring(0, l2 - Action.To.Extension.Length);
+                    toname = toname.Substring(0, l2 - action.To.Extension.Length);
 
                     FileInfo[] flist = sfdi.GetFiles(basename + ".*");
                     foreach (FileInfo fi in flist)
@@ -150,13 +150,13 @@ namespace TVRename
                         if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, FileHelper.FileInFolder(Action.To.Directory, newName), Action.Episode, null); // tidyup on main action, not this
+                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, null); // tidyup on main action, not this
 
                         
 
                         // check this item isn't already in our to-do list
                         bool doNotAdd = false;
-                        foreach (Item ai2 in Actionlist)
+                        foreach (ITem ai2 in actionlist)
                         {
                             if (!(ai2 is ActionCopyMoveRename))
                                 continue;
@@ -170,26 +170,26 @@ namespace TVRename
 
                         if (!doNotAdd)
                         {
-                            if (!newitem.SameAs(Action)) // don't re-add ourself
+                            if (!newitem.SameAs(action)) // don't re-add ourself
                                 extras.Add(newitem);
                         }
                     }
                 }
                 catch (System.IO.PathTooLongException e)
                 {
-                    string t = "Path or filename too long. " + Action.From.FullName + ", " + e.Message;
-                    logger.Warn(e, "Path or filename too long. " + Action.From.FullName);
+                    string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
+                    Logger.Warn(e, "Path or filename too long. " + action.From.FullName);
 
-                    if ((!mDoc.Args.Unattended) && (!mDoc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     
                 }
             }
 
-            foreach (Item action in extras)
+            foreach (ITem action in extras)
             {
                 // check we don't already have this in our list and, if we don't add it!
                 bool have = false;
-                foreach (Item action2 in Actionlist)
+                foreach (ITem action2 in actionlist)
                 {
                     if (action2.SameAs(action))
                     {
@@ -197,11 +197,11 @@ namespace TVRename
                         break;
                     }
 
-                    if ((action is Action) && (action2 is Action) )
+                    if ((action is IAction) && (action2 is IAction) )
                     {
-                        Action a1 = (Action)action;
-                        Action a2 = (Action)action2;
-                        if (a2.produces == a1.produces)
+                        IAction a1 = (IAction)action;
+                        IAction a2 = (IAction)action2;
+                        if (a2.Produces == a1.Produces)
                         {
                             have = true;
                             break;
@@ -210,7 +210,7 @@ namespace TVRename
                 }
 
                 if (!have)
-                    Actionlist.Insert(0, action); // put before other actions, so tidyup is run last
+                    actionlist.Insert(0, action); // put before other actions, so tidyup is run last
             }
         }
         // consider each of the files, see if it is suitable for series "ser" and episode "epi"
@@ -233,26 +233,26 @@ namespace TVRename
 
                 try
                 {
-                    if (!dce.HasUsefulExtension_NotOthersToo) // not a usefile file extension
+                    if (!dce.HasUsefulExtensionNotOthersToo) // not a usefile file extension
                         continue;
-                    if (TVSettings.Instance.IgnoreSamples && dce.LowerName.Contains("sample") && ((dce.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                    if (TVSettings.Instance.IgnoreSamples && dce.LowerName.Contains("sample") && ((dce.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMb))
                         continue;
 
                     //do any of the possible names for the series match the filename?
-                    matched = (me.Episode.SI.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(dce.SimplifiedFullName,name)));
+                    matched = (me.Episode.Si.GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(dce.SimplifiedFullName,name)));
 
                     if (matched)
                     {
                         int seasF;
                         int epF;
 
-                        if ((TVDoc.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
+                        if ((TVDoc.FindSeasEp(dce.TheFile, out seasF, out epF, me.Episode.Si) && (seasF == season) && (epF == epnum)) || (me.Episode.Si.UseSequentialMatch && TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
                             FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
 
                             // don't remove the base search folders
                             bool doTidyup = true;
-                            foreach (String folder in mDoc.SearchFolders)
+                            foreach (String folder in MDoc.SearchFolders)
                             {
                                 // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
                                 if (String.Compare(folder.ToLower().TrimEnd('\\'), fi.Directory.FullName.ToLower().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0)
@@ -275,10 +275,10 @@ namespace TVRename
                 catch (System.IO.PathTooLongException e)
                 {
                     string t = "Path too long. " + dce.TheFile.FullName + ", " + e.Message;
-                    logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
+                    Logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
 
                     t += ".  More information is available in the log file";
-                    if ((!mDoc.Args.Unattended) && (!mDoc.Args.Hide)) MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide)) MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                     t = "DirectoryName " + dce.TheFile.DirectoryName + ", File name: " + dce.TheFile.Name;
                     t += matched ? ", matched.  " : ", no match.  ";
@@ -287,7 +287,7 @@ namespace TVRename
                         t += "Show: " + me.Episode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
                         t += "To: " + me.TheFileNoExt;
                     }
-                    logger.Warn(t);
+                    Logger.Warn(t);
                 }
             }
 

@@ -2,39 +2,39 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class DownloadMede8erMetaData : DownloadIdentifier
+    class DownloadMede8ErMetaData : DownloadIdentifier
     {
 
-        public DownloadMede8erMetaData() 
+        public DownloadMede8ErMetaData() 
         {
-            reset();
+            Reset();
         }
 
         public override DownloadType GetDownloadType()
         {
-            return DownloadType.downloadMetaData;
+            return DownloadType.DownloadMetaData;
         }
 
         public override ItemList ProcessShow(ShowItem si,bool forceRefresh)
         {
-            if (TVSettings.Instance.Mede8erXML)
+            if (TVSettings.Instance.Mede8ErXML)
             {
-                ItemList TheActionList = new ItemList();
+                ItemList theActionList = new ItemList();
 
-                FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "series.xml");
+                FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
                 bool needUpdate = !tvshowxml.Exists ||
-                                  (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshowxml.LastWriteTime));
+                                  (si.TheSeries().SrvLastUpdated > TimeZone.Epoch(tvshowxml.LastWriteTime));
 
                 if (forceRefresh || needUpdate)
-                    TheActionList.Add(new ActionMede8erXML(tvshowxml, si));
+                    theActionList.Add(new ActionMede8ErXML(tvshowxml, si));
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
-                FileInfo viewxml = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "view.xml");
-                if (!viewxml.Exists) TheActionList.Add(new ActionMede8erViewXML(viewxml,si));
+                FileInfo viewxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "view.xml");
+                if (!viewxml.Exists) theActionList.Add(new ActionMede8ErViewXML(viewxml,si));
 
 
-                return TheActionList;
+                return theActionList;
             }
 
             return base.ProcessShow(si, forceRefresh);
@@ -42,16 +42,16 @@ namespace TVRename
 
         public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            if (TVSettings.Instance.Mede8erXML)
+            if (TVSettings.Instance.Mede8ErXML)
             {
-                ItemList TheActionList = new ItemList();
+                ItemList theActionList = new ItemList();
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
                 FileInfo viewxml = FileHelper.FileInFolder(folder, "view.xml");
-                if (!viewxml.Exists) TheActionList.Add(new ActionMede8erViewXML(viewxml,si,snum));
+                if (!viewxml.Exists) theActionList.Add(new ActionMede8ErViewXML(viewxml,si,snum));
 
 
-                return TheActionList;
+                return theActionList;
             }
 
             return base.ProcessSeason(si, folder, snum, forceRefresh);
@@ -59,26 +59,26 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (TVSettings.Instance.Mede8erXML)
+            if (TVSettings.Instance.Mede8ErXML)
             {
-                ItemList TheActionList = new ItemList();
+                ItemList theActionList = new ItemList();
                 string fn = filo.Name;
                 fn = fn.Substring(0, fn.Length - filo.Extension.Length);
                 fn += ".xml";
                 FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
-                if (forceRefresh || !nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))
-                    TheActionList.Add(new ActionMede8erXML(nfo, dbep));
+                if (forceRefresh || !nfo.Exists || (dbep.SrvLastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))
+                    theActionList.Add(new ActionMede8ErXML(nfo, dbep));
 
-                return TheActionList;
+                return theActionList;
 
             }
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void reset()
+        public override void Reset()
         {
-           base.reset();
+           base.Reset();
         }
 
     }

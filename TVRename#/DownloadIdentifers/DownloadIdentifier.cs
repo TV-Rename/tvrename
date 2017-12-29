@@ -12,8 +12,8 @@ namespace TVRename
 
         public enum DownloadType
         {
-            downloadImage,
-            downloadMetaData
+            DownloadImage,
+            DownloadMetaData
         }
 
         public abstract DownloadType GetDownloadType();
@@ -47,10 +47,10 @@ namespace TVRename
             return null;
         }
 
-        public virtual void notifyComplete(FileInfo file)
+        public virtual void NotifyComplete(FileInfo file)
         {
         }
 
-        public virtual void reset() { }
+        public virtual void Reset() { }
     }
 }

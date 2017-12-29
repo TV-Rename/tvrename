@@ -17,9 +17,9 @@ namespace TVRename
     {
         public string StyleString;
 
-        public CustomName(CustomName O)
+        public CustomName(CustomName o)
         {
-            StyleString = O.StyleString;
+            StyleString = o.StyleString;
         }
 
         public CustomName(string s)
@@ -69,9 +69,9 @@ namespace TVRename
 
             string r = NameForNoExt(pe, StyleString);
 
-            int maxLenOK = 200 - (folderNameLength + ((extension != null) ? extension.Length : 0));
-            if (r.Length > maxLenOK)
-                r = r.Substring(0, maxLenOK);
+            int maxLenOk = 200 - (folderNameLength + ((extension != null) ? extension.Length : 0));
+            if (r.Length > maxLenOk)
+                r = r.Substring(0, maxLenOk);
 
             if (!string.IsNullOrEmpty(extension))
             {
@@ -109,7 +109,7 @@ namespace TVRename
         {
             String name = styleString;
 
-            string showname = pe.SI.ShowName;
+            string showname = pe.Si.ShowName;
             string epname = pe.Name;
             if (urlEncode)
             {
@@ -126,7 +126,7 @@ namespace TVRename
             name = name.Replace("{Number}", pe.OverallNumber.ToString());
             name = name.Replace("{Number:2}", pe.OverallNumber.ToString("00"));
             name = name.Replace("{Number:3}", pe.OverallNumber.ToString("000"));
-            DateTime? airdt = pe.GetAirDateDT(false);
+            DateTime? airdt = pe.GetAirDateDt(false);
             if (airdt != null)
             {
                 DateTime dt = (DateTime) airdt;

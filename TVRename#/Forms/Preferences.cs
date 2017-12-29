@@ -28,21 +28,21 @@ namespace TVRename
     {
         delegate void LoadLanguageDoneDel();
 
-        private TVDoc mDoc;
-        private Thread LoadLanguageThread;
-        private String EnterPreferredLanguage; // hold here until background language download task is done
+        private TVDoc _mDoc;
+        private Thread _loadLanguageThread;
+        private String _enterPreferredLanguage; // hold here until background language download task is done
 
-        private LoadLanguageDoneDel LoadLanguageDone;
+        private LoadLanguageDoneDel _loadLanguageDone;
 
         public Preferences(TVDoc doc, bool goToScanOpts)
         {
             InitializeComponent();
-            LoadLanguageDone += LoadLanguageDoneFunc;
+            _loadLanguageDone += LoadLanguageDoneFunc;
 
-            SetupRSSGrid();
+            SetupRssGrid();
             SetupReplacementsGrid();
 
-            mDoc = doc;
+            _mDoc = doc;
 
             if (goToScanOpts)
                 tabControl1.SelectedTab = tpScanOptions;
@@ -50,7 +50,7 @@ namespace TVRename
 
         private void OKButton_Click(object sender, EventArgs e)
         {
-            if (!TVSettings.OKExtensionsString(txtEmptyIgnoreExtensions.Text))
+            if (!TVSettings.OkExtensionsString(txtEmptyIgnoreExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
@@ -60,7 +60,7 @@ namespace TVRename
                 return;
             }
 
-            if (!TVSettings.OKExtensionsString(txtVideoExtensions.Text))
+            if (!TVSettings.OkExtensionsString(txtVideoExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
@@ -69,7 +69,7 @@ namespace TVRename
                 txtVideoExtensions.Focus();
                 return;
             }
-            if (!TVSettings.OKExtensionsString(txtVideoExtensions.Text))
+            if (!TVSettings.OkExtensionsString(txtVideoExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
@@ -78,7 +78,7 @@ namespace TVRename
                 txtVideoExtensions.Focus();
                 return;
             }
-            if (!TVSettings.OKExtensionsString(txtOtherExtensions.Text))
+            if (!TVSettings.OkExtensionsString(txtOtherExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
@@ -87,177 +87,177 @@ namespace TVRename
                 txtOtherExtensions.Focus();
                 return;
             }
-            TVSettings S = TVSettings.Instance;
+            TVSettings s = TVSettings.Instance;
 
-            S.Replacements.Clear();
+            s.Replacements.Clear();
             for (int i = 1; i < ReplacementsGrid.RowsCount; i++)
             {
                 string from = (string) (ReplacementsGrid[i, 0].Value);
                 string to = (string) (ReplacementsGrid[i, 1].Value);
                 bool ins = (bool) (ReplacementsGrid[i, 2].Value);
                 if (!string.IsNullOrEmpty(from))
-                    S.Replacements.Add(new Replacement(from, to, ins));
+                    s.Replacements.Add(new Replacement(from, to, ins));
             }
 
-            S.ExportWTWRSS = cbWTWRSS.Checked;
-            S.ExportWTWRSSTo = txtWTWRSS.Text;
-            S.ExportWTWXML = cbWTWXML.Checked;
-            S.ExportWTWXMLTo = txtWTWXML.Text;
-            S.ExportMissingXML = cbMissingXML.Checked;
-            S.ExportMissingXMLTo = txtMissingXML.Text;
-            S.ExportMissingCSV = cbMissingCSV.Checked;
-            S.ExportMissingCSVTo = txtMissingCSV.Text;
-            S.ExportRenamingXML = cbRenamingXML.Checked;
-            S.ExportRenamingXMLTo = txtRenamingXML.Text;
-            S.ExportFOXML = cbFOXML.Checked;
-            S.ExportFOXMLTo = txtFOXML.Text;
-            S.ExportShowsTXT = cbShowsTXT.Checked;
-            S.ExportShowsTXTTo = txtShowsTXTTo.Text;
+            s.ExportWtwrss = cbWTWRSS.Checked;
+            s.ExportWtwrssTo = txtWTWRSS.Text;
+            s.ExportWtwxml = cbWTWXML.Checked;
+            s.ExportWtwxmlTo = txtWTWXML.Text;
+            s.ExportMissingXML = cbMissingXML.Checked;
+            s.ExportMissingXMLTo = txtMissingXML.Text;
+            s.ExportMissingCsv = cbMissingCSV.Checked;
+            s.ExportMissingCsvTo = txtMissingCSV.Text;
+            s.ExportRenamingXML = cbRenamingXML.Checked;
+            s.ExportRenamingXMLTo = txtRenamingXML.Text;
+            s.ExportFoxml = cbFOXML.Checked;
+            s.ExportFoxmlTo = txtFOXML.Text;
+            s.ExportShowsTxt = cbShowsTXT.Checked;
+            s.ExportShowsTxtTo = txtShowsTXTTo.Text;
 
-            S.WTWRecentDays = Convert.ToInt32(txtWTWDays.Text);
-            S.StartupTab = cbStartupTab.SelectedIndex;
-            S.NotificationAreaIcon = cbNotificationIcon.Checked;
-            S.VideoExtensionsString = txtVideoExtensions.Text;
-            S.OtherExtensionsString = txtOtherExtensions.Text;
-            S.ExportRSSMaxDays = Convert.ToInt32(txtExportRSSMaxDays.Text);
-            S.ExportRSSMaxShows = Convert.ToInt32(txtExportRSSMaxShows.Text);
-            S.ExportRSSDaysPast = Convert.ToInt32(txtExportRSSDaysPast.Text);
-            S.KeepTogether = cbKeepTogether.Checked;
-            S.LeadingZeroOnSeason = cbLeadingZero.Checked;
-            S.ShowInTaskbar = chkShowInTaskbar.Checked;
-            S.RenameTxtToSub = cbTxtToSub.Checked;
-            S.ShowEpisodePictures = cbShowEpisodePictures.Checked;
-            S.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
-            S.AutoCreateFolders = cbAutoCreateFolders.Checked ;  
-            S.SpecialsFolderName = txtSpecialsFolderName.Text;
+            s.WtwRecentDays = Convert.ToInt32(txtWTWDays.Text);
+            s.StartupTab = cbStartupTab.SelectedIndex;
+            s.NotificationAreaIcon = cbNotificationIcon.Checked;
+            s.VideoExtensionsString = txtVideoExtensions.Text;
+            s.OtherExtensionsString = txtOtherExtensions.Text;
+            s.ExportRssMaxDays = Convert.ToInt32(txtExportRSSMaxDays.Text);
+            s.ExportRssMaxShows = Convert.ToInt32(txtExportRSSMaxShows.Text);
+            s.ExportRssDaysPast = Convert.ToInt32(txtExportRSSDaysPast.Text);
+            s.KeepTogether = cbKeepTogether.Checked;
+            s.LeadingZeroOnSeason = cbLeadingZero.Checked;
+            s.ShowInTaskbar = chkShowInTaskbar.Checked;
+            s.RenameTxtToSub = cbTxtToSub.Checked;
+            s.ShowEpisodePictures = cbShowEpisodePictures.Checked;
+            s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
+            s.AutoCreateFolders = cbAutoCreateFolders.Checked ;  
+            s.SpecialsFolderName = txtSpecialsFolderName.Text;
 
-            S.ForceLowercaseFilenames = cbForceLower.Checked;
-            S.IgnoreSamples = cbIgnoreSamples.Checked;
+            s.ForceLowercaseFilenames = cbForceLower.Checked;
+            s.IgnoreSamples = cbIgnoreSamples.Checked;
 
-            S.uTorrentPath = txtRSSuTorrentPath.Text;
-            S.ResumeDatPath = txtUTResumeDatPath.Text;
-            S.SABHostPort = txtSABHostPort.Text;
-            S.SABAPIKey = txtSABAPIKey.Text;
-            S.CheckSABnzbd = cbCheckSABnzbd.Checked;
+            s.UTorrentPath = txtRSSuTorrentPath.Text;
+            s.ResumeDatPath = txtUTResumeDatPath.Text;
+            s.SabHostPort = txtSABHostPort.Text;
+            s.SabapiKey = txtSABAPIKey.Text;
+            s.CheckSaBnzbd = cbCheckSABnzbd.Checked;
 
-            S.SearchRSS = cbSearchRSS.Checked;
-            S.EpTBNs = cbEpTBNs.Checked;
-            S.NFOShows = cbNFOShows.Checked;
-            S.NFOEpisodes = cbNFOEpisodes.Checked;
-            S.KODIImages = cbKODIImages.Checked;
-            S.pyTivoMeta = cbMeta.Checked;
-            S.pyTivoMetaSubFolder = cbMetaSubfolder.Checked;
-            S.FolderJpg = cbFolderJpg.Checked;
-            S.RenameCheck = cbRenameCheck.Checked;
-            S.MissingCheck = cbMissing.Checked;
-            S.SearchLocally = cbSearchLocally.Checked;
-            S.LeaveOriginals = cbLeaveOriginals.Checked;
-            S.CheckuTorrent = cbCheckuTorrent.Checked;
-            S.LookForDateInFilename = cbLookForAirdate.Checked;
+            s.SearchRss = cbSearchRSS.Checked;
+            s.EpTbNs = cbEpTBNs.Checked;
+            s.NfoShows = cbNFOShows.Checked;
+            s.NfoEpisodes = cbNFOEpisodes.Checked;
+            s.KodiImages = cbKODIImages.Checked;
+            s.PyTivoMeta = cbMeta.Checked;
+            s.PyTivoMetaSubFolder = cbMetaSubfolder.Checked;
+            s.FolderJpg = cbFolderJpg.Checked;
+            s.RenameCheck = cbRenameCheck.Checked;
+            s.MissingCheck = cbMissing.Checked;
+            s.SearchLocally = cbSearchLocally.Checked;
+            s.LeaveOriginals = cbLeaveOriginals.Checked;
+            s.CheckuTorrent = cbCheckuTorrent.Checked;
+            s.LookForDateInFilename = cbLookForAirdate.Checked;
 
-            S.MonitorFolders = cbMonitorFolder.Checked;
-            S.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
+            s.MonitorFolders = cbMonitorFolder.Checked;
+            s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
 
-            S.EpJPGs = cbEpThumbJpg.Checked;
-            S.SeriesJpg = cbSeriesJpg.Checked;
-            S.Mede8erXML = cbXMLFiles.Checked;
-            S.ShrinkLargeMede8erImages = cbShrinkLarge.Checked;
-            S.FanArtJpg = cbFantArtJpg.Checked;
+            s.EpJpGs = cbEpThumbJpg.Checked;
+            s.SeriesJpg = cbSeriesJpg.Checked;
+            s.Mede8ErXML = cbXMLFiles.Checked;
+            s.ShrinkLargeMede8ErImages = cbShrinkLarge.Checked;
+            s.FanArtJpg = cbFantArtJpg.Checked;
 
-            S.Tidyup.DeleteEmpty = cbDeleteEmpty.Checked;
-            S.Tidyup.DeleteEmptyIsRecycle = cbRecycleNotDelete.Checked;
-            S.Tidyup.EmptyIgnoreWords = cbEmptyIgnoreWords.Checked;
-            S.Tidyup.EmptyIgnoreWordList = txtEmptyIgnoreWords.Text;
-            S.Tidyup.EmptyIgnoreExtensions = cbEmptyIgnoreExtensions.Checked;
-            S.Tidyup.EmptyIgnoreExtensionList = txtEmptyIgnoreExtensions.Text;
-            S.Tidyup.EmptyMaxSizeCheck = cbEmptyMaxSize.Checked;
-            int.TryParse(txtEmptyMaxSize.Text, out S.Tidyup.EmptyMaxSizeMB);
+            s.Tidyup.DeleteEmpty = cbDeleteEmpty.Checked;
+            s.Tidyup.DeleteEmptyIsRecycle = cbRecycleNotDelete.Checked;
+            s.Tidyup.EmptyIgnoreWords = cbEmptyIgnoreWords.Checked;
+            s.Tidyup.EmptyIgnoreWordList = txtEmptyIgnoreWords.Text;
+            s.Tidyup.EmptyIgnoreExtensions = cbEmptyIgnoreExtensions.Checked;
+            s.Tidyup.EmptyIgnoreExtensionList = txtEmptyIgnoreExtensions.Text;
+            s.Tidyup.EmptyMaxSizeCheck = cbEmptyMaxSize.Checked;
+            int.TryParse(txtEmptyMaxSize.Text, out s.Tidyup.EmptyMaxSizeMb);
 
             if (rbFolderFanArt.Checked)
-                S.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
+                s.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
             else if (rbFolderBanner.Checked)
-                S.FolderJpgIs = TVSettings.FolderJpgIsType.Banner;
+                s.FolderJpgIs = TVSettings.FolderJpgIsType.Banner;
             else if (rbFolderSeasonPoster.Checked)
-                S.FolderJpgIs = TVSettings.FolderJpgIsType.SeasonPoster;
+                s.FolderJpgIs = TVSettings.FolderJpgIsType.SeasonPoster;
             else
-                S.FolderJpgIs = TVSettings.FolderJpgIsType.Poster;
+                s.FolderJpgIs = TVSettings.FolderJpgIsType.Poster;
 
             if (rdoQuickScan.Checked)
-                S.MonitoredFoldersScanType = TVSettings.ScanType.Quick;
+                s.MonitoredFoldersScanType = TVSettings.ScanType.Quick;
             else if (rdoRecentScan.Checked)
-                S.MonitoredFoldersScanType = TVSettings.ScanType.Recent;
+                s.MonitoredFoldersScanType = TVSettings.ScanType.Recent;
             else
-                S.MonitoredFoldersScanType = TVSettings.ScanType.Full;
+                s.MonitoredFoldersScanType = TVSettings.ScanType.Full;
 
             if (rdEden.Checked)
-                S.SelectedKODIType= TVSettings.KODIType.Eden;
+                s.SelectedKodiType= TVSettings.KodiType.Eden;
             else if (rdFrodo.Checked)
-                S.SelectedKODIType = TVSettings.KODIType.Frodo;
+                s.SelectedKodiType = TVSettings.KodiType.Frodo;
             else
-                S.SelectedKODIType = TVSettings.KODIType.Both;
+                s.SelectedKodiType = TVSettings.KodiType.Both;
 
 
             TheTVDB.Instance.GetLock("Preferences-OK");
             foreach (Language l in TheTVDB.Instance.LanguageList)
             {
-                if (l.name == cbLanguages.Text)
+                if (l.Name == cbLanguages.Text)
                 {
-                    S.PreferredLanguage = l.abbreviation;
+                    s.PreferredLanguage = l.Abbreviation;
                     break;
                 }
             }
             if (rbWTWScan.Checked)
-                S.WTWDoubleClick = TVSettings.WTWDoubleClickAction.Scan;
+                s.WtwDoubleClick = TVSettings.WtwDoubleClickAction.Scan;
             else
-                S.WTWDoubleClick = TVSettings.WTWDoubleClickAction.Search;
+                s.WtwDoubleClick = TVSettings.WtwDoubleClickAction.Search;
 
             TheTVDB.Instance.SaveCache();
             TheTVDB.Instance.Unlock("Preferences-OK");
 
             try
             {
-                S.SampleFileMaxSizeMB = int.Parse(txtMaxSampleSize.Text);
+                s.SampleFileMaxSizeMb = int.Parse(txtMaxSampleSize.Text);
             }
             catch
             {
-                S.SampleFileMaxSizeMB = 50;
+                s.SampleFileMaxSizeMb = 50;
             }
 
             try
             {
-                S.ParallelDownloads = int.Parse(txtParallelDownloads.Text);
+                s.ParallelDownloads = int.Parse(txtParallelDownloads.Text);
             }
             catch
             {
-                S.ParallelDownloads = 4;
+                s.ParallelDownloads = 4;
             }
 
-            if (S.ParallelDownloads < 1)
-                S.ParallelDownloads = 1;
-            else if (S.ParallelDownloads > 8)
-                S.ParallelDownloads = 8;
+            if (s.ParallelDownloads < 1)
+                s.ParallelDownloads = 1;
+            else if (s.ParallelDownloads > 8)
+                s.ParallelDownloads = 8;
 
             // RSS URLs
-            S.RSSURLs.Clear();
+            s.RssurLs.Clear();
             for (int i = 1; i < RSSGrid.RowsCount; i++)
             {
                 string url = (string) (RSSGrid[i, 0].Value);
                 if (!string.IsNullOrEmpty(url))
-                    S.RSSURLs.Add(url);
+                    s.RssurLs.Add(url);
             }
 
-            S.ShowStatusColors = new ShowStatusColoringTypeList();
+            s.ShowStatusColors = new ShowStatusColoringTypeList();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
                 if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
                     item.Tag is ShowStatusColoringType)
                 {
-                    S.ShowStatusColors.Add(item.Tag as ShowStatusColoringType,
+                    s.ShowStatusColors.Add(item.Tag as ShowStatusColoringType,
                                            ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
             }
 
-            mDoc.SetDirty();
+            _mDoc.SetDirty();
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -266,110 +266,108 @@ namespace TVRename
         {
             SetupLanguages();
 
-            TVSettings S = TVSettings.Instance;
-            int r = 1;
-
-            foreach (Replacement R in S.Replacements)
+            TVSettings s = TVSettings.Instance;
+           
+            foreach (Replacement rep in s.Replacements)
             {
-                AddNewReplacementRow(R.This, R.That, R.CaseInsensitive);
-                r++;
+                AddNewReplacementRow(rep.This, rep.That, rep.CaseInsensitive);
             }
 
-            txtMaxSampleSize.Text = S.SampleFileMaxSizeMB.ToString();
+            txtMaxSampleSize.Text = s.SampleFileMaxSizeMb.ToString();
 
-            cbWTWRSS.Checked = S.ExportWTWRSS;
-            txtWTWRSS.Text = S.ExportWTWRSSTo;
-            txtWTWDays.Text = S.WTWRecentDays.ToString();
-            cbWTWXML.Checked = S.ExportWTWXML;
-            txtWTWXML.Text = S.ExportWTWXMLTo;
-            txtExportRSSMaxDays.Text = S.ExportRSSMaxDays.ToString();
-            txtExportRSSMaxShows.Text = S.ExportRSSMaxShows.ToString();
-            txtExportRSSDaysPast.Text = S.ExportRSSDaysPast.ToString();
+            cbWTWRSS.Checked = s.ExportWtwrss;
+            txtWTWRSS.Text = s.ExportWtwrssTo;
+            txtWTWDays.Text = s.WtwRecentDays.ToString();
+            cbWTWXML.Checked = s.ExportWtwxml;
+            txtWTWXML.Text = s.ExportWtwxmlTo;
+            txtExportRSSMaxDays.Text = s.ExportRssMaxDays.ToString();
+            txtExportRSSMaxShows.Text = s.ExportRssMaxShows.ToString();
+            txtExportRSSDaysPast.Text = s.ExportRssDaysPast.ToString();
 
-            cbMissingXML.Checked = S.ExportMissingXML;
-            txtMissingXML.Text = S.ExportMissingXMLTo;
-            cbMissingCSV.Checked = S.ExportMissingCSV;
-            txtMissingCSV.Text = S.ExportMissingCSVTo;
+            cbMissingXML.Checked = s.ExportMissingXML;
+            txtMissingXML.Text = s.ExportMissingXMLTo;
+            cbMissingCSV.Checked = s.ExportMissingCsv;
+            txtMissingCSV.Text = s.ExportMissingCsvTo;
 
-            cbShowsTXT.Checked = S.ExportShowsTXT ;
-            txtShowsTXTTo.Text = S.ExportShowsTXTTo;
+            cbShowsTXT.Checked = s.ExportShowsTxt ;
+            txtShowsTXTTo.Text = s.ExportShowsTxtTo;
 
 
-            cbRenamingXML.Checked = S.ExportRenamingXML;
-            txtRenamingXML.Text = S.ExportRenamingXMLTo;
+            cbRenamingXML.Checked = s.ExportRenamingXML;
+            txtRenamingXML.Text = s.ExportRenamingXMLTo;
 
-            cbFOXML.Checked = S.ExportFOXML;
-            txtFOXML.Text = S.ExportFOXMLTo;
+            cbFOXML.Checked = s.ExportFoxml;
+            txtFOXML.Text = s.ExportFoxmlTo;
 
-            cbStartupTab.SelectedIndex = S.StartupTab;
-            cbNotificationIcon.Checked = S.NotificationAreaIcon;
-            txtVideoExtensions.Text = S.GetVideoExtensionsString();
-            txtOtherExtensions.Text = S.GetOtherExtensionsString();
+            cbStartupTab.SelectedIndex = s.StartupTab;
+            cbNotificationIcon.Checked = s.NotificationAreaIcon;
+            txtVideoExtensions.Text = s.GetVideoExtensionsString();
+            txtOtherExtensions.Text = s.GetOtherExtensionsString();
 
-            cbKeepTogether.Checked = S.KeepTogether;
+            cbKeepTogether.Checked = s.KeepTogether;
             cbKeepTogether_CheckedChanged(null, null);
 
-            cbLeadingZero.Checked = S.LeadingZeroOnSeason;
-            chkShowInTaskbar.Checked = S.ShowInTaskbar;
-            cbTxtToSub.Checked = S.RenameTxtToSub;
-            cbShowEpisodePictures.Checked = S.ShowEpisodePictures;
-            cbAutoCreateFolders.Checked = S.AutoCreateFolders; 
-            cbAutoSelInMyShows.Checked = S.AutoSelectShowInMyShows;
-            txtSpecialsFolderName.Text = S.SpecialsFolderName;
-            cbForceLower.Checked = S.ForceLowercaseFilenames;
-            cbIgnoreSamples.Checked = S.IgnoreSamples;
-            txtRSSuTorrentPath.Text = S.uTorrentPath;
-            txtUTResumeDatPath.Text = S.ResumeDatPath;
-            txtSABHostPort.Text = S.SABHostPort;
-            txtSABAPIKey.Text = S.SABAPIKey;
-            cbCheckSABnzbd.Checked = S.CheckSABnzbd;
+            cbLeadingZero.Checked = s.LeadingZeroOnSeason;
+            chkShowInTaskbar.Checked = s.ShowInTaskbar;
+            cbTxtToSub.Checked = s.RenameTxtToSub;
+            cbShowEpisodePictures.Checked = s.ShowEpisodePictures;
+            cbAutoCreateFolders.Checked = s.AutoCreateFolders; 
+            cbAutoSelInMyShows.Checked = s.AutoSelectShowInMyShows;
+            txtSpecialsFolderName.Text = s.SpecialsFolderName;
+            cbForceLower.Checked = s.ForceLowercaseFilenames;
+            cbIgnoreSamples.Checked = s.IgnoreSamples;
+            txtRSSuTorrentPath.Text = s.UTorrentPath;
+            txtUTResumeDatPath.Text = s.ResumeDatPath;
+            txtSABHostPort.Text = s.SabHostPort;
+            txtSABAPIKey.Text = s.SabapiKey;
+            cbCheckSABnzbd.Checked = s.CheckSaBnzbd;
 
-            txtParallelDownloads.Text = S.ParallelDownloads.ToString();
+            txtParallelDownloads.Text = s.ParallelDownloads.ToString();
 
-            cbSearchRSS.Checked = S.SearchRSS;
-            cbEpTBNs.Checked = S.EpTBNs;
-            cbNFOShows.Checked = S.NFOShows;
-            cbNFOEpisodes.Checked = S.NFOEpisodes;
-            cbKODIImages.Checked = S.KODIImages;
-            cbMeta.Checked = S.pyTivoMeta;
-            cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
-            cbFolderJpg.Checked = S.FolderJpg;
-            cbRenameCheck.Checked = S.RenameCheck;
-            cbCheckuTorrent.Checked = S.CheckuTorrent;
-            cbLookForAirdate.Checked = S.LookForDateInFilename;
-            cbMonitorFolder.Checked = S.MonitorFolders;
-            cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
-            cbMissing.Checked = S.MissingCheck;
-            cbSearchLocally.Checked = S.SearchLocally;
-            cbLeaveOriginals.Checked = S.LeaveOriginals;
-            EnterPreferredLanguage = S.PreferredLanguage;
+            cbSearchRSS.Checked = s.SearchRss;
+            cbEpTBNs.Checked = s.EpTbNs;
+            cbNFOShows.Checked = s.NfoShows;
+            cbNFOEpisodes.Checked = s.NfoEpisodes;
+            cbKODIImages.Checked = s.KodiImages;
+            cbMeta.Checked = s.PyTivoMeta;
+            cbMetaSubfolder.Checked = s.PyTivoMetaSubFolder;
+            cbFolderJpg.Checked = s.FolderJpg;
+            cbRenameCheck.Checked = s.RenameCheck;
+            cbCheckuTorrent.Checked = s.CheckuTorrent;
+            cbLookForAirdate.Checked = s.LookForDateInFilename;
+            cbMonitorFolder.Checked = s.MonitorFolders;
+            cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
+            cbMissing.Checked = s.MissingCheck;
+            cbSearchLocally.Checked = s.SearchLocally;
+            cbLeaveOriginals.Checked = s.LeaveOriginals;
+            _enterPreferredLanguage = s.PreferredLanguage;
 
-            cbEpThumbJpg.Checked = S.EpJPGs;
-            cbSeriesJpg.Checked = S.SeriesJpg;
-            cbXMLFiles.Checked = S.Mede8erXML;
-            cbShrinkLarge.Checked = S.ShrinkLargeMede8erImages;
-            cbFantArtJpg.Checked = S.FanArtJpg;
+            cbEpThumbJpg.Checked = s.EpJpGs;
+            cbSeriesJpg.Checked = s.SeriesJpg;
+            cbXMLFiles.Checked = s.Mede8ErXML;
+            cbShrinkLarge.Checked = s.ShrinkLargeMede8ErImages;
+            cbFantArtJpg.Checked = s.FanArtJpg;
 
 #if DEBUG
-            System.Diagnostics.Debug.Assert(S.Tidyup != null);
+            System.Diagnostics.Debug.Assert(s.Tidyup != null);
 #endif
-            cbDeleteEmpty.Checked = S.Tidyup.DeleteEmpty;
-            cbRecycleNotDelete.Checked = S.Tidyup.DeleteEmptyIsRecycle;
-            cbEmptyIgnoreWords.Checked = S.Tidyup.EmptyIgnoreWords;
-            txtEmptyIgnoreWords.Text = S.Tidyup.EmptyIgnoreWordList;
-            cbEmptyIgnoreExtensions.Checked = S.Tidyup.EmptyIgnoreExtensions;
-            txtEmptyIgnoreExtensions.Text = S.Tidyup.EmptyIgnoreExtensionList;
-            cbEmptyMaxSize.Checked = S.Tidyup.EmptyMaxSizeCheck;
-            txtEmptyMaxSize.Text = S.Tidyup.EmptyMaxSizeMB.ToString();
+            cbDeleteEmpty.Checked = s.Tidyup.DeleteEmpty;
+            cbRecycleNotDelete.Checked = s.Tidyup.DeleteEmptyIsRecycle;
+            cbEmptyIgnoreWords.Checked = s.Tidyup.EmptyIgnoreWords;
+            txtEmptyIgnoreWords.Text = s.Tidyup.EmptyIgnoreWordList;
+            cbEmptyIgnoreExtensions.Checked = s.Tidyup.EmptyIgnoreExtensions;
+            txtEmptyIgnoreExtensions.Text = s.Tidyup.EmptyIgnoreExtensionList;
+            cbEmptyMaxSize.Checked = s.Tidyup.EmptyMaxSizeCheck;
+            txtEmptyMaxSize.Text = s.Tidyup.EmptyMaxSizeMb.ToString();
 
 
-            switch (S.WTWDoubleClick)
+            switch (s.WtwDoubleClick)
             {
-                case TVSettings.WTWDoubleClickAction.Search:
+                case TVSettings.WtwDoubleClickAction.Search:
                 default:
                     rbWTWSearch.Checked = true;
                     break;
-                case TVSettings.WTWDoubleClickAction.Scan:
+                case TVSettings.WtwDoubleClickAction.Scan:
                     rbWTWScan.Checked = true;
                     break;
             }
@@ -379,10 +377,10 @@ namespace TVRename
 
             FillSearchFolderList();
 
-            foreach (string s in S.RSSURLs)
-                AddNewRSSRow(s);
+            foreach (string url in s.RssurLs)
+                AddNewRssRow(url);
 
-            switch (S.FolderJpgIs)
+            switch (s.FolderJpgIs)
             {
                 case TVSettings.FolderJpgIsType.FanArt:
                     rbFolderFanArt.Checked = true;
@@ -398,7 +396,7 @@ namespace TVRename
                     break;
             }
 
-            switch (S.MonitoredFoldersScanType)
+            switch (s.MonitoredFoldersScanType)
             {
                 case TVSettings.ScanType.Quick:
                     rdoQuickScan.Checked = true;
@@ -411,12 +409,12 @@ namespace TVRename
                     break;
             }
 
-            switch (S.SelectedKODIType)
+            switch (s.SelectedKodiType)
             {
-                case TVSettings.KODIType.Eden:
+                case TVSettings.KodiType.Eden:
                     rdEden.Checked = true;
                     break;
-                case TVSettings.KODIType.Frodo:
+                case TVSettings.KodiType.Frodo:
                     rdFrodo.Checked = true;
                     break;
                 default:
@@ -424,11 +422,11 @@ namespace TVRename
                     break;
             }
 
-            if (S.ShowStatusColors != null)
+            if (s.ShowStatusColors != null)
             {
                 foreach (
                     KeyValuePair<ShowStatusColoringType, Color> showStatusColor in
-                        S.ShowStatusColors)
+                        s.ShowStatusColors)
                 {
                     ListViewItem item = new ListViewItem();
                     item.Text = showStatusColor.Key.Text;
@@ -456,7 +454,7 @@ namespace TVRename
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
             List<string> showStatusList = new List<string>();
-            List<ShowItem> shows = mDoc.GetShowItems(false);
+            List<ShowItem> shows = _mDoc.GetShowItems(false);
             foreach (ShowItem show in shows)
             {
                 if(!showStatusList.Contains(show.ShowStatus))
@@ -481,12 +479,12 @@ namespace TVRename
             //this.cboShowStatus.ValueMember = ";
         }
 
-        private void Browse(TextBox txt, string DefaultExt, int FilterIndex)
+        private void Browse(TextBox txt, string defaultExt, int filterIndex)
         {
             //rss =1, XML = 2, CSV = 3, TXT=4, HTML = 5
             saveFile.FileName = txt.Text;
-            saveFile.DefaultExt = DefaultExt;
-            saveFile.FilterIndex = FilterIndex;
+            saveFile.DefaultExt = defaultExt;
+            saveFile.FilterIndex = filterIndex;
             if (saveFile.ShowDialog() == DialogResult.OK)
                 txt.Text = saveFile.FileName;
         }
@@ -497,7 +495,7 @@ namespace TVRename
             Browse(txtWTWXML,"xml",2);
         }
 
-        private void txtNumberOnlyKeyPress(object sender, KeyPressEventArgs e)
+        private void TxtNumberOnlyKeyPress(object sender, KeyPressEventArgs e)
         {
             // digits only
             if ((e.KeyChar >= 32) && (!Char.IsDigit(e.KeyChar)))
@@ -603,12 +601,12 @@ namespace TVRename
         private void bnAddSearchFolder_Click(object sender, EventArgs e)
         {
             int n = lbSearchFolders.SelectedIndex;
-            folderBrowser.SelectedPath = n != -1 ? mDoc.SearchFolders[n] : "";
+            folderBrowser.SelectedPath = n != -1 ? _mDoc.SearchFolders[n] : "";
 
             if (folderBrowser.ShowDialog() == DialogResult.OK)
             {
-                mDoc.SearchFolders.Add(folderBrowser.SelectedPath);
-                mDoc.SetDirty();
+                _mDoc.SearchFolders.Add(folderBrowser.SelectedPath);
+                _mDoc.SetDirty();
             }
 
             FillSearchFolderList();
@@ -620,8 +618,8 @@ namespace TVRename
             if (n == -1)
                 return;
 
-            mDoc.SearchFolders.RemoveAt(n);
-            mDoc.SetDirty();
+            _mDoc.SearchFolders.RemoveAt(n);
+            _mDoc.SetDirty();
 
             FillSearchFolderList();
         }
@@ -631,14 +629,14 @@ namespace TVRename
             int n = lbSearchFolders.SelectedIndex;
             if (n == -1)
                 return;
-            Helpers.SysOpen(mDoc.SearchFolders[n]);
+            Helpers.SysOpen(_mDoc.SearchFolders[n]);
         }
 
         private void FillSearchFolderList()
         {
             lbSearchFolders.Items.Clear();
-            mDoc.SearchFolders.Sort();
-            foreach (string efi in mDoc.SearchFolders)
+            _mDoc.SearchFolders.Sort();
+            foreach (string efi in _mDoc.SearchFolders)
                 lbSearchFolders.Items.Add(efi);
         }
 
@@ -663,13 +661,13 @@ namespace TVRename
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
-                        mDoc.SearchFolders.Add(path.ToLower());
+                        _mDoc.SearchFolders.Add(path.ToLower());
                 }
                 catch
                 {
                 }
             }
-            mDoc.SetDirty();
+            _mDoc.SetDirty();
             FillSearchFolderList();
         }
 
@@ -755,7 +753,7 @@ namespace TVRename
             }
         }
 
-        private void SetupRSSGrid()
+        private void SetupRssGrid()
         {
             SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
                                                          {
@@ -787,7 +785,7 @@ namespace TVRename
             RSSGrid[0, 0].View = titleModel;
         }
 
-        private void AddNewRSSRow(string text)
+        private void AddNewRssRow(string text)
         {
             int r = RSSGrid.RowsCount;
             RSSGrid.RowsCount = r + 1;
@@ -796,7 +794,7 @@ namespace TVRename
 
         private void bnRSSAdd_Click(object sender, EventArgs e)
         {
-            AddNewRSSRow(null);
+            AddNewRssRow(null);
         }
 
         private void bnRSSRemove_Click(object sender, EventArgs e)
@@ -824,8 +822,8 @@ namespace TVRename
             cbLanguages.Update();
             cbLanguages.Enabled = false;
 
-            LoadLanguageThread = new Thread(LoadLanguage);
-            LoadLanguageThread.Start();
+            _loadLanguageThread = new Thread(LoadLanguage);
+            _loadLanguageThread.Start();
         }
 
         private void LoadLanguage()
@@ -845,7 +843,7 @@ namespace TVRename
             }
             TheTVDB.Instance.Unlock("Preferences-LoadLanguages");
             if (!aborted)
-                BeginInvoke(LoadLanguageDone);
+                BeginInvoke(_loadLanguageDone);
         }
 
         private void LoadLanguageDoneFunc()
@@ -863,10 +861,10 @@ namespace TVRename
             String pref = "";
             foreach (Language l in TheTVDB.Instance.LanguageList)
             {
-                cbLanguages.Items.Add(l.name);
+                cbLanguages.Items.Add(l.Name);
 
-                if (EnterPreferredLanguage == l.abbreviation)
-                    pref = l.name;
+                if (_enterPreferredLanguage == l.Abbreviation)
+                    pref = l.Name;
             }
             cbLanguages.EndUpdate();
             cbLanguages.Text = pref;
@@ -1039,10 +1037,10 @@ namespace TVRename
 
         private void Preferences_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (LoadLanguageThread != null && LoadLanguageThread.IsAlive)
+            if (_loadLanguageThread != null && _loadLanguageThread.IsAlive)
             {
-                LoadLanguageThread.Abort();
-                LoadLanguageThread.Join(500); // milliseconds timeout
+                _loadLanguageThread.Abort();
+                _loadLanguageThread.Join(500); // milliseconds timeout
             }
         }
 

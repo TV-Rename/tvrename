@@ -243,11 +243,11 @@ namespace TVRename
     
 }
 
-    public static class HTTPHelper
+    public static class HttpHelper
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static String HTTPRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
+        public static String HttpRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
             httpWebRequest.Method = method;
@@ -260,7 +260,7 @@ namespace TVRename
                 httpWebRequest.Headers.Add("Accept-Language",lang);
             }
 
-            logger.Trace("Obtaining {0}", url);
+            _logger.Trace("Obtaining {0}", url);
 
             if (method == "POST") { 
                 using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
@@ -277,27 +277,27 @@ namespace TVRename
             {
                 result = streamReader.ReadToEnd();
             }
-            logger.Trace("Returned {0}", result);
+            _logger.Trace("Returned {0}", result);
             return result;
         }
 
-        public static JObject JsonHTTPPOSTRequest( String url, JObject request)
+        public static JObject JsonHttppostRequest( String url, JObject request)
         {
-            String response = HTTPRequest("POST",url, request.ToString(), "application/json");
+            String response = HttpRequest("POST",url, request.ToString(), "application/json");
 
             return JObject.Parse(response);
             
         }
 
-        public static JObject JsonHTTPGETRequest(String url, Dictionary<string, string> parameters, String authToken, String lang="")
+        public static JObject JsonHttpgetRequest(String url, Dictionary<string, string> parameters, String authToken, String lang="")
         {
-            String response = HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
+            String response = HttpRequest("GET", url + GetHttpParameters(parameters), null, "application/json", authToken,lang);
 
             return JObject.Parse(response);
 
         }
 
-        public static string getHTTPParameters(Dictionary<string, string> parameters)
+        public static string GetHttpParameters(Dictionary<string, string> parameters)
         {
             if (parameters == null) return "";
 
@@ -314,8 +314,8 @@ namespace TVRename
 
     }
 
-    public static class JSONHelper {
-        public static String flatten(JToken ja,String delimiter = ",")
+    public static class JsonHelper {
+        public static String Flatten(JToken ja,String delimiter = ",")
         {
             if (ja == null) return "";
 
@@ -348,7 +348,7 @@ namespace TVRename
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         private enum BrowserEmulationVersion
         {
@@ -399,12 +399,12 @@ namespace TVRename
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                logger.Error(se);
+                _logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                logger.Error(uae);
+                _logger.Error(uae);
             }
 
             return result;
@@ -438,12 +438,12 @@ namespace TVRename
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                logger.Error(se);
+                _logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                logger.Error(uae);
+                _logger.Error(uae);
             }
 
             return result;
@@ -476,13 +476,13 @@ namespace TVRename
                     {
                         // if it's a valid value, update or create the value
                         key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
-                        logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
+                        _logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
                     }
                     else
                     {
                         // otherwise, remove the existing value
                         key.DeleteValue(programName, false);
-                        logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
+                        _logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
                     }
 
                     result = true;
@@ -491,12 +491,12 @@ namespace TVRename
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                logger.Error(se);
+                _logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                logger.Error(uae);
+                _logger.Error(uae);
             }
 
             return result;
@@ -508,7 +508,7 @@ namespace TVRename
             BrowserEmulationVersion emulationCode;
 
             ieVersion = GetInternetExplorerMajorVersion();
-            logger.Warn("IE Version {0} is identified",ieVersion );
+            _logger.Warn("IE Version {0} is identified",ieVersion );
 
             if (ieVersion >= 11)
             {
@@ -540,7 +540,7 @@ namespace TVRename
         {
             if (!IsBrowserEmulationSet())
             {
-                logger.Warn("Updating the registry to ensure that the latest browser version is used");
+                _logger.Warn("Updating the registry to ensure that the latest browser version is used");
                 SetBrowserEmulationVersion();
             }
         }
@@ -551,9 +551,9 @@ namespace TVRename
     public static class Helpers
     {
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static string pad(int i)
+        public static string Pad(int i)
         {
             if (i.ToString().Length > 1)
             {
@@ -573,9 +573,9 @@ namespace TVRename
 
         public static DateTime FromUnixTime(long unixTime)
         {
-            return epoch.AddSeconds(unixTime);
+            return Epoch.AddSeconds(unixTime);
         }
-        private static readonly DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public static bool SysOpen(string what, string arguments = null)
         {
@@ -586,7 +586,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Error(e);
+                _logger.Error(e);
                 return false;
             }
         }

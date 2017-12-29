@@ -24,7 +24,7 @@ namespace TVRename
         public bool EmptyIgnoreExtensions = false;
         public string EmptyIgnoreExtensionList = ".nzb;.nfo;.par2;.txt;.srt";
         public bool EmptyMaxSizeCheck = true;
-        public int EmptyMaxSizeMB = 100;
+        public int EmptyMaxSizeMb = 100;
 
         public string[] EmptyIgnoreExtensionsArray
         {
@@ -54,19 +54,19 @@ namespace TVRename
         }
     }
 
-    public class FilenameProcessorRE
+    public class FilenameProcessorRe
     {
         // A regular expression to find the season and episode number in a filename
 
         public bool Enabled;
         public string Notes;
-        public string RE;
+        public string Re;
         public bool UseFullPath;
 
-        public FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
+        public FilenameProcessorRe(bool enabled, string re, bool useFullPath, string notes)
         {
             Enabled = enabled;
-            RE = re;
+            Re = re;
             UseFullPath = useFullPath;
             Notes = notes;
         }
@@ -188,24 +188,24 @@ namespace TVRename
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
-        private static volatile TVSettings instance;
-        private static object syncRoot = new Object();
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static volatile TVSettings _instance;
+        private static object _syncRoot = new Object();
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVSettings Instance
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
-                    lock (syncRoot)
+                    lock (_syncRoot)
                     {
-                        if (instance == null)
-                            instance = new TVSettings();
+                        if (_instance == null)
+                            _instance = new TVSettings();
                     }
                 }
 
-                return instance;
+                return _instance;
             }
         }
 
@@ -222,7 +222,7 @@ namespace TVRename
 
         #region WTWDoubleClickAction enum
 
-        public enum WTWDoubleClickAction
+        public enum WtwDoubleClickAction
         {
             Search,
             Scan
@@ -241,7 +241,7 @@ namespace TVRename
 
         #endregion
 
-        public enum KODIType
+        public enum KodiType
         {
             Eden,
             Frodo,
@@ -255,36 +255,36 @@ namespace TVRename
 
         public bool AutoSelectShowInMyShows = true;
         public bool AutoCreateFolders = false;
-        public bool BGDownload = false;
+        public bool BgDownload = false;
         public bool CheckuTorrent = false;
-        public bool EpTBNs = false;
-        public bool EpJPGs = false;
+        public bool EpTbNs = false;
+        public bool EpJpGs = false;
         public bool SeriesJpg = false;
-        public bool ShrinkLargeMede8erImages = false;
+        public bool ShrinkLargeMede8ErImages = false;
         public bool FanArtJpg = false;
-        public bool Mede8erXML = false;
-        public bool ExportFOXML = false;
-        public string ExportFOXMLTo = "";
-        public bool ExportMissingCSV = false;
-        public string ExportMissingCSVTo = "";
+        public bool Mede8ErXML = false;
+        public bool ExportFoxml = false;
+        public string ExportFoxmlTo = "";
+        public bool ExportMissingCsv = false;
+        public string ExportMissingCsvTo = "";
         public bool ExportMissingXML = false;
         public string ExportMissingXMLTo = "";
-        public bool ExportShowsTXT = false;
-        public string ExportShowsTXTTo = "";
-        public int ExportRSSMaxDays = 7;
-        public int ExportRSSMaxShows = 10;
-        public int ExportRSSDaysPast = 0;
+        public bool ExportShowsTxt = false;
+        public string ExportShowsTxtTo = "";
+        public int ExportRssMaxDays = 7;
+        public int ExportRssMaxShows = 10;
+        public int ExportRssDaysPast = 0;
         public bool ExportRenamingXML = false;
         public string ExportRenamingXMLTo = "";
-        public bool ExportWTWRSS = false;
-        public string ExportWTWRSSTo = "";
-        public bool ExportWTWXML = false;
-        public string ExportWTWXMLTo = "";
-        public List<FilenameProcessorRE> FNPRegexs = DefaultFNPList();
+        public bool ExportWtwrss = false;
+        public string ExportWtwrssTo = "";
+        public bool ExportWtwxml = false;
+        public string ExportWtwxmlTo = "";
+        public List<FilenameProcessorRe> FnpRegexs = DefaultFnpList();
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
         public ScanType MonitoredFoldersScanType = ScanType.Full;
-        public KODIType SelectedKODIType = KODIType.Both;
+        public KodiType SelectedKodiType = KodiType.Both;
         public bool ForceLowercaseFilenames = false;
         public bool IgnoreSamples = true;
         public bool KeepTogether = true;
@@ -292,11 +292,11 @@ namespace TVRename
         public bool LeaveOriginals = false;
         public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
-        public bool NFOShows = false;
-        public bool NFOEpisodes = false;
-        public bool KODIImages = false;
-        public bool pyTivoMeta = false;
-        public bool pyTivoMetaSubFolder = false;
+        public bool NfoShows = false;
+        public bool NfoEpisodes = false;
+        public bool KodiImages = false;
+        public bool PyTivoMeta = false;
+        public bool PyTivoMetaSubFolder = false;
         public CustomName NamingStyle = new CustomName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
@@ -309,14 +309,14 @@ namespace TVRename
         }
 
         public int ParallelDownloads = 4;
-        public List<string> RSSURLs = DefaultRSSURLList();
+        public List<string> RssurLs = DefaultRssurlList();
         public bool RenameCheck = true;
         public bool RenameTxtToSub = false;
-        public List<Replacement> Replacements = DefaultListRE();
+        public List<Replacement> Replacements = DefaultListRe();
         public string ResumeDatPath = "";
-        public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
+        public int SampleFileMaxSizeMb = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
-        public bool SearchRSS = false;
+        public bool SearchRss = false;
         public bool ShowEpisodePictures = true;
         public bool ShowInTaskbar = true;
         public string SpecialsFolderName = "Specials";
@@ -328,16 +328,16 @@ namespace TVRename
             get { return VideoExtensionsString.Split(';'); }
         }
         public string VideoExtensionsString = "";
-        public int WTWRecentDays = 7;
-        public string uTorrentPath = "";
+        public int WtwRecentDays = 7;
+        public string UTorrentPath = "";
         public bool MonitorFolders = false;
         public bool RemoveDownloadDirectoriesFiles =false;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
-        public String SABHostPort = "";
-        public String SABAPIKey = "";
-        public bool CheckSABnzbd = false;
+        public String SabHostPort = "";
+        public String SabapiKey = "";
+        public bool CheckSaBnzbd = false;
         public String PreferredLanguage = "en";
-        public WTWDoubleClickAction WTWDoubleClick;
+        public WtwDoubleClickAction WtwDoubleClick;
 
         public TidySettings Tidyup = new TidySettings();
 
@@ -346,7 +346,7 @@ namespace TVRename
             SetToDefaults();
         }
 
-        public void load(XmlReader reader)
+        public void Load(XmlReader reader)
         {
             
             SetToDefaults();
@@ -372,7 +372,7 @@ namespace TVRename
                     reader.Read();
                 }
                 else if (reader.Name == "BGDownload")
-                    BGDownload = reader.ReadElementContentAsBoolean();
+                    BgDownload = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "OfflineMode")
                     OfflineMode = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "Replacements" && !reader.IsEmptyElement)
@@ -396,15 +396,15 @@ namespace TVRename
                     reader.Read();
                 }
                 else if (reader.Name == "ExportWTWRSS" && !reader.IsEmptyElement)
-                    ExportWTWRSS = reader.ReadElementContentAsBoolean();
+                    ExportWtwrss = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportWTWRSSTo")
-                    ExportWTWRSSTo = reader.ReadElementContentAsString();
+                    ExportWtwrssTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportWTWXML")
-                    ExportWTWXML = reader.ReadElementContentAsBoolean();
+                    ExportWtwxml = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportWTWXMLTo")
-                    ExportWTWXMLTo = reader.ReadElementContentAsString();
+                    ExportWtwxmlTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWRecentDays")
-                    WTWRecentDays = reader.ReadElementContentAsInt();
+                    WtwRecentDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "StartupTab")
                 {
                     int n = reader.ReadElementContentAsInt();
@@ -428,11 +428,11 @@ namespace TVRename
                 else if (reader.Name == "OtherExtensions")
                     OtherExtensionsString = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportRSSMaxDays")
-                    ExportRSSMaxDays = reader.ReadElementContentAsInt();
+                    ExportRssMaxDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportRSSMaxShows")
-                    ExportRSSMaxShows = reader.ReadElementContentAsInt();
+                    ExportRssMaxShows = reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportRSSDaysPast")
-                    ExportRSSDaysPast = reader.ReadElementContentAsInt();
+                    ExportRssDaysPast = reader.ReadElementContentAsInt();
                 else if (reader.Name == "KeepTogether")
                     KeepTogether = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LeadingZeroOnSeason")
@@ -450,66 +450,66 @@ namespace TVRename
                 else if (reader.Name == "SpecialsFolderName")
                     SpecialsFolderName = reader.ReadElementContentAsString();
                 else if (reader.Name == "SABAPIKey")
-                    SABAPIKey = reader.ReadElementContentAsString();
+                    SabapiKey = reader.ReadElementContentAsString();
                 else if (reader.Name == "CheckSABnzbd")
-                    CheckSABnzbd = reader.ReadElementContentAsBoolean();
+                    CheckSaBnzbd = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SABHostPort")
-                    SABHostPort = reader.ReadElementContentAsString();
+                    SabHostPort = reader.ReadElementContentAsString();
                 else if (reader.Name == "PreferredLanguage")
                     PreferredLanguage = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWDoubleClick")
-                    WTWDoubleClick = (WTWDoubleClickAction)reader.ReadElementContentAsInt();
+                    WtwDoubleClick = (WtwDoubleClickAction)reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportMissingXML")
                     ExportMissingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingXMLTo")
                     ExportMissingXMLTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportMissingCSV")
-                    ExportMissingCSV = reader.ReadElementContentAsBoolean();
+                    ExportMissingCsv = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingCSVTo")
-                    ExportMissingCSVTo = reader.ReadElementContentAsString();
+                    ExportMissingCsvTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportRenamingXML")
                     ExportRenamingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportRenamingXMLTo")
                     ExportRenamingXMLTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportFOXML")
-                    ExportFOXML = reader.ReadElementContentAsBoolean();
+                    ExportFoxml = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportFOXMLTo")
-                    ExportFOXMLTo = reader.ReadElementContentAsString();
+                    ExportFoxmlTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportShowsTXT")
-                    ExportShowsTXT = reader.ReadElementContentAsBoolean();
+                    ExportShowsTxt = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportShowsTXTTo")
-                    ExportShowsTXTTo = reader.ReadElementContentAsString();
+                    ExportShowsTxtTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "ForceLowercaseFilenames")
                     ForceLowercaseFilenames = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "IgnoreSamples")
                     IgnoreSamples = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SampleFileMaxSizeMB")
-                    SampleFileMaxSizeMB = reader.ReadElementContentAsInt();
+                    SampleFileMaxSizeMb = reader.ReadElementContentAsInt();
                 else if (reader.Name == "ParallelDownloads")
                     ParallelDownloads = reader.ReadElementContentAsInt();
                 else if (reader.Name == "uTorrentPath")
-                    uTorrentPath = reader.ReadElementContentAsString();
+                    UTorrentPath = reader.ReadElementContentAsString();
                 else if (reader.Name == "ResumeDatPath")
                     ResumeDatPath = reader.ReadElementContentAsString();
                 else if (reader.Name == "SearchRSS")
-                    SearchRSS = reader.ReadElementContentAsBoolean();
+                    SearchRss = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpImgs")
-                    EpTBNs = reader.ReadElementContentAsBoolean();
+                    EpTbNs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "NFOs") //support legacy tag
                 {
-                    NFOShows = reader.ReadElementContentAsBoolean();
-                    NFOEpisodes = NFOShows;
+                    NfoShows = reader.ReadElementContentAsBoolean();
+                    NfoEpisodes = NfoShows;
                 }
                 else if (reader.Name == "NFOShows")
-                    NFOShows = reader.ReadElementContentAsBoolean();
+                    NfoShows = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "NFOEpisodes")
-                    NFOEpisodes = reader.ReadElementContentAsBoolean();
+                    NfoEpisodes = reader.ReadElementContentAsBoolean();
                 else if ((reader.Name == "XBMCImages") || (reader.Name == "KODIImages")) //Backward Compatibilty
-                    KODIImages = reader.ReadElementContentAsBoolean();
+                    KodiImages = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMeta")
-                    pyTivoMeta = reader.ReadElementContentAsBoolean();
+                    PyTivoMeta = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMetaSubFolder")
-                    pyTivoMetaSubFolder = reader.ReadElementContentAsBoolean();
+                    PyTivoMetaSubFolder = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpg")
                     FolderJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpgIs")
@@ -517,7 +517,7 @@ namespace TVRename
                 else if (reader.Name == "MonitoredFoldersScanType")
                     MonitoredFoldersScanType = (ScanType)reader.ReadElementContentAsInt();
                 else if ((reader.Name == "SelectedXBMCType") || (reader.Name == "SelectedKODIType"))
-                    SelectedKODIType = (KODIType)reader.ReadElementContentAsInt();
+                    SelectedKodiType = (KodiType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameCheck")
                     RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
@@ -535,13 +535,13 @@ namespace TVRename
                 else if (reader.Name == "RemoveDownloadDirectoriesFiles")
                     RemoveDownloadDirectoriesFiles = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpJPGs")
-                    EpJPGs = reader.ReadElementContentAsBoolean();
+                    EpJpGs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SeriesJpg")
                     SeriesJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "Mede8erXML")
-                    Mede8erXML = reader.ReadElementContentAsBoolean();
+                    Mede8ErXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ShrinkLargeMede8erImages")
-                    ShrinkLargeMede8erImages = reader.ReadElementContentAsBoolean();
+                    ShrinkLargeMede8ErImages = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FanArtJpg")
                     FanArtJpg = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DeleteEmpty")
@@ -559,11 +559,11 @@ namespace TVRename
                 else if (reader.Name == "EmptyMaxSizeCheck")
                     Tidyup.EmptyMaxSizeCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EmptyMaxSizeMB")
-                    Tidyup.EmptyMaxSizeMB = reader.ReadElementContentAsInt();
+                    Tidyup.EmptyMaxSizeMb = reader.ReadElementContentAsInt();
 
                 else if (reader.Name == "FNPRegexs" && !reader.IsEmptyElement)
                 {
-                    FNPRegexs.Clear();
+                    FnpRegexs.Clear();
                     reader.Read();
                     while (!reader.EOF)
                     {
@@ -574,7 +574,7 @@ namespace TVRename
                             string s = reader.GetAttribute("Enabled");
                             bool en = s == null || bool.Parse(s);
 
-                            FNPRegexs.Add(new FilenameProcessorRE(en, reader.GetAttribute("RE"),
+                            FnpRegexs.Add(new FilenameProcessorRe(en, reader.GetAttribute("RE"),
                                                                        bool.Parse(reader.GetAttribute("UseFullPath")),
                                                                        reader.GetAttribute("Notes")));
                             reader.Read();
@@ -586,14 +586,14 @@ namespace TVRename
                 }
                 else if (reader.Name == "RSSURLs" && !reader.IsEmptyElement)
                 {
-                    RSSURLs.Clear();
+                    RssurLs.Clear();
                     reader.Read();
                     while (!reader.EOF)
                     {
                         if ((reader.Name == "RSSURLs") && (!reader.IsStartElement()))
                             break;
                         if (reader.Name == "URL")
-                            RSSURLs.Add(reader.ReadElementContentAsString());
+                            RssurLs.Add(reader.ReadElementContentAsString());
                         else
                             reader.ReadOuterXml();
                     }
@@ -699,13 +699,13 @@ namespace TVRename
             guesses[1] = "c:\\Program Files\\uTorrent\\uTorrent.exe";
             guesses[2] = "c:\\Program Files (x86)\\uTorrent\\uTorrent.exe";
 
-            uTorrentPath = "";
+            UTorrentPath = "";
             foreach (string g in guesses)
             {
                 FileInfo f = new FileInfo(g);
                 if (f.Exists)
                 {
-                    uTorrentPath = f.FullName;
+                    UTorrentPath = f.FullName;
                     break;
                 }
             }
@@ -721,42 +721,42 @@ namespace TVRename
         {
             writer.WriteStartElement("Settings");
             TheSearchers.WriteXML(writer);
-            XMLHelper.WriteElementToXML(writer,"BGDownload",BGDownload);
+            XMLHelper.WriteElementToXML(writer,"BGDownload",BgDownload);
             XMLHelper.WriteElementToXML(writer,"OfflineMode",OfflineMode);
             writer.WriteStartElement("Replacements");
-            foreach (Replacement R in Replacements)
+            foreach (Replacement r in Replacements)
             {
                 writer.WriteStartElement("Replace");
-                XMLHelper.WriteAttributeToXML(writer,"This",R.This);
-                XMLHelper.WriteAttributeToXML(writer, "That", R.That);
-                XMLHelper.WriteAttributeToXML(writer, "CaseInsensitive", R.CaseInsensitive ? "Y" : "N");
+                XMLHelper.WriteAttributeToXML(writer,"This",r.This);
+                XMLHelper.WriteAttributeToXML(writer, "That", r.That);
+                XMLHelper.WriteAttributeToXML(writer, "CaseInsensitive", r.CaseInsensitive ? "Y" : "N");
                 writer.WriteEndElement(); //Replace
             }
             writer.WriteEndElement(); //Replacements
             
-            XMLHelper.WriteElementToXML(writer,"ExportWTWRSS",ExportWTWRSS);
-            XMLHelper.WriteElementToXML(writer,"ExportWTWRSSTo",ExportWTWRSSTo);
-            XMLHelper.WriteElementToXML(writer,"ExportWTWXML",ExportWTWXML);
-            XMLHelper.WriteElementToXML(writer,"ExportWTWXMLTo",ExportWTWXMLTo);
-            XMLHelper.WriteElementToXML(writer,"WTWRecentDays",WTWRecentDays);
+            XMLHelper.WriteElementToXML(writer,"ExportWTWRSS",ExportWtwrss);
+            XMLHelper.WriteElementToXML(writer,"ExportWTWRSSTo",ExportWtwrssTo);
+            XMLHelper.WriteElementToXML(writer,"ExportWTWXML",ExportWtwxml);
+            XMLHelper.WriteElementToXML(writer,"ExportWTWXMLTo",ExportWtwxmlTo);
+            XMLHelper.WriteElementToXML(writer,"WTWRecentDays",WtwRecentDays);
             XMLHelper.WriteElementToXML(writer,"ExportMissingXML",ExportMissingXML);
             XMLHelper.WriteElementToXML(writer,"ExportMissingXMLTo",ExportMissingXMLTo);
-            XMLHelper.WriteElementToXML(writer,"ExportMissingCSV",ExportMissingCSV);
-            XMLHelper.WriteElementToXML(writer,"ExportMissingCSVTo",ExportMissingCSVTo);
+            XMLHelper.WriteElementToXML(writer,"ExportMissingCSV",ExportMissingCsv);
+            XMLHelper.WriteElementToXML(writer,"ExportMissingCSVTo",ExportMissingCsvTo);
             XMLHelper.WriteElementToXML(writer,"ExportRenamingXML",ExportRenamingXML);
             XMLHelper.WriteElementToXML(writer,"ExportRenamingXMLTo",ExportRenamingXMLTo);
-            XMLHelper.WriteElementToXML(writer,"ExportShowsTXT", ExportShowsTXT);
-            XMLHelper.WriteElementToXML(writer, "ExportShowsTXTTo", ExportShowsTXTTo);
-            XMLHelper.WriteElementToXML(writer,"ExportFOXML",ExportFOXML);
-            XMLHelper.WriteElementToXML(writer,"ExportFOXMLTo",ExportFOXMLTo);
+            XMLHelper.WriteElementToXML(writer,"ExportShowsTXT", ExportShowsTxt);
+            XMLHelper.WriteElementToXML(writer, "ExportShowsTXTTo", ExportShowsTxtTo);
+            XMLHelper.WriteElementToXML(writer,"ExportFOXML",ExportFoxml);
+            XMLHelper.WriteElementToXML(writer,"ExportFOXMLTo",ExportFoxmlTo);
             XMLHelper.WriteElementToXML(writer,"StartupTab2",TabNameForNumber(StartupTab));
             XMLHelper.WriteElementToXML(writer,"NamingStyle",NamingStyle.StyleString);
             XMLHelper.WriteElementToXML(writer,"NotificationAreaIcon",NotificationAreaIcon);
             XMLHelper.WriteElementToXML(writer,"VideoExtensions",VideoExtensionsString);
             XMLHelper.WriteElementToXML(writer,"OtherExtensions",OtherExtensionsString);
-            XMLHelper.WriteElementToXML(writer,"ExportRSSMaxDays",ExportRSSMaxDays);
-            XMLHelper.WriteElementToXML(writer,"ExportRSSMaxShows",ExportRSSMaxShows);
-            XMLHelper.WriteElementToXML(writer,"ExportRSSDaysPast",ExportRSSDaysPast);
+            XMLHelper.WriteElementToXML(writer,"ExportRSSMaxDays",ExportRssMaxDays);
+            XMLHelper.WriteElementToXML(writer,"ExportRSSMaxShows",ExportRssMaxShows);
+            XMLHelper.WriteElementToXML(writer,"ExportRSSDaysPast",ExportRssDaysPast);
             XMLHelper.WriteElementToXML(writer,"KeepTogether",KeepTogether);
             XMLHelper.WriteElementToXML(writer,"LeadingZeroOnSeason",LeadingZeroOnSeason);
             XMLHelper.WriteElementToXML(writer,"ShowInTaskbar",ShowInTaskbar);
@@ -768,19 +768,19 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "AutoCreateFolders", AutoCreateFolders );
             XMLHelper.WriteElementToXML(writer,"ShowEpisodePictures",ShowEpisodePictures);
             XMLHelper.WriteElementToXML(writer,"SpecialsFolderName",SpecialsFolderName);
-            XMLHelper.WriteElementToXML(writer,"uTorrentPath",uTorrentPath);
+            XMLHelper.WriteElementToXML(writer,"uTorrentPath",UTorrentPath);
             XMLHelper.WriteElementToXML(writer,"ResumeDatPath",ResumeDatPath);
-            XMLHelper.WriteElementToXML(writer,"SearchRSS",SearchRSS);
-            XMLHelper.WriteElementToXML(writer,"EpImgs",EpTBNs);
-            XMLHelper.WriteElementToXML(writer,"NFOShows",NFOShows);
-            XMLHelper.WriteElementToXML(writer,"NFOEpisodes", NFOEpisodes);
-            XMLHelper.WriteElementToXML(writer,"KODIImages",KODIImages);
-            XMLHelper.WriteElementToXML(writer,"pyTivoMeta",pyTivoMeta);
-            XMLHelper.WriteElementToXML(writer,"pyTivoMetaSubFolder",pyTivoMetaSubFolder);
+            XMLHelper.WriteElementToXML(writer,"SearchRSS",SearchRss);
+            XMLHelper.WriteElementToXML(writer,"EpImgs",EpTbNs);
+            XMLHelper.WriteElementToXML(writer,"NFOShows",NfoShows);
+            XMLHelper.WriteElementToXML(writer,"NFOEpisodes", NfoEpisodes);
+            XMLHelper.WriteElementToXML(writer,"KODIImages",KodiImages);
+            XMLHelper.WriteElementToXML(writer,"pyTivoMeta",PyTivoMeta);
+            XMLHelper.WriteElementToXML(writer,"pyTivoMetaSubFolder",PyTivoMetaSubFolder);
             XMLHelper.WriteElementToXML(writer,"FolderJpg",FolderJpg);
             XMLHelper.WriteElementToXML(writer,"FolderJpgIs",(int) FolderJpgIs);
             XMLHelper.WriteElementToXML(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);
-            XMLHelper.WriteElementToXML(writer,"SelectedKODIType",(int)SelectedKODIType);
+            XMLHelper.WriteElementToXML(writer,"SelectedKODIType",(int)SelectedKodiType);
             XMLHelper.WriteElementToXML(writer,"CheckuTorrent",CheckuTorrent);
             XMLHelper.WriteElementToXML(writer,"RenameCheck",RenameCheck);
             XMLHelper.WriteElementToXML(writer,"MissingCheck",MissingCheck);
@@ -789,15 +789,15 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",LookForDateInFilename);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",MonitorFolders);
             XMLHelper.WriteElementToXML(writer, "RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
-            XMLHelper.WriteElementToXML(writer,"SABAPIKey",SABAPIKey);
-            XMLHelper.WriteElementToXML(writer,"CheckSABnzbd",CheckSABnzbd);
-            XMLHelper.WriteElementToXML(writer,"SABHostPort",SABHostPort);
+            XMLHelper.WriteElementToXML(writer,"SABAPIKey",SabapiKey);
+            XMLHelper.WriteElementToXML(writer,"CheckSABnzbd",CheckSaBnzbd);
+            XMLHelper.WriteElementToXML(writer,"SABHostPort",SabHostPort);
             XMLHelper.WriteElementToXML(writer,"PreferredLanguage",PreferredLanguage);
-            XMLHelper.WriteElementToXML(writer,"WTWDoubleClick",(int) WTWDoubleClick);
-            XMLHelper.WriteElementToXML(writer,"EpJPGs",EpJPGs);
+            XMLHelper.WriteElementToXML(writer,"WTWDoubleClick",(int) WtwDoubleClick);
+            XMLHelper.WriteElementToXML(writer,"EpJPGs",EpJpGs);
             XMLHelper.WriteElementToXML(writer,"SeriesJpg",SeriesJpg);
-            XMLHelper.WriteElementToXML(writer,"Mede8erXML",Mede8erXML);
-            XMLHelper.WriteElementToXML(writer,"ShrinkLargeMede8erImages",ShrinkLargeMede8erImages);
+            XMLHelper.WriteElementToXML(writer,"Mede8erXML",Mede8ErXML);
+            XMLHelper.WriteElementToXML(writer,"ShrinkLargeMede8erImages",ShrinkLargeMede8ErImages);
             XMLHelper.WriteElementToXML(writer,"FanArtJpg",FanArtJpg);
             XMLHelper.WriteElementToXML(writer,"DeleteEmpty",Tidyup.DeleteEmpty);
             XMLHelper.WriteElementToXML(writer,"DeleteEmptyIsRecycle",Tidyup.DeleteEmptyIsRecycle);
@@ -806,14 +806,14 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"EmptyIgnoreExtensions",Tidyup.EmptyIgnoreExtensions);
             XMLHelper.WriteElementToXML(writer,"EmptyIgnoreExtensionList",Tidyup.EmptyIgnoreExtensionList);
             XMLHelper.WriteElementToXML(writer,"EmptyMaxSizeCheck",Tidyup.EmptyMaxSizeCheck);
-            XMLHelper.WriteElementToXML(writer,"EmptyMaxSizeMB",Tidyup.EmptyMaxSizeMB);
+            XMLHelper.WriteElementToXML(writer,"EmptyMaxSizeMB",Tidyup.EmptyMaxSizeMb);
 
             writer.WriteStartElement("FNPRegexs");
-            foreach (FilenameProcessorRE re in FNPRegexs)
+            foreach (FilenameProcessorRe re in FnpRegexs)
             {
                 writer.WriteStartElement("Regex");
                 XMLHelper.WriteAttributeToXML(writer,"Enabled",re.Enabled);
-                XMLHelper.WriteAttributeToXML(writer,"RE",re.RE);
+                XMLHelper.WriteAttributeToXML(writer,"RE",re.Re);
                 XMLHelper.WriteAttributeToXML(writer,"UseFullPath",re.UseFullPath);
                 XMLHelper.WriteAttributeToXML(writer,"Notes",re.Notes);
                 writer.WriteEndElement(); // Regex
@@ -821,7 +821,7 @@ namespace TVRename
             writer.WriteEndElement(); // FNPRegexs
 
             writer.WriteStartElement("RSSURLs");
-            foreach (string s in RSSURLs) XMLHelper.WriteElementToXML(writer,"URL",s);
+            foreach (string s in RssurLs) XMLHelper.WriteElementToXML(writer,"URL",s);
             writer.WriteEndElement(); // RSSURLs
 
             if (ShowStatusColors != null)
@@ -849,7 +849,7 @@ namespace TVRename
                 XMLHelper.WriteInfo(writer, "ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork);
                 XMLHelper.WriteInfo(writer, "ShowRatingFilter", "ShowRating", Filter.ShowRating);
 
-                foreach (String Genre in Filter.Genres) XMLHelper.WriteInfo(writer, "GenreFilter", "Genre", Genre);
+                foreach (String genre in Filter.Genres) XMLHelper.WriteInfo(writer, "GenreFilter", "Genre", genre);
  
                 writer.WriteEndElement(); //ShowFilters
             }
@@ -863,7 +863,7 @@ namespace TVRename
         
         public string GetOtherExtensionsString() => OtherExtensionsString;
         
-        public static bool OKExtensionsString(string s)
+        public static bool OkExtensionsString(string s)
         {
             if (string.IsNullOrEmpty(s))
                 return true;
@@ -882,50 +882,50 @@ namespace TVRename
             return "*?<>:/\\|\""; // invalid filename characters, must be in the list!
         }
 
-        public static List<FilenameProcessorRE> DefaultFNPList()
+        public static List<FilenameProcessorRe> DefaultFnpList()
         {
             // Default list of filename processors
 
-            List<FilenameProcessorRE> l = new List<FilenameProcessorRE>
+            List<FilenameProcessorRe> l = new List<FilenameProcessorRe>
                                               {
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRe(true,
                                                                           "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]",
                                                                           false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),
-                                                  new FilenameProcessorRE(false,
+                                                  new FilenameProcessorRe(false,
                                                                           "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]",
                                                                           false,
                                                                           "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."),
-                                                  new FilenameProcessorRE(false,
+                                                  new FilenameProcessorRe(false,
                                                                           "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]",
                                                                           false, "S02--E03"),
-                                                  new FilenameProcessorRE(false,
+                                                  new FilenameProcessorRe(false,
                                                                           "(^|[^a-z])s(?<s>[0-9]+) e(?<e>[0-9]{2,})[^a-z]",
                                                                           false, "'S02.E04' and 'S02 E04'"),
-                                                  new FilenameProcessorRE(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false,
+                                                  new FilenameProcessorRe(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false,
                                                                           "filenames starting with '1.23' for season 1, episode 23"),
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRe(true,
                                                                           "(^|[^a-z])(?<s>[0-9])(?<e>[0-9]{2,})[^a-z]",
                                                                           false, "Show - 323 - Foo"),
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRe(true,
                                                                           "(^|[^a-z])se(?<s>[0-9]+)([ex]|ep|xep)?(?<e>[0-9]+)[^a-z]",
                                                                           false, "se3e23 se323 se1ep1 se01xep01..."),
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRe(true,
                                                                           "(^|[^a-z])(?<s>[0-9]+)-(?<e>[0-9]{2,})[^a-z]",
                                                                           false, "3-23 EpName"),
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRe(true,
                                                                           "(^|[^a-z])s(?<s>[0-9]+) +- +e(?<e>[0-9]{2,})[^a-z]",
                                                                           false, "ShowName - S01 - E01"),
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRe(true,
                                                                           "\\b(?<e>[0-9]{2,}) ?- ?.* ?- ?(?<s>[0-9]+)",
                                                                           false,
                                                                           "like '13 - Showname - 2 - Episode Title.avi'"),
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRe(true,
                                                                           "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)",
                                                                           false, "episode 3 - season 4"),
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRe(true,
                                                                           "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-",
                                                                           true, "Show Season 3\\E23 - Epname"),
-                                                  new FilenameProcessorRE(false,
+                                                  new FilenameProcessorRe(false,
                                                                           "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})",
                                                                           true, "Season 3\\Episode 23")
                                               };
@@ -933,7 +933,7 @@ namespace TVRename
             return l;
         }
 
-        private static List<Replacement> DefaultListRE()
+        private static List<Replacement> DefaultListRe()
         {
             return new List<Replacement>
                        {
@@ -949,7 +949,7 @@ namespace TVRename
                        };
         }
 
-        private static List<string> DefaultRSSURLList()
+        private static List<string> DefaultRssurlList()
         {
             List<string> sl = new List<String>
                                   {
@@ -999,7 +999,7 @@ namespace TVRename
             return false;
         }
 
-        public string BTSearchURL(ProcessedEpisode epi)
+        public string BtSearchUrl(ProcessedEpisode epi)
         {
             if (epi == null)
                 return "";
@@ -1008,20 +1008,20 @@ namespace TVRename
             if (s == null)
                 return "";
 
-            String url = String.IsNullOrEmpty(epi.SI.CustomSearchURL)
-                             ? TheSearchers.CurrentSearchURL()
-                             : epi.SI.CustomSearchURL;
+            String url = String.IsNullOrEmpty(epi.Si.CustomSearchUrl)
+                             ? TheSearchers.CurrentSearchUrl()
+                             : epi.Si.CustomSearchUrl;
             return CustomName.NameForNoExt(epi, url, true);
         }
 
         public string FilenameFriendly(string fn)
         {
-            foreach (Replacement R in Replacements)
+            foreach (Replacement r in Replacements)
             {
-                if (R.CaseInsensitive)
-                    fn = Regex.Replace(fn, Regex.Escape(R.This), Regex.Escape(R.That), RegexOptions.IgnoreCase);
+                if (r.CaseInsensitive)
+                    fn = Regex.Replace(fn, Regex.Escape(r.This), Regex.Escape(r.That), RegexOptions.IgnoreCase);
                 else
-                    fn = fn.Replace(R.This, R.That);
+                    fn = fn.Replace(r.This, r.That);
             }
             if (ForceLowercaseFilenames)
                 fn = fn.ToLower();
@@ -1031,7 +1031,7 @@ namespace TVRename
         public bool NeedToDownloadBannerFile(){
             // Return true iff we need to download season specific images
             // There are 4 possible reasons
-            return (SeasonSpecificFolderJPG() || KODIImages || SeriesJpg ||FanArtJpg);
+            return (SeasonSpecificFolderJPG() || KodiImages || SeriesJpg ||FanArtJpg);
         }
 
         public bool SeasonSpecificFolderJPG() {
@@ -1040,12 +1040,12 @@ namespace TVRename
 
         public bool DownloadFrodoImages()
         {
-            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Frodo));
+            return (KodiImages && (SelectedKodiType == KodiType.Both || SelectedKodiType == KodiType.Frodo));
         }
 
         public bool DownloadEdenImages()
         {
-            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Eden)); 
+            return (KodiImages && (SelectedKodiType == KodiType.Both || SelectedKodiType == KodiType.Eden)); 
         }
     }
 }

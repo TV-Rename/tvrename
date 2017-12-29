@@ -19,27 +19,27 @@ namespace TVRename
     ///          the designers will not be able to interact properly with localized
     ///          resources associated with this form.
     /// </summary>
-    public enum FAResult
+    public enum FaResult
     {
-        kfaNotSet,
-        kfaRetry,
-        kfaCancel,
-        kfaCreate,
-        kfaIgnoreOnce,
-        kfaIgnoreAlways,
-        kfaDifferentFolder
+        KfaNotSet,
+        KfaRetry,
+        KfaCancel,
+        KfaCreate,
+        KfaIgnoreOnce,
+        KfaIgnoreAlways,
+        KfaDifferentFolder
     }
 
     public partial class MissingFolderAction : Form
     {
         public string FolderName;
-        public FAResult Result;
+        public FaResult Result;
 
         public MissingFolderAction(string showName, string season, string folderName)
         {
             InitializeComponent();
 
-            Result = FAResult.kfaCancel;
+            Result = FaResult.KfaCancel;
             FolderName = folderName;
             txtShow.Text = showName;
             txtSeason.Text = season;
@@ -55,31 +55,31 @@ namespace TVRename
 
         private void bnIgnoreOnce_Click(object sender, System.EventArgs e)
         {
-            Result = FAResult.kfaIgnoreOnce;
+            Result = FaResult.KfaIgnoreOnce;
             Close();
         }
 
         private void bnIgnoreAlways_Click(object sender, System.EventArgs e)
         {
-            Result = FAResult.kfaIgnoreAlways;
+            Result = FaResult.KfaIgnoreAlways;
             Close();
         }
 
         private void bnCreate_Click(object sender, System.EventArgs e)
         {
-            Result = FAResult.kfaCreate;
+            Result = FaResult.KfaCreate;
             Close();
         }
 
         private void bnRetry_Click(object sender, System.EventArgs e)
         {
-            Result = FAResult.kfaRetry;
+            Result = FaResult.KfaRetry;
             Close();
         }
 
         private void bnCancel_Click(object sender, System.EventArgs e)
         {
-            Result = FAResult.kfaCancel;
+            Result = FaResult.KfaCancel;
             Close();
         }
 
@@ -88,7 +88,7 @@ namespace TVRename
             folderBrowser.SelectedPath = FolderName;
             if (folderBrowser.ShowDialog() == DialogResult.OK)
             {
-                Result = FAResult.kfaDifferentFolder;
+                Result = FaResult.KfaDifferentFolder;
                 FolderName = folderBrowser.SelectedPath;
                 Close();
             }
@@ -111,7 +111,7 @@ namespace TVRename
                     if (di.Exists)
                     {
                         FolderName = path;
-                        Result = FAResult.kfaDifferentFolder;
+                        Result = FaResult.KfaDifferentFolder;
                         Close();
                         return;
                     }

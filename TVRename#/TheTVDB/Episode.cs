@@ -16,7 +16,7 @@ namespace TVRename
     {
         public bool Dirty;
         public int EpNum;
-        public int EpisodeID;
+        public int EpisodeId;
         public DateTime? FirstAired;
         public Dictionary<string, string> Items; // other fields we don't specifically grab
         public string Overview;
@@ -26,35 +26,35 @@ namespace TVRename
         public string Writer;
 
         public int ReadSeasonNum; // only use after loading to attach to the correct season!
-        public int SeasonID;
-        public int SeriesID;
-        public long Srv_LastUpdated;
+        public int SeasonId;
+        public int SeriesId;
+        public long SrvLastUpdated;
 
         public Season TheSeason;
         public SeriesInfo TheSeries;
-        private string mName;
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private string _mName;
+        private static NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public Episode(Episode O)
+        public Episode(Episode o)
         {
-            EpisodeID = O.EpisodeID;
-            SeriesID = O.SeriesID;
-            EpNum = O.EpNum;
-            FirstAired = O.FirstAired;
-            Srv_LastUpdated = O.Srv_LastUpdated;
-            Overview = O.Overview;
-            EpisodeRating = O.EpisodeRating;
-            EpisodeGuestStars = O.EpisodeGuestStars;
-            EpisodeDirector = O.EpisodeDirector;
-            Writer = O.Writer;
-            Name = O.Name;
-            TheSeason = O.TheSeason;
-            TheSeries = O.TheSeries;
-            SeasonID = O.SeasonID;
-            Dirty = O.Dirty;
+            EpisodeId = o.EpisodeId;
+            SeriesId = o.SeriesId;
+            EpNum = o.EpNum;
+            FirstAired = o.FirstAired;
+            SrvLastUpdated = o.SrvLastUpdated;
+            Overview = o.Overview;
+            EpisodeRating = o.EpisodeRating;
+            EpisodeGuestStars = o.EpisodeGuestStars;
+            EpisodeDirector = o.EpisodeDirector;
+            Writer = o.Writer;
+            Name = o.Name;
+            TheSeason = o.TheSeason;
+            TheSeries = o.TheSeries;
+            SeasonId = o.SeasonId;
+            Dirty = o.Dirty;
 
             Items = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, string> i in O.Items)
+            foreach (KeyValuePair<string, string> i in o.Items)
                 Items.Add(i.Key, i.Value);
         }
 
@@ -84,11 +84,11 @@ namespace TVRename
                     if ((r.Name == "Episode") && (!r.IsStartElement()))
                         break;
                     if (r.Name == "id")
-                        EpisodeID = r.ReadElementContentAsInt();
+                        EpisodeId = r.ReadElementContentAsInt();
                     else if (r.Name == "seriesid")
-                        SeriesID = r.ReadElementContentAsInt(); // thetvdb series id
+                        SeriesId = r.ReadElementContentAsInt(); // thetvdb series id
                     else if (r.Name == "seasonid")
-                        SeasonID = r.ReadElementContentAsInt();
+                        SeasonId = r.ReadElementContentAsInt();
                     else if (r.Name == "EpisodeNumber")
                         EpNum = r.ReadElementContentAsInt();
                     else if (r.Name == "SeasonNumber")
@@ -97,7 +97,7 @@ namespace TVRename
                         int.TryParse(sn, out ReadSeasonNum);
                     }
                     else if (r.Name == "lastupdated")
-                        Srv_LastUpdated = r.ReadElementContentAsInt();
+                        SrvLastUpdated = r.ReadElementContentAsInt();
                     else if (r.Name == "Overview")
                         Overview = XMLHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "Rating")        
@@ -117,7 +117,7 @@ namespace TVRename
                             String contents = r.ReadElementContentAsString();
                             if (contents == "")
                             {
-                               logger.Info ("Please confirm, but we are assuming that " + Name +"(episode Id =" +EpisodeID + ") has no airdate");
+                               _logger.Info ("Please confirm, but we are assuming that " + Name +"(episode Id =" +EpisodeId + ") has no airdate");
                                 FirstAired = null;
                             } else { 
                                 FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
@@ -146,17 +146,17 @@ namespace TVRename
             catch (XmlException e)
             {
                 string message = "Error processing data from TheTVDB for an episode.";
-                if (SeriesID != -1)
-                    message += "\r\nSeries ID: " + SeriesID;
-                if (EpisodeID != -1)
-                    message += "\r\nEpisode ID: " + EpisodeID;
+                if (SeriesId != -1)
+                    message += "\r\nSeries ID: " + SeriesId;
+                if (EpisodeId != -1)
+                    message += "\r\nEpisode ID: " + EpisodeId;
                 if (EpNum != -1)
                     message += "\r\nEpisode Number: " + EpNum;
                 if (!string.IsNullOrEmpty(Name))
                     message += "\r\nName: " + Name;
 
 
-                logger.Error(e, message);
+                _logger.Error(e, message);
 
                 throw new TVDBException(e.Message);
             }
@@ -165,7 +165,7 @@ namespace TVRename
         public Episode(int seriesId, JObject json, JObject jsonInDefaultLang)
         {
             SetDefaults(null,null);
-            loadJSON(seriesId, json, jsonInDefaultLang);
+            LoadJson(seriesId, json, jsonInDefaultLang);
         }
 
         public Episode(int seriesId,JObject r)
@@ -177,13 +177,13 @@ namespace TVRename
 
             SetDefaults(null, null);
 
-            loadJSON(seriesId,r);
+            LoadJson(seriesId,r);
         }
-        private void loadJSON(int seriesId, JObject bestLanguageR, JObject backupLanguageR)
+        private void LoadJson(int seriesId, JObject bestLanguageR, JObject backupLanguageR)
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English). 
             //We will populate with the best language frst and then fillin any gaps with the backup Language
-            loadJSON(seriesId,bestLanguageR);
+            LoadJson(seriesId,bestLanguageR);
 
             //backupLanguageR should be a series of name/value pairs (ie a JArray of JPropertes)
             //TVDB asserts that name and overview are the fields that are localised
@@ -204,7 +204,7 @@ namespace TVRename
         }
 
 
-        private void loadJSON(int seriesId, JObject r)
+        private void LoadJson(int seriesId, JObject r)
         {
             //r should be a series of name/value pairs (ie a JArray of JPropertes)
             //save them all into the Items array for safe keeping
@@ -213,7 +213,7 @@ namespace TVRename
                 try
                 {
                     JToken currentData = (JToken)episodeItems.Value;
-                    if (currentData.Type == JTokenType.Array) Items[episodeItems.Name] = JSONHelper.flatten((JToken)currentData);
+                    if (currentData.Type == JTokenType.Array) Items[episodeItems.Name] = JsonHelper.Flatten((JToken)currentData);
                     else if (currentData.Type != JTokenType.Object) //Ignore objects here as it is always the 'language' attribute that we do not need
                     {
                         JValue currentValue = (JValue)episodeItems.Value;
@@ -224,48 +224,48 @@ namespace TVRename
                 }
                 catch (ArgumentException ae)
                 {
-                   logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   _logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
                 catch (NullReferenceException ae)
                 {
-                   logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   _logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
                 catch (InvalidCastException ae)
                 {
-                   logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   _logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
             }
 
-            SeriesID = seriesId;
+            SeriesId = seriesId;
 
-            EpisodeID = (int)r["id"];
+            EpisodeId = (int)r["id"];
 
-            if ((string)r["airedSeasonID"] != null) { SeasonID = (int)r["airedSeasonID"]; }
+            if ((string)r["airedSeasonID"] != null) { SeasonId = (int)r["airedSeasonID"]; }
             else
             {
-               logger.Error("Issue with episode " + EpisodeID + " for series " + seriesId + " no airedSeasonID " );
-               logger.Error(r.ToString());
+               _logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " no airedSeasonID " );
+               _logger.Error(r.ToString());
             }
 
             EpNum = (int)r["airedEpisodeNumber"];
-            Srv_LastUpdated = (int)r["lastUpdated"];
+            SrvLastUpdated = (int)r["lastUpdated"];
             Overview = (string)r["overview"];
             EpisodeRating = (string)r["siteRating"];
             Name = (string)r["episodeName"];
 
             String sn = (string)r["airedSeason"];
             if (sn == null) {
-               logger.Error("Issue with episode " + EpisodeID + " for series " + seriesId + " airedSeason = null");
-               logger.Error(r.ToString());
+               _logger.Error("Issue with episode " + EpisodeId + " for series " + seriesId + " airedSeason = null");
+               _logger.Error(r.ToString());
             }
             else { int.TryParse(sn, out ReadSeasonNum); }
             
-            EpisodeGuestStars = JSONHelper.flatten((JToken)r["guestStars"], "|");
-            EpisodeDirector = JSONHelper.flatten((JToken)r["directors"], "|");
-            Writer = JSONHelper.flatten((JToken)r["writers"], "|");
+            EpisodeGuestStars = JsonHelper.Flatten((JToken)r["guestStars"], "|");
+            EpisodeDirector = JsonHelper.Flatten((JToken)r["directors"], "|");
+            Writer = JsonHelper.Flatten((JToken)r["writers"], "|");
 
             try
             {
@@ -282,7 +282,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Debug(e, "Failed to parse firstAired");
+                _logger.Debug(e, "Failed to parse firstAired");
                 FirstAired = null;
 
             }
@@ -292,11 +292,11 @@ namespace TVRename
         {
             get
             {
-                if ((mName == null) || (string.IsNullOrEmpty(mName)))
+                if ((_mName == null) || (string.IsNullOrEmpty(_mName)))
                     return "Episode " + EpNum;
-                return mName;
+                return _mName;
             }
-            set { mName = value; }
+            set { _mName = value; }
         }
 
         public int SeasonNumber
@@ -311,12 +311,12 @@ namespace TVRename
 
         public bool SameAs(Episode o)
         {
-            return (EpisodeID == o.EpisodeID);
+            return (EpisodeId == o.EpisodeId);
         }
 
         public string GetFilename()
         {
-            return getValueAcrossVersions("filename", "Filename","");
+            return GetValueAcrossVersions("filename", "Filename","");
         }
 
         public string[] GetGuestStars()
@@ -334,7 +334,7 @@ namespace TVRename
         }
 
 
-       string getValueAcrossVersions(string oldTag, string newTag, string defaultValue)
+       string GetValueAcrossVersions(string oldTag, string newTag, string defaultValue)
         {
             //Need to cater for new and old style tags (TVDB interface v1 vs v2)
             if (Items.ContainsKey(oldTag)) return Items[oldTag];
@@ -342,12 +342,12 @@ namespace TVRename
             return defaultValue;
         }
 
-        public bool OK()
+        public bool Ok()
         {
-            bool returnVal = (SeriesID != -1) && (EpisodeID != -1) && (EpNum != -1) && (SeasonID != -1) && (ReadSeasonNum != -1);
+            bool returnVal = (SeriesId != -1) && (EpisodeId != -1) && (EpNum != -1) && (SeasonId != -1) && (ReadSeasonNum != -1);
             if (!returnVal)
             {
-               logger.Warn("Issue with episode " + EpisodeID + " for series " + SeriesID + " for EpNum " + EpNum + " for SeasonID " + SeasonID + " for ReadSeasonNum " + ReadSeasonNum);
+               _logger.Warn("Issue with episode " + EpisodeId + " for series " + SeriesId + " for EpNum " + EpNum + " for SeasonID " + SeasonId + " for ReadSeasonNum " + ReadSeasonNum);
             }
 
             return returnVal;
@@ -365,16 +365,16 @@ namespace TVRename
             EpisodeDirector = ""; 
             Writer = ""; 
             Name = "";
-            EpisodeID = -1;
-            SeriesID = -1;
+            EpisodeId = -1;
+            SeriesId = -1;
             ReadSeasonNum  = -1;
             EpNum = -1;
             FirstAired = null;
-            Srv_LastUpdated = -1;
+            SrvLastUpdated = -1;
             Dirty = false;
         }
 
-        public DateTime? GetAirDateDT(bool inLocalTime)
+        public DateTime? GetAirDateDt(bool inLocalTime)
         {
             if (FirstAired == null)
                 return null;
@@ -388,12 +388,12 @@ namespace TVRename
                 return dt;
 
             // do timezone adjustment
-            return TimeZone.AdjustTZTimeToLocalTime(dt, TheSeries.GetTimeZone());
+            return TimeZone.AdjustTzTimeToLocalTime(dt, TheSeries.GetTimeZone());
         }
 
         public string HowLong()
         {
-            DateTime? airsdt = GetAirDateDT(true);
+            DateTime? airsdt = GetAirDateDt(true);
             if (airsdt == null)
                 return "";
             DateTime dt = (DateTime) airsdt;
@@ -417,13 +417,13 @@ namespace TVRename
 
         public string DayOfWeek()
         {
-            DateTime? dt = GetAirDateDT(true);
+            DateTime? dt = GetAirDateDt(true);
             return (dt != null) ? dt.Value.ToString("ddd") : "-";
         }
 
         public string TimeOfDay()
         {
-            DateTime? dt = GetAirDateDT(true);
+            DateTime? dt = GetAirDateDt(true);
             return (dt != null) ? dt.Value.ToString("t") : "-";
         }
 
@@ -437,12 +437,12 @@ namespace TVRename
         {
             writer.WriteStartElement("Episode");
 
-            XMLHelper.WriteElementToXML(writer,"id",EpisodeID);
-            XMLHelper.WriteElementToXML(writer,"seriesid",SeriesID);
-            XMLHelper.WriteElementToXML(writer,"seasonid",SeasonID);
+            XMLHelper.WriteElementToXML(writer,"id",EpisodeId);
+            XMLHelper.WriteElementToXML(writer,"seriesid",SeriesId);
+            XMLHelper.WriteElementToXML(writer,"seasonid",SeasonId);
             XMLHelper.WriteElementToXML(writer,"EpisodeNumber",EpNum);
             XMLHelper.WriteElementToXML(writer,"SeasonNumber",SeasonNumber);
-            XMLHelper.WriteElementToXML(writer,"lastupdated",Srv_LastUpdated);
+            XMLHelper.WriteElementToXML(writer,"lastupdated",SrvLastUpdated);
             XMLHelper.WriteElementToXML(writer,"Overview",Overview);
             XMLHelper.WriteElementToXML(writer,"Rating",EpisodeRating);  
             XMLHelper.WriteElementToXML(writer,"GuestStars",EpisodeGuestStars);  

@@ -9,10 +9,10 @@ namespace TVRename
         public const string TVDBFileName = "TheTVDB.xml";
         public const string SettingsFileName = "TVRenameSettings.xml";
         const string LayoutFileName = "TVRenameLayout.dat";
-        const string UILayoutFileName = "Layout.xml";
+        const string UiLayoutFileName = "Layout.xml";
         const string StatisticsFileName = "Statistics.xml";
 
-        private static string userDefinedBasePath;
+        private static string _userDefinedBasePath;
 
         public static void SetUserDefinedBasePath(string path)
         {
@@ -30,7 +30,7 @@ namespace TVRename
             {
                 System.IO.Directory.CreateDirectory(path);
             }
-            userDefinedBasePath = path;
+            _userDefinedBasePath = path;
         }
 
         protected static FileInfo GetFileInfo(string path, string file)
@@ -42,9 +42,9 @@ namespace TVRename
         {
             get
             {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
+                if (!string.IsNullOrEmpty(_userDefinedBasePath))
                 {
-                    return GetFileInfo(userDefinedBasePath, StatisticsFileName);
+                    return GetFileInfo(_userDefinedBasePath, StatisticsFileName);
                 }
                 else
                 {
@@ -57,9 +57,9 @@ namespace TVRename
         {
             get
             {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
+                if (!string.IsNullOrEmpty(_userDefinedBasePath))
                 {
-                    return GetFileInfo(userDefinedBasePath, LayoutFileName);
+                    return GetFileInfo(_userDefinedBasePath, LayoutFileName);
                 }
                 else
                 {
@@ -68,17 +68,17 @@ namespace TVRename
             }
         }
 
-        public static FileInfo UILayoutFile
+        public static FileInfo UiLayoutFile
         {
             get
             {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
+                if (!string.IsNullOrEmpty(_userDefinedBasePath))
                 {
-                    return GetFileInfo(userDefinedBasePath, UILayoutFileName);
+                    return GetFileInfo(_userDefinedBasePath, UiLayoutFileName);
                 }
                 else
                 {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), UILayoutFileName);
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), UiLayoutFileName);
                 }
             }
         }
@@ -87,9 +87,9 @@ namespace TVRename
         {
             get
             {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
+                if (!string.IsNullOrEmpty(_userDefinedBasePath))
                 {
-                    return GetFileInfo(userDefinedBasePath, TVDBFileName);
+                    return GetFileInfo(_userDefinedBasePath, TVDBFileName);
                 }
                 else
                 {
@@ -102,9 +102,9 @@ namespace TVRename
         {
             get
             {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
+                if (!string.IsNullOrEmpty(_userDefinedBasePath))
                 {
-                    return GetFileInfo(userDefinedBasePath, SettingsFileName);
+                    return GetFileInfo(_userDefinedBasePath, SettingsFileName);
                 }
                 else
                 {

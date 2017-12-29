@@ -25,21 +25,21 @@ namespace TVRename
     /// </summary>
     public partial class CustomNameDesigner : Form
     {
-        private CustomName CN;
-        private List<ProcessedEpisode> Eps;
-        private TVDoc mDoc;
+        private CustomName _cn;
+        private List<ProcessedEpisode> _eps;
+        private TVDoc _mDoc;
 
         public CustomNameDesigner(List<ProcessedEpisode> pel, CustomName cn, TVDoc doc)
         {
-            Eps = pel;
-            CN = cn;
-            mDoc = doc;
+            _eps = pel;
+            _cn = cn;
+            _mDoc = doc;
 
             InitializeComponent();
 
-            if (Eps == null)
+            if (_eps == null)
                 lvTest.Enabled = false;
-            txtTemplate.Text = CN.StyleString;
+            txtTemplate.Text = _cn.StyleString;
 
             FillExamples();
             FillCombos();
@@ -51,7 +51,7 @@ namespace TVRename
             cbPresets.Items.Clear();
             ProcessedEpisode pe = null;
             if (lvTest.SelectedItems.Count == 0)
-                pe = ((Eps != null) && (Eps.Count > 0)) ? Eps[0] : null;
+                pe = ((_eps != null) && (_eps.Count > 0)) ? _eps[0] : null;
             else
                 pe = (ProcessedEpisode) (lvTest.SelectedItems[0].Tag);
 
@@ -71,14 +71,14 @@ namespace TVRename
 
         private void FillExamples()
         {
-            if (Eps == null)
+            if (_eps == null)
                 return;
 
             lvTest.Items.Clear();
-            foreach (ProcessedEpisode pe in Eps)
+            foreach (ProcessedEpisode pe in _eps)
             {
                 ListViewItem lvi = new ListViewItem();
-                string fn = TVSettings.Instance.FilenameFriendly(CN.NameForExt(pe, null, 0));
+                string fn = TVSettings.Instance.FilenameFriendly(_cn.NameForExt(pe, null, 0));
                 lvi.Text = fn;
 
                 bool ok = false;
@@ -88,7 +88,7 @@ namespace TVRename
                 {
                     int seas;
                     int ep;
-                    ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out seas, out ep, pe.SI);
+                    ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out seas, out ep, pe.Si);
                     ok1 = ok && (seas == pe.SeasonNumber);
                     ok2 = ok && (ep == pe.EpNum);
                     string pre1 = ok1 ? "" : "* ";
@@ -116,7 +116,7 @@ namespace TVRename
 
         private void txtTemplate_TextChanged(object sender, System.EventArgs e)
         {
-            CN.StyleString = txtTemplate.Text;
+            _cn.StyleString = txtTemplate.Text;
             FillExamples();
         }
 

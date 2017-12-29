@@ -5,46 +5,46 @@ namespace TVRename
 {
     class DownloadFanartJPG : DownloadIdentifier
     {
-        private static List<string> doneFanartJPG;
-        private const string defaultFileName = "fanart.jpg";
+        private static List<string> _doneFanartJPG;
+        private const string DefaultFileName = "fanart.jpg";
 
         public DownloadFanartJPG() 
         {
-            reset();
+            Reset();
         }
 
         public override DownloadType GetDownloadType()
         {
-            return DownloadType.downloadImage;
+            return DownloadType.DownloadImage;
         }
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             //We only want to do something if the fanart option is enabled. If the KODI option is enabled then let it do the work.
-            if ((TVSettings.Instance.FanArtJpg) && !TVSettings.Instance.KODIImages)
+            if ((TVSettings.Instance.FanArtJpg) && !TVSettings.Instance.KodiImages)
             {
-                ItemList TheActionList = new ItemList();
-                FileInfo fi = FileHelper.FileInFolder(si.AutoAdd_FolderBase, defaultFileName);
+                ItemList theActionList = new ItemList();
+                FileInfo fi = FileHelper.FileInFolder(si.AutoAddFolderBase, DefaultFileName);
 
                 bool doesntExist =  !fi.Exists;
-                if ((forceRefresh ||doesntExist) &&(!doneFanartJPG.Contains(fi.FullName)))
+                if ((forceRefresh ||doesntExist) &&(!_doneFanartJPG.Contains(fi.FullName)))
                 {
                     string bannerPath = si.TheSeries().GetSeriesFanartPath();
 
                     if (!string.IsNullOrEmpty(bannerPath))
-                        TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, false));
-                    doneFanartJPG.Add(fi.FullName);
+                        theActionList.Add(new ActionDownload(si, null, fi, bannerPath, false));
+                    _doneFanartJPG.Add(fi.FullName);
                 }
-                return TheActionList;
+                return theActionList;
 
             }
             return base.ProcessShow(si, forceRefresh);
         }
 
-        public override void reset()
+        public override void Reset()
         {
-            doneFanartJPG = new List<string>(); 
-            base.reset();
+            _doneFanartJPG = new List<string>(); 
+            base.Reset();
         }
 
     }

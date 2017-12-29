@@ -14,14 +14,14 @@ namespace TVRename
 {
     public enum RuleAction
     {
-        kRemove,
-        kSwap,
-        kMerge,
-        kInsert,
-        kIgnoreEp,
-        kRename,
-        kSplit,
-        kCollapse
+        KRemove,
+        KSwap,
+        KMerge,
+        KInsert,
+        KIgnoreEp,
+        KRename,
+        KSplit,
+        KCollapse
     }
 
     public class ShowRule
@@ -59,17 +59,17 @@ namespace TVRename
             }
         }
 
-        public ShowRule(ShowRule O)
+        public ShowRule(ShowRule o)
         {
-            DoWhatNow = O.DoWhatNow;
-            First = O.First;
-            Second = O.Second;
-            UserSuppliedText = O.UserSuppliedText;
+            DoWhatNow = o.DoWhatNow;
+            First = o.First;
+            Second = o.Second;
+            UserSuppliedText = o.UserSuppliedText;
         }
 
         public void SetToDefaults()
         {
-            DoWhatNow = RuleAction.kIgnoreEp;
+            DoWhatNow = RuleAction.KIgnoreEp;
             First = Second = -1;
             UserSuppliedText = "";
         }
@@ -88,21 +88,21 @@ namespace TVRename
         {
             switch (DoWhatNow)
             {
-                case RuleAction.kIgnoreEp:
+                case RuleAction.KIgnoreEp:
                     return "Ignore";
-                case RuleAction.kRemove:
+                case RuleAction.KRemove:
                     return "Remove";
-                case RuleAction.kCollapse:
+                case RuleAction.KCollapse:
                     return "Collapse";
-                case RuleAction.kSwap:
+                case RuleAction.KSwap:
                     return "Swap";
-                case RuleAction.kMerge:
+                case RuleAction.KMerge:
                     return "Merge";
-                case RuleAction.kSplit:
+                case RuleAction.KSplit:
                     return "Split";
-                case RuleAction.kInsert:
+                case RuleAction.KInsert:
                     return "Insert";
-                case RuleAction.kRename:
+                case RuleAction.KRename:
                     return "Rename";
                 default:
                     return "<Unknown>";

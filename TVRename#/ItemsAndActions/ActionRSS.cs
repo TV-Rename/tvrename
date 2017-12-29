@@ -12,15 +12,15 @@ namespace TVRename
     using System.Windows.Forms;
 
     // MS_TODO: derive this from ActionDownload?
-    public class ActionRSS : Item, Action, ScanListItem
+    public class ActionRss : ITem, IAction, IScanListItem
     {
-        public RSSItem RSS;
+        public RssItem Rss;
         public string TheFileNoExt;
 
-        public ActionRSS(RSSItem rss, string toWhereNoExt, ProcessedEpisode pe)
+        public ActionRss(RssItem rss, string toWhereNoExt, ProcessedEpisode pe)
         {
             Episode = pe;
-            RSS = rss;
+            Rss = rss;
             TheFileNoExt = toWhereNoExt;
         }
 
@@ -32,7 +32,7 @@ namespace TVRename
 
         public string ProgressText
         {
-            get { return RSS.Title; }
+            get { return Rss.Title; }
         }
 
         public double PercentDone
@@ -50,9 +50,9 @@ namespace TVRename
             get { return 1000000; }
         }
 
-        public string produces
+        public string Produces
         {
-            get { return RSS.URL; }
+            get { return Rss.Url; }
         }
 
         public bool Go( ref bool pause, TVRenameStats stats)
@@ -60,7 +60,7 @@ namespace TVRename
             System.Net.WebClient wc = new System.Net.WebClient();
             try
             {
-                byte[] r = wc.DownloadData(RSS.URL);
+                byte[] r = wc.DownloadData(Rss.Url);
                 if ((r == null) || (r.Length == 0))
                 {
                     Error = true;
@@ -69,12 +69,12 @@ namespace TVRename
                     return false;
                 }
 
-                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(RSS.Title);
+                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(Rss.Title);
                 if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
                     saveTemp += ".torrent";
                 File.WriteAllBytes(saveTemp, r);
 
-                System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "/directory \"" + (new FileInfo(TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
+                System.Diagnostics.Process.Start(TVSettings.Instance.UTorrentPath, "/directory \"" + (new FileInfo(TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
 
                 Done = true;
                 return true;
@@ -92,15 +92,15 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public bool SameAs(ITem o)
         {
-            return (o is ActionRSS) && ((o as ActionRSS).RSS == RSS);
+            return (o is ActionRss) && ((o as ActionRss).Rss == Rss);
         }
 
-        public int Compare(Item o)
+        public int Compare(ITem o)
         {
-            ActionRSS rss = o as ActionRSS;
-            return rss == null ? 0 : RSS.URL.CompareTo(rss.RSS.URL);
+            ActionRss rss = o as ActionRss;
+            return rss == null ? 0 : Rss.Url.CompareTo(rss.Rss.Url);
         }
 
         #endregion
@@ -124,19 +124,19 @@ namespace TVRename
             get
             {
                 ListViewItem lvi = new ListViewItem {
-                                                        Text = Episode.SI.ShowName
+                                                        Text = Episode.Si.ShowName
                                                     };
 
                 lvi.SubItems.Add(Episode.SeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
-                DateTime? dt = Episode.GetAirDateDT(true);
+                DateTime? dt = Episode.GetAirDateDt(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
                 lvi.SubItems.Add(TheFileNoExt);
-                lvi.SubItems.Add(RSS.Title);
+                lvi.SubItems.Add(Rss.Title);
 
                 lvi.Tag = this;
 
@@ -144,7 +144,7 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder
+        string IScanListItem.TargetFolder
         {
             get
             {
@@ -159,7 +159,7 @@ namespace TVRename
             get { return "lvgActionDownloadRSS"; }
         }
 
-        int ScanListItem.IconNumber
+        int IScanListItem.IconNumber
         {
             get { return 6; }
         }

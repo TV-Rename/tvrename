@@ -11,10 +11,10 @@ namespace TVRename
     {
         public UpcomingXML(TVDoc i) : base(i) { }
 
-        public override bool Active()=> TVSettings.Instance.ExportWTWXML;
-        public override string Location() => TVSettings.Instance.ExportWTWXMLTo;
+        public override bool Active()=> TVSettings.Instance.ExportWtwxml;
+        public override string Location() => TVSettings.Instance.ExportWtwxmlTo;
 
-        protected override bool  generate(System.IO.Stream str, List<ProcessedEpisode> elist)
+        protected override bool  Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
         {
             DirFilesCache dfc = new DirFilesCache();
             try
@@ -35,19 +35,19 @@ namespace TVRename
                         writer.WriteStartElement("item");
                         XMLHelper.WriteElementToXML(writer,"id",ei.TheSeries.TVDBCode);
                         XMLHelper.WriteElementToXML(writer,"SeriesName",ei.TheSeries.Name);
-                        XMLHelper.WriteElementToXML(writer,"SeasonNumber",Helpers.pad(ei.SeasonNumber));
-                        XMLHelper.WriteElementToXML(writer, "EpisodeNumber", Helpers.pad(ei.EpNum));
+                        XMLHelper.WriteElementToXML(writer,"SeasonNumber",Helpers.Pad(ei.SeasonNumber));
+                        XMLHelper.WriteElementToXML(writer, "EpisodeNumber", Helpers.Pad(ei.EpNum));
                         XMLHelper.WriteElementToXML(writer,"EpisodeName",ei.Name);
   
                         writer.WriteStartElement("available");
-                        DateTime? airdt = ei.GetAirDateDT(true);
+                        DateTime? airdt = ei.GetAirDateDt(true);
 
                         if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
                         {
-                            List<FileInfo> fl = mDoc.FindEpOnDisk(dfc, ei);
+                            List<FileInfo> fl = MDoc.FindEpOnDisk(dfc, ei);
                             if ((fl != null) && (fl.Count > 0))
                                 writer.WriteValue("true");
-                            else if (ei.SI.DoMissingCheck)
+                            else if (ei.Si.DoMissingCheck)
                                 writer.WriteValue("false");
                         }
 
@@ -55,7 +55,7 @@ namespace TVRename
                         XMLHelper.WriteElementToXML( writer,"Overview",ei.Overview);
                         
                         writer.WriteStartElement("FirstAired");
-                        DateTime? dt = ei.GetAirDateDT(true);
+                        DateTime? dt = ei.GetAirDateDt(true);
                         if (dt != null)
                             writer.WriteValue(dt.Value.ToString("F"));
                         writer.WriteEndElement();
@@ -73,8 +73,8 @@ namespace TVRename
             } // try
             catch (Exception e)
             {
-                if ((!mDoc.Args.Unattended) && (!mDoc.Args.Hide)) MessageBox.Show(e.Message);
-                logger.Error(e);
+                if ((!MDoc.Args.Unattended) && (!MDoc.Args.Hide)) MessageBox.Show(e.Message);
+                Logger.Error(e);
                 return false;
             }
 

@@ -4,14 +4,14 @@ namespace TVRename
     {
         protected ItemList TheActionList;
         protected bool ActionCancel = false;
-        protected TVDoc mDoc;
+        protected TVDoc MDoc;
 
         public Finder(TVDoc doc)
         {
-            mDoc = doc;
+            MDoc = doc;
         }
 
-        public enum FinderDisplayType { Local, Downloading, RSS};
+        public enum FinderDisplayType { Local, Downloading, Rss};
 
         public abstract void Check(SetProgressDelegate prog, int startpct, int totPct);
         
@@ -19,10 +19,10 @@ namespace TVRename
 
         public abstract FinderDisplayType DisplayType();
 
-        public void setActionList(ItemList actionList) { TheActionList = actionList; }
+        public void SetActionList(ItemList actionList) { TheActionList = actionList; }
 
-        public void interrupt() { ActionCancel = true; }
-        public void reset() { ActionCancel = false; }
+        public void Interrupt() { ActionCancel = true; }
+        public void Reset() { ActionCancel = false; }
 
     }
 }

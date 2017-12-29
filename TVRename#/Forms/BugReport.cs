@@ -25,11 +25,11 @@ namespace TVRename
     /// </summary>
     public partial class BugReport : Form
     {
-        private TVDoc mDoc;
+        private TVDoc _mDoc;
 
         public BugReport(TVDoc doc)
         {
-            mDoc = doc;
+            _mDoc = doc;
             InitializeComponent();
         }
 
@@ -63,8 +63,8 @@ namespace TVRename
             if (cbFOScan.Checked || cbFolderScan.Checked)
             {
                 txt.Append("==== Filename processors ====\r\n");
-                foreach (FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
-                    txt.Append((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RE + "\" " + (s.UseFullPath ? "(FullPath)" : "") + "\r\n");
+                foreach (FilenameProcessorRe s in TVSettings.Instance.FnpRegexs)
+                    txt.Append((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.Re + "\" " + (s.UseFullPath ? "(FullPath)" : "") + "\r\n");
                 txt.Append("\r\n");
             }
 
@@ -74,7 +74,7 @@ namespace TVRename
                 txt.Append("\r\n");
 
                 DirCache dirC = new DirCache();
-                foreach (string efi in mDoc.SearchFolders)
+                foreach (string efi in _mDoc.SearchFolders)
                     dirC.AddFolder(null, 0, 0, efi, true);
 
                 foreach (DirCacheEntry fi in dirC)
@@ -82,7 +82,7 @@ namespace TVRename
                     int seas;
                     int ep;
                     bool r = TVDoc.FindSeasEp(fi.TheFile, out seas, out ep, null);
-                    bool useful = fi.HasUsefulExtension_NotOthersToo;
+                    bool useful = fi.HasUsefulExtensionNotOthersToo;
                     txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                 }
                 txt.Append("\r\n");
@@ -92,7 +92,7 @@ namespace TVRename
             {
                 txt.Append("==== Media Folders Directory Scan ====" + "\r\n");
 
-                foreach (ShowItem si in mDoc.GetShowItems(true))
+                foreach (ShowItem si in _mDoc.GetShowItems(true))
                 {
                     foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
@@ -113,7 +113,7 @@ namespace TVRename
                                 int seas;
                                 int ep;
                                 bool r = TVDoc.FindSeasEp(fi.TheFile, out seas, out ep, si);
-                                bool useful = fi.HasUsefulExtension_NotOthersToo;
+                                bool useful = fi.HasUsefulExtensionNotOthersToo;
                                 txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                             }
                             txt.Append("\r\n");
@@ -121,7 +121,7 @@ namespace TVRename
                     }
                     txt.Append("\r\n");
                 }
-                mDoc.UnlockShowItems();
+                _mDoc.UnlockShowItems();
 
                 txt.Append("\r\n");
             }

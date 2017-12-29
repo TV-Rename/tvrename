@@ -21,11 +21,11 @@ namespace TVRename
     /// </summary>
     public partial class AddModifyRule : Form
     {
-        private ShowRule mRule;
+        private ShowRule _mRule;
 
         public AddModifyRule(ShowRule rule)
         {
-            mRule = rule;
+            _mRule = rule;
             InitializeComponent();
 
             FillDialog();
@@ -38,47 +38,47 @@ namespace TVRename
 
         private void FillDialog()
         {
-            switch (mRule.DoWhatNow)
+            switch (_mRule.DoWhatNow)
             {
-                case RuleAction.kRename:
+                case RuleAction.KRename:
                     rbRename.Checked = true;
                     break;
 
-                case RuleAction.kCollapse:
+                case RuleAction.KCollapse:
                     rbCollapse.Checked = true;
                     break;
 
-                case RuleAction.kRemove:
+                case RuleAction.KRemove:
                     rbRemove.Checked = true;
                     break;
 
-                case RuleAction.kSwap:
+                case RuleAction.KSwap:
                     rbSwap.Checked = true;
                     break;
 
-                case RuleAction.kMerge:
+                case RuleAction.KMerge:
                     rbMerge.Checked = true;
                     break;
 
-                case RuleAction.kSplit:
+                case RuleAction.KSplit:
                     rbSplit.Checked = true;
                     break;
 
-                case RuleAction.kInsert:
+                case RuleAction.KInsert:
                     rbInsert.Checked = true;
                     break;
 
                 default:
-                case RuleAction.kIgnoreEp:
+                case RuleAction.KIgnoreEp:
                     rbIgnore.Checked = true;
                     break;
             }
 
-            txtUserText.Text = mRule.UserSuppliedText;
-            if (mRule.First != -1)
-                txtValue1.Text = mRule.First.ToString();
-            if (mRule.Second != -1)
-                txtValue2.Text = mRule.Second.ToString();
+            txtUserText.Text = _mRule.UserSuppliedText;
+            if (_mRule.First != -1)
+                txtValue1.Text = _mRule.First.ToString();
+            if (_mRule.Second != -1)
+                txtValue2.Text = _mRule.Second.ToString();
 
             EnableDisableAndLabels();
         }
@@ -166,44 +166,44 @@ namespace TVRename
 
         private void bnOK_Click(object sender, EventArgs e)
         {
-            RuleAction dwn = RuleAction.kIgnoreEp;
+            RuleAction dwn = RuleAction.KIgnoreEp;
 
             if (rbIgnore.Checked)
-                dwn = RuleAction.kIgnoreEp;
+                dwn = RuleAction.KIgnoreEp;
             else if (rbSwap.Checked)
-                dwn = RuleAction.kSwap;
+                dwn = RuleAction.KSwap;
             else if (rbMerge.Checked)
-                dwn = RuleAction.kMerge;
+                dwn = RuleAction.KMerge;
             else if (rbInsert.Checked)
-                dwn = RuleAction.kInsert;
+                dwn = RuleAction.KInsert;
             else if (rbRemove.Checked)
-                dwn = RuleAction.kRemove;
+                dwn = RuleAction.KRemove;
             else if (rbCollapse.Checked)
-                dwn = RuleAction.kCollapse;
+                dwn = RuleAction.KCollapse;
             else if (rbRename.Checked)
-                dwn = RuleAction.kRename;
+                dwn = RuleAction.KRename;
             else if (rbSplit.Checked)
-                dwn = RuleAction.kSplit;
+                dwn = RuleAction.KSplit;
 
-            mRule.DoWhatNow = dwn;
-            mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : "";
-
-            try
-            {
-                mRule.First = txtValue1.Enabled ? Convert.ToInt32(txtValue1.Text) : -1;
-            }
-            catch
-            {
-                mRule.First = -1;
-            }
+            _mRule.DoWhatNow = dwn;
+            _mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : "";
 
             try
             {
-                mRule.Second = txtValue2.Enabled ? Convert.ToInt32(txtValue2.Text) : -1;
+                _mRule.First = txtValue1.Enabled ? Convert.ToInt32(txtValue1.Text) : -1;
             }
             catch
             {
-                mRule.Second = -1;
+                _mRule.First = -1;
+            }
+
+            try
+            {
+                _mRule.Second = txtValue2.Enabled ? Convert.ToInt32(txtValue2.Text) : -1;
+            }
+            catch
+            {
+                _mRule.Second = -1;
             }
         }
     }
