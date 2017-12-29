@@ -8,18 +8,10 @@
 namespace TVRename
 {
     using System;
-    using System.CodeDom;
     using System.Diagnostics;
-    using Alphaleonis.Win32.Filesystem;
     using System.Linq;
-    using System.Security.AccessControl;
-    using System.Threading;
-    using System.Web.UI.WebControls;
     using System.Windows.Forms;
-
-    using File = Alphaleonis.Win32.Filesystem.File;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 

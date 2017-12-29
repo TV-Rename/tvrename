@@ -7,7 +7,6 @@
 // 
 using System;
 using System.Drawing;
-using Alphaleonis.Win32.Filesystem;
 using System.Windows.Forms;
 using System.IO;
 

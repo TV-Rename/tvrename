@@ -10,7 +10,6 @@
 
 using Newtonsoft.Json.Linq;
 using System;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace TVRename

@@ -7,7 +7,6 @@
 // 
 using Alphaleonis.Win32.Filesystem;
 using System;
-using System.Windows.Forms;
 
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.

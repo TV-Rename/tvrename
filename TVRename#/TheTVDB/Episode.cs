@@ -8,7 +8,6 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace TVRename

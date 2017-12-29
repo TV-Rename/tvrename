@@ -14,7 +14,6 @@ using System.Windows.Forms;
 namespace TVRename
 {
     using System.IO;
-    using System.Text.RegularExpressions;
     using Directory = Alphaleonis.Win32.Filesystem.Directory;
     using File = Alphaleonis.Win32.Filesystem.File;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
