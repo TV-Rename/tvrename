@@ -26,7 +26,7 @@ As you can see from the image above there are a number of options, each of which
 ## Preferences
 
 ![The Preferences Tabs](images/options/preferences-tabs-01.png){:.pic-l}
-As can be seen there are a number of tabs in "Preferences", each of which is discussed in below.<br />
+The tabs in "Preferences", are each discussed below.<br />
 
 {:.center}
 [Media Center](#media-center)&nbsp;&#9670;&nbsp;[Search Folders](#search-folders)&nbsp;&#9670;&nbsp;[&#181;Torrent / NZB](#&#181;torrent--nzb)&nbsp;&#9670;&nbsp;[Tree Coloring](#tree-coloring)
@@ -38,6 +38,11 @@ As can be seen there are a number of tabs in "Preferences", each of which is dis
 [Return to Top]()
 
 ### Media Center
+![Preferences - the Media Centre tab](images/options/preferences-media-center-01.png)
+
+This is were you tell TV Rename about your media player (and hence, the additional files you may need to download)
+
+### AWAITING POSSIBLE UPDATE
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -48,7 +53,7 @@ The ***Search Folders*** tab is used to tell TV Rename where to look for TV show
 
 Three buttons are available at the bottom of the tab. `Add` opens an explorer style window so you can browse to the folder location you wish to add and click `OK`, `Remove` removes a highlighted row from the panel and `Open` opens an explorer window targeting the row highlighted in the panel.
 
-At the top of the tab the "Monitor folders for changes" tick box tell TV Rename to automatically check for new files in the identified locations and the "Scan Type" radio buttons tell TV Rename the type of scan to perform if anything is found by the folder monitor.
+At the top of the tab the "Monitor folders for changes" tick box tell TV Rename to automatically check for new files in the identified locations and the ["Scan Type"](userguide#scan-types) radio buttons tell TV Rename the type of scan to perform if anything is found.
 
 | *Defaults:* | "Folder Monitor" | ***Un-ticked*** |
 |-------------|------------------|-----------------|
@@ -232,8 +237,7 @@ The available tags with their definitions are listed below: -
 [Return to Top]()
 
 ## Search Engines
-![options - Modify Search Engines tab](images/options/modify-search-engines-01.png)
-
+![options - Modify Search Engines tab](images/options/modify-search-engines-01.png)<br />
 The *Modify Search Engines* window controls TV Rename's interface with the world (other than TheTVDB). Here, you can configure how and where TV Rename points a web browser searching for files.
 
 The examples are a little out of date but serve to show how to configure the search.
@@ -246,13 +250,71 @@ As an example, here is a URL entry for Zooqle.
 
 The list of URL's can be used when the ***When to watch*** tab is open, the last used entry becomes the default, and appears in a text box to the right of the `Refresh` button. It can be changed by clicking the `▼` button and selecting another entry.
 
-With a little patience you can get really creative with these entries and pass your search to its specific target through a web proxy.
-
+With a little ingenuity you can get really creative with these entries and pass your search to its specific target through a web proxy.
 
 {:.toplink}
 [Return to Top]()
 
 ## Filename Processors
+![Options - the Filename Processors tab](images/options/filename-processors-01.png)<br />
+In much the same way that the ***Filename Template Editor*** is used to process the names of files being moved to the "Media Library" so ***Filename Processors*** is used to inform Rename what filenames to look out for when searching for a missing files
+
+To really understand the contents of the Regex column above, you need a working knowledge of [Regular Expressions](https://regexone.com/ "Visit RegexOne").
+
+Once you have figured out whats going on you can see that all the regular expressions capture the season and episode number of a show from the filename. Each one can work on just the filename: -
+
+> ShowName S01E07.avi
+
+or on the whole path: -
+
+> C:/files/ShowName/S01E07.avi
+
+Each expression can be toggled on and off, as can the ability to process a full path.
+
+Each expression has a Notes field which can be used to remind the user why the expression was added.
+
+Additionally, a folder can be specified to test the results of the Regular Expression.
+
+In all likelihood you will find it unnecessary to make changes here, only if a new, totally unrecognisable file name structure appeared would it be necessary, and then there would probably be discussion about it in the forum.
+
+{:.toplink}
+[Return to Top]()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -262,36 +324,11 @@ With a little patience you can get really creative with these entries and pass y
 | x | The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename. |
 | x | "Find Extensions" sets the extensions of media files to look for. Separate them each with a semicolon, don't use spaces, and make sure you put the dot in! |
 
-##### Automatic Export
-
-| Field | Explanation |
-|-------|-----------------|
-| x | y |
-
-##### Scan Options
-
-| Field | Explanation |
-|-------|-----------------|
-| x | y |
-
-##### Folder Deleting
-| Field | Explanation |
-|-------|-----------------|
-| x | y |
-
 
 ##### Media Centre
-This is were you configure the type of media player (and hence what additional files you need TV Rename to download)
 | Field | Explanation |
 |-------|-----------------|
 | x | y |
-
-##### Search Folders
-| Field | Explanation |
-|-------|-----------------|
-| Monitor folders for changes | SHould the system automatically run a scan when a file in one of the Search Folders is modified? |
-| Scan Type | If the system is monitoring the Search Folders then what [type of scan](userguide#scan-types) should be run when a file changes?  |
-| Search Folders | Where should TV Rename look for missing episodes? It is also the list of folders that are monitored |
 
 ##### uTorrent / NZB
 | Field | Explanation |
@@ -303,31 +340,10 @@ This is were you configure the type of media player (and hence what additional f
 |-------|-----------------|
 | x | y |
 
-# Offline Operation
-# Automatic Background Download
-# Ignore List
-# Filename Template Editor
-# Search Engines
-# Filename Processors
-
 
 
 "Use sequential number matching" will match episodes based on their overall airing order. Because this causes a lot of false matches, it is off by default. For example, Seinfeld S08E02 is the 136th episode aired, so with this option "Seinfeld - 136 - The Soul Mate.avi" will be seen at S08E02.
 
 The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!
 
-# Season Settings
-
-# Other Settings
-
-## File Name Processors
-This screen tells TV Rename what filenames to look out for when searchign for a missing file. To really understand it you need to understand is [Regular Expressions](https://regexone.com/). Once you understand them you can see that this is a list of regular expressions that cature the season and episode number from the filename. Each one can work on just the filename "Show S01E07.avi", or on the whole filename "C:/files/showName/S01E02.avi".
-
- * Each can be toggled on and off
- * A folder can be specified to test the results of the Regular Expression
- * Each can have some notes to remind the user why that expression was added
-
-### AWAITING UPDATE
-## Search Engines
-### AWAITING UPDATE
 
