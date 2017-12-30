@@ -29,9 +29,9 @@ namespace TVRename
         {
             this.CurrentSearch = "";
 
-            this.Add("Google", "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode2}");
-            this.Add("Pirate Bay", "https://thepiratebay.org/search/{ShowName} S{Season:2}E{Episode2}");
-            this.Add("binsearch", "https://www.binsearch.info/?q={ShowName}+S{Season:2}E{Episode2}");
+            this.Add("Google", "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}");
+            this.Add("Pirate Bay", "https://thepiratebay.org/search/{ShowName} S{Season:2}E{Episode}");
+            this.Add("binsearch", "https://www.binsearch.info/?q={ShowName}+S{Season:2}E{Episode}");
 
             this.CurrentSearch = "Mininova";
         }
