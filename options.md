@@ -29,7 +29,7 @@ As you can see from the image above there are a number of options, each of which
 The tabs in "Preferences", are each discussed below.<br />
 
 {:.center}
-[Media Center](#media-center)&nbsp;&#9670;&nbsp;[Search Folders](#search-folders)&nbsp;&#9670;&nbsp;[&#181;Torrent / NZB](#&#181;torrent--nzb)&nbsp;&#9670;&nbsp;[Tree Coloring](#tree-coloring)
+[Media Center](#media-center)&nbsp;&#9670;&nbsp;[Search Folders](#search-folders)&nbsp;&#9670;&nbsp;[µTorrent / NZB](#µtorrent--nzb)&nbsp;&#9670;&nbsp;[Tree Coloring](#tree-coloring)
 
 {:.center}
 [General](#general)&nbsp;&#9670;&nbsp;[Files and Folders](#files-and-folders)&nbsp;&#9670;&nbsp;[Automatic Export](#automatic-export)&nbsp;&#9670;&nbsp;[Scan Options](#scan-options)&nbsp;&#9670;&nbsp;[Folder Deleting](#folder-deleting)
@@ -42,7 +42,7 @@ The tabs in "Preferences", are each discussed below.<br />
 
 This is were you tell TV Rename about your media player (and hence, the additional files you may need to download)
 
-### AWAITING POSSIBLE UPDATE
+### AWAITING UPDATE
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -62,8 +62,20 @@ At the top of the tab the "Monitor folders for changes" tick box tell TV Rename 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### &#181;Torrent / NZB
+### µTorrent / NZB
+![Preferences - the µTorrent / NZB tab](images/options/preferences-utorrent-nzb-01.png){:.pic-l}
+Some of the contents of this tab are use by the *Scan Options* tab.
 
+"The Torrent RSS URLs:" can be any suitable RSS-feeds provided by indexers or public RSS websites and are used to  search for missing files.
+
+`Add` and `Remove` allow you to add and remove feeds, and `Open` presents the highlighted feed in a web browser.
+
+TV Rename can check both µTorrent and SABnzbd queues and uses some of the information provided on this tab to know where to look.
+
+Both the "Host Port" and "API Key" are required to use this functionality in SABnzbd.
+ 
+TV Rename also needs to know the µTorrent "Application" and "resume.dat" paths, (they can be found with the `Browse` buttons) so it can detect if files are in the process of being downloaded or are complete.
+ 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
@@ -187,7 +199,7 @@ This may be something you want or it may just be adding to the "noise" in the **
 
 If it is "noise" you can highlight the row (or multiple rows if that fits better) and right click. A cut-down menu appears, if you select "Ignore Selected" the item is removed from the ***Scan*** results and appears in the "Ignore List".
 
-If at a later date to add the item you can remove it from the Ignore list using the *Edit Ignore List* window, selecting the item in question and clicking `Remove`.
+If, at a later date, you decide you wish to add the item, you can remove it from the Ignore list using the *Edit Ignore List* window, selecting the item in question and clicking `Remove`.
 
 {:.toplink}
 [Return to Top]()
@@ -238,15 +250,13 @@ The available tags with their definitions are listed below: -
 
 ## Search Engines
 ![options - Modify Search Engines tab](images/options/modify-search-engines-01.png)<br />
-The *Modify Search Engines* window controls TV Rename's interface with the world (other than TheTVDB). Here, you can configure how and where TV Rename points a web browser searching for files.
-
-The examples are a little out of date but serve to show how to configure the search.
+The *Modify Search Engines* window controls TV Rename's outgoing interface with the world (other than TheTVDB). Here, you can configure how and where TV Rename points a web browser searching for files.
 
 Using the `Add` and `Delete` buttons you can create or remove records at will, and the `Tags...` button will help you insert tags in the created URL. The tags supported are the same as for the previous item.
 
-As an example, here is a URL entry for Zooqle.
+As an example, here is a URL entry for Google.
 
-> https://zooqle.com/search?q={ShowName}%20S{Season:2}E{Episode}
+> https://www.google.co.uk/search?q={ShowName}+S{Season:2}E{Episode}
 
 The list of URL's can be used when the ***When to watch*** tab is open, the last used entry becomes the default, and appears in a text box to the right of the `Refresh` button. It can be changed by clicking the `▼` button and selecting another entry.
 
