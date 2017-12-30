@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -951,10 +951,7 @@ namespace TVRename
 
         private static List<string> DefaultRSSURLList()
         {
-            List<string> sl = new List<String>
-                                  {
-                                      "http://tvrss.net/feed/eztv"
-                                  };
+            List<string> sl = new List<String>();
             return sl;
         }
 
