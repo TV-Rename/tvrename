@@ -26,7 +26,7 @@ As you can see from the image above there are a number of options, each of which
 ## Preferences
 
 ![The Preferences Tabs](images/options/preferences-tabs-01.png){:.pic-l}
-As can be seen from the image there are a large number of tabs in "Preferences", each of which is discussed in below.<br />
+As can be seen there are a number of tabs in "Preferences", each of which is discussed in below.<br />
 
 {:.center}
 [Media Center](#media-center)&nbsp;&#9670;&nbsp;[Search Folders](#search-folders)&nbsp;&#9670;&nbsp;[&#181;Torrent / NZB](#&#181;torrent--nzb)&nbsp;&#9670;&nbsp;[Tree Coloring](#tree-coloring)
@@ -171,6 +171,18 @@ Ticking the "TXT" box in the "All Shows" section of the panel will save a TXT fi
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ## Ignore List
+![Preferences - the Edit Ignore List window](images/options/edit-ignore-list-01.png){:.pic-l}
+When a ***Scan*** is run any "missing" episodes for shows in your "Media Library" are listed.
+
+These may be genuine missing episodes or they may be "Specials", that don't fit the season/episode pattern but are still part of the show, for example: -
+
+> My Favourite Show - S00E03 - Recap of Last Season
+
+This may be something you want or it may just be adding to the "noise" in the ***Scan*** tab.
+
+If it is "noise" you can highlight the row (or multiple rows if that fits better) and right click. A cut-down menu appears, if you select "Ignore Selected" the item is removed from the ***Scan*** results and appears in the "Ignore List".
+
+If at a later date to add the item you can remove it from the Ignore list using the *Edit Ignore List* window, selecting the item in question and clicking `Remove`.
 
 {:.toplink}
 [Return to Top]()

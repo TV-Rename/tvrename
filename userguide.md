@@ -26,22 +26,22 @@ The next section tells us what shows found in the Media Library will be airing n
 
 "Future Episodes" looks further ahead and lists the first new episode of each show found in the Media Library not already listed.
 
-"Later" shows the rest of the future episode information matching shows in your Media Library that [The TVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
+"Later" shows the rest of the future episode information matching shows in your Media Library that [TheTVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
 
 The next two panels show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). The calendar interacts with the main panel. Clicking on a bold date will highlight the episode matching the date in the list above, and clicking on an episode in the main panel will cause the calendar to display that date. In either case the episode summary will be updated (if there is one).
 
 At the very bottom, the status bar displays the next show/episode airing and how long you've got to wait for it!
 
-**The content presented by TV Rename is only as good as that found at [The TVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and helping to maintain their content - everybody benefits!**
+**The content presented by TV Rename is only as good as that found at [TheTVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and helping to maintain their content - everybody benefits!**
 
 *In keeping with our jumping-about policy lets look at My Shows next.*
 
 ## "My Shows"
 My Shows is where you tell TV Rename about the TV Shows you are watching (or have watched), where they can be found and how they are structured.
 
-In essence this tab (along with some of the preferences) allows you to configure the interaction between  [The TVDB](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidently there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they always get the same path or drive letter assigned to them each time they are used. 
+In essence this tab (along with some of the preferences) allows you to configure the interaction between  [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidentally there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they always get the same path or drive letter assigned to them each time they are used. 
 
-Here, you can see a number of shows listed in the left hand panel of the window. These are the shows that TV Rename is monitoring, if a show is in your "Media Library" it will have further information associated with it (its "home" folder in the "Media Library" for example, but there is much more). In the right hand panel you can read details about the highlighted show gleaned from [The TVDB](http://thetvdb.com "Visit thetvdb.com"). 
+Here, you can see a number of shows listed in the left hand panel of the window. These are the shows that TV Rename is monitoring, if a show is in your "Media Library" it will have further information associated with it (its "home" folder in the "Media Library" for example, but there is much more). In the right hand panel you can read details about the highlighted show gleaned from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"). 
 ![My Shows](images/main-window/my-shows-01.png)
 Below these panels are a series of buttons which allow you to manage the content. They are: -
 
@@ -59,7 +59,7 @@ Below these panels are a series of buttons which allow you to manage the content
 
 * {:.no-icon} `Open` - Opens the folder for the highlighted show or season in explorer.
 
-* {:.no-icon} `Visit TVDB` - Visit The TVDB page for highlighted show or season.
+* {:.no-icon} `Visit TVDB` - Visit TheTVDB page for highlighted show or season.
 
 ### Add/Edit Show
 ![Add/Edit Show](images/main-window/add-edit-show-01.png){:.pic-l}

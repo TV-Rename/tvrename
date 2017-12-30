@@ -18,7 +18,7 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
  2. Click the `Check >>` button, the selected path will be scanned and any recognised content automatically displayed in the ***Scan Results*** tab.
  
- 3. Whilst displaying the ***Scan Results*** tab click `Auto ID All` and TV Rename will attempt to match the found content against [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and try to guess if the show is part of a "flat" structure with all the episodes in one folder, or a "tree" structure with sub folders for each season and specials.
+ 3. Whilst displaying the ***Scan Results*** tab click `Auto ID All` and TV Rename will attempt to match the found content against [TheTVDB](http://thetvdb.com "Visit thetvdb.com"), and try to guess if the show is part of a "flat" structure with all the episodes in one folder, or a "tree" structure with sub folders for each season and specials.
  Any shows not identified will not have an entry in the **Show** column or the **thetvdb code** column; these can be fixed manually by highlighting the relevant row in the table and clicking `Edit` and using `Search`. 
 
  4. Once the match process has finished, click `Add & Close` and all the identified shows will be added to the ***My Shows*** tab.
@@ -41,7 +41,7 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
 ![Scan](images/main-window/scan-01.png)
 
- 1. Go to the ***Scan*** tab, and click `Full Scan`. TV Rename will download any needed show information from [The TVDB](http://thetvdb.com "Visit thetvdb.com"), and examine the contents of the Media Library. Settings in **Options...** will change the behaviour here.
+ 1. Go to the ***Scan*** tab, and click `Full Scan`. TV Rename will download any needed show information from [TheTVDB](http://thetvdb.com "Visit thetvdb.com"), and examine the contents of the Media Library. Settings in **Options...** will change the behaviour here.
 
  2. When the scan is complete, review TV Rename's suggested changes and other information. Any ticked item will be actioned, so un-tick things you're not sure about, or use the check boxes in the bottom-right of the screen. Right-click on selected items for more actions.
 

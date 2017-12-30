@@ -11,7 +11,7 @@ Before using this tool, check that your preferred renaming style is set in **Opt
 
 `Add` (or Drag-and-Drop) folders to the ***Folders:*** tab. Click the `Check >>` button, and TV Rename will recursively search through the new folders looking for new tv shows. Once this is complete and if anything is found, the ***Scan Results*** tab will appear, populated with the paths to any newly found shows, it will also identify the folder structure of the show ("Flat" - everything in one folder or "Folder per season").
 
-Click the `Auto ID All` button and TV Rename will try and identify the newly found shows using cached data from the TVDB. If the show is found the "Show" and "thetvdb code" colums will be populated. If a show isn't being matched or is being incorrectly identified highlight the row in question and use the `Edit` button to perform a manual search of the TVDB, and for a more in-depth interrogation you can use the `Visit TVDB` button which will launch a web browser targeting the shows page or `Open Folder` which will open the selected folder in Windows Explorer.
+Click the `Auto ID All` button and TV Rename will try and identify the newly found shows using cached data from TheTVDB. If the show is found the "Show" and "thetvdb code" colums will be populated. If a show isn't being matched or is being incorrectly identified highlight the row in question and use the `Edit` button to perform a manual search of [TheTVDB](http://thetvdb.com "Visit TheTVDB.com"), and for a more in-depth interrogation you can use the `Visit TVDB` button which will launch a web browser targeting the shows page or `Open Folder` which will open the selected folder in Windows Explorer.
 
 Clicking `Remove` will remove the highlighted row from the New Shows list, however it will be re-detected in the next run of "Auto ID All".
 
@@ -19,13 +19,13 @@ Clicking `Ignore` will add the folder to the "Ignore Folders:" list and it will 
 
 **** IGNORE LIST APPEARS TO BE BROKEN...
 
-Click on a show to edit it. You can then type a tvdb.com code, or part of a show name, to find the tvdb.com code in the list. If it isn't showing up, type in part of the name and press the Search button. This searches on tvdb.com, and will add any results to the local code cache.
+Click on a show to edit it. You can then type a "TheTVDB.com" code, or part of a show name, to find it in the list. If it isn't showing up, type in part of the name and press the Search button. This searches on TheTVDB.com, and will add any results to the local code cache.
 
 After entering the code, or clicking on the show in the list, enter (or correct) the season number. Changes are immediately applied to the "New shows and folders" list. If you select multiple folders, all will be updated simultaneously.
 
-**Visit tvdb.com** will take you to the tvdb.com page, so you can check it is the right show. Guess will re-guess the show details.
+**Visit tvdb.com** will take you to the "TheTVDB.com" page, so you can check it is the right show. Guess will re-guess the show details.
 
-Clicking Remove, or pressing delete on your keyboard will remove the selected folder(s) from the list. It will be re-detected the next tiem you do a Check here. Click Ignore to add the folder to the "Ignored Folders" list. Ignore All will ignore all folders in the list.
+Clicking Remove, or pressing delete on your keyboard will remove the selected folder(s) from the list. It will be re-detected the next item you do a Check here. Click Ignore to add the folder to the "Ignored Folders" list. Ignore All will ignore all folders in the list.
 
 Open will open an Explorer window in that folder. Clicking on Done will then take all the shows with tvdb.com codes and season numbers, and add/merge them into your shows and folders lists.
 

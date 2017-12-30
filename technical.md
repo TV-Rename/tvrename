@@ -8,7 +8,7 @@ A number of TV Rename's functions can be accessed using the command line. You ca
 The only thing TV Rename saves to the registry is installation information which is used by Windows "Apps and Features" to uninstall the program. But hey, why would you want to do that?
 
 ## Configuration Files
-All the configuration information and locally cached data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is stored in a series of (mainly XML) files under the users Application folder.
+All the configuration information and locally cached data from [TheTVDB](http://thetvdb.com "Visit thetvdb.com") is stored in a series of (mainly XML) files under the users Application folder.
 
 On Windows XP this is: -
 
@@ -30,14 +30,14 @@ It contains: -
 
 **TheTVDB.xml** -  The locally cached tvdb.com show season and episode information for everything listed in the ***My Shows*** tab.
 
-**TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of the TVDB.xml file. A new file gets created here every time you click ***File>Save*** on a first-in-first-out (FIFO) basis.
+**TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of theTVDB.xml file. A new file gets created here every time you click ***File>Save*** on a first-in-first-out (FIFO) basis.
 
 **TVRenameSettings.xml** - Everything else not mentioned is stored in here. All your shows, Media Library paths, folder structures and settings. As with TheTVDB.xml this is only overwritten when you choose **File>Save**.
 
 **TVRenameSettings.xml.0 - TVRenameSettings.xml.9** - backup copies of TV RenameSettings.xml (FIFO).
 
 ## Log Files
-Logging was added in version 2.3. The main logfile (TVRename.log) can be found in: -
+Logging was added in version 2.3. The main log file (TVRename.log) can be found in: -
 > \\Documents and Settings\\\<username\>\\AppData\\Roaming\\TVRename\\log\\
 
 on Windows XP or: -
