@@ -110,11 +110,13 @@ li a:hover, a:active {
 }
 
 li.tag-h1 a:hover, a:active {
-    border-bottom: 2px solid #333;
+    color: #666;
+    border-bottom: 2px solid #666;
 } 
 
 li.tag-h2 a:hover, a:active {
-    border-bottom: 1px solid #333;
+    color: #666;
+    border-bottom: 1px solid #666;
 } 
 
 table {

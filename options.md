@@ -140,7 +140,7 @@ If ticked this works for both the ***When to watch*** and ***Scan*** tabs. If an
 
 *Default: **Ticked***
 
-*Look for airdate in filenames*<br />
+*Look for air date in filenames*<br />
 If ticked this provides a second method of identifying show episodes by looking for a date (in a number of formats) in the shows filename and comparing that against the air-date.
 
 The supported date formats are: "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy" and "MM-dd-yy"
@@ -156,6 +156,14 @@ This option sets the language for returned data when requesting information from
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### Files and Folders
+![Preferences - The Files and Folders tab](images/options/preferences-files-folders-01.png){:.pic-l}
+The "Filename Replacements" grid controls the replacement of illegal characters in filenames.
+
+If the filename contains a character that isn't allowed in a windows filename the rows in this grid are checked to discover what to use instead of the problem character.
+
+"Video Extensions:" tells TV Rename the extensions to match when looking for video files. The entries should be semicolon delimited, not contain spaces and include the "." preceding the extension.
+
+"Other Extensions:" follows the same rules as "Video Extensions" but the file extensions specified are media related rather than video specific
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -177,13 +185,35 @@ Ticking the "TXT" box in the "All Shows" section of the panel will save a TXT fi
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### Scan options
+### Scan Options
+![Preferences - the Scan Options tab](images/options/preferences-scan-options-01.png){:.pic-l}
+This tab in conjunction with data from the ***µTorrent / NZB*** tab controls the ***Scan*** tabs checks and actions. 
+
+The settings in here are more or less self explanatory, however remember that the ***µTorrent / NZB*** tab must be populated before the µTorrent, SABnzdb and RSS options can be used.
+
+| *Defaults*              |                                            |                 |
+|-------------------------|--------------------------------------------|-----------------|
+| Scan checks and actions | Rename Check                               | ***Ticked***    |
+|-------------------------|--------------------------------------------|-----------------|
+|                         | Missing Check                              | ***Ticked***    |
+|-------------------------|--------------------------------------------|-----------------|
+|                         | Look in "Search Folders" for missing files | ***Ticked***    |
+|-------------------------|--------------------------------------------|-----------------|
+|                         | Copy files, don't move                     | ***Un-ticked*** |
+|-------------------------|--------------------------------------------|-----------------|
+|                         | Check µTorrent queue                       | ***Un-ticked*** |
+|-------------------------|--------------------------------------------|-----------------|
+|                         | Check SABnzdb queue                        | ***Un-ticked*** |
+|-------------------------|--------------------------------------------|-----------------|
+|                         | Search RSS for missing files               | ***Un-ticked*** |
+|-------------------------|--------------------------------------------|-----------------|
+| Folder Creation         | Automatically create missing folders       | ***Un-ticked*** |
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### Folder Deleting
-![Preferences>Options - The Folder Delete tab](images/options/preferences-folder-del-01.png){:.pic-l}
+![Preferences - the Folder Delete tab](images/options/preferences-folder-del-01.png){:.pic-l}
 This tab is all about TV Rename tidying up after itself.
 
 When downloading video from the internet its quite common to get .nfo files, screen grabs, sample video, text-art files and the like bundled with the download.
@@ -202,7 +232,7 @@ If you use the copy option to update your library then ticking the "Clean up alr
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ## Ignore List
-![Preferences - the Edit Ignore List window](images/options/edit-ignore-list-01.png){:.pic-l}
+![The Edit Ignore List window](images/options/edit-ignore-list-01.png){:.pic-l}
 When a ***Scan*** is run any "missing" episodes for shows in your "Media Library" are listed.
 
 These may be genuine missing episodes or they may be "Specials", that don't fit the season/episode pattern but are still part of the show, for example: -
@@ -219,7 +249,7 @@ If, at a later date, you decide you wish to add the item, you can remove it from
 [Return to Top]()
 
 ## Filename Template Editor
-![Preferences - the Filename Template Editor tab](images/options/filename-template-editor-01.png){:.pic-l}
+![The Filename Template Editor tab](images/options/filename-template-editor-01.png){:.pic-l}
 This is where the format of the filenames that TV Rename will rename to are defined.
 
 To help illustrate the results the "Sample and Test:" panel contains the processed entries from the show and season selected in the ***My Shows*** tab.
@@ -263,7 +293,7 @@ The available tags with their definitions are listed below: -
 [Return to Top]()
 
 ## Search Engines
-![options - Modify Search Engines tab](images/options/modify-search-engines-01.png)<br />
+![The Modify Search Engines window](images/options/modify-search-engines-01.png)<br />
 The *Modify Search Engines* window controls TV Rename's outgoing interface with the world (other than TheTVDB). Here, you can configure how and where TV Rename points a web browser searching for files.
 
 Using the `Add` and `Delete` buttons you can create or remove records at will, and the `Tags...` button will help you insert tags in the created URL. The tags supported are the same as for the previous item.
@@ -280,7 +310,7 @@ With a little ingenuity you can get really creative with these entries and pass 
 [Return to Top]()
 
 ## Filename Processors
-![Options - the Filename Processors tab](images/options/filename-processors-01.png)<br />
+![he Filename Processors window](images/options/filename-processors-01.png)<br />
 In much the same way that the ***Filename Template Editor*** is used to process the names of files being moved to the "Media Library" so ***Filename Processors*** is used to inform Rename what filenames to look out for when searching for a missing files
 
 To really understand the contents of the Regex column above, you need a working knowledge of [Regular Expressions](https://regexone.com/ "Visit RegexOne").
@@ -305,69 +335,6 @@ In all likelihood you will find it unnecessary to make changes here, only if a n
 [Return to Top]()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-##### Files & Folders
-| Field | Explanation |
-|-------|-----------------|
-| x | The filename character replacements set what to use if the episode name has a character in it that isn't allowed in a Windows filename. |
-| x | "Find Extensions" sets the extensions of media files to look for. Separate them each with a semicolon, don't use spaces, and make sure you put the dot in! |
-
-
-##### Media Centre
-| Field | Explanation |
-|-------|-----------------|
-| x | y |
-
-##### uTorrent / NZB
-| Field | Explanation |
-|-------|-----------------|
-| x | y |
-
-##### Coloring
-| Field | Explanation |
-|-------|-----------------|
-| x | y |
-
-
-
 "Use sequential number matching" will match episodes based on their overall airing order. Because this causes a lot of false matches, it is off by default. For example, Seinfeld S08E02 is the 136th episode aired, so with this option "Seinfeld - 136 - The Soul Mate.avi" will be seen at S08E02.
 
 The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!
-
-
