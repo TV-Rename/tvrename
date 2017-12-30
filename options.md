@@ -203,9 +203,9 @@ The available tags with their definitions are listed below: -
 |-------------|-------------------------------------------------------------------------|
 |{Season:2}   |Number of the season forced to 2 characters with a leading zero          |
 |-------------|-------------------------------------------------------------------------|
-|{Episode}    |Number of the episode (within series), eg S01E03                         |
+|{Episode}    |Number of the episode (within a season), eg S01E03                       |
 |-------------|-------------------------------------------------------------------------|
-|{Episode2}   |Number of the second episode of a pair (within series), eg S01E04-E05    |
+|{Episode2}   |Number of the second episode of a pair (within a season), eg S01E04-E05  |
 |             | created by the default S{Season:2}E{Episode}[-E{Episode2}])             |
 |-------------|-------------------------------------------------------------------------|
 |{EpisodeName}|Name of the Episode                                                      |
@@ -232,6 +232,25 @@ The available tags with their definitions are listed below: -
 [Return to Top]()
 
 ## Search Engines
+![options - Modify Search Engines tab](images/options/modify-search-engines-01.png)
+
+The *Modify Search Engines* window controls TV Rename's interface with the world (other than TheTVDB). Here, you can configure how and where TV Rename points a web browser searching for files.
+
+The examples are a little out of date but serve to show how to configure the search.
+
+Using the `Add` and `Delete` buttons you can create or remove records at will, and the `Tags...` button will help you insert tags in the created URL. The tags supported are the same as for the previous item.
+
+As an example, here is a URL entry for Zooqle.
+
+> https://zooqle.com/search?q={ShowName}%20S{Season:2}E{Episode}
+
+The list of URL's can be used when the ***When to watch*** tab is open, the last used entry becomes the default, and appears in a text box to the right of the `Refresh` button. It can be changed by clicking the `▼` button and selecting another entry.
+
+With a little patience you can get really creative with these entries and pass your search to its specific target through a web proxy.
+
+
+{:.toplink}
+[Return to Top]()
 
 ## Filename Processors
 
