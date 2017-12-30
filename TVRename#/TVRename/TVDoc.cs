@@ -414,6 +414,7 @@ namespace TVRename
             this.Dirty();
             this.AddItems.Clear();
             this.UnlockShowItems();
+            ExportShowInfo();
         }
 
         public void MonitorGuessShowItem(FolderMonitorEntry ai)

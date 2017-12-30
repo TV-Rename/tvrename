@@ -2455,7 +2455,6 @@ namespace TVRename
                 return;
 
             this.DeleteShow(si);
-            this.mDoc.ExportShowInfo(); //Save shows list to disk
         }
 
         private void DeleteShow(ShowItem si)
