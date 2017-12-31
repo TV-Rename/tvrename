@@ -6,7 +6,7 @@ This guide will help you through the basics setting up TV Rename.
 
 To return to this page click `Quickstart Guide` in TV Rename's **Help**, or browse to [www.tvrename.com/quickstart](quickstart "Browse the TV Rename Quickstart Guide online").
 
-> This guide assumes you already have the beginings of a "Media Library" - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them). TV Rename doesn't care how these folders are organised, however to us mere humans probably one folder per show or one folder per show with one sub-folder per season makes sense in terms of being able to find stuff later.*
+> This guide assumes you already have the beginnings of a "Media Library" - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them). TV Rename doesn't care how these folders are organised, however to us mere humans probably one folder per show or one folder per show with one sub-folder per season makes sense in terms of being able to find stuff later.*
 
 # Basic Setup
 
@@ -49,12 +49,12 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
 ## 4. Ongoing Monitoring
 
- 1. Go to the ***When to watch*** tab to see all known future information (including airdates) of shows you are following.
+ 1. Go to the ***When to watch*** tab to see all known future information (including air dates) of shows you are following.
  
  2. In the ***Search Folders*** tab of **Options>Preferences** ticking the "Monitor folders for changes" box will tell TV Rename to automatically scan whenever a new file is made available.
 
 ## 5. Sit back, relax, and let TV Rename do all the hard work for you!
 
 ***Whatever changes TV Rename makes to your recording names the season and episode details will remain untouched.***
-*It is highly unlikely that the names of the recordings will get screwed up, but, should it happen, the problem should be easily fixable after changing some settings, or adding new rules. At least, that's the theory. :)*
+*It is highly unlikely that the names of the recordings will get screwed up, but, should it happen, the problem should be easily fixable after changing some settings, or adding new rules. At least, that's the theory.*
 

@@ -18,7 +18,7 @@ But you want them named with the show and episode name and the season and episod
 
 ...then this is the tool for you!
 
-## But wait.. Theres more!
+## But wait.. There's more!
 **TV Rename can: -**
 * Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and rules you can configure
 * Monitor specified folders for TV Show files
@@ -30,6 +30,6 @@ But you want them named with the show and episode name and the season and episod
 * Copy (or move) files from monitored folders to your Media Library
 * List any missing TV Show episodes/seasons in your Media Library
 * Create web searches to help you find missing TV Show files
-* Tell you how long you'll have to wait until the next episode of a TV Show airs
+* Tell you how long you'll have to wait until the next episode of your current favourite TV Show airs
 
 **To do all this clever stuff TV Rename makes extensive use of data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"), without their database and API this tool would not exist! Please support them!**
