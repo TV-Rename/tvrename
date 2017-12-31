@@ -56,18 +56,18 @@ You can read the [NLog Wiki](https://github.com/nlog/NLog/wiki/Configuration-fil
 
 When raising a bug please include a log file that illustrates the issue if you can, it will help us find a solution quickly.
 
-# Source Code
+## Source Code
 You can find TV Rename's source code (along with executables and this website) in [The TV Rename GitHub Repository](https://github.com/TV-Rename/tvrename "Visit The repository").
 
-# Framework
-TV Rename uses the Microsoft .NET Framework. The installer will check for this and let you know if it is needed. It's a free download from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").
+## Framework
+TV Rename uses the Microsoft .NET Framework. The installer will check for its presence and let you know if any action is needed. It's a free download from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").
 
-# Credits
+## Credits
 TV Rename pulls data from [TheTVDB.com](http://thetvdb.com/ "Visit TheTVDB.com") using their API. **Please visit their site, register, and help out by contributing information and artwork for TV Series and Episodes.**
 
 It also uses: -
 * [Json.NET](https://www.newtonsoft.com/json),
-* [AlphaFS](http://alphafs.alphaleonis.com/) is used for advanced .NET file operations,
+* [AlphaFS](http://alphafs.alphaleonis.com/) for advanced .NET file operations,
 * [NLog](http://nlog-project.org/) open-source logging for .NET,
 * [SourceGrid](https://sourcegrid.codeplex.com/),
 * TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](https://www.red-gate.com/products/dotnet-development/ants-performance-profiler/), and JetBrain's [dotTrace](https://www.jetbrains.com/profiler/).
