@@ -855,6 +855,33 @@ namespace TVRename
                 }
             }
 
+            this.Say("Upgrading dirty locks");
+            // if more than 10% of a show's episodes are marked as dirty, just download the entire show again
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
+            {
+                int totaleps = 0;
+                int totaldirty = 0;
+                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                {
+                    foreach (Episode ep in kvp2.Value.Episodes)
+                    {
+                        if (ep.Dirty)
+                            totaldirty++;
+                        totaleps++;
+                    }
+                }
+
+                float percentDirty = 100 * totaldirty / totaleps;
+                if ((totaleps>0) && ((percentDirty) >=10)) // 10%
+                {
+                    kvp.Value.Dirty = true;
+                    kvp.Value.Seasons.Clear();
+                    logger.Info("Planning to download all of {0} as {1}% of the episodes need to be updated", kvp.Value.Name, percentDirty);
+                }
+                else logger.Trace("Not planning to download all of {0} as {1}% of the episodes need to be updated and that's less than the 10% limit to upgrade.", kvp.Value.Name, percentDirty);
+            }
+
+
             this.Say("");
 
             return true;
