@@ -5,7 +5,7 @@ One of TV Rename's strongest (and most confusing) features is its configurabilit
 
 Luckily the "out-of-the-box" defaults work well, and should you wish to change any settings, all the stuff you can "fiddle with" is described here.
 
-As you can see from the image above there are a number of options, each of which is discussed below.
+Use the links (below or left) to jump to a specific item.
 
 {:.center}
 [Offline Operation](#offline-operation)&nbsp;&#9670;&nbsp;[Automatic Background Download](#automatic-background-download)&nbsp;&#9670;&nbsp;[Preferences](#preferences "Delve into the preferences")
@@ -14,11 +14,13 @@ As you can see from the image above there are a number of options, each of which
 [Ignore List](#ignore-list)&nbsp;&#9670;&nbsp;[Filename Template Editor](#filename-template-editor)&nbsp;&#9670;&nbsp;[Search Engines](#search-engines)&nbsp;&#9670;&nbsp;[Filename Processors]()
 
 ## Offline Operation
+If **Offline Operation** is enabled TV Rename will firstly prompt you to make sure you wish to go offline, and if you click `Yes` it will run on locally cached data from TheTVD. This is useful if you happen to be somewhere that doesn't have internet access because it will stop TV Rename attempting to update.
 
 {:.toplink}
 [Return to Top]()
 
 ## Automatic Background Download
+If **Automatic Background Download** is enabled any action that reads data from TheTVDB will trigger a cache update prior to processing. 
 
 {:.toplink}
 [Return to Top]()
@@ -26,7 +28,9 @@ As you can see from the image above there are a number of options, each of which
 ## Preferences
 
 ![The Preferences Tabs](images/options/preferences-tabs-01.png){:.pic-l}
-The tabs in "Preferences", are each discussed below.<br />
+The tabs in "Preferences", are each discussed below.
+
+Use the links (below) to jump to a specific item...
 
 {:.center}
 [Media Center](#media-center)&nbsp;&#9670;&nbsp;[Search Folders](#search-folders)&nbsp;&#9670;&nbsp;[µTorrent / NZB](#µtorrent--nzb)&nbsp;&#9670;&nbsp;[Tree Coloring](#tree-coloring)
@@ -42,7 +46,7 @@ The tabs in "Preferences", are each discussed below.<br />
 
 This is were you tell TV Rename about your media player (and hence, the additional files you may need to download)
 
-### AWAITING UPDATE
+### Awaiting Update
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -159,11 +163,23 @@ This option sets the language for returned data when requesting information from
 ![Preferences - The Files and Folders tab](images/options/preferences-files-folders-01.png){:.pic-l}
 The "Filename Replacements" grid controls the replacement of illegal characters in filenames.
 
-If the filename contains a character that isn't allowed in a windows filename the rows in this grid are checked to discover what to use instead of the problem character.
+If the filename contains a character that isn't supported in a windows filename the grid is checked row by row to discover what to use instead of the problem character.
 
 "Video Extensions:" tells TV Rename the extensions to match when looking for video files. The entries should be semicolon delimited, not contain spaces and include the "." preceding the extension.
 
-"Other Extensions:" follows the same rules as "Video Extensions" but the file extensions specified are media related rather than video specific
+"Other Extensions:" follows the same rules as "Video Extensions" but the file extensions specified are typically for video related files rather than video. The extensions listed by default are :-
+
+|*.srt*|Subtitles in text format.|
+|------|---|
+|*.nfo*|An XML style file that contains information about the video, such as a title, summary, list of actors, year of production etc. This information is often used by media players to provide a more immersive viewing experience.|
+|------|---|
+|*.txt*|Text files can be any text but quite often, if the base name of the text file is the same as that of the video file, they contain subtitles in text format.
+|------|---|
+|*.tbn*|A KODI/XBMC specific jpeg, (doesn't seem to be as common as it used to be).
+
+It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.srt and BigBuckBunny.nfo. This helps keep them organised.
+
+The rest of the options are straightforward and need little explanation.
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -293,10 +309,10 @@ The available tags with their definitions are listed below: -
 [Return to Top]()
 
 ## Search Engines
-![The Modify Search Engines window](images/options/modify-search-engines-01.png)<br />
+![The Modify Search Engines window](images/options/modify-search-engines-01.png){:.pic-l}
 The *Modify Search Engines* window controls TV Rename's outgoing interface with the world (other than TheTVDB). Here, you can configure how and where TV Rename points a web browser searching for files.
 
-Using the `Add` and `Delete` buttons you can create or remove records at will, and the `Tags...` button will help you insert tags in the created URL. The tags supported are the same as for the previous item.
+Using the `Add` and `Delete` buttons you can create or remove records at will, and the `Tags...` pop up a list of supported tags to remind you whats available. (The tags supported are the same as those listed in the *Filename Template Editor.)
 
 As an example, here is a URL entry for Google.
 

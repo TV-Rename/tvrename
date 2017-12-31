@@ -124,9 +124,10 @@ table {
 }
 
 th, td, td:first-child {
-  padding: 0 5px;
-  font-weight: normal;
-  border: none;
+    padding: 0 5px;
+    font-weight: normal;
+    border: none;
+    vertical-align: baseline;
 }
 
 #banner {
