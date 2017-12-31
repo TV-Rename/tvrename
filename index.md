@@ -33,7 +33,7 @@ We use two google groups for help and support.
 
 ## Document Conventions
 Throughout this documentation: -<br />
-Text indicating a window name is *Italic*, eg: *Folder Monitor*<br />
-Text indicating a tab in a window is ***Bold Italic***, eg: ***When to watch***<br />
-Text indicating navigation through the menu system is **Bold** and may include a **>** to indicate a sub menu, eg: **Options>Preferences**<br />
+Text indicating a window name is *Italic*, e.g. *Folder Monitor*<br />
+Text indicating a tab in a window is ***Bold Italic***, e.g. ***When to watch***<br />
+Text indicating navigation through the menu system is **Bold** and may include a **>** to indicate a sub menu, e.g. **Options>Preferences**<br />
 Text indicating a button looks like `A Button`
