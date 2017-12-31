@@ -27,6 +27,7 @@ using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TVRename.Ipc;
 
 namespace TVRename
 {
@@ -64,7 +65,7 @@ namespace TVRename
     ///          the designers will not be able to interact properly with localized
     ///          resources associated with this form.
     /// </summary>
-    public partial class UI : Form
+    public partial class UI : Form, IRemoteActions
     {
         #region Delegates
 
@@ -75,10 +76,6 @@ namespace TVRename
 
         protected int Busy;
         private TVDoc mDoc;
-        public IPCDelegate IPCBringToForeground;
-        public IPCDelegate IPCDoAll;
-        public IPCDelegate IPCQuit;
-        public IPCDelegate IPCScan;
         protected bool InternalCheckChange;
         private int LastDLRemaining;
 
@@ -216,56 +213,10 @@ namespace TVRename
 
         private void SetupIPC()
         {
-            this.IPCBringToForeground += this.ShowYourself;
-            this.IPCScan += this.ScanAll;
-            this.IPCDoAll += this.ActionAll;
-            this.IPCQuit += this.Close;
-
-            this.AFMFullScan += this.ScanAll;
+            this.AFMFullScan += this.ProcessAll;
             this.AFMQuickScan += this.QuickScan; 
             this.AFMRecentScan += this.ScanRecent;
-
-            this.AFMDoAll += this.ActionAll;
-
-            int retries = 2;
-            while (retries > 0)
-            {
-                try
-                {
-                    //Instantiate our server channel.
-                    IpcServerChannel channel = new IpcServerChannel("TVRenameChannel");
-
-                    //Register the server channel.
-                    ChannelServices.RegisterChannel(channel, true);
-
-                    //Register this service type.
-                    RemotingConfiguration.RegisterWellKnownServiceType(typeof (IPCMethods), "IPCMethods",
-                                                                       WellKnownObjectMode.Singleton);
-
-                    IPCMethods.Setup(this, this.mDoc);
-                    break; // got this far, all is good, exit retry loop
-                }
-                catch
-                {
-                    // Maybe there is a half-dead TVRename process?  Try to kill it off.
-                    String pn = Process.GetCurrentProcess().ProcessName; 
-                    Process[] procs = Process.GetProcessesByName(pn);
-                    foreach (Process proc in procs)
-                    {
-                        if (proc.Id != Process.GetCurrentProcess().Id)
-                        {
-                            try
-                            {
-                                proc.Kill();
-                            }
-                            catch
-                            {
-                            }
-                        }
-                    }
-                }
-                retries--;
-            } // retry loop
+            this.AFMDoAll += this.ProcessAll;
         }
 
 
@@ -285,9 +236,9 @@ namespace TVRename
             // TODO: Unify command line handling between here and in Program.cs
 
             if (this.mDoc.Args.Scan || this.mDoc.Args.DoAll) // doall implies scan
-                this.ScanAll();
+                this.Scan();
             if (this.mDoc.Args.DoAll)
-                this.ActionAll();
+                this.ProcessAll();
             if (this.mDoc.Args.Quit || this.mDoc.Args.Hide)
                 this.Close();
         }
@@ -1426,7 +1377,7 @@ namespace TVRename
             UP.Show();
         }
 
-        public void ShowYourself()
+        public void FocusWindow()
         {
             if (!TVSettings.Instance.ShowInTaskbar)
                 this.Show();
@@ -1438,7 +1389,7 @@ namespace TVRename
         public void notifyIcon1_DoubleClick(object sender, MouseEventArgs e)
         {
             this.tmrShowUpcomingPopup.Stop();
-            this.ShowYourself();
+            this.FocusWindow();
         }
 
         public void buyMeADrinkToolStripMenuItem_Click(object sender, System.EventArgs e)
@@ -2821,10 +2772,10 @@ namespace TVRename
 
         private void bnActionCheck_Click(object sender, System.EventArgs e)
         {
-            this.ScanAll();
+            this.Scan();
          }
 
-        private void ScanAll()
+        public void Scan()
         {
             this.tabControl1.SelectedTab = this.tbAllInOne;
             this.Scan(null);
@@ -3014,7 +2965,7 @@ namespace TVRename
             this.ActionAction(true);
         }
 
-        private void ActionAll()
+        public void ProcessAll()
         {
             this.ActionAction(true);
         }
@@ -3532,5 +3483,7 @@ namespace TVRename
         {
             Helpers.SysOpen("https://groups.google.com/forum/#!forum/tvrename");
         }
+        
+        public void Quit() => Close();
     }
 }
