@@ -1,7 +1,6 @@
 #### Tools
-![The Tools Menu](images/tools/menu-01.png){:.pic-l}
-
-Here you can find tools to delete, update, manipulate your "Media Library" data and TheTVDB cache.
+![The Tools Menu](images/tools/menu-01.png){:.pic-r}
+Here you can find tools to update, manipulate and annihilate the data relating to your "Media Library" and TheTVDB cache.
 
 {:.clear}
 ## Force Refresh All
