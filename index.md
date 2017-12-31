@@ -28,14 +28,12 @@ We use two google groups for help and support.
 4. If you need a quick resolution then packaging up your configuration files and sending them to us will help speed diagnosis. **For security reasons it is advisable to only send the package to the person helping you with your problem**.
 5. You can also visit our "[idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Rename's Idea Wall")" to suggest new features and vote on other suggestions. 
 
-## [Under the Hood](technical "Read the Technical Guide")
-Get the oily rag out, its time to get your hands dirty... [Read the Technical Guide](technical "Read the Technical Guide").
+## [Technical Guide](technical "Read the Technical Guide")
+***Get the oily rag out, its time to get your hands dirty...*** [Read the Technical Guide](technical "Read the Technical Guide").
 
 ## Document Conventions
-Text indicating a window name is *Italic*, eg: *Folder Monitor*
-
-Text indicating a tab in a window is ***Bold Italic***, eg: ***When to watch***
-
-Text indicating navigation through the menu system is **Bold** and may include a **>** to indicate a sub menu, eg: **Tools>Folder Monitor**
-
+Throughout this documentation: -<br />
+Text indicating a window name is *Italic*, eg: *Folder Monitor*<br />
+Text indicating a tab in a window is ***Bold Italic***, eg: ***When to watch***<br />
+Text indicating navigation through the menu system is **Bold** and may include a **>** to indicate a sub menu, eg: **Options>Preferences**<br />
 Text indicating a button looks like `A Button`

@@ -1,5 +1,5 @@
-#### Under the Hood
-***Right then, spanners at the ready, here we go!***
+#### Technical Guide
+***Oily rag and spanners at the ready? Right then, here we go!***
 
 ## [TV Rename and the Command&nbsp;Line](cmd-line "Read about Command Line functionality")
 A number of TV Rename's functions can be accessed using the command line. You can find more details [here](cmd-line "Read about Command Line functionality").
