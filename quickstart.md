@@ -56,5 +56,4 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 ## 5. Sit back, relax, and let TV Rename do all the hard work for you!
 
 ***Whatever changes TV Rename makes to your recording names the season and episode details will remain untouched.***
-*It is highly unlikely that the names of the recordings will get screwed up, but, should it happen, the problem should be easily fixable after changing some settings, or adding new rules. At least, that's the theory.*
-
+*It is highly unlikely that the names of the recordings will get screwed up, but, should it happen, the problem should be easily fixable after changing some settings, or adding new rules. At least, that's the theory.* <sub>:smiley:</sub>
