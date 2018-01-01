@@ -234,7 +234,7 @@ This tab is all about TV Rename tidying up after itself.
 
 When downloading video from the internet its quite common to get .nfo files, screen grabs, sample video, text-art files and the like bundled with the download.
 
-TV Rename automatically takes care of the video file and any others you media play may require, renaming them and copying or moving them to your "Media Library".
+TV Rename automatically takes care of the video file and any others you media play may require, renaming them and copying or moving them to your Media Library.
 
 The settings in this tab take care of the rest.
 
@@ -249,7 +249,7 @@ If you use the copy option to update your library then ticking the "Clean up alr
 
 ## Ignore List
 ![The Edit Ignore List window](images/options/edit-ignore-list-01.png){:.pic-l}
-When a ***Scan*** is run any "missing" episodes for shows in your "Media Library" are listed.
+When a ***Scan*** is run any "missing" episodes for shows in your Media Library are listed.
 
 These may be genuine missing episodes or they may be "Specials", that don't fit the season/episode pattern but are still part of the show, for example: -
 
@@ -327,7 +327,7 @@ With a little ingenuity you can get really creative with these entries and pass 
 
 ## Filename Processors
 ![he Filename Processors window](images/options/filename-processors-01.png)<br />
-In much the same way that the ***Filename Template Editor*** is used to process the names of files being moved to the "Media Library" so ***Filename Processors*** is used to inform Rename what filenames to look out for when searching for a missing files
+In much the same way that the ***Filename Template Editor*** is used to process the names of files being moved to the Media Library so ***Filename Processors*** is used to inform Rename what filenames to look out for when searching for a missing files
 
 To really understand the contents of the Regex column above, you need a working knowledge of [Regular Expressions](https://regexone.com/ "Visit RegexOne").
 

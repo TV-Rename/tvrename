@@ -2,6 +2,7 @@
 * Most items can be double-clicked, to do the most "useful" thing for them.
 * Folders, shows, and episodes can be right-clicked for appropriate actions.
 * Column headers can be clicked to sort by that column.
+* Ciicking a green cell in The Actors Grid will launch your browser targeting the actor whose column the green cell is in at the "Internet Move Database" [IMDb.com](http://www.imdb.com "Visit IMDb").
 * Folder lists support drag and drop of folders from Explorer, for quick and easy addition.
 * You can remove items from the renaming and finding and organising lists by selecting them, and pressing "Delete" on your keyboard.
 * If you double-click on a tab to select it, it will automatically do the "Find", "Check", or "Refresh" action for that tab.

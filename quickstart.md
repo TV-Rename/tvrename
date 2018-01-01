@@ -1,6 +1,6 @@
 #### Quickstart Guide
 
-# Welcome to TV Rename!
+#### Welcome to TV Rename!
 
 This guide will help you through the basics setting up TV Rename.
 
@@ -8,13 +8,13 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
 > This guide assumes you already have the beginnings of a "Media Library" - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them). TV Rename doesn't care how these folders are organised, however to us mere humans probably one folder per show or one folder per show with one sub-folder per season makes sense in terms of being able to find stuff later.*
 
-# Basic Setup
+#### Basic Setup
 
-## 1. Add content from your "Media Library"
+## 1. Add content from your Media Library
 
  ![Tools>Folder Monitor](images/tools/folder-monitor-01.png)
  
- 1. Go to **Tools>Folder Monitor** and whilst on the ***Folder*** tab of the newly opened *Folder Monitor* window click `Add`. Browse to the root folder of your "Media Library" and click `OK`. The path will be added to the ***Monitor Folders*** list.
+ 1. Go to **Tools>Folder Monitor** and whilst on the ***Folder*** tab of the newly opened *Folder Monitor* window click `Add`. Browse to the root folder of your Media Library and click `OK`. The path will be added to the ***Monitor Folders*** list.
 
  2. Click the `Check >>` button, the selected path will be scanned and any recognised content automatically displayed in the ***Scan Results*** tab.
  
@@ -41,7 +41,7 @@ To return to this page click `Quickstart Guide` in TV Rename's **Help**, or brow
 
 ![Scan](images/main-window/scan-01.png)
 
- 1. Go to the ***Scan*** tab, and click `Full Scan`. TV Rename will download any needed show information from [TheTVDB](http://thetvdb.com "Visit thetvdb.com"), and examine the contents of the Media Library. Settings in **Options...** will change the behaviour here.
+ 1. Go to the ***Scan*** tab, and click `Full`. TV Rename will download any needed show information from [TheTVDB](http://thetvdb.com "Visit thetvdb.com"), and examine the contents of the Media Library. Settings in **Options...** will change the behaviour here.
 
  2. When the scan is complete, review TV Rename's suggested changes and other information. Any ticked item will be actioned, so un-tick things you're not sure about, or use the check boxes in the bottom-right of the screen. Right-click on selected items for more actions.
 

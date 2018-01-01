@@ -1,8 +1,8 @@
 #### User Guide
 ## Introduction
-As I write this guide Version 2.24 of TV Rename is out-in-the-wild and Version 2.3 is in beta making it "quite interesting" trying to keep stuff up to date. We'll do our best but any suggestions for improvements, or offers of help are more than welcome.
 
-**Note:** Comparing the live and beta versions most of the features are the same, or similar. The most recent changes have been regarding entering show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com.
+#### Apologies, this page is
+#### under construction...
 
 If you're new to TV Rename you're should probably read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get up and running).
 
@@ -39,13 +39,13 @@ At the very bottom, the status bar displays the next show/episode airing and how
 ## "My Shows"
 My Shows is where you tell TV Rename about the TV Shows you are watching (or have watched), where they can be found and how they are structured.
 
-In essence this tab (along with some of the preferences) allows you to configure the interaction between  [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and your "Media Library". Incidentally there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they always get the same path or drive letter assigned to them each time they are used. 
+In essence this tab (along with some of the preferences) allows you to configure the interaction between  [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and your Media Library. Incidentally there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they always get the same path or drive letter assigned to them each time they are used. 
 
-Here, you can see a number of shows listed in the left hand panel of the window. These are the shows that TV Rename is monitoring, if a show is in your "Media Library" it will have further information associated with it (its "home" folder in the "Media Library" for example, but there is much more). In the right hand panel you can read details about the highlighted show gleaned from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"). 
+Here, you can see a number of shows listed in the left hand panel of the window. These are the shows that TV Rename is monitoring, if a show is in your Media Library it will have further information associated with it (its "home" folder in the Media Library for example, but there is much more). In the right hand panel you can read details about the highlighted show gleaned from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"). 
 ![My Shows](images/main-window/my-shows-01.png)
 Below these panels are a series of buttons which allow you to manage the content. They are: -
 
-* {:.no-icon} `Add` - Adds a new show to the list. Remember you will need to add folders to for the show separately if you need to monitor it in the "Media Library". You don't need to add a folder if you only want to see the shows air-dates in the ***[When to Watch](#when-to-watch "go to "When to Watch")*** tab.
+* {:.no-icon} `Add` - Adds a new show to the list. Remember you will need to add folders to for the show separately if you need to monitor it in the Media Library. You don't need to add a folder if you only want to see the shows air-dates in the ***[When to Watch](#when-to-watch "go to "When to Watch")*** tab.
 
 * {:.no-icon} `Edit` - Edit the currently selected show.
 
@@ -82,7 +82,7 @@ Once the update is complete ***My Shows*** includes "The Good Doctor" and looks 
 ![My Shows - New Show Added](images/main-window/my-shows-02.png)
 Additionally the ***When to Watch*** tab will now list any future episode dates.
 
-Lets go back and tweak "The Good Doctor" to include it in our "Media Library". Assuming the show is listed in ***My Shows***, make sure it is highlighted and click `Edit` to recall the partially populated *Add/Edit Show*. If it isn't listed in ***My Shows*** follow the steps above to get the show name populated and then carry on as described below (the "click `OK`" is unnecessary). 
+Lets go back and tweak "The Good Doctor" to include it in our Media Library. Assuming the show is listed in ***My Shows***, make sure it is highlighted and click `Edit` to recall the partially populated *Add/Edit Show*. If it isn't listed in ***My Shows*** follow the steps above to get the show name populated and then carry on as described below (the "click `OK`" is unnecessary). 
 
 
 
@@ -190,12 +190,7 @@ The "When to Watch" display is automatically refreshed from time to time, and TV
 
 ![watch](images/main-window/when-to-watch-01.png)
 
-# Tools
+The My Shows tab reverts to showing The TVDB codes and indicating that the relevant data has not been downloaded, all record of ignored episodes (including "Specials") will have been deleted as well. Your best option is to run *Background Download Now* (also from the *Tools* menu - see below) and go and make a cup of coffee while the cache re-populates.
 
-See the **[Tools](tools)** section for further information on some of the additional tools and features of the software
-
-# Preferences
-
-See the **[Settings Guide](settings)** for further information on how to configure TV Rename
-
+(Once the download is complete all your shows will re-appear in ***My Shows***. Switch to the ***Scan*** tab and run `Full`. The tab re-populates, but horror-of horrors all your ignored episodes and season have gone, and confusion over double episodes and the like has returned. Unfortunately this has to be set up manually. (See, I said you needed a coffee!).
 
