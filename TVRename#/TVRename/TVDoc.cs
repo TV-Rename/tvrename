@@ -66,7 +66,7 @@ namespace TVRename
         private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
 
         private List<Finder> Finders;
-        readonly string[] _seasonWords = { "Season", // EN
+        readonly string[] seasonWords = { "Season", // EN
             "Saison", // FR, DE
             "temporada", // ES
             "Seizoen" //Dutch
