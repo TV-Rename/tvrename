@@ -17,7 +17,7 @@ namespace TVRename
             Ask,
             Ignore,
             Create
-        };
+        }
 
         public bool Hide { get; }
         public MissingFolderBehavior MissingFolder { get; set; } // TODO: Make read only
