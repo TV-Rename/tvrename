@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using System.Linq;
+using TVRename.DownloadIdentifiers;
 
 namespace TVRename
 {
@@ -269,7 +270,7 @@ namespace TVRename
                             DownloadIdentifiersController di = new DownloadIdentifiersController();
 
                             // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                            addTo.Add(di.ProcessEpisode(me.Episode, fi));
+                            addTo.AddRange(di.ProcessEpisode(me.Episode, fi));
 
                             return true;
                         }
