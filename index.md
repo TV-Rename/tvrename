@@ -1,25 +1,25 @@
 ## [About TV Rename](about "Read more about TV Rename")
-TV Rename is a TV Show management tool that runs on Windows XP and later... *[Read more about it here!](about "Read more about TV Rename")*
+TV Rename is a file management tool that runs on Windows XP and later, managing all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.&emsp; *[Read more here...](about "Read more about TV Rename")*
 
 ## [Quickstart Guide](quickstart "Read The Quickstart Guide")
-Get up and running with TV Rename... *[Click here!](quickstart "Read The Quickstart Guide")*
+This guide will help you through the basics, quickly getting TV Rename up and running.&emsp; *[Read the guide...](quickstart "Read The Quickstart Guide")*
 
 ## [User Guide](userguide "Read The User Guide")
-TV Rename in lots more detail... *[Click here!](userguide "Read The User Guide")*
+This guide picks up where the Quickstart Guide finishes and discusses using TV Rename in much more detail.&emsp; *[Read the guide...](userguide "Read The User Guide")*
 
 ## [Tips 'n' Tricks](tips-tricks "Read Tips 'n' Tricks")
-TV Rename's "Did you knows..." *[Click here!](tips-tricks "Read Tips 'n' Tricks")*
+Helpful hints, and inside information (from the developers).&emsp; *[Read more...](tips-tricks "Read Tips 'n' Tricks")*
 
 ## [Command Line Interface](cmd-line "Read about using the CLI")
-Things you can do from the [command line](cmd-line "Read about using the CLI").
+Things you can do from the [command line...](cmd-line "Read about using the CLI").
 
 ## Forums
-We use two google groups for help and support.
-### ["TVRename"](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")
-***The Main Forum*** - You can ask for help , make suggestions, and report something you think may be a bug [here](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename
- Forum").
-### ["TVRename Releases"](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")
-***The Releases Forum*** - Release notes and notifications of new versions can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum"). You can download the latest version here, as well as alphas and betas..
+TV Rename uses two google groups for help and support.
+### ["TVRename"](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")  
+***The Main Forum*** - You can ask for help , make suggestions, and report something you think may be a bug [here...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename  Forum").
+### ["TVRename Releases"](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")  
+***The Releases Forum*** - Links to downloads and release notes (including beta's and alphas) can be found [here](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum").  
+To receive email when a new version is released, join the group and then select "Send me an email for every new message".
 
 ## Issues, Bugs and Feature&nbsp;Requests
 1. Start by visiting the [support forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum"), and make a post there.
@@ -33,7 +33,7 @@ We use two google groups for help and support.
 
 ## Document Conventions
 Throughout this documentation: -<br />
-Text indicating a window name is *Italic*, e.g. *Folder Monitor*<br />
-Text indicating a tab in a window is ***Bold Italic***, e.g. ***When to watch***<br />
-Text indicating navigation through the menu system is **Bold** and may include a **>** to indicate a sub menu, e.g. **Options>Preferences**<br />
+Text indicating a window name is *Italic*, e.g. "*Folder Monitor*"<br />
+Text indicating a tab in a window is ***Bold Italic***, e.g. "***When to watch***"<br />
+Text indicating navigation through the menu system is **Bold** and may include a **>** to indicate a sub menu, e.g. "**Options>Preferences**"<br />
 Text indicating a button looks like `A Button`
