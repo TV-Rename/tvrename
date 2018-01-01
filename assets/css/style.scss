@@ -7,7 +7,7 @@
     background-color: #e1e1e1;
     border: 1px solid #adadad;
     border-radius: 3px;
-    padding: 3px;
+    padding: 3px 5px;
     white-space: nowrap;
 }
 
@@ -26,10 +26,43 @@
     padding: 0 0 10px 25px;
 }
 
-h1, h2 {
-   color: #3399cc;
+.cli {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: 14px;
+    font-weight: bold;
 }
-	
+
+.clear {
+    clear: both;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    font-weight: bold;
+    color: #ffcc00;
+}
+
+.center a:hover {
+    border-bottom: 1px solid #3399cc;
+}
+
+.toplink {
+    margin-right: auto;
+    text-align: right;
+    color: #ffcc00;
+}
+
+.toplink a {
+    font-size: 10px;
+    font-weight: normal;
+}
+
+h1, h2, h4, h5 {
+    color: #3399cc;
+}
+
 h1 a:link, a:visited {
     font-weight: bold;
 }
@@ -46,11 +79,22 @@ h2 a:hover, a:active {
     border-bottom: 3px solid #3399cc;
 }
 
-p a:link, a:visited {
+h4 {
+    font-size: 28px;
     font-weight: bold;
 }
 
-p a:hover, a:active {
+h5 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+p a {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+p a:hover {
     border-bottom: 1px solid #3399cc;
 }
 
@@ -64,6 +108,27 @@ li a:link, a:visited {
 
 li a:hover, a:active {
     border-bottom: 1px solid #3399cc;
+}
+
+li.tag-h1 a:hover, a:active {
+    color: #666;
+    border-bottom: 2px solid #666;
+} 
+
+li.tag-h2 a:hover, a:active {
+    color: #666;
+    border-bottom: 1px solid #666;
+} 
+
+table {
+    width: 0;
+}
+
+th, td, td:first-child {
+    padding: 0 5px;
+    font-weight: normal;
+    border: none;
+    vertical-align: baseline;
 }
 
 #banner {
@@ -84,10 +149,24 @@ li a:hover, a:active {
 }
 
 #banner ul li .button {
-    width: 110px;
+    width: 121px;
     padding: 4px 0;
 }
 
 .wrapper nav {
     top: 190px;
+}
+
+footer span a {
+    color:#666;
+    font-size: 22px;
+}
+
+footer span a:hover {
+    border-bottom: 2px solid #666;
+}
+
+footer span img {
+    opacity: 0.5;
+    filter: alpha(opacity=50);
 }
