@@ -33,27 +33,27 @@ namespace TVRename.DownloadIdentifiers
 
             List<Item> actions = new List<Item>();
 
-            if ((forceRefresh || !poster.Exists) && !this.Processed.Contains(show.AutoAdd_FolderBase))
+            if ((forceRefresh || !poster.Exists) && !this.Processed.Contains(poster.FullName))
             {
-                this.Processed.Add(show.AutoAdd_FolderBase);
+                this.Processed.Add(poster.FullName);
 
                 string path = show.TheSeries().GetSeriesPosterPath();
 
                 if (!string.IsNullOrEmpty(path)) actions.Add(new ActionDownload(show, null, poster, path, false));
             }
 
-            if ((forceRefresh || !banner.Exists) && !this.Processed.Contains(show.AutoAdd_FolderBase))
+            if ((forceRefresh || !banner.Exists) && !this.Processed.Contains(banner.FullName))
             {
-                this.Processed.Add(show.AutoAdd_FolderBase);
+                this.Processed.Add(banner.FullName);
 
                 string path = show.TheSeries().GetSeriesWideBannerPath();
 
                 if (!string.IsNullOrEmpty(path)) actions.Add(new ActionDownload(show, null, banner, path, false));
             }
 
-            if ((forceRefresh || !fanart.Exists) && !this.Processed.Contains(show.AutoAdd_FolderBase))
+            if ((forceRefresh || !fanart.Exists) && !this.Processed.Contains(fanart.FullName))
             {
-                this.Processed.Add(show.AutoAdd_FolderBase);
+                this.Processed.Add(fanart.FullName);
 
                 string path = show.TheSeries().GetSeriesFanartPath();
 
