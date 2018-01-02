@@ -10,7 +10,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TV Rename")]
 [assembly: AssemblyProduct("TV Rename")]
-[assembly: AssemblyCopyright("Copyright © 2007-2017")]
+[assembly: AssemblyCopyright("Copyright © 2007-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

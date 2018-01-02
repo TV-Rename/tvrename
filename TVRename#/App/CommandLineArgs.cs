@@ -1,89 +1,61 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace TVRename
 {
+    /// <summary>
+    /// Parse and store command line arguments.
+    /// </summary>
     public class CommandLineArgs
     {
-        public enum MissingFolderBehaviour
+        /// <summary>
+        /// Actions to perform when a missing folder is found.
+        /// </summary>
+        public enum MissingFolderBehavior
         {
             Ask,
             Ignore,
             Create
-        };
-
-        // holds boolean settings set on the command line
-        public bool Hide;
-        public MissingFolderBehaviour MissingFolder;
-        public bool RenameCheck;
-        public bool Quit;
-        public bool ForceRecover;
-        public bool Scan;
-        public bool DoAll;
-        public bool Unattended;
-        public string UserFilePath;
-
-        public CommandLineArgs(String[] args)
-        {
-            // force all arguments to lower case
-            for (int i = 0; i < args.Length; i++)
-                if (args[i][0] == '/')
-                    args[i] = args[i].ToLower();
-
-            Hide = Array.IndexOf(args, "/hide") != -1;
-
-            if (Array.IndexOf(args, "/createmissing") != -1)
-                MissingFolder = MissingFolderBehaviour.Create;
-            else if (Array.IndexOf(args, "/ignoremissing") != -1)
-                MissingFolder = MissingFolderBehaviour.Ignore;
-            else
-                MissingFolder = MissingFolderBehaviour.Ask;
-
-            RenameCheck = !(Array.IndexOf(args, "/norenamecheck") != -1);
-            Quit = Array.IndexOf(args, "/quit") != -1;
-            ForceRecover = Array.IndexOf(args, "/recover") != -1;
-
-            DoAll = Array.IndexOf(args, "/doall") != -1;
-            Scan = Array.IndexOf(args, "/scan") != -1;
-
-            Unattended = Array.IndexOf(args, "/unattended") != -1;
-
-            foreach (string arg in args)
-            {
-                if (arg.StartsWith("/userfilepath:"))
-                {
-                    UserFilePath = arg.Substring(arg.IndexOf(":") + 1);
-                }
-            }
         }
 
-        public CommandLineArgs(ReadOnlyCollection<string> commandLineArgs)
+        public bool Hide { get; }
+        public MissingFolderBehavior MissingFolder { get; set; } // TODO: Make read only
+        public bool RenameCheck { get; }
+        public bool Quit { get; }
+        public bool ForceRecover { get; }
+        public bool Scan { get; }
+        public bool DoAll { get; }
+        public bool Unattended { get; }
+        public string UserFilePath { get; }
+
+        /// <summary>
+        /// Initializes a new instance populated with values parsed from the command line arguments.
+        /// </summary>
+        /// <param name="args">The command line arguments.</param>
+        public CommandLineArgs(ReadOnlyCollection<string> args)
         {
-            Hide = commandLineArgs.Contains("/hide", StringComparer.OrdinalIgnoreCase);
+            this.Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
+            this.RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
+            this.Quit = args.Contains("/quit", StringComparer.OrdinalIgnoreCase);
+            this.ForceRecover = args.Contains("/recover", StringComparer.OrdinalIgnoreCase);
+            this.DoAll = args.Contains("/doall", StringComparer.OrdinalIgnoreCase);
+            this.Scan = args.Contains("/scan", StringComparer.OrdinalIgnoreCase);
+            this.Unattended = args.Contains("/unattended", StringComparer.OrdinalIgnoreCase);
 
-            if (commandLineArgs.Contains("/createmissing", StringComparer.OrdinalIgnoreCase) )
-                MissingFolder = MissingFolderBehaviour.Create;
-            else if (commandLineArgs.Contains("/ignoremissing", StringComparer.OrdinalIgnoreCase))
-                MissingFolder = MissingFolderBehaviour.Ignore;
-            else
-                MissingFolder = MissingFolderBehaviour.Ask;
+            this.UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a.Substring(a.IndexOf(":", StringComparison.Ordinal) + 1)).FirstOrDefault();
 
-            RenameCheck = !commandLineArgs.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase); 
-            Quit = commandLineArgs.Contains("/quit", StringComparer.OrdinalIgnoreCase);
-            ForceRecover = commandLineArgs.Contains("/recover", StringComparer.OrdinalIgnoreCase);
-
-            DoAll = commandLineArgs.Contains("/doall", StringComparer.OrdinalIgnoreCase); 
-            Scan = commandLineArgs.Contains("/scan", StringComparer.OrdinalIgnoreCase); 
-
-            Unattended = commandLineArgs.Contains("/unattended", StringComparer.OrdinalIgnoreCase); 
-
-            foreach (string arg in commandLineArgs)
+            if (args.Contains("/createmissing", StringComparer.OrdinalIgnoreCase))
             {
-                if (arg.StartsWith("/userfilepath:"))
-                {
-                    UserFilePath = arg.Substring(arg.IndexOf(":") + 1);
-                }
+                this.MissingFolder = MissingFolderBehavior.Create;
+            }
+            else if (args.Contains("/ignoremissing", StringComparer.OrdinalIgnoreCase))
+            {
+                this.MissingFolder = MissingFolderBehavior.Ignore;
+            }
+            else
+            {
+                this.MissingFolder = MissingFolderBehavior.Ask;
             }
         }
     }

@@ -1854,9 +1854,9 @@ namespace TVRename
 
                                 FAResult whatToDo = FAResult.kfaNotSet;
 
-                                if (this.Args.MissingFolder == CommandLineArgs.MissingFolderBehaviour.Create)
+                                if (this.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.Create)
                                     whatToDo = FAResult.kfaCreate;
-                                else if (this.Args.MissingFolder == CommandLineArgs.MissingFolderBehaviour.Ignore)
+                                else if (this.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.Ignore)
                                     whatToDo = FAResult.kfaIgnoreOnce;
 
                                 if (this.Args.Hide && (whatToDo == FAResult.kfaNotSet))

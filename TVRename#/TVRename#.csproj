@@ -56,7 +56,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>GlobalMembersTVRename</StartupObject>
+    <StartupObject>TVRename.App.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AlphaFS, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4d31a58f7d7ad5c9, processorArchitecture=MSIL">
@@ -85,9 +85,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
-    <Compile Include="App\IPC.cs" />
+    <Compile Include="Ipc\IRemoteActions.cs" />
+    <Compile Include="Ipc\RemoteClient.cs" />
     <Compile Include="Custom Controls\ListViewFlickerFree.cs">
       <SubType>Component</SubType>
     </Compile>
