@@ -20,10 +20,6 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-<!-- TAKE THE NEXT LINE OUT WHEN NOT TESTING     
-    <meta content='15' http-equiv='refresh'/>
--->     
-
   </head>
 
   <body>
@@ -75,9 +71,9 @@
 	<nav>
 		<ul>
              {% if page.url == '/' %}
-             <li><img alt="Home button" src="images/home-no-link.png" height="122" width="100" /></li>
+             <li><img alt="Home button" src="images/tv-noise.gif" height="122" width="100" /></li>
            {% else %}
-             <li><a alt="Home Button" title="Return to Home Page" style="border-bottom:none;" href="{{ site.baseurl }}/index"><img src="images/home-link.png" height="122" width="100" /></a></li>
+             <li><a alt="Home Button" title="Return to Home Page" style="border-bottom:none;" href="{{ site.baseurl }}/index"><img src="images/tv-home.gif" height="122" width="100" /></a></li>
            {% endif %}
             <li style="font-weight:700; font-style: italic; font-size: 1.2em; color: #3399cc">On this page...</li>
          </ul>
