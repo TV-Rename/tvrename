@@ -1,5 +1,3 @@
-#### Quickstart Guide
-
 #### Welcome to TV Rename!
 
 This guide will help you through the basics setting up TV Rename.
