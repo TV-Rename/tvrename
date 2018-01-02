@@ -2,6 +2,8 @@
 ![The Tools Menu](images/tools/menu-01.png){:.pic-r}
 Here you can find tools to update, manipulate and annihilate the data relating to your Media Library and TheTVDB cache.
 
+Sort out once-and-for-all which of your favourite actors are in which shows and vice-versa.
+
 You can also do some clever stuff manipulating and re-creating torrent files.
 
 {:.clear}
