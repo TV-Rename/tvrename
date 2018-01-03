@@ -7,8 +7,8 @@ This guide will help you through the basics, quickly getting TV Rename up and ru
 ## [User Guide](userguide "Read The User Guide")
 This guide picks up where the Quickstart Guide finishes and discusses using TV Rename in much more detail.&emsp; *[Read the guide...](userguide "Read The User Guide")*
 
-## [Tips 'n' Tricks](tips-tricks "Read Tips 'n' Tricks")
-Helpful hints, and inside information (from the developers).&emsp; *[Read more...](tips-tricks "Read Tips 'n' Tricks")*
+## [Tips, Tricks and Gotchas](tips-tricks "Read Tips 'n' Tricks")
+Helpful hints, and inside information (from the developers).&emsp; *[Read more...](tips-tricks "Read Tips, Tricks and Gotchas")*
 
 ## [Command Line Interface](cmd-line "Read about using the CLI")
 Things you can do from the [command line...](cmd-line "Read about using the CLI").

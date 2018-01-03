@@ -1,8 +1,7 @@
 #### User Guide
 ## Introduction
 
-#### Apologies, this page is
-#### under construction...
+![Under Construction](images/under-construction.jpg)
 
 If you're new to TV Rename you're should probably read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get up and running).
 
