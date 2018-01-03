@@ -27,8 +27,7 @@ namespace TVRename.App
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Check if an application instance is already running
-            bool newInstance;
-            Mutex mutex = new Mutex(true, "TVRename", out newInstance);
+            Mutex mutex = new Mutex(true, "TVRename", out bool newInstance);
 
             if (!newInstance)
             {
