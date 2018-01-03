@@ -46,7 +46,7 @@ Use the links (below) to jump to a specific item...
 
 This is were you tell TV Rename about your media player (and hence, the additional files you may need to download)
 
-### Awaiting Update
+![Under Construction](images/under-construction.jpg)
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()

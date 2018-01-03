@@ -1,10 +1,9 @@
 #### Tools
 ![The Tools Menu](images/tools/menu-01.png){:.pic-r}
-Here you can find tools to update, manipulate and annihilate the data relating to your Media Library and TheTVDB cache.
+Here you can find tools to update, manipulate and annihilate the data relating to your Media Library and TheTVDB cache. You can do some clever stuff manipulating and re-creating torrent files.
 
-You can also do some clever stuff manipulating and re-creating torrent files.
+And you can finally sort out once-and-for-all which shows your favourite actors are in, what else they've been in, and who acts in your favourite shows.
 
-{:.clear}
 ## Force Refresh All
 ![Force Refresh All](images/tools/force-refresh-all-01.png){:.pic-l}
 If TV Rename's representation of your Media Library is a mess then this is probably the Tool for you.
@@ -37,9 +36,7 @@ Clicking `Remove` will remove the highlighted row from the New Shows list, howev
 
 Clicking `Ignore` will add the folder to the "Ignore Folders:" list and it will be ignored is subsequent scans.
 
-### IGNORE LIST APPEARS TO BE BROKEN...
-
-### AWAITING UPDATE
+![Under Construction](images/under-construction.jpg)
 
 ## Actors Grid
 Really like that actor in "Such-and-such"? Sure they are in other shows in your Media Library? This is the tool to tell you!
@@ -64,7 +61,7 @@ The Actors Grid has one more (undocumented) trick up its sleeve. If you click on
 
 ## Torrent Match
 
-###AWAITING UPDATE
+![Under Construction](images/under-construction.jpg)
 
 The "Torrent Match" tab lets you rename files, so their names match what is in a .torrent file. This is done using the torrent hashes, so it will work on any type of file, as long as it is big enough for a partial hash to be done on it.
 
@@ -80,4 +77,4 @@ It's not possible to rename the files in (a multiple file) torrent, to match wha
 
 ## µTorrent Save To
 
-### AWAITING UPDATE
+![Under Construction](images/under-construction.jpg)
