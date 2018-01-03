@@ -20,7 +20,7 @@ If **Offline Operation** is enabled TV Rename will firstly prompt you to make su
 [Return to Top]()
 
 ## Automatic Background Download
-If **Automatic Background Download** is enabled any action that reads data from TheTVDB will trigger a cache update prior to processing. 
+If **Automatic Background Download** is enabled any action that reads data from [The TVDB](http://thetvdb.com "Visit thetvdb.com")  will trigger a cache update prior to processing. 
 
 {:.toplink}
 [Return to Top]()
@@ -134,7 +134,7 @@ Does what-it-says-on-the-tin, if ticked screen grabs from show episodes are disp
 
 *Default: **Ticked***
 
-*Download up to "X" shows simultaneously from TheTVDB*<br />
+*Download up to "X" shows simultaneously from [The TVDB](http://thetvdb.com "Visit thetvdb.com") *<br />
 Sets the number of concurrent connections to TheTVDB API. It can be set in the range to 1 to 8.
 
 *Default: **4***
@@ -349,8 +349,3 @@ In all likelihood you will find it unnecessary to make changes here, only if a n
 
 {:.toplink}
 [Return to Top]()
-
-
-"Use sequential number matching" will match episodes based on their overall airing order. Because this causes a lot of false matches, it is off by default. For example, Seinfeld S08E02 is the 136th episode aired, so with this option "Seinfeld - 136 - The Soul Mate.avi" will be seen at S08E02.
-
-The "Default Naming Style" is what is used for new folders that you add, so if you are adding a lot, set it here first!

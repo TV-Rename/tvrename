@@ -23,7 +23,7 @@ Any shows not identified will not have an entry in the **Show** column or the **
 5. You can manually add shows by clicking the `Add` button in the ***My Shows*** tab. Enter the show name, and click `Search` to find it. 
 Enter the base folder for the show in your Media Library, and select whether or not you have a sub-folder for each season.
  
-6. Go back to the ***My Shows*** tab and browse the series information. Here, by right clicking on a show, you can edit the show itself to control how TV Rename manages it, or edit a season to override episode information fetched from TheTVDB.
+6. Go back to the ***My Shows*** tab and browse the series information. Here, by right clicking on a show, you can edit the show itself to control how TV Rename manages it, or edit a season to override episode information fetched from [The TVDB](http://thetvdb.com "Visit thetvdb.com") .
 
 ## 2. Set your Preferences
 ![Options>Preferences>Search Folders](images/options/preferences-search-folders-01.png){:.pic-r}

@@ -1,6 +1,4 @@
 #### User Guide
-#### Introduction
-![Under Construction](images/under-construction.jpg)
 If you're new to TV Rename you should read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will get you up-and-running quickly).
 
 Need help? Please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to answer any questions you may have.
@@ -90,7 +88,7 @@ In the following example, we'll add a new show called "The Good Doctor" to TV Re
 ![Add/Edit Show - Search Results](images/main-window/add-edit-show-02.png){:.pic-r}
 The first step is to tell TV Rename about the show. If you know it you can enter TheTVDB's code for the show, otherwise type the show's name (e.g. "the good doctor") and click on `Search`. TV Rename will search for matches to your entry in TheTVDB's database, cache the results locally and display the matches. The search also works with partial show names. For example you could search for just "doctor", but "doctor" being fairly common in TV Show titles, returns over 80 results (including ours!), and you will have to delve into the list to find the one you want. Once you have found the correct show, click on it to highlight it.
 
-If all you want to do is see the details of the show then you're done! Just click `OK` at the bottom of the window and TV Rename will pull the necessary data from TheTVDB to populate the ***My Shows*** tab.
+If all you want to do is see the details of the show then you're done! Just click `OK` at the bottom of the window and TV Rename will pull the necessary data from [The TVDB](http://thetvdb.com "Visit thetvdb.com")  to populate the ***My Shows*** tab.
 
 Once the update is complete ***My Shows*** includes "The Good Doctor" and looks like this: -
 ![My Shows - New Show Added](images/main-window/my-shows-02.png)
@@ -142,15 +140,21 @@ However TV Rename's middle name is "configurability", so lets take a look at the
 
 ### The Advanced Tab
 
+![Under Construction](images/under-construction.jpg)
+
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### The Show Aliases Tab
 
+![Under Construction](images/under-construction.jpg)
+
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### The Search Tab
+
+![Under Construction](images/under-construction.jpg)
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -192,30 +196,60 @@ After applying a rule, go to ***My Shows***, select the show, and click `Refresh
 [Return to Top]()
 
 ## Scan
-
 TV Rename can scan your Media Library looking for missing or outdated files and will try to repair any issues it finds automatically. 
 
 There are three types of scan available : -
 
- | **Full**   | A full scan of all shows and seasons. |
- | **Recent** | A Scan of all the shows that have aired recently. |
- | **Quick**  | Scan the shows that have aired recently and have a missing episode in the library. Also check the locations specified in *Options>Preferences>Search Folders* for any matching media files.
+| **Full**   | A full scan of all shows and seasons. |
+| **Recent** | A Scan of all the shows that have aired recently. |
+| **Quick**  | Scan the shows that have aired recently and have a missing episode in the library. Also check the locations specified in *Options>Preferences>Search Folders* for any matching media files.
 
-## Scan Results
+***Scan*** indicates where there are gaps in your library. The result of a typical scan is shown below.
 
-This shows you where there are gaps in your collection. Click the check button, and TV Rename will look through your folders and list what you are missing.
+![The Scan Tab](images/main-window/scan-03.png)
 
-The "arrow-down" button in the bottom left lets you choose your preferred torrent search engine. Clicking on the button in the bottom left will search for the currently selected missing episode(s) on that site. Double-clicking an item in the list will also search.
+The scan indicates that there a number of missing episodes, a file in the Media Library that needs to be renamed and a file that has been downloaded and is waiting to be moved to the Media Library and be renamed in the process.
 
-### AWAITING UPDATE
+Looking at the missing episodes first; even here TV Rename is "trying to help". Note that each entry has a magnifying glass icon to the left of the row. Single clicking one of these rows and then clicking the`Web Search` button (in this case "Zooqle") will launch a search for the indicated file (configured in *[Options>Search Engines](options#search-engines "See Options>Search Engines for details")*). Double clicking one of these rows will launch the same web search. You an also select multiple rows and then click the `Web Search` button to launch a browser with multiple tabs, one for each highlighted row.
 
-Add a number of "search folders". Either use the "Add" button, or drag and drop folders from Windows Explorer into this list. The "Open" button will open an Explorer window for the selected folder. Folders added to this list automatically have their sub folders searched.
+If you're having trouble finding what you're searching for you can change the search engine to another in the *[Options>Search Engines](options#search-engines "See Options>Search Engines for details")* list by clicking the `▼` button next to "Web Search" and selecting a different entry.
 
-Press the "Find" button to search for missing episodes. TV Rename will list the episodes it found, and the appropriate move (on the same device) or copy (across different devices) operation to get them to where they should be. If you choose "Leave Originals", it will always copy the files to their new location.
+In addition to the files to be searched for, the ***Scan*** tab is also showing that there is one file to be renamed and one file to be copied or moved (see the [Options>Preferences Scan Options](options#scan-options "See Options>Preferences Scan Options for details") tab). Note both items have a tick in the box icon to the left of each row.
 
-Once you are satisfied with the list of things to do, click on "Move/Copy" and TV Rename will do it.
+When the `Do Checked` button is clicked everything ticked will be processed.
 
-While files are being copied and/or moved, the dialog below is shown. Press "Pause" to temporarily pause the copy/move operation. Click it again to resume. "Cancel" will stop immediately. The disk space shown is for the drive that the current file is being copied/moved to.
+Note that there are some tick boxes to the right of the buttons. These give you course control over the ticked items, it this case we can toggle everything to be moved and/or everything to be renamed on and off.
+
+In addition you can toggle individual items on or off by clicking directly on their tick boxes.
+
+Once you are happy with everything selected click on `Do Checked` and the Copy/Move/Rename process will start.
+
+![The Progress Pane](images/main-window/progress-01.png){:.pic-r}
+While files are being copied and/or moved, this dialog is shown. Click `Pause` to temporarily pause the copy/move operation. Click it again to resume. Clicking `Cancel` will stop the operation immediately. The disk space shown is for the drive that the current file is being copied/moved to.
+
+Selecting rows in the main scan panel and clicking `Ignore Selected` will remove them from the system (permanently unless they are removed from the ignore list - see [Options>Ignore List](options#ignore-list)).
+
+Selecting rows in the main scan panel and clicking `Remove Selected` will temporarily remove them from the scan tab. They will re-appear when the scan is re-run.
+
+{:.toplink}
+[Return to Top]()
+
+## Further Automation
+
+![Under Construction](images/under-construction.jpg)
+
+{:.toplink}
+[Return to Top]()
+
+## Help
+![Statistics...](images/help/statistics-01.png){:.pic-l}
+Aside from the usual instructions the `Help` menu is hiding one really useful function - **Statistics**.
+It's surprising just how much work TV Rename does "managing some videos".
+
+The figures in the example do not look particularly impressive, but consider that I reverted to a clean install (Stats all at "0") when I started to re-write/update these documents around two weeks ago, how much goes on under-the-hood is quite impressive  
+
+{:.toplink}
+[Return to Top]()
 
 ### AWAITING UPDATE
 
@@ -227,25 +261,22 @@ A folder can be excluded from a rename check by setting rename files to no in th
 
 You can select items in the list and press the Delete key on your keyboard to remove them from the list. Once you are happy with the changes offered, click the Rename button at the bottom, and TV Rename will make the changes.
 
-# When to Watch
-For shows which have the "Show next air-date" option set, they will be listed here if tv.com has air-date information available. The time and date are adjusted to be in the timezone that you have Windows set to be.
-
-Click on the columns to sort by them. Right-click on items to do useful related actions. For shows that have aired, an icon is shown to indicate if it is on disk (double-clicking will open it), or needs to be searched for. Double-clicking a item that isn't on disk will open the specified torrent search engine for it.
-
-Click on the calendar to see what is airing on a particular day. Dates with shows airing are in bold. Click on a show to see its episode summary below. The refresh button will make sure that the information is up-to-date.
-
-"Aired in the last N days" and "Next 7 days" are self-explanatory. "Later" shows the next airing episode of any show you're interested in that isn't in the next week. "Future Episodes" are all known episodes after anything in the two preceding categories.
-
-You can turn this grouping off by clicking on the "How Long" column header, and on by clicking on "Air Date".
-
-The "When to Watch" display is automatically refreshed from time to time, and TV Rename will download in the background any updates needed from tv.com. Background downloading can be disabled from the Options menu, and will also be disabled if you're in Offline Mode.
-
-![watch](images/main-window/when-to-watch-01.png)
-
 The My Shows tab reverts to showing The TVDB codes and indicating that the relevant data has not been downloaded, all record of ignored episodes (including "Specials") will have been deleted as well. Your best option is to run *Background Download Now* (also from the *Tools* menu - see below) and go and make a cup of coffee while the cache re-populates.
 
 (Once the download is complete all your shows will re-appear in ***My Shows***. Switch to the ***Scan*** tab and run `Full`. The tab re-populates, but horror-of horrors all your ignored episodes and season have gone, and confusion over double episodes and the like has returned. Unfortunately this has to be set up manually. (See, I said you needed a coffee!).
 
-## Status Bar
-At the very bottom of the window the status bar displays the next show/episode airing and how long you've got to wait for it and the "Background download:" status!
+{:.toplink}
+[Return to Top]()
 
+## Right Clicking
+
+![Under Construction](images/under-construction.jpg)
+
+{:.toplink}
+[Return to Top]()
+
+## The Status Bar
+The Status Bar hides at the very bottom of the main window, quietly displaying the next show/episode airing and how long you've got to wait before you can watch it, and the "Background download:" status (either "Idle" or details of what it's doing!
+
+{:.toplink}
+[Return to Top]()
