@@ -1,7 +1,7 @@
 #### User Guide
 #### Introduction
 ![Under Construction](images/under-construction.jpg)
-If you're new to TV Rename we recommend you read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get up and running quickly).
+If you're new to TV Rename you should read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will get you up-and-running quickly).
 
 Need help? Please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to answer any questions you may have.
 
@@ -39,6 +39,7 @@ My Shows displays a list of TV shows found and Identified in your Media Library,
 In essence this tab (along with some of the [preferences](options#preferences)) allows you to configure the interaction between  [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and your Media Library. Incidentally there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they are always assigned the same path or drive letter each time they are connected. 
 
 ![My Shows](images/main-window/my-shows-01.png)
+
 Here, you can see a number of shows listed in the left hand panel of the window. These are the shows that TV Rename is monitoring, if a show is in your Media Library it will have further information associated with it (its "home" folder in the Media Library for example, but there is much more). In the right hand panel you can read details about the highlighted show gleaned from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com").
 
 There is a small "search filter" at the top of the Show List panel, typing in this box here will allow you to hide the display of shows that don't match the text.
@@ -68,7 +69,7 @@ Clicking on the `Add` button will open the *Add/Edit Show* window ready to add a
 
 Clicking the `Edit` button with a **show** highlighted will open the same window pre-populated with that shows details. 
 
-Clicking `Edit` with the **season** of a show highlighted will open the *Edit Season Rules* window - *[more on this later](userguide#edit-season)...*
+Clicking `Edit` with the **season** of a show highlighted will open the *Edit Season Rules* window - *[more on this later](#edit-season-rulesá)...*
 
 {:.clear}
 {:.toplink}
@@ -156,70 +157,49 @@ However TV Rename's middle name is "configurability", so lets take a look at the
 
 ## Edit Season Rules
 
+The "Edit Season Rules" pane allows you to manipulate the local data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") to suit your episode structure.
+
+![Edit Season Rules](images/main-window/edit-season-rules-01.png){:.pic-l}
+
+Episodes 1 and 2 of Season 5 of "Marvel's Agents of S.H.I.E.L.D." aired as a double episode so only one file exists, however [The TVDB](http://thetvdb.com "Visit thetvdb.com") correctly has both episodes listed individually, so there is a conflict.
+
+The image illustrates a rule that merges the two episodes into one. This will affect the name displayed in the ***My Shows*** tab, and the naming of the file in the Media Library.
+
+The rules are applied in top to bottom order, you can use the the `Up` and `Down` buttons to move a rule.
+
+`Add`, `Edit`, and `Delete` will manipulate the list as expected.
+
+![Add/Modify Rule](images/main-window/add-modify-rule-01.png){:.pic-r}
+Clicking either `Add` or `Edit` will open the *Add/Modify Rule* pane. The only difference being `Add` allows you to create a new rule and `Edit` pulls in the data from a highlighted rule for you to change.
+
+In this example we are editing the rule shown above. This is a two part process, firstly select an "Action:", and secondly tell TV Rename what to apply the action to.
+
+In this case the "Action" is "Merge", we are merging "1" and "2" i.e. Episodes 1 and 2 of the selected season, And we will let TV Rename name the new file automatically.
+
+The "Actions:" available are: -
+
+| **Ignore** | Keep the specified episode in the guide, but don't check for it (or rename it) on disk locally.   |
+| **Rename** | Manually set the name of an episode.                                                              |   
+| **Remove** | Make a an episode disappear. All episodes above will be renumbered down to fill the gap.          |
+| **Swap**   | Swap the position of two episodes.                                                                |
+| **Merge**  | The episodes numbers supplied all in a single multi-episode file.                                 |
+| **Insert** | Manually add an episode into the season. Later episodes are renumbered to accommodate the change. |
+| **Split**  | Turn one episode into many. Following episodes are renumbered to accommodate the change.          |
+
+After applying a rule, go to ***My Shows***, select the show, and click `Refresh`. You will then see (and can check) the effects of the rules you've created.
+
 {:.toplink}
 [Return to Top]()
 
+## Scan
 
+TV Rename can scan your Media Library looking for missing or outdated files and will try to repair any issues it finds automatically. 
 
+There are three types of scan available : -
 
-
-
-**Show next air-date** chooses if this show will appear in the "When to Watch" tab. tv.com also can include pilots, specials, and TV movies in their episode guide. If you don't check these three checkboxes, they will be ignored completely. If you check the checkbox, it will be counted as an episode. For example, Mythbusters often counts a special as an episode.
-
-The Old option means that once data is downloaded from tv.com, and locally cached, it will never be downloaded again. (See the "Mark Old Shows" dialog, too.) Otherwise, TV Rename re-downloads data from tv.com for a show depending on how long it was since the last episode, and if the next episode's air-date is known.
-
-The rules section lets you manipulate the tv.com episode guide to suit how you have the episodes on your computer. The rules are applied in order, from top to bottom, it is possible to use the Up and Down buttons to re-prioritise them. Add, edit, and Delete will alter the rules list.
-
-In this example, episodes 16 and 17 were aired as a double episode, meaning you have only one file on disk for both. The rule merges the two episodes into one. This affects the display in the "Episode Guide" tab, as well as what is checked for and how the files are renamed.
-
-## Add/Modify Rule
-This is the dialog for adding or editing a rule for a show's season. Choose the operation at the top, then enter the appropriate values below.
-
-### AWAITING UPDATE
-{:#edit-season}
-Clicking Edit  with the **season** of a show highlighted will open the *Edit Season Rules* window.
-
-
-* **Ignore** - Keep the specified episode in the guide, but don't check for it (or rename it) on disk locally.
-* **Rename** - Manually set the name of an episode.
-* **Remove** - Make a an episode disappear. All episodes above will be renumbered down to fill the gap.
-* **Swap** - Swap the position of two episodes.
-* **Merge** - These episodes are all on disk locally as one multi-episode file.
-* **Insert** - Manually add an episode into the season. Episodes after are renumbered to accommodate it.
-* **Split** - Turn one episode into many, renumbering episode after the split to accommodate them.
-After adding a rule, you can go to the "Episode Guide" tab, select the show, and then click "Refresh". You will then be able to see (and check) the effects of the rules you've created.
-
-## Episode Guide
-Once you have set up your shows, you can visit the episode guide to see the information from tvdb.com, after modification by any rules you may have added.
-
-Select the show from the combo box. If you've recently edited the show in the "shows and folders" tab, the display may be empty. In this case, click on the Refresh button.
-
-"Visit TVDB" will open your web browser on the tv.com page for this season of this show. Clicking on the show name will take you to the show summary page.
-
-##TV Rename User Guide
-###Introduction...
-
-Welcome to this, the latest incarnation of the userguide, as I write this Version 2.24 is out in the wild and Version 2.3 is in beta, so this will be as up-to-date as I can make it, but currently the target is a moveable feast.
-
-If you haven't got the first idea of what TV Rename is and how it worksThe rightmost button lets you choose your preferred torrent search engine. This is used when you click on one of the "Search" links in the episode guide.
-
-If TV Rename has found the corresponding episode on disk, a watch link will be displayed. That will open the video file in the associated Windows movie player.
-
-The episode guide also includes indication of whether or not the show has been aired, or how long until it airs. The "time to do" display is adjusted from the timezone on tv.com's page, to that of your computer.
-
-### AWAITING UPDATE
-
-# Scan
-
-TV Rename will scan your shows and look for missing/outdated files. For anything missing/wrong it will try and fix the issues automatically 
-
-## Scan Types
-
-There are 3 types of scan you can choose from :
-
- 1. **Full** - A full scan of all shows
- 2. **Recent** - Scan of all the shows that have aired in the last 7 days
- 3. **Quick** - Scan just the shows that are in the last 7 days and have a missing episode on disk. Plus any shows that match a media file in the download folder.
+ | **Full**   | A full scan of all shows and seasons. |
+ | **Recent** | A Scan of all the shows that have aired recently. |
+ | **Quick**  | Scan the shows that have aired recently and have a missing episode in the library. Also check the locations specified in *Options>Preferences>Search Folders* for any matching media files.
 
 ## Scan Results
 
