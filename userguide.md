@@ -81,20 +81,19 @@ Once the update is complete ***My Shows*** includes "The Good Doctor" and looks 
 ![My Shows - New Show Added](images/main-window/my-shows-02.png)
 Additionally the ***When to Watch*** tab will now list any future episode dates.
 
-{:#edit-season}
-Clicking Edit  with the **season** of a show highlighted will open the *Edit Season Rules* window.
-
 Lets go back and tweak "The Good Doctor" to include it in our Media Library. Assuming the show is listed in ***My Shows***, make sure it is highlighted and click `Edit` to recall the partially populated *Add/Edit Show*. If it isn't listed in ***My Shows*** follow the steps above to get the show name populated and then carry on as described below (the "click `OK`" is unnecessary). 
 
+The "Custom show name:" field allows you to change the shows name in both TV Rename and the Media Library (except the base folder). You may like to remove "The" from names, or change extra information like the year the show was originally produced that appears with some shows. If you tick the box and enter a new name in the field provided the shows title will be replaced with this entry.
+
+The "Airs in Timezone:" drop-down tells TV Rename that the air time from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is in that specific timezone. Most shows are in Eastern USA time, but British shows (e.g. Maigret) will be in British Standard Time. This only has an effect in the "When to Watch" tab  which translates these times into your local timezone, or in the status bar when calculating time till the "Next Airing:".
+
+If you wish to ignore specific seasons of a show enter the season numbers (space separated) in the "Ignore Seasons:" field (Entering a "0" will ignore "Specials").
+
+Ticking "Automatic Folders:"
+
+Don't forget to click `OK` when you're done.
 
 
-
-
-You can pre-load the cache for tv.com codes by using the "Update Codes" option on the "Tools" menu. This will download from TV Rename's website data for about 14000 shows, but it is only updated very infrequently.
-
-The **show name** is what you like to call the show yourself. You may like to remove "The" from names, or extra info like the year that tv.com puts on some shows. If you click **Copy**, it will keep it the same as tv.com's naming.
-
-You enter the season number into the **season** field. The **timezone** is the timezone that the air-date times on the tv.com summary page are in. Most shows are Eastern USA timezone, but British shows (e.g. Jekyll) will be British Standard Time. This only has an effect on the "When to Watch" display, which then translates those times into your computer's timezone.
 
 **Show next air-date** chooses if this show will appear in the "When to Watch" tab. tv.com also can include pilots, specials, and TV movies in their episode guide. If you don't check these three checkboxes, they will be ignored completely. If you check the checkbox, it will be counted as an episode. For example, Mythbusters often counts a special as an episode.
 
@@ -108,6 +107,8 @@ In this example, episodes 16 and 17 were aired as a double episode, meaning you 
 This is the dialog for adding or editing a rule for a show's season. Choose the operation at the top, then enter the appropriate values below.
 
 ### AWAITING UPDATE
+{:#edit-season}
+Clicking Edit  with the **season** of a show highlighted will open the *Edit Season Rules* window.
 
 
 * **Ignore** - Keep the specified episode in the guide, but don't check for it (or rename it) on disk locally.
