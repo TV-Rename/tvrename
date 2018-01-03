@@ -24,6 +24,8 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Win32;
 using System.Security;
 
@@ -556,6 +558,34 @@ namespace TVRename
     {
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        /// <summary>
+        /// Gets a value indicating whether application is running under Mono.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if application is running under Mono; otherwise, <c>false</c>.
+        /// </value>
+        public static bool OnMono => Type.GetType("Mono.Runtime") != null;
+
+        /// <summary>
+        /// Gets the application display version from the current assemblies <see cref="AssemblyInformationalVersionAttribute"/>.
+        /// </summary>
+        /// <value>
+        /// The application display version.
+        /// </value>
+        public static string DisplayVersion
+        {
+            get
+            {
+                string v = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false).Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
+
+#if DEBUG
+                v += " ** Debug Build **";
+#endif
+
+                return v;
+            }
+        }
 
         public static string pad(int i)
         {

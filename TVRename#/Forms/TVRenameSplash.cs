@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,7 +13,7 @@ namespace TVRename
         public TVRenameSplash()
         {
             InitializeComponent();
-            lblVersion.Text = Version.DisplayVersionString();
+            lblVersion.Text = Helpers.DisplayVersion;
         }
         public void UpdateStatus(string status) { lblStatus.Text = status; }
         public void UpdateProgress(int progress) { prgComplete.Value = progress; }
