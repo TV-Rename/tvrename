@@ -1,60 +1,60 @@
 #### User Guide
-## Introduction
-
+#### Introduction
 ![Under Construction](images/under-construction.jpg)
+If you're new to TV Rename we recommend you read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get up and running quickly).
 
-If you're new to TV Rename you're should probably read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will help you get up and running).
-
-If you need help, please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to help.
+Need help? Please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to answer any questions you may have.
 
 ### Lets (not) start at the beginning...
 In true technical manual fashion we're going to start at the end because, as is so often the case, it makes sense to see where your going to help figure out how to get there.
 
-## "When to watch"
-Once you have TV Rename up and running and behaving the way you want you'll probably spend most of your time here. If you wish you can make this tab open by default by changing the Startup tab setting in the ***General*** tab of **Options>Preferences**.
+## When to watch
+Once you have TV Rename up and running and behaving the way you want you'll probably spend most of your time here. If you wish you can make this tab open by default by changing the Startup tab setting in the ***[General](options#general)*** tab of **Options>Preferences**.
 
 ![When To Watch](images/main-window/when-to-watch-01.png)
+Looking at the list in the main panel we see details of recent and future show episodes matching the TV Shows found in the Media Library.
 
-Looking at the list in the main panel we see details of recent and future show episodes matching TV Shows found in the Media Library.
+At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the ***[General](options#general)*** tab of **Options>Preferences** if you wish).
 
-At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the ***General*** tab of **Options>Preferences** if you wish).
-
-In this example there are two shows listed. The disk icon to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode was found in the Media Library and the magnifying glass to the left of "Maigret (2016)" indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured under **Options>Search Engines**).
+In this example there are two shows listed. The disk icon to the left of "Marvel's Agents of S.H.I.E.L.D." indicates that the episode was found in the Media Library and the magnifying glass to the left of "Maigret (2016)" indicates that the episode cannot be found locally. Double clicking on this row will launch your default web browser (pointing to a page of your choice - in this case Zooqle) pre-loaded with search parameters to look for the missing file (configured in **[Options>Search Engines](options#search-engines)**).
 
 The next section tells us what shows found in the Media Library will be airing new episodes in the "Next 7 Days".
 
-"Future Episodes" looks further ahead and lists the first new episode of each show found in the Media Library not already listed.
+"Future Episodes" looks further ahead and lists the first new episode of each show found in the Media Library not already listed in "Next 7 Days".
 
-"Later" shows the rest of the future episode information matching shows in your Media Library that [TheTVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
+"Later" shows the rest of the future episode information matching shows in the Media Library that [TheTVDB](http://thetvdb.com "Visit thetvdb.com") knows about.
 
 The next two panels show (on the left) a summary for the episode highlighted in the main panel and (on the right) a calendar indicating the dates episodes were/will be broadcast (in bold type). The calendar interacts with the main panel. Clicking on a bold date will highlight the episode matching the date in the list above, and clicking on an episode in the main panel will cause the calendar to display that date. In either case the episode summary will be updated (if there is one).
 
-At the very bottom, the status bar displays the next show/episode airing and how long you've got to wait for it!
-
-**The content presented by TV Rename is only as good as that found at [TheTVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and helping to maintain their content - everybody benefits!**
+**As stated elsewhere; the content presented by TV Rename is only as good as that found at [TheTVDB](http://thetvdb.com "Visit thetvdb.com") so please consider registering and helping to maintain their content - everybody benefits!**
 
 *In keeping with our jumping-about policy lets look at My Shows next.*
 
-## "My Shows"
-My Shows is where you tell TV Rename about the TV Shows you are watching (or have watched), where they can be found and how they are structured.
+## My Shows
+My Shows displays a list of TV shows found and Identified in your Media Library, and is where you can manually tell TV Rename about a new TV Show in the library, where it can be found and how it is structured.
 
-In essence this tab (along with some of the preferences) allows you to configure the interaction between  [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and your Media Library. Incidentally there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they always get the same path or drive letter assigned to them each time they are used. 
+In essence this tab (along with some of the [preferences](options#preferences)) allows you to configure the interaction between  [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and your Media Library. Incidentally there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they are always assigned the same path or drive letter each time they are connected. 
 
-Here, you can see a number of shows listed in the left hand panel of the window. These are the shows that TV Rename is monitoring, if a show is in your Media Library it will have further information associated with it (its "home" folder in the Media Library for example, but there is much more). In the right hand panel you can read details about the highlighted show gleaned from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com"). 
 ![My Shows](images/main-window/my-shows-01.png)
+Here, you can see a number of shows listed in the left hand panel of the window. These are the shows that TV Rename is monitoring, if a show is in your Media Library it will have further information associated with it (its "home" folder in the Media Library for example, but there is much more). In the right hand panel you can read details about the highlighted show gleaned from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com").
+
+There is a small "search filter" at the top of the Show List panel, typing in this box here will allow you to hide the display of shows that don't match the text.
+
+The right hand panel has two tabs, "Information" and "Images", the usual setting  is "Information", however selecting "Images" displays all the cached images for a show or season of a show collected from [The TVDB](http://thetvdb.com "Visit thetvdb.com"). Control of just what images are acquired is managed using the ***[Media Centre](options#media-center)*** tab of *Options>Preferences*.  
+
 Below these panels are a series of buttons which allow you to manage the content. They are: -
 
-* {:.no-icon} `Add` - Adds a new show to the list. Remember you will need to add folders to for the show separately if you need to monitor it in the Media Library. You don't need to add a folder if you only want to see the shows air-dates in the ***[When to Watch](#when-to-watch "go to "When to Watch")*** tab.
+* {:.no-icon} `Add` - Adds a new show to the list. Remember you may need to add folders to for the show separately if you need to monitor it in the Media Library. You don't need to add a folder if you only want to see the shows air-dates in the ***[When to Watch](#when-to-watch "go to "When to Watch")*** tab.
 
-* {:.no-icon} `Edit` - Edit the currently selected show.
+* {:.no-icon} `Edit` - Edit the currently selected show or season.
 
 * {:.no-icon} `Delete` - Remove the currently selected show(s).
 
 * {:.no-icon} `Filter` - Filter the listed shows based on the entered criteria.
 
-* {:.no-icon} `Expand` - Toggle between a collapsed view of the show list (just the show names) and an expanded view (show names, seasons and specials).
+* {:.no-icon} `Expand` - Toggle between a collapsed view of the Show List (just the show names) and an expanded view (show names, seasons and specials).
 
-* {:.no-icon} `Details` - Toggle between showing and hiding the Detais Panel. If the panel is hidden the Show List panel expands to fill the tab.
+* {:.no-icon} `Information` - Toggle between showing and hiding the (right hand) Information Panel. If the panel is hidden the Show List panel expands to fill the tab.
 
 * {:.no-icon} `Open` - Opens the folder for the highlighted show or season in explorer.
 
@@ -64,9 +64,9 @@ Below these panels are a series of buttons which allow you to manage the content
 ![Add/Edit Show](images/main-window/add-edit-show-01.png){:.pic-l}
 Clicking on the `Add` button will open the *Add/Edit Show* window ready to add another show. 
 
-Clicking the `Edit` button with a show highlighted will open the same window pre-populated with that shows details. 
+Clicking the `Edit` button with a **show** highlighted will open the same window pre-populated with that shows details. 
 
-Clicking `Edit` with the **season** of a show highlighted will open the *Edit Season Rules* window - *more on this later...*
+Clicking `Edit` with the **season** of a show highlighted will open the *Edit Season Rules* window - *[more on this later](userguide#edit-season)...*
 
 We'll start by completing the ***Basics*** tab (illustrated).
 
@@ -80,6 +80,9 @@ If all you want to do is see the details of the show then you're done! Just clic
 Once the update is complete ***My Shows*** includes "The Good Doctor" and looks like this: -
 ![My Shows - New Show Added](images/main-window/my-shows-02.png)
 Additionally the ***When to Watch*** tab will now list any future episode dates.
+
+{:#edit-season}
+Clicking Edit  with the **season** of a show highlighted will open the *Edit Season Rules* window.
 
 Lets go back and tweak "The Good Doctor" to include it in our Media Library. Assuming the show is listed in ***My Shows***, make sure it is highlighted and click `Edit` to recall the partially populated *Add/Edit Show*. If it isn't listed in ***My Shows*** follow the steps above to get the show name populated and then carry on as described below (the "click `OK`" is unnecessary). 
 
@@ -192,4 +195,7 @@ The "When to Watch" display is automatically refreshed from time to time, and TV
 The My Shows tab reverts to showing The TVDB codes and indicating that the relevant data has not been downloaded, all record of ignored episodes (including "Specials") will have been deleted as well. Your best option is to run *Background Download Now* (also from the *Tools* menu - see below) and go and make a cup of coffee while the cache re-populates.
 
 (Once the download is complete all your shows will re-appear in ***My Shows***. Switch to the ***Scan*** tab and run `Full`. The tab re-populates, but horror-of horrors all your ignored episodes and season have gone, and confusion over double episodes and the like has returned. Unfortunately this has to be set up manually. (See, I said you needed a coffee!).
+
+## Status Bar
+At the very bottom of the window the status bar displays the next show/episode airing and how long you've got to wait for it and the "Background download:" status!
 
