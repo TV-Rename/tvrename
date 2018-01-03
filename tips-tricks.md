@@ -1,6 +1,5 @@
-# Tips, Tricks and Gotchas
+#### Tips, Tricks and Gotchas
 ## Tips from the Developers
-
 * Most items can be double-clicked, to do the most "useful" thing for them.
 * Folders, shows, and episodes can be right-clicked for appropriate actions.
 * Column headers can be clicked to sort by that column.
