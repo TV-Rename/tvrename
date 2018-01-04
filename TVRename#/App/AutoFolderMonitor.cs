@@ -1,119 +1,141 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.IO;
-using Alphaleonis.Win32.Filesystem;
+using System.Timers;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
 
-namespace TVRename
+namespace TVRename.App
 {
+    /// <summary>
+    /// Monitors search folders, triggering form actions on file change.
+    /// </summary>
     public class AutoFolderMonitor
     {
-        private TVDoc mDoc;
-        private UI mUI;
-        private List<System.IO.FileSystemWatcher> Watchers = new List<System.IO.FileSystemWatcher>();
-        private System.Timers.Timer mScanDelayTimer;
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AutoFolderMonitor(TVDoc Doc, UI ui)
+        private readonly TVDoc doc;
+        private readonly UI ui;
+        private readonly Timer timer;
+        private readonly List<FileSystemWatcher> watchers = new List<FileSystemWatcher>();
+
+        /// <summary>
+        /// Sets a value indicating whether this <see cref="AutoFolderMonitor"/> is enabled.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if enabled; otherwise, <c>false</c>.
+        /// </value>
+        public bool Enabled
         {
-            mDoc = Doc;
-            mUI = ui;
-
-            mScanDelayTimer = new System.Timers.Timer(1000);
-            mScanDelayTimer.Elapsed += new System.Timers.ElapsedEventHandler(mScanDelayTimer_Elapsed);
-            mScanDelayTimer.Stop();
-        }
-
-        public void SettingsChanged(bool monitor)
-        {
-            if (monitor)
+            set
             {
-                StopMonitor();
-                StartMonitor();
-            }
-            else
-                StopMonitor();
-        }
+                Stop();
 
-        public void StartMonitor()
-        {
-            foreach (string efi in this.mDoc.SearchFolders)
-            {
-                if (!Directory.Exists(efi)) //Does not exist
-                    continue;
-
-                if ((File.GetAttributes(efi) & FileAttributes.Directory) != (FileAttributes.Directory))  // not a folder
-                    continue;
-
-
-                FileSystemWatcher watcher = new FileSystemWatcher(efi);
-                watcher.Changed += new FileSystemEventHandler(watcher_Changed);
-                watcher.Created += new FileSystemEventHandler(watcher_Changed);
-                watcher.Renamed += new RenamedEventHandler(watcher_Changed);
-                //watcher.Deleted += new FileSystemEventHandler(watcher_Changed);
-                //watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime;
-                watcher.IncludeSubdirectories = true;
-                watcher.EnableRaisingEvents = true;
-                Watchers.Add(watcher);
-                logger.Trace("Starting logger for {0}", efi);
+                if (value) Start();
             }
         }
 
-        void watcher_Changed(object sender, FileSystemEventArgs e)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AutoFolderMonitor"/> class.
+        /// </summary>
+        /// <param name="doc">The settings document.</param>
+        /// <param name="ui">The form to trigger.</param>
+        public AutoFolderMonitor(TVDoc doc, UI ui)
         {
-            logger.Trace("Restarted delay timer");
-            mScanDelayTimer.Stop();
-            mScanDelayTimer.Start();
+            this.doc = doc;
+            this.ui = ui;
+
+            this.timer = new Timer(1000);
+            this.timer.Elapsed += timer_Elapsed;
         }
 
-        void mScanDelayTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        /// <summary>
+        /// Starts the folder montioring.
+        /// </summary>
+        public void Start()
         {
-            mScanDelayTimer.Stop();
-            this.StopMonitor();
-
-            //We only wish to do a scan now if we are not already undertaking one
-            if (!mDoc.CurrentlyBusy)
+            foreach (string dir in this.doc.SearchFolders)
             {
-                logger.Info("*******************************");
-                logger.Info("Auto scan fired");
-                if (mUI != null)
+                if (!Directory.Exists(dir)) continue; // Does not exist
+                if ((File.GetAttributes(dir) & FileAttributes.Directory) != FileAttributes.Directory) continue; // Not a directory
+
+                FileSystemWatcher watcher = new FileSystemWatcher(dir)
                 {
-                    switch (TVSettings.Instance.MonitoredFoldersScanType)
-                    {
-                        case TVRename.TVSettings.ScanType.Full:
-                            mUI.Invoke(mUI.AFMFullScan);
-                            break;
-                        case TVRename.TVSettings.ScanType.Recent:
-                            mUI.Invoke(mUI.AFMRecentScan);
-                            break;
-                        case TVRename.TVSettings.ScanType.Quick:
-                            mUI.Invoke(mUI.AFMQuickScan);
-                            break;
-                    }
+                    IncludeSubdirectories = true,
+                    EnableRaisingEvents = true
+                };
 
-                    mUI.Invoke(mUI.AFMDoAll);
+                watcher.Changed += watcher_Updated;
+                watcher.Created += watcher_Updated;
+                watcher.Renamed += watcher_Updated;
 
-                    if (TVSettings.Instance.MonitoredFoldersScanType == TVSettings.ScanType.Full)
-                        mDoc.ExportMissingXML(); // Export Missing episodes to XML if we scanned all
+                this.watchers.Add(watcher);
 
-                }
-
+                Logger.Trace($"Starting logger for {dir}");
             }
-            else
-            {
-               logger.Info("Auto scan cancelled as the system is already busy");
-            }
-            this.StartMonitor();
         }
 
-        public void StopMonitor()
+        /// <summary>
+        /// Stops the folder montioring.
+        /// </summary>
+        public void Stop()
         {
-            foreach (FileSystemWatcher watcher in Watchers)
+            foreach (FileSystemWatcher watcher in this.watchers)
             {
                 watcher.EnableRaisingEvents = false;
                 watcher.Dispose();
             }
-            Watchers.Clear();
+
+            this.watchers.Clear();
+        }
+
+        private void watcher_Updated(object sender, FileSystemEventArgs e)
+        {
+            Logger.Trace("Restarted delay timer");
+
+            this.timer.Stop();
+            this.timer.Start();
+        }
+
+        private void timer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            this.timer.Stop();
+            Stop();
+
+            // Only start a scan if not already busy
+            if (!this.doc.CurrentlyBusy)
+            {
+                Logger.Info("*******************************");
+                Logger.Info("Auto scan fired");
+
+                if (this.ui != null)
+                {
+                    switch (TVSettings.Instance.MonitoredFoldersScanType)
+                    {
+                        case TVSettings.ScanType.Full:
+                            this.ui.Invoke(this.ui.AFMFullScan);
+                            break;
+                        case TVSettings.ScanType.Recent:
+                            this.ui.Invoke(this.ui.AFMRecentScan);
+                            break;
+                        case TVSettings.ScanType.Quick:
+                            this.ui.Invoke(this.ui.AFMQuickScan);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+
+                    this.ui.Invoke(this.ui.AFMDoAll);
+
+                    if (TVSettings.Instance.MonitoredFoldersScanType == TVSettings.ScanType.Full) this.doc.ExportMissingXML(); // Export missing episodes if everything was scanned
+                }
+            }
+            else
+            {
+                Logger.Info("Auto scan cancelled as the system is already busy");
+            }
+
+            Start();
         }
     }
 }
