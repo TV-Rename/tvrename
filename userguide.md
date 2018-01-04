@@ -62,7 +62,7 @@ Below these panels are a series of buttons which allow you to manage the content
 
 * {:.no-icon} `Visit TVDB` - Visit TheTVDB page for highlighted show or season.
 
-![Add/Edit Show](images/main-window/add-edit-show-01.png){:.pic-l}
+![Add/Edit Show](images/main-window/add-edit-show-basics-01.png){:.pic-l}
 Clicking on the `Add` button will open the *Add/Edit Show* window ready to add another show. 
 
 Clicking the `Edit` button with a **show** highlighted will open the same window pre-populated with that shows details. 
@@ -85,7 +85,7 @@ We'll start by completing the ***Basics*** tab (illustrated above).
 ### The Basics Tab
 In the following example, we'll add a new show called "The Good Doctor" to TV Rename.
 
-![Add/Edit Show - Search Results](images/main-window/add-edit-show-02.png){:.pic-r}
+![Add/Edit Show - Search Results](images/main-window/add-edit-show-basics-02.png){:.pic-r}
 The first step is to tell TV Rename about the show. If you know it you can enter TheTVDB's code for the show, otherwise type the show's name (e.g. "the good doctor") and click on `Search`. TV Rename will search for matches to your entry in TheTVDB's database, cache the results locally and display the matches. The search also works with partial show names. For example you could search for just "doctor", but "doctor" being fairly common in TV Show titles, returns over 80 results (including ours!), and you will have to delve into the list to find the one you want. Once you have found the correct show, click on it to highlight it.
 
 If all you want to do is see the details of the show then you're done! Just click `OK` at the bottom of the window and TV Rename will pull the necessary data from [The TVDB](http://thetvdb.com "Visit thetvdb.com")  to populate the ***My Shows*** tab.
@@ -139,8 +139,22 @@ However TV Rename's middle name is "configurability", so lets take a look at the
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### The Advanced Tab
+![The Advanced Tab](images/main-window/add-edit-show-advanced-01.png){:.pic-l}
+Here, you can further manipulate the way data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is handled as it is merged into the local data.
 
-![Under Construction](images/under-construction.jpg)
+The "Use DVD order" tick box comes into play when the episodes aired on TV in a different order to those presented on the DVD. [The TVDB](http://thetvdb.com "Visit thetvdb.com") usually has details of these orders and this tick box allows you to choose your preference for the current show.   
+A Really good example of this is the 1967 ITV Show ["The Prisoner"](https://www.thetvdb.com/?tab=season&seriesid=74805&seasonid=8058&lid=7 "Visit \"The Prisoner\" on TheTVDB"), which, whilst it was written as one season of seventeen episodes still causes as much controversy (and argument) over it's running order today as it did when it was originally released.
+
+The "Show next airdate in When to Watch" tick box toggles the display of the shows "Future" and "Later" episodes in the ***When to Watch*** tab.
+
+The "Specials count as episodes" tick box is useful with shows such as "Mythbusters" where specials are often counted as normal episodes.
+
+The "Do Renaming" tick box tells TV Rename to use the names built using the [(Options>)Filename Template Editor](options#filename-template-editor) when copying or moving files if it is ticked, otherwise they will be left unchanged.
+
+"Use sequential number matching" will match episodes based on their overall airing order. Because this can cause a large number of false matches, the box is un-ticked by default.  
+For example, Season 4 Episode 9 of Marvel's Agents of S.H.I.E.L.D. is the 75<sup>th</sup> episode aired, so with this option enabled "Marvel's Agents of S.H.I.E.L.D. - 75 - Broken Promises.mkv" will be seen at S04E09.
+
+
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
