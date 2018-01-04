@@ -27,6 +27,7 @@ using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TVRename.App;
 using TVRename.Ipc;
 
 namespace TVRename
@@ -143,7 +144,7 @@ namespace TVRename
                 this.Hide();
             }
 
-            this.Text = this.Text + " " + Version.DisplayVersionString();
+            this.Text = this.Text + " " + Helpers.DisplayVersion;
 
             updateSplashStatus(splash,"Filling Shows");
             this.FillMyShows();
@@ -167,9 +168,9 @@ namespace TVRename
 
             updateSplashStatus(splash, "Starting Monitor");
 
-            this.mAutoFolderMonitor = new TVRename.AutoFolderMonitor(mDoc,this);
+            this.mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this);
             if (TVSettings.Instance.MonitorFolders)
-                this.mAutoFolderMonitor.StartMonitor();
+                this.mAutoFolderMonitor.Start();
 
             //splash.Close();
         }
@@ -811,7 +812,7 @@ namespace TVRename
             }
             else
             {
-                body += "<h2>Images are not being downloaded for this series. Please see Options -> Settings -> Media Center to reconfigure.</h2>";
+                body += "<h2>Images are not being downloaded for this series. Please see Options -> Preferences -> Media Center to reconfigure.</h2>";
             }
 
             return body;
@@ -2016,7 +2017,7 @@ namespace TVRename
                 this.FillWhenToWatchList();
                 this.ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
                 this.FillEpGuideHTML();
-                this.mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
+                this.mAutoFolderMonitor.Enabled = TVSettings.Instance.MonitorFolders;
                 ForceRefresh(null);
             }
             this.LessBusy();

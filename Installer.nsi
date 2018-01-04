@@ -12,7 +12,7 @@ Name "${APPNAME}"
 Caption "${APPNAME} ${VERSION} Setup"
 BrandingText " "
 
-InstallDir "$PROGRAMFILES\TVRename"
+InstallDir "$PROGRAMFILES\${APPNAME}"
 
 OutFile "TVRename-${TAG}.exe"
 
@@ -21,7 +21,7 @@ OutFile "TVRename-${TAG}.exe"
 
 Var STARTMENU_FOLDER
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
-!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\TVRename"
+!define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\${APPNAME}"
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
 !define MUI_ABORTWARNING
@@ -41,12 +41,36 @@ Var STARTMENU_FOLDER
 
 !insertmacro MUI_LANGUAGE "English"
 
+Function .onInit ; Remove v2 first
+    ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "UninstallString"
+    StrCmp $R0 "" done
+
+    MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION "A previous version of ${APPNAME} is installed.$\n$\nUninstall previous version before installing the new version?$\nYour settings will be imported into the new version." IDOK upgrade
+    Abort
+
+upgrade:
+    ReadRegStr $R0 HKCU "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" "AppData"
+
+    CreateDirectory "$R0\${APPNAME}\cache"
+    CreateDirectory "$R0\${APPNAME}\config"
+    CopyFiles "$R0\TVRename\TVRename\2.1\TheTVDB.xml" "$R0\${APPNAME}\cache"
+    CopyFiles "$R0\TVRename\TVRename\2.1\Layout.xml" "$R0\${APPNAME}\config"
+    CopyFiles "$R0\TVRename\TVRename\2.1\Statistics.xml" "$R0\${APPNAME}\config"
+    CopyFiles "$R0\TVRename\TVRename\2.1\TVRenameSettings.xml" "$R0\${APPNAME}\config"
+
+    ReadRegStr $R0 HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "UninstallString"
+
+    ClearErrors
+    ExecWait '"$R0" _?=$INSTDIR' ; Do not copy the uninstaller to a temp file
+
+done:
+
+FunctionEnd
+
 Section "Install"
     SetOutPath "$INSTDIR"
 
     !insertmacro CheckNetFramework 40Client
-
-    Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
     File "TVRename#\bin\Release\TVRename.exe"
     File "TVRename#\bin\Release\NLog.config"
@@ -64,17 +88,17 @@ Section "Install"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
     !insertmacro MUI_STARTMENU_WRITE_END
 
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "DisplayName" "${APPNAME}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "DisplayIcon" "$INSTDIR\TVRename.exe"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "DisplayVersion" "${VERSION}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "Publisher" "${APPNAME}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "UninstallString" "$INSTDIR\Uninstall.exe"
-    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "NoModify" 1
-    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "NoRepair" 1
-    
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$INSTDIR\TVRename.exe"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayVersion" "${VERSION}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "Publisher" "${APPNAME}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$INSTDIR\Uninstall.exe"
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoModify" 1
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "NoRepair" 1
+
     ${GetSize} "$INSTDIR" "/S=0K" $0 $1 $2
     IntFmt $0 "0x%08X" $0
-    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename" "EstimatedSize" "$0"
+    WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "EstimatedSize" "$0"
 
 SectionEnd
 
@@ -94,11 +118,11 @@ Section "Uninstall"
     Delete "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk"
     RmDir "$SMPROGRAMS\$STARTMENU_FOLDER"
 
-    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\TVRename"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
 
     MessageBox MB_YESNO|MB_ICONEXCLAMATION "Do you wish to remove your ${APPNAME} settings as well?" IDNO done
     ReadRegStr $R0 HKCU "Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders" "AppData"
-    RmDir /r "$R0\TVRename"
+    RmDir /r "$R0\${APPNAME}"
 
 done:
 
