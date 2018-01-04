@@ -88,6 +88,11 @@
     <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
+    <Compile Include="Exporter\MissingXml.cs" />
+    <Compile Include="Exporter\ShowsTxt.cs" />
+    <Compile Include="Exporter\UpcomingExporter.cs" />
+    <Compile Include="Exporter\UpcomingRss.cs" />
+    <Compile Include="Exporter\UpcomingXml.cs" />
     <Compile Include="Ipc\IRemoteActions.cs" />
     <Compile Include="Ipc\RemoteClient.cs" />
     <Compile Include="Custom Controls\ListViewFlickerFree.cs">
@@ -106,11 +111,7 @@
     <Compile Include="DownloadIdentifers\DownloadIdentifier.cs" />
     <Compile Include="DownloadIdentifers\DownloadJolderJPG.cs" />
     <Compile Include="DownloadIdentifers\DownloadXBMCImages.cs" />
-    <Compile Include="Exporter\ShowsTXT.cs" />
     <Compile Include="Exporter\Exporter.cs" />
-    <Compile Include="Exporter\MissingXML.cs" />
-    <Compile Include="Exporter\UpcomingRSS.cs" />
-    <Compile Include="Exporter\UpcomingXML.cs" />
     <Compile Include="Finders\FileFinder.cs" />
     <Compile Include="Finders\RSSFinder.cs" />
     <Compile Include="Finders\uTorrentFinder.cs" />

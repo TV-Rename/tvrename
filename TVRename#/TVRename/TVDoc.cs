@@ -25,6 +25,7 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
+using TVRename.Exporter;
 
 namespace TVRename
 {
@@ -1355,13 +1356,13 @@ namespace TVRename
 
         public void ExportMissingXML()
         {
-            MissingXML mx = new MissingXML();
+            MissingXml mx = new MissingXml();
             mx.Run(TheActionList);
         }
 
         public void ExportShowInfo()
         {
-            ShowsTXT mx = new ShowsTXT();
+            ShowsTxt mx = new ShowsTxt();
             mx.Run(this.ShowItems);
         }
 
@@ -1425,12 +1426,12 @@ namespace TVRename
         {
             List<UpcomingExporter> lup = new List<UpcomingExporter>();
 
-            lup.Add(new UpcomingRSS(this));
-            lup.Add(new UpcomingXML(this));
+            lup.Add(new UpcomingRss(this));
+            lup.Add(new UpcomingXml(this));
 
             foreach (UpcomingExporter ue in lup)
             {
-                if (ue.Active()) { ue.Run(); }
+                if (ue.Active) { ue.Run(); }
             }
         }
 
