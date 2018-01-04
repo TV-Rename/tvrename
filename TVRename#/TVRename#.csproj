@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -6,13 +6,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{2FFF6A6D-6094-47FF-AB34-E04E644F8F9C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TVRename</RootNamespace>
     <AssemblyName>TVRename</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <StartupObject>TVRename.App.Program</StartupObject>
-    <ApplicationIcon>App\app.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,25 +30,28 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>TVRename.App.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>App\app.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AlphaFS, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4d31a58f7d7ad5c9, processorArchitecture=MSIL">
-      <HintPath>..\packages\AlphaFS.2.1.3\lib\net40\AlphaFS.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\AlphaFS.2.1.3\lib\net45\AlphaFS.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.12\lib\net40\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="SourceGrid, Version=4.40.4580.29115, Culture=neutral, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL">
       <HintPath>..\packages\SourceGrid.4.4.0\lib\net35\SourceGrid.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
+    <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Transactions" />
@@ -64,14 +64,6 @@
     <Compile Include="App\AutoFolderMonitor.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\Program.cs" />
-    <Compile Include="App\Version.cs" />
-    <Compile Include="Exporter\MissingXml.cs" />
-    <Compile Include="Exporter\ShowsTxt.cs" />
-    <Compile Include="Exporter\UpcomingExporter.cs" />
-    <Compile Include="Exporter\UpcomingRss.cs" />
-    <Compile Include="Exporter\UpcomingXml.cs" />
-    <Compile Include="Ipc\IRemoteActions.cs" />
-    <Compile Include="Ipc\RemoteClient.cs" />
     <Compile Include="Custom Controls\ListViewFlickerFree.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -96,6 +88,11 @@
     <Compile Include="DownloadIdentifiers\DownloadSeriesImage.cs" />
     <Compile Include="DownloadIdentifiers\DownloadType.cs" />
     <Compile Include="Exporter\Exporter.cs" />
+    <Compile Include="Exporter\MissingXml.cs" />
+    <Compile Include="Exporter\ShowsTxt.cs" />
+    <Compile Include="Exporter\UpcomingExporter.cs" />
+    <Compile Include="Exporter\UpcomingRss.cs" />
+    <Compile Include="Exporter\UpcomingXml.cs" />
     <Compile Include="Finders\FileFinder.cs" />
     <Compile Include="Finders\Finder.cs" />
     <Compile Include="Finders\RSSFinder.cs" />
@@ -286,15 +283,14 @@
     <Compile Include="ItemsAndActions\ItemSABnzbd.cs" />
     <Compile Include="ItemsAndActions\ItemuTorrenting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs" />
     <Compile Include="Settings\CustomName.cs" />
     <Compile Include="Settings\Searchers.cs" />
     <Compile Include="Settings\Settings.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="Settings\ShowRule.cs" />
     <Compile Include="Settings\ShowsAndEpisodes.cs" />
-    <Compile Include="Settings\Statistics.cs">
-      <SubType>code</SubType>
-    </Compile>
+    <Compile Include="Settings\Statistics.cs" />
     <Compile Include="TheTVDB\Banner.cs" />
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
@@ -311,204 +307,127 @@
     <Compile Include="Utility\DirCacheEntry.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Utility\Helpers.cs" />
-    <Compile Include="Utility\SABnzbdXML.cs">
-      <SubType>code</SubType>
-    </Compile>
+    <Compile Include="Utility\SABnzbdXML.cs" />
     <Compile Include="Utility\Sorters.cs" />
     <Compile Include="Utility\Timezone.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Custom Controls\MyListView.resx">
       <DependentUpon>MyListView.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Custom Controls\TheTVDBCodeFinder.resx">
       <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ActorsGrid.resx">
       <DependentUpon>ActorsGrid.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddEditSearchEngine.resx">
       <DependentUpon>AddEditSearchEngine.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddEditSeasEpFinders.resx">
       <DependentUpon>AddEditSeasEpFinders.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddEditShow.resx">
       <DependentUpon>AddEditShow.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddModifyRule.resx">
       <DependentUpon>AddModifyRule.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BugReport.resx">
       <DependentUpon>BugReport.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BuyMeADrink.resx">
       <DependentUpon>BuyMeADrink.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CopyMoveProgress.resx">
       <DependentUpon>CopyMoveProgress.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CustomNameDesigner.resx">
       <DependentUpon>CustomNameDesigner.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\CustomNameTagsFloatingWindow.resx">
       <DependentUpon>CustomNameTagsFloatingWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DownloadProgress.resx">
       <DependentUpon>DownloadProgress.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EditRules.resx">
       <DependentUpon>EditRules.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FolderMonitor.resx">
       <DependentUpon>FolderMonitor.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FolderMonitorEdit.resx">
       <DependentUpon>FolderMonitorEdit.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FolderMonitorProgress.resx">
       <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\IgnoreEdit.resx">
       <DependentUpon>IgnoreEdit.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MissingFolderAction.resx">
       <DependentUpon>MissingFolderAction.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Preferences.resx">
       <DependentUpon>Preferences.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\RecoverXML.resx">
       <DependentUpon>RecoverXML.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ScanProgress.resx">
       <DependentUpon>ScanProgress.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ShowException.resx">
       <DependentUpon>ShowException.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\StatsWindow.resx">
       <DependentUpon>StatsWindow.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TorrentMatch.resx">
       <DependentUpon>TorrentMatch.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TVRenameSplash.resx">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UI.resx">
       <DependentUpon>UI.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UpcomingPopup.resx">
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\uTorrent.resx">
       <DependentUpon>uTorrent.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="app.config" />
-    <Content Include="App\app.ico" />
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <None Include="packages.config" />
-    <Compile Include="Forms\RecoverXML.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ScanProgress.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Settings\Searchers.cs" />
-    <Compile Include="Settings\Settings.cs" />
-    <Compile Include="Forms\ShowException.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Settings\ShowsAndEpisodes.cs" />
-    <Compile Include="Settings\ShowRule.cs" />
-    <Compile Include="Utility\SABnzbdXML.cs" />
-    <Compile Include="Utility\Sorters.cs" />
-    <Compile Include="Settings\Statistics.cs" />
-    <Compile Include="Forms\StatsWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TheTVDB\TheTVDB.cs" />
-    <Compile Include="Custom Controls\TheTVDBCodeFinder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Utility\Timezone.cs" />
-    <Compile Include="Forms\TorrentMatch.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TVRename\TVDoc.cs" />
-    <Compile Include="App\Program.cs" />
-    <Compile Include="Forms\UI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\UpcomingPopup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\uTorrent.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />
-    <None Include="Resources\tv3white.png" />
-    <None Include="Resources\ButtonSmall_Delete.png" />
-    <None Include="Resources\Black-Red_256x256.png" />
-    <None Include="Resources\ButtonSmall_Delete.png" />
-    <None Include="Resources\EditInformationHS.png" />
-    <None Include="Resources\FindHS.png" />
-    <None Include="Resources\FormulaEvaluatorHS.png" />
-    <None Include="Resources\GetLatestVersion.png" />
-    <None Include="Resources\graphhs.png" />
-    <None Include="Resources\Help.png" />
-    <None Include="Resources\RefreshDocViewHS.png" />
-    <None Include="Resources\saveHS.png" />
-    <None Include="Resources\SearchFolderHS.png" />
-    <None Include="Resources\SearchWebHS.png" />
-    <None Include="Resources\TableHS.png" />
-    <None Include="Resources\tv3white.png" />
-    <None Include="Resources\Web.png" />
-    <None Include="Resources\ZoomHS.png" />
+    <Content Include="Resources\Black-Red_256x256.png" />
+    <Content Include="Resources\ButtonSmall_Delete.png" />
+    <Content Include="Resources\EditInformationHS.png" />
+    <Content Include="Resources\FindHS.png" />
+    <Content Include="Resources\FormulaEvaluatorHS.png" />
+    <Content Include="Resources\GetLatestVersion.png" />
+    <Content Include="Resources\graphhs.png" />
+    <Content Include="Resources\Help.png" />
+    <Content Include="Resources\RefreshDocViewHS.png" />
+    <Content Include="Resources\saveHS.png" />
+    <Content Include="Resources\SearchFolderHS.png" />
+    <Content Include="Resources\SearchWebHS.png" />
+    <Content Include="Resources\TableHS.png" />
+    <Content Include="Resources\tv3white.png" />
+    <Content Include="Resources\Web.png" />
+    <Content Include="Resources\ZoomHS.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
