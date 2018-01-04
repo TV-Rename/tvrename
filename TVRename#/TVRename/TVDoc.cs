@@ -10,17 +10,14 @@
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using Alphaleonis.Win32.Filesystem;
-using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
 using System.Xml;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;

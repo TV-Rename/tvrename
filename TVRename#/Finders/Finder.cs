@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace TVRename
+﻿namespace TVRename
 {
     abstract class Finder
     {

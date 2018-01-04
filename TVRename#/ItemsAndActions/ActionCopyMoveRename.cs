@@ -1,22 +1,10 @@
-﻿using Alphaleonis.Win32.Filesystem;
-using System;
-using System.CodeDom;
-using System.Diagnostics;
-using System.IO.MemoryMappedFiles;
-using System.Linq;
-using System.Security.AccessControl;
-using System.Threading;
-using System.Web.UI.WebControls;
-using System.Windows.Forms;
+﻿using System.Security.AccessControl;
 
 namespace TVRename
 {
     using Alphaleonis.Win32.Filesystem;
     using System;
-    using System.IO;
     using System.Windows.Forms;
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-    using File = Alphaleonis.Win32.Filesystem.File;		
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;		
     using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
 

@@ -7,20 +7,14 @@
 // 
 using System;
 using System.Collections.Generic;
-using Alphaleonis.Win32.Filesystem;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using Newtonsoft.Json;
-
-using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 using System.Linq;
 using System.IO;
-using System.Linq.Expressions;
-using NLog;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 

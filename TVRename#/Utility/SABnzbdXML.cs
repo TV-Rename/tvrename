@@ -13,8 +13,6 @@
 // xsd.exe sab.xml
 // xsd.exe sab.xsd /c /edb
 
-using System;
-using Alphaleonis.Win32.Filesystem;
 using System.Xml.Serialization;
 using System.IO;
 

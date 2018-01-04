@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -10,7 +10,6 @@
 
 using Newtonsoft.Json.Linq;
 using System;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace TVRename

@@ -7,26 +7,17 @@
 // 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using TVRename.Forms;
-using Alphaleonis.Win32.Filesystem;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
-using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
 using System.Linq;
-using System.Text;
 using TVRename.App;
 using TVRename.Ipc;
 
