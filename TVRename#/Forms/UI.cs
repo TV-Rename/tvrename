@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -303,7 +303,7 @@ namespace TVRename
             filterButton.Size = new Size(16, 16);
             filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width, (filterTextBox.ClientSize.Height - 16) / 2 + 1);
             filterButton.Cursor = Cursors.Default;
-            filterButton.Image = Properties.Resources.DeleteSmall;
+            filterButton.Image = Properties.Resources.Delete;
             filterButton.Name = "Clear";
             filterButton.Click += filterButton_Click;
             filterTextBox.Controls.Add(filterButton);

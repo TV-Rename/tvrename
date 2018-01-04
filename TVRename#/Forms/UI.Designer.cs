@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -221,7 +221,7 @@ namespace TVRename
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Image = global::TVRename.Properties.Resources.saveHS;
+            this.saveToolStripMenuItem.Image = global::TVRename.Properties.Resources.Save;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
             this.saveToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
@@ -268,7 +268,7 @@ namespace TVRename
             // 
             // backgroundDownloadToolStripMenuItem
             // 
-            this.backgroundDownloadToolStripMenuItem.Image = global::TVRename.Properties.Resources.GetLatestVersion;
+            this.backgroundDownloadToolStripMenuItem.Image = global::TVRename.Properties.Resources.Update;
             this.backgroundDownloadToolStripMenuItem.Name = "backgroundDownloadToolStripMenuItem";
             this.backgroundDownloadToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
             this.backgroundDownloadToolStripMenuItem.Text = "Automatic &Background Download";
@@ -283,7 +283,7 @@ namespace TVRename
             // 
             // preferencesToolStripMenuItem
             // 
-            this.preferencesToolStripMenuItem.Image = global::TVRename.Properties.Resources.EditInformationHS;
+            this.preferencesToolStripMenuItem.Image = global::TVRename.Properties.Resources.Edit;
             this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
             this.preferencesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
             this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
@@ -300,7 +300,7 @@ namespace TVRename
             // 
             // filenameTemplateEditorToolStripMenuItem
             // 
-            this.filenameTemplateEditorToolStripMenuItem.Image = global::TVRename.Properties.Resources.FormulaEvaluatorHS;
+            this.filenameTemplateEditorToolStripMenuItem.Image = global::TVRename.Properties.Resources.Formula;
             this.filenameTemplateEditorToolStripMenuItem.Name = "filenameTemplateEditorToolStripMenuItem";
             this.filenameTemplateEditorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.T)));
             this.filenameTemplateEditorToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
@@ -309,7 +309,7 @@ namespace TVRename
             // 
             // searchEnginesToolStripMenuItem
             // 
-            this.searchEnginesToolStripMenuItem.Image = global::TVRename.Properties.Resources.SearchWebHS;
+            this.searchEnginesToolStripMenuItem.Image = global::TVRename.Properties.Resources.SearchWeb;
             this.searchEnginesToolStripMenuItem.Name = "searchEnginesToolStripMenuItem";
             this.searchEnginesToolStripMenuItem.Size = new System.Drawing.Size(254, 22);
             this.searchEnginesToolStripMenuItem.Text = "&Search Engines";
@@ -346,7 +346,7 @@ namespace TVRename
             // 
             // backgroundDownloadNowToolStripMenuItem
             // 
-            this.backgroundDownloadNowToolStripMenuItem.Image = global::TVRename.Properties.Resources.RefreshDocViewHS;
+            this.backgroundDownloadNowToolStripMenuItem.Image = global::TVRename.Properties.Resources.Refresh;
             this.backgroundDownloadNowToolStripMenuItem.Name = "backgroundDownloadNowToolStripMenuItem";
             this.backgroundDownloadNowToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
             this.backgroundDownloadNowToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
@@ -360,7 +360,7 @@ namespace TVRename
             // 
             // folderMonitorToolStripMenuItem
             // 
-            this.folderMonitorToolStripMenuItem.Image = global::TVRename.Properties.Resources.SearchFolderHS;
+            this.folderMonitorToolStripMenuItem.Image = global::TVRename.Properties.Resources.SearchFolder;
             this.folderMonitorToolStripMenuItem.Name = "folderMonitorToolStripMenuItem";
             this.folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
             this.folderMonitorToolStripMenuItem.Text = "Folder &Monitor";
@@ -368,7 +368,7 @@ namespace TVRename
             // 
             // actorsToolStripMenuItem
             // 
-            this.actorsToolStripMenuItem.Image = global::TVRename.Properties.Resources.TableHS;
+            this.actorsToolStripMenuItem.Image = global::TVRename.Properties.Resources.Table;
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
             this.actorsToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
             this.actorsToolStripMenuItem.Text = "&Actors Grid";
@@ -438,7 +438,7 @@ namespace TVRename
             // 
             // statisticsToolStripMenuItem
             // 
-            this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.graphhs;
+            this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.Graph;
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
             this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics";
