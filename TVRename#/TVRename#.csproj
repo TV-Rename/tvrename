@@ -54,7 +54,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
-    <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -230,6 +229,12 @@
     <Compile Include="Forms\ShowException.Designer.cs">
       <DependentUpon>ShowException.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SplashScreen.Designer.cs">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\StatsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -241,12 +246,6 @@
     </Compile>
     <Compile Include="Forms\TorrentMatch.Designer.cs">
       <DependentUpon>TorrentMatch.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\TVRenameSplash.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\TVRenameSplash.Designer.cs">
-      <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\UI.cs">
       <SubType>Form</SubType>
@@ -393,9 +392,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\TorrentMatch.resx">
       <DependentUpon>TorrentMatch.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TVRenameSplash.resx">
-      <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UI.resx">
       <DependentUpon>UI.cs</DependentUpon>

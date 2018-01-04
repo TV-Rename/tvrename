@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.VisualBasic.ApplicationServices;
+using TVRename.Forms;
 using TVRename.Ipc;
 
 namespace TVRename.App
@@ -10,6 +11,7 @@ namespace TVRename.App
     /// Provides the primary form bootstrap including a splash screen.
     /// </summary>
     /// <seealso cref="WindowsFormsApplicationBase" />
+    /// <inheritdoc />
     internal class ApplicationBase : WindowsFormsApplicationBase
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
@@ -17,19 +19,21 @@ namespace TVRename.App
         /// <summary>
         /// Initializes the splash screen.
         /// </summary>
+        /// <inheritdoc />
         protected override void OnCreateSplashScreen()
         {
-            this.SplashScreen = new TVRenameSplash();
+            this.SplashScreen = new SplashScreen();
         }
 
         /// <summary>
         /// Configures the splash screen and initializes the main application form
         /// This runs once the splash screen is visible.
         /// </summary>
+        /// <inheritdoc />
         protected override void OnCreateMainForm()
         {
             // Update splash screen
-            this.SplashScreen.Invoke(new MethodInvoker(() => ((TVRenameSplash)this.SplashScreen).UpdateStatus("Initializing")));
+            this.SplashScreen.Invoke(new MethodInvoker(() => ((SplashScreen)this.SplashScreen).Status = "Initializing"));
 
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
@@ -104,7 +108,7 @@ namespace TVRename.App
             } while (recover);
 
             // Show user interface
-            UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen);
+            UI ui = new UI(doc, (SplashScreen)this.SplashScreen);
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
             RemoteClient.Bind(ui, doc);

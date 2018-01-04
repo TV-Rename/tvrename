@@ -103,7 +103,7 @@ namespace TVRename
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public UI(TVDoc doc, TVRenameSplash splash)
+        public UI(TVDoc doc, SplashScreen splash)
         {
 
             this.mDoc = doc;
@@ -175,19 +175,19 @@ namespace TVRename
             //splash.Close();
         }
 
-        void updateSplashStatus(TVRenameSplash SplashScreen, String text)
+        void updateSplashStatus(SplashScreen SplashScreen, String text)
         {
             SplashScreen.Invoke((System.Action)delegate
             {
-                SplashScreen.UpdateStatus(text);
+                SplashScreen.Status = text;
             });
         }
 
-        void updateSplashPercent(TVRenameSplash SplashScreen,int num)
+        void updateSplashPercent(SplashScreen SplashScreen,int num)
         {
             SplashScreen.Invoke((System.Action)delegate
             {
-                SplashScreen.UpdateProgress (num);
+                SplashScreen.Progress = num;
             });
         }
 
