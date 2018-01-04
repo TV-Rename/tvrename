@@ -282,13 +282,6 @@ The My Shows tab reverts to showing The TVDB codes and indicating that the relev
 {:.toplink}
 [Return to Top]()
 
-## Right Clicking
-
-![Under Construction](images/under-construction.jpg)
-
-{:.toplink}
-[Return to Top]()
-
 ## The Status Bar
 The Status Bar hides at the very bottom of the main window, quietly displaying the next show/episode airing and how long you've got to wait before you can watch it, and the "Background download:" status (either "Idle" or details of what it's doing!
 
