@@ -19,7 +19,7 @@ namespace TVRename.App
         /// </summary>
         /// <param name="args">The command line arguments.</param>
         [STAThread]
-        private static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Logger.Info($"TV Rename started with args: {string.Join(" ", args)}");
 
