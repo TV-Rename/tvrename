@@ -192,14 +192,6 @@ namespace TVRename
             else
                 S.MonitoredFoldersScanType = TVSettings.ScanType.Full;
 
-            if (this.rdEden.Checked)
-                S.SelectedKODIType= TVSettings.KODIType.Eden;
-            else if (this.rdFrodo.Checked)
-                S.SelectedKODIType = TVSettings.KODIType.Frodo;
-            else
-                S.SelectedKODIType = TVSettings.KODIType.Both;
-
-
             TheTVDB.Instance.GetLock("Preferences-OK");
             foreach (Language l in TheTVDB.Instance.LanguageList)
             {
@@ -411,19 +403,6 @@ namespace TVRename
                     break;
                 default:
                     this.rdoFullScan.Checked = true;
-                    break;
-            }
-
-            switch (S.SelectedKODIType)
-            {
-                case TVSettings.KODIType.Eden:
-                    this.rdEden.Checked = true;
-                    break;
-                case TVSettings.KODIType.Frodo:
-                    this.rdFrodo.Checked = true;
-                    break;
-                default:
-                    this.rdBoth.Checked = true;
                     break;
             }
 
@@ -1071,7 +1050,6 @@ namespace TVRename
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = false;
                     cbKODIImages.Checked = true;
-                    rdBoth.Checked = true;
                     break;
                 case 2: // pytivo
                     cbEpTBNs.Checked = false;

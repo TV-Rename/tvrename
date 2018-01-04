@@ -25,6 +25,7 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
+using TVRename.DownloadIdentifiers;
 using TVRename.Exporter;
 
 namespace TVRename
@@ -1696,7 +1697,7 @@ namespace TVRename
 
             this.ScanProgDlg = null;
 
-            DownloadIdentifiers.reset();
+            DownloadIdentifiers.Reset();
 
             this.CurrentlyBusy = false;
         }
@@ -1970,7 +1971,7 @@ namespace TVRename
 
             if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations().Count > 0))
             {
-                this.TheActionList.Add(DownloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
+                this.TheActionList.AddRange(DownloadIdentifiers.ForceUpdateShow(DownloadType.Image, si));
                 si.BannersLastUpdatedOnDisk = System.DateTime.Now;
                 this.SetDirty();
             }
@@ -2000,7 +2001,7 @@ namespace TVRename
 
 
                     //Image series checks here
-                    this.TheActionList.Add(DownloadIdentifiers.ForceUpdateSeason(DownloadIdentifier.DownloadType.downloadImage, si, folder, snum));
+                    this.TheActionList.AddRange(DownloadIdentifiers.ForceUpdateSeason(DownloadType.Image, si, folder, snum));
 
                 }
 
@@ -2227,7 +2228,7 @@ namespace TVRename
                 //it has all the required files for that show
                 if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations().Count > 0))
                 {
-                    this.TheActionList.Add(DownloadIdentifiers.ProcessShow(si));
+                    this.TheActionList.AddRange(DownloadIdentifiers.ProcessShow(si));
                 }
 
                 //MS_TODO Put the bannerrefresh period into the settings file, we'll default to 3 months
@@ -2237,7 +2238,7 @@ namespace TVRename
 
                 if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
                 {
-                    this.TheActionList.Add(DownloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
+                    this.TheActionList.AddRange(DownloadIdentifiers.ForceUpdateShow(DownloadType.Image, si));
                     si.BannersLastUpdatedOnDisk = DateTime.Now;
                     this.SetDirty();
                 }
@@ -2284,7 +2285,7 @@ namespace TVRename
                     if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(false).Count > 0))
                     {
                         // main image for the folder itself
-                        this.TheActionList.Add(DownloadIdentifiers.ProcessShow(si));
+                        this.TheActionList.AddRange(DownloadIdentifiers.ProcessShow(si));
                     }
 
 
@@ -2300,14 +2301,14 @@ namespace TVRename
                         if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
                         {
                             //Image series checks here
-                            this.TheActionList.Add(DownloadIdentifiers.ForceUpdateSeason(DownloadIdentifier.DownloadType.downloadImage, si, folder, snum));
+                            this.TheActionList.AddRange(DownloadIdentifiers.ForceUpdateSeason(DownloadType.Image, si, folder, snum));
                         }
 
                         bool renCheck = TVSettings.Instance.RenameCheck && si.DoRename && Directory.Exists(folder); // renaming check needs the folder to exist
                         bool missCheck = TVSettings.Instance.MissingCheck && si.DoMissingCheck;
 
                         //Image series checks here
-                        this.TheActionList.Add(DownloadIdentifiers.ProcessSeason(si, folder, snum));
+                        this.TheActionList.AddRange(DownloadIdentifiers.ProcessSeason(si, folder, snum));
 
                         FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
 
@@ -2368,7 +2369,7 @@ namespace TVRename
                                     //copy a file inthe appropriate place and they do not need to worry about downloading 
                                     //one for that purpse
 
-                                    DownloadIdentifiers.notifyComplete(actualFile);
+                                    DownloadIdentifiers.MarkProcessed(actualFile);
 
                                 }
                             }
@@ -2438,7 +2439,7 @@ namespace TVRename
                                     // do NFO and thumbnail checks if required
                                     FileInfo filo = localEps[dbep.EpNum]; // filename (or future filename) of the file
 
-                                    this.TheActionList.Add(DownloadIdentifiers.ProcessEpisode(dbep, filo));
+                                    this.TheActionList.AddRange(DownloadIdentifiers.ProcessEpisode(dbep, filo));
 
                                 }
                             } // up to date check, for each episode in thetvdb
