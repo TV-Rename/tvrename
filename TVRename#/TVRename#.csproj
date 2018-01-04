@@ -465,7 +465,6 @@
     <Compile Include="Forms\uTorrent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="App\Version.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App\app.ico" />

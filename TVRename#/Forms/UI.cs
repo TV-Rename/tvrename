@@ -143,7 +143,7 @@ namespace TVRename
                 this.Hide();
             }
 
-            this.Text = this.Text + " " + Version.DisplayVersionString();
+            this.Text = this.Text + " " + Helpers.DisplayVersion;
 
             updateSplashStatus(splash,"Filling Shows");
             this.FillMyShows();
