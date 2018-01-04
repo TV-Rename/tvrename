@@ -143,7 +143,7 @@ namespace TVRename
                 this.Hide();
             }
 
-            this.Text = this.Text + " " + Version.DisplayVersionString();
+            this.Text = this.Text + " " + Helpers.DisplayVersion;
 
             updateSplashStatus(splash,"Filling Shows");
             this.FillMyShows();
@@ -811,7 +811,7 @@ namespace TVRename
             }
             else
             {
-                body += "<h2>Images are not being downloaded for this series. Please see Options -> Settings -> Media Center to reconfigure.</h2>";
+                body += "<h2>Images are not being downloaded for this series. Please see Options -> Preferences -> Media Center to reconfigure.</h2>";
             }
 
             return body;

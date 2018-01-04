@@ -871,7 +871,8 @@ namespace TVRename
                     }
                 }
 
-                float percentDirty = 100 * totaldirty / totaleps;
+                float percentDirty = 100;
+                if (totaldirty > 0 || totaleps > 0) percentDirty = 100 * totaldirty / totaleps;
                 if ((totaleps>0) && ((percentDirty) >=10)) // 10%
                 {
                     kvp.Value.Dirty = true;
