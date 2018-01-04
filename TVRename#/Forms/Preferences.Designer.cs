@@ -126,6 +126,7 @@ namespace TVRename
             this.cbCheckuTorrent = new System.Windows.Forms.CheckBox();
             this.cbSearchLocally = new System.Windows.Forms.CheckBox();
             this.tbFolderDeleting = new System.Windows.Forms.TabPage();
+            this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.txtEmptyMaxSize = new System.Windows.Forms.TextBox();
@@ -139,10 +140,6 @@ namespace TVRename
             this.cbDeleteEmpty = new System.Windows.Forms.CheckBox();
             this.tbMediaCenter = new System.Windows.Forms.TabPage();
             this.cbNFOEpisodes = new System.Windows.Forms.CheckBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.rdEden = new System.Windows.Forms.RadioButton();
-            this.rdFrodo = new System.Windows.Forms.RadioButton();
-            this.rdBoth = new System.Windows.Forms.RadioButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.rbFolderBanner = new System.Windows.Forms.RadioButton();
             this.rbFolderPoster = new System.Windows.Forms.RadioButton();
@@ -213,7 +210,6 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -226,7 +222,6 @@ namespace TVRename
             this.tpScanOptions.SuspendLayout();
             this.tbFolderDeleting.SuspendLayout();
             this.tbMediaCenter.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tbSearchFolders.SuspendLayout();
             this.tbuTorrentNZB.SuspendLayout();
@@ -1176,6 +1171,16 @@ namespace TVRename
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
             // 
+            // cbCleanUpDownloadDir
+            // 
+            this.cbCleanUpDownloadDir.AutoSize = true;
+            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(16, 244);
+            this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
+            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(276, 17);
+            this.cbCleanUpDownloadDir.TabIndex = 11;
+            this.cbCleanUpDownloadDir.Text = "Clean up already copied files from download directory";
+            this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
+            // 
             // label32
             // 
             this.label32.AutoSize = true;
@@ -1279,7 +1284,6 @@ namespace TVRename
             // tbMediaCenter
             // 
             this.tbMediaCenter.Controls.Add(this.cbNFOEpisodes);
-            this.tbMediaCenter.Controls.Add(this.panel2);
             this.tbMediaCenter.Controls.Add(this.panel1);
             this.tbMediaCenter.Controls.Add(this.cbKODIImages);
             this.tbMediaCenter.Controls.Add(this.bnMCPresets);
@@ -1314,49 +1318,6 @@ namespace TVRename
             this.cbNFOEpisodes.TabIndex = 24;
             this.cbNFOEpisodes.Text = "&NFO files for episodes";
             this.cbNFOEpisodes.UseVisualStyleBackColor = true;
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.rdEden);
-            this.panel2.Controls.Add(this.rdFrodo);
-            this.panel2.Controls.Add(this.rdBoth);
-            this.panel2.Location = new System.Drawing.Point(201, 15);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(215, 40);
-            this.panel2.TabIndex = 23;
-            // 
-            // rdEden
-            // 
-            this.rdEden.AutoSize = true;
-            this.rdEden.Location = new System.Drawing.Point(112, -1);
-            this.rdEden.Name = "rdEden";
-            this.rdEden.Size = new System.Drawing.Size(50, 17);
-            this.rdEden.TabIndex = 20;
-            this.rdEden.TabStop = true;
-            this.rdEden.Text = "&Eden";
-            this.rdEden.UseVisualStyleBackColor = true;
-            // 
-            // rdFrodo
-            // 
-            this.rdFrodo.AutoSize = true;
-            this.rdFrodo.Location = new System.Drawing.Point(54, -1);
-            this.rdFrodo.Name = "rdFrodo";
-            this.rdFrodo.Size = new System.Drawing.Size(52, 17);
-            this.rdFrodo.TabIndex = 19;
-            this.rdFrodo.TabStop = true;
-            this.rdFrodo.Text = "&Frodo";
-            this.rdFrodo.UseVisualStyleBackColor = true;
-            // 
-            // rdBoth
-            // 
-            this.rdBoth.AutoSize = true;
-            this.rdBoth.Location = new System.Drawing.Point(168, -2);
-            this.rdBoth.Name = "rdBoth";
-            this.rdBoth.Size = new System.Drawing.Size(47, 17);
-            this.rdBoth.TabIndex = 21;
-            this.rdBoth.TabStop = true;
-            this.rdBoth.Text = "&Both";
-            this.rdBoth.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
@@ -2044,16 +2005,6 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // cbCleanUpDownloadDir
-            // 
-            this.cbCleanUpDownloadDir.AutoSize = true;
-            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(16, 244);
-            this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
-            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(276, 17);
-            this.cbCleanUpDownloadDir.TabIndex = 11;
-            this.cbCleanUpDownloadDir.Text = "Clean up already copied files from download directory";
-            this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2096,8 +2047,6 @@ namespace TVRename
             this.tbFolderDeleting.PerformLayout();
             this.tbMediaCenter.ResumeLayout(false);
             this.tbMediaCenter.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tbSearchFolders.ResumeLayout(false);
@@ -2291,10 +2240,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbEmptyIgnoreWords;
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.CheckBox cbRecycleNotDelete;
-        private System.Windows.Forms.RadioButton rdBoth;
-        private System.Windows.Forms.RadioButton rdEden;
-        private System.Windows.Forms.RadioButton rdFrodo;
-        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.CheckBox cbNFOEpisodes;
         private System.Windows.Forms.GroupBox groupBox7;

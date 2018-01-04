@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -241,13 +241,6 @@ namespace TVRename
 
         #endregion
 
-        public enum KODIType
-        {
-            Eden,
-            Frodo,
-            Both
-        }
-
         public List<String> MonitorFoldersNames = new List<String>();
         public List<String> IgnoreFoldersNames = new List<String>();
         public List<String> SearchFoldersNames = new List<String>();
@@ -284,7 +277,6 @@ namespace TVRename
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
         public ScanType MonitoredFoldersScanType = ScanType.Full;
-        public KODIType SelectedKODIType = KODIType.Both;
         public bool ForceLowercaseFilenames = false;
         public bool IgnoreSamples = true;
         public bool KeepTogether = true;
@@ -516,8 +508,6 @@ namespace TVRename
                     this.FolderJpgIs = (FolderJpgIsType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "MonitoredFoldersScanType")
                     this.MonitoredFoldersScanType = (ScanType)reader.ReadElementContentAsInt();
-                else if ((reader.Name == "SelectedXBMCType") || (reader.Name == "SelectedKODIType"))
-                    this.SelectedKODIType = (KODIType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameCheck")
                     this.RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
@@ -780,7 +770,6 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"FolderJpg",this.FolderJpg);
             XMLHelper.WriteElementToXML(writer,"FolderJpgIs",(int) this.FolderJpgIs);
             XMLHelper.WriteElementToXML(writer,"MonitoredFoldersScanType",(int)this.MonitoredFoldersScanType);
-            XMLHelper.WriteElementToXML(writer,"SelectedKODIType",(int)this.SelectedKODIType);
             XMLHelper.WriteElementToXML(writer,"CheckuTorrent",this.CheckuTorrent);
             XMLHelper.WriteElementToXML(writer,"RenameCheck",this.RenameCheck);
             XMLHelper.WriteElementToXML(writer,"MissingCheck",this.MissingCheck);
@@ -951,10 +940,7 @@ namespace TVRename
 
         private static List<string> DefaultRSSURLList()
         {
-            List<string> sl = new List<String>
-                                  {
-                                      "http://tvrss.net/feed/eztv"
-                                  };
+            List<string> sl = new List<String>();
             return sl;
         }
 
@@ -1036,16 +1022,6 @@ namespace TVRename
 
         public bool SeasonSpecificFolderJPG() {
             return (FolderJpgIsType.SeasonPoster == FolderJpgIs);
-        }
-
-        public bool DownloadFrodoImages()
-        {
-            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Frodo));
-        }
-
-        public bool DownloadEdenImages()
-        {
-            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Eden)); 
         }
     }
 }

@@ -1,19 +1,18 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
 namespace TVRename
 {
-    public partial class TVRenameSplash : Form, ISplashForm
+    public partial class TVRenameSplash : Form
     {
         public TVRenameSplash()
         {
             InitializeComponent();
-            lblVersion.Text = Version.DisplayVersionString();
+            lblVersion.Text = Helpers.DisplayVersion;
         }
         public void UpdateStatus(string status) { lblStatus.Text = status; }
         public void UpdateProgress(int progress) { prgComplete.Value = progress; }
