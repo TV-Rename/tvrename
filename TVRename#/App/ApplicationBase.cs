@@ -64,7 +64,7 @@ namespace TVRename.App
             }
 
             FileInfo tvdbFile = PathManager.TVDBFile;
-            FileInfo settingsFile = PathManager.TVDocSettingsFile;
+            FileInfo settingsFile = PathManager.SettingsFile;
             TVDoc doc;
 
             do // Loop until files correctly load
