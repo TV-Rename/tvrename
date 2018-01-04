@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace TVRename.Exporter
+namespace TVRename.Exporters
 {
     /// <summary>
     /// Exports a list of shows to a text file.

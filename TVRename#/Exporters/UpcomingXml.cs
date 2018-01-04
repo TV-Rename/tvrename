@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using System.Xml;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-namespace TVRename.Exporter
+namespace TVRename.Exporters
 {
     /// <summary>
     /// Exporter for saving upcoming episodes to a XML file.

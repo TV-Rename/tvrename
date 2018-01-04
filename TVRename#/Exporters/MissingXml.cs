@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace TVRename.Exporter
+namespace TVRename.Exporters
 {
     /// <summary>
     /// Exports a list of missing items to a XML file.

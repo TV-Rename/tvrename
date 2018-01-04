@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -26,7 +26,7 @@ using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
 using TVRename.DownloadIdentifiers;
-using TVRename.Exporter;
+using TVRename.Exporters;
 
 namespace TVRename
 {

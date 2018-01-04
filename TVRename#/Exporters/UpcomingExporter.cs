@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace TVRename.Exporter
+namespace TVRename.Exporters
 {
     /// <summary>
     /// Base exporter for saving upcoming episode data.

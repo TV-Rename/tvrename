@@ -1,4 +1,4 @@
-namespace TVRename.Exporter
+namespace TVRename.Exporters
 {
     /// <summary>
     /// Base exporter for saving data.

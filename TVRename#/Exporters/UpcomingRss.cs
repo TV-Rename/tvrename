@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace TVRename.Exporter
+namespace TVRename.Exporters
 {
     /// <summary>
     /// Exporter for saving upcoming episodes to a RSS file.
