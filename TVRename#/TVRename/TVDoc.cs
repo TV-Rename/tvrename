@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -1180,15 +1180,15 @@ namespace TVRename
         {
             // backup old settings before writing new ones
 
-            FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
-            logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
+            FileHelper.Rotate(PathManager.SettingsFile.FullName);
+            logger.Info("Saving Settings to {0}", PathManager.SettingsFile.FullName);
 
             XmlWriterSettings settings = new XmlWriterSettings
             {
                 Indent = true,
                 NewLineOnAttributes = true
             };
-            using (XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings))
+            using (XmlWriter writer = XmlWriter.Create(PathManager.SettingsFile.FullName, settings))
             {
 
                 writer.WriteStartDocument();

@@ -1,117 +1,109 @@
 ﻿using System;
 using Alphaleonis.Win32.Filesystem;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
     public class PathManager
     {
+        /// <summary>
+        /// The default base path for application data.
+        /// Used if a user path is not specified.
+        /// </summary>
+        /// <see cref="userBasePath"/>
+        private static readonly string DefaultBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TV Rename");
+
+        /// <summary>
+        /// The user base path if specifed.
+        /// If not specified then the default base path will be used.
+        /// </summary>
+        /// <see cref="DefaultBasePath"/>
+        private static string userBasePath;
+
+        /// <summary>
+        /// The file name for the settings file.
+        /// </summary>
+        public const string SettingsFileName = "Settings.xml";
+
+        /// <summary>
+        /// The file name for the statistics file.
+        /// </summary>
+        public const string StatisticsFileName = "Statistics.xml";
+
+        /// <summary>
+        /// The file name for the layout configuration file.
+        /// </summary>
+        public const string LayoutFileName = "Layout.xml";
+
+        /// <summary>
+        /// The file name for the TheTVDB cache file.
+        /// </summary>
         public const string TVDBFileName = "TheTVDB.xml";
-        public const string SettingsFileName = "TVRenameSettings.xml";
-        const string LayoutFileName = "TVRenameLayout.dat";
-        const string UILayoutFileName = "Layout.xml";
-        const string StatisticsFileName = "Statistics.xml";
 
-        private static string userDefinedBasePath;
+        /// <summary>
+        /// Gets file information for the settings file.
+        /// </summary>
+        /// <value>
+        /// The settings file information.
+        /// </value>
+        /// <see cref="SettingsFileName"/>
+        public static FileInfo SettingsFile => GetFileInfo("config", SettingsFileName);
 
+        /// <summary>
+        /// Gets file information for the statistics file.
+        /// </summary>
+        /// <value>
+        /// The statistics file information.
+        /// </value>
+        /// <see cref="StatisticsFileName"/>
+        public static FileInfo StatisticsFile => GetFileInfo("config", StatisticsFileName);
+
+        /// <summary>
+        /// Gets file information for the layout configuration file.
+        /// </summary>
+        /// <value>
+        /// The layout file information.
+        /// </value>
+        /// <see cref="LayoutFileName"/>
+        public static FileInfo LayoutFile => GetFileInfo("config", LayoutFileName);
+
+        /// <summary>
+        /// Gets file information for the TheTVDB cache file.
+        /// </summary>
+        /// <value>
+        /// The TVDB cache file information.
+        /// </value>
+        /// <see cref="TVDBFileName"/>
+        public static FileInfo TVDBFile => GetFileInfo("cache", TVDBFileName);
+
+        /// <summary>
+        /// Gets file information for a specified path and file relative to the base path.
+        /// </summary>
+        /// <param name="relativePath">The path relative to the base path.</param>
+        /// <param name="file">The file to read.</param>
+        /// <returns>File information for specifed file.</returns>
+        private static FileInfo GetFileInfo(string relativePath, string file)
+        {
+            var path = Path.Combine(userBasePath ?? DefaultBasePath, relativePath);
+
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+
+            return new FileInfo(Path.Combine(path, file));
+        }
+
+        /// <summary>
+        /// Sets the base path to a user defined directory, creating it if it does not exist.
+        /// </summary>
+        /// <param name="path">The base path.</param>
+        /// <exception cref="ArgumentNullException">Path is null.</exception>
         public static void SetUserDefinedBasePath(string path)
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                throw new ArgumentNullException("path");
-            }
-            if (System.IO.File.Exists(path))
-            {
-                throw new ArgumentException("path");
-            }
-            path = System.IO.Path.GetFullPath(path); // Get absolute path, in case the given path was a relative one. This will make the Path absolute depending on the Environment.CurrentDirectory.
-            // Why are we getting a absolute path here ? Simply because it is not guaranteed that the Environment.CurrentDirectory will not change a some point during runtime and then all bets are off were the Files are going to be saved, which would be fatal to the data integrity.(Saved changes might go to some file nobody even knew about )
-            if (!System.IO.Directory.Exists(path))
-            {
-                System.IO.Directory.CreateDirectory(path);
-            }
-            userDefinedBasePath = path;
-        }
+            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException(nameof(path));
 
-        protected static FileInfo GetFileInfo(string path, string file)
-        {
-            return new FileInfo(System.IO.Path.Combine(path, file));
-        }
+            path = Path.GetFullPath(path); // Resolve relative path, depending on Environment.CurrentDirectory
 
-        public static FileInfo StatisticsFile
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
-                {
-                    return GetFileInfo(userDefinedBasePath, StatisticsFileName);
-                }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), StatisticsFileName);
-                }
-            }
-        }
+            if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 
-        public static FileInfo LayoutFile
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
-                {
-                    return GetFileInfo(userDefinedBasePath, LayoutFileName);
-                }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), LayoutFileName);
-                }
-            }
+            userBasePath = path;
         }
-
-        public static FileInfo UILayoutFile
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
-                {
-                    return GetFileInfo(userDefinedBasePath, UILayoutFileName);
-                }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), UILayoutFileName);
-                }
-            }
-        }
-
-        public static FileInfo TVDBFile
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
-                {
-                    return GetFileInfo(userDefinedBasePath, TVDBFileName);
-                }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), TVDBFileName);
-                }
-            }
-        }
-
-        public static FileInfo TVDocSettingsFile
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(userDefinedBasePath))
-                {
-                    return GetFileInfo(userDefinedBasePath, SettingsFileName);
-                }
-                else
-                {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), SettingsFileName);
-                }
-            }
-        }
-
     }
 }

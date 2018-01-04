@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -52,7 +52,7 @@ namespace TVRename
                 txt.Append("\r\n");
                 try
                 {
-                    StreamReader sr = new StreamReader(PathManager.TVDocSettingsFile.FullName);
+                    StreamReader sr = new StreamReader(PathManager.SettingsFile.FullName);
                     txt.Append(sr.ReadToEnd());
                     sr.Close();
                     txt.Append("\r\n");
