@@ -160,6 +160,7 @@ For example, Season 4 Episode 9 of Marvel's Agents of S.H.I.E.L.D. is the 75<sup
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### The Show Aliases Tab
+![The Show Aliases tab](images/main-window/add-edit-show-aliases-01.png){:.pic-l}
 The Show Aliases tab only affects source files, it does **not** affect show episodes in your media library (TV Rename can work out the correct name for a file in the library from the containing folder structure and the show/season number).
 
 Sources often rename files because of the excessive length of the shows name, for example "Law and Order- Special Victims Unit" could be represented as "L&O-SVU". Adding "L&O-SVU" as an alias would cause any source file with that abbreviated name be renamed correctly when moved or copied into the library.
