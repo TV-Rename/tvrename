@@ -30,7 +30,9 @@ namespace TVRename
 
         public Season TheSeason;
         public SeriesInfo TheSeries;
-        
+
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public Banner(Banner O)
         {
 
@@ -131,11 +133,8 @@ namespace TVRename
                 if (!string.IsNullOrEmpty(this.BannerPath))
                     message += "\r\nBanner Path: " + this.BannerPath;
 
-                message += "\r\n" + e.Message;
-
-                if (!args.Unattended) 
-                    MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
+                logger.Error(e, message);
+                
                 throw new TVDBException(e.Message);
             }
         }

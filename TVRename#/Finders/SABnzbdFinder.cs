@@ -26,6 +26,9 @@ namespace TVRename
             return FinderDisplayType.Downloading;
         }
 
+        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             if (String.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || String.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
@@ -62,7 +65,7 @@ namespace TVRename
                 SAB.result res = SAB.result.Deserialize(r);
                 if (res != null && res.status == "False")
                 {
-                    MessageBox.Show(res.error, "SABnzbd Queue Check", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
                     prog.Invoke(startpct + totPct);
                     return;
                 }
@@ -77,9 +80,9 @@ namespace TVRename
             {
                 sq = SAB.queue.Deserialize(r);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                MessageBox.Show("Error processing data from SABnzbd", "SABnzbd Queue Check", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
                 prog.Invoke(startpct + totPct);
                 return;
             }

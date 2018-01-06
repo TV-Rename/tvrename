@@ -34,6 +34,7 @@ namespace TVRename
         public Season TheSeason;
         public SeriesInfo TheSeries;
         private string mName;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public Episode(Episode O)
         {
@@ -117,7 +118,7 @@ namespace TVRename
                             String contents = r.ReadElementContentAsString();
                             if (contents == "")
                             {
-                                System.Diagnostics.Debug.Print ("Please confirm, but we are assuming that " + this.Name +"(episode Id =" +this.EpisodeID + ") has no airdate");
+                               logger.Info ("Please confirm, but we are assuming that " + this.Name +"(episode Id =" +this.EpisodeID + ") has no airdate");
                                 this.FirstAired = null;
                             } else { 
                                 this.FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
@@ -155,10 +156,8 @@ namespace TVRename
                 if (!string.IsNullOrEmpty(this.Name))
                     message += "\r\nName: " + this.Name;
 
-                message += "\r\n" + e.Message;
 
-                if (!args.Unattended) 
-                    MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Error(e, message);
 
                 throw new TVDBException(e.Message);
             }
@@ -226,17 +225,17 @@ namespace TVRename
                 }
                 catch (ArgumentException ae)
                 {
-                    System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
                 catch (NullReferenceException ae)
                 {
-                    System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
                 catch (InvalidCastException ae)
                 {
-                    System.Diagnostics.Debug.Print("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
+                   logger.Error("Could not parse Json for " + episodeItems.Name + " :" + ae.Message);
                     //ignore as probably a cast exception
                 }
             }
@@ -248,8 +247,8 @@ namespace TVRename
             if ((string)r["airedSeasonID"] != null) { this.SeasonID = (int)r["airedSeasonID"]; }
             else
             {
-                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " no airedSeasonID " );
-                System.Diagnostics.Debug.Print(r.ToString());
+               logger.Error("Issue with episode " + EpisodeID + " for series " + seriesId + " no airedSeasonID " );
+               logger.Error(r.ToString());
             }
 
             this.EpNum = (int)r["airedEpisodeNumber"];
@@ -260,8 +259,8 @@ namespace TVRename
 
             String sn = (string)r["airedSeason"];
             if (sn == null) {
-                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + seriesId + " airedSeason = null");
-                System.Diagnostics.Debug.Print(r.ToString());
+               logger.Error("Issue with episode " + EpisodeID + " for series " + seriesId + " airedSeason = null");
+               logger.Error(r.ToString());
             }
             else { int.TryParse(sn, out this.ReadSeasonNum); }
             
@@ -274,7 +273,7 @@ namespace TVRename
                 String contents = (string)r["firstAired"];
                 if (String.IsNullOrEmpty(contents))
                 {
-                    //if (this.ReadSeasonNum > 0) System.Diagnostics.Debug.Print("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
+                    //if (this.ReadSeasonNum > 0)logger.Info("Please confirm, but we are assuming that " + this.Name + "(episode Id =" + this.EpisodeID + ") has no airdate");
                     this.FirstAired = null;
                 }
                 else
@@ -284,6 +283,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
+                logger.Debug(e, "Failed to parse firstAired");
                 this.FirstAired = null;
 
             }
@@ -348,7 +348,7 @@ namespace TVRename
             bool returnVal = (this.SeriesID != -1) && (this.EpisodeID != -1) && (this.EpNum != -1) && (this.SeasonID != -1) && (this.ReadSeasonNum != -1);
             if (!returnVal)
             {
-                System.Diagnostics.Debug.Print("Issue with episode " + EpisodeID + " for series " + SeriesID + " for EpNum " + EpNum + " for SeasonID " + SeasonID + " for ReadSeasonNum " + ReadSeasonNum);
+               logger.Warn("Issue with episode " + EpisodeID + " for series " + SeriesID + " for EpNum " + EpNum + " for SeasonID " + SeasonID + " for ReadSeasonNum " + ReadSeasonNum);
             }
 
             return returnVal;

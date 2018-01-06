@@ -1,0 +1,63 @@
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+skip_non_tags: true
+skip_branch_with_pr: true
+clone_depth: 1
+
+branches:
+  only:
+  - master
+
+cache:
+- packages -> **\packages.config
+
+init:
+- ps: >-
+    $tag = $env:APPVEYOR_REPO_TAG_NAME.TrimStart("v")
+
+    Update-AppveyorBuild -Version "$($tag)"
+
+    $version = $tag -split '-'
+
+    $friendly = $version[0].TrimEnd(".0")
+
+    If ($version[1]) {
+      $end = (Get-Culture).TextInfo.ToTitleCase($version[1].Replace("rc", "RC"))
+      $friendly += " " + $end -replace "([a-z]+)(\d+)",'$1 $2'
+    }
+
+    $env:APPVEYOR_BUILD_VERSION_FRIENDLY = $friendly
+
+assembly_info:
+  patch: true
+  file: TVRename#\Properties\AssemblyInfo.cs
+  assembly_informational_version: '$(APPVEYOR_BUILD_VERSION_FRIENDLY)'
+
+test: off
+
+before_build:
+- cmd: nuget restore
+
+build:
+  verbosity: minimal
+
+after_build:
+- cmd: >-
+    curl -fsS -o "%PROGRAMFILES(x86)%\NSIS\Plugins\x86-unicode\DotNetChecker.dll" https://raw.githubusercontent.com/ReVolly/NsisDotNetChecker/master/bin/DotNetChecker.dll
+
+    curl -fsS -o DotNetChecker.nsh https://raw.githubusercontent.com/ReVolly/NsisDotNetChecker/master/nsis/DotNetChecker.nsh
+
+    "%PROGRAMFILES(x86)%\NSIS\makensis" /WX /DVERSION="%APPVEYOR_BUILD_VERSION_FRIENDLY%" /DTAG="%APPVEYOR_BUILD_VERSION%" Installer.nsi
+
+artifacts:
+- path: 'TVRename-$(appveyor_build_version).exe'
+  name: 'TVRename-$(appveyor_build_version)'
+
+deploy:
+- provider: GitHub
+  auth_token:
+    secure: N9IXwzwtulNUU5FVDy1+z7ZKbYuSWhtrrTosnaoLApyLas6XEd1whQNZYnpYKBnJ
+  artifact: 'TVRename-$(appveyor_build_version)'
+  on:
+    appveyor_repo_tag: true
