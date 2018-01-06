@@ -26,6 +26,7 @@ namespace TVRename
         public bool BannersLoaded;
 
         public System.Collections.Generic.Dictionary<int, Season> Seasons;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         //All Banners
         public System.Collections.Generic.Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.
@@ -45,7 +46,6 @@ namespace TVRename
         private int bestSeriesLangPosterId;
         private int bestSeriesLangBannerId;
         private int bestSeriesLangFanartId;
-
 
         private TimeZone SeriesTZ;
 
@@ -76,8 +76,8 @@ namespace TVRename
             this.LoadJSON(json);
 
             if (String.IsNullOrEmpty(this.Name)            ){
-                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
-                System.Diagnostics.Debug.Print(json.ToString());
+               logger.Warn("Issue with series " + this.TVDBCode );
+               logger.Warn(json.ToString());
             }
         }
 
@@ -87,9 +87,9 @@ namespace TVRename
             this.LanguageId = langId;
             this.LoadJSON(json,jsonInDefaultLang);
             if (String.IsNullOrEmpty(this.Name)            ){
-                System.Diagnostics.Debug.Print("Issue with series " + this.TVDBCode );
-                System.Diagnostics.Debug.Print(json.ToString());
-                System.Diagnostics.Debug.Print(jsonInDefaultLang .ToString());
+               logger.Warn("Issue with series " + this.TVDBCode );
+               logger.Warn(json.ToString());
+               logger.Info(jsonInDefaultLang .ToString());
             }
 
         }
@@ -274,9 +274,9 @@ namespace TVRename
                     {
                         this.AirsTime = DateTime.Parse("20:00");
 
+                        string theTime = r.ReadElementContentAsString();
                         try
                         {
-                            string theTime = r.ReadElementContentAsString();
                             if (!string.IsNullOrEmpty(theTime))
                             {
                                 this.Items["Airs_Time"] = theTime;
@@ -290,6 +290,7 @@ namespace TVRename
                         }
                         catch (FormatException)
                         {
+                            logger.Trace("Failed to parse time: {0} ", theTime);
                         }
                     }
                     else if (r.Name == "FirstAired")
@@ -304,6 +305,7 @@ namespace TVRename
                         }
                         catch
                         {
+                            logger.Trace("Failed to parse date: {0} ", theDate);
                             this.FirstAired = null;
                             this.Items["FirstAired"] = "";
                             this.Items["Year"] = "";
@@ -329,7 +331,7 @@ namespace TVRename
 
                 message += "\r\n" + e.Message;
 
-                MessageBox.Show(message, "TVRename", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                logger.Error(e,message);
 
                 throw new TVDBException(e.Message);
             }
@@ -350,7 +352,7 @@ namespace TVRename
                         if (seriesItems.Value != null) this.Items[seriesItems.Name] = (string)seriesItems.Value;
                     }
                     catch (ArgumentException ae) {
-                        System.Diagnostics.Debug.Print("Could not parse Json for " + seriesItems.Name + " :" + ae.Message);
+                       logger.Warn("Could not parse Json for " + seriesItems.Name + " :" + ae.Message);
                     }
             }
 
@@ -414,7 +416,7 @@ namespace TVRename
         public void LoadJSON(JObject bestLanguageR, JObject backupLanguageR)
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English). 
-            //We will populate with the best language frst and then fillin any gaps with the backup Language
+            //We will populate with the best language frst and then fill in any gaps with the backup Language
             LoadJSON(bestLanguageR);
 
             //backupLanguageR should be a series of name/value pairs (ie a JArray of JPropertes)

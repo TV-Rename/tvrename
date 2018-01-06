@@ -12,8 +12,9 @@ namespace TVRename
         private UI mUI;
         private List<System.IO.FileSystemWatcher> Watchers = new List<System.IO.FileSystemWatcher>();
         private System.Timers.Timer mScanDelayTimer;
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AutoFolderMonitor(TVDoc Doc,UI ui)
+        public AutoFolderMonitor(TVDoc Doc, UI ui)
         {
             mDoc = Doc;
             mUI = ui;
@@ -43,7 +44,7 @@ namespace TVRename
 
                 if ((File.GetAttributes(efi) & FileAttributes.Directory) != (FileAttributes.Directory))  // not a folder
                     continue;
-                
+
 
                 FileSystemWatcher watcher = new FileSystemWatcher(efi);
                 watcher.Changed += new FileSystemEventHandler(watcher_Changed);
@@ -54,11 +55,13 @@ namespace TVRename
                 watcher.IncludeSubdirectories = true;
                 watcher.EnableRaisingEvents = true;
                 Watchers.Add(watcher);
+                logger.Trace("Starting logger for {0}", efi);
             }
         }
 
         void watcher_Changed(object sender, FileSystemEventArgs e)
         {
+            logger.Trace("Restarted delay timer");
             mScanDelayTimer.Stop();
             mScanDelayTimer.Start();
         }
@@ -67,9 +70,12 @@ namespace TVRename
         {
             mScanDelayTimer.Stop();
             this.StopMonitor();
-            
+
             //We only wish to do a scan now if we are not already undertaking one
-            if (mDoc.CanScan(TVSettings.Instance.MonitoredFoldersScanType)) {
+            if (!mDoc.CurrentlyBusy)
+            {
+                logger.Info("*******************************");
+                logger.Info("Auto scan fired");
                 if (mUI != null)
                 {
                     switch (TVSettings.Instance.MonitoredFoldersScanType)
@@ -91,11 +97,11 @@ namespace TVRename
                         mDoc.ExportMissingXML(); // Export Missing episodes to XML if we scanned all
 
                 }
-                
+
             }
             else
             {
-                System.Diagnostics.Debug.Print("Auto scan delayed as the system is already busy");
+               logger.Info("Auto scan cancelled as the system is already busy");
             }
             this.StartMonitor();
         }

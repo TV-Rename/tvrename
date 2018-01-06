@@ -1,22 +1,25 @@
 # TV Rename
-*Organise your TV videos with ease*
 
-Say you've downloaded a few TV episodes, and they have names like:
+### Organise your TV files with ease
 
->  *Grey's.Anatomy.S03E04.blah.xvid.avi*
+Say you've downloaded a few TV episodes and they have names like:
 
-and you want them named more like:
+> *Greys.Anatomy.S03E04.blah.xvid.avi*
 
-> *Greys Anatomy - S03E04 - What I Am.avi*
+and you want them named like:
 
-..this this is the program for you!
+> *Grey's Anatomy - S03E04 - What I Am.avi*
 
-**But wait.. Theres more!!!**
+...then TV Rename is the program for you!
 
- * Rename files, using data from thetvdb.com
- * Check if you're missing episodes in your collection
- * Tell you how long until the next time a show airs
- * Monitor your library of folders for new shows and seasons
- * Monitor your download directories for new files
- * Copy files from where you download them to, to fill in gaps in your main collection
- * Un-name files, using names in a .torrent file
+## Features
+
+* Automatically rename files using data from thetvdb.com
+* Check for missing episodes in your collection
+* See how long until the next episode for your shows air
+* Monitor your library of folders for new shows and seasons
+* Monitor your download directories for new files
+* Copy or move files from your download folder to your collection
+* Correctly name downloads, using filenames from a .torrent file
+
+and more!

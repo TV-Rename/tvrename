@@ -48,7 +48,7 @@ namespace TVRename
 
         public static string[] ZoneNames()
         {
-            if (Version.OnMono())
+            if (Helpers.OnMono)
             {
                 // need a mono version of this function
                 return new string[0];
@@ -60,7 +60,7 @@ namespace TVRename
 
         public static TimeZone TimeZoneFor(string name)
         {
-            if (Version.OnMono())
+            if (Helpers.OnMono)
             {
                 // TODO: Need a mono version of the TimeZone class.  Does mono have System.Core.TimeZoneInfo?
                 return null;
@@ -84,7 +84,7 @@ namespace TVRename
             if (theirTimeZone == null)
                 return dt;
 
-            if (Version.OnMono())
+            if (Helpers.OnMono)
             {
                 // need a mono version of this function
                 return dt;

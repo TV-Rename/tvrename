@@ -24,6 +24,8 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Microsoft.Win32;
 using System.Security;
 
@@ -249,6 +251,8 @@ namespace TVRename
 
     public static class HTTPHelper
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public static String HTTPRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
@@ -261,6 +265,9 @@ namespace TVRename
             {
                 httpWebRequest.Headers.Add("Accept-Language",lang);
             }
+
+            logger.Trace("Obtaining {0}", url);
+
             if (method == "POST") { 
                 using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
                 {
@@ -276,6 +283,7 @@ namespace TVRename
             {
                 result = streamReader.ReadToEnd();
             }
+            logger.Trace("Returned {0}", result);
             return result;
         }
 
@@ -345,6 +353,9 @@ namespace TVRename
 
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
+
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private enum BrowserEmulationVersion
         {
             Default = 0,
@@ -391,13 +402,15 @@ namespace TVRename
                     }
                 }
             }
-            catch (SecurityException)
+            catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
+                logger.Error(se);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
+                logger.Error(uae);
             }
 
             return result;
@@ -428,13 +441,15 @@ namespace TVRename
                     }
                 }
             }
-            catch (SecurityException)
+            catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
+                logger.Error(se);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
+                logger.Error(uae);
             }
 
             return result;
@@ -467,23 +482,27 @@ namespace TVRename
                     {
                         // if it's a valid value, update or create the value
                         key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
+                        logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
                     }
                     else
                     {
                         // otherwise, remove the existing value
                         key.DeleteValue(programName, false);
+                        logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
                     }
 
                     result = true;
                 }
             }
-            catch (SecurityException)
+            catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
+                logger.Error(se);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
+                logger.Error(uae);
             }
 
             return result;
@@ -495,6 +514,7 @@ namespace TVRename
             BrowserEmulationVersion emulationCode;
 
             ieVersion = GetInternetExplorerMajorVersion();
+            logger.Warn("IE Version {0} is identified",ieVersion );
 
             if (ieVersion >= 11)
             {
@@ -526,6 +546,7 @@ namespace TVRename
         {
             if (!IsBrowserEmulationSet())
             {
+                logger.Warn("Updating the registry to ensure that the latest browser version is used");
                 SetBrowserEmulationVersion();
             }
         }
@@ -536,6 +557,35 @@ namespace TVRename
     public static class Helpers
     {
 
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        /// <summary>
+        /// Gets a value indicating whether application is running under Mono.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if application is running under Mono; otherwise, <c>false</c>.
+        /// </value>
+        public static bool OnMono => Type.GetType("Mono.Runtime") != null;
+
+        /// <summary>
+        /// Gets the application display version from the current assemblies <see cref="AssemblyInformationalVersionAttribute"/>.
+        /// </summary>
+        /// <value>
+        /// The application display version.
+        /// </value>
+        public static string DisplayVersion
+        {
+            get
+            {
+                string v = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false).Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
+
+#if DEBUG
+                v += " ** Debug Build **";
+#endif
+
+                return v;
+            }
+        }
 
         public static string pad(int i)
         {
@@ -568,26 +618,18 @@ namespace TVRename
                 System.Diagnostics.Process.Start(what, arguments);
                 return true;
             }
-            catch
+            catch (Exception e)
             {
+                logger.Error(e);
                 return false;
             }
         }
 
-        public static Color WarningColor()
-        {
-            return Color.FromArgb(255, 210, 210);
-        }
+        public static Color WarningColor() => Color.FromArgb(255, 210, 210);
 
-        public static bool Contains(string source, string toCheck, StringComparison comp)
-        {
-            return source.IndexOf(toCheck, comp) >= 0;
-        }
-
-        public static string TranslateColorToHtml(Color c)
-        {
-            return String.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
-        }
+        public static bool Contains(string source, string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
+        
+        public static string TranslateColorToHtml(Color c) =>String.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
         
         public static string SimplifyName(string n)
         {

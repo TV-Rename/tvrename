@@ -10,6 +10,7 @@ namespace TVRename
     public class DirFilesCache
     {
         private Dictionary<String, FileInfo[]> Cache = new Dictionary<string, FileInfo[]>();
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public FileInfo[] Get(String folder)
         {
@@ -39,7 +40,7 @@ namespace TVRename
                 Cache[folder] = files;
                 return files;
             } catch (System.IO.IOException) {
-                System.Diagnostics.Debug.Print("IOException occurred trying to access " + folder);
+               logger.Error ("IOException occurred trying to access " + folder);
                 return null;
             }
         }

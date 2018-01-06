@@ -190,6 +190,7 @@ namespace TVRename
 
         private static volatile TVSettings instance;
         private static object syncRoot = new Object();
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVSettings Instance
         {
@@ -347,6 +348,7 @@ namespace TVRename
 
         public void load(XmlReader reader)
         {
+            
             this.SetToDefaults();
 
             reader.Read();
@@ -710,7 +712,7 @@ namespace TVRename
 
             // ResumeDatPath
             FileInfo f2 =
-                new FileInfo(System.Windows.Forms.Application.UserAppDataPath + "\\..\\..\\..\\uTorrent\\resume.dat");
+                new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"uTorrent\resume.dat"));
             this.ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
@@ -949,10 +951,7 @@ namespace TVRename
 
         private static List<string> DefaultRSSURLList()
         {
-            List<string> sl = new List<String>
-                                  {
-                                      "http://tvrss.net/feed/eztv"
-                                  };
+            List<string> sl = new List<String>();
             return sl;
         }
 

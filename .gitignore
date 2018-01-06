@@ -1,12 +1,4 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/Backup
-/TVRename#/obj/Debug
-/TVRename#/bin/Debug
-/packages/Newtonsoft.Json.10.0.3/lib
-/packages/Newtonsoft.Json.10.0.3
-/.vs/TVRename#/v15
-/TVRename#/obj/Release
-/TVRename#/bin/Release
+﻿/.vs
+/packages
+/TVRename#/obj
+/TVRename#/bin
