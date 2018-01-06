@@ -33,15 +33,15 @@ The tabs in "Preferences", are each discussed below.
 Use the links (below) to jump to a specific item...
 
 {:.center}
-[Media Center](#media-center)&nbsp;&#9670;&nbsp;[Search Folders](#search-folders)&nbsp;&#9670;&nbsp;[µTorrent / NZB](#µtorrent--nzb)&nbsp;&#9670;&nbsp;[Tree Coloring](#tree-coloring)
+[Media Center](#the-media-center-tab)&nbsp;&#9670;&nbsp;[Search Folders](#the-search-folders-tab)&nbsp;&#9670;&nbsp;[µTorrent / NZB](#the-µtorrent--nzb-tab)&nbsp;&#9670;&nbsp;[Tree Coloring](#the-tree-coloring-tab)
 
 {:.center}
-[General](#general)&nbsp;&#9670;&nbsp;[Files and Folders](#files-and-folders)&nbsp;&#9670;&nbsp;[Automatic Export](#automatic-export)&nbsp;&#9670;&nbsp;[Scan Options](#scan-options)&nbsp;&#9670;&nbsp;[Folder Deleting](#folder-deleting)
+[General](#the-general-tab)&nbsp;&#9670;&nbsp;[Files and Folders](#the-files-and-folders-tab)&nbsp;&#9670;&nbsp;[Automatic Export](#the-automatic-export-tab)&nbsp;&#9670;&nbsp;[Scan Options](#the-scan-options-tab)&nbsp;&#9670;&nbsp;[Folder Deleting](#the-folder-deleting-tab)
 
 {:.toplink}
 [Return to Top]()
 
-### Media Center
+### The Media Center Tab
 ![Preferences - the Media Centre tab](images/options/preferences-media-center-01.png)
 
 This is were you tell TV Rename about your media player (and hence, the additional files you may need to download)
@@ -51,7 +51,7 @@ This is were you tell TV Rename about your media player (and hence, the addition
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### Search Folders
+### The Search Folders Tab
 ![Preferences - the Search Folders tab](images/options/preferences-search-folders-02.png){:.pic-l}
 The ***Search Folders*** tab is used to tell TV Rename where to look for TV show episode files BEFORE they are processed. Logical entries in here would be your downloads folder (if you download TV show episodes from the internet) or maybe your desktop (if you rip TV show episodes from DVD or Blu-ray). Or both!
 
@@ -66,7 +66,7 @@ At the top of the tab the "Monitor folders for changes" tick box tell TV Rename 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### µTorrent / NZB
+### The µTorrent / NZB Tab
 ![Preferences - the µTorrent / NZB tab](images/options/preferences-utorrent-nzb-01.png){:.pic-l}
 Some of the contents of this tab are use by the *Scan Options* tab.
 
@@ -83,7 +83,7 @@ TV Rename also needs to know the µTorrent "Application" and "resume.dat" paths,
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### Tree Coloring
+### The Tree Coloring Tab
 ![Preferences - the Tree Coloring tab](images/options/preferences-tree-coloring-01.png){:.pic-l}
 If you're like me and have a large catalogue of old TV Shows, the ***My&nbsp;Shows*** tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. ***Tree Coloring*** to the rescue...
 
@@ -101,7 +101,7 @@ If you wish to remove a rule from the list just select it and click `Remove`.
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### General
+### The General Tab
 ![Preferences - the General tab](images/options/preferences-general-01.png){:.pic-l}
 *When to watch* "X" *days count as recent*<br />
 Specifies how many recent days are listed for the for "Aired in the last N days" section of the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab.
@@ -159,7 +159,7 @@ This option sets the language for returned data when requesting information from
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### Files and Folders
+### The Files and Folders Tab
 ![Preferences - The Files and Folders tab](images/options/preferences-files-folders-01.png){:.pic-l}
 The "Filename Replacements" grid controls the replacement of illegal characters in filenames.
 
@@ -184,7 +184,7 @@ The rest of the options are straightforward and need little explanation.
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### Automatic Export
+### The Automatic Export Tab
 ![Preferences - the Automatic Export tab](images/options/preferences-auto-export-01.png){:.pic-l}
 Ticking the "RSS" box in the "When to watch"  section of the panel will save a RSS-reader compatible XML file to the location you specify (by typing or browsing). This file can then be read by something like XBOX Media Center, or a Windows  RSS App.
 
@@ -201,7 +201,7 @@ Ticking the "TXT" box in the "All Shows" section of the panel will save a TXT fi
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### Scan Options
+### The Scan Options Tab
 ![Preferences - the Scan Options tab](images/options/preferences-scan-options-01.png){:.pic-l}
 This tab in conjunction with data from the ***µTorrent / NZB*** tab controls the ***Scan*** tabs checks and actions. 
 
@@ -228,7 +228,7 @@ The settings in here are more or less self explanatory, however remember that th
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-### Folder Deleting
+### The Folder Deleting Tab
 ![Preferences - the Folder Delete tab](images/options/preferences-folder-del-01.png){:.pic-l}
 This tab is all about TV Rename tidying up after itself.
 

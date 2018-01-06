@@ -223,7 +223,7 @@ There are three types of scan available : -
 | **Recent** | A Scan of all the shows that have aired recently. |
 | **Quick**  | Scan the shows that have aired recently and have a missing episode in the library. Also check the locations specified in *Options>Preferences>Search Folders* for any matching media files.
 
-As with other tabs, "recent" is taken as being the number of days counted as recent indicated in the [Options>Preferences General](options#preferences-general) tab. 
+As with other tabs, "recent" is taken as being the number of days counted as recent indicated in the [Options>Preferences General](options#general) tab. 
 
 ***Scan*** indicates where there are gaps in your library. The result of a typical scan is shown below.
 
