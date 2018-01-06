@@ -154,14 +154,19 @@ The "Do Renaming" tick box tells TV Rename to use the names built using the [(Op
 "Use sequential number matching" will match episodes based on their overall airing order. Because this can cause a large number of false matches, the box is un-ticked by default.  
 For example, Season 4 Episode 9 of Marvel's Agents of S.H.I.E.L.D. is the 75<sup>th</sup> episode aired, so with this option enabled "Marvel's Agents of S.H.I.E.L.D. - 75 - Broken Promises.mkv" will be seen at S04E09.
 
-
+![Under Construction](images/under-construction.jpg)
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### The Show Aliases Tab
+![The Show Aliases tab](images/main-window/add-edit-show-aliases-01.png){:.pic-l}
+The Show Aliases tab only affects source files, it does **not** affect show episodes in your media library (TV Rename can work out the correct name for a file in the library from the containing folder structure and the show/season number).
 
-![Under Construction](images/under-construction.jpg)
+Sources often rename files because of the excessive length of the shows name, for example "Law and Order- Special Victims Unit" could be represented as "L&O-SVU". Adding "L&O-SVU" as an alias would cause any source file with that abbreviated name be renamed correctly when moved or copied into the library.
+
+Another good example (though for different reasons) would be the BBC1 show "Doctor Who", [The TVDB](http://thetvdb.com "Visit thetvdb.com") correctly calls it "Doctor Who" which TV Rename will recognise, however some sources  variously call the show "Dr. Who" or "Dr Who" causing some confusion.  
+Adding "Dr. Who" and "Dr Who" as aliases for "Doctor Who" will fix this problem and everything will be correctly named "Doctor Who" when moved or copied into the library.
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -217,6 +222,8 @@ There are three types of scan available : -
 | **Full**   | A full scan of all shows and seasons. |
 | **Recent** | A Scan of all the shows that have aired recently. |
 | **Quick**  | Scan the shows that have aired recently and have a missing episode in the library. Also check the locations specified in *Options>Preferences>Search Folders* for any matching media files.
+
+As with other tabs, "recent" is taken as being the number of days counted as recent indicated in the [Options>Preferences General](options#preferences-general) tab. 
 
 ***Scan*** indicates where there are gaps in your library. The result of a typical scan is shown below.
 
