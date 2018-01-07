@@ -76,7 +76,7 @@ namespace TVRename
 
             try
             {
-                if (FileHelper.Same(this.From, this.To))
+                if (!FileHelper.Same(this.From, this.To))
                 {
                     // XP won't actually do a rename if its only a case difference
                     string tempName = TempFor(this.To);
