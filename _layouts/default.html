@@ -29,7 +29,7 @@
 	<body>
 
 		<header>
-			<h1><img src="images/tv-white.svg" height="46" width="36" />&nbsp;{{ site.title | default: site.github.repository_name }}</h1>
+			<h1><img src="images/tv-white.svg" height="46" width="36" alt="TV Rename Logo" />&nbsp;{{ site.title | default: site.github.repository_name }}</h1>
 			<p>{{ site.description | default: site.github.project_tagline }}</p>
 		</header>
 
@@ -87,7 +87,10 @@
 				{{ content }}
 			</section>
 			<footer>
-				<span><a href="{{ site.github.repository_url }}" title="Visit TV Rename's GitHub pages"><img src="images/GitHub-Mark-32px.png" height="16" width="16" />&nbsp;Visit TV Rename on GitHub&nbsp;<img src="images/GitHub-Mark-32px.png" height="16" width="16" /></a></span>
+				<span><a href="{{ site.github.repository_url }}" title="Visit TV Rename's GitHub pages">
+				<img src="images/GitHub-Mark-32px.png" height="16" width="16" alt="GitHub Logo"/>
+				&nbsp;Visit TV Rename on GitHub&nbsp;
+				<img src="images/GitHub-Mark-32px.png" height="16" width="16" alt="GitHub Logo"/></a></span>
 			</footer>
 
 		</div><!-- end wrapper -->
