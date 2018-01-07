@@ -20,10 +20,10 @@ Helpful hints, and inside information (from the developers among others).&emsp; 
 ## Forums
 TV Rename uses Google Groups for help, support and release information.
 
-### [The TVRename Forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")  
+### The TV Rename Forum
 Here you can ask for help, make suggestions, and report something you think may be a bug.&emsp; *[Visit the TV Rename forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
 
-### [ The TV Rename Releases Forum ](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum") 
+### The TV Rename Releases Forum 
 Here you can find links to downloads and release notes (including beta's and alphas).&emsp; *[Visit the TV Rename Releases forum...](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")*.
   
 ***Note:*** To receive email when a new version is released, join the group, go to "My settings", "Membership and email settings" and then, in "Email delivery preference:" select "Notify me for every new message".
