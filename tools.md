@@ -4,6 +4,8 @@ Here you can find tools to update, manipulate and annihilate the data relating t
 
 And you can finally sort out once-and-for-all which shows your favourite actors are in, what else they've been in, and who acts in your favourite shows.
 
+If you're in a hurry use the links on the left to jump to a specific item.
+
 ## Force Refresh All
 ![Force Refresh All](images/tools/force-refresh-all-01.png){:.pic-l}
 If TV Rename's representation of your Media Library is a mess then this is probably the Tool for you.

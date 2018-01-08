@@ -3,9 +3,9 @@
 ![The Options Menu](images/options/menu-01.png){:.pic-r}
 One of TV Rename's strongest (and most confusing) features is its configurability. For the newcomer especially, it's very easy to get "lost" in the plethora of options and preferences, and give up.
 
-Luckily the "out-of-the-box" defaults work very well, and, should you wish to change any of the options or preferences, all the stuff you can "fiddle with" is described here.
+Luckily the "out-of-the-box" defaults work very well, and, should you wish to change any of the settings at some point all the stuff you can "fiddle with" is described here.
 
-Use the links (below or left) to jump to a specific item.
+If you're in a hurry use the links on the left (or below) to jump to a specific item.
 
 {:.center}
 [Offline Operation](#offline-operation)&nbsp;&#9670;&nbsp;[Automatic Background Download](#automatic-background-download)&nbsp;&#9670;&nbsp;[Preferences](#preferences "Delve into the preferences")
@@ -14,13 +14,13 @@ Use the links (below or left) to jump to a specific item.
 [Ignore List](#ignore-list)&nbsp;&#9670;&nbsp;[Filename Template Editor](#filename-template-editor)&nbsp;&#9670;&nbsp;[Search Engines](#search-engines)&nbsp;&#9670;&nbsp;[Filename Processors]()
 
 ## Offline Operation
-If **Offline Operation** is enabled TV Rename will firstly prompt you to make sure you wish to go offline, and if you click `Yes` it will run on locally cached data from TheTVD. This is useful if you happen to be somewhere that doesn't have internet access because it will stop TV Rename attempting to update.
+If **Offline Operation** is enabled TV Rename will firstly prompt you to make sure you wish to go offline, and if you click `Yes` it will run on locally cached data from [The TVDB](http://thetvdb.com "Visit thetvdb.com"). This will stop TV Rename attempting to update.
 
 {:.toplink}
 [Return to Top]()
 
 ## Automatic Background Download
-If **Automatic Background Download** is enabled any action that reads data from [The TVDB](http://thetvdb.com "Visit TheTVDB.com") will trigger a cache update prior to processing.
+If **Automatic Background Download** is enabled any action that reads data from the cache will also trigger an update from[The TVDB](http://thetvdb.com "Visit TheTVDB.com"), additionally updates will be performed at regular intervals.
 
 {:.toplink}
 [Return to Top]()
@@ -49,7 +49,7 @@ The tick box options in each group should already be familiar to you if you use 
 
 The `Presets` button (bottom right) allows you to quickly apply all the relevant presets for the chosen media player.
 
-**Note:** The functionality of this tab is currently under review due to the growthY in the media player market - so expect some changes in Version 3!
+**Note:** The functionality of this tab is currently under review due to the growth in the media player market - so expect some changes in Version 3!
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -81,7 +81,7 @@ TV Rename can check both µTorrent and SABnzbd queues and uses some of the infor
 
 Both the "Host Port" and "API Key" are required to use this functionality in SABnzbd.
 
-TV Rename also needs to know the µTorrent "Application" and "resume.dat" paths, (they can be found with the `Browse` buttons) so it can detect if files are in the process of being downloaded or are complete.
+TV Rename also needs to know the µTorrent "Application" and "resume.dat" paths, (they can be found with the `Browse` buttons) so it can detect if files are queued, in the process of being downloaded or are complete.
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
