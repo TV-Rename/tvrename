@@ -175,7 +175,7 @@ If the filename contains a character that isn't supported in a windows filename 
 |------|---|
 |*.txt*|Text files can be any text but quite often, if the base name of the text file is the same as that of the video file, they contain subtitles in text format.
 |------|---|
-|*.tbn*|A KODI/XBMC specific jpeg, (doesn't seem to be as common as it used to be).
+|*.tbn*|A KODI/XBMC specific jpeg.
 
 It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.srt and BigBuckBunny.nfo. This helps keep them organised.
 
