@@ -70,8 +70,10 @@ It also uses: -
 * [AlphaFS](http://alphafs.alphaleonis.com/) for advanced .NET file operations,
 * [NLog](http://nlog-project.org/) open-source logging for .NET,
 * [SourceGrid](https://sourcegrid.codeplex.com/),
-* TVRename has seen significant speed improvements as a result of using Red Gate's [ANTS profiler](https://www.red-gate.com/products/dotnet-development/ants-performance-profiler/), and JetBrain's [dotTrace](https://www.jetbrains.com/profiler/).
-* JetBrains' [ReSharper](https://www.jetbrains.com/resharper/) is also used for improving code performance.
+* TVRename has seen significant speed improvements as a result of using: -
+  * Red Gate's [ANTS Performance Profiler](https://www.red-gate.com/products/dotnet-development/ants-performance-profiler/ "Visit ANTS Performance Profiler pages")
+  * JetBrains' [dotTrace](https://www.jetbrains.com/profiler  "Visit the Jetbrains Profiler pages")
+  * JetBrains' [ReSharper](https://www.jetbrains.com/resharper "Visit the Jetbrains Resharper pages")
 
 And thanks to:<br />
 Vecteezy! Vector Art for our cool Retro Television Logo - [Vectors by www.vecteezy.com](https://www.vecteezy.com).

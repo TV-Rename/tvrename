@@ -1,7 +1,7 @@
 #### About TV Rename
 
 ## Foreword ##
-As ongoing work on the TV Rename guide continues Version 2.3 of the software has just been released.
+As ongoing work on the TV Rename guide continues Version 2.31 of the software has just been released.
 
 The biggest changes implemented in this release are regarding entering show information, and using [TheTVDB.com](http://thetvdb.com "Visit TheTVDB.com") as the reference data source rather than tv.com.
 

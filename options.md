@@ -20,7 +20,7 @@ If **Offline Operation** is enabled TV Rename will firstly prompt you to make su
 [Return to Top]()
 
 ## Automatic Background Download
-If **Automatic Background Download** is enabled any action that reads data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") will trigger a cache update prior to processing.
+If **Automatic Background Download** is enabled any action that reads data from [The TVDB](http://thetvdb.com "Visit TheTVDB.com") will trigger a cache update prior to processing.
 
 {:.toplink}
 [Return to Top]()
@@ -49,7 +49,7 @@ The tick box options in each group should already be familiar to you if you use 
 
 The `Presets` button (bottom right) allows you to quickly apply all the relevant presets for the chosen media player.
 
-**Note:** The functionality of this tab is currently under review due to the growth in the media player market - so expect some changes in Version 3!
+**Note:** The functionality of this tab is currently under review due to the growthY in the media player market - so expect some changes in Version 3!
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -137,7 +137,7 @@ Does what-it-says-on-the-tin, if ticked screen grabs from show episodes are disp
 
 *Default:* ***Ticked***
 
-*Download up to "X" shows simultaneously from [The TVDB](http://thetvdb.com "Visit thetvdb.com") *<br />
+*Download up to "X" shows simultaneously from [The TVDB](http://thetvdb.com "Visit TheTVDB.com") *<br />
 Sets the number of concurrent connections to TheTVDB API. It can be set in the range to 1 to 8.
 
 *Default:* ***4***
