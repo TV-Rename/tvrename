@@ -2773,7 +2773,7 @@ namespace TVRename
         private void bnActionCheck_Click(object sender, System.EventArgs e)
         {
             this.Scan();
-         }
+        }
 
         public void Scan()
         {
