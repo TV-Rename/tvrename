@@ -42,11 +42,14 @@ Use the links (below) to jump to a specific item...
 [Return to Top]()
 
 ### The Media Center Tab
-![Preferences - the Media Centre tab](images/options/preferences-media-center-01.png)
+![Preferences - the Media Centre tab](images/options/preferences-media-center-01.png){:.pic-l}
+Here you can tell TV Rename about your media player (and hence, any additional files you may need to download).
 
-This is were you tell TV Rename about your media player (and hence, the additional files you may need to download)
+The tick box options in each group should already be familiar to you if you use that particular media player.
 
-![Under Construction](images/under-construction.jpg)
+The `Presets` button (bottom right) allows you to quickly apply all the relevant presets for the chosen media player.
+
+**Note:** The functionality of this tab is currently under review due to the growth in the media player market - so expect some changes in Version 3!
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
