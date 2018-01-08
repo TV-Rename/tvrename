@@ -10,4 +10,3 @@ trim_trailing_whitespace = true
 
 [*.md]
 soft_wrap = true
-trim_trailing_whitespace = false

@@ -12,11 +12,11 @@ All the configuration information and locally cached data from [TheTVDB](http://
 
 On Windows XP this is: -
 
-> \\Documents and Settings\\\<username\>\\Application Data\\TVRename\\TVRename\\2.1\\
+> \\Documents and Settings\\\<user-name\>\\Application Data\\TVRename\\TVRename\\2.1\\
 
 And on Windows Vista and later: -
 
-> \\Users\\\<username\>\\AppData\\Roaming\\TVRename\\TVRename\\2.1\\
+> \\Users\\\<user-name\>\\AppData\\Roaming\\TVRename\\TVRename\\2.1\\
 
 In either case the 2.1 folder contains the same set of files.
 
@@ -28,7 +28,7 @@ It contains: -
 
 **Statistics.xml** - TV Rename's historical statistics.
 
-**TheTVDB.xml** -  The locally cached tvdb.com show season and episode information for everything listed in the ***My Shows*** tab.
+**TheTVDB.xml** - The locally cached tvdb.com show season and episode information for everything listed in the ***My Shows*** tab.
 
 **TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of theTVDB.xml file. A new file gets created here every time you click ***File>Save*** on a first-in-first-out (FIFO) basis.
 

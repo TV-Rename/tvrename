@@ -20,7 +20,7 @@ If **Offline Operation** is enabled TV Rename will firstly prompt you to make su
 [Return to Top]()
 
 ## Automatic Background Download
-If **Automatic Background Download** is enabled any action that reads data from [The TVDB](http://thetvdb.com "Visit thetvdb.com")  will trigger a cache update prior to processing. 
+If **Automatic Background Download** is enabled any action that reads data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") will trigger a cache update prior to processing.
 
 {:.toplink}
 [Return to Top]()
@@ -60,8 +60,8 @@ Three buttons are available at the bottom of the tab. `Add` opens an explorer st
 At the top of the tab the "Monitor folders for changes" tick box tell TV Rename to automatically check for new files in the identified locations and the ["Scan Type"](userguide#scan-types) radio buttons tell TV Rename the type of scan to perform if anything is found.
 
 | *Defaults:* | "Folder Monitor" | ***Un-ticked*** |
-|-------------|------------------|-----------------|
-|             | "Scan type"      | ***Full***      |
+|---|---|---|
+| | "Scan type" | ***Full*** |
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -70,16 +70,16 @@ At the top of the tab the "Monitor folders for changes" tick box tell TV Rename 
 ![Preferences - the µTorrent / NZB tab](images/options/preferences-utorrent-nzb-01.png){:.pic-l}
 Some of the contents of this tab are use by the *Scan Options* tab.
 
-"The Torrent RSS URLs:" can be any suitable RSS-feeds provided by indexers or public RSS websites and are used to  search for missing files.
+"The Torrent RSS URLs:" can be any suitable RSS-feeds provided by indexers or public RSS websites and are used to search for missing files.
 
 `Add` and `Remove` allow you to add and remove feeds, and `Open` presents the highlighted feed in a web browser.
 
 TV Rename can check both µTorrent and SABnzbd queues and uses some of the information provided on this tab to know where to look.
 
 Both the "Host Port" and "API Key" are required to use this functionality in SABnzbd.
- 
+
 TV Rename also needs to know the µTorrent "Application" and "resume.dat" paths, (they can be found with the `Browse` buttons) so it can detect if files are in the process of being downloaded or are complete.
- 
+
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
@@ -94,7 +94,7 @@ To create a record:-
 * Select a color to associate with the status by either entering a web-safe color name or code in the "Text Color:" box or clicking `Select Colour` and choosing from the pallet.
 * Click the `Add` button and your new entry will appear the box above.
 
-For example: to make finished shows less obtrusive in ***My&nbsp;Shows*** expand the "Status:" drop-down and select "Show Status: Ended", in the "Text Color:" box type "#808080" and click `Add`. Back in the  ***My&nbsp;Shows*** text for shows that have finished will be light grey and less obtrusive.
+For example: to make finished shows less obtrusive in ***My&nbsp;Shows*** expand the "Status:" drop-down and select "Show Status: Ended", in the "Text Color:" box type "#808080" and click `Add`. Back in the ***My&nbsp;Shows*** text for shows that have finished will be light grey and less obtrusive.
 
 If you wish to remove a rule from the list just select it and click `Remove`.
 
@@ -103,21 +103,21 @@ If you wish to remove a rule from the list just select it and click `Remove`.
 
 ### The General Tab
 ![Preferences - the General tab](images/options/preferences-general-01.png){:.pic-l}
-*When to watch* "X" *days count as recent*<br />
+*When to watch* "X" *days count as recent*
 Specifies how many recent days are listed for the for "Aired in the last N days" section of the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab.
 
-*Default: **7 days***
+*Default:* ***7 days***
 
-*Double-click in When to Watch does:*<br />
+*Double-click in When to Watch does:*
 Controls the double-click action in the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab. Options are Search and Scan.
 
-*Default: **Search***
+*Default:* ***Search***
 
 {:.clear}
-*Startup Tab:*<br />
+*Startup Tab:*
 Selects which tab you wish open when TV Rename loads. ***My&nbsp;Shows***, ***Search*** or ***When to Watch***.
 
-*Default: **My Shows***
+*Default:* ***My Shows***
 
 The *Show Notification Area* and *Show in Taskbar* interact, one of them **must** be ticked. If you try to un-tick both the option you are changing clears, but the other one automatically sets.
 
@@ -126,34 +126,34 @@ If *Show Notification Area* is selected TV Rename's icon appears in the System T
 Both boxes can be ticked, in which case you get both functionalities.
 
 | *Defaults:* | "Show Notification Area" | ***Un-ticked*** |
-|-------------|--------------------------|-----------------|
-|             | "Show in Taskbar"        | ***Ticked***    |
+|---|---|---|
+| | "Show in Taskbar" | ***Ticked*** |
 
-*Show episode pictures in episode guides*<br />
+*Show episode pictures in episode guides*
 Does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the ***My&nbsp;Shows*** tab. If un-ticked only the episode description is displayed.
 
-*Default: **Ticked***
+*Default:* ***Ticked***
 
 *Download up to "X" shows simultaneously from [The TVDB](http://thetvdb.com "Visit thetvdb.com") *<br />
 Sets the number of concurrent connections to TheTVDB API. It can be set in the range to 1 to 8.
 
-*Default: **4***
+*Default:* ***4***
 
-*Automatically select show and season in My&nbsp;Shows*<br />
+*Automatically select show and season in My&nbsp;Shows*
 If ticked this works for both the ***When to watch*** and ***Scan*** tabs. If an item is selected in either of these tabs the ***My&nbsp;Shows*** tab is automatically updated to highlight the indicated show and season.
 
-*Default: **Ticked***
+*Default:* ***Ticked***
 
-*Look for air date in filenames*<br />
+*Look for air date in filenames*
 If ticked this provides a second method of identifying show episodes by looking for a date (in a number of formats) in the shows filename and comparing that against the air-date.
 
 The supported date formats are: "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy" and "MM-dd-yy"
 
 And the "date separators" can be any of: - / . , " " (a space)
 
-*Default: **Un-ticked***
+*Default:* ***Un-ticked***
 
-*Prefered language:*<br />
+*Preferred language:*
 This option sets the language for returned data when requesting information from TheTVDB API. TV Rename will request "English" If the selected language is not available.
 
 {:.toplink}
@@ -169,13 +169,13 @@ If the filename contains a character that isn't supported in a windows filename 
 
 "Other Extensions:" follows the same rules as "Video Extensions" but the file extensions specified are typically for video related files rather than video. The extensions listed by default are :-
 
-|*.srt*|Subtitles in text format.|
-|------|---|
-|*.nfo*|An XML style file that contains information about the video, such as a title, summary, list of actors, year of production etc. This information is often used by media players to provide a more immersive viewing experience.|
-|------|---|
-|*.txt*|Text files can be any text but quite often, if the base name of the text file is the same as that of the video file, they contain subtitles in text format.
-|------|---|
-|*.tbn*|A KODI/XBMC specific jpeg.
+| *.srt* | Subtitles in text format.|
+|---|---|
+| *.nfo* |An XML style file that contains information about the video, such as a title, summary, list of actors, year of production etc. This information is often used by media players to provide a more immersive viewing experience.|
+|---|---|
+| *.txt* |Text files can be any text but quite often, if the base name of the text file is the same as that of the video file, they contain subtitles in text format.
+|---|---|
+| *.tbn* |A KODI/XBMC specific jpeg.
 
 It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.srt and BigBuckBunny.nfo. This helps keep them organised.
 
@@ -186,7 +186,7 @@ The rest of the options are straightforward and need little explanation.
 
 ### The Automatic Export Tab
 ![Preferences - the Automatic Export tab](images/options/preferences-auto-export-01.png){:.pic-l}
-Ticking the "RSS" box in the "When to watch"  section of the panel will save a RSS-reader compatible XML file to the location you specify (by typing or browsing). This file can then be read by something like XBOX Media Center, or a Windows  RSS App.
+Ticking the "RSS" box in the "When to watch" section of the panel will save a RSS-reader compatible XML file to the location you specify (by typing or browsing). This file can then be read by something like XBOX Media Center, or a Windows RSS App.
 
 Ticking the "XML" box in the "When to watch" section of the panel will save a standard XML file to the location you specify (by typing or browsing).
 
@@ -196,34 +196,28 @@ Ticking the "XML" box in the "Missing" section of the panel will save a standard
 
 Ticking the "TXT" box in the "All Shows" section of the panel will save a TXT file whenever a show is added, edited or deleted from TV Rename. It also gets updated when `Auto ID All` in the *Scan Results* tab of **Tools>Folder Monitor** is clicked.
 
-*Default: **All un-ticked***
+*Default:* ***All un-ticked***
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### The Scan Options Tab
 ![Preferences - the Scan Options tab](images/options/preferences-scan-options-01.png){:.pic-l}
-This tab in conjunction with data from the ***µTorrent / NZB*** tab controls the ***Scan*** tabs checks and actions. 
+This tab in conjunction with data from the ***µTorrent / NZB*** tab controls the ***Scan*** tabs checks and actions.
 
 The settings in here are more or less self explanatory, however remember that the ***µTorrent / NZB*** tab must be populated before the µTorrent, SABnzdb and RSS options can be used.
 
-| *Defaults*              |                                            |                 |
-|-------------------------|--------------------------------------------|-----------------|
-| Scan checks and actions | Rename Check                               | ***Ticked***    |
-|-------------------------|--------------------------------------------|-----------------|
-|                         | Missing Check                              | ***Ticked***    |
-|-------------------------|--------------------------------------------|-----------------|
-|                         | Look in "Search Folders" for missing files | ***Ticked***    |
-|-------------------------|--------------------------------------------|-----------------|
-|                         | Copy files, don't move                     | ***Un-ticked*** |
-|-------------------------|--------------------------------------------|-----------------|
-|                         | Check µTorrent queue                       | ***Un-ticked*** |
-|-------------------------|--------------------------------------------|-----------------|
-|                         | Check SABnzdb queue                        | ***Un-ticked*** |
-|-------------------------|--------------------------------------------|-----------------|
-|                         | Search RSS for missing files               | ***Un-ticked*** |
-|-------------------------|--------------------------------------------|-----------------|
-| Folder Creation         | Automatically create missing folders       | ***Un-ticked*** |
+| *Defaults* | | |
+|---|---|---|
+| Scan checks | Rename Check | ***Ticked*** |
+| and actions | Missing Check | ***Ticked*** |
+| | Look in "Search Folders" for missing files | ***Ticked*** |
+| | Copy files, don't move | ***Un-ticked*** |
+| | Check µTorrent queue | ***Un-ticked*** |
+| | Check SABnzdb queue | ***Un-ticked*** |
+| | Search RSS for missing files | ***Un-ticked*** |
+|---|---|---|
+| Folder Creation | Automatically create missing folders | ***Un-ticked*** |
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -270,40 +264,40 @@ This is where the format of the filenames that TV Rename will rename to are defi
 
 To help illustrate the results the "Sample and Test:" panel contains the processed entries from the show and season selected in the ***My Shows*** tab.
 
-The "Naming template:" text box displays a tokenised version of the filename which can be edited directly or populated using the "Tags:" drop-down, or overwritten with a record selected from the "Presets:" drop-down. Any changes in the "Naming Template:" are automatically reflected in the "Sample and Test:" panel.   
+The "Naming template:" text box displays a tokenised version of the filename which can be edited directly or populated using the "Tags:" drop-down, or overwritten with a record selected from the "Presets:" drop-down. Any changes in the "Naming Template:" are automatically reflected in the "Sample and Test:" panel.
 
 The available tags with their definitions are listed below: -
 
-|{ShowName}   |Name of the Show                                                         |
-|-------------|-------------------------------------------------------------------------|
-|{Season}     |Number of the season                                                     |
-|-------------|-------------------------------------------------------------------------|
-|{Season:2}   |Number of the season forced to 2 characters with a leading zero          |
-|-------------|-------------------------------------------------------------------------|
-|{Episode}    |Number of the episode (within a season), eg S01E03                       |
-|-------------|-------------------------------------------------------------------------|
-|{Episode2}   |Number of the second episode of a pair (within a season), eg S01E04-E05  |
-|             | created by the default S{Season:2}E{Episode}[-E{Episode2}])             |
-|-------------|-------------------------------------------------------------------------|
-|{EpisodeName}|Name of the Episode                                                      |
-|-------------|-------------------------------------------------------------------------|
-|{Number}     |Overall number of the episode                                            |
-|-------------|-------------------------------------------------------------------------|
-|{Number:2}   |Overall number of the episode forced to 2 characters with a leading zero |
-|-------------|-------------------------------------------------------------------------|
-|{Number:3}   |Overall number of the episode forced to 3 characters with leading zero(s)|
-|-------------|-------------------------------------------------------------------------|
-|{ShortDate}  |Air date in short format, eg 25/12/2017                                  |
-|-------------|-------------------------------------------------------------------------|
-|{LongDate}   |Air date in lomg format, eg 25 December 2017                             |
-|-------------|-------------------------------------------------------------------------|
-|{YMDDate}    |Air date in YMD format, eg 2017/12/25                                    |
-|-------------|-------------------------------------------------------------------------|
-|{AllEpisodes}|All episodes - E01E02 etc                                                |
+|{ShowName} |Name of the Show |
+|---|---|
+|{Season} |Number of the season |
+|---|---|
+|{Season:2} |Number of the season forced to 2 characters with a leading zero |
+|---|---|
+|{Episode} |Number of the episode (within a season), eg S01E03 |
+|---|---|
+|{Episode2} |Number of the second episode of a pair (within a season), eg S01E04-E05 |
+| | created by the default S{Season:2}E{Episode}[-E{Episode2}]) |
+|---|---|
+|{EpisodeName}|Name of the Episode |
+|---|---|
+|{Number} |Overall number of the episode |
+|---|---|
+|{Number:2} |Overall number of the episode forced to 2 characters with a leading zero |
+|---|---|
+|{Number:3} |Overall number of the episode forced to 3 characters with leading zero(s)|
+|---|---|
+|{ShortDate} |Air date in short format, eg 25/12/2017 |
+|---|---|
+|{LongDate} |Air date in lomg format, eg 25 December 2017 |
+|---|---|
+|{YMDDate} |Air date in YMD format, eg 2017/12/25 |
+|---|---|
+|{AllEpisodes}|All episodes - E01E02 etc |
 
 | *Default:* | ***{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}*** |
-|------------|------------------------------------------------------------------------|
-|            | (the second preset).                                                   |
+|---|---|
+| | (the second preset). |
 
 {:.toplink}
 [Return to Top]()
@@ -312,7 +306,7 @@ The available tags with their definitions are listed below: -
 ![The Modify Search Engines window](images/options/modify-search-engines-01.png){:.pic-l}
 The *Modify Search Engines* window controls TV Rename's outgoing interface with the world (other than TheTVDB). Here, you can configure how and where TV Rename points a web browser searching for files.
 
-Using the `Add` and `Delete` buttons you can create or remove records at will, and the `Tags...` pop up a list of supported tags to remind you whats available. (The tags supported are the same as those listed in the *Filename Template Editor.)
+Using the `Add` and `Delete` buttons you can create or remove records at will, and the `Tags...` pop up a list of supported tags to remind you whats available. (The tags supported are the same as those listed in the [Filename Template Editor](#filename-template-editor).)
 
 As an example, here is a URL entry for Google.
 
