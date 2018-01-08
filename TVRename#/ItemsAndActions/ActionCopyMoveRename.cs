@@ -1,4 +1,4 @@
-﻿using Alphaleonis.Win32.Filesystem;
+using Alphaleonis.Win32.Filesystem;
 using System;
 using System.CodeDom;
 using System.Diagnostics;
@@ -76,39 +76,29 @@ namespace TVRename
 
             try
             {
-                if (FileHelper.Same(this.From, this.To))
+                //we use a temp name just in case we are interruted or some other problem occurs
+                string tempName = TempFor(this.To);
+
+                // If both full filenames are the same then we want to move it away and back
+                //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
+                if (IsMoveRename() || FileHelper.Same(this.From, this.To)) 
                 {
-                    // XP won't actually do a rename if its only a case difference
-                    string tempName = TempFor(this.To);
-
-                    //From.MoveTo(tempName);
-                    //File.Move(tempName, To.FullName);
-
-                    if (IsMoveRename())
-                    {
-                        // This step could be slow, so report progress
-                        CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
-                        if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
-                    }
-                    else
-                    {
-                        //we are copying
-                        // This step could be slow, so report progress
-                        CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
-                        if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
-                    }
-
-
-                    // This step very quick, so no progress reporting		
-                    Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName, MoveOptions.ReplaceExisting);
-
-
-                }
-                else { 
-                    //From.MoveTo(To.FullName);
-                    CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                    // This step could be slow, so report progress
+                    CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
                     if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
                 }
+                else
+                {
+                    //we are copying
+                    System.Diagnostics.Debug.Assert(this.Operation == Op.Copy);
+
+                    // This step could be slow, so report progress
+                    CopyMoveResult copyResult = Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
+                    if (copyResult.ErrorCode != 0) throw new Exception(copyResult.ErrorMessage);
+                }
+
+                // Copying the temp file into the correct name is very quick, so no progress reporting		
+                Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName, MoveOptions.ReplaceExisting);
 
                 this.Done = true;
 
