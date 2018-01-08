@@ -1,25 +1,12 @@
-﻿using Alphaleonis.Win32.Filesystem;
-using System;
-using System.CodeDom;
+using Alphaleonis.Win32.Filesystem;
 using System.Diagnostics;
-using System.IO.MemoryMappedFiles;
-using System.Linq;
 using System.Security.AccessControl;
-using System.Threading;
-using System.Web.UI.WebControls;
-using System.Windows.Forms;
 
 namespace TVRename
 {
     using Alphaleonis.Win32.Filesystem;
     using System;
-    using System.IO;
     using System.Windows.Forms;
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-    using File = Alphaleonis.Win32.Filesystem.File;		
-    using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;		
-    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
-
 
     public class ActionCopyMoveRename : ActionFileOperation
     {
@@ -76,41 +63,31 @@ namespace TVRename
 
             try
             {
-                if (FileHelper.Same(this.From, this.To))
+                //we use a temp name just in case we are interruted or some other problem occurs
+                string tempName = TempFor(To);
+
+                // If both full filenames are the same then we want to move it away and back
+                //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
+                if (IsMoveRename() || FileHelper.Same(From, To)) 
                 {
-                    // XP won't actually do a rename if its only a case difference
-                    string tempName = TempFor(this.To);
-
-                    //From.MoveTo(tempName);
-                    //File.Move(tempName, To.FullName);
-
-                    if (IsMoveRename())
-                    {
-                        // This step could be slow, so report progress
-                        CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
-                        if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
-                    }
-                    else
-                    {
-                        //we are copying
-                        // This step could be slow, so report progress
-                        CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
-                        if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
-                    }
-
-
-                    // This step very quick, so no progress reporting		
-                    Alphaleonis.Win32.Filesystem.File.Move(tempName, this.To.FullName, MoveOptions.ReplaceExisting);
-
-
-                }
-                else { 
-                    //From.MoveTo(To.FullName);
-                    CopyMoveResult moveResult = Alphaleonis.Win32.Filesystem.File.Move(this.From.FullName, this.To.FullName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                    // This step could be slow, so report progress
+                    CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
                     if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
                 }
+                else
+                {
+                    //we are copying
+                    Debug.Assert(Operation == Op.Copy);
 
-                this.Done = true;
+                    // This step could be slow, so report progress
+                    CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
+                    if (copyResult.ErrorCode != 0) throw new Exception(copyResult.ErrorMessage);
+                }
+
+                // Copying the temp file into the correct name is very quick, so no progress reporting		
+                File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+
+                Done = true;
 
                 switch (Operation)
                 {
@@ -128,18 +105,17 @@ namespace TVRename
                 }
 
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
-                this.Done = true;
-                this.Error = true;
-                this.ErrorText = e.Message;
+                Done = true;
+                Error = true;
+                ErrorText = e.Message;
             }
 
             // set NTFS permissions
             try
             {
-                if (security != null)
-                    To.SetAccessControl(security);
+                if (security != null) To.SetAccessControl(security);
             }
             catch
             {
@@ -276,7 +252,7 @@ namespace TVRename
         private CopyMoveProgressResult CopyProgressCallback(long TotalFileSize, long TotalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, Object UserData)
         {
             double pct = TotalBytesTransferred * 100.0 / TotalFileSize;
-            this.PercentDone = pct > 100.0 ? 100.0 : pct;
+            PercentDone = pct > 100.0 ? 100.0 : pct;
             return CopyMoveProgressResult.Continue;
         }
 
