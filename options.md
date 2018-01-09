@@ -3,7 +3,7 @@
 ![The Options Menu](images/options/menu-01.png){:.pic-r}
 One of TV Rename's strongest (and most confusing) features is its configurability. For the newcomer especially, it's very easy to get "lost" in the plethora of options and preferences, and give up.
 
-Luckily the "out-of-the-box" defaults work very well, and, should you wish to change any of the settings at some point all the stuff you can "fiddle with" is described here.
+Luckily the "out-of-the-box" defaults work very well, and, should you wish to change any of the options or preferences at some point all the stuff you can "fiddle with" is described here.
 
 If you're in a hurry use the links on the left (or below) to jump to a specific item.
 

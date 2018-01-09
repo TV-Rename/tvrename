@@ -1,9 +1,9 @@
 #### About TV Rename
 
 ## Foreword ##
-As ongoing work on the TV Rename guide continues Version 2.31 of the software has just been released.
+As ongoing work on the TV Rename guide continues Version 2.3.1 of the software has just been released.
 
-The biggest changes implemented in this release are regarding entering show information, and using [TheTVDB.com](http://thetvdb.com "Visit TheTVDB.com") as the reference data source rather than tv.com.
+The biggest "under the hood" change in this release is the move away from TheTVDB's XML interface to their new JSON v2 API. Additionally there have been numerous changes regarding entering show information.
 
 *Maintaining the documentation will always be ongoing, keeping the content accurate, up to date and relevant as TV Rename evolves can be tricky but any suggestions for improvements, or offers of help are more than welcome.*
 

@@ -59,6 +59,11 @@ When raising a bug please include a log file that illustrates the issue if you c
 ## Source Code
 You can find TV Rename's source code (along with executables and this website) in [The TV Rename GitHub Repository](https://github.com/TV-Rename/tvrename "Visit The repository").
 
+## Development
+You can find the Developers Wiki [here]({{ site.github.wiki_url }} "Read the Wiki")...
+In addition there is a Developers Forum which you can request access to. 
+
+
 ## Framework
 TV Rename uses the Microsoft .NET Framework. The installer will check for its presence and let you know if any action is needed. It's a free download from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").
 
@@ -76,4 +81,5 @@ It also uses: -
   * JetBrains' [ReSharper](https://www.jetbrains.com/resharper "Visit the Jetbrains Resharper pages")
 
 And thanks to:<br />
-Vecteezy! Vector Art for our cool Retro Television Logo - [Vectors by www.vecteezy.com](https://www.vecteezy.com).
+Vecteezy! Vector Art for our cool [Retro Television Logo](https://www.vecteezy.com/vector-art/73089-retro-television)
+Vectors by [www.vecteezy.com](https://www.vecteezy.com).
