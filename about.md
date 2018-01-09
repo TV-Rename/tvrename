@@ -1,9 +1,11 @@
 #### About TV Rename
 
 ## Foreword ##
-As work on this incarnation of the guide lumbers on, TV Rename Version 2.3 has just been released. Maintaining the documentation will always be ongoing, keeping stuff accurate and up to date as TV Rename evolves, we'll do our best but any suggestions for improvements, or offers of help are more than welcome.
+As ongoing work on the TV Rename guide continues Version 2.31 of the software has just been released.
 
-The biggest changes implemented in this release are regarding entering show information (***Shows and Folders***), and using [theTVDB.com](http://thetvdb.com "Visit theTVDB.com") as the reference database rather than tv.com.
+The biggest changes implemented in this release are regarding entering show information, and using [TheTVDB.com](http://thetvdb.com "Visit TheTVDB.com") as the reference data source rather than tv.com.
+
+*Maintaining the documentation will always be ongoing, keeping the content accurate, up to date and relevant as TV Rename evolves can be tricky but any suggestions for improvements, or offers of help are more than welcome.*
 
 ## What TV Rename isn't
 OK, before we get into all the really cool stuff TV Rename can do, let's get what it doesn't do out of the way...
@@ -17,19 +19,18 @@ Say you've downloaded a few TV Show episodes, they will probably have names like
 
 > ***Grey's.Anatomy.S03E04.blah.xvid.avi***
 
-But you want them named with the show and episode name and the season and episode number like: -
+But you want them automatically renamed including the show and episode name and the season and episode number like: -
 
 > ***Grey's Anatomy - S03E04 - What I Am.avi***
 
 ...then this is the tool for you!
 
-## But wait.. There's more!
+## But wait... There's more!
 **TV Rename can: -**
-* Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and rules you can configure
+* Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit TheTVDB.com") and rules you can configure
 * Monitor specified folders for TV Show files
-* Restore downloaded file names to those originally found in the .torrent files used to download them
 
-> ***"Media Library"** - a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
+> ***"Media Library"*** - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
 
 **Once TV Rename knows about your Media Library it can: -**
 * Copy (or move) files from monitored folders to your Media Library
