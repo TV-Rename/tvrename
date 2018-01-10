@@ -39,8 +39,8 @@ Clicking `Remove` will remove the highlighted row from the New Shows list, howev
 Clicking `Ignore` will add the folder to the list in the ***Ignore*** tab and it will be ignored is subsequent scans.
 
 **Note:** A "glitch" in the design of the ***Ignore*** tab means there is currently no obvious way to remove a folder from this list. The designers are aware of the problem and it will be fixed in the next release. Until then if you have a folder "stuck" in here that you want to be part of the library again, ask in the Main Forum and someone will help you fix it. 
-<!--
-## Actors Grid
+
+<!-- ## Actors Grid
 Really like that actor in "Such-and-such"? Sure they are in other shows in your Media Library? This is the tool to tell you!
 
 Among the meta-data that [The TVDB](http://thetvdb.com "Visit TheTVDB.com") collects (and you import) is information about actors, they may be a shows "core characters" or "guest stars" but the data is available for every episode of every season of every show on [The TVDB](http://thetvdb.com "Visit TheTVDB.com") (If it's not or you know better please visit [their site](http://thetvdb.com "Visit TheTVDB.com"), log in and fix it - it's to everyone's benefit.
@@ -79,5 +79,4 @@ It's not possible to rename the files in (a multiple file) torrent, to match wha
 
 ## µTorrent Save To
 
-![Under Construction](images/under-construction.jpg)
--->
+![Under Construction](images/under-construction.jpg) -->
