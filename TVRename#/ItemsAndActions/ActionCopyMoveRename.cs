@@ -1,4 +1,5 @@
-﻿using System.Security.AccessControl;
+using System.Security.AccessControl;
+using TVRename.Settings;
 
 namespace TVRename
 {
@@ -49,7 +50,7 @@ namespace TVRename
         // 0.0 to 100.0
         public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause)
         {
             // read NTFS permissions (if any)
             FileSecurity security = null;
@@ -103,13 +104,13 @@ namespace TVRename
                 switch (Operation)
                 {
                     case Op.Move:
-                        stats.FilesMoved++;
+                        Statistics.Instance.FilesMoved++;
                         break;
                     case Op.Rename:
-                        stats.FilesRenamed++;
+                        Statistics.Instance.FilesRenamed++;
                         break;
                     case Op.Copy:
-                        stats.FilesCopied++;
+                        Statistics.Instance.FilesCopied++;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();

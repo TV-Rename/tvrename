@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -55,7 +55,7 @@ namespace TVRename
             get { return this.RSS.URL; }
         }
 
-        public bool Go( ref bool pause, TVRenameStats stats)
+        public bool Go( ref bool pause)
         {
             System.Net.WebClient wc = new System.Net.WebClient();
             try

@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -54,7 +54,7 @@ namespace TVRename
             get { return 10000; }
         }
 
-        public bool Go( ref bool pause, TVRenameStats stats)
+        public bool Go( ref bool pause)
         {
             // "try" and silently fail.  eg. when file is use by other...
             StreamWriter writer;

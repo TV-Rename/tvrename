@@ -46,7 +46,7 @@ namespace TVRename
         string ProgressText { get; } // shortish text to display to user while task is running
         double PercentDone { get; } // 0.0 to 100.0
         long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
-        bool Go( ref bool pause, TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
+        bool Go( ref bool pause); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
         string produces { get; } //What does this action produce? typically a filename
     }
 
@@ -207,6 +207,6 @@ namespace TVRename
         public abstract IgnoreItem Ignore { get; }
         public abstract int Compare(Item o);
         public abstract bool SameAs(Item o);
-        public abstract bool Go(ref bool pause, TVRenameStats stats);
+        public abstract bool Go(ref bool pause);
     }
 }

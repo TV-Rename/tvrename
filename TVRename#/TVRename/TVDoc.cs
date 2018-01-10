@@ -22,8 +22,10 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
+using DevAge.Configuration;
 using TVRename.DownloadIdentifiers;
 using TVRename.Exporters;
+using TVRename.Settings;
 
 namespace TVRename
 {
@@ -58,7 +60,6 @@ namespace TVRename
         public List<Thread> Workers;
         private bool mDirty;
         private Thread mDownloaderThread;
-        private TVRenameStats mStats;
         public bool CurrentlyBusy = false;  // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -134,8 +135,7 @@ namespace TVRename
 
             this.Workers = null;
             this.WorkerSemaphore = null;
-
-            this.mStats = new TVRenameStats();
+            
             this.mDirty = false;
             this.TheActionList = new ItemList();
 
@@ -203,24 +203,6 @@ namespace TVRename
 
                     Monitor.Exit(ShowItems);
              */
-        }
-
-        public TVRenameStats Stats()
-        {
-            this.mStats.NS_NumberOfShows = ShowItems.Count;
-            this.mStats.NS_NumberOfSeasons = 0;
-            this.mStats.NS_NumberOfEpisodesExpected = 0;
-
-            this.LockShowItems();
-            foreach (ShowItem si in ShowItems)
-            {
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> k in si.SeasonEpisodes)
-                    this.mStats.NS_NumberOfEpisodesExpected += k.Value.Count;
-                this.mStats.NS_NumberOfSeasons += si.SeasonEpisodes.Count;
-            }
-            this.UnlockShowItems();
-
-            return this.mStats;
         }
 
         public void SetDirty()
@@ -407,7 +389,7 @@ namespace TVRename
                 found.AutoAdd_FolderPerSeason = ai.HasSeasonFoldersGuess;
 
                 found.AutoAdd_SeasonFolderName = ai.SeasonFolderName + " ";
-                this.Stats().AutoAddedShows++;
+                Statistics.Instance.AutoAddedShows++;
             }
 
             this.GenDict();
@@ -476,7 +458,7 @@ namespace TVRename
                     return false;
             }
 
-            this.Stats().TorrentsMatched++;
+            Statistics.Instance.TorrentsMatched++;
 
             BTFileRenamer btp = new BTFileRenamer(prog);
             ItemList newList = new ItemList();
@@ -741,7 +723,7 @@ namespace TVRename
         public void Closing()
         {
             this.StopBGDownloadThread();
-            this.Stats().Save();
+            Statistics.Save();
         }
 
         public void DoBTSearch(ProcessedEpisode ep)
@@ -1216,7 +1198,7 @@ namespace TVRename
 
             this.mDirty = false;
 
-            this.Stats().Save();
+            Statistics.Save();
         }
 
         public bool LoadXMLSettings(FileInfo from)
@@ -1335,14 +1317,7 @@ namespace TVRename
                 return false;
             }
 
-            try
-            {
-                mStats = TVRenameStats.Load();
-            }
-            catch (Exception)
-            {
-                // not worried if stats loading fails
-            }
+            Statistics.FilePath = Path.Combine(PathManager.DefaultBasePath, "statistics.json");
 
             //Set these on the settigns object so others can read them too - iealy shuld be refactored into the settings code
             TVSettings.Instance.MonitorFoldersNames = this.MonitorFolders;
@@ -1446,7 +1421,7 @@ namespace TVRename
             if (action != null)
             {
                 logger.Trace("Triggering Action: {0} - {1} - {32", action.Name, action.produces, action.ToString());
-                action.Go(ref this.ActionPause, mStats);
+                action.Go(ref this.ActionPause);
             }
                 
 
@@ -2196,15 +2171,15 @@ namespace TVRename
             //    totalEps += si.SeasonEpisodes.Count;
 
             if (TVSettings.Instance.RenameCheck)
-                this.Stats().RenameChecksDone++;
+                Statistics.Instance.RenameChecksDone++;
 
             if (TVSettings.Instance.MissingCheck)
-                this.Stats().MissingChecksDone++;
+                Statistics.Instance.MissingChecksDone++;
 
             prog.Invoke(0);
 
-            if (showList == null) // only do episode count if we're doing all shows and seasons
-                this.mStats.NS_NumberOfEpisodes = 0;
+            //if (showList == null) // only do episode count if we're doing all shows and seasons
+                //this.mStats.NS_NumberOfEpisodes = 0;
 
             DirFilesCache dfc = new DirFilesCache();
             int c = 0;
@@ -2430,8 +2405,8 @@ namespace TVRename
                                 else
                                 {
                                     // the file is here
-                                    if (showList == null)
-                                        this.mStats.NS_NumberOfEpisodes++;
+                                    //if (showList == null)
+                                        //this.mStats.NS_NumberOfEpisodes++;
 
                                     // do NFO and thumbnail checks if required
                                     FileInfo filo = localEps[dbep.EpNum]; // filename (or future filename) of the file
@@ -2550,7 +2525,7 @@ namespace TVRename
             if (this.ScanProgDlg != null)
                 this.ScanProgDlg.Done();
 
-            this.Stats().FindAndOrganisesDone++;
+            Statistics.Instance.FindAndOrganisesDone++;
         }
 
         public static bool MatchesSequentialNumber(string filename, ref int seas, ref int ep, ProcessedEpisode pe)

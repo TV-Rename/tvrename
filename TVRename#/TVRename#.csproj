@@ -310,6 +310,7 @@
     <Compile Include="Utility\DirCacheEntry.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Utility\Helpers.cs" />
+    <Compile Include="Utility\JsonSettings.cs" />
     <Compile Include="Utility\SABnzbdXML.cs" />
     <Compile Include="Utility\Sorters.cs" />
     <Compile Include="Utility\Timezone.cs" />

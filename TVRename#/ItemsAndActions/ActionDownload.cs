@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -106,7 +106,7 @@ namespace TVRename
             return bmPhoto;
         }
 
-        public bool Go(ref bool pause, TVRenameStats stats)
+        public bool Go(ref bool pause)
         {
             byte[] theData = TheTVDB.Instance.GetTVDBDownload(this.Path);
             if ((theData == null) || (theData.Length == 0))

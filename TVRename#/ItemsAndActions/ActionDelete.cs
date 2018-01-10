@@ -1,4 +1,4 @@
-﻿namespace TVRename
+namespace TVRename
 {
     using System;
     using System.Windows.Forms;
@@ -72,7 +72,7 @@
         public override IgnoreItem Ignore => toRemove == null ? null : new IgnoreItem(toRemove.FullName);
         public override string TargetFolder => toRemove?.DirectoryName;
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause)
         {
             try
             {
@@ -138,7 +138,7 @@
         public override string TargetFolder => toRemove?.Parent.FullName;
 
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause)
         {
             try
             {

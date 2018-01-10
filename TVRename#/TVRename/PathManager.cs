@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -10,7 +10,7 @@ namespace TVRename
         /// Used if a user path is not specified.
         /// </summary>
         /// <see cref="userBasePath"/>
-        private static readonly string DefaultBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TV Rename");
+        public static readonly string DefaultBasePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TV Rename");
 
         /// <summary>
         /// The user base path if specifed.

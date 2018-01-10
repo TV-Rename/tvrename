@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -158,7 +158,7 @@ namespace TVRename
         }
 
 
-        public bool Go(ref bool pause, TVRenameStats stats)
+        public bool Go(ref bool pause)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {

@@ -2198,7 +2198,7 @@ namespace TVRename
 
         public void statisticsToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
-            StatsWindow sw = new StatsWindow(this.mDoc.Stats());
+            StatsWindow sw = new StatsWindow();
             sw.ShowDialog();
         }
 
