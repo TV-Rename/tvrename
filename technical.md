@@ -61,7 +61,7 @@ You can find TV Rename's source code (along with executables and this website) i
 
 ## Development
 You can find the Developers Wiki [here]({{ site.github.wiki_url }} "Read the Wiki")...
-In addition there is a Developers Forum which you can request access to. 
+In addition there is a Developers Forum in Google Groups which you can request access to. 
 
 
 ## Framework
