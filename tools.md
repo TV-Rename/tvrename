@@ -40,10 +40,10 @@ Clicking `Ignore` will add the folder to the list in the ***Ignore*** tab and it
 
 **Note:** A "glitch" in the design of the ***Ignore*** tab means there is currently no obvious way to remove a folder from this list. The designers are aware of the problem and it will be fixed in the next release. Until then if you have a folder "stuck" in here that you want to be part of the library again, ask in the Main Forum and someone will help you fix it. 
 
-## Actors Grid
+<!-- ## Actors Grid
 Really like that actor in "Such-and-such"? Sure they are in other shows in your Media Library? This is the tool to tell you!
 
-Among the metadata that [The TVDB](http://thetvdb.com "Visit TheTVDB.com") collects (and you import) is information about actors, they may be a shows "core characters" or "guest stars" but the data is available for every episode of every season of every show on [The TVDB](http://thetvdb.com "Visit TheTVDB.com") (If it's not or you know better please visit [their site](http://thetvdb.com "Visit TheTVDB.com"), log in and fix it - it's to everyone's benefit.
+Among the meta-data that [The TVDB](http://thetvdb.com "Visit TheTVDB.com") collects (and you import) is information about actors, they may be a shows "core characters" or "guest stars" but the data is available for every episode of every season of every show on [The TVDB](http://thetvdb.com "Visit TheTVDB.com") (If it's not or you know better please visit [their site](http://thetvdb.com "Visit TheTVDB.com"), log in and fix it - it's to everyone's benefit.
 
 Think of a spreadsheet, with actors names along the top (and a total at the end) and show names down the side (and a total at the bottom), now make it totally dynamic and fill the matching actor/show cells in green...
 
@@ -66,18 +66,17 @@ The Actors Grid has one more (undocumented) trick up its sleeve. If you click on
 ![Under Construction](images/under-construction.jpg)
 
 The "Torrent Match" tab lets you rename files, so their names match what is in a .torrent file. This is done using the torrent hashes, so it will work on any type of file, as long as it is big enough for a partial hash to be done on it.
-<!--
+
 Choose the .torrent file, and folder of files to rename. If you choose a "Copy To" location, the files will be copied to their new names, leaving the originals intact. If it is off, then they will be renamed in place. 
 
-Currently, TVRename can only process single file torrents, and multi-file torrents without subfolders in them.
+Currently, TVRename can only process single file torrents, and multi-file torrents without sub folders in them.
 
 After clicking "Go", the torrent file will be processed. This can take a while if the torrent file has a lot of items in it, or there are a lot of potential matches in the "Folder" you have selected.
 
-If processing is successful, you will be taken to the rename or finding and orgnising tab, to see the suggested operations. Your files will only be modified if you click "Rename" or "Move/Copy" from there.
+If processing is successful, you will be taken to the rename or finding and organising tab, to see the suggested operations. Your files will only be modified if you click "Rename" or "Move/Copy" from there.
 
 It's not possible to rename the files in (a multiple file) torrent, to match what you have on disk. Changing the names affects the hash, which makes it a different torrent from the tracker's point of view. Because of this, TVRename renames the files on disk instead.
--->
 
 ## µTorrent Save To
 
-![Under Construction](images/under-construction.jpg)
+![Under Construction](images/under-construction.jpg) -->

@@ -10,17 +10,24 @@
 		{% seo %}
 
 		<link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
-
+		
+		<!-- Updated jquery -->
+		<!--
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		-->
+
+		<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity=
+		"sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
 		<script src="{{ '/assets/js/main.js' | relative_url }}"></script>
 
 		<!--[if lt IE 9]>
-			<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
 		<![endif]-->
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		
-		<!-- Uncomment the next line to have page auto reload for testing
+		<!-- Uncomment the next line to have page auto reload for local testing
 		<meta http-equiv="refresh" content="15">
 		-->
 		
@@ -52,12 +59,12 @@
 				<span>Links:</span>
 				-->
 				<ul>
-					<!-- Modified Download link to point to GitHub pages
-					<li><a title="Visit TV Rename's Releases Forum" href="https://groups.google.com/forum/#!forum/tvrename-releases" class="button">Download</a></li>
+					<!--
+					Modified Download link to point to GitHub pages
 					-->
-					<li><a title="Visit the Download Page on GitHub" href="https://github.com/TV-Rename/tvrename/releases" class="button">Download</a></li>
+					<li><a id="download" title="Download the latest version from GitHub" href="{{ site.github.releases_url }}" class="button">Download</a></li>
 					<li><a title="Visit TV Rename's Forum" href="https://groups.google.com/forum/#!forum/tvrename" class="button">Support</a></li>
-					<li><a title="Visit TV Rename's GitHub Issues Page" href="https://github.com/TV-Rename/tvrename/issues" class="button">Bug Tracker</a></li>
+					<li><a title="Visit TV Rename's GitHub Issues Page" href="{{ site.github.issues_url }}" class="button">Bug Tracker</a></li>
 					<li><a title="Visit TV Rename's Idea Wall" href="http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0" class="button">Feature Tracker</a></li>
 					<li><a title="Read About TV Rename" href="about" class="button">About TV Rename</a></li>
 				</ul>
@@ -74,14 +81,14 @@
 
 		<div class="wrapper">
 			<nav>
-					<ul>
-						{% if page.url == '/' %}
-							<li><img alt="Home button" src="images/tv-noise.gif" height="122" width="100" /></li>
-						{% else %}
-							<li><a alt="Home Button" title="Return to Home Page" style="border-bottom:none;" href="{{ site.baseurl }}/index"><img src="images/tv-home.gif" height="122" width="100" /></a></li>
-						{% endif %}
-						<li style="font-weight:700; font-style: italic; font-size: 1.2em; color: #3399cc">On this page...</li>
-					</ul>
+				<ul>
+					{% if page.url == '/' %}
+					<li><img alt="Home button" src="images/tv-noise.gif" height="122" width="100" /></li>
+					{% else %}
+					<li><a alt="Home Button" title="Return to Home Page" style="border-bottom:none;" href="index"><img src="images/tv-home.gif" height="122" width="100" /></a></li>
+					{% endif %}
+					<li style="font-weight:700; font-style: italic; font-size: 1.2em; color: #3399cc">On this page...</li>
+				</ul>
 			</nav>
 			<section>
 				{{ content }}
@@ -107,5 +114,16 @@
 				ga('send', 'pageview');
 			</script>
 		{% endif %}
+		
+		<!-- Update the download link to point directly to the latest .exe -->
+		
+		<script>
+			$(function() {
+				$.get('https://api.github.com/repos/TV-Rename/tvrename/releases/latest', function(data) {
+					$('#download').attr('href', data.assets[0].browser_download_url);
+				});
+			});
+		</script>
+
 	</body>
 </html>
