@@ -59,9 +59,10 @@ When raising a bug please include a log file that illustrates the issue if you c
 ## Source Code
 You can find TV Rename's source code (along with executables and this website) in [The TV Rename GitHub Repository](https://github.com/TV-Rename/tvrename "Visit The repository").
 
-## Development
-You can find the Developers Wiki [here]({{ site.github.wiki_url }} "Read the Wiki")...
-In addition there is a Developers Forum in Google Groups which you can request access to. 
+## Development Links
+ * You can find the Developers Wiki [here]({{ site.github.wiki_url }} "Read the Wiki")...
+ * In addition there is a [Developers Forum in Google Groups](https://groups.google.com/forum/#!forum/tv-rename-development) which you can request access to. 
+ * The legacy forum can be [accessed](http://old.tvrename.com/bbold/) in read-only mode for background and history about the project
 
 
 ## Framework
