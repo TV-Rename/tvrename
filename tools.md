@@ -8,7 +8,7 @@ If you're in a hurry use the links on the left to jump to a specific item.
 
 ## Force Refresh All
 ![Force Refresh All](images/tools/force-refresh-all-01.png){:.pic-l}
-If TV Rename's representation of your Media Library is a mess then this is probably the Tool for you.
+If TV Rename's representation of your Media Library is a mess then this is probably the tool for you.
 
 After selecting the option from the menu you are presented with the alert window (shown).
 

@@ -255,35 +255,41 @@ Selecting rows in the main scan panel and clicking `Remove Selected` will tempor
 {:.toplink}
 [Return to Top]()
 
-## Help
+## The Status Bar
+The Status Bar hides at the very bottom of the main window, quietly displaying the next show/episode airing and how long you've got to wait before you can watch it, and the "Background download:" status which is either "Idle" or details of what it's doing!
+
+{:.toplink}
+[Return to Top]()
+
+## Repairing Corrupt Data
+Occasionally information for shows gets corrupted and needs refreshing. The quickest way to do this is a "Forced Refresh", which comes in two flavours.
+
+Firstly, if the problem is small, only effecting a small number of shows, right clicking a problematic show on the ***My Shows*** tab will pop up a menu on which one of the options is "Force&nbsp;Refresh". Clicking this option will tell TV Rename to go to [The TVDB](http://thetvdb.com "Visit thetvdb.com") and re-collect all the data available for that show and re-populate the local cache. This will often fix the issue.
+
+The second solution is far more drastic in its effect.
+
+"Force Refresh All" in the **Tools** menu is the "Tool of Last Resort". If TV Rename's representation of your Media Library is a real mess or the previous solution doesn't help then this is your only real alternative.
+
+![Force Refresh All](images/tools/force-refresh-all-01.png){:.pic-r}
+After selecting the option from the menu you are presented with the alert window (shown).
+
+**READ IT CAREFULLY AND PAY ATTENTION**. If you click `Yes` there's no going back, all the locally stored information in TheTVDB's cache will be **DELETED**.
+
+The ***My Shows*** tab reverts to showing The TVDB codes instead of show names, indicating that the relevant data has been deleted. Whilst still on the ***My Shows*** tab click the `Refresh` button and the show data will be downloaded again. (Now might be a good time for a coffee, if your library is large and internet connection slow it may take a while!)
+
+Once the download is complete all your shows will re-appear by name.
+
+{:.toplink}
+[Return to Top]()
+
+## Help - Statistics
 ![Statistics...](images/help/statistics-01.png){:.pic-l}
-Aside from the usual instructions the `Help` menu is hiding one really useful function - **Statistics**.
+Aside from the usual instructions the "Help" menu is hiding one really useful function - **Statistics**.
+
+This statistics illustration (left) was created just two weeks after a fresh install of TV Rename was carried out (so work on updating the documentation could begin with a clean setup).
+
 It's surprising just how much work TV Rename does "managing some videos".
 
-The figures in the example do not look particularly impressive, but consider that I reverted to a clean install (Stats all at "0") when I started to re-write/update these documents around two weeks ago, how much goes on under-the-hood is quite impressive 
-
-{:.toplink}
-[Return to Top]()
-
-### AWAITING UPDATE
-
-Click on the check button, and TV Rename will, after downloading any needed information from [The TVDB](http://thetvdb.com "Visit thetvdb.com"), go through your folders and see if any files need to be renamed.
-
-TV Rename attempts to intelligently determine a shows season and episode number from it's filename, and handles most common naming styles.
-
-A folder can be excluded from a rename check by setting rename files to no in the add/edit folder dialog, accessed from the shows and folders tab.
-
-You can select items in the list and press the Delete key on your keyboard to remove them from the list. Once you are happy with the changes offered, click the Rename button at the bottom, and TV Rename will make the changes.
-
-The My Shows tab reverts to showing The TVDB codes and indicating that the relevant data has not been downloaded, all record of ignored episodes (including "Specials") will have been deleted as well. Your best option is to run *Background Download Now* (also from the *Tools* menu - see below) and go and make a cup of coffee while the cache re-populates.
-
-(Once the download is complete all your shows will re-appear in ***My Shows***. Switch to the ***Scan*** tab and run `Full`. The tab re-populates, but horror-of horrors all your ignored episodes and season have gone, and confusion over double episodes and the like has returned. Unfortunately this has to be set up manually. (See, I said you needed a coffee!).
-
-{:.toplink}
-[Return to Top]()
-
-## The Status Bar
-The Status Bar hides at the very bottom of the main window, quietly displaying the next show/episode airing and how long you've got to wait before you can watch it, and the "Background download:" status (either "Idle" or details of what it's doing!
-
+{:.clear}
 {:.toplink}
 [Return to Top]()
