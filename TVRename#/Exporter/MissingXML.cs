@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -8,7 +9,7 @@ namespace TVRename
     class MissingXML : MissingExporter
     {
         public override bool Active() =>TVSettings.Instance.ExportMissingXML;
-        public override string Location() =>TVSettings.Instance.ExportMissingXMLTo;
+        protected override string Location() =>TVSettings.Instance.ExportMissingXMLTo;
         
         public override void Run(ItemList TheActionList)
         {

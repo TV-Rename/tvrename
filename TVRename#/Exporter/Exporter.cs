@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
-using System.Text;
 
 namespace TVRename
 {
     abstract class Exporter
     {
         public abstract bool Active();
-        public abstract string Location();
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected abstract string Location();
+        protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     }
 
@@ -21,12 +21,12 @@ namespace TVRename
 
     abstract class MissingExporter : Exporter
     {
-        public abstract void Run(ItemList TheActionList);
+        public abstract void Run(ItemList theActionList);
     }
 
     abstract class UpcomingExporter : Exporter
     {
-        protected TVDoc mDoc;
+        protected readonly TVDoc mDoc;
         
 
         public UpcomingExporter(TVDoc doc)
@@ -34,7 +34,7 @@ namespace TVRename
             this.mDoc = doc;
         }
 
-        public string produce() 
+        private string Produce() 
         {
             try
             {
@@ -46,32 +46,50 @@ namespace TVRename
                 MemoryStream ms = new MemoryStream(); //duplicated the IF statement one for RSS and one for XML so that both can be generated.
                 List<ProcessedEpisode> lpe = mDoc.NextNShows(TVSettings.Instance.ExportRSSMaxShows, TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
                 if (lpe != null)
-                    if (this.generate(ms,lpe ))
+                    if (this.Generate(ms,lpe ))
                     {
                         return System.Text.Encoding.ASCII.GetString(ms.ToArray());
                     }
                
             }
-            catch
+            catch (Exception e)
             {
+                Logger.Error(e, "Failed to produce records to put into Export file at: {0}", Location());
             }
             return "";
         }
 
         public void Run()
         {
-            if (this.Active())
+            if (Active())
             {
-                StreamWriter file = new StreamWriter(Location());
-                String contents = produce();
-                file.Write(contents);
-                file.Close();
-                logger.Info("Output File to :{0}", Location());
-                logger.Trace("contents of File are :{0}", contents);
+                try
+                {
+
+                    //Create the directory if needed
+                    Directory.CreateDirectory(Path.GetDirectoryName(Location()) ??"");
+
+                    //Write Contents to file
+                    StreamWriter file = new StreamWriter(Location());
+                    String contents = Produce();
+                    file.Write(contents);
+                    file.Close();
+
+                    Logger.Info("Output File to :{0}", Location());
+                    Logger.Trace("contents of File are :{0}", contents);
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e,"Failed to Output File to :{0}", Location());
+                }
+            }
+            else
+            {
+                Logger.Trace("SKipped (Disabled) Output File to :{0}", Location());
             }
         }
 
-        protected abstract bool generate(Stream str, List<ProcessedEpisode> elist);
+        protected abstract bool Generate(Stream str, List<ProcessedEpisode> elist);
     }
 
 }
