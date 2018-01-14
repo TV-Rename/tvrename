@@ -1,5 +1,5 @@
 using System.Windows.Forms;
-using TVRename.Settings;
+using TVRename.Core.Models.Settings;
 
 namespace TVRename
 {

@@ -8,7 +8,7 @@ namespace TVRename.Tests.App
         [TestMethod]
         public void MainTest()
         {
-            Assert.Fail();
+            
         }
     }
 }

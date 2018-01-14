@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2B79E028-5C13-4896-B829-3CFC645E21C3}</ProjectGuid>
+    <ProjectGuid>{4BFA7AA0-98B5-4B6C-A988-B1C0BE1FB957}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TVRename.Tests</RootNamespace>
-    <AssemblyName>TVRename.Tests</AssemblyName>
+    <RootNamespace>TVRename.Core.Tests</RootNamespace>
+    <AssemblyName>TVRename.Core.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -55,13 +55,12 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="App\ProgramTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TVRename#\TVRename#.csproj">
-      <Project>{2FFF6A6D-6094-47FF-AB34-E04E644F8F9C}</Project>
-      <Name>TVRename#</Name>
+    <ProjectReference Include="..\TVRename.Core\TVRename.Core.csproj">
+      <Project>{78BE5B7B-5F85-4325-A0D6-FB7722737BF4}</Project>
+      <Name>TVRename.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -95,4 +94,11 @@
     <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.2.0\build\net45\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.2.0\build\net45\MSTest.TestAdapter.targets'))" />
   </Target>
   <Import Project="..\packages\MSTest.TestAdapter.1.2.0\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.1.2.0\build\net45\MSTest.TestAdapter.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
 </Project>
