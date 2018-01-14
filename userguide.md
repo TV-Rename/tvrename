@@ -268,16 +268,16 @@ Firstly, if the problem is small, only effecting a small number of shows, right 
 
 The second solution is far more drastic in its effect.
 
-"Force Refresh All" in the **Tools** menu is the "Tool of Last Resort". If TV Rename's representation of your Media Library is a real mess or the previous solution doesn't help then tis is your only real alternative.
+"Force Refresh All" in the **Tools** menu is the "Tool of Last Resort". If TV Rename's representation of your Media Library is a real mess or the previous solution doesn't help then this is your only real alternative.
 
 ![Force Refresh All](images/tools/force-refresh-all-01.png){:.pic-r}
 After selecting the option from the menu you are presented with the alert window (shown).
 
 **READ IT CAREFULLY AND PAY ATTENTION**. If you click `Yes` there's no going back, all the locally stored information in TheTVDB's cache will be **DELETED**.
 
-The ***My Shows*** tab reverts to showing The TVDB codes instead of show names, indicating that the relevant data has not been downloaded, all record of ignored episodes (including "Specials") is deleted as well. Your best option is to run **Background Download Now** (also from the **Tools** menu) and go and make a cup of coffee while the cache re-populates.
+The ***My Shows*** tab reverts to showing The TVDB codes instead of show names, indicating that the relevant data has been deleted. Whilst still on the ***My Shows*** tab click the `Refresh` button and the show data will be downloaded again. (Now might be a good time for a coffee, if your library is large and internet connection slow it may take a while!)
 
-Once the download is complete all your shows will re-appear by name in ***My Shows***. Switch to the ***Scan*** tab and run a `Full` scan. The tab re-populates but, as previously intimated, all your ignored episodes and seasons have gone, and confusion over double episodes and the like has returned. Unfortunately there is no option but to do this manually. (See, we said you needed a coffee!).
+Once the download is complete all your shows will re-appear by name.
 
 {:.toplink}
 [Return to Top]()
