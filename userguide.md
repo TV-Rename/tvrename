@@ -151,10 +151,12 @@ The "Specials count as episodes" tick box is useful with shows such as "Mythbust
 
 The "Do Renaming" tick box tells TV Rename to use the names built using the [(Options>)Filename Template Editor](options#filename-template-editor) when copying or moving files if it is ticked, otherwise they will be left unchanged.
 
+The "Do missing check" tick-box enables or disables the ability to check for missing episodes, if the option is ticked some degree of granularity is provided by the "Include future episodes" and "Include no airdate" tick-boxes.
+
 "Use sequential number matching" will match episodes based on their overall airing order. Because this can cause a large number of false matches, the box is un-ticked by default. 
 For example, Season 4 Episode 9 of Marvel's Agents of S.H.I.E.L.D. is the 75<sup>th</sup> episode aired, so with this option enabled "Marvel's Agents of S.H.I.E.L.D. - 75 - Broken Promises.mkv" will be seen at S04E09.
 
-![Under Construction](images/under-construction.jpg)
+The "Manual/Additional Folders" section allows you to manually add and remove additional Seasons and associated folders.
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -171,12 +173,14 @@ Adding "Dr. Who" and "Dr Who" as aliases for "Doctor Who" will fix this problem 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
 
+<!--- 
 ### The Search Tab
 
 ![Under Construction](images/under-construction.jpg)
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
+--->
 
 ## Edit Season Rules
 
