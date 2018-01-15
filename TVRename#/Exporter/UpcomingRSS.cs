@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
 
@@ -9,9 +10,9 @@ namespace TVRename
     {
         public UpcomingRSS(TVDoc i) : base(i) { }
         public override bool Active() =>TVSettings.Instance.ExportWTWRSS;
-        public override string Location() => TVSettings.Instance.ExportWTWRSSTo;
+        protected override string Location() => TVSettings.Instance.ExportWTWRSSTo;
 
-        protected override bool generate(System.IO.Stream str, List<ProcessedEpisode> elist)
+        protected override bool Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
         {
             if (elist == null)
                 return false;
@@ -61,7 +62,7 @@ namespace TVRename
             } // try
             catch (Exception e)
             {
-                logger.Error(e);
+                Logger.Error(e);
                 return false;
             }
 
