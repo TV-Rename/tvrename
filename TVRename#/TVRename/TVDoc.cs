@@ -2030,6 +2030,11 @@ namespace TVRename
 
             DirFilesCache dfc = new DirFilesCache();
 
+            //When doing a fullscan the showlist is null indicating that all shows should be checked
+            if (showList is null)
+            {
+                showList = this.ShowItems;
+            }
 
             foreach (String dirPath in SearchFolders)
             {
