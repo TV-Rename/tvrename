@@ -1726,7 +1726,7 @@ namespace TVRename
 
             DoActions(theList);
         }
-        private void findDoubleEps()
+        protected internal void findDoubleEps()
         {
             StringBuilder output = new StringBuilder();
 

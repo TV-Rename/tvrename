@@ -18,6 +18,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using System.IO;
 using System.Linq;
+using Microsoft.VisualBasic;
 using TVRename.Ipc;
 
 namespace TVRename
@@ -3678,6 +3679,13 @@ namespace TVRename
             unForm.ShowDialog();
 
 
+        }
+
+        private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.mDoc.findDoubleEps();
+            MessageBox.Show("Please review the log file for files which are possibly double episodes",
+                "Double Episode Finder", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }
