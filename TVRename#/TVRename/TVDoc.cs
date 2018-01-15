@@ -25,6 +25,7 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace TVRename
 {
@@ -2984,6 +2985,45 @@ namespace TVRename
             }
             return shows;
         }
+
+        private const string GITHUB_RELEASES_URL = "https://github.com/TV-Rename/tvrename/releases/latest";
+        private const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases/latest";
+
+        public void CheckForUpdates()
+        {
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+
+            string response = client.DownloadString(GITHUB_RELEASES_API_URL);
+
+            JObject gitHubInfo = JObject.Parse(response);
+
+            //TODO - catch Errors if GitHub page has changed or is no longer json
+
+            string latestVersion = gitHubInfo["tag_name"].ToString();
+            string downloadUrl = gitHubInfo["assets"][0]["browser_download_url"].ToString();
+            string releaseNotes = gitHubInfo["body"].ToString();
+
+            string currentVersion = Helpers.DisplayVersion;
+
+                if (currentVersion != latestVersion)
+                {
+                    DialogResult dialogResult;
+                        dialogResult =
+                            MessageBox.Show(
+                                $@"There is new version {latestVersion} available."+ System.Environment.NewLine + $@"You are using version {currentVersion}." + System.Environment.NewLine + System.Environment.NewLine
+                                + "Do you want to update the application now?" + System.Environment.NewLine + System.Environment.NewLine + releaseNotes, @"Update Available",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+
+                }
+                else
+                {
+                    MessageBox.Show(@"There is no update available please try again later.", @"No update available",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+        }
     }
 }
+
 
