@@ -7,9 +7,11 @@
 // 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
+using NLog;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -248,6 +250,20 @@ namespace TVRename
             Both
         }
 
+        public enum BetaMode
+        {
+            BetaToo,
+            ProductionOnly
+        }
+
+        public enum KeepTogetherModes
+        {
+            All,
+            AllBut,
+            Just
+        }
+
+
         public List<String> MonitorFoldersNames = new List<String>();
         public List<String> IgnoreFoldersNames = new List<String>();
         public List<String> SearchFoldersNames = new List<String>();
@@ -300,6 +316,32 @@ namespace TVRename
         public CustomName NamingStyle = new CustomName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
+
+        public BetaMode mode = BetaMode.ProductionOnly;
+        public float upgradeDirtyPercent = 20;
+        public  KeepTogetherModes  keepTogetherMode = KeepTogetherModes.All;
+        
+
+        public string[] keepTogetherExtensionsArray
+        {
+            get { return keepTogetherExtensionsString.Split(';'); }
+        }
+        public string keepTogetherExtensionsString = "";
+
+        public string defaultSeasonWord = "Season";
+
+        public string[] searchSeasonWordsArray
+        {
+            get { return searchSeasonWordsString.Split(';'); }
+        }
+        public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
+
+        
+        internal bool IncludeBetaUpdates()
+        {
+            return (this.mode== BetaMode.BetaToo );
+        }
+
         public string OtherExtensionsString = "";
         public ShowFilter Filter = new ShowFilter();
 
@@ -529,7 +571,7 @@ namespace TVRename
                 else if (reader.Name == "LeaveOriginals")
                     this.LeaveOriginals = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LookForDateInFilename")
-                    LookForDateInFilename = reader.ReadElementContentAsBoolean();
+                    this.LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "RemoveDownloadDirectoriesFiles")
@@ -560,6 +602,19 @@ namespace TVRename
                     this.Tidyup.EmptyMaxSizeCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EmptyMaxSizeMB")
                     this.Tidyup.EmptyMaxSizeMB = reader.ReadElementContentAsInt();
+
+                else if (reader.Name == "BetaMode")
+                    this.mode = (BetaMode)reader.ReadElementContentAsInt();
+                else if (reader.Name == "PercentDirtyUpgrade")
+                    this.upgradeDirtyPercent = reader.ReadElementContentAsFloat();
+                else if (reader.Name == "BaseSeasonName")
+                    this.defaultSeasonWord = reader.ReadElementContentAsString( );
+                else if (reader.Name == "SearchSeasonNames")
+                    this.searchSeasonWordsString = reader.ReadElementContentAsString();
+                else if (reader.Name == "KeepTogetherType")
+                    this.keepTogetherMode = (KeepTogetherModes) reader.ReadElementContentAsInt();
+                else if (reader.Name == "KeepTogetherExtensions")
+                    this.keepTogetherExtensionsString = reader.ReadElementContentAsString();
 
                 else if (reader.Name == "FNPRegexs" && !reader.IsEmptyElement)
                 {
@@ -692,6 +747,7 @@ namespace TVRename
 
             this.VideoExtensionsString = ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm";
             this.OtherExtensionsString = ".srt;.nfo;.txt;.tbn";
+            this.keepTogetherExtensionsString = ".srt;.nfo;.txt;.tbn";
 
             // have a guess at utorrent's path
             string[] guesses = new string[3];
@@ -807,6 +863,12 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"EmptyIgnoreExtensionList",this.Tidyup.EmptyIgnoreExtensionList);
             XMLHelper.WriteElementToXML(writer,"EmptyMaxSizeCheck",this.Tidyup.EmptyMaxSizeCheck);
             XMLHelper.WriteElementToXML(writer,"EmptyMaxSizeMB",this.Tidyup.EmptyMaxSizeMB);
+            XMLHelper.WriteElementToXML(writer, "BetaMode", (int)this.mode);
+            XMLHelper.WriteElementToXML(writer, "PercentDirtyUpgrade", this.upgradeDirtyPercent);
+            XMLHelper.WriteElementToXML(writer, "BaseSeasonName", this.defaultSeasonWord);
+            XMLHelper.WriteElementToXML(writer, "SearchSeasonNames", this.searchSeasonWordsString);
+            XMLHelper.WriteElementToXML(writer, "KeepTogetherType", (int)this.keepTogetherMode);
+            XMLHelper.WriteElementToXML(writer, "KeepTogetherExtensions", this.keepTogetherExtensionsString);
 
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)
@@ -857,12 +919,21 @@ namespace TVRename
             writer.WriteEndElement(); // settings
         }
 
+        internal float PercentDirtyUpgrade()
+        {
+            return this.upgradeDirtyPercent;
+        }
+
         public FolderJpgIsType ItemForFolderJpg() => this.FolderJpgIs;
 
         public string GetVideoExtensionsString() =>this.VideoExtensionsString;
         
         public string GetOtherExtensionsString() => this.OtherExtensionsString;
-        
+
+        public string GetKeepTogetherString() => this.keepTogetherExtensionsString;
+
+        public string GetSeasonSearchTermsString() => this.searchSeasonWordsString;
+
         public static bool OKExtensionsString(string s)
         {
             if (string.IsNullOrEmpty(s))
@@ -996,6 +1067,20 @@ namespace TVRename
             return false;
         }
 
+        public bool KeepExtensionTogether(string extension)
+        {
+            if (this.KeepTogether == false) return false;
+
+            if (this.keepTogetherMode == KeepTogetherModes.All) return true;
+
+            if (this.keepTogetherMode == KeepTogetherModes.Just) return this.keepTogetherExtensionsArray.Contains(extension);
+
+            if (this.keepTogetherMode == KeepTogetherModes.AllBut ) return !this.keepTogetherExtensionsArray.Contains(extension);
+
+            logger.Error("INVALID USE OF KEEP EXTENSION");
+            return false;
+        }
+
         public string BTSearchURL(ProcessedEpisode epi)
         {
             if (epi == null)
@@ -1044,5 +1129,6 @@ namespace TVRename
         {
             return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Eden)); 
         }
+
     }
 }
