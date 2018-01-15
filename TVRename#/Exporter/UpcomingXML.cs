@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Xml;
 using System.Windows.Forms;
@@ -12,9 +13,9 @@ namespace TVRename
         public UpcomingXML(TVDoc i) : base(i) { }
 
         public override bool Active()=> TVSettings.Instance.ExportWTWXML;
-        public override string Location() => TVSettings.Instance.ExportWTWXMLTo;
+        protected override string Location() => TVSettings.Instance.ExportWTWXMLTo;
 
-        protected override bool  generate(System.IO.Stream str, List<ProcessedEpisode> elist)
+        protected override bool  Generate(System.IO.Stream str, List<ProcessedEpisode> elist)
         {
             DirFilesCache dfc = new DirFilesCache();
             try
@@ -74,7 +75,7 @@ namespace TVRename
             catch (Exception e)
             {
                 if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(e.Message);
-                logger.Error(e);
+                Logger.Error(e);
                 return false;
             }
 
