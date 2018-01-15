@@ -7,26 +7,17 @@
 // 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Runtime.Remoting.Channels.Ipc;
 using System.Threading;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
 using TVRename.Forms;
-using Alphaleonis.Win32.Filesystem;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
-using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
 using System.Linq;
-using System.Text;
 using TVRename.Ipc;
 
 namespace TVRename
@@ -304,6 +295,8 @@ namespace TVRename
             filterTextBox.Controls.Add(filterButton);
             // Send EM_SETMARGINS to prevent text from disappearing underneath the button
             SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
+
+            this.betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
 
             this.Show();
             this.UI_LocationChanged(null, null);
@@ -813,7 +806,7 @@ namespace TVRename
             else
                 eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
 
-            string seasText = snum == 0 ? "Specials" : ("Season " + snum);
+            string seasText = snum == 0 ? TVSettings.Instance.SpecialsFolderName : (TVSettings.Instance.defaultSeasonWord +" " + snum);
             if ((eis.Count > 0) && (eis[0].SeasonID > 0))
                 seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, eis[0].SeasonID, false) + "\">" +
                            seasText + "</a>";
@@ -977,7 +970,7 @@ namespace TVRename
             else
                 eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
 
-            string seasText = snum == 0 ? "Specials" : ("Season " + snum);
+            string seasText = snum == 0 ? TVSettings.Instance.SpecialsFolderName : (TVSettings.Instance.defaultSeasonWord+ " " + snum);
             if ((eis.Count > 0) && (eis[0].SeasonID > 0))
                 seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, eis[0].SeasonID, false) + "\">" +
                            seasText + "</a>";
@@ -1653,10 +1646,9 @@ namespace TVRename
 
             if (seas != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
-                tsi = new ToolStripMenuItem("Edit " + (seas.SeasonNumber == 0
-                                                ? "Specials"
-                                                : "Season " + seas.SeasonNumber));
-                tsi.Tag = (int) RightClickCommands.kEditSeason;
+                tsi = new ToolStripMenuItem("Edit " + (seas.SeasonNumber == 0 ?
+                                                TVSettings.Instance.SpecialsFolderName : TVSettings.Instance.defaultSeasonWord+" " + seas.SeasonNumber));
+                tsi.Tag = (int)RightClickCommands.kEditSeason;
                 this.showRightClickMenu.Items.Add(tsi);
             }
 
@@ -2139,6 +2131,7 @@ namespace TVRename
                 this.ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
                 this.FillEpGuideHTML();
                 this.mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
+                this.betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
                 ForceRefresh(null);
             }
 
@@ -2387,7 +2380,7 @@ namespace TVRename
 
                 foreach (int snum in theKeys)
                 {
-                    string nodeTitle = snum == 0 ? "Specials" : "Season " + snum;
+                    string nodeTitle = snum == 0 ? TVSettings.Instance.SpecialsFolderName : TVSettings.Instance.defaultSeasonWord+" " + snum;
                     TreeNode n2 = new TreeNode(nodeTitle);
                     if (si.IgnoreSeasons.Contains(snum))
                         n2.ForeColor = Color.Gray;
@@ -3670,9 +3663,11 @@ namespace TVRename
 
         public void Quit() => Close();
 
+
         private void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.mDoc.CheckForUpdates();
+
 
         }
     }

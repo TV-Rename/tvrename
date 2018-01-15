@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -71,9 +71,13 @@ namespace TVRename
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbGeneral = new System.Windows.Forms.TabPage();
+            this.label37 = new System.Windows.Forms.Label();
+            this.label38 = new System.Windows.Forms.Label();
+            this.tbPercentDirty = new System.Windows.Forms.TextBox();
+            this.cbMode = new System.Windows.Forms.ComboBox();
+            this.label34 = new System.Windows.Forms.Label();
             this.rbWTWScan = new System.Windows.Forms.RadioButton();
             this.rbWTWSearch = new System.Windows.Forms.RadioButton();
             this.label10 = new System.Windows.Forms.Label();
@@ -85,6 +89,13 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.txtParallelDownloads = new System.Windows.Forms.TextBox();
             this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
+            this.txtKeepTogether = new System.Windows.Forms.TextBox();
+            this.label39 = new System.Windows.Forms.Label();
+            this.cbKeepTogetherMode = new System.Windows.Forms.ComboBox();
+            this.tbSeasonSearchTerms = new System.Windows.Forms.TextBox();
+            this.label36 = new System.Windows.Forms.Label();
+            this.txtSeasonFolderName = new System.Windows.Forms.TextBox();
+            this.label35 = new System.Windows.Forms.Label();
             this.bnReplaceRemove = new System.Windows.Forms.Button();
             this.bnReplaceAdd = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -126,6 +137,7 @@ namespace TVRename
             this.cbCheckuTorrent = new System.Windows.Forms.CheckBox();
             this.cbSearchLocally = new System.Windows.Forms.CheckBox();
             this.tbFolderDeleting = new System.Windows.Forms.TabPage();
+            this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
             this.txtEmptyMaxSize = new System.Windows.Forms.TextBox();
@@ -213,7 +225,6 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -267,7 +278,7 @@ namespace TVRename
             this.ReplacementsGrid.Name = "ReplacementsGrid";
             this.ReplacementsGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.ReplacementsGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.ReplacementsGrid.Size = new System.Drawing.Size(403, 124);
+            this.ReplacementsGrid.Size = new System.Drawing.Size(403, 62);
             this.ReplacementsGrid.TabIndex = 1;
             this.ReplacementsGrid.TabStop = true;
             this.ReplacementsGrid.ToolTipText = "";
@@ -417,7 +428,7 @@ namespace TVRename
             // cbTxtToSub
             // 
             this.cbTxtToSub.AutoSize = true;
-            this.cbTxtToSub.Location = new System.Drawing.Point(6, 259);
+            this.cbTxtToSub.Location = new System.Drawing.Point(6, 234);
             this.cbTxtToSub.Name = "cbTxtToSub";
             this.cbTxtToSub.Size = new System.Drawing.Size(118, 17);
             this.cbTxtToSub.TabIndex = 9;
@@ -426,14 +437,14 @@ namespace TVRename
             // 
             // txtSpecialsFolderName
             // 
-            this.txtSpecialsFolderName.Location = new System.Drawing.Point(113, 306);
+            this.txtSpecialsFolderName.Location = new System.Drawing.Point(113, 281);
             this.txtSpecialsFolderName.Name = "txtSpecialsFolderName";
             this.txtSpecialsFolderName.Size = new System.Drawing.Size(279, 20);
             this.txtSpecialsFolderName.TabIndex = 12;
             // 
             // txtVideoExtensions
             // 
-            this.txtVideoExtensions.Location = new System.Drawing.Point(99, 186);
+            this.txtVideoExtensions.Location = new System.Drawing.Point(99, 128);
             this.txtVideoExtensions.Name = "txtVideoExtensions";
             this.txtVideoExtensions.Size = new System.Drawing.Size(293, 20);
             this.txtVideoExtensions.TabIndex = 5;
@@ -464,7 +475,7 @@ namespace TVRename
             // cbLeadingZero
             // 
             this.cbLeadingZero.AutoSize = true;
-            this.cbLeadingZero.Location = new System.Drawing.Point(6, 282);
+            this.cbLeadingZero.Location = new System.Drawing.Point(6, 257);
             this.cbLeadingZero.Name = "cbLeadingZero";
             this.cbLeadingZero.Size = new System.Drawing.Size(170, 17);
             this.cbLeadingZero.TabIndex = 10;
@@ -474,7 +485,7 @@ namespace TVRename
             // cbKeepTogether
             // 
             this.cbKeepTogether.AutoSize = true;
-            this.cbKeepTogether.Location = new System.Drawing.Point(6, 238);
+            this.cbKeepTogether.Location = new System.Drawing.Point(6, 180);
             this.cbKeepTogether.Name = "cbKeepTogether";
             this.cbKeepTogether.Size = new System.Drawing.Size(251, 17);
             this.cbKeepTogether.TabIndex = 8;
@@ -506,7 +517,7 @@ namespace TVRename
             // 
             // txtWTWDays
             // 
-            this.txtWTWDays.Location = new System.Drawing.Point(92, 9);
+            this.txtWTWDays.Location = new System.Drawing.Point(13, 9);
             this.txtWTWDays.Name = "txtWTWDays";
             this.txtWTWDays.Size = new System.Drawing.Size(28, 20);
             this.txtWTWDays.TabIndex = 1;
@@ -515,7 +526,7 @@ namespace TVRename
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(126, 12);
+            this.label2.Location = new System.Drawing.Point(47, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 13);
             this.label2.TabIndex = 2;
@@ -524,7 +535,7 @@ namespace TVRename
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 309);
+            this.label13.Location = new System.Drawing.Point(6, 284);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(108, 13);
             this.label13.TabIndex = 11;
@@ -533,7 +544,7 @@ namespace TVRename
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(3, 189);
+            this.label14.Location = new System.Drawing.Point(3, 131);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(90, 13);
             this.label14.TabIndex = 4;
@@ -547,15 +558,6 @@ namespace TVRename
             this.label6.Size = new System.Drawing.Size(62, 13);
             this.label6.TabIndex = 6;
             this.label6.Text = "&Startup tab:";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(80, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "&When to watch";
             // 
             // tabControl1
             // 
@@ -580,6 +582,11 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.label37);
+            this.tbGeneral.Controls.Add(this.label38);
+            this.tbGeneral.Controls.Add(this.tbPercentDirty);
+            this.tbGeneral.Controls.Add(this.cbMode);
+            this.tbGeneral.Controls.Add(this.label34);
             this.tbGeneral.Controls.Add(this.rbWTWScan);
             this.tbGeneral.Controls.Add(this.rbWTWSearch);
             this.tbGeneral.Controls.Add(this.label10);
@@ -587,7 +594,6 @@ namespace TVRename
             this.tbGeneral.Controls.Add(this.cbLanguages);
             this.tbGeneral.Controls.Add(this.cbStartupTab);
             this.tbGeneral.Controls.Add(this.label21);
-            this.tbGeneral.Controls.Add(this.label1);
             this.tbGeneral.Controls.Add(this.cbAutoSelInMyShows);
             this.tbGeneral.Controls.Add(this.cbShowEpisodePictures);
             this.tbGeneral.Controls.Add(this.label11);
@@ -605,6 +611,53 @@ namespace TVRename
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
+            // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Location = new System.Drawing.Point(6, 188);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(114, 13);
+            this.label37.TabIndex = 20;
+            this.label37.Text = "Refresh entire series  if";
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Location = new System.Drawing.Point(158, 188);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(132, 13);
+            this.label38.TabIndex = 22;
+            this.label38.Text = "% of episodes are updated";
+            // 
+            // tbPercentDirty
+            // 
+            this.tbPercentDirty.Location = new System.Drawing.Point(123, 185);
+            this.tbPercentDirty.Name = "tbPercentDirty";
+            this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
+            this.tbPercentDirty.TabIndex = 21;
+            // 
+            // cbMode
+            // 
+            this.cbMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbMode.FormattingEnabled = true;
+            this.cbMode.Items.AddRange(new object[] {
+            "Beta",
+            "Production"});
+            this.cbMode.Location = new System.Drawing.Point(112, 279);
+            this.cbMode.Name = "cbMode";
+            this.cbMode.Size = new System.Drawing.Size(146, 21);
+            this.cbMode.Sorted = true;
+            this.cbMode.TabIndex = 19;
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(6, 282);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(37, 13);
+            this.label34.TabIndex = 18;
+            this.label34.Text = "&Mode:";
             // 
             // rbWTWScan
             // 
@@ -631,7 +684,7 @@ namespace TVRename
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 234);
+            this.label10.Location = new System.Drawing.Point(6, 258);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 13);
             this.label10.TabIndex = 16;
@@ -640,7 +693,7 @@ namespace TVRename
             // cbLookForAirdate
             // 
             this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 210);
+            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 234);
             this.cbLookForAirdate.Name = "cbLookForAirdate";
             this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
             this.cbLookForAirdate.TabIndex = 15;
@@ -655,7 +708,7 @@ namespace TVRename
             "My Shows",
             "Scan",
             "When to Watch"});
-            this.cbLanguages.Location = new System.Drawing.Point(112, 231);
+            this.cbLanguages.Location = new System.Drawing.Point(112, 255);
             this.cbLanguages.Name = "cbLanguages";
             this.cbLanguages.Size = new System.Drawing.Size(146, 21);
             this.cbLanguages.Sorted = true;
@@ -673,7 +726,7 @@ namespace TVRename
             // cbAutoSelInMyShows
             // 
             this.cbAutoSelInMyShows.AutoSize = true;
-            this.cbAutoSelInMyShows.Location = new System.Drawing.Point(9, 187);
+            this.cbAutoSelInMyShows.Location = new System.Drawing.Point(9, 211);
             this.cbAutoSelInMyShows.Name = "cbAutoSelInMyShows";
             this.cbAutoSelInMyShows.Size = new System.Drawing.Size(268, 17);
             this.cbAutoSelInMyShows.TabIndex = 14;
@@ -708,6 +761,13 @@ namespace TVRename
             // 
             // tbFilesAndFolders
             // 
+            this.tbFilesAndFolders.Controls.Add(this.txtKeepTogether);
+            this.tbFilesAndFolders.Controls.Add(this.label39);
+            this.tbFilesAndFolders.Controls.Add(this.cbKeepTogetherMode);
+            this.tbFilesAndFolders.Controls.Add(this.tbSeasonSearchTerms);
+            this.tbFilesAndFolders.Controls.Add(this.label36);
+            this.tbFilesAndFolders.Controls.Add(this.txtSeasonFolderName);
+            this.tbFilesAndFolders.Controls.Add(this.label35);
             this.tbFilesAndFolders.Controls.Add(this.bnReplaceRemove);
             this.tbFilesAndFolders.Controls.Add(this.bnReplaceAdd);
             this.tbFilesAndFolders.Controls.Add(this.label3);
@@ -733,9 +793,71 @@ namespace TVRename
             this.tbFilesAndFolders.Text = "Files and Folders";
             this.tbFilesAndFolders.UseVisualStyleBackColor = true;
             // 
+            // txtKeepTogether
+            // 
+            this.txtKeepTogether.Location = new System.Drawing.Point(204, 206);
+            this.txtKeepTogether.Name = "txtKeepTogether";
+            this.txtKeepTogether.Size = new System.Drawing.Size(188, 20);
+            this.txtKeepTogether.TabIndex = 23;
+            // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Location = new System.Drawing.Point(25, 210);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(21, 13);
+            this.label39.TabIndex = 22;
+            this.label39.Text = "Do";
+            // 
+            // cbKeepTogetherMode
+            // 
+            this.cbKeepTogetherMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbKeepTogetherMode.FormattingEnabled = true;
+            this.cbKeepTogetherMode.Items.AddRange(new object[] {
+            "All",
+            "All but these",
+            "Just"});
+            this.cbKeepTogetherMode.Location = new System.Drawing.Point(52, 207);
+            this.cbKeepTogetherMode.Name = "cbKeepTogetherMode";
+            this.cbKeepTogetherMode.Size = new System.Drawing.Size(146, 21);
+            this.cbKeepTogetherMode.Sorted = true;
+            this.cbKeepTogetherMode.TabIndex = 21;
+            // 
+            // tbSeasonSearchTerms
+            // 
+            this.tbSeasonSearchTerms.Location = new System.Drawing.Point(113, 329);
+            this.tbSeasonSearchTerms.Name = "tbSeasonSearchTerms";
+            this.tbSeasonSearchTerms.Size = new System.Drawing.Size(279, 20);
+            this.tbSeasonSearchTerms.TabIndex = 20;
+            // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(6, 332);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(109, 13);
+            this.label36.TabIndex = 19;
+            this.label36.Text = "Season search terms:";
+            // 
+            // txtSeasonFolderName
+            // 
+            this.txtSeasonFolderName.Location = new System.Drawing.Point(113, 305);
+            this.txtSeasonFolderName.Name = "txtSeasonFolderName";
+            this.txtSeasonFolderName.Size = new System.Drawing.Size(279, 20);
+            this.txtSeasonFolderName.TabIndex = 18;
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(6, 308);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(109, 13);
+            this.label35.TabIndex = 17;
+            this.label35.Text = "&Seasons folder name:";
+            // 
             // bnReplaceRemove
             // 
-            this.bnReplaceRemove.Location = new System.Drawing.Point(90, 149);
+            this.bnReplaceRemove.Location = new System.Drawing.Point(90, 91);
             this.bnReplaceRemove.Name = "bnReplaceRemove";
             this.bnReplaceRemove.Size = new System.Drawing.Size(75, 23);
             this.bnReplaceRemove.TabIndex = 3;
@@ -745,7 +867,7 @@ namespace TVRename
             // 
             // bnReplaceAdd
             // 
-            this.bnReplaceAdd.Location = new System.Drawing.Point(9, 149);
+            this.bnReplaceAdd.Location = new System.Drawing.Point(9, 91);
             this.bnReplaceAdd.Name = "bnReplaceAdd";
             this.bnReplaceAdd.Size = new System.Drawing.Size(75, 23);
             this.bnReplaceAdd.TabIndex = 2;
@@ -765,7 +887,7 @@ namespace TVRename
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(228, 335);
+            this.label19.Location = new System.Drawing.Point(228, 355);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(55, 13);
             this.label19.TabIndex = 15;
@@ -773,7 +895,7 @@ namespace TVRename
             // 
             // txtMaxSampleSize
             // 
-            this.txtMaxSampleSize.Location = new System.Drawing.Point(172, 332);
+            this.txtMaxSampleSize.Location = new System.Drawing.Point(172, 352);
             this.txtMaxSampleSize.Name = "txtMaxSampleSize";
             this.txtMaxSampleSize.Size = new System.Drawing.Size(53, 20);
             this.txtMaxSampleSize.TabIndex = 14;
@@ -782,7 +904,7 @@ namespace TVRename
             // label22
             // 
             this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(3, 215);
+            this.label22.Location = new System.Drawing.Point(3, 157);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(89, 13);
             this.label22.TabIndex = 6;
@@ -790,7 +912,7 @@ namespace TVRename
             // 
             // txtOtherExtensions
             // 
-            this.txtOtherExtensions.Location = new System.Drawing.Point(99, 212);
+            this.txtOtherExtensions.Location = new System.Drawing.Point(99, 154);
             this.txtOtherExtensions.Name = "txtOtherExtensions";
             this.txtOtherExtensions.Size = new System.Drawing.Size(293, 20);
             this.txtOtherExtensions.TabIndex = 7;
@@ -798,7 +920,7 @@ namespace TVRename
             // cbForceLower
             // 
             this.cbForceLower.AutoSize = true;
-            this.cbForceLower.Location = new System.Drawing.Point(6, 357);
+            this.cbForceLower.Location = new System.Drawing.Point(6, 377);
             this.cbForceLower.Name = "cbForceLower";
             this.cbForceLower.Size = new System.Drawing.Size(167, 17);
             this.cbForceLower.TabIndex = 16;
@@ -808,7 +930,7 @@ namespace TVRename
             // cbIgnoreSamples
             // 
             this.cbIgnoreSamples.AutoSize = true;
-            this.cbIgnoreSamples.Location = new System.Drawing.Point(6, 334);
+            this.cbIgnoreSamples.Location = new System.Drawing.Point(6, 354);
             this.cbIgnoreSamples.Name = "cbIgnoreSamples";
             this.cbIgnoreSamples.Size = new System.Drawing.Size(166, 17);
             this.cbIgnoreSamples.TabIndex = 13;
@@ -1175,6 +1297,16 @@ namespace TVRename
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
+            // 
+            // cbCleanUpDownloadDir
+            // 
+            this.cbCleanUpDownloadDir.AutoSize = true;
+            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(16, 244);
+            this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
+            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(276, 17);
+            this.cbCleanUpDownloadDir.TabIndex = 11;
+            this.cbCleanUpDownloadDir.Text = "Clean up already copied files from download directory";
+            this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
             // 
             // label32
             // 
@@ -2044,16 +2176,6 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // cbCleanUpDownloadDir
-            // 
-            this.cbCleanUpDownloadDir.AutoSize = true;
-            this.cbCleanUpDownloadDir.Location = new System.Drawing.Point(16, 244);
-            this.cbCleanUpDownloadDir.Name = "cbCleanUpDownloadDir";
-            this.cbCleanUpDownloadDir.Size = new System.Drawing.Size(276, 17);
-            this.cbCleanUpDownloadDir.TabIndex = 11;
-            this.cbCleanUpDownloadDir.Text = "Clean up already copied files from download directory";
-            this.cbCleanUpDownloadDir.UseVisualStyleBackColor = true;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2145,7 +2267,6 @@ namespace TVRename
 
         private System.Windows.Forms.TextBox txtWTWDays;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox cbStartupTab;
         private System.Windows.Forms.Label label6;
 
@@ -2304,5 +2425,17 @@ namespace TVRename
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.CheckBox cbAutoCreateFolders;
         private System.Windows.Forms.CheckBox cbCleanUpDownloadDir;
+        private System.Windows.Forms.ComboBox cbMode;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.TextBox txtSeasonFolderName;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.TextBox tbSeasonSearchTerms;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.TextBox tbPercentDirty;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.ComboBox cbKeepTogetherMode;
+        private System.Windows.Forms.TextBox txtKeepTogether;
     }
 }

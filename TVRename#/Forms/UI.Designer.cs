@@ -72,6 +72,8 @@ namespace TVRename
             this.backgroundDownloadNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.folderMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.betaToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.torrentMatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -194,6 +196,7 @@ namespace TVRename
             this.fileToolStripMenuItem,
             this.optionsToolStripMenuItem,
             this.toolsToolStripMenuItem,
+            this.betaToolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -330,12 +333,7 @@ namespace TVRename
             this.flushCacheToolStripMenuItem,
             this.backgroundDownloadNowToolStripMenuItem,
             this.toolStripSeparator3,
-            this.folderMonitorToolStripMenuItem,
-            this.actorsToolStripMenuItem,
-            this.toolStripSeparator4,
-            this.torrentMatchToolStripMenuItem,
-            this.uTorrentToolStripMenuItem,
-            this.showSummaryToolStripMenuItem});
+            this.folderMonitorToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -369,30 +367,51 @@ namespace TVRename
             this.folderMonitorToolStripMenuItem.Text = "Folder &Monitor";
             this.folderMonitorToolStripMenuItem.Click += new System.EventHandler(this.folderMonitorToolStripMenuItem_Click);
             // 
+            // betaToolsToolStripMenuItem
+            // 
+            this.betaToolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.dToolStripMenuItem,
+            this.showSummaryToolStripMenuItem,
+            this.actorsToolStripMenuItem,
+            this.toolStripSeparator4,
+            this.torrentMatchToolStripMenuItem,
+            this.uTorrentToolStripMenuItem});
+            this.betaToolsToolStripMenuItem.Name = "betaToolsToolStripMenuItem";
+            this.betaToolsToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
+            this.betaToolsToolStripMenuItem.Text = "Beta";
+            this.betaToolsToolStripMenuItem.Click += new System.EventHandler(this.betaToolsToolStripMenuItem_Click);
+            // 
+            // dToolStripMenuItem
+            // 
+            this.dToolStripMenuItem.Name = "dToolStripMenuItem";
+            this.dToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.dToolStripMenuItem.Text = "Duplicate Episodes";
+            this.dToolStripMenuItem.Click += new System.EventHandler(this.dToolStripMenuItem_Click);
+            // 
             // actorsToolStripMenuItem
             // 
             this.actorsToolStripMenuItem.Image = global::TVRename.Properties.Resources.TableHS;
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.actorsToolStripMenuItem.Text = "&Actors Grid";
             this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(261, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(159, 6);
             // 
             // torrentMatchToolStripMenuItem
             // 
             this.torrentMatchToolStripMenuItem.Name = "torrentMatchToolStripMenuItem";
-            this.torrentMatchToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.torrentMatchToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.torrentMatchToolStripMenuItem.Text = "&Torrent Match";
             this.torrentMatchToolStripMenuItem.Click += new System.EventHandler(this.torrentMatchToolStripMenuItem_Click);
             // 
             // uTorrentToolStripMenuItem
             // 
             this.uTorrentToolStripMenuItem.Name = "uTorrentToolStripMenuItem";
-            this.uTorrentToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.uTorrentToolStripMenuItem.Size = new System.Drawing.Size(162, 22);
             this.uTorrentToolStripMenuItem.Text = "&uTorrent Save To";
             this.uTorrentToolStripMenuItem.Click += new System.EventHandler(this.uTorrentToolStripMenuItem_Click);
             // 
@@ -965,6 +984,7 @@ namespace TVRename
             this.columnHeader56,
             this.columnHeader58});
             this.lvAction.FullRowSelect = true;
+
             listViewGroup1.Header = "Missing";
             listViewGroup1.Name = "lvgActionMissing";
             listViewGroup2.Header = "Rename";
@@ -1203,6 +1223,7 @@ namespace TVRename
             this.columnHeader34,
             this.columnHeader35});
             this.lvWhenToWatch.FullRowSelect = true;
+
             listViewGroup10.Header = "Recently Aired";
             listViewGroup10.Name = "justPassed";
             listViewGroup11.Header = "Next 7 Days";
@@ -1218,6 +1239,7 @@ namespace TVRename
             listViewGroup11,
             listViewGroup12,
             listViewGroup13});
+
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -1431,8 +1453,8 @@ namespace TVRename
             // showSummaryToolStripMenuItem
             // 
             this.showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
-            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
-            this.showSummaryToolStripMenuItem.Text = "ShowSummary";
+            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.showSummaryToolStripMenuItem.Text = "Show Summary";
             this.showSummaryToolStripMenuItem.Click += new System.EventHandler(this.showSummaryToolStripMenuItem_Click);
             // checkForNewVersionToolStripMenuItem
             // 
@@ -1440,6 +1462,7 @@ namespace TVRename
             this.checkForNewVersionToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             this.checkForNewVersionToolStripMenuItem.Text = "Check for new Version";
             this.checkForNewVersionToolStripMenuItem.Click += new System.EventHandler(this.checkForNewVersionToolStripMenuItem_Click);
+
             // 
             // UI
             // 
@@ -1608,8 +1631,8 @@ namespace TVRename
         private System.Windows.Forms.TextBox filterTextBox;
         private System.Windows.Forms.ToolStripMenuItem visitSupportForumToolStripMenuItem;
         private System.Windows.Forms.WebBrowser webBrowserImages;
+        private System.Windows.Forms.ToolStripMenuItem betaToolsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showSummaryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForNewVersionToolStripMenuItem;
-
     }
 }
