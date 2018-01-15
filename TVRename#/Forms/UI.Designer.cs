@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -171,6 +171,7 @@ namespace TVRename
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
+            this.showSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForNewVersionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -333,7 +334,8 @@ namespace TVRename
             this.actorsToolStripMenuItem,
             this.toolStripSeparator4,
             this.torrentMatchToolStripMenuItem,
-            this.uTorrentToolStripMenuItem});
+            this.uTorrentToolStripMenuItem,
+            this.showSummaryToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             this.toolsToolStripMenuItem.Text = "&Tools";
@@ -1426,6 +1428,12 @@ namespace TVRename
             this.quickTimer.Interval = 1;
             this.quickTimer.Tick += new System.EventHandler(this.quickTimer_Tick);
             // 
+            // showSummaryToolStripMenuItem
+            // 
+            this.showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
+            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
+            this.showSummaryToolStripMenuItem.Text = "ShowSummary";
+            this.showSummaryToolStripMenuItem.Click += new System.EventHandler(this.showSummaryToolStripMenuItem_Click);
             // checkForNewVersionToolStripMenuItem
             // 
             this.checkForNewVersionToolStripMenuItem.Name = "checkForNewVersionToolStripMenuItem";
@@ -1600,6 +1608,8 @@ namespace TVRename
         private System.Windows.Forms.TextBox filterTextBox;
         private System.Windows.Forms.ToolStripMenuItem visitSupportForumToolStripMenuItem;
         private System.Windows.Forms.WebBrowser webBrowserImages;
+        private System.Windows.Forms.ToolStripMenuItem showSummaryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForNewVersionToolStripMenuItem;
+
     }
 }

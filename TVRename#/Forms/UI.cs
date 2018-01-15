@@ -3574,7 +3574,12 @@ namespace TVRename
             this.UpdateActionCheckboxes();
         }
 
-        private void bnHideHTMLPanel_Click(object sender, EventArgs e)
+        		         private void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+         {
+            new ShowSummary(this.mDoc).ShowDialog();
+         }
+
+    private void bnHideHTMLPanel_Click(object sender, EventArgs e)
         {
             if (splitContainer1.Panel2Collapsed)
             {
@@ -3670,6 +3675,5 @@ namespace TVRename
             this.mDoc.CheckForUpdates();
 
         }
-
     }
 }
