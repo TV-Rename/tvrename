@@ -73,12 +73,12 @@ namespace TVRename
             //See https://github.com/TV-Rename/tvrename/issues/241 for background
 
             IEnumerable<string>  seasonWordsFromShows = from si in this.ShowItems select si.AutoAdd_SeasonFolderName.Trim();
-            List<string> results =  seasonWordsFromShows.ToList();
+            List<string> results =  seasonWordsFromShows.Distinct().ToList();
 
             results.Add(TVSettings.Instance.defaultSeasonWord);
             results.AddRange(TVSettings.Instance.searchSeasonWordsArray);
 
-            return results.Distinct();
+            return results.Where(t => !String.IsNullOrWhiteSpace(t)).Distinct();
         }
 
 
