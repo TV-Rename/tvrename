@@ -66,11 +66,20 @@ namespace TVRename
         private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
 
         private List<Finder> Finders;
-        readonly string[] SeasonWords = { "Season", // EN
-            "Saison", // FR, DE
-            "temporada", // ES
-            "Seizoen" //Dutch
-        }; // TODO: move into settings, and allow user to edit these
+
+        private IEnumerable<string>  SeasonWords()
+        {
+            //See https://github.com/TV-Rename/tvrename/issues/241 for background
+
+            IEnumerable<string>  seasonWordsFromShows = from si in this.ShowItems select si.AutoAdd_SeasonFolderName.Trim();
+            List<string> results =  seasonWordsFromShows.ToList();
+
+            results.Add(TVSettings.Instance.defaultSeasonWord);
+            results.AddRange(TVSettings.Instance.searchSeasonWordsArray);
+
+            return results.Distinct();
+        }
+
 
 
         public List<String> getGenres()
@@ -290,7 +299,7 @@ namespace TVRename
             try
             {
                 // keep in sync with ProcessAddItems, etc.
-                foreach (string sw in SeasonWords)
+                foreach (string sw in SeasonWords())
                 {
                     DirectoryInfo[] di2 = di.GetDirectories("*" + sw + " *");
                     if (di2.Length == 0)
@@ -1152,9 +1161,9 @@ namespace TVRename
             // Assume is blah\blah\blah\show\season X
             string showName = ai.Folder;
 
-            foreach (string seasonWord in this.SeasonWords)
+            foreach (string seasonWord in this.SeasonWords())
             {
-                string seasonFinder = ".*" + seasonWord + "[ _\\.]+([0-9]+).*"; // todo: don't look for just one season word
+                string seasonFinder = ".*" + seasonWord + "[ _\\.]+([0-9]+).*"; 
                 if (Regex.Matches(showName, seasonFinder, RegexOptions.IgnoreCase).Count == 0)
                     continue;
 
@@ -2020,6 +2029,7 @@ namespace TVRename
             //if so add show to list of files to be removed
 
             DirFilesCache dfc = new DirFilesCache();
+
 
             foreach (String dirPath in SearchFolders)
             {
