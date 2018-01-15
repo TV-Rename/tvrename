@@ -3666,7 +3666,16 @@ namespace TVRename
 
         private void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.mDoc.CheckForUpdates();
+            UpdateVersion update =  this.mDoc.CheckForUpdates();
+
+            if (update is null) {
+                MessageBox.Show(@"There is no update available please try again later.", @"No update available",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            UpdateNotification  unForm = new UpdateNotification(update);
+            unForm.ShowDialog();
 
 
         }

@@ -73,7 +73,6 @@ namespace TVRename
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.folderMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.betaToolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.dToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.torrentMatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -370,7 +369,6 @@ namespace TVRename
             // betaToolsToolStripMenuItem
             // 
             this.betaToolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.dToolStripMenuItem,
             this.showSummaryToolStripMenuItem,
             this.actorsToolStripMenuItem,
             this.toolStripSeparator4,
@@ -379,14 +377,7 @@ namespace TVRename
             this.betaToolsToolStripMenuItem.Name = "betaToolsToolStripMenuItem";
             this.betaToolsToolStripMenuItem.Size = new System.Drawing.Size(42, 20);
             this.betaToolsToolStripMenuItem.Text = "Beta";
-            this.betaToolsToolStripMenuItem.Click += new System.EventHandler(this.betaToolsToolStripMenuItem_Click);
-            // 
-            // dToolStripMenuItem
-            // 
-            this.dToolStripMenuItem.Name = "dToolStripMenuItem";
-            this.dToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
-            this.dToolStripMenuItem.Text = "Duplicate Episodes";
-            this.dToolStripMenuItem.Click += new System.EventHandler(this.dToolStripMenuItem_Click);
+            
             // 
             // actorsToolStripMenuItem
             // 

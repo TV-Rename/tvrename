@@ -33,7 +33,7 @@ namespace TVRename.Forms
             this.btnDownloadNow = new System.Windows.Forms.Button();
             this.bnReleaseNotes = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbReleaseNotes = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -90,18 +90,17 @@ namespace TVRename.Forms
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
-            // textBox1
+            // tbReleaseNotes
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tbReleaseNotes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(26, 92);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(342, 171);
-            this.textBox1.TabIndex = 5;
+            this.tbReleaseNotes.Location = new System.Drawing.Point(26, 92);
+            this.tbReleaseNotes.Multiline = true;
+            this.tbReleaseNotes.Name = "tbReleaseNotes";
+            this.tbReleaseNotes.Size = new System.Drawing.Size(342, 171);
+            this.tbReleaseNotes.TabIndex = 5;
             // 
             // lblStatus
             // 
@@ -119,7 +118,7 @@ namespace TVRename.Forms
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(380, 333);
             this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.tbReleaseNotes);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.bnReleaseNotes);
             this.Controls.Add(this.btnDownloadNow);
@@ -144,7 +143,7 @@ namespace TVRename.Forms
         private System.Windows.Forms.Button btnDownloadNow;
         private System.Windows.Forms.Button bnReleaseNotes;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox tbReleaseNotes;
         private System.Windows.Forms.Label lblStatus;
     }
 }
