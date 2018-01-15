@@ -149,18 +149,23 @@ namespace TVRename
             this.Items = new System.Collections.Generic.Dictionary<string, string>();
             this.Seasons = new System.Collections.Generic.Dictionary<int, Season>();
 
-            this.AllBanners = new System.Collections.Generic.Dictionary<int, Banner>();
-            this.SeasonBanners = new System.Collections.Generic.Dictionary<int, Banner>();
-            this.SeasonLangBanners = new System.Collections.Generic.Dictionary<int, Banner>();
-            this.SeasonWideBanners = new System.Collections.Generic.Dictionary<int, Banner>();
-            this.SeasonLangWideBanners = new System.Collections.Generic.Dictionary<int, Banner>();
 
             this.Dirty = false;
             this.Name = "";
             this.AirsTime = null;
             this.TVDBCode = -1;
             this.LanguageId = -1;
+            resetBanners();
+        }
+
+        public void resetBanners()
+        {
             this.BannersLoaded = false;
+            this.AllBanners = new System.Collections.Generic.Dictionary<int, Banner>();
+            this.SeasonBanners = new System.Collections.Generic.Dictionary<int, Banner>();
+            this.SeasonLangBanners = new System.Collections.Generic.Dictionary<int, Banner>();
+            this.SeasonWideBanners = new System.Collections.Generic.Dictionary<int, Banner>();
+            this.SeasonLangWideBanners = new System.Collections.Generic.Dictionary<int, Banner>();
 
             this.bestSeriesPosterId = -1;
             this.bestSeriesBannerId = -1;
@@ -168,6 +173,7 @@ namespace TVRename
             this.bestSeriesLangPosterId = -1;
             this.bestSeriesLangBannerId = -1;
             this.bestSeriesLangFanartId = -1;
+
         }
 
         public void Merge(SeriesInfo o, int preferredLanguageId)
@@ -574,14 +580,15 @@ namespace TVRename
 
         public string GetSeriesWideBannerPath()
         {
-            //firstly choose the one the TVDB recommended
-            if (!string.IsNullOrEmpty(GetItem("banner"))) return GetItem("banner");
 
-            //then try the best one we've found with the correct language
+            //ry the best one we've found with the correct language
             if (bestSeriesLangBannerId != -1) return AllBanners[bestSeriesLangBannerId].BannerPath;
 
             //if there are none with the righ tlanguage then try one from another language
             if (bestSeriesBannerId  != -1) return AllBanners[bestSeriesBannerId].BannerPath;
+
+            //then choose the one the TVDB recommended _LOWERED IN PRIORITY AFTER LEVERAGE issue - https://github.com/TV-Rename/tvrename/issues/285
+            if (!string.IsNullOrEmpty(GetItem("banner"))) return GetItem("banner");
 
             //give up
             return "";
