@@ -106,19 +106,16 @@ If you wish to remove a rule from the list just select it and click `Remove`.
 
 ### The General Tab
 ![Preferences - the General tab](images/options/preferences-general-01.png){:.pic-l}
-_When to watch_ "X" _days count as recent_
-Specifies how many recent days are listed for the for "Aired in the last N days" section of the [When to Watch](userguide#when-to-watch "Read about When to Watch") tab.
+The number in _When to watch_ "X" _days count as recent_ specifies how many recent days are listed for the for "Aired in the last N days" section of the [When to Watch](userguide#when-to-watch "Read about When to Watch") tab.
 
 _Default:_ ***7 days***
 
-_Double-click in When to Watch does:_
-Controls the double-click action in the [When to Watch](userguide#when-to-watch "Read about When to Watch") tab. Options are Search and Scan.
+The _Double-click in When to Watch does:_ radio buttons control the double-click action in the [When to Watch](userguide#when-to-watch "Read about When to Watch") tab. Options are Search and Scan.
 
 _Default:_ ***Search***
 
 {:.clear}
-_Startup Tab:_
-Selects which tab you wish open when TV Rename loads. ***My&nbsp;Shows***, ***Search*** or ***When to Watch***.
+The _Startup Tab:_ setting selects which tab you wish open when TV Rename loads. ***My&nbsp;Shows***, ***Search*** or ***When to Watch***.
 
 _Default:_ ***My Shows***
 
@@ -132,28 +129,23 @@ Both boxes can be ticked, in which case you get both functionalities.
 |---|---|---|
 | | "Show in Taskbar" | ***Ticked*** |
 
-_Show episode pictures in episode guides_
-Does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the ***My&nbsp;Shows*** tab. If un-ticked only the episode description is displayed.
+_Show episode pictures in episode guides_ does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the ***My&nbsp;Shows*** tab. If un-ticked only the episode description is displayed.
 
 _Default:_ ***Ticked***
 
-_Download up to_ "X" _shows simultaneously from [The TVDB](http://thetvdb.com "Visit TheTVDB.com")_ <br />
-Sets the number of concurrent connections to TheTVDB API. It can be set in the range to 1 to 8.
+_Download up to_ "X" _shows simultaneously from The TVDB_ sets the number of concurrent connections to TheTVDB API. It can be set in the range to 1 to 8.
 
 _Default:_ ***4***
 
-_Refresh entire series if "X" % of episodes are updated_ <br /> 
-Sets the point at which TV Rename "decides" to do a full refresh of a show when updating data. This functionality is useful if for example you have a set of show recordings which you are replacing with DVD rips and the data structure is different.
+_Refresh entire series if_ "X" _% of episodes are updated_ sets the point at which TV Rename "decides" to do a full refresh of a show when updating data. This functionality is useful if for example you have a set of show recordings which you are replacing with DVD rips and the data structure is different.
 
 _Default:_ ***20*** 
 
-_Automatically select show and season in My&nbsp;Shows_
-If ticked this works for both the ***When to watch*** and ***Scan*** tabs. If an item is selected in either of these tabs the ***My&nbsp;Shows*** tab is automatically updated to highlight the indicated show and season.
+_Automatically select show and season in My&nbsp;Shows_ if ticked, works for both the ***When to watch*** and ***Scan*** tabs. If an item is selected in either of these tabs the ***My&nbsp;Shows*** tab is automatically updated to highlight the indicated show and season.
 
 _Default:_ ***Ticked***
 
-_Look for air date in filenames_
-If ticked this provides a second method of identifying show episodes by looking for a date (in a number of formats) in the shows filename and comparing that against the air-date.
+_Look for air date in filenames_ if ticked, provides a second method of identifying show episodes by looking for a date (in a number of formats) in the shows filename and comparing that against the air-date.
 
 The supported date formats are: "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy" and "MM-dd-yy"
 
@@ -161,15 +153,13 @@ And the "date separators" can be any of: - / . , " " (a space)
 
 _Default:_ ***Un-ticked***
 
-_Preferred language:_
-This option sets the language for returned data when requesting information from TheTVDB API. TV Rename will request "English" If the selected language is not available.
+_Preferred language:_ sets the language for returned data when requesting information from TheTVDB API. TV Rename will request "English" If the selected language is not available.
 
-_Mode:_
-This option (new in Version 2.3.2) allows you to preview functionality that is being worked on but not yet ready for the mainstream releases. The options available are "Production" and "Beta".
+The _Mode:_ drop-down, (new in Version 2.3.2) allows you to preview functionality that is being worked on but not yet ready for the mainstream releases. The options available are "Production" and "Beta".
 
-In production mode the application looks and behaves as normal.
+In Production mode the application looks and behaves as normal.
 
-In beta mode a new menu called **Beta** appears between **Tools** and **Help** which gives you access to preview upcoming additions and enhancements.
+In Beta mode a new menu called **Beta** appears between **Tools** and **Help** which gives you access to preview upcoming additions and enhancements.
 
 _Default:_ ***Production***
 
@@ -194,7 +184,7 @@ If the filename contains a character that isn't supported in a windows filename 
 |---|---|
 | *.tbn* |A KODI/XBMC specific jpeg.
 
-It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.sub and BigBuckBunny.nfo. This helps keep them organised.
+It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.srt and BigBuckBunny.nfo. This helps keep them organised.
 
 TV Rename knows this, hence the "Copy/Move file with same base name as video" tick-box. Which gives you the ability to turn this functionality on or off.
 
@@ -202,7 +192,7 @@ _Default:_ ***Ticked***
 
 The "Do" drop-down and text box underneath provide a degree of granularity to this function.
 
-Subtitle files come in a number of guises of which one of the most common is a .sub file. These are text files structured in a way that media players can establish the start time, finish time and content of a subtitle and display it. Quite often sources for these files give them a .txt extension, for example: BigBuckBunny.txt. Ticking the "Rename .txt to .sub" option will tell TV Rename to rename these files when copied or moved.
+Subtitle files come in a number of guises of which one of the most common is a .srt file. These are text files structured in a way that media players can establish the start time, finish time and content of a subtitle and display it. Quite often sources for these files give them a .txt extension, for example: BigBuckBunny.txt. Ticking the "Rename .txt to .srt" option will tell TV Rename to rename these files when copied or moved.
 
 _Default:_ ***Un-ticked***
 
