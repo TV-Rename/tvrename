@@ -659,5 +659,41 @@ namespace TVRename
             }
             return (sb.ToString().Normalize(NormalizationForm.FormC));
         }
+
+        internal static bool GreaterVersionString(string versionNumber1, string versionNumber2)
+        {
+            //Returns true iff versionNumber 1 > versionNumber2
+
+            //First check to see that they both have text
+            if (String.IsNullOrWhiteSpace(versionNumber2)) return true;
+            if (String.IsNullOrWhiteSpace(versionNumber1)) return false;
+
+            char[] endings = new char[] {'-', ' '};
+
+            //Extract Version Numbers and then compare them
+            string strVersion1 = (versionNumber1.LastIndexOfAny(endings) >0) ? versionNumber1.Substring(0, versionNumber1.LastIndexOfAny(endings)):versionNumber1;
+            string strVersion2 = (versionNumber2.LastIndexOfAny(endings) > 0) ? versionNumber2.Substring(0, versionNumber2.LastIndexOfAny(endings)):versionNumber2;
+
+            Version v1 = new Version(strVersion1);
+            Version v2 = new Version(strVersion2);
+
+            if (v1.CompareTo(v2) >0) return true;
+            if (v1.CompareTo(v2) < 0) return false;
+
+
+            //We have the same version - now we have to get tricky and look at the extension (rc1, beta2 etc)
+
+            //If either are not present then you can assume they are FINAL versions and trump any rx1 verisons
+            if (versionNumber1.LastIndexOfAny(endings) == -1) return true;
+            if (versionNumber2.LastIndexOfAny(endings) == -1) return false;
+
+            //We have 1 suffixes
+            string suffix1 = versionNumber1.Substring(versionNumber1.LastIndexOfAny(endings)+1);
+            string suffix2 = versionNumber2.Substring(versionNumber2.LastIndexOfAny(endings)+1);
+
+            //Compare alphabetically alpha1 < alpha2 < beta1 < beta2 < rc1 < rc2 etc
+            return (String.Compare(suffix1, suffix2, StringComparison.Ordinal) > 0);
+
+        }
     }
 }

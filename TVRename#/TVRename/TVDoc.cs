@@ -3039,44 +3039,76 @@ namespace TVRename
             return shows;
         }
 
-        private const string GITHUB_RELEASES_URL = "https://github.com/TV-Rename/tvrename/releases/latest";
-        private const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases/latest";
-
         public UpdateVersion CheckForUpdates()
         {
-            WebClient client = new WebClient();
-            client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-
-            string response = client.DownloadString(GITHUB_RELEASES_API_URL);
-
-            JObject gitHubInfo = JObject.Parse(response);
+            const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
 
             //TODO - catch Errors if GitHub page has changed or is no longer json
 
-            string latestVersion = gitHubInfo["tag_name"].ToString();
-            string downloadUrl = gitHubInfo["assets"][0]["browser_download_url"].ToString();
-            string releaseNotes = gitHubInfo["body"].ToString();
-            DateTime.TryParse(gitHubInfo["published_at"].ToString(), out DateTime releaseDate);
-            bool isBeta = gitHubInfo["prerelease"].ToString()=="true'";
-
             string currentVersion = Helpers.DisplayVersion;
+            bool inDebug = currentVersion.EndsWith(" ** Debug Build **");
+            //remove debug stuff
+            if (inDebug) currentVersion = currentVersion.Substring(0, currentVersion.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
 
-            if (currentVersion != latestVersion)
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+            string response = client.DownloadString(GITHUB_RELEASES_API_URL);
+            JArray gitHubInfo = JArray.Parse(response);
+
+            UpdateVersion latestVersion = null;
+            UpdateVersion latestBetaVersion = null;
+
+            foreach (JObject gitHubReleaseJSON in gitHubInfo.Children<JObject>())
             {
-                return new UpdateVersion
+                DateTime.TryParse(gitHubReleaseJSON["published_at"].ToString(), out DateTime releaseDate);
+
+                try
                 {
-                    DownloadUrl = downloadUrl,
-                    ReleaseNotesText = releaseNotes,
-                    VersionNumber = latestVersion,
-                    ReleaseNotesUrl = GITHUB_RELEASES_URL,
-                    ReleaseDate = releaseDate, 
-                    IsBeta = isBeta
-                };
+                    UpdateVersion testVersion = new UpdateVersion
+                    {
+                        DownloadUrl = gitHubReleaseJSON["assets"][0]["browser_download_url"].ToString(),
+                        ReleaseNotesText = gitHubReleaseJSON["body"].ToString(),
+                        VersionNumber = gitHubReleaseJSON["tag_name"].ToString(),
+                        ReleaseNotesUrl = gitHubReleaseJSON["html_url"].ToString(),
+                        ReleaseDate = releaseDate,
+                        IsBeta = (gitHubReleaseJSON["prerelease"].ToString() == "True")
+                    };
+                    if (testVersion.IsBeta)
+                    {
+                        if (Helpers.GreaterVersionString(testVersion.VersionNumber, latestBetaVersion?.VersionNumber)) latestBetaVersion = testVersion;
+                    }
+                    else
+                    {
+                        if (Helpers.GreaterVersionString(testVersion.VersionNumber, latestVersion?.VersionNumber)) latestVersion = testVersion;
+                    }
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    continue;
 
+                }
 
+                
 
             }
-            else return null;
+
+            if (latestVersion == null)
+            {
+                logger.Error("Could not find latest version information from GitHub");
+                return null;
+            }
+
+            if (latestBetaVersion == null)
+            {
+                logger.Error("Could not find latest beta version information from GitHub");
+                return null;
+            }
+
+            if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) && (Helpers.GreaterVersionString(latestVersion.VersionNumber, currentVersion))) return latestVersion;
+
+            if ((TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo) && (Helpers.GreaterVersionString(latestBetaVersion.VersionNumber, currentVersion))) return latestBetaVersion;
+
+            return null;
         }
     }
 

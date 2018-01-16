@@ -96,9 +96,11 @@ namespace TVRename.Forms
             this.tbReleaseNotes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbReleaseNotes.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.tbReleaseNotes.Location = new System.Drawing.Point(26, 92);
             this.tbReleaseNotes.Multiline = true;
             this.tbReleaseNotes.Name = "tbReleaseNotes";
+            this.tbReleaseNotes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.tbReleaseNotes.Size = new System.Drawing.Size(342, 171);
             this.tbReleaseNotes.TabIndex = 5;
             // 
@@ -117,6 +119,7 @@ namespace TVRename.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(380, 333);
+            this.ControlBox = false;
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.tbReleaseNotes);
             this.Controls.Add(this.btnCancel);
@@ -125,10 +128,11 @@ namespace TVRename.Forms
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(350, 350);
             this.Name = "UpdateNotification";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Available Update";
             this.TopMost = true;
             this.ResumeLayout(false);
