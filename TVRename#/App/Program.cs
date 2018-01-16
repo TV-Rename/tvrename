@@ -26,6 +26,8 @@ namespace TVRename.App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(GlobalExceptionHandler);
+
             // Check if an application instance is already running
             Mutex mutex = new Mutex(true, "TVRename", out bool newInstance);
 
@@ -107,5 +109,12 @@ namespace TVRename.App
 
             Logger.Info("Application exiting");
         }
+    
+    static void GlobalExceptionHandler(object sender, UnhandledExceptionEventArgs args)
+    {
+        Exception e = (Exception) args.ExceptionObject;
+        Logger.Fatal("UNHANDLED ERROR",e);
     }
+}
+
 }
