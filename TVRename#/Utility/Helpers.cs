@@ -692,7 +692,7 @@ namespace TVRename
             string suffix2 = versionNumber2.Substring(versionNumber2.LastIndexOfAny(endings)+1);
 
             //Compare alphabetically alpha1 < alpha2 < beta1 < beta2 < rc1 < rc2 etc
-            return (String.Compare(suffix1, suffix2, StringComparison.Ordinal) > 0);
+            return (String.Compare(suffix1, suffix2, StringComparison.OrdinalIgnoreCase) > 0);
 
         }
     }
