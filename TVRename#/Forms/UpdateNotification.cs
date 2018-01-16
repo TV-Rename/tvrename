@@ -12,7 +12,7 @@ namespace TVRename.Forms
             this.newVersion = update;
             InitializeComponent();
             this.tbReleaseNotes.Text = this.newVersion.ReleaseNotesText;
-            this.lblStatus.Text = $@"There is new version {update.VersionNumber} available since {update.ReleaseDate}.";
+            this.lblStatus.Text = $@"There is new version {update.VersionNumber} available since "+ update.ReleaseDate.ToLocalTime() + ".";
         }
 
         private void bnReleaseNotes_Click(object sender, EventArgs e)

@@ -164,6 +164,9 @@ namespace TVRename
             if (TVSettings.Instance.MonitorFolders)
                 this.mAutoFolderMonitor.StartMonitor();
 
+            updateSplashStatus(splash, "Update Available?");
+
+            SearchForUpdates(false);
             //splash.Close();
         }
 
@@ -3667,25 +3670,38 @@ namespace TVRename
 
         private void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateVersion update =  this.mDoc.CheckForUpdates();
+            SearchForUpdates(true);
+        }
 
-            if (update is null) {
-                MessageBox.Show(@"There is no update available please try again later.", @"No update available",
-                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        private void SearchForUpdates(bool showNoUpdateRequiredDialog)
+        {
+            UpdateVersion update = this.mDoc.CheckForUpdates();
+
+            if (update is null  )
+            {
+                //this.btnUpdateAvailable.Visible = false;
+                if (showNoUpdateRequiredDialog) {
+                    MessageBox.Show(@"There is no update available please try again later.", @"No update available",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);}
                 return;
             }
 
-            UpdateNotification  unForm = new UpdateNotification(update);
+            UpdateNotification unForm = new UpdateNotification(update);
             unForm.ShowDialog();
-
-
+            //this.btnUpdateAvailable.Visible = true;
         }
+
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.mDoc.findDoubleEps();
             MessageBox.Show("Please review the log file for files which are possibly double episodes",
                 "Double Episode Finder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnUpdateAvailable_Click(object sender, EventArgs e)
+        {
+            SearchForUpdates(true);
         }
     }
 }
