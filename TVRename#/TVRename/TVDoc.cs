@@ -19,6 +19,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Xml;
 using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
@@ -505,22 +506,31 @@ namespace TVRename
         {
             System.Diagnostics.Debug.Assert(this.WorkerSemaphore != null);
 
-            this.WorkerSemaphore.WaitOne(); // don't start until we're allowed to
-
-            int code = (int)(codeIn);
-
-            bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
-
-            threadslogger.Trace("  Downloading " + code);
-            bool r = TheTVDB.Instance.EnsureUpdated(code, bannersToo);
-            threadslogger.Trace("  Finished " + code);
-            if (!r)
+            try
             {
-                this.DownloadOK = false;
-                if (this.DownloadStopOnError)
-                    this.DownloadDone = true;
+                this.WorkerSemaphore.WaitOne(); // don't start until we're allowed to
+
+                int code = (int) (codeIn);
+
+                bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
+
+                threadslogger.Trace("  Downloading " + code);
+                bool r = TheTVDB.Instance.EnsureUpdated(code, bannersToo);
+                threadslogger.Trace("  Finished " + code);
+                if (!r)
+                {
+                    this.DownloadOK = false;
+                    if (this.DownloadStopOnError)
+                        this.DownloadDone = true;
+                }
+
+                this.WorkerSemaphore.Release(1);
             }
-            this.WorkerSemaphore.Release(1);
+            catch (Exception e)
+            {
+                logger.Fatal("Unhandled Exception in GetThread", e);
+                return;
+            }
         }
 
         public void WaitForAllThreadsAndTidyUp()
@@ -569,9 +579,9 @@ namespace TVRename
                     codes.Add(si.TVDBCode);
                 this.UnlockShowItems();
 
-                
+
                 int numWorkers = TVSettings.Instance.ParallelDownloads;
-                logger.Info("Setting up {0} threads to download information from TVDB.com",numWorkers);
+                logger.Info("Setting up {0} threads to download information from TVDB.com", numWorkers);
                 this.Workers = new List<Thread>();
 
                 this.WorkerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
@@ -587,7 +597,8 @@ namespace TVRename
                     this.Workers.Add(t);
                     t.Name = "GetThread:" + code;
                     t.Start(code); // will grab the semaphore as soon as we make it available
-                    int nfr = this.WorkerSemaphore.Release(1); // release our hold on the semaphore, so that worker can grab it
+                    int nfr = this.WorkerSemaphore
+                        .Release(1); // release our hold on the semaphore, so that worker can grab it
                     threadslogger.Trace("Started " + code + " pool has " + nfr + " free");
                     Thread.Sleep(1); // allow the other thread a chance to run and grab
 
@@ -609,10 +620,18 @@ namespace TVRename
                 this.DownloadOK = true;
                 return;
             }
-            catch (ThreadAbortException)
+            catch (ThreadAbortException taa)
             {
                 this.DownloadDone = true;
                 this.DownloadOK = false;
+                logger.Error(taa);
+                return;
+            }
+            catch (Exception e)
+            {
+                this.DownloadDone = true;
+                this.DownloadOK = false;
+                logger.Fatal("UNHANDLED EXCEPTION IN DOWNLOAD THREAD",e);
                 return;
             }
             finally
@@ -630,8 +649,7 @@ namespace TVRename
             this.DownloadPct = 0;
             this.DownloadDone = false;
             this.DownloadOK = true;
-            this.mDownloaderThread = new Thread(this.Downloader);
-            this.mDownloaderThread.Name = "Downloader";
+            this.mDownloaderThread = new Thread(this.Downloader) {Name = "Downloader"};
             this.mDownloaderThread.Start();
         }
 
@@ -1446,22 +1464,29 @@ namespace TVRename
 
         public void ProcessSingleAction(Object infoIn)
         {
-            ProcessActionInfo info = infoIn as ProcessActionInfo;
-            if (info == null)
-                return;
+            try {
+                ProcessActionInfo info = infoIn as ProcessActionInfo;
+                if (info == null)
+                    return;
 
-            this.ActionSemaphores[info.SemaphoreNumber].WaitOne(); // don't start until we're allowed to
-            this.ActionStarting = false; // let our creator know we're started ok
+                this.ActionSemaphores[info.SemaphoreNumber].WaitOne(); // don't start until we're allowed to
+                this.ActionStarting = false; // let our creator know we're started ok
 
-            Action action = info.TheAction;
-            if (action != null)
-            {
-                logger.Trace("Triggering Action: {0} - {1} - {32", action.Name, action.produces, action.ToString());
-                action.Go(ref this.ActionPause, mStats);
+                Action action = info.TheAction;
+                if (action != null)
+                {
+                    logger.Trace("Triggering Action: {0} - {1} - {32", action.Name, action.produces, action.ToString());
+                    action.Go(ref this.ActionPause, mStats);
+                }
+
+
+                this.ActionSemaphores[info.SemaphoreNumber].Release(1);
             }
-                
-
-            this.ActionSemaphores[info.SemaphoreNumber].Release(1);
+            catch (Exception e)
+            {
+                logger.Fatal("Unhandled Exception in Process Single Action", e);
+                return;
+            }
         }
 
         public ActionQueue[] ActionProcessorMakeQueues(ScanListItemList theList)
@@ -1514,88 +1539,103 @@ namespace TVRename
 #if DEBUG
             System.Diagnostics.Debug.Assert(queuesIn is ActionQueue[]);
 #endif
-            ActionQueue[] queues = queuesIn as ActionQueue[];
-            if (queues == null)
-                return;
-
-            int N = queues.Length;
-
-            this.ActionWorkers = new List<Thread>();
-            this.ActionSemaphores = new Semaphore[N];
-
-            for (int i = 0; i < N; i++)
-            {
-                this.ActionSemaphores[i] = new Semaphore(queues[i].ParallelLimit, queues[i].ParallelLimit); // allow up to numWorkers working at once
-                logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name, queues[i].ParallelLimit, i);
-            }
-                
-
             try
             {
-                for (; ; )
-                {
-                    while (this.ActionPause)
-                        Thread.Sleep(100);
+                ActionQueue[] queues = queuesIn as ActionQueue[];
 
-                    // look through the list of semaphores to see if there is one waiting for some work to do
-                    bool allDone = true;
-                    int which = -1;
-                    for (int i = 0; i < N; i++)
+                if (queues == null)
+                    return;
+
+                int N = queues.Length;
+
+                this.ActionWorkers = new List<Thread>();
+                this.ActionSemaphores = new Semaphore[N];
+
+                for (int i = 0; i < N; i++)
+                {
+                    this.ActionSemaphores[i] =
+                        new Semaphore(queues[i].ParallelLimit,
+                            queues[i].ParallelLimit); // allow up to numWorkers working at once
+                    logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name,
+                        queues[i].ParallelLimit, i);
+                }
+
+
+                try
+                {
+                    for (;;)
                     {
-                        // something to do in this queue, and semaphore is available
-                        if (queues[i].ActionPosition < queues[i].Actions.Count)
+                        while (this.ActionPause)
+                            Thread.Sleep(100);
+
+                        // look through the list of semaphores to see if there is one waiting for some work to do
+                        bool allDone = true;
+                        int which = -1;
+                        for (int i = 0; i < N; i++)
                         {
-                            allDone = false;
-                            if (this.ActionSemaphores[i].WaitOne(20, false))
+                            // something to do in this queue, and semaphore is available
+                            if (queues[i].ActionPosition < queues[i].Actions.Count)
                             {
-                                which = i;
-                                break;
+                                allDone = false;
+                                if (this.ActionSemaphores[i].WaitOne(20, false))
+                                {
+                                    which = i;
+                                    break;
+                                }
                             }
                         }
-                    }
-                    if ((which == -1) && (allDone))
-                        break; // all done!
 
-                    if (which == -1)
-                        continue; // no semaphores available yet, try again for one
+                        if ((which == -1) && (allDone))
+                            break; // all done!
 
-                    ActionQueue Q = queues[which];
-                    Action act = Q.Actions[Q.ActionPosition++];
+                        if (which == -1)
+                            continue; // no semaphores available yet, try again for one
 
-                    if (act == null)
-                        continue;
+                        ActionQueue Q = queues[which];
+                        Action act = Q.Actions[Q.ActionPosition++];
 
-                    if (!act.Done)
-                    {
-                        Thread t = new Thread(this.ProcessSingleAction)
+                        if (act == null)
+                            continue;
+
+                        if (!act.Done)
                         {
-                            Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"
-                        };
-                        this.ActionWorkers.Add(t);
-                        this.ActionStarting = true; // set to false in thread after it has the semaphore
-                        t.Start(new ProcessActionInfo(which, act));
+                            Thread t = new Thread(this.ProcessSingleAction)
+                            {
+                                Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"
+                            };
+                            this.ActionWorkers.Add(t);
+                            this.ActionStarting = true; // set to false in thread after it has the semaphore
+                            t.Start(new ProcessActionInfo(which, act));
 
-                        int nfr = this.ActionSemaphores[which].Release(1); // release our hold on the semaphore, so that worker can grab it
-                        threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
+                            int nfr = this.ActionSemaphores[which]
+                                .Release(1); // release our hold on the semaphore, so that worker can grab it
+                            threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
+                        }
+
+                        while (this.ActionStarting) // wait for thread to get the semaphore
+                            Thread.Sleep(10); // allow the other thread a chance to run and grab
+
+                        // tidy up any finished workers
+                        for (int i = this.ActionWorkers.Count - 1; i >= 0; i--)
+                        {
+                            if (!this.ActionWorkers[i].IsAlive)
+                                this.ActionWorkers.RemoveAt(i); // remove dead worker
+                        }
                     }
 
-                    while (this.ActionStarting) // wait for thread to get the semaphore
-                        Thread.Sleep(10); // allow the other thread a chance to run and grab
-
-                    // tidy up any finished workers
-                    for (int i = this.ActionWorkers.Count - 1; i >= 0; i--)
-                    {
-                        if (!this.ActionWorkers[i].IsAlive)
-                            this.ActionWorkers.RemoveAt(i); // remove dead worker
-                    }
+                    this.WaitForAllActionThreadsAndTidyUp();
                 }
-                this.WaitForAllActionThreadsAndTidyUp();
+                catch (ThreadAbortException)
+                {
+                    foreach (Thread t in this.ActionWorkers)
+                        t.Abort();
+                    this.WaitForAllActionThreadsAndTidyUp();
+                }
             }
-            catch (ThreadAbortException)
+            catch (Exception e)
             {
-                foreach (Thread t in this.ActionWorkers)
-                    t.Abort();
-                this.WaitForAllActionThreadsAndTidyUp();
+                logger.Fatal("Unhandled Exception in ActionProcessor", e);
+                return;
             }
         }
 
@@ -1676,8 +1716,7 @@ namespace TVRename
             if (!this.DoDownloadsFG())
                 return;
 
-            Thread ActionWork = new Thread(this.ScanWorker);
-            ActionWork.Name = "ActionWork";
+            Thread actionWork = new Thread(this.ScanWorker) {Name = "ActionWork"};
 
             this.ActionCancel = false;
             foreach (Finder f in Finders) { f.reset(); }
@@ -1692,16 +1731,16 @@ namespace TVRename
             else
                 this.ScanProgDlg = null;
 
-            ActionWork.Start(shows);
+            actionWork.Start(shows);
 
             if ((this.ScanProgDlg != null) && (this.ScanProgDlg.ShowDialog() == DialogResult.Cancel))
             {
                 this.ActionCancel = true;
-                ActionWork.Interrupt();
+                actionWork.Interrupt();
                 foreach (Finder f in Finders) { f.interrupt(); }
             }
             else
-                ActionWork.Join();
+                actionWork.Join();
 
             this.ScanProgDlg = null;
 
@@ -2473,101 +2512,115 @@ namespace TVRename
 
         public void ScanWorker(Object o)
         {
-            List<ShowItem> specific = (List<ShowItem>)(o);
-
-            while (!this.Args.Hide && ((this.ScanProgDlg == null) || (!this.ScanProgDlg.Ready)))
-                Thread.Sleep(10); // wait for thread to create the dialog
-
-            this.TheActionList = new ItemList();
-            SetProgressDelegate noProgress = this.NoProgress;
-
-            if (TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck)
-                this.RenameAndMissingCheck(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.MediaLibProg, specific);
-
-            if (TVSettings.Instance.RemoveDownloadDirectoriesFiles)
-                this.FindUnusedFilesInDLDirectory(specific);
-
-            if (TVSettings.Instance.MissingCheck)
+            try
             {
-                // have a look around for any missing episodes
-                int activeLocalFinders = 0;
-                int activeRSSFinders = 0;
-                int activeDownloadingFinders = 0;
+                List<ShowItem> specific = (List<ShowItem>) (o);
 
-                foreach (Finder f in Finders)
+
+                while (!this.Args.Hide && ((this.ScanProgDlg == null) || (!this.ScanProgDlg.Ready)))
+                    Thread.Sleep(10); // wait for thread to create the dialog
+
+                this.TheActionList = new ItemList();
+                SetProgressDelegate noProgress = this.NoProgress;
+
+                if (TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck)
+                    this.RenameAndMissingCheck(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.MediaLibProg,
+                        specific);
+
+                if (TVSettings.Instance.RemoveDownloadDirectoriesFiles)
+                    this.FindUnusedFilesInDLDirectory(specific);
+
+                if (TVSettings.Instance.MissingCheck)
                 {
-                    if (f.Active())
-                    {
-                        f.setActionList(this.TheActionList);
+                    // have a look around for any missing episodes
+                    int activeLocalFinders = 0;
+                    int activeRSSFinders = 0;
+                    int activeDownloadingFinders = 0;
 
-                        switch (f.DisplayType())
+                    foreach (Finder f in Finders)
+                    {
+                        if (f.Active())
                         {
-                            case Finder.FinderDisplayType.Local:
-                                activeLocalFinders++;
-                                break;
-                            case Finder.FinderDisplayType.Downloading:
-                                activeDownloadingFinders++;
-                                break;
-                            case Finder.FinderDisplayType.RSS:
-                                activeRSSFinders++;
-                                break;
+                            f.setActionList(this.TheActionList);
+
+                            switch (f.DisplayType())
+                            {
+                                case Finder.FinderDisplayType.Local:
+                                    activeLocalFinders++;
+                                    break;
+                                case Finder.FinderDisplayType.Downloading:
+                                    activeDownloadingFinders++;
+                                    break;
+                                case Finder.FinderDisplayType.RSS:
+                                    activeRSSFinders++;
+                                    break;
+                            }
+                        }
+                    }
+
+                    int currentLocalFinderId = 0;
+                    int currentRSSFinderId = 0;
+                    int currentDownloadingFinderId = 0;
+
+                    foreach (Finder f in Finders)
+                    {
+                        if (this.ActionCancel)
+                        {
+                            return;
+                        }
+
+                        if (f.Active() && this.ListHasMissingItems(this.TheActionList))
+                        {
+
+                            int startPos = 0;
+                            int endpos = 0;
+
+                            switch (f.DisplayType())
+                            {
+                                case Finder.FinderDisplayType.Local:
+                                    currentLocalFinderId++;
+                                    startPos = 100 * (currentLocalFinderId - 1) / activeLocalFinders;
+                                    startPos = 100 * (currentLocalFinderId) / activeLocalFinders;
+                                    f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.LocalSearchProg,
+                                        startPos, endpos);
+                                    break;
+                                case Finder.FinderDisplayType.Downloading:
+                                    currentDownloadingFinderId++;
+                                    startPos = 100 * (currentDownloadingFinderId - 1) / activeDownloadingFinders;
+                                    startPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
+                                    f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.DownloadingProg,
+                                        startPos, endpos);
+                                    break;
+                                case Finder.FinderDisplayType.RSS:
+                                    currentRSSFinderId++;
+                                    startPos = 100 * (currentRSSFinderId - 1) / activeRSSFinders;
+                                    startPos = 100 * (currentRSSFinderId) / activeRSSFinders;
+                                    f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.RSSProg, startPos,
+                                        endpos);
+                                    break;
+                            }
+
+                            this.RemoveIgnored();
                         }
                     }
                 }
 
-                int currentLocalFinderId = 0;
-                int currentRSSFinderId = 0;
-                int currentDownloadingFinderId = 0;
+                if (this.ActionCancel)
+                    return;
 
-                foreach (Finder f in Finders)
-                {
-                    if (this.ActionCancel)
-                    {
-                        return;
-                    }
+                // sort Action list by type
+                this.TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
 
-                    if (f.Active() && this.ListHasMissingItems(this.TheActionList))
-                    {
+                if (this.ScanProgDlg != null)
+                    this.ScanProgDlg.Done();
 
-                        int startPos = 0;
-                        int endpos = 0;
-
-                        switch (f.DisplayType())
-                        {
-                            case Finder.FinderDisplayType.Local:
-                                currentLocalFinderId++;
-                                startPos = 100 * (currentLocalFinderId - 1) / activeLocalFinders;
-                                startPos = 100 * (currentLocalFinderId) / activeLocalFinders;
-                                f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.LocalSearchProg, startPos, endpos);
-                                break;
-                            case Finder.FinderDisplayType.Downloading:
-                                currentDownloadingFinderId++;
-                                startPos = 100 * (currentDownloadingFinderId - 1) / activeDownloadingFinders;
-                                startPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
-                                f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.DownloadingProg, startPos, endpos);
-                                break;
-                            case Finder.FinderDisplayType.RSS:
-                                currentRSSFinderId++;
-                                startPos = 100 * (currentRSSFinderId - 1) / activeRSSFinders;
-                                startPos = 100 * (currentRSSFinderId) / activeRSSFinders;
-                                f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.RSSProg, startPos, endpos);
-                                break;
-                        }
-
-                        this.RemoveIgnored();
-                    }
-                }
+                this.Stats().FindAndOrganisesDone++;
             }
-            if (this.ActionCancel)
+            catch (Exception e)
+            {
+                logger.Fatal("Unhandled Exception in ScanWorker",e);
                 return;
-
-            // sort Action list by type
-            this.TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
-
-            if (this.ScanProgDlg != null)
-                this.ScanProgDlg.Done();
-
-            this.Stats().FindAndOrganisesDone++;
+            }
         }
 
         public static bool MatchesSequentialNumber(string filename, ref int seas, ref int ep, ProcessedEpisode pe)

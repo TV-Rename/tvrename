@@ -31,6 +31,7 @@ namespace TVRename
         private TVDoc mDoc;
         private Thread LoadLanguageThread;
         private String EnterPreferredLanguage; // hold here until background language download task is done
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private LoadLanguageDoneDel LoadLanguageDone;
 
@@ -920,6 +921,11 @@ namespace TVRename
             }
             catch (ThreadAbortException)
             {
+                aborted = true;
+            }
+            catch (Exception e)
+            {
+                logger.Fatal("Unhandled Exception in LoadLanguages", e);
                 aborted = true;
             }
             TheTVDB.Instance.Unlock("Preferences-LoadLanguages");
