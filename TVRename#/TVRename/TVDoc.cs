@@ -25,6 +25,7 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
+using Newtonsoft.Json.Linq;
 
 namespace TVRename
 {
@@ -66,11 +67,20 @@ namespace TVRename
         private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
 
         private List<Finder> Finders;
-        readonly string[] SeasonWords = { "Season", // EN
-            "Saison", // FR, DE
-            "temporada", // ES
-            "Seizoen" //Dutch
-        }; // TODO: move into settings, and allow user to edit these
+
+        private IEnumerable<string>  SeasonWords()
+        {
+            //See https://github.com/TV-Rename/tvrename/issues/241 for background
+
+            IEnumerable<string>  seasonWordsFromShows = from si in this.ShowItems select si.AutoAdd_SeasonFolderName.Trim();
+            List<string> results =  seasonWordsFromShows.Distinct().ToList();
+
+            results.Add(TVSettings.Instance.defaultSeasonWord);
+            results.AddRange(TVSettings.Instance.searchSeasonWordsArray);
+
+            return results.Where(t => !String.IsNullOrWhiteSpace(t)).Distinct();
+        }
+
 
 
         public List<String> getGenres()
@@ -290,7 +300,7 @@ namespace TVRename
             try
             {
                 // keep in sync with ProcessAddItems, etc.
-                foreach (string sw in SeasonWords)
+                foreach (string sw in SeasonWords())
                 {
                     DirectoryInfo[] di2 = di.GetDirectories("*" + sw + " *");
                     if (di2.Length == 0)
@@ -1152,9 +1162,9 @@ namespace TVRename
             // Assume is blah\blah\blah\show\season X
             string showName = ai.Folder;
 
-            foreach (string seasonWord in this.SeasonWords)
+            foreach (string seasonWord in this.SeasonWords())
             {
-                string seasonFinder = ".*" + seasonWord + "[ _\\.]+([0-9]+).*"; // todo: don't look for just one season word
+                string seasonFinder = ".*" + seasonWord + "[ _\\.]+([0-9]+).*"; 
                 if (Regex.Matches(showName, seasonFinder, RegexOptions.IgnoreCase).Count == 0)
                     continue;
 
@@ -1716,7 +1726,7 @@ namespace TVRename
 
             DoActions(theList);
         }
-        private void findDoubleEps()
+        protected internal void findDoubleEps()
         {
             StringBuilder output = new StringBuilder();
 
@@ -2020,6 +2030,12 @@ namespace TVRename
             //if so add show to list of files to be removed
 
             DirFilesCache dfc = new DirFilesCache();
+
+            //When doing a fullscan the showlist is null indicating that all shows should be checked
+            if (showList is null)
+            {
+                showList = this.ShowItems;
+            }
 
             foreach (String dirPath in SearchFolders)
             {
@@ -2969,6 +2985,58 @@ namespace TVRename
             }
             return shows;
         }
+
+        private const string GITHUB_RELEASES_URL = "https://github.com/TV-Rename/tvrename/releases/latest";
+        private const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases/latest";
+
+        public UpdateVersion CheckForUpdates()
+        {
+            WebClient client = new WebClient();
+            client.Headers.Add("user-agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+
+            string response = client.DownloadString(GITHUB_RELEASES_API_URL);
+
+            JObject gitHubInfo = JObject.Parse(response);
+
+            //TODO - catch Errors if GitHub page has changed or is no longer json
+
+            string latestVersion = gitHubInfo["tag_name"].ToString();
+            string downloadUrl = gitHubInfo["assets"][0]["browser_download_url"].ToString();
+            string releaseNotes = gitHubInfo["body"].ToString();
+            DateTime.TryParse(gitHubInfo["published_at"].ToString(), out DateTime releaseDate);
+            bool isBeta = gitHubInfo["prerelease"].ToString()=="true'";
+
+            string currentVersion = Helpers.DisplayVersion;
+
+            if (currentVersion != latestVersion)
+            {
+                return new UpdateVersion
+                {
+                    DownloadUrl = downloadUrl,
+                    ReleaseNotesText = releaseNotes,
+                    VersionNumber = latestVersion,
+                    ReleaseNotesUrl = GITHUB_RELEASES_URL,
+                    ReleaseDate = releaseDate, 
+                    IsBeta = isBeta
+                };
+
+
+
+            }
+            else return null;
+        }
     }
+
+    public class UpdateVersion
+    {
+        public string VersionNumber {get;set;}
+        public string DownloadUrl { get; set; }
+        public string ReleaseNotesText { get; set; }
+        public string ReleaseNotesUrl { get; set; }
+        public bool IsBeta { get; set; }
+        public DateTime ReleaseDate { get; set; }
+    }
+
 }
+
 

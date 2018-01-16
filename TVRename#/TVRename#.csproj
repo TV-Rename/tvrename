@@ -88,6 +88,12 @@
     <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
+    <Compile Include="Forms\UpdateNotification.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\UpdateNotification.Designer.cs">
+      <DependentUpon>UpdateNotification.cs</DependentUpon>
+    </Compile>
     <Compile Include="Ipc\IRemoteActions.cs" />
     <Compile Include="Ipc\RemoteClient.cs" />
     <Compile Include="Custom Controls\ListViewFlickerFree.cs">
@@ -121,6 +127,12 @@
     </Compile>
     <Compile Include="Forms\Filters.Designer.cs">
       <DependentUpon>Filters.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ShowSummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ShowSummary.Designer.cs">
+      <DependentUpon>ShowSummary.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\TVRenameSplash.cs">
       <SubType>Form</SubType>
@@ -356,6 +368,9 @@
     <EmbeddedResource Include="Forms\FolderMonitorProgress.resx">
       <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\UpdateNotification.resx">
+      <DependentUpon>UpdateNotification.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\IgnoreEdit.resx">
       <DependentUpon>IgnoreEdit.cs</DependentUpon>

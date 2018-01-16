@@ -10,10 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 
 namespace TVRename
@@ -90,6 +87,16 @@ namespace TVRename
                 this.txtOtherExtensions.Focus();
                 return;
             }
+            if (!TVSettings.OKExtensionsString(this.txtKeepTogether.Text))
+            {
+                MessageBox.Show(
+                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
+                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.tabControl1.SelectedTab = tbFilesAndFolders;
+                this.txtKeepTogether.Focus();
+                return;
+            }
+
             TVSettings S = TVSettings.Instance;
 
             S.Replacements.Clear();
@@ -133,6 +140,9 @@ namespace TVRename
             S.AutoSelectShowInMyShows = this.cbAutoSelInMyShows.Checked;
             S.AutoCreateFolders = this.cbAutoCreateFolders.Checked ;  
             S.SpecialsFolderName = this.txtSpecialsFolderName.Text;
+            S.searchSeasonWordsString = this.tbSeasonSearchTerms.Text;
+            S.defaultSeasonWord = this.txtSeasonFolderName.Text;
+            S.keepTogetherExtensionsString = this.txtKeepTogether.Text;
 
             S.ForceLowercaseFilenames = this.cbForceLower.Checked;
             S.IgnoreSamples = this.cbIgnoreSamples.Checked;
@@ -199,6 +209,26 @@ namespace TVRename
             else
                 S.SelectedKODIType = TVSettings.KODIType.Both;
 
+            if (this.cbMode.Text == "Beta")
+            {
+                S.mode = TVSettings.BetaMode.BetaToo;
+            }
+            else
+            {
+                S.mode = TVSettings.BetaMode.ProductionOnly;
+            }
+
+            if (this.cbKeepTogetherMode.Text == "all but")
+            {
+                S.keepTogetherMode = TVSettings.KeepTogetherModes.AllBut;
+            } else if (this.cbKeepTogetherMode.Text == "just")
+
+            {
+                S.keepTogetherMode = TVSettings.KeepTogetherModes.Just;
+            }
+            else
+                S.keepTogetherMode = TVSettings.KeepTogetherModes.All;
+
 
             TheTVDB.Instance.GetLock("Preferences-OK");
             foreach (Language l in TheTVDB.Instance.LanguageList)
@@ -225,6 +255,20 @@ namespace TVRename
             {
                 S.SampleFileMaxSizeMB = 50;
             }
+
+            try
+            {
+                S.upgradeDirtyPercent = float.Parse(this.tbPercentDirty.Text);
+            }
+            catch
+            {
+                S.upgradeDirtyPercent = 20;
+            }
+            if (S.upgradeDirtyPercent < 1)
+                S.upgradeDirtyPercent = 1;
+            else if (S.upgradeDirtyPercent > 100)
+                S.upgradeDirtyPercent = 100;
+
 
             try
             {
@@ -270,12 +314,10 @@ namespace TVRename
             this.SetupLanguages();
 
             TVSettings S = TVSettings.Instance;
-            int r = 1;
 
             foreach (Replacement R in S.Replacements)
             {
                 this.AddNewReplacementRow(R.This, R.That, R.CaseInsensitive);
-                r++;
             }
 
             this.txtMaxSampleSize.Text = S.SampleFileMaxSizeMB.ToString();
@@ -308,6 +350,8 @@ namespace TVRename
             this.cbNotificationIcon.Checked = S.NotificationAreaIcon;
             this.txtVideoExtensions.Text = S.GetVideoExtensionsString();
             this.txtOtherExtensions.Text = S.GetOtherExtensionsString();
+            this.txtKeepTogether.Text = S.GetKeepTogetherString();
+            this.tbSeasonSearchTerms.Text = S.GetSeasonSearchTermsString();
 
             this.cbKeepTogether.Checked = S.KeepTogether;
             this.cbKeepTogether_CheckedChanged(null, null);
@@ -328,6 +372,7 @@ namespace TVRename
             this.cbCheckSABnzbd.Checked = S.CheckSABnzbd;
 
             this.txtParallelDownloads.Text = S.ParallelDownloads.ToString();
+            this.tbPercentDirty.Text = S.upgradeDirtyPercent.ToString();
 
             this.cbSearchRSS.Checked = S.SearchRSS;
             this.cbEpTBNs.Checked = S.EpTBNs;
@@ -353,6 +398,7 @@ namespace TVRename
             this.cbShrinkLarge.Checked = S.ShrinkLargeMede8erImages;
             this.cbFantArtJpg.Checked = S.FanArtJpg;
 
+
 #if DEBUG
             System.Diagnostics.Debug.Assert(S.Tidyup != null);
 #endif
@@ -364,6 +410,8 @@ namespace TVRename
             this.txtEmptyIgnoreExtensions.Text = S.Tidyup.EmptyIgnoreExtensionList;
             this.cbEmptyMaxSize.Checked = S.Tidyup.EmptyMaxSizeCheck;
             this.txtEmptyMaxSize.Text = S.Tidyup.EmptyMaxSizeMB.ToString();
+            this.txtSeasonFolderName.Text = S.defaultSeasonWord;
+
 
 
             switch (S.WTWDoubleClick)
@@ -375,6 +423,31 @@ namespace TVRename
                 case TVSettings.WTWDoubleClickAction.Scan:
                     this.rbWTWScan.Checked = true;
                     break;
+            }
+            switch(S.keepTogetherMode)
+            {
+                case TVSettings.KeepTogetherModes.All:
+                default:
+                    this.cbKeepTogetherMode.Text = "All";
+                    break;
+                case TVSettings.KeepTogetherModes.AllBut:
+                    this.cbKeepTogetherMode.Text = "all but";
+                    break;
+                case TVSettings.KeepTogetherModes.Just:
+                    this.cbKeepTogetherMode.Text = "just";
+                    break;
+            }
+
+            switch (S.mode)
+            {
+                case TVSettings.BetaMode.ProductionOnly:
+                default:
+                    this.cbMode.Text = "Production";
+                    break;
+                case TVSettings.BetaMode.BetaToo:
+                    this.cbMode.Text = "Beta";
+                    break;
+
             }
 
             this.EnableDisable(null, null);
@@ -527,6 +600,9 @@ namespace TVRename
         private void cbKeepTogether_CheckedChanged(object sender, System.EventArgs e)
         {
             this.cbTxtToSub.Enabled = this.cbKeepTogether.Checked;
+            this.txtKeepTogether.Enabled = this.cbKeepTogether.Checked;
+            this.cbKeepTogetherMode.Enabled = this.cbKeepTogether.Checked;
+            this.label39.Enabled = this.cbKeepTogether.Checked;
         }
 
         private void bnBrowseMissingCSV_Click(object sender, System.EventArgs e)

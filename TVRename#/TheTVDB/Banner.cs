@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -161,7 +161,7 @@ namespace TVRename
             this.BannerPath = (string)json["fileName"];
             this.BannerId = (int)json["id"];
             this.BannerType = (string)json["keyType"];
-            this.LanguageId = LangId;//(json["languageId"] == null) ? -1 : (int)json["languageId"];
+            this.LanguageId = (json["languageId"] == null) ? LangId  : (int)json["languageId"];
             
             double.TryParse((string)(json["ratingsInfo"]["average"]), out this.Rating);
             this.RatingCount = (int)(json["ratingsInfo"]["count"]);

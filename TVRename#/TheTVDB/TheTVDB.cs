@@ -856,7 +856,8 @@ namespace TVRename
             }
 
             this.Say("Upgrading dirty locks");
-            // if more than 10% of a show's episodes are marked as dirty, just download the entire show again
+
+            // if more than x% of a show's episodes are marked as dirty, just download the entire show again
             foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
             {
                 int totaleps = 0;
@@ -873,7 +874,7 @@ namespace TVRename
 
                 float percentDirty = 100;
                 if (totaldirty > 0 || totaleps > 0) percentDirty = 100 * totaldirty / totaleps;
-                if ((totaleps>0) && ((percentDirty) >=10)) // 10%
+                if ((totaleps>0) && ((percentDirty) >= TVSettings.Instance.PercentDirtyUpgrade())) // 10%
                 {
                     kvp.Value.Dirty = true;
                     kvp.Value.Seasons.Clear();
