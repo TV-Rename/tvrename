@@ -1,11 +1,16 @@
 #### Tools
 ![The Tools Menu](images/tools/menu-01.png){:.pic-r}
-Here you can find tools to update, manipulate and annihilate the data relating to your Media Library and [The TVDB](http://thetvdb.com "Visit TheTVDB.com") cache. You can do some clever stuff manipulating and re-creating torrent files.
+Here you can find tools to update, manipulate and annihilate the data relating to your Media Library and [The TVDB](http://thetvdb.com "Visit TheTVDB.com") cache.
+
+<!--
+You can do some clever stuff manipulating and re-creating torrent files.
 
 And you can finally sort out once-and-for-all which shows your favourite actors are in, what else they've been in, and who acts in your favourite shows.
 
 If you're in a hurry use the links on the left to jump to a specific item.
+-->
 
+{:.clear}
 ## Force Refresh All
 ![Force Refresh All](images/tools/force-refresh-all-01.png){:.pic-l}
 If TV Rename's representation of your Media Library is a mess then this is probably the tool for you.

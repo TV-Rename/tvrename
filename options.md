@@ -62,7 +62,7 @@ Three buttons are available at the bottom of the tab. `Add` opens an explorer st
 
 At the top of the tab the "Monitor folders for changes" tick box tell TV Rename to automatically check for new files in the identified locations and the ["Scan Type"](userguide#scan-types) radio buttons tell TV Rename the type of scan to perform if anything is found.
 
-| *Defaults:* | "Folder Monitor" | ***Un-ticked*** |
+| _Defaults:_ | "Folder Monitor" | ***Un-ticked*** |
 |---|---|---|
 | | "Scan type" | ***Full*** |
 
@@ -88,7 +88,7 @@ TV Rename also needs to know the µTorrent "Application" and "resume.dat" paths,
 
 ### The Tree Coloring Tab
 ![Preferences - the Tree Coloring tab](images/options/preferences-tree-coloring-01.png){:.pic-l}
-If you're like me and have a large catalogue of old TV Shows, the ***My&nbsp;Shows*** tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. ***Tree Coloring*** to the rescue...
+If you have a large catalogue of old TV Shows, the ***My&nbsp;Shows*** tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. ***Tree Coloring*** to the rescue...
 
 Tree coloring allows you to change the color of the text on the left hand pane of the ***My&nbsp;Shows*** tab depending on the status of the show or the show season.
 
@@ -106,58 +106,72 @@ If you wish to remove a rule from the list just select it and click `Remove`.
 
 ### The General Tab
 ![Preferences - the General tab](images/options/preferences-general-01.png){:.pic-l}
-*When to watch* "X" *days count as recent*
-Specifies how many recent days are listed for the for "Aired in the last N days" section of the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab.
+_When to watch_ "X" _days count as recent_
+Specifies how many recent days are listed for the for "Aired in the last N days" section of the [When to Watch](userguide#when-to-watch "Read about When to Watch") tab.
 
-*Default:* ***7 days***
+_Default:_ ***7 days***
 
-*Double-click in When to Watch does:*
-Controls the double-click action in the ***[When to Watch](userguide#when-to-watch "Read about When to Watch")*** tab. Options are Search and Scan.
+_Double-click in When to Watch does:_
+Controls the double-click action in the [When to Watch](userguide#when-to-watch "Read about When to Watch") tab. Options are Search and Scan.
 
-*Default:* ***Search***
+_Default:_ ***Search***
 
 {:.clear}
-*Startup Tab:*
+_Startup Tab:_
 Selects which tab you wish open when TV Rename loads. ***My&nbsp;Shows***, ***Search*** or ***When to Watch***.
 
-*Default:* ***My Shows***
+_Default:_ ***My Shows***
 
-The *Show Notification Area* and *Show in Taskbar* interact, one of them **must** be ticked. If you try to un-tick both the option you are changing clears, but the other one automatically sets.
+"Show Notification Area" and "Show in Taskbar" interact, one of them **must** be ticked. If you try to un-tick both the option you are changing clears, but the other one automatically sets.
 
-If *Show in Taskbar* is selected TV Rename's icon appears in the Windows taskbar.<br />
-If *Show Notification Area* is selected TV Rename's icon appears in the System Tray. Right-clicking it will show an "Upcoming Shows" list, and double clicking restores the main window.<br />
+If "Show in Taskbar" is selected TV Rename's icon appears in the Windows taskbar.<br />
+If "Show Notification Area" is selected TV Rename's icon appears in the System Tray. Right-clicking it will show an "Upcoming Shows" list, and double clicking restores the main window.<br />
 Both boxes can be ticked, in which case you get both functionalities.
 
-| *Defaults:* | "Show Notification Area" | ***Un-ticked*** |
+| _Defaults:_ | "Show Notification Area" | ***Un-ticked*** |
 |---|---|---|
 | | "Show in Taskbar" | ***Ticked*** |
 
-*Show episode pictures in episode guides*
+_Show episode pictures in episode guides_
 Does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the ***My&nbsp;Shows*** tab. If un-ticked only the episode description is displayed.
 
-*Default:* ***Ticked***
+_Default:_ ***Ticked***
 
-*Download up to "X" shows simultaneously from [The TVDB](http://thetvdb.com "Visit TheTVDB.com") *<br />
+_Download up to_ "X" _shows simultaneously from [The TVDB](http://thetvdb.com "Visit TheTVDB.com")_ <br />
 Sets the number of concurrent connections to TheTVDB API. It can be set in the range to 1 to 8.
 
-*Default:* ***4***
+_Default:_ ***4***
 
-*Automatically select show and season in My&nbsp;Shows*
+_Refresh entire series if "X" % of episodes are updated_ <br /> 
+Sets the point at which TV Rename "decides" to do a full refresh of a show when updating data. This functionality is useful if for example you have a set of show recordings which you are replacing with DVD rips and the data structure is different.
+
+_Default:_ ***20*** 
+
+_Automatically select show and season in My&nbsp;Shows_
 If ticked this works for both the ***When to watch*** and ***Scan*** tabs. If an item is selected in either of these tabs the ***My&nbsp;Shows*** tab is automatically updated to highlight the indicated show and season.
 
-*Default:* ***Ticked***
+_Default:_ ***Ticked***
 
-*Look for air date in filenames*
+_Look for air date in filenames_
 If ticked this provides a second method of identifying show episodes by looking for a date (in a number of formats) in the shows filename and comparing that against the air-date.
 
 The supported date formats are: "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy" and "MM-dd-yy"
 
 And the "date separators" can be any of: - / . , " " (a space)
 
-*Default:* ***Un-ticked***
+_Default:_ ***Un-ticked***
 
-*Preferred language:*
+_Preferred language:_
 This option sets the language for returned data when requesting information from TheTVDB API. TV Rename will request "English" If the selected language is not available.
+
+_Mode:_
+This option (new in Version 2.3.2) allows you to preview functionality that is being worked on but not yet ready for the mainstream releases. The options available are "Production" and "Beta".
+
+In production mode the application looks and behaves as normal.
+
+In beta mode a new menu called **Beta** appears between **Tools** and **Help** which gives you access to preview upcoming additions and enhancements.
+
+_Default:_ ***Production***
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -180,9 +194,39 @@ If the filename contains a character that isn't supported in a windows filename 
 |---|---|
 | *.tbn* |A KODI/XBMC specific jpeg.
 
-It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.srt and BigBuckBunny.nfo. This helps keep them organised.
+It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.sub and BigBuckBunny.nfo. This helps keep them organised.
 
-The rest of the options are straightforward and need little explanation.
+TV Rename knows this, hence the "Copy/Move file with same base name as video" tick-box. Which gives you the ability to turn this functionality on or off.
+
+_Default:_ ***Ticked***
+
+The "Do" drop-down and text box underneath provide a degree of granularity to this function.
+
+Subtitle files come in a number of guises of which one of the most common is a .sub file. These are text files structured in a way that media players can establish the start time, finish time and content of a subtitle and display it. Quite often sources for these files give them a .txt extension, for example: BigBuckBunny.txt. Ticking the "Rename .txt to .sub" option will tell TV Rename to rename these files when copied or moved.
+
+_Default:_ ***Un-ticked***
+
+The next four items affect how TV Rename creates folders in your Media Library and recognises seasons when searching.
+
+The "Leading 0 on Season Numbers" tick-box simply tells TV Rename to use "Season 01"  instead of "Season 1" etc. when creating new folders.
+
+_Default:_ ***Un-ticked***
+
+The "Specials folder name:" text box allows you to modify the name used when creating a "Specials" folder for a show. 
+
+It is common practice for specials to be labeled as part of "Season 0" so for example: special 3 of "Battlestar Galactica" would be labeled "Battlestar Galactica - S00E03 - The Story So Far"  and stored (by default) in the "Specials" folder.
+
+_Default:_ ***Specials***
+
+Similarly, the "Season folder name:" text box allows you to customise the name used when creating a "Season" in tour Media Library.
+
+_Default_ ***Season***
+
+The "Season search terms:" text box provides TV REname with a list of semicolon separated words the TV Rename will recognise as part of a season identifier when searching.
+
+_Default_ ***Season;Series;Saison;Temporada;Seizoen***
+
+The rest of the options in this pane are straightforward and need no explanation.
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -199,7 +243,7 @@ Ticking the "XML" box in the "Missing" section of the panel will save a standard
 
 Ticking the "TXT" box in the "All Shows" section of the panel will save a TXT file whenever a show is added, edited or deleted from TV Rename. It also gets updated when `Auto ID All` in the *Scan Results* tab of **Tools>Folder Monitor** is clicked.
 
-*Default:* ***All un-ticked***
+_Default:_ ***All un-ticked***
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -298,7 +342,7 @@ The available tags with their definitions are listed below: -
 |---|---|
 |{AllEpisodes}|All episodes - E01E02 etc |
 
-| *Default:* | ***{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}*** |
+| _Default:_ | ***{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}*** |
 |---|---|
 | | (the second preset). |
 

@@ -63,7 +63,7 @@ You can find TV Rename's source code (along with executables and this website) i
  * You can find the Developers Wiki [here]({{ site.github.wiki_url }} "Read the Wiki")...
  * In addition there is a [Developers Forum in Google Groups](https://groups.google.com/forum/#!forum/tv-rename-development) which you can request access to. 
  * The legacy forum can be [accessed](http://old.tvrename.com/bbold/) in read-only mode for background and history about the project
-
+ * If you select "Beta" mode in in **Options>Preferences** ***General*** you will be automatically notified of new Beta and Release Candidate releases as they are made available. Additionally all the releases can be found on [TV Rename's GitHub Releases page]({{ site.github.releases_url }} "Visit the TV Rename Releases page"). 
 
 ## Framework
 TV Rename uses the Microsoft .NET Framework. The installer will check for its presence and let you know if any action is needed. It's a free download from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").
