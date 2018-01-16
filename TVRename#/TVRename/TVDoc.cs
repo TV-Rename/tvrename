@@ -3075,12 +3075,13 @@ namespace TVRename
                             ReleaseDate = releaseDate,
                             IsBeta = (gitHubReleaseJSON["prerelease"].ToString() == "True")
                         };
-                        if (testVersion.IsBeta)
-                        {
-                            if (Helpers.GreaterVersionString(testVersion.VersionNumber,
-                                latestBetaVersion?.VersionNumber)) latestBetaVersion = testVersion;
-                        }
-                        else
+
+                        //all versions want to be considered if you are in the beta stream
+                        if (Helpers.GreaterVersionString(testVersion.VersionNumber,
+                            latestBetaVersion?.VersionNumber)) latestBetaVersion = testVersion;
+
+                        //If the latest version is a production one then update the latest production version
+                        if (!testVersion.IsBeta)
                         {
                             if (Helpers.GreaterVersionString(testVersion.VersionNumber, latestVersion?.VersionNumber))
                                 latestVersion = testVersion;
