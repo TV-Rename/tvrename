@@ -23,12 +23,17 @@ namespace TVRename.Core.TVDB
         /// <summary>
         /// The TheTVDB API base URL.
         /// </summary>
-        private const string ApiUrl = "https://api.thetvdb.com/";
+        public const string ApiUrl = "https://api.thetvdb.com/";
+
+        /// <summary>
+        /// The TheTVDB image base URL.
+        /// </summary>
+        public const string ImageUrl = "https://www.thetvdb.com/banners/";
 
         /// <summary>
         /// The TheTVDB API version.
         /// </summary>
-        private const string ApiVersion = "2.1.2";
+        public const string ApiVersion = "2.1.2";
 
         /// <summary>
         /// The TheTVDB API key.
@@ -84,7 +89,7 @@ namespace TVRename.Core.TVDB
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue($"application/vnd.thetvdb.v{ApiVersion}"));
 
                 if (!string.IsNullOrEmpty(this.token)) client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.token);
-                
+
                 if (!string.IsNullOrEmpty(this.Language)) client.DefaultRequestHeaders.AcceptLanguage.Add(new StringWithQualityHeaderValue(this.Language));
 
                 using (HttpRequestMessage request = new HttpRequestMessage(method, endpoint))
@@ -99,6 +104,8 @@ namespace TVRename.Core.TVDB
                     using (HttpResponseMessage response = await client.SendAsync(request, ct))
                     {
                         if (!response.IsSuccessStatusCode) throw new HttpException((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+
+                        ct.ThrowIfCancellationRequested();
 
                         return JObject.Parse(await response.Content.ReadAsStringAsync());
                     }
@@ -171,18 +178,9 @@ namespace TVRename.Core.TVDB
         /// <returns>List of supported languages.</returns>
         public async Task<IEnumerable<Language>> GetLanguages(CancellationToken ct)
         {
-            try
-            {
-                JObject response = await Request(HttpMethod.Get, "/languages", ct);
+            JObject response = await Request(HttpMethod.Get, "/languages", ct);
 
-                return response.SelectToken("data").ToObject<List<Language>>().OrderBy(l => l.Id);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-
-                throw;
-            }
+            return response.SelectToken("data").ToObject<List<Language>>().OrderBy(l => l.Id);
         }
 
         /// <summary>
@@ -202,11 +200,11 @@ namespace TVRename.Core.TVDB
 
                 return response.SelectToken("data").ToObject<List<PartialSeries>>();
             }
-            catch (Exception ex)
+            catch (HttpException ex) when (ex.GetHttpCode() == 404)
             {
                 Logger.Error(ex);
 
-                throw;
+                return new List<PartialSeries>();
             }
         }
 
@@ -219,34 +217,35 @@ namespace TVRename.Core.TVDB
         /// <returns>The series.</returns>
         public async Task<Series> GetSeries(int id, CancellationToken ct, bool episodes)
         {
-            try
+            JObject response = await Request(HttpMethod.Get, $"/series/{id}", ct);
+            Series show = response.SelectToken("data").ToObject<Series>();
+
+            ct.ThrowIfCancellationRequested();
+
+            response = await Request(HttpMethod.Get, $"/series/{id}/actors", ct);
+            show.Actors.AddRange(response.SelectToken("data").ToObject<List<Actor>>() ?? new List<Actor>());
+
+            ct.ThrowIfCancellationRequested();
+
+            response = await Request(HttpMethod.Get, $"/series/{id}/images", ct);
+            List<string> imageTypes = response.SelectToken("data").ToObject<Dictionary<string, int>>().Where(d => d.Value > 0).Select(d => d.Key).ToList();
+
+            ct.ThrowIfCancellationRequested();
+
+            foreach (string imageType in imageTypes)
             {
-                JObject response = await Request(HttpMethod.Get, $"/series/{id}", ct);
-                Series show = response.SelectToken("data").ToObject<Series>();
+                ct.ThrowIfCancellationRequested();
 
-                response = await Request(HttpMethod.Get, $"/series/{id}/actors", ct);
-                show.Actors.AddRange(response.SelectToken("data").ToObject<List<Actor>>() ?? new List<Actor>());
-
-                response = await Request(HttpMethod.Get, $"/series/{id}/images", ct);
-                List<string> imageTypes = response.SelectToken("data").ToObject<Dictionary<string, int>>().Where(d => d.Value > 0).Select(d => d.Key).ToList();
-
-                foreach (string imageType in imageTypes)
-                {
-                    response = await Request(HttpMethod.Get, $"/series/{id}/images/query?keyType={imageType}", ct);
-                    var a = response.SelectToken("data").ToObject<List<Image>>();
-                    show.Images.AddRange(a);
-                }
-                
-                if (episodes) show.Episodes = await GetEpisodes(id, ct);
-                
-                return show;
+                response = await Request(HttpMethod.Get, $"/series/{id}/images/query?keyType={imageType}", ct);
+                List<Image> a = response.SelectToken("data").ToObject<List<Image>>();
+                show.Images.AddRange(a);
             }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
 
-                throw;
-            }
+            ct.ThrowIfCancellationRequested();
+
+            if (episodes) show.Episodes = await GetEpisodes(id, ct);
+
+            return show;
         }
 
         /// <summary>
@@ -257,33 +256,26 @@ namespace TVRename.Core.TVDB
         /// <returns>List of partial episodes.</returns>
         public async Task<List<PartialEpisode>> GetPartialEpisodes(int id, CancellationToken ct)
         {
-            try
+            List<PartialEpisode> episodes = new List<PartialEpisode>();
+
+            int page = 1;
+            bool morePages = true;
+
+            while (morePages)
             {
-                List<PartialEpisode> episodes = new List<PartialEpisode>();
+                JObject response = await Request(HttpMethod.Get, $"/series/{id}/episodes?page={page++}", ct);
 
-                int page = 1;
-                bool morePages = true;
+                ct.ThrowIfCancellationRequested();
 
-                while (morePages)
-                {
-                    JObject response = await Request(HttpMethod.Get, $"/series/{id}/episodes?page={page++}", ct);
+                Dictionary<string, int?> links = response.SelectToken("links").ToObject<Dictionary<string, int?>>();
+                List<PartialEpisode> newEpisodes = response.SelectToken("data").ToObject<List<PartialEpisode>>();
 
-                    Dictionary<string, int?> links = response.SelectToken("links").ToObject<Dictionary<string, int?>>();
-                    List<PartialEpisode> newEpisodes = response.SelectToken("data").ToObject<List<PartialEpisode>>();
+                episodes.AddRange(newEpisodes);
 
-                    episodes.AddRange(newEpisodes);
-
-                    if (!links["next"].HasValue) morePages = false;
-                }
-
-                return episodes;
+                if (!links["next"].HasValue) morePages = false;
             }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
 
-                throw;
-            }
+            return episodes;
         }
 
         /// <summary>
@@ -292,20 +284,25 @@ namespace TVRename.Core.TVDB
         /// <param name="id">The identifier.</param>
         /// <param name="ct">The cancellation token to cancel operation.</param>
         /// <returns>List of episodes.</returns>
-        public async Task<List<Episode>> GetEpisodes(int id, CancellationToken ct)
+        public async Task<List<Episode>> GetEpisodes(int id, CancellationToken ct) // TODO: Parallel
         {
-            try
-            {
-                List<PartialEpisode> partialEpisodes = await GetPartialEpisodes(id, ct);
+            List<PartialEpisode> partialEpisodes = await GetPartialEpisodes(id, ct);
 
-                return partialEpisodes.Select(async e => await GetEpisode(e.Id, ct)).Select(t => t.Result).ToList();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
+            ct.ThrowIfCancellationRequested();
 
-                throw;
-            }
+            List<Task<Episode>> tasks = partialEpisodes.Select(e => GetEpisode(e.Id, ct)).ToList();
+
+            Episode[] results = await Task.WhenAll(tasks);
+
+            return results.ToList();
+
+            //return partialEpisodes.Select(e =>
+            //{
+            //    return GetEpisode(e.Id, ct);
+            //}).Select(t =>
+            //{
+            //    return t.Result;
+            //}).ToList();
         }
 
         /// <summary>
@@ -316,18 +313,9 @@ namespace TVRename.Core.TVDB
         /// <returns>The episode.</returns>
         public async Task<Episode> GetEpisode(int id, CancellationToken ct)
         {
-            try
-            {
-                JObject response = await Request(HttpMethod.Get, $"/episodes/{id}", ct);
+            JObject response = await Request(HttpMethod.Get, $"/episodes/{id}", ct);
 
-                return response.SelectToken("data").ToObject<Episode>();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-
-                throw;
-            }
+            return response.SelectToken("data").ToObject<Episode>();
         }
 
         /// <summary>
@@ -339,18 +327,9 @@ namespace TVRename.Core.TVDB
         /// <returns>List of updates.</returns>
         public async Task<List<Update>> GetUpdates(DateTime from, CancellationToken ct)
         {
-            try
-            {
-                JObject response = await Request(HttpMethod.Get, $"/updated/query?fromTime={from.ToUniversalTime().ToUnixTime()}", ct);
+            JObject response = await Request(HttpMethod.Get, $"/updated/query?fromTime={from.ToUniversalTime().ToUnixTime()}", ct);
 
-                return response.SelectToken("data").ToObject<List<Update>>() ?? new List<Update>();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-
-                throw;
-            }
+            return response.SelectToken("data").ToObject<List<Update>>() ?? new List<Update>();
         }
     }
 }

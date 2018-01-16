@@ -1,12 +1,12 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("TVRename.Core.Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("TV Rename Core Tests")]
+[assembly: AssemblyDescription("TV Rename Core Tests")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TVRename.Core.Tests")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCompany("TV Rename")]
+[assembly: AssemblyProduct("TV Rename Core Tests")]
+[assembly: AssemblyCopyright("Copyright © 2007-2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

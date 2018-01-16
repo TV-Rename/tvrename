@@ -8,11 +8,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using TVRename.Core.Extensions;
+using TVRename.Core.Models;
 using TVRename.Core.Models.Cache;
 using TVRename.Core.Models.TVDB;
 using Episode = TVRename.Core.Models.TVDB.Episode;
 using File = Alphaleonis.Win32.Filesystem.File;
 using Language = TVRename.Core.Models.Language;
+using Show = TVRename.Core.Models.Cache.Show;
 
 namespace TVRename.Core.TVDB
 {
@@ -194,6 +196,20 @@ namespace TVRename.Core.TVDB
         }
 
         /// <summary>
+        /// Searches TheTVDB for the specified show.
+        /// </summary>
+        /// <param name="search">The show search text.</param>
+        /// <param name="ct">The cancellation token to cancel operation.</param>
+        /// <returns>List of TheTVDB search results.</returns>
+        public async Task<List<SearchResult>> Search(string search, CancellationToken ct)
+        {
+            Logger.Info($"Searching for show {search}");
+
+            List<PartialSeries> results = await this.client.Search(search, ct);
+            return results.Select(r => (SearchResult)r).ToList();
+        }
+
+        /// <summary>
         /// Updates the cache from TheTVDB update feed, downloading fresh metadata as needed.
         /// </summary>
         /// <param name="ct">The cancellation token to cancel operation.</param>
@@ -248,7 +264,7 @@ namespace TVRename.Core.TVDB
 
             Logger.Info($"Processing {updates.Count} updates");
 
-            var newEpisodes = new List<Tuple<int, PartialEpisode>>();
+            List<Tuple<int, PartialEpisode>> newEpisodes = new List<Tuple<int, PartialEpisode>>();
 
             // Process updates and download in parallel
             await updates.ForEachAsync(async update =>

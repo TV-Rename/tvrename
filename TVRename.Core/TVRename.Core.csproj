@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -56,11 +56,14 @@
     <Compile Include="Models\Cache\Episode.cs" />
     <Compile Include="Models\Cache\Season.cs" />
     <Compile Include="Models\Cache\SeasonStatus.cs" />
+    <Compile Include="Models\SearchResult.cs" />
     <Compile Include="Models\Cache\Show.cs" />
     <Compile Include="Models\Converters\TimeZoneInfoConverter.cs" />
     <Compile Include="Models\Converters\CounterConverter.cs" />
     <Compile Include="Models\Converters\EpochConverter.cs" />
     <Compile Include="Models\Language.cs" />
+    <Compile Include="Models\Show.cs" />
+    <Compile Include="Models\Settings\Settings.cs" />
     <Compile Include="Utility\Counter.cs" />
     <Compile Include="Models\Settings\Layout.cs" />
     <Compile Include="Models\Settings\Statistics.cs" />

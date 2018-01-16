@@ -63,7 +63,7 @@ namespace TVRename.Core.Models.TVDB
         /// <returns>
         /// The result of the conversion.
         /// </returns>
-        public static implicit operator Show(Series series)
+        public static implicit operator Cache.Show(Series series)
         {
             Dictionary<int, Season> seasons = new Dictionary<int, Season>();
 
@@ -136,7 +136,7 @@ namespace TVRename.Core.Models.TVDB
                 }
             }
 
-            return new Show
+            return new Cache.Show
             {
                 Actors = series.Actors.Select(a => a.Name.Trim()).ToList(),
                 AirDay = airDay,
