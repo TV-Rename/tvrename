@@ -10,7 +10,6 @@
 // Means we can run TVRename and do useful stuff, without showing any UI. (i.e. text mode / console app)
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using Alphaleonis.Win32.Filesystem;
@@ -19,9 +18,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Xml;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -3042,14 +3039,32 @@ namespace TVRename
         public UpdateVersion CheckForUpdates()
         {
             const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
+            UpdateVersion currentVersion;
             try
             {
-                string currentVersion = Helpers.DisplayVersion;
-                bool inDebug = currentVersion.EndsWith(" ** Debug Build **");
+                string currentVersionString = Helpers.DisplayVersion;
+
+                bool inDebug = currentVersionString.EndsWith(" ** Debug Build **");
                 //remove debug stuff
                 if (inDebug)
-                    currentVersion = currentVersion.Substring(0,
-                        currentVersion.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
+                    currentVersionString = currentVersionString.Substring(0,
+                        currentVersionString.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
+
+                currentVersion =
+                    new UpdateVersion(currentVersionString, UpdateVersion.VersionType.Friendly);
+            }
+            catch (ArgumentException e)
+            {
+                logger.Error("Failed to establish if there are any new releases as could not parse internal version: "+ Helpers.DisplayVersion, e);
+                return null;
+
+            }
+
+            UpdateVersion latestVersion = null;
+            UpdateVersion latestBetaVersion = null;
+
+            try
+            {
 
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent",
@@ -3057,45 +3072,44 @@ namespace TVRename
                 string response = client.DownloadString(GITHUB_RELEASES_API_URL);
                 JArray gitHubInfo = JArray.Parse(response);
 
-                UpdateVersion latestVersion = null;
-                UpdateVersion latestBetaVersion = null;
-
                 foreach (JObject gitHubReleaseJSON in gitHubInfo.Children<JObject>())
                 {
-                    DateTime.TryParse(gitHubReleaseJSON["published_at"].ToString(), out DateTime releaseDate);
-
                     try
                     {
-                        UpdateVersion testVersion = new UpdateVersion
+                        DateTime.TryParse(gitHubReleaseJSON["published_at"].ToString(), out DateTime releaseDate);
+                        UpdateVersion testVersion = new UpdateVersion(gitHubReleaseJSON["tag_name"].ToString(),
+                            UpdateVersion.VersionType.Semantic)
                         {
                             DownloadUrl = gitHubReleaseJSON["assets"][0]["browser_download_url"].ToString(),
                             ReleaseNotesText = gitHubReleaseJSON["body"].ToString(),
-                            VersionNumber = gitHubReleaseJSON["tag_name"].ToString(),
                             ReleaseNotesUrl = gitHubReleaseJSON["html_url"].ToString(),
                             ReleaseDate = releaseDate,
                             IsBeta = (gitHubReleaseJSON["prerelease"].ToString() == "True")
                         };
-                        if (testVersion.IsBeta)
+
+                        //all versions want to be considered if you are in the beta stream
+                        if (testVersion.NewerThan(latestBetaVersion)) latestBetaVersion = testVersion;
+
+                        //If the latest version is a production one then update the latest production version
+                        if (!testVersion.IsBeta)
                         {
-                            if (Helpers.GreaterVersionString(testVersion.VersionNumber,
-                                latestBetaVersion?.VersionNumber)) latestBetaVersion = testVersion;
-                        }
-                        else
-                        {
-                            if (Helpers.GreaterVersionString(testVersion.VersionNumber, latestVersion?.VersionNumber))
-                                latestVersion = testVersion;
+                            if (testVersion.NewerThan(latestVersion)) latestVersion = testVersion;
                         }
                     }
-                    catch (ArgumentOutOfRangeException)
+                    catch (NullReferenceException ex)
                     {
+                        logger.Warn("Looks like the JSON payload from GitHub has changed");
+                        logger.Debug(ex, gitHubReleaseJSON.ToString());
                         continue;
-
                     }
-
-
-
+                    catch (ArgumentOutOfRangeException ex)
+                    {
+                        logger.Debug("Generally happens because the release did not have an exe attached");
+                        logger.Debug(ex, gitHubReleaseJSON.ToString());
+                        continue;
+                    }
+                    
                 }
-
                 if (latestVersion == null)
                 {
                     logger.Error("Could not find latest version information from GitHub: {0}", response);
@@ -3108,33 +3122,92 @@ namespace TVRename
                     return null;
                 }
 
-                if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) &&
-                    (Helpers.GreaterVersionString(latestVersion.VersionNumber, currentVersion))) return latestVersion;
-
-                if ((TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo) &&
-                    (Helpers.GreaterVersionString(latestBetaVersion.VersionNumber, currentVersion)))
-                    return latestBetaVersion;
-
-                return null;
             }
             catch (Exception e)
             {
-                logger.Error("Failed to contact GitHub to identify new releases",e);
+                logger.Error("Failed to contact GitHub to identify new releases", e);
                 return null;
-                
+
             }
+
+
+
+        
+
+                if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) &&
+                    (latestVersion.NewerThan( currentVersion))) return latestVersion;
+
+                if ((TVSettings.Instance.mode == TVSettings.BetaMode.BetaToo) &&
+                    (latestBetaVersion.NewerThan(currentVersion)))
+                    return latestBetaVersion;
+
+                return null;
         }
     }
 
-    public class UpdateVersion
+    public class UpdateVersion :IComparable
     {
-        public string VersionNumber {get;set;}
         public string DownloadUrl { get; set; }
         public string ReleaseNotesText { get; set; }
         public string ReleaseNotesUrl { get; set; }
         public bool IsBeta { get; set; }
         public DateTime ReleaseDate { get; set; }
+
+        public Version VersionNumber { get; }
+        public string Prerelease { get; }
+        public string Build { get;  }
+
+        public enum VersionType { Semantic,Friendly}
+
+            public  UpdateVersion(string version, VersionType  type)
+            {
+                if (string.IsNullOrWhiteSpace(version)) throw new ArgumentException("The provided version string is invalid.", nameof(version));
+
+                string matchString = (type == VersionType.Semantic)
+                    ? @"^(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?(\-(?<pre>[0-9A-Za-z\-\.]+|[*]))?(\+(?<build>[0-9A-Za-z\-\.]+|[*]))?$"
+                    : @"^(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?( (?<pre>[0-9A-Za-z\- \.]+))?$";
+
+                Regex regex = new Regex(matchString, RegexOptions.ExplicitCapture);
+                Match match = regex.Match(version);
+
+                if (!match.Success || !match.Groups["major"].Success || !match.Groups["minor"].Success) throw new ArgumentException("The provided version string is invalid.", nameof(version));
+                if (type == VersionType.Semantic &&   !match.Groups["patch"].Success) throw new ArgumentException("The provided version string is invalid semantic version.", nameof(version));
+
+                this.VersionNumber = new Version(int.Parse(match.Groups["major"].Value),
+                    int.Parse(match.Groups["minor"].Value),
+                    match.Groups["patch"].Success ? int.Parse(match.Groups["patch"].Value) : 0);
+
+                this.Prerelease = match.Groups["pre"].Value.Replace(" ", string.Empty);
+                this.Build = match.Groups["build"].Value?? string.Empty;
+            }
+
+        public int CompareTo(object obj)
+        {
+
+            if (obj == null) return 1;
+            if (!(obj is UpdateVersion otherUpdateVersion)) throw new ArgumentException("Object is not a UpdateVersion");
+
+                
+            //Returns 1 if this > object, 0 if this=object and -1 if this< object
+
+
+            //Extract Version Numbers and then compare them
+            if (this.VersionNumber.CompareTo(otherUpdateVersion.VersionNumber) != 0) return this.VersionNumber.CompareTo(otherUpdateVersion.VersionNumber);
+
+            //We have the same version - now we have to get tricky and look at the extension (rc1, beta2 etc)
+
+            //If either are not present then you can assume they are FINAL versions and trump any rx1 verisons
+            if (String.IsNullOrWhiteSpace( this.Prerelease) ) return 1;
+            if (String.IsNullOrWhiteSpace(otherUpdateVersion .Prerelease)) return -1;
+            
+            //We have 2 suffixes
+            //Compare alphabetically alpha1 < alpha2 < beta1 < beta2 < rc1 < rc2 etc
+            return (String.Compare(this.Prerelease , otherUpdateVersion.Prerelease , StringComparison.OrdinalIgnoreCase) );
+        }
+
+        public bool NewerThan(UpdateVersion compare) => (CompareTo(compare) > 0);
     }
+    
 
 }
 
