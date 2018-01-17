@@ -184,7 +184,7 @@ If the filename contains a character that isn't supported in a windows filename 
 |---|---|
 | *.tbn* |A KODI/XBMC specific jpeg.
 
-It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.srt and BigBuckBunny.nfo. This helps keep them organised.
+It is common for files to have the same base name for example: BigBuckBunny.avi, BigBuckBunny.sub and BigBuckBunny.nfo. This helps keep them organised.
 
 TV Rename knows this, hence the "Copy/Move file with same base name as video" tick-box. Which gives you the ability to turn this functionality on or off.
 
@@ -192,7 +192,7 @@ _Default:_ ***Ticked***
 
 The "Do" drop-down and text box underneath provide a degree of granularity to this function.
 
-Subtitle files come in a number of guises of which one of the most common is a .srt file. These are text files structured in a way that media players can establish the start time, finish time and content of a subtitle and display it. Quite often sources for these files give them a .txt extension, for example: BigBuckBunny.txt. Ticking the "Rename .txt to .srt" option will tell TV Rename to rename these files when copied or moved.
+Subtitle files come in a number of guises of which one of the most common is a .sub file. These are text files structured in a way that media players can establish the start time, finish time and content of a subtitle and display it. Quite often sources for these files give them a .txt extension, for example: BigBuckBunny.txt. Ticking the "Rename .txt to .sub" option will tell TV Rename to rename these files when copied or moved.
 
 _Default:_ ***Un-ticked***
 
