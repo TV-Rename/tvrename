@@ -219,10 +219,10 @@ namespace TVRename
                 S.mode = TVSettings.BetaMode.ProductionOnly;
             }
 
-            if (this.cbKeepTogetherMode.Text == "all but")
+            if (this.cbKeepTogetherMode.Text == "All but these")
             {
                 S.keepTogetherMode = TVSettings.KeepTogetherModes.AllBut;
-            } else if (this.cbKeepTogetherMode.Text == "just")
+            } else if (this.cbKeepTogetherMode.Text == "Just")
 
             {
                 S.keepTogetherMode = TVSettings.KeepTogetherModes.Just;
@@ -432,10 +432,10 @@ namespace TVRename
                     this.cbKeepTogetherMode.Text = "All";
                     break;
                 case TVSettings.KeepTogetherModes.AllBut:
-                    this.cbKeepTogetherMode.Text = "all but";
+                    this.cbKeepTogetherMode.Text = "All but these";
                     break;
                 case TVSettings.KeepTogetherModes.Just:
-                    this.cbKeepTogetherMode.Text = "just";
+                    this.cbKeepTogetherMode.Text = "Just";
                     break;
             }
 
@@ -601,7 +601,7 @@ namespace TVRename
         private void cbKeepTogether_CheckedChanged(object sender, System.EventArgs e)
         {
             this.cbTxtToSub.Enabled = this.cbKeepTogether.Checked;
-            this.txtKeepTogether.Enabled = this.cbKeepTogether.Checked;
+            this.txtKeepTogether.Enabled = (this.cbKeepTogether.Checked && this.cbKeepTogetherMode.Text != "All");
             this.cbKeepTogetherMode.Enabled = this.cbKeepTogether.Checked;
             this.label39.Enabled = this.cbKeepTogether.Checked;
         }
@@ -1214,5 +1214,9 @@ namespace TVRename
             cmDefaults.Show(pt);
         }
 
+        private void cbKeepTogetherMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.txtKeepTogether.Enabled = (this.cbKeepTogether.Checked && this.cbKeepTogetherMode.Text != "All");
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -146,6 +146,9 @@ namespace TVRename
                     FileInfo[] flist = sfdi.GetFiles(basename + ".*");
                     foreach (FileInfo fi in flist)
                     {
+                        //check to see whether the file is one of the types we do/don't want to include
+                        if (!TVSettings.Instance.KeepTogetherFilesWithType(fi.Extension)) continue;
+
                         // do case insensitive replace
                         string n = fi.Name;
                         int p = n.ToUpper().IndexOf(basename.ToUpper());

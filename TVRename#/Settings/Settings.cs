@@ -814,6 +814,8 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"ExportRSSMaxShows",this.ExportRSSMaxShows);
             XMLHelper.WriteElementToXML(writer,"ExportRSSDaysPast",this.ExportRSSDaysPast);
             XMLHelper.WriteElementToXML(writer,"KeepTogether",this.KeepTogether);
+            XMLHelper.WriteElementToXML(writer,"KeepTogetherType", (int)this.keepTogetherMode);
+            XMLHelper.WriteElementToXML(writer,"KeepTogetherExtensions", this.keepTogetherExtensionsString);
             XMLHelper.WriteElementToXML(writer,"LeadingZeroOnSeason",this.LeadingZeroOnSeason);
             XMLHelper.WriteElementToXML(writer,"ShowInTaskbar",this.ShowInTaskbar);
             XMLHelper.WriteElementToXML(writer,"IgnoreSamples",this.IgnoreSamples);
@@ -821,7 +823,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"RenameTxtToSub",this.RenameTxtToSub);
             XMLHelper.WriteElementToXML(writer,"ParallelDownloads",this.ParallelDownloads);
             XMLHelper.WriteElementToXML(writer,"AutoSelectShowInMyShows",this.AutoSelectShowInMyShows);
-            XMLHelper.WriteElementToXML(writer, "AutoCreateFolders", this.AutoCreateFolders );
+            XMLHelper.WriteElementToXML(writer,"AutoCreateFolders", this.AutoCreateFolders );
             XMLHelper.WriteElementToXML(writer,"ShowEpisodePictures",this.ShowEpisodePictures);
             XMLHelper.WriteElementToXML(writer,"SpecialsFolderName",this.SpecialsFolderName);
             XMLHelper.WriteElementToXML(writer,"uTorrentPath",this.uTorrentPath);
@@ -844,7 +846,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);
-            XMLHelper.WriteElementToXML(writer, "RemoveDownloadDirectoriesFiles", this.RemoveDownloadDirectoriesFiles);
+            XMLHelper.WriteElementToXML(writer,"RemoveDownloadDirectoriesFiles", this.RemoveDownloadDirectoriesFiles);
             XMLHelper.WriteElementToXML(writer,"SABAPIKey",this.SABAPIKey);
             XMLHelper.WriteElementToXML(writer,"CheckSABnzbd",this.CheckSABnzbd);
             XMLHelper.WriteElementToXML(writer,"SABHostPort",this.SABHostPort);
@@ -867,8 +869,6 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "PercentDirtyUpgrade", this.upgradeDirtyPercent);
             XMLHelper.WriteElementToXML(writer, "BaseSeasonName", this.defaultSeasonWord);
             XMLHelper.WriteElementToXML(writer, "SearchSeasonNames", this.searchSeasonWordsString);
-            XMLHelper.WriteElementToXML(writer, "KeepTogetherType", (int)this.keepTogetherMode);
-            XMLHelper.WriteElementToXML(writer, "KeepTogetherExtensions", this.keepTogetherExtensionsString);
 
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)
@@ -1090,9 +1090,9 @@ namespace TVRename
             if (s == null)
                 return "";
 
-            String url = String.IsNullOrEmpty(epi.SI.CustomSearchURL)
-                             ? this.TheSearchers.CurrentSearchURL()
-                             : epi.SI.CustomSearchURL;
+            String url = (epi.SI.UseCustomSearchURL && !String.IsNullOrWhiteSpace(epi.SI.CustomSearchURL))
+                ? epi.SI.CustomSearchURL
+                : this.TheSearchers.CurrentSearchURL();
             return CustomName.NameForNoExt(epi, url, true);
         }
 
@@ -1130,5 +1130,19 @@ namespace TVRename
             return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Eden)); 
         }
 
+        public bool KeepTogetherFilesWithType(string fileExtension)
+        {
+            if (this.KeepTogether == false) return false;
+
+            switch (this.keepTogetherMode)
+            {
+                case KeepTogetherModes.All: return true;
+                case KeepTogetherModes.Just: return keepTogetherExtensionsArray.Contains(fileExtension);
+                case KeepTogetherModes.AllBut: return !keepTogetherExtensionsArray.Contains(fileExtension);
+
+            }
+
+            return true;
+        }
     }
 }
