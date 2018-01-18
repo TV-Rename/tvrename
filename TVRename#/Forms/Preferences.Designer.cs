@@ -428,7 +428,7 @@ namespace TVRename
             // cbTxtToSub
             // 
             this.cbTxtToSub.AutoSize = true;
-            this.cbTxtToSub.Location = new System.Drawing.Point(6, 234);
+            this.cbTxtToSub.Location = new System.Drawing.Point(29, 234);
             this.cbTxtToSub.Name = "cbTxtToSub";
             this.cbTxtToSub.Size = new System.Drawing.Size(118, 17);
             this.cbTxtToSub.TabIndex = 9;
@@ -822,6 +822,7 @@ namespace TVRename
             this.cbKeepTogetherMode.Size = new System.Drawing.Size(146, 21);
             this.cbKeepTogetherMode.Sorted = true;
             this.cbKeepTogetherMode.TabIndex = 21;
+            this.cbKeepTogetherMode.SelectedIndexChanged += new System.EventHandler(this.cbKeepTogetherMode_SelectedIndexChanged);
             // 
             // tbSeasonSearchTerms
             // 
