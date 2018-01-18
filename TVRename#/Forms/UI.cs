@@ -247,7 +247,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
             {
                 ProcessedEpisode pe = lvi.Tag as ProcessedEpisode;
-                if (pe != null && !String.IsNullOrEmpty(pe.SI.CustomSearchURL))
+                if (pe != null && pe.SI.UseCustomSearchURL && !String.IsNullOrWhiteSpace(pe.SI.CustomSearchURL))
                 {
                     customWTW = true;
                     break;
@@ -258,7 +258,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvAction.SelectedItems)
             {
                 ProcessedEpisode pe = lvi.Tag as ProcessedEpisode;
-                if (pe != null && !String.IsNullOrEmpty(pe.SI.CustomSearchURL))
+                if (pe != null && pe.SI.UseCustomSearchURL && !String.IsNullOrWhiteSpace(pe.SI.CustomSearchURL))
                 {
                     customAction = true;
                     break;

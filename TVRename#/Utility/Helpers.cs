@@ -345,6 +345,17 @@ namespace TVRename
         {
             return source.IndexOf(toCheck, comp) >= 0;
         }
+
+
+        public static string ReplaceInsensitive(this string source, string search, string replacement)
+        {
+            return Regex.Replace(
+                source,
+                Regex.Escape(search),
+                replacement.Replace("$", "$$"),
+                RegexOptions.IgnoreCase
+                    );
+        }
     }
 
     public static class RegistryHelper {

@@ -165,6 +165,7 @@ namespace TVRename
         public bool UseCustomShowName;
         public bool UseSequentialMatch;
         public List<string> AliasNames = new List<string>();
+        public bool UseCustomSearchURL;
         public String CustomSearchURL;
 
         private DateTime? bannersLastUpdatedOnDisk;
@@ -234,6 +235,8 @@ namespace TVRename
                     this.DoMissingCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DVDOrder")
                     this.DVDOrder = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "UseCustomSearchURL")
+                    this.UseCustomSearchURL = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CustomSearchURL")
                     this.CustomSearchURL = reader.ReadElementContentAsString();
                 else if (reader.Name == "ForceCheckAll") // removed 2.2.0b2
@@ -509,6 +512,7 @@ namespace TVRename
             this.CountSpecials = false;
             this.DVDOrder = false;
             CustomSearchURL = "";
+            UseCustomSearchURL = false;
             ForceCheckNoAirdate = false;
             ForceCheckFuture = false;
             this.BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
@@ -601,6 +605,7 @@ namespace TVRename
             }
             writer.WriteEndElement();
 
+            XMLHelper.WriteElementToXML(writer, "UseCustomSearchURL", this.UseCustomSearchURL);
             XMLHelper.WriteElementToXML(writer, "CustomSearchURL",this.CustomSearchURL);
 
             foreach (KeyValuePair<int, List<ShowRule>> kvp in this.SeasonRules)

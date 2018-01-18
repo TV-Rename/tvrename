@@ -1090,9 +1090,9 @@ namespace TVRename
             if (s == null)
                 return "";
 
-            String url = String.IsNullOrEmpty(epi.SI.CustomSearchURL)
-                             ? this.TheSearchers.CurrentSearchURL()
-                             : epi.SI.CustomSearchURL;
+            String url = (epi.SI.UseCustomSearchURL && !String.IsNullOrWhiteSpace(epi.SI.CustomSearchURL))
+                ? epi.SI.CustomSearchURL
+                : this.TheSearchers.CurrentSearchURL();
             return CustomName.NameForNoExt(epi, url, true);
         }
 

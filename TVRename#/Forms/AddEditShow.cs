@@ -122,7 +122,7 @@ namespace TVRename
             }
             this.txtTagList.Text = tl.ToString();
 
-            cbUseCustomSearch.Checked = !String.IsNullOrEmpty(si.CustomSearchURL);
+            cbUseCustomSearch.Checked = si.UseCustomSearchURL && !String.IsNullOrWhiteSpace(si.CustomSearchURL);
             txtSearchURL.Text = si.CustomSearchURL ?? "";
             EnableDisableCustomSearch();
         }
@@ -179,6 +179,7 @@ namespace TVRename
             this.mSI.DVDOrder = this.chkDVDOrder.Checked;
             this.mSI.ForceCheckFuture = this.cbIncludeFuture.Checked;
             this.mSI.ForceCheckNoAirdate = this.cbIncludeNoAirdate.Checked;
+            this.mSI.UseCustomSearchURL = this.cbUseCustomSearch.Checked;
             this.mSI.CustomSearchURL = this.txtSearchURL.Text;
 
             this.mSI.UseSequentialMatch = this.cbSequentialMatching.Checked;
