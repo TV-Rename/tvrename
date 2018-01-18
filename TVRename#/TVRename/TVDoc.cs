@@ -1472,7 +1472,7 @@ namespace TVRename
                 Action action = info.TheAction;
                 if (action != null)
                 {
-                    logger.Trace("Triggering Action: {0} - {1} - {32", action.Name, action.produces, action.ToString());
+                    logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.produces, action.ToString());
                     action.Go(ref this.ActionPause, mStats);
                 }
 
