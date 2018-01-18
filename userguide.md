@@ -177,7 +177,7 @@ Adding "Dr. Who" and "Dr Who" as aliases for "Doctor Who" will fix this problem 
 ![The Search Tab](images/main-window/add-edit-show-search-01.png){:.pic-l}
 The Search Tab allows you to create a custom web search for files on a per show basis.
 
-This is useful if you collect episodes of a show that falls outside the scope of the "normal" search engines and has its own genre-specific sites and searches (anime for example).
+This is useful if you collect episodes of a show that falls outside the scope of the "normal" search engines and has its own genre-specific sites and searches (Anime for example).
 
 Using the same technique and tag structure as found in the [Options>Search&nbsp;Engines](options#search-engines "Visit Options>Search Engines") tab you can create a search specific to the show in question without affecting the "general" searches.
 
