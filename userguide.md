@@ -173,14 +173,18 @@ Adding "Dr. Who" and "Dr Who" as aliases for "Doctor Who" will fix this problem 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
 
-<!--- 
 ### The Search Tab
+![The Search Tab](images/main-window/add-edit-show-search-01.png){:.pic-l}
+The Search Tab allows you to create a custom web search for files on a per show basis.
 
-![Under Construction](images/under-construction.jpg)
+This is useful if you collect episodes of a show that falls outside the scope of the "normal" search engines and has its own genre-specific sites and searches (anime for example).
+
+Using the same technique and tag structure as found in the [Options>Search&nbsp;Engines](options#search-engines "Visit Options>Search Engines") tab you can create a search specific to the show in question without affecting the "general" searches.
+
+This option is disabled by default but it can be enabled by ticking the "Use Custom Search" box
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
---->
 
 ## Edit Season Rules
 
