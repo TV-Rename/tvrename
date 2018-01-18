@@ -27,14 +27,14 @@
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		
-		<!-- Uncomment the next line to have page auto reload for local testing
-		<meta http-equiv="refresh" content="15">
-		-->
+		<!-- Include the refresh metatag if we're on localhost -->
+		{% if site.url == 'http://localhost:4000' %}
+			<meta http-equiv="refresh" content="15">
+		{% endif %}	
 		
 	</head>
 
 	<body>
-
 		<header>
 			<h1><img src="images/tv-white.svg" height="46" width="36" alt="TV Rename Logo" />&nbsp;{{ site.title | default: site.github.repository_name }}</h1>
 			<p>{{ site.description | default: site.github.project_tagline }}</p>
