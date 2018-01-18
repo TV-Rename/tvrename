@@ -35,6 +35,7 @@ namespace TVRename.Forms
             this.btnCancel = new System.Windows.Forms.Button();
             this.tbReleaseNotes = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.webReleaseNotes = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
             // label1
@@ -61,7 +62,7 @@ namespace TVRename.Forms
             // 
             this.btnDownloadNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDownloadNow.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnDownloadNow.Location = new System.Drawing.Point(248, 298);
+            this.btnDownloadNow.Location = new System.Drawing.Point(288, 460);
             this.btnDownloadNow.Name = "btnDownloadNow";
             this.btnDownloadNow.Size = new System.Drawing.Size(120, 23);
             this.btnDownloadNow.TabIndex = 2;
@@ -72,7 +73,7 @@ namespace TVRename.Forms
             // bnReleaseNotes
             // 
             this.bnReleaseNotes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnReleaseNotes.Location = new System.Drawing.Point(248, 269);
+            this.bnReleaseNotes.Location = new System.Drawing.Point(288, 431);
             this.bnReleaseNotes.Name = "bnReleaseNotes";
             this.bnReleaseNotes.Size = new System.Drawing.Size(120, 23);
             this.bnReleaseNotes.TabIndex = 3;
@@ -84,7 +85,7 @@ namespace TVRename.Forms
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(26, 298);
+            this.btnCancel.Location = new System.Drawing.Point(26, 460);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 4;
@@ -101,7 +102,7 @@ namespace TVRename.Forms
             this.tbReleaseNotes.Multiline = true;
             this.tbReleaseNotes.Name = "tbReleaseNotes";
             this.tbReleaseNotes.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbReleaseNotes.Size = new System.Drawing.Size(342, 171);
+            this.tbReleaseNotes.Size = new System.Drawing.Size(382, 333);
             this.tbReleaseNotes.TabIndex = 5;
             // 
             // lblStatus
@@ -112,14 +113,26 @@ namespace TVRename.Forms
             this.lblStatus.Size = new System.Drawing.Size(0, 13);
             this.lblStatus.TabIndex = 6;
             // 
+            // webReleaseNotes
+            // 
+            this.webReleaseNotes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webReleaseNotes.Location = new System.Drawing.Point(26, 92);
+            this.webReleaseNotes.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webReleaseNotes.Name = "webReleaseNotes";
+            this.webReleaseNotes.Size = new System.Drawing.Size(382, 333);
+            this.webReleaseNotes.TabIndex = 7;
+            this.webReleaseNotes.Visible = false;
+            // 
             // UpdateNotification
             // 
             this.AcceptButton = this.btnDownloadNow;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(380, 333);
-            this.ControlBox = false;
+            this.ClientSize = new System.Drawing.Size(420, 496);
+            this.Controls.Add(this.webReleaseNotes);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.tbReleaseNotes);
             this.Controls.Add(this.btnCancel);
@@ -127,6 +140,7 @@ namespace TVRename.Forms
             this.Controls.Add(this.btnDownloadNow);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(350, 350);
             this.Name = "UpdateNotification";
@@ -149,5 +163,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox tbReleaseNotes;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.WebBrowser webReleaseNotes;
     }
 }
