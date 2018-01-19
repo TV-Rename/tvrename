@@ -18,7 +18,7 @@ namespace TVRename.Forms
             this.newVersion = update;
             InitializeComponent();
             this.tbReleaseNotes.Text = this.newVersion.ReleaseNotesText;
-            this.lblStatus.Text = $@"There is new version {update.VersionNumber}-{update.Prerelease} available since "+ update.ReleaseDate.ToLocalTime() + ".";
+            this.lblStatus.Text = $@"There is new version {update} available since {update.ReleaseDate.ToLocalTime()}.";
 
             //If this call is slow then we can put it in a new thread and update the control as it comes back from GH
             UpdateWithMarkdown();
