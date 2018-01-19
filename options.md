@@ -202,6 +202,8 @@ The "Leading 0 on Season Numbers" tick-box simply tells TV Rename to use "Season
 
 _Default:_ ***Un-ticked***
 
+The next three preferences will be of special interest to those of you who speak "English as a second language". You can now set the folder names used for "Seasons" and "Specials", and the text recognised as "Season" when searching.
+
 The "Specials folder name:" text box allows you to modify the name used when creating a "Specials" folder for a show. 
 
 It is common practice for specials to be labeled as part of "Season 0" so for example: special 3 of "Battlestar Galactica" would be labeled "Battlestar Galactica - S00E03 - The Story So Far"  and stored (by default) in the "Specials" folder.
@@ -212,7 +214,7 @@ Similarly, the "Season folder name:" text box allows you to customise the name u
 
 _Default_ ***Season***
 
-The "Season search terms:" text box provides TV REname with a list of semicolon separated words the TV Rename will recognise as part of a season identifier when searching.
+The "Season search terms:" text box provides TV Rename with a list of semicolon separated words that TV Rename will recognise as part of a season identifier when searching.
 
 _Default_ ***Season;Series;Saison;Temporada;Seizoen***
 
