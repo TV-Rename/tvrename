@@ -152,6 +152,19 @@ namespace TVRename
                     fileText = activeCMAction.ProgressText;
                 }
 
+                DirectoryInfo toUNCRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
+                if (toUNCRoot != null)
+                {
+                    FileSystemProperties driveStats = FileHelper.GetProperties(toUNCRoot.ToString());
+                    if (driveStats != null)
+                    {
+                        int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);
+                        diskValue = 1000 - pct;
+                        diskText = ((int)(driveStats.AvailableBytes / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
+                    }
+                }
+
+
                 this.txtFilename.Text = fileText;
                 this.pbDiskSpace.Value = diskValue;
                 this.txtDiskSpace.Text = diskText;

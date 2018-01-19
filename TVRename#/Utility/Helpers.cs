@@ -9,16 +9,12 @@
 using System;
 using System.Drawing;
 using System.Globalization;
-using Alphaleonis.Win32.Filesystem;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json.Linq;
-using System.Web;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
@@ -26,6 +22,7 @@ using Path = Alphaleonis.Win32.Filesystem.Path;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.Security;
 
@@ -174,6 +171,32 @@ namespace TVRename
         }
     }
 
+    public class FileSystemProperties
+    {
+        public  FileSystemProperties(long? totalBytes, long? freeBytes, long? availableBytes)
+        {
+            TotalBytes = totalBytes;
+            FreeBytes = freeBytes;
+            AvailableBytes = availableBytes;
+        }
+
+        /// <summary>
+        /// Gets the total number of bytes on the drive.
+        /// </summary>
+        public long? TotalBytes { get; private set; }
+
+        /// <summary>
+        /// Gets the number of bytes free on the drive.
+        /// </summary>
+        public long? FreeBytes { get; private set; }
+
+        /// <summary>
+        /// Gets the number of bytes available on the drive (counts disk quotas).
+        /// </summary>
+        public long? AvailableBytes { get; private set; }
+    }
+
+
     public static class FileHelper
     {
         public static bool FolderIsSubfolderOf(string thisOne, string ofThat)
@@ -185,6 +208,28 @@ namespace TVRename
             return ((thisOne.Length >= l) && (thisOne.Substring(0, l).ToLower() == ofThat.ToLower()));
         }
 
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
+
+        /// <summary>
+        /// Gets the properties for this file system.
+        /// </summary>
+        /// <param name="volumeIdentifier">The path whose volume properties are to be queried.</param>
+        /// <returns>A <see cref="FileSystemProperties"/> containing the properties for the specified file system.</returns>
+        public static FileSystemProperties GetProperties(string volumeIdentifier)
+        {
+            ulong available;
+            ulong total;
+            ulong free;
+            if (GetDiskFreeSpaceEx(volumeIdentifier, out available, out total, out free))
+            {
+                return new FileSystemProperties((long)total, (long)free, (long)available);
+            }
+            return new FileSystemProperties(null, null, null);
+        }
+
+   
         public static void Rotate(string filenameBase)
         {
             if (File.Exists(filenameBase))
