@@ -1,4 +1,4 @@
-#### User Guide
+#### The TV Rename User Guide
 If you're new to TV Rename you should read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will get you up-and-running quickly).
 
 Need help? Please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to answer any questions you may have.

@@ -1,4 +1,4 @@
-#### Command Line Interface
+#### TV Rename's Command Line Interface
 
 ### These are the options you need to know!
 

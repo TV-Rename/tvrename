@@ -28,12 +28,6 @@ Here you can find links to downloads and release notes (including beta's and alp
 
 ***Note:*** To receive email when a new version is released, join the TV Rename Releases forum, go to "My settings", "Membership and email settings" and then, in "Email delivery preference:" select "Notify me for every new message".
 
-## Issues, Bugs and Feature&nbsp;Requests
-1. Start by visiting the [TV Rename Forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum"), and search for similar issues, if you find none create a "NEW TOPIC" and ask away.
-2. You can also use **Help>Bug Report** in the application. Fill in the form and click ```Create```. Once the diagnostic information has been gathered, copy and paste it to the [TV Rename Forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum").
-3. If you've found a bug that has been verified by the team, please make sure it has been raised on the [bug tracker](https://github.com/TV-Rename/tvrename/issues "Visit the GitHub Bug Tracker"), if it's registered there you will (usually) get a faster response.
-4. If you need a quick resolution packaging up your configuration files and sending them to us will help with the diagnosis ([see the "Technical Guide"](technical#configuration-files "Read the Technical Guide") for details. **For security reasons it is advisable to only send the package to the person helping you with your problem**.
-5. You can also visit our "[idea wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Rename's Idea Wall")" to suggest new features and vote on other suggestions.
 
 ## [Technical Guide](technical "Read the Technical Guide")
 ***Get the oily rag out, its time to get your hands dirty...*** [Read the Technical Guide](technical "Read the Technical Guide").

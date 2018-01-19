@@ -1,4 +1,4 @@
-#### Tools
+#### The Tools Menu
 ![The Tools Menu](images/tools/menu-01.png){:.pic-r}
 Here you can find tools to update, manipulate and annihilate the data relating to your Media Library and [The TVDB](http://thetvdb.com "Visit TheTVDB.com") cache.
 

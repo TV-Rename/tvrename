@@ -1,4 +1,4 @@
-#### Options and Preferences
+#### The Options Menu
 
 ![The Options Menu](images/options/menu-01.png){:.pic-r}
 One of TV Rename's strongest (and most confusing) features is its configurability. For the newcomer especially, it's very easy to get "lost" in the plethora of options and preferences, and give up.
