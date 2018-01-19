@@ -3195,17 +3195,28 @@ namespace TVRename
             if (this.VersionNumber.CompareTo(otherUpdateVersion.VersionNumber) != 0) return this.VersionNumber.CompareTo(otherUpdateVersion.VersionNumber);
 
             //We have the same version - now we have to get tricky and look at the extension (rc1, beta2 etc)
+            //if both have no extension then they are the same
+            if (string.IsNullOrWhiteSpace(this.Prerelease) && string.IsNullOrWhiteSpace(otherUpdateVersion.Prerelease)) return 0;
 
             //If either are not present then you can assume they are FINAL versions and trump any rx1 verisons
-            if (String.IsNullOrWhiteSpace( this.Prerelease) ) return 1;
-            if (String.IsNullOrWhiteSpace(otherUpdateVersion .Prerelease)) return -1;
+            if (string.IsNullOrWhiteSpace( this.Prerelease) ) return 1;
+            if (string.IsNullOrWhiteSpace(otherUpdateVersion .Prerelease)) return -1;
             
             //We have 2 suffixes
             //Compare alphabetically alpha1 < alpha2 < beta1 < beta2 < rc1 < rc2 etc
-            return (String.Compare(this.Prerelease , otherUpdateVersion.Prerelease , StringComparison.OrdinalIgnoreCase) );
+            return (string.Compare(this.Prerelease , otherUpdateVersion.Prerelease , StringComparison.OrdinalIgnoreCase) );
         }
 
         public bool NewerThan(UpdateVersion compare) => (CompareTo(compare) > 0);
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(this.VersionNumber);
+            if (!string.IsNullOrWhiteSpace(this.Prerelease)) sb.Append("-" + this.Prerelease);
+            if (!string.IsNullOrWhiteSpace(this.Build)) sb.Append("-(" + this.Build+")");
+            return sb.ToString() ;
+        }
     }
     
 
