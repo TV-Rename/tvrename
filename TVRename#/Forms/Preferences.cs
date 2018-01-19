@@ -925,7 +925,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in LoadLanguages", e);
+                logger.Fatal(e,"Unhandled Exception in LoadLanguages");
                 aborted = true;
             }
             TheTVDB.Instance.Unlock("Preferences-LoadLanguages");

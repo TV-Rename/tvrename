@@ -525,7 +525,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in GetThread", e);
+                logger.Fatal(e,"Unhandled Exception in GetThread");
                 return;
             }
         }
@@ -628,7 +628,7 @@ namespace TVRename
             {
                 this.DownloadDone = true;
                 this.DownloadOK = false;
-                logger.Fatal("UNHANDLED EXCEPTION IN DOWNLOAD THREAD",e);
+                logger.Fatal(e,"UNHANDLED EXCEPTION IN DOWNLOAD THREAD");
                 return;
             }
             finally
@@ -1481,7 +1481,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in Process Single Action", e);
+                logger.Fatal(e,"Unhandled Exception in Process Single Action");
                 return;
             }
         }
@@ -1631,7 +1631,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in ActionProcessor", e);
+                logger.Fatal(e,"Unhandled Exception in ActionProcessor");
                 return;
             }
         }
@@ -2615,7 +2615,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in ScanWorker",e);
+                logger.Fatal(e,"Unhandled Exception in ScanWorker");
                 return;
             }
         }
@@ -3125,7 +3125,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Error("Failed to contact GitHub to identify new releases", e);
+                logger.Error(e,"Failed to contact GitHub to identify new releases");
                 return null;
 
             }
