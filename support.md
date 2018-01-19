@@ -9,7 +9,7 @@ If you've found a bug that has been verified, please make sure it has been raise
 **For security reasons it is advisable to only send the package to the person helping you with your problem**.
 
 ## New Ideas and Feature&nbsp;Requests
-If you have an idea for a great new feature (as well as discussing it in the forum) you can post it on our "[Idea Wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Renames Idea Wall")". As well as suggesting new features, the Idea Wall lets you comment and vote on other ideas and suggestions.
+If you have an idea for a great new feature you can post it on our "[Idea Wall](http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0 "Visit TV Renames Idea Wall")" (as well as discussing it in the forum). Apart from suggesting new features, the Idea Wall lets you comment and vote on other ideas and suggestions.
 
 ## What are "the developers" thinking?
 ***Good question! It's one I quite often ask as well!***

@@ -1,36 +1,88 @@
-## [About TV Rename](about "Read more about TV Rename")
-TV Rename is a media management tool that runs on Windows XP and later, looking after all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.&emsp; *[Read more...](about "Read more about TV Rename")*
+<script>
+  $(function(){
+  $('.faderandom > :gt(0)').hide();
+  setInterval(function(){
+    var rand = Math.floor(Math.random() * ($('.faderandom').children().length-1));
+    $('.faderandom > :first-child').appendTo('.faderandom').fadeOut();
+    $('.faderandom > *').eq(rand).prependTo('.faderandom').fadeIn();
+  }, 2500);
+});
+</script>
 
-## Document Conventions
-Throughout this documentation: -<br />
-Text indicating a window name is *Italic*, e.g. "*Folder Monitor*"<br />
-Text indicating a tab in a window is ***Bold Italic***, e.g. "***When to watch***"<br />
-Text indicating navigation through the menu system is **Bold** and may include a **>** to indicate a sub menu, e.g. "**Options>Preferences**"<br />
-Text indicating a button looks like `A Button`
+<div class="faderandom">
+  <img src="images/slides/001.png">
+  <img src="images/slides/002.png">
+  <img src="images/slides/003.png">
+  <img src="images/slides/004.png">
+  <img src="images/slides/005.png">
+  <img src="images/slides/006.png">
+  <img src="images/slides/007.png">
+  <img src="images/slides/008.png">
+  <img src="images/slides/009.png">
+  <img src="images/slides/010.png">
+  <img src="images/slides/011.png">
+  <img src="images/slides/012.png">
+  <img src="images/slides/013.png">
+  <img src="images/slides/014.png">
+  <img src="images/slides/015.png">
+  <img src="images/slides/016.png">
+  <img src="images/slides/017.png">
+  <img src="images/slides/018.png">
+</div>
+
+##### Welcome to 
+#### TV&nbsp;Rename
+***The tool that helps you organise your TV Show Collection with ease...***
+
+## What is TV Rename?
+TV Rename is a media management tool that runs on Windows XP and later, looking after all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
+
+On the surface TV Rename will "fix" the names of downloaded TV Show files...
+
+Say you've downloaded a few TV Show episodes, they will probably have names like this: -
+
+> ***Grey's.Anatomy.S03E04.blah-blah.xvid.avi***
+
+But you want them automatically renamed including the show and episode name and the season and episode number like this: -
+
+> ***Grey's Anatomy - S03E04 - What I Am.avi***
+
+...this is the tool for you!
+
+## But wait... There's more!
+**TV Rename can: -**
+* Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit TheTVDB.com") and rules you can configure
+* Monitor specified folders for TV Show files
+
+> ***"Media Library"*** - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
+
+**Once TV Rename knows about your Media Library it can: -**
+* Copy (or move) files from monitored folders to your Media Library
+* List any missing TV Show episodes/seasons in your Media Library
+* Create web searches to help you find missing TV Show files
+* Tell you how long you'll have to wait until the next episode of your current favourite TV Show airs
 
 ## [Quickstart Guide](quickstart "Read The Quickstart Guide")
-This guide will help you through the initial setup of TV Rename creating a working system with your media files.&emsp; *[Read the guide...](quickstart "Read The Quickstart Guide")*
+The Quickstart Guide will help you through the initial setup of TV Rename creating a working system with your media files.&emsp; *[Read the guide...](quickstart "Read The Quickstart Guide")*
 
 ## [User Guide](userguide "Read The User Guide")
-This guide picks up where the Quickstart Guide finishes, discussing using TV Rename in much more detail.&emsp; *[Read the guide...](userguide "Read The User Guide")*
-
-## [Tips and Tricks](tips-tricks "Read Tips 'n' Tricks")
-Helpful hints, and inside information (from the developers among others).&emsp; *[Read more...](tips-tricks "Read Tips and Tricks")*
-
-## Forums
-TV Rename uses Google Groups for help, support and release information.
-
-### The TV Rename Forum
-Here you can ask for help, make suggestions, and report something you think may be a bug.&emsp; *[Visit the TV Rename forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
-
-### The TV Rename Releases Forum
-Here you can find links to downloads and release notes (including beta's and alphas).&emsp; *[Visit the TV Rename Releases forum...](https://groups.google.com/forum/#!forum/tvrename-releases "Visit the TV Rename Releases Forum")*.
-
-***Note:*** To receive email when a new version is released, join the TV Rename Releases forum, go to "My settings", "Membership and email settings" and then, in "Email delivery preference:" select "Notify me for every new message".
-
+The User Guide picks up where the Quickstart Guide finishes, discussing the three main tabs and their use in some detail.&emsp; *[Read the guide...](userguide "Read The User Guide")*
 
 ## [Technical Guide](technical "Read the Technical Guide")
-***Get the oily rag out, its time to get your hands dirty...*** [Read the Technical Guide](technical "Read the Technical Guide").
+***Get the oily rag out, its time to get your hands dirty...*** [Read the Technical Guide](technical "Read the guide").
+
+## [The Options Menu](options "Read about Options and Preferences")
+The Options Menu takes you gently through virtually every available option and preference helping you to get TV Rename to behave just the way you want.&emsp; *[Read more...](options "TV Rename's Options and Preferences")* 
+
+## [The Tools Menu](tools Read about TV Rename's Tools")
+The Tools Menu discusses some of TV Rename's other features including forcing updates and the like.&emsp; *[Read more...](tools "TV Rename's Tools")* 
 
 ## [Command Line Interface](cmd-line "Read about using the CLI")
 10 things you can do from the [command line...](cmd-line "Read about using the CLI").
+
+## [The Forum](https://groups.google.com/forum/#!forum/tvrename "Visit the Forum")
+TV Rename's forum is hosted on Google Groups.<br />
+Here you can ask for help, make suggestions, and report something you think may be a bug.&emsp; *[Visit the TV Rename forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
+
+## [Tips and Tricks](tips-tricks "Read Tips 'n' Tricks")
+Helpful hints, and inside information (from the developers among others).&emsp; *[Read more...](tips-tricks "Read Tips and Tricks")*

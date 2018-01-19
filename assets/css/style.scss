@@ -59,6 +59,21 @@
     font-weight: normal;
 }
 
+.faderandom { 
+	position: relative;
+	height: 200px;
+	width: 300px;
+	float: right;
+	margin: 0 0 30px 15px;
+}
+
+.faderandom > * {
+	position: absolute;
+	left: 0;
+	top: 0;
+	display: block;
+}
+
 h1, h2, h4, h5 {
     color: #3399cc;
 }
@@ -163,11 +178,11 @@ th, td, td:first-child {
 
 footer span a {
     color:#666;
-    font-size: 22px;
+    font-size: 12px;
 }
 
 footer span a:hover {
-    border-bottom: 2px solid #666;
+    border-bottom: 1px solid #666;
 }
 
 footer span img {

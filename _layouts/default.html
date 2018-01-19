@@ -1,3 +1,6 @@
+---
+image_sliders_load_all: true
+---
 <!doctype html>
 <html lang="{{ site.lang | default: "en-US" }}">
 
@@ -10,12 +13,12 @@
 		{% seo %}
 
 		<link rel="stylesheet" href="{{ '/assets/css/style.css?v=' | append: site.github.build_revision | relative_url }}">
-		
-		<!-- Updated jquery -->
+
 		<!--
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 		-->
-
+		
+		<!-- Updated jquery -->
 		<script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity=
 		"sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
@@ -26,12 +29,7 @@
 		<![endif]-->
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		
-		<!-- Include the refresh metatag if we're on localhost -->
-		{% if site.url == 'http://localhost:4000' %}
-			<meta http-equiv="refresh" content="15">
-		{% endif %}	
-		
+
 	</head>
 
 	<body>
@@ -59,22 +57,19 @@
 				<span>Links:</span>
 				-->
 				<ul>
-					<li><a title="Read About TV Rename" href="about" class="button">About TV Rename</a></li>
-					<li><a title="Visit TV Rename's Forum" href="https://groups.google.com/forum/#!forum/tvrename" class="button">Support</a></li>
-					<li><a title="Visit TV Rename's GitHub Issues Page" href="{{ site.github.issues_url }}" class="button">Bug Tracker</a></li>
-					<li><a title="Visit TV Rename's Idea Wall" href="http://ideas.theideawall.com/TVRename/Forum/Details/8dea3275-4010-4bab-9763-a8bb613517e0" class="button">Feature Tracker</a></li>
-					<!--
-					Modified Download link to point to GitHub pages
-					-->
 					<li><a id="download" title="Download the latest version from GitHub" href="{{ site.github.releases_url }}" class="button">Download</a></li>
-				</ul>
-				<br />
-				<ul style="float: right; margin-top: 6px;">
+					<li><a title="Read about TV Rename Support" href="support" class="button">Support</a></li>
 					<li><a title="Read the Quickstart Guide" href="quickstart" class="button">Quickstart Guide</a></li>
 					<li><a title="Read the User Guide" href="userguide" class="button">User Guide</a></li>
 					<li><a title="Read the Technical Guide" href="technical" class="button">Technical Guide</a></li>
-					<li><a title="Read the Options Guide" href="options" class="button">The Options Menu</a></li>
-					<li><a title="Read the Tools Guide" href="tools" class="button">The Tools Menu</a></li>
+				</ul>
+				<br />
+				<ul style="float: right; margin-top: 6px;">
+					<li><a title="Visit the Forum" href="https://groups.google.com/forum/#!forum/tvrename" class="button">The Forum</a></li>
+					<li><a title="Read Tips and Tricks" href="tips-tricks" class="button">Tips and Tricks</a></li>
+					<li><a title="Read the Options Menu Guide" href="options" class="button">The Options Menu</a></li>
+					<li><a title="Read the Tools Menu Guide" href="tools" class="button">The Tools Menu</a></li>
+					<li><a title="Read about the Command Line Interface" href="cmd-line" class="button">The CLI</a></li>
 				</ul>
 			</div>
 		</div><!-- end banner -->
@@ -94,10 +89,10 @@
 				{{ content }}
 			</section>
 			<footer>
-				<span><a href="{{ site.github.repository_url }}" title="Visit TV Rename's GitHub pages">
-				<img src="images/GitHub-Mark-32px.png" height="16" width="16" alt="GitHub Logo"/>
+				<span><a href="{{ site.github.repository_url }}" title="Visit TV Rename on GitHub">
+				<img src="images/GitHub-Mark-32px.png" height="8" width="8" alt="GitHub Logo"/>
 				&nbsp;Visit TV Rename on GitHub&nbsp;
-				<img src="images/GitHub-Mark-32px.png" height="16" width="16" alt="GitHub Logo"/></a></span>
+				<img src="images/GitHub-Mark-32px.png" height="8" width="8" alt="GitHub Logo"/></a></span>
 			</footer>
 
 		</div><!-- end wrapper -->
@@ -114,8 +109,6 @@
 				ga('send', 'pageview');
 			</script>
 		{% endif %}
-		
-		<!-- Update the download link to point directly to the latest .exe -->
 		
 		<script>
 			$(function() {

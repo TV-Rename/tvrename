@@ -1,8 +1,8 @@
-#### TV Rename's Command Line Interface
+#### The Command Line Interface
 
 ### These are the options you need to know!
 
-If TV Rename is already running any CLI activity will be directed towards the running instance.
+***If TV Rename is already running any CLI activity will be directed towards the running instance.***
 
 ## Main Options
 

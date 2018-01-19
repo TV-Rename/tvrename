@@ -1,4 +1,4 @@
-#### The TV Rename Technical Guide
+#### The Technical Guide
 ***Oily rag and spanners at the ready? Right then, here we go!***
 
 ## [TV Rename and the Command&nbsp;Line](cmd-line "Read about Command Line functionality")
