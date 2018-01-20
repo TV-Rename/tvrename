@@ -35,9 +35,9 @@
 ## What is TV Rename?
 TV Rename is a media management tool that runs on Windows XP and later, looking after all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
 
-On the surface TV Rename will "fix" the names of downloaded TV Show files...
+On the surface TV Rename will "fix" the names of TV Show files...
 
-Say you've downloaded a few TV Show episodes, they will probably have names like this: -
+Say you've got a few TV Show episodes saved as video files, they will probably have names like this: -
 
 > ***Grey's.Anatomy.S03E04.blah-blah.xvid.avi***
 
@@ -60,6 +60,8 @@ But you want them automatically renamed including the show and episode name and 
 * Create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of your current favourite TV Show airs
 
+***Here is a quick summary of the information you'll find lurking inside the menu system above...***
+
 ## [Quickstart Guide](quickstart "Read The Quickstart Guide")
 The Quickstart Guide will help you through the initial setup of TV Rename creating a working system with your media files.&emsp; *[Read the guide...](quickstart "Read The Quickstart Guide")*
 
@@ -78,9 +80,10 @@ The Tools Menu discusses some of TV Rename's other features including forcing up
 ## [Command Line Interface](cmd-line "Read about using the CLI")
 10 things you can do from the [command line...](cmd-line "Read about using the CLI").
 
-## [The Forum](https://groups.google.com/forum/#!forum/tvrename "Visit the Forum")
-TV Rename's forum is hosted on Google Groups.<br />
-Here you can ask for help, make suggestions, and report something you think may be a bug.&emsp; *[Visit the TV Rename forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
-
 ## [Tips and Tricks](tips-tricks "Read Tips 'n' Tricks")
 Helpful hints, and inside information (from the developers among others).&emsp; *[Read more...](tips-tricks "Read Tips and Tricks")*
+
+## [Support](support "Read the Support Page")
+There are a number of routes to get help with TV Rename, you'll find all the details *[here...](support " Read the Support Page")*<br />
+In addition there is a direct link to the *[TVRename Forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
+
