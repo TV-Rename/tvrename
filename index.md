@@ -1,6 +1,8 @@
 
 <!-- jqFade slideshow -->
 
+<script src="/assets/js/jqFade.js"></script>
+
 <div class="fade">
 	<img src="images/slides/001.png">
 	<img src="images/slides/002.png">
