@@ -1,33 +1,31 @@
+
+
 <script>
-  $(function(){
-  $('.faderandom > :gt(0)').hide();
-  setInterval(function(){
-    var rand = Math.floor(Math.random() * ($('.faderandom').children().length-1));
-    $('.faderandom > :first-child').appendTo('.faderandom').fadeOut();
-    $('.faderandom > *').eq(rand).prependTo('.faderandom').fadeIn();
-  }, 2500);
-});
+	// Jquery Slideshow the div class fade
+	$(function(){
+	$('.fade > :gt(0)').hide();
+		setInterval(function(){$('.fade > :first-child').fadeOut().next().fadeIn().end().appendTo('.fade');}, 2500);
+	});
 </script>
 
-<div class="faderandom">
-  <img src="images/slides/001.png">
-  <img src="images/slides/002.png">
-  <img src="images/slides/003.png">
-  <img src="images/slides/004.png">
-  <img src="images/slides/005.png">
-  <img src="images/slides/006.png">
-  <img src="images/slides/007.png">
-  <img src="images/slides/008.png">
-  <img src="images/slides/009.png">
-  <img src="images/slides/010.png">
-  <img src="images/slides/011.png">
-  <img src="images/slides/012.png">
-  <img src="images/slides/013.png">
-  <img src="images/slides/014.png">
-  <img src="images/slides/015.png">
-  <img src="images/slides/016.png">
-  <img src="images/slides/017.png">
-  <img src="images/slides/018.png">
+<div class="fade">
+	<img src="images/slides/001.png">
+	<img src="images/slides/002.png">
+	<img src="images/slides/003.png">
+	<img src="images/slides/004.png">
+	<img src="images/slides/005.png">
+	<img src="images/slides/006.png">
+	<img src="images/slides/007.png">
+	<img src="images/slides/008.png">
+	<img src="images/slides/009.png">
+	<img src="images/slides/010.png">
+	<img src="images/slides/011.png">
+	<img src="images/slides/012.png">
+	<img src="images/slides/013.png">
+	<img src="images/slides/014.png">
+	<img src="images/slides/015.png">
+	<img src="images/slides/016.png">
+	<img src="images/slides/017.png">
 </div>
 
 ##### Welcome to 

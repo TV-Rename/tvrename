@@ -59,7 +59,7 @@
     font-weight: normal;
 }
 
-.faderandom { 
+.fade { 
 	position: relative;
 	height: 200px;
 	width: 300px;
@@ -67,7 +67,7 @@
 	margin: 0 0 30px 15px;
 }
 
-.faderandom > * {
+.fade > * {
 	position: absolute;
 	left: 0;
 	top: 0;
