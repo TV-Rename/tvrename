@@ -1,11 +1,6 @@
 
 <!-- jquery "fade" slideshow change every 2.5s -->
-<script>
-	$(function(){
-		$('.fade > :gt(0)').hide();
-		setInterval(function(){$('.fade > :first-child').fadeOut().next().fadeIn().end().appendTo('.fade');}, 2500);
-	});
-</script>
+<script src="/assets/javascript/jqFade.js"></script>
 
 <div class="fade">
 	<img src="images/slides/001.png">
