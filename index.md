@@ -47,7 +47,7 @@ But you want them automatically renamed including the show and episode name and 
 
 ...this is the tool for you!
 
-## But wait... There's more!
+##### But wait... There's more!
 **TV Rename can: -**
 * Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit TheTVDB.com") and rules you can configure
 * Monitor specified folders for TV Show files
@@ -60,7 +60,7 @@ But you want them automatically renamed including the show and episode name and 
 * Create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of your current favourite TV Show airs
 
-***Here is a quick summary of the information you'll find lurking inside the menu system above...***
+***Here is a quick summary of the information you'll find lurking behind the menu buttons above...***
 
 ## [Quickstart Guide](quickstart "Read The Quickstart Guide")
 The Quickstart Guide will help you through the initial setup of TV Rename creating a working system with your media files.&emsp; *[Read the guide...](quickstart "Read The Quickstart Guide")*
@@ -69,7 +69,7 @@ The Quickstart Guide will help you through the initial setup of TV Rename creati
 The User Guide picks up where the Quickstart Guide finishes, discussing the three main tabs and their use in some detail.&emsp; *[Read the guide...](userguide "Read The User Guide")*
 
 ## [Technical Guide](technical "Read the Technical Guide")
-***Get the oily rag out, its time to get your hands dirty...*** [Read the Technical Guide](technical "Read the guide").
+***Get the oily rag out, its time to get your hands dirty...*** *[Read the guide...](technical "Read the guide")*
 
 ## [The Options Menu](options "Read about Options and Preferences")
 The Options Menu takes you gently through virtually every available option and preference helping you to get TV Rename to behave just the way you want.&emsp; *[Read more...](options "TV Rename's Options and Preferences")* 
@@ -87,3 +87,5 @@ Helpful hints, and inside information (from the developers among others).&emsp; 
 There are a number of routes to get help with TV Rename, you'll find all the details *[here...](support " Read the Support Page")*<br />
 In addition there is a direct link to the *[TVRename Forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
 
+## Download
+Downloads the latest version of the software...
