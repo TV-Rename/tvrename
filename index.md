@@ -2,8 +2,8 @@
 	$(function(){
 		$('.fade > :gt(0)').hide();
 		setInterval(function(){
-			$('.fade > :first-child').fadeOut().next().fadeIn().end().appendTo('.fade');
-		}, 2500);
+			$('.fade > :first-child').fadeOut(3000).next().fadeIn(3000).end().appendTo('.fade');
+		}, 10000);
 	});
 </script>
 
