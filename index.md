@@ -1,7 +1,11 @@
 
 <!-- jqFade slideshow -->
-
-<script src="/assets/js/jqFade.js"></script>
+<script>
+	$(function(){
+	$('.fade > :gt(0)').hide();
+	setInterval(function(){$('.fade > :first-child').fadeOut().next().fadeIn().end().appendTo('.fade');}, 2500);
+	});
+</script>
 
 <div class="fade">
 	<img src="images/slides/001.png">
