@@ -35,6 +35,8 @@ namespace TVRename
 
         protected static FileInfo GetFileInfo(string path, string file)
         {
+            Directory.CreateDirectory(path);
+
             return new FileInfo(System.IO.Path.Combine(path, file));
         }
 
