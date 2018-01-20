@@ -1,9 +1,9 @@
 
-<!-- jqFade slideshow -->
+<!-- jquery "fade" slideshow change every 2.5s -->
 <script>
 	$(function(){
-	$('.fade > :gt(0)').hide();
-	setInterval(function(){$('.fade > :first-child').fadeOut().next().fadeIn().end().appendTo('.fade');}, 2500);
+		$('.fade > :gt(0)').hide();
+		setInterval(function(){$('.fade > :first-child').fadeOut().next().fadeIn().end().appendTo('.fade');}, 2500);
 	});
 </script>
 
@@ -29,20 +29,22 @@
 
 ##### Welcome to 
 #### TV&nbsp;Rename!
-***The tool that helps you organise your TV Show Collection with ease...***
+**Organise your TV Shows with ease...**
 
 ## What is TV Rename?
 TV Rename is a media management tool that runs on Windows XP and later, looking after all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
 
-On the surface TV Rename will "fix" the names of TV Show files...
+On the surface TV Rename will "fix" the names of TV Shows...
 
-Say you've got a few TV Show episodes saved as video files, they will probably have names like this: -
+For example, you've got a few TV Show episodes saved as video files, they will probably have names like this: -
 
-> ***Grey's.Anatomy.S03E04.blah-blah.xvid.avi***
+> ***Grey's.Anatomy.S03E04.blah-blah-blah.xvid.avi***
 
-But you want them automatically renamed including the show and episode name and the season and episode number like this: -
+But you want them all renamed, including the show and episode name and the season and episode number like this: -
 
 > ***Grey's Anatomy - S03E04 - What I Am.avi***
+
+And you want it done automatically...
 
 ...this is the tool for you!
 
