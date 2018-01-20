@@ -46,7 +46,7 @@ But you want them all renamed, including the show and episode name and the seaso
 
 And you want it done automatically...
 
-...this is the tool for you!
+then this is the tool for you!
 
 ##### But wait... There's more!
 **TV Rename can: -**
