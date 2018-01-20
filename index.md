@@ -1,12 +1,5 @@
 
-
-<script>
-	// Run jquery Slideshow on the div class="fade"
-	$(function(){
-	$('.fade > :gt(0)').hide();
-		setInterval(function(){$('.fade > :first-child').fadeOut().next().fadeIn().end().appendTo('.fade');}, 2500);
-	});
-</script>
+<!-- jqFade slideshow -->
 
 <div class="fade">
 	<img src="images/slides/001.png">
@@ -29,7 +22,7 @@
 </div>
 
 ##### Welcome to 
-#### TV&nbsp;Rename
+#### TV&nbsp;Rename!
 ***The tool that helps you organise your TV Show Collection with ease...***
 
 ## What is TV Rename?
@@ -87,5 +80,5 @@ Helpful hints, and inside information (from the developers among others).&emsp; 
 There are a number of routes to get help with TV Rename, you'll find all the details *[here...](support " Read the Support Page")*<br />
 In addition there is a direct link to the *[TVRename Forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
 
-## Download
+## [Download]({{ site.github.releases_url }}/latest "Download the Latest Version...") 
 Downloads the latest version of the software...
