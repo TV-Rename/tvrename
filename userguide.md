@@ -1,4 +1,4 @@
-#### User Guide
+#### The User Guide
 If you're new to TV Rename you should read the [Quickstart Guide](quickstart "Read the Quickstart Guide") first (it's only a 3-4 minute read and will get you up-and-running quickly).
 
 Need help? Please sign up to the [forum](https://groups.google.com/forum/#!forum/tvrename "Visit the TVRename forum"), someone there will be happy to answer any questions you may have.
@@ -151,10 +151,12 @@ The "Specials count as episodes" tick box is useful with shows such as "Mythbust
 
 The "Do Renaming" tick box tells TV Rename to use the names built using the [(Options>)Filename Template Editor](options#filename-template-editor) when copying or moving files if it is ticked, otherwise they will be left unchanged.
 
+The "Do missing check" tick-box enables or disables the ability to check for missing episodes, if the option is ticked some degree of granularity is provided by the "Include future episodes" and "Include no airdate" tick-boxes.
+
 "Use sequential number matching" will match episodes based on their overall airing order. Because this can cause a large number of false matches, the box is un-ticked by default. 
 For example, Season 4 Episode 9 of Marvel's Agents of S.H.I.E.L.D. is the 75<sup>th</sup> episode aired, so with this option enabled "Marvel's Agents of S.H.I.E.L.D. - 75 - Broken Promises.mkv" will be seen at S04E09.
 
-![Under Construction](images/under-construction.jpg)
+The "Manual/Additional Folders" section allows you to manually add and remove additional Seasons and associated folders.
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -172,8 +174,14 @@ Adding "Dr. Who" and "Dr Who" as aliases for "Doctor Who" will fix this problem 
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### The Search Tab
+![The Search Tab](images/main-window/add-edit-show-search-01.png){:.pic-l}
+The Search Tab allows you to create a custom search for files on a per show basis.
 
-![Under Construction](images/under-construction.jpg)
+This is useful if you collect episodes of a show that falls outside the scope of the "general" search engines and has its own genre-specific sites and searches (Japanese Anime for example).
+
+Using the same technique and tag structure as found in the [Options>Search&nbsp;Engines](options#search-engines "Visit Options>Search Engines") tab you can create a search specific to the show without affecting the "general" searches.
+
+This option is disabled by default but it can be enabled for the specific show by ticking the "Use Custom Search" box in the tab.
 
 {:.toplink}
 [Return to Add/Edit Show](#addedit-show)&nbsp;&#9670;&nbsp;[Return to Top]()

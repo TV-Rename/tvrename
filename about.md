@@ -1,7 +1,7 @@
 #### About TV Rename
 
 ## Foreword ##
-As ongoing work on the TV Rename guide continues Version 2.3.1 of the software has just been released.
+As ongoing work on the TV Rename guide continues Version 2.3.2 of the software has just been released.
 
 This is a bug-fix release for Version 2.3, recent changes include the move away from using TheTVDB's XML interface to their new JSON v2 API, and numerous changes around entering show information.
 
