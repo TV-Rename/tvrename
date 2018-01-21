@@ -59,21 +59,6 @@
     font-weight: normal;
 }
 
-.fade { 
-	position: relative;
-	height: 200px;
-	width: 300px;
-	float: right;
-	margin: 0 0 30px 15px;
-}
-
-.fade > * {
-	position: absolute;
-	left: 0;
-	top: 0;
-	display: block;
-}
-
 h1, h2, h4, h5 {
     color: #3399cc;
 }
