@@ -1,5 +1,4 @@
-<!-- Define the class="fade" cross fading slide show -->
-
+<!-- Define the class="fade" slide show -->
 <style>
 	.fade { position: relative; height: 252px; width: 336px; float: right; margin: 0 0 20px 20px; }
 	.fade > * { position: absolute; left: 0; top: 0; display: block; }
@@ -13,7 +12,6 @@
 		}, 9000);
 	});
 </script>
-
 <!-- End slide show definition -->
 
 <div class="fade">
@@ -97,5 +95,13 @@ Helpful hints, and inside information (from the developers among others).&emsp; 
 There are a number of routes to get help with TV Rename, you'll find all the details *[here...](support " Read the Support Page")*<br />
 In addition there is a direct link to the *[TVRename Forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
 
-## [Download]({{ site.github.releases_url }}/latest "Download the Latest Version...") 
-Downloads the latest version of the software...
+## [Download]({{ site.github.releases_url }} "Download the Latest Version..."){:#downloadLink} 
+Download the latest version of the software...
+
+<script>
+	$(function() {
+		$.get('https://api.github.com/repos/TV-Rename/tvrename/releases/latest', function(data) {
+			$('#downloadLink').attr('href', data.assets[0].browser_download_url);
+		});
+	});
+</script>
