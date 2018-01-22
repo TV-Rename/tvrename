@@ -43,7 +43,7 @@ On the surface TV Rename will "fix" the names of TV Shows...
 
 For example, you've got a few TV Show episodes saved as video files, they will probably have names like this: -
 
-> ***Grey's.Anatomy.S03E04.blah-blah-blah.xvid.avi***
+> _**Grey's.Anatomy.S03E04.blah-blah-blah.xvid.avi**_
 
 But you want them all renamed, including the show and episode name and the season and episode number like this: -
 
@@ -66,7 +66,7 @@ Then this is the tool for you!
 * Create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of your current favourite TV Show airs
 
-***Here is a quick summary of the information you'll find lurking behind the menu buttons above...***
+_**Here is a quick summary of the information you'll find lurking behind the menu buttons above...**_
 
 ## [Quickstart Guide](quickstart "Read The Quickstart Guide")
 The Quickstart Guide will help you through the initial setup of TV Rename creating a working system with your media files.&emsp; *[Read the guide...](quickstart "Read The Quickstart Guide")*
