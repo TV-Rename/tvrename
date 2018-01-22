@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows.Forms;
+using static System.Windows.Forms.Control;
 
 namespace TVRename.Windows.Utilities
 {
@@ -26,6 +24,23 @@ namespace TVRename.Windows.Utilities
 #endif
 
                 return v;
+            }
+        }
+
+        public static void DoubleBuffer(Control control)
+        {
+            if (SystemInformation.TerminalServerSession) return;
+
+            typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(control, true, null);
+        }
+
+        public static void DoubleBuffer(ControlCollection controls)
+        {
+            if (SystemInformation.TerminalServerSession) return;
+
+            foreach (Control control in controls)
+            {
+                DoubleBuffer(control);
             }
         }
     }

@@ -41,7 +41,7 @@ namespace TVRename.Windows.Forms
             this.textBoxSearch = new System.Windows.Forms.TextBox();
             this.buttonSearch = new System.Windows.Forms.Button();
             this.groupBoxStorage = new System.Windows.Forms.GroupBox();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.groupBoxSearch.SuspendLayout();
             this.groupBoxStorage.SuspendLayout();
             this.SuspendLayout();
@@ -187,13 +187,13 @@ namespace TVRename.Windows.Forms
             this.groupBoxStorage.TabStop = false;
             this.groupBoxStorage.Text = "Storage";
             // 
-            // statusStrip1
+            // statusStrip
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 369);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(380, 22);
-            this.statusStrip1.TabIndex = 4;
-            this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip.Location = new System.Drawing.Point(0, 369);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(380, 22);
+            this.statusStrip.TabIndex = 4;
+            this.statusStrip.Text = "statusStrip";
             // 
             // Add
             // 
@@ -202,7 +202,7 @@ namespace TVRename.Windows.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(380, 391);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.groupBoxStorage);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.groupBoxSearch);
@@ -239,6 +239,6 @@ namespace TVRename.Windows.Forms
         private System.Windows.Forms.TextBox textBoxSearch;
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.GroupBox groupBoxStorage;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip statusStrip;
     }
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -42,22 +42,50 @@
     <Reference Include="AlphaFS, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4d31a58f7d7ad5c9, processorArchitecture=MSIL">
       <HintPath>..\packages\AlphaFS.2.1.3\lib\net452\AlphaFS.dll</HintPath>
     </Reference>
+    <Reference Include="Humanizer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
+    </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Scriban, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Scriban.1.1.1\lib\net40\Scriban.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
+    <Compile Include="Controls\EpisodeView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\EpisodeView.Designer.cs">
+      <DependentUpon>EpisodeView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SeasonView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\SeasonView.Designer.cs">
+      <DependentUpon>SeasonView.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ShowView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -82,6 +110,30 @@
     <Compile Include="Forms\Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\MediaCenter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MediaCenter.Designer.cs">
+      <DependentUpon>MediaCenter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MediaCenterImage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MediaCenterImage.Designer.cs">
+      <DependentUpon>MediaCenterImage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MediaCenterText.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MediaCenterText.Designer.cs">
+      <DependentUpon>MediaCenterText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Preferences.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Preferences.Designer.cs">
+      <DependentUpon>Preferences.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\SplashScreen.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +147,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\Layout.cs" />
+    <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Utilities\Helpers.cs" />
     <None Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -127,6 +181,19 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\calendar.png" />
+    <Content Include="Resources\disk.png" />
+    <Content Include="Resources\document.png" />
+    <Content Include="Resources\help.png" />
+    <Content Include="Resources\image.png" />
+    <Content Include="Resources\scan.png" />
+    <Content Include="Resources\search-folder.png" />
+    <Content Include="Resources\statistics.png" />
+    <Content Include="Resources\tv.png" />
+    <Content Include="Resources\web.png" />
+    <Content Include="Resources\zoom.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

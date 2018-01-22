@@ -91,7 +91,15 @@ namespace TVRename.Core.Models.Cache
         /// <value>
         /// The episode rating.
         /// </value>
-        public string Rating { get; set; }
+        public Rating Rating { get; set; }
+
+        /// <summary>
+        /// Gets or sets the episode thumbnail image path.
+        /// </summary>
+        /// <value>
+        /// The episode thumbnail image path.
+        /// </value>
+        public string Thumbnail { get; set; }
 
         /// <summary>
         /// Gets or sets the episode writers.

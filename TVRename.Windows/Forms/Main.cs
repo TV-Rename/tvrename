@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
+using Humanizer;
+using TVRename.Core.Actions;
+using TVRename.Core.Models;
 using TVRename.Core.Models.Cache;
-using TVRename.Core.Models.Settings;
 using TVRename.Core.TVDB;
+using TVRename.Core.Utility;
+using TVRename.Windows.Configuration;
 using TVRename.Windows.Controls;
 using TVRename.Windows.Utilities;
 using Show = TVRename.Core.Models.Show;
@@ -25,12 +29,32 @@ namespace TVRename.Windows.Forms
         {
             InitializeComponent();
 
-            BuildTree();
+            // Double buffer to reduce flicker
+            Helpers.DoubleBuffer(this.listViewScan);
+            Helpers.DoubleBuffer(this.listViewCalendar);
 
-            this.Shown += (sender, args) =>
-            {
-                Logger.Info("Main form started");
-            };
+            // Position window
+            this.Size = Configuration.Layout.Instance.Window.Size;
+            this.Location = Configuration.Layout.Instance.Window.Location;
+            this.WindowState = Configuration.Layout.Instance.Window.Maximized ? FormWindowState.Maximized : FormWindowState.Normal;
+            this.splitContainer.SplitterDistance = Configuration.Layout.Instance.Window.Splitter;
+
+            // Image lists
+            this.imageListTabs.Images.Add(Properties.Resources.Tv);
+            this.imageListTabs.Images.Add(Properties.Resources.Zoom);
+            this.imageListTabs.Images.Add(Properties.Resources.Calendar);
+
+            this.tabControl.TabPages[0].ImageIndex = 0;
+            this.tabControl.TabPages[1].ImageIndex = 1;
+            this.tabControl.TabPages[2].ImageIndex = 2;
+
+            this.imageListCalendar.Images.Add(Properties.Resources.Scan);
+            this.imageListCalendar.Images.Add(Properties.Resources.Disk);
+
+            BuildTree();
+            BuildCalendar();
+
+            this.Shown += (s, a) => Logger.Info("Main form started");
         }
 
         private void BuildTree()
@@ -47,7 +71,7 @@ namespace TVRename.Windows.Forms
                 {
                     node.Nodes.Add(new TreeNode
                     {
-                        Text = season.Key == 0 ? "Specials" : $"Season {season.Key}",
+                        Text = season.Key == 0 ? Settings.Instance.SpecialsTemplate.Template(season.Value) : Settings.Instance.SeasonTemplate.Template(season.Value),
                         Name = season.Key.ToString()
                     });
                 }
@@ -55,7 +79,85 @@ namespace TVRename.Windows.Forms
 
             this.treeViewShows.EndUpdate();
 
-            this.toolStripStatusLabelShows.Text = $"{this.treeViewShows.Nodes.Count} shows";
+            this.toolStripStatusLabelShows.Text = "show".ToQuantity(this.treeViewShows.Nodes.Count);
+        }
+
+        private void BuildCalendar()
+        {
+            List<DateTime> dates = new List<DateTime>();
+
+            this.listViewCalendar.BeginUpdate();
+            this.listViewCalendar.Groups["recent"].Header = $"Aired in the last {"day".ToQuantity(Settings.Instance.RecentDays)}";
+            this.listViewCalendar.Items.Clear();
+
+            foreach (Show show in Settings.Instance.Shows)
+            {
+                //if (!show.NextAirs.HasValue) continue;
+
+                foreach (Season season in show.Metadata.Seasons.Values)
+                {
+                    if (show.IgnoredSeasons.Contains(season.Number)) continue;
+
+                    foreach (Episode episode in season.Episodes.Values)
+                    {
+                        if (!episode.FirstAired.HasValue || episode.FirstAired?.CompareTo(DateTime.MaxValue) == 0) continue;
+
+                        TimeSpan delta = episode.FirstAired.Value.Subtract(DateTime.UtcNow);
+
+                        if (delta < -TimeSpan.FromDays(Settings.Instance.RecentDays)) continue;
+
+                        ListViewItem lvi = new ListViewItem
+                        {
+                            Text = show.Metadata.Name,
+                            SubItems =
+                            {
+                                season.Number.ToString(),
+                                episode.Number.ToString(),
+                                episode.FirstAired.Value.ToShortDateString(),
+                                episode.FirstAired.Value.ToString("t"),
+                                episode.FirstAired.Value.ToString("ddd"),
+                                episode.FirstAired.Value < DateTime.UtcNow ? "Aired" : $"{delta.Days}d {delta.Hours}h",
+                                episode.Name
+                            },
+                            Tag = episode
+                        };
+
+                        if (delta.TotalHours < 0)
+                            lvi.Group = this.listViewCalendar.Groups["recent"];
+                        else if (delta < TimeSpan.FromDays(Settings.Instance.RecentDays))
+                            lvi.Group = this.listViewCalendar.Groups["soon"];
+                        //else if (episode.NextToAir)
+                        //    lvi.Group = this.listViewCalendar.Groups["future"];
+                        else
+                            lvi.Group = this.listViewCalendar.Groups["later"];
+
+                        if (episode.FirstAired?.CompareTo(DateTime.Now) < 0) // has aired
+                        {
+                            List<FileInfo> files = new List<FileInfo>();
+
+                            //this.FindEpOnDisk(episode);
+
+                            if (files.Count > 0)
+                            {
+                                lvi.ImageIndex = 1;
+                            }
+                            else if (show.CheckMissing)
+                            {
+                                lvi.ImageIndex = 0;
+                            }
+                        }
+
+                        this.listViewCalendar.Items.Add(lvi);
+
+                        dates.Add(episode.FirstAired.Value);
+                    }
+                }
+            }
+
+            this.listViewCalendar.Sort();
+            this.listViewCalendar.EndUpdate();
+
+            this.calendar.BoldedDates = dates.ToArray();
         }
 
         private async Task Save()
@@ -67,6 +169,8 @@ namespace TVRename.Windows.Forms
             Settings.Save();
 
             await TVDB.Save(Path.Combine(ApplicationBase.BasePath, "tvdb.json"));
+
+            Settings.Instance.Dirty = false;
 
             this.toolStripStatusLabel.Text = "Ready";
             this.toolStripButtonSave.Enabled = true;
@@ -90,7 +194,7 @@ namespace TVRename.Windows.Forms
 
                 if (Settings.Instance.Shows.All(s => s.TVDBId != show.TVDBId))
                 {
-                    this.toolStripStatusLabel.Text = $"Downloading new show...";
+                    this.toolStripStatusLabel.Text = "Downloading new show...";
                     this.toolStripProgressBar.Style = ProgressBarStyle.Marquee;
 
                     await TVDB.Instance.Add(show.TVDBId, CancellationToken.None);
@@ -100,6 +204,9 @@ namespace TVRename.Windows.Forms
                     this.toolStripStatusLabel.Text = "Ready";
 
                     BuildTree();
+                    BuildCalendar();
+
+                    Settings.Instance.Dirty = true;
                 }
             }
 
@@ -121,6 +228,51 @@ namespace TVRename.Windows.Forms
             throw new Exception("Test error");
         }
 
+        private void mediaCenterFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new MediaCenter().ShowDialog();
+        }
+
+        private void preferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (new Preferences().ShowDialog() != DialogResult.OK) return;
+
+            BuildTree();
+            BuildCalendar();
+        }
+
+        private async void refreshAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("TODO"); // TODO
+
+            //await TVDB.Instance.Refresh(CancellationToken.None); // TODO: Warning, UI
+        }
+
+        private void bulkAddShowsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("TODO"); // TODO
+        }
+
+        private void onlineHelpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://www.tvrename.com/userguide");
+        }
+
+        private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://www.tvrename.com/");
+        }
+
+        private void toolStripMenuItemStatistics_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("TODO"); // TODO
+        }
+
+        private void toolStripMenuItemAbout_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("TODO"); // TODO
+        }
+
         private void toolStripButtonAdd_Click(object sender, EventArgs e)
         {
             addToolStripMenuItem_Click(sender, e);
@@ -129,6 +281,197 @@ namespace TVRename.Windows.Forms
         private async void toolStripButtonSave_Click(object sender, EventArgs e)
         {
             await Save();
+        }
+
+        private async void toolStripButtonUpdate_Click(object sender, EventArgs e)
+        {
+            this.toolStripButtonUpdate.Enabled = false;
+            this.toolStripStatusLabel.Text = "Downloading show updates...";
+            this.toolStripProgressBar.Style = ProgressBarStyle.Marquee;
+
+            await TVDB.Instance.Update(CancellationToken.None);
+
+            this.toolStripProgressBar.Style = ProgressBarStyle.Continuous;
+            this.toolStripStatusLabel.Text = "Ready";
+            this.toolStripButtonUpdate.Enabled = true;
+
+            BuildTree();
+            BuildCalendar();
+        }
+
+        private async Task<List<ListViewItem>> Scan(CancellationToken ct)
+        {
+            // Directory|File.Exists has no async version so manually run in a new thread
+            return await Task.Factory.StartNew(() =>
+            {
+                Dictionary<char, string> replacementChars = new Dictionary<char, string>
+                {
+                    {':', "-"},
+                    {'"', "'"},
+                    {'*', "#"},
+                    {'?', ""},
+                    {'>', ""},
+                    {'<', ""},
+                    {'/', "-"},
+                    {'\\', "-"},
+                    {'|', "-"},
+                };
+
+                List<ListViewItem> results = new List<ListViewItem>();
+
+                foreach (Show show in Settings.Instance.Shows)
+                {
+                    ProcessedShow processedShow = new ProcessedShow(show);
+
+                    if (!Directory.Exists(processedShow.Location))
+                    {
+                        // TODO: Missing show dir
+                        continue;
+                    }
+
+                    foreach (IAction action in Settings.Instance.Identifiers.Select(i => i.ProcessShow(processedShow)).Where(s => s != null))
+                    {
+                        results.Add(new ListViewItem(new[]
+                        {
+                            processedShow.Name,
+                            string.Empty,
+                            string.Empty,
+                            string.Empty,
+                            Path.GetDirectoryName(action.Produces),
+                            Path.GetFileName(action.Produces)
+                        })
+                        {
+                            Tag = action
+                        });
+                    }
+
+                    foreach (Season season in show.Metadata.Seasons.Values)
+                    {
+                        ProcessedSeason processedSeason = new ProcessedSeason(season);
+
+                        string seasonDir = (processedSeason.Number == 0 ? Settings.Instance.SpecialsTemplate : Settings.Instance.SeasonTemplate).Template(season);
+
+                        foreach (KeyValuePair<char, string> singleChar in replacementChars)
+                        {
+                            seasonDir = seasonDir.Replace(singleChar.Key.ToString(), singleChar.Value);
+                        }
+
+                        processedSeason.Location = Path.Combine(processedShow.Location, seasonDir);
+
+                        if (!Directory.Exists(processedSeason.Location))
+                        {
+                            // TODO: Missing season dir
+                            continue;
+                        }
+
+                        foreach (IAction action in Settings.Instance.Identifiers.Select(i => i.ProcessSeason(processedShow, processedSeason)).Where(s => s != null))
+                        {
+                            results.Add(new ListViewItem(new[]
+                            {
+                                processedShow.Name,
+                                seasonDir,
+                                string.Empty,
+                                string.Empty,
+                                Path.GetDirectoryName(action.Produces),
+                                Path.GetFileName(action.Produces)
+                            })
+                            {
+                                Tag = action
+                            });
+                        }
+
+                        foreach (Episode episode in season.Episodes.Values)
+                        {
+                            ProcessedEpisode processedEpisode = new ProcessedEpisode(episode);
+
+                            string episodeFile = Settings.Instance.EpisodeTemplate.Template(new Dictionary<string, object>
+                            {
+                                { "show", processedShow },
+                                { "season", processedSeason },
+                                { "episode", processedEpisode }
+                            });
+
+                            foreach (KeyValuePair<char, string> singleChar in replacementChars)
+                            {
+                                episodeFile = episodeFile.Replace(singleChar.Key.ToString(), singleChar.Value);
+                            }
+
+                            string episodePath = Path.Combine(processedSeason.Location, episodeFile);
+
+                            if (!File.Exists(episodePath))
+                            {
+                                // TODO: Missing episode file
+                                //continue;
+                            }
+
+                            processedEpisode.Location = processedSeason.Location;
+                            processedEpisode.Filename = episodeFile;
+
+                            foreach (IAction action in Settings.Instance.Identifiers.Select(i => i.ProcessEpisode(processedShow, processedSeason, processedEpisode)).Where(s => s != null))
+                            {
+                                results.Add(new ListViewItem(new[]
+                                {
+                                    processedShow.Name,
+                                    seasonDir,
+                                    processedEpisode.Name,
+                                    string.Empty,
+                                    Path.GetDirectoryName(action.Produces),
+                                    Path.GetFileName(action.Produces)
+                                })
+                                {
+                                    Tag = action
+                                });
+                            }
+                        }
+                    }
+                }
+
+                return results;
+            }, ct);
+        }
+
+        private async void toolStripButtonScan_Click(object sender, EventArgs e)
+        {
+            this.toolStripStatusLabel.Text = "Scanning...";
+            this.toolStripProgressBar.Style = ProgressBarStyle.Marquee;
+
+            this.tabControl.SelectedIndex = 1;
+
+            this.listViewScan.Items.Clear();
+
+            try
+            {
+                List<ListViewItem> results = await Scan(CancellationToken.None);
+
+                this.listViewScan.Items.AddRange(results.ToArray());
+                this.listViewScan.Sort();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+
+            this.toolStripProgressBar.Style = ProgressBarStyle.Continuous;
+            this.toolStripStatusLabel.Text = "Ready";
+        }
+
+        private void listViewCalendar_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.listViewCalendar.SelectedItems.Count == 0)
+            {
+                this.textBoxSynopsis.Clear();
+                return;
+            }
+
+            Episode episode = (Episode)this.listViewCalendar.SelectedItems[0].Tag;
+
+            this.textBoxSynopsis.Text = episode.Overview;
+
+            if (episode.FirstAired.HasValue)
+            {
+                this.calendar.SelectionStart = episode.FirstAired.Value;
+                this.calendar.SelectionEnd = episode.FirstAired.Value;
+            }
         }
 
         private void treeViewShows_AfterSelect(object sender, TreeViewEventArgs e)
@@ -153,7 +496,7 @@ namespace TVRename.Windows.Forms
                     this.toolStripProgressBar.Style = ProgressBarStyle.Marquee;
                     this.toolStripStatusLabel.Text = $"Refreshing show {show.Metadata.Name}...";
 
-                    await TVDB.Instance.Refresh(id, CancellationToken.None);
+                    await TVDB.Instance.Refresh(show.TVDBId, CancellationToken.None);
 
                     showView.Item = show;
 
@@ -168,17 +511,43 @@ namespace TVRename.Windows.Forms
             {
                 // Season
 
+                int id = int.Parse(e.Node.Parent.Name);
+                Show show = Settings.Instance.Shows.First(s => s.TVDBId == id);
                 int number = int.Parse(e.Node.Name);
+                Season season = show.Metadata.Seasons[number];
 
-                this.view = new Label
+                this.view = new SeasonView(season)
                 {
-                    Text = $"TODO: Season {number}",
-                    Font = new Font("Microsoft Sans Serif,", 20),
                     Dock = DockStyle.Fill
                 };
             }
 
             this.splitContainer.Panel2.Controls.Add(this.view);
+        }
+
+        private void Main_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (!Settings.Instance.Dirty) return;
+
+            switch (MessageBox.Show("Your TV Rename settings have changed, do you want to save before exiting?", "TV Rename", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1))
+            {
+                case DialogResult.Cancel:
+                    e.Cancel = true;
+                    break;
+
+                case DialogResult.Yes:
+                    Settings.Save();
+                    break;
+            }
+        }
+
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Configuration.Layout.Instance.Window.Size = this.WindowState == FormWindowState.Maximized ? this.RestoreBounds.Size : this.Size;
+            Configuration.Layout.Instance.Window.Location = this.WindowState == FormWindowState.Maximized ? this.RestoreBounds.Location : this.Location;
+            Configuration.Layout.Instance.Window.Maximized = this.WindowState == FormWindowState.Maximized;
+            Configuration.Layout.Instance.Window.Splitter = this.splitContainer.SplitterDistance;
+            Configuration.Layout.Save();
         }
     }
 }

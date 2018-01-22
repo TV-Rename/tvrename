@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using TVRename.Core.Models.Cache;
 
 namespace TVRename.Core.Models.TVDB
 {
@@ -72,7 +73,12 @@ namespace TVRename.Core.Models.TVDB
                 Name = episode.EpisodeName,
                 Number = episode.AiredEpisodeNumber ?? 0, // TODO: Safe?
                 Overview = episode.Overview,
-                Rating = episode.SiteRating.ToString(),
+                Rating = new Rating
+                {
+                    Score = episode.SiteRating ?? 0,
+                    Votes = episode.SiteRatingCount ?? 0
+                },
+                Thumbnail = episode.Filename,
                 Writers = episode.Writers.Select(w => w.Trim()).ToList()
             };
         }

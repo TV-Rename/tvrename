@@ -5,8 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using TVRename.Core.Models;
 using TVRename.Core.TVDB;
+using TVRename.Windows.Configuration;
 
 namespace TVRename.Windows.Forms
 {
@@ -21,6 +23,9 @@ namespace TVRename.Windows.Forms
         public Add()
         {
             InitializeComponent();
+
+            this.textBoxLocation.Text = Settings.Instance.DefaultLocation;
+            this.textBoxLocation.Tag = null;
         }
 
         private void Add_Load(object sender, EventArgs e)
@@ -105,7 +110,7 @@ namespace TVRename.Windows.Forms
             if (this.textBoxLocation.Tag == null)
             {
                 this.textBoxLocation.TextChanged -= this.textBoxLocation_TextChanged;
-                this.textBoxLocation.Text = this.listViewResults.SelectedItems[0].SubItems[1].Text;
+                this.textBoxLocation.Text = Path.Combine(Settings.Instance.DefaultLocation, this.listViewResults.SelectedItems[0].SubItems[1].Text);
                 this.textBoxLocation.TextChanged += this.textBoxLocation_TextChanged;
             }
 
@@ -121,15 +126,20 @@ namespace TVRename.Windows.Forms
 
         private void buttonBrowse_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog
+            CommonOpenFileDialog ofd = new CommonOpenFileDialog
             {
-                Description = "Select the folder containing the TV show:",
-                ShowNewFolderButton = false
+                DefaultDirectory = this.textBoxLocation.Text,
+                IsFolderPicker = true,
+                Multiselect = false,
+                RestoreDirectory = true,
+                EnsureValidNames = true,
+                EnsurePathExists = true,
+                EnsureFileExists = true
             };
 
-            if (fbd.ShowDialog() == DialogResult.OK)
+            if (ofd.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                this.textBoxLocation.Text = Path.GetFullPath(fbd.SelectedPath);
+                this.textBoxLocation.Text = Path.GetFullPath(ofd.FileName);
             }
         }
 

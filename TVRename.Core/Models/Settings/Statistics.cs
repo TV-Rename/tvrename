@@ -10,7 +10,7 @@ namespace TVRename.Core.Models.Settings
     /// </summary>
     /// <seealso cref="JsonSettings{Statistics}" />
     /// <inheritdoc />
-    public partial class Statistics : JsonSettings<Statistics>
+    public class Statistics : JsonSettings<Statistics>
     {
         [JsonConverter(typeof(CounterConverter))]
         public Counter AutoAddedShows { get; set; } = new Counter(0);

@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
-using TVRename.Core.Models.Settings;
 using TVRename.Core.TVDB;
+using TVRename.Windows.Configuration;
 using TVRename.Windows.Forms;
 
 namespace TVRename.Windows
@@ -37,6 +37,7 @@ namespace TVRename.Windows
             // Run slow operations
 
             Settings.FilePath = Path.Combine(BasePath, "settings.json");
+            Layout.FilePath = Path.Combine(BasePath, "layout.json");
 
             // Load TVDB cache
             Logger.Info($"Loading TVDB cache");

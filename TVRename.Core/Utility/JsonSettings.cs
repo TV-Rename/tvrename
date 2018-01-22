@@ -42,7 +42,10 @@ namespace TVRename.Core.Utility
         /// <summary>
         /// <see cref="JsonSerializerSettings"/> to use when saving the settings.
         /// </summary>
-        public static JsonSerializerSettings SerializerSettings => new JsonSerializerSettings();
+        public static JsonSerializerSettings SerializerSettings => new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
 
         /// <summary>
         /// <see cref="SerializerFormatting"/> to use when saving the settings.
@@ -62,7 +65,7 @@ namespace TVRename.Core.Utility
 
                 try
                 {
-                    instance = JsonConvert.DeserializeObject<T>(File.ReadAllText(FilePath));
+                    instance = JsonConvert.DeserializeObject<T>(File.ReadAllText(FilePath), SerializerSettings);
 
                     if (instance == null) throw new NullReferenceException("Empty JSON file");
                 }

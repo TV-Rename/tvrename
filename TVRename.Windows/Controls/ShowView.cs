@@ -48,6 +48,12 @@ namespace TVRename.Windows.Controls
         {
             InitializeComponent();
 
+            this.tableLayoutPanel.HorizontalScroll.Enabled = false;
+            this.tableLayoutPanel.HorizontalScroll.Visible = false;
+
+            Padding p = this.tableLayoutPanel.Padding;
+            this.tableLayoutPanel.Padding = new Padding(p.Left, p.Top, SystemInformation.VerticalScrollBarWidth, p.Bottom);
+
             this.Item = show;
         }
 
