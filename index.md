@@ -34,18 +34,16 @@
 	<img src="images/slides/017.png">
 </div>
 
-##### Welcome to 
-#### TV&nbsp;Rename!
-**Organise your TV Shows with ease...**
+#### TV&nbsp;Rename -
+##### Television Sorted...
 
-## What is TV Rename?
 TV Rename is a media management tool that runs on Windows XP and later, looking after all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
 
 On the surface TV Rename will "fix" the names of TV Shows...
 
 For example, you've got a few TV Show episodes saved as video files, they will probably have names like this: -
 
-> ***Grey's.Anatomy.S03E04.blah-blah-blah.xvid.avi***
+> _**Grey's.Anatomy.S03E04.blah-blah-blah.xvid.avi**_
 
 But you want them all renamed, including the show and episode name and the season and episode number like this: -
 
