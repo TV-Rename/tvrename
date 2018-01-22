@@ -66,7 +66,7 @@ Then this is the tool for you!
 * Create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of your current favourite TV Show airs
 
-***Here is a quick summary of the information you'll find lurking behind the menu buttons above...***
+_**Here is a quick summary of the information you'll find lurking behind the menu buttons above...**_
 
 ## [Quickstart Guide](quickstart "Read The Quickstart Guide")
 The Quickstart Guide will help you through the initial setup of TV Rename creating a working system with your media files.&emsp; *[Read the guide...](quickstart "Read The Quickstart Guide")*
