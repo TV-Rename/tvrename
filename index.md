@@ -34,9 +34,8 @@
 	<img src="images/slides/017.png">
 </div>
 
-##### Welcome to 
-#### TV&nbsp;Rename!
-**Organise your TV Shows with ease...**
+#### TV&nbsp;Rename -
+##### Television Sorted...
 
 ## What is TV Rename?
 TV Rename is a media management tool that runs on Windows XP and later, looking after all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
