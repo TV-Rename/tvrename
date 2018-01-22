@@ -47,7 +47,7 @@ For example, you've got a few TV Show episodes saved as video files, they will p
 
 But you want them all renamed, including the show and episode name and the season and episode number like this: -
 
-> ***Grey's Anatomy - S03E04 - What I Am.avi***
+> _**Grey's Anatomy - S03E04 - What I Am.avi**_
 
 And you want it done automatically...
 
@@ -58,7 +58,7 @@ Then this is the tool for you!
 * Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit TheTVDB.com") and rules you can configure
 * Monitor specified folders for TV Show files
 
-> ***"Media Library"*** - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
+> _**"Media Library"**_ - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
 
 **Once TV Rename knows about your Media Library it can: -**
 * Copy (or move) files from monitored folders to your Media Library
