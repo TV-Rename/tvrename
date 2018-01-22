@@ -1,5 +1,5 @@
 #### The Technical Guide
-***Oily rag and spanners at the ready? Right then, here we go!***
+**_ Oily rag and spanners at the ready? Right then, here we go!**_ 
 
 ## [TV Rename and the Command&nbsp;Line](cmd-line "Read about Command Line functionality")
 A number of TV Rename's functions can be accessed using the command line. You can find more details [here...](cmd-line "Read about Command Line functionality")
@@ -28,9 +28,9 @@ It contains: -
 
 **Statistics.xml** - TV Rename's historical statistics.
 
-**TheTVDB.xml** - The locally cached tvdb.com show season and episode information for everything listed in the ***My Shows*** tab.
+**TheTVDB.xml** - The locally cached tvdb.com show season and episode information for everything listed in the _**My Shows**_ tab.
 
-**TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of theTVDB.xml file. A new file gets created here every time you click ***File>Save*** on a first-in-first-out (FIFO) basis.
+**TheTVDB.xml.0 - TheTVDB.xml.9** - A maximum of ten backup copies of theTVDB.xml file. A new file gets created here every time you click _**File>Save**_ on a first-in-first-out (FIFO) basis.
 
 **TVRenameSettings.xml** - Everything else not mentioned is stored in here. All your shows, Media Library paths, folder structures and settings. As with TheTVDB.xml this is only overwritten when you choose **File>Save**.
 
@@ -63,7 +63,7 @@ You can find TV Rename's source code (along with executables and this website) i
  * You can find the Developers Wiki [here]({{ site.github.wiki_url }} "Read the Wiki")...
  * In addition there is a [Developers Forum in Google Groups](https://groups.google.com/forum/#!forum/tv-rename-development) which you can request access to. 
  * The legacy forum can be [accessed](http://old.tvrename.com/bbold/) in read-only mode for background and history about the project
- * If you select "Beta" mode in in **Options>Preferences** ***General*** you will be automatically notified of new Beta and Release Candidate releases as they are made available. Additionally all the releases can be found on [TV Rename's GitHub Releases page]({{ site.github.releases_url }} "Visit the TV Rename Releases page"). 
+ * If you select "Beta" mode in in **Options>Preferences** _**General**_ you will be automatically notified of new Beta and Release Candidate releases as they are made available. Additionally all the releases can be found on [TV Rename's GitHub Releases page]({{ site.github.releases_url }} "Visit the TV Rename Releases page"). 
 
 ## Framework
 TV Rename uses the Microsoft .NET Framework. The installer will check for its presence and let you know if any action is needed. It's a free download from [Microsoft](https://www.microsoft.com/net/download/windows "Get .NET").

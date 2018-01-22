@@ -75,7 +75,7 @@ The Quickstart Guide will help you through the initial setup of TV Rename creati
 The User Guide picks up where the Quickstart Guide finishes, discussing the three main tabs and their use in some detail.&emsp; *[Read the guide...](userguide "Read The User Guide")*
 
 ## [Technical Guide](technical "Read the Technical Guide")
-***Get the oily rag out, its time to get your hands dirty...*** *[Read the guide...](technical "Read the guide")*
+**_ Get the oily rag out, its time to get your hands dirty...**_ *[Read the guide...](technical "Read the guide")*
 
 ## [The Options Menu](options "Read about Options and Preferences")
 The Options Menu takes you gently through virtually every available option and preference helping you to get TV Rename to behave just the way you want.&emsp; *[Read more...](options "TV Rename's Options and Preferences")* 
