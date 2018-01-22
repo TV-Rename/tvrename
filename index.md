@@ -104,4 +104,4 @@ Download the latest version of the software...
 	});
 </script>
 
-[test](http://localhost:4000)
+[test](http://localhost:4000/options.html)
