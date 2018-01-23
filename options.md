@@ -88,7 +88,7 @@ TV Rename also needs to know the µTorrent "Application" and "resume.dat" paths,
 
 ### The Tree Coloring Tab
 ![Preferences - the Tree Coloring tab](images/options/preferences-tree-coloring-01.png){:.pic-l}
-If you have a large catalogue of old TV Shows, the _**My&nbsp;Shows**_ tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. _**Tree Coloring**_ to the rescue...
+If you have a large catalogue of old tv shows, the _**My&nbsp;Shows**_ tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. _**Tree Coloring**_ to the rescue...
 
 Tree coloring allows you to change the color of the text on the left hand pane of the _**My&nbsp;Shows**_ tab depending on the status of the show or the show season.
 

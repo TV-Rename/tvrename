@@ -10,7 +10,7 @@ In true technical manual fashion we're going to start at the end because, as is 
 Once you have TV Rename up and running and behaving the way you want you'll probably spend most of your time here. If you wish you can make this tab open by default by changing the Startup tab setting in the _**[General](options#general)**_ tab of **Options>Preferences**.
 
 ![When To Watch](images/main-window/when-to-watch-01.png)
-Looking at the list in the main panel we see details of recent and future show episodes matching the TV Shows found in the Media Library.
+Looking at the list in the main panel we see details of recent and future show episodes matching the tv shows found in the Media Library.
 
 At the top of the panel episodes "Aired in the last 7 days" are shown (you can actually modify the number of days in the _**[General](options#general)**_ tab of **Options>Preferences** if you wish).
 
@@ -32,9 +32,9 @@ The next two panels show (on the left) a summary for the episode highlighted in 
 [Return to Top]()
 
 ## My Shows
-My Shows displays a list of TV shows found and Identified in your Media Library, and is where you can manually tell TV Rename about a new TV Show in the library, where it can be found and how it is structured.
+My Shows displays a list of TV shows found and Identified in your Media Library, and is where you can manually tell TV Rename about a new tv show in the library, where it can be found and how it is structured.
 
-In essence this tab (along with some of the [preferences](options#preferences)) allows you to configure the interaction between [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and your Media Library. Incidentally there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a TV Show cannot be spread across multiple locations, and removable USB drives should be set up so they are always assigned the same path or drive letter each time they are connected. 
+In essence this tab (along with some of the [preferences](options#preferences)) allows you to configure the interaction between [TheTVDB.com](http://thetvdb.com "Visit thetvdb.com") and your Media Library. Incidentally there can be multiple storage locations including local paths or drives on your computer, mapped network shares and UNC paths. The only restrictions being that a tv show cannot be spread across multiple locations, and removable USB drives should be set up so they are always assigned the same path or drive letter each time they are connected. 
 
 ![My Shows](images/main-window/my-shows-01.png)
 
@@ -86,7 +86,7 @@ We'll start by completing the _**Basics**_ tab (illustrated above).
 In the following example, we'll add a new show called "The Good Doctor" to TV Rename.
 
 ![Add/Edit Show - Search Results](images/main-window/add-edit-show-basics-02.png){:.pic-r}
-The first step is to tell TV Rename about the show. If you know it you can enter TheTVDB's code for the show, otherwise type the shows name (e.g. "the good doctor") and click on `Search`. TV Rename will search for matches to your entry in TheTVDB's database, cache the results locally and display the matches. The search also works with partial show names. For example you could search for just "doctor", but "doctor" being fairly common in TV Show titles, returns over 80 results (including ours!), and you will have to delve into the list to find the one you want. Once you have found the correct show, click on it to highlight it.
+The first step is to tell TV Rename about the show. If you know it you can enter TheTVDB's code for the show, otherwise type the shows name (e.g. "the good doctor") and click on `Search`. TV Rename will search for matches to your entry in TheTVDB's database, cache the results locally and display the matches. The search also works with partial show names. For example you could search for just "doctor", but "doctor" being fairly common in tv show titles, returns over 80 results (including ours!), and you will have to delve into the list to find the one you want. Once you have found the correct show, click on it to highlight it.
 
 If all you want to do is see the details of the show then you're done! Just click `OK` at the bottom of the window and TV Rename will pull the necessary data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") to populate the _**My Shows**_ tab.
 
@@ -143,7 +143,7 @@ However TV Rename's middle name is "configurability", so lets take a look at the
 Here, you can further manipulate the way data from [The TVDB](http://thetvdb.com "Visit thetvdb.com") is handled as it is merged into the local data.
 
 The "Use DVD order" tick box comes into play when the episodes aired on TV in a different order to those presented on the DVD. [The TVDB](http://thetvdb.com "Visit thetvdb.com") usually has details of these orders and this tick box allows you to choose your preference for the current show. 
-A Really good example of this is the 1967 ITV Show ["The Prisoner"](https://www.thetvdb.com/?tab=season&seriesid=74805&seasonid=8058&lid=7 "Visit \"The Prisoner\" on TheTVDB"), which, whilst it was written as one season of seventeen episodes still causes as much controversy (and argument) over it's running order today as it did when it was originally released.
+A Really good example of this is the 1967 Itv show ["The Prisoner"](https://www.thetvdb.com/?tab=season&seriesid=74805&seasonid=8058&lid=7 "Visit \"The Prisoner\" on TheTVDB"), which, whilst it was written as one season of seventeen episodes still causes as much controversy (and argument) over it's running order today as it did when it was originally released.
 
 The "Show next airdate in When to Watch" tick box toggles the display of the shows "Future" and "Later" episodes in the _**When to Watch**_ tab.
 
