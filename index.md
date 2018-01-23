@@ -37,7 +37,9 @@
 #### TV&nbsp;Rename
 ##### Television Sorted...
 
-TV Rename is a media management tool that runs on Windows XP and later, looking after all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
+TV Rename is the Swiss-Army-Knife of media management tools.
+
+It runs on Windows XP and later and looks after all your TV Show files; making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
 
 On the surface TV Rename will "fix" the names of TV Shows...
 
@@ -62,6 +64,7 @@ Then this is the tool for you!
 
 **Once TV Rename knows about your Media Library it can: -**
 * Copy (or move) files from monitored folders to your Media Library
+* Download tv show posters and images and create meta-data automatically
 * List any missing TV Show episodes/seasons in your Media Library
 * Create web searches to help you find missing TV Show files
 * Tell you how long you'll have to wait until the next episode of your current favourite TV Show airs
