@@ -2,7 +2,7 @@
 
 ### These are the options you need to know!
 
-***If TV Rename is already running any CLI activity will be directed towards the running instance.***
+_**If TV Rename is already running any CLI activity will be directed towards the running instance.**_
 
 ## Main Options
 

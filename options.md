@@ -56,15 +56,15 @@ The `Presets` button (bottom right) allows you to quickly apply all the relevant
 
 ### The Search Folders Tab
 ![Preferences - the Search Folders tab](images/options/preferences-search-folders-02.png){:.pic-l}
-The ***Search Folders*** tab is used to tell TV Rename where to look for TV show episode files BEFORE they are processed. Logical entries in here would be your downloads folder (if you download TV show episodes from the internet) or maybe your desktop (if you rip TV show episodes from DVD or Blu-ray). Or both!
+The _**Search Folders**_ tab is used to tell TV Rename where to look for TV show episode files BEFORE they are processed. Logical entries in here would be your downloads folder (if you download TV show episodes from the internet) or maybe your desktop (if you rip TV show episodes from DVD or Blu-ray). Or both!
 
 Three buttons are available at the bottom of the tab. `Add` opens an explorer style window so you can browse to the folder location you wish to add and click `OK`, `Remove` removes a highlighted row from the panel and `Open` opens an explorer window targeting the row highlighted in the panel.
 
 At the top of the tab the "Monitor folders for changes" tick box tell TV Rename to automatically check for new files in the identified locations and the ["Scan Type"](userguide#scan-types) radio buttons tell TV Rename the type of scan to perform if anything is found.
 
-| _Defaults:_ | "Folder Monitor" | ***Un-ticked*** |
+| _Defaults:_ | "Folder Monitor" | _**Un-ticked**_ |
 |---|---|---|
-| | "Scan type" | ***Full*** |
+| | "Scan type" | _**Full**_ |
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -88,16 +88,16 @@ TV Rename also needs to know the µTorrent "Application" and "resume.dat" paths,
 
 ### The Tree Coloring Tab
 ![Preferences - the Tree Coloring tab](images/options/preferences-tree-coloring-01.png){:.pic-l}
-If you have a large catalogue of old TV Shows, the ***My&nbsp;Shows*** tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. ***Tree Coloring*** to the rescue...
+If you have a large catalogue of old tv shows, the _**My&nbsp;Shows**_ tab can be somewhat cluttered, but you don't want to remove anything from TV Rename. _**Tree Coloring**_ to the rescue...
 
-Tree coloring allows you to change the color of the text on the left hand pane of the ***My&nbsp;Shows*** tab depending on the status of the show or the show season.
+Tree coloring allows you to change the color of the text on the left hand pane of the _**My&nbsp;Shows**_ tab depending on the status of the show or the show season.
 
 To create a record:-
 * Expand the "Status:" drop-down and select the status you wish to match from the list.
 * Select a color to associate with the status by either entering a web-safe color name or code in the "Text Color:" box or clicking `Select Colour` and choosing from the pallet.
 * Click the `Add` button and your new entry will appear the box above.
 
-For example: to make finished shows less obtrusive in ***My&nbsp;Shows*** expand the "Status:" drop-down and select "Show Status: Ended", in the "Text Color:" box type "#808080" and click `Add`. Back in the ***My&nbsp;Shows*** text for shows that have finished will be light grey and less obtrusive.
+For example: to make finished shows less obtrusive in _**My&nbsp;Shows**_ expand the "Status:" drop-down and select "Show Status: Ended", in the "Text Color:" box type "#808080" and click `Add`. Back in the _**My&nbsp;Shows**_ text for shows that have finished will be light grey and less obtrusive.
 
 If you wish to remove a rule from the list just select it and click `Remove`.
 
@@ -108,16 +108,16 @@ If you wish to remove a rule from the list just select it and click `Remove`.
 ![Preferences - the General tab](images/options/preferences-general-01.png){:.pic-l}
 The number in _When to watch_ "X" _days count as recent_ specifies how many recent days are listed for the for "Aired in the last N days" section of the [When to Watch](userguide#when-to-watch "Read about When to Watch") tab.
 
-_Default:_ ***7 days***
+_Default:_ _**7 days**_
 
 The _Double-click in When to Watch does:_ radio buttons control the double-click action in the [When to Watch](userguide#when-to-watch "Read about When to Watch") tab. Options are Search and Scan.
 
-_Default:_ ***Search***
+_Default:_ _**Search**_
 
 {:.clear}
-The _Startup Tab:_ setting selects which tab you wish open when TV Rename loads. ***My&nbsp;Shows***, ***Search*** or ***When to Watch***.
+The _Startup Tab:_ setting selects which tab you wish open when TV Rename loads. _**My&nbsp;Shows**_, _**Search**_ or _**When to Watch**_.
 
-_Default:_ ***My Shows***
+_Default:_ _**My Shows**_
 
 "Show Notification Area" and "Show in Taskbar" interact, one of them **must** be ticked. If you try to un-tick both the option you are changing clears, but the other one automatically sets.
 
@@ -125,25 +125,25 @@ If "Show in Taskbar" is selected TV Rename's icon appears in the Windows taskbar
 If "Show Notification Area" is selected TV Rename's icon appears in the System Tray. Right-clicking it will show an "Upcoming Shows" list, and double clicking restores the main window.<br />
 Both boxes can be ticked, in which case you get both functionalities.
 
-| _Defaults:_ | "Show Notification Area" | ***Un-ticked*** |
+| _Defaults:_ | "Show Notification Area" | _**Un-ticked**_ |
 |---|---|---|
-| | "Show in Taskbar" | ***Ticked*** |
+| | "Show in Taskbar" | _**Ticked**_ |
 
-_Show episode pictures in episode guides_ does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the ***My&nbsp;Shows*** tab. If un-ticked only the episode description is displayed.
+_Show episode pictures in episode guides_ does what-it-says-on-the-tin, if ticked screen grabs from show episodes are displayed with the episode description in the _**My&nbsp;Shows**_ tab. If un-ticked only the episode description is displayed.
 
-_Default:_ ***Ticked***
+_Default:_ _**Ticked**_
 
 _Download up to_ "X" _shows simultaneously from The TVDB_ sets the number of concurrent connections to TheTVDB API. It can be set in the range to 1 to 8.
 
-_Default:_ ***4***
+_Default:_ _**4**_
 
 _Refresh entire series if_ "X" _% of episodes are updated_ sets the point at which TV Rename "decides" to do a full refresh of a show when updating data. This functionality is useful if for example you have a set of show recordings which you are replacing with DVD rips and the data structure is different.
 
-_Default:_ ***20*** 
+_Default:_ _**20**_ 
 
-_Automatically select show and season in My&nbsp;Shows_ if ticked, works for both the ***When to watch*** and ***Scan*** tabs. If an item is selected in either of these tabs the ***My&nbsp;Shows*** tab is automatically updated to highlight the indicated show and season.
+_Automatically select show and season in My&nbsp;Shows_ if ticked, works for both the _**When to watch**_ and _**Scan**_ tabs. If an item is selected in either of these tabs the _**My&nbsp;Shows**_ tab is automatically updated to highlight the indicated show and season.
 
-_Default:_ ***Ticked***
+_Default:_ _**Ticked**_
 
 _Look for air date in filenames_ if ticked, provides a second method of identifying show episodes by looking for a date (in a number of formats) in the shows filename and comparing that against the air-date.
 
@@ -151,7 +151,7 @@ The supported date formats are: "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM
 
 And the "date separators" can be any of: - / . , " " (a space)
 
-_Default:_ ***Un-ticked***
+_Default:_ _**Un-ticked**_
 
 _Preferred language:_ sets the language for returned data when requesting information from TheTVDB API. TV Rename will request "English" If the selected language is not available.
 
@@ -161,7 +161,7 @@ In Production mode the application looks and behaves as normal.
 
 In Beta mode a new menu called **Beta** appears between **Tools** and **Help** which gives you access to preview upcoming additions and enhancements.
 
-_Default:_ ***Production***
+_Default:_ _**Production**_
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -188,19 +188,19 @@ It is common for files to have the same base name for example: BigBuckBunny.avi,
 
 TV Rename knows this, hence the "Copy/Move file with same base name as video" tick-box. Which gives you the ability to turn this functionality on or off.
 
-_Default:_ ***Ticked***
+_Default:_ _**Ticked**_
 
 The "Do" drop-down and text box underneath provide a degree of granularity to this function.
 
 Subtitle files come in a number of guises of which one of the most common is a .sub file. These are text files structured in a way that media players can establish the start time, finish time and content of a subtitle and display it. Quite often sources for these files give them a .txt extension, for example: BigBuckBunny.txt. Ticking the "Rename .txt to .sub" option will tell TV Rename to rename these files when copied or moved.
 
-_Default:_ ***Un-ticked***
+_Default:_ _**Un-ticked**_
 
 The next four items affect how TV Rename creates folders in your Media Library and recognises seasons when searching.
 
 The "Leading 0 on Season Numbers" tick-box simply tells TV Rename to use "Season 01"  instead of "Season 1" etc. when creating new folders.
 
-_Default:_ ***Un-ticked***
+_Default:_ _**Un-ticked**_
 
 The next three preferences will be of special interest to those of you who speak "English as a second language". You can now set the folder names used for "Seasons" and "Specials", and the text recognised as "Season" when searching.
 
@@ -208,15 +208,15 @@ The "Specials folder name:" text box allows you to modify the name used when cre
 
 It is common practice for specials to be labeled as part of "Season 0" so for example: special 3 of "Battlestar Galactica" would be labeled "Battlestar Galactica - S00E03 - The Story So Far"  and stored (by default) in the "Specials" folder.
 
-_Default:_ ***Specials***
+_Default:_ _**Specials**_
 
 Similarly, the "Season folder name:" text box allows you to customise the name used when creating a "Season" in tour Media Library.
 
-_Default_ ***Season***
+_Default_ _**Season**_
 
 The "Season search terms:" text box provides TV Rename with a list of semicolon separated words that TV Rename will recognise as part of a season identifier when searching.
 
-_Default_ ***Season;Series;Saison;Temporada;Seizoen***
+_Default_ _**Season;Series;Saison;Temporada;Seizoen**_
 
 The rest of the options in this pane are straightforward and need no explanation.
 
@@ -235,28 +235,28 @@ Ticking the "XML" box in the "Missing" section of the panel will save a standard
 
 Ticking the "TXT" box in the "All Shows" section of the panel will save a TXT file whenever a show is added, edited or deleted from TV Rename. It also gets updated when `Auto ID All` in the *Scan Results* tab of **Tools>Folder Monitor** is clicked.
 
-_Default:_ ***All un-ticked***
+_Default:_ _**All un-ticked**_
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ### The Scan Options Tab
 ![Preferences - the Scan Options tab](images/options/preferences-scan-options-01.png){:.pic-l}
-This tab in conjunction with data from the ***µTorrent / NZB*** tab controls the ***Scan*** tabs checks and actions.
+This tab in conjunction with data from the _**µTorrent / NZB**_ tab controls the _**Scan**_ tabs checks and actions.
 
-The settings in here are more or less self explanatory, however remember that the ***µTorrent / NZB*** tab must be populated before the µTorrent, SABnzdb and RSS options can be used.
+The settings in here are more or less self explanatory, however remember that the _**µTorrent / NZB**_ tab must be populated before the µTorrent, SABnzdb and RSS options can be used.
 
 | *Defaults* | | |
 |---|---|---|
-| Scan checks | Rename Check | ***Ticked*** |
-| and actions | Missing Check | ***Ticked*** |
-| | Look in "Search Folders" for missing files | ***Ticked*** |
-| | Copy files, don't move | ***Un-ticked*** |
-| | Check µTorrent queue | ***Un-ticked*** |
-| | Check SABnzdb queue | ***Un-ticked*** |
-| | Search RSS for missing files | ***Un-ticked*** |
+| Scan checks | Rename Check | _**Ticked**_ |
+| and actions | Missing Check | _**Ticked**_ |
+| | Look in "Search Folders" for missing files | _**Ticked**_ |
+| | Copy files, don't move | _**Un-ticked**_ |
+| | Check µTorrent queue | _**Un-ticked**_ |
+| | Check SABnzdb queue | _**Un-ticked**_ |
+| | Search RSS for missing files | _**Un-ticked**_ |
 |---|---|---|
-| Folder Creation | Automatically create missing folders | ***Un-ticked*** |
+| Folder Creation | Automatically create missing folders | _**Un-ticked**_ |
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
@@ -275,22 +275,22 @@ The flow through this tab is pretty self explanatory, start by ticking the "Dele
 
 If you use the copy option to update your library then ticking the "Clean up already copied..." box will delete the source files after the copy is complete.
 
-*Default: **All functionality disabled***
+*Default: **All functionality disabled**_
 
 {:.toplink}
 [Return to Preferences](#preferences)&nbsp;&#9670;&nbsp;[Return to Top]()
 
 ## Ignore List
 ![The Edit Ignore List window](images/options/edit-ignore-list-01.png){:.pic-l}
-When a ***Scan*** is run any "missing" episodes for shows in your Media Library are listed.
+When a _**Scan**_ is run any "missing" episodes for shows in your Media Library are listed.
 
 These may be genuine missing episodes or they may be "Specials", that don't fit the season/episode pattern but are still part of the show, for example: -
 
 > My Favourite Show - S00E03 - Recap of Last Season
 
-This may be something you want or it may just be adding to the "noise" in the ***Scan*** tab.
+This may be something you want or it may just be adding to the "noise" in the _**Scan**_ tab.
 
-If it is "noise" you can highlight the row (or multiple rows if that fits better) and right click. A cut-down menu appears, if you select "Ignore Selected" the item is removed from the ***Scan*** results and appears in the "Ignore List".
+If it is "noise" you can highlight the row (or multiple rows if that fits better) and right click. A cut-down menu appears, if you select "Ignore Selected" the item is removed from the _**Scan**_ results and appears in the "Ignore List".
 
 If, at a later date, you decide you wish to add the item, you can remove it from the Ignore list using the *Edit Ignore List* window, selecting the item in question and clicking `Remove`.
 
@@ -301,7 +301,7 @@ If, at a later date, you decide you wish to add the item, you can remove it from
 ![The Filename Template Editor tab](images/options/filename-template-editor-01.png){:.pic-l}
 This is where the format of the filenames that TV Rename will rename to are defined.
 
-To help illustrate the results the "Sample and Test:" panel contains the processed entries from the show and season selected in the ***My Shows*** tab.
+To help illustrate the results the "Sample and Test:" panel contains the processed entries from the show and season selected in the _**My Shows**_ tab.
 
 The "Naming template:" text box displays a tokenised version of the filename which can be edited directly or populated using the "Tags:" drop-down, or overwritten with a record selected from the "Presets:" drop-down. Any changes in the "Naming Template:" are automatically reflected in the "Sample and Test:" panel.
 
@@ -334,7 +334,7 @@ The available tags with their definitions are listed below: -
 |---|---|
 |{AllEpisodes}|All episodes - E01E02 etc |
 
-| _Default:_ | ***{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}*** |
+| _Default:_ | _**{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}**_ |
 |---|---|
 | | (the second preset). |
 
@@ -351,7 +351,7 @@ As an example, here is a URL entry for Google.
 
 > https://www.google.co.uk/search?q={ShowName}+S{Season:2}E{Episode}
 
-The list of URL's can be used when the ***When to watch*** tab is open, the last used entry becomes the default, and appears in a text box to the right of the `Refresh` button. It can be changed by clicking the `▼` button and selecting another entry.
+The list of URL's can be used when the _**When to watch**_ tab is open, the last used entry becomes the default, and appears in a text box to the right of the `Refresh` button. It can be changed by clicking the `▼` button and selecting another entry.
 
 With a little ingenuity you can get really creative with these entries and pass your search to its specific target through a web proxy.
 
@@ -360,7 +360,7 @@ With a little ingenuity you can get really creative with these entries and pass 
 
 ## Filename Processors
 ![he Filename Processors window](images/options/filename-processors-01.png)<br />
-In much the same way that the ***Filename Template Editor*** is used to process the names of files being moved to the Media Library so ***Filename Processors*** is used to inform Rename what filenames to look out for when searching for a missing files
+In much the same way that the _**Filename Template Editor**_ is used to process the names of files being moved to the Media Library so _**Filename Processors**_ is used to inform Rename what filenames to look out for when searching for a missing files
 
 To really understand the contents of the Regex column above, you need a working knowledge of [Regular Expressions](https://regexone.com/ "Visit RegexOne").
 

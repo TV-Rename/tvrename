@@ -34,20 +34,22 @@
 	<img src="images/slides/017.png">
 </div>
 
-#### TV&nbsp;Rename -
+#### TV&nbsp;Rename
 ##### Television Sorted...
 
-TV Rename is a media management tool that runs on Windows XP and later, looking after all your TV Show files and making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
+TV Rename is the Swiss-Army-Knife of media management tools.
 
-On the surface TV Rename will "fix" the names of TV Shows...
+It runs on Windows XP and later and looks after all your tv show files; making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
 
-For example, you've got a few TV Show episodes saved as video files, they will probably have names like this: -
+On the surface TV Rename will "fix" the names of tv shows...
+
+For example, you've got a few tv show episodes saved as video files, they will probably have names like this: -
 
 > _**Grey's.Anatomy.S03E04.blah-blah-blah.xvid.avi**_
 
 But you want them all renamed, including the show and episode name and the season and episode number like this: -
 
-> ***Grey's Anatomy - S03E04 - What I Am.avi***
+> _**Grey's Anatomy - S03E04 - What I Am.avi**_
 
 And you want it done automatically...
 
@@ -56,15 +58,16 @@ Then this is the tool for you!
 ##### But wait... There's more!
 **TV Rename can: -**
 * Rename files, using data from [TheTVDB.com](http://thetvdb.com "Visit TheTVDB.com") and rules you can configure
-* Monitor specified folders for TV Show files
+* Monitor specified folders for new tv show files
 
-> ***"Media Library"*** - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of TV Show files in it (them).*
+> _**"Media Library"**_ - *a folder (or folders) somewhere on your PC or NAS or whatever, with a bunch of tv show files in it (them).*
 
 **Once TV Rename knows about your Media Library it can: -**
 * Copy (or move) files from monitored folders to your Media Library
-* List any missing TV Show episodes/seasons in your Media Library
-* Create web searches to help you find missing TV Show files
-* Tell you how long you'll have to wait until the next episode of your current favourite TV Show airs
+* Download tv show posters and images and create meta-data automatically
+* List any missing tv show episodes/seasons in your Media Library
+* Create web searches to help you find missing tv show files
+* Tell you how long you'll have to wait until the next episode of your current favourite tv show airs
 
 _**Here is a quick summary of the information you'll find lurking behind the menu buttons above...**_
 
@@ -75,7 +78,7 @@ The Quickstart Guide will help you through the initial setup of TV Rename creati
 The User Guide picks up where the Quickstart Guide finishes, discussing the three main tabs and their use in some detail.&emsp; *[Read the guide...](userguide "Read The User Guide")*
 
 ## [Technical Guide](technical "Read the Technical Guide")
-***Get the oily rag out, its time to get your hands dirty...*** *[Read the guide...](technical "Read the guide")*
+_**Get the oily rag out, its time to get your hands dirty...**_ *[Read the guide...](technical "Read the guide")*
 
 ## [The Options Menu](options "Read about Options and Preferences")
 The Options Menu takes you gently through virtually every available option and preference helping you to get TV Rename to behave just the way you want.&emsp; *[Read more...](options "TV Rename's Options and Preferences")* 
