@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+
+using System.Web.UI.WebControls;
+
 namespace TVRename
 {
     using System;
@@ -41,6 +44,7 @@ namespace TVRename
             this.mToDo = todo;
             this.InitializeComponent();
             this.copyTimer.Start();
+            this.diskSpaceTimer.Start();
         }
 
         /// <summary>
@@ -49,6 +53,7 @@ namespace TVRename
         ~CopyMoveProgress()
         {
             this.copyTimer.Stop();
+            this.diskSpaceTimer.Stop();
         }
 
         private void SetPercentages(double file, double group)
@@ -76,13 +81,13 @@ namespace TVRename
             BringToFront();
         }
 
-        private bool UpdateNewStyle() // return true if all tasks are done
+        private bool UpdateCopyProgress() // return true if all tasks are done
         {
             // update each listview item, for non-empty queues
             bool allDone = true;
 
             this.lvProgress.BeginUpdate();
-            int top = this.lvProgress.TopItem != null ? this.lvProgress.TopItem.Index : 0;
+            int top = lvProgress.TopItem?.Index ?? 0;
             ActionCopyMoveRename activeCMAction = null;
             long workDone = 0;
             long totalWork = 0;
@@ -120,55 +125,9 @@ namespace TVRename
                 this.lvProgress.TopItem = this.lvProgress.Items[top];
             this.lvProgress.EndUpdate();
 
-            int diskValue = 0;
-            string diskText = "--- GB free";
-            string fileText = "";
-
             if (activeCMAction != null)
             {
-                string folder = activeCMAction.TargetFolder;
-                DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
-
-                if (toRoot != null)
-                {
-                    System.IO.DriveInfo di;
-                    try
-                    {
-                        // try to get root of drive
-                        di = new System.IO.DriveInfo(toRoot.ToString());
-                    }
-                    catch (System.ArgumentException)
-                    {
-                        di = null;
-                    }
-
-                    if (di != null)
-                    {
-                        int pct = (int) ((1000 * di.TotalFreeSpace) / di.TotalSize);
-                        diskValue = 1000 - pct;
-                        diskText = ((int) (di.TotalFreeSpace / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
-                    }
-
-                    fileText = activeCMAction.ProgressText;
-                }
-
-                DirectoryInfo toUNCRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
-                if (toUNCRoot != null)
-                {
-                    FileSystemProperties driveStats = FileHelper.GetProperties(toUNCRoot.ToString());
-                    if (driveStats != null)
-                    {
-                        int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);
-                        diskValue = 1000 - pct;
-                        diskText = ((int)(driveStats.AvailableBytes / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
-                    }
-                }
-
-
-                this.txtFilename.Text = fileText;
-                this.pbDiskSpace.Value = diskValue;
-                this.txtDiskSpace.Text = diskText;
-
+                this.txtFilename.Text = activeCMAction.ProgressText;
                 this.SetPercentages(activeCMAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
             }
 
@@ -180,7 +139,7 @@ namespace TVRename
             this.copyTimer.Stop();
 
             //this.UpdateOldStyle();
-            bool allDone = this.UpdateNewStyle();
+            bool allDone = this.UpdateCopyProgress();
 
             if (allDone)
             {
@@ -191,13 +150,92 @@ namespace TVRename
                 this.copyTimer.Start();
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        private void diskSpaceTimer_Tick(object sender, System.EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            this.diskSpaceTimer.Stop();
+            UpdateDiskSpace();
+            this.diskSpaceTimer.Start();
         }
 
-        private void cbPause_CheckedChanged(object sender, System.EventArgs e)
+        private void UpdateDiskSpace()
+        {
+            int diskValue = 0;
+            string diskText = "--- GB free";
+
+            ActionCopyMoveRename activeCMAction = null;
+
+            activeCMAction = GetActiveCmAction();
+
+            if (activeCMAction is null) return;
+
+
+            string folder = activeCMAction.TargetFolder;
+            DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
+
+            if (toRoot != null)
+            {
+                System.IO.DriveInfo di;
+                try
+                {
+                    // try to get root of drive
+                    di = new System.IO.DriveInfo(toRoot.ToString());
+                }
+                catch (System.ArgumentException)
+                {
+                    di = null;
+                }
+
+                if (di != null)
+                {
+                    int pct = (int)((1000 * di.TotalFreeSpace) / di.TotalSize);
+                    diskValue = 1000 - pct;
+                    diskText = ((int)(di.TotalFreeSpace / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
+                }
+            }
+
+            DirectoryInfo toUNCRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
+            if (toUNCRoot != null)
+            {
+                FileSystemProperties driveStats = FileHelper.GetProperties(toUNCRoot.ToString());
+                if (driveStats != null)
+                {
+                    int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);
+                    diskValue = 1000 - pct;
+                    diskText = ((int)(driveStats.AvailableBytes / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
+                }
+            }
+            
+            this.pbDiskSpace.Value = diskValue;
+            this.txtDiskSpace.Text = diskText;
+        }
+
+        private ActionCopyMoveRename GetActiveCmAction()
+        {
+            foreach (ActionQueue aq in this.mToDo)
+            {
+                if (aq.Actions.Count == 0)
+                    continue;
+
+                foreach (Action action in aq.Actions)
+                {
+                    if ((!action.Done) && (action.PercentDone > 0))
+                    {
+                        if (action is ActionCopyMoveRename cmAction )
+                            return cmAction;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private void bnCancel_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.Cancel;
+            Close();
+        }
+
+        private void cbPause_CheckedChanged(object sender, EventArgs e)
         {
             this.mDoc.ActionPause = this.cbPause.Checked;
 
@@ -214,5 +252,6 @@ namespace TVRename
             this.label3.Enabled = en;
             this.txtFilename.Enabled = en;
         }
+
     }
 }
