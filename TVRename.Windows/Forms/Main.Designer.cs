@@ -30,10 +30,11 @@ namespace TVRename.Windows.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Metadata", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
             this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -115,6 +116,8 @@ namespace TVRename.Windows.Forms
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.buttonScanProcess = new System.Windows.Forms.Button();
+            this.columnHeaderScanError = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -247,6 +250,7 @@ namespace TVRename.Windows.Forms
             // 
             // tabPageScan
             // 
+            this.tabPageScan.Controls.Add(this.buttonScanProcess);
             this.tabPageScan.Controls.Add(this.listViewScan);
             this.tabPageScan.Location = new System.Drawing.Point(4, 23);
             this.tabPageScan.Name = "tabPageScan";
@@ -268,15 +272,19 @@ namespace TVRename.Windows.Forms
             this.columnHeaderScanEpisode,
             this.columnHeaderScanDate,
             this.columnHeaderScanFolder,
-            this.columnHeaderScanFile});
+            this.columnHeaderScanFile,
+            this.columnHeaderScanError});
             this.listViewScan.FullRowSelect = true;
             listViewGroup1.Header = "Missing";
             listViewGroup1.Name = "missing";
+            listViewGroup2.Header = "Metadata";
+            listViewGroup2.Name = "metadata";
             this.listViewScan.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1});
+            listViewGroup1,
+            listViewGroup2});
             this.listViewScan.Location = new System.Drawing.Point(9, 6);
             this.listViewScan.Name = "listViewScan";
-            this.listViewScan.Size = new System.Drawing.Size(1060, 505);
+            this.listViewScan.Size = new System.Drawing.Size(1060, 476);
             this.listViewScan.TabIndex = 0;
             this.listViewScan.UseCompatibleStateImageBehavior = false;
             this.listViewScan.View = System.Windows.Forms.View.Details;
@@ -289,12 +297,10 @@ namespace TVRename.Windows.Forms
             // columnHeaderScanSeason
             // 
             this.columnHeaderScanSeason.Text = "Season";
-            this.columnHeaderScanSeason.Width = 75;
             // 
             // columnHeaderScanEpisode
             // 
             this.columnHeaderScanEpisode.Text = "Episode";
-            this.columnHeaderScanEpisode.Width = 150;
             // 
             // columnHeaderScanDate
             // 
@@ -304,12 +310,12 @@ namespace TVRename.Windows.Forms
             // columnHeaderScanFolder
             // 
             this.columnHeaderScanFolder.Text = "Folder";
-            this.columnHeaderScanFolder.Width = 200;
+            this.columnHeaderScanFolder.Width = 250;
             // 
             // columnHeaderScanFile
             // 
             this.columnHeaderScanFile.Text = "File";
-            this.columnHeaderScanFile.Width = 300;
+            this.columnHeaderScanFile.Width = 350;
             // 
             // tabPageCalendar
             // 
@@ -340,19 +346,19 @@ namespace TVRename.Windows.Forms
             this.columnHeaderRemaining,
             this.columnHeaderEpisodeName});
             this.listViewCalendar.FullRowSelect = true;
-            listViewGroup2.Header = "Recently Aired";
-            listViewGroup2.Name = "recent";
-            listViewGroup3.Header = "Next 7 Days";
-            listViewGroup3.Name = "soon";
-            listViewGroup4.Header = "Future Episodes";
-            listViewGroup4.Name = "future";
-            listViewGroup5.Header = "Later";
-            listViewGroup5.Name = "later";
+            listViewGroup3.Header = "Recently Aired";
+            listViewGroup3.Name = "recent";
+            listViewGroup4.Header = "Next 7 Days";
+            listViewGroup4.Name = "soon";
+            listViewGroup5.Header = "Future Episodes";
+            listViewGroup5.Name = "future";
+            listViewGroup6.Header = "Later";
+            listViewGroup6.Name = "later";
             this.listViewCalendar.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup2,
             listViewGroup3,
             listViewGroup4,
-            listViewGroup5});
+            listViewGroup5,
+            listViewGroup6});
             this.listViewCalendar.HideSelection = false;
             this.listViewCalendar.Location = new System.Drawing.Point(9, 6);
             this.listViewCalendar.Name = "listViewCalendar";
@@ -787,6 +793,23 @@ namespace TVRename.Windows.Forms
             this.columnHeader16.Text = "Episode Name";
             this.columnHeader16.Width = 360;
             // 
+            // buttonScanProcess
+            // 
+            this.buttonScanProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonScanProcess.Enabled = false;
+            this.buttonScanProcess.Location = new System.Drawing.Point(9, 488);
+            this.buttonScanProcess.Name = "buttonScanProcess";
+            this.buttonScanProcess.Size = new System.Drawing.Size(75, 23);
+            this.buttonScanProcess.TabIndex = 1;
+            this.buttonScanProcess.Text = "&Process";
+            this.buttonScanProcess.UseVisualStyleBackColor = true;
+            this.buttonScanProcess.Click += new System.EventHandler(this.buttonScanProcess_Click);
+            // 
+            // columnHeaderScanError
+            // 
+            this.columnHeaderScanError.Text = "Error";
+            this.columnHeaderScanError.Width = 300;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -910,5 +933,7 @@ namespace TVRename.Windows.Forms
         private System.Windows.Forms.ToolStripMenuItem mediaCenterFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem preferencesToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader columnHeaderScanFile;
+        private System.Windows.Forms.Button buttonScanProcess;
+        private System.Windows.Forms.ColumnHeader columnHeaderScanError;
     }
 }

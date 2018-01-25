@@ -9,6 +9,8 @@ namespace TVRename.Core.Models
     {
         public int TVDBId { get; set; }
 
+        public string Name { get; set; } = null;
+
         public string Location { get; set; }
 
         public bool CheckMissing { get; set; } = true;
@@ -16,7 +18,7 @@ namespace TVRename.Core.Models
         public List<int> IgnoredSeasons { get; set; } = new List<int>();
 
         [JsonIgnore]
-        public Cache.Show Metadata => Core.TVDB.TVDB.Instance.Shows.ContainsKey(this.TVDBId) ? Core.TVDB.TVDB.Instance.Shows[this.TVDBId] : null;
+        public Cache.Show Metadata => Core.TVDB.TVDB.Instance.Shows.ContainsKey(this.TVDBId) ? Core.TVDB.TVDB.Instance.Shows[this.TVDBId] : null; // TODO
 
         [CanBeNull]
         [JsonIgnore]

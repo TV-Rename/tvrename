@@ -5,9 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace TVRename.Core.Extensions
-{    /// <summary>
-     /// Linq and enumerable type extention methods.
-     /// </summary>
+{
+    /// <summary>
+    /// Linq and enumerable type extention methods.
+    /// </summary>
     public static class LinqExtensions
     {
         /// <summary>

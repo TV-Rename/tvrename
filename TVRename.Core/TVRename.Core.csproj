@@ -54,10 +54,16 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\DownloadAction.cs" />
     <Compile Include="Actions\IAction.cs" />
+    <Compile Include="Actions\KodiAction.cs" />
+    <Compile Include="Actions\Mede8erViewAction.cs" />
+    <Compile Include="Actions\Mede8erAction.cs" />
+    <Compile Include="Actions\PyTivoAction.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Metadata\Identifiers\Mede8eViewrIdentifier.cs" />
     <Compile Include="Metadata\Identifiers\PyTivoIdentifier.cs" />
     <Compile Include="Metadata\Identifiers\Mede8erIdentifier.cs" />

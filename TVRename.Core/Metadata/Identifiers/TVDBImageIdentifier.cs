@@ -1,5 +1,4 @@
 using System;
-using System.Drawing.Imaging;
 using Alphaleonis.Win32.Filesystem;
 using TVRename.Core.Actions;
 using TVRename.Core.Models;
@@ -30,18 +29,10 @@ namespace TVRename.Core.Metadata.Identifiers
             }
             set { }
         }
-
-        public override ImageType ImageType { get; set; }
-
-        public override ImageFormat ImageFormat { get; set; }
         
-        public override string Location { get; set; }
-
-        public override string FileName { get; set; }
-
         protected override IAction ProcessShow(ProcessedShow show, FileInfo file, bool force = false)
         {
-            //if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
+            if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
 
             string url;
 
@@ -68,7 +59,7 @@ namespace TVRename.Core.Metadata.Identifiers
 
         protected override IAction ProcessSeason(ProcessedShow show, ProcessedSeason season, FileInfo file, bool force = false)
         {
-            //if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
+            if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
 
             string url;
 
@@ -91,14 +82,14 @@ namespace TVRename.Core.Metadata.Identifiers
 
         protected override IAction ProcessEpisode(ProcessedShow show, ProcessedSeason season, ProcessedEpisode episode, FileInfo file, bool force = false)
         {
-            //if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
+            if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
 
             string url;
 
             switch (this.ImageType)
             {
                 case ImageType.EpisodeThumbnail:
-                    url = show.Poster; // TODO: Episode thumb
+                    url = episode.Thumbnail;
                     break;
 
                 default:

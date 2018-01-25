@@ -6,6 +6,8 @@ namespace TVRename.Core.Metadata
     {
         public override FileType FileType => FileType.Text;
 
+        public override Target Target { get; set; }
+        
         [JsonIgnore]
         public abstract string TextFormat { get; }
     }

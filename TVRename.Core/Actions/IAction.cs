@@ -6,6 +6,7 @@ namespace TVRename.Core.Actions
     public interface IAction
     {
         string Type { get; }
+
         string Produces { get; }
         
         Task Run(CancellationToken ct);

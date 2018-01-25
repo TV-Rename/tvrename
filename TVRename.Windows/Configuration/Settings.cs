@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TVRename.Core.Metadata;
 using TVRename.Core.Models;
@@ -17,7 +18,7 @@ namespace TVRename.Windows.Configuration
         [JsonIgnore]
         internal bool Dirty { get; set; }
 
-        public string DefaultLocation { get; set; } = "D:\\TV"; // TODO
+        public string DefaultLocation { get; set; } = Environment.GetFolderPath(Environment.SpecialFolder.MyVideos);
 
         public string SeasonTemplate { get; set; } = "Season {{number | pad}}";
 

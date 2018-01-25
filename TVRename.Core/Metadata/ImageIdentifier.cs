@@ -10,8 +10,8 @@ namespace TVRename.Core.Metadata
 
         public override FileType FileType => FileType.Image;
         
-        public abstract ImageType ImageType { get; set; }
+        public ImageType ImageType { get; set; }
 
-        public abstract ImageFormat ImageFormat { get; set; }
+        public ImageFormat ImageFormat { get; set; }
     }
 }

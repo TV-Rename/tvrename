@@ -149,6 +149,7 @@
     </Compile>
     <Compile Include="Configuration\Layout.cs" />
     <Compile Include="Configuration\Settings.cs" />
+    <Compile Include="Utilities\AsyncEventHandler.cs" />
     <Compile Include="Utilities\Helpers.cs" />
     <None Include="NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

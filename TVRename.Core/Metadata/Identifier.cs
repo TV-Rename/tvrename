@@ -10,13 +10,13 @@ namespace TVRename.Core.Metadata
 {
     public abstract class Identifier
     {
+        public string Location { get; set; }
+
+        public string FileName { get; set; }
+
         [JsonIgnore]
         public abstract FileType FileType { get; }
-
-        public abstract string Location { get; set; }
-
-        public abstract string FileName { get; set; }
-
+        
         public abstract Target Target { get; set; }
 
         [CanBeNull]

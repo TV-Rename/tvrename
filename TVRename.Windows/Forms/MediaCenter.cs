@@ -212,8 +212,8 @@ namespace TVRename.Windows.Forms
             this.identifiers.Add(new PyTivoIdentifier
             {
                 Target = Target.Episode,
-                Location = @"{{episode.location}}\.meta\",
-                FileName = "{{episode.filename}}.txt"
+                Location = "{{episode.location}}",
+                FileName = "{{episode.filename}}.txt" // TODO: Must inc video file ext
             });
 
             this.Render();

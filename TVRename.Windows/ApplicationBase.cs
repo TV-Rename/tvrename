@@ -6,6 +6,7 @@ using Alphaleonis.Win32.Filesystem;
 using TVRename.Core.TVDB;
 using TVRename.Windows.Configuration;
 using TVRename.Windows.Forms;
+using TVRename.Windows.Utilities;
 
 namespace TVRename.Windows
 {
@@ -35,6 +36,8 @@ namespace TVRename.Windows
             UpdateStatus("Loading cache");
 
             // Run slow operations
+
+            Directory.CreateDirectory(BasePath);
 
             Settings.FilePath = Path.Combine(BasePath, "settings.json");
             Layout.FilePath = Path.Combine(BasePath, "layout.json");
@@ -114,23 +117,5 @@ namespace TVRename.Windows
 
             return await tcs.Task;
         }
-    }
-
-    public class AsyncEventHandler
-    {
-        private readonly TaskCompletionSource<EventArgs> tcs = new TaskCompletionSource<EventArgs>();
-
-        public EventHandler Handler => (s, a) => this.tcs.SetResult(a);
-
-        public Task<EventArgs> Event => this.tcs.Task;
-    }
-
-    public class AsyncEventHandler<TEventArgs>
-    {
-        private readonly TaskCompletionSource<TEventArgs> tcs = new TaskCompletionSource<TEventArgs>();
-
-        public EventHandler<TEventArgs> Handler => (s, a) => this.tcs.SetResult(a);
-
-        public Task<TEventArgs> Event => this.tcs.Task;
     }
 }

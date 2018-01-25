@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -336,12 +337,15 @@ namespace TVRename.Windows.Forms
                             processedShow.Name,
                             string.Empty,
                             string.Empty,
-                            string.Empty,
+                            processedShow.LastUpdated.ToShortDateString(),
                             Path.GetDirectoryName(action.Produces),
-                            Path.GetFileName(action.Produces)
+                            Path.GetFileName(action.Produces),
+                            string.Empty
                         })
                         {
-                            Tag = action
+                            Tag = action,
+                            Checked = true,
+                            Group = this.listViewScan.Groups["metadata"]
                         });
                     }
 
@@ -361,7 +365,8 @@ namespace TVRename.Windows.Forms
                         if (!Directory.Exists(processedSeason.Location))
                         {
                             // TODO: Missing season dir
-                            continue;
+
+                            Directory.CreateDirectory(processedSeason.Location);
                         }
 
                         foreach (IAction action in Settings.Instance.Identifiers.Select(i => i.ProcessSeason(processedShow, processedSeason)).Where(s => s != null))
@@ -369,14 +374,17 @@ namespace TVRename.Windows.Forms
                             results.Add(new ListViewItem(new[]
                             {
                                 processedShow.Name,
-                                seasonDir,
+                                processedSeason.Number == 0 ? Settings.Instance.SpecialsTemplate.Template(season) : processedSeason.Number.ToString(),
                                 string.Empty,
-                                string.Empty,
+                                processedShow.LastUpdated.ToShortDateString(),
                                 Path.GetDirectoryName(action.Produces),
-                                Path.GetFileName(action.Produces)
+                                Path.GetFileName(action.Produces),
+                                string.Empty
                             })
                             {
-                                Tag = action
+                                Tag = action,
+                                Checked = true,
+                                Group = this.listViewScan.Groups["metadata"]
                             });
                         }
 
@@ -398,10 +406,25 @@ namespace TVRename.Windows.Forms
 
                             string episodePath = Path.Combine(processedSeason.Location, episodeFile);
 
+                            // TODO: Video extentions
+
                             if (!File.Exists(episodePath))
                             {
-                                // TODO: Missing episode file
-                                //continue;
+                                results.Add(new ListViewItem(new[]
+                                {
+                                    processedShow.Name,
+                                    processedSeason.Number == 0 ? Settings.Instance.SpecialsTemplate.Template(season) : processedSeason.Number.ToString(),
+                                    processedEpisode.Number.ToString(),
+                                    processedEpisode.FirstAired?.ToShortDateString(),
+                                    Path.GetDirectoryName(episodePath),
+                                    Path.GetFileName(episodePath),
+                                    string.Empty
+                                })
+                                {
+                                    Tag = "MISSING", // TODO
+                                    Checked = false,
+                                    Group = this.listViewScan.Groups["missing"]
+                                });
                             }
 
                             processedEpisode.Location = processedSeason.Location;
@@ -412,14 +435,17 @@ namespace TVRename.Windows.Forms
                                 results.Add(new ListViewItem(new[]
                                 {
                                     processedShow.Name,
-                                    seasonDir,
-                                    processedEpisode.Name,
-                                    string.Empty,
+                                    processedSeason.Number == 0 ? Settings.Instance.SpecialsTemplate.Template(season) : processedSeason.Number.ToString(),
+                                    processedEpisode.Number.ToString(),
+                                    processedEpisode.LastUpdated.ToShortDateString(),
                                     Path.GetDirectoryName(action.Produces),
-                                    Path.GetFileName(action.Produces)
+                                    Path.GetFileName(action.Produces),
+                                    string.Empty
                                 })
                                 {
-                                    Tag = action
+                                    Tag = action,
+                                    Checked = true,
+                                    Group = this.listViewScan.Groups["metadata"]
                                 });
                             }
                         }
@@ -444,6 +470,10 @@ namespace TVRename.Windows.Forms
                 List<ListViewItem> results = await Scan(CancellationToken.None);
 
                 this.listViewScan.Items.AddRange(results.ToArray());
+
+                this.listViewScan.Groups["missing"].Header = $"Missing ({"Item".ToQuantity(this.listViewScan.Groups["missing"].Items.Count)})";
+                this.listViewScan.Groups["metadata"].Header = $"Metadata ({"Item".ToQuantity(this.listViewScan.Groups["metadata"].Items.Count)})";
+
                 this.listViewScan.Sort();
             }
             catch (Exception ex)
@@ -453,6 +483,67 @@ namespace TVRename.Windows.Forms
 
             this.toolStripProgressBar.Style = ProgressBarStyle.Continuous;
             this.toolStripStatusLabel.Text = "Ready";
+
+            this.buttonScanProcess.Enabled = this.listViewScan.CheckedItems.Count > 0;
+        }
+
+
+        CancellationTokenSource cts = new CancellationTokenSource();
+
+        private async void buttonScanProcess_Click(object sender, EventArgs e)
+        {
+            if (this.buttonScanProcess.Text == "&Process")
+            {
+                this.buttonScanProcess.Text = "&Cancel";
+
+                this.cts = new CancellationTokenSource();
+
+                try
+                {
+                    this.toolStripStatusLabel.Text = "Processing...";
+                    this.toolStripProgressBar.Style = ProgressBarStyle.Marquee;
+
+                    foreach (ListViewItem lvi in this.listViewScan.CheckedItems)
+                    {
+                        if (!(lvi.Tag is IAction action)) continue;
+
+                        try
+                        {
+                            await action.Run(this.cts.Token);
+
+                            this.listViewScan.Items.Remove(lvi);
+                        }
+                        catch (TaskCanceledException exception)
+                        {
+                            Logger.Error(exception);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.Error(ex);
+
+                            lvi.ForeColor = Color.Red;
+                            lvi.SubItems[6].Text = ex.Message;
+                        }
+                    }
+
+                    this.toolStripProgressBar.Style = ProgressBarStyle.Continuous;
+                    this.toolStripStatusLabel.Text = "Ready";
+
+                    this.buttonScanProcess.Text = "&Process";
+                    this.buttonScanProcess.Enabled = this.listViewScan.CheckedItems.Count > 0;
+                }
+                catch (TaskCanceledException exception)
+                {
+                    Logger.Error(exception);
+                }
+            }
+            else
+            {
+                this.buttonScanProcess.Enabled = false;
+                this.toolStripStatusLabel.Text = "Canceling...";
+
+                this.cts.Cancel();
+            }
         }
 
         private void listViewCalendar_SelectedIndexChanged(object sender, EventArgs e)
