@@ -30,11 +30,15 @@ namespace TVRename.Windows.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Metadata", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Metadata", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
             this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -45,6 +49,7 @@ namespace TVRename.Windows.Forms
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.treeViewShows = new System.Windows.Forms.TreeView();
             this.tabPageScan = new System.Windows.Forms.TabPage();
+            this.buttonScanProcess = new System.Windows.Forms.Button();
             this.listViewScan = new System.Windows.Forms.ListView();
             this.columnHeaderScanShow = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderScanSeason = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -52,6 +57,7 @@ namespace TVRename.Windows.Forms
             this.columnHeaderScanDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderScanFolder = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderScanFile = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeaderScanError = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabPageCalendar = new System.Windows.Forms.TabPage();
             this.listViewCalendar = new System.Windows.Forms.ListView();
             this.columnHeaderShow = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -116,8 +122,6 @@ namespace TVRename.Windows.Forms
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.buttonScanProcess = new System.Windows.Forms.Button();
-            this.columnHeaderScanError = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -260,6 +264,18 @@ namespace TVRename.Windows.Forms
             this.tabPageScan.Text = "Scan";
             this.tabPageScan.UseVisualStyleBackColor = true;
             // 
+            // buttonScanProcess
+            // 
+            this.buttonScanProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonScanProcess.Enabled = false;
+            this.buttonScanProcess.Location = new System.Drawing.Point(9, 488);
+            this.buttonScanProcess.Name = "buttonScanProcess";
+            this.buttonScanProcess.Size = new System.Drawing.Size(75, 23);
+            this.buttonScanProcess.TabIndex = 1;
+            this.buttonScanProcess.Text = "&Process";
+            this.buttonScanProcess.UseVisualStyleBackColor = true;
+            this.buttonScanProcess.Click += new System.EventHandler(this.buttonScanProcess_Click);
+            // 
             // listViewScan
             // 
             this.listViewScan.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -277,11 +293,23 @@ namespace TVRename.Windows.Forms
             this.listViewScan.FullRowSelect = true;
             listViewGroup1.Header = "Missing";
             listViewGroup1.Name = "missing";
-            listViewGroup2.Header = "Metadata";
-            listViewGroup2.Name = "metadata";
+            listViewGroup2.Header = "Rename";
+            listViewGroup2.Name = "rename";
+            listViewGroup3.Header = "Move";
+            listViewGroup3.Name = "move";
+            listViewGroup4.Header = "Copy";
+            listViewGroup4.Name = "copy";
+            listViewGroup5.Header = "Metadata";
+            listViewGroup5.Name = "metadata";
+            listViewGroup6.Header = "Download";
+            listViewGroup6.Name = "download";
             this.listViewScan.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
-            listViewGroup2});
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4,
+            listViewGroup5,
+            listViewGroup6});
             this.listViewScan.Location = new System.Drawing.Point(9, 6);
             this.listViewScan.Name = "listViewScan";
             this.listViewScan.Size = new System.Drawing.Size(1060, 476);
@@ -317,6 +345,11 @@ namespace TVRename.Windows.Forms
             this.columnHeaderScanFile.Text = "File";
             this.columnHeaderScanFile.Width = 350;
             // 
+            // columnHeaderScanError
+            // 
+            this.columnHeaderScanError.Text = "Error";
+            this.columnHeaderScanError.Width = 300;
+            // 
             // tabPageCalendar
             // 
             this.tabPageCalendar.Controls.Add(this.listViewCalendar);
@@ -346,19 +379,19 @@ namespace TVRename.Windows.Forms
             this.columnHeaderRemaining,
             this.columnHeaderEpisodeName});
             this.listViewCalendar.FullRowSelect = true;
-            listViewGroup3.Header = "Recently Aired";
-            listViewGroup3.Name = "recent";
-            listViewGroup4.Header = "Next 7 Days";
-            listViewGroup4.Name = "soon";
-            listViewGroup5.Header = "Future Episodes";
-            listViewGroup5.Name = "future";
-            listViewGroup6.Header = "Later";
-            listViewGroup6.Name = "later";
+            listViewGroup7.Header = "Recently Aired";
+            listViewGroup7.Name = "recent";
+            listViewGroup8.Header = "Next 7 Days";
+            listViewGroup8.Name = "soon";
+            listViewGroup9.Header = "Future Episodes";
+            listViewGroup9.Name = "future";
+            listViewGroup10.Header = "Later";
+            listViewGroup10.Name = "later";
             this.listViewCalendar.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup3,
-            listViewGroup4,
-            listViewGroup5,
-            listViewGroup6});
+            listViewGroup7,
+            listViewGroup8,
+            listViewGroup9,
+            listViewGroup10});
             this.listViewCalendar.HideSelection = false;
             this.listViewCalendar.Location = new System.Drawing.Point(9, 6);
             this.listViewCalendar.Name = "listViewCalendar";
@@ -792,23 +825,6 @@ namespace TVRename.Windows.Forms
             // 
             this.columnHeader16.Text = "Episode Name";
             this.columnHeader16.Width = 360;
-            // 
-            // buttonScanProcess
-            // 
-            this.buttonScanProcess.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonScanProcess.Enabled = false;
-            this.buttonScanProcess.Location = new System.Drawing.Point(9, 488);
-            this.buttonScanProcess.Name = "buttonScanProcess";
-            this.buttonScanProcess.Size = new System.Drawing.Size(75, 23);
-            this.buttonScanProcess.TabIndex = 1;
-            this.buttonScanProcess.Text = "&Process";
-            this.buttonScanProcess.UseVisualStyleBackColor = true;
-            this.buttonScanProcess.Click += new System.EventHandler(this.buttonScanProcess_Click);
-            // 
-            // columnHeaderScanError
-            // 
-            this.columnHeaderScanError.Text = "Error";
-            this.columnHeaderScanError.Width = 300;
             // 
             // Main
             // 

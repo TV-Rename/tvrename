@@ -16,17 +16,20 @@ namespace TVRename.Core.Metadata
 
         [JsonIgnore]
         public abstract FileType FileType { get; }
-        
+
+        [JsonIgnore]
+        public abstract TargetTypes SupportedTypes { get; }
+
         public abstract Target Target { get; set; }
 
         [CanBeNull]
-        protected abstract IAction ProcessShow(ProcessedShow show, FileInfo file, bool force = false);
+        protected virtual IAction ProcessShow(ProcessedShow show, FileInfo file, bool force = false) => null;
 
         [CanBeNull]
-        protected abstract IAction ProcessSeason(ProcessedShow show, ProcessedSeason season, FileInfo file, bool force = false);
+        protected virtual IAction ProcessSeason(ProcessedShow show, ProcessedSeason season, FileInfo file, bool force = false) => null;
 
         [CanBeNull]
-        protected abstract IAction ProcessEpisode(ProcessedShow show, ProcessedSeason season, ProcessedEpisode episode, FileInfo file, bool force = false);
+        protected virtual IAction ProcessEpisode(ProcessedShow show, ProcessedSeason season, ProcessedEpisode episode, FileInfo file, bool force = false) => null;
 
         [CanBeNull]
         public IAction ProcessShow(ProcessedShow show, bool force = false)

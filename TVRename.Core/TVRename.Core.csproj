@@ -64,9 +64,10 @@
     <Compile Include="Actions\Mede8erAction.cs" />
     <Compile Include="Actions\PyTivoAction.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
-    <Compile Include="Metadata\Identifiers\Mede8eViewrIdentifier.cs" />
+    <Compile Include="Metadata\Identifiers\Mede8eViewIdentifier.cs" />
     <Compile Include="Metadata\Identifiers\PyTivoIdentifier.cs" />
     <Compile Include="Metadata\Identifiers\Mede8erIdentifier.cs" />
+    <Compile Include="Metadata\TargetTypes.cs" />
     <Compile Include="Metadata\TextIdentifier.cs" />
     <Compile Include="Metadata\Identifiers\TVDBImageIdentifier.cs" />
     <Compile Include="Metadata\Identifiers\KodiIdentifier.cs" />

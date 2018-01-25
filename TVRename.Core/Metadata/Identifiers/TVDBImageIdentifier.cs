@@ -36,6 +36,7 @@ namespace TVRename.Core.Metadata.Identifiers
 
             string url;
 
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch (this.ImageType)
             {
                 case ImageType.ShowPoster:
@@ -63,6 +64,7 @@ namespace TVRename.Core.Metadata.Identifiers
 
             string url;
 
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch (this.ImageType)
             {
                 case ImageType.SeasonPoster:
@@ -86,6 +88,7 @@ namespace TVRename.Core.Metadata.Identifiers
 
             string url;
 
+            // ReSharper disable once SwitchStatementMissingSomeCases
             switch (this.ImageType)
             {
                 case ImageType.EpisodeThumbnail:

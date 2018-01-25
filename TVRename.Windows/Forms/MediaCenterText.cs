@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using TVRename.Core.Metadata;
 using TVRename.Core.Metadata.Identifiers;
@@ -7,31 +9,31 @@ namespace TVRename.Windows.Forms
 {
     public partial class MediaCenterText : Form
     {
+        private readonly List<TextIdentifier> identifiers = new List<TextIdentifier> {
+            new KodiIdentifier(),
+            new PyTivoIdentifier(),
+            new Mede8erIdentifier(),
+            new Mede8erViewIdentifier()
+        };
+
         public TextIdentifier Identifier { get; private set; }
 
         public MediaCenterText(TextIdentifier identifier) : this()
         {
-            switch (identifier)
+            this.comboBoxTarget.SelectedIndex = (int)identifier.Target;
+
+            for (int i = 0; i < this.comboBoxType.Items.Count; i++)
             {
-                case KodiIdentifier _:
-                    this.comboBoxType.SelectedIndex = 0;
-                    break;
-                case PyTivoIdentifier _:
-                    this.comboBoxType.SelectedIndex = 1;
-                    break;
-                case Mede8erIdentifier _: // TODO: View
-                    this.comboBoxType.SelectedIndex = 2;
-                    break;
-                case Mede8erViewIdentifier _:
-                    this.comboBoxType.SelectedIndex = 3;
-                    break;
+                if (this.comboBoxType.Items[i].ToString() != identifier.ToString()) continue;
+
+                this.comboBoxType.SelectedIndex = i;
+                break;
             }
 
-            this.comboBoxTarget.SelectedIndex = (int)identifier.Target;
             this.textBoxName.Text = identifier.FileName;
             this.textBoxLocation.Text = identifier.Location;
         }
-        
+
         public MediaCenterText()
         {
             InitializeComponent();
@@ -40,7 +42,30 @@ namespace TVRename.Windows.Forms
         private void MediaCenterText_Load(object sender, EventArgs e)
         {
             if (this.comboBoxTarget.SelectedIndex == -1) this.comboBoxTarget.SelectedIndex = 0;
-            if (this.comboBoxType.SelectedIndex == -1) this.comboBoxType.SelectedIndex = 0;
+        }
+
+        private void comboBoxTarget_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.comboBoxType.Items.Clear();
+
+            TargetTypes target = 0;
+
+            switch (this.comboBoxTarget.SelectedIndex)
+            {
+                case 0:
+                    target = TargetTypes.Show;
+                    break;
+                case 1:
+                    target = TargetTypes.Season;
+                    break;
+                case 2:
+                    target = TargetTypes.Episode;
+                    break;
+            }
+
+            this.comboBoxType.Items.AddRange(this.identifiers.Where(i => i.SupportedTypes.HasFlag(target)).Cast<object>().ToArray());
+
+            this.comboBoxType.SelectedIndex = 0;
         }
 
         private void textBoxName_TextChanged(object sender, EventArgs e)

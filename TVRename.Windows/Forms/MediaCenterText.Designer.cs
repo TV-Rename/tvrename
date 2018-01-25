@@ -118,11 +118,6 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBoxType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxType.FormattingEnabled = true;
-            this.comboBoxType.Items.AddRange(new object[] {
-            "Kodi XML",
-            "pyTivo",
-            "Mede8er XML",
-            "Mede8er View"});
             this.comboBoxType.Location = new System.Drawing.Point(89, 39);
             this.comboBoxType.Name = "comboBoxType";
             this.comboBoxType.Size = new System.Drawing.Size(205, 21);
@@ -151,6 +146,7 @@
             this.comboBoxTarget.Name = "comboBoxTarget";
             this.comboBoxTarget.Size = new System.Drawing.Size(205, 21);
             this.comboBoxTarget.TabIndex = 19;
+            this.comboBoxTarget.SelectedIndexChanged += new System.EventHandler(this.comboBoxTarget_SelectedIndexChanged);
             // 
             // MediaCenterText
             // 

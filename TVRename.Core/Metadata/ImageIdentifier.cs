@@ -9,6 +9,8 @@ namespace TVRename.Core.Metadata
         public abstract override Target Target { get; set; }
 
         public override FileType FileType => FileType.Image;
+
+        public override TargetTypes SupportedTypes => TargetTypes.Show | TargetTypes.Season | TargetTypes.Episode;
         
         public ImageType ImageType { get; set; }
 

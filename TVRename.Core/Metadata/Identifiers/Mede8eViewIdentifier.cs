@@ -8,7 +8,9 @@ namespace TVRename.Core.Metadata.Identifiers
     public class Mede8erViewIdentifier : TextIdentifier
     {
         public override string TextFormat => "Mede8er View";
-        
+
+        public override TargetTypes SupportedTypes => TargetTypes.Show | TargetTypes.Season;
+
         protected override IAction ProcessShow(ProcessedShow show, FileInfo file, bool force = false)
         {
             if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
@@ -21,11 +23,6 @@ namespace TVRename.Core.Metadata.Identifiers
             if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
 
             return new Mede8erViewAction(file, true);
-        }
-
-        protected override IAction ProcessEpisode(ProcessedShow show, ProcessedSeason season, ProcessedEpisode episode, FileInfo file, bool force = false)
-        {
-            return null;
         }
     }
 }

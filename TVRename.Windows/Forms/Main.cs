@@ -345,7 +345,7 @@ namespace TVRename.Windows.Forms
                         {
                             Tag = action,
                             Checked = true,
-                            Group = this.listViewScan.Groups["metadata"]
+                            Group = this.listViewScan.Groups[action.Type.ToLowerInvariant()]
                         });
                     }
 
@@ -384,7 +384,7 @@ namespace TVRename.Windows.Forms
                             {
                                 Tag = action,
                                 Checked = true,
-                                Group = this.listViewScan.Groups["metadata"]
+                                Group = this.listViewScan.Groups[action.Type.ToLowerInvariant()]
                             });
                         }
 
@@ -445,7 +445,7 @@ namespace TVRename.Windows.Forms
                                 {
                                     Tag = action,
                                     Checked = true,
-                                    Group = this.listViewScan.Groups["metadata"]
+                                    Group = this.listViewScan.Groups[action.Type.ToLowerInvariant()]
                                 });
                             }
                         }
@@ -473,6 +473,7 @@ namespace TVRename.Windows.Forms
 
                 this.listViewScan.Groups["missing"].Header = $"Missing ({"Item".ToQuantity(this.listViewScan.Groups["missing"].Items.Count)})";
                 this.listViewScan.Groups["metadata"].Header = $"Metadata ({"Item".ToQuantity(this.listViewScan.Groups["metadata"].Items.Count)})";
+                this.listViewScan.Groups["download"].Header = $"Download ({"Item".ToQuantity(this.listViewScan.Groups["download"].Items.Count)})";
 
                 this.listViewScan.Sort();
             }
