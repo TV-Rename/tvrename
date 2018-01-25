@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{78BE5B7B-5F85-4325-A0D6-FB7722737BF4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TVRename.Core</RootNamespace>
+    <AssemblyName>TVRename.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AlphaFS, Version=2.1.0.0, Culture=neutral, PublicKeyToken=4d31a58f7d7ad5c9, processorArchitecture=MSIL">
+      <HintPath>..\packages\AlphaFS.2.1.3\lib\net452\AlphaFS.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="Scriban, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Scriban.1.1.1\lib\net40\Scriban.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actions\DownloadAction.cs" />
+    <Compile Include="Actions\IAction.cs" />
+    <Compile Include="Actions\KodiAction.cs" />
+    <Compile Include="Actions\Mede8erViewAction.cs" />
+    <Compile Include="Actions\Mede8erAction.cs" />
+    <Compile Include="Actions\PyTivoAction.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
+    <Compile Include="Metadata\Identifiers\Mede8eViewrIdentifier.cs" />
+    <Compile Include="Metadata\Identifiers\PyTivoIdentifier.cs" />
+    <Compile Include="Metadata\Identifiers\Mede8erIdentifier.cs" />
+    <Compile Include="Metadata\TextIdentifier.cs" />
+    <Compile Include="Metadata\Identifiers\TVDBImageIdentifier.cs" />
+    <Compile Include="Metadata\Identifiers\KodiIdentifier.cs" />
+    <Compile Include="Metadata\Target.cs" />
+    <Compile Include="Metadata\ImageType.cs" />
+    <Compile Include="Metadata\ImageIdentifier.cs" />
+    <Compile Include="Metadata\Identifier.cs" />
+    <Compile Include="Metadata\FileType.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\LinqExtensions.cs" />
+    <Compile Include="Models\Cache\Episode.cs" />
+    <Compile Include="Models\Cache\Season.cs" />
+    <Compile Include="Models\Cache\SeasonStatus.cs" />
+    <Compile Include="Models\ProcessedEpisode.cs" />
+    <Compile Include="Models\ProcessedShow.cs" />
+    <Compile Include="Models\ProcessedSeason.cs" />
+    <Compile Include="Models\SearchResult.cs" />
+    <Compile Include="Models\Cache\Show.cs" />
+    <Compile Include="Models\Converters\TimeZoneInfoConverter.cs" />
+    <Compile Include="Models\Converters\CounterConverter.cs" />
+    <Compile Include="Models\Converters\EpochConverter.cs" />
+    <Compile Include="Models\Language.cs" />
+    <Compile Include="Models\Show.cs" />
+    <Compile Include="Utility\Counter.cs" />
+    <Compile Include="Models\Settings\Statistics.cs" />
+    <Compile Include="Models\AirDay.cs" />
+    <Compile Include="Models\TVDB\Actor.cs" />
+    <Compile Include="Models\TVDB\PartialEpisode.cs" />
+    <Compile Include="Models\TVDB\Episode.cs" />
+    <Compile Include="Models\Cache\Rating.cs" />
+    <Compile Include="Models\TVDB\Image.cs" />
+    <Compile Include="Models\TVDB\Language.cs" />
+    <Compile Include="Models\TVDB\PartialSeries.cs" />
+    <Compile Include="Models\ContentRating.cs" />
+    <Compile Include="Models\TVDB\Series.cs" />
+    <Compile Include="Models\Status.cs" />
+    <Compile Include="Models\TVDB\Update.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TVDB\Client.cs" />
+    <Compile Include="TVDB\TVDB.cs" />
+    <Compile Include="Utility\JsonSettings.cs" />
+    <Compile Include="Utility\Template.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

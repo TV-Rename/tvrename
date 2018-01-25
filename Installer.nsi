@@ -70,9 +70,10 @@ FunctionEnd
 Section "Install"
     SetOutPath "$INSTDIR"
 
-    !insertmacro CheckNetFramework 40Client
+    !insertmacro CheckNetFramework 46Client
 
     File "TVRename#\bin\Release\TVRename.exe"
+    File "TVRename#\bin\Release\TVRename.Core.dll"
     File "TVRename#\bin\Release\NLog.config"
     File "TVRename#\bin\Release\AlphaFS.dll"
     File "TVRename#\bin\Release\Newtonsoft.Json.dll"
@@ -104,6 +105,7 @@ SectionEnd
 
 Section "Uninstall"
     Delete "$INSTDIR\TVRename.exe"
+    Delete "$INSTDIR\TVRename.Core.dll"
     Delete "$INSTDIR\NLog.config"
     Delete "$INSTDIR\AlphaFS.dll"
     Delete "$INSTDIR\Newtonsoft.Json.dll"

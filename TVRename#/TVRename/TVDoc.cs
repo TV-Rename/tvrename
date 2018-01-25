@@ -22,10 +22,9 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
-using DevAge.Configuration;
+using TVRename.Core.Models.Settings;
 using TVRename.DownloadIdentifiers;
 using TVRename.Exporters;
-using TVRename.Settings;
 
 namespace TVRename
 {
@@ -389,7 +388,7 @@ namespace TVRename
                 found.AutoAdd_FolderPerSeason = ai.HasSeasonFoldersGuess;
 
                 found.AutoAdd_SeasonFolderName = ai.SeasonFolderName + " ";
-                Statistics.Instance.AutoAddedShows++;
+                Statistics.Instance.AutoAddedShows.Increment();
             }
 
             this.GenDict();
@@ -458,7 +457,7 @@ namespace TVRename
                     return false;
             }
 
-            Statistics.Instance.TorrentsMatched++;
+            Statistics.Instance.TorrentsMatched.Increment();
 
             BTFileRenamer btp = new BTFileRenamer(prog);
             ItemList newList = new ItemList();
@@ -2171,10 +2170,10 @@ namespace TVRename
             //    totalEps += si.SeasonEpisodes.Count;
 
             if (TVSettings.Instance.RenameCheck)
-                Statistics.Instance.RenameChecksDone++;
+                Statistics.Instance.RenameChecksDone.Increment();
 
             if (TVSettings.Instance.MissingCheck)
-                Statistics.Instance.MissingChecksDone++;
+                Statistics.Instance.MissingChecksDone.Increment();
 
             prog.Invoke(0);
 
@@ -2525,7 +2524,7 @@ namespace TVRename
             if (this.ScanProgDlg != null)
                 this.ScanProgDlg.Done();
 
-            Statistics.Instance.FindAndOrganisesDone++;
+            Statistics.Instance.FindAndOrganisesDone.Increment();
         }
 
         public static bool MatchesSequentialNumber(string filename, ref int seas, ref int ep, ProcessedEpisode pe)

@@ -2,7 +2,7 @@ using System;
 using Alphaleonis.Win32.Filesystem;
 using Newtonsoft.Json;
 
-namespace TVRename.Utility
+namespace TVRename.Core.Utility
 {
     /// <summary>
     /// Singleton lazy loaded settings serialized to JSON.
@@ -31,12 +31,21 @@ namespace TVRename.Utility
 
         private static T instance;
 
-        public static string FilePath { get; set; } = AppDomain.CurrentDomain.BaseDirectory + @"\settings.json"; // TODO: Document
+        /// <summary>
+        /// Gets or sets the file path where the settings file will be read and written to.
+        /// </summary>
+        /// <value>
+        /// The file path to the settings file.
+        /// </value>
+        public static string FilePath { get; set; } = AppDomain.CurrentDomain.BaseDirectory + @"\settings.json";
 
         /// <summary>
         /// <see cref="JsonSerializerSettings"/> to use when saving the settings.
         /// </summary>
-        public static JsonSerializerSettings SerializerSettings => new JsonSerializerSettings();
+        public static JsonSerializerSettings SerializerSettings => new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        };
 
         /// <summary>
         /// <see cref="SerializerFormatting"/> to use when saving the settings.
@@ -56,7 +65,7 @@ namespace TVRename.Utility
 
                 try
                 {
-                    instance = JsonConvert.DeserializeObject<T>(File.ReadAllText(FilePath));
+                    instance = JsonConvert.DeserializeObject<T>(File.ReadAllText(FilePath), SerializerSettings);
 
                     if (instance == null) throw new NullReferenceException("Empty JSON file");
                 }

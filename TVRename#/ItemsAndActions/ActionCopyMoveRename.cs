@@ -1,5 +1,5 @@
 using System.Security.AccessControl;
-using TVRename.Settings;
+using TVRename.Core.Models.Settings;
 
 namespace TVRename
 {
@@ -104,13 +104,13 @@ namespace TVRename
                 switch (Operation)
                 {
                     case Op.Move:
-                        Statistics.Instance.FilesMoved++;
+                        Statistics.Instance.FilesMoved.Increment();
                         break;
                     case Op.Rename:
-                        Statistics.Instance.FilesRenamed++;
+                        Statistics.Instance.FilesRenamed.Increment();
                         break;
                     case Op.Copy:
-                        Statistics.Instance.FilesCopied++;
+                        Statistics.Instance.FilesCopied.Increment();
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
