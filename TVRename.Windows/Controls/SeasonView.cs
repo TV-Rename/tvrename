@@ -19,7 +19,7 @@ namespace TVRename.Windows.Controls
                 
                 this.SuspendLayout();
 
-                foreach (KeyValuePair<int, Episode> episode in this.Item.Episodes.OrderBy(e => e.Key).Reverse())
+                foreach (KeyValuePair<int, Episode> episode in this.Item.Episodes.OrderBy(e => e.Value.FirstAired).ThenBy(e => e.Value.Number).Reverse())
                 {
                     this.Controls.Add(new EpisodeView(episode.Value)
                     {
