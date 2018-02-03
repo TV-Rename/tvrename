@@ -41,9 +41,10 @@ namespace TVRename.Windows
 
             Settings.FilePath = Path.Combine(BasePath, "settings.json");
             Layout.FilePath = Path.Combine(BasePath, "layout.json");
+            Stats.FilePath = Path.Combine(BasePath, "stats.json");
 
             // Load TVDB cache
-            Logger.Info($"Loading TVDB cache");
+            Logger.Info("Loading TVDB cache");
             await TVDB.Load(Path.Combine(BasePath, "tvdb.json"));
 
             // Set TVDB options

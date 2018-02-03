@@ -335,6 +335,7 @@ namespace TVRename.Windows.Controls
             this.buttonTvCom.TabIndex = 1;
             this.buttonTvCom.Text = "Visit &TV.com";
             this.buttonTvCom.UseVisualStyleBackColor = true;
+            this.buttonTvCom.Click += new System.EventHandler(this.buttonTvCom_Click);
             // 
             // buttonImdb
             // 
@@ -345,6 +346,7 @@ namespace TVRename.Windows.Controls
             this.buttonImdb.TabIndex = 0;
             this.buttonImdb.Text = "Visit &IMDB";
             this.buttonImdb.UseVisualStyleBackColor = true;
+            this.buttonImdb.Click += new System.EventHandler(this.buttonImdb_Click);
             // 
             // buttonRefresh
             // 

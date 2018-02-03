@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -17,9 +16,9 @@ namespace TVRename.Windows.Controls
             {
                 this.season = value;
                 
-                this.SuspendLayout();
+                SuspendLayout();
 
-                foreach (KeyValuePair<int, Episode> episode in this.Item.Episodes.OrderBy(e => e.Value.FirstAired).ThenBy(e => e.Value.Number).Reverse())
+                foreach (KeyValuePair<int, Episode> episode in this.Item.Episodes.OrderBy(e => e.Value.Number).ThenBy(e => e.Value.FirstAired).Reverse())
                 {
                     this.Controls.Add(new EpisodeView(episode.Value)
                     {
@@ -27,7 +26,7 @@ namespace TVRename.Windows.Controls
                     });
                 }
 
-                this.ResumeLayout();
+                ResumeLayout();
             }
         }
 
@@ -37,13 +36,10 @@ namespace TVRename.Windows.Controls
         {
             InitializeComponent();
 
-            this.Item = season;
-        }
-
-        private void SeasonView_Load(object sender, EventArgs e)
-        {
             this.HorizontalScroll.Enabled = false;
             this.HorizontalScroll.Visible = false;
+
+            this.Item = season;
         }
     }
 }

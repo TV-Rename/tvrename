@@ -29,12 +29,12 @@ namespace TVRename.Windows.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Metadata", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Metadata", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
@@ -122,6 +122,12 @@ namespace TVRename.Windows.Forms
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.checkBoxScanSelectAll = new System.Windows.Forms.CheckBox();
+            this.labelScanSelect = new System.Windows.Forms.Label();
+            this.checkBoxBoxScanSelectCopyMove = new System.Windows.Forms.CheckBox();
+            this.checkBoxBoxScanSelectRename = new System.Windows.Forms.CheckBox();
+            this.checkBoxBoxScanSelectDownload = new System.Windows.Forms.CheckBox();
+            this.checkBoxBoxScanSelectMetadata = new System.Windows.Forms.CheckBox();
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -254,6 +260,12 @@ namespace TVRename.Windows.Forms
             // 
             // tabPageScan
             // 
+            this.tabPageScan.Controls.Add(this.checkBoxBoxScanSelectMetadata);
+            this.tabPageScan.Controls.Add(this.checkBoxBoxScanSelectDownload);
+            this.tabPageScan.Controls.Add(this.checkBoxBoxScanSelectRename);
+            this.tabPageScan.Controls.Add(this.checkBoxBoxScanSelectCopyMove);
+            this.tabPageScan.Controls.Add(this.labelScanSelect);
+            this.tabPageScan.Controls.Add(this.checkBoxScanSelectAll);
             this.tabPageScan.Controls.Add(this.buttonScanProcess);
             this.tabPageScan.Controls.Add(this.listViewScan);
             this.tabPageScan.Location = new System.Drawing.Point(4, 23);
@@ -291,18 +303,18 @@ namespace TVRename.Windows.Forms
             this.columnHeaderScanFile,
             this.columnHeaderScanError});
             this.listViewScan.FullRowSelect = true;
-            listViewGroup1.Header = "Missing";
-            listViewGroup1.Name = "missing";
-            listViewGroup2.Header = "Rename";
-            listViewGroup2.Name = "rename";
-            listViewGroup3.Header = "Move";
-            listViewGroup3.Name = "move";
-            listViewGroup4.Header = "Copy";
-            listViewGroup4.Name = "copy";
-            listViewGroup5.Header = "Metadata";
-            listViewGroup5.Name = "metadata";
-            listViewGroup6.Header = "Download";
-            listViewGroup6.Name = "download";
+            listViewGroup1.Header = "Rename";
+            listViewGroup1.Name = "rename";
+            listViewGroup2.Header = "Move";
+            listViewGroup2.Name = "move";
+            listViewGroup3.Header = "Copy";
+            listViewGroup3.Name = "copy";
+            listViewGroup4.Header = "Metadata";
+            listViewGroup4.Name = "metadata";
+            listViewGroup5.Header = "Download";
+            listViewGroup5.Name = "download";
+            listViewGroup6.Header = "Missing";
+            listViewGroup6.Name = "missing";
             this.listViewScan.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2,
@@ -826,6 +838,71 @@ namespace TVRename.Windows.Forms
             this.columnHeader16.Text = "Episode Name";
             this.columnHeader16.Width = 360;
             // 
+            // checkBoxScanSelectAll
+            // 
+            this.checkBoxScanSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxScanSelectAll.AutoSize = true;
+            this.checkBoxScanSelectAll.Location = new System.Drawing.Point(715, 492);
+            this.checkBoxScanSelectAll.Name = "checkBoxScanSelectAll";
+            this.checkBoxScanSelectAll.Size = new System.Drawing.Size(37, 17);
+            this.checkBoxScanSelectAll.TabIndex = 2;
+            this.checkBoxScanSelectAll.Text = "&All";
+            this.checkBoxScanSelectAll.UseVisualStyleBackColor = true;
+            // 
+            // labelScanSelect
+            // 
+            this.labelScanSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelScanSelect.AutoSize = true;
+            this.labelScanSelect.Location = new System.Drawing.Point(669, 493);
+            this.labelScanSelect.Name = "labelScanSelect";
+            this.labelScanSelect.Size = new System.Drawing.Size(40, 13);
+            this.labelScanSelect.TabIndex = 3;
+            this.labelScanSelect.Text = "Select:";
+            // 
+            // checkBoxBoxScanSelectCopyMove
+            // 
+            this.checkBoxBoxScanSelectCopyMove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBoxScanSelectCopyMove.AutoSize = true;
+            this.checkBoxBoxScanSelectCopyMove.Location = new System.Drawing.Point(758, 492);
+            this.checkBoxBoxScanSelectCopyMove.Name = "checkBoxBoxScanSelectCopyMove";
+            this.checkBoxBoxScanSelectCopyMove.Size = new System.Drawing.Size(82, 17);
+            this.checkBoxBoxScanSelectCopyMove.TabIndex = 4;
+            this.checkBoxBoxScanSelectCopyMove.Text = "&Copy/Move";
+            this.checkBoxBoxScanSelectCopyMove.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBoxScanSelectRename
+            // 
+            this.checkBoxBoxScanSelectRename.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBoxScanSelectRename.AutoSize = true;
+            this.checkBoxBoxScanSelectRename.Location = new System.Drawing.Point(846, 492);
+            this.checkBoxBoxScanSelectRename.Name = "checkBoxBoxScanSelectRename";
+            this.checkBoxBoxScanSelectRename.Size = new System.Drawing.Size(66, 17);
+            this.checkBoxBoxScanSelectRename.TabIndex = 5;
+            this.checkBoxBoxScanSelectRename.Text = "&Rename";
+            this.checkBoxBoxScanSelectRename.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBoxScanSelectDownload
+            // 
+            this.checkBoxBoxScanSelectDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBoxScanSelectDownload.AutoSize = true;
+            this.checkBoxBoxScanSelectDownload.Location = new System.Drawing.Point(995, 492);
+            this.checkBoxBoxScanSelectDownload.Name = "checkBoxBoxScanSelectDownload";
+            this.checkBoxBoxScanSelectDownload.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxBoxScanSelectDownload.TabIndex = 6;
+            this.checkBoxBoxScanSelectDownload.Text = "&Download";
+            this.checkBoxBoxScanSelectDownload.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBoxScanSelectMetadata
+            // 
+            this.checkBoxBoxScanSelectMetadata.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBoxScanSelectMetadata.AutoSize = true;
+            this.checkBoxBoxScanSelectMetadata.Location = new System.Drawing.Point(918, 492);
+            this.checkBoxBoxScanSelectMetadata.Name = "checkBoxBoxScanSelectMetadata";
+            this.checkBoxBoxScanSelectMetadata.Size = new System.Drawing.Size(71, 17);
+            this.checkBoxBoxScanSelectMetadata.TabIndex = 7;
+            this.checkBoxBoxScanSelectMetadata.Text = "&Metadata";
+            this.checkBoxBoxScanSelectMetadata.UseVisualStyleBackColor = true;
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -856,6 +933,7 @@ namespace TVRename.Windows.Forms
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.tabPageScan.ResumeLayout(false);
+            this.tabPageScan.PerformLayout();
             this.tabPageCalendar.ResumeLayout(false);
             this.tabPageCalendar.PerformLayout();
             this.menuStrip.ResumeLayout(false);
@@ -951,5 +1029,11 @@ namespace TVRename.Windows.Forms
         private System.Windows.Forms.ColumnHeader columnHeaderScanFile;
         private System.Windows.Forms.Button buttonScanProcess;
         private System.Windows.Forms.ColumnHeader columnHeaderScanError;
+        private System.Windows.Forms.CheckBox checkBoxBoxScanSelectDownload;
+        private System.Windows.Forms.CheckBox checkBoxBoxScanSelectRename;
+        private System.Windows.Forms.CheckBox checkBoxBoxScanSelectCopyMove;
+        private System.Windows.Forms.Label labelScanSelect;
+        private System.Windows.Forms.CheckBox checkBoxScanSelectAll;
+        private System.Windows.Forms.CheckBox checkBoxBoxScanSelectMetadata;
     }
 }

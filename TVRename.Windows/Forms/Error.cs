@@ -15,15 +15,14 @@ namespace TVRename.Windows.Forms
 
         private void buttonReport_Click(object sender, EventArgs e)
         {
-            string title = "Crash Report";
             string body = $"```{Environment.NewLine}{this.textBoxTrace.Text}{Environment.NewLine}```"; // TODO: Too long for URL?
 
-            Process.Start($"https://github.com/TV-Rename/tvrename/issues/new?title={Uri.EscapeDataString(title)}&body={Uri.EscapeDataString(body)}");
+            Process.Start($"https://github.com/TV-Rename/tvrename/issues/new?title={Uri.EscapeDataString("Crash Report")}&body={Uri.EscapeDataString(body)}");
         }
 
         private void buttonExit_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
 
             Environment.Exit(1);
         }

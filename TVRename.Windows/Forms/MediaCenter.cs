@@ -31,7 +31,7 @@ namespace TVRename.Windows.Forms
 
         private void MediaCenter_Load(object sender, EventArgs e)
         {
-            this.Render();
+            Render();
         }
 
         private void Render()
@@ -51,7 +51,7 @@ namespace TVRename.Windows.Forms
                             $"{textIdentifier.Target.Humanize()} Metadata",
                             textIdentifier.TextFormat,
                             identifier.Location,
-                            identifier.FileName,
+                            identifier.FileName
                         })
                         {
                             Tag = identifier,
@@ -67,7 +67,7 @@ namespace TVRename.Windows.Forms
                             imageIdentifier.ImageType.Humanize(),
                             imageIdentifier.ImageFormat.ToString().ToUpperInvariant(),
                             identifier.Location,
-                            identifier.FileName,
+                            identifier.FileName
                         })
                         {
                             Tag = identifier,
@@ -90,7 +90,7 @@ namespace TVRename.Windows.Forms
 
         private void listView_DoubleClick(object sender, EventArgs e)
         {
-            this.buttonEdit_Click(sender, e);
+            buttonEdit_Click(sender, e);
         }
 
         private void contextMenuStrip_Opening(object sender, CancelEventArgs e)
@@ -100,12 +100,12 @@ namespace TVRename.Windows.Forms
 
         private void toolStripMenuItemEdit_Click(object sender, EventArgs e)
         {
-            this.buttonEdit_Click(sender, e);
+            buttonEdit_Click(sender, e);
         }
 
         private void toolStripMenuItemRemove_Click(object sender, EventArgs e)
         {
-            this.buttonRemove_Click(sender, e);
+            buttonRemove_Click(sender, e);
         }
 
         private void buttonPresets_Click(object sender, EventArgs e)
@@ -172,7 +172,7 @@ namespace TVRename.Windows.Forms
                 FileName = "{{episode.filename}}-thumb.jpg"
             });
 
-            this.Render();
+            Render();
         }
 
         private void toolStripMenuItemPresetMede8er_Click(object sender, EventArgs e)
@@ -204,7 +204,7 @@ namespace TVRename.Windows.Forms
                 FileName = "{{episode.filename}}.xml"
             });
 
-            this.Render();
+            Render();
         }
 
         private void toolStripMenuItemPresetPyTivo_Click(object sender, EventArgs e)
@@ -216,7 +216,7 @@ namespace TVRename.Windows.Forms
                 FileName = "{{episode.filename}}.txt" // TODO: Must inc video file ext
             });
 
-            this.Render();
+            Render();
         }
 
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -233,7 +233,7 @@ namespace TVRename.Windows.Forms
                 this.identifiers.Add(form.Identifier);
             }
 
-            this.Render();
+            Render();
         }
 
         private void toolStripMenuItemAddImage_Click(object sender, EventArgs e)
@@ -245,7 +245,7 @@ namespace TVRename.Windows.Forms
                 this.identifiers.Add(form.Identifier);
             }
 
-            this.Render();
+            Render();
         }
 
         private void buttonEdit_Click(object sender, EventArgs e)
@@ -261,7 +261,7 @@ namespace TVRename.Windows.Forms
 
                         this.identifiers[this.identifiers.IndexOf(textIdentifier)] = form.Identifier;
 
-                        this.Render();
+                        Render();
                     }
                     
                     break;
@@ -273,7 +273,7 @@ namespace TVRename.Windows.Forms
                         
                         this.identifiers[this.identifiers.IndexOf(imageIdentifier)] = form.Identifier;
 
-                        this.Render();
+                        Render();
                     }
 
                     break;
@@ -295,12 +295,12 @@ namespace TVRename.Windows.Forms
             Settings.Instance.Identifiers = this.identifiers;
             Settings.Instance.Dirty = true;
 
-            this.Close();
+            Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void listView_MouseClick(object sender, MouseEventArgs e)

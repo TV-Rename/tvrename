@@ -1,4 +1,4 @@
-﻿namespace TVRename.Windows.Controls
+namespace TVRename.Windows.Controls
 {
     partial class SeasonView
     {
@@ -38,7 +38,6 @@
             this.DoubleBuffered = true;
             this.Name = "SeasonView";
             this.Size = new System.Drawing.Size(855, 375);
-            this.Load += new System.EventHandler(this.SeasonView_Load);
             this.ResumeLayout(false);
 
         }

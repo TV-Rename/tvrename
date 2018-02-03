@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using TVRename.Windows.Configuration;
 using static System.Windows.Forms.Control;
 
 namespace TVRename.Windows.Utilities
@@ -31,7 +33,7 @@ namespace TVRename.Windows.Utilities
         {
             if (SystemInformation.TerminalServerSession) return;
 
-            typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(control, true, null);
+            typeof(Control).GetProperty("DoubleBuffered", BindingFlags.NonPublic | BindingFlags.Instance)?.SetValue(control, true, null);
         }
 
         public static void DoubleBuffer(ControlCollection controls)
@@ -42,6 +44,16 @@ namespace TVRename.Windows.Utilities
             {
                 DoubleBuffer(control);
             }
+        }
+
+        public static string EscapeTemplatePath(string path)
+        {
+            foreach (KeyValuePair<char, string> replacement in Settings.Instance.FilenameReplacements)
+            {
+                path = path.Replace(replacement.Key.ToString(), replacement.Value);
+            }
+
+            return path;
         }
     }
 }

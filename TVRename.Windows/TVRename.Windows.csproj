@@ -25,12 +25,14 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>TVRename.Windows.Program</StartupObject>
@@ -74,6 +76,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
+    <Compile Include="Configuration\Statistics.cs" />
+    <Compile Include="Forms\About.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\About.Designer.cs">
+      <DependentUpon>About.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Statistics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Statistics.Designer.cs">
+      <DependentUpon>Statistics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WindowPosition.cs" />
     <Compile Include="Controls\EpisodeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -92,6 +108,8 @@
     <Compile Include="Controls\ShowView.Designer.cs">
       <DependentUpon>ShowView.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\FilenameProcessor.cs" />
+    <Compile Include="Scanner.cs" />
     <Compile Include="Forms\Add.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +145,12 @@
     </Compile>
     <Compile Include="Forms\MediaCenterText.Designer.cs">
       <DependentUpon>MediaCenterText.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MissingFolderAction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MissingFolderAction.Designer.cs">
+      <DependentUpon>MissingFolderAction.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Preferences.cs">
       <SubType>Form</SubType>

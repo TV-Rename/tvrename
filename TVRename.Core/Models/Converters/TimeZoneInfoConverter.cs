@@ -41,7 +41,7 @@ namespace TVRename.Core.Models.Converters
 
             string value = (string)JToken.Load(reader);
 
-            return TimeZoneInfo.FindSystemTimeZoneById(value); ;
+            return TimeZoneInfo.FindSystemTimeZoneById(value);
         }
 
         /// <summary>

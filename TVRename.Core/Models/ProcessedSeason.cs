@@ -6,6 +6,8 @@ namespace TVRename.Core.Models
     {
         public string Location { get; set; }
 
+        public string Directory { get; set; }
+        
         public ProcessedSeason() { }
 
         public ProcessedSeason(Season season)

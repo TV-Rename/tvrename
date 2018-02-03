@@ -74,7 +74,7 @@ namespace TVRename.Windows.Controls
 
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
-            this.RefreshClicked?.Invoke(this, EventArgs.Empty);
+            RefreshClicked?.Invoke(this, EventArgs.Empty);
         }
     }
 }

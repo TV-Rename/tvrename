@@ -33,9 +33,9 @@ namespace TVRename.Core.Actions
                     ct.ThrowIfCancellationRequested();
 
                     using (Stream stream = await response.Content.ReadAsStreamAsync())
-                    using (FileStream file = new FileStream(this.file.FullName, FileMode.Create))
+                    using (FileStream fs = new FileStream(this.file.FullName, FileMode.Create))
                     {
-                        await stream.CopyToAsync(file, 81920, ct);
+                        await stream.CopyToAsync(fs, 81920, ct);
                     }
                 }
             }

@@ -52,12 +52,12 @@ namespace TVRename.Windows.Forms
             Settings.Instance.EpisodeTemplate = this.textBoxEpisodeTemplate.Text;
             Settings.Instance.Dirty = true;
 
-            this.Close();
+            Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

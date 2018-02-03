@@ -1,5 +1,6 @@
 using System.Drawing;
 using TVRename.Core.Utility;
+using TVRename.Windows.Models;
 
 namespace TVRename.Windows.Configuration
 {
@@ -11,17 +12,12 @@ namespace TVRename.Windows.Configuration
     /// <inheritdoc />
     public class Layout : JsonSettings<Layout>
     {
-        public WindowPosition Window { get; set; } = new WindowPosition();
-
-        public class WindowPosition
+        public WindowPosition Window { get; set; } = new WindowPosition
         {
-            public Size Size { get; set; } = new Size(950, 650);
-
-            public Point Location { get; set; } = new Point(100, 100);
-
-            public bool Maximized { get; set; } = false;
-
-            public int Splitter { get; set; } = 250;
-        }
+            Size = new Size(950, 650),
+            Location = new Point(100, 100),
+            Maximized = false,
+            Splitter = 250
+        };
     }
 }

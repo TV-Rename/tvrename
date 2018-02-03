@@ -90,5 +90,10 @@ namespace TVRename.Core.Models.Cache
         {
             this.Number = number;
         }
+
+        public override string ToString()
+        {
+            return this.Number == 0 ? "Specials" : $"Season {this.Number:##}";
+        }
     }
 }

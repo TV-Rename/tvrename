@@ -109,9 +109,9 @@ namespace TVRename.Windows.Forms
 
             if (this.textBoxLocation.Tag == null)
             {
-                this.textBoxLocation.TextChanged -= this.textBoxLocation_TextChanged;
+                this.textBoxLocation.TextChanged -= textBoxLocation_TextChanged;
                 this.textBoxLocation.Text = Path.Combine(Settings.Instance.DefaultLocation, this.listViewResults.SelectedItems[0].SubItems[1].Text);
-                this.textBoxLocation.TextChanged += this.textBoxLocation_TextChanged;
+                this.textBoxLocation.TextChanged += textBoxLocation_TextChanged;
             }
 
             ValidateInput();
@@ -153,14 +153,14 @@ namespace TVRename.Windows.Forms
                 Location = Path.GetFullPath(this.textBoxLocation.Text)
             };
 
-            this.Close();
+            Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
 
-            this.Close();
+            Close();
         }
 
         private void ValidateInput()

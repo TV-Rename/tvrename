@@ -48,7 +48,7 @@ namespace TVRename.Windows.Forms
         {
             this.comboBoxType.Items.Clear();
 
-            TargetTypes target = 0;
+            TargetTypes target;
 
             switch (this.comboBoxTarget.SelectedIndex)
             {
@@ -61,6 +61,8 @@ namespace TVRename.Windows.Forms
                 case 2:
                     target = TargetTypes.Episode;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             this.comboBoxType.Items.AddRange(this.identifiers.Where(i => i.SupportedTypes.HasFlag(target)).Cast<object>().ToArray());
@@ -94,18 +96,20 @@ namespace TVRename.Windows.Forms
                 case 3:
                     this.Identifier = new Mede8erViewIdentifier();
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             this.Identifier.Target = (Target)this.comboBoxTarget.SelectedIndex;
             this.Identifier.FileName = this.textBoxName.Text;
             this.Identifier.Location = this.textBoxLocation.Text;
 
-            this.Close();
+            Close();
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void ValidatePaths()

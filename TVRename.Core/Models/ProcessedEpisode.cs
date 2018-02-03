@@ -1,3 +1,4 @@
+using Alphaleonis.Win32.Filesystem;
 using TVRename.Core.Models.Cache;
 
 namespace TVRename.Core.Models
@@ -5,7 +6,14 @@ namespace TVRename.Core.Models
     public class ProcessedEpisode : Episode
     {
         public string Location { get; set; }
+
         public string Filename { get; set; }
+
+        public string Extension { get; set; }
+
+        public bool Exists { get; set; }
+
+        public string FullPath => Path.Combine(this.Location, $"{this.Filename}.{this.Extension}");
 
         public ProcessedEpisode() { }
 

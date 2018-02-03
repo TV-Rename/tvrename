@@ -1,4 +1,5 @@
-using System;
+using System.Collections.Generic;
+using TVRename.Core.Utility;
 
 namespace TVRename.Core.Models
 {
@@ -9,6 +10,26 @@ namespace TVRename.Core.Models
         public string OriginalName { get; set; }
 
         public string Location { get; set; }
+
+        public List<string> AllNames
+        {
+            get
+            {
+                List<string> names = new List<string>
+                {
+                    Helpers.SimplifyName(this.Name)
+                };
+                
+                if (this.CustomName)
+                {
+                    string simplifiedShowName = Helpers.SimplifyName(this.OriginalName);
+                    if (!string.IsNullOrEmpty(simplifiedShowName)) names.Add(simplifiedShowName);
+
+                }
+
+                return names;
+            }
+        }
 
         public ProcessedShow() { }
 
