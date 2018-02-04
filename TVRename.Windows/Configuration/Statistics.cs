@@ -8,7 +8,7 @@ namespace TVRename.Windows.Configuration
     /// Stores and represents application statistics.
     /// See <see cref="JsonSettings{T}"/>.
     /// </summary>
-    /// <seealso cref="JsonSettings{Statistics}" />
+    /// <seealso cref="JsonSettings{Stats}" />
     /// <inheritdoc />
     public class Stats : JsonSettings<Stats>
     {

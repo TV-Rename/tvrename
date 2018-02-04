@@ -275,7 +275,7 @@ namespace TVRename.Windows
                     foreach (string file in await Helpers.GetFilesAsync(processedSeason.Location, Settings.Instance.VideoFileExtensions.Select(e => $"*.{e}").ToArray()))
                     {
                         // Try to match the file against the show
-                        if (!FindEpisode(processedSeason.Location, Path.GetFileName(file), out int matchedSeasonNumber, out int matchedEpisodeNumber, processedShow)) continue;
+                        if (!MatchFile(processedSeason.Location, Path.GetFileName(file), out int matchedSeasonNumber, out int matchedEpisodeNumber, processedShow)) continue;
 
                         Logger.Debug($"{file}: {matchedSeasonNumber} {matchedEpisodeNumber}");
 
@@ -330,7 +330,7 @@ namespace TVRename.Windows
 
                     if (!matched) continue;
 
-                    if (!FindEpisode(directory, fileName, out int seasF, out int epF, action.Show) || seasF != action.Season.Number || epF != action.Episode.Number) continue;
+                    if (!MatchFile(directory, fileName, out int seasF, out int epF, action.Show) || seasF != action.Season.Number || epF != action.Episode.Number) continue;
 
                     FileAction fileAction = new FileAction(new FileInfo(file), new FileInfo(action.Produces + Path.GetExtension(file)), FileAction.FileOperation.Copy);
 
@@ -348,8 +348,10 @@ namespace TVRename.Windows
         }
 
         // TODO: Review
-        private static bool FindEpisode(string directory, string filename, out int season, out int episode, ProcessedShow show)
+        public static bool MatchFile(string directory, string filename, out int season, out int episode, ProcessedShow show = null, IEnumerable<FilenameProcessor> processors = null)
         {
+            if (processors == null) processors = Settings.Instance.FilenameProcessors;
+
             season = -1;
             episode = -1;
 
@@ -362,7 +364,7 @@ namespace TVRename.Windows
             filename = filename.ToLower() + " ";
             fullPath = fullPath.ToLower() + " ";
 
-            foreach (FilenameProcessor processor in Settings.Instance.FilenameProcessors)
+            foreach (FilenameProcessor processor in processors)
             {
                 if (!processor.Enabled) continue;
 

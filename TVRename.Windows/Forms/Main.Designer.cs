@@ -49,6 +49,12 @@ namespace TVRename.Windows.Forms
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.treeViewShows = new System.Windows.Forms.TreeView();
             this.tabPageScan = new System.Windows.Forms.TabPage();
+            this.checkBoxBoxScanSelectMetadata = new System.Windows.Forms.CheckBox();
+            this.checkBoxBoxScanSelectDownload = new System.Windows.Forms.CheckBox();
+            this.checkBoxBoxScanSelectRename = new System.Windows.Forms.CheckBox();
+            this.checkBoxBoxScanSelectCopyMove = new System.Windows.Forms.CheckBox();
+            this.labelScanSelect = new System.Windows.Forms.Label();
+            this.checkBoxScanSelectAll = new System.Windows.Forms.CheckBox();
             this.buttonScanProcess = new System.Windows.Forms.Button();
             this.listViewScan = new System.Windows.Forms.ListView();
             this.columnHeaderScanShow = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -83,6 +89,7 @@ namespace TVRename.Windows.Forms
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mediaCenterFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filenameProcessorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemTools = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bulkAddShowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -122,12 +129,6 @@ namespace TVRename.Windows.Forms
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.checkBoxScanSelectAll = new System.Windows.Forms.CheckBox();
-            this.labelScanSelect = new System.Windows.Forms.Label();
-            this.checkBoxBoxScanSelectCopyMove = new System.Windows.Forms.CheckBox();
-            this.checkBoxBoxScanSelectRename = new System.Windows.Forms.CheckBox();
-            this.checkBoxBoxScanSelectDownload = new System.Windows.Forms.CheckBox();
-            this.checkBoxBoxScanSelectMetadata = new System.Windows.Forms.CheckBox();
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -275,6 +276,71 @@ namespace TVRename.Windows.Forms
             this.tabPageScan.TabIndex = 1;
             this.tabPageScan.Text = "Scan";
             this.tabPageScan.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBoxScanSelectMetadata
+            // 
+            this.checkBoxBoxScanSelectMetadata.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBoxScanSelectMetadata.AutoSize = true;
+            this.checkBoxBoxScanSelectMetadata.Location = new System.Drawing.Point(918, 492);
+            this.checkBoxBoxScanSelectMetadata.Name = "checkBoxBoxScanSelectMetadata";
+            this.checkBoxBoxScanSelectMetadata.Size = new System.Drawing.Size(71, 17);
+            this.checkBoxBoxScanSelectMetadata.TabIndex = 7;
+            this.checkBoxBoxScanSelectMetadata.Text = "&Metadata";
+            this.checkBoxBoxScanSelectMetadata.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBoxScanSelectDownload
+            // 
+            this.checkBoxBoxScanSelectDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBoxScanSelectDownload.AutoSize = true;
+            this.checkBoxBoxScanSelectDownload.Location = new System.Drawing.Point(995, 492);
+            this.checkBoxBoxScanSelectDownload.Name = "checkBoxBoxScanSelectDownload";
+            this.checkBoxBoxScanSelectDownload.Size = new System.Drawing.Size(74, 17);
+            this.checkBoxBoxScanSelectDownload.TabIndex = 6;
+            this.checkBoxBoxScanSelectDownload.Text = "&Download";
+            this.checkBoxBoxScanSelectDownload.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBoxScanSelectRename
+            // 
+            this.checkBoxBoxScanSelectRename.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBoxScanSelectRename.AutoSize = true;
+            this.checkBoxBoxScanSelectRename.Location = new System.Drawing.Point(846, 492);
+            this.checkBoxBoxScanSelectRename.Name = "checkBoxBoxScanSelectRename";
+            this.checkBoxBoxScanSelectRename.Size = new System.Drawing.Size(66, 17);
+            this.checkBoxBoxScanSelectRename.TabIndex = 5;
+            this.checkBoxBoxScanSelectRename.Text = "&Rename";
+            this.checkBoxBoxScanSelectRename.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxBoxScanSelectCopyMove
+            // 
+            this.checkBoxBoxScanSelectCopyMove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxBoxScanSelectCopyMove.AutoSize = true;
+            this.checkBoxBoxScanSelectCopyMove.Location = new System.Drawing.Point(758, 492);
+            this.checkBoxBoxScanSelectCopyMove.Name = "checkBoxBoxScanSelectCopyMove";
+            this.checkBoxBoxScanSelectCopyMove.Size = new System.Drawing.Size(82, 17);
+            this.checkBoxBoxScanSelectCopyMove.TabIndex = 4;
+            this.checkBoxBoxScanSelectCopyMove.Text = "&Copy/Move";
+            this.checkBoxBoxScanSelectCopyMove.UseVisualStyleBackColor = true;
+            // 
+            // labelScanSelect
+            // 
+            this.labelScanSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelScanSelect.AutoSize = true;
+            this.labelScanSelect.Location = new System.Drawing.Point(669, 493);
+            this.labelScanSelect.Name = "labelScanSelect";
+            this.labelScanSelect.Size = new System.Drawing.Size(40, 13);
+            this.labelScanSelect.TabIndex = 3;
+            this.labelScanSelect.Text = "Select:";
+            // 
+            // checkBoxScanSelectAll
+            // 
+            this.checkBoxScanSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxScanSelectAll.AutoSize = true;
+            this.checkBoxScanSelectAll.Location = new System.Drawing.Point(715, 492);
+            this.checkBoxScanSelectAll.Name = "checkBoxScanSelectAll";
+            this.checkBoxScanSelectAll.Size = new System.Drawing.Size(37, 17);
+            this.checkBoxScanSelectAll.TabIndex = 2;
+            this.checkBoxScanSelectAll.Text = "&All";
+            this.checkBoxScanSelectAll.UseVisualStyleBackColor = true;
             // 
             // buttonScanProcess
             // 
@@ -559,7 +625,8 @@ namespace TVRename.Windows.Forms
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mediaCenterFilesToolStripMenuItem,
-            this.preferencesToolStripMenuItem});
+            this.preferencesToolStripMenuItem,
+            this.filenameProcessorsToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "&Options";
@@ -568,7 +635,7 @@ namespace TVRename.Windows.Forms
             // 
             this.mediaCenterFilesToolStripMenuItem.Image = global::TVRename.Windows.Properties.Resources.Document;
             this.mediaCenterFilesToolStripMenuItem.Name = "mediaCenterFilesToolStripMenuItem";
-            this.mediaCenterFilesToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.mediaCenterFilesToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.mediaCenterFilesToolStripMenuItem.Text = "&Media Center Files...";
             this.mediaCenterFilesToolStripMenuItem.Click += new System.EventHandler(this.mediaCenterFilesToolStripMenuItem_Click);
             // 
@@ -576,9 +643,16 @@ namespace TVRename.Windows.Forms
             // 
             this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
             this.preferencesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.P)));
-            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            this.preferencesToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
             this.preferencesToolStripMenuItem.Text = "&Preferences...";
             this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
+            // 
+            // filenameProcessorsToolStripMenuItem
+            // 
+            this.filenameProcessorsToolStripMenuItem.Name = "filenameProcessorsToolStripMenuItem";
+            this.filenameProcessorsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.filenameProcessorsToolStripMenuItem.Text = "File&name Processors...";
+            this.filenameProcessorsToolStripMenuItem.Click += new System.EventHandler(this.filenameProcessorsToolStripMenuItem_Click);
             // 
             // toolStripMenuItemTools
             // 
@@ -838,71 +912,6 @@ namespace TVRename.Windows.Forms
             this.columnHeader16.Text = "Episode Name";
             this.columnHeader16.Width = 360;
             // 
-            // checkBoxScanSelectAll
-            // 
-            this.checkBoxScanSelectAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxScanSelectAll.AutoSize = true;
-            this.checkBoxScanSelectAll.Location = new System.Drawing.Point(715, 492);
-            this.checkBoxScanSelectAll.Name = "checkBoxScanSelectAll";
-            this.checkBoxScanSelectAll.Size = new System.Drawing.Size(37, 17);
-            this.checkBoxScanSelectAll.TabIndex = 2;
-            this.checkBoxScanSelectAll.Text = "&All";
-            this.checkBoxScanSelectAll.UseVisualStyleBackColor = true;
-            // 
-            // labelScanSelect
-            // 
-            this.labelScanSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelScanSelect.AutoSize = true;
-            this.labelScanSelect.Location = new System.Drawing.Point(669, 493);
-            this.labelScanSelect.Name = "labelScanSelect";
-            this.labelScanSelect.Size = new System.Drawing.Size(40, 13);
-            this.labelScanSelect.TabIndex = 3;
-            this.labelScanSelect.Text = "Select:";
-            // 
-            // checkBoxBoxScanSelectCopyMove
-            // 
-            this.checkBoxBoxScanSelectCopyMove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxBoxScanSelectCopyMove.AutoSize = true;
-            this.checkBoxBoxScanSelectCopyMove.Location = new System.Drawing.Point(758, 492);
-            this.checkBoxBoxScanSelectCopyMove.Name = "checkBoxBoxScanSelectCopyMove";
-            this.checkBoxBoxScanSelectCopyMove.Size = new System.Drawing.Size(82, 17);
-            this.checkBoxBoxScanSelectCopyMove.TabIndex = 4;
-            this.checkBoxBoxScanSelectCopyMove.Text = "&Copy/Move";
-            this.checkBoxBoxScanSelectCopyMove.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxBoxScanSelectRename
-            // 
-            this.checkBoxBoxScanSelectRename.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxBoxScanSelectRename.AutoSize = true;
-            this.checkBoxBoxScanSelectRename.Location = new System.Drawing.Point(846, 492);
-            this.checkBoxBoxScanSelectRename.Name = "checkBoxBoxScanSelectRename";
-            this.checkBoxBoxScanSelectRename.Size = new System.Drawing.Size(66, 17);
-            this.checkBoxBoxScanSelectRename.TabIndex = 5;
-            this.checkBoxBoxScanSelectRename.Text = "&Rename";
-            this.checkBoxBoxScanSelectRename.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxBoxScanSelectDownload
-            // 
-            this.checkBoxBoxScanSelectDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxBoxScanSelectDownload.AutoSize = true;
-            this.checkBoxBoxScanSelectDownload.Location = new System.Drawing.Point(995, 492);
-            this.checkBoxBoxScanSelectDownload.Name = "checkBoxBoxScanSelectDownload";
-            this.checkBoxBoxScanSelectDownload.Size = new System.Drawing.Size(74, 17);
-            this.checkBoxBoxScanSelectDownload.TabIndex = 6;
-            this.checkBoxBoxScanSelectDownload.Text = "&Download";
-            this.checkBoxBoxScanSelectDownload.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxBoxScanSelectMetadata
-            // 
-            this.checkBoxBoxScanSelectMetadata.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkBoxBoxScanSelectMetadata.AutoSize = true;
-            this.checkBoxBoxScanSelectMetadata.Location = new System.Drawing.Point(918, 492);
-            this.checkBoxBoxScanSelectMetadata.Name = "checkBoxBoxScanSelectMetadata";
-            this.checkBoxBoxScanSelectMetadata.Size = new System.Drawing.Size(71, 17);
-            this.checkBoxBoxScanSelectMetadata.TabIndex = 7;
-            this.checkBoxBoxScanSelectMetadata.Text = "&Metadata";
-            this.checkBoxBoxScanSelectMetadata.UseVisualStyleBackColor = true;
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1035,5 +1044,6 @@ namespace TVRename.Windows.Forms
         private System.Windows.Forms.Label labelScanSelect;
         private System.Windows.Forms.CheckBox checkBoxScanSelectAll;
         private System.Windows.Forms.CheckBox checkBoxBoxScanSelectMetadata;
+        private System.Windows.Forms.ToolStripMenuItem filenameProcessorsToolStripMenuItem;
     }
 }

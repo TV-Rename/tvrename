@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Alphaleonis.Win32.Filesystem;
 using TVRename.Windows.Configuration;
 using static System.Windows.Forms.Control;
 
@@ -54,6 +55,11 @@ namespace TVRename.Windows.Utilities
             }
 
             return path;
+        }
+
+        public static bool IsVideo(this FileInfo file)
+        {
+            return Settings.Instance.VideoFileExtensions.Contains(file.Extension.Trim('.'));
         }
     }
 }

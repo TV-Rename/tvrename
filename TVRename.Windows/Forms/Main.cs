@@ -170,6 +170,13 @@ namespace TVRename.Windows.Forms
             await BuildCalendar();
         }
 
+        private void filenameProcessorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (new FilenameProcessors().ShowDialog() != DialogResult.OK) return;
+
+            // TODO
+        }
+
         private void refreshAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("TODO"); // TODO
