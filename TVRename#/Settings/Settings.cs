@@ -745,7 +745,8 @@ namespace TVRename
         {
             // defaults that aren't handled with default initialisers
 
-            this.VideoExtensionsString = ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm";
+            this.VideoExtensionsString =
+                ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp";
             this.OtherExtensionsString = ".srt;.nfo;.txt;.tbn";
             this.keepTogetherExtensionsString = ".srt;.nfo;.txt;.tbn";
 
