@@ -641,6 +641,7 @@ namespace TVRename
             // epGuideHTML
             // 
             this.epGuideHTML.AllowWebBrowserDrop = false;
+            this.epGuideHTML.ScriptErrorsSuppressed = true;
             this.epGuideHTML.Dock = System.Windows.Forms.DockStyle.Fill;
             this.epGuideHTML.Location = new System.Drawing.Point(3, 3);
             this.epGuideHTML.MinimumSize = new System.Drawing.Size(20, 20);
@@ -664,6 +665,7 @@ namespace TVRename
             // webBrowserImages
             // 
             this.webBrowserImages.AllowWebBrowserDrop = false;
+            this.webBrowserImages.ScriptErrorsSuppressed = true;
             this.webBrowserImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webBrowserImages.Location = new System.Drawing.Point(3, 3);
             this.webBrowserImages.MinimumSize = new System.Drawing.Size(20, 20);
