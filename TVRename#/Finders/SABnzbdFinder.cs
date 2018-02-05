@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Net;
@@ -52,6 +52,7 @@ namespace TVRename
             }
             catch (WebException)
             {
+                logger.Info("Failed to obtain SABnzbd, please recheck settings: " + theURL);
             }
 
             if (r == null)

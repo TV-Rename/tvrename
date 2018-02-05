@@ -78,6 +78,7 @@ namespace TVRename
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.torrentMatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uTorrentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.duplicateFinderLOGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.bugReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buyMeADrinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -155,7 +156,6 @@ namespace TVRename
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
-            this.duplicateFinderLOGToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lvAction = new TVRename.MyListView();
             this.columnHeader48 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader49 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -175,6 +175,7 @@ namespace TVRename
             this.columnHeader33 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader34 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader35 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tmrPeriodicScan = new System.Windows.Forms.Timer(this.components);
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -414,6 +415,13 @@ namespace TVRename
             this.uTorrentToolStripMenuItem.Text = "&uTorrent Save To";
             this.uTorrentToolStripMenuItem.Click += new System.EventHandler(this.uTorrentToolStripMenuItem_Click);
             // 
+            // duplicateFinderLOGToolStripMenuItem
+            // 
+            this.duplicateFinderLOGToolStripMenuItem.Name = "duplicateFinderLOGToolStripMenuItem";
+            this.duplicateFinderLOGToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
+            this.duplicateFinderLOGToolStripMenuItem.Text = "Duplicate Finder (LOG)";
+            this.duplicateFinderLOGToolStripMenuItem.Click += new System.EventHandler(this.duplicateFinderLOGToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -641,11 +649,11 @@ namespace TVRename
             // epGuideHTML
             // 
             this.epGuideHTML.AllowWebBrowserDrop = false;
-            this.epGuideHTML.ScriptErrorsSuppressed = true;
             this.epGuideHTML.Dock = System.Windows.Forms.DockStyle.Fill;
             this.epGuideHTML.Location = new System.Drawing.Point(3, 3);
             this.epGuideHTML.MinimumSize = new System.Drawing.Size(20, 20);
             this.epGuideHTML.Name = "epGuideHTML";
+            this.epGuideHTML.ScriptErrorsSuppressed = true;
             this.epGuideHTML.Size = new System.Drawing.Size(618, 431);
             this.epGuideHTML.TabIndex = 6;
             this.epGuideHTML.WebBrowserShortcutsEnabled = false;
@@ -665,11 +673,11 @@ namespace TVRename
             // webBrowserImages
             // 
             this.webBrowserImages.AllowWebBrowserDrop = false;
-            this.webBrowserImages.ScriptErrorsSuppressed = true;
             this.webBrowserImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webBrowserImages.Location = new System.Drawing.Point(3, 3);
             this.webBrowserImages.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowserImages.Name = "webBrowserImages";
+            this.webBrowserImages.ScriptErrorsSuppressed = true;
             this.webBrowserImages.Size = new System.Drawing.Size(618, 431);
             this.webBrowserImages.TabIndex = 0;
             this.webBrowserImages.WebBrowserShortcutsEnabled = false;
@@ -1260,13 +1268,6 @@ namespace TVRename
             this.quickTimer.Interval = 1;
             this.quickTimer.Tick += new System.EventHandler(this.quickTimer_Tick);
             // 
-            // duplicateFinderLOGToolStripMenuItem
-            // 
-            this.duplicateFinderLOGToolStripMenuItem.Name = "duplicateFinderLOGToolStripMenuItem";
-            this.duplicateFinderLOGToolStripMenuItem.Size = new System.Drawing.Size(194, 22);
-            this.duplicateFinderLOGToolStripMenuItem.Text = "Duplicate Finder (LOG)";
-            this.duplicateFinderLOGToolStripMenuItem.Click += new System.EventHandler(this.duplicateFinderLOGToolStripMenuItem_Click);
-            // 
             // lvAction
             // 
             this.lvAction.AllowDrop = true;
@@ -1462,6 +1463,11 @@ namespace TVRename
             this.columnHeader35.Text = "Episode Name";
             this.columnHeader35.Width = 360;
             // 
+            // tmrPeriodicScan
+            // 
+            this.tmrPeriodicScan.Enabled = true;
+            this.tmrPeriodicScan.Tick += new System.EventHandler(this.tmrPeriodicScan_Tick);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1633,5 +1639,6 @@ namespace TVRename
         private System.Windows.Forms.ToolStripMenuItem showSummaryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForNewVersionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem duplicateFinderLOGToolStripMenuItem;
+        private System.Windows.Forms.Timer tmrPeriodicScan;
     }
 }

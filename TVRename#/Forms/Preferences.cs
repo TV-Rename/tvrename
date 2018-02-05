@@ -170,6 +170,9 @@ namespace TVRename
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
 
             S.MonitorFolders = this.cbMonitorFolder.Checked;
+            S.runStartupCheck = this.chkScanOnStartup.Checked;
+            S.runPeriodicCheck = this.chkScheduledScan.Checked;
+            S.periodCheckHours = int.Parse(this.domainUpDown1.SelectedItem?.ToString()??"1");
             S.RemoveDownloadDirectoriesFiles = this.cbCleanUpDownloadDir.Checked;
 
             S.EpJPGs = this.cbEpThumbJpg.Checked;
@@ -387,6 +390,9 @@ namespace TVRename
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
             this.cbLookForAirdate.Checked = S.LookForDateInFilename;
             this.cbMonitorFolder.Checked = S.MonitorFolders;
+            this.chkScheduledScan.Checked = S.RunPeriodicCheck();
+            this.chkScanOnStartup.Checked = S.RunOnStartUp();
+            this.domainUpDown1.SelectedItem = S.periodCheckHours;
             this.cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
             this.cbMissing.Checked = S.MissingCheck;
             this.cbSearchLocally.Checked = S.SearchLocally;
@@ -1217,6 +1223,12 @@ namespace TVRename
         private void cbKeepTogetherMode_SelectedIndexChanged(object sender, EventArgs e)
         {
             this.txtKeepTogether.Enabled = (this.cbKeepTogether.Checked && this.cbKeepTogetherMode.Text != "All");
+        }
+
+        private void domainUpDown1_KeyDown(object sender, KeyEventArgs e)
+        {
+                e.SuppressKeyPress = true;
+            
         }
     }
 }

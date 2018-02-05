@@ -1691,6 +1691,8 @@ namespace TVRename
                     }
                 }
 
+            logger.Info("Completed Selected Actions");
+            logger.Info("**********************");
 
         }
 

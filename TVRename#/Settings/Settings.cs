@@ -382,6 +382,9 @@ namespace TVRename
         public WTWDoubleClickAction WTWDoubleClick;
 
         public TidySettings Tidyup = new TidySettings();
+        public bool runPeriodicCheck = false;
+        public int periodCheckHours =1;
+        public bool runStartupCheck = false;
 
         private TVSettings()
         {
@@ -574,6 +577,12 @@ namespace TVRename
                     this.LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "StartupScan")
+                    this.runStartupCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "PeriodicScan")
+                    this.runPeriodicCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "PeriodicScanHours")
+                    this.periodCheckHours = reader.ReadElementContentAsInt();
                 else if (reader.Name == "RemoveDownloadDirectoriesFiles")
                     this.RemoveDownloadDirectoriesFiles = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpJPGs")
@@ -847,6 +856,9 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);
+            XMLHelper.WriteElementToXML(writer, "StartupScan", this.runStartupCheck);
+            XMLHelper.WriteElementToXML(writer, "PeriodicScan", this.runPeriodicCheck);
+            XMLHelper.WriteElementToXML(writer, "PeriodicScanHours", this.periodCheckHours);
             XMLHelper.WriteElementToXML(writer,"RemoveDownloadDirectoriesFiles", this.RemoveDownloadDirectoriesFiles);
             XMLHelper.WriteElementToXML(writer,"SABAPIKey",this.SABAPIKey);
             XMLHelper.WriteElementToXML(writer,"CheckSABnzbd",this.CheckSABnzbd);
@@ -932,6 +944,11 @@ namespace TVRename
         public string GetOtherExtensionsString() => this.OtherExtensionsString;
 
         public string GetKeepTogetherString() => this.keepTogetherExtensionsString;
+
+        //todo make these a genuine settings
+        public bool RunPeriodicCheck() => this.runPeriodicCheck;
+        public int PeriodicCheckPeriod() =>  this.periodCheckHours * 60* 60 * 1000;
+        public bool RunOnStartUp() => this.runStartupCheck;
 
         public string GetSeasonSearchTermsString() => this.searchSeasonWordsString;
 
