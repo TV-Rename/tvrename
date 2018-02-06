@@ -7,7 +7,7 @@
 // 
 namespace TVRename
 {
-    // "FolderMonitorItem" represents a folder found by doing a Check in the Folder monitor dialog
+    // "FolderMonitorItem" represents a folder found by doing a Check in the 'Bulk Add Shows' dialog
     public class FolderMonitorEntry
     {
         public string Folder;

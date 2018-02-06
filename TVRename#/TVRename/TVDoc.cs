@@ -381,7 +381,7 @@ namespace TVRename
 
         public void MonitorCheckFolderRecursive(DirectoryInfo di, ref bool stop)
         {
-            // is it on the folder monitor ignore list?
+            // is it on the ''Bulk Add Shows' ignore list?
             if (this.IgnoreFolders.Contains(di.FullName.ToLower()))
             {
                 logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
