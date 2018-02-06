@@ -303,7 +303,8 @@ namespace TVRename
                     DirectoryInfo[] di2 = di.GetDirectories("*" + sw + " *");
                     if (di2.Length == 0)
                         continue;
-
+                    logger.Info("Assuming {0} contains a show becasue keyword '{1}' is found in subdirectory {2}",
+                        di.FullName, sw, di2[0].FullName);
                     folderName = sw;
                     return true;
                 }
@@ -330,6 +331,7 @@ namespace TVRename
                 {
                     // we're looking at a folder that is a subfolder of an existing show
                     alreadyHaveIt = true;
+                    logger.Info("Rejecting {0} as it's already part of {1}.", theFolder,si.ShowName);
                     break;
                 }
 
@@ -342,6 +344,7 @@ namespace TVRename
                             continue;
 
                         alreadyHaveIt = true;
+                        logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,folder);
                         break;
                     }
                 }
@@ -361,6 +364,7 @@ namespace TVRename
                     // ....its good!
                     FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
                     AddItems.Add(ai);
+                    logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
                         this.MonitorGuessShowItem(ai);
                 }
@@ -368,6 +372,7 @@ namespace TVRename
             }
             catch (UnauthorizedAccessException)
             {
+                logger.Info("Can't access {0}, so ignoring it", di2.FullName);
                 alreadyHaveIt = true;
             }
 
@@ -378,7 +383,11 @@ namespace TVRename
         {
             // is it on the folder monitor ignore list?
             if (this.IgnoreFolders.Contains(di.FullName.ToLower()))
+            {
+                logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
                 return;
+            }
+                
 
             if (MonitorAddSingleFolder(di, false))
                 return; // done.
@@ -447,6 +456,8 @@ namespace TVRename
             // Check the monitored folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
             // calls to "MonitorGuessShowItem"
+            logger.Info("*********************************************************************");
+            logger.Info("*Starting to find folders that contain files, but are not in library*");
 
             this.AddItems = new FolderMonitorEntryList();
 
