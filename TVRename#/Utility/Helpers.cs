@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.Security;
+using System.Windows.Forms;
 
 // Helpful functions and classes
 
@@ -622,6 +623,35 @@ namespace TVRename
         ///   <c>true</c> if application is running under Mono; otherwise, <c>false</c>.
         /// </value>
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
+
+        public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
+        {
+            if (uiElement == null)
+            {
+                throw new ArgumentNullException("uiElement");
+            }
+
+            if (uiElement.InvokeRequired)
+            {
+                if (forceSynchronous)
+                {
+                    uiElement.Invoke((System.Action)delegate { SafeInvoke(uiElement, updater, forceSynchronous); });
+                }
+                else
+                {
+                    uiElement.BeginInvoke((System.Action)delegate { SafeInvoke(uiElement, updater, forceSynchronous); });
+                }
+            }
+            else
+            {
+                if (uiElement.IsDisposed)
+                {
+                    throw new ObjectDisposedException("Control is already disposed.");
+                }
+
+                updater();
+            }
+        }
 
         /// <summary>
         /// Gets the application display version from the current assemblies <see cref="AssemblyInformationalVersionAttribute"/>.

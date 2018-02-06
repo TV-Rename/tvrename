@@ -29,7 +29,8 @@ namespace TVRename.App
         protected override void OnCreateMainForm()
         {
             // Update splash screen
-            this.SplashScreen.Invoke(new MethodInvoker(() => ((TVRenameSplash)this.SplashScreen).UpdateStatus("Initializing")));
+            this.SplashScreen.SafeInvoke(
+                () => ((TVRenameSplash) this.SplashScreen).UpdateStatus("Initializing"), true);
 
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
