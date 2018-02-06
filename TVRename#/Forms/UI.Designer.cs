@@ -221,7 +221,7 @@ namespace TVRename
             // 
             this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
             this.exportToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.E)));
-            this.exportToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exportToolStripMenuItem.Text = "&Export";
             this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
             // 
@@ -230,20 +230,20 @@ namespace TVRename
             this.saveToolStripMenuItem.Image = global::TVRename.Properties.Resources.saveHS;
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
             this.saveToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(144, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -365,7 +365,7 @@ namespace TVRename
             this.folderMonitorToolStripMenuItem.Image = global::TVRename.Properties.Resources.SearchFolderHS;
             this.folderMonitorToolStripMenuItem.Name = "folderMonitorToolStripMenuItem";
             this.folderMonitorToolStripMenuItem.Size = new System.Drawing.Size(264, 22);
-            this.folderMonitorToolStripMenuItem.Text = "&Bulk Add Shows";
+            this.folderMonitorToolStripMenuItem.Text = "Bulk &Add Shows";
             this.folderMonitorToolStripMenuItem.Click += new System.EventHandler(this.folderMonitorToolStripMenuItem_Click);
             // 
             // betaToolsToolStripMenuItem
@@ -439,14 +439,14 @@ namespace TVRename
             // bugReportToolStripMenuItem
             // 
             this.bugReportToolStripMenuItem.Name = "bugReportToolStripMenuItem";
-            this.bugReportToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.bugReportToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.bugReportToolStripMenuItem.Text = "Bug &Report";
             this.bugReportToolStripMenuItem.Click += new System.EventHandler(this.bugReportToolStripMenuItem_Click);
             // 
             // buyMeADrinkToolStripMenuItem
             // 
             this.buyMeADrinkToolStripMenuItem.Name = "buyMeADrinkToolStripMenuItem";
-            this.buyMeADrinkToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.buyMeADrinkToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.buyMeADrinkToolStripMenuItem.Text = "&Buy Me A Drink";
             this.buyMeADrinkToolStripMenuItem.Click += new System.EventHandler(this.buyMeADrinkToolStripMenuItem_Click);
             // 
@@ -454,14 +454,14 @@ namespace TVRename
             // 
             this.visitWebsiteToolStripMenuItem.Image = global::TVRename.Properties.Resources.Web;
             this.visitWebsiteToolStripMenuItem.Name = "visitWebsiteToolStripMenuItem";
-            this.visitWebsiteToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.visitWebsiteToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.visitWebsiteToolStripMenuItem.Text = "&Visit Website";
             this.visitWebsiteToolStripMenuItem.Click += new System.EventHandler(this.visitWebsiteToolStripMenuItem_Click);
             // 
             // visitSupportForumToolStripMenuItem
             // 
             this.visitSupportForumToolStripMenuItem.Name = "visitSupportForumToolStripMenuItem";
-            this.visitSupportForumToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.visitSupportForumToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.visitSupportForumToolStripMenuItem.Text = "Visit Support Forum";
             this.visitSupportForumToolStripMenuItem.Click += new System.EventHandler(this.visitSupportForumToolStripMenuItem_Click);
             // 
@@ -469,7 +469,7 @@ namespace TVRename
             // 
             this.quickstartGuideToolStripMenuItem.Image = global::TVRename.Properties.Resources.Help;
             this.quickstartGuideToolStripMenuItem.Name = "quickstartGuideToolStripMenuItem";
-            this.quickstartGuideToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.quickstartGuideToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.quickstartGuideToolStripMenuItem.Text = "&Quickstart Guide";
             this.quickstartGuideToolStripMenuItem.Click += new System.EventHandler(this.quickstartGuideToolStripMenuItem_Click);
             // 
@@ -477,15 +477,15 @@ namespace TVRename
             // 
             this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.graphhs;
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics";
             this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // checkForNewVersionToolStripMenuItem
             // 
             this.checkForNewVersionToolStripMenuItem.Name = "checkForNewVersionToolStripMenuItem";
-            this.checkForNewVersionToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            this.checkForNewVersionToolStripMenuItem.Text = "Check for new Version";
+            this.checkForNewVersionToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.checkForNewVersionToolStripMenuItem.Text = "Check For New Version";
             this.checkForNewVersionToolStripMenuItem.Click += new System.EventHandler(this.checkForNewVersionToolStripMenuItem_Click);
             // 
             // tabControl1
