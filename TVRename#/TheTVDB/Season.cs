@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+using System;
+
 namespace TVRename
 {
     public class Season
@@ -108,8 +110,28 @@ namespace TVRename
             }
         }
 
-        //TODO - IMPLEMENT THIS
-        public System.DateTime? LastAiredDate { get; internal set; }
+        
+        public DateTime? LastAiredDate() {
+            DateTime? returnValue = null;
+            foreach (Episode a in Episodes)
+            {
+                if (DateTime.Compare(a.FirstAired.Value.ToUniversalTime(), DateTime.UtcNow) <= 0)
+                {
+                    //Date is before now()
+
+                    //We don't have a best offer yet
+                    if (returnValue == null) returnValue = a.FirstAired.Value.ToUniversalTime();
+                    else
+                    //the currently tested date is better than the current value
+                    if (DateTime.Compare(a.FirstAired.Value.ToUniversalTime(), returnValue.Value) > 0)
+                    {
+                        returnValue = a.FirstAired.Value.ToUniversalTime();
+                    }
+                }
+            }
+            return returnValue;
+
+        }
 
         public string GetBannerPath()
         {

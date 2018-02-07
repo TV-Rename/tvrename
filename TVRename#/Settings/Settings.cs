@@ -191,8 +191,6 @@ namespace TVRename
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
-        public bool CorrectFileDates = true;//TODO set this up properly
-
         private static volatile TVSettings instance;
         private static object syncRoot = new Object();
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -311,6 +309,7 @@ namespace TVRename
         public bool LeaveOriginals = false;
         public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
+        public bool CorrectFileDates = false;
         public bool NFOShows = false;
         public bool NFOEpisodes = false;
         public bool KODIImages = false;
@@ -572,6 +571,8 @@ namespace TVRename
                     this.CheckuTorrent = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MissingCheck")
                     this.MissingCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "UpdateFileDates")
+                    this.CorrectFileDates = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SearchLocally")
                     this.SearchLocally = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LeaveOriginals")
@@ -855,6 +856,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"CheckuTorrent",this.CheckuTorrent);
             XMLHelper.WriteElementToXML(writer,"RenameCheck",this.RenameCheck);
             XMLHelper.WriteElementToXML(writer,"MissingCheck",this.MissingCheck);
+            XMLHelper.WriteElementToXML(writer, "UpdateFileDates", this.CorrectFileDates);
             XMLHelper.WriteElementToXML(writer,"SearchLocally",this.SearchLocally);
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
@@ -948,7 +950,7 @@ namespace TVRename
 
         public string GetKeepTogetherString() => this.keepTogetherExtensionsString;
 
-        //todo make these a genuine settings
+        
         public bool RunPeriodicCheck() => this.runPeriodicCheck;
         public int PeriodicCheckPeriod() =>  this.periodCheckHours * 60* 60 * 1000;
         public bool RunOnStartUp() => this.runStartupCheck;

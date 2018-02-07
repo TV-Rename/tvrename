@@ -126,6 +126,8 @@ namespace TVRename
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.label40 = new System.Windows.Forms.Label();
+            this.cbxUpdateAirDate = new System.Windows.Forms.CheckBox();
             this.label33 = new System.Windows.Forms.Label();
             this.cbAutoCreateFolders = new System.Windows.Forms.CheckBox();
             this.label28 = new System.Windows.Forms.Label();
@@ -1155,6 +1157,8 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.label40);
+            this.tpScanOptions.Controls.Add(this.cbxUpdateAirDate);
             this.tpScanOptions.Controls.Add(this.label33);
             this.tpScanOptions.Controls.Add(this.cbAutoCreateFolders);
             this.tpScanOptions.Controls.Add(this.label28);
@@ -1172,6 +1176,25 @@ namespace TVRename
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(6, 249);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(94, 13);
+            this.label40.TabIndex = 11;
+            this.label40.Text = "Additional Actions:";
+            // 
+            // cbxUpdateAirDate
+            // 
+            this.cbxUpdateAirDate.AutoSize = true;
+            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 265);
+            this.cbxUpdateAirDate.Name = "cbxUpdateAirDate";
+            this.cbxUpdateAirDate.Size = new System.Drawing.Size(197, 17);
+            this.cbxUpdateAirDate.TabIndex = 10;
+            this.cbxUpdateAirDate.Text = "Update files and folders with air date";
+            this.cbxUpdateAirDate.UseVisualStyleBackColor = true;
             // 
             // label33
             // 
@@ -2501,5 +2524,7 @@ namespace TVRename
         private System.Windows.Forms.DomainUpDown domainUpDown1;
         private System.Windows.Forms.CheckBox chkScheduledScan;
         private System.Windows.Forms.CheckBox chkScanOnStartup;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.CheckBox cbxUpdateAirDate;
     }
 }

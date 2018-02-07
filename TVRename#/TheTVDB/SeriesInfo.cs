@@ -53,8 +53,21 @@ namespace TVRename
         public long Srv_LastUpdated;
         public int TVDBCode;
 
-        //TODO - IMPLEMENT THIS
-        public DateTime? LastAiredDate { get; internal set; }
+        
+        public DateTime? LastAiredDate() {
+            DateTime? returnValue = null; 
+            foreach (Season s in Seasons.Values)
+            {
+                if (returnValue == null) returnValue = s.LastAiredDate();
+                else
+                //the currently tested date is better than the current value
+                if ((s.LastAiredDate()!=null) &&(DateTime.Compare(s.LastAiredDate().Value, returnValue.Value) > 0))
+                {
+                    returnValue = s.LastAiredDate();
+                }
+            }
+            return returnValue;
+        }
 
         // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!

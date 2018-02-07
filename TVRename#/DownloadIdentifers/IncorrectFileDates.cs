@@ -17,7 +17,7 @@ namespace TVRename
             if (TVSettings.Instance.CorrectFileDates)
             {
                 DirectoryInfo di = new DirectoryInfo(si.AutoAdd_FolderBase);
-                DateTime newUpdateTime = si.TheSeries().LastAiredDate.Value;
+                DateTime newUpdateTime = si.TheSeries().LastAiredDate().Value;
                 if (di.LastWriteTimeUtc != newUpdateTime) return new ItemList() { new ItemDateTouch(di, si, newUpdateTime) };
             }
             return null;
@@ -28,7 +28,7 @@ namespace TVRename
             if (TVSettings.Instance.CorrectFileDates)
             {
                 DirectoryInfo di = new DirectoryInfo(folder);
-                DateTime newUpdateTime = si.TheSeries().Seasons[snum].LastAiredDate.Value;
+                DateTime newUpdateTime = si.TheSeries().Seasons[snum].LastAiredDate().Value;
                 if (di.LastWriteTimeUtc != newUpdateTime) return new ItemList() { new ItemDateTouch(di, si, newUpdateTime) };
             }
             return null;

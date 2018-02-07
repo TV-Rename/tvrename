@@ -164,6 +164,7 @@ namespace TVRename
             S.FolderJpg = this.cbFolderJpg.Checked;
             S.RenameCheck = this.cbRenameCheck.Checked;
             S.MissingCheck = this.cbMissing.Checked;
+            S.CorrectFileDates = this.cbxUpdateAirDate.Checked;
             S.SearchLocally = this.cbSearchLocally.Checked;
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
@@ -395,6 +396,7 @@ namespace TVRename
             this.domainUpDown1.SelectedItem = S.periodCheckHours;
             this.cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
             this.cbMissing.Checked = S.MissingCheck;
+            this.cbxUpdateAirDate.Checked = S.CorrectFileDates;
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;
             this.EnterPreferredLanguage = S.PreferredLanguage;
@@ -1230,5 +1232,6 @@ namespace TVRename
                 e.SuppressKeyPress = true;
             
         }
+
     }
 }

@@ -78,8 +78,6 @@ namespace TVRename
                 }
                 if (WhereDirectory != null)
                 {
-                    //TODO maybe this should be a new field on the series that is the max aired time before now
-                    //TODO confirm timezones etc
                     System.IO.Directory.SetLastWriteTimeUtc(WhereDirectory.FullName, updateTime );
                 }
             }
