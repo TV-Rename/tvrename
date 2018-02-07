@@ -3070,6 +3070,7 @@ namespace TVRename
             int downloadCount = 0;
             int metaCount = 0;
             int dlCount = 0;
+            int fileMetaCount = 0;
 
             foreach (Item Action in this.mDoc.TheActionList)
             {
@@ -3100,6 +3101,8 @@ namespace TVRename
                     rssCount++;
                 else if (Action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     metaCount++;
+                else if (Action is ItemDateTouch)
+                    fileMetaCount++;
                 else if (Action is ItemuTorrenting || Action is ItemSABnzbd)
                     dlCount++;
                 else if (Action is ActionDeleteFile || Action is ActionDeleteDirectory)
@@ -3116,7 +3119,8 @@ namespace TVRename
             this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
             this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
             this.lvAction.Groups[7].Header = "Media Center Metadata (" + metaCount + " " + itemitems(metaCount) + ")";
-            this.lvAction.Groups[8].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
+            this.lvAction.Groups[8].Header = "Update File/Directory Metadata (" + fileMetaCount + " " + itemitems(metaCount) + ")";
+            this.lvAction.Groups[9].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
 
             this.InternalCheckChange = false;
 

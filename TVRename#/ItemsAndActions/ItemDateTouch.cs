@@ -12,9 +12,10 @@ namespace TVRename
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ItemDateTouch : Item, Action, ScanListItem, ActionWriteMetadata
+    public class ItemDateTouch : Item, Action, ScanListItem
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
+        public Season SN; // if for an entire show, rather than specific episode
         public FileInfo WhereFile;
         public DirectoryInfo WhereDirectory;
         private readonly DateTime updateTime;
@@ -26,6 +27,14 @@ namespace TVRename
             this.updateTime = date;
         }
 
+        public ItemDateTouch(DirectoryInfo dir, Season sn, DateTime date)
+        {
+            this.SN = sn;
+            this.WhereDirectory = dir;
+            this.updateTime = date;
+
+        }
+
         public ItemDateTouch(DirectoryInfo dir, ShowItem si, DateTime date)
         {
             this.SI = si;
@@ -33,6 +42,7 @@ namespace TVRename
             this.updateTime = date;
 
         }
+
 
         public string produces => this.WhereFile?.FullName?? this.WhereDirectory?.FullName;
 
@@ -115,17 +125,39 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem {Text = this.Episode.SI.ShowName};
 
-                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
-                lvi.SubItems.Add(this.Episode.NumsAsString());
-                DateTime? dt = this.Episode.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
+                ListViewItem lvi = new ListViewItem();
+
+                if (this.Episode != null)
+                {
+                    lvi.Text = this.Episode.SI.ShowName;
+                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.NumsAsString());
+
+                }
+                else if (this.SN != null)
+                {
+                    lvi.Text = this.SN.TheSeries.Name;
+                    lvi.SubItems.Add(this.SN.SeasonNumber.ToString());
+                    lvi.SubItems.Add("");
+
+                }
+                else if (this.SI != null)
+                {
+                    lvi.Text = this.SI.ShowName;
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+
+                }
+
+                DateTime dt = this.updateTime;
+
+                if ((dt.CompareTo(DateTime.MaxValue)) != 0)
+                    lvi.SubItems.Add(dt.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.WhereFile?.DirectoryName??this.WhereDirectory?.Name);
+                lvi.SubItems.Add(this.WhereFile?.DirectoryName??this.WhereDirectory?.FullName);
                 lvi.SubItems.Add(this.WhereFile?.Name??this.WhereDirectory?.Name);
 
                 lvi.Tag = this;
@@ -137,7 +169,7 @@ namespace TVRename
 
         string ScanListItem.TargetFolder => this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
 
-        public string ScanListViewGroup => "lvgActionMeta";
+        public string ScanListViewGroup => "lvgUpdateFileDates";
 
         public int IconNumber => 7;
 

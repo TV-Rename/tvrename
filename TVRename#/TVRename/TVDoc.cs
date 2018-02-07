@@ -1538,7 +1538,7 @@ namespace TVRename
                 if (action == null)
                     continue; // skip non-actions
 
-                if ((action is ActionWriteMetadata)) // base interface that all metadata actions are derived from
+                if ((action is ActionWriteMetadata) || (action is ItemDateTouch )) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownload) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
