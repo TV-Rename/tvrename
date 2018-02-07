@@ -729,6 +729,15 @@ namespace TVRename
             return n.Trim();
         }
 
+        public static string CompareName(string n)
+        {
+            //TODO consider whether merge with above
+            n = Helpers.RemoveDiacritics(n);
+            n = Regex.Replace(n, "[^\\w ]", "");
+            return SimplifyName(n);
+
+        }
+
         public static string RemoveDiacritics(string stIn)
         {
             // From http://blogs.msdn.com/b/michkap/archive/2007/05/14/2629747.aspx
