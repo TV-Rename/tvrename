@@ -86,6 +86,12 @@
     <Compile Include="Forms\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\BulkAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\BulkAdd.Designer.cs">
+      <DependentUpon>BulkAdd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FilenameProcessors.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -220,8 +226,10 @@
     <Content Include="Resources\calendar.png" />
     <Content Include="Resources\disk.png" />
     <Content Include="Resources\document.png" />
+    <Content Include="Resources\fail.png" />
     <Content Include="Resources\help.png" />
     <Content Include="Resources\image.png" />
+    <Content Include="Resources\pass.png" />
     <Content Include="Resources\scan.png" />
     <Content Include="Resources\search-folder.png" />
     <Content Include="Resources\statistics.png" />

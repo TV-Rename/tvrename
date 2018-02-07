@@ -43,6 +43,8 @@ namespace TVRename.Windows.Configuration
 
         public List<string> SearchDirectories { get; set; } = new List<string>();
 
+        public List<string> IgnoreDirectories { get; set; } = new List<string>();
+
         public Dictionary<char, string> FilenameReplacements { get; set; } = new Dictionary<char, string>();
 
         public List<string> VideoFileExtensions { get; set; } = new List<string>();

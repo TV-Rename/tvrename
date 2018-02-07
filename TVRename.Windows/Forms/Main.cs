@@ -186,7 +186,7 @@ namespace TVRename.Windows.Forms
 
         private void bulkAddShowsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("TODO"); // TODO
+            new BulkAdd().ShowDialog();
         }
 
         private void onlineHelpToolStripMenuItem_Click(object sender, EventArgs e)

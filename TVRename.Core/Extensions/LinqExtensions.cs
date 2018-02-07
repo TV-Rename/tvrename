@@ -18,18 +18,19 @@ namespace TVRename.Core.Extensions
         /// <param name="source">The source.</param>
         /// <param name="action">The action to perform asynchronously on each element.</param>
         /// <param name="maxDegreeOfParallelism">The maximum degree of parallelism.</param>
+        /// <param name="continueOnCapturedContext"><see langword="true" /> to attempt to marshal the continuation back to the original context captured; otherwise, <see langword="false" />.</param>
         /// <returns></returns>
-        public static Task ForEachAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task> action, int maxDegreeOfParallelism = 5)
+        public static Task ForEachAsync<TSource>(this IEnumerable<TSource> source, Func<TSource, Task> action, int maxDegreeOfParallelism = 5, bool continueOnCapturedContext = false)
         {
             SemaphoreSlim throttler = new SemaphoreSlim(maxDegreeOfParallelism, maxDegreeOfParallelism);
 
             IEnumerable<Task> tasks = source.Select(async input =>
             {
-                await throttler.WaitAsync().ConfigureAwait(false);
+                await throttler.WaitAsync().ConfigureAwait(continueOnCapturedContext);
 
                 try
                 {
-                    await action(input).ConfigureAwait(false);
+                    await action(input).ConfigureAwait(continueOnCapturedContext);
                 }
                 finally
                 {
