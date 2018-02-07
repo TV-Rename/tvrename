@@ -108,6 +108,8 @@ namespace TVRename
             }
         }
 
+        public System.DateTime? LastAiredDate { get; internal set; }
+
         public string GetBannerPath()
         {
             return this.TheSeries.GetSeasonBannerPath(this.SeasonNumber);

@@ -19,6 +19,7 @@ namespace TVRename
 {   
     public class TidySettings
     {
+        
         public bool DeleteEmpty = false; // Delete empty folders after move
         public bool DeleteEmptyIsRecycle = true; // Recycle, rather than delete
         public bool EmptyIgnoreWords = false;
@@ -186,9 +187,11 @@ namespace TVRename
 
     public sealed class TVSettings
     {
-        
+
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
+
+        public bool CorrectFileDates = true;//TODO set this up properly
 
         private static volatile TVSettings instance;
         private static object syncRoot = new Object();

@@ -53,6 +53,8 @@ namespace TVRename
         public long Srv_LastUpdated;
         public int TVDBCode;
 
+        public DateTime? LastAiredDate { get; internal set; }
+
         // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
 
