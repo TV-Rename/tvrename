@@ -299,26 +299,32 @@ namespace TVRename
             this.SetDirty();
         }
 
-        public bool MonitorFolderHasSeasonFolders(DirectoryInfo di, out string folderName)
+        public bool MonitorFolderHasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs)
         {
             try
             {
+                subDirs =  di.GetDirectories();
                 // keep in sync with ProcessAddItems, etc.
                 foreach (string sw in SeasonWords())
                 {
-                    DirectoryInfo[] di2 = di.GetDirectories("*" + sw + " *");
-                    if (di2.Length == 0)
-                        continue;
-                    logger.Info("Assuming {0} contains a show becasue keyword '{1}' is found in subdirectory {2}",
-                        di.FullName, sw, di2[0].FullName);
-                    folderName = sw;
-                    return true;
+                    foreach (DirectoryInfo subDir in subDirs)
+                    {
+                        if (subDir.Name.Contains(sw, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            logger.Info("Assuming {0} contains a show becasue keyword '{1}' is found in subdirectory {2}", di.FullName, sw, subDir.FullName);
+                            folderName = sw;
+                            return true;
+
+                        }
+                    }
                 }
+
             }
             catch (UnauthorizedAccessException uae)
             {
                 // e.g. recycle bin, system volume information
                 logger.Warn(uae, "Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",di.FullName);
+                subDirs = null;
             }
  
 
@@ -326,19 +332,18 @@ namespace TVRename
             return false;
         }
 
-        public bool MonitorAddSingleFolder(DirectoryInfo di2, bool andGuess)
+        public bool MonitorAddSingleFolder(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs )
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
-            bool alreadyHaveIt = false;
             foreach (ShowItem si in ShowItems)
             {
                 if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) && FileHelper.FolderIsSubfolderOf(theFolder, si.AutoAdd_FolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
-                    alreadyHaveIt = true;
-                    logger.Info("Rejecting {0} as it's already part of {1}.", theFolder,si.ShowName);
-                    break;
+                    logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
+                    subDirs = null;
+                    return true;
                 }
 
                 Dictionary<int, List<string>> afl = si.AllFolderLocations();
@@ -349,23 +354,24 @@ namespace TVRename
                         if (theFolder.ToLower() != folder.ToLower())
                             continue;
 
-                        alreadyHaveIt = true;
                         logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,folder);
-                        break;
+                        subDirs = null;
+                        return true;
                     }
                 }
-
-                if (alreadyHaveIt)
-                    break;
             } // for each showitem
 
+
+            //We don't have it already
             bool hasSeasonFolders = false;
             try
             {
                 string folderName = null;
-                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName);
-                bool hasSubFolders = di2.GetDirectories().Length > 0;
-                if (!alreadyHaveIt && (!hasSubFolders || hasSeasonFolders))
+                DirectoryInfo[] subDirectories = null;
+                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName, out subDirectories);
+                subDirs = subDirectories;
+                bool hasSubFolders = subDirectories.Length > 0;
+                if (!hasSubFolders || hasSeasonFolders)
                 {
                     // ....its good!
                     FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
@@ -379,10 +385,11 @@ namespace TVRename
             catch (UnauthorizedAccessException)
             {
                 logger.Info("Can't access {0}, so ignoring it", di2.FullName);
-                alreadyHaveIt = true;
+                subDirs = null;
+                return true;
             }
 
-            return hasSeasonFolders || alreadyHaveIt;
+            return hasSeasonFolders;
         }
 
         public void MonitorCheckFolderRecursive(DirectoryInfo di, ref bool stop)
@@ -393,14 +400,13 @@ namespace TVRename
                 logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
                 return;
             }
-                
 
-            if (MonitorAddSingleFolder(di, false))
+            if (MonitorAddSingleFolder(di, false, out DirectoryInfo[] subDirs))
                 return; // done.
 
             // recursively check a monitored folder for new shows
 
-            foreach (DirectoryInfo di2 in di.GetDirectories())
+            foreach (DirectoryInfo di2 in subDirs)
             {
                 if (stop)
                     return;

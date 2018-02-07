@@ -348,7 +348,7 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        this.mDoc.MonitorAddSingleFolder(di, true);
+                        this.mDoc.MonitorAddSingleFolder(di, true,out DirectoryInfo[] redundant);
                         this.FillFMNewShowList(true);
                     }
                 }
