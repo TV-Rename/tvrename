@@ -126,6 +126,8 @@ namespace TVRename
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.label40 = new System.Windows.Forms.Label();
+            this.cbxUpdateAirDate = new System.Windows.Forms.CheckBox();
             this.label33 = new System.Windows.Forms.Label();
             this.cbAutoCreateFolders = new System.Windows.Forms.CheckBox();
             this.label28 = new System.Windows.Forms.Label();
@@ -177,6 +179,10 @@ namespace TVRename
             this.cbFantArtJpg = new System.Windows.Forms.CheckBox();
             this.cbFolderJpg = new System.Windows.Forms.CheckBox();
             this.tbSearchFolders = new System.Windows.Forms.TabPage();
+            this.label1 = new System.Windows.Forms.Label();
+            this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
+            this.chkScheduledScan = new System.Windows.Forms.CheckBox();
+            this.chkScanOnStartup = new System.Windows.Forms.CheckBox();
             this.lblScanAction = new System.Windows.Forms.Label();
             this.rdoQuickScan = new System.Windows.Forms.RadioButton();
             this.rdoRecentScan = new System.Windows.Forms.RadioButton();
@@ -1151,6 +1157,8 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.label40);
+            this.tpScanOptions.Controls.Add(this.cbxUpdateAirDate);
             this.tpScanOptions.Controls.Add(this.label33);
             this.tpScanOptions.Controls.Add(this.cbAutoCreateFolders);
             this.tpScanOptions.Controls.Add(this.label28);
@@ -1168,6 +1176,25 @@ namespace TVRename
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
+            // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Location = new System.Drawing.Point(6, 249);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(94, 13);
+            this.label40.TabIndex = 11;
+            this.label40.Text = "Additional Actions:";
+            // 
+            // cbxUpdateAirDate
+            // 
+            this.cbxUpdateAirDate.AutoSize = true;
+            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 265);
+            this.cbxUpdateAirDate.Name = "cbxUpdateAirDate";
+            this.cbxUpdateAirDate.Size = new System.Drawing.Size(197, 17);
+            this.cbxUpdateAirDate.TabIndex = 10;
+            this.cbxUpdateAirDate.Text = "Update files and folders with air date";
+            this.cbxUpdateAirDate.UseVisualStyleBackColor = true;
             // 
             // label33
             // 
@@ -1705,6 +1732,10 @@ namespace TVRename
             // 
             // tbSearchFolders
             // 
+            this.tbSearchFolders.Controls.Add(this.label1);
+            this.tbSearchFolders.Controls.Add(this.domainUpDown1);
+            this.tbSearchFolders.Controls.Add(this.chkScheduledScan);
+            this.tbSearchFolders.Controls.Add(this.chkScanOnStartup);
             this.tbSearchFolders.Controls.Add(this.lblScanAction);
             this.tbSearchFolders.Controls.Add(this.rdoQuickScan);
             this.tbSearchFolders.Controls.Add(this.rdoRecentScan);
@@ -1722,10 +1753,61 @@ namespace TVRename
             this.tbSearchFolders.Text = "Search Folders";
             this.tbSearchFolders.UseVisualStyleBackColor = true;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(178, 89);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(33, 13);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "hours";
+            // 
+            // domainUpDown1
+            // 
+            this.domainUpDown1.Items.Add("1");
+            this.domainUpDown1.Items.Add("2");
+            this.domainUpDown1.Items.Add("3");
+            this.domainUpDown1.Items.Add("4");
+            this.domainUpDown1.Items.Add("5");
+            this.domainUpDown1.Items.Add("6");
+            this.domainUpDown1.Items.Add("8");
+            this.domainUpDown1.Items.Add("12");
+            this.domainUpDown1.Items.Add("24");
+            this.domainUpDown1.Items.Add("48");
+            this.domainUpDown1.Items.Add("96");
+            this.domainUpDown1.Location = new System.Drawing.Point(134, 87);
+            this.domainUpDown1.Name = "domainUpDown1";
+            this.domainUpDown1.Size = new System.Drawing.Size(40, 20);
+            this.domainUpDown1.TabIndex = 25;
+            this.domainUpDown1.Text = "1";
+            this.domainUpDown1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.domainUpDown1_KeyDown);
+            // 
+            // chkScheduledScan
+            // 
+            this.chkScheduledScan.AutoSize = true;
+            this.chkScheduledScan.Location = new System.Drawing.Point(3, 88);
+            this.chkScheduledScan.Name = "chkScheduledScan";
+            this.chkScheduledScan.Size = new System.Drawing.Size(135, 17);
+            this.chkScheduledScan.TabIndex = 24;
+            this.chkScheduledScan.Text = "Sc&heduled scan every ";
+            this.toolTip1.SetToolTip(this.chkScheduledScan, "If checked the system will automatically scan and complete actions on startup");
+            this.chkScheduledScan.UseVisualStyleBackColor = true;
+            // 
+            // chkScanOnStartup
+            // 
+            this.chkScanOnStartup.AutoSize = true;
+            this.chkScanOnStartup.Location = new System.Drawing.Point(3, 65);
+            this.chkScanOnStartup.Name = "chkScanOnStartup";
+            this.chkScanOnStartup.Size = new System.Drawing.Size(103, 17);
+            this.chkScanOnStartup.TabIndex = 23;
+            this.chkScanOnStartup.Text = "&Scan on Startup";
+            this.toolTip1.SetToolTip(this.chkScanOnStartup, "If checked the system will automatically scan and complete actions on startup");
+            this.chkScanOnStartup.UseVisualStyleBackColor = true;
+            // 
             // lblScanAction
             // 
             this.lblScanAction.AutoSize = true;
-            this.lblScanAction.Location = new System.Drawing.Point(3, 32);
+            this.lblScanAction.Location = new System.Drawing.Point(2, 12);
             this.lblScanAction.Name = "lblScanAction";
             this.lblScanAction.Size = new System.Drawing.Size(59, 13);
             this.lblScanAction.TabIndex = 22;
@@ -1734,7 +1816,7 @@ namespace TVRename
             // rdoQuickScan
             // 
             this.rdoQuickScan.AutoSize = true;
-            this.rdoQuickScan.Location = new System.Drawing.Point(135, 48);
+            this.rdoQuickScan.Location = new System.Drawing.Point(134, 28);
             this.rdoQuickScan.Name = "rdoQuickScan";
             this.rdoQuickScan.Size = new System.Drawing.Size(53, 17);
             this.rdoQuickScan.TabIndex = 20;
@@ -1745,7 +1827,7 @@ namespace TVRename
             // rdoRecentScan
             // 
             this.rdoRecentScan.AutoSize = true;
-            this.rdoRecentScan.Location = new System.Drawing.Point(69, 48);
+            this.rdoRecentScan.Location = new System.Drawing.Point(68, 28);
             this.rdoRecentScan.Name = "rdoRecentScan";
             this.rdoRecentScan.Size = new System.Drawing.Size(60, 17);
             this.rdoRecentScan.TabIndex = 19;
@@ -1756,7 +1838,7 @@ namespace TVRename
             // rdoFullScan
             // 
             this.rdoFullScan.AutoSize = true;
-            this.rdoFullScan.Location = new System.Drawing.Point(22, 48);
+            this.rdoFullScan.Location = new System.Drawing.Point(21, 28);
             this.rdoFullScan.Name = "rdoFullScan";
             this.rdoFullScan.Size = new System.Drawing.Size(41, 17);
             this.rdoFullScan.TabIndex = 18;
@@ -1767,7 +1849,7 @@ namespace TVRename
             // cbMonitorFolder
             // 
             this.cbMonitorFolder.AutoSize = true;
-            this.cbMonitorFolder.Location = new System.Drawing.Point(6, 12);
+            this.cbMonitorFolder.Location = new System.Drawing.Point(3, 111);
             this.cbMonitorFolder.Name = "cbMonitorFolder";
             this.cbMonitorFolder.Size = new System.Drawing.Size(154, 17);
             this.cbMonitorFolder.TabIndex = 5;
@@ -1812,10 +1894,10 @@ namespace TVRename
             this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lbSearchFolders.FormattingEnabled = true;
-            this.lbSearchFolders.Location = new System.Drawing.Point(3, 88);
+            this.lbSearchFolders.Location = new System.Drawing.Point(3, 153);
             this.lbSearchFolders.Name = "lbSearchFolders";
             this.lbSearchFolders.ScrollAlwaysVisible = true;
-            this.lbSearchFolders.Size = new System.Drawing.Size(400, 277);
+            this.lbSearchFolders.Size = new System.Drawing.Size(400, 212);
             this.lbSearchFolders.TabIndex = 1;
             this.lbSearchFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragDrop);
             this.lbSearchFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragOver);
@@ -1824,7 +1906,7 @@ namespace TVRename
             // label23
             // 
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(3, 68);
+            this.label23.Location = new System.Drawing.Point(5, 131);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(78, 13);
             this.label23.TabIndex = 0;
@@ -2438,5 +2520,11 @@ namespace TVRename
         private System.Windows.Forms.Label label39;
         private System.Windows.Forms.ComboBox cbKeepTogetherMode;
         private System.Windows.Forms.TextBox txtKeepTogether;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.DomainUpDown domainUpDown1;
+        private System.Windows.Forms.CheckBox chkScheduledScan;
+        private System.Windows.Forms.CheckBox chkScanOnStartup;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.CheckBox cbxUpdateAirDate;
     }
 }

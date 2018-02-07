@@ -19,6 +19,7 @@ namespace TVRename
 {   
     public class TidySettings
     {
+        
         public bool DeleteEmpty = false; // Delete empty folders after move
         public bool DeleteEmptyIsRecycle = true; // Recycle, rather than delete
         public bool EmptyIgnoreWords = false;
@@ -186,7 +187,7 @@ namespace TVRename
 
     public sealed class TVSettings
     {
-        
+
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
@@ -308,6 +309,7 @@ namespace TVRename
         public bool LeaveOriginals = false;
         public bool LookForDateInFilename = false;
         public bool MissingCheck = true;
+        public bool CorrectFileDates = false;
         public bool NFOShows = false;
         public bool NFOEpisodes = false;
         public bool KODIImages = false;
@@ -382,6 +384,9 @@ namespace TVRename
         public WTWDoubleClickAction WTWDoubleClick;
 
         public TidySettings Tidyup = new TidySettings();
+        public bool runPeriodicCheck = false;
+        public int periodCheckHours =1;
+        public bool runStartupCheck = false;
 
         private TVSettings()
         {
@@ -566,6 +571,8 @@ namespace TVRename
                     this.CheckuTorrent = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MissingCheck")
                     this.MissingCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "UpdateFileDates")
+                    this.CorrectFileDates = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SearchLocally")
                     this.SearchLocally = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LeaveOriginals")
@@ -574,6 +581,12 @@ namespace TVRename
                     this.LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "StartupScan")
+                    this.runStartupCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "PeriodicScan")
+                    this.runPeriodicCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "PeriodicScanHours")
+                    this.periodCheckHours = reader.ReadElementContentAsInt();
                 else if (reader.Name == "RemoveDownloadDirectoriesFiles")
                     this.RemoveDownloadDirectoriesFiles = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpJPGs")
@@ -745,7 +758,8 @@ namespace TVRename
         {
             // defaults that aren't handled with default initialisers
 
-            this.VideoExtensionsString = ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm";
+            this.VideoExtensionsString =
+                ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp";
             this.OtherExtensionsString = ".srt;.nfo;.txt;.tbn";
             this.keepTogetherExtensionsString = ".srt;.nfo;.txt;.tbn";
 
@@ -842,10 +856,14 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"CheckuTorrent",this.CheckuTorrent);
             XMLHelper.WriteElementToXML(writer,"RenameCheck",this.RenameCheck);
             XMLHelper.WriteElementToXML(writer,"MissingCheck",this.MissingCheck);
+            XMLHelper.WriteElementToXML(writer, "UpdateFileDates", this.CorrectFileDates);
             XMLHelper.WriteElementToXML(writer,"SearchLocally",this.SearchLocally);
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);
+            XMLHelper.WriteElementToXML(writer, "StartupScan", this.runStartupCheck);
+            XMLHelper.WriteElementToXML(writer, "PeriodicScan", this.runPeriodicCheck);
+            XMLHelper.WriteElementToXML(writer, "PeriodicScanHours", this.periodCheckHours);
             XMLHelper.WriteElementToXML(writer,"RemoveDownloadDirectoriesFiles", this.RemoveDownloadDirectoriesFiles);
             XMLHelper.WriteElementToXML(writer,"SABAPIKey",this.SABAPIKey);
             XMLHelper.WriteElementToXML(writer,"CheckSABnzbd",this.CheckSABnzbd);
@@ -931,6 +949,11 @@ namespace TVRename
         public string GetOtherExtensionsString() => this.OtherExtensionsString;
 
         public string GetKeepTogetherString() => this.keepTogetherExtensionsString;
+
+        
+        public bool RunPeriodicCheck() => this.runPeriodicCheck;
+        public int PeriodicCheckPeriod() =>  this.periodCheckHours * 60* 60 * 1000;
+        public bool RunOnStartUp() => this.runStartupCheck;
 
         public string GetSeasonSearchTermsString() => this.searchSeasonWordsString;
 

@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -54,8 +54,9 @@ namespace TVRename
             this.copyTimer = new System.Windows.Forms.Timer(this.components);
             this.cbPause = new System.Windows.Forms.CheckBox();
             this.lvProgress = new TVRename.ListViewFlickerFree();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.diskSpaceTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // pbFile
@@ -119,8 +120,8 @@ namespace TVRename
             // 
             // txtFilename
             // 
-            this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFilename.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilename.Location = new System.Drawing.Point(65, 9);
             this.txtFilename.Name = "txtFilename";
             this.txtFilename.Size = new System.Drawing.Size(288, 16);
@@ -196,9 +197,9 @@ namespace TVRename
             // 
             // lvProgress
             // 
-            this.lvProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvProgress.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvProgress.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2});
@@ -223,11 +224,16 @@ namespace TVRename
             this.columnHeader2.Text = "Item";
             this.columnHeader2.Width = 256;
             // 
+            // diskSpaceTimer
+            // 
+            this.diskSpaceTimer.Interval = 1000;
+            this.diskSpaceTimer.Tick += new System.EventHandler(this.diskSpaceTimer_Tick);
+            // 
             // CopyMoveProgress
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(367, 291);
+            this.ClientSize = new System.Drawing.Size(359, 291);
             this.Controls.Add(this.lvProgress);
             this.Controls.Add(this.cbPause);
             this.Controls.Add(this.txtFile);
@@ -275,5 +281,6 @@ namespace TVRename
         private ListViewFlickerFree lvProgress;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
+        private System.Windows.Forms.Timer diskSpaceTimer;
     }
 }

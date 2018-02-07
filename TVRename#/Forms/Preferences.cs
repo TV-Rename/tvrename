@@ -164,12 +164,16 @@ namespace TVRename
             S.FolderJpg = this.cbFolderJpg.Checked;
             S.RenameCheck = this.cbRenameCheck.Checked;
             S.MissingCheck = this.cbMissing.Checked;
+            S.CorrectFileDates = this.cbxUpdateAirDate.Checked;
             S.SearchLocally = this.cbSearchLocally.Checked;
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
 
             S.MonitorFolders = this.cbMonitorFolder.Checked;
+            S.runStartupCheck = this.chkScanOnStartup.Checked;
+            S.runPeriodicCheck = this.chkScheduledScan.Checked;
+            S.periodCheckHours = int.Parse(this.domainUpDown1.SelectedItem?.ToString()??"1");
             S.RemoveDownloadDirectoriesFiles = this.cbCleanUpDownloadDir.Checked;
 
             S.EpJPGs = this.cbEpThumbJpg.Checked;
@@ -387,8 +391,12 @@ namespace TVRename
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
             this.cbLookForAirdate.Checked = S.LookForDateInFilename;
             this.cbMonitorFolder.Checked = S.MonitorFolders;
+            this.chkScheduledScan.Checked = S.RunPeriodicCheck();
+            this.chkScanOnStartup.Checked = S.RunOnStartUp();
+            this.domainUpDown1.SelectedItem = S.periodCheckHours;
             this.cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
             this.cbMissing.Checked = S.MissingCheck;
+            this.cbxUpdateAirDate.Checked = S.CorrectFileDates;
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;
             this.EnterPreferredLanguage = S.PreferredLanguage;
@@ -925,7 +933,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in LoadLanguages", e);
+                logger.Fatal(e,"Unhandled Exception in LoadLanguages");
                 aborted = true;
             }
             TheTVDB.Instance.Unlock("Preferences-LoadLanguages");
@@ -1218,5 +1226,12 @@ namespace TVRename
         {
             this.txtKeepTogether.Enabled = (this.cbKeepTogether.Checked && this.cbKeepTogetherMode.Text != "All");
         }
+
+        private void domainUpDown1_KeyDown(object sender, KeyEventArgs e)
+        {
+                e.SuppressKeyPress = true;
+            
+        }
+
     }
 }

@@ -62,7 +62,7 @@ namespace TVRename
             }
             if (confirmClose)
             {
-                if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"My Shows\"?", "Folder Monitor", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
+                if (DialogResult.OK != MessageBox.Show("Close without adding identified shows to \"My Shows\"?", "Bulk Add Shows", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning))
                 {
                     return;
                 }
@@ -183,7 +183,7 @@ namespace TVRename
             this.FMPPercent = 0;
 
             Thread fmpshower = new Thread(this.FMPShower);
-            fmpshower.Name = "Folder Monitor Progress (Folder Check)";
+            fmpshower.Name = "'Bulk Add Shows' Progress (Folder Check)";
             fmpshower.Start();
 
             while ((this.FMP == null) || (!this.FMP.Ready))
@@ -268,7 +268,7 @@ namespace TVRename
             this.FMPUpto = "Identifying shows";
             this.FMPPercent = 0;
 
-            Thread fmpshower = new Thread(this.FMPShower) {Name = "Folder Monitor Progress (Full Auto)"};
+            Thread fmpshower = new Thread(this.FMPShower) {Name = "Bulk Add Shows Progress (Full Auto)"};
             fmpshower.Start();
 
             while ((this.FMP == null) || (!this.FMP.Ready))
@@ -317,7 +317,7 @@ namespace TVRename
             if (this.lvFMNewShows.SelectedItems.Count == 0)
                 return;
 
-            DialogResult res = MessageBox.Show("Add selected folders to the folder monitor ignore list?", "Folder Monitor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult res = MessageBox.Show("Add selected folders to the 'Bulk Add Shows' ignore folders list?", "Bulk Add Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (res != DialogResult.Yes)
                 return;
 
@@ -348,7 +348,7 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        this.mDoc.MonitorAddSingleFolder(di, true);
+                        this.mDoc.MonitorAddSingleFolder(di, true,out DirectoryInfo[] redundant);
                         this.FillFMNewShowList(true);
                     }
                 }
@@ -435,7 +435,7 @@ namespace TVRename
         {
             if (this.mDoc.AddItems.Count > 0)
             {
-                DialogResult res = MessageBox.Show("Add identified shows to \"My Shows\"?", "Folder Monitor", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                DialogResult res = MessageBox.Show("Add identified shows to \"My Shows\"?", "Bulk Add Shows", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                 if (res != DialogResult.Yes)
                     return;
 

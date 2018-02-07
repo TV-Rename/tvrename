@@ -66,7 +66,7 @@ namespace TVRename
 
         private List<Finder> Finders;
 
-        private IEnumerable<string>  SeasonWords()
+        private IEnumerable<string>  GetSeasonWords()
         {
             //See https://github.com/TV-Rename/tvrename/issues/241 for background
 
@@ -79,7 +79,13 @@ namespace TVRename
             return results.Where(t => !String.IsNullOrWhiteSpace(t)).Distinct();
         }
 
+        private IEnumerable<string> SeasonWordsCache;
+        private IEnumerable<string> SeasonWords()
+        {
+            if (SeasonWordsCache == null) SeasonWordsCache = GetSeasonWords();
+            return SeasonWordsCache;
 
+        }
 
         public List<String> getGenres()
         {
@@ -293,25 +299,32 @@ namespace TVRename
             this.SetDirty();
         }
 
-        public bool MonitorFolderHasSeasonFolders(DirectoryInfo di, out string folderName)
+        public bool MonitorFolderHasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs)
         {
             try
             {
+                subDirs =  di.GetDirectories();
                 // keep in sync with ProcessAddItems, etc.
                 foreach (string sw in SeasonWords())
                 {
-                    DirectoryInfo[] di2 = di.GetDirectories("*" + sw + " *");
-                    if (di2.Length == 0)
-                        continue;
+                    foreach (DirectoryInfo subDir in subDirs)
+                    {
+                        if (subDir.Name.Contains(sw, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            logger.Info("Assuming {0} contains a show becasue keyword '{1}' is found in subdirectory {2}", di.FullName, sw, subDir.FullName);
+                            folderName = sw;
+                            return true;
 
-                    folderName = sw;
-                    return true;
+                        }
+                    }
                 }
+
             }
             catch (UnauthorizedAccessException uae)
             {
                 // e.g. recycle bin, system volume information
                 logger.Warn(uae, "Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",di.FullName);
+                subDirs = null;
             }
  
 
@@ -319,48 +332,55 @@ namespace TVRename
             return false;
         }
 
-        public bool MonitorAddSingleFolder(DirectoryInfo di2, bool andGuess)
+        public bool MonitorAddSingleFolder(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs )
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
-            bool alreadyHaveIt = false;
             foreach (ShowItem si in ShowItems)
             {
-                if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) && FileHelper.FolderIsSubfolderOf(theFolder, si.AutoAdd_FolderBase))
+                if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) &&
+                    FileHelper.FolderIsSubfolderOf(theFolder, si.AutoAdd_FolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
-                    alreadyHaveIt = true;
-                    break;
+                    logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
+                    subDirs = null;
+                    return true;
                 }
 
-                Dictionary<int, List<string>> afl = si.AllFolderLocations();
-                foreach (KeyValuePair<int, List<string>> kvp in afl)
+                if (si.UsesManualFolders())
                 {
-                    foreach (string folder in kvp.Value)
+                    Dictionary<int, List<string>> afl = si.AllFolderLocations();
+                    foreach (KeyValuePair<int, List<string>> kvp in afl)
                     {
-                        if (theFolder.ToLower() != folder.ToLower())
-                            continue;
+                        foreach (string folder in kvp.Value)
+                        {
+                            if (theFolder.ToLower() != folder.ToLower())
+                                continue;
 
-                        alreadyHaveIt = true;
-                        break;
+                            logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName, folder);
+                            subDirs = null;
+                            return true;
+                        }
                     }
                 }
-
-                if (alreadyHaveIt)
-                    break;
             } // for each showitem
 
+
+            //We don't have it already
             bool hasSeasonFolders = false;
             try
             {
                 string folderName = null;
-                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName);
-                bool hasSubFolders = di2.GetDirectories().Length > 0;
-                if (!alreadyHaveIt && (!hasSubFolders || hasSeasonFolders))
+                DirectoryInfo[] subDirectories = null;
+                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName, out subDirectories);
+                subDirs = subDirectories;
+                bool hasSubFolders = subDirectories.Length > 0;
+                if (!hasSubFolders || hasSeasonFolders)
                 {
                     // ....its good!
                     FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
                     AddItems.Add(ai);
+                    logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
                         this.MonitorGuessShowItem(ai);
                 }
@@ -368,24 +388,29 @@ namespace TVRename
             }
             catch (UnauthorizedAccessException)
             {
-                alreadyHaveIt = true;
+                logger.Info("Can't access {0}, so ignoring it", di2.FullName);
+                subDirs = null;
+                return true;
             }
 
-            return hasSeasonFolders || alreadyHaveIt;
+            return hasSeasonFolders;
         }
 
         public void MonitorCheckFolderRecursive(DirectoryInfo di, ref bool stop)
         {
-            // is it on the folder monitor ignore list?
+            // is it on the ''Bulk Add Shows' ignore list?
             if (this.IgnoreFolders.Contains(di.FullName.ToLower()))
+            {
+                logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
                 return;
+            }
 
-            if (MonitorAddSingleFolder(di, false))
+            if (MonitorAddSingleFolder(di, false, out DirectoryInfo[] subDirs))
                 return; // done.
 
             // recursively check a monitored folder for new shows
 
-            foreach (DirectoryInfo di2 in di.GetDirectories())
+            foreach (DirectoryInfo di2 in subDirs)
             {
                 if (stop)
                     return;
@@ -447,6 +472,8 @@ namespace TVRename
             // Check the monitored folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
             // calls to "MonitorGuessShowItem"
+            logger.Info("*********************************************************************");
+            logger.Info("*Starting to find folders that contain files, but are not in library*");
 
             this.AddItems = new FolderMonitorEntryList();
 
@@ -525,7 +552,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in GetThread", e);
+                logger.Fatal(e,"Unhandled Exception in GetThread");
                 return;
             }
         }
@@ -628,7 +655,7 @@ namespace TVRename
             {
                 this.DownloadDone = true;
                 this.DownloadOK = false;
-                logger.Fatal("UNHANDLED EXCEPTION IN DOWNLOAD THREAD",e);
+                logger.Fatal(e,"UNHANDLED EXCEPTION IN DOWNLOAD THREAD");
                 return;
             }
             finally
@@ -1481,7 +1508,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in Process Single Action", e);
+                logger.Fatal(e,"Unhandled Exception in Process Single Action");
                 return;
             }
         }
@@ -1511,7 +1538,7 @@ namespace TVRename
                 if (action == null)
                     continue; // skip non-actions
 
-                if ((action is ActionWriteMetadata)) // base interface that all metadata actions are derived from
+                if ((action is ActionWriteMetadata) || (action is ItemDateTouch )) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownload) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
@@ -1631,7 +1658,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in ActionProcessor", e);
+                logger.Fatal(e,"Unhandled Exception in ActionProcessor");
                 return;
             }
         }
@@ -1691,6 +1718,8 @@ namespace TVRename
                     }
                 }
 
+            logger.Info("Completed Selected Actions");
+            logger.Info("**********************");
 
         }
 
@@ -2615,7 +2644,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal("Unhandled Exception in ScanWorker",e);
+                logger.Fatal(e,"Unhandled Exception in ScanWorker");
                 return;
             }
         }
@@ -3125,7 +3154,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Error("Failed to contact GitHub to identify new releases", e);
+                logger.Error(e,"Failed to contact GitHub to identify new releases");
                 return null;
 
             }

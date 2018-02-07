@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
 // 
+using System;
+
 namespace TVRename
 {
     public class Season
@@ -106,6 +108,28 @@ namespace TVRename
                 }
                 return false;
             }
+        }
+
+        
+        public DateTime? LastAiredDate() {
+            DateTime? returnValue = null;
+            foreach (Episode a in this.Episodes)
+            {
+                DateTime? episodeAirDate = a.FirstAired;
+
+                //ignore episode if has no date
+                if (!episodeAirDate.HasValue) continue;
+
+                //ignore episode if it's in the future
+                if (DateTime.Compare(episodeAirDate.Value.ToUniversalTime(), DateTime.UtcNow) > 0) continue;
+
+                //If we don't have a best offer yet
+                if (!returnValue.HasValue) returnValue = episodeAirDate.Value;
+                //else the currently tested date is better than the current value
+                else if (DateTime.Compare(episodeAirDate.Value, returnValue.Value) > 0) returnValue = episodeAirDate.Value;
+            }
+            return returnValue;
+
         }
 
         public string GetBannerPath()

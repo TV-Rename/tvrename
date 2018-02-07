@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -88,7 +88,7 @@ namespace TVRename
             this.Name = "FolderMonitorProgress";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Folder Monitor Progress";
+            this.Text = "Bulk Add Shows - Progress";
             this.Load += new System.EventHandler(this.FolderMonitorProgress_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

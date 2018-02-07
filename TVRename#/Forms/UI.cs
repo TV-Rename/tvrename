@@ -164,10 +164,17 @@ namespace TVRename
             if (TVSettings.Instance.MonitorFolders)
                 this.mAutoFolderMonitor.StartMonitor();
 
+            this.tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
+            this.tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
+
+
             updateSplashStatus(splash, "Update Available?");
 
             SearchForUpdates(false);
+
+            updateSplashStatus(splash, "Running autoscan");
             //splash.Close();
+
         }
 
         void updateSplashStatus(TVRenameSplash SplashScreen, String text)
@@ -204,7 +211,7 @@ namespace TVRename
         private void SetupIPC()
         {
             this.AFMFullScan += this.ProcessAll;
-            this.AFMQuickScan += this.QuickScan;
+            this.AFMQuickScan += this.ScanQuick;
             this.AFMRecentScan += this.ScanRecent;
             this.AFMDoAll += this.ProcessAll;
         }
@@ -313,6 +320,8 @@ namespace TVRename
                 this.BGDownloadTimer.Start();
 
             this.quickTimer.Start();
+
+            if (TVSettings.Instance.RunOnStartUp()){ RunAutoScan("Startup Scan"); }
         }
 
         // MAH: Added in support of the Filter TextBox Button
@@ -2948,7 +2957,7 @@ namespace TVRename
             this.FillActionList();
         }
 
-        private void QuickScan()
+        private void ScanQuick()
         {
             logger.Info("*******************************");
             logger.Info("Starting QuickScan...");
@@ -3061,6 +3070,7 @@ namespace TVRename
             int downloadCount = 0;
             int metaCount = 0;
             int dlCount = 0;
+            int fileMetaCount = 0;
 
             foreach (Item Action in this.mDoc.TheActionList)
             {
@@ -3091,6 +3101,8 @@ namespace TVRename
                     rssCount++;
                 else if (Action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     metaCount++;
+                else if (Action is ItemDateTouch)
+                    fileMetaCount++;
                 else if (Action is ItemuTorrenting || Action is ItemSABnzbd)
                     dlCount++;
                 else if (Action is ActionDeleteFile || Action is ActionDeleteDirectory)
@@ -3107,7 +3119,8 @@ namespace TVRename
             this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
             this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
             this.lvAction.Groups[7].Header = "Media Center Metadata (" + metaCount + " " + itemitems(metaCount) + ")";
-            this.lvAction.Groups[8].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
+            this.lvAction.Groups[8].Header = "Update File/Directory Metadata (" + fileMetaCount + " " + itemitems(metaCount) + ")";
+            this.lvAction.Groups[9].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
 
             this.InternalCheckChange = false;
 
@@ -3592,7 +3605,7 @@ namespace TVRename
 
         private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.ScanRecent();
 
-        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.QuickScan();
+        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.ScanQuick();
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
@@ -3702,6 +3715,40 @@ namespace TVRename
         private void btnUpdateAvailable_Click(object sender, EventArgs e)
         {
             SearchForUpdates(true);
+        }
+
+        private void tmrPeriodicScan_Tick(object sender, EventArgs e)
+        {
+            RunAutoScan("Periodic Scan");
+        }
+
+        private void RunAutoScan(string scanType)
+        {
+            //We only wish to do a scan now if we are not already undertaking one
+            if (!this.mDoc.CurrentlyBusy)
+            {
+                logger.Info("*******************************");
+                logger.Info(scanType + " fired");
+                switch (TVSettings.Instance.MonitoredFoldersScanType)
+                {
+                    case TVRename.TVSettings.ScanType.Full:
+                        Scan();
+                        break;
+                    case TVRename.TVSettings.ScanType.Recent:
+                        ScanRecent();
+                        break;
+                    case TVRename.TVSettings.ScanType.Quick:
+                        ScanQuick();
+                        break;
+                }
+
+                ProcessAll();
+                logger.Info(scanType + " complete");
+            }
+            else
+            {
+                logger.Info(scanType + " cancelled as the system is already busy");
+            }
         }
     }
 }

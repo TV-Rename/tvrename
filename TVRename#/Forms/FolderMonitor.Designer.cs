@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at http://code.google.com/p/tvrename/
@@ -471,7 +471,7 @@ namespace TVRename
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FolderMonitor";
             this.ShowInTaskbar = false;
-            this.Text = "Folder Monitor";
+            this.Text = "Bulk Add Shows";
             this.tabControl1.ResumeLayout(false);
             this.tbFolders.ResumeLayout(false);
             this.tbFolders.PerformLayout();

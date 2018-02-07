@@ -1,4 +1,4 @@
-﻿namespace TVRename
+namespace TVRename
 {
     partial class FolderMonitorEdit
     {
@@ -91,7 +91,7 @@
             this.Name = "FolderMonitorEdit";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Folder Monitor - Edit Show";
+            this.Text = "Bulk Add - Edit Show";
             this.ResumeLayout(false);
             this.PerformLayout();
 

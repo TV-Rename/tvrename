@@ -177,6 +177,29 @@ namespace TVRename
             return this.Series;
         }
 
+        public System.Collections.Generic.Dictionary<int, SeriesInfo> GetSeriesDictMatching(string testShowName)
+        {
+            System.Collections.Generic.Dictionary<int, SeriesInfo> matchingSeries = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
+
+            testShowName = Helpers.CompareName(testShowName);
+
+            if (string.IsNullOrEmpty(testShowName)) return matchingSeries;
+
+            foreach (KeyValuePair<int, SeriesInfo> kvp in this.Series)
+            {
+                string show = Helpers.CompareName(kvp.Value.Name);
+
+                if (show.Contains(testShowName, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    //We have a match
+                    matchingSeries.Add( kvp.Key, kvp.Value);
+                }
+            }
+
+            return matchingSeries;
+        }
+
+
         public bool GetLock(string whoFor)
         {
             logger.Trace("Lock Series for " + whoFor);
@@ -356,10 +379,9 @@ namespace TVRename
 
             showName = showName.ToLower();
 
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in this.Series)
+            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in this.GetSeriesDictMatching(showName))
             {
-                if (ser.Value.Name.ToLower() == showName)
-                    return ser.Value;
+                return ser.Value;
             }
 
             return null;
