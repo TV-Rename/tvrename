@@ -338,7 +338,8 @@ namespace TVRename
             string theFolder = di2.FullName.ToLower();
             foreach (ShowItem si in ShowItems)
             {
-                if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) && FileHelper.FolderIsSubfolderOf(theFolder, si.AutoAdd_FolderBase))
+                if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) &&
+                    FileHelper.FolderIsSubfolderOf(theFolder, si.AutoAdd_FolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
                     logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
@@ -346,17 +347,20 @@ namespace TVRename
                     return true;
                 }
 
-                Dictionary<int, List<string>> afl = si.AllFolderLocations();
-                foreach (KeyValuePair<int, List<string>> kvp in afl)
+                if (si.UsesManualFolders())
                 {
-                    foreach (string folder in kvp.Value)
+                    Dictionary<int, List<string>> afl = si.AllFolderLocations();
+                    foreach (KeyValuePair<int, List<string>> kvp in afl)
                     {
-                        if (theFolder.ToLower() != folder.ToLower())
-                            continue;
+                        foreach (string folder in kvp.Value)
+                        {
+                            if (theFolder.ToLower() != folder.ToLower())
+                                continue;
 
-                        logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,folder);
-                        subDirs = null;
-                        return true;
+                            logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName, folder);
+                            subDirs = null;
+                            return true;
+                        }
                     }
                 }
             } // for each showitem
