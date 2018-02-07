@@ -81,6 +81,7 @@ namespace TVRename.Windows.Forms
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bulkAddShowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -88,15 +89,17 @@ namespace TVRename.Windows.Forms
             this.testErrorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mediaCenterFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filenameProcessorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.preferencesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemStatistics = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.refreshAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.onlineHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visitWebsiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItemStatistics = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonAdd = new System.Windows.Forms.ToolStripButton();
@@ -128,8 +131,6 @@ namespace TVRename.Windows.Forms
             this.columnHeader14 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader15 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader16 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.bulkAddShowsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripContainer.BottomToolStripPanel.SuspendLayout();
             this.toolStripContainer.ContentPanel.SuspendLayout();
             this.toolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -589,6 +590,16 @@ namespace TVRename.Windows.Forms
             this.addToolStripMenuItem.Text = "&Add Show...";
             this.addToolStripMenuItem.Click += new System.EventHandler(this.addToolStripMenuItem_Click);
             // 
+            // bulkAddShowsToolStripMenuItem
+            // 
+            this.bulkAddShowsToolStripMenuItem.Image = global::TVRename.Windows.Properties.Resources.SearchFolder;
+            this.bulkAddShowsToolStripMenuItem.Name = "bulkAddShowsToolStripMenuItem";
+            this.bulkAddShowsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.N)));
+            this.bulkAddShowsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
+            this.bulkAddShowsToolStripMenuItem.Text = "&Bulk Add Shows...";
+            this.bulkAddShowsToolStripMenuItem.Click += new System.EventHandler(this.bulkAddShowsToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -641,6 +652,18 @@ namespace TVRename.Windows.Forms
             this.mediaCenterFilesToolStripMenuItem.Text = "&Media Center Files...";
             this.mediaCenterFilesToolStripMenuItem.Click += new System.EventHandler(this.mediaCenterFilesToolStripMenuItem_Click);
             // 
+            // filenameProcessorsToolStripMenuItem
+            // 
+            this.filenameProcessorsToolStripMenuItem.Name = "filenameProcessorsToolStripMenuItem";
+            this.filenameProcessorsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
+            this.filenameProcessorsToolStripMenuItem.Text = "File&name Processors...";
+            this.filenameProcessorsToolStripMenuItem.Click += new System.EventHandler(this.filenameProcessorsToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(187, 6);
+            // 
             // preferencesToolStripMenuItem
             // 
             this.preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
@@ -649,20 +672,28 @@ namespace TVRename.Windows.Forms
             this.preferencesToolStripMenuItem.Text = "&Preferences...";
             this.preferencesToolStripMenuItem.Click += new System.EventHandler(this.preferencesToolStripMenuItem_Click);
             // 
-            // filenameProcessorsToolStripMenuItem
-            // 
-            this.filenameProcessorsToolStripMenuItem.Name = "filenameProcessorsToolStripMenuItem";
-            this.filenameProcessorsToolStripMenuItem.Size = new System.Drawing.Size(190, 22);
-            this.filenameProcessorsToolStripMenuItem.Text = "File&name Processors...";
-            this.filenameProcessorsToolStripMenuItem.Click += new System.EventHandler(this.filenameProcessorsToolStripMenuItem_Click);
-            // 
             // toolStripMenuItemTools
             // 
             this.toolStripMenuItemTools.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItemStatistics,
+            this.toolStripSeparator6,
             this.refreshAllToolStripMenuItem});
             this.toolStripMenuItemTools.Name = "toolStripMenuItemTools";
             this.toolStripMenuItemTools.Size = new System.Drawing.Size(47, 20);
             this.toolStripMenuItemTools.Text = "&Tools";
+            // 
+            // toolStripMenuItemStatistics
+            // 
+            this.toolStripMenuItemStatistics.Image = global::TVRename.Windows.Properties.Resources.Statistics;
+            this.toolStripMenuItemStatistics.Name = "toolStripMenuItemStatistics";
+            this.toolStripMenuItemStatistics.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemStatistics.Text = "&Statistics...";
+            this.toolStripMenuItemStatistics.Click += new System.EventHandler(this.toolStripMenuItemStatistics_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(149, 6);
             // 
             // refreshAllToolStripMenuItem
             // 
@@ -678,7 +709,6 @@ namespace TVRename.Windows.Forms
             this.onlineHelpToolStripMenuItem,
             this.visitWebsiteToolStripMenuItem,
             this.toolStripSeparator4,
-            this.toolStripMenuItemStatistics,
             this.toolStripMenuItemAbout});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
@@ -704,14 +734,6 @@ namespace TVRename.Windows.Forms
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             this.toolStripSeparator4.Size = new System.Drawing.Size(138, 6);
-            // 
-            // toolStripMenuItemStatistics
-            // 
-            this.toolStripMenuItemStatistics.Image = global::TVRename.Windows.Properties.Resources.Statistics;
-            this.toolStripMenuItemStatistics.Name = "toolStripMenuItemStatistics";
-            this.toolStripMenuItemStatistics.Size = new System.Drawing.Size(141, 22);
-            this.toolStripMenuItemStatistics.Text = "&Statistics...";
-            this.toolStripMenuItemStatistics.Click += new System.EventHandler(this.toolStripMenuItemStatistics_Click);
             // 
             // toolStripMenuItemAbout
             // 
@@ -905,21 +927,6 @@ namespace TVRename.Windows.Forms
             this.columnHeader16.Text = "Episode Name";
             this.columnHeader16.Width = 360;
             // 
-            // bulkAddShowsToolStripMenuItem
-            // 
-            this.bulkAddShowsToolStripMenuItem.Image = global::TVRename.Windows.Properties.Resources.SearchFolder;
-            this.bulkAddShowsToolStripMenuItem.Name = "bulkAddShowsToolStripMenuItem";
-            this.bulkAddShowsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.N)));
-            this.bulkAddShowsToolStripMenuItem.Size = new System.Drawing.Size(243, 22);
-            this.bulkAddShowsToolStripMenuItem.Text = "&Bulk Add Shows...";
-            this.bulkAddShowsToolStripMenuItem.Click += new System.EventHandler(this.bulkAddShowsToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(187, 6);
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -993,7 +1000,6 @@ namespace TVRename.Windows.Forms
         private System.Windows.Forms.ToolStripMenuItem onlineHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem visitWebsiteToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemStatistics;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemAbout;
         private System.Windows.Forms.ImageList imageListTabs;
         private System.Windows.Forms.MonthCalendar calendar;
@@ -1054,5 +1060,7 @@ namespace TVRename.Windows.Forms
         private System.Windows.Forms.ToolStripMenuItem filenameProcessorsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem bulkAddShowsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemStatistics;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
     }
 }
