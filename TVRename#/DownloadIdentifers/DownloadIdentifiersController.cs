@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -19,6 +19,7 @@ namespace TVRename
             Identifiers.Add(new DownloadSeriesJPG());
             Identifiers.Add(new DownloadKODIMetaData());
             Identifiers.Add(new DownloadKODIImages());
+            Identifiers.Add(new IncorrectFileDates());
         }
 
         public void notifyComplete(FileInfo file)

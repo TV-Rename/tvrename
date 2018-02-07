@@ -17,7 +17,8 @@ namespace TVRename
             if (TVSettings.Instance.CorrectFileDates)
             {
                 DirectoryInfo di = new DirectoryInfo(si.AutoAdd_FolderBase);
-                if (di.LastWriteTimeUtc != si.TheSeries().LastAiredDate.Value) return new ItemList() { new ItemDateTouch(di, si, si.TheSeries().LastAiredDate.Value) };
+                DateTime newUpdateTime = si.TheSeries().LastAiredDate.Value;
+                if (di.LastWriteTimeUtc != newUpdateTime) return new ItemList() { new ItemDateTouch(di, si, newUpdateTime) };
             }
             return null;
         }
@@ -27,10 +28,9 @@ namespace TVRename
             if (TVSettings.Instance.CorrectFileDates)
             {
                 DirectoryInfo di = new DirectoryInfo(folder);
-                if (di.LastWriteTimeUtc != si.TheSeries().Seasons[snum].LastAiredDate.Value) return new ItemList() { new ItemDateTouch(di, si, si.TheSeries().Seasons[snum].LastAiredDate.Value) };
+                DateTime newUpdateTime = si.TheSeries().Seasons[snum].LastAiredDate.Value;
+                if (di.LastWriteTimeUtc != newUpdateTime) return new ItemList() { new ItemDateTouch(di, si, newUpdateTime) };
             }
-
-
             return null;
         }
 
@@ -38,7 +38,8 @@ namespace TVRename
         {
             if (TVSettings.Instance.CorrectFileDates)
             {
-                if (filo.LastWriteTimeUtc !=  dbep.FirstAired.Value)  return  new ItemList() { new ItemDateTouch(filo,dbep, dbep.FirstAired.Value) };
+                DateTime newUpdateTime = dbep.FirstAired.Value;
+                if (filo.LastWriteTimeUtc != newUpdateTime)  return  new ItemList() { new ItemDateTouch(filo,dbep, newUpdateTime) };
             }
             return null;
         }

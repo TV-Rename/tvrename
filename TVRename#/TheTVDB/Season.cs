@@ -108,6 +108,7 @@ namespace TVRename
             }
         }
 
+        //TODO - IMPLEMENT THIS
         public System.DateTime? LastAiredDate { get; internal set; }
 
         public string GetBannerPath()
