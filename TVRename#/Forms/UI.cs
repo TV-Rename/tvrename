@@ -2968,20 +2968,6 @@ namespace TVRename
             this.FillActionList();
         }
 
-        private static string GBMB(long size)
-        {
-            long gb1 = (1024 * 1024 * 1024);
-            long gb = ((gb1 / 2) + size) / gb1;
-            if (gb > 1)
-                return gb + " GB";
-            else
-            {
-                long mb1 = 1024 * 1024;
-                long mb = ((mb1 / 2) + size) / mb1;
-                return mb + " MB";
-            }
-        }
-
         private static string itemitems(int n)
         {
             return n == 1 ? "Item" : "Items";
@@ -3112,9 +3098,9 @@ namespace TVRename
             this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
             this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
             this.lvAction.Groups[2].Header =
-                "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
+                "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + copySize.GBMB(1) + ")";
             this.lvAction.Groups[3].Header =
-                "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
+                "Move (" + moveCount + " " + itemitems(moveCount) + ", " + moveSize.GBMB(1) + ")";
             this.lvAction.Groups[4].Header = "Remove (" + removeCount + " " + itemitems(removeCount) + ")";
             this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
             this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
