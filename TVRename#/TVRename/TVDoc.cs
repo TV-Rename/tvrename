@@ -66,7 +66,7 @@ namespace TVRename
 
         private List<Finder> Finders;
 
-        private IEnumerable<string>  SeasonWords()
+        private IEnumerable<string>  GetSeasonWords()
         {
             //See https://github.com/TV-Rename/tvrename/issues/241 for background
 
@@ -79,7 +79,13 @@ namespace TVRename
             return results.Where(t => !String.IsNullOrWhiteSpace(t)).Distinct();
         }
 
+        private IEnumerable<string> SeasonWordsCache;
+        private IEnumerable<string> SeasonWords()
+        {
+            if (SeasonWordsCache == null) SeasonWordsCache = GetSeasonWords();
+            return SeasonWordsCache;
 
+        }
 
         public List<String> getGenres()
         {
