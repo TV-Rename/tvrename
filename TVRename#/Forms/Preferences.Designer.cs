@@ -1300,7 +1300,7 @@ namespace TVRename
             this.cbSearchLocally.Name = "cbSearchLocally";
             this.cbSearchLocally.Size = new System.Drawing.Size(213, 17);
             this.cbSearchLocally.TabIndex = 3;
-            this.cbSearchLocally.Text = "&Look in \"Search Folders\" for mising files";
+            this.cbSearchLocally.Text = "&Look in \"Search Folders\" for missing files";
             this.cbSearchLocally.UseVisualStyleBackColor = true;
             this.cbSearchLocally.CheckedChanged += new System.EventHandler(this.cbSearchLocally_CheckedChanged);
             // 

@@ -120,9 +120,10 @@ namespace TVRename
             {
                 this.LoadLayoutXML();
             }
-            catch
+            catch (Exception e)
             {
                 // silently fail, doesn't matter too much
+                logger.Info(e, "Error loading layout XML");
             }
 
             this.SetProgress += this.SetProgressActual;
@@ -142,12 +143,12 @@ namespace TVRename
             this.FillMyShows();
             this.UpdateSearchButton();
             this.ClearInfoWindows();
-            updateSplashPercent(splash, 12);
+            updateSplashPercent(splash, 10);
             updateSplashStatus(splash, "Updating WTW");
             this.mDoc.DoWhenToWatch(true);
-            updateSplashPercent(splash, 50);
+            updateSplashPercent(splash, 40);
             this.FillWhenToWatchList();
-            updateSplashPercent(splash, 90);
+            updateSplashPercent(splash, 60);
             updateSplashStatus(splash, "Write Upcoming");
             this.mDoc.WriteUpcoming();
             updateSplashStatus(splash, "Setting Notifications");
@@ -158,19 +159,22 @@ namespace TVRename
                 this.tabControl1.SelectedIndex = TVSettings.Instance.StartupTab;
             this.tabControl1_SelectedIndexChanged(null, null);
 
-            updateSplashStatus(splash, "Starting Monitor");
+
+            updateSplashStatus(splash, "Creating Monitors");
 
             this.mAutoFolderMonitor = new TVRename.AutoFolderMonitor(mDoc, this);
-            if (TVSettings.Instance.MonitorFolders)
-                this.mAutoFolderMonitor.StartMonitor();
-
+            
             this.tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
-            this.tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
-
-
+            
             updateSplashStatus(splash, "Update Available?");
 
             SearchForUpdates(false);
+
+            updateSplashStatus(splash, "Starting Monitor");
+            if (TVSettings.Instance.MonitorFolders)
+                this.mAutoFolderMonitor.StartMonitor();
+
+            this.tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
             updateSplashStatus(splash, "Running autoscan");
             //splash.Close();
@@ -2968,20 +2972,6 @@ namespace TVRename
             this.FillActionList();
         }
 
-        private static string GBMB(long size)
-        {
-            long gb1 = (1024 * 1024 * 1024);
-            long gb = ((gb1 / 2) + size) / gb1;
-            if (gb > 1)
-                return gb + " GB";
-            else
-            {
-                long mb1 = 1024 * 1024;
-                long mb = ((mb1 / 2) + size) / mb1;
-                return mb + " MB";
-            }
-        }
-
         private static string itemitems(int n)
         {
             return n == 1 ? "Item" : "Items";
@@ -3112,9 +3102,9 @@ namespace TVRename
             this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
             this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
             this.lvAction.Groups[2].Header =
-                "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
+                "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + copySize.GBMB(1) + ")";
             this.lvAction.Groups[3].Header =
-                "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
+                "Move (" + moveCount + " " + itemitems(moveCount) + ", " + moveSize.GBMB(1) + ")";
             this.lvAction.Groups[4].Header = "Remove (" + removeCount + " " + itemitems(removeCount) + ")";
             this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
             this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";

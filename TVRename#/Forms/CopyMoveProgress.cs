@@ -189,7 +189,8 @@ namespace TVRename
                 {
                     int pct = (int)((1000 * di.TotalFreeSpace) / di.TotalSize);
                     diskValue = 1000 - pct;
-                    diskText = ((int)(di.TotalFreeSpace / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
+                    diskText = di.TotalFreeSpace.GBMB(1) + " free";
+
                 }
             }
 
@@ -201,7 +202,7 @@ namespace TVRename
                 {
                     int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);
                     diskValue = 1000 - pct;
-                    diskText = ((int)(driveStats.AvailableBytes / 1024.0 / 1024.0 / 1024.0 + 0.5)) + " GB free";
+                    diskText = (driveStats.AvailableBytes??0).GBMB(1) + " free";
                 }
             }
             

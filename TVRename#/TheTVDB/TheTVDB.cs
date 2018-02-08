@@ -142,7 +142,12 @@ namespace TVRename
             this.APIRoot = "https://api.thetvdb.com";
 
             this.Series = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
-            this.New_Srv_Time = this.Srv_Time = 0;
+
+            //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
+            //If we have no prior install then the app has no shows and is by definition up-to-date
+            this.New_Srv_Time = DateTime.UtcNow.ToUnixTime();
+
+            this.Srv_Time = 0;
 
             this.LoadOK = (loadFrom == null) || this.LoadCache(loadFrom);
 
@@ -723,7 +728,7 @@ namespace TVRename
                 //As a safety measure we check that no more than 10 calls are made
                 if (numberofCallsMade > 10) {
                     moreUpdates = false;
-                    String errorMessage = "We have run 10 weeks of updates but it appears the system may need to check again once this set have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(this.Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the dates keep getting closer then keep getting 10 weeks of updates, otherwise consider a full refresh";
+                    String errorMessage = "We have run 10 weeks of updates and we are not up to date.  The system will need to check again once this set of updates have been processed." + Environment.NewLine + "Last Updated time was " + Helpers.FromUnixTime(this.Srv_Time).ToLocalTime() + Environment.NewLine + "New Last Updated time is " + Helpers.FromUnixTime(this.New_Srv_Time).ToLocalTime() + Environment.NewLine + Environment.NewLine + "If the dates keep getting more recent then let the system keep getting 10 week blocks of updates, otherwise consider a 'Force Refresh All'";
                     logger.Warn(errorMessage);
                     if ((!this.Args.Unattended) && (!this.Args.Hide))  MessageBox.Show(errorMessage , "Long Running Update", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
@@ -737,14 +742,6 @@ namespace TVRename
 
             foreach (JObject jsonResponse in updatesResponses)
             {
-
-
-
-
-
-
-
-
                 // if updatetime > localtime for item, then remove it, so it will be downloaded later
                 try
                 {
@@ -1178,8 +1175,7 @@ namespace TVRename
                     else if (r.Name == "Data")
                     {
                         string time = r.GetAttribute("time");
-                        if (time != null)
-                            this.New_Srv_Time = long.Parse(time);
+                        this.New_Srv_Time = (time == null)?0:long.Parse(time);
                         r.Read();
                     }
                     else

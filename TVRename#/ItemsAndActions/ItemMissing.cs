@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -14,11 +14,15 @@ namespace TVRename
     public class ItemMissing : Item, ScanListItem
     {
         public string TheFileNoExt;
+        private string folder;
+        private string filename;
 
-        public ItemMissing(ProcessedEpisode pe, string whereItShouldBeNoExt)
+        public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder, string expectedFilenameNoExt)
         {
             this.Episode = pe;
-            this.TheFileNoExt = whereItShouldBeNoExt;
+            this.TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + expectedFilenameNoExt;
+            this.folder = whereItShouldBeFolder;
+            this.filename = expectedFilenameNoExt;
         }
 
         #region Item Members
@@ -84,9 +88,8 @@ namespace TVRename
                 else
                     lvi.SubItems.Add("");
 
-                FileInfo fi = new FileInfo(this.TheFileNoExt);
-                lvi.SubItems.Add(fi.DirectoryName);
-                lvi.SubItems.Add(fi.Name);
+                lvi.SubItems.Add(this.folder);
+                lvi.SubItems.Add(this.filename);
 
                 lvi.Tag = this;
 
