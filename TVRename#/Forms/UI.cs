@@ -120,9 +120,10 @@ namespace TVRename
             {
                 this.LoadLayoutXML();
             }
-            catch
+            catch (Exception e)
             {
                 // silently fail, doesn't matter too much
+                logger.Info(e, "Error loading layout XML");
             }
 
             this.SetProgress += this.SetProgressActual;
@@ -142,12 +143,12 @@ namespace TVRename
             this.FillMyShows();
             this.UpdateSearchButton();
             this.ClearInfoWindows();
-            updateSplashPercent(splash, 12);
+            updateSplashPercent(splash, 10);
             updateSplashStatus(splash, "Updating WTW");
             this.mDoc.DoWhenToWatch(true);
-            updateSplashPercent(splash, 50);
+            updateSplashPercent(splash, 40);
             this.FillWhenToWatchList();
-            updateSplashPercent(splash, 90);
+            updateSplashPercent(splash, 60);
             updateSplashStatus(splash, "Write Upcoming");
             this.mDoc.WriteUpcoming();
             updateSplashStatus(splash, "Setting Notifications");
@@ -158,19 +159,22 @@ namespace TVRename
                 this.tabControl1.SelectedIndex = TVSettings.Instance.StartupTab;
             this.tabControl1_SelectedIndexChanged(null, null);
 
-            updateSplashStatus(splash, "Starting Monitor");
+
+            updateSplashStatus(splash, "Creating Monitors");
 
             this.mAutoFolderMonitor = new TVRename.AutoFolderMonitor(mDoc, this);
-            if (TVSettings.Instance.MonitorFolders)
-                this.mAutoFolderMonitor.StartMonitor();
-
+            
             this.tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
-            this.tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
-
-
+            
             updateSplashStatus(splash, "Update Available?");
 
             SearchForUpdates(false);
+
+            updateSplashStatus(splash, "Starting Monitor");
+            if (TVSettings.Instance.MonitorFolders)
+                this.mAutoFolderMonitor.StartMonitor();
+
+            this.tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
             updateSplashStatus(splash, "Running autoscan");
             //splash.Close();
