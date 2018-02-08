@@ -76,6 +76,9 @@ namespace TVRename.Windows.Forms
             this.listBoxFolders.Items.Add(ofd.FileName);
 
             this.buttonFoldersScan.Enabled = this.listBoxFolders.Items.Count > 0;
+
+            Settings.Instance.SearchDirectories = this.listBoxFolders.Items.Cast<string>().ToList();
+            Settings.Instance.Dirty = true;
         }
 
         private void buttonFoldersRemove_Click(object sender, EventArgs e)
@@ -85,6 +88,9 @@ namespace TVRename.Windows.Forms
             this.listBoxFolders.Items.RemoveAt(this.listBoxFolders.SelectedIndex);
 
             this.buttonFoldersScan.Enabled = this.listBoxFolders.Items.Count > 0;
+
+            Settings.Instance.SearchDirectories = this.listBoxFolders.Items.Cast<string>().ToList();
+            Settings.Instance.Dirty = true;
         }
 
         private void buttonFoldersOpen_Click(object sender, EventArgs e)
@@ -94,7 +100,7 @@ namespace TVRename.Windows.Forms
             Process.Start(this.listBoxFolders.SelectedItem.ToString());
         }
 
-        private void buttonFoldersScan_Click(object sender, EventArgs e)
+        private async void buttonFoldersScan_Click(object sender, EventArgs e)
         {
             if (this.listViewResults.Items.Count > 0 && MessageBox.Show("Scanning again will clear your previous scan results, do you want to continue?", "TV Rename", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
@@ -113,15 +119,13 @@ namespace TVRename.Windows.Forms
             this.listViewResults.Items.Clear();
             this.listViewResults.SelectedIndexChanged -= listViewResults_SelectedIndexChanged;
 
-            this.tabControl.SelectedIndex = 1; // Results tab
-
             this.toolStripStatusLabel.Text = "Scanning folders...";
             this.toolStripProgressBar.Style = ProgressBarStyle.Marquee;
 
-            // TODO: Async, full scan
-            this.listViewResults.BeginUpdate();
-            this.listViewResults.Items.AddRange(SearchAllFolders(this.listBoxFolders.Items.Cast<string>()).ToArray());
-            this.listViewResults.EndUpdate();
+            // TODO: Full scan
+            this.listViewResults.Items.AddRange(await SearchAllFolders(this.listBoxFolders.Items.Cast<string>()));
+
+            this.tabControl.SelectedIndex = 1; // Results tab
 
             // Finished
             this.toolStripStatusLabel.Text = $"Found {"potential show".ToQuantity(this.listViewResults.Items.Count)}";
@@ -225,12 +229,33 @@ namespace TVRename.Windows.Forms
 
         private void buttonResultsRemove_Click(object sender, EventArgs e)
         {
+            if (this.listViewResults.SelectedItems.Count < 1) return;
 
+            foreach (ListViewItem lvi in this.listViewResults.SelectedItems)
+            {
+                this.listViewResults.Items.Remove(lvi);
+            }
+
+            this.buttonResultsRemove.Enabled = this.listViewResults.Items.Count > 0;
+            this.buttonResultsIgnore.Enabled = this.listViewResults.Items.Count > 0;
         }
 
         private void buttonResultsIgnore_Click(object sender, EventArgs e)
         {
+            if (this.listViewResults.SelectedItems.Count < 1) return;
 
+            foreach (ListViewItem lvi in this.listViewResults.SelectedItems)
+            {
+                this.listBoxIgnored.Items.Add(lvi.Text);
+
+                this.listViewResults.Items.Remove(lvi);
+            }
+
+            this.buttonResultsRemove.Enabled = this.listViewResults.Items.Count > 0;
+            this.buttonResultsIgnore.Enabled = this.listViewResults.Items.Count > 0;
+
+            Settings.Instance.IgnoreDirectories = this.listBoxIgnored.Items.Cast<string>().ToList();
+            Settings.Instance.Dirty = true;
         }
 
         private void buttonResultsAdd_Click(object sender, EventArgs e)
@@ -271,6 +296,9 @@ namespace TVRename.Windows.Forms
             if (this.listBoxIgnored.Items.Cast<string>().Any(i => string.Equals(i, ofd.FileName, StringComparison.InvariantCultureIgnoreCase))) return;
 
             this.listBoxIgnored.Items.Add(ofd.FileName);
+
+            Settings.Instance.IgnoreDirectories = this.listBoxIgnored.Items.Cast<string>().ToList();
+            Settings.Instance.Dirty = true;
         }
 
         private void buttonIgnoredRemove_Click(object sender, EventArgs e)
@@ -278,6 +306,9 @@ namespace TVRename.Windows.Forms
             if (this.listBoxIgnored.SelectedIndex == ListBox.NoMatches) return;
 
             this.listBoxIgnored.Items.RemoveAt(this.listBoxIgnored.SelectedIndex);
+
+            Settings.Instance.IgnoreDirectories = this.listBoxIgnored.Items.Cast<string>().ToList();
+            Settings.Instance.Dirty = true;
         }
 
         private void buttonIgnoredOpen_Click(object sender, EventArgs e)
@@ -325,35 +356,43 @@ namespace TVRename.Windows.Forms
             return null;
         }
 
-        public IEnumerable<ListViewItem> SearchAllFolders(IEnumerable<string> directories)
+        public async Task<ListViewItem[]> SearchAllFolders(IEnumerable<string> directories)
         {
-            IEnumerable<DirectoryInfo> tlds = directories.Select(d => new DirectoryInfo(d)).Where(d => d.Exists).SelectMany(d => d.GetDirectories());
-
-            foreach (DirectoryInfo directory in tlds)
+            return await Task.Run(() =>
             {
-                foreach (FoundShowFolder r in this.SearchFolder(directory))
-                {
-                    ListViewItem lvi = new ListViewItem(new[]
-                    {
-                        r.Location,
-                        string.Empty,
-                        r.Structure == FoundShowFolder.FolderStructure.Seasons ? "Folder per season" : "Flat",
-                        string.Empty
-                    })
-                    {
-                        //Checked = true,
-                        ImageIndex = 0,
-                        Tag = r
-                    };
+                // TODO: Better search
+                IEnumerable<DirectoryInfo> tlds = directories.Select(d => new DirectoryInfo(d)).Where(d => d.Exists).SelectMany(d => d.GetDirectories());
 
-                    yield return lvi;
+                List<ListViewItem> results = new List<ListViewItem>();
+
+                foreach (DirectoryInfo directory in tlds)
+                {
+                    foreach (FoundShowFolder r in this.SearchFolder(directory))
+                    {
+                        ListViewItem lvi = new ListViewItem(new[]
+                        {
+                            r.Location,
+                            string.Empty,
+                            r.Structure == FoundShowFolder.FolderStructure.Seasons ? "Folder per season" : "Flat",
+                            string.Empty
+                        })
+                        {
+                            //Checked = true,
+                            ImageIndex = 0,
+                            Tag = r
+                        };
+
+                        results.Add(lvi);
+                    }
                 }
-            }
+
+                return results.ToArray();
+            });
         }
 
         public IEnumerable<FoundShowFolder> SearchFolder(DirectoryInfo directory)
         {
-            if (Settings.Instance.IgnoreDirectories.Contains(directory.FullName.ToLower())) yield break; // TODO: Better comp
+            if (Settings.Instance.IgnoreDirectories.Contains(directory.FullName.ToLower())) yield break; // TODO: Better comp, check existing shows
 
             bool hasSeasonFolders = directory.GetDirectories().Length > 0 && directory.GetDirectories().SelectMany(d => d.GetFiles()).Any();
 

@@ -361,10 +361,8 @@ namespace TVRename.Windows.Forms
             this.listBoxIgnored.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBoxIgnored.FormattingEnabled = true;
             this.listBoxIgnored.Location = new System.Drawing.Point(9, 39);
             this.listBoxIgnored.Name = "listBoxIgnored";
-            this.listBoxIgnored.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxIgnored.Size = new System.Drawing.Size(760, 342);
             this.listBoxIgnored.TabIndex = 4;
             this.listBoxIgnored.SelectedIndexChanged += new System.EventHandler(this.listBoxIgnored_SelectedIndexChanged);
