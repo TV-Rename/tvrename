@@ -742,14 +742,6 @@ namespace TVRename
 
             foreach (JObject jsonResponse in updatesResponses)
             {
-
-
-
-
-
-
-
-
                 // if updatetime > localtime for item, then remove it, so it will be downloaded later
                 try
                 {
@@ -1183,8 +1175,7 @@ namespace TVRename
                     else if (r.Name == "Data")
                     {
                         string time = r.GetAttribute("time");
-                        if (time != null)
-                            this.New_Srv_Time = long.Parse(time);
+                        this.New_Srv_Time = (time == null)?0:long.Parse(time);
                         r.Read();
                     }
                     else
