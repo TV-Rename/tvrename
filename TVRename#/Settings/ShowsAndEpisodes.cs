@@ -333,6 +333,11 @@ namespace TVRename
             } // while
         }
 
+        internal bool UsesManualFolders()
+        {
+            return this.ManualFolderLocations.Count>0;
+        }
+
         public SeriesInfo TheSeries()
         {
             return TheTVDB.Instance.GetSeries(this.TVDBCode);

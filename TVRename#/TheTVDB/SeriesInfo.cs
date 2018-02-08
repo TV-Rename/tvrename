@@ -56,15 +56,14 @@ namespace TVRename
         
         public DateTime? LastAiredDate() {
             DateTime? returnValue = null; 
-            foreach (Season s in Seasons.Values)
+            foreach (Season s in this.Seasons.Values)
             {
-                if (returnValue == null) returnValue = s.LastAiredDate();
-                else
-                //the currently tested date is better than the current value
-                if ((s.LastAiredDate()!=null) &&(DateTime.Compare(s.LastAiredDate().Value, returnValue.Value) > 0))
-                {
-                    returnValue = s.LastAiredDate();
-                }
+                DateTime? seasonLastAirDate = s.LastAiredDate();
+
+                if (!seasonLastAirDate.HasValue) continue;
+
+                if (!returnValue.HasValue) returnValue = seasonLastAirDate.Value;
+                else if (DateTime.Compare(seasonLastAirDate.Value, returnValue.Value) > 0) returnValue = seasonLastAirDate.Value;
             }
             return returnValue;
         }

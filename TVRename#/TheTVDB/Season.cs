@@ -113,21 +113,20 @@ namespace TVRename
         
         public DateTime? LastAiredDate() {
             DateTime? returnValue = null;
-            foreach (Episode a in Episodes)
+            foreach (Episode a in this.Episodes)
             {
-                if (DateTime.Compare(a.FirstAired.Value.ToUniversalTime(), DateTime.UtcNow) <= 0)
-                {
-                    //Date is before now()
+                DateTime? episodeAirDate = a.FirstAired;
 
-                    //We don't have a best offer yet
-                    if (returnValue == null) returnValue = a.FirstAired.Value.ToUniversalTime();
-                    else
-                    //the currently tested date is better than the current value
-                    if (DateTime.Compare(a.FirstAired.Value.ToUniversalTime(), returnValue.Value) > 0)
-                    {
-                        returnValue = a.FirstAired.Value.ToUniversalTime();
-                    }
-                }
+                //ignore episode if has no date
+                if (!episodeAirDate.HasValue) continue;
+
+                //ignore episode if it's in the future
+                if (DateTime.Compare(episodeAirDate.Value.ToUniversalTime(), DateTime.UtcNow) > 0) continue;
+
+                //If we don't have a best offer yet
+                if (!returnValue.HasValue) returnValue = episodeAirDate.Value;
+                //else the currently tested date is better than the current value
+                else if (DateTime.Compare(episodeAirDate.Value, returnValue.Value) > 0) returnValue = episodeAirDate.Value;
             }
             return returnValue;
 

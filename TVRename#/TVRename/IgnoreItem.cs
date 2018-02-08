@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -28,7 +28,7 @@ namespace TVRename
 
         public bool SameFileAs(IgnoreItem o)
         {
-            if (string.IsNullOrEmpty(this.FileAndPath) || string.IsNullOrEmpty(o.FileAndPath))
+            if (string.IsNullOrEmpty(this.FileAndPath) || string.IsNullOrEmpty(o?.FileAndPath))
                 return false;
             return this.FileAndPath == o.FileAndPath;
         }

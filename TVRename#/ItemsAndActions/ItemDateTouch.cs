@@ -8,25 +8,31 @@
 namespace TVRename
 {
     using System;
-    using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
-    using System.IO;
-    using Directory = Alphaleonis.Win32.Filesystem.Directory;
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ItemDateTouch : Item, Action, ScanListItem, ActionWriteMetadata
+    public class ItemDateTouch : Item, Action, ScanListItem
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
+        public Season SN; // if for an entire show, rather than specific episode
         public FileInfo WhereFile;
         public DirectoryInfo WhereDirectory;
-        private DateTime updateTime;
+        private readonly DateTime updateTime;
 
         public ItemDateTouch(FileInfo f, ProcessedEpisode pe, DateTime date)
         {
             this.Episode = pe;
             this.WhereFile = f;
             this.updateTime = date;
+        }
+
+        public ItemDateTouch(DirectoryInfo dir, Season sn, DateTime date)
+        {
+            this.SN = sn;
+            this.WhereDirectory = dir;
+            this.updateTime = date;
+
         }
 
         public ItemDateTouch(DirectoryInfo dir, ShowItem si, DateTime date)
@@ -37,48 +43,34 @@ namespace TVRename
 
         }
 
-        public string produces
-        {
-            get { return this.WhereFile?.FullName?? this.WhereDirectory?.FullName; }
-        }
+
+        public string produces => this.WhereFile?.FullName?? this.WhereDirectory?.FullName;
 
         #region Action Members
 
-        public string Name
-        {
-            get { return "Touch Update Time"; }
-        }
+        public string Name => "Touch Update Time";
 
         public bool Done { get; private set; }
         public bool Error { get; private set; }
         public string ErrorText { get; set; }
 
-        public string ProgressText
-        {
-            get { return this.WhereFile?.Name??this.WhereDirectory?.Name; }
-        }
+        public string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
 
-        public double PercentDone
-        {
-            get { return this.Done ? 100 : 0; }
-        }
+        public double PercentDone => this.Done ? 100 : 0;
 
-        public long SizeOfWork
-        {
-            get { return 100; }
-        }
+        public long SizeOfWork => 100;
 
         public bool Go(ref bool pause, TVRenameStats stats)
         {
             try
             {
-                if (WhereFile != null)
+                if (this.WhereFile != null)
                 {
-                    System.IO.File.SetLastWriteTimeUtc(WhereFile.FullName, updateTime);
+                    System.IO.File.SetLastWriteTimeUtc(this.WhereFile.FullName, this.updateTime);
                 }
-                if (WhereDirectory != null)
+                if (this.WhereDirectory != null)
                 {
-                    System.IO.Directory.SetLastWriteTimeUtc(WhereDirectory.FullName, updateTime );
+                    System.IO.Directory.SetLastWriteTimeUtc(this.WhereDirectory.FullName, this.updateTime );
                 }
             }
             catch (Exception e)
@@ -108,11 +100,11 @@ namespace TVRename
 
             if (this.Episode == null)
                 return 1;
-            if (nfo == null || nfo.Episode == null)
+            if (nfo?.Episode == null)
                 return -1;
             if (this.WhereFile != null)
-                return (this.WhereFile.FullName + this.Episode.Name).CompareTo(nfo.WhereFile.FullName + nfo.Episode.Name);
-            return (this.WhereDirectory.FullName + this.Episode.Name).CompareTo(nfo.WhereDirectory.FullName + nfo.Episode.Name);
+                return String.Compare((this.WhereFile.FullName + this.Episode.Name), nfo.WhereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return String.Compare((this.WhereDirectory.FullName + this.Episode.Name), nfo.WhereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion
@@ -133,18 +125,39 @@ namespace TVRename
         {
             get
             {
+
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = this.Episode.SI.ShowName;
-                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
-                lvi.SubItems.Add(this.Episode.NumsAsString());
-                DateTime? dt = this.Episode.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
+                if (this.Episode != null)
+                {
+                    lvi.Text = this.Episode.SI.ShowName;
+                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.NumsAsString());
+
+                }
+                else if (this.SN != null)
+                {
+                    lvi.Text = this.SN.TheSeries.Name;
+                    lvi.SubItems.Add(this.SN.SeasonNumber.ToString());
+                    lvi.SubItems.Add("");
+
+                }
+                else if (this.SI != null)
+                {
+                    lvi.Text = this.SI.ShowName;
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+
+                }
+
+                DateTime dt = this.updateTime;
+
+                if ((dt.CompareTo(DateTime.MaxValue)) != 0)
+                    lvi.SubItems.Add(dt.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.WhereFile?.DirectoryName??this.WhereDirectory?.Name);
+                lvi.SubItems.Add(this.WhereFile?.DirectoryName??this.WhereDirectory?.FullName);
                 lvi.SubItems.Add(this.WhereFile?.Name??this.WhereDirectory?.Name);
 
                 lvi.Tag = this;
@@ -154,25 +167,13 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder
-        {
-            get
-            {
-                return this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
-            }
-        }
+        string ScanListItem.TargetFolder => this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
 
-        public string ScanListViewGroup
-        {
-            get { return "lvgActionMeta"; }
-        }
+        public string ScanListViewGroup => "lvgUpdateFileDates";
 
-        public int IconNumber
-        {
-            get { return 7; }
-        }
+        public int IconNumber => 7;
 
-        public ProcessedEpisode Episode { get; private set; }
+        public ProcessedEpisode Episode { get; }
 
         #endregion
 

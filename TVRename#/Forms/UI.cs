@@ -2968,20 +2968,6 @@ namespace TVRename
             this.FillActionList();
         }
 
-        private static string GBMB(long size)
-        {
-            long gb1 = (1024 * 1024 * 1024);
-            long gb = ((gb1 / 2) + size) / gb1;
-            if (gb > 1)
-                return gb + " GB";
-            else
-            {
-                long mb1 = 1024 * 1024;
-                long mb = ((mb1 / 2) + size) / mb1;
-                return mb + " MB";
-            }
-        }
-
         private static string itemitems(int n)
         {
             return n == 1 ? "Item" : "Items";
@@ -3070,6 +3056,7 @@ namespace TVRename
             int downloadCount = 0;
             int metaCount = 0;
             int dlCount = 0;
+            int fileMetaCount = 0;
 
             foreach (Item Action in this.mDoc.TheActionList)
             {
@@ -3100,6 +3087,8 @@ namespace TVRename
                     rssCount++;
                 else if (Action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     metaCount++;
+                else if (Action is ItemDateTouch)
+                    fileMetaCount++;
                 else if (Action is ItemuTorrenting || Action is ItemSABnzbd)
                     dlCount++;
                 else if (Action is ActionDeleteFile || Action is ActionDeleteDirectory)
@@ -3109,14 +3098,15 @@ namespace TVRename
             this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
             this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
             this.lvAction.Groups[2].Header =
-                "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + GBMB(copySize) + ")";
+                "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + copySize.GBMB(1) + ")";
             this.lvAction.Groups[3].Header =
-                "Move (" + moveCount + " " + itemitems(moveCount) + ", " + GBMB(moveSize) + ")";
+                "Move (" + moveCount + " " + itemitems(moveCount) + ", " + moveSize.GBMB(1) + ")";
             this.lvAction.Groups[4].Header = "Remove (" + removeCount + " " + itemitems(removeCount) + ")";
             this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
             this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
             this.lvAction.Groups[7].Header = "Media Center Metadata (" + metaCount + " " + itemitems(metaCount) + ")";
-            this.lvAction.Groups[8].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
+            this.lvAction.Groups[8].Header = "Update File/Directory Metadata (" + fileMetaCount + " " + itemitems(metaCount) + ")";
+            this.lvAction.Groups[9].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
 
             this.InternalCheckChange = false;
 
