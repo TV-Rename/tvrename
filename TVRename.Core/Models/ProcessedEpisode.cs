@@ -13,7 +13,7 @@ namespace TVRename.Core.Models
 
         public bool Exists { get; set; }
 
-        public string FullPath => Path.Combine(this.Location, $"{this.Filename}.{this.Extension}");
+        public string FullPath => Path.Combine(this.Location, string.IsNullOrEmpty(this.Extension) ? $"{this.Filename}" : $"{this.Filename}.{this.Extension}");
 
         public ProcessedEpisode() { }
 

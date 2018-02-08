@@ -224,7 +224,21 @@ namespace TVRename.Windows.Forms
 
         private void buttonResultsEdit_Click(object sender, EventArgs e)
         {
+            if (this.listViewResults.SelectedItems.Count < 1) return;
 
+            ListViewItem lvi = this.listViewResults.SelectedItems[0];
+
+            using (Identify form = new Identify(lvi.Tag as FoundShowFolder))
+            {
+                if (form.ShowDialog() != DialogResult.OK) return;
+
+                lvi.ImageIndex = 1;
+                lvi.SubItems[1].Text = form.NewShow.Name;
+                lvi.SubItems[3].Text = form.NewShow.TvdbId.ToString();
+                lvi.Tag = form.NewShow;
+                    
+                this.buttonResultsAdd.Enabled = this.listViewResults.Items.Cast<ListViewItem>().Any(l => l.ImageIndex == 1); // Any IDed
+            }
         }
 
         private void buttonResultsRemove_Click(object sender, EventArgs e)
