@@ -174,6 +174,56 @@ namespace TVRename.Windows.Forms
 
             Render();
         }
+        
+        private void toolStripMenuItemPresetPlex_Click(object sender, EventArgs e)
+        {
+            this.identifiers.Add(new TVDBImageIdentifier
+            {
+                ImageType = ImageType.ShowPoster,
+                ImageFormat = ImageFormat.Jpeg,
+                Location = "{{show.location}}",
+                FileName = "folder.jpg"
+            });
+            this.identifiers.Add(new TVDBImageIdentifier
+            {
+                ImageType = ImageType.ShowBanner,
+                ImageFormat = ImageFormat.Jpeg,
+                Location = "{{show.location}}",
+                FileName = "banner.jpg"
+            });
+            this.identifiers.Add(new TVDBImageIdentifier
+            {
+                ImageType = ImageType.ShowFanart,
+                ImageFormat = ImageFormat.Jpeg,
+                Location = "{{show.location}}",
+                FileName = "art.jpg"
+            });
+
+            this.identifiers.Add(new TVDBImageIdentifier
+            {
+                ImageType = ImageType.SeasonPoster,
+                ImageFormat = ImageFormat.Jpeg,
+                Location = "{{season.location}}",
+                FileName = "Season{{season.number | pad}}.jpg"
+            });
+            this.identifiers.Add(new TVDBImageIdentifier
+            {
+                ImageType = ImageType.SeasonBanner,
+                ImageFormat = ImageFormat.Jpeg,
+                Location = "{{season.location}}",
+                FileName = "Season{{season.number | pad}}-banner.jpg"
+            });
+
+            this.identifiers.Add(new TVDBImageIdentifier
+            {
+                ImageType = ImageType.EpisodeThumbnail,
+                ImageFormat = ImageFormat.Jpeg,
+                Location = "{{episode.location}}",
+                FileName = "{{episode.filename}}.jpg"
+            });
+
+            Render();
+        }
 
         private void toolStripMenuItemPresetMede8er_Click(object sender, EventArgs e)
         {

@@ -48,6 +48,7 @@
             this.toolStripMenuItemPresetKodi = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemPresetMede8er = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemPresetPyTivo = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItemPresetPlex = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripAdd = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItemAddText = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItemAddImage = new System.Windows.Forms.ToolStripMenuItem();
@@ -178,23 +179,24 @@
             // 
             this.contextMenuStripPresets.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripMenuItemPresetKodi,
+            this.toolStripMenuItemPresetPlex,
             this.toolStripMenuItemPresetMede8er,
             this.toolStripMenuItemPresetPyTivo});
             this.contextMenuStripPresets.Name = "contextMenuStripPresets";
             this.contextMenuStripPresets.ShowImageMargin = false;
-            this.contextMenuStripPresets.Size = new System.Drawing.Size(96, 70);
+            this.contextMenuStripPresets.Size = new System.Drawing.Size(128, 114);
             // 
             // toolStripMenuItemPresetKodi
             // 
             this.toolStripMenuItemPresetKodi.Name = "toolStripMenuItemPresetKodi";
-            this.toolStripMenuItemPresetKodi.Size = new System.Drawing.Size(95, 22);
+            this.toolStripMenuItemPresetKodi.Size = new System.Drawing.Size(127, 22);
             this.toolStripMenuItemPresetKodi.Text = "&Kodi";
             this.toolStripMenuItemPresetKodi.Click += new System.EventHandler(this.toolStripMenuItemPresetKodi_Click);
             // 
             // toolStripMenuItemPresetMede8er
             // 
             this.toolStripMenuItemPresetMede8er.Name = "toolStripMenuItemPresetMede8er";
-            this.toolStripMenuItemPresetMede8er.Size = new System.Drawing.Size(95, 22);
+            this.toolStripMenuItemPresetMede8er.Size = new System.Drawing.Size(127, 22);
             this.toolStripMenuItemPresetMede8er.Text = "&Mede8er";
             this.toolStripMenuItemPresetMede8er.Click += new System.EventHandler(this.toolStripMenuItemPresetMede8er_Click);
             // 
@@ -202,8 +204,15 @@
             // 
             this.toolStripMenuItemPresetPyTivo.Name = "toolStripMenuItemPresetPyTivo";
             this.toolStripMenuItemPresetPyTivo.Size = new System.Drawing.Size(95, 22);
-            this.toolStripMenuItemPresetPyTivo.Text = "&pyTivo";
+            this.toolStripMenuItemPresetPyTivo.Text = "py&Tivo";
             this.toolStripMenuItemPresetPyTivo.Click += new System.EventHandler(this.toolStripMenuItemPresetPyTivo_Click);
+            // 
+            // toolStripMenuItemPresetPlex
+            // 
+            this.toolStripMenuItemPresetPlex.Name = "toolStripMenuItemPresetPlex";
+            this.toolStripMenuItemPresetPlex.Size = new System.Drawing.Size(127, 22);
+            this.toolStripMenuItemPresetPlex.Text = "&Plex";
+            this.toolStripMenuItemPresetPlex.Click += new System.EventHandler(this.toolStripMenuItemPresetPlex_Click);
             // 
             // contextMenuStripAdd
             // 
@@ -317,5 +326,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemEdit;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemRemove;
         private System.Windows.Forms.Button buttonEdit;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemPresetPlex;
     }
 }
