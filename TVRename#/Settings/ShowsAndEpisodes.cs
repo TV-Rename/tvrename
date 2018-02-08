@@ -661,12 +661,12 @@ namespace TVRename
             return this.AllFolderLocations( true);
         }
 
-        public static string TTS(string s) // trim trailing slash
+        public Dictionary<int, List<string>> AllFolderLocationsEpCheck(bool checkExist)
         {
-            return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
+            return this.AllFolderLocations(true, checkExist);
         }
 
-        public Dictionary<int, List<string>> AllFolderLocations(bool manualToo)
+        public Dictionary<int, List<string>> AllFolderLocations(bool manualToo,bool checkExist=true)
         {
             Dictionary<int, List<string>> fld = new Dictionary<int, List<string>>();
 
@@ -677,7 +677,7 @@ namespace TVRename
                     if (!fld.ContainsKey(kvp.Key))
                         fld[kvp.Key] = new List<String>();
                     foreach (string s in kvp.Value)
-                        fld[kvp.Key].Add(TTS(s));
+                        fld[kvp.Key].Add(s.TTS());
                 }
             }
 
@@ -695,12 +695,12 @@ namespace TVRename
                         continue;
 
                     string newName = this.AutoFolderNameForSeason(i);
-                    if ((!string.IsNullOrEmpty(newName)) && (Directory.Exists(newName)))
+                    if ((!string.IsNullOrEmpty(newName)) && (!checkExist ||(Directory.Exists(newName))))
                     {
                         if (!fld.ContainsKey(i))
                             fld[i] = new List<String>();
                         if (!fld[i].Contains(newName))
-                            fld[i].Add(TTS(newName));
+                            fld[i].Add(newName.TTS());
                     }
                 }
             }
