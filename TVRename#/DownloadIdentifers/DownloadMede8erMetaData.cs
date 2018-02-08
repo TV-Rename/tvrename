@@ -10,8 +10,8 @@ namespace TVRename
 {
     class DownloadMede8erMetaData : DownloadIdentifier
     {
-
-        public DownloadMede8erMetaData() 
+        private List<string> doneFiles;
+        public DownloadMede8erMetaData()
         {
             reset();
         }
@@ -21,7 +21,7 @@ namespace TVRename
             return DownloadType.downloadMetaData;
         }
 
-        public override ItemList ProcessShow(ShowItem si,bool forceRefresh)
+        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             if (TVSettings.Instance.Mede8erXML)
             {
@@ -32,12 +32,20 @@ namespace TVRename
                 bool needUpdate = !tvshowxml.Exists ||
                                   (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshowxml.LastWriteTime));
 
-                if (forceRefresh || needUpdate)
+                if ((forceRefresh || needUpdate) && (!this.doneFiles.Contains(tvshowxml.FullName)))
+                {
+                    this.doneFiles.Add(tvshowxml.FullName);
                     TheActionList.Add(new ActionMede8erXML(tvshowxml, si));
+                }
+
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
                 FileInfo viewxml = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "view.xml");
-                if (!viewxml.Exists) TheActionList.Add(new ActionMede8erViewXML(viewxml,si));
+                if ((!viewxml.Exists) && (!this.doneFiles.Contains(viewxml.FullName)))
+                {
+                    this.doneFiles.Add(viewxml.FullName);
+                    TheActionList.Add(new ActionMede8erViewXML(viewxml, si));
+                }
 
 
                 return TheActionList;
@@ -54,7 +62,7 @@ namespace TVRename
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
                 FileInfo viewxml = FileHelper.FileInFolder(folder, "view.xml");
-                if (!viewxml.Exists) TheActionList.Add(new ActionMede8erViewXML(viewxml,si,snum));
+                if (!viewxml.Exists) TheActionList.Add(new ActionMede8erViewXML(viewxml, si, snum));
 
 
                 return TheActionList;
@@ -84,7 +92,8 @@ namespace TVRename
 
         public override void reset()
         {
-           base.reset();
+            this.doneFiles = new List<string>();
+            base.reset();
         }
 
     }
