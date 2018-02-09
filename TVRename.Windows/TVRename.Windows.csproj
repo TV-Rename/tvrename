@@ -86,6 +86,12 @@
     <Compile Include="Forms\About.Designer.cs">
       <DependentUpon>About.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ActorGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ActorGrid.Designer.cs">
+      <DependentUpon>ActorGrid.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\BulkAdd.cs">
       <SubType>Form</SubType>
     </Compile>

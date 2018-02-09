@@ -177,6 +177,20 @@ namespace TVRename.Windows.Forms
             // TODO
         }
 
+        private void toolStripMenuItemActorGrid_Click(object sender, EventArgs e)
+        {
+            new ActorGrid().ShowDialog();
+        }
+        private void toolStripMenuItemStatistics_Click(object sender, EventArgs e)
+        {
+            new Statistics().ShowDialog();
+        }
+
+        private void toolStripMenuItemAbout_Click(object sender, EventArgs e)
+        {
+            new About().ShowDialog();
+        }
+
         private void refreshAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             MessageBox.Show("TODO"); // TODO
@@ -197,16 +211,6 @@ namespace TVRename.Windows.Forms
         private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Process.Start("http://www.tvrename.com/");
-        }
-
-        private void toolStripMenuItemStatistics_Click(object sender, EventArgs e)
-        {
-            new Statistics().ShowDialog();
-        }
-
-        private void toolStripMenuItemAbout_Click(object sender, EventArgs e)
-        {
-            new About().ShowDialog();
         }
 
         private void toolStripButtonAdd_Click(object sender, EventArgs e)
