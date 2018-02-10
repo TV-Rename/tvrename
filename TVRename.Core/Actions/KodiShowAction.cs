@@ -9,7 +9,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename.Core.Actions
 {
-    public class KodiAction : IAction
+    public class KodiShowAction : IAction
     {
         private readonly ProcessedShow show;
         private readonly FileInfo file;
@@ -18,7 +18,7 @@ namespace TVRename.Core.Actions
 
         public string Produces => this.file.FullName;
 
-        public KodiAction(ProcessedShow show, FileInfo file)
+        public KodiShowAction(ProcessedShow show, FileInfo file)
         {
             this.show = show;
             this.file = file;

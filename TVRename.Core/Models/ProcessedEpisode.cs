@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
 using TVRename.Core.Models.Cache;
 
@@ -5,6 +6,13 @@ namespace TVRename.Core.Models
 {
     public class ProcessedEpisode : Episode
     {
+        //TODO_MS Implement these methods/populate the values
+        internal IEnumerable<Episode> SourceEpisodes;
+        public ProcessedShow Show { get; private set; }
+        public ProcessedEpisodeType Type { get; private set; }
+        public enum ProcessedEpisodeType { single, split, merged };
+
+
         public string Location { get; set; }
 
         public string Filename { get; set; }

@@ -108,5 +108,6 @@ namespace TVRename.Core.Models.Cache
         /// The episode writers.
         /// </value>
         public List<string> Writers { get; set; } = new List<string>();
+        public bool SeasonNumber { get; internal set; }
     }
 }
