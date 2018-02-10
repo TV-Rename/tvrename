@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ site.lang | default: "en-US" }}">
+<html lang="{{ site.lang | default: "en-UK" }}">
 
 	<head>
 
@@ -103,6 +103,9 @@
 			$(function() {
 				$.get('https://api.github.com/repos/TV-Rename/tvrename/releases/latest', function(data) {
 					$('#downloadExe').attr('href', data.assets[0].browser_download_url);
+					if ($('.release')[0]) {
+						$('.release').html('Latest Release: v ' + data.tag_name);
+					};
 				});
 			});
 		</script>

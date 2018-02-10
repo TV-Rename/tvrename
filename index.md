@@ -37,13 +37,17 @@
 #### TV&nbsp;Rename
 ##### Television Sorted...
 
-TV Rename is the Swiss-Army-Knife of media management tools.
+{:style="font-size:1.2rem;"}
+_**Organise your TV Shows with the Swiss-Army-Knife of media management tools.**_
 
-It runs on Windows XP and later and looks after all your tv show files; making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
+{:class="release" style="font-size:1.2rem; font-weight:bold;"}
+Latest Release:
+
+Running on Windows XP and later it looks after all your TV show files; making them presentable for Kodi (XBMC), Mede8er, pyTivo and other media hubs.
 
 On the surface TV Rename will "fix" the names of tv shows...
 
-For example, you've got a few tv show episodes saved as video files, they will probably have names like this: -
+For example, you've got a few TV show episodes saved as video files, they will probably have names like this: -
 
 > _**Grey's.Anatomy.S03E04.blah-blah-blah.xvid.avi**_
 
@@ -83,7 +87,7 @@ _**Get the oily rag out, its time to get your hands dirty...**_ *[Read the guide
 ## [The Options Menu](options "Read about Options and Preferences")
 The Options Menu takes you gently through virtually every available option and preference helping you to get TV Rename to behave just the way you want.&emsp; *[Read more...](options "TV Rename's Options and Preferences")* 
 
-## [The Tools Menu](tools Read about TV Rename's Tools")
+## [The Tools Menu](tools "Read about TV Rename's Tools")
 The Tools Menu discusses some of TV Rename's other features including forcing updates and the like.&emsp; *[Read more...](tools "TV Rename's Tools")* 
 
 ## [Command Line Interface](cmd-line "Read about using the CLI")
@@ -95,14 +99,3 @@ Helpful hints, and inside information (from the developers among others).&emsp; 
 ## [Support](support "Read the Support Page")
 There are a number of routes to get help with TV Rename, you'll find all the details *[here...](support " Read the Support Page")*<br />
 In addition there is a direct link to the *[TVRename Forum...](https://groups.google.com/forum/#!forum/tvrename "Visit the TV Rename Forum")*.
-
-## [Download]({{ site.github.releases_url }} "Download the Latest Version..."){:#downloadLink} 
-Download the latest version of the software...
-
-<script>
-	$(function() {
-		$.get('https://api.github.com/repos/TV-Rename/tvrename/releases/latest', function(data) {
-			$('#downloadLink').attr('href', data.assets[0].browser_download_url);
-		});
-	});
-</script>
