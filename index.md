@@ -1,4 +1,5 @@
-<!-- Define the class="fade" slide show -->
+<!-- Define the class="fade" slide show ----- -->
+
 <style>
 	.fade { position: relative; height: 252px; width: 336px; float: right; margin: 0 0 20px 20px; }
 	.fade > * { position: absolute; left: 0; top: 0; display: block; }
@@ -12,7 +13,6 @@
 		}, 9000);
 	});
 </script>
-<!-- End slide show definition -->
 
 <div class="fade">
 	<img src="images/slides/001.png">
@@ -33,6 +33,8 @@
 	<img src="images/slides/016.png">
 	<img src="images/slides/017.png">
 </div>
+
+<!-- End slide show definition -------------- -->
 
 #### TV&nbsp;Rename
 ##### Television Sorted...
