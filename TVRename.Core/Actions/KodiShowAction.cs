@@ -82,10 +82,7 @@ namespace TVRename.Core.Actions
                 writer.WriteValue(this.show.ImdbId);
                 writer.WriteEndElement();
 
-                foreach (string genre in this.show.Genres)
-                {
-                    writer.WriteNode("genre", genre);
-                }
+                writer.WriteNodes("genre", this.show.Genres);
 
                 writer.WriteNode("premiered", this.show.FirstAired?.ToString("yyyy-MM-dd"));
 

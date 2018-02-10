@@ -92,7 +92,19 @@ namespace TVRename.Core.Actions
             }
             writer.WriteNode("id", singleEpisode.Id);
 
-            
+            writer.WriteStartElement("uniqueid");
+            writer.WriteAttributeString("type", "tvdb");
+            writer.WriteAttributeString("default", "true");
+            writer.WriteValue(singleEpisode.Id);
+            writer.WriteEndElement();
+
+            /*
+            writer.WriteStartElement("uniqueid");
+            writer.WriteAttributeString("type", "imdb");
+            writer.WriteAttributeString("default", "false");
+            writer.WriteValue(singleEpisode.ImdbId);
+            writer.WriteEndElement();
+            */
 
             //Writers(s)
             writer.WriteNodes("credits", singleEpisode.Writers);
@@ -112,6 +124,7 @@ namespace TVRename.Core.Actions
             //Find actors in the series or this specific episode
             IEnumerable<string> overallActors = singleEpisode.GuestStars;
             overallActors = overallActors.Union(this.episode.Show?.Actors ?? new List<string>());
+            int i = 0;
             foreach (string actor in overallActors)
             {
                 if (string.IsNullOrEmpty(actor))
@@ -119,6 +132,7 @@ namespace TVRename.Core.Actions
 
                 writer.WriteStartElement("actor");
                 writer.WriteNode("name", actor);
+                writer.WriteNode("order", i++);
                 writer.WriteEndElement(); // actor
             }
         }
