@@ -62,7 +62,7 @@ namespace TVRename
                     lvi.Text = ei.HowLong();
                     lvi.SubItems.Add(ei.DayOfWeek());
                     lvi.SubItems.Add(ei.TimeOfDay());
-                    lvi.SubItems.Add(TVSettings.Instance.NamingStyle.NameForExt(ei, null, 0));
+                    lvi.SubItems.Add(TVSettings.Instance.NamingStyle.NameForExt(ei));
                     this.lvUpcoming.Items.Add(lvi);
                 }
                 if (this.lvUpcoming.Items.Count > 0)

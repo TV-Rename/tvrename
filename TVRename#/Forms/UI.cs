@@ -317,6 +317,11 @@ namespace TVRename
             this.UI_LocationChanged(null, null);
             this.UI_SizeChanged(null, null);
 
+            System.Windows.Forms.ToolTip ToolTip1 = new System.Windows.Forms.ToolTip();
+            ToolTip1.SetToolTip(this.btnActionQuickScan, "Scan shows with missing recent aired episodes and and shows that match files in the search folders");
+            ToolTip1.SetToolTip(this.bnActionRecentCheck, "Scan shows with recent aired episodes");
+            ToolTip1.SetToolTip(this.bnActionCheck , "Scan all shows");
+
             this.backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
             this.offlineOperationToolStripMenuItem.Checked = TVSettings.Instance.OfflineMode;
             this.BGDownloadTimer.Interval = 10000; // first time
@@ -3739,6 +3744,11 @@ namespace TVRename
             {
                 logger.Info(scanType + " cancelled as the system is already busy");
             }
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

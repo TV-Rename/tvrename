@@ -177,7 +177,7 @@ namespace TVRename
             this.lbEpsPreview.BeginUpdate();
             this.lbEpsPreview.Items.Clear();
             foreach (ProcessedEpisode pe in pel)
-                this.lbEpsPreview.Items.Add(this.NameStyle.NameForExt(pe, null, 0));
+                this.lbEpsPreview.Items.Add(this.NameStyle.NameForExt(pe));
             this.lbEpsPreview.EndUpdate();
         }
     }

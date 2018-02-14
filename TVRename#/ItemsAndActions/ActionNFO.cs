@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -8,12 +8,8 @@
 namespace TVRename
 {
     using System;
-    using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
     using System.Xml;
-    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
-    using Directory = Alphaleonis.Win32.Filesystem.Directory;
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionNFO : Item, Action, ScanListItem, ActionWriteMetadata
@@ -37,41 +33,27 @@ namespace TVRename
 
         #region Action Members
 
-        public string Name
-        {
-            get { return "Write KODI Metadata"; }
-        }
+        public string Name => "Write KODI Metadata";
 
         public bool Done { get; private set; }
         public bool Error { get; private set; }
         public string ErrorText { get; set; }
 
-        public string ProgressText
-        {
-            get { return this.Where.Name; }
-        }
+        public string ProgressText => this.Where.Name;
 
-        public double PercentDone
-        {
-            get { return this.Done ? 100 : 0; }
-        }
+        public double PercentDone => this.Done ? 100 : 0;
 
-        public long SizeOfWork
-        {
-            get { return 10000; }
-        }
+        public long SizeOfWork => 10000;
 
-        public string produces
-        {
-            get { return this.Where.FullName; }
-        }
+        public string produces => this.Where.FullName;
 
-        private void writeEpisodeDetailsFor(Episode episode, XmlWriter writer)
+        private void writeEpisodeDetailsFor(Episode episode, XmlWriter writer,bool multi)
         {
             // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
             writer.WriteStartElement("episodedetails");
 
             XMLHelper.WriteElementToXML(writer, "title", episode.Name);
+            XMLHelper.WriteElementToXML(writer,"showtitle", this.Episode.SI.ShowName );
             XMLHelper.WriteElementToXML(writer, "rating", episode.EpisodeRating);
             XMLHelper.WriteElementToXML(writer, "season", episode.SeasonNumber);
             XMLHelper.WriteElementToXML(writer, "episode", episode.EpNum);
@@ -82,34 +64,25 @@ namespace TVRename
                 writer.WriteValue(episode.FirstAired.Value.ToString("yyyy-MM-dd"));
             writer.WriteEndElement();
 
-            if (this.Episode.SI != null)
-            {
-                XMLHelper.WriteElementToXML(writer, "mpaa", this.Episode.SI.TheSeries().GetRating());
-            }
+            XMLHelper.WriteElementToXML(writer, "mpaa", this.Episode.SI?.TheSeries()?.GetRating(),true);
 
             //Director(s)
-            if (!String.IsNullOrEmpty(episode.EpisodeDirector))
+            string epDirector = episode.EpisodeDirector;
+            if (!string.IsNullOrEmpty(epDirector))
             {
-                string EpDirector = episode.EpisodeDirector;
-                if (!string.IsNullOrEmpty(EpDirector))
+                foreach (string Daa in epDirector.Split('|'))
                 {
-                    foreach (string Daa in EpDirector.Split('|'))
-                    {
-                        if (string.IsNullOrEmpty(Daa))
-                            continue;
-
-                        XMLHelper.WriteElementToXML(writer, "director", Daa);
-                    }
+                    XMLHelper.WriteElementToXML(writer, "director", Daa,true);
                 }
             }
 
             //Writers(s)
-            if (!String.IsNullOrEmpty(episode.Writer))
+            string EpWriter = episode.Writer;
+            if (!string.IsNullOrEmpty(EpWriter))
             {
-                string EpWriter = episode.Writer;
-                if (!string.IsNullOrEmpty(EpWriter))
+                foreach (string txtWriter in EpWriter.Split('|'))
                 {
-                    XMLHelper.WriteElementToXML(writer, "credits", EpWriter);
+                    XMLHelper.WriteElementToXML(writer, "credits", txtWriter, true);
                 }
             }
 
@@ -158,6 +131,29 @@ namespace TVRename
                 }
             }
 
+            if (multi)
+            {
+                writer.WriteStartElement("resume");
+                //we have to put 0 as we don't know where the multipart episode starts/ends
+                XMLHelper.WriteElementToXML(writer, "position", 0);
+                XMLHelper.WriteElementToXML(writer, "total", 0);
+                writer.WriteEndElement(); // resume
+
+                //For now we only put art in for multipart episodes. Kodi finds the art appropriately
+                //without our help for the others
+
+                ShowItem episodeSi = this.Episode.SI??this.SI;
+                string filename =
+                    TVSettings.Instance.FilenameFriendly(
+                        TVSettings.Instance.NamingStyle.GetTargetEpisodeName(episode, episodeSi.ShowName));
+
+                string thumbFilename =  filename + ".jpg";
+                XMLHelper.WriteElementToXML(writer, "thumb",thumbFilename);
+                //Should be able to do this using the local filename, but only seems to work if you provide a URL
+                //XMLHelper.WriteElementToXML(writer, "thumb", TheTVDB.Instance.GetTVDBDownloadURL(episode.GetFilename()));
+
+
+            }
             writer.WriteEndElement(); // episodedetails
         }
 
@@ -191,9 +187,9 @@ namespace TVRename
             {
                 if (this.Episode.type == ProcessedEpisode.ProcessedEpisodeType.merged)
                 {
-                    foreach (Episode ep in this.Episode.sourceEpisodes) writeEpisodeDetailsFor(ep, writer);
+                    foreach (Episode ep in this.Episode.sourceEpisodes) writeEpisodeDetailsFor(ep, writer, true);
                 }
-                else writeEpisodeDetailsFor(this.Episode, writer);
+                else writeEpisodeDetailsFor(this.Episode, writer, false);
             }
             else if (this.SI != null) // show overview (tvshow.nfo)
             {
@@ -339,15 +335,9 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup
-        {
-            get { return "lvgActionMeta"; }
-        }
+        public string ScanListViewGroup => "lvgActionMeta";
 
-        public int IconNumber
-        {
-            get { return 7; }
-        }
+        public int IconNumber => 7;
 
         public ProcessedEpisode Episode { get; private set; }
 
