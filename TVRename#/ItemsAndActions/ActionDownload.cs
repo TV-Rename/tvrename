@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at http://code.google.com/p/tvrename/
@@ -43,31 +43,16 @@ namespace TVRename
         public bool Error { get; set; }
         public string ErrorText { get; set; }
 
-        public string Name
-        {
-            get { return "Download"; }
-        }
+        public string Name => "Download";
 
-        public string ProgressText
-        {
-            get { return this.Destination.Name; }
-        }
+        public string ProgressText => this.Destination.Name;
 
-        public double PercentDone
-        {
-            get { return this.Done ? 100 : 0; }
-        }
+        public double PercentDone => this.Done ? 100 : 0;
 
-        public string produces
-        {
-            get { return this.Destination.FullName; }
-        }
+        public string produces => this.Destination.FullName;
 
         // 0 to 100
-        public long SizeOfWork
-        {
-            get { return 1000000; }
-        }
+        public long SizeOfWork => 1000000;
 
         // http://www.codeproject.com/Articles/2941/Resizing-a-Photographic-image-with-GDI-for-NET
         static Image MaxSize(Image imgPhoto, int Width, int Height)
@@ -173,10 +158,7 @@ namespace TVRename
 
         #region ScanListItem Members
 
-        public int IconNumber
-        {
-            get { return 5; }
-        }
+        public int IconNumber => 5;
 
         public ProcessedEpisode Episode { get; set; }
 
@@ -226,10 +208,7 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup
-        {
-            get { return "lvgActionDownload"; }
-        }
+        public string ScanListViewGroup => "lvgActionDownload";
 
         public string TargetFolder
         {

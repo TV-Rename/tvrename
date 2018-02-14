@@ -435,8 +435,8 @@ namespace TVRename
             return "5FEC454623154441"; // tvrename's API key on thetvdb.com
         }
 
-
-        public byte[] GetTVDBDownload(string url, bool forceReload = false) {
+        public string GetTVDBDownloadURL(string url)
+        {
             string mirr = this.WebsiteRoot;
 
             if (url.StartsWith("/"))
@@ -448,6 +448,15 @@ namespace TVRename
             theURL += "banners/";
             theURL += url;
 
+            return theURL;
+        }
+
+
+
+        public byte[] GetTVDBDownload(string url, bool forceReload = false)
+        {
+
+            string theURL = GetTVDBDownloadURL(url);
 
             System.Net.WebClient wc = new System.Net.WebClient();
 

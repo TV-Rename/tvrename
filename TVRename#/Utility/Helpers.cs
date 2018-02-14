@@ -80,8 +80,10 @@ namespace TVRename
             return res;
         }
 
-        public static void WriteElementToXML(XmlWriter writer, string elementName, string value)
+        public static void WriteElementToXML(XmlWriter writer, string elementName, string value,bool ignoreifBlank = false)
         {
+            if (ignoreifBlank && string.IsNullOrEmpty(value)) return;
+
             writer.WriteStartElement(elementName);
             writer.WriteValue(value??"");
             writer.WriteEndElement();

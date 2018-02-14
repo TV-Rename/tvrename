@@ -151,7 +151,7 @@ namespace TVRename
 
                         // do case insensitive replace
                         string n = fi.Name;
-                        int p = n.ToUpper().IndexOf(basename.ToUpper());
+                        int p = n.IndexOf(basename, StringComparison.OrdinalIgnoreCase);
                         string newName = n.Substring(0, p) + toname + n.Substring(p + basename.Length);
                         if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";

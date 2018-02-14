@@ -37,7 +37,7 @@ namespace TVRename
 
                     foreach (ProcessedEpisode ei in elist)
                     {
-                        string niceName = TVSettings.Instance.NamingStyle.NameForExt(ei, null, 0);
+                        string niceName = TVSettings.Instance.NamingStyle.NameForExt(ei);
 
                         writer.WriteStartElement("item");
                         
