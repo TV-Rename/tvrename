@@ -202,13 +202,18 @@ namespace TVRename
 
     public static class FileHelper
     {
-        public static bool FolderIsSubfolderOf(string thisOne, string ofThat)
+        public static bool IsSubfolderOf(this string thisOne, string ofThat)
         {
             // need terminating slash, otherwise "c:\abc def" will match "c:\abc"
             thisOne += System.IO.Path.DirectorySeparatorChar.ToString();
             ofThat += System.IO.Path.DirectorySeparatorChar.ToString();
             int l = ofThat.Length;
             return ((thisOne.Length >= l) && (thisOne.Substring(0, l).ToLower() == ofThat.ToLower()));
+        }
+
+        public static string TTS(this string s) // trim trailing slash
+        {
+            return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
 
         public static string GBMB(this long value, int decimalPlaces = 0)
