@@ -124,6 +124,7 @@ namespace TVRename
 
             if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
             {
+                logger.Info($"Testing {From.Directory.FullName } to see whether it should be tidied up");
                 DoTidyup(From.Directory  );
             }
 

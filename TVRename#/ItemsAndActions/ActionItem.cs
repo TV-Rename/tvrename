@@ -8,18 +8,10 @@
 namespace TVRename
 {
     using System;
-    using System.CodeDom;
     using System.Diagnostics;
-    using Alphaleonis.Win32.Filesystem;
     using System.Linq;
-    using System.Security.AccessControl;
-    using System.Threading;
-    using System.Web.UI.WebControls;
     using System.Windows.Forms;
-
-    using File = Alphaleonis.Win32.Filesystem.File;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
-    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 
@@ -102,6 +94,7 @@ namespace TVRename
     {
         protected double _percent;
         protected TidySettings _tidyup;
+        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public bool Done { get; set; }
         public bool Error { get; set; }
@@ -118,10 +111,12 @@ namespace TVRename
             if (file == null) return;
             if (_tidyup.DeleteEmptyIsRecycle)
             {
+                logger.Info($"Recycling {file.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
+                logger.Info($"Deleting {file.FullName}");
                 file.Delete(true);
             }
         }
@@ -131,10 +126,12 @@ namespace TVRename
             if (di == null) return;
             if (_tidyup.DeleteEmptyIsRecycle)
             {
+                logger.Info($"Recycling {di.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
+                logger.Info($"Deleting {di.FullName}");
                 di.Delete();
             }
         }

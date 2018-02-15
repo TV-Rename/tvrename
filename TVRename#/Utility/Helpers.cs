@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -26,6 +27,7 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.Security;
 using System.Windows.Forms;
+using NLog;
 
 // Helpful functions and classes
 
@@ -638,7 +640,7 @@ namespace TVRename
     public static class Helpers
     {
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Gets a value indicating whether application is running under Mono.
@@ -725,7 +727,7 @@ namespace TVRename
         {
             try
             {
-                System.Diagnostics.Process.Start(what, arguments);
+                Process.Start(what, arguments);
                 return true;
             }
             catch (Exception e)
@@ -760,6 +762,46 @@ namespace TVRename
             n = Regex.Replace(n, "[^\\w ]", "");
             return SimplifyName(n);
 
+        }
+
+        public static string GetCommonStartString(List<string> testValues)
+        {
+            string root = string.Empty;
+            bool first = true;
+            foreach (string test in testValues)
+            {
+                if (first)
+                {
+                    root = test;
+                    first = false;
+                }
+                else
+                {
+                    root = GetCommonStartString(root, test);
+                }
+                
+            }
+            return root;
+        }
+
+
+        public static string GetCommonStartString(string fist, string second)
+        {
+            StringBuilder builder = new StringBuilder();
+            char[] ar1 = fist.ToArray();
+            int minLength = Math.Min(fist.Length, second.Length);
+            for (int i = 0; i < minLength; i++)
+            {
+                if (fist.Length > i + 1 && ar1[i].Equals(second[i]))
+                {
+                    builder.Append(ar1[i]);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return builder.ToString();
         }
 
         public static string RemoveDiacritics(string stIn)
