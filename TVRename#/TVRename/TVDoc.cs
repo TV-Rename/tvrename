@@ -1093,6 +1093,7 @@ namespace TVRename
                             if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec) && (n1 < n2))
                             {
                                 ProcessedEpisode oldFirstEI = eis[n1];
+                                List<string> episodeNames = new List<string> {eis[n1].Name};
                                 string combinedName = eis[n1].Name + " + ";
                                 string combinedSummary = eis[n1].Overview + "<br/><br/>";
                                 List<Episode> alleps = new List<Episode>();
@@ -1100,6 +1101,7 @@ namespace TVRename
                                 //int firstNum = eis[n1]->TVcomEpCount();
                                 for (int i = n1 + 1; i <= n2; i++)
                                 {
+                                    episodeNames.Add(eis[i].Name);
                                     combinedName += eis[i].Name;
                                     combinedSummary += eis[i].Overview;
                                     alleps.Add(eis[i]);
@@ -1113,6 +1115,19 @@ namespace TVRename
                                 eis.RemoveRange(n1, n2 - n1);
 
                                 eis.RemoveAt(n1);
+
+                                string root = Helpers.GetCommonStartString(episodeNames);
+                                int shortestEpisodeName = episodeNames.Min(x => x.Length);
+                                int longestEpisodeName = episodeNames.Max(x => x.Length);
+                                bool namesSameLength = (shortestEpisodeName == longestEpisodeName);
+                                bool rootIsIgnored = root.Trim().Equals("Episode", StringComparison.OrdinalIgnoreCase);
+
+
+                                if (namesSameLength && !rootIsIgnored && root.Length > 3 &&
+                                    root.Length > shortestEpisodeName / 2)
+                                {
+                                    combinedName = root.Trim().TrimEnd('(').Trim();
+                                }
 
                                 ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si, alleps)
                                 {
@@ -1795,6 +1810,11 @@ namespace TVRename
         {
             StringBuilder output = new StringBuilder();
 
+            output.AppendLine("##################################################");
+            output.AppendLine("DUPLICATE FINDER - Part one");
+            output.AppendLine("##################################################");
+
+
             foreach (ShowItem si in this.ShowItems)
             {
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
@@ -1812,19 +1832,40 @@ namespace TVRename
                     //Search through each pair of episodes for the same season
                     foreach (ProcessedEpisode pep in kvp.Value)
                     {
-                        foreach (ProcessedEpisode comparePep in kvp.Value)
+                        if (pep.type == ProcessedEpisode.ProcessedEpisodeType.merged)
+                        {
+                            output.AppendLine(si.ShowName + " - Season: " + kvp.Key + " - " + pep.NumsAsString() +" - "+pep.Name+" is:");
+                            foreach (Episode sourceEpisode in pep.sourceEpisodes)
+                            {
+                                output.AppendLine("                      - " + sourceEpisode.EpNum + " - " + sourceEpisode.Name);
+                            }
+                        }
+
+                    foreach (ProcessedEpisode comparePep in kvp.Value)
                         {
                             if (pep.FirstAired.HasValue && comparePep.FirstAired.HasValue && pep.FirstAired == comparePep.FirstAired && pep.EpisodeID < comparePep.EpisodeID)
                             {
-                                output.AppendLine(si.ShowName + " - Season: " + kvp.Key + " - " + pep.FirstAired.ToString() + " - " + pep.EpNum + " - " + comparePep.EpNum);
+                                output.AppendLine($"{si.ShowName} - Season: {kvp.Key} - {pep.FirstAired.ToString()} - {pep.EpNum}({pep.Name}) - {comparePep.EpNum}({comparePep.Name})");
+                                string root = Helpers.GetCommonStartString(pep.Name, comparePep.Name);
+                                bool sameLength = (pep.Name.Length == comparePep.Name.Length);
+                                if (!root.Trim().Equals("Episode") && sameLength && root.Length>3 && root.Length > pep.Name.Length/2)
+                                    output.AppendLine("####### POSSIBLE DUPLICATE ##########");
                             }
                         }
                     }
                 }
             }
-            
-           logger.Info(output.ToString());
+            output.AppendLine("##################################################");
+            output.AppendLine("DUPLICATE FINDER - End");
+            output.AppendLine("##################################################");
+
+
+
+
+            logger.Info(output.ToString());
         }
+
+
         public void QuickScan() => QuickScan(true, true);
 
         public void QuickScan(bool doMissingRecents, bool doFilesInDownloadDir)
