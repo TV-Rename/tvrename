@@ -2186,6 +2186,7 @@ namespace TVRename
                             SeriesInfo s = si.TheSeries();
                             Episode ep = s.getEpisode(seasF, epF);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                            logger.Info($"Removing {fi.FullName } as it matches {matchingShows[0].ShowName} and no episodes are needed");
                             this.TheActionList.Add(new ActionDeleteFile(fi, pep, TVSettings.Instance.Tidyup));
                         }
 
@@ -2227,6 +2228,7 @@ namespace TVRename
                             SeriesInfo s = si.TheSeries();
                             Episode ep = s.getEpisode(seasF, epF);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                            logger.Info($"Removing {di.FullName } as it matches {matchingShows[0].ShowName} and no episodes are needed");
                             this.TheActionList.Add(new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup));
                         }
 

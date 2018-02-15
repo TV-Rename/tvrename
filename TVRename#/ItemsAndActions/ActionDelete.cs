@@ -83,6 +83,7 @@ namespace TVRename
                     DeleteOrRecycleFile(this.toRemove);
                     if (this._tidyup != null && this._tidyup.DeleteEmpty)
                     {
+                        logger.Info($"Testing {this.toRemove.Directory.FullName } to see whether it should be tidied up");
                         DoTidyup(this.toRemove.Directory);
                     }
                 }
@@ -158,6 +159,7 @@ namespace TVRename
                     DeleteOrRecycleFolder(this.toRemove);
                     if (this._tidyup != null && this._tidyup.DeleteEmpty)
                     {
+                        logger.Info($"Testing {this.toRemove.Parent.FullName } to see whether it should be tidied up");
                         DoTidyup(this.toRemove.Parent);
                     }
                 }
