@@ -27,6 +27,8 @@ using System.Runtime.InteropServices;
 using Microsoft.Win32;
 using System.Security;
 using System.Windows.Forms;
+using Microsoft.WindowsAPICodePack.Shell;
+using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
 using NLog;
 
 // Helpful functions and classes
@@ -204,6 +206,38 @@ namespace TVRename
 
     public static class FileHelper
     {
+
+
+        public static int GetFilmLength(this FileInfo movieFile)
+        {
+            string duration;
+            using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
+            {
+                // alternatively: shell.Properties.GetProperty("System.Media.Duration");
+                IShellProperty prop = shell.Properties.System.Media.Duration;
+                // Duration will be formatted as 00:44:08
+                duration = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+            }
+
+            return 3600 * int.Parse(duration.Split(':')[0]) + 60 * int.Parse(duration.Split(':')[1]) +
+                   int.Parse(duration.Split(':')[2]);
+
+        }
+
+        public static void GetFilmDetails(this FileInfo movieFile)
+        {
+            using (ShellPropertyCollection properties = new ShellPropertyCollection(movieFile.FullName))
+            {
+                foreach (IShellProperty prop in properties)
+                {
+                    string value = (prop.ValueAsObject == null)
+                        ? ""
+                        : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+                    Console.WriteLine("{0} = {1}", prop.CanonicalName, value);
+                }
+            }
+        }
+
         public static bool FolderIsSubfolderOf(string thisOne, string ofThat)
         {
             // need terminating slash, otherwise "c:\abc def" will match "c:\abc"
