@@ -6,7 +6,7 @@ namespace TVRename.Core.Models
 {
     public class ProcessedEpisode : Episode
     {
-        //TODO_MS Implement these methods/populate the values
+        //TODO: Implement these methods/populate the values -MarkSummerville
         internal IEnumerable<Episode> SourceEpisodes;
         public ProcessedShow Show { get; private set; }
         public ProcessedEpisodeType Type { get; private set; }

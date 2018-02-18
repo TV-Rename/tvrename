@@ -42,7 +42,8 @@ namespace TVRename.Core.Actions
                     ConformanceLevel = ConformanceLevel.Fragment
                 });
 
-                writer.WriteStartDocument(true);
+                //writer.WriteWhitespace("");
+                //writer.WriteStartDocument((true);
                 writer.WriteComment($" created on {DateTime.UtcNow:u} - by TV Rename ");
 
 
@@ -62,6 +63,7 @@ namespace TVRename.Core.Actions
             writer.WriteStartElement("episodedetails");
 
             writer.WriteNode("title", singleEpisode.Name);
+            writer.WriteNode("showtitle", this.episode.Show?.Name,true);
 
             //writer.WriteNode("rating", singleEpisode.Rating.Score);
             if (singleEpisode.Rating != null)
@@ -86,10 +88,8 @@ namespace TVRename.Core.Actions
             writer.WriteNode("episode", singleEpisode.Number);
             writer.WriteNode("plot", singleEpisode.Overview);
 
-            if (this.episode.Show != null)
-            {
-                writer.WriteNode("mpaa", this.episode.Show.ContentRating.ToString());
-            }
+            writer.WriteNode("mpaa", this.episode.Show?.ContentRating.ToString(),true); //TODO: Dash
+
             writer.WriteNode("id", singleEpisode.Id);
 
             writer.WriteStartElement("uniqueid");
@@ -98,13 +98,14 @@ namespace TVRename.Core.Actions
             writer.WriteValue(singleEpisode.Id);
             writer.WriteEndElement();
 
-            /*
-            writer.WriteStartElement("uniqueid");
-            writer.WriteAttributeString("type", "imdb");
-            writer.WriteAttributeString("default", "false");
-            writer.WriteValue(singleEpisode.ImdbId);
-            writer.WriteEndElement();
-            */
+            if (!string.IsNullOrWhiteSpace(singleEpisode.ImdbId))
+            {
+                writer.WriteStartElement("uniqueid");
+                writer.WriteAttributeString("type", "imdb");
+                writer.WriteAttributeString("default", "false");
+                writer.WriteValue(singleEpisode.ImdbId);
+                writer.WriteEndElement();
+            }
 
             //Writers(s)
             writer.WriteNodes("credits", singleEpisode.Writers);
@@ -117,6 +118,14 @@ namespace TVRename.Core.Actions
             {
                 writer.WriteStartElement("aired");
                 writer.WriteValue(singleEpisode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("premiered");
+                writer.WriteValue(singleEpisode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                writer.WriteEndElement();
+
+                writer.WriteStartElement("year");
+                writer.WriteValue(singleEpisode.FirstAired.Value.ToString("yyyy"));
                 writer.WriteEndElement();
             }
 

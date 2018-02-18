@@ -61,12 +61,15 @@ namespace TVRename.Core.Actions
 
                     writer.WriteEndElement();
                 }
-                
+
+                writer.WriteNode("season", this.show.SeasonCount());
+                writer.WriteNode("episode", this.show.EpisodeCount());
+
                 writer.WriteNode("plot", this.show.Overview);
 
-                if (!string.IsNullOrEmpty(this.show.Runtime)) writer.WriteNode("runtime", this.show.Runtime);
+                writer.WriteNode("runtime", this.show.Runtime,true);
 
-                writer.WriteNode("mpaa", this.show.ContentRating.ToString()); // TODO: Dash
+                writer.WriteNode("mpaa", this.show.ContentRating.ToString(),true); // TODO: Dash
 
                 writer.WriteNode("id", this.show.Id);
 

@@ -61,5 +61,17 @@ namespace TVRename.Core.Models
             this.Rating = show.Metadata.Rating;
             this.Status = show.Metadata.Status;
         }
+
+
+        //TODO: Complete these methods , Mark Summerville
+        public int SeasonCount()
+        {
+            return 1;
+        }
+
+        public int EpisodeCount()
+        {
+            return 1; 
+        }
     }
 }
