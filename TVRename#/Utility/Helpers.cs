@@ -813,6 +813,12 @@ namespace TVRename
             return root;
         }
 
+        public static string TrimEnd(this string root, string ending)
+        {
+            if (!root.EndsWith(ending,StringComparison.OrdinalIgnoreCase)) return root;
+
+            return root.Substring(0, root.Length - ending.Length);
+        }
 
         public static string GetCommonStartString(string fist, string second)
         {
