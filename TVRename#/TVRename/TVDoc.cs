@@ -1810,11 +1810,12 @@ namespace TVRename
         {
             StringBuilder output = new StringBuilder();
 
+            output.AppendLine("");
             output.AppendLine("##################################################");
-            output.AppendLine("DUPLICATE FINDER - Part one");
+            output.AppendLine("DUPLICATE FINDER - Start");
             output.AppendLine("##################################################");
 
-
+            DirFilesCache dfc = new DirFilesCache();
             foreach (ShowItem si in this.ShowItems)
             {
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
@@ -1845,11 +1846,58 @@ namespace TVRename
                         {
                             if (pep.FirstAired.HasValue && comparePep.FirstAired.HasValue && pep.FirstAired == comparePep.FirstAired && pep.EpisodeID < comparePep.EpisodeID)
                             {
+                                // Tell user about this possibility
                                 output.AppendLine($"{si.ShowName} - Season: {kvp.Key} - {pep.FirstAired.ToString()} - {pep.EpNum}({pep.Name}) - {comparePep.EpNum}({comparePep.Name})");
+
+                                //do the 'name' test
                                 string root = Helpers.GetCommonStartString(pep.Name, comparePep.Name);
                                 bool sameLength = (pep.Name.Length == comparePep.Name.Length);
-                                if (!root.Trim().Equals("Episode") && sameLength && root.Length>3 && root.Length > pep.Name.Length/2)
-                                    output.AppendLine("####### POSSIBLE DUPLICATE ##########");
+                                if (!root.Trim().Equals("Episode") && sameLength && root.Length>3 && root.Length > pep.Name.Length / 2) { 
+                                    output.AppendLine("####### POSSIBLE DUPLICATE DUE TO NAME##########");
+
+                                //Do the missing Test (ie is one missing and not the other)
+                                bool pepFound = FindEpOnDisk(dfc,pep ).Count>0;
+                                bool comparePepFound = FindEpOnDisk(dfc, comparePep).Count > 0;
+
+                                    if (pepFound ^ comparePepFound)
+                                    {
+                                        output.AppendLine(
+                                            "####### POSSIBLE DUPLICATE DUE TO ONE MISSING AND ONE FOUND ##########");
+
+                                        ProcessedEpisode possibleDupEpisode = pepFound ? pep : comparePep;
+                                        //Test the file sizes in the season
+                                        //More than 40% longer
+                                        FileInfo possibleDupFile = FindEpOnDisk(dfc, possibleDupEpisode)[0];
+                                        int dupMovieLength = possibleDupFile.GetFilmLength();
+                                        System.Collections.Generic.List<int> otherMovieLengths =
+                                            new System.Collections.Generic.List<int>();
+
+                                        foreach (FileInfo file in possibleDupFile.Directory.EnumerateFiles())
+                                        {
+                                            if (TVSettings.Instance.UsefulExtension(file.Extension, false))
+                                            {
+                                                otherMovieLengths.Add(file.GetFilmLength());
+                                            }
+                                        }
+
+                                        int averageMovieLength =
+                                            (otherMovieLengths.Sum() - dupMovieLength) / (otherMovieLengths.Count - 1);
+
+                                        if (dupMovieLength > averageMovieLength * 1.4)
+                                        {
+                                            output.AppendLine(
+                                                "######################################################################");
+                                            output.AppendLine(
+                                                "####### SURELY WE HAVE ONE NOW                              ##########");
+                                            output.AppendLine(
+                                                $"####### {possibleDupEpisode.EpNum}({possibleDupEpisode.Name}) has length {dupMovieLength} greater than the average in the directory of {averageMovieLength}");
+                                            output.AppendLine(
+                                                "######################################################################");
+                                        }
+                                    }
+                                }
+
+
                             }
                         }
                     }
