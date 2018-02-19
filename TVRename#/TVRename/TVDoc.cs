@@ -339,7 +339,7 @@ namespace TVRename
             foreach (ShowItem si in ShowItems)
             {
                 if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) &&
-                    FileHelper.FolderIsSubfolderOf(theFolder, si.AutoAdd_FolderBase))
+                    theFolder.IsSubfolderOf(si.AutoAdd_FolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
                     logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
@@ -812,12 +812,12 @@ namespace TVRename
                 this.GenDict();
         }
 
-        public List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ProcessedEpisode pe)
+        public List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ProcessedEpisode pe,bool checkDirectoryExist = true)
         {
-            return this.FindEpOnDisk(dfc, pe.SI, pe);
+            return this.FindEpOnDisk(dfc, pe.SI, pe, checkDirectoryExist);
         }
 
-        public List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ShowItem si, Episode epi)
+        public List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ShowItem si, Episode epi,bool checkDirectoryExist = true)
         {
             if (dfc == null)
                 dfc = new DirFilesCache();
@@ -828,10 +828,10 @@ namespace TVRename
 
             int snum = epi.TheSeason.SeasonNumber;
 
-            if (!si.AllFolderLocations().ContainsKey(snum))
+            if (!si.AllFolderLocationsEpCheck(checkDirectoryExist).ContainsKey(snum))
                 return ret;
 
-            foreach (string folder in si.AllFolderLocations()[snum])
+            foreach (string folder in si.AllFolderLocationsEpCheck(checkDirectoryExist)[snum])
             {
                 FileInfo[] files = dfc.Get(folder);
                 if (files == null)
