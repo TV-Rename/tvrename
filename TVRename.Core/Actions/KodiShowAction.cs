@@ -9,7 +9,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename.Core.Actions
 {
-    public class KodiAction : IAction
+    public class KodiShowAction : IAction
     {
         private readonly ProcessedShow show;
         private readonly FileInfo file;
@@ -18,7 +18,7 @@ namespace TVRename.Core.Actions
 
         public string Produces => this.file.FullName;
 
-        public KodiAction(ProcessedShow show, FileInfo file)
+        public KodiShowAction(ProcessedShow show, FileInfo file)
         {
             this.show = show;
             this.file = file;
@@ -61,12 +61,15 @@ namespace TVRename.Core.Actions
 
                     writer.WriteEndElement();
                 }
-                
+
+                writer.WriteNode("season", this.show.SeasonCount());
+                writer.WriteNode("episode", this.show.EpisodeCount());
+
                 writer.WriteNode("plot", this.show.Overview);
 
-                if (!string.IsNullOrEmpty(this.show.Runtime)) writer.WriteNode("runtime", this.show.Runtime);
+                writer.WriteNode("runtime", this.show.Runtime,true);
 
-                writer.WriteNode("mpaa", this.show.ContentRating.ToString()); // TODO: Dash
+                writer.WriteNode("mpaa", this.show.ContentRating.ToString(),true); // TODO: Dash
 
                 writer.WriteNode("id", this.show.Id);
 
@@ -82,10 +85,7 @@ namespace TVRename.Core.Actions
                 writer.WriteValue(this.show.ImdbId);
                 writer.WriteEndElement();
 
-                foreach (string genre in this.show.Genres)
-                {
-                    writer.WriteNode("genre", genre);
-                }
+                writer.WriteNodes("genre", this.show.Genres);
 
                 writer.WriteNode("premiered", this.show.FirstAired?.ToString("yyyy-MM-dd"));
 

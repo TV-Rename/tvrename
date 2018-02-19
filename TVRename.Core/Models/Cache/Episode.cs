@@ -108,5 +108,9 @@ namespace TVRename.Core.Models.Cache
         /// The episode writers.
         /// </value>
         public List<string> Writers { get; set; } = new List<string>();
+
+        //TODO: Populate these properies - MarkSummerville
+        public bool SeasonNumber { get; internal set; }
+        public string ImdbId { get; set; }
     }
 }

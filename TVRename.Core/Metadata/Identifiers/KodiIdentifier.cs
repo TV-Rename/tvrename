@@ -8,27 +8,22 @@ namespace TVRename.Core.Metadata.Identifiers
     {
         public override string TextFormat => "Kodi XML";
 
-        public override TargetTypes SupportedTypes => TargetTypes.Show | TargetTypes.Season | TargetTypes.Episode;
+        public override TargetTypes SupportedTypes => TargetTypes.Show | TargetTypes.Episode;
 
         protected override IAction ProcessShow(ProcessedShow show, FileInfo file, bool force = false)
         {
             if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
 
-            return new KodiAction(show, file);
+            return new KodiShowAction(show, file);
         }
 
-        protected override IAction ProcessSeason(ProcessedShow show, ProcessedSeason season, FileInfo file, bool force = false)
-        {
-            if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
 
-            return new KodiAction(show, file);
-        }
 
         protected override IAction ProcessEpisode(ProcessedShow show, ProcessedSeason season, ProcessedEpisode episode, FileInfo file, bool force = false)
         {
             if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;
 
-            return new KodiAction(show, file);
+            return new KodiEpisodeAction(episode , file);
         }
     }
 }

@@ -58,11 +58,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\KodiEpisodeAction.cs" />
     <Compile Include="Actions\FleAction.cs" />
     <Compile Include="Actions\MissingAction.cs" />
     <Compile Include="Actions\DownloadAction.cs" />
     <Compile Include="Actions\IAction.cs" />
-    <Compile Include="Actions\KodiAction.cs" />
+    <Compile Include="Actions\KodiShowAction.cs" />
     <Compile Include="Actions\Mede8erViewAction.cs" />
     <Compile Include="Actions\Mede8erAction.cs" />
     <Compile Include="Actions\PyTivoAction.cs" />
