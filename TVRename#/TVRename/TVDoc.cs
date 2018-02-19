@@ -3049,6 +3049,7 @@ namespace TVRename
 
             string fullPath = directory + System.IO.Path.DirectorySeparatorChar + filename; // construct full path with sanitised filename
 
+            //TODO:Do we still need this now we have AlphaFS, MarkSummerville
             if ((filename.Length > 256) || (fullPath.Length > 256))
                 return false;
 
