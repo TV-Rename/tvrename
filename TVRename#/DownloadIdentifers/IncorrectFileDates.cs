@@ -17,9 +17,9 @@ namespace TVRename
             DateTime? newUpdateTime = si.TheSeries().LastAiredDate();
             if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
             {
-                //Any series before 1970 will get 1970 as the timestamp
-                if (newUpdateTime.Value.CompareTo(Helpers.FromUnixTime(0)) < 0)
-                    newUpdateTime = Helpers.FromUnixTime(0);
+                //Any series before 1980 will get 1980 as the timestamp
+                if (newUpdateTime.Value.CompareTo(Helpers.windowsStartDateTime) < 0)
+                    newUpdateTime = Helpers.windowsStartDateTime;
 
                 DirectoryInfo di = new DirectoryInfo(si.AutoAdd_FolderBase);
                 if ((di.LastWriteTimeUtc != newUpdateTime.Value)&&(!this.doneFilesAndFolders.Contains(di.FullName)))
@@ -37,9 +37,10 @@ namespace TVRename
 
             if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
             {
-                //Any series before 1970 will get 1970 as the timestamp
-                if (newUpdateTime.Value.CompareTo(Helpers.FromUnixTime(0)) < 0)
-                    newUpdateTime = Helpers.FromUnixTime(0);
+                //Any series before 1980 will get 1980 as the timestamp
+                if (newUpdateTime.Value.CompareTo(Helpers.windowsStartDateTime) < 0)
+                    newUpdateTime = Helpers.windowsStartDateTime;
+
 
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!this.doneFilesAndFolders.Contains(di.FullName)))
@@ -58,9 +59,9 @@ namespace TVRename
             {
                 DateTime newUpdateTime = dbep.FirstAired.Value;
 
-                //Any series before 1970 will get 1970 as the timestamp
-                if (newUpdateTime.CompareTo(Helpers.FromUnixTime(0)) < 0)
-                    newUpdateTime = Helpers.FromUnixTime(0);
+                //Any series before 1980 will get 1980 as the timestamp
+                if (newUpdateTime.CompareTo(Helpers.windowsStartDateTime) < 0)
+                    newUpdateTime = Helpers.windowsStartDateTime;
 
                 if ((filo.LastWriteTimeUtc != newUpdateTime) && (!this.doneFilesAndFolders.Contains(filo.FullName)))
                 {
