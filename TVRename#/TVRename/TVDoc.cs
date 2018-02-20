@@ -1122,11 +1122,14 @@ namespace TVRename
                                 bool namesSameLength = (shortestEpisodeName == longestEpisodeName);
                                 bool rootIsIgnored = root.Trim().Equals("Episode", StringComparison.OrdinalIgnoreCase);
 
-                                char[] charsToTrim = { ',', '.', '(' };
+
                                 if (namesSameLength && !rootIsIgnored && root.Length > 3 &&
                                     root.Length > shortestEpisodeName / 2)
                                 {
-                                    combinedName = root.Trim().TrimEnd("part").TrimEnd("episode").Trim().TrimEnd(charsToTrim).Trim();
+                                    char[] charsToTrim = { ',', '.', ';', ':', '-', '(' };
+                                    string[] wordsToTrim = { "part", "episode" };
+
+                                    combinedName = root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
                                 }
 
                                 ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si, alleps)

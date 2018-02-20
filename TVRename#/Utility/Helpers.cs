@@ -823,16 +823,27 @@ namespace TVRename
             return root.Substring(0, root.Length - ending.Length);
         }
 
-        public static string GetCommonStartString(string fist, string second)
+        public static string TrimEnd(this string root, string[] endings)
+        {
+            string trimmedString = root;
+            foreach (string ending in endings)
+            {
+                trimmedString = trimmedString.TrimEnd(ending);
+            }
+
+            return trimmedString;
+        }
+
+        public static string GetCommonStartString(string first, string second)
         {
             StringBuilder builder = new StringBuilder();
-            char[] ar1 = fist.ToArray();
-            int minLength = Math.Min(fist.Length, second.Length);
+            
+            int minLength = Math.Min(first.Length, second.Length);
             for (int i = 0; i < minLength; i++)
             {
-                if (fist.Length > i + 1 && ar1[i].Equals(second[i]))
+                if (first[i].Equals(second[i]))
                 {
-                    builder.Append(ar1[i]);
+                    builder.Append(first[i]);
                 }
                 else
                 {
