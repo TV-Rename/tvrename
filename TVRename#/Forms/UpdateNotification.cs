@@ -53,7 +53,7 @@ namespace TVRename.Forms
                 result = reader.ReadToEnd();
             }
 
-            string HTML_HEAD = "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style><base target=\"_blank\"></head><body>";
+            string HTML_HEAD = "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
             string HTML_FOOTER = "</body></html>";
 
             this.webReleaseNotes.DocumentText= HTML_HEAD+result+HTML_FOOTER;
@@ -75,5 +75,18 @@ namespace TVRename.Forms
             Helpers.SysOpen(this.newVersion.DownloadUrl);
         }
 
+        private void NavigateTo(object sender, WebBrowserNavigatingEventArgs e)
+        {
+            string url = e.Url.AbsoluteUri;
+
+            if (url.Contains(@"ieframe.dll"))
+                url = e.Url.Fragment.Substring(1);
+
+            if ((url.Substring(0, 7).CompareTo("http://") == 0) || (url.Substring(0, 8).CompareTo("https://") == 0))
+            {
+                e.Cancel = true;
+                Helpers.SysOpen(e.Url.AbsoluteUri);
+            }
+        }
     }
 }
