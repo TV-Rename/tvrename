@@ -8,6 +8,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -19,7 +20,7 @@ namespace TVRename
         public int EpNum;
         public int EpisodeID;
         public DateTime? FirstAired;
-        public System.Collections.Generic.Dictionary<string, string> Items; // other fields we don't specifically grab
+        private System.Collections.Generic.Dictionary<string, string> Items; // other fields we don't specifically grab
         public string Overview;
         public string EpisodeRating;
         public string EpisodeGuestStars;
@@ -63,6 +64,58 @@ namespace TVRename
         {
             this.SetDefaults(ser, seas);
         }
+
+
+        internal IEnumerable<KeyValuePair<string, string>> OtherItems()
+        {
+
+            List<string> skip = new List<String>
+            {
+                "id",
+                "airedSeason",
+                "airedSeasonID",
+                "airedEpisodeNumber",
+                "episodeName",
+                "overview",
+                "lastUpdated",
+                "dvdSeason",
+                "dvdEpisodeNumber",
+                "dvdChapter",
+                "absoluteNumber",
+                "filename",
+                "seriesId",
+                "lastUpdatedBy",
+                "airsAfterSeason",
+                "airsBeforeSeason",
+                "airsBeforeEpisode",
+                "thumbAuthor",
+                "thumbAdded",
+                "thumbAdded",
+                "thumbWidth",
+                "thumbHeight",
+                "director",
+                "firstAired",
+                "Combined_episodenumber",
+                "Combined_season",
+                "DVD_episodenumber",
+                "DVD_season",
+                "EpImgFlag",
+                "absolute_number",
+                "filename",
+                "is_movie",
+                "thumb_added",
+                "thumb_height",
+                "thumb_width",
+                "EpisodeDirector"
+            };
+            return this.Items.Where(c => !skip.Contains(c.Key));
+            
+        }
+
+
+        public string DVDEp => getValueAcrossVersions("dvdEpisodeNumber", "DVD_episodenumber", "");
+        public string AirsBeforeSeason => getValueAcrossVersions("airsBeforeSeason", "airsbefore_season", "");
+        public string AirsBeforeEpisode => getValueAcrossVersions("airsBeforeEpisode", "airsbefore_episode", "");
 
         public Episode(SeriesInfo ser, Season seas, XmlReader r, CommandLineArgs args)
         {

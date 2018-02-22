@@ -1059,48 +1059,9 @@ namespace TVRename
         {
             String overviewString = ei.Overview;
 
-            List<string> skip = new List<String>
-            {
-                "id",
-                "airedSeason",
-                "airedSeasonID",
-                "airedEpisodeNumber",
-                "episodeName",
-                "overview",
-                "lastUpdated",
-                "dvdSeason",
-                "dvdEpisodeNumber",
-                "dvdChapter",
-                "absoluteNumber",
-                "filename",
-                "seriesId",
-                "lastUpdatedBy",
-                "airsAfterSeason",
-                "airsBeforeSeason",
-                "airsBeforeEpisode",
-                "thumbAuthor",
-                "thumbAdded",
-                "thumbAdded",
-                "thumbWidth",
-                "thumbHeight",
-                "director",
-                "firstAired",
-                "Combined_episodenumber",
-                "Combined_season",
-                "DVD_episodenumber",
-                "DVD_season",
-                "EpImgFlag",
-                "absolute_number",
-                "filename",
-                "is_movie",
-                "thumb_added",
-                "thumb_height",
-                "thumb_width",
-                "EpisodeDirector"
-            };
 
             bool firstInfo = true;
-            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in ei.Items)
+            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in ei.OtherItems())
             {
                 if (firstInfo)
                 {
@@ -1108,7 +1069,7 @@ namespace TVRename
                     firstInfo = false;
                 }
 
-                if (!skip.Contains(kvp.Key) && (kvp.Value != "") && kvp.Value != "0")
+                if ((kvp.Value != "") && kvp.Value != "0")
                 {
 
                     if (((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId")))

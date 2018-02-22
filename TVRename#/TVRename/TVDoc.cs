@@ -953,37 +953,34 @@ namespace TVRename
                 // merge specials in
                 foreach (Episode ep in ser.Seasons[0].Episodes)
                 {
-                    if (ep.Items.ContainsKey("airsbefore_season") && ep.Items.ContainsKey("airsbefore_episode"))
+                    string seasstr = ep.AirsBeforeSeason;
+                    string epstr = ep.AirsBeforeEpisode;
+                    if ((string.IsNullOrEmpty(seasstr)) || (string.IsNullOrEmpty(epstr)))
+                        continue;
+                    int sease = int.Parse(seasstr);
+                    if (sease != snum)
+                        continue;
+                    int epnum = int.Parse(epstr);
+                    for (int i = 0; i < eis.Count; i++)
                     {
-                        string seasstr = ep.Items["airsbefore_season"];
-                        string epstr = ep.Items["airsbefore_episode"];
-                        if ((string.IsNullOrEmpty(seasstr)) || (string.IsNullOrEmpty(epstr)))
-                            continue;
-                        int sease = int.Parse(seasstr);
-                        if (sease != snum)
-                            continue;
-                        int epnum = int.Parse(epstr);
-                        for (int i = 0; i < eis.Count; i++)
+                        if ((eis[i].SeasonNumber == sease) && (eis[i].EpNum == epnum))
                         {
-                            if ((eis[i].SeasonNumber == sease) && (eis[i].EpNum == epnum))
+                            ProcessedEpisode pe = new ProcessedEpisode(ep, si)
                             {
-                                ProcessedEpisode pe = new ProcessedEpisode(ep, si)
-                                {
-                                    TheSeason = eis[i].TheSeason,
-                                    SeasonID = eis[i].SeasonID
-                                };
-                                eis.Insert(i, pe);
-                                break;
-                            }
+                                TheSeason = eis[i].TheSeason,
+                                SeasonID = eis[i].SeasonID
+                            };
+                            eis.Insert(i, pe);
+                            break;
                         }
                     }
                 }
                 // renumber to allow for specials
                 int epnumr = 1;
-                for (int j = 0; j < eis.Count; j++)
+                foreach (ProcessedEpisode t in eis)
                 {
-                    eis[j].EpNum2 = epnumr + (eis[j].EpNum2 - eis[j].EpNum);
-                    eis[j].EpNum = epnumr;
+                    t.EpNum2 = epnumr + (t.EpNum2 - t.EpNum);
+                    t.EpNum = epnumr;
                     epnumr++;
                 }
             }
