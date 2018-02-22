@@ -839,19 +839,15 @@ namespace TVRename
 
                 foreach (FileInfo fiTemp in files)
                 {
-                    int seasFound;
-                    int epFound;
-
                     if (!TVSettings.Instance.UsefulExtension(fiTemp.Extension, false))
                         continue; // move on
 
-                    if (FindSeasEp(fiTemp, out seasFound, out epFound, si))
-                    {
-                        if (seasFound == -1)
-                            seasFound = seasWanted;
-                        if ((seasFound == seasWanted) && (epFound == epWanted))
-                            ret.Add(fiTemp);
-                    }
+                    if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, si)) continue;
+
+                    if (seasFound == -1)
+                        seasFound = seasWanted;
+                    if ((seasFound == seasWanted) && (epFound == epWanted))
+                        ret.Add(fiTemp);
                 }
             }
 
@@ -2230,11 +2226,8 @@ namespace TVRename
 
                         if (fileCanBeRemoved)
                         {
-                            int seasF;
-                            int epF;
-
                             ShowItem si = matchingShows[0];//Choose the first series
-                            TVDoc.FindSeasEp(fi, out seasF, out epF, si);
+                            TVDoc.FindSeasEp(fi, out int seasF, out int epF, si);
                             SeriesInfo s = si.TheSeries();
                             Episode ep = s.getEpisode(seasF, epF);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
@@ -2272,11 +2265,8 @@ namespace TVRename
 
                         if (dirCanBeRemoved)
                         {
-                            int seasF;
-                            int epF;
-
                             ShowItem si = matchingShows[0];//Choose the first series
-                            TVDoc.FindSeasEp(di, out seasF, out epF, si);
+                            TVDoc.FindSeasEp(di, out int seasF, out int epF, si);
                             SeriesInfo s = si.TheSeries();
                             Episode ep = s.getEpisode(seasF, epF);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
@@ -2297,10 +2287,7 @@ namespace TVRename
 
         public bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
         {
-            int seasF;
-            int epF;
-
-            if (TVDoc.FindSeasEp(fi, out seasF, out epF, si))
+            if (TVDoc.FindSeasEp(fi, out int seasF, out int epF, si))
             {
                 SeriesInfo s = si.TheSeries();
                 try
@@ -2328,10 +2315,7 @@ namespace TVRename
 
         public bool fileNeeded(DirectoryInfo di, ShowItem si, DirFilesCache dfc)
         {
-            int seasF;
-            int epF;
-
-            if (TVDoc.FindSeasEp(di, out seasF, out epF, si))
+            if (TVDoc.FindSeasEp(di, out int seasF, out int epF, si))
             {
                 SeriesInfo s = si.TheSeries();
                 try
@@ -2495,10 +2479,7 @@ namespace TVRename
                             if (this.ActionCancel)
                                 return;
 
-                            int seasNum;
-                            int epNum;
-
-                            if (!FindSeasEp(fi, out seasNum, out epNum, si))
+                            if (!FindSeasEp(fi, out int seasNum, out int epNum, si))
                                 continue; // can't find season & episode, so this file is of no interest to us
 
                             if (seasNum == -1)
@@ -2996,12 +2977,6 @@ namespace TVRename
             this.DoDownloadsFG();
         }
 
-        public static bool FindSeasEp(FileInfo fi, ShowItem si)
-        {
-            int s;
-            int e;
-            return FindSeasEp(fi, out s, out e, si);
-        }
 
         public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si)
         {

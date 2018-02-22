@@ -83,9 +83,7 @@ namespace TVRename
 
                 foreach (DirCacheEntry fi in dirC)
                 {
-                    int seas;
-                    int ep;
-                    bool r = TVDoc.FindSeasEp(fi.TheFile, out seas, out ep, null);
+                    bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, null);
                     bool useful = fi.HasUsefulExtension_NotOthersToo;
                     txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                 }
@@ -114,9 +112,7 @@ namespace TVRename
                                 files.AddFolder(null, 0, 0, folder, true);
                             foreach (DirCacheEntry fi in files)
                             {
-                                int seas;
-                                int ep;
-                                bool r = TVDoc.FindSeasEp(fi.TheFile, out seas, out ep, si);
+                                bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, si);
                                 bool useful = fi.HasUsefulExtension_NotOthersToo;
                                 txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                             }
