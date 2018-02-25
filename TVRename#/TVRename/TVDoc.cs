@@ -3137,6 +3137,10 @@ namespace TVRename
         {
             const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
             UpdateVersion currentVersion;
+
+            System.Net.ServicePointManager.SecurityProtocol =  System.Net.SecurityProtocolType.Tls12;
+
+
             try
             {
                 string currentVersionString = Helpers.DisplayVersion;
