@@ -122,9 +122,7 @@ namespace TVRename
 
                         if (FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false))
                         {
-                            int seasF;
-                            int epF;
-                            if (TVDoc.FindSeasEp(file, out seasF, out epF, Action.Episode.SI) &&
+                            if (TVDoc.FindSeasEp(file, out int seasF, out int epF, Action.Episode.SI) &&
                                 (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
                             {
                                 toRemove.Add(Action1);

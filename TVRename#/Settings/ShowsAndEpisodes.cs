@@ -117,31 +117,30 @@ namespace TVRename
             int ep1 = e1.EpNum;
             int ep2 = e2.EpNum;
 
-            string key = "DVD_episodenumber";
-            if (e1.Items.ContainsKey(key) && e2.Items.ContainsKey(key))
+            string n1 = e1.DVDEp;
+            string n2 = e2.DVDEp;
+
+            if ((!string.IsNullOrEmpty(n1)) && (!string.IsNullOrEmpty(n2)))
             {
-                string n1 = e1.Items[key];
-                string n2 = e2.Items[key];
-                if ((!string.IsNullOrEmpty(n1)) && (!string.IsNullOrEmpty(n2)))
+                try
                 {
-                    try
-                    {
-                        int t1 = (int) (1000.0 * double.Parse(n1));
-                        int t2 = (int) (1000.0 * double.Parse(n2));
-                        ep1 = t1;
-                        ep2 = t2;
-                    }
-                    catch (FormatException)
-                    {
-                    }
+                    int t1 = (int) (1000.0 * double.Parse(n1));
+                    int t2 = (int) (1000.0 * double.Parse(n2));
+                    ep1 = t1;
+                    ep2 = t2;
+                }
+                catch (FormatException)
+                {
                 }
             }
 
             return ep1 - ep2;
         }
-    }
 
-    public class ShowItem
+
+}
+
+public class ShowItem
     {
         public bool AutoAddNewSeasons;
         public string AutoAdd_FolderBase; // TODO: use magical renaming tokens here

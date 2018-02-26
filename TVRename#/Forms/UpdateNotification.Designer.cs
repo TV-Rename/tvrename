@@ -121,10 +121,10 @@ namespace TVRename.Forms
             this.webReleaseNotes.Location = new System.Drawing.Point(26, 92);
             this.webReleaseNotes.MinimumSize = new System.Drawing.Size(20, 20);
             this.webReleaseNotes.Name = "webReleaseNotes";
-            this.webReleaseNotes.ScriptErrorsSuppressed = true;
             this.webReleaseNotes.Size = new System.Drawing.Size(382, 333);
             this.webReleaseNotes.TabIndex = 7;
             this.webReleaseNotes.Visible = false;
+            this.webReleaseNotes.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // UpdateNotification
             // 

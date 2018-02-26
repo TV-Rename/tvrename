@@ -839,19 +839,15 @@ namespace TVRename
 
                 foreach (FileInfo fiTemp in files)
                 {
-                    int seasFound;
-                    int epFound;
-
                     if (!TVSettings.Instance.UsefulExtension(fiTemp.Extension, false))
                         continue; // move on
 
-                    if (FindSeasEp(fiTemp, out seasFound, out epFound, si))
-                    {
-                        if (seasFound == -1)
-                            seasFound = seasWanted;
-                        if ((seasFound == seasWanted) && (epFound == epWanted))
-                            ret.Add(fiTemp);
-                    }
+                    if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, si)) continue;
+
+                    if (seasFound == -1)
+                        seasFound = seasWanted;
+                    if ((seasFound == seasWanted) && (epFound == epWanted))
+                        ret.Add(fiTemp);
                 }
             }
 
@@ -957,37 +953,34 @@ namespace TVRename
                 // merge specials in
                 foreach (Episode ep in ser.Seasons[0].Episodes)
                 {
-                    if (ep.Items.ContainsKey("airsbefore_season") && ep.Items.ContainsKey("airsbefore_episode"))
+                    string seasstr = ep.AirsBeforeSeason;
+                    string epstr = ep.AirsBeforeEpisode;
+                    if ((string.IsNullOrEmpty(seasstr)) || (string.IsNullOrEmpty(epstr)))
+                        continue;
+                    int sease = int.Parse(seasstr);
+                    if (sease != snum)
+                        continue;
+                    int epnum = int.Parse(epstr);
+                    for (int i = 0; i < eis.Count; i++)
                     {
-                        string seasstr = ep.Items["airsbefore_season"];
-                        string epstr = ep.Items["airsbefore_episode"];
-                        if ((string.IsNullOrEmpty(seasstr)) || (string.IsNullOrEmpty(epstr)))
-                            continue;
-                        int sease = int.Parse(seasstr);
-                        if (sease != snum)
-                            continue;
-                        int epnum = int.Parse(epstr);
-                        for (int i = 0; i < eis.Count; i++)
+                        if ((eis[i].SeasonNumber == sease) && (eis[i].EpNum == epnum))
                         {
-                            if ((eis[i].SeasonNumber == sease) && (eis[i].EpNum == epnum))
+                            ProcessedEpisode pe = new ProcessedEpisode(ep, si)
                             {
-                                ProcessedEpisode pe = new ProcessedEpisode(ep, si)
-                                {
-                                    TheSeason = eis[i].TheSeason,
-                                    SeasonID = eis[i].SeasonID
-                                };
-                                eis.Insert(i, pe);
-                                break;
-                            }
+                                TheSeason = eis[i].TheSeason,
+                                SeasonID = eis[i].SeasonID
+                            };
+                            eis.Insert(i, pe);
+                            break;
                         }
                     }
                 }
                 // renumber to allow for specials
                 int epnumr = 1;
-                for (int j = 0; j < eis.Count; j++)
+                foreach (ProcessedEpisode t in eis)
                 {
-                    eis[j].EpNum2 = epnumr + (eis[j].EpNum2 - eis[j].EpNum);
-                    eis[j].EpNum = epnumr;
+                    t.EpNum2 = epnumr + (t.EpNum2 - t.EpNum);
+                    t.EpNum = epnumr;
                     epnumr++;
                 }
             }
@@ -1120,13 +1113,17 @@ namespace TVRename
                                 int shortestEpisodeName = episodeNames.Min(x => x.Length);
                                 int longestEpisodeName = episodeNames.Max(x => x.Length);
                                 bool namesSameLength = (shortestEpisodeName == longestEpisodeName);
-                                bool rootIsIgnored = root.Trim().Equals("Episode", StringComparison.OrdinalIgnoreCase);
+                                bool rootIsIgnored = root.Trim().Equals("Episode", StringComparison.OrdinalIgnoreCase) ||
+                                                     root.Trim().Equals("Part", StringComparison.OrdinalIgnoreCase);
 
-                                char[] charsToTrim = { ',', '.', '(' };
+
                                 if (namesSameLength && !rootIsIgnored && root.Length > 3 &&
                                     root.Length > shortestEpisodeName / 2)
                                 {
-                                    combinedName = root.Trim().TrimEnd("part").TrimEnd("episode").Trim().TrimEnd(charsToTrim).Trim();
+                                    char[] charsToTrim = { ',', '.', ';', ':', '-', '(' };
+                                    string[] wordsToTrim = { "part", "episode" };
+
+                                    combinedName = root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
                                 }
 
                                 ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si, alleps)
@@ -2226,11 +2223,8 @@ namespace TVRename
 
                         if (fileCanBeRemoved)
                         {
-                            int seasF;
-                            int epF;
-
                             ShowItem si = matchingShows[0];//Choose the first series
-                            TVDoc.FindSeasEp(fi, out seasF, out epF, si);
+                            TVDoc.FindSeasEp(fi, out int seasF, out int epF, si);
                             SeriesInfo s = si.TheSeries();
                             Episode ep = s.getEpisode(seasF, epF);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
@@ -2268,11 +2262,8 @@ namespace TVRename
 
                         if (dirCanBeRemoved)
                         {
-                            int seasF;
-                            int epF;
-
                             ShowItem si = matchingShows[0];//Choose the first series
-                            TVDoc.FindSeasEp(di, out seasF, out epF, si);
+                            TVDoc.FindSeasEp(di, out int seasF, out int epF, si);
                             SeriesInfo s = si.TheSeries();
                             Episode ep = s.getEpisode(seasF, epF);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
@@ -2293,10 +2284,7 @@ namespace TVRename
 
         public bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
         {
-            int seasF;
-            int epF;
-
-            if (TVDoc.FindSeasEp(fi, out seasF, out epF, si))
+            if (TVDoc.FindSeasEp(fi, out int seasF, out int epF, si))
             {
                 SeriesInfo s = si.TheSeries();
                 try
@@ -2324,10 +2312,7 @@ namespace TVRename
 
         public bool fileNeeded(DirectoryInfo di, ShowItem si, DirFilesCache dfc)
         {
-            int seasF;
-            int epF;
-
-            if (TVDoc.FindSeasEp(di, out seasF, out epF, si))
+            if (TVDoc.FindSeasEp(di, out int seasF, out int epF, si))
             {
                 SeriesInfo s = si.TheSeries();
                 try
@@ -2491,10 +2476,7 @@ namespace TVRename
                             if (this.ActionCancel)
                                 return;
 
-                            int seasNum;
-                            int epNum;
-
-                            if (!FindSeasEp(fi, out seasNum, out epNum, si))
+                            if (!FindSeasEp(fi, out int seasNum, out int epNum, si))
                                 continue; // can't find season & episode, so this file is of no interest to us
 
                             if (seasNum == -1)
@@ -2992,12 +2974,6 @@ namespace TVRename
             this.DoDownloadsFG();
         }
 
-        public static bool FindSeasEp(FileInfo fi, ShowItem si)
-        {
-            int s;
-            int e;
-            return FindSeasEp(fi, out s, out e, si);
-        }
 
         public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si)
         {
@@ -3049,6 +3025,7 @@ namespace TVRename
 
             string fullPath = directory + System.IO.Path.DirectorySeparatorChar + filename; // construct full path with sanitised filename
 
+            //TODO:Do we still need this now we have AlphaFS, MarkSummerville
             if ((filename.Length > 256) || (fullPath.Length > 256))
                 return false;
 
@@ -3160,6 +3137,10 @@ namespace TVRename
         {
             const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
             UpdateVersion currentVersion;
+
+            System.Net.ServicePointManager.SecurityProtocol =  System.Net.SecurityProtocolType.Tls12;
+
+
             try
             {
                 string currentVersionString = Helpers.DisplayVersion;

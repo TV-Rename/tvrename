@@ -87,11 +87,11 @@ namespace TVRename
                 bool ok = false;
                 bool ok1 = false;
                 bool ok2 = false;
+
+                //TODO: Do we still need this check, MarkSummerville
                 if (fn.Length < 255)
                 {
-                    int seas;
-                    int ep;
-                    ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out seas, out ep, pe.SI);
+                    ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, pe.SI);
                     ok1 = ok && (seas == pe.SeasonNumber);
                     ok2 = ok && (ep == pe.EpNum);
                     string pre1 = ok1 ? "" : "* ";

@@ -20,6 +20,10 @@ namespace TVRename.App
         protected override void OnCreateSplashScreen()
         {
             this.SplashScreen = new TVRenameSplash();
+
+            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
+            if ((!clargs.Unattended) && (!clargs.Hide)) this.SplashScreen.Enabled = false;
+                
         }
 
         /// <summary>

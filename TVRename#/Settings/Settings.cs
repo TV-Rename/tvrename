@@ -997,7 +997,7 @@ namespace TVRename
                                                                           false, "'S02.E04' and 'S02 E04'"),
                                                   new FilenameProcessorRE(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false,
                                                                           "filenames starting with '1.23' for season 1, episode 23"),
-                                                  new FilenameProcessorRE(true,
+                                                  new FilenameProcessorRE(false,
                                                                           "(^|[^a-z])(?<s>[0-9])(?<e>[0-9]{2,})[^a-z]",
                                                                           false, "Show - 323 - Foo"),
                                                   new FilenameProcessorRE(true,
