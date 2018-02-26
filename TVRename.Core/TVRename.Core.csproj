@@ -67,6 +67,7 @@
     <Compile Include="Actions\Mede8erViewAction.cs" />
     <Compile Include="Actions\Mede8erAction.cs" />
     <Compile Include="Actions\PyTivoAction.cs" />
+    <Compile Include="Extensions\TaskExtensions.cs" />
     <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Metadata\Identifiers\Mede8eViewIdentifier.cs" />
     <Compile Include="Metadata\Identifiers\PyTivoIdentifier.cs" />
