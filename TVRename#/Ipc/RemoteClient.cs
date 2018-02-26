@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
@@ -41,7 +42,13 @@ namespace TVRename.Ipc
             ui = form;
             doc = settings;
 
-            ChannelServices.RegisterChannel(new IpcServerChannel(IpcChannel), true);
+            Hashtable channelProperties = new Hashtable();
+            channelProperties.Add("exclusiveAddressUse", false);
+            channelProperties.Add("portName", IpcChannel);
+
+            IpcServerChannel serverChannel = new IpcServerChannel(channelProperties,null);
+            ChannelServices.RegisterChannel(serverChannel, true);
+
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteClient), IpcService, WellKnownObjectMode.Singleton);
         }
 
