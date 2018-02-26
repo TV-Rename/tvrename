@@ -2806,8 +2806,8 @@ namespace TVRename
 
                 foreach (Episode epi in kvp.Value.Episodes)
                 {
-                    DateTime? dt = epi.GetAirDateDT(false); // file will have local timezone date, not ours
-                    if ((dt == null) || (!dt.HasValue))
+                    DateTime? dt = epi.GetAirDateDT(); // file will have local timezone date, not ours
+                    if (dt == null)
                         continue;
 
                     TimeSpan closestDate = TimeSpan.MaxValue;

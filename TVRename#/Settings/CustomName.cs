@@ -82,7 +82,7 @@ namespace TVRename
             return r;
         }
 
-        public string GetTargetEpisodeName(Episode ep, string showname, bool urlEncode = false )
+        public string GetTargetEpisodeName(Episode ep, string showname,TimeZone tz, bool urlEncode = false )
         {
             //note this is for an Episode and not a ProcessedEpisode
             String name = this.StyleString;
@@ -98,7 +98,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
-            DateTime? airdt = ep.GetAirDateDT(false);
+            DateTime? airdt = ep.GetAirDateDT(tz);
             if (airdt != null)
             {
                 DateTime dt = (DateTime)airdt;

@@ -9,7 +9,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace TVRename
@@ -20,7 +19,7 @@ namespace TVRename
         public int EpNum;
         public int EpisodeID;
         public DateTime? FirstAired;
-        private System.Collections.Generic.Dictionary<string, string> Items; // other fields we don't specifically grab
+        private Dictionary<string, string> Items; // other fields we don't specifically grab
         public string Overview;
         public string EpisodeRating;
         public string EpisodeGuestStars;
@@ -55,16 +54,35 @@ namespace TVRename
             this.SeasonID = O.SeasonID;
             this.Dirty = O.Dirty;
 
-            this.Items = new System.Collections.Generic.Dictionary<string, string>();
-            foreach (System.Collections.Generic.KeyValuePair<string, string> i in O.Items)
+            this.Items = new Dictionary<string, string>();
+            foreach (KeyValuePair<string, string> i in O.Items)
                 this.Items.Add(i.Key, i.Value);
         }
 
         public Episode(SeriesInfo ser, Season seas)
         {
-            this.SetDefaults(ser, seas);
+            SetDefaults(ser, seas);
         }
 
+        public DateTime? GetAirDateDT()
+        {
+            if (this.FirstAired == null)
+                return null;
+
+            DateTime fa = (DateTime)this.FirstAired;
+            DateTime? airs = this.TheSeries.AirsTime;
+
+            return new DateTime(fa.Year, fa.Month, fa.Day, airs?.Hour ?? 20, airs?.Minute ?? 0, 0, 0);
+        }
+
+
+        public DateTime? GetAirDateDT(TimeZone tz)
+        {
+            DateTime? dt = GetAirDateDT();
+            if (dt == null) return null;
+
+            return TimeZone.AdjustTZTimeToLocalTime(dt.Value, tz);
+        }
 
         internal IEnumerable<KeyValuePair<string, string>> OtherItems()
         {
@@ -112,7 +130,6 @@ namespace TVRename
             
         }
 
-
         public string DVDEp => getValueAcrossVersions("dvdEpisodeNumber", "DVD_episodenumber", "");
         public string AirsBeforeSeason => getValueAcrossVersions("airsBeforeSeason", "airsbefore_season", "");
         public string AirsBeforeEpisode => getValueAcrossVersions("airsBeforeEpisode", "airsbefore_episode", "");
@@ -126,7 +143,7 @@ namespace TVRename
 
             try
             {
-                this.SetDefaults(ser, seas);
+                SetDefaults(ser, seas);
 
                 r.Read();
                 if (r.Name != "Episode")
@@ -218,8 +235,8 @@ namespace TVRename
 
         public Episode(int seriesId, JObject json, JObject jsonInDefaultLang)
         {
-            this.SetDefaults(null,null);
-            this.loadJSON(seriesId, json, jsonInDefaultLang);
+            SetDefaults(null,null);
+            loadJSON(seriesId, json, jsonInDefaultLang);
         }
 
         public Episode(int seriesId,JObject r)
@@ -229,9 +246,9 @@ namespace TVRename
             //  blah blah
             // </Episode>
 
-            this.SetDefaults(null, null);
+            SetDefaults(null, null);
 
-            this.loadJSON(seriesId,r);
+            loadJSON(seriesId,r);
         }
         private void loadJSON(int seriesId, JObject bestLanguageR, JObject backupLanguageR)
         {
@@ -300,7 +317,7 @@ namespace TVRename
             if ((string)r["airedSeasonID"] != null) { this.SeasonID = (int)r["airedSeasonID"]; }
             else
             {
-               logger.Error("Issue with episode " + EpisodeID + " for series " + seriesId + " no airedSeasonID " );
+               logger.Error("Issue with episode " + this.EpisodeID + " for series " + seriesId + " no airedSeasonID " );
                logger.Error(r.ToString());
             }
 
@@ -312,7 +329,7 @@ namespace TVRename
 
             String sn = (string)r["airedSeason"];
             if (sn == null) {
-               logger.Error("Issue with episode " + EpisodeID + " for series " + seriesId + " airedSeason = null");
+               logger.Error("Issue with episode " + this.EpisodeID + " for series " + seriesId + " airedSeason = null");
                logger.Error(r.ToString());
             }
             else { int.TryParse(sn, out this.ReadSeasonNum); }
@@ -346,11 +363,11 @@ namespace TVRename
         {
             get
             {
-                if ((this.mName == null) || (string.IsNullOrEmpty(this.mName)))
+                if (string.IsNullOrEmpty(this.mName))
                     return "Episode " + this.EpNum;
                 return this.mName;
             }
-            set { this.mName = value; }
+            set => this.mName = value;
         }
 
         public int SeasonNumber
@@ -376,19 +393,19 @@ namespace TVRename
         public string[] GetGuestStars()
         {
 
-            String guest = this.EpisodeGuestStars;
+            string guest = this.EpisodeGuestStars;
 
             if (!string.IsNullOrEmpty(guest))
             {
                 return guest.Split('|');
 
             }
-            return new String[] { };
+            return new string[] { };
 
         }
 
 
-       string getValueAcrossVersions(string oldTag, string newTag, string defaultValue)
+       private string getValueAcrossVersions(string oldTag, string newTag, string defaultValue)
         {
             //Need to cater for new and old style tags (TVDB interface v1 vs v2)
             if (this.Items.ContainsKey(oldTag)) return this.Items[oldTag];
@@ -401,7 +418,7 @@ namespace TVRename
             bool returnVal = (this.SeriesID != -1) && (this.EpisodeID != -1) && (this.EpNum != -1) && (this.SeasonID != -1) && (this.ReadSeasonNum != -1);
             if (!returnVal)
             {
-               logger.Warn("Issue with episode " + EpisodeID + " for series " + SeriesID + " for EpNum " + EpNum + " for SeasonID " + SeasonID + " for ReadSeasonNum " + ReadSeasonNum);
+               logger.Warn("Issue with episode " + this.EpisodeID + " for series " + this.SeriesID + " for EpNum " + this.EpNum + " for SeasonID " + this.SeasonID + " for ReadSeasonNum " + this.ReadSeasonNum);
             }
 
             return returnVal;
@@ -409,7 +426,7 @@ namespace TVRename
 
         public void SetDefaults(SeriesInfo ser, Season seas)
         {
-            this.Items = new System.Collections.Generic.Dictionary<string, string>();
+            this.Items = new Dictionary<string, string>();
             this.TheSeason = seas;
             this.TheSeries = ser;
 
@@ -428,58 +445,7 @@ namespace TVRename
             this.Dirty = false;
         }
 
-        public DateTime? GetAirDateDT(bool inLocalTime)
-        {
-            if (this.FirstAired == null)
-                return null;
 
-            DateTime fa = (DateTime) this.FirstAired;
-            DateTime? airs = this.TheSeries.AirsTime;
-
-            DateTime dt = new DateTime(fa.Year, fa.Month, fa.Day, (airs != null) ? airs.Value.Hour : 20, (airs != null) ? airs.Value.Minute : 0, 0, 0);
-
-            if (!inLocalTime)
-                return dt;
-
-            // do timezone adjustment
-            return TimeZone.AdjustTZTimeToLocalTime(dt, this.TheSeries.GetTimeZone());
-        }
-
-        public string HowLong()
-        {
-            DateTime? airsdt = this.GetAirDateDT(true);
-            if (airsdt == null)
-                return "";
-            DateTime dt = (DateTime) airsdt;
-
-            TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
-            if (ts.TotalHours < 0)
-                return "Aired";
-            else
-            {
-                int h = ts.Hours;
-                if (ts.TotalHours >= 1)
-                {
-                    if (ts.Minutes >= 30)
-                        h += 1;
-                    return ts.Days + "d " + h + "h"; // +ts->Minutes+"m "+ts->Seconds+"s";
-                }
-                else
-                    return System.Math.Round(ts.TotalMinutes) + "min";
-            }
-        }
-
-        public string DayOfWeek()
-        {
-            DateTime? dt = this.GetAirDateDT(true);
-            return (dt != null) ? dt.Value.ToString("ddd") : "-";
-        }
-
-        public string TimeOfDay()
-        {
-            DateTime? dt = this.GetAirDateDT(true);
-            return (dt != null) ? dt.Value.ToString("t") : "-";
-        }
 
         public void SetSeriesSeason(SeriesInfo ser, Season seas)
         {
@@ -515,7 +481,7 @@ namespace TVRename
                                       "GuestStars","guestStars","director","directors","EpisodeDirector","Writer","Writers","id","seasonid","Overview","Rating"
                                   };
 
-            foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in this.Items)
+            foreach (KeyValuePair<string, string> kvp in this.Items)
             {
                 if (!skip.Contains(kvp.Key))
                 {

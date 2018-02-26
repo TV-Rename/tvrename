@@ -137,8 +137,53 @@ namespace TVRename
             return ep1 - ep2;
         }
 
+        public DateTime? GetAirDateDT(bool inLocalTime)
+        {
 
-}
+            if (!inLocalTime)
+                return GetAirDateDT();
+
+            // do timezone adjustment
+            return GetAirDateDT(this.SI.GetTimeZone());
+        }
+
+        public string HowLong()
+        {
+            DateTime? airsdt = GetAirDateDT(true);
+            if (airsdt == null)
+                return "";
+            DateTime dt = (DateTime)airsdt;
+
+            TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
+            if (ts.TotalHours < 0)
+                return "Aired";
+            else
+            {
+                int h = ts.Hours;
+                if (ts.TotalHours >= 1)
+                {
+                    if (ts.Minutes >= 30)
+                        h += 1;
+                    return ts.Days + "d " + h + "h"; // +ts->Minutes+"m "+ts->Seconds+"s";
+                }
+                else
+                    return Math.Round(ts.TotalMinutes) + "min";
+            }
+        }
+
+        public string DayOfWeek()
+        {
+            DateTime? dt = GetAirDateDT(true);
+            return (dt != null) ? dt.Value.ToString("ddd") : "-";
+        }
+
+        public string TimeOfDay()
+        {
+            DateTime? dt = GetAirDateDT(true);
+            return (dt != null) ? dt.Value.ToString("t") : "-";
+        }
+
+    }
 
 public class ShowItem
     {
@@ -154,11 +199,11 @@ public class ShowItem
         public bool DoRename;
         public bool ForceCheckFuture;
         public bool ForceCheckNoAirdate;
-        public System.Collections.Generic.List<int> IgnoreSeasons;
-        public System.Collections.Generic.Dictionary<int, List<String>> ManualFolderLocations;
+        public List<int> IgnoreSeasons;
+        public Dictionary<int, List<String>> ManualFolderLocations;
         public bool PadSeasonToTwoDigits;
-        public System.Collections.Generic.Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
-        public System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<ShowRule>> SeasonRules;
+        public Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
+        public Dictionary<int, List<ShowRule>> SeasonRules;
         public bool ShowNextAirdate;
         public int TVDBCode;
         public bool UseCustomShowName;
@@ -167,33 +212,48 @@ public class ShowItem
         public bool UseCustomSearchURL;
         public String CustomSearchURL;
 
-        private DateTime? bannersLastUpdatedOnDisk;
-        public DateTime? BannersLastUpdatedOnDisk
-        {
-            get
-            {
-                return bannersLastUpdatedOnDisk;
-            }
-            set
-            {
-                bannersLastUpdatedOnDisk = value;
-            }
-        }
+        public String ShowTimeZone;
+        private TimeZone SeriesTZ;
+        private string LastFiguredTZ;
+
+
+        public DateTime? BannersLastUpdatedOnDisk { get; set; }
 
         public ShowItem()
         {
-            this.SetDefaults();
+            SetDefaults();
         }
 
         public ShowItem(int tvDBCode)
         {
-            this.SetDefaults();
+            SetDefaults();
             this.TVDBCode = tvDBCode;
+        }
+
+        private void FigureOutTimeZone()
+        {
+            string tzstr = this.ShowTimeZone;
+
+            if (string.IsNullOrEmpty(tzstr))
+                tzstr = TimeZone.DefaultTimeZone();
+
+            this.SeriesTZ = TimeZone.TimeZoneFor(tzstr);
+
+            this.LastFiguredTZ = tzstr;
+        }
+
+        public TimeZone GetTimeZone()
+        {
+            // we cache the timezone info, as the fetching is a bit slow, and we do this a lot
+            if (this.LastFiguredTZ != this.ShowTimeZone)
+                this.FigureOutTimeZone();
+
+            return this.SeriesTZ;
         }
 
         public ShowItem(XmlReader reader)
         {
-            this.SetDefaults();
+            SetDefaults();
 
             reader.Read();
             if (reader.Name != "ShowItem")
@@ -238,6 +298,8 @@ public class ShowItem
                     this.UseCustomSearchURL = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CustomSearchURL")
                     this.CustomSearchURL = reader.ReadElementContentAsString();
+                else if (reader.Name == "TimeZone")
+                    this.ShowTimeZone = reader.ReadElementContentAsString();
                 else if (reader.Name == "ForceCheckAll") // removed 2.2.0b2
                     this.ForceCheckNoAirdate = this.ForceCheckFuture = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ForceCheckFuture")
@@ -318,7 +380,7 @@ public class ShowItem
                             if ((reader.Name == "Folder") && reader.IsStartElement())
                             {
                                 string ff = reader.GetAttribute("Location");
-                                if (this.AutoFolderNameForSeason(snum) != ff)
+                                if (AutoFolderNameForSeason(snum) != ff)
                                     this.ManualFolderLocations[snum].Add(ff);
                             }
                             reader.Read();
@@ -348,7 +410,7 @@ public class ShowItem
             {
                 if (this.UseCustomShowName)
                     return this.CustomShowName;
-                SeriesInfo ser = this.TheSeries();
+                SeriesInfo ser = TheSeries();
                 if (ser != null)
                     return ser.Name;
                 return "<" + this.TVDBCode + " not downloaded>";
@@ -379,7 +441,7 @@ public class ShowItem
         public string ShowStatus
         {
             get{
-                SeriesInfo ser = this.TheSeries();
+                SeriesInfo ser = TheSeries();
                 if (ser != null ) return ser.getStatus();
                 return "Unknown";
             }
@@ -397,17 +459,17 @@ public class ShowItem
         {
             get
             {
-                if (HasSeasonsAndEpisodes)
+                if (this.HasSeasonsAndEpisodes)
                 {
-                    if (HasAiredEpisodes && !HasUnairedEpisodes)
+                    if (this.HasAiredEpisodes && !this.HasUnairedEpisodes)
                     {
                         return ShowAirStatus.Aired;
                     }
-                    else if (HasUnairedEpisodes && !HasAiredEpisodes)
+                    else if (this.HasUnairedEpisodes && !this.HasAiredEpisodes)
                     {
                         return ShowAirStatus.NoneAired;
                     }
-                    else if (HasAiredEpisodes && HasUnairedEpisodes)
+                    else if (this.HasAiredEpisodes && this.HasUnairedEpisodes)
                     {
                         return ShowAirStatus.PartiallyAired;
                     }
@@ -424,13 +486,12 @@ public class ShowItem
             }
         }
 
-        bool HasSeasonsAndEpisodes
+        private bool HasSeasonsAndEpisodes
         {
-            get
-            {
-                if (this.TheSeries() != null && this.TheSeries().Seasons != null && this.TheSeries().Seasons.Count > 0)
+            get { 
+                if (TheSeries() != null && TheSeries().Seasons != null && TheSeries().Seasons.Count > 0)
                 {
-                    foreach (KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                    foreach (KeyValuePair<int, Season> s in TheSeries().Seasons)
                     {
                         if(this.IgnoreSeasons.Contains(s.Key))
                             continue;
@@ -441,57 +502,51 @@ public class ShowItem
                     }
                 }
                 return false;
-            }
+        }
         }
 
-        bool HasUnairedEpisodes
+        private bool HasUnairedEpisodes
         {
             get
             {
-                if (HasSeasonsAndEpisodes)
+                if (this.HasSeasonsAndEpisodes)
                 {
-                    foreach (KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                    foreach (KeyValuePair<int, Season> s in TheSeries().Seasons)
                     {
-                        if(this.IgnoreSeasons.Contains(s.Key))
+                        if (this.IgnoreSeasons.Contains(s.Key))
                             continue;
-                        if (s.Value.Status == Season.SeasonStatus.NoneAired || s.Value.Status == Season.SeasonStatus.PartiallyAired)
+                        if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.NoneAired ||
+                            s.Value.Status(GetTimeZone()) == Season.SeasonStatus.PartiallyAired)
                         {
                             return true;
                         }
                     }
                 }
+
                 return false;
             }
         }
 
-        bool HasAiredEpisodes
+        private bool HasAiredEpisodes
         {
-            get
-            {
-                if (HasSeasonsAndEpisodes)
-                {
-                    foreach (KeyValuePair<int, Season> s in this.TheSeries().Seasons)
+                get{
+                    if (!this.HasSeasonsAndEpisodes) return false;
+
+                    foreach (KeyValuePair<int, Season> s in TheSeries().Seasons)
                     {
                         if(this.IgnoreSeasons.Contains(s.Key))
                             continue;
-                        if (s.Value.Status == Season.SeasonStatus.PartiallyAired || s.Value.Status == Season.SeasonStatus.Aired)
+                        if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.PartiallyAired || s.Value.Status(GetTimeZone()) == Season.SeasonStatus.Aired)
                         {
                             return true;
                         }
                     }
-                }
-                return false;
-            }
+                    return false;
+        }
         }
 
 
-        public string[] Genres
-        {
-            get
-            {
-                return this.TheSeries()?.GetGenres();
-            }
-        }
+        public string[] Genres => TheSeries()?.GetGenres();
 
         public void SetDefaults()
         {
@@ -515,20 +570,20 @@ public class ShowItem
             this.DoMissingCheck = true;
             this.CountSpecials = false;
             this.DVDOrder = false;
-            CustomSearchURL = "";
-            UseCustomSearchURL = false;
-            ForceCheckNoAirdate = false;
-            ForceCheckFuture = false;
+            this.CustomSearchURL = "";
+            this.UseCustomSearchURL = false;
+            this.ForceCheckNoAirdate = false;
+            this.ForceCheckFuture = false;
             this.BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
+            this.ShowTimeZone = TVRename.TimeZone.DefaultTimeZone(); // default, is correct for most shows
+
+            this.LastFiguredTZ = "";
 
         }
 
         public List<ShowRule> RulesForSeason(int n)
         {
-            if (this.SeasonRules.ContainsKey(n))
-                return this.SeasonRules[n];
-            else
-                return null;
+            return this.SeasonRules.ContainsKey(n) ? this.SeasonRules[n] : null;
         }
 
         public string AutoFolderNameForSeason(int n)
@@ -593,6 +648,7 @@ public class ShowItem
             XMLHelper.WriteElementToXML(writer,"UseSequentialMatch",this.UseSequentialMatch);
             XMLHelper.WriteElementToXML(writer,"PadSeasonToTwoDigits",this.PadSeasonToTwoDigits);
             XMLHelper.WriteElementToXML(writer, "BannersLastUpdatedOnDisk", this.BannersLastUpdatedOnDisk);
+            XMLHelper.WriteElementToXML(writer, "TimeZone", this.ShowTimeZone);
 
 
             writer.WriteStartElement("IgnoreSeasons");
@@ -657,12 +713,12 @@ public class ShowItem
 
         public Dictionary<int, List<string>> AllFolderLocations()
         {
-            return this.AllFolderLocations( true);
+            return AllFolderLocations( true);
         }
 
         public Dictionary<int, List<string>> AllFolderLocationsEpCheck(bool checkExist)
         {
-            return this.AllFolderLocations(true, checkExist);
+            return AllFolderLocations(true, checkExist);
         }
 
         public Dictionary<int, List<string>> AllFolderLocations(bool manualToo,bool checkExist=true)
@@ -688,12 +744,12 @@ public class ShowItem
                     if (kvp.Key > highestThereIs)
                         highestThereIs = kvp.Key;
                 }
-                foreach (int i in SeasonEpisodes.Keys)
+                foreach (int i in this.SeasonEpisodes.Keys)
                 {
                     if (this.IgnoreSeasons.Contains(i))
                         continue;
 
-                    string newName = this.AutoFolderNameForSeason(i);
+                    string newName = AutoFolderNameForSeason(i);
                     if ((!string.IsNullOrEmpty(newName)) && (!checkExist ||(Directory.Exists(newName))))
                     {
                         if (!fld.ContainsKey(i))

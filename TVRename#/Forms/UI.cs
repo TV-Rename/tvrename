@@ -2373,7 +2373,7 @@ namespace TVRename
                         {
                             Color nodeColor =
                                 TVSettings.Instance.ShowStatusColors.GetEntry(true, false,
-                                    ser.Seasons[snum].Status.ToString());
+                                    ser.Seasons[snum].Status(si.GetTimeZone()).ToString());
                             if (!nodeColor.IsEmpty)
                                 n2.ForeColor = nodeColor;
                         }
@@ -2492,12 +2492,11 @@ namespace TVRename
             {
                 this.mDoc.GetShowItems(true).Add(si);
                 this.mDoc.UnlockShowItems();
-                SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
-                if (ser != null)
-                    ser.ShowTimeZone = aes.ShowTimeZone;
+
                 this.ShowAddedOrEdited(true);
                 this.SelectShow(si);
-                logger.Info("Added new show called {0}", ser.Name);
+
+                logger.Info("Added new show called {0}", si.ShowName);
             }
             else logger.Info("Cancelled adding new show");
 
@@ -2596,11 +2595,10 @@ namespace TVRename
 
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
-                if (ser != null)
-                    ser.ShowTimeZone = aes.ShowTimeZone; // TODO: move into AddEditShow
-
                 this.ShowAddedOrEdited(si.TVDBCode != oldCode);
                 this.SelectShow(si);
+
+                logger.Info("Modified show called {0}", si.ShowName);
             }
 
             this.LessBusy();

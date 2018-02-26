@@ -32,21 +32,19 @@ namespace TVRename
             this.Episodes = new System.Collections.Generic.List<Episode>();
         }
 
-        public SeasonStatus Status
+        public SeasonStatus Status(TimeZone tz)
         {
-            get
-            {
                 if (HasEpisodes)
                 {
-                    if (HasAiredEpisodes && !HasUnairedEpisodes)
+                    if (HasAiredEpisodes(tz) && !HasUnairedEpisodes(tz))
                     {
                         return SeasonStatus.Aired;
                     }
-                    else if (HasAiredEpisodes && HasUnairedEpisodes)
+                    else if (HasAiredEpisodes(tz) && HasUnairedEpisodes(tz))
                     {
                         return SeasonStatus.PartiallyAired;
                     }
-                    else if (!HasAiredEpisodes && HasUnairedEpisodes)
+                    else if (!HasAiredEpisodes(tz) && HasUnairedEpisodes(tz))
                     {
                         return SeasonStatus.NoneAired;
                     }
@@ -61,53 +59,40 @@ namespace TVRename
                 {
                     return SeasonStatus.NoEpisodes;
                 }
-            }
         }
 
-        bool HasEpisodes
-        {
-            get
-            {
-                return this.Episodes != null && this.Episodes.Count > 0;
-            }
-        }
+        private bool HasEpisodes => this.Episodes != null && this.Episodes.Count > 0;
 
-        bool HasUnairedEpisodes
+        private bool HasUnairedEpisodes(TimeZone tz)
         {
-            get
-            {
                 if (HasEpisodes)
                 {
                     foreach (Episode e in this.Episodes)
                     {
-                        if (e.GetAirDateDT(true).HasValue)
+                        if (e.GetAirDateDT(tz).HasValue)
                         {
-                            if (e.GetAirDateDT(true).Value > System.DateTime.Now)
+                            if (e.GetAirDateDT(tz).Value > System.DateTime.Now)
                                 return true;
                         }
                     }
                 }
                 return false;
-            }
         }
 
-        bool HasAiredEpisodes
+        private bool HasAiredEpisodes(TimeZone tz)
         {
-            get
-            {
                 if (HasEpisodes)
                 {
                     foreach (Episode e in this.Episodes)
                     {
-                        if (e.GetAirDateDT(true).HasValue)
+                        if (e.GetAirDateDT(tz).HasValue)
                         {
-                            if (e.GetAirDateDT(true).Value < System.DateTime.Now)
+                            if (e.GetAirDateDT(tz).Value < System.DateTime.Now)
                                 return true;
                         }
                     }
                 }
                 return false;
-            }
         }
 
         
