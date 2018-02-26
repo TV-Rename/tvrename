@@ -21,6 +21,12 @@ namespace TVRename.Windows.Forms
     /// </summary>
     public partial class BulkAdd : Form
     {
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private CancellationTokenSource cts;
+
+        public IEnumerable<FoundShowFolder> NewShows { get; private set; }
+
         public BulkAdd()
         {
             InitializeComponent();
@@ -164,62 +170,119 @@ namespace TVRename.Windows.Forms
 
         private async void buttonResultsId_Click(object sender, EventArgs e)
         {
-            // Folders tab
-            EnableTab(this.tabPageFolders, false);
-
-            // Ignored tag
-            EnableTab(this.tabPageIgnored, false);
-
-            // Results tab
-            this.buttonResultsId.Text = "&Cancel"; // TODO
-            this.buttonResultsId.Enabled = true;
-            this.buttonResultsEdit.Enabled = false;
-            this.buttonResultsRemove.Enabled = false;
-            this.buttonResultsIgnore.Enabled = false;
-            this.buttonResultsAdd.Enabled = false;
-            this.listViewResults.SelectedIndexChanged -= listViewResults_SelectedIndexChanged;
-
-            List<ListViewItem> items = this.listViewResults.Items.Cast<ListViewItem>().Where(l => l.ImageIndex != 1).ToList();
-
-            this.toolStripStatusLabel.Text = $"Identifing {"show".ToQuantity(items.Count)}...";
-            this.toolStripProgressBar.Value = 0;
-            this.toolStripProgressBar.Minimum = 0;
-            this.toolStripProgressBar.Maximum = items.Count * 2;
-
-            await items.ForEachAsync(async lvi =>
+            if (this.buttonResultsId.Text == "&Cancel")
             {
-                this.toolStripProgressBar.Value++;
+                this.cts.Cancel();
 
-                FoundShowFolder match = await AutoId(lvi.Tag as FoundShowFolder);
+                // Finished
+                this.toolStripStatusLabel.Text = $"Identified {this.listViewResults.Items.Cast<ListViewItem>().Count(l => l.ImageIndex == 1)} of {"show".ToQuantity(this.listViewResults.Items.Count)}";
+                this.toolStripProgressBar.Value = 0;
 
-                this.toolStripProgressBar.Value++;
+                // Folders tab
+                EnableTab(this.tabPageFolders, true);
 
-                if (match == null) return;
+                // Ignored tag
+                EnableTab(this.tabPageIgnored, true);
 
-                lvi.ImageIndex = 1;
-                lvi.SubItems[1].Text = match.Name;
-                lvi.SubItems[3].Text = match.TvdbId.ToString();
-            }, TVDB.Instance.Threads, true);
+                // Results tab
+                this.buttonResultsId.Text = "Auto &ID All";
+                this.buttonResultsId.Enabled = true;
+                this.buttonResultsEdit.Enabled = false;
+                this.buttonResultsRemove.Enabled = false;
+                this.buttonResultsIgnore.Enabled = false;
+                this.buttonResultsAdd.Enabled = this.listViewResults.Items.Cast<ListViewItem>().Any(l => l.ImageIndex == 1); // Any IDed
+                this.listViewResults.SelectedIndexChanged += listViewResults_SelectedIndexChanged;
+                if (this.listViewResults.Items.Count > 0) this.listViewResults.Items[0].Selected = true;
 
-            // Finished
-            this.toolStripStatusLabel.Text = $"Identified {this.listViewResults.Items.Cast<ListViewItem>().Count(l => l.ImageIndex == 1)} of {"show".ToQuantity(this.listViewResults.Items.Count)}";
-            this.toolStripProgressBar.Value = 0;
+                return;
+            }
 
-            // Folders tab
-            EnableTab(this.tabPageFolders, true);
+            this.cts = new CancellationTokenSource();
 
-            // Ignored tag
-            EnableTab(this.tabPageIgnored, true);
+            try
+            {
+                // Folders tab
+                EnableTab(this.tabPageFolders, false);
 
-            // Results tab
-            this.buttonResultsId.Text = "Auto &ID All";
-            this.buttonResultsId.Enabled = true;
-            this.buttonResultsEdit.Enabled = false;
-            this.buttonResultsRemove.Enabled = false;
-            this.buttonResultsIgnore.Enabled = false;
-            this.buttonResultsAdd.Enabled = this.listViewResults.Items.Cast<ListViewItem>().Any(l => l.ImageIndex == 1); // Any IDed
-            this.listViewResults.SelectedIndexChanged += listViewResults_SelectedIndexChanged;
-            if (this.listViewResults.Items.Count > 0) this.listViewResults.Items[0].Selected = true;
+                // Ignored tag
+                EnableTab(this.tabPageIgnored, false);
+
+                // Results tab
+                this.buttonResultsId.Text = "&Cancel";
+                this.buttonResultsId.Enabled = true;
+                this.buttonResultsEdit.Enabled = false;
+                this.buttonResultsRemove.Enabled = false;
+                this.buttonResultsIgnore.Enabled = false;
+                this.buttonResultsAdd.Enabled = false;
+                this.listViewResults.SelectedIndexChanged -= listViewResults_SelectedIndexChanged;
+
+                List<ListViewItem> items = this.listViewResults.Items.Cast<ListViewItem>().Where(l => l.ImageIndex != 1).ToList();
+
+                this.toolStripStatusLabel.Text = $"Identifing {"show".ToQuantity(items.Count)}...";
+                this.toolStripProgressBar.Value = 0;
+                this.toolStripProgressBar.Minimum = 0;
+                this.toolStripProgressBar.Maximum = items.Count * 2 + 1;
+
+                await items.ForEachAsync(async lvi =>
+                {
+                    this.toolStripProgressBar.Value++;
+
+                    FoundShowFolder match = await AutoId(lvi.Tag as FoundShowFolder, this.cts.Token); // TODO?
+
+                    this.toolStripProgressBar.Value++;
+
+                    if (match == null) return;
+
+                    lvi.ImageIndex = 1;
+                    lvi.SubItems[1].Text = match.Name;
+                    lvi.SubItems[3].Text = match.TvdbId.ToString();
+                    lvi.Tag = match;
+                }, this.cts.Token, TVDB.Instance.Threads, true);
+
+                // Finished
+                this.toolStripStatusLabel.Text = $"Identified {this.listViewResults.Items.Cast<ListViewItem>().Count(l => l.ImageIndex == 1)} of {"show".ToQuantity(this.listViewResults.Items.Count)}";
+                this.toolStripProgressBar.Value = 0;
+
+                // Folders tab
+                EnableTab(this.tabPageFolders, true);
+
+                // Ignored tag
+                EnableTab(this.tabPageIgnored, true);
+
+                // Results tab
+                this.buttonResultsId.Text = "Auto &ID All";
+                this.buttonResultsId.Enabled = true;
+                this.buttonResultsEdit.Enabled = false;
+                this.buttonResultsRemove.Enabled = false;
+                this.buttonResultsIgnore.Enabled = false;
+                this.buttonResultsAdd.Enabled = this.listViewResults.Items.Cast<ListViewItem>().Any(l => l.ImageIndex == 1); // Any IDed
+                this.listViewResults.SelectedIndexChanged += listViewResults_SelectedIndexChanged;
+                if (this.listViewResults.Items.Count > 0) this.listViewResults.Items[0].Selected = true;
+            }
+            catch (TaskCanceledException exception)
+            {
+                Logger.Error(exception);
+
+                // Finished
+                this.toolStripStatusLabel.Text = $"Identified {this.listViewResults.Items.Cast<ListViewItem>().Count(l => l.ImageIndex == 1)} of {"show".ToQuantity(this.listViewResults.Items.Count)}";
+                this.toolStripProgressBar.Value = 0;
+
+                // Folders tab
+                EnableTab(this.tabPageFolders, true);
+
+                // Ignored tag
+                EnableTab(this.tabPageIgnored, true);
+
+                // Results tab
+                this.buttonResultsId.Text = "Auto &ID All";
+                this.buttonResultsId.Enabled = true;
+                this.buttonResultsEdit.Enabled = false;
+                this.buttonResultsRemove.Enabled = false;
+                this.buttonResultsIgnore.Enabled = false;
+                this.buttonResultsAdd.Enabled = this.listViewResults.Items.Cast<ListViewItem>().Any(l => l.ImageIndex == 1); // Any IDed
+                this.listViewResults.SelectedIndexChanged += listViewResults_SelectedIndexChanged;
+                if (this.listViewResults.Items.Count > 0) this.listViewResults.Items[0].Selected = true;
+            }
         }
 
         private void buttonResultsEdit_Click(object sender, EventArgs e)
@@ -236,7 +299,7 @@ namespace TVRename.Windows.Forms
                 lvi.SubItems[1].Text = form.NewShow.Name;
                 lvi.SubItems[3].Text = form.NewShow.TvdbId.ToString();
                 lvi.Tag = form.NewShow;
-                    
+
                 this.buttonResultsAdd.Enabled = this.listViewResults.Items.Cast<ListViewItem>().Any(l => l.ImageIndex == 1); // Any IDed
             }
         }
@@ -274,9 +337,7 @@ namespace TVRename.Windows.Forms
 
         private void buttonResultsAdd_Click(object sender, EventArgs e)
         {
-            IEnumerable<FoundShowFolder> add = this.listViewResults.Items.Cast<ListViewItem>().Where(l => l.ImageIndex == 1).Select(l => l.Tag as FoundShowFolder);
-
-            // TODO: Add
+            this.NewShows = this.listViewResults.Items.Cast<ListViewItem>().Where(l => l.ImageIndex == 1).Select(l => l.Tag as FoundShowFolder);
 
             this.Close();
         }
@@ -342,10 +403,10 @@ namespace TVRename.Windows.Forms
             foreach (Control control in page.Controls) control.Enabled = enable;
         }
 
-        public async Task<FoundShowFolder> AutoId(FoundShowFolder folder)
+        public async Task<FoundShowFolder> AutoId(FoundShowFolder folder, CancellationToken ct)
         {
-            var name = Path.GetFileName(folder.Location);
-            var s = await TVDB.Instance.Search(name, CancellationToken.None);
+            string name = Path.GetFileName(folder.Location);
+            List<SearchResult> s = await TVDB.Instance.Search(name, ct);
 
             if (s.Count < 1) return null;
 

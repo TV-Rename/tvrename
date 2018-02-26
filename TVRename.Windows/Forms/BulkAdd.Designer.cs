@@ -238,6 +238,7 @@ namespace TVRename.Windows.Forms
             // buttonResultsAdd
             // 
             this.buttonResultsAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonResultsAdd.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.buttonResultsAdd.Enabled = false;
             this.buttonResultsAdd.Location = new System.Drawing.Point(694, 387);
             this.buttonResultsAdd.Name = "buttonResultsAdd";

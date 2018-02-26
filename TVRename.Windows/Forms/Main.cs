@@ -123,19 +123,7 @@ namespace TVRename.Windows.Forms
 
                 if (Settings.Instance.Shows.All(s => s.TVDBId != show.TVDBId))
                 {
-                    this.toolStripStatusLabel.Text = "Downloading new show...";
-                    this.toolStripProgressBar.Style = ProgressBarStyle.Marquee;
-
-                    await TVDB.Instance.Add(show.TVDBId, CancellationToken.None);
-                    Settings.Instance.Shows.Add(show);
-
-                    this.toolStripProgressBar.Style = ProgressBarStyle.Continuous;
-                    this.toolStripStatusLabel.Text = "Ready";
-
-                    await BuildTree();
-                    await BuildCalendar();
-
-                    Settings.Instance.Dirty = true;
+                    await AddShow(show);
                 }
             }
 
@@ -198,9 +186,18 @@ namespace TVRename.Windows.Forms
             //await TVDB.Instance.Refresh(CancellationToken.None); // TODO: Warning, UI
         }
 
-        private void bulkAddShowsToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void bulkAddShowsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new BulkAdd().ShowDialog();
+            using (BulkAdd form = new BulkAdd())
+            {
+                if (form.ShowDialog() != DialogResult.OK) return;
+
+                await AddShows(form.NewShows.Select(s => new Show
+                {
+                    Location = s.Location,
+                    TVDBId = s.TvdbId
+                }));
+            }
         }
 
         private void onlineHelpToolStripMenuItem_Click(object sender, EventArgs e)
@@ -511,6 +508,38 @@ namespace TVRename.Windows.Forms
             Configuration.Layout.Save();
 
             Stats.Save();
+        }
+
+        private async Task AddShow(Show show)
+        {
+            await AddShows(new[] { show });
+        }
+        
+        private async Task AddShows(IEnumerable<Show> shows)
+        {
+            // TODO: Progress
+
+            int count = shows.Count();
+
+            this.toolStripStatusLabel.Text = count == 1 ? "Downloading new show..." : $"Downloading new show 1 of {count}...";
+            this.toolStripProgressBar.Style = ProgressBarStyle.Marquee;
+
+            int i = 1;
+            foreach (Show show in shows)
+            {
+                await TVDB.Instance.Add(show.TVDBId, CancellationToken.None);
+                Settings.Instance.Shows.Add(show);
+
+                if (count != 1) this.toolStripStatusLabel.Text = $"Downloading new show {i++} of {count}...";
+            }
+
+            this.toolStripProgressBar.Style = ProgressBarStyle.Continuous;
+            this.toolStripStatusLabel.Text = "Ready";
+
+            await BuildTree();
+            await BuildCalendar();
+
+            Settings.Instance.Dirty = true;
         }
     }
 }
