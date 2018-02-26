@@ -32,6 +32,7 @@ namespace TVRename.Core.Actions
                 XmlWriter writer = XmlWriter.Create(this.file.FullName, new XmlWriterSettings
                 {
                     Indent = true,
+                    IndentChars = "    ",
                     Encoding = Encoding.UTF8,
                     NewLineChars = "\r\n"
                 });
@@ -62,14 +63,15 @@ namespace TVRename.Core.Actions
                     writer.WriteEndElement();
                 }
 
+                // TODO
                 writer.WriteNode("season", this.show.SeasonCount());
                 writer.WriteNode("episode", this.show.EpisodeCount());
 
                 writer.WriteNode("plot", this.show.Overview);
 
-                writer.WriteNode("runtime", this.show.Runtime,true);
+                writer.WriteNode("runtime", this.show.Runtime, true);
 
-                writer.WriteNode("mpaa", this.show.ContentRating.ToString(),true); // TODO: Dash
+                writer.WriteNode("mpaa", this.show.ContentRating.ToString(), true); // TODO: Dash
 
                 writer.WriteNode("id", this.show.Id);
 
@@ -97,10 +99,8 @@ namespace TVRename.Core.Actions
                 foreach (string actor in this.show.Actors)
                 {
                     writer.WriteStartElement("actor");
-
                     writer.WriteNode("name", actor);
                     writer.WriteNode("order", i++);
-
                     writer.WriteEndElement();
                 }
 

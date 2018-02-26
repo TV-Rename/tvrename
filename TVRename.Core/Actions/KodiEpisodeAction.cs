@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Alphaleonis.Win32.Filesystem;
 using TVRename.Core.Extensions;
 using TVRename.Core.Models;
 using TVRename.Core.Models.Cache;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename.Core.Actions
 {
@@ -26,8 +26,7 @@ namespace TVRename.Core.Actions
             this.episode = episode;
             this.file = file;
         }
-
-        //https://kodi.wiki/view/NFO_files/tvshows#TV_Episode_Tags 
+        
         public async Task Run(CancellationToken ct)
         {
             await Task.Factory.StartNew(() =>
@@ -35,38 +34,39 @@ namespace TVRename.Core.Actions
                 XmlWriter writer = XmlWriter.Create(this.file.FullName, new XmlWriterSettings
                 {
                     Indent = true,
+                    IndentChars = "    ",
                     Encoding = Encoding.UTF8,
                     NewLineChars = "\r\n",
 
-                    //Multipart NFO files are not actually valid XML as they have multiple episodeDetails elements
+                    // Multipart NFO files are not actually valid XML as they have multiple episodeDetails elements
                     ConformanceLevel = ConformanceLevel.Fragment
                 });
 
-                //writer.WriteWhitespace("");
-                //writer.WriteStartDocument((true);
+                //writer.WriteStartDocument(true);
                 writer.WriteComment($" created on {DateTime.UtcNow:u} - by TV Rename ");
 
-
-                if (this.episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
+                if (this.episode.Type == ProcessedEpisodeType.Merged)
                 {
                     foreach (Episode ep in this.episode.SourceEpisodes) WriteEpisodeDetailsFor(writer, ep);
                 }
-                else WriteEpisodeDetailsFor(writer, this.episode);
+                else
+                {
+                    WriteEpisodeDetailsFor(writer, this.episode);
+                }
 
                 writer.Close();
             }, ct);
         }
 
-        private void WriteEpisodeDetailsFor(XmlWriter writer,Episode singleEpisode )
+        // https://kodi.wiki/view/NFO_files/tvshows#TV_Episode_Tags
+        private void WriteEpisodeDetailsFor(XmlWriter writer, Episode ep)
         {
-            // See: https://kodi.wiki/view/NFO_files/tvshows#TV_Episode_Tags
             writer.WriteStartElement("episodedetails");
 
-            writer.WriteNode("title", singleEpisode.Name);
-            writer.WriteNode("showtitle", this.episode.Show?.Name,true);
+            writer.WriteNode("title", ep.Name);
+            writer.WriteNode("showtitle", this.episode.Show?.Name, true);
 
-            //writer.WriteNode("rating", singleEpisode.Rating.Score);
-            if (singleEpisode.Rating != null)
+            if (ep.Rating != null)
             {
                 writer.WriteStartElement("ratings");
 
@@ -75,8 +75,8 @@ namespace TVRename.Core.Actions
                 writer.WriteAttributeString("max", "10");
                 writer.WriteAttributeString("default", "true");
 
-                writer.WriteNode("value", singleEpisode.Rating.Score);
-                writer.WriteNode("votes", singleEpisode.Rating.Votes);
+                writer.WriteNode("value", ep.Rating.Score);
+                writer.WriteNode("votes", ep.Rating.Votes);
 
                 writer.WriteEndElement();
 
@@ -84,67 +84,60 @@ namespace TVRename.Core.Actions
             }
 
 
-            writer.WriteNode("season", singleEpisode.SeasonNumber);
-            writer.WriteNode("episode", singleEpisode.Number);
-            writer.WriteNode("plot", singleEpisode.Overview);
+            writer.WriteNode("season", ep.SeasonNumber);
+            writer.WriteNode("episode", ep.Number);
+            writer.WriteNode("plot", ep.Overview);
 
-            writer.WriteNode("mpaa", this.episode.Show?.ContentRating.ToString(),true); //TODO: Dash
+            writer.WriteNode("mpaa", this.episode.Show?.ContentRating.ToString(), true); //TODO: Dash
 
-            writer.WriteNode("id", singleEpisode.Id);
+            writer.WriteNode("id", ep.Id);
 
             writer.WriteStartElement("uniqueid");
             writer.WriteAttributeString("type", "tvdb");
             writer.WriteAttributeString("default", "true");
-            writer.WriteValue(singleEpisode.Id);
+            writer.WriteValue(ep.Id);
             writer.WriteEndElement();
 
-            if (!string.IsNullOrWhiteSpace(singleEpisode.ImdbId))
+            if (!string.IsNullOrWhiteSpace(ep.ImdbId))
             {
                 writer.WriteStartElement("uniqueid");
                 writer.WriteAttributeString("type", "imdb");
                 writer.WriteAttributeString("default", "false");
-                writer.WriteValue(singleEpisode.ImdbId);
+                writer.WriteValue(ep.ImdbId);
                 writer.WriteEndElement();
             }
 
-            //Writers(s)
-            writer.WriteNodes("credits", singleEpisode.Writers);
+            writer.WriteNodes("credits", ep.Writers);
 
-            //Director(s)
-            writer.WriteNodes("director", singleEpisode.Directors);
+            writer.WriteNodes("director", ep.Directors);
 
-
-            if (singleEpisode.FirstAired != null)
+            if (ep.FirstAired != null)
             {
                 writer.WriteStartElement("aired");
-                writer.WriteValue(singleEpisode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                writer.WriteValue(ep.FirstAired.Value.ToString("yyyy-MM-dd"));
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("premiered");
-                writer.WriteValue(singleEpisode.FirstAired.Value.ToString("yyyy-MM-dd"));
+                writer.WriteValue(ep.FirstAired.Value.ToString("yyyy-MM-dd"));
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("year");
-                writer.WriteValue(singleEpisode.FirstAired.Value.ToString("yyyy"));
+                writer.WriteValue(ep.FirstAired.Value.ToString("yyyy"));
                 writer.WriteEndElement();
             }
 
-
-            //Find actors in the series or this specific episode
-            IEnumerable<string> overallActors = singleEpisode.GuestStars;
+            // Find actors in the series or this specific episode
+            IEnumerable<string> overallActors = ep.GuestStars;
             overallActors = overallActors.Union(this.episode.Show?.Actors ?? new List<string>());
-            int i = 0;
-            foreach (string actor in overallActors)
-            {
-                if (string.IsNullOrEmpty(actor))
-                    continue;
 
+            int i = 0;
+            foreach (string actor in overallActors.Where(a => !string.IsNullOrEmpty(a)))
+            {
                 writer.WriteStartElement("actor");
                 writer.WriteNode("name", actor);
                 writer.WriteNode("order", i++);
                 writer.WriteEndElement(); // actor
             }
         }
-
     }
 }

@@ -6,12 +6,10 @@ namespace TVRename.Core.Models
 {
     public class ProcessedEpisode : Episode
     {
-        //TODO: Implement these methods/populate the values -MarkSummerville
-        internal IEnumerable<Episode> SourceEpisodes;
+        //TODO: Implement these methods/populate the values - MarkSummerville
+        public IEnumerable<Episode> SourceEpisodes;
         public ProcessedShow Show { get; private set; }
         public ProcessedEpisodeType Type { get; private set; }
-        public enum ProcessedEpisodeType { single, split, merged };
-
 
         public string Location { get; set; }
 

@@ -16,9 +16,7 @@ namespace TVRename.Core.Metadata.Identifiers
 
             return new KodiShowAction(show, file);
         }
-
-
-
+        
         protected override IAction ProcessEpisode(ProcessedShow show, ProcessedSeason season, ProcessedEpisode episode, FileInfo file, bool force = false)
         {
             if (!force && file.Exists && show.LastUpdated <= file.LastWriteTime) return null;

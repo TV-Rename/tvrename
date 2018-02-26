@@ -63,7 +63,7 @@ namespace TVRename.Core.Models
         }
 
 
-        //TODO: Complete these methods , Mark Summerville
+        // TODO: Complete these methods - Mark Summerville
         public int SeasonCount()
         {
             return 1;

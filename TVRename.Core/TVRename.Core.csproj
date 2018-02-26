@@ -86,6 +86,7 @@
     <Compile Include="Models\Cache\Season.cs" />
     <Compile Include="Models\Cache\SeasonStatus.cs" />
     <Compile Include="Models\ProcessedEpisode.cs" />
+    <Compile Include="Models\ProcessedEpisodeType.cs" />
     <Compile Include="Models\ProcessedShow.cs" />
     <Compile Include="Models\ProcessedSeason.cs" />
     <Compile Include="Models\SearchResult.cs" />

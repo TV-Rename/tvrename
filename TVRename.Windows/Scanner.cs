@@ -279,6 +279,7 @@ namespace TVRename.Windows
 
                         Logger.Debug($"{file}: {matchedSeasonNumber} {matchedEpisodeNumber}");
 
+                        // TODO: Validate match worked
                         Season matchedSeason = show.Metadata.Seasons[matchedSeasonNumber];
                         Episode matchedEpisode = matchedSeason.Episodes.Values.First(e => e.Number == matchedEpisodeNumber);
 
