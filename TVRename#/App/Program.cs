@@ -78,8 +78,8 @@ namespace TVRename.App
 
                 // TODO: Unify command line handling between here and in UI.cs (ProcessArgs). Just send in clargs via IPC?
 
-                // DoAll implies Scan
-                if (clargs.DoAll || clargs.Scan) ipc.Scan();
+                
+                if (clargs.Scan) ipc.Scan();
 
                 if (clargs.QuickScan) ipc.QuickScan();
                 if (clargs.RecentScan) ipc.RecentScan();

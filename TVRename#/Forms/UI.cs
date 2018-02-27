@@ -214,7 +214,7 @@ namespace TVRename
 
         private void SetupIPC()
         {
-            this.AFMFullScan += this.ProcessAll;
+            this.AFMFullScan += this.Scan;
             this.AFMQuickScan += this.QuickScan;
             this.AFMRecentScan += this.RecentScan;
             this.AFMDoAll += this.ProcessAll;
@@ -236,7 +236,7 @@ namespace TVRename
         {
             // TODO: Unify command line handling between here and in Program.cs
 
-            if (this.mDoc.Args.Scan || this.mDoc.Args.DoAll) // doall implies scan
+            if (this.mDoc.Args.Scan)
                 this.Scan();
             if (this.mDoc.Args.QuickScan )
                 this.QuickScan();
@@ -3088,7 +3088,7 @@ namespace TVRename
 
         private void bnActionAction_Click(object sender, System.EventArgs e)
         {
-            this.ActionAction(true);
+            ProcessAll();
         }
 
         public void ProcessAll()

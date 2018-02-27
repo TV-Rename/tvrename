@@ -70,7 +70,7 @@ namespace TVRename
             output.AppendLine("/scan will Tell TV Rename to run a scan");
             output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");
-            output.AppendLine("/doall Tell TV Rename execute all the actions it can (including a scan).");
+            output.AppendLine("/doall Tell TV Rename execute all the actions it can.");
             output.AppendLine("/quit Tell a running TV Rename session to exit.");
             output.AppendLine("");
             output.AppendLine("/hide will hide the UI");
