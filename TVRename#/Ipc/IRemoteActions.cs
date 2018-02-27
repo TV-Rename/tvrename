@@ -17,6 +17,17 @@ namespace TVRename.Ipc
         void Scan();
 
         /// <summary>
+        /// Scans all files.
+        /// </summary>
+        void QuickScan();
+
+        /// <summary>
+        /// Scans all files.
+        /// </summary>
+        void RecentScan();
+
+
+        /// <summary>
         /// Processes all file tasks.
         /// </summary>
         void ProcessAll();

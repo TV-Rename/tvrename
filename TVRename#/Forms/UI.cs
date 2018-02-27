@@ -215,8 +215,8 @@ namespace TVRename
         private void SetupIPC()
         {
             this.AFMFullScan += this.ProcessAll;
-            this.AFMQuickScan += this.ScanQuick;
-            this.AFMRecentScan += this.ScanRecent;
+            this.AFMQuickScan += this.QuickScan;
+            this.AFMRecentScan += this.RecentScan;
             this.AFMDoAll += this.ProcessAll;
         }
 
@@ -238,6 +238,10 @@ namespace TVRename
 
             if (this.mDoc.Args.Scan || this.mDoc.Args.DoAll) // doall implies scan
                 this.Scan();
+            if (this.mDoc.Args.QuickScan )
+                this.QuickScan();
+            if (this.mDoc.Args.RecentScan ) 
+                this.RecentScan();
             if (this.mDoc.Args.DoAll)
                 this.ProcessAll();
             if (this.mDoc.Args.Quit || this.mDoc.Args.Hide)
@@ -2909,7 +2913,8 @@ namespace TVRename
             this.mDoc.ExportMissingXML(); //Save missing shows to XML
         }
 
-        private void ScanRecent()
+
+        public void RecentScan()
         {
             Scan(this.mDoc.getRecentShows());
         }
@@ -2925,7 +2930,7 @@ namespace TVRename
             this.FillActionList();
         }
 
-        private void ScanQuick()
+        public void QuickScan()
         {
             logger.Info("*******************************");
             logger.Info("Starting QuickScan...");
@@ -3557,9 +3562,9 @@ namespace TVRename
             }
         }
 
-        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.ScanRecent();
+        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.RecentScan();
 
-        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.ScanQuick();
+        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.QuickScan();
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
@@ -3689,10 +3694,10 @@ namespace TVRename
                         Scan();
                         break;
                     case TVRename.TVSettings.ScanType.Recent:
-                        ScanRecent();
+                        RecentScan();
                         break;
                     case TVRename.TVSettings.ScanType.Quick:
-                        ScanQuick();
+                        QuickScan();
                         break;
                 }
 

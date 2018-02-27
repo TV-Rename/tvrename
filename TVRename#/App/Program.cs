@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using TVRename.Ipc;
@@ -28,6 +29,11 @@ namespace TVRename.App
 
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(GlobalExceptionHandler);
 
+            if (args.Contains("/?", StringComparer.OrdinalIgnoreCase))
+            {
+                Logger.Info(CommandLineArgs.Helptext());
+                Console.WriteLine(CommandLineArgs.Helptext());
+            }
             // Check if an application instance is already running
             Mutex mutex = new Mutex(true, "TVRename", out bool newInstance);
 
@@ -35,7 +41,7 @@ namespace TVRename.App
             {
                 // Already running
 
-                Logger.Warn("An instance is alrady running");
+                Logger.Warn("An instance is already running");
 
                 // Create an IPC channel to the existing instance
                 RemoteClient.Proxy();
@@ -74,6 +80,9 @@ namespace TVRename.App
 
                 // DoAll implies Scan
                 if (clargs.DoAll || clargs.Scan) ipc.Scan();
+
+                if (clargs.QuickScan) ipc.QuickScan();
+                if (clargs.RecentScan) ipc.RecentScan();
 
                 if (clargs.DoAll) ipc.ProcessAll();
 
