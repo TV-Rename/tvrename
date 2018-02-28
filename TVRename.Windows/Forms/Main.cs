@@ -16,7 +16,7 @@ using TVRename.Windows.Configuration;
 using TVRename.Windows.Controls;
 using static TVRename.Windows.Utilities.Helpers;
 using Path = Alphaleonis.Win32.Filesystem.Path;
-using Show = TVRename.Core.Models.Show;
+using Show = TVRename.Windows.Models.Show;
 
 namespace TVRename.Windows.Forms
 {
@@ -240,11 +240,11 @@ namespace TVRename.Windows.Forms
         {
             foreach (Show show in shows)
             {
-                if (!show.CheckMissing) continue;
+                if (show.Settings.CheckMissing == false) continue;
 
                 foreach (Season season in show.Metadata.Seasons.Values)
                 {
-                    if (show.IgnoredSeasons.Contains(season.Number)) continue;
+                    if (show.Settings.IgnoredSeasons != null && show.Settings.IgnoredSeasons.Contains(season.Number)) continue;
 
                     string seasonDir = (season.Number == 0 ? Settings.Instance.SpecialsTemplate : Settings.Instance.SeasonTemplate).Template(season);
                     seasonDir = EscapeTemplatePath(seasonDir);
@@ -285,7 +285,12 @@ namespace TVRename.Windows.Forms
                             }
                             else if (form.Result == MissingFolderAction.ActionResult.IgnoreAlways)
                             {
-                                show.IgnoredSeasons.Add(season.Number);
+                                if (show.Settings.IgnoredSeasons != null)
+                                {
+                                    show.Settings.IgnoredSeasons = new List<int>();
+                                }
+
+                                show.Settings.IgnoredSeasons.Add(season.Number);
 
                                 break;
                             }
@@ -514,7 +519,7 @@ namespace TVRename.Windows.Forms
         {
             await AddShows(new[] { show });
         }
-        
+
         private async Task AddShows(IEnumerable<Show> shows)
         {
             // TODO: Progress

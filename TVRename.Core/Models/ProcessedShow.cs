@@ -19,7 +19,7 @@ namespace TVRename.Core.Models
                 {
                     Helpers.SimplifyName(this.Name)
                 };
-                
+
                 if (this.CustomName)
                 {
                     string simplifiedShowName = Helpers.SimplifyName(this.OriginalName);
@@ -33,10 +33,10 @@ namespace TVRename.Core.Models
 
         public ProcessedShow() { }
 
-        public ProcessedShow(Show show)
+        public ProcessedShow(Show show, ShowSettings settings)
         {
-            this.Name = show.Name ?? show.Metadata.Name;
-            this.CustomName = !string.IsNullOrEmpty(show.Name);
+            this.Name = settings.CustomName ?? show.Metadata.Name;
+            this.CustomName = !string.IsNullOrEmpty(settings.CustomName);
             if (this.CustomName) this.OriginalName = show.Metadata.Name;
 
             this.Location = show.Location;
@@ -71,7 +71,7 @@ namespace TVRename.Core.Models
 
         public int EpisodeCount()
         {
-            return 1; 
+            return 1;
         }
     }
 }

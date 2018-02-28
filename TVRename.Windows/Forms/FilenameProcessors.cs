@@ -74,7 +74,7 @@ namespace TVRename.Windows.Forms
                 selected
             };
 
-            Show show = Settings.Instance.Shows[this.comboBoxShows.SelectedIndex];
+            Core.Models.Show show = Settings.Instance.Shows[this.comboBoxShows.SelectedIndex];
 
             this.listViewPreview.BeginUpdate();
 

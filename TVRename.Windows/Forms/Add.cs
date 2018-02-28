@@ -9,6 +9,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using TVRename.Core.Models;
 using TVRename.Core.TVDB;
 using TVRename.Windows.Configuration;
+using Show = TVRename.Windows.Models.Show;
 
 namespace TVRename.Windows.Forms
 {

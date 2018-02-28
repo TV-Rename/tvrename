@@ -97,6 +97,7 @@
     <Compile Include="Models\Converters\EpochConverter.cs" />
     <Compile Include="Models\Language.cs" />
     <Compile Include="Models\Show.cs" />
+    <Compile Include="Models\ShowSettings.cs" />
     <Compile Include="Utility\Counter.cs" />
     <Compile Include="Models\Settings\Statistics.cs" />
     <Compile Include="Models\AirDay.cs" />

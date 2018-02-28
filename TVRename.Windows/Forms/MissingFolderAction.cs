@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 using TVRename.Core.Models.Cache;
-using Show = TVRename.Core.Models.Show;
+using Show = TVRename.Windows.Models.Show;
 
 namespace TVRename.Windows.Forms
 {
@@ -23,7 +23,7 @@ namespace TVRename.Windows.Forms
         {
             InitializeComponent();
 
-            this.labelShow.Text = show.Name ?? show.Metadata.Name;
+            this.labelShow.Text = show.Settings.CustomName ?? show.Metadata.Name;
             this.labelSeason.Text = $"{season.Number} of {show.Metadata.Seasons.Count}";
             this.labelFolder.Text = location;
         }

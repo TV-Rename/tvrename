@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing.Imaging;
 using TVRename.Core.Metadata;
-using TVRename.Core.Models;
 using TVRename.Core.Utility;
 using Newtonsoft.Json;
 using TVRename.Core.Metadata.Identifiers;
+using TVRename.Core.Models;
 using TVRename.Windows.Models;
+using Show = TVRename.Windows.Models.Show;
 
 namespace TVRename.Windows.Configuration
 {
@@ -53,12 +54,26 @@ namespace TVRename.Windows.Configuration
 
         public List<Identifier> Identifiers { get; set; } = new List<Identifier>();
 
+        public ShowSettings DefaultSettings { get; set; } = new ShowSettings
+        {
+            Rename = true,
+            CheckMissing = true
+        };
+
         public List<Show> Shows { get; set; } = new List<Show>();
 
         public override Settings Initialize()
         {
             return new Settings
             {
+                DefaultSettings = new ShowSettings
+                {
+                    Aliases = new List<string>(),
+                    CheckMissing = true,
+                    IgnoredSeasons = new List<int>(),
+                    Rename = true
+                },
+
                 SearchDirectories = new List<string>
                 {
                     @"D:\Downloads\Video"

@@ -23,9 +23,6 @@ namespace TVRename.Core.Actions
             this.Episode = episode;
         }
 
-        public async Task Run(CancellationToken ct)
-        {
-            
-        }
+        public Task Run(CancellationToken ct) => Task.CompletedTask;
     }
 }

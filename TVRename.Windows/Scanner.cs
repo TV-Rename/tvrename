@@ -14,7 +14,7 @@ using TVRename.Windows.Configuration;
 using TVRename.Windows.Models;
 using static TVRename.Windows.Utilities.Helpers;
 using Helpers = TVRename.Core.Utility.Helpers;
-using Show = TVRename.Core.Models.Show;
+using Show = TVRename.Windows.Models.Show;
 
 namespace TVRename.Windows
 {
@@ -59,7 +59,7 @@ namespace TVRename.Windows
 
                 foreach (Season season in show.Metadata.Seasons.Values)
                 {
-                    if (show.IgnoredSeasons.Contains(season.Number)) continue;
+                    if (show.Settings.IgnoredSeasons != null && show.Settings.IgnoredSeasons.Contains(season.Number)) continue;
 
                     foreach (Episode episode in season.Episodes.Values)
                     {
@@ -110,7 +110,7 @@ namespace TVRename.Windows
                             {
                                 lvi.ImageIndex = 1;
                             }
-                            else if (show.CheckMissing)
+                            else if (show.Settings.CheckMissing == true)
                             {
                                 lvi.ImageIndex = 0;
                             }
@@ -126,7 +126,7 @@ namespace TVRename.Windows
 
         public static async Task<ProcessedShow> ProcessShow(Show show)
         {
-            return new ProcessedShow(show);
+            return new ProcessedShow(show, show.Settings);
         }
 
         public static async Task<ProcessedSeason> ProcessSeason(Show show, Season season)
@@ -219,7 +219,7 @@ namespace TVRename.Windows
                     }));
 
                 // Loop show seasons, skipping user ignored
-                foreach (Season season in show.Metadata.Seasons.Values.Where(s => !show.IgnoredSeasons.Contains(s.Number)))
+                foreach (Season season in show.Metadata.Seasons.Values.Where(s => !show.Settings.IgnoredSeasons.Contains(s.Number)))
                 {
                     ProcessedSeason processedSeason = await ProcessSeason(processedShow, season);
 

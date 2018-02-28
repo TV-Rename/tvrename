@@ -124,6 +124,7 @@
       <DependentUpon>Statistics.cs</DependentUpon>
     </Compile>
     <Compile Include="Models\FoundShowFolder.cs" />
+    <Compile Include="Models\Show.cs" />
     <Compile Include="Models\WindowPosition.cs" />
     <Compile Include="Controls\EpisodeView.cs">
       <SubType>UserControl</SubType>
