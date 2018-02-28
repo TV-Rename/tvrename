@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
@@ -41,7 +42,11 @@ namespace TVRename.Ipc
             ui = form;
             doc = settings;
 
-            ChannelServices.RegisterChannel(new IpcServerChannel(IpcChannel), true);
+            Hashtable channelProperties = new Hashtable {{"exclusiveAddressUse", false}, {"portName", IpcChannel}};
+
+            IpcServerChannel serverChannel = new IpcServerChannel(channelProperties,null);
+            ChannelServices.RegisterChannel(serverChannel, true);
+
             RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteClient), IpcService, WellKnownObjectMode.Singleton);
         }
 
@@ -98,8 +103,23 @@ namespace TVRename.Ipc
         }
 
         /// <summary>
-        /// Processes all file tasks.
+        /// Scans all recent files.
         /// </summary>
+        public void RecentScan()
+        {
+            ui?.BeginInvoke((MethodInvoker)ui.RecentScan);
+        }
+
+        /// <summary>
+        /// Scans all missing recent episodes plus any files in download directory.
+        /// </summary>
+        public void QuickScan()
+        {
+            ui?.BeginInvoke((MethodInvoker)ui.QuickScan);
+        }
+        /// <summary>
+         /// Processes all file tasks.
+         /// </summary>
         public void ProcessAll()
         {
             ui?.BeginInvoke((MethodInvoker)ui.ProcessAll);

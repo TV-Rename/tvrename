@@ -214,9 +214,9 @@ namespace TVRename
 
         private void SetupIPC()
         {
-            this.AFMFullScan += this.ProcessAll;
-            this.AFMQuickScan += this.ScanQuick;
-            this.AFMRecentScan += this.ScanRecent;
+            this.AFMFullScan += this.Scan;
+            this.AFMQuickScan += this.QuickScan;
+            this.AFMRecentScan += this.RecentScan;
             this.AFMDoAll += this.ProcessAll;
         }
 
@@ -236,8 +236,12 @@ namespace TVRename
         {
             // TODO: Unify command line handling between here and in Program.cs
 
-            if (this.mDoc.Args.Scan || this.mDoc.Args.DoAll) // doall implies scan
+            if (this.mDoc.Args.Scan)
                 this.Scan();
+            if (this.mDoc.Args.QuickScan )
+                this.QuickScan();
+            if (this.mDoc.Args.RecentScan ) 
+                this.RecentScan();
             if (this.mDoc.Args.DoAll)
                 this.ProcessAll();
             if (this.mDoc.Args.Quit || this.mDoc.Args.Hide)
@@ -2373,7 +2377,7 @@ namespace TVRename
                         {
                             Color nodeColor =
                                 TVSettings.Instance.ShowStatusColors.GetEntry(true, false,
-                                    ser.Seasons[snum].Status.ToString());
+                                    ser.Seasons[snum].Status(si.GetTimeZone()).ToString());
                             if (!nodeColor.IsEmpty)
                                 n2.ForeColor = nodeColor;
                         }
@@ -2492,12 +2496,11 @@ namespace TVRename
             {
                 this.mDoc.GetShowItems(true).Add(si);
                 this.mDoc.UnlockShowItems();
-                SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
-                if (ser != null)
-                    ser.ShowTimeZone = aes.ShowTimeZone;
+
                 this.ShowAddedOrEdited(true);
                 this.SelectShow(si);
-                logger.Info("Added new show called {0}", ser.Name);
+
+                logger.Info("Added new show called {0}", si.ShowName);
             }
             else logger.Info("Cancelled adding new show");
 
@@ -2596,11 +2599,10 @@ namespace TVRename
 
             if (dr == System.Windows.Forms.DialogResult.OK)
             {
-                if (ser != null)
-                    ser.ShowTimeZone = aes.ShowTimeZone; // TODO: move into AddEditShow
-
                 this.ShowAddedOrEdited(si.TVDBCode != oldCode);
                 this.SelectShow(si);
+
+                logger.Info("Modified show called {0}", si.ShowName);
             }
 
             this.LessBusy();
@@ -2911,7 +2913,8 @@ namespace TVRename
             this.mDoc.ExportMissingXML(); //Save missing shows to XML
         }
 
-        private void ScanRecent()
+
+        public void RecentScan()
         {
             Scan(this.mDoc.getRecentShows());
         }
@@ -2927,7 +2930,7 @@ namespace TVRename
             this.FillActionList();
         }
 
-        private void ScanQuick()
+        public void QuickScan()
         {
             logger.Info("*******************************");
             logger.Info("Starting QuickScan...");
@@ -3085,7 +3088,7 @@ namespace TVRename
 
         private void bnActionAction_Click(object sender, System.EventArgs e)
         {
-            this.ActionAction(true);
+            ProcessAll();
         }
 
         public void ProcessAll()
@@ -3559,9 +3562,9 @@ namespace TVRename
             }
         }
 
-        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.ScanRecent();
+        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.RecentScan();
 
-        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.ScanQuick();
+        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.QuickScan();
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
@@ -3691,10 +3694,10 @@ namespace TVRename
                         Scan();
                         break;
                     case TVRename.TVSettings.ScanType.Recent:
-                        ScanRecent();
+                        RecentScan();
                         break;
                     case TVRename.TVSettings.ScanType.Quick:
-                        ScanQuick();
+                        QuickScan();
                         break;
                 }
 

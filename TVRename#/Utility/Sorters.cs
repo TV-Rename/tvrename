@@ -50,7 +50,7 @@ namespace TVRename
 
             try
             {
-                d1 = ((Episode) ((x as ListViewItem).Tag)).GetAirDateDT(true);
+                d1 = ((ProcessedEpisode) ((x as ListViewItem).Tag)).GetAirDateDT(true);
             }
             catch
             {
@@ -59,7 +59,7 @@ namespace TVRename
 
             try
             {
-                d2 = ((Episode) ((y as ListViewItem).Tag)).GetAirDateDT(true);
+                d2 = ((ProcessedEpisode) ((y as ListViewItem).Tag)).GetAirDateDT(true);
             }
             catch
             {

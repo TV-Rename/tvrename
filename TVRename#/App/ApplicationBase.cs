@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.VisualBasic.ApplicationServices;
@@ -12,7 +13,7 @@ namespace TVRename.App
     /// <seealso cref="WindowsFormsApplicationBase" />
     internal class ApplicationBase : WindowsFormsApplicationBase
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Initializes the splash screen.
@@ -22,7 +23,7 @@ namespace TVRename.App
             this.SplashScreen = new TVRenameSplash();
 
             CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
-            if ((!clargs.Unattended) && (!clargs.Hide)) this.SplashScreen.Enabled = false;
+            if ((clargs.Unattended) || (clargs.Hide)) this.SplashScreen.Visible  = false;
                 
         }
 
@@ -32,14 +33,17 @@ namespace TVRename.App
         /// </summary>
         protected override void OnCreateMainForm()
         {
+            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
+            if ((clargs.Unattended) || (clargs.Hide))
+                this.SplashScreen.SafeInvoke(
+                    () => ((TVRenameSplash)this.SplashScreen).Visible = false,true);
+
             // Update splash screen
             this.SplashScreen.SafeInvoke(
                 () => ((TVRenameSplash) this.SplashScreen).UpdateStatus("Initializing"), true);
 
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
-
-            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
 
             bool recover = false;
             string recoverText = string.Empty;
@@ -62,7 +66,7 @@ namespace TVRename.App
                 {
                     if (!clargs.Unattended && !clargs.Hide) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
+                    logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
 
                     Environment.Exit(1);
                 }
@@ -96,6 +100,9 @@ namespace TVRename.App
                 // Try loading settings file
                 doc = new TVDoc(settingsFile, clargs);
 
+                convertSeriesTimeZones(doc, TheTVDB.Instance);
+
+
                 if (recover) doc.SetDirty();
                 recover = !doc.LoadOK;
 
@@ -115,6 +122,25 @@ namespace TVRename.App
             RemoteClient.Bind(ui, doc);
 
             this.MainForm = ui;
+        }
+
+        private void convertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
+        {
+            //this is just to convert timezones in the TheTVDB into the TVDOC where they should be:
+            //itshould only do anything the first time it is run and then be entirely begign
+            //can be removed after 1/1/19
+
+            foreach (ShowItem si in doc.ShowItems)
+            {
+                string newTimeZone = tvdb.GetSeries(si.TVDBCode).tempTimeZone;
+                if ((si.ShowTimeZone == TimeZone.DefaultTimeZone()) && newTimeZone != TimeZone.DefaultTimeZone() && !string.IsNullOrWhiteSpace(newTimeZone))
+                {
+                    si.ShowTimeZone = newTimeZone;
+                    doc.SetDirty();
+                    logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
+                }
+            }
+
         }
     }
 }

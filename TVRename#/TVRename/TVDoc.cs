@@ -2806,8 +2806,8 @@ namespace TVRename
 
                 foreach (Episode epi in kvp.Value.Episodes)
                 {
-                    DateTime? dt = epi.GetAirDateDT(false); // file will have local timezone date, not ours
-                    if ((dt == null) || (!dt.HasValue))
+                    DateTime? dt = epi.GetAirDateDT(); // file will have local timezone date, not ours
+                    if (dt == null)
                         continue;
 
                     TimeSpan closestDate = TimeSpan.MaxValue;
@@ -3024,10 +3024,6 @@ namespace TVRename
             filename = SEFinderSimplifyFilename(filename, showNameHint);
 
             string fullPath = directory + System.IO.Path.DirectorySeparatorChar + filename; // construct full path with sanitised filename
-
-            //TODO:Do we still need this now we have AlphaFS, MarkSummerville
-            if ((filename.Length > 256) || (fullPath.Length > 256))
-                return false;
 
             int leftMostPos = filename.Length;
 

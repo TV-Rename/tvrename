@@ -27,7 +27,6 @@ namespace TVRename
     /// </summary>
     public partial class AddEditShow : Form
     {
-        public string ShowTimeZone;
         private ShowItem mSI;
         private TheTVDBCodeFinder mTCCF;
 
@@ -43,6 +42,7 @@ namespace TVRename
                 this.cbTimeZone.Items.Add(s);
 
             this.cbTimeZone.EndUpdate();
+            this.cbTimeZone.Text = si.ShowTimeZone;
 
             this.mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
             this.mTCCF.Dock = DockStyle.Fill;
@@ -72,11 +72,6 @@ namespace TVRename
 
             this.chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
 
-            this.ShowTimeZone = ((si == null) || (si.TheSeries() == null))
-                                    ? TimeZone.DefaultTimeZone()
-                                    : si.TheSeries().ShowTimeZone;
-
-            this.cbTimeZone.Text = this.ShowTimeZone;
             this.chkDVDOrder.Checked = si.DVDOrder;
             this.cbIncludeFuture.Checked = si.ForceCheckFuture;
             this.cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
@@ -157,11 +152,10 @@ namespace TVRename
         {
             int code = this.mTCCF.SelectedCode();
 
-            string tz = (this.cbTimeZone.SelectedItem != null) ? this.cbTimeZone.SelectedItem.ToString() : "";
 
             this.mSI.CustomShowName = this.txtCustomShowName.Text;
             this.mSI.UseCustomShowName = this.chkCustomShowName.Checked;
-            this.ShowTimeZone = tz; //TODO: move to somewhere else. make timezone manager for tvdb?
+            this.mSI.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVRename.TimeZone.DefaultTimeZone();
             this.mSI.ShowNextAirdate = this.chkShowNextAirdate.Checked;
             this.mSI.PadSeasonToTwoDigits = this.chkPadTwoDigits.Checked;
             this.mSI.TVDBCode = code;

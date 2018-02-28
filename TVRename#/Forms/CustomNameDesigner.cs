@@ -84,23 +84,16 @@ namespace TVRename
                 string fn = TVSettings.Instance.FilenameFriendly(this.CN.NameForExt(pe));
                 lvi.Text = fn;
 
-                bool ok = false;
-                bool ok1 = false;
-                bool ok2 = false;
+                bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, pe.SI);
+                bool ok1 = ok && (seas == pe.SeasonNumber);
+                bool ok2 = ok && (ep == pe.EpNum);
+                string pre1 = ok1 ? "" : "* ";
+                string pre2 = ok2 ? "" : "* ";
 
-                //TODO: Do we still need this check, MarkSummerville
-                if (fn.Length < 255)
-                {
-                    ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, pe.SI);
-                    ok1 = ok && (seas == pe.SeasonNumber);
-                    ok2 = ok && (ep == pe.EpNum);
-                    string pre1 = ok1 ? "" : "* ";
-                    string pre2 = ok2 ? "" : "* ";
+                lvi.SubItems.Add(pre1 + ((seas != -1) ? seas.ToString() : ""));
+                lvi.SubItems.Add(pre2 + ((ep != -1) ? ep.ToString() : ""));
+                lvi.Tag = pe;
 
-                    lvi.SubItems.Add(pre1 + ((seas != -1) ? seas.ToString() : ""));
-                    lvi.SubItems.Add(pre2 + ((ep != -1) ? ep.ToString() : ""));
-                    lvi.Tag = pe;
-                }
                 if (!ok || !ok1 || !ok2)
                     lvi.BackColor = Helpers.WarningColor();
                 this.lvTest.Items.Add(lvi);

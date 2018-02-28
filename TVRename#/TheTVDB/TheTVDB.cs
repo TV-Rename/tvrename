@@ -1806,7 +1806,7 @@ namespace TVRename
 
                 foreach (Episode e in s.Episodes)
                 {
-                    DateTime? adt = e.GetAirDateDT(true);
+                    DateTime? adt = e.GetAirDateDT();
                     if (adt != null)
                     {
                         DateTime dt = (DateTime) adt;
