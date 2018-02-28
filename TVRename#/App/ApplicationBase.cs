@@ -23,7 +23,7 @@ namespace TVRename.App
             this.SplashScreen = new TVRenameSplash();
 
             CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
-            if ((!clargs.Unattended) && (!clargs.Hide)) this.SplashScreen.Enabled = false;
+            if ((clargs.Unattended) || (clargs.Hide)) this.SplashScreen.Visible  = false;
                 
         }
 
@@ -33,14 +33,17 @@ namespace TVRename.App
         /// </summary>
         protected override void OnCreateMainForm()
         {
+            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
+            if ((clargs.Unattended) || (clargs.Hide))
+                this.SplashScreen.SafeInvoke(
+                    () => ((TVRenameSplash)this.SplashScreen).Visible = false,true);
+
             // Update splash screen
             this.SplashScreen.SafeInvoke(
                 () => ((TVRenameSplash) this.SplashScreen).UpdateStatus("Initializing"), true);
 
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
-
-            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
 
             bool recover = false;
             string recoverText = string.Empty;
