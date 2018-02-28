@@ -72,6 +72,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
@@ -80,6 +81,12 @@
   <ItemGroup>
     <Compile Include="ApplicationBase.cs" />
     <Compile Include="Configuration\Statistics.cs" />
+    <Compile Include="Controls\CheckedGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\CheckedGroupBox.Designer.cs">
+      <DependentUpon>CheckedGroupBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\About.cs">
       <SubType>Form</SubType>
     </Compile>
