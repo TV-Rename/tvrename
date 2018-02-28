@@ -116,7 +116,7 @@ namespace TVRename.App
             } while (recover);
 
             // Show user interface
-            UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen);
+            UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen, !clargs.Unattended && !clargs.Hide);
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
             RemoteClient.Bind(ui, doc);

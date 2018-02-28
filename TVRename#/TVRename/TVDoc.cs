@@ -3314,9 +3314,23 @@ namespace TVRename
             if (!string.IsNullOrWhiteSpace(this.Build)) sb.Append("-(" + this.Build+")");
             return sb.ToString() ;
         }
+
+        public string LogMessage()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("************************");
+            sb.AppendLine("**New Update Available**");
+            sb.AppendLine("************************");
+            sb.AppendLine($"A new verion is available: {ToString()} since {ReleaseDate}");
+            sb.AppendLine($"please download from {DownloadUrl}");
+            sb.AppendLine($"full notes available from {ReleaseNotesUrl}");
+            sb.AppendLine(ReleaseNotesText);
+            return sb.ToString();
+        }
     }
     
 
 }
+
 
 

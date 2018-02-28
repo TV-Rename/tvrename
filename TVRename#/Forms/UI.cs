@@ -95,7 +95,7 @@ namespace TVRename
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public UI(TVDoc doc, TVRenameSplash splash)
+        public UI(TVDoc doc, TVRenameSplash splash,bool showUI)
         {
 
             this.mDoc = doc;
@@ -168,7 +168,7 @@ namespace TVRename
             
             updateSplashStatus(splash, "Update Available?");
 
-            SearchForUpdates(false);
+            SearchForUpdates(false,!showUI);
 
             updateSplashStatus(splash, "Starting Monitor");
             if (TVSettings.Instance.MonitorFolders)
@@ -3645,23 +3645,34 @@ namespace TVRename
             SearchForUpdates(true);
         }
 
-        private void SearchForUpdates(bool showNoUpdateRequiredDialog)
+        private void SearchForUpdates(bool showNoUpdateRequiredDialog, bool inSilentMode = false)
         {
             UpdateVersion update = this.mDoc.CheckForUpdates();
 
-            if (update is null  )
+            if (update is null)
             {
                 //this.btnUpdateAvailable.Visible = false;
-                if (showNoUpdateRequiredDialog) {
+                if (showNoUpdateRequiredDialog && !inSilentMode)
+                {
                     MessageBox.Show(@"There is no update available please try again later.", @"No update available",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);}
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
                 return;
             }
 
+            if (inSilentMode)
+            {
+                logger.Warn(update.LogMessage());
+            }
+            else
+            {
+            
             UpdateNotification unForm = new UpdateNotification(update);
             unForm.ShowDialog();
             //this.btnUpdateAvailable.Visible = true;
         }
+    }
 
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
