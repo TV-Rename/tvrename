@@ -250,24 +250,27 @@ namespace TVRename
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
 
-        public static string GBMB(this long value, int decimalPlaces = 0)
+
+        public static string GBMB(this long value, int decimalPlaces = 2)
         {
             const long OneKb = 1024;
             const long OneMb = OneKb * 1024;
             const long OneGb = OneMb * 1024;
             const long OneTb = OneGb * 1024;
 
-            var asTb = Math.Round((double)value / OneTb, decimalPlaces);
-            var asGb = Math.Round((double)value / OneGb, decimalPlaces);
-            var asMb = Math.Round((double)value / OneMb, decimalPlaces);
-            var asKb = Math.Round((double)value / OneKb, decimalPlaces);
-            string chosenValue = asTb >= 1 ? string.Format("{0} TB", asTb)
-                : asGb >= 1 ? string.Format("{0} GB", asGb)
-                : asMb >= 1 ? string.Format("{0} MB", asMb)
-                : asKb >= 1 ? string.Format("{0} KB", asKb)
-                : string.Format("{0} B", Math.Round((double)value, decimalPlaces));
+            double asTb = Math.Round((double)value / OneTb, decimalPlaces);
+            double asGb = Math.Round((double)value / OneGb, decimalPlaces);
+            double asMb = Math.Round((double)value / OneMb, decimalPlaces);
+            double asKb = Math.Round((double)value / OneKb, decimalPlaces);
+            double asB  = Math.Round((double)value, decimalPlaces);
+            string chosenValue = asTb >= 1 ? $"{asTb:G3} TB"
+                : asGb >= 1 ? $"{asGb:G3} GB"
+                : asMb >= 1 ? $"{asMb:G3} MB"
+                : asKb >= 1 ? $"{asKb:G3} KB"
+                : $"{asB:G3} B";
             return chosenValue;
         }
+
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -445,6 +448,12 @@ namespace TVRename
 
     public static class StringExtensions
     {
+
+        public static string itemitems(this int n)
+        {
+            return n == 1 ? "Item" : "Items";
+        }
+
         public static bool Contains(this string source, string toCheck, StringComparison comp)
         {
             return source.IndexOf(toCheck, comp) >= 0;

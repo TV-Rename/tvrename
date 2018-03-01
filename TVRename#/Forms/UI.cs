@@ -2940,10 +2940,6 @@ namespace TVRename
             this.FillActionList();
         }
 
-        private static string itemitems(int n)
-        {
-            return n == 1 ? "Item" : "Items";
-        }
 
         private ListViewItem LVIForItem(Item item)
         {
@@ -3036,7 +3032,7 @@ namespace TVRename
                     missingCount++;
                 else if (Action is ActionCopyMoveRename)
                 {
-                    ActionCopyMoveRename cmr = (ActionCopyMoveRename) (Action);
+                    ActionCopyMoveRename cmr = (ActionCopyMoveRename)(Action);
                     ActionCopyMoveRename.Op op = cmr.Operation;
                     if (op == ActionCopyMoveRename.Op.Copy)
                     {
@@ -3067,22 +3063,27 @@ namespace TVRename
                     removeCount++;
             }
 
-            this.lvAction.Groups[0].Header = "Missing (" + missingCount + " " + itemitems(missingCount) + ")";
-            this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + itemitems(renameCount) + ")";
+            this.lvAction.Groups[0].Header = present() + ")";
+            this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + renameCount.itemitems() + ")";
             this.lvAction.Groups[2].Header =
-                "Copy (" + copyCount + " " + itemitems(copyCount) + ", " + copySize.GBMB(1) + ")";
+                "Copy (" + copyCount + " " + (copyCount.itemitems()) + ", " + copySize.GBMB(1) + ")";
             this.lvAction.Groups[3].Header =
-                "Move (" + moveCount + " " + itemitems(moveCount) + ", " + moveSize.GBMB(1) + ")";
-            this.lvAction.Groups[4].Header = "Remove (" + removeCount + " " + itemitems(removeCount) + ")";
-            this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + itemitems(rssCount) + ")";
-            this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + itemitems(downloadCount) + ")";
-            this.lvAction.Groups[7].Header = "Media Center Metadata (" + metaCount + " " + itemitems(metaCount) + ")";
-            this.lvAction.Groups[8].Header = "Update File/Directory Metadata (" + fileMetaCount + " " + itemitems(metaCount) + ")";
-            this.lvAction.Groups[9].Header = "Downloading (" + dlCount + " " + itemitems(dlCount) + ")";
+                "Move (" + moveCount + " " + (moveCount.itemitems()) + ", " + moveSize.GBMB(1) + ")";
+            this.lvAction.Groups[4].Header = "Remove (" + removeCount + " " + (removeCount.itemitems()) + ")";
+            this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + (rssCount.itemitems()) + ")";
+            this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + (downloadCount.itemitems()) + ")";
+            this.lvAction.Groups[7].Header = "Media Center Metadata (" + metaCount + " " + (metaCount.itemitems()) + ")";
+            this.lvAction.Groups[8].Header = "Update File/Directory Metadata (" + fileMetaCount + " " + (metaCount.itemitems()) + ")";
+            this.lvAction.Groups[9].Header = "Downloading (" + dlCount + " " + (dlCount.itemitems()) + ")";
 
             this.InternalCheckChange = false;
 
             this.UpdateActionCheckboxes();
+        }
+
+        private static string present()
+        {
+            return "Missing (" + missingCount + " " + (missingCount.itemitems());
         }
 
         private void bnActionAction_Click(object sender, System.EventArgs e)

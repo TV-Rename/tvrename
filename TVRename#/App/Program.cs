@@ -123,7 +123,8 @@ namespace TVRename.App
     {
         Exception e = (Exception) args.ExceptionObject;
         Logger.Fatal(e,"UNHANDLED ERROR");
-    }
+        Environment.Exit(1);
+        }
 }
 
 }
