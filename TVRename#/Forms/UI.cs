@@ -3063,27 +3063,35 @@ namespace TVRename
                     removeCount++;
             }
 
-            this.lvAction.Groups[0].Header = present() + ")";
-            this.lvAction.Groups[1].Header = "Rename (" + renameCount + " " + renameCount.itemitems() + ")";
-            this.lvAction.Groups[2].Header =
-                "Copy (" + copyCount + " " + (copyCount.itemitems()) + ", " + copySize.GBMB(1) + ")";
-            this.lvAction.Groups[3].Header =
-                "Move (" + moveCount + " " + (moveCount.itemitems()) + ", " + moveSize.GBMB(1) + ")";
-            this.lvAction.Groups[4].Header = "Remove (" + removeCount + " " + (removeCount.itemitems()) + ")";
-            this.lvAction.Groups[5].Header = "Download RSS (" + rssCount + " " + (rssCount.itemitems()) + ")";
-            this.lvAction.Groups[6].Header = "Download (" + downloadCount + " " + (downloadCount.itemitems()) + ")";
-            this.lvAction.Groups[7].Header = "Media Center Metadata (" + metaCount + " " + (metaCount.itemitems()) + ")";
-            this.lvAction.Groups[8].Header = "Update File/Directory Metadata (" + fileMetaCount + " " + (metaCount.itemitems()) + ")";
-            this.lvAction.Groups[9].Header = "Downloading (" + dlCount + " " + (dlCount.itemitems()) + ")";
+            this.lvAction.Groups[0].Header = HeaderName("Missing",missingCount);
+            this.lvAction.Groups[1].Header = HeaderName("Rename", renameCount); 
+            this.lvAction.Groups[2].Header = HeaderName("Copy", copyCount,copySize );
+            this.lvAction.Groups[3].Header = HeaderName("Move", moveCount, moveSize);
+            this.lvAction.Groups[4].Header = HeaderName("Remove", removeCount); 
+            this.lvAction.Groups[5].Header = HeaderName("Download RSS", rssCount); 
+            this.lvAction.Groups[6].Header = HeaderName("Download", downloadCount);
+            this.lvAction.Groups[7].Header = HeaderName("Media Center Metadata", metaCount); 
+            this.lvAction.Groups[8].Header = HeaderName("Update File/Directory Metadata", fileMetaCount); 
+            this.lvAction.Groups[9].Header = HeaderName("Downloading", dlCount); 
 
             this.InternalCheckChange = false;
 
             this.UpdateActionCheckboxes();
         }
 
-        private static string present()
+        private static string HeaderName(string name, int number)
         {
-            return "Missing (" + missingCount + " " + (missingCount.itemitems());
+            return $"{name} ({PrettyPrint(number)})";
+
+        }
+
+        private static string  PrettyPrint(int number)
+        {
+            return number + " " + (number.itemitems());
+        }
+        private static string HeaderName(string name, int number, long filesize)
+        {
+            return $"{name} ({PrettyPrint(number)}, {filesize.GBMB(1)})";
         }
 
         private void bnActionAction_Click(object sender, System.EventArgs e)
