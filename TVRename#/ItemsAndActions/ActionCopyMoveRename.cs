@@ -85,6 +85,7 @@ namespace TVRename
 
                 // Copying the temp file into the correct name is very quick, so no progress reporting		
                 File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+                logger.Info($"{this.Name} completed: {this.From.FullName} to {this.To.FullName } ");
 
                 Done = true;
 

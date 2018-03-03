@@ -370,11 +370,14 @@ namespace TVRename
             bool hasSeasonFolders = false;
             try
             {
-                string folderName = null;
-                DirectoryInfo[] subDirectories = null;
-                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out folderName, out subDirectories);
+                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out string folderName, out DirectoryInfo[] subDirectories);
+
                 subDirs = subDirectories;
-                bool hasSubFolders = subDirectories.Length > 0;
+
+                //This is an indication that something is wrong
+                if (subDirectories is null) return false;
+
+                bool hasSubFolders = subDirectories?.Length > 0;
                 if (!hasSubFolders || hasSeasonFolders)
                 {
                     // ....its good!
@@ -407,6 +410,8 @@ namespace TVRename
 
             if (MonitorAddSingleFolder(di, false, out DirectoryInfo[] subDirs))
                 return; // done.
+
+            if (subDirs == null) return; //indication we could not access the subdirectory
 
             // recursively check a monitored folder for new shows
 
