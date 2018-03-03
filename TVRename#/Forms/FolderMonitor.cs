@@ -186,7 +186,7 @@ namespace TVRename
             while ((this.FMP == null) || (!this.FMP.Ready))
                 Thread.Sleep(10);
 
-            this.mDoc.MonitorCheckFolders(ref this.FMPStopNow, ref this.FMPPercent);
+            this.mDoc.CheckFolders(ref this.FMPStopNow, ref this.FMPPercent);
             
             this.FMPStopNow = true;
 
@@ -287,7 +287,7 @@ namespace TVRename
                 int p = ai.Folder.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
                 this.FMPUpto = ai.Folder.Substring(p + 1); // +1 makes -1 "not found" result ok
                 
-                this.mDoc.MonitorGuessShowItem(ai);
+                this.mDoc.GuessShowItem(ai);
                 
                 // update our display
                 this.UpdateFMListItem(ai, true);
@@ -345,7 +345,7 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        this.mDoc.MonitorAddSingleFolder(di, true,out DirectoryInfo[] redundant);
+                        this.mDoc.CheckFolderForShows(di, true,out DirectoryInfo[] redundant);
                         this.FillFMNewShowList(true);
                     }
                 }
@@ -436,7 +436,7 @@ namespace TVRename
                 if (res != DialogResult.Yes)
                     return;
 
-                this.mDoc.MonitorAddAllToMyShows();
+                this.mDoc.AddAllToMyShows();
             }
 
             this.Close();

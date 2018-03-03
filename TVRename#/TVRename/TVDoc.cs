@@ -299,7 +299,7 @@ namespace TVRename
             this.SetDirty();
         }
 
-        public bool MonitorFolderHasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs)
+        public bool HasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs)
         {
             try
             {
@@ -332,7 +332,7 @@ namespace TVRename
             return false;
         }
 
-        public bool MonitorAddSingleFolder(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs )
+        public bool CheckFolderForShows(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs )
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
@@ -370,7 +370,7 @@ namespace TVRename
             bool hasSeasonFolders = false;
             try
             {
-                hasSeasonFolders = MonitorFolderHasSeasonFolders(di2, out string folderName, out DirectoryInfo[] subDirectories);
+                hasSeasonFolders = HasSeasonFolders(di2, out string folderName, out DirectoryInfo[] subDirectories);
 
                 subDirs = subDirectories;
 
@@ -385,7 +385,7 @@ namespace TVRename
                     AddItems.Add(ai);
                     logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
-                        this.MonitorGuessShowItem(ai);
+                        this.GuessShowItem(ai);
                 }
 
             }
@@ -399,7 +399,7 @@ namespace TVRename
             return hasSeasonFolders;
         }
 
-        public void MonitorCheckFolderRecursive(DirectoryInfo di, ref bool stop)
+        public void CheckFolderForShows(DirectoryInfo di, ref bool stop)
         {
             // is it on the ''Bulk Add Shows' ignore list?
             if (this.IgnoreFolders.Contains(di.FullName.ToLower()))
@@ -408,23 +408,23 @@ namespace TVRename
                 return;
             }
 
-            if (MonitorAddSingleFolder(di, false, out DirectoryInfo[] subDirs))
+            if (CheckFolderForShows(di, false, out DirectoryInfo[] subDirs))
                 return; // done.
 
             if (subDirs == null) return; //indication we could not access the subdirectory
 
-            // recursively check a monitored folder for new shows
+            // recursively check a folder for new shows
 
             foreach (DirectoryInfo di2 in subDirs)
             {
                 if (stop)
                     return;
 
-                this.MonitorCheckFolderRecursive(di2, ref stop); // not a season folder.. recurse!
+                this.CheckFolderForShows(di2, ref stop); // not a season folder.. recurse!
             } // for each directory
         }
 
-        public void MonitorAddAllToMyShows()
+        public void AddAllToMyShows()
         {
             this.LockShowItems();
 
@@ -456,27 +456,27 @@ namespace TVRename
             ExportShowInfo();
         }
 
-        public void MonitorGuessShowItem(FolderMonitorEntry ai)
+        public void GuessShowItem(FolderMonitorEntry ai)
         {
             string showName = this.GuessShowName(ai);
 
             if (string.IsNullOrEmpty(showName))
                 return;
 
-            TheTVDB.Instance.GetLock("MonitorGuessShowItem");
+            TheTVDB.Instance.GetLock("GuessShowItem");
 
             SeriesInfo ser = TheTVDB.Instance.FindSeriesForName(showName);
             if (ser != null)
                 ai.TVDBCode = ser.TVDBCode;
 
-            TheTVDB.Instance.Unlock("MonitorGuessShowItem");
+            TheTVDB.Instance.Unlock("GuessShowItem");
         }
 
-        public void MonitorCheckFolders(ref bool stop, ref int percentDone)
+        public void CheckFolders(ref bool stop, ref int percentDone)
         {
-            // Check the monitored folder list, and build up a new "AddItems" list.
+            // Check the  folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
-            // calls to "MonitorGuessShowItem"
+            // calls to "GuessShowItem"
             logger.Info("*********************************************************************");
             logger.Info("*Starting to find folders that contain files, but are not in library*");
 
@@ -493,7 +493,7 @@ namespace TVRename
                 if (!di.Exists)
                     continue;
 
-                this.MonitorCheckFolderRecursive(di, ref stop);
+                this.CheckFolderForShows(di, ref stop);
 
                 if (stop)
                     break;
