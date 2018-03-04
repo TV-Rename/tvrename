@@ -114,6 +114,7 @@ namespace TVRename
 
         public void SelectionChanged(Object sender, SourceGrid.RangeRegionChangedEventArgs e)
         {
+            SelectionOnSelectionChanged(sender, e);
             this.StartTimer();
         }
 
@@ -353,7 +354,27 @@ namespace TVRename
             this.StartTimer();
         }
 
+        private void SelectionOnSelectionChanged(object sender, RangeRegionChangedEventArgs rangeRegionChangedEventArgs)
+        {
+            // multiselection is off, so we can cheat...
+            int[] rowsIndex = this.Grid1.Selection.GetSelectionRegion().GetRowsIndex();
 
+            if (rowsIndex.Length == 0)
+            {
+                this.bnDelete.Enabled = false;
+                this.bnUp.Enabled = false;
+                this.bnDown.Enabled = false;
+                return;
+            }
+            int selectedRow = rowsIndex[0];
+
+            this.bnDelete.Enabled = true;
+
+            this.bnUp.Enabled = (selectedRow > 1);
+            this.bnDown.Enabled = (selectedRow < this.Grid1.RowsCount - 1);
+
+
+        }
     }
 }
 

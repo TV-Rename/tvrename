@@ -7,6 +7,9 @@
 //
 
 
+using System;
+using SourceGrid;
+
 namespace TVRename
 {
     partial class AddEditSeasEpFinders
@@ -84,7 +87,6 @@ namespace TVRename
             this.bnCancel.TabIndex = 7;
             this.bnCancel.Text = "Cancel";
             this.bnCancel.UseVisualStyleBackColor = true;
-            
             // 
             // bnDelete
             // 
@@ -222,6 +224,7 @@ namespace TVRename
             this.Grid1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Grid1.BackColor = System.Drawing.SystemColors.Window;
+            this.Grid1.EnableSort = true;
             this.Grid1.Location = new System.Drawing.Point(13, 13);
             this.Grid1.Name = "Grid1";
             this.Grid1.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
@@ -230,6 +233,7 @@ namespace TVRename
             this.Grid1.TabIndex = 15;
             this.Grid1.TabStop = true;
             this.Grid1.ToolTipText = "";
+            this.Grid1.Selection.SelectionChanged += SelectionOnSelectionChanged;
             // 
             // bnDown
             // 
@@ -284,6 +288,7 @@ namespace TVRename
             this.PerformLayout();
 
         }
+
 
         #endregion
 
