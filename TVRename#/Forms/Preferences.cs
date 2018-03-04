@@ -138,6 +138,8 @@ namespace TVRename
             S.ShowInTaskbar = this.chkShowInTaskbar.Checked;
             S.RenameTxtToSub = this.cbTxtToSub.Checked;
             S.ShowEpisodePictures = this.cbShowEpisodePictures.Checked;
+            S.HideMyShowsSpoilers = this.chkHideMyShowsSpoilers.Checked;
+            S.HideWtWSpoilers = this.chkHideWtWSpoilers.Checked;
             S.AutoSelectShowInMyShows = this.cbAutoSelInMyShows.Checked;
             S.AutoCreateFolders = this.cbAutoCreateFolders.Checked ;  
             S.SpecialsFolderName = this.txtSpecialsFolderName.Text;
@@ -365,6 +367,8 @@ namespace TVRename
             this.chkShowInTaskbar.Checked = S.ShowInTaskbar;
             this.cbTxtToSub.Checked = S.RenameTxtToSub;
             this.cbShowEpisodePictures.Checked = S.ShowEpisodePictures;
+            this.chkHideMyShowsSpoilers.Checked = S.HideMyShowsSpoilers;
+            this.chkHideWtWSpoilers.Checked = S.HideWtWSpoilers;
             this.cbAutoCreateFolders.Checked = S.AutoCreateFolders; 
             this.cbAutoSelInMyShows.Checked = S.AutoSelectShowInMyShows;
             this.txtSpecialsFolderName.Text = S.SpecialsFolderName;

@@ -361,6 +361,8 @@ namespace TVRename
         public bool SearchLocally = true;
         public bool SearchRSS = false;
         public bool ShowEpisodePictures = true;
+        public bool HideWtWSpoilers = false;
+        public bool HideMyShowsSpoilers = false;
         public bool ShowInTaskbar = true;
         public string SpecialsFolderName = "Specials";
         public int StartupTab = 0;
@@ -489,6 +491,10 @@ namespace TVRename
                     this.RenameTxtToSub = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ShowEpisodePictures")
                     this.ShowEpisodePictures = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "HideWtWSpoilers")
+                    this.HideWtWSpoilers = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "HideMyShowsSpoilers")
+                    this.HideMyShowsSpoilers = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoCreateFolders")
                     this.AutoCreateFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoSelectShowInMyShows")
@@ -838,6 +844,8 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"AutoSelectShowInMyShows",this.AutoSelectShowInMyShows);
             XMLHelper.WriteElementToXML(writer,"AutoCreateFolders", this.AutoCreateFolders );
             XMLHelper.WriteElementToXML(writer,"ShowEpisodePictures",this.ShowEpisodePictures);
+            XMLHelper.WriteElementToXML(writer, "HideWtWSpoilers", this.HideWtWSpoilers);
+            XMLHelper.WriteElementToXML(writer, "HideMyShowsSpoilers", this.HideMyShowsSpoilers);
             XMLHelper.WriteElementToXML(writer,"SpecialsFolderName",this.SpecialsFolderName);
             XMLHelper.WriteElementToXML(writer,"uTorrentPath",this.uTorrentPath);
             XMLHelper.WriteElementToXML(writer,"ResumeDatPath",this.ResumeDatPath);

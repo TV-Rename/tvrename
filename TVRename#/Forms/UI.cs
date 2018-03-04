@@ -1038,7 +1038,7 @@ namespace TVRename
 
                 body += "<p><p>";
 
-                if (TVSettings.Instance.ShowEpisodePictures)
+                if ((TVSettings.Instance.ShowEpisodePictures) || (TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired") )
                 {
                     body += "<table><tr>";
                     body += "<td width=100% valign=top>" + getOverview(ei) + "</td><td width=300 height=225>";
@@ -1060,8 +1060,9 @@ namespace TVRename
 
         private string getOverview(ProcessedEpisode ei)
         {
-            String overviewString = ei.Overview;
+            string overviewString = ei.Overview;
 
+            if (TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired") overviewString = "[Spoilers Hidden]";
 
             bool firstInfo = true;
             foreach (System.Collections.Generic.KeyValuePair<string, string> kvp in ei.OtherItems())
@@ -1268,7 +1269,12 @@ namespace TVRename
             int n = this.lvWhenToWatch.SelectedIndices[0];
 
             ProcessedEpisode ei = (ProcessedEpisode) (this.lvWhenToWatch.Items[n].Tag);
-            this.txtWhenToWatchSynopsis.Text = ei.Overview;
+
+            if (TVSettings.Instance.HideWtWSpoilers && (ei.HowLong() != "Aired" || this.lvWhenToWatch.Items[n].ImageIndex==1))
+            {
+                this.txtWhenToWatchSynopsis.Text = "[Spoilers Hidden]";
+            } else 
+                this.txtWhenToWatchSynopsis.Text = ei.Overview;
 
             this.mInternalChange++;
             DateTime? dt = ei.GetAirDateDT(true);

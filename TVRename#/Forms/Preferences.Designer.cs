@@ -231,6 +231,8 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkHideMyShowsSpoilers = new System.Windows.Forms.CheckBox();
+            this.chkHideWtWSpoilers = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -588,6 +590,8 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.chkHideWtWSpoilers);
+            this.tbGeneral.Controls.Add(this.chkHideMyShowsSpoilers);
             this.tbGeneral.Controls.Add(this.label37);
             this.tbGeneral.Controls.Add(this.label38);
             this.tbGeneral.Controls.Add(this.tbPercentDirty);
@@ -621,7 +625,7 @@ namespace TVRename
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(6, 188);
+            this.label37.Location = new System.Drawing.Point(6, 229);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(114, 13);
             this.label37.TabIndex = 20;
@@ -630,7 +634,7 @@ namespace TVRename
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(158, 188);
+            this.label38.Location = new System.Drawing.Point(158, 229);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(132, 13);
             this.label38.TabIndex = 22;
@@ -638,7 +642,7 @@ namespace TVRename
             // 
             // tbPercentDirty
             // 
-            this.tbPercentDirty.Location = new System.Drawing.Point(123, 185);
+            this.tbPercentDirty.Location = new System.Drawing.Point(123, 226);
             this.tbPercentDirty.Name = "tbPercentDirty";
             this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
             this.tbPercentDirty.TabIndex = 21;
@@ -650,7 +654,7 @@ namespace TVRename
             this.cbMode.Items.AddRange(new object[] {
             "Beta",
             "Production"});
-            this.cbMode.Location = new System.Drawing.Point(112, 279);
+            this.cbMode.Location = new System.Drawing.Point(112, 320);
             this.cbMode.Name = "cbMode";
             this.cbMode.Size = new System.Drawing.Size(146, 21);
             this.cbMode.Sorted = true;
@@ -659,7 +663,7 @@ namespace TVRename
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(6, 282);
+            this.label34.Location = new System.Drawing.Point(6, 323);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(37, 13);
             this.label34.TabIndex = 18;
@@ -690,7 +694,7 @@ namespace TVRename
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 258);
+            this.label10.Location = new System.Drawing.Point(6, 299);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 13);
             this.label10.TabIndex = 16;
@@ -699,7 +703,7 @@ namespace TVRename
             // cbLookForAirdate
             // 
             this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 234);
+            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 275);
             this.cbLookForAirdate.Name = "cbLookForAirdate";
             this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
             this.cbLookForAirdate.TabIndex = 15;
@@ -714,7 +718,7 @@ namespace TVRename
             "My Shows",
             "Scan",
             "When to Watch"});
-            this.cbLanguages.Location = new System.Drawing.Point(112, 255);
+            this.cbLanguages.Location = new System.Drawing.Point(112, 296);
             this.cbLanguages.Name = "cbLanguages";
             this.cbLanguages.Size = new System.Drawing.Size(146, 21);
             this.cbLanguages.Sorted = true;
@@ -723,7 +727,7 @@ namespace TVRename
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(6, 164);
+            this.label21.Location = new System.Drawing.Point(6, 205);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(82, 13);
             this.label21.TabIndex = 11;
@@ -732,7 +736,7 @@ namespace TVRename
             // cbAutoSelInMyShows
             // 
             this.cbAutoSelInMyShows.AutoSize = true;
-            this.cbAutoSelInMyShows.Location = new System.Drawing.Point(9, 211);
+            this.cbAutoSelInMyShows.Location = new System.Drawing.Point(9, 252);
             this.cbAutoSelInMyShows.Name = "cbAutoSelInMyShows";
             this.cbAutoSelInMyShows.Size = new System.Drawing.Size(268, 17);
             this.cbAutoSelInMyShows.TabIndex = 14;
@@ -751,7 +755,7 @@ namespace TVRename
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(126, 164);
+            this.label20.Location = new System.Drawing.Point(126, 205);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(170, 13);
             this.label20.TabIndex = 13;
@@ -759,7 +763,7 @@ namespace TVRename
             // 
             // txtParallelDownloads
             // 
-            this.txtParallelDownloads.Location = new System.Drawing.Point(92, 161);
+            this.txtParallelDownloads.Location = new System.Drawing.Point(92, 202);
             this.txtParallelDownloads.Name = "txtParallelDownloads";
             this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
             this.txtParallelDownloads.TabIndex = 12;
@@ -1298,7 +1302,7 @@ namespace TVRename
             this.cbSearchLocally.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cbSearchLocally.Location = new System.Drawing.Point(40, 79);
             this.cbSearchLocally.Name = "cbSearchLocally";
-            this.cbSearchLocally.Size = new System.Drawing.Size(213, 17);
+            this.cbSearchLocally.Size = new System.Drawing.Size(218, 17);
             this.cbSearchLocally.TabIndex = 3;
             this.cbSearchLocally.Text = "&Look in \"Search Folders\" for missing files";
             this.cbSearchLocally.UseVisualStyleBackColor = true;
@@ -2259,6 +2263,26 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
+            // chkHideMyShowsSpoilers
+            // 
+            this.chkHideMyShowsSpoilers.AutoSize = true;
+            this.chkHideMyShowsSpoilers.Location = new System.Drawing.Point(9, 161);
+            this.chkHideMyShowsSpoilers.Name = "chkHideMyShowsSpoilers";
+            this.chkHideMyShowsSpoilers.Size = new System.Drawing.Size(151, 17);
+            this.chkHideMyShowsSpoilers.TabIndex = 23;
+            this.chkHideMyShowsSpoilers.Text = "Hide Spoilers in My Shows";
+            this.chkHideMyShowsSpoilers.UseVisualStyleBackColor = true;
+            // 
+            // chkHideWtWSpoilers
+            // 
+            this.chkHideWtWSpoilers.AutoSize = true;
+            this.chkHideWtWSpoilers.Location = new System.Drawing.Point(9, 184);
+            this.chkHideWtWSpoilers.Name = "chkHideWtWSpoilers";
+            this.chkHideWtWSpoilers.Size = new System.Drawing.Size(182, 17);
+            this.chkHideWtWSpoilers.TabIndex = 24;
+            this.chkHideWtWSpoilers.Text = "Hide Spoilers in When To Watch";
+            this.chkHideWtWSpoilers.UseVisualStyleBackColor = true;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2526,5 +2550,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkScanOnStartup;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.CheckBox cbxUpdateAirDate;
+        private System.Windows.Forms.CheckBox chkHideWtWSpoilers;
+        private System.Windows.Forms.CheckBox chkHideMyShowsSpoilers;
     }
 }
