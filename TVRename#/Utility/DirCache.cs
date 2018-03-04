@@ -29,8 +29,8 @@ namespace TVRename
             int n = 0;
             if (!Directory.Exists(folder))
                 return n;
-            if (folder.Length >= 248)
-                return n;
+//            if (folder.Length >= 248)
+//                return n;
             try
             {
                 DirectoryInfo di = new DirectoryInfo(folder);
@@ -65,12 +65,15 @@ namespace TVRename
 
             try
             {
-                if (folder.Length >= 248)
+                /*
+                 * if (folder.Length >= 248)
+                 
                 {
                     logger.Error ("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder);
                     return count;
                 }
 
+    */
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (!di.Exists)
                     return count;
@@ -81,9 +84,9 @@ namespace TVRename
                 foreach (FileInfo ff in f2)
                 {
                     count++;
-                    if ((ff.Name.Length + folder.Length) >= 260)
-                        logger.Error("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder);
-                    else
+//                    if ((ff.Name.Length + folder.Length) >= 260)
+//                        logger.Error("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder);
+//                    else
                         this.Add(new DirCacheEntry(ff));
                     if ((prog != null) && (totalFiles != 0))
                         prog.Invoke(100 * (count) / totalFiles);
@@ -100,8 +103,9 @@ namespace TVRename
             {
                 logger.Info(e);
             }
-            catch
+            catch (Exception exception)
             {
+                logger.Error(exception);
             }
             return count;
         }

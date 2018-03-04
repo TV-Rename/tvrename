@@ -113,16 +113,12 @@ namespace TVRename
                         //if (!TVSettings.Instance.UsefulExtension(file.Extension, false)) // not a usefile file extension
                         //    continue;
 
-                        if (FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false))
-                        {
-                            if (TVDoc.FindSeasEp(file, out int seasF, out int epF, Action.Episode.SI) &&
-                                (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
-                            {
-                                toRemove.Add(Action1);
-                                newList.Add(new ItemSABnzbd(te, Action.Episode, Action.TheFileNoExt));
-                                break;
-                            }
-                        }
+                        if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
+                        if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, Action.Episode.SI) ||
+                            (seasF != Action.Episode.SeasonNumber) || (epF != Action.Episode.EpNum)) continue;
+                        toRemove.Add(Action1);
+                        newList.Add(new ItemSABnzbd(te, Action.Episode, Action.TheFileNoExt));
+                        break;
                     }
                 }
             }
