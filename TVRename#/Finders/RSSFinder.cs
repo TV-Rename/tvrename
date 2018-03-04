@@ -197,11 +197,9 @@ namespace TVRename
             if ((string.IsNullOrEmpty(title)) || (string.IsNullOrEmpty(link)))
                 return false;
 
-            int season = -1;
-            int episode = -1;
             string showName = "";
 
-            TVDoc.FindSeasEp("", title, out season, out episode, null, this.Rexps);
+            TVDoc.FindSeasEp("", title, out int season, out int episode, null, this.Rexps);
 
             try
             {

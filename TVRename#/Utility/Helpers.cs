@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -691,6 +692,25 @@ namespace TVRename
         /// </value>
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
 
+
+        public static void Swap<T>(
+            this IList<T> list,
+            int firstIndex,
+            int secondIndex
+        )
+        {
+            Contract.Requires(list != null);
+            Contract.Requires(firstIndex >= 0 && firstIndex < list.Count);
+            Contract.Requires(secondIndex >= 0 && secondIndex < list.Count);
+            if (firstIndex == secondIndex)
+            {
+                return;
+            }
+            T temp = list[firstIndex];
+            list[firstIndex] = list[secondIndex];
+            list[secondIndex] = temp;
+        }
+        
         public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
         {
             if (uiElement == null)
