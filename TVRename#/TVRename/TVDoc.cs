@@ -1725,7 +1725,7 @@ namespace TVRename
 
             this.ActionProcessorThread.Join();
 
-            theList.RemoveAll(x => (x is Action) && (x as Action).Done && !(x as Action).Error);
+            theList.RemoveAll(x => (x is Action) && ((Action) x).Done && !((Action) x).Error);
 
                 foreach (ScanListItem sli in theList)
                 {
@@ -1736,7 +1736,7 @@ namespace TVRename
                 }
 
             logger.Info("Completed Selected Actions");
-            logger.Info("**********************");
+            logger.Info("**************************");
 
         }
 

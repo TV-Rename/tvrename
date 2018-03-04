@@ -24,7 +24,7 @@ namespace TVRename
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
-            if (String.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || String.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
+            if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || String.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
                 prog.Invoke(startpct + totPct);
                 return;
@@ -34,7 +34,7 @@ namespace TVRename
 
             // Something like:
             // http://localhost:8080/sabnzbd/api?mode=queue&apikey=xxx&start=0&limit=8888&output=xml
-            String theURL = "http://" + TVSettings.Instance.SABHostPort +
+            string theURL = "http://" + TVSettings.Instance.SABHostPort +
                             "/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey=" + TVSettings.Instance.SABAPIKey;
 
             WebClient wc = new WebClient();
@@ -45,7 +45,7 @@ namespace TVRename
             }
             catch (WebException)
             {
-                logger.Info("Failed to obtain SABnzbd, please recheck settings: " + theURL);
+                logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theURL);
             }
 
             if (r == null)
@@ -82,7 +82,7 @@ namespace TVRename
             }
 
             System.Diagnostics.Debug.Assert(sq != null); // shouldn't happen
-            if (sq == null || sq.slots == null || sq.slots.Length == 0) // empty queue
+            if (sq?.slots == null || sq.slots.Length == 0) // empty queue
                 return;
 
             ItemList newList = new ItemList();
