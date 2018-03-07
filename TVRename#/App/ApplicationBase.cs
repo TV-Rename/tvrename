@@ -132,7 +132,7 @@ namespace TVRename.App
 
             foreach (ShowItem si in doc.ShowItems)
             {
-                string newTimeZone = tvdb.GetSeries(si.TVDBCode).tempTimeZone;
+                string newTimeZone = tvdb.GetSeries(si.TVDBCode)?.tempTimeZone;
                 if ((si.ShowTimeZone == TimeZone.DefaultTimeZone()) && newTimeZone != TimeZone.DefaultTimeZone() && !string.IsNullOrWhiteSpace(newTimeZone))
                 {
                     si.ShowTimeZone = newTimeZone;
