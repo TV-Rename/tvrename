@@ -46,13 +46,12 @@ namespace TVRename
                 return this.Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
             }
 
-            if (!this.Episode.SeasonNumber.Equals(miss.Episode.SeasonNumber))
+            if (!this.Episode.AppropriateSeasonNumber.Equals(miss.Episode.AppropriateSeasonNumber))
             {
-                int compare = this.Episode.SeasonNumber.CompareTo(miss.Episode.SeasonNumber);
-                return compare;
+                return this.Episode.AppropriateSeasonNumber.CompareTo(miss.Episode.AppropriateSeasonNumber);
             }
 
-            return this.Episode.EpNum.CompareTo(miss.Episode.EpNum);
+            return this.Episode.AppropriateEpNum.CompareTo(miss.Episode.AppropriateEpNum);
         }
 
         #endregion
@@ -79,7 +78,7 @@ namespace TVRename
                                                         Text = this.Episode.SI.ShowName
                                                     };
 
-                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(this.Episode.NumsAsString());
 
                 DateTime? dt = this.Episode.GetAirDateDT(true);

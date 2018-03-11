@@ -188,7 +188,7 @@ namespace TVRename
 	            else
 	            {
 		            lvi.Text = Episode.TheSeries.Name;
-		            lvi.SubItems.Add(Episode.SeasonNumber.ToString());
+		            lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
 		            lvi.SubItems.Add(Episode.NumsAsString());
 		            DateTime? dt = Episode.GetAirDateDT(true);
 		            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))

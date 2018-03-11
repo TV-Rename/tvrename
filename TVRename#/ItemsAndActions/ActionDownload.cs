@@ -178,8 +178,8 @@ namespace TVRename
                                                         Text = (this.Episode != null) ? this.Episode.SI.ShowName : ((this.SI != null) ? this.SI.ShowName : "")
                                                     };
 
-                lvi.SubItems.Add(this.Episode != null ? this.Episode.SeasonNumber.ToString() : "");
-                lvi.SubItems.Add(this.Episode != null ? this.Episode.NumsAsString() : "");
+                lvi.SubItems.Add(this.Episode?.AppropriateSeasonNumber.ToString() ?? "");
+                lvi.SubItems.Add(this.Episode?.NumsAsString() ?? "");
 
                 if (this.Episode != null)
                 {

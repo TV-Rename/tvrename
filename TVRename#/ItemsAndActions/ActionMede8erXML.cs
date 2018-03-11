@@ -92,8 +92,8 @@ namespace TVRename
                 writer.WriteStartElement("details");
                 writer.WriteStartElement("movie");
                 XMLHelper.WriteElementToXML(writer,"title",this.Episode.Name);
-                XMLHelper.WriteElementToXML(writer,"season",this.Episode.SeasonNumber);
-                XMLHelper.WriteElementToXML(writer,"episode",this.Episode.EpNum);
+                XMLHelper.WriteElementToXML(writer,"season",this.Episode.AppropriateSeasonNumber);
+                XMLHelper.WriteElementToXML(writer,"episode",this.Episode.AppropriateEpNum);
 
                 writer.WriteStartElement("year");
                 if (this.Episode.FirstAired != null)
@@ -295,7 +295,7 @@ namespace TVRename
                 if (this.Episode != null)
                 {
                     lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(this.Episode.NumsAsString());
                     DateTime? dt = this.Episode.GetAirDateDT(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)

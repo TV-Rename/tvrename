@@ -99,9 +99,6 @@ namespace TVRename.App
                 // Try loading settings file
                 doc = new TVDoc(settingsFile, clargs);
 
-                convertSeriesTimeZones(doc, TheTVDB.Instance);
-
-
                 if (recover) doc.SetDirty();
                 recover = !doc.LoadOK;
 
@@ -113,6 +110,8 @@ namespace TVRename.App
                 if (!doc.LoadOK && !string.IsNullOrEmpty(doc.LoadErr)) recoverText = doc.LoadErr;
                 if (!TheTVDB.Instance.LoadOK && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr)) recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
             } while (recover);
+
+            convertSeriesTimeZones(doc, TheTVDB.Instance);
 
             // Show user interface
             UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen, !clargs.Unattended && !clargs.Hide);
@@ -131,7 +130,7 @@ namespace TVRename.App
 
             foreach (ShowItem si in doc.ShowItems)
             {
-                string newTimeZone = tvdb.GetSeries(si.TVDBCode).tempTimeZone;
+                string newTimeZone = tvdb.GetSeries(si.TVDBCode)?.tempTimeZone;
                 if ((si.ShowTimeZone == TimeZone.DefaultTimeZone()) && newTimeZone != TimeZone.DefaultTimeZone() && !string.IsNullOrWhiteSpace(newTimeZone))
                 {
                     si.ShowTimeZone = newTimeZone;

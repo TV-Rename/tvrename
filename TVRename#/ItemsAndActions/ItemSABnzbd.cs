@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -77,7 +77,7 @@ namespace TVRename
                 ListViewItem lvi = new ListViewItem();
 
                 lvi.Text = this.Episode.SI.ShowName;
-                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(this.Episode.NumsAsString());
                 DateTime? dt = this.Episode.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))

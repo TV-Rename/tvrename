@@ -94,7 +94,6 @@ namespace TVRename
                 }
                 return false;
         }
-
         
         public DateTime? LastAiredDate() {
             DateTime? returnValue = null;
@@ -127,5 +126,21 @@ namespace TVRename
             return this.TheSeries.GetSeasonWideBannerPath(this.SeasonNumber);
         }
 
+        public void AddUpdateEpisode(Episode newEpisode)
+        {
+            bool added = false;
+            for (int i = 0; i < this.Episodes.Count; i++)
+            {
+                Episode ep = this.Episodes[i];
+                if (ep.EpisodeID == newEpisode.EpisodeID)
+                {
+                    this.Episodes[i] = newEpisode;
+                    added = true;
+                    break;
+                }
+            }
+            if (!added)
+                this.Episodes.Add(newEpisode);
+        }
     }
 }

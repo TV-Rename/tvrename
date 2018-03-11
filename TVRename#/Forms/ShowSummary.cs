@@ -161,7 +161,7 @@ namespace TVRename
 
             if (ser != null)
             {
-                foreach (int snum in ser.Seasons.Keys)
+                foreach (int snum in si.DVDOrder? ser.DVDSeasons.Keys: ser.AiredSeasons.Keys)
                 {
                     ShowSummaryData.ShowSummarySeasonData seasonData = this.getSeasonDetails(si, ser, snum);
                     showSummary.AddSeason(seasonData);
@@ -180,9 +180,11 @@ namespace TVRename
 
             Season season = null;
 
-            if ((snum >= 0) && (ser.Seasons.ContainsKey(snum)))
+            Dictionary<int, Season> seasons = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
+
+            if ((snum >= 0) && (seasons.ContainsKey(snum)))
             {
-                season = ser.Seasons[snum];
+                season = seasons[snum];
 
                 List<ProcessedEpisode> eis;
 

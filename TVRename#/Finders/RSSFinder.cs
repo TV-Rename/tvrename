@@ -50,7 +50,7 @@ namespace TVRename
 
                 foreach (RSSItem rss in RSSList)
                 {
-                    if ((FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) || (string.IsNullOrEmpty(rss.ShowName) && FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false))) && (rss.Season == pe.SeasonNumber) && (rss.Episode == pe.EpNum))
+                    if ((FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) || (string.IsNullOrEmpty(rss.ShowName) && FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false))) && (rss.Season == pe.AppropriateSeasonNumber) && (rss.Episode == pe.AppropriateEpNum ))
                     {
                         newItems.Add(new ActionRSS(rss, Action.TheFileNoExt, pe));
                         toRemove.Add(Action1);

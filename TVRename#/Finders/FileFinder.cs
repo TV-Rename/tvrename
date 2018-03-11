@@ -220,10 +220,10 @@ namespace TVRename
         // if so, add a rcitem for copy to "fi"
         public bool FindMissingEp(DirCache dirCache, ItemMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
         {
-            int season = me.Episode.SeasonNumber;
+            int season = me.Episode.AppropriateSeasonNumber;
 
             //String ^toName = FilenameFriendly(Settings->NamingStyle->NameFor(me->PE));
-            int epnum = me.Episode.EpNum;
+            int epnum = me.Episode.AppropriateEpNum;
 
             // TODO: find a 'best match', or use first ?
 

@@ -77,7 +77,7 @@ namespace TVRename
             writer.WriteLine(string.Format("title : {0}", this.Episode.SI.ShowName));
             writer.WriteLine(string.Format("seriesTitle : {0}", this.Episode.SI.ShowName));
             writer.WriteLine(string.Format("episodeTitle : {0}", this.Episode.Name));
-            writer.WriteLine(string.Format("episodeNumber : {0}{1:0#}", this.Episode.SeasonNumber, this.Episode.EpNum));
+            writer.WriteLine(string.Format("episodeNumber : {0}{1:0#}", this.Episode.AppropriateSeasonNumber, this.Episode.AppropriateEpNum));
             writer.WriteLine("isEpisode : true");
             writer.WriteLine(string.Format("description : {0}", this.Episode.Overview));
             if (this.Episode.FirstAired != null)
@@ -147,10 +147,9 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem();
+                ListViewItem lvi = new ListViewItem {Text = this.Episode.SI.ShowName};
 
-                lvi.Text = this.Episode.SI.ShowName;
-                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(this.Episode.NumsAsString());
                 DateTime? dt = this.Episode.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)

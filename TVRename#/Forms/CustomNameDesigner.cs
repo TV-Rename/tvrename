@@ -82,8 +82,8 @@ namespace TVRename
                 lvi.Text = fn;
 
                 bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, pe.SI);
-                bool ok1 = ok && (seas == pe.SeasonNumber);
-                bool ok2 = ok && (ep == pe.EpNum);
+                bool ok1 = ok && (seas == pe.AppropriateSeasonNumber);
+                bool ok2 = ok && (ep == pe.AppropriateEpNum);
                 string pre1 = ok1 ? "" : "* ";
                 string pre2 = ok2 ? "" : "* ";
 

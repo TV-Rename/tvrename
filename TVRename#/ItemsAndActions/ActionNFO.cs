@@ -47,7 +47,7 @@ namespace TVRename
 
         public string produces => this.Where.FullName;
 
-        private void writeEpisodeDetailsFor(Episode episode, XmlWriter writer,bool multi)
+        private void writeEpisodeDetailsFor(Episode episode, XmlWriter writer,bool multi,bool dvdOrder)
         {
             // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
             writer.WriteStartElement("episodedetails");
@@ -55,8 +55,18 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "title", episode.Name);
             XMLHelper.WriteElementToXML(writer,"showtitle", this.Episode.SI.ShowName );
             XMLHelper.WriteElementToXML(writer, "rating", episode.EpisodeRating);
-            XMLHelper.WriteElementToXML(writer, "season", episode.SeasonNumber);
-            XMLHelper.WriteElementToXML(writer, "episode", episode.EpNum);
+            if (dvdOrder)
+            {
+                XMLHelper.WriteElementToXML(writer, "season", episode.DVDSeasonNumber);
+                XMLHelper.WriteElementToXML(writer, "episode", episode.DVDEpNum);
+            }
+            else
+            {
+                XMLHelper.WriteElementToXML(writer, "season", episode.AiredSeasonNumber);
+                XMLHelper.WriteElementToXML(writer, "episode", episode.AiredEpNum);
+
+            }
+
             XMLHelper.WriteElementToXML(writer, "plot", episode.Overview);
 
             writer.WriteStartElement("aired");
@@ -145,7 +155,7 @@ namespace TVRename
                 ShowItem episodeSi = this.Episode.SI??this.SI;
                 string filename =
                     TVSettings.Instance.FilenameFriendly(
-                        TVSettings.Instance.NamingStyle.GetTargetEpisodeName(episode,episodeSi.ShowName, episodeSi.GetTimeZone()));
+                        TVSettings.Instance.NamingStyle.GetTargetEpisodeName(episode,episodeSi.ShowName, episodeSi.GetTimeZone(), this.SI.DVDOrder));
 
                 string thumbFilename =  filename + ".jpg";
                 XMLHelper.WriteElementToXML(writer, "thumb",thumbFilename);
@@ -187,9 +197,9 @@ namespace TVRename
             {
                 if (this.Episode.type == ProcessedEpisode.ProcessedEpisodeType.merged)
                 {
-                    foreach (Episode ep in this.Episode.sourceEpisodes) writeEpisodeDetailsFor(ep, writer, true);
+                    foreach (Episode ep in this.Episode.sourceEpisodes) writeEpisodeDetailsFor(ep, writer, true, this.Episode.SI.DVDOrder);
                 }
-                else writeEpisodeDetailsFor(this.Episode, writer, false);
+                else writeEpisodeDetailsFor(this.Episode, writer, false, this.Episode.SI.DVDOrder);
             }
             else if (this.SI != null) // show overview (tvshow.nfo)
             {
@@ -299,7 +309,7 @@ namespace TVRename
                 if (this.Episode != null)
                 {
                     lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(this.Episode.NumsAsString());
                     DateTime? dt = this.Episode.GetAirDateDT(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
