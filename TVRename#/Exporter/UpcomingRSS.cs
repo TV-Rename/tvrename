@@ -39,9 +39,9 @@ namespace TVRename
 
                         writer.WriteStartElement("item");
                         
-                        XMLHelper.WriteElementToXML(writer,"title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + niceName);
+                        XMLHelper.WriteElementToXML(writer,"title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.SI.ShowName + " " + niceName);
                         XMLHelper.WriteElementToXML(writer, "link", TheTVDB.Instance.WebsiteURL(ei.TheSeries.TVDBCode, ei.SeasonID, false));
-                        XMLHelper.WriteElementToXML(writer,"description",niceName + "<br/>" + ei.Overview);
+                        XMLHelper.WriteElementToXML(writer,"description", ei.SI.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
 
                         writer.WriteStartElement("pubDate");
                         DateTime? dt = ei.GetAirDateDT(true);
