@@ -1492,12 +1492,12 @@ namespace TVRename
             this.FillEpGuideHTML(si, -1);
         }
 
-        public void GotoEpguideFor(Episode ep, bool changeTab)
+        public void GotoEpguideFor(ProcessedEpisode ep, bool changeTab)
         {
             if (changeTab)
                 this.tabControl1.SelectTab(this.tbMyShows);
 
-            this.SelectSeason(ep.TheAiredSeason);
+            this.SelectSeason(ep.AppropriateSeason);
         }
 
         public void RightClickOnMyShows(ShowItem si, Point pt)
@@ -1532,7 +1532,7 @@ namespace TVRename
 
             this.mLastEpClicked = ep;
             this.mLastShowsClicked = sis;
-            this.mLastSeasonClicked = ep != null ? ep.TheAiredSeason : null;
+            this.mLastSeasonClicked = ep?.AppropriateSeason;
             this.mLastActionsClicked = null;
             this.BuildRightClickMenu(pt);
         }
@@ -3274,7 +3274,7 @@ namespace TVRename
                     this.mLastEpClicked = action.Episode;
                     if (action.Episode != null)
                     {
-                        this.mLastSeasonClicked = action.Episode.TheAiredSeason;
+                        this.mLastSeasonClicked = action.Episode.AppropriateSeason;
                         this.mLastShowsClicked = new List<ShowItem>() {action.Episode.SI};
                     }
                     else

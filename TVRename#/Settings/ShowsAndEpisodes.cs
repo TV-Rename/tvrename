@@ -91,7 +91,9 @@ namespace TVRename
             this.type = ProcessedEpisodeType.merged ;
         }
 
-        public int AppropriateSeasonNumber => this.SI.DVDOrder ? DVDSeasonNumber : AiredSeasonNumber;
+        public int AppropriateSeasonNumber => this.SI.DVDOrder ? this.DVDSeasonNumber : this.AiredSeasonNumber;
+
+        public Season AppropriateSeason => this.SI.DVDOrder ? this.TheDVDSeason : this.TheAiredSeason;
 
         public int AppropriateEpNum
         {
@@ -780,17 +782,16 @@ public class ShowItem
                 }
                 foreach (int i in this.SeasonEpisodes.Keys)
                 {
-                    if (this.IgnoreSeasons.Contains(i))
-                        continue;
+                    if (this.IgnoreSeasons.Contains(i)) continue;
 
                     string newName = AutoFolderNameForSeason(i);
-                    if ((!string.IsNullOrEmpty(newName)) && (!checkExist ||(Directory.Exists(newName))))
-                    {
-                        if (!fld.ContainsKey(i))
-                            fld[i] = new List<String>();
-                        if (!fld[i].Contains(newName))
-                            fld[i].Add(newName.TTS());
-                    }
+                    if (string.IsNullOrEmpty(newName)) continue;
+
+                    if (checkExist && !Directory.Exists(newName)) continue;
+
+                    if (!fld.ContainsKey(i)) fld[i] = new List<string>();
+
+                    if (!fld[i].Contains(newName)) fld[i].Add(newName.TTS());
                 }
             }
 
