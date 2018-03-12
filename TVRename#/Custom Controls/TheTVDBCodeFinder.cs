@@ -105,13 +105,13 @@ namespace TVRename
                     int num = kvp.Key;
                     string show = kvp.Value.Name;
                     show = Helpers.RemoveDiacritics(show);
-                    string s = num + " " + show;
+                    string s = num + " " + show.Replace(".", " "); 
 
                     string simpleS = Regex.Replace(s.ToLower(), "[^\\w ]", "");
 
                     bool numberMatch = numeric && num == matchnum;
-
-                    if (numberMatch || (!numeric && (simpleS.Contains(Regex.Replace(what, "[^\\w ]", "")))) || (numeric && show.Contains(what)))
+                    string searchTerm = Regex.Replace(what, "[^\\w ]", "");
+                    if (numberMatch || (!numeric && (simpleS.Contains(searchTerm))) || (numeric && show.Contains(what)))
                     {
                         ListViewItem lvi = new ListViewItem();
                         lvi.Text = num.ToString();
