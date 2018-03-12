@@ -142,5 +142,16 @@ namespace TVRename
             if (!added)
                 this.Episodes.Add(newEpisode);
         }
+
+        public bool ContainsEpisode(int episodeNumber,bool dvdOrder)
+        {
+            foreach (Episode ep in this.Episodes)
+            {
+                if (dvdOrder && ep.DVDEpNum == episodeNumber) return true;
+                if (!dvdOrder && ep.AiredEpNum == episodeNumber) return true;
+            }
+
+            return false;
+        }
     }
 }
