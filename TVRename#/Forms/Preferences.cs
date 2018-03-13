@@ -165,6 +165,7 @@ namespace TVRename
             S.pyTivoMetaSubFolder = this.cbMetaSubfolder.Checked;
             S.FolderJpg = this.cbFolderJpg.Checked;
             S.RenameCheck = this.cbRenameCheck.Checked;
+            S.PreventMove = this.chkPreventMove.Checked;
             S.MissingCheck = this.cbMissing.Checked;
             S.CorrectFileDates = this.cbxUpdateAirDate.Checked;
             S.SearchLocally = this.cbSearchLocally.Checked;
@@ -392,6 +393,7 @@ namespace TVRename
             this.cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
             this.cbFolderJpg.Checked = S.FolderJpg;
             this.cbRenameCheck.Checked = S.RenameCheck;
+            this.chkPreventMove.Checked = S.PreventMove;
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
             this.cbLookForAirdate.Checked = S.LookForDateInFilename;
             this.cbMonitorFolder.Checked = S.MonitorFolders;

@@ -15,7 +15,7 @@ namespace TVRename
     {
         public string TheFileNoExt;
         private string folder;
-        private string filename;
+        public string filename;
 
         public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder, string expectedFilenameNoExt)
         {

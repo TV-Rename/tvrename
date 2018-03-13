@@ -354,6 +354,7 @@ namespace TVRename
         public int ParallelDownloads = 4;
         public List<string> RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
+        public bool PreventMove = false;
         public bool RenameTxtToSub = false;
         public List<Replacement> Replacements = DefaultListRE();
         public string ResumeDatPath = "";
@@ -572,6 +573,8 @@ namespace TVRename
                     this.SelectedKODIType = (KODIType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameCheck")
                     this.RenameCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "PreventMove")
+                    this.PreventMove  = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
                     this.CheckuTorrent = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MissingCheck")
@@ -862,6 +865,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"SelectedKODIType",(int)this.SelectedKODIType);
             XMLHelper.WriteElementToXML(writer,"CheckuTorrent",this.CheckuTorrent);
             XMLHelper.WriteElementToXML(writer,"RenameCheck",this.RenameCheck);
+            XMLHelper.WriteElementToXML(writer, "PreventMove", this.PreventMove);
             XMLHelper.WriteElementToXML(writer,"MissingCheck",this.MissingCheck);
             XMLHelper.WriteElementToXML(writer, "UpdateFileDates", this.CorrectFileDates);
             XMLHelper.WriteElementToXML(writer,"SearchLocally",this.SearchLocally);

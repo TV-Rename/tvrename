@@ -223,6 +223,21 @@ namespace TVRename
 
         }
 
+        public static bool SameDirectoryLocation(this string directoryPath1, string directoryPath2)
+        {
+            // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
+            return string.Compare(directoryPath1.NormalizePath().TrimEnd('\\'), directoryPath2.NormalizePath().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0;
+        }
+
+        public static string NormalizePath(this string path)
+        {
+            //https://stackoverflow.com/questions/2281531/how-can-i-compare-directory-paths-in-c
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                .ToUpperInvariant();
+        }
+
+
         public static void GetFilmDetails(this FileInfo movieFile)
         {
             using (ShellPropertyCollection properties = new ShellPropertyCollection(movieFile.FullName))

@@ -222,7 +222,6 @@ namespace TVRename
         {
             int season = me.Episode.AppropriateSeasonNumber;
 
-            //String ^toName = FilenameFriendly(Settings->NamingStyle->NameFor(me->PE));
             int epnum = me.Episode.AppropriateEpNum;
 
             // TODO: find a 'best match', or use first ?
@@ -246,22 +245,32 @@ namespace TVRename
 
                     if (matched)
                     {
-                        if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
+                        if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) ||
+                            (me.Episode.SI.UseSequentialMatch && TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
                             FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
 
+                            if (TVSettings.Instance.PreventMove )
+                            {
+                                //We do not want to move the file, just rename it
+                                fi = new FileInfo(dce.TheFile.DirectoryName + System.IO.Path.DirectorySeparatorChar + me.filename + dce.TheFile.Extension);
+                            }
+
                             // don't remove the base search folders
                             bool doTidyup = true;
-                            foreach (String folder in this.mDoc.SearchFolders)
+                            foreach (string folder in this.mDoc.SearchFolders)
                             {
-                                // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
-                                if (String.Compare(folder.ToLower().TrimEnd('\\'), fi.Directory.FullName.ToLower().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0)
+                                
+                                if (folder.SameDirectoryLocation(fi.Directory.FullName))
+
+                                    
                                 {
                                     doTidyup = false;
                                     break;
                                 }
                             }
-                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, doTidyup ? TVSettings.Instance.Tidyup : null));
+                            if(dce.TheFile.FullName != fi.FullName)
+                                addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, doTidyup ? TVSettings.Instance.Tidyup : null));
 
                             DownloadIdentifiersController di = new DownloadIdentifiersController();
 

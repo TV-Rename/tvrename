@@ -73,6 +73,8 @@ namespace TVRename
             this.label6 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbGeneral = new System.Windows.Forms.TabPage();
+            this.chkHideWtWSpoilers = new System.Windows.Forms.CheckBox();
+            this.chkHideMyShowsSpoilers = new System.Windows.Forms.CheckBox();
             this.label37 = new System.Windows.Forms.Label();
             this.label38 = new System.Windows.Forms.Label();
             this.tbPercentDirty = new System.Windows.Forms.TextBox();
@@ -231,8 +233,7 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkHideMyShowsSpoilers = new System.Windows.Forms.CheckBox();
-            this.chkHideWtWSpoilers = new System.Windows.Forms.CheckBox();
+            this.chkPreventMove = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -621,6 +622,26 @@ namespace TVRename
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
+            // 
+            // chkHideWtWSpoilers
+            // 
+            this.chkHideWtWSpoilers.AutoSize = true;
+            this.chkHideWtWSpoilers.Location = new System.Drawing.Point(9, 184);
+            this.chkHideWtWSpoilers.Name = "chkHideWtWSpoilers";
+            this.chkHideWtWSpoilers.Size = new System.Drawing.Size(182, 17);
+            this.chkHideWtWSpoilers.TabIndex = 24;
+            this.chkHideWtWSpoilers.Text = "Hide Spoilers in When To Watch";
+            this.chkHideWtWSpoilers.UseVisualStyleBackColor = true;
+            // 
+            // chkHideMyShowsSpoilers
+            // 
+            this.chkHideMyShowsSpoilers.AutoSize = true;
+            this.chkHideMyShowsSpoilers.Location = new System.Drawing.Point(9, 161);
+            this.chkHideMyShowsSpoilers.Name = "chkHideMyShowsSpoilers";
+            this.chkHideMyShowsSpoilers.Size = new System.Drawing.Size(151, 17);
+            this.chkHideMyShowsSpoilers.TabIndex = 23;
+            this.chkHideMyShowsSpoilers.Text = "Hide Spoilers in My Shows";
+            this.chkHideMyShowsSpoilers.UseVisualStyleBackColor = true;
             // 
             // label37
             // 
@@ -1161,6 +1182,7 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.chkPreventMove);
             this.tpScanOptions.Controls.Add(this.label40);
             this.tpScanOptions.Controls.Add(this.cbxUpdateAirDate);
             this.tpScanOptions.Controls.Add(this.label33);
@@ -1184,7 +1206,7 @@ namespace TVRename
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(6, 249);
+            this.label40.Location = new System.Drawing.Point(6, 272);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(94, 13);
             this.label40.TabIndex = 11;
@@ -1193,7 +1215,7 @@ namespace TVRename
             // cbxUpdateAirDate
             // 
             this.cbxUpdateAirDate.AutoSize = true;
-            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 265);
+            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 288);
             this.cbxUpdateAirDate.Name = "cbxUpdateAirDate";
             this.cbxUpdateAirDate.Size = new System.Drawing.Size(197, 17);
             this.cbxUpdateAirDate.TabIndex = 10;
@@ -1203,7 +1225,7 @@ namespace TVRename
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(6, 202);
+            this.label33.Location = new System.Drawing.Point(6, 225);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(80, 13);
             this.label33.TabIndex = 9;
@@ -1212,7 +1234,7 @@ namespace TVRename
             // cbAutoCreateFolders
             // 
             this.cbAutoCreateFolders.AutoSize = true;
-            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 218);
+            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 241);
             this.cbAutoCreateFolders.Name = "cbAutoCreateFolders";
             this.cbAutoCreateFolders.Size = new System.Drawing.Size(192, 17);
             this.cbAutoCreateFolders.TabIndex = 8;
@@ -1231,7 +1253,7 @@ namespace TVRename
             // cbSearchRSS
             // 
             this.cbSearchRSS.AutoSize = true;
-            this.cbSearchRSS.Location = new System.Drawing.Point(40, 171);
+            this.cbSearchRSS.Location = new System.Drawing.Point(40, 194);
             this.cbSearchRSS.Name = "cbSearchRSS";
             this.cbSearchRSS.Size = new System.Drawing.Size(158, 17);
             this.cbSearchRSS.TabIndex = 7;
@@ -1255,7 +1277,7 @@ namespace TVRename
             this.cbMissing.AutoSize = true;
             this.cbMissing.Checked = true;
             this.cbMissing.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbMissing.Location = new System.Drawing.Point(20, 56);
+            this.cbMissing.Location = new System.Drawing.Point(20, 79);
             this.cbMissing.Name = "cbMissing";
             this.cbMissing.Size = new System.Drawing.Size(95, 17);
             this.cbMissing.TabIndex = 2;
@@ -1266,7 +1288,7 @@ namespace TVRename
             // cbLeaveOriginals
             // 
             this.cbLeaveOriginals.AutoSize = true;
-            this.cbLeaveOriginals.Location = new System.Drawing.Point(60, 102);
+            this.cbLeaveOriginals.Location = new System.Drawing.Point(60, 125);
             this.cbLeaveOriginals.Name = "cbLeaveOriginals";
             this.cbLeaveOriginals.Size = new System.Drawing.Size(129, 17);
             this.cbLeaveOriginals.TabIndex = 4;
@@ -1276,7 +1298,7 @@ namespace TVRename
             // cbCheckSABnzbd
             // 
             this.cbCheckSABnzbd.AutoSize = true;
-            this.cbCheckSABnzbd.Location = new System.Drawing.Point(40, 148);
+            this.cbCheckSABnzbd.Location = new System.Drawing.Point(40, 171);
             this.cbCheckSABnzbd.Name = "cbCheckSABnzbd";
             this.cbCheckSABnzbd.Size = new System.Drawing.Size(137, 17);
             this.cbCheckSABnzbd.TabIndex = 6;
@@ -1287,7 +1309,7 @@ namespace TVRename
             // cbCheckuTorrent
             // 
             this.cbCheckuTorrent.AutoSize = true;
-            this.cbCheckuTorrent.Location = new System.Drawing.Point(40, 125);
+            this.cbCheckuTorrent.Location = new System.Drawing.Point(40, 148);
             this.cbCheckuTorrent.Name = "cbCheckuTorrent";
             this.cbCheckuTorrent.Size = new System.Drawing.Size(133, 17);
             this.cbCheckuTorrent.TabIndex = 5;
@@ -1300,7 +1322,7 @@ namespace TVRename
             this.cbSearchLocally.AutoSize = true;
             this.cbSearchLocally.Checked = true;
             this.cbSearchLocally.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbSearchLocally.Location = new System.Drawing.Point(40, 79);
+            this.cbSearchLocally.Location = new System.Drawing.Point(40, 102);
             this.cbSearchLocally.Name = "cbSearchLocally";
             this.cbSearchLocally.Size = new System.Drawing.Size(218, 17);
             this.cbSearchLocally.TabIndex = 3;
@@ -2263,25 +2285,15 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // chkHideMyShowsSpoilers
+            // chkPreventMove
             // 
-            this.chkHideMyShowsSpoilers.AutoSize = true;
-            this.chkHideMyShowsSpoilers.Location = new System.Drawing.Point(9, 161);
-            this.chkHideMyShowsSpoilers.Name = "chkHideMyShowsSpoilers";
-            this.chkHideMyShowsSpoilers.Size = new System.Drawing.Size(151, 17);
-            this.chkHideMyShowsSpoilers.TabIndex = 23;
-            this.chkHideMyShowsSpoilers.Text = "Hide Spoilers in My Shows";
-            this.chkHideMyShowsSpoilers.UseVisualStyleBackColor = true;
-            // 
-            // chkHideWtWSpoilers
-            // 
-            this.chkHideWtWSpoilers.AutoSize = true;
-            this.chkHideWtWSpoilers.Location = new System.Drawing.Point(9, 184);
-            this.chkHideWtWSpoilers.Name = "chkHideWtWSpoilers";
-            this.chkHideWtWSpoilers.Size = new System.Drawing.Size(182, 17);
-            this.chkHideWtWSpoilers.TabIndex = 24;
-            this.chkHideWtWSpoilers.Text = "Hide Spoilers in When To Watch";
-            this.chkHideWtWSpoilers.UseVisualStyleBackColor = true;
+            this.chkPreventMove.AutoSize = true;
+            this.chkPreventMove.Location = new System.Drawing.Point(40, 56);
+            this.chkPreventMove.Name = "chkPreventMove";
+            this.chkPreventMove.Size = new System.Drawing.Size(188, 17);
+            this.chkPreventMove.TabIndex = 12;
+            this.chkPreventMove.Text = "Pre&vent move of files (just rename)";
+            this.chkPreventMove.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -2552,5 +2564,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbxUpdateAirDate;
         private System.Windows.Forms.CheckBox chkHideWtWSpoilers;
         private System.Windows.Forms.CheckBox chkHideMyShowsSpoilers;
+        private System.Windows.Forms.CheckBox chkPreventMove;
     }
 }
