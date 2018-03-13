@@ -1435,7 +1435,8 @@ namespace TVRename
             // 
             this.showRightClickMenu.Name = "menuSearchSites";
             this.showRightClickMenu.ShowImageMargin = false;
-            this.showRightClickMenu.Size = new System.Drawing.Size(36, 4);
+            this.showRightClickMenu.Size = new System.Drawing.Size(128, 26);
+            this.showRightClickMenu.Opening += new System.ComponentModel.CancelEventHandler(this.showRightClickMenu_Opening);
             this.showRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.showRightClickMenu_ItemClicked);
             // 
             // folderRightClickMenu

@@ -2598,7 +2598,7 @@ namespace TVRename
             }
         }
 
-        private void EditSeason(ShowItem si, int seasnum)
+        internal void EditSeason(ShowItem si, int seasnum)
         {
             this.MoreBusy();
 
@@ -2619,7 +2619,7 @@ namespace TVRename
             this.LessBusy();
         }
 
-        private void EditShow(ShowItem si)
+        internal void EditShow(ShowItem si)
         {
             this.MoreBusy();
             TheTVDB.Instance.GetLock("EditShow");
@@ -2644,7 +2644,7 @@ namespace TVRename
             this.LessBusy();
         }
 
-        private void ForceRefresh(List<ShowItem> sis)
+        internal void ForceRefresh(List<ShowItem> sis)
         {
             this.mDoc.ForceRefresh(sis);
             this.FillMyShows();
@@ -3722,9 +3722,9 @@ namespace TVRename
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            this.mDoc.findDoubleEps();
-            MessageBox.Show("Please review the log file for files which are possibly double episodes",
-                "Double Episode Finder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            List < PossibleDuplicateEpisode >  x = this.mDoc.findDoubleEps();
+            frmDupEpFinder form = new frmDupEpFinder(x,this.mDoc,this);
+            form.ShowDialog();
         }
 
         private void btnUpdateAvailable_Click(object sender, EventArgs e)
@@ -3767,6 +3767,11 @@ namespace TVRename
         }
 
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void showRightClickMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
         }
