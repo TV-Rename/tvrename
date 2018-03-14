@@ -1301,7 +1301,7 @@ namespace TVRename
                 if ( FileHelper.SimplifyAndCheckFilename(simplifiedfname, m.TheSeries.Name,false,true))
                 {
                     // see if season and episode match
-                    bool findFile = TVDoc.FindSeasEp("", simplifiedfname, out int seasF, out int epF, m.SI, this.Rexps,
+                    bool findFile = TVDoc.FindSeasEp("", simplifiedfname, out int seasF, out int epF, out int maxEp, m.SI, this.Rexps,
                         out FilenameProcessorRE rex);
                     bool matchSeasonEpisode = m.SI.DVDOrder
                         ? (seasF == m.AiredSeasonNumber) && (epF == m.AiredEpNum)

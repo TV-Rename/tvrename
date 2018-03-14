@@ -373,6 +373,8 @@ namespace TVRename
         {
             get { return VideoExtensionsString.Split(';'); }
         }
+
+        public bool AutoMergeEpisodes = false;
         public string VideoExtensionsString = "";
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
@@ -587,6 +589,8 @@ namespace TVRename
                     this.LeaveOriginals = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LookForDateInFilename")
                     this.LookForDateInFilename = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "AutoMergeEpisodes")
+                    this.AutoMergeEpisodes = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "StartupScan")
@@ -871,6 +875,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"SearchLocally",this.SearchLocally);
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
+            XMLHelper.WriteElementToXML(writer, "AutoMergeEpisodes", this.AutoMergeEpisodes);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);
             XMLHelper.WriteElementToXML(writer, "StartupScan", this.runStartupCheck);
             XMLHelper.WriteElementToXML(writer, "PeriodicScan", this.runPeriodicCheck);
@@ -993,6 +998,9 @@ namespace TVRename
 
             List<FilenameProcessorRE> l = new List<FilenameProcessorRE>
                                               {
+                                                  new FilenameProcessorRE(true,
+                                                      "(^|[^a-z])s?(?<s>[0-9]+).?[ex](?<e>[0-9]{2,})(-?e[0-9]{2,})*-?[ex](?<f>[0-9]{2,})[^a-z]",
+                                                      false, "Multipart Rule : s04e01e02e03 S01E01-E02"),
                                                   new FilenameProcessorRE(true,
                                                                           "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]",
                                                                           false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),

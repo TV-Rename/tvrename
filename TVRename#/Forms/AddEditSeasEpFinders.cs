@@ -284,10 +284,10 @@ namespace TVRename
                     continue; // move on
 
                 ShowItem si = this.cbShowList.SelectedIndex >= 0 ? this.SIL[this.cbShowList.SelectedIndex] : null;
-                bool r = TVDoc.FindSeasEp(fi, out int seas, out int ep, si, rel, false,out FilenameProcessorRE matchRex);
+                bool r = TVDoc.FindSeasEp(fi, out int seas, out int ep, out int maxEp, si, rel, false,out FilenameProcessorRE matchRex);
                 ListViewItem lvi = new ListViewItem {Text = fi.Name};
                 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
-                lvi.SubItems.Add((ep == -1) ? "-" : ep.ToString());
+                lvi.SubItems.Add((ep == -1) ? "-" : ep.ToString() + ((maxEp!=-1)?"-"+maxEp.ToString():""));
                 lvi.SubItems.Add((matchRex == null) ? "-" : matchRex.Notes);
                 if (!r)
                     lvi.BackColor = Helpers.WarningColor();

@@ -79,9 +79,9 @@ namespace TVRename
 
                 foreach (DirCacheEntry fi in dirC)
                 {
-                    bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, null);
+                    bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, null);
                     bool useful = fi.HasUsefulExtension_NotOthersToo;
-                    txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
+                    txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                 }
                 txt.Append("\r\n");
             }
@@ -108,9 +108,9 @@ namespace TVRename
                                 files.AddFolder(null, 0, 0, folder, true);
                             foreach (DirCacheEntry fi in files)
                             {
-                                bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, si);
+                                bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);
                                 bool useful = fi.HasUsefulExtension_NotOthersToo;
-                                txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
+                                txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                             }
                             txt.Append("\r\n");
                         }

@@ -267,9 +267,9 @@ namespace TVRename
             return null;
         }
 
-        internal static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, ShowItem sI)
+        internal static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowItem sI)
         {
-            return FindSeasEp( theFile, out  seasF, out  epF,  sI, out FilenameProcessorRE rex);
+            return FindSeasEp( theFile, out  seasF, out  epF, out  maxEp,  sI, out FilenameProcessorRE rex);
         }
 
         //			void WebServer()
@@ -847,7 +847,7 @@ namespace TVRename
                     if (!TVSettings.Instance.UsefulExtension(fiTemp.Extension, false))
                         continue; // move on
 
-                    if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, si)) continue;
+                    if (!FindSeasEp(fiTemp, out int seasFound, out int epFound, out int maxEp, si)) continue;
 
                     if (seasFound == -1)
                         seasFound = seasWanted;
@@ -2195,16 +2195,10 @@ namespace TVRename
                 // all the folders for this particular season
                 List<string> folders = allFolders[snum];
 
-
-                List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
-
                 foreach (string folder in folders)
                 {
-
-
                     //Image series checks here
                     this.TheActionList.Add(DownloadIdentifiers.ForceUpdateSeason(DownloadIdentifier.DownloadType.downloadImage, si, folder, snum));
-
                 }
 
             } // for each season of this show
@@ -2267,7 +2261,7 @@ namespace TVRename
                         if (fileCanBeRemoved)
                         {
                             ShowItem si = matchingShows[0];//Choose the first series
-                            TVDoc.FindSeasEp(fi, out int seasF, out int epF, si, out FilenameProcessorRE rex);
+                            TVDoc.FindSeasEp(fi, out int seasF, out int epF, out int maxEp, si, out FilenameProcessorRE rex);
                             SeriesInfo s = si.TheSeries();
                             Episode ep = s.getEpisode(seasF, epF, si.DVDOrder);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
@@ -2327,7 +2321,7 @@ namespace TVRename
 
         public bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
         {
-            if (TVDoc.FindSeasEp(fi, out int seasF, out int epF, si, out FilenameProcessorRE rex))
+            if (TVDoc.FindSeasEp(fi, out int seasF, out int epF, out int maxEp, si, out FilenameProcessorRE rex))
             {
                 SeriesInfo s = si.TheSeries();
                 try
@@ -2519,7 +2513,7 @@ namespace TVRename
                             if (this.ActionCancel)
                                 return;
 
-                            if (!FindSeasEp(fi, out int seasNum, out int epNum, si, out FilenameProcessorRE rex))
+                            if (!FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si, out FilenameProcessorRE rex))
                                 continue; // can't find season & episode, so this file is of no interest to us
 
                             if (seasNum == -1)
@@ -2822,12 +2816,13 @@ namespace TVRename
             return filename;
         }
 
-        private static bool FindSeasEpDateCheck(FileInfo fi, out int seas, out int ep, ShowItem si)
+        private static bool FindSeasEpDateCheck(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si)
         {
             if (fi == null || si == null)
             {
                 seas = -1;
                 ep = -1;
+                maxEp = -1;
                 return false;
             }
 
@@ -2845,6 +2840,7 @@ namespace TVRename
 
             ep = -1;
             seas = -1;
+            maxEp = -1;
             Dictionary<int, Season> seasonsToUse = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
 
             foreach (KeyValuePair<int, Season> kvp in seasonsToUse)
@@ -3022,31 +3018,32 @@ namespace TVRename
         }
 
 
-        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si, out FilenameProcessorRE re)
+        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si, out FilenameProcessorRE re)
         {
-            return TVDoc.FindSeasEp(fi, out seas, out ep, si, TVSettings.Instance.FNPRegexs, TVSettings.Instance.LookForDateInFilename, out re);
+            return TVDoc.FindSeasEp(fi, out seas, out ep, out maxEp, si, TVSettings.Instance.FNPRegexs, TVSettings.Instance.LookForDateInFilename, out re);
         }
 
 
 
-        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, ShowItem si, List<FilenameProcessorRE> rexps, bool doDateCheck,out FilenameProcessorRE re)
+        public static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si, List<FilenameProcessorRE> rexps, bool doDateCheck,out FilenameProcessorRE re)
         {
             re = null;
             if (fi == null)
             {
                 seas = -1;
                 ep = -1;
+                maxEp = -1;
                 return false;
             }
 
-            if (doDateCheck && FindSeasEpDateCheck(fi, out seas, out ep, si))
+            if (doDateCheck && FindSeasEpDateCheck(fi, out seas, out ep,out maxEp, si))
                 return true;
 
             string filename = fi.Name;
             int l = filename.Length;
             int le = fi.Extension.Length;
             filename = filename.Substring(0, l - le);
-            return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep, si, rexps, out re);
+            return FindSeasEp(fi.Directory.FullName, filename, out seas, out ep,out  maxEp ,si, rexps, out re);
         }
 
         public static bool FindSeasEp(DirectoryInfo di, out int seas, out int ep, ShowItem si, out FilenameProcessorRE re)
@@ -3062,20 +3059,20 @@ namespace TVRename
                 return false;
             }
 
-            return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, si, rexps, out re);
+            return FindSeasEp(di.Parent.FullName, di.Name, out seas, out ep, out int maxEp, si, rexps, out re);
         }
 
 
-        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, ShowItem si, List<FilenameProcessorRE> rexps)
+        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp, ShowItem si, List<FilenameProcessorRE> rexps)
         {
-            return TVDoc.FindSeasEp(directory, filename, out seas, out ep, si,rexps, out FilenameProcessorRE rex);
+            return TVDoc.FindSeasEp(directory, filename, out seas, out ep,  out maxEp, si,rexps, out FilenameProcessorRE rex);
         }
 
 
-        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, ShowItem si, List<FilenameProcessorRE> rexps, out FilenameProcessorRE rex)
+        public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp, ShowItem si, List<FilenameProcessorRE> rexps, out FilenameProcessorRE rex)
         {
             string showNameHint = (si != null) ? si.ShowName : "";
-
+            maxEp = -1;
             seas = ep = -1;
             rex = null;
 
@@ -3097,13 +3094,12 @@ namespace TVRename
                     {
                         int adj = re.UseFullPath ? (fullPath.Length - filename.Length) : 0;
 
-                        int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index) - adj;
-
-
                         if (!int.TryParse(m.Groups["s"].ToString(), out seas))
                             seas = -1;
                         if (!int.TryParse(m.Groups["e"].ToString(), out ep))
                             ep = -1;
+                        if (!int.TryParse(m.Groups["f"].ToString(), out maxEp))
+                            maxEp = -1;
 
                         rex = re;
                         if ((seas != -1) || (ep != -1))  return true;

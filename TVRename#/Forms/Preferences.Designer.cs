@@ -128,6 +128,7 @@ namespace TVRename
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.chkPreventMove = new System.Windows.Forms.CheckBox();
             this.label40 = new System.Windows.Forms.Label();
             this.cbxUpdateAirDate = new System.Windows.Forms.CheckBox();
             this.label33 = new System.Windows.Forms.Label();
@@ -233,7 +234,7 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkPreventMove = new System.Windows.Forms.CheckBox();
+            this.chkAutoMergeEpisodes = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -1182,6 +1183,7 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.chkAutoMergeEpisodes);
             this.tpScanOptions.Controls.Add(this.chkPreventMove);
             this.tpScanOptions.Controls.Add(this.label40);
             this.tpScanOptions.Controls.Add(this.cbxUpdateAirDate);
@@ -1202,6 +1204,16 @@ namespace TVRename
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
+            // 
+            // chkPreventMove
+            // 
+            this.chkPreventMove.AutoSize = true;
+            this.chkPreventMove.Location = new System.Drawing.Point(40, 56);
+            this.chkPreventMove.Name = "chkPreventMove";
+            this.chkPreventMove.Size = new System.Drawing.Size(188, 17);
+            this.chkPreventMove.TabIndex = 12;
+            this.chkPreventMove.Text = "Pre&vent move of files (just rename)";
+            this.chkPreventMove.UseVisualStyleBackColor = true;
             // 
             // label40
             // 
@@ -2285,15 +2297,15 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // chkPreventMove
+            // chkAutoMergeEpisodes
             // 
-            this.chkPreventMove.AutoSize = true;
-            this.chkPreventMove.Location = new System.Drawing.Point(40, 56);
-            this.chkPreventMove.Name = "chkPreventMove";
-            this.chkPreventMove.Size = new System.Drawing.Size(188, 17);
-            this.chkPreventMove.TabIndex = 12;
-            this.chkPreventMove.Text = "Pre&vent move of files (just rename)";
-            this.chkPreventMove.UseVisualStyleBackColor = true;
+            this.chkAutoMergeEpisodes.AutoSize = true;
+            this.chkAutoMergeEpisodes.Location = new System.Drawing.Point(9, 311);
+            this.chkAutoMergeEpisodes.Name = "chkAutoMergeEpisodes";
+            this.chkAutoMergeEpisodes.Size = new System.Drawing.Size(276, 17);
+            this.chkAutoMergeEpisodes.TabIndex = 13;
+            this.chkAutoMergeEpisodes.Text = "Automatically create merge rules for merged episodes";
+            this.chkAutoMergeEpisodes.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -2565,5 +2577,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkHideWtWSpoilers;
         private System.Windows.Forms.CheckBox chkHideMyShowsSpoilers;
         private System.Windows.Forms.CheckBox chkPreventMove;
+        private System.Windows.Forms.CheckBox chkAutoMergeEpisodes;
     }
 }

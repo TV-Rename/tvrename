@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -245,10 +246,40 @@ namespace TVRename
 
                     if (matched)
                     {
-                        if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) ||
+                        if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.SI) && (seasF == season) && (epF == epnum)) ||
                             (me.Episode.SI.UseSequentialMatch && TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
-                            FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
+
+                            FileInfo fi;
+                            if (maxEp !=-1 && TVSettings.Instance.AutoMergeEpisodes) 
+                            {
+                                ShowRule sr = new ShowRule();
+                                sr.DoWhatNow = RuleAction.kMerge;
+                                sr.First = epF;
+                                sr.Second = maxEp;
+                                if (!me.Episode.SI.SeasonRules.ContainsKey(seasF)) me.Episode.SI.SeasonRules[seasF] = new List<ShowRule>();
+
+                                me.Episode.SI.SeasonRules[seasF].Add(sr);
+                                logger.Info($"Added new rule automatically for {sr}");
+
+                                //Regenerate the episodes with the new rule added
+                                this.mDoc.GenerateEpisodeDict(me.Episode.SI);
+
+                                //Get the newly created processed episode we are after
+                                List<ProcessedEpisode> newSeason = this.mDoc.GetShowItem(me.Episode.SI.TVDBCode).SeasonEpisodes[seasF];
+                                ProcessedEpisode newPE = me.Episode;
+
+                                foreach (ProcessedEpisode pe in newSeason)
+                                {
+                                    if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
+                                }
+
+                                
+                                me = new ItemMissing(newPE, me.TargetFolder, TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(newPE)));
+                            }
+                            fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
+                       
+                            
 
                             if (TVSettings.Instance.PreventMove )
                             {

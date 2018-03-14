@@ -199,7 +199,7 @@ namespace TVRename
 
             string showName = "";
 
-            TVDoc.FindSeasEp("", title, out int season, out int episode, null, this.Rexps);
+            TVDoc.FindSeasEp("", title, out int season, out int episode, out int maxEp, null, this.Rexps);
 
             try
             {

@@ -172,6 +172,7 @@ namespace TVRename
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
+            S.AutoMergeEpisodes = this.chkAutoMergeEpisodes.Checked;
 
             S.MonitorFolders = this.cbMonitorFolder.Checked;
             S.runStartupCheck = this.chkScanOnStartup.Checked;
@@ -396,6 +397,7 @@ namespace TVRename
             this.chkPreventMove.Checked = S.PreventMove;
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
             this.cbLookForAirdate.Checked = S.LookForDateInFilename;
+            this.chkAutoMergeEpisodes.Checked = S.AutoMergeEpisodes;
             this.cbMonitorFolder.Checked = S.MonitorFolders;
             this.chkScheduledScan.Checked = S.RunPeriodicCheck();
             this.chkScanOnStartup.Checked = S.RunOnStartUp();
