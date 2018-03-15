@@ -1,19 +1,15 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 namespace TVRename
 {
     using System;
-    using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
     using System.Xml;
-    using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
-    using Directory = Alphaleonis.Win32.Filesystem.Directory;
-    using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
@@ -96,8 +92,8 @@ namespace TVRename
                 writer.WriteStartElement("details");
                 writer.WriteStartElement("movie");
                 XMLHelper.WriteElementToXML(writer,"title",this.Episode.Name);
-                XMLHelper.WriteElementToXML(writer,"season",this.Episode.SeasonNumber);
-                XMLHelper.WriteElementToXML(writer,"episode",this.Episode.EpNum);
+                XMLHelper.WriteElementToXML(writer,"season",this.Episode.AppropriateSeasonNumber);
+                XMLHelper.WriteElementToXML(writer,"episode",this.Episode.AppropriateEpNum);
 
                 writer.WriteStartElement("year");
                 if (this.Episode.FirstAired != null)
@@ -299,7 +295,7 @@ namespace TVRename
                 if (this.Episode != null)
                 {
                     lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(this.Episode.NumsAsString());
                     DateTime? dt = this.Episode.GetAirDateDT(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)

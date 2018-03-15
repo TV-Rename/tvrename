@@ -1,9 +1,4 @@
-﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -40,7 +35,7 @@ namespace TVRename
 
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
-                FileInfo viewxml = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "view.xml");
+                FileInfo viewxml = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "View.xml");
                 if ((!viewxml.Exists) && (!this.doneFiles.Contains(viewxml.FullName)))
                 {
                     this.doneFiles.Add(viewxml.FullName);
@@ -61,7 +56,7 @@ namespace TVRename
                 ItemList TheActionList = new ItemList();
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
-                FileInfo viewxml = FileHelper.FileInFolder(folder, "view.xml");
+                FileInfo viewxml = FileHelper.FileInFolder(folder, "View.xml");
                 if (!viewxml.Exists) TheActionList.Add(new ActionMede8erViewXML(viewxml, si, snum));
 
 

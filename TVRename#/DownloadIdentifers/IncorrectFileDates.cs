@@ -33,7 +33,7 @@ namespace TVRename
 
         public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            DateTime? newUpdateTime = si.TheSeries().Seasons[snum].LastAiredDate();
+            DateTime? newUpdateTime = si.GetSeason(snum).LastAiredDate();
 
             if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
             {

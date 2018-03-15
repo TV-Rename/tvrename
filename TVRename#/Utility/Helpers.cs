@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System;
@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Net;
 using Newtonsoft.Json.Linq;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -222,6 +223,21 @@ namespace TVRename
 
         }
 
+        public static bool SameDirectoryLocation(this string directoryPath1, string directoryPath2)
+        {
+            // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
+            return string.Compare(directoryPath1.NormalizePath().TrimEnd('\\'), directoryPath2.NormalizePath().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0;
+        }
+
+        public static string NormalizePath(this string path)
+        {
+            //https://stackoverflow.com/questions/2281531/how-can-i-compare-directory-paths-in-c
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                .ToUpperInvariant();
+        }
+
+
         public static void GetFilmDetails(this FileInfo movieFile)
         {
             using (ShellPropertyCollection properties = new ShellPropertyCollection(movieFile.FullName))
@@ -250,24 +266,27 @@ namespace TVRename
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
 
-        public static string GBMB(this long value, int decimalPlaces = 0)
+
+        public static string GBMB(this long value, int decimalPlaces = 2)
         {
             const long OneKb = 1024;
             const long OneMb = OneKb * 1024;
             const long OneGb = OneMb * 1024;
             const long OneTb = OneGb * 1024;
 
-            var asTb = Math.Round((double)value / OneTb, decimalPlaces);
-            var asGb = Math.Round((double)value / OneGb, decimalPlaces);
-            var asMb = Math.Round((double)value / OneMb, decimalPlaces);
-            var asKb = Math.Round((double)value / OneKb, decimalPlaces);
-            string chosenValue = asTb >= 1 ? string.Format("{0} TB", asTb)
-                : asGb >= 1 ? string.Format("{0} GB", asGb)
-                : asMb >= 1 ? string.Format("{0} MB", asMb)
-                : asKb >= 1 ? string.Format("{0} KB", asKb)
-                : string.Format("{0} B", Math.Round((double)value, decimalPlaces));
+            double asTb = Math.Round((double)value / OneTb, decimalPlaces);
+            double asGb = Math.Round((double)value / OneGb, decimalPlaces);
+            double asMb = Math.Round((double)value / OneMb, decimalPlaces);
+            double asKb = Math.Round((double)value / OneKb, decimalPlaces);
+            double asB  = Math.Round((double)value, decimalPlaces);
+            string chosenValue = asTb >= 1 ? $"{asTb:G3} TB"
+                : asGb >= 1 ? $"{asGb:G3} GB"
+                : asMb >= 1 ? $"{asMb:G3} MB"
+                : asKb >= 1 ? $"{asKb:G3} KB"
+                : $"{asB:G3} B";
             return chosenValue;
         }
+
 
         [return: MarshalAs(UnmanagedType.Bool)]
         [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -445,6 +464,12 @@ namespace TVRename
 
     public static class StringExtensions
     {
+
+        public static string itemitems(this int n)
+        {
+            return n == 1 ? "Item" : "Items";
+        }
+
         public static bool Contains(this string source, string toCheck, StringComparison comp)
         {
             return source.IndexOf(toCheck, comp) >= 0;
@@ -682,6 +707,25 @@ namespace TVRename
         /// </value>
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
 
+
+        public static void Swap<T>(
+            this IList<T> list,
+            int firstIndex,
+            int secondIndex
+        )
+        {
+            Contract.Requires(list != null);
+            Contract.Requires(firstIndex >= 0 && firstIndex < list.Count);
+            Contract.Requires(secondIndex >= 0 && secondIndex < list.Count);
+            if (firstIndex == secondIndex)
+            {
+                return;
+            }
+            T temp = list[firstIndex];
+            list[firstIndex] = list[secondIndex];
+            list[secondIndex] = temp;
+        }
+        
         public static void SafeInvoke(this Control uiElement, System.Action updater, bool forceSynchronous)
         {
             if (uiElement == null)

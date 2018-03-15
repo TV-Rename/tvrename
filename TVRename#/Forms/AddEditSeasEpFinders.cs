@@ -1,16 +1,15 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
-using Alphaleonis.Win32.Filesystem;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;		
+using SourceGrid;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;		
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;		
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -115,6 +114,7 @@ namespace TVRename
 
         public void SelectionChanged(Object sender, SourceGrid.RangeRegionChangedEventArgs e)
         {
+            SelectionOnSelectionChanged(sender, e);
             this.StartTimer();
         }
 
@@ -167,9 +167,7 @@ namespace TVRename
             bool fullPath = (bool) (this.Grid1[i, 2].Value);
             string notes = (string) (this.Grid1[i, 3].Value) ?? "";
 
-            if (string.IsNullOrEmpty(regex))
-                return null;
-            return new FilenameProcessorRE(en, regex, fullPath, notes);
+            return string.IsNullOrEmpty(regex) ? null : new FilenameProcessorRE(en, regex, fullPath, notes);
         }
 
         private void bnOK_Click(object sender, System.EventArgs e)
@@ -282,18 +280,15 @@ namespace TVRename
             DirectoryInfo d = new DirectoryInfo(this.txtFolder.Text);
             foreach (FileInfo fi in d.GetFiles())
             {
-                int seas;
-                int ep;
-
                 if (!TVSettings.Instance.UsefulExtension(fi.Extension, true))
                     continue; // move on
 
                 ShowItem si = this.cbShowList.SelectedIndex >= 0 ? this.SIL[this.cbShowList.SelectedIndex] : null;
-                bool r = TVDoc.FindSeasEp(fi, out seas, out ep, si, rel, false);
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = fi.Name;
+                bool r = TVDoc.FindSeasEp(fi, out int seas, out int ep, out int maxEp, si, rel, false,out FilenameProcessorRE matchRex);
+                ListViewItem lvi = new ListViewItem {Text = fi.Name};
                 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());
-                lvi.SubItems.Add((ep == -1) ? "-" : ep.ToString());
+                lvi.SubItems.Add((ep == -1) ? "-" : ep.ToString() + ((maxEp!=-1)?"-"+maxEp.ToString():""));
+                lvi.SubItems.Add((matchRex == null) ? "-" : matchRex.Notes);
                 if (!r)
                     lvi.BackColor = Helpers.WarningColor();
                 this.lvPreview.Items.Add(lvi);
@@ -326,5 +321,60 @@ namespace TVRename
         }
 
         #endregion
+
+        private void bnUp_Click(object sender, EventArgs e)
+        {
+            // multiselection is off, so we can cheat...
+            int[] rowsIndex = this.Grid1.Selection.GetSelectionRegion().GetRowsIndex();
+
+            if (rowsIndex.Length == 0) return;
+
+            int recordToMoveUp = rowsIndex[0];
+
+            if (recordToMoveUp < 2) return;
+
+            this.Grid1.Rows.Swap(recordToMoveUp , recordToMoveUp-1);
+            this.Grid1.Selection.Focus(new Position(recordToMoveUp - 1, 1), true);
+            this.StartTimer();
+        }
+
+        private void bnDown_Click(object sender, EventArgs e)
+        {
+            // multiselection is off, so we can cheat...
+            int[] rowsIndex = this.Grid1.Selection.GetSelectionRegion().GetRowsIndex();
+
+            if (rowsIndex.Length == 0) return;
+
+            int recordToMoveDown = rowsIndex[0];
+
+            if (recordToMoveDown > this.Grid1.RowsCount-2) return;
+
+            this.Grid1.Rows.Swap(recordToMoveDown, recordToMoveDown +1);
+            this.Grid1.Selection.Focus(new Position(recordToMoveDown+1,1), true);
+            this.StartTimer();
+        }
+
+        private void SelectionOnSelectionChanged(object sender, RangeRegionChangedEventArgs rangeRegionChangedEventArgs)
+        {
+            // multiselection is off, so we can cheat...
+            int[] rowsIndex = this.Grid1.Selection.GetSelectionRegion().GetRowsIndex();
+
+            if (rowsIndex.Length == 0)
+            {
+                this.bnDelete.Enabled = false;
+                this.bnUp.Enabled = false;
+                this.bnDown.Enabled = false;
+                return;
+            }
+            int selectedRow = rowsIndex[0];
+
+            this.bnDelete.Enabled = true;
+
+            this.bnUp.Enabled = (selectedRow > 1);
+            this.bnDown.Enabled = (selectedRow < this.Grid1.RowsCount - 1);
+
+
+        }
     }
 }
+

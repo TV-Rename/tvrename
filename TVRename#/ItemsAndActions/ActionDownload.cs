@@ -1,20 +1,18 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
     using System;
-    using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using System.IO;
@@ -180,8 +178,8 @@ namespace TVRename
                                                         Text = (this.Episode != null) ? this.Episode.SI.ShowName : ((this.SI != null) ? this.SI.ShowName : "")
                                                     };
 
-                lvi.SubItems.Add(this.Episode != null ? this.Episode.SeasonNumber.ToString() : "");
-                lvi.SubItems.Add(this.Episode != null ? this.Episode.NumsAsString() : "");
+                lvi.SubItems.Add(this.Episode?.AppropriateSeasonNumber.ToString() ?? "");
+                lvi.SubItems.Add(this.Episode?.NumsAsString() ?? "");
 
                 if (this.Episode != null)
                 {

@@ -1,15 +1,14 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
 namespace TVRename
@@ -162,7 +161,7 @@ namespace TVRename
 
             if (ser != null)
             {
-                foreach (int snum in ser.Seasons.Keys)
+                foreach (int snum in si.DVDOrder? ser.DVDSeasons.Keys: ser.AiredSeasons.Keys)
                 {
                     ShowSummaryData.ShowSummarySeasonData seasonData = this.getSeasonDetails(si, ser, snum);
                     showSummary.AddSeason(seasonData);
@@ -181,9 +180,11 @@ namespace TVRename
 
             Season season = null;
 
-            if ((snum >= 0) && (ser.Seasons.ContainsKey(snum)))
+            Dictionary<int, Season> seasons = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
+
+            if ((snum >= 0) && (seasons.ContainsKey(snum)))
             {
-                season = ser.Seasons[snum];
+                season = seasons[snum];
 
                 List<ProcessedEpisode> eis;
 

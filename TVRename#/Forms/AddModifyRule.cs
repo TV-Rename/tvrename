@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 using System.Windows.Forms;
@@ -22,10 +22,15 @@ namespace TVRename
     public partial class AddModifyRule : Form
     {
         private ShowRule mRule;
+        private Season mSeason;
+        private bool mdvdOrder;
 
-        public AddModifyRule(ShowRule rule)
+        public AddModifyRule(ShowRule rule, Season season, bool dvdOrder)
         {
             this.mRule = rule;
+            this.mSeason = season;
+            this.mdvdOrder = dvdOrder;
+
             this.InitializeComponent();
 
             this.FillDialog();
@@ -205,6 +210,54 @@ namespace TVRename
             {
                 this.mRule.Second = -1;
             }
+
+            //validation Rules
+            if (!this.mSeason.ContainsEpisode(int.Parse(this.txtValue1.Text), this.mdvdOrder))
+            {
+                MessageBox.Show("First episode number is not valid for the selected season", "Modify Rules",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.txtValue1.Focus();
+                this.DialogResult = DialogResult.None;
+                return;
+            }
+
+            //these 3 tpyes only have one episode cited
+            if (!(this.mRule.DoWhatNow == RuleAction.kRename || this.mRule.DoWhatNow == RuleAction.kInsert || this.mRule.DoWhatNow == RuleAction.kSplit) &&
+                !this.mSeason.ContainsEpisode(int.Parse(this.txtValue2.Text), this.mdvdOrder))
+            {
+                MessageBox.Show("Second episode number is not valid for the selected season", "Modify Rules",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.txtValue2.Focus();
+                this.DialogResult = DialogResult.None;
+                return;
+            }
+
+            //these 3 tpyes only have one episode cited - others must be in order
+            if (!(this.mRule.DoWhatNow == RuleAction.kRename || this.mRule.DoWhatNow == RuleAction.kInsert || this.mRule.DoWhatNow == RuleAction.kSplit) &&
+                int.Parse(this.txtValue2.Text) < int.Parse(this.txtValue1.Text))
+            {
+                MessageBox.Show("Second episode number must be before the first episode number", "Modify Rules",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.txtValue2.Focus();
+                this.DialogResult = DialogResult.None;
+                return;
+            }
+
+            //Swap, merge and collapse can't be done on the same episode numbers
+            if ((this.mRule.DoWhatNow == RuleAction.kSwap || this.mRule.DoWhatNow == RuleAction.kMerge || this.mRule.DoWhatNow == RuleAction.kCollapse) &&
+                (this.txtValue2.Text.Equals(this.txtValue1.Text)))
+            {
+                MessageBox.Show("Episode Numbers must be different", "Modify Rules",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                this.txtValue2.Focus();
+                this.DialogResult = DialogResult.None;
+                return;
+            }
+
+
         }
+
+
+
     }
 }

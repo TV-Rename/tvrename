@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,6 @@ using System.Windows.Forms;
 namespace TVRename
 {
     using System.IO;
-    using System.Text.RegularExpressions;
     using Directory = Alphaleonis.Win32.Filesystem.Directory;
     using File = Alphaleonis.Win32.Filesystem.File;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -1302,9 +1301,12 @@ namespace TVRename
                 if ( FileHelper.SimplifyAndCheckFilename(simplifiedfname, m.TheSeries.Name,false,true))
                 {
                     // see if season and episode match
-                    int seasF;
-                    int epF;
-                    if (TVDoc.FindSeasEp("", simplifiedfname, out seasF, out epF, m.SI, this.Rexps) && (seasF == m.SeasonNumber) && (epF == m.EpNum))
+                    bool findFile = TVDoc.FindSeasEp("", simplifiedfname, out int seasF, out int epF, out int maxEp, m.SI, this.Rexps,
+                        out FilenameProcessorRE rex);
+                    bool matchSeasonEpisode = m.SI.DVDOrder
+                        ? (seasF == m.AiredSeasonNumber) && (epF == m.AiredEpNum)
+                        : (seasF == m.DVDSeasonNumber)   && (epF == m.DVDEpNum);
+                    if (findFile && matchSeasonEpisode)
                     {
                         // match!
                         // get extension from nameInTorrent

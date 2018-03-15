@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,6 @@ using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
-using NLog;
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -355,6 +354,7 @@ namespace TVRename
         public int ParallelDownloads = 4;
         public List<string> RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
+        public bool PreventMove = false;
         public bool RenameTxtToSub = false;
         public List<Replacement> Replacements = DefaultListRE();
         public string ResumeDatPath = "";
@@ -362,6 +362,8 @@ namespace TVRename
         public bool SearchLocally = true;
         public bool SearchRSS = false;
         public bool ShowEpisodePictures = true;
+        public bool HideWtWSpoilers = false;
+        public bool HideMyShowsSpoilers = false;
         public bool ShowInTaskbar = true;
         public string SpecialsFolderName = "Specials";
         public int StartupTab = 0;
@@ -371,6 +373,8 @@ namespace TVRename
         {
             get { return VideoExtensionsString.Split(';'); }
         }
+
+        public bool AutoMergeEpisodes = false;
         public string VideoExtensionsString = "";
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
@@ -490,6 +494,10 @@ namespace TVRename
                     this.RenameTxtToSub = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ShowEpisodePictures")
                     this.ShowEpisodePictures = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "HideWtWSpoilers")
+                    this.HideWtWSpoilers = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "HideMyShowsSpoilers")
+                    this.HideMyShowsSpoilers = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoCreateFolders")
                     this.AutoCreateFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoSelectShowInMyShows")
@@ -567,6 +575,8 @@ namespace TVRename
                     this.SelectedKODIType = (KODIType)reader.ReadElementContentAsInt();
                 else if (reader.Name == "RenameCheck")
                     this.RenameCheck = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "PreventMove")
+                    this.PreventMove  = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
                     this.CheckuTorrent = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MissingCheck")
@@ -579,6 +589,8 @@ namespace TVRename
                     this.LeaveOriginals = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LookForDateInFilename")
                     this.LookForDateInFilename = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "AutoMergeEpisodes")
+                    this.AutoMergeEpisodes = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "StartupScan")
@@ -839,6 +851,8 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"AutoSelectShowInMyShows",this.AutoSelectShowInMyShows);
             XMLHelper.WriteElementToXML(writer,"AutoCreateFolders", this.AutoCreateFolders );
             XMLHelper.WriteElementToXML(writer,"ShowEpisodePictures",this.ShowEpisodePictures);
+            XMLHelper.WriteElementToXML(writer, "HideWtWSpoilers", this.HideWtWSpoilers);
+            XMLHelper.WriteElementToXML(writer, "HideMyShowsSpoilers", this.HideMyShowsSpoilers);
             XMLHelper.WriteElementToXML(writer,"SpecialsFolderName",this.SpecialsFolderName);
             XMLHelper.WriteElementToXML(writer,"uTorrentPath",this.uTorrentPath);
             XMLHelper.WriteElementToXML(writer,"ResumeDatPath",this.ResumeDatPath);
@@ -855,11 +869,13 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"SelectedKODIType",(int)this.SelectedKODIType);
             XMLHelper.WriteElementToXML(writer,"CheckuTorrent",this.CheckuTorrent);
             XMLHelper.WriteElementToXML(writer,"RenameCheck",this.RenameCheck);
+            XMLHelper.WriteElementToXML(writer, "PreventMove", this.PreventMove);
             XMLHelper.WriteElementToXML(writer,"MissingCheck",this.MissingCheck);
             XMLHelper.WriteElementToXML(writer, "UpdateFileDates", this.CorrectFileDates);
             XMLHelper.WriteElementToXML(writer,"SearchLocally",this.SearchLocally);
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
+            XMLHelper.WriteElementToXML(writer, "AutoMergeEpisodes", this.AutoMergeEpisodes);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);
             XMLHelper.WriteElementToXML(writer, "StartupScan", this.runStartupCheck);
             XMLHelper.WriteElementToXML(writer, "PeriodicScan", this.runPeriodicCheck);
@@ -982,6 +998,9 @@ namespace TVRename
 
             List<FilenameProcessorRE> l = new List<FilenameProcessorRE>
                                               {
+                                                  new FilenameProcessorRE(true,
+                                                      "(^|[^a-z])s?(?<s>[0-9]+).?[ex](?<e>[0-9]{2,})(-?e[0-9]{2,})*-?[ex](?<f>[0-9]{2,})[^a-z]",
+                                                      false, "Multipart Rule : s04e01e02e03 S01E01-E02"),
                                                   new FilenameProcessorRE(true,
                                                                           "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]",
                                                                           false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),

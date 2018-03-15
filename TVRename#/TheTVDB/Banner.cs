@@ -1,16 +1,15 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.htmlr
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.mdr
 //
 // For more information see http://thetvdb.com/wiki/index.php/API:banners.xml
 //  
 
 using Newtonsoft.Json.Linq;
 using System;
-using System.Windows.Forms;
 using System.Xml;
 
 namespace TVRename

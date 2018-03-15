@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using System.Text.RegularExpressions;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using System.Linq;
@@ -223,10 +221,9 @@ namespace TVRename
         // if so, add a rcitem for copy to "fi"
         public bool FindMissingEp(DirCache dirCache, ItemMissing me, ItemList addTo, ActionCopyMoveRename.Op whichOp)
         {
-            int season = me.Episode.SeasonNumber;
+            int season = me.Episode.AppropriateSeasonNumber;
 
-            //String ^toName = FilenameFriendly(Settings->NamingStyle->NameFor(me->PE));
-            int epnum = me.Episode.EpNum;
+            int epnum = me.Episode.AppropriateEpNum;
 
             // TODO: find a 'best match', or use first ?
 
@@ -249,22 +246,62 @@ namespace TVRename
 
                     if (matched)
                     {
-                        if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, me.Episode.SI) && (seasF == season) && (epF == epnum)) || (me.Episode.SI.UseSequentialMatch && TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
+                        if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.SI) && (seasF == season) && (epF == epnum)) ||
+                            (me.Episode.SI.UseSequentialMatch && TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
-                            FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
+
+                            FileInfo fi;
+                            if (maxEp !=-1 && TVSettings.Instance.AutoMergeEpisodes) 
+                            {
+                                ShowRule sr = new ShowRule();
+                                sr.DoWhatNow = RuleAction.kMerge;
+                                sr.First = epF;
+                                sr.Second = maxEp;
+                                if (!me.Episode.SI.SeasonRules.ContainsKey(seasF)) me.Episode.SI.SeasonRules[seasF] = new List<ShowRule>();
+
+                                me.Episode.SI.SeasonRules[seasF].Add(sr);
+                                logger.Info($"Added new rule automatically for {sr}");
+
+                                //Regenerate the episodes with the new rule added
+                                this.mDoc.GenerateEpisodeDict(me.Episode.SI);
+
+                                //Get the newly created processed episode we are after
+                                List<ProcessedEpisode> newSeason = this.mDoc.GetShowItem(me.Episode.SI.TVDBCode).SeasonEpisodes[seasF];
+                                ProcessedEpisode newPE = me.Episode;
+
+                                foreach (ProcessedEpisode pe in newSeason)
+                                {
+                                    if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
+                                }
+
+                                
+                                me = new ItemMissing(newPE, me.TargetFolder, TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(newPE)));
+                            }
+                            fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
+                       
+                            
+
+                            if (TVSettings.Instance.PreventMove )
+                            {
+                                //We do not want to move the file, just rename it
+                                fi = new FileInfo(dce.TheFile.DirectoryName + System.IO.Path.DirectorySeparatorChar + me.filename + dce.TheFile.Extension);
+                            }
 
                             // don't remove the base search folders
                             bool doTidyup = true;
-                            foreach (String folder in this.mDoc.SearchFolders)
+                            foreach (string folder in this.mDoc.SearchFolders)
                             {
-                                // http://stackoverflow.com/questions/1794025/how-to-check-whether-2-directoryinfo-objects-are-pointing-to-the-same-directory
-                                if (String.Compare(folder.ToLower().TrimEnd('\\'), fi.Directory.FullName.ToLower().TrimEnd('\\'), StringComparison.InvariantCultureIgnoreCase) == 0)
+                                
+                                if (folder.SameDirectoryLocation(fi.Directory.FullName))
+
+                                    
                                 {
                                     doTidyup = false;
                                     break;
                                 }
                             }
-                            addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, doTidyup ? TVSettings.Instance.Tidyup : null));
+                            if(dce.TheFile.FullName != fi.FullName)
+                                addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, doTidyup ? TVSettings.Instance.Tidyup : null));
 
                             DownloadIdentifiersController di = new DownloadIdentifiersController();
 

@@ -100,6 +100,12 @@
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
     <Compile Include="DownloadIdentifers\IncorrectFileDates.cs" />
+    <Compile Include="Forms\DupEpFinder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DupEpFinder.Designer.cs">
+      <DependentUpon>DupEpFinder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\UpdateNotification.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -158,6 +164,7 @@
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ItemDateTouch.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
+    <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\ActorsGrid.cs">
       <SubType>Form</SubType>
@@ -381,6 +388,9 @@
     <EmbeddedResource Include="Forms\FolderMonitorProgress.resx">
       <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DupEpFinder.resx">
+      <DependentUpon>DupEpFinder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UpdateNotification.resx">
       <DependentUpon>UpdateNotification.cs</DependentUpon>

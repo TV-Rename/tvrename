@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Xml;
 using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -35,8 +33,8 @@ namespace TVRename
                         writer.WriteStartElement("item");
                         XMLHelper.WriteElementToXML(writer,"id",ei.TheSeries.TVDBCode);
                         XMLHelper.WriteElementToXML(writer,"SeriesName",ei.TheSeries.Name);
-                        XMLHelper.WriteElementToXML(writer,"SeasonNumber",Helpers.pad(ei.SeasonNumber));
-                        XMLHelper.WriteElementToXML(writer, "EpisodeNumber", Helpers.pad(ei.EpNum));
+                        XMLHelper.WriteElementToXML(writer,"SeasonNumber",Helpers.pad(ei.AppropriateSeasonNumber));
+                        XMLHelper.WriteElementToXML(writer, "EpisodeNumber", Helpers.pad(ei.AppropriateEpNum));
                         XMLHelper.WriteElementToXML(writer,"EpisodeName",ei.Name);
   
                         writer.WriteStartElement("available");

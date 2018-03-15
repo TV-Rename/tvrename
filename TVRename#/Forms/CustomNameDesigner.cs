@@ -1,16 +1,13 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
-using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
@@ -84,14 +81,16 @@ namespace TVRename
                 string fn = TVSettings.Instance.FilenameFriendly(this.CN.NameForExt(pe));
                 lvi.Text = fn;
 
-                bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, pe.SI);
-                bool ok1 = ok && (seas == pe.SeasonNumber);
-                bool ok2 = ok && (ep == pe.EpNum);
+                bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.SI);
+                bool ok1 = ok && (seas == pe.AppropriateSeasonNumber);
+                bool ok2 = ok && (ep == pe.AppropriateEpNum);
                 string pre1 = ok1 ? "" : "* ";
                 string pre2 = ok2 ? "" : "* ";
 
                 lvi.SubItems.Add(pre1 + ((seas != -1) ? seas.ToString() : ""));
-                lvi.SubItems.Add(pre2 + ((ep != -1) ? ep.ToString() : ""));
+                lvi.SubItems.Add(pre2 + ((ep != -1) ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
+
+                
                 lvi.Tag = pe;
 
                 if (!ok || !ok1 || !ok2)

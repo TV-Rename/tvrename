@@ -1,9 +1,9 @@
 //
 // Main website for TVRename is http://tvrename.com
 //
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 //
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 //
 
 
@@ -1435,7 +1435,8 @@ namespace TVRename
             // 
             this.showRightClickMenu.Name = "menuSearchSites";
             this.showRightClickMenu.ShowImageMargin = false;
-            this.showRightClickMenu.Size = new System.Drawing.Size(36, 4);
+            this.showRightClickMenu.Size = new System.Drawing.Size(128, 26);
+            this.showRightClickMenu.Opening += new System.ComponentModel.CancelEventHandler(this.showRightClickMenu_Opening);
             this.showRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.showRightClickMenu_ItemClicked);
             // 
             // folderRightClickMenu

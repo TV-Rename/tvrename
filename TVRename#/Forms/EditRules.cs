@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ namespace TVRename
         private void bnAddRule_Click(object sender, System.EventArgs e)
         {
             ShowRule sr = new ShowRule();
-            AddModifyRule ar = new AddModifyRule(sr);
+            AddModifyRule ar = new AddModifyRule(sr, this.mSI.GetSeason(this.mSeasonNumber), this.mSI.DVDOrder);
 
             bool res = ar.ShowDialog() == System.Windows.Forms.DialogResult.OK;
             if (res)
@@ -102,7 +102,7 @@ namespace TVRename
             if (this.lvRuleList.SelectedItems.Count == 0)
                 return;
             ShowRule sr = (ShowRule) (this.lvRuleList.SelectedItems[0].Tag);
-            AddModifyRule ar = new AddModifyRule(sr);
+            AddModifyRule ar = new AddModifyRule(sr,this.mSI.GetSeason(this.mSeasonNumber),this.mSI.DVDOrder);
             ar.ShowDialog(); // modifies rule in-place if OK'd
             this.FillRuleList(false, 0);
         }

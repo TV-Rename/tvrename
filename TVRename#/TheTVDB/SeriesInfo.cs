@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using Newtonsoft.Json.Linq;
 using System;
@@ -23,7 +23,8 @@ namespace TVRename
         public string Name;
         public bool BannersLoaded;
 
-        public Dictionary<int, Season> Seasons;
+        public Dictionary<int, Season> AiredSeasons;
+        public Dictionary<int, Season> DVDSeasons;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         //All Banners
@@ -52,7 +53,7 @@ namespace TVRename
 
         public DateTime? LastAiredDate() {
             DateTime? returnValue = null; 
-            foreach (Season s in this.Seasons.Values)
+            foreach (Season s in this.AiredSeasons.Values) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
             {
                 DateTime? seasonLastAirDate = s.LastAiredDate();
 
@@ -134,7 +135,8 @@ namespace TVRename
         public void SetToDefauts()
         {
             this.Items = new Dictionary<string, string>();
-            this.Seasons = new Dictionary<int, Season>();
+            this.AiredSeasons = new Dictionary<int, Season>();
+            this.DVDSeasons = new Dictionary<int, Season>();
 
 
             this.Dirty = false;
@@ -190,8 +192,10 @@ namespace TVRename
             if (o.AirsTime != null)
                 this.AirsTime = o.AirsTime;
 
-            if ((o.Seasons != null) && (o.Seasons.Count != 0))
-                this.Seasons = o.Seasons;
+            if ((o.AiredSeasons != null) && (o.AiredSeasons.Count != 0))
+                this.AiredSeasons = o.AiredSeasons;
+            if ((o.DVDSeasons != null) && (o.DVDSeasons.Count != 0))
+                this.DVDSeasons = o.DVDSeasons;
 
             if ((o.SeasonBanners != null) && (o.SeasonBanners.Count != 0))
                 this.SeasonBanners = o.SeasonBanners;
@@ -532,17 +536,28 @@ namespace TVRename
             writer.WriteEndElement(); // series
         }
 
-        public Season GetOrAddSeason(int num, int seasonID)
+        public Season GetOrAddAiredSeason(int num, int seasonID)
         {
-            if (this.Seasons.ContainsKey(num))
-                return this.Seasons[num];
+            if (this.AiredSeasons.ContainsKey(num))
+                return this.AiredSeasons[num];
 
             Season s = new Season(this, num, seasonID);
-            this.Seasons[num] = s;
+            this.AiredSeasons[num] = s;
 
             return s;
         }
 
+
+        public Season GetOrAddDVDSeason(int num, int seasonID)
+        {
+            if (this.DVDSeasons.ContainsKey(num))
+                return this.DVDSeasons[num];
+
+            Season s = new Season(this, num, seasonID);
+            this.DVDSeasons[num] = s;
+
+            return s;
+        }
 
 
         public string GetSeasonBannerPath(int snum)
@@ -709,18 +724,36 @@ namespace TVRename
                 coll.Add(seasonOfNewBanner, banner);
         }
 
-        internal Episode getEpisode(int seasF, int epF)
+        internal Episode getEpisode(int seasF, int epF,bool dvdOrder)
         {
-           foreach ( Season s in this.Seasons.Values)
+            if (dvdOrder)
             {
-                if (s.SeasonNumber == seasF)
+                foreach (Season s in this.DVDSeasons.Values)
                 {
-                    foreach (Episode pe in s.Episodes)
+                    if (s.SeasonNumber == seasF)
                     {
-                        if (pe.EpNum == epF) return pe;
+                        foreach (Episode pe in s.Episodes)
+                        {
+                            if (pe.DVDEpNum == epF) return pe;
+                        }
+                    }
+                }
+
+            }
+            else
+            {
+                foreach (Season s in this.AiredSeasons.Values)
+                {
+                    if (s.SeasonNumber == seasF)
+                    {
+                        foreach (Episode pe in s.Episodes)
+                        {
+                            if (pe.AiredEpNum == epF) return pe;
+                        }
                     }
                 }
             }
+
             throw new EpisodeNotFoundException();
         }
 

@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 using System.Collections.Generic;
@@ -138,6 +138,8 @@ namespace TVRename
             S.ShowInTaskbar = this.chkShowInTaskbar.Checked;
             S.RenameTxtToSub = this.cbTxtToSub.Checked;
             S.ShowEpisodePictures = this.cbShowEpisodePictures.Checked;
+            S.HideMyShowsSpoilers = this.chkHideMyShowsSpoilers.Checked;
+            S.HideWtWSpoilers = this.chkHideWtWSpoilers.Checked;
             S.AutoSelectShowInMyShows = this.cbAutoSelInMyShows.Checked;
             S.AutoCreateFolders = this.cbAutoCreateFolders.Checked ;  
             S.SpecialsFolderName = this.txtSpecialsFolderName.Text;
@@ -163,12 +165,14 @@ namespace TVRename
             S.pyTivoMetaSubFolder = this.cbMetaSubfolder.Checked;
             S.FolderJpg = this.cbFolderJpg.Checked;
             S.RenameCheck = this.cbRenameCheck.Checked;
+            S.PreventMove = this.chkPreventMove.Checked;
             S.MissingCheck = this.cbMissing.Checked;
             S.CorrectFileDates = this.cbxUpdateAirDate.Checked;
             S.SearchLocally = this.cbSearchLocally.Checked;
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
+            S.AutoMergeEpisodes = this.chkAutoMergeEpisodes.Checked;
 
             S.MonitorFolders = this.cbMonitorFolder.Checked;
             S.runStartupCheck = this.chkScanOnStartup.Checked;
@@ -365,6 +369,8 @@ namespace TVRename
             this.chkShowInTaskbar.Checked = S.ShowInTaskbar;
             this.cbTxtToSub.Checked = S.RenameTxtToSub;
             this.cbShowEpisodePictures.Checked = S.ShowEpisodePictures;
+            this.chkHideMyShowsSpoilers.Checked = S.HideMyShowsSpoilers;
+            this.chkHideWtWSpoilers.Checked = S.HideWtWSpoilers;
             this.cbAutoCreateFolders.Checked = S.AutoCreateFolders; 
             this.cbAutoSelInMyShows.Checked = S.AutoSelectShowInMyShows;
             this.txtSpecialsFolderName.Text = S.SpecialsFolderName;
@@ -388,8 +394,10 @@ namespace TVRename
             this.cbMetaSubfolder.Checked = S.pyTivoMetaSubFolder;
             this.cbFolderJpg.Checked = S.FolderJpg;
             this.cbRenameCheck.Checked = S.RenameCheck;
+            this.chkPreventMove.Checked = S.PreventMove;
             this.cbCheckuTorrent.Checked = S.CheckuTorrent;
             this.cbLookForAirdate.Checked = S.LookForDateInFilename;
+            this.chkAutoMergeEpisodes.Checked = S.AutoMergeEpisodes;
             this.cbMonitorFolder.Checked = S.MonitorFolders;
             this.chkScheduledScan.Checked = S.RunPeriodicCheck();
             this.chkScanOnStartup.Checked = S.RunOnStartUp();

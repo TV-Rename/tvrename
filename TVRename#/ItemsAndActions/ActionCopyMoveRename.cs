@@ -1,4 +1,3 @@
-using Alphaleonis.Win32.Filesystem;
 using System.Diagnostics;
 using System.Security.AccessControl;
 
@@ -86,6 +85,7 @@ namespace TVRename
 
                 // Copying the temp file into the correct name is very quick, so no progress reporting		
                 File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+                logger.Info($"{this.Name} completed: {this.From.FullName} to {this.To.FullName } ");
 
                 Done = true;
 
@@ -188,7 +188,7 @@ namespace TVRename
 	            else
 	            {
 		            lvi.Text = Episode.TheSeries.Name;
-		            lvi.SubItems.Add(Episode.SeasonNumber.ToString());
+		            lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
 		            lvi.SubItems.Add(Episode.NumsAsString());
 		            DateTime? dt = Episode.GetAirDateDT(true);
 		            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))

@@ -1,10 +1,11 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
 using System.Xml;
 
 // Per-season sets of rules for manipulating episodes from thetvdb into multi-episode files,
@@ -65,6 +66,11 @@ namespace TVRename
             this.First = O.First;
             this.Second = O.Second;
             this.UserSuppliedText = O.UserSuppliedText;
+        }
+
+        public override string ToString()
+        {
+            return $"ShowRule: {ActionInWords()} with parameters {this.First}, {this.Second} and usertest: {this.UserSuppliedText}";
         }
 
         public void SetToDefaults()

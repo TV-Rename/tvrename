@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 
@@ -94,7 +94,6 @@ namespace TVRename
                 }
                 return false;
         }
-
         
         public DateTime? LastAiredDate() {
             DateTime? returnValue = null;
@@ -127,5 +126,32 @@ namespace TVRename
             return this.TheSeries.GetSeasonWideBannerPath(this.SeasonNumber);
         }
 
+        public void AddUpdateEpisode(Episode newEpisode)
+        {
+            bool added = false;
+            for (int i = 0; i < this.Episodes.Count; i++)
+            {
+                Episode ep = this.Episodes[i];
+                if (ep.EpisodeID == newEpisode.EpisodeID)
+                {
+                    this.Episodes[i] = newEpisode;
+                    added = true;
+                    break;
+                }
+            }
+            if (!added)
+                this.Episodes.Add(newEpisode);
+        }
+
+        public bool ContainsEpisode(int episodeNumber,bool dvdOrder)
+        {
+            foreach (Episode ep in this.Episodes)
+            {
+                if (dvdOrder && ep.DVDEpNum == episodeNumber) return true;
+                if (!dvdOrder && ep.AiredEpNum == episodeNumber) return true;
+            }
+
+            return false;
+        }
     }
 }

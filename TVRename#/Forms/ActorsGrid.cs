@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 using System.Collections.Generic;
@@ -59,7 +59,7 @@ namespace TVRename
 
                 if (this.cbGuestStars.Checked)
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in si.Seasons)
+                    foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in si.AiredSeasons) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                     {
                         foreach (Episode ep in kvp.Value.Episodes)
                         {

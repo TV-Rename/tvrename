@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 namespace TVRename
 {
@@ -131,7 +131,7 @@ namespace TVRename
                 if (this.Episode != null)
                 {
                     lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(this.Episode.NumsAsString());
 
                 }

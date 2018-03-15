@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -171,7 +170,7 @@ namespace TVRename
                         string foldername = filo.DirectoryName;
                         string filename =
                             TVSettings.Instance.FilenameFriendly(
-                                TVSettings.Instance.NamingStyle.GetTargetEpisodeName(sourceEp,dbep.SI.ShowName, dbep.SI.GetTimeZone()));
+                                TVSettings.Instance.NamingStyle.GetTargetEpisodeName(sourceEp,dbep.SI.ShowName, dbep.SI.GetTimeZone(), dbep.SI.DVDOrder));
                         ActionDownload b = DoEpisode(dbep.SI,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
                         if (b != null) theActionList.Add(b);
                     }

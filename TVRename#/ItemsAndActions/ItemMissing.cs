@@ -1,9 +1,9 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 namespace TVRename
 {
@@ -15,7 +15,7 @@ namespace TVRename
     {
         public string TheFileNoExt;
         private string folder;
-        private string filename;
+        public string filename;
 
         public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder, string expectedFilenameNoExt)
         {
@@ -46,13 +46,12 @@ namespace TVRename
                 return this.Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
             }
 
-            if (!this.Episode.SeasonNumber.Equals(miss.Episode.SeasonNumber))
+            if (!this.Episode.AppropriateSeasonNumber.Equals(miss.Episode.AppropriateSeasonNumber))
             {
-                int compare = this.Episode.SeasonNumber.CompareTo(miss.Episode.SeasonNumber);
-                return compare;
+                return this.Episode.AppropriateSeasonNumber.CompareTo(miss.Episode.AppropriateSeasonNumber);
             }
 
-            return this.Episode.EpNum.CompareTo(miss.Episode.EpNum);
+            return this.Episode.AppropriateEpNum.CompareTo(miss.Episode.AppropriateEpNum);
         }
 
         #endregion
@@ -79,7 +78,7 @@ namespace TVRename
                                                         Text = this.Episode.SI.ShowName
                                                     };
 
-                lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(this.Episode.NumsAsString());
 
                 DateTime? dt = this.Episode.GetAirDateDT(true);

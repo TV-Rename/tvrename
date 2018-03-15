@@ -34,7 +34,7 @@ namespace TVRename
                 else
                 {
                     lvi.Text = this.Episode.TheSeries.Name;
-                    lvi.SubItems.Add(this.Episode.SeasonNumber.ToString());
+                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(this.Episode.NumsAsString());
                     DateTime? dt = this.Episode.GetAirDateDT(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))

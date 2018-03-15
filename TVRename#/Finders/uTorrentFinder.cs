@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Alphaleonis.Win32.Filesystem;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Linq;
@@ -64,7 +63,7 @@ namespace TVRename
 
                     if (!matched) continue;
 
-                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, Action.Episode.SI) && (seasF == Action.Episode.SeasonNumber) && (epF == Action.Episode.EpNum))
+                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int maxEp, Action.Episode.SI) && (seasF == Action.Episode.AppropriateSeasonNumber) && (epF == Action.Episode.AppropriateEpNum))
                     {
                         toRemove.Add(Action1);
                         newList.Add(new ItemuTorrenting(te, Action.Episode, Action.TheFileNoExt));

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.VisualBasic.ApplicationServices;
@@ -115,7 +114,7 @@ namespace TVRename.App
             convertSeriesTimeZones(doc, TheTVDB.Instance);
 
             // Show user interface
-            UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen);
+            UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen, !clargs.Unattended && !clargs.Hide);
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
             RemoteClient.Bind(ui, doc);

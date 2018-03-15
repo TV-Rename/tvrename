@@ -1,19 +1,15 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Alphaleonis.Win32.Filesystem;
 using System.Text;
-using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
-using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.IO;
 
 namespace TVRename
@@ -83,9 +79,9 @@ namespace TVRename
 
                 foreach (DirCacheEntry fi in dirC)
                 {
-                    bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, null);
+                    bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, null);
                     bool useful = fi.HasUsefulExtension_NotOthersToo;
-                    txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
+                    txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                 }
                 txt.Append("\r\n");
             }
@@ -112,9 +108,9 @@ namespace TVRename
                                 files.AddFolder(null, 0, 0, folder, true);
                             foreach (DirCacheEntry fi in files)
                             {
-                                bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, si);
+                                bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);
                                 bool useful = fi.HasUsefulExtension_NotOthersToo;
-                                txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
+                                txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
                             }
                             txt.Append("\r\n");
                         }

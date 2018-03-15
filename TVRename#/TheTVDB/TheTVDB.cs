@@ -1,26 +1,20 @@
 // 
 // Main website for TVRename is http://tvrename.com
 // 
-// Source code available at http://code.google.com/p/tvrename/
+// Source code available at https://github.com/TV-Rename/tvrename
 // 
-// This code is released under GPLv3 http://www.gnu.org/licenses/gpl.html
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
 using System.Collections.Generic;
-using Alphaleonis.Win32.Filesystem;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using Newtonsoft.Json;
-
-using System.Text;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 using System.Linq;
 using System.IO;
-using System.Linq.Expressions;
-using NLog;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -254,6 +248,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
+                logger.Warn(e, "Problem on Startup loading File");
                 this.LoadErr = loadFrom.Name + " : " + e.Message;
 
                 if (fs != null)
@@ -323,7 +318,8 @@ namespace TVRename
                     if (kvp.Value.Srv_LastUpdated != 0)
                     {
                         kvp.Value.WriteXml(writer);
-                        foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                        foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                            //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                         {
                             Season seas = kvp2.Value;
                             foreach (Episode e in seas.Episodes)
@@ -399,7 +395,8 @@ namespace TVRename
 
             foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series.ToList())
             {
-                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                    //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                 {
                     Season seas = kvp2.Value;
                     foreach (Episode e in seas.Episodes)
@@ -627,7 +624,9 @@ namespace TVRename
                     SeriesInfo ser = kvp.Value;
                     if ((theTime == 0) || ((ser.Srv_LastUpdated != 0) && (ser.Srv_LastUpdated < theTime)))
                         theTime = ser.Srv_LastUpdated;
-                    foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+
+                    //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                    foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
                     {
                         Season seas = kvp2.Value;
 
@@ -645,9 +644,9 @@ namespace TVRename
             foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> kvp in this.Series)
             {
                 SeriesInfo ser = kvp.Value;
-                if ((ser.Srv_LastUpdated == 0) || (ser.Seasons.Count == 0))
+                if ((ser.Srv_LastUpdated == 0) || (ser.AiredSeasons.Count == 0))
                     ser.Dirty = true;
-                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
                 {
                     foreach (Episode ep in kvp2.Value.Episodes)
                     {
@@ -829,7 +828,7 @@ namespace TVRename
 
                                         bool found = false;
                                         foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in this
-                                            .Series[id].Seasons)
+                                            .Series[id].AiredSeasons)
                                         {
                                             Season seas = kvp2.Value;
 
@@ -890,7 +889,7 @@ namespace TVRename
             {
                 int totaleps = 0;
                 int totaldirty = 0;
-                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.Seasons)
+                foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
                 {
                     foreach (Episode ep in kvp2.Value.Episodes)
                     {
@@ -905,7 +904,8 @@ namespace TVRename
                 if ((totaleps>0) && ((percentDirty) >= TVSettings.Instance.PercentDirtyUpgrade())) // 10%
                 {
                     kvp.Value.Dirty = true;
-                    kvp.Value.Seasons.Clear();
+                    kvp.Value.AiredSeasons.Clear();
+                    kvp.Value.DVDSeasons.Clear();
                     logger.Info("Planning to download all of {0} as {1}% of the episodes need to be updated", kvp.Value.Name, percentDirty);
                 }
                 else logger.Trace("Not planning to download all of {0} as {1}% of the episodes need to be updated and that's less than the 10% limit to upgrade.", kvp.Value.Name, percentDirty);
@@ -1147,28 +1147,10 @@ namespace TVRename
                     }
                     else if (r.Name == "Episode")
                     {
-                        Episode e = new Episode(null, null, r.ReadSubtree(), Args);
+                        Episode e = new Episode(null, null,null, r.ReadSubtree(), Args);
                         if (e.OK())
                         {
-                            if (!this.Series.ContainsKey(e.SeriesID))
-                                throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
-                            SeriesInfo ser = this.Series[e.SeriesID];
-                            Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
-
-                            bool added = false;
-                            for (int i = 0; i < seas.Episodes.Count; i++)
-                            {
-                                Episode ep = seas.Episodes[i];
-                                if (ep.EpisodeID == e.EpisodeID)
-                                {
-                                    seas.Episodes[i] = e;
-                                    added = true;
-                                    break;
-                                }
-                            }
-                            if (!added)
-                                seas.Episodes.Add(e);
-                            e.SetSeriesSeason(ser, seas);
+                            AddOrUpdateEpisode(e);
                         }
                         r.Read();
                     }
@@ -1222,6 +1204,23 @@ namespace TVRename
             }
             return true;
         }
+
+        private void AddOrUpdateEpisode(Episode e)
+        {
+            if (!this.Series.ContainsKey(e.SeriesID))
+                throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
+            SeriesInfo ser = this.Series[e.SeriesID];
+
+            Season airedSeason = ser.GetOrAddAiredSeason(e.ReadAiredSeasonNum, e.SeasonID);
+            airedSeason.AddUpdateEpisode(e);
+
+            Season dvdSeason = ser.GetOrAddDVDSeason(e.ReadDVDSeasonNum, e.SeasonID);
+            dvdSeason.AddUpdateEpisode(e);
+
+            e.SetSeriesSeason(ser, airedSeason,dvdSeason);
+        }
+
+
 
         public bool DoWeForceReloadFor(int code)
         {
@@ -1326,41 +1325,6 @@ namespace TVRename
                     {
                     //The episode does not contain enough data (specifically image filename), so we'll get the full version
                     this.DownloadEpisodeNow(code, (int)episodeData["id"]);
-
-              /* All of this code was used when we tried to create an episode from the series response. Issue was that we ended up doubling up. 
-              Creating an imperfect episode and having to do a full refresh anyway.
-
-                COmmenting it out for now
-
-                                        Episode e = new Episode(code,episodeData);
-                                        if (e.OK())
-                                        {
-                                            if (!this.Series.ContainsKey(e.SeriesID))
-                                                throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
-                                            SeriesInfo ser = this.Series[e.SeriesID];
-                                            Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
-
-                                            bool added = false;
-                                            for (int i = 0; i < seas.Episodes.Count; i++)
-                                            {
-                                                Episode ep = seas.Episodes[i];
-                                                if (ep.EpisodeID == e.EpisodeID)
-                                                {
-                                                    seas.Episodes[i] = e;
-                                                    added = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (!added)
-                                                seas.Episodes.Add(e);
-                                            e.SetSeriesSeason(ser, seas);
-
-                                            //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                                            this.DownloadEpisodeNow(code, e.EpisodeID);
-
-                                        }
-                                           */
-
                     }
                 }
                 catch (InvalidCastException ex)
@@ -1523,7 +1487,7 @@ namespace TVRename
 
         private bool inForeignLanguage() => !(DefaultLanguage == this.RequestLanguage);
 
-        private bool DownloadEpisodeNow(int seriesID, int episodeID)
+        private bool DownloadEpisodeNow(int seriesID, int episodeID, bool dvdOrder = false)
         {
             bool forceReload = this.ForceReloadOn.Contains(seriesID);
 
@@ -1532,8 +1496,15 @@ namespace TVRename
             {
                 Episode ep = this.FindEpisodeByID(episodeID);
                 string eptxt =  "New Episode Id = "+ episodeID;
-                if ((ep != null) && (ep.TheSeason != null))
-                    eptxt = string.Format("S{0:00}E{1:00}", ep.TheSeason.SeasonNumber, ep.EpNum);
+
+                if (ep != null)
+                {
+
+                    if ((dvdOrder) && (ep.TheDVDSeason != null))
+                        eptxt = $"S{ep.TheDVDSeason.SeasonNumber:00}E{ep.DVDEpNum:00}";
+                    if ((!dvdOrder) && (ep.TheAiredSeason != null))
+                        eptxt = $"S{ep.TheAiredSeason.SeasonNumber:00}E{ep.AiredEpNum:00}";
+                }
 
                 txt = this.Series[seriesID].Name + " (" + eptxt + ")";
             }
@@ -1581,25 +1552,7 @@ namespace TVRename
 
                 if (e.OK())
                 {
-                    if (!this.Series.ContainsKey(e.SeriesID))
-                        throw new TVDBException("Can't find the series to add the episode to (TheTVDB).");
-                    SeriesInfo ser = this.Series[e.SeriesID];
-                    Season seas = ser.GetOrAddSeason(e.ReadSeasonNum, e.SeasonID);
-
-                    bool added = false;
-                    for (int i = 0; i < seas.Episodes.Count; i++)
-                    {
-                        Episode ep = seas.Episodes[i];
-                        if (ep.EpisodeID == e.EpisodeID)
-                        {
-                            seas.Episodes[i] = e;
-                            added = true;
-                            break;
-                        }
-                    }
-                    if (!added)
-                        seas.Episodes.Add(e);
-                    e.SetSeriesSeason(ser, seas);
+                    AddOrUpdateEpisode(e);
                 }
             }
             catch (TVDBException e)
@@ -1627,15 +1580,15 @@ namespace TVRename
 
         public bool EnsureUpdated(int code, bool bannersToo)
         {
-            if (DoWeForceReloadFor(code) || (this.Series[code].Seasons.Count == 0))
+            if (DoWeForceReloadFor(code) || (this.Series[code].AiredSeasons.Count == 0))
                 return this.DownloadSeriesNow(code, true, bannersToo) != null; // the whole lot!
 
             bool ok = true;
 
             if ((this.Series[code].Dirty) || (bannersToo && !this.Series[code].BannersLoaded))
-                ok = (this.DownloadSeriesNow(code, false, bannersToo) != null) && ok;
+                ok = (this.DownloadSeriesNow(code, false, bannersToo) != null);
 
-            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in this.Series[code].Seasons)
+            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp in this.Series[code].AiredSeasons)
             {
                 Season seas = kvp.Value;
                 foreach (Episode e in seas.Episodes)
@@ -1792,7 +1745,7 @@ namespace TVRename
         // Next episode to air of a given show		
         public Episode NextAiring(int code)
         {
-            if (!this.Series.ContainsKey(code) || (this.Series[code].Seasons.Count == 0))
+            if (!this.Series.ContainsKey(code) || (this.Series[code].AiredSeasons.Count == 0))
                 return null; // DownloadSeries(code, true);
 
             Episode next = null;
@@ -1800,7 +1753,7 @@ namespace TVRename
             DateTime mostSoonAfterToday = new DateTime(0);
 
             SeriesInfo ser = this.Series[code];
-            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in ser.Seasons)
+            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in ser.AiredSeasons)
             {
                 Season s = kvp2.Value;
 
