@@ -1126,13 +1126,22 @@ namespace TVRename
             html += "</body></html>";
 
             web.Navigate("about:blank"); // make it close any file it might have open
+            try
+            {
+                BinaryWriter bw = new BinaryWriter(new FileStream(path, System.IO.FileMode.Create));
+                bw.Write(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(html));
 
-            BinaryWriter bw = new BinaryWriter(new FileStream(path, System.IO.FileMode.Create));
-            bw.Write(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(html));
+                bw.Close();
+                web.Navigate(LocalFileURLBase(path));
+            }
+            catch (Exception ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
+                //May get errors if TV Rename cannot access the filesystem or disk is full etc
+                logger.Error(ex);
+            }
 
-            bw.Close();
-
-            web.Navigate(LocalFileURLBase(path));
+            
         }
 
         public void TVDBFor(ProcessedEpisode e)

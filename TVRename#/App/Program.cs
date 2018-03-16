@@ -22,7 +22,7 @@ namespace TVRename.App
         [STAThread]
         private static void Main(string[] args)
         {
-            Logger.Info($"TV Rename started with args: {string.Join(" ", args)}");
+            Logger.Info($"TV Rename {Helpers.DisplayVersion} started with args: {string.Join(" ", args)}");
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

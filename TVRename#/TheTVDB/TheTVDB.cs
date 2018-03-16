@@ -165,10 +165,7 @@ namespace TVRename
 
         public SeriesInfo GetSeries(int id)
         {
-            if (!this.HasSeries(id))
-                return null;
-
-            return this.Series[id];
+            return this.HasSeries(id) ? this.Series[id] : null; 
         }
 
         public System.Collections.Generic.Dictionary<int, SeriesInfo> GetSeriesDict()
@@ -1231,7 +1228,7 @@ namespace TVRename
         {
             bool forceReload = DoWeForceReloadFor(code);
 
-            string txt = "";
+            string txt;
             if (this.Series.ContainsKey(code))
                 txt = this.Series[code].Name;
             else
@@ -1341,7 +1338,7 @@ namespace TVRename
             List<JObject> bannerDefaultLangResponses = new List<JObject>();
             if (bannersToo || forceReload )            {
                 // get /series/id/images if the bannersToo is set - may need to make multiple calls to for each image type
-                List<string> imageTypes = new List<string> { };
+                List<string> imageTypes = new List<string>();
 
                 try
                 {
@@ -1379,7 +1376,7 @@ namespace TVRename
                 }
                 if (inForeignLanguage())
                 {
-                    List<string> imageDefaultLangTypes = new List<string> { };
+                    List<string> imageDefaultLangTypes = new List<string>();
 
                     try
                     {
@@ -1427,7 +1424,7 @@ namespace TVRename
             {
                 try {
                     foreach (JObject bannerData in response["data"])                    {
-                        Banner b = new Banner((int)si.TVDBCode, bannerData,getLanguageId());
+                        Banner b = new Banner(si.TVDBCode, bannerData,getLanguageId());
                         if (!this.Series.ContainsKey(b.SeriesID)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
                         SeriesInfo ser = this.Series[b.SeriesID];
                         ser.AddOrUpdateBanner(b);
@@ -1448,7 +1445,7 @@ namespace TVRename
                 {
                     foreach (JObject bannerData in response["data"])
                     {
-                        Banner b = new Banner((int)si.TVDBCode, bannerData, getDefaultLanguageId());
+                        Banner b = new Banner(si.TVDBCode, bannerData, getDefaultLanguageId());
                         if (!this.Series.ContainsKey(b.SeriesID)) throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
                         SeriesInfo ser = this.Series[b.SeriesID];
                         ser.AddOrUpdateBanner(b);
@@ -1462,7 +1459,7 @@ namespace TVRename
                 }
             }
 
-            this.Series[(int)si.TVDBCode].BannersLoaded = true;
+            this.Series[si.TVDBCode].BannersLoaded = true;
 
             //Get the actors too then well need another call for that
             try
@@ -1470,11 +1467,11 @@ namespace TVRename
                 JObject jsonActorsResponse = HTTPHelper.JsonHTTPGETRequest(APIRoot + "/series/" + code + "/actors",
                     null, this.authenticationToken);
                 IEnumerable<string> seriesActors = from a in jsonActorsResponse["data"] select (string) a["name"];
-                this.Series[(int) si.TVDBCode].setActors(seriesActors);
+                this.Series[si.TVDBCode].setActors(seriesActors);
             }
             catch (WebException ex)
             {
-                logger.Error(ex, "Unble to obtain actors for {0}",this.Series[(int)si.TVDBCode].Name);
+                logger.Error(ex, "Unble to obtain actors for {0}",this.Series[si.TVDBCode].Name);
                 this.LastError = ex.Message;
             }
         
@@ -1485,7 +1482,7 @@ namespace TVRename
 
         }
 
-        private bool inForeignLanguage() => !(DefaultLanguage == this.RequestLanguage);
+        private bool inForeignLanguage() => DefaultLanguage != this.RequestLanguage;
 
         private bool DownloadEpisodeNow(int seriesID, int episodeID, bool dvdOrder = false)
         {
@@ -1593,23 +1590,19 @@ namespace TVRename
                 Season seas = kvp.Value;
                 foreach (Episode e in seas.Episodes)
                 {
-                    if (e.Dirty && e.EpisodeID >0)
-                    {
-                        this.LockEE();
-                        this.ExtraEpisodes.Add(new ExtraEp(e.SeriesID, e.EpisodeID));
-                        this.UnlockEE();
-                    }
+                    if (!e.Dirty || e.EpisodeID <= 0) continue;
+                    this.LockEE();
+                    this.ExtraEpisodes.Add(new ExtraEp(e.SeriesID, e.EpisodeID));
+                    this.UnlockEE();
                 }
             }
 
             this.LockEE();
             foreach (ExtraEp ee in this.ExtraEpisodes)
             {
-                if ((ee.SeriesID == code) && (!ee.Done))
-                {
-                    ok = this.DownloadEpisodeNow(ee.SeriesID, ee.EpisodeID) && ok;
-                    ee.Done = true;
-                }
+                if ((ee.SeriesID != code) || (ee.Done)) continue;
+                ok = this.DownloadEpisodeNow(ee.SeriesID, ee.EpisodeID) && ok;
+                ee.Done = true;
             }
             this.UnlockEE();
 
