@@ -2552,7 +2552,7 @@ namespace TVRename
                                 if (newname != actualFile.Name)
                                 {
                                     actualFile = FileHelper.FileInFolder(folder, newname); // rename updates the filename
-                                    this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep, null));
+                                    this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep, null,null));
 
                                     //The following section informs the DownloadIdentifers that we already plan to
                                     //copy a file inthe appropriate place and they do not need to worry about downloading 

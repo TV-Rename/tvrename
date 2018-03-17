@@ -43,6 +43,7 @@ namespace TVRename
         kEditSeason,
         kDeleteShow,
         kUpdateImages,
+        kActionRevert,
         kWatchBase = 1000,
         kOpenFolderBase = 2000
     }
@@ -1967,6 +1968,9 @@ namespace TVRename
                     case RightClickCommands.kActionAction:
                         this.ActionAction(false);
                         break;
+                    case RightClickCommands.kActionRevert:
+                        this.Revert(false);
+                        break;
                     case RightClickCommands.kActionBrowseForFile:
                     {
                         if ((this.mLastActionsClicked != null) && (this.mLastActionsClicked.Count > 0))
@@ -1990,7 +1994,7 @@ namespace TVRename
                                                 ? ActionCopyMoveRename.Op.Copy
                                                 : ActionCopyMoveRename.Op.Move, from,
                                             new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode,
-                                            TVSettings.Instance.Tidyup));
+                                            TVSettings.Instance.Tidyup,mi));
                                     // and remove old Missing item
                                     this.mDoc.TheActionList.Remove(mi);
                                 }
@@ -3169,6 +3173,41 @@ namespace TVRename
             this.mDoc.CurrentlyBusy = false;
         }
 
+        private void Revert(bool checkedNotSelected)
+        {
+            this.mDoc.CurrentlyBusy = true;
+
+            foreach (ScanListItem scanListItem in (new LVResults(this.lvAction, checkedNotSelected).FlatList))
+            {
+                ActionCopyMoveRename i2 = (ActionCopyMoveRename) scanListItem;
+                ItemMissing m2 = i2.UndoItemMissing;
+
+                if (m2 == null) continue;
+
+                this.mDoc.TheActionList.Add(m2);
+                this.mDoc.TheActionList.Remove(i2);
+
+                List<ActionCopyMoveRename> toRemove = new List<ActionCopyMoveRename>();
+                //We can remove any CopyMoveActions that are closely related too
+                foreach (Item a in this.mDoc.TheActionList)
+                {
+                    if (!(a is ActionCopyMoveRename i1)) continue;
+
+                    if (i1.From.RemoveExtension().StartsWith(i2.From.RemoveExtension()))
+                    {
+                        toRemove.Add(i1);
+
+                    }
+                }
+                //Remove all similar items
+                foreach (ActionCopyMoveRename i in toRemove) this.mDoc.TheActionList.Remove(i);
+            }
+
+            this.FillActionList();
+            this.RefreshWTW(false);
+            this.mDoc.CurrentlyBusy = false;
+        }
+
         private void folderMonitorToolStripMenuItem_Click(object sender, System.EventArgs e)
         {
             FolderMonitor fm = new FolderMonitor(this.mDoc);
@@ -3212,6 +3251,7 @@ namespace TVRename
                 this.showRightClickMenu.Items.Add(tsi);
             }
 
+
             tsi = new ToolStripMenuItem("Ignore Selected");
             tsi.Tag = (int) RightClickCommands.kActionIgnore;
             this.showRightClickMenu.Items.Add(tsi);
@@ -3240,6 +3280,13 @@ namespace TVRename
                 }
             }
 
+            if (lvr.CopyMove.Count > 0)
+            {
+                this.showRightClickMenu.Items.Add(new ToolStripSeparator());
+
+                tsi = new ToolStripMenuItem("Revert to Missing") {Tag = (int) RightClickCommands.kActionRevert};
+                this.showRightClickMenu.Items.Add(tsi);
+            }
             this.MenuGuideAndTVDB(true);
             this.MenuFolders(lvr);
 
@@ -3651,7 +3698,7 @@ namespace TVRename
                         TVSettings.Instance.LeaveOriginals
                             ? ActionCopyMoveRename.Op.Copy
                             : ActionCopyMoveRename.Op.Move, from,
-                        new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode, TVSettings.Instance.Tidyup));
+                        new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode, TVSettings.Instance.Tidyup,mi));
                 // and remove old Missing item
                 this.mDoc.TheActionList.Remove(mi);
                 this.FillActionList();

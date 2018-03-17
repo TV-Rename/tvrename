@@ -60,9 +60,7 @@ namespace TVRename
             {
                 ItemList TheActionList = new ItemList();
 
-                string fn = filo.Name;
-                fn = fn.Substring(0, fn.Length - filo.Extension.Length);
-                fn += ".nfo";
+                string fn = filo.RemoveExtension() + ".nfo";
                 FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
                 if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)) || forceRefresh)

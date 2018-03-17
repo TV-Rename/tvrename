@@ -191,8 +191,7 @@ namespace TVRename
             string ban = ep.GetFilename();
             if (!string.IsNullOrEmpty(ban))
             {
-                string basefn = filo.Name;
-                basefn = basefn.Substring(0, basefn.Length - filo.Extension.Length); //remove extension
+                string basefn = filo.RemoveExtension();
                 FileInfo imgtbn = FileHelper.FileInFolder(filo.Directory, basefn + extension);
                 if (!imgtbn.Exists || forceRefresh)
                     if (!(this.doneTBN.Contains(imgtbn.FullName)))
