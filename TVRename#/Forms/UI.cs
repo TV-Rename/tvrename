@@ -3193,7 +3193,7 @@ namespace TVRename
                 {
                     if (!(a is ActionCopyMoveRename i1)) continue;
 
-                    if (i1.From.RemoveExtension().StartsWith(i2.From.RemoveExtension()))
+                    if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true)))
                     {
                         toRemove.Add(i1);
 

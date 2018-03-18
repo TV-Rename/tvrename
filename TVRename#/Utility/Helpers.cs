@@ -237,9 +237,11 @@ namespace TVRename
                 .ToUpperInvariant();
         }
 
-        public static string RemoveExtension(this FileInfo file)
+        public static string RemoveExtension(this FileInfo file, bool useFullPath = false)
         {
-            return file.FullName.Substring(0, file.FullName.Length - file.Extension.Length);
+            string root = useFullPath ? file.FullName : file.Name;
+
+            return root.Substring(0, root.Length - file.Extension.Length);
         }
 
         public static void GetFilmDetails(this FileInfo movieFile)
