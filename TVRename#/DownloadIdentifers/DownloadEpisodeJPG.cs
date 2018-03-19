@@ -27,8 +27,7 @@ namespace TVRename
                 string ban = dbep.GetFilename();
                 if (!string.IsNullOrEmpty(ban))
                 {
-                    string basefn = filo.Name;
-                    basefn = basefn.Substring(0, basefn.Length - filo.Extension.Length); //remove extension
+                    string basefn = filo.RemoveExtension();
 
                     FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + ".jpg");
 

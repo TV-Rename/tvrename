@@ -169,6 +169,7 @@ namespace TVRename
             S.MissingCheck = this.cbMissing.Checked;
             S.CorrectFileDates = this.cbxUpdateAirDate.Checked;
             S.SearchLocally = this.cbSearchLocally.Checked;
+            S.AutoSearchForDownloadedFiles = this.chkAutoSearchForDownloadedFiles.Checked;
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
@@ -405,6 +406,7 @@ namespace TVRename
             this.cbCleanUpDownloadDir.Checked = S.RemoveDownloadDirectoriesFiles;
             this.cbMissing.Checked = S.MissingCheck;
             this.cbxUpdateAirDate.Checked = S.CorrectFileDates;
+            this.chkAutoSearchForDownloadedFiles.Checked = S.AutoSearchForDownloadedFiles;
             this.cbSearchLocally.Checked = S.SearchLocally;
             this.cbLeaveOriginals.Checked = S.LeaveOriginals;
             this.EnterPreferredLanguage = S.PreferredLanguage;

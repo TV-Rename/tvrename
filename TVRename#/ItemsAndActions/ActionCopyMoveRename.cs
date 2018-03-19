@@ -23,9 +23,10 @@ namespace TVRename
         public FileInfo From;
         public Op Operation;
         public FileInfo To;
+        public ItemMissing UndoItemMissing;
 
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup)
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup,ItemMissing undoItem)
         {
             _tidyup = tidyup;
             PercentDone = 0;
@@ -33,6 +34,7 @@ namespace TVRename
             Operation = operation;
             From = from;
             To = to;
+            this.UndoItemMissing = undoItem;
         }
 
         #region Action Members
@@ -122,10 +124,19 @@ namespace TVRename
                 // ignored
             }
 
-            if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
+            try
             {
-                logger.Info($"Testing {From.Directory.FullName } to see whether it should be tidied up");
-                DoTidyup(From.Directory  );
+                if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
+                {
+                    logger.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
+                    DoTidyup(From.Directory);
+                }
+            }
+            catch (Exception e)
+            {
+                Done = true;
+                Error = true;
+                ErrorText = e.Message;
             }
 
             return !Error;

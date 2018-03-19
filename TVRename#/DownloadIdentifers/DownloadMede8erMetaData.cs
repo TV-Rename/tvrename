@@ -71,9 +71,7 @@ namespace TVRename
             if (TVSettings.Instance.Mede8erXML)
             {
                 ItemList TheActionList = new ItemList();
-                string fn = filo.Name;
-                fn = fn.Substring(0, fn.Length - filo.Extension.Length);
-                fn += ".xml";
+                string fn = filo.RemoveExtension() + ".xml";
                 FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
                 if (forceRefresh || !nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)))

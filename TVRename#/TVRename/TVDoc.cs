@@ -80,7 +80,8 @@ namespace TVRename
         }
 
         private IEnumerable<string> SeasonWordsCache;
-        private IEnumerable<string> SeasonWords()
+
+        internal IEnumerable<string> SeasonWords()
         {
             if (SeasonWordsCache == null) SeasonWordsCache = GetSeasonWords();
             return SeasonWordsCache;
@@ -1697,6 +1698,9 @@ namespace TVRename
             catch (Exception e)
             {
                 logger.Fatal(e,"Unhandled Exception in ActionProcessor");
+                foreach (Thread t in this.ActionWorkers)
+                    t.Abort();
+                this.WaitForAllActionThreadsAndTidyUp();
                 return;
             }
         }
@@ -2552,7 +2556,7 @@ namespace TVRename
                                 if (newname != actualFile.Name)
                                 {
                                     actualFile = FileHelper.FileInFolder(folder, newname); // rename updates the filename
-                                    this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep, null));
+                                    this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep, null,null));
 
                                     //The following section informs the DownloadIdentifers that we already plan to
                                     //copy a file inthe appropriate place and they do not need to worry about downloading 

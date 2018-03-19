@@ -154,7 +154,7 @@ namespace TVRename
                         if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, FileHelper.FileInFolder(Action.To.Directory, newName), Action.Episode, null); // tidyup on main action, not this
+                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(Action.Operation, fi, FileHelper.FileInFolder(Action.To.Directory, newName), Action.Episode, null,null); // tidyup on main action, not this
 
                         
 
@@ -301,7 +301,7 @@ namespace TVRename
                                 }
                             }
                             if(dce.TheFile.FullName != fi.FullName)
-                                addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, doTidyup ? TVSettings.Instance.Tidyup : null));
+                                addTo.Add(new ActionCopyMoveRename(whichOp, dce.TheFile, fi, me.Episode, doTidyup ? TVSettings.Instance.Tidyup : null,me));
 
                             DownloadIdentifiersController di = new DownloadIdentifiersController();
 

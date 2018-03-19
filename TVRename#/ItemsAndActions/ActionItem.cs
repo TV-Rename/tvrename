@@ -132,7 +132,7 @@ namespace TVRename
             else
             {
                 logger.Info($"Deleting {di.FullName}");
-                di.Delete();
+                di.Delete(true,true);
             }
         }
 

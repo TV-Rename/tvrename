@@ -237,6 +237,12 @@ namespace TVRename
                 .ToUpperInvariant();
         }
 
+        public static string RemoveExtension(this FileInfo file, bool useFullPath = false)
+        {
+            string root = useFullPath ? file.FullName : file.Name;
+
+            return root.Substring(0, root.Length - file.Extension.Length);
+        }
 
         public static void GetFilmDetails(this FileInfo movieFile)
         {
@@ -370,6 +376,20 @@ namespace TVRename
         }
 
         internal static string TempPath(string v) => Path.GetTempPath() + v;
+
+        public static string MakeValidPath(string input)
+        {
+            string directoryName = input;
+            string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
+
+            foreach (char c in invalid)
+            {
+                directoryName = directoryName.Replace(c.ToString(), "");
+            }
+
+            return directoryName;
+
+        }
     }
 
     public static class HTTPHelper
@@ -840,6 +860,7 @@ namespace TVRename
 
         }
 
+
         public static string GetCommonStartString(List<string> testValues)
         {
             string root = string.Empty;
@@ -865,6 +886,13 @@ namespace TVRename
             if (!root.EndsWith(ending,StringComparison.OrdinalIgnoreCase)) return root;
 
             return root.Substring(0, root.Length - ending.Length);
+        }
+
+        public static string RemoveAfter(this string root, string ending)
+        {
+            if (root.IndexOf(ending) !=-1)
+                return   root.Substring(0, root.IndexOf(ending));
+            return root;
         }
 
         public static string TrimEnd(this string root, string[] endings)

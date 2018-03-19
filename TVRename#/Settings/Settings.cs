@@ -365,6 +365,7 @@ namespace TVRename
         public bool HideWtWSpoilers = false;
         public bool HideMyShowsSpoilers = false;
         public bool ShowInTaskbar = true;
+        public bool AutoSearchForDownloadedFiles = false;
         public string SpecialsFolderName = "Specials";
         public int StartupTab = 0;
         public Searchers TheSearchers = new Searchers();
@@ -373,6 +374,8 @@ namespace TVRename
         {
             get { return VideoExtensionsString.Split(';'); }
         }
+
+        
 
         public bool AutoMergeEpisodes = false;
         public string VideoExtensionsString = "";
@@ -587,6 +590,8 @@ namespace TVRename
                     this.SearchLocally = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LeaveOriginals")
                     this.LeaveOriginals = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "AutoSearchForDownloadedFiles")
+                    this.AutoSearchForDownloadedFiles = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "LookForDateInFilename")
                     this.LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoMergeEpisodes")
@@ -871,6 +876,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"RenameCheck",this.RenameCheck);
             XMLHelper.WriteElementToXML(writer, "PreventMove", this.PreventMove);
             XMLHelper.WriteElementToXML(writer,"MissingCheck",this.MissingCheck);
+            XMLHelper.WriteElementToXML(writer, "AutoSearchForDownloadedFiles", this.AutoSearchForDownloadedFiles);
             XMLHelper.WriteElementToXML(writer, "UpdateFileDates", this.CorrectFileDates);
             XMLHelper.WriteElementToXML(writer,"SearchLocally",this.SearchLocally);
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
