@@ -124,10 +124,19 @@ namespace TVRename
                 // ignored
             }
 
-            if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
+            try
             {
-                logger.Info($"Testing {From.Directory.FullName } to see whether it should be tidied up");
-                DoTidyup(From.Directory  );
+                if (Operation == Op.Move && _tidyup != null && _tidyup.DeleteEmpty)
+                {
+                    logger.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
+                    DoTidyup(From.Directory);
+                }
+            }
+            catch (Exception e)
+            {
+                Done = true;
+                Error = true;
+                ErrorText = e.Message;
             }
 
             return !Error;

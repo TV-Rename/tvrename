@@ -1698,6 +1698,9 @@ namespace TVRename
             catch (Exception e)
             {
                 logger.Fatal(e,"Unhandled Exception in ActionProcessor");
+                foreach (Thread t in this.ActionWorkers)
+                    t.Abort();
+                this.WaitForAllActionThreadsAndTidyUp();
                 return;
             }
         }
