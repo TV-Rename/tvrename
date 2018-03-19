@@ -18,6 +18,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using TVRename.Ipc;
 
 namespace TVRename
@@ -2979,6 +2980,141 @@ namespace TVRename
             this.FillActionList();
         }
 
+        private void GetNewShows()
+        {
+            //for each directory in settings directory
+            //for each file in directory
+            //for each saved show (order by recent)
+            //does show match selected file?
+            //if so add series to list of series scanned
+            if (!TVSettings.Instance.AutoSearchForDownloadedFiles) return;
+
+            List<string> possibleShowNames = new List<string>();
+
+            foreach (string dirPath in this.mDoc.SearchFolders)
+            {
+                if (!Directory.Exists(dirPath)) continue;
+
+                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (!File.Exists(filePath)) continue;
+
+                    FileInfo fi = new FileInfo(filePath);
+
+                    if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                        continue; // move on
+
+                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                        continue;
+
+                    if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension()+".");
+
+                }
+
+                foreach (string subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (!Directory.Exists(subDirPath)) continue;
+
+                    DirectoryInfo di = new DirectoryInfo(subDirPath);
+
+                    if (!LookForSeries(di.Name)) possibleShowNames.Add(di.Name);
+                }
+
+
+                List<ShowItem> addedShows = new List<ShowItem>();
+
+                foreach (string hint in possibleShowNames)
+                {
+                    //MessageBox.Show($"Search for {hint}");
+                    //if hint doesn't match existing added shows
+                    if (LookForSeries(hint, addedShows)) continue;
+
+                    //Remove anything we can from hint to make it cleaner and hence more likely to match
+                    string refinedHint = RemoveSeriesEpisodeIndicators(hint);
+
+                    //popup dialog
+                    AutoAddShow askForMatch = new AutoAddShow(refinedHint);
+                    if (askForMatch.ShowDialog() == DialogResult.OK)
+                    {
+                        //If added add show to collection
+                        addedShows.Add(askForMatch.ShowItem);
+                    }
+
+                }
+                this.mDoc.ShowItems.AddRange(addedShows);
+
+
+            }
+        }
+
+        private string RemoveSeriesEpisodeIndicators(string hint)
+        {
+            string hint2 =  Helpers.RemoveDiacritics(hint);
+            hint2 = RemoveSE(hint2);
+            hint2 = hint2.ToLower();
+            hint2 = hint2.Replace("'", "");
+            hint2 = hint2.Replace("&", "and");
+            hint2 = Regex.Replace(hint2, "[_\\W]+", " ");
+            hint2 = hint2.RemoveAfter("1080p") ;
+            hint2 = hint2.RemoveAfter("720p");
+            foreach (string seasonWord in this.mDoc.SeasonWords())
+            {
+                hint2 = hint2.RemoveAfter(seasonWord );
+            }
+            hint2 = hint2.Trim();
+            return hint2;
+
+        }
+
+        private string RemoveSE(string hint)
+        {
+            foreach (FilenameProcessorRE re in TVSettings.Instance.FNPRegexs)
+            {
+                if (!re.Enabled)
+                    continue;
+                try
+                {
+                    Match m = Regex.Match(hint, re.RE, RegexOptions.IgnoreCase);
+                    if (m.Success)
+                    {
+                        if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
+                            seas = -1;
+                        if (!int.TryParse(m.Groups["e"].ToString(), out int ep))
+                            ep = -1;
+
+                        int p = Math.Min(m.Groups["s"].Index, m.Groups["e"].Index);
+                        int p2 = Math.Min(p, hint.IndexOf(m.Groups.SyncRoot.ToString()));
+
+                        if ((seas != -1) && (ep != -1)) return hint.Remove(p2!=-1?p2:p);
+                    }
+                }
+                catch (FormatException)
+                {
+                }
+                catch (ArgumentException)
+                { }
+            }
+
+            return hint;
+        }
+
+        private bool LookForSeries(string name)
+        {
+            return LookForSeries(name, this.mDoc.ShowItems);
+        }
+
+        private bool LookForSeries(string test,IEnumerable<ShowItem> shows)
+        {
+            foreach (ShowItem si in shows)
+            {
+                if (si.getSimplifiedPossibleShowNames()
+                    .Any(name => FileHelper.SimplifyAndCheckFilename(test, name)))
+                    return  true;
+            }
+
+            return false;
+        }
+
         public void QuickScan()
         {
             logger.Info("*******************************");
@@ -2986,6 +3122,7 @@ namespace TVRename
             this.MoreBusy();
             this.mDoc.QuickScan();
             this.LessBusy();
+            GetNewShows();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
         }

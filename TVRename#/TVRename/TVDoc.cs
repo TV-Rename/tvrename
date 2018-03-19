@@ -80,7 +80,8 @@ namespace TVRename
         }
 
         private IEnumerable<string> SeasonWordsCache;
-        private IEnumerable<string> SeasonWords()
+
+        internal IEnumerable<string> SeasonWords()
         {
             if (SeasonWordsCache == null) SeasonWordsCache = GetSeasonWords();
             return SeasonWordsCache;

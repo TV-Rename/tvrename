@@ -15,6 +15,7 @@ using System.Collections.Generic;
 
 namespace TVRename
 {
+    /// <inheritdoc />
     /// <summary>
     /// Summary for TheTVDBCodeFinder
     /// </summary>
@@ -60,6 +61,19 @@ namespace TVRename
             catch
             {
                 return -1;
+            }
+        }
+        public string SelectedShowName()
+        {
+            try
+            {
+                if (this.lvMatches.SelectedItems.Count == 0) return "";
+
+                return (string)(this.lvMatches.SelectedItems[0].SubItems[1].Text);
+            }
+            catch
+            {
+                return "";
             }
         }
 

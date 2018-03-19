@@ -128,6 +128,7 @@ namespace TVRename
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.chkAutoMergeEpisodes = new System.Windows.Forms.CheckBox();
             this.chkPreventMove = new System.Windows.Forms.CheckBox();
             this.label40 = new System.Windows.Forms.Label();
             this.cbxUpdateAirDate = new System.Windows.Forms.CheckBox();
@@ -234,7 +235,7 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkAutoMergeEpisodes = new System.Windows.Forms.CheckBox();
+            this.chkAutoSearchForDownloadedFiles = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -1183,6 +1184,7 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.chkAutoSearchForDownloadedFiles);
             this.tpScanOptions.Controls.Add(this.chkAutoMergeEpisodes);
             this.tpScanOptions.Controls.Add(this.chkPreventMove);
             this.tpScanOptions.Controls.Add(this.label40);
@@ -1204,6 +1206,16 @@ namespace TVRename
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoMergeEpisodes
+            // 
+            this.chkAutoMergeEpisodes.AutoSize = true;
+            this.chkAutoMergeEpisodes.Location = new System.Drawing.Point(9, 311);
+            this.chkAutoMergeEpisodes.Name = "chkAutoMergeEpisodes";
+            this.chkAutoMergeEpisodes.Size = new System.Drawing.Size(276, 17);
+            this.chkAutoMergeEpisodes.TabIndex = 13;
+            this.chkAutoMergeEpisodes.Text = "Automatically create merge rules for merged episodes";
+            this.chkAutoMergeEpisodes.UseVisualStyleBackColor = true;
             // 
             // chkPreventMove
             // 
@@ -2297,15 +2309,15 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // chkAutoMergeEpisodes
+            // chkAutoSearchForDownloadedFiles
             // 
-            this.chkAutoMergeEpisodes.AutoSize = true;
-            this.chkAutoMergeEpisodes.Location = new System.Drawing.Point(9, 311);
-            this.chkAutoMergeEpisodes.Name = "chkAutoMergeEpisodes";
-            this.chkAutoMergeEpisodes.Size = new System.Drawing.Size(276, 17);
-            this.chkAutoMergeEpisodes.TabIndex = 13;
-            this.chkAutoMergeEpisodes.Text = "Automatically create merge rules for merged episodes";
-            this.chkAutoMergeEpisodes.UseVisualStyleBackColor = true;
+            this.chkAutoSearchForDownloadedFiles.AutoSize = true;
+            this.chkAutoSearchForDownloadedFiles.Location = new System.Drawing.Point(9, 334);
+            this.chkAutoSearchForDownloadedFiles.Name = "chkAutoSearchForDownloadedFiles";
+            this.chkAutoSearchForDownloadedFiles.Size = new System.Drawing.Size(186, 17);
+            this.chkAutoSearchForDownloadedFiles.TabIndex = 14;
+            this.chkAutoSearchForDownloadedFiles.Text = "Notify when new shows are found";
+            this.chkAutoSearchForDownloadedFiles.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -2578,5 +2590,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkHideMyShowsSpoilers;
         private System.Windows.Forms.CheckBox chkPreventMove;
         private System.Windows.Forms.CheckBox chkAutoMergeEpisodes;
+        private System.Windows.Forms.CheckBox chkAutoSearchForDownloadedFiles;
     }
 }
