@@ -18,6 +18,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using TVRename.Ipc;
 
@@ -3995,6 +3996,53 @@ namespace TVRename
         private void showRightClickMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
+        }
+
+        private void timezoneInconsistencyLOGToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            TimeZoneTracker results = new TimeZoneTracker();
+            foreach (ShowItem si in this.mDoc.ShowItems)
+            {
+                SeriesInfo ser = si.TheSeries();
+
+                //si.ShowTimeZone = TimeZone.TimeZoneForNetwork(ser.getNetwork());
+
+                results.Add(ser.getNetwork() ,si.ShowTimeZone,si.ShowName);
+            }
+            logger.Info(results.PrintVersion());
+        }
+
+        private class TimeZoneTracker
+        {
+            private readonly Dictionary<string,Dictionary<string,List<string>>> _s = new Dictionary<string, Dictionary<string, List<string>>>();
+            internal void Add(string network, string timezone, string show)
+            {
+                if (!this._s.ContainsKey(network)) this._s.Add(network,new Dictionary<string, List<string>>());
+                Dictionary<string, List<string>> snet = this._s[network];
+
+                if (!snet.ContainsKey(timezone)) snet.Add(timezone , new List<string>());
+                List<string> snettz = snet[timezone];
+
+                snettz.Add(show);
+            }
+
+            internal string PrintVersion()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("***********************************");
+                sb.AppendLine("****Timezone Comparison       *****");
+                sb.AppendLine("***********************************");
+                foreach (KeyValuePair<string, Dictionary<string, List<string>>> kvp in this._s)
+                {
+                    foreach (KeyValuePair<string, List<string>> kvp2 in kvp.Value)
+                    {
+                        sb.AppendLine($"{kvp.Key,-30}{kvp2.Key,-30}{string.Join(",", kvp2.Value )}");
+                    }
+                }
+
+                return sb.ToString();
+            }
         }
     }
 }
