@@ -3073,14 +3073,18 @@ namespace TVRename
 
         private string RemoveSeriesEpisodeIndicators(string hint)
         {
+            string[] removeAfterTerms = new string[] {"1080p","720p"};
+
             string hint2 =  Helpers.RemoveDiacritics(hint);
             hint2 = RemoveSE(hint2);
             hint2 = hint2.ToLower();
             hint2 = hint2.Replace("'", "");
             hint2 = hint2.Replace("&", "and");
             hint2 = Regex.Replace(hint2, "[_\\W]+", " ");
-            hint2 = hint2.RemoveAfter("1080p") ;
-            hint2 = hint2.RemoveAfter("720p");
+            foreach (string term in removeAfterTerms)
+            {
+                hint2 = hint2.RemoveAfter(term);
+            }
             foreach (string seasonWord in this.mDoc.SeasonWords())
             {
                 hint2 = hint2.RemoveAfter(seasonWord );
