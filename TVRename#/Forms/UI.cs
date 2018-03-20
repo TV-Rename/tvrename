@@ -3032,17 +3032,38 @@ namespace TVRename
                     //Remove anything we can from hint to make it cleaner and hence more likely to match
                     string refinedHint = RemoveSeriesEpisodeIndicators(hint);
 
+
+
+                    logger.Info("****************");
+                    logger.Info("Auto Adding New Show");
+                    this.MoreBusy();
+                    
+                    TheTVDB.Instance.GetLock("AutoAddShow");
                     //popup dialog
                     AutoAddShow askForMatch = new AutoAddShow(refinedHint);
-                    if (askForMatch.ShowDialog() == DialogResult.OK)
+
+                    System.Windows.Forms.DialogResult dr = askForMatch.ShowDialog();
+                    TheTVDB.Instance.Unlock("AutoAddShow");
+                    if (dr == System.Windows.Forms.DialogResult.OK)
                     {
                         //If added add show to collection
                         addedShows.Add(askForMatch.ShowItem);
+
+                        
                     }
+                    else logger.Info("Cancelled Auto adding new show");
+
+
+                    this.LessBusy();
+                    
 
                 }
-                this.mDoc.ShowItems.AddRange(addedShows);
+                this.mDoc.GetShowItems(true).AddRange(addedShows);
 
+                this.mDoc.UnlockShowItems();
+                this.ShowAddedOrEdited(true);
+                this.SelectShow(addedShows.Last());
+                logger.Info("Added new shows called: {0}", string.Join(",",addedShows.Select(s=> s.ShowName)) );
 
             }
         }
