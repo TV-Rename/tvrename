@@ -2973,6 +2973,7 @@ namespace TVRename
         {
             logger.Info("*******************************");
             logger.Info("Starting Scan for {0} shows...", shows?.Count > 0 ? shows.Count.ToString() : "all");
+            GetNewShows();
             this.MoreBusy();
             this.mDoc.ActionGo(shows);
             this.LessBusy();
@@ -3004,14 +3005,17 @@ namespace TVRename
                     if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
                         continue; // move on
 
-                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                    if (TVSettings.Instance.IgnoreSamples &&
+                        Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
+                        ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
                         continue;
 
-                    if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension()+".");
+                    if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
 
                 }
 
-                foreach (string subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
+                    System.IO.SearchOption.AllDirectories))
                 {
                     if (!Directory.Exists(subDirPath)) continue;
 
@@ -3020,52 +3024,51 @@ namespace TVRename
                     if (!LookForSeries(di.Name)) possibleShowNames.Add(di.Name);
                 }
 
+            }
+            List<ShowItem> addedShows = new List<ShowItem>();
 
-                List<ShowItem> addedShows = new List<ShowItem>();
+            foreach (string hint in possibleShowNames)
+            {
+                //MessageBox.Show($"Search for {hint}");
+                //if hint doesn't match existing added shows
+                if (LookForSeries(hint, addedShows)) continue;
 
-                foreach (string hint in possibleShowNames)
+                //Remove anything we can from hint to make it cleaner and hence more likely to match
+                string refinedHint = RemoveSeriesEpisodeIndicators(hint);
+
+                logger.Info("****************");
+                logger.Info("Auto Adding New Show");
+                this.MoreBusy();
+
+                TheTVDB.Instance.GetLock("AutoAddShow");
+                //popup dialog
+                AutoAddShow askForMatch = new AutoAddShow(refinedHint);
+
+                System.Windows.Forms.DialogResult dr = askForMatch.ShowDialog();
+                TheTVDB.Instance.Unlock("AutoAddShow");
+                if (dr == System.Windows.Forms.DialogResult.OK)
                 {
-                    //MessageBox.Show($"Search for {hint}");
-                    //if hint doesn't match existing added shows
-                    if (LookForSeries(hint, addedShows)) continue;
-
-                    //Remove anything we can from hint to make it cleaner and hence more likely to match
-                    string refinedHint = RemoveSeriesEpisodeIndicators(hint);
-
-
-
-                    logger.Info("****************");
-                    logger.Info("Auto Adding New Show");
-                    this.MoreBusy();
-                    
-                    TheTVDB.Instance.GetLock("AutoAddShow");
-                    //popup dialog
-                    AutoAddShow askForMatch = new AutoAddShow(refinedHint);
-
-                    System.Windows.Forms.DialogResult dr = askForMatch.ShowDialog();
-                    TheTVDB.Instance.Unlock("AutoAddShow");
-                    if (dr == System.Windows.Forms.DialogResult.OK)
-                    {
-                        //If added add show to collection
-                        addedShows.Add(askForMatch.ShowItem);
-
-                        
-                    }
-                    else logger.Info("Cancelled Auto adding new show");
-
-
-                    this.LessBusy();
-                    
-
+                    //If added add show to collection
+                    addedShows.Add(askForMatch.ShowItem);
                 }
-                this.mDoc.GetShowItems(true).AddRange(addedShows);
+                else logger.Info("Cancelled Auto adding new show");
 
-                this.mDoc.UnlockShowItems();
-                this.ShowAddedOrEdited(true);
-                this.SelectShow(addedShows.Last());
-                logger.Info("Added new shows called: {0}", string.Join(",",addedShows.Select(s=> s.ShowName)) );
+
+                this.LessBusy();
+
 
             }
+
+            this.mDoc.GetShowItems(true).AddRange(addedShows);
+
+            this.mDoc.UnlockShowItems();
+            this.ShowAddedOrEdited(true);
+
+            if (addedShows.Count <= 0) return;
+
+            this.SelectShow(addedShows.Last());
+            logger.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
+
         }
 
         private string RemoveSeriesEpisodeIndicators(string hint)
@@ -3140,10 +3143,10 @@ namespace TVRename
         {
             logger.Info("*******************************");
             logger.Info("Starting QuickScan...");
+            GetNewShows();
             this.MoreBusy();
             this.mDoc.QuickScan();
             this.LessBusy();
-            GetNewShows();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
         }
