@@ -205,7 +205,7 @@ namespace TVRename
                     {
                         Action a1 = (Action)action;
                         Action a2 = (Action)action2;
-                        if (a2.produces == a1.produces)
+                        if (a2.Produces == a1.Produces)
                         {
                             have = true;
                             break;
@@ -284,7 +284,7 @@ namespace TVRename
                             if (TVSettings.Instance.PreventMove )
                             {
                                 //We do not want to move the file, just rename it
-                                fi = new FileInfo(dce.TheFile.DirectoryName + System.IO.Path.DirectorySeparatorChar + me.filename + dce.TheFile.Extension);
+                                fi = new FileInfo(dce.TheFile.DirectoryName + System.IO.Path.DirectorySeparatorChar + me.Filename + dce.TheFile.Extension);
                             }
 
                             // don't remove the base search folders

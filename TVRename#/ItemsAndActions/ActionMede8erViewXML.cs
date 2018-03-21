@@ -13,43 +13,30 @@ namespace TVRename
     using System.Xml;
 
 
-    public class ActionMede8erViewXML : Item, Action, ScanListItem, ActionWriteMetadata
+    public class ActionMede8erViewXML : ActionWriteMetadata
     {
-        public FileInfo Where;
         public ShowItem SI; // if for an entire show, rather than specific episode
-        public int snum;
+        public int Snum;
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si)
         {
             this.SI = si;
             this.Where = nfo;
-            this.snum = -1;
+            this.Snum = -1;
         }
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum)
         {
             this.SI = si;
             this.Where = nfo;
-            this.snum = snum;
+            this.Snum = snum;
         }
-
-        public string produces => this.Where.FullName;
 
         #region Action Members
 
-        public string Name => "Write Mede8er View Data";
+        public override  string Name => "Write Mede8er View Data";
 
-        public bool Done { get; private set; }
-        public bool Error { get; private set; }
-        public string ErrorText { get; set; }
-
-        public string ProgressText => this.Where.Name;
-
-        public double PercentDone => this.Done ? 100 : 0;
-
-        public long SizeOfWork => 10000;
-
-        public bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause, TVRenameStats stats)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -61,8 +48,6 @@ namespace TVRename
             try
             {
                 writer = XmlWriter.Create(this.Where.FullName, settings);
-                if (writer == null)
-                    return false;
             }
             catch (Exception)
             {
@@ -72,17 +57,10 @@ namespace TVRename
 
             writer.WriteStartElement("FolderTag");
             // is it a show or season folder
-            if (snum >= 0)
+            if (this.Snum >= 0)
             {
                 // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
-                if (TVSettings.Instance.EpJPGs)
-                {
-                    XMLHelper.WriteElementToXML(writer, "ViewMode", "Photo");
-                }
-                else
-                {
-                    XMLHelper.WriteElementToXML(writer, "ViewMode", "List");
-                }
+                XMLHelper.WriteElementToXML(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
                 XMLHelper.WriteElementToXML(writer, "ViewType", "Video");
             }
             else
@@ -100,12 +78,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
-            return (o is ActionMede8erViewXML) && ((o as ActionMede8erViewXML).Where == this.Where);
+            return (o is ActionMede8erViewXML xml) && (xml.Where == this.Where);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ActionMede8erViewXML nfo = o as ActionMede8erViewXML;
 
@@ -114,9 +92,9 @@ namespace TVRename
 
         #endregion
 
-        #region ScanListItem Members
+        #region Item Members
 
-        public IgnoreItem Ignore
+        public override  IgnoreItem Ignore
         {
             get
             {
@@ -126,14 +104,14 @@ namespace TVRename
             }
         }
 
-        public ListViewItem ScanListViewItem
+        public override ListViewItem ScanListViewItem
         {
             get
             {
                 ListViewItem lvi = new ListViewItem();
 
                 lvi.Text = this.SI.ShowName;
-                lvi.SubItems.Add(this.snum > 0 ? this.snum.ToString() : "");
+                lvi.SubItems.Add(this.Snum > 0 ? this.Snum.ToString() : "");
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
 
@@ -146,13 +124,11 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder => this.Where == null ? null : this.Where.DirectoryName;
+        public override string TargetFolder => this.Where == null ? null : this.Where.DirectoryName;
 
-        public string ScanListViewGroup => "lvgActionMeta";
+        public override string ScanListViewGroup => "lvgActionMeta";
 
-        public int IconNumber => 7;
-
-        public ProcessedEpisode Episode { get; private set; }
+        public override int IconNumber => 7;
 
         #endregion
 

@@ -1538,7 +1538,7 @@ namespace TVRename
                 Action action = info.TheAction;
                 if (action != null)
                 {
-                    logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.produces, action.ToString());
+                    logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
                     action.Go(ref this.ActionPause, mStats);
                 }
 
@@ -1552,7 +1552,7 @@ namespace TVRename
             }
         }
 
-        public ActionQueue[] ActionProcessorMakeQueues(ScanListItemList theList)
+        public ActionQueue[] ActionProcessorMakeQueues(ItemList theList)
         {
             // Take a single list
             // Return an array of "ActionQueue" items.
@@ -1570,7 +1570,7 @@ namespace TVRename
             queues[2] = new ActionQueue("Write Metadata", 4); // writing KODI NFO files, etc.
             queues[3] = new ActionQueue("Download", TVSettings.Instance.ParallelDownloads); // downloading torrents, banners, thumbnails
 
-            foreach (ScanListItem sli in theList)
+            foreach (Item sli in theList)
             {
                 Action action = sli as Action;
 
@@ -1720,7 +1720,7 @@ namespace TVRename
             this.ActionSemaphores = null;
         }
 
-        public void DoActions(ScanListItemList theList)
+        public void DoActions(ItemList theList)
         {
             logger.Info("**********************");
             logger.Info("Doing Selected Actions....");
@@ -1752,7 +1752,7 @@ namespace TVRename
 
             theList.RemoveAll(x => (x is Action) && ((Action) x).Done && !((Action) x).Error);
 
-                foreach (ScanListItem sli in theList)
+                foreach (Item sli in theList)
                 {
                     if (sli is Action) {
                         Action slia = (Action)sli;
@@ -1820,13 +1820,13 @@ namespace TVRename
         public void doAllActions()
         {
 
-            ScanListItemList theList = new ScanListItemList();
+            ItemList theList = new ItemList();
 
             foreach (Item action in TheActionList)
             {
-                if (action is ScanListItem)
+                if (action is Item)
                 {
-                    theList.Add((ScanListItem)(action));
+                    theList.Add((Item)(action));
 
                 }
             }
@@ -2151,7 +2151,7 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             foreach (Item item in this.TheActionList)
             {
-                ScanListItem act = item as ScanListItem;
+                Item act = item as Item;
                 foreach (IgnoreItem ii in this.Ignore)
                 {
                     if (ii.SameFileAs(act.Ignore))

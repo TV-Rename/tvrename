@@ -166,7 +166,6 @@
     </Compile>
     <Compile Include="ItemsAndActions\ActionDelete.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
-    <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
     <Compile Include="Settings\ShowFilter.cs" />

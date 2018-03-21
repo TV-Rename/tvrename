@@ -13,10 +13,9 @@ namespace TVRename
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
-    public class ActionMede8erXML : Item, Action, ScanListItem, ActionWriteMetadata
+    public class ActionMede8erXML : ActionWriteMetadata
     {
            public ShowItem SI; // if for an entire show, rather than specific episode
-        public FileInfo Where;
 
         public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe)
         {
@@ -32,38 +31,12 @@ namespace TVRename
             this.Where = nfo;
         }
 
-        public string produces
-        {
-            get { return this.Where.FullName; }
-        }
 
         #region Action Members
 
-        public string Name
-        {
-            get { return "Write Mede8er Metadata"; }
-        }
+        public override string Name => "Write Mede8er Metadata";
 
-        public bool Done { get; private set; }
-        public bool Error { get; private set; }
-        public string ErrorText { get; set; }
-
-        public string ProgressText
-        {
-            get { return this.Where.Name; }
-        }
-
-        public double PercentDone
-        {
-            get { return this.Done ? 100 : 0; }
-        }
-
-        public long SizeOfWork
-        {
-            get { return 10000; }
-        }
-
-        public bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause, TVRenameStats stats)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -74,10 +47,7 @@ namespace TVRename
             XmlWriter writer;
             try
             {
-                //                XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings);
                 writer = XmlWriter.Create(this.Where.FullName, settings);
-                if (writer == null)
-                    return false;
             }
             catch (Exception)
             {
@@ -142,17 +112,17 @@ namespace TVRename
                 writer.WriteEndElement();  // genres
 
                 //Director(s)
-                if (!String.IsNullOrEmpty(this.Episode.EpisodeDirector))
+                if (!string.IsNullOrEmpty(this.Episode.EpisodeDirector))
                 {
-                    string EpDirector = this.Episode.EpisodeDirector;
-                    if (!string.IsNullOrEmpty(EpDirector))
+                    string epDirector = this.Episode.EpisodeDirector;
+                    if (!string.IsNullOrEmpty(epDirector))
                     {
-                        foreach (string Daa in EpDirector.Split('|'))
+                        foreach (string daa in epDirector.Split('|'))
                         {
-                            if (string.IsNullOrEmpty(Daa))
+                            if (string.IsNullOrEmpty(daa))
                                 continue;
 
-                            XMLHelper.WriteElementToXML(writer,"director",Daa);
+                            XMLHelper.WriteElementToXML(writer,"director",daa);
                         }
                     }
                 }
@@ -160,10 +130,10 @@ namespace TVRename
                 //Writers(s)
                 if (!String.IsNullOrEmpty(this.Episode.Writer))
                 {
-                    string EpWriter = this.Episode.Writer;
-                    if (!string.IsNullOrEmpty(EpWriter))
+                    string epWriter = this.Episode.Writer;
+                    if (!string.IsNullOrEmpty(epWriter))
                     {
-                        XMLHelper.WriteElementToXML(writer,"credits",EpWriter);
+                        XMLHelper.WriteElementToXML(writer,"credits",epWriter);
                     }
                 }
 
@@ -256,27 +226,26 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
-            return (o is ActionMede8erXML) && ((o as ActionMede8erXML).Where == this.Where);
+            return (o is ActionMede8erXML xml) && (xml.Where == this.Where);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ActionMede8erXML nfo = o as ActionMede8erXML;
 
             if (this.Episode == null)
                 return 1;
-            if (nfo == null || nfo.Episode == null)
+            if (nfo?.Episode == null)
                 return -1;
             return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
         }
 
         #endregion
 
-        #region ScanListItem Members
-
-        public IgnoreItem Ignore
+        #region Item Members
+        public override IgnoreItem Ignore
         {
             get
             {
@@ -286,7 +255,7 @@ namespace TVRename
             }
         }
 
-        public ListViewItem ScanListViewItem
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -321,7 +290,7 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder
+        public override string TargetFolder
         {
             get
             {
@@ -331,26 +300,13 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup
-        {
-            get { return "lvgActionMeta"; }
-        }
+        public override string ScanListViewGroup => "lvgActionMeta";
 
-        public int IconNumber
-        {
-            get { return 7; }
-        }
-
-        public ProcessedEpisode Episode { get; private set; }
+        public override int IconNumber => 7;
 
         #endregion
 
-        private static void WriteInfo(XmlWriter writer, string value, string elemName)
-        {
-            WriteInfo(writer, value, elemName, null, null);
-        }
-
-        private static void WriteInfo(XmlWriter writer, string value, string elemName, string attribute, string attributeVal)
+        private static void WriteInfo(XmlWriter writer, string value, string elemName, string attribute = null, string attributeVal = null)
         {
             if (!string.IsNullOrEmpty(value))
             {

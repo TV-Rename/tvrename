@@ -17,7 +17,7 @@ namespace TVRename
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using System.IO;
 
-    public class ActionDownloadImage : Item, Action, ScanListItem
+    public class ActionDownloadImage : ActionDownload
     {
         private readonly string Path;
         private readonly FileInfo Destination;
@@ -37,42 +37,36 @@ namespace TVRename
 
         #region Action Members
 
-        public bool Done { get; set; }
-        public bool Error { get; set; }
-        public string ErrorText { get; set; }
+        public override string Name => "Download";
 
-        public string Name => "Download";
+        public override string ProgressText => this.Destination.Name;
 
-        public string ProgressText => this.Destination.Name;
-
-        public double PercentDone => this.Done ? 100 : 0;
-
-        public string produces => this.Destination.FullName;
+        public override string Produces => this.Destination.FullName;
 
         // 0 to 100
-        public long SizeOfWork => 1000000;
+        public override long SizeOfWork => 1000000;
 
         // http://www.codeproject.com/Articles/2941/Resizing-a-Photographic-image-with-GDI-for-NET
-        static Image MaxSize(Image imgPhoto, int Width, int Height)
+        static Image MaxSize(Image imgPhoto, int width, int height)
         {
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
 
-            float nPercentW = ((float)Width / (float)sourceWidth);
-            float nPercentH = ((float)Height / (float)sourceHeight);
+            float nPercentW = (width / (float)sourceWidth);
+            float nPercentH = (height / (float)sourceHeight);
 
             //float nPercent = Math.Min(nPercentH, nPercentW);
             int destWidth, destHeight;
 
             if (nPercentH < nPercentW)
             {
-                destHeight = Height;
+                destHeight = height;
                 destWidth = (int)(sourceWidth * nPercentH);
             }
             else
             {
                 destHeight = (int)(sourceHeight * nPercentW);
-                destWidth = Width;
+                destWidth = width;
             }
 
             Bitmap bmPhoto = new Bitmap(destWidth, destHeight, PixelFormat.Format24bppRgb);
@@ -91,7 +85,7 @@ namespace TVRename
             return bmPhoto;
         }
 
-        public bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause, TVRenameStats stats)
         {
             byte[] theData = TheTVDB.Instance.GetTVDBDownload(this.Path);
             if ((theData == null) || (theData.Length == 0))
@@ -102,7 +96,7 @@ namespace TVRename
                 return false;
             }
 
-            if (ShrinkLargeMede8erImage)
+            if (this.ShrinkLargeMede8erImage)
             {
                 // shrink images down to a maximum size of 156x232
                 Image im = new Bitmap(new MemoryStream(theData));
@@ -141,26 +135,23 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
-            return (o is ActionDownloadImage) && ((o as ActionDownloadImage).Destination == this.Destination);
+            return (o is ActionDownloadImage image) && (image.Destination == this.Destination);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
-            ActionDownloadImage dl = o as ActionDownloadImage;
-            return dl == null ? 0 : this.Destination.FullName.CompareTo(dl.Destination.FullName);
+            return !(o is ActionDownloadImage dl) ? 0 : this.Destination.FullName.CompareTo(dl.Destination.FullName);
         }
 
         #endregion
 
-        #region ScanListItem Members
+        #region Item Members
 
-        public int IconNumber => 5;
+        public override int IconNumber => 5;
 
-        public ProcessedEpisode Episode { get; set; }
-
-        public IgnoreItem Ignore
+        public override IgnoreItem Ignore
         {
             get
             {
@@ -170,7 +161,7 @@ namespace TVRename
             }
         }
 
-        public ListViewItem ScanListViewItem
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -206,9 +197,9 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup => "lvgActionDownload";
+        public override string ScanListViewGroup => "lvgActionDownload";
 
-        public string TargetFolder
+        public override string TargetFolder
         {
             get
             {
