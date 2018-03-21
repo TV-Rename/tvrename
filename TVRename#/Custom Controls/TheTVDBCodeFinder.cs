@@ -46,7 +46,9 @@ namespace TVRename
             this.mInternal = true;
             this.txtFindThis.Text = s;
             this.mInternal = false;
+            Search();
             this.DoFind(true);
+            
         }
 
         public int SelectedCode()
@@ -125,6 +127,7 @@ namespace TVRename
 
                     bool numberMatch = numeric && num == matchnum;
                     string searchTerm = Regex.Replace(what, "[^\\w ]", "");
+                    searchTerm = searchTerm.Trim();
                     if (numberMatch || (!numeric && (simpleS.Contains(searchTerm))) || (numeric && show.Contains(what)))
                     {
                         ListViewItem lvi = new ListViewItem();
@@ -156,6 +159,11 @@ namespace TVRename
         }
 
         private void bnGoSearch_Click(object sender, EventArgs e)
+        {
+            Search();
+        }
+
+        private void Search()
         {
             // search on thetvdb.com site
             this.txtSearchStatus.Text = "Searching on TheTVDB.com";

@@ -23,36 +23,21 @@ namespace TVRename
             this.Where = nfo;
         }
 
-        public string produces
-        {
-            get { return this.Where.FullName; }
-        }
+        public string produces => this.Where.FullName;
 
         #region Action Members
 
-        public string Name
-        {
-            get { return "Write pyTivo Meta"; }
-        }
+        public string Name => "Write pyTivo Meta";
 
         public bool Done { get; private set; }
         public bool Error { get; private set; }
         public string ErrorText { get; set; }
 
-        public string ProgressText
-        {
-            get { return this.Where.Name; }
-        }
+        public string ProgressText => this.Where.Name;
 
-        public double PercentDone
-        {
-            get { return this.Done ? 100 : 0; }
-        }
+        public double PercentDone => this.Done ? 100 : 0;
 
-        public long SizeOfWork
-        {
-            get { return 10000; }
-        }
+        public long SizeOfWork => 10000;
 
         public bool Go( ref bool pause, TVRenameStats stats)
         {
@@ -74,15 +59,16 @@ namespace TVRename
             }
 
             // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata
-            writer.WriteLine(string.Format("title : {0}", this.Episode.SI.ShowName));
-            writer.WriteLine(string.Format("seriesTitle : {0}", this.Episode.SI.ShowName));
-            writer.WriteLine(string.Format("episodeTitle : {0}", this.Episode.Name));
-            writer.WriteLine(string.Format("episodeNumber : {0}{1:0#}", this.Episode.AppropriateSeasonNumber, this.Episode.AppropriateEpNum));
+            writer.WriteLine($"title : {this.Episode.SI.ShowName}");
+            writer.WriteLine($"seriesTitle : {this.Episode.SI.ShowName}");
+            writer.WriteLine($"episodeTitle : {this.Episode.Name}");
+            writer.WriteLine(
+                $"episodeNumber : {this.Episode.AppropriateSeasonNumber}{this.Episode.AppropriateEpNum:0#}");
             writer.WriteLine("isEpisode : true");
-            writer.WriteLine(string.Format("description : {0}", this.Episode.Overview));
+            writer.WriteLine($"description : {this.Episode.Overview}");
             if (this.Episode.FirstAired != null)
-                writer.WriteLine(string.Format("originalAirDate : {0:yyyy-MM-dd}T00:00:00Z",this.Episode.FirstAired.Value));
-            writer.WriteLine(string.Format("callsign : {0}", this.Episode.SI.TheSeries().getNetwork()));
+                writer.WriteLine($"originalAirDate : {this.Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
+            writer.WriteLine($"callsign : {this.Episode.SI.TheSeries().getNetwork()}");
 
             WriteEntries(writer, "vDirector", this.Episode.EpisodeDirector);
             WriteEntries(writer, "vWriter", this.Episode.Writer);
@@ -100,12 +86,12 @@ namespace TVRename
             if (string.IsNullOrEmpty(Entries))
                 return;
             if (!Entries.Contains("|"))
-                writer.WriteLine(string.Format("{0} : {1}", Heading, Entries));
+                writer.WriteLine($"{Heading} : {Entries}");
             else
             {
                 foreach (string entry in Entries.Split('|'))
                     if (!string.IsNullOrEmpty(entry))
-                        writer.WriteLine(string.Format("{0} : {1}", Heading, entry));
+                        writer.WriteLine($"{Heading} : {entry}");
             }
         }
 
@@ -177,15 +163,9 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup
-        {
-            get { return "lvgActionMeta"; }
-        }
+        public string ScanListViewGroup => "lvgActionMeta";
 
-        public int IconNumber
-        {
-            get { return 7; }
-        }
+        public int IconNumber => 7;
 
         public ProcessedEpisode Episode { get; private set; }
 

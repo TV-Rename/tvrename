@@ -26,7 +26,7 @@ namespace TVRename
 
         public System.Collections.Generic.List<ActionCopyMoveRename> CopyMove;
         public int Count;
-        public System.Collections.Generic.List<ActionDownload> Download;
+        public System.Collections.Generic.List<ActionDownloadImage> Download;
         public ScanListItemList FlatList;
         public System.Collections.Generic.List<ItemMissing> Missing;
         public System.Collections.Generic.List<ActionNFO> NFO;
@@ -52,7 +52,7 @@ namespace TVRename
             this.RSS = new System.Collections.Generic.List<ActionRSS>();
             this.CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
             this.Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
-            this.Download = new System.Collections.Generic.List<ActionDownload>();
+            this.Download = new System.Collections.Generic.List<ActionDownloadImage>();
             this.NFO = new System.Collections.Generic.List<ActionNFO>();
             this.PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
             this.FlatList = new ScanListItemList();
@@ -104,8 +104,8 @@ namespace TVRename
                     else // copy/move
                         this.CopyMove.Add(cmr);
                 }
-                else if (action is ActionDownload)
-                    this.Download.Add((ActionDownload) (action));
+                else if (action is ActionDownloadImage)
+                    this.Download.Add((ActionDownloadImage) (action));
                 else if (action is ActionRSS)
                     this.RSS.Add((ActionRSS) (action));
                 else if (action is ItemMissing)

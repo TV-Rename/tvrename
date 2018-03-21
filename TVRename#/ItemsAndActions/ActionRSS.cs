@@ -11,7 +11,7 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
-    // MS_TODO: derive this from ActionDownload?
+    // MS_TODO: derive this from ActionDownloadImage?
     public class ActionRSS : Item, Action, ScanListItem
     {
         public RSSItem RSS;

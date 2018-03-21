@@ -1353,9 +1353,7 @@ namespace TVRename
                 }
                 catch (WebException ex) {
                     //no images for chosen language
-                    logger.Trace("No images found for {0} in language {1}", APIRoot + "/series/" + code + "/images", TVSettings.Instance.PreferredLanguage);
-                    logger.Warn(ex.Message);
-
+                    logger.Warn(ex, $"No images found for {APIRoot}/series/{code}/images in language {TVSettings.Instance.PreferredLanguage}");
                 }
 
 

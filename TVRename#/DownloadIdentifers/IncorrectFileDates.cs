@@ -25,7 +25,7 @@ namespace TVRename
                 if ((di.LastWriteTimeUtc != newUpdateTime.Value)&&(!this.doneFilesAndFolders.Contains(di.FullName)))
                 {
                     this.doneFilesAndFolders.Add(di.FullName);
-                    return new ItemList() { new ItemDateTouch(di, si, newUpdateTime.Value) };
+                    return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
                 }
             }
             return null;
@@ -46,7 +46,7 @@ namespace TVRename
                 if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!this.doneFilesAndFolders.Contains(di.FullName)))
                 {
                     this.doneFilesAndFolders.Add(di.FullName);
-                    return new ItemList() { new ItemDateTouch(di, si, newUpdateTime.Value) };
+                    return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
                 }
                 
             }
@@ -66,7 +66,7 @@ namespace TVRename
                 if ((filo.LastWriteTimeUtc != newUpdateTime) && (!this.doneFilesAndFolders.Contains(filo.FullName)))
                 {
                     this.doneFilesAndFolders.Add(filo.FullName);
-                    return  new ItemList() { new ItemDateTouch(filo,dbep, newUpdateTime) };
+                    return  new ItemList() { new ActionDateTouch(filo,dbep, newUpdateTime) };
                 }
             }
             return null;

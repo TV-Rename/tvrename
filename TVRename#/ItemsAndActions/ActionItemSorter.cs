@@ -26,7 +26,7 @@ namespace TVRename
                 return 2;
             if (a is ActionRSS)
                 return 3;
-            if (a is ActionDownload)
+            if (a is ActionDownloadImage)
                 return 4;
             if (a is ActionNFO)
                 return 5;

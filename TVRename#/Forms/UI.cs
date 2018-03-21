@@ -18,6 +18,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using File = Alphaleonis.Win32.Filesystem.File;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using TVRename.Ipc;
 
@@ -238,11 +239,11 @@ namespace TVRename
             // TODO: Unify command line handling between here and in Program.cs
 
             if (this.mDoc.Args.Scan)
-                this.Scan();
+                this.Scan(true);
             if (this.mDoc.Args.QuickScan )
-                this.QuickScan();
+                this.QuickScan(true);
             if (this.mDoc.Args.RecentScan ) 
-                this.RecentScan();
+                this.RecentScan(true);
             if (this.mDoc.Args.DoAll)
                 this.ProcessAll();
             if (this.mDoc.Args.Quit || this.mDoc.Args.Hide)
@@ -1332,7 +1333,7 @@ namespace TVRename
                     this.bnWTWBTSearch_Click(null, null);
                     break;
                 case TVSettings.WTWDoubleClickAction.Scan:
-                    this.Scan(new List<ShowItem> {ei.SI});
+                    this.Scan(new List<ShowItem> {ei.SI},false);
                     this.tabControl1.SelectTab(this.tbAllInOne);
                     break;
             }
@@ -1482,6 +1483,11 @@ namespace TVRename
             if (this.WindowState == FormWindowState.Minimized)
                 this.WindowState = FormWindowState.Normal;
             this.Activate();
+        }
+
+        public void Scan()
+        {
+            Scan(true);
         }
 
         public void notifyIcon1_DoubleClick(object sender, MouseEventArgs e)
@@ -1897,7 +1903,7 @@ namespace TVRename
                     {
                         if (mLastShowsClicked != null)
                         {
-                            this.Scan(mLastShowsClicked);
+                            this.Scan(mLastShowsClicked,false);
                             this.tabControl1.SelectTab(this.tbAllInOne);
                         }
 
@@ -1989,16 +1995,22 @@ namespace TVRename
                                 {
                                     // make new Item for copying/moving to specified location
                                     FileInfo from = new FileInfo(this.openFile.FileName);
+                                    FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
                                     this.mDoc.TheActionList.Add(
                                         new ActionCopyMoveRename(
                                             TVSettings.Instance.LeaveOriginals
                                                 ? ActionCopyMoveRename.Op.Copy
-                                                : ActionCopyMoveRename.Op.Move, from,
-                                            new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode,
+                                                : ActionCopyMoveRename.Op.Move, from,to
+                                           , mi.Episode,
                                             TVSettings.Instance.Tidyup,mi));
                                     // and remove old Missing item
                                     this.mDoc.TheActionList.Remove(mi);
-                                }
+
+                                    DownloadIdentifiersController di = new DownloadIdentifiersController();
+
+                                        // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+                                    this.mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
+                                    }
                             }
 
                             this.mLastActionsClicked = null;
@@ -2953,26 +2965,37 @@ namespace TVRename
 
         private void bnActionCheck_Click(object sender, System.EventArgs e)
         {
-            this.Scan();
+            this.Scan(false);
         }
 
-        public void Scan()
+        public void Scan(bool unattended)
         {
             this.tabControl1.SelectedTab = this.tbAllInOne;
-            this.Scan(null);
+            this.Scan(null, unattended);
             this.mDoc.ExportMissingXML(); //Save missing shows to XML
         }
 
+        public void QuickScan()
+        {
+            QuickScan(true);
+        }
 
         public void RecentScan()
         {
-            Scan(this.mDoc.getRecentShows());
+            RecentScan(true);
         }
 
-        private void Scan(List<ShowItem> shows)
+
+        public void RecentScan(bool unattended)
+        {
+            Scan(this.mDoc.getRecentShows(),unattended );
+        }
+
+        private void Scan(List<ShowItem> shows,bool unattended)
         {
             logger.Info("*******************************");
             logger.Info("Starting Scan for {0} shows...", shows?.Count > 0 ? shows.Count.ToString() : "all");
+            GetNewShows(unattended);
             this.MoreBusy();
             this.mDoc.ActionGo(shows);
             this.LessBusy();
@@ -2980,7 +3003,7 @@ namespace TVRename
             this.FillActionList();
         }
 
-        private void GetNewShows()
+        private void GetNewShows(bool unattended)
         {
             //for each directory in settings directory
             //for each file in directory
@@ -2988,6 +3011,9 @@ namespace TVRename
             //does show match selected file?
             //if so add series to list of series scanned
             if (!TVSettings.Instance.AutoSearchForDownloadedFiles) return;
+
+            //Dont support unattended mode
+            if (unattended) return;
 
             List<string> possibleShowNames = new List<string>();
 
@@ -3004,59 +3030,97 @@ namespace TVRename
                     if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
                         continue; // move on
 
-                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                    if (TVSettings.Instance.IgnoreSamples &&
+                        Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
+                        ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
                         continue;
 
-                    if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension()+".");
+                    if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
 
                 }
 
-                foreach (string subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+//                foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
+//                    System.IO.SearchOption.AllDirectories))
+//                {
+//                    if (!Directory.Exists(subDirPath)) continue;
+//
+//                    DirectoryInfo di = new DirectoryInfo(subDirPath);
+//
+//                    if (!LookForSeries(di.Name)) possibleShowNames.Add(di.Name);
+//                }
+
+            }
+            List<ShowItem> addedShows = new List<ShowItem>();
+
+            
+            foreach (string hint in possibleShowNames)
+            {
+                //MessageBox.Show($"Search for {hint}");
+                //if hint doesn't match existing added shows
+                if (LookForSeries(hint, addedShows)) continue;
+
+                //If the hint contains certain terms then we'll ignore it
+                if (IgnoreHint(hint)) continue;
+
+                //Remove anything we can from hint to make it cleaner and hence more likely to match
+                string refinedHint = RemoveSeriesEpisodeIndicators(hint);
+
+                logger.Info("****************");
+                logger.Info("Auto Adding New Show");
+                this.MoreBusy();
+
+                TheTVDB.Instance.GetLock("AutoAddShow");
+                //popup dialog
+                AutoAddShow askForMatch = new AutoAddShow(refinedHint);
+
+                System.Windows.Forms.DialogResult dr = askForMatch.ShowDialog();
+                TheTVDB.Instance.Unlock("AutoAddShow");
+                if (dr == System.Windows.Forms.DialogResult.OK)
                 {
-                    if (!Directory.Exists(subDirPath)) continue;
-
-                    DirectoryInfo di = new DirectoryInfo(subDirPath);
-
-                    if (!LookForSeries(di.Name)) possibleShowNames.Add(di.Name);
+                    //If added add show to collection
+                    addedShows.Add(askForMatch.ShowItem);
                 }
+                else logger.Info("Cancelled Auto adding new show");
 
 
-                List<ShowItem> addedShows = new List<ShowItem>();
-
-                foreach (string hint in possibleShowNames)
-                {
-                    //MessageBox.Show($"Search for {hint}");
-                    //if hint doesn't match existing added shows
-                    if (LookForSeries(hint, addedShows)) continue;
-
-                    //Remove anything we can from hint to make it cleaner and hence more likely to match
-                    string refinedHint = RemoveSeriesEpisodeIndicators(hint);
-
-                    //popup dialog
-                    AutoAddShow askForMatch = new AutoAddShow(refinedHint);
-                    if (askForMatch.ShowDialog() == DialogResult.OK)
-                    {
-                        //If added add show to collection
-                        addedShows.Add(askForMatch.ShowItem);
-                    }
-
-                }
-                this.mDoc.ShowItems.AddRange(addedShows);
+                this.LessBusy();
 
 
             }
+
+            this.mDoc.GetShowItems(true).AddRange(addedShows);
+
+            this.mDoc.UnlockShowItems();
+            this.ShowAddedOrEdited(true);
+
+            if (addedShows.Count <= 0) return;
+
+            this.SelectShow(addedShows.Last());
+            logger.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
+
+        }
+
+        private static bool IgnoreHint(string hint)
+        {
+            string[] removeHintsContaining = new string[] { "dvdrip", "camrip", "screener", "dvdscr", "r5", "bluray" };
+
+            return removeHintsContaining.Any(hint.Contains);
         }
 
         private string RemoveSeriesEpisodeIndicators(string hint)
         {
+            string[] removeAfterTerms = new string[] {"1080p","720p"};
+
             string hint2 =  Helpers.RemoveDiacritics(hint);
             hint2 = RemoveSE(hint2);
             hint2 = hint2.ToLower();
             hint2 = hint2.Replace("'", "");
             hint2 = hint2.Replace("&", "and");
             hint2 = Regex.Replace(hint2, "[_\\W]+", " ");
-            hint2 = hint2.RemoveAfter("1080p") ;
-            hint2 = hint2.RemoveAfter("720p");
+            foreach (string term in removeAfterTerms)
+            {
+                hint2 = hint2.RemoveAfter(term);
+            }
             foreach (string seasonWord in this.mDoc.SeasonWords())
             {
                 hint2 = hint2.RemoveAfter(seasonWord );
@@ -3115,14 +3179,14 @@ namespace TVRename
             return false;
         }
 
-        public void QuickScan()
+        public void QuickScan(bool unattended)
         {
             logger.Info("*******************************");
             logger.Info("Starting QuickScan...");
+            GetNewShows(unattended);
             this.MoreBusy();
             this.mDoc.QuickScan();
             this.LessBusy();
-            GetNewShows();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
         }
@@ -3236,13 +3300,13 @@ namespace TVRename
                     else if (op == ActionCopyMoveRename.Op.Rename)
                         renameCount++;
                 }
-                else if (Action is ActionDownload)
+                else if (Action is ActionDownloadImage)
                     downloadCount++;
                 else if (Action is ActionRSS)
                     rssCount++;
                 else if (Action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     metaCount++;
-                else if (Action is ItemDateTouch)
+                else if (Action is ActionDateTouch)
                     fileMetaCount++;
                 else if (Action is ItemuTorrenting || Action is ItemSABnzbd)
                     dlCount++;
@@ -3324,20 +3388,33 @@ namespace TVRename
                 this.mDoc.TheActionList.Add(m2);
                 this.mDoc.TheActionList.Remove(i2);
 
-                List<ActionCopyMoveRename> toRemove = new List<ActionCopyMoveRename>();
+                List<Item> toRemove = new List<Item>();
                 //We can remove any CopyMoveActions that are closely related too
                 foreach (Item a in this.mDoc.TheActionList)
                 {
-                    if (!(a is ActionCopyMoveRename i1)) continue;
+                    if (a is ItemMissing) continue;
 
-                    if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true)))
+                    if ((a is ActionCopyMoveRename i1))
                     {
-                        toRemove.Add(i1);
 
+                        if (i1.From.RemoveExtension(true).StartsWith(i2.From.RemoveExtension(true)))
+                        {
+                            toRemove.Add(i1);
+
+                        }
                     }
+                    else if (a is ScanListItem  ad)
+                    {
+                        if ((ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum) &&
+                            (ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber))
+                            toRemove.Add(a);
+                    }
+                    else
+                    {
+                        continue;}
                 }
                 //Remove all similar items
-                foreach (ActionCopyMoveRename i in toRemove) this.mDoc.TheActionList.Remove(i);
+                foreach (Item i in toRemove) this.mDoc.TheActionList.Remove(i);
             }
 
             this.FillActionList();
@@ -3696,7 +3773,7 @@ namespace TVRename
             foreach (ListViewItem lvi in this.lvAction.Items)
             {
                 Item i = (Item) (lvi.Tag);
-                if ((i != null) && (i is ActionDownload))
+                if ((i != null) && (i is ActionDownloadImage))
                     lvi.Checked = cs == CheckState.Checked;
             }
 
@@ -3830,14 +3907,20 @@ namespace TVRename
                 // Only want the first file if multiple files were dragged across.
                 FileInfo from = new FileInfo(files[0]);
                 ItemMissing mi = (ItemMissing) lvi.Tag;
+                FileInfo to = new FileInfo(mi.TheFileNoExt + from.Extension);
+
                 this.mDoc.TheActionList.Add(
                     new ActionCopyMoveRename(
                         TVSettings.Instance.LeaveOriginals
                             ? ActionCopyMoveRename.Op.Copy
-                            : ActionCopyMoveRename.Op.Move, from,
-                        new FileInfo(mi.TheFileNoExt + from.Extension), mi.Episode, TVSettings.Instance.Tidyup,mi));
+                            : ActionCopyMoveRename.Op.Move, from,to
+                        , mi.Episode, TVSettings.Instance.Tidyup,mi));
                 // and remove old Missing item
                 this.mDoc.TheActionList.Remove(mi);
+                DownloadIdentifiersController di = new DownloadIdentifiersController();
+
+                // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+                this.mDoc.TheActionList.Add(di.ProcessEpisode(mi.Episode, to));
                 this.FillActionList();
             }
         }
@@ -3940,13 +4023,13 @@ namespace TVRename
                 switch (TVSettings.Instance.MonitoredFoldersScanType)
                 {
                     case TVRename.TVSettings.ScanType.Full:
-                        Scan();
+                        Scan(true);
                         break;
                     case TVRename.TVSettings.ScanType.Recent:
-                        RecentScan();
+                        RecentScan(true);
                         break;
                     case TVRename.TVSettings.ScanType.Quick:
-                        QuickScan();
+                        QuickScan(true);
                         break;
                 }
 
@@ -3967,6 +4050,53 @@ namespace TVRename
         private void showRightClickMenu_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
+        }
+
+        private void timezoneInconsistencyLOGToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            TimeZoneTracker results = new TimeZoneTracker();
+            foreach (ShowItem si in this.mDoc.ShowItems)
+            {
+                SeriesInfo ser = si.TheSeries();
+
+                //si.ShowTimeZone = TimeZone.TimeZoneForNetwork(ser.getNetwork());
+
+                results.Add(ser.getNetwork() ,si.ShowTimeZone,si.ShowName);
+            }
+            logger.Info(results.PrintVersion());
+        }
+
+        private class TimeZoneTracker
+        {
+            private readonly Dictionary<string,Dictionary<string,List<string>>> _s = new Dictionary<string, Dictionary<string, List<string>>>();
+            internal void Add(string network, string timezone, string show)
+            {
+                if (!this._s.ContainsKey(network)) this._s.Add(network,new Dictionary<string, List<string>>());
+                Dictionary<string, List<string>> snet = this._s[network];
+
+                if (!snet.ContainsKey(timezone)) snet.Add(timezone , new List<string>());
+                List<string> snettz = snet[timezone];
+
+                snettz.Add(show);
+            }
+
+            internal string PrintVersion()
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("***********************************");
+                sb.AppendLine("****Timezone Comparison       *****");
+                sb.AppendLine("***********************************");
+                foreach (KeyValuePair<string, Dictionary<string, List<string>>> kvp in this._s)
+                {
+                    foreach (KeyValuePair<string, List<string>> kvp2 in kvp.Value)
+                    {
+                        sb.AppendLine($"{kvp.Key,-30}{kvp2.Key,-30}{string.Join(",", kvp2.Value )}");
+                    }
+                }
+
+                return sb.ToString();
+            }
         }
     }
 }

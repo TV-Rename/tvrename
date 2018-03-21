@@ -56,7 +56,7 @@ namespace TVRename
                         string path = si.TheSeries().GetSeriesPosterPath();
                         if (!string.IsNullOrEmpty(path))
                         {
-                            TheActionList.Add(new ActionDownload(si, null, posterJPG, path, false));
+                            TheActionList.Add(new ActionDownloadImage(si, null, posterJPG, path, false));
                             donePosterJPG.Add(si.AutoAdd_FolderBase);
                         }
                     }
@@ -66,7 +66,7 @@ namespace TVRename
                         string path = si.TheSeries().GetSeriesWideBannerPath();
                         if (!string.IsNullOrEmpty(path))
                         {
-                            TheActionList.Add(new ActionDownload(si, null, bannerJPG, path, false));
+                            TheActionList.Add(new ActionDownloadImage(si, null, bannerJPG, path, false));
                             doneBannerJPG.Add(si.AutoAdd_FolderBase);
                         }
                     }
@@ -76,7 +76,7 @@ namespace TVRename
                         string path = si.TheSeries().GetSeriesFanartPath();
                         if (!string.IsNullOrEmpty(path))
                         {
-                            TheActionList.Add(new ActionDownload(si, null, fanartJPG, path));
+                            TheActionList.Add(new ActionDownloadImage(si, null, fanartJPG, path));
                             doneFanartJPG.Add(si.AutoAdd_FolderBase);
                         }
                     }
@@ -122,7 +122,7 @@ namespace TVRename
                     {
                         string path = si.TheSeries().GetSeasonBannerPath(snum);
                         if (!string.IsNullOrEmpty(path))
-                            TheActionList.Add(new ActionDownload(si, null, posterJPG, path));
+                            TheActionList.Add(new ActionDownloadImage(si, null, posterJPG, path));
                     }
 
                     FileInfo bannerJPG = FileHelper.FileInFolder(folder, filenamePrefix + "banner.jpg");
@@ -130,7 +130,7 @@ namespace TVRename
                     {
                         string path = si.TheSeries().GetSeasonWideBannerPath(snum);
                         if (!string.IsNullOrEmpty(path))
-                            TheActionList.Add(new ActionDownload(si, null, bannerJPG, path));
+                            TheActionList.Add(new ActionDownloadImage(si, null, bannerJPG, path));
                     }
                 }
                 if (TVSettings.Instance.DownloadEdenImages())
@@ -146,7 +146,7 @@ namespace TVRename
                     {
                         string path = si.TheSeries().GetSeasonBannerPath(snum);
                         if (!string.IsNullOrEmpty(path))
-                            TheActionList.Add(new ActionDownload(si, null, posterTBN, path));
+                            TheActionList.Add(new ActionDownloadImage(si, null, posterTBN, path));
                     }
                 }
                 return TheActionList;
@@ -171,13 +171,13 @@ namespace TVRename
                         string filename =
                             TVSettings.Instance.FilenameFriendly(
                                 TVSettings.Instance.NamingStyle.GetTargetEpisodeName(sourceEp,dbep.SI.ShowName, dbep.SI.GetTimeZone(), dbep.SI.DVDOrder));
-                        ActionDownload b = DoEpisode(dbep.SI,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
+                        ActionDownloadImage b = DoEpisode(dbep.SI,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
                         if (b != null) theActionList.Add(b);
                     }
                 }
                 else
                 {
-                    ActionDownload a = DoEpisode(dbep.SI, dbep, filo, ".tbn", forceRefresh);
+                    ActionDownloadImage a = DoEpisode(dbep.SI, dbep, filo, ".tbn", forceRefresh);
                     if (a != null) theActionList.Add(a);
                 }
 
@@ -186,7 +186,7 @@ namespace TVRename
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        private ActionDownload DoEpisode(ShowItem si, Episode ep, FileInfo filo,string extension, bool forceRefresh)
+        private ActionDownloadImage DoEpisode(ShowItem si, Episode ep, FileInfo filo,string extension, bool forceRefresh)
         {
             string ban = ep.GetFilename();
             if (!string.IsNullOrEmpty(ban))
@@ -198,7 +198,7 @@ namespace TVRename
                     {
                         this.doneTBN.Add(imgtbn.FullName);
 
-                        return new ActionDownload(si, (ep is ProcessedEpisode) ? (ProcessedEpisode)ep  : new ProcessedEpisode(ep,si ), imgtbn, ban);
+                        return new ActionDownloadImage(si, (ep is ProcessedEpisode) ? (ProcessedEpisode)ep  : new ProcessedEpisode(ep,si ), imgtbn, ban);
                         
                     }
             }

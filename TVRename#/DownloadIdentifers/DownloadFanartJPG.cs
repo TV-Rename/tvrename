@@ -32,7 +32,7 @@ namespace TVRename
                     string bannerPath = si.TheSeries().GetSeriesFanartPath();
 
                     if (!string.IsNullOrEmpty(bannerPath))
-                        TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, false));
+                        TheActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, false));
                     doneFanartJPG.Add(fi.FullName);
                 }
                 return TheActionList;

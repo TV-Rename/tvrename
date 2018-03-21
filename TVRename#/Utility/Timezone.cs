@@ -6,7 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
-
+using System.Linq;
 using Microsoft.Win32; // for RegistryKey
 
 // Do conversions between timezones, handling daylight savings time (summer time) at both ends.
@@ -77,6 +77,16 @@ namespace TVRename
         public static string DefaultTimeZone()
         {
             return "Eastern Standard Time";
+        }
+
+        public static string TimeZoneForNetwork(string network)
+        {
+            string[] UKTV = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };
+            string[] AusTV = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC1", "ABC (AU)" };
+            if (UKTV.Contains(network)) return "GMT Standard Time";
+            if (AusTV.Contains(network)) return "AUS Eastern Standard Time";
+
+            return DefaultTimeZone();
         }
 
         public static DateTime AdjustTZTimeToLocalTime(DateTime dt, TimeZone theirTimeZone) // set tz to 0 to not correct for timezone

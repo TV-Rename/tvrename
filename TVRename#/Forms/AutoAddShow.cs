@@ -5,7 +5,7 @@ namespace TVRename.Forms
 {
     public partial class AutoAddShow : Form
     {
-        private ShowItem mSI;
+        private readonly ShowItem mSI;
         private readonly TheTVDBCodeFinder mTCCF;
 
         public AutoAddShow(string hint)
@@ -41,7 +41,9 @@ namespace TVRename.Forms
 
             this.mSI.TVDBCode = code;
             this.mSI.AutoAdd_FolderBase = this.cbDirectory.Text+this.lblDirectoryName.Text;
-
+            this.mSI.PadSeasonToTwoDigits = true;
+            //Set Default Timezone based on Network??
+            //this.mSI.ShowTimeZone
         }
 
         private void btnOK_Click(object sender, EventArgs e)

@@ -1,4 +1,4 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -23,7 +23,7 @@ namespace TVRename
         {
             this.SI = si;
             this.Where = nfo;
-            snum = -1;
+            this.snum = -1;
         }
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum)
@@ -33,36 +33,21 @@ namespace TVRename
             this.snum = snum;
         }
 
-        public string produces
-        {
-            get { return this.Where.FullName; }
-        }
+        public string produces => this.Where.FullName;
 
         #region Action Members
 
-        public string Name
-        {
-            get { return "Write Mede8er View Data"; }
-        }
+        public string Name => "Write Mede8er View Data";
 
         public bool Done { get; private set; }
         public bool Error { get; private set; }
         public string ErrorText { get; set; }
 
-        public string ProgressText
-        {
-            get { return this.Where.Name; }
-        }
+        public string ProgressText => this.Where.Name;
 
-        public double PercentDone
-        {
-            get { return this.Done ? 100 : 0; }
-        }
+        public double PercentDone => this.Done ? 100 : 0;
 
-        public long SizeOfWork
-        {
-            get { return 10000; }
-        }
+        public long SizeOfWork => 10000;
 
         public bool Go(ref bool pause, TVRenameStats stats)
         {
@@ -148,7 +133,7 @@ namespace TVRename
                 ListViewItem lvi = new ListViewItem();
 
                 lvi.Text = this.SI.ShowName;
-                if (snum > 0) { lvi.SubItems.Add(snum.ToString()); } else { lvi.SubItems.Add(""); }
+                lvi.SubItems.Add(this.snum > 0 ? this.snum.ToString() : "");
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
 
@@ -161,25 +146,11 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return this.Where.DirectoryName;
-            }
-        }
+        string ScanListItem.TargetFolder => this.Where == null ? null : this.Where.DirectoryName;
 
-        public string ScanListViewGroup
-        {
-            get { return "lvgActionMeta"; }
-        }
+        public string ScanListViewGroup => "lvgActionMeta";
 
-        public int IconNumber
-        {
-            get { return 7; }
-        }
+        public int IconNumber => 7;
 
         public ProcessedEpisode Episode { get; private set; }
 
