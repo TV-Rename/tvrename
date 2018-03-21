@@ -168,7 +168,7 @@
     <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
     <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
-    <Compile Include="ItemsAndActions\ItemDateTouch.cs" />
+    <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
@@ -273,7 +273,7 @@
     <Compile Include="TheTVDB\Season.cs" />
     <Compile Include="TheTVDB\SeriesInfo.cs" />
     <Compile Include="ItemsAndActions\ActionCopyMoveRename.cs" />
-    <Compile Include="ItemsAndActions\ActionDownload.cs" />
+    <Compile Include="ItemsAndActions\ActionDownloadImage.cs" />
     <Compile Include="ItemsAndActions\ActionItem.cs" />
     <Compile Include="ItemsAndActions\ItemMissing.cs" />
     <Compile Include="ItemsAndActions\ActionNFO.cs" />

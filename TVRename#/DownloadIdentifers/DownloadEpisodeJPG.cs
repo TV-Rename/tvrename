@@ -32,7 +32,7 @@ namespace TVRename
                     FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + ".jpg");
 
                     if (forceRefresh || !imgjpg.Exists)
-                        TheActionList.Add(new ActionDownload(dbep.SI, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
+                        TheActionList.Add(new ActionDownloadImage(dbep.SI, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
                 }
 
                 return TheActionList;

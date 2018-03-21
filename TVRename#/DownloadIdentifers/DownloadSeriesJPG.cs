@@ -28,7 +28,7 @@ namespace TVRename
                 {
                     string bannerPath = si.TheSeries().GetSeasonBannerPath(snum);
                     if (!string.IsNullOrEmpty(bannerPath))
-                        TheActionList.Add(new ActionDownload(si, null, fi, bannerPath, TVSettings.Instance.ShrinkLargeMede8erImages));
+                        TheActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, TVSettings.Instance.ShrinkLargeMede8erImages));
                     doneJPG.Add(fi.FullName);
                 }
                 return TheActionList;

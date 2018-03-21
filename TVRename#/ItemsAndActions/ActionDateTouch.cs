@@ -12,7 +12,7 @@ namespace TVRename
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ItemDateTouch : Item, Action, ScanListItem
+    public class ActionDateTouch : Item, Action, ScanListItem
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
         public Season SN; // if for an entire show, rather than specific episode
@@ -20,14 +20,14 @@ namespace TVRename
         public DirectoryInfo WhereDirectory;
         private readonly DateTime updateTime;
 
-        public ItemDateTouch(FileInfo f, ProcessedEpisode pe, DateTime date)
+        public ActionDateTouch(FileInfo f, ProcessedEpisode pe, DateTime date)
         {
             this.Episode = pe;
             this.WhereFile = f;
             this.updateTime = date;
         }
 
-        public ItemDateTouch(DirectoryInfo dir, Season sn, DateTime date)
+        public ActionDateTouch(DirectoryInfo dir, Season sn, DateTime date)
         {
             this.SN = sn;
             this.WhereDirectory = dir;
@@ -35,7 +35,7 @@ namespace TVRename
 
         }
 
-        public ItemDateTouch(DirectoryInfo dir, ShowItem si, DateTime date)
+        public ActionDateTouch(DirectoryInfo dir, ShowItem si, DateTime date)
         {
             this.SI = si;
             this.WhereDirectory = dir;
@@ -91,12 +91,12 @@ namespace TVRename
 
         public bool SameAs(Item o)
         {
-            return (o is ItemDateTouch) && ((o as ItemDateTouch).WhereFile == this.WhereFile) && ((o as ItemDateTouch).WhereDirectory == this.WhereDirectory);
+            return (o is ActionDateTouch) && ((o as ActionDateTouch).WhereFile == this.WhereFile) && ((o as ActionDateTouch).WhereDirectory == this.WhereDirectory);
         }
 
         public int Compare(Item o)
         {
-            ItemDateTouch nfo = o as ItemDateTouch;
+            ActionDateTouch nfo = o as ActionDateTouch;
 
             if (this.Episode == null)
                 return 1;
