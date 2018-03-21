@@ -1818,7 +1818,7 @@ namespace TVRename
                 int n = this.mFoldersToOpen.Count;
                 bool first = true;
 
-                foreach (ScanListItem sli in lvr.FlatList)
+                foreach (Item sli in lvr.FlatList)
                 {
                     string folder = sli.TargetFolder;
 
@@ -2029,7 +2029,7 @@ namespace TVRename
                         {
                             foreach (Item ai in this.mLastActionsClicked)
                             {
-                                ScanListItem er = ai as ScanListItem;
+                                Item er = ai as Item;
                                 if (er?.Episode == null)
                                     continue;
 
@@ -2042,7 +2042,7 @@ namespace TVRename
                                 ItemList remove = new ItemList();
                                 foreach (Item action in this.mDoc.TheActionList)
                                 {
-                                    ScanListItem er2 = action as ScanListItem;
+                                    Item er2 = action as Item;
 
                                     if ((er2 != null) && (er2.Episode != null) && (er2.Episode.AppropriateSeasonNumber == snum))
                                         if (er2.TargetFolder == er.TargetFolder) //ie if they are for the same series
@@ -3194,7 +3194,7 @@ namespace TVRename
 
         private ListViewItem LVIForItem(Item item)
         {
-            ScanListItem sli = item as ScanListItem;
+            Item sli = item as Item;
             if (sli == null)
             {
                 return new ListViewItem();
@@ -3363,7 +3363,7 @@ namespace TVRename
             // remove items from master list, unless it had an error
             foreach (Item i2 in (new LVResults(this.lvAction, checkedNotSelected)).FlatList)
             {
-                ScanListItem sli = i2 as ScanListItem;
+                Item sli = i2 as Item;
 
                 if ((sli != null) && (!lvr.FlatList.Contains(sli)))
                     this.mDoc.TheActionList.Remove(i2);
@@ -3378,9 +3378,9 @@ namespace TVRename
         {
             this.mDoc.CurrentlyBusy = true;
 
-            foreach (ScanListItem scanListItem in (new LVResults(this.lvAction, checkedNotSelected).FlatList))
+            foreach (Item Item in (new LVResults(this.lvAction, checkedNotSelected).FlatList))
             {
-                ActionCopyMoveRename i2 = (ActionCopyMoveRename) scanListItem;
+                ActionCopyMoveRename i2 = (ActionCopyMoveRename) Item;
                 ItemMissing m2 = i2.UndoItemMissing;
 
                 if (m2 == null) continue;
@@ -3403,7 +3403,7 @@ namespace TVRename
 
                         }
                     }
-                    else if (a is ScanListItem  ad)
+                    else if (a is Item  ad)
                     {
                         if ((ad.Episode?.AppropriateEpNum == i2.Episode?.AppropriateEpNum) &&
                             (ad.Episode?.AppropriateSeasonNumber == i2.Episode?.AppropriateSeasonNumber))
@@ -3538,7 +3538,7 @@ namespace TVRename
 
             if ((lvr.Count == 1) && (this.lvAction.FocusedItem != null) && (this.lvAction.FocusedItem.Tag != null))
             {
-                ScanListItem action = this.lvAction.FocusedItem.Tag as ScanListItem;
+                Item action = this.lvAction.FocusedItem.Tag as Item;
                 if (action != null)
                 {
                     this.mLastEpClicked = action.Episode;
@@ -3814,7 +3814,7 @@ namespace TVRename
 
             foreach (Item i in lvr.FlatList)
             {
-                ScanListItem sli = i as ScanListItem;
+                Item sli = i as Item;
                 if ((sli != null) && (sli.Episode != null))
                     this.mDoc.DoBTSearch(sli.Episode);
             }
@@ -3829,7 +3829,7 @@ namespace TVRename
         {
             LVResults lvr = new LVResults(this.lvAction, false);
             bool added = false;
-            foreach (ScanListItem Action in lvr.FlatList)
+            foreach (Item Action in lvr.FlatList)
             {
                 IgnoreItem ii = Action.Ignore;
                 if (ii != null)

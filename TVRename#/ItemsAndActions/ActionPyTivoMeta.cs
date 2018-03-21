@@ -13,9 +13,8 @@ namespace TVRename
     using Directory = Alphaleonis.Win32.Filesystem.Directory;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
+    public class ActionPyTivoMeta : ActionWriteMetadata
     {
-        public FileInfo Where;
 
         public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe)
         {
@@ -23,23 +22,12 @@ namespace TVRename
             this.Where = nfo;
         }
 
-        public string produces => this.Where.FullName;
 
         #region Action Members
 
-        public string Name => "Write pyTivo Meta";
+        public override string Name => "Write pyTivo Meta";
 
-        public bool Done { get; private set; }
-        public bool Error { get; private set; }
-        public string ErrorText { get; set; }
-
-        public string ProgressText => this.Where.Name;
-
-        public double PercentDone => this.Done ? 100 : 0;
-
-        public long SizeOfWork => 10000;
-
-        public bool Go( ref bool pause, TVRenameStats stats)
+        public override bool Go( ref bool pause, TVRenameStats stats)
         {
             // "try" and silently fail.  eg. when file is use by other...
             StreamWriter writer;
@@ -99,12 +87,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
             return (o is ActionPyTivoMeta) && ((o as ActionPyTivoMeta).Where == this.Where);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ActionPyTivoMeta nfo = o as ActionPyTivoMeta;
 
@@ -117,19 +105,11 @@ namespace TVRename
 
         #endregion
 
-        #region ScanListItem Members
+        #region Item Members
 
-        public IgnoreItem Ignore
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return new IgnoreItem(this.Where.FullName);
-            }
-        }
 
-        public ListViewItem ScanListViewItem
+
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -153,21 +133,7 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return this.Where.DirectoryName;
-            }
-        }
 
-        public string ScanListViewGroup => "lvgActionMeta";
-
-        public int IconNumber => 7;
-
-        public ProcessedEpisode Episode { get; private set; }
 
         #endregion
 

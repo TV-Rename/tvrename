@@ -39,8 +39,6 @@ namespace TVRename
 
         #region Action Members
 
-
-
         public override string Name => IsMoveRename() ? "Move" : "Copy";
 
         public override string ProgressText => To.Name;
@@ -146,7 +144,7 @@ namespace TVRename
 
         public override string produces => To.FullName;
 
-        #region Item Members
+        
 
         public override bool SameAs(Item o)
         {
@@ -171,16 +169,14 @@ namespace TVRename
             return string.Compare(s1, s2, StringComparison.Ordinal);
         }
 
-        #endregion
 
-        #region ScanListItem Members
 
         public override int IconNumber => IsMoveRename() ? 4 : 3;
-
-
-
-        public override IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
         #endregion
+
+
+        #region Item Members
+        public override IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
 
         public override ListViewItem ScanListViewItem
         {
@@ -235,7 +231,7 @@ namespace TVRename
             }
         }
 
-        public override string TargetFolder => To?.DirectoryName;
+        public override  string TargetFolder => To?.DirectoryName;
 
         #endregion
 

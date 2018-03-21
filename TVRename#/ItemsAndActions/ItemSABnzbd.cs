@@ -11,9 +11,8 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
-    public class ItemSABnzbd : Item, ScanListItem
+    public class ItemSABnzbd : ItemInProgress
     {
-        public string DesiredLocationNoExt;
         public SAB.queueSlotsSlot Entry;
 
         public ItemSABnzbd(SAB.queueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
@@ -25,12 +24,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
             return (o is ItemSABnzbd) && this.Entry == (o as ItemSABnzbd).Entry;
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ItemSABnzbd ut = o as ItemSABnzbd;
             if (ut == null)
@@ -46,9 +45,9 @@ namespace TVRename
 
         #endregion
 
-        #region ScanListItem Members
+        #region Item Members
 
-        public string TargetFolder
+        public override string TargetFolder
         {
             get
             {
@@ -58,19 +57,7 @@ namespace TVRename
             }
         }
 
-        public ProcessedEpisode Episode { get; private set; }
-
-        public IgnoreItem Ignore
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(this.DesiredLocationNoExt))
-                    return null;
-                return new IgnoreItem(this.DesiredLocationNoExt);
-            }
-        }
-
-        public ListViewItem ScanListViewItem
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -100,12 +87,9 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup
-        {
-            get { return "lvgDownloading"; }
-        }
 
-        int ScanListItem.IconNumber
+
+        public override  int IconNumber
         {
             get { return 8; }
         }
