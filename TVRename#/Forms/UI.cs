@@ -3104,7 +3104,7 @@ namespace TVRename
         {
             string[] removeHintsContaining = { "dvdrip", "camrip", "screener", "dvdscr", "r5", "bluray" };
 
-            return removeHintsContaining.Any(hint.Contains);
+            return removeHintsContaining.Any(hint.ToLower().Contains);
         }
 
         private string RemoveSeriesEpisodeIndicators(string hint)
@@ -3877,9 +3877,9 @@ namespace TVRename
             }
         }
 
-        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.RecentScan();
+        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.RecentScan(false);
 
-        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.QuickScan();
+        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.QuickScan(false);
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
