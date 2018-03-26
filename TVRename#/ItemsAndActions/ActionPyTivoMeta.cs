@@ -13,9 +13,8 @@ namespace TVRename
     using Directory = Alphaleonis.Win32.Filesystem.Directory;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ActionPyTivoMeta : Item, Action, ScanListItem, ActionWriteMetadata
+    public class ActionPyTivoMeta : ActionWriteMetadata
     {
-        public FileInfo Where;
 
         public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe)
         {
@@ -23,23 +22,12 @@ namespace TVRename
             this.Where = nfo;
         }
 
-        public string produces => this.Where.FullName;
 
         #region Action Members
 
-        public string Name => "Write pyTivo Meta";
+        public override string Name => "Write pyTivo Meta";
 
-        public bool Done { get; private set; }
-        public bool Error { get; private set; }
-        public string ErrorText { get; set; }
-
-        public string ProgressText => this.Where.Name;
-
-        public double PercentDone => this.Done ? 100 : 0;
-
-        public long SizeOfWork => 10000;
-
-        public bool Go( ref bool pause, TVRenameStats stats)
+        public override bool Go( ref bool pause, TVRenameStats stats)
         {
             // "try" and silently fail.  eg. when file is use by other...
             StreamWriter writer;
@@ -48,9 +36,7 @@ namespace TVRename
                 // create folder if it does not exist. (Only really applies when .meta\ folder is being used.)
                 if (!this.Where.Directory.Exists)
                     Directory.CreateDirectory(this.Where.Directory.FullName);
-                writer = new System.IO.StreamWriter(this.Where.FullName, false, System.Text.Encoding.GetEncoding(1252));
-                if (writer == null)
-                    return false;
+                writer = new StreamWriter(this.Where.FullName, false, System.Text.Encoding.GetEncoding(1252));
             }
             catch (Exception)
             {
@@ -81,17 +67,17 @@ namespace TVRename
             return true;
         }
 
-        private void WriteEntries(StreamWriter writer, string Heading, string Entries)
+        private static void WriteEntries(TextWriter writer, string heading, string entries)
         {
-            if (string.IsNullOrEmpty(Entries))
+            if (string.IsNullOrEmpty(entries))
                 return;
-            if (!Entries.Contains("|"))
-                writer.WriteLine($"{Heading} : {Entries}");
+            if (!entries.Contains("|"))
+                writer.WriteLine($"{heading} : {entries}");
             else
             {
-                foreach (string entry in Entries.Split('|'))
+                foreach (string entry in entries.Split('|'))
                     if (!string.IsNullOrEmpty(entry))
-                        writer.WriteLine($"{Heading} : {entry}");
+                        writer.WriteLine($"{heading} : {entry}");
             }
         }
 
@@ -99,37 +85,29 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
-            return (o is ActionPyTivoMeta) && ((o as ActionPyTivoMeta).Where == this.Where);
+            return (o is ActionPyTivoMeta meta) && (meta.Where == this.Where);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ActionPyTivoMeta nfo = o as ActionPyTivoMeta;
 
             if (this.Episode == null)
                 return 1;
-            if (nfo ==null || nfo.Episode == null)
+            if (nfo?.Episode == null)
                 return -1;
             return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
         }
 
         #endregion
 
-        #region ScanListItem Members
+        #region Item Members
 
-        public IgnoreItem Ignore
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return new IgnoreItem(this.Where.FullName);
-            }
-        }
 
-        public ListViewItem ScanListViewItem
+
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -153,21 +131,7 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return this.Where.DirectoryName;
-            }
-        }
 
-        public string ScanListViewGroup => "lvgActionMeta";
-
-        public int IconNumber => 7;
-
-        public ProcessedEpisode Episode { get; private set; }
 
         #endregion
 

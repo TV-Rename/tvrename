@@ -11,28 +11,28 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
-    public class ItemMissing : Item, ScanListItem
+    public class ItemMissing : Item
     {
         public string TheFileNoExt;
         private string folder;
-        public string filename;
+        public string Filename;
 
         public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder, string expectedFilenameNoExt)
         {
             this.Episode = pe;
             this.TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + expectedFilenameNoExt;
             this.folder = whereItShouldBeFolder;
-            this.filename = expectedFilenameNoExt;
+            this.Filename = expectedFilenameNoExt;
         }
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
             return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, this.TheFileNoExt) == 0);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ItemMissing miss = o as ItemMissing;
             //return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
@@ -56,11 +56,9 @@ namespace TVRename
 
         #endregion
 
-        #region ScanListItem Members
+        #region Item Members
 
-        public ProcessedEpisode Episode { get; private set; }
-
-        public IgnoreItem Ignore
+        public override  IgnoreItem Ignore
         {
             get
             {
@@ -70,7 +68,7 @@ namespace TVRename
             }
         }
 
-        public ListViewItem ScanListViewItem
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -88,7 +86,7 @@ namespace TVRename
                     lvi.SubItems.Add("");
 
                 lvi.SubItems.Add(this.folder);
-                lvi.SubItems.Add(this.filename);
+                lvi.SubItems.Add(this.Filename);
 
                 lvi.Tag = this;
 
@@ -96,12 +94,9 @@ namespace TVRename
             }
         }
 
-        public string ScanListViewGroup
-        {
-            get { return "lvgActionMissing"; }
-        }
+        public override string ScanListViewGroup => "lvgActionMissing";
 
-        public string TargetFolder
+        public override string TargetFolder
         {
             get
             {
@@ -111,10 +106,7 @@ namespace TVRename
             }
         }
 
-        public int IconNumber
-        {
-            get { return 1; }
-        }
+        public override int IconNumber => 1;
 
         #endregion
     }
