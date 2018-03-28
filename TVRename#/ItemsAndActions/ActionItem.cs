@@ -117,7 +117,7 @@ namespace TVRename
             Debug.Assert(this.Tidyup != null);
             Debug.Assert(this.Tidyup.DeleteEmpty);
 #else
-            if (_tidyup == null || !_tidyup.DeleteEmpty)
+            if (this.Tidyup == null || !this.Tidyup.DeleteEmpty)
                 return;
 #endif
             // See if we should now delete the folder we just moved that file from.
