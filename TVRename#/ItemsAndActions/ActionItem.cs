@@ -175,7 +175,6 @@ namespace TVRename
             }
             DeleteOrRecycleFolder(di);
         }
-        public ProcessedEpisode Episode { get; set; }
     }
 
     public abstract class ActionWriteMetadata : ActionDownload
