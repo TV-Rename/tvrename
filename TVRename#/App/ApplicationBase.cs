@@ -94,7 +94,7 @@ namespace TVRename.App
                 }
 
                 // Try loading TheTVDB cache file
-                TheTVDB.Instance.setup(tvdbFile, PathManager.TVDBFile, clargs);
+                TheTVDB.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
 
                 // Try loading settings file
                 doc = new TVDoc(settingsFile, clargs);

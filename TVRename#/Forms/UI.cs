@@ -879,16 +879,14 @@ namespace TVRename
 
         private static string ImageSection(string title, int width, int height, string bannerPath)
         {
-            string body = "";
+            
+            if (string.IsNullOrEmpty(bannerPath)) return "";
 
-            if ((!string.IsNullOrEmpty(bannerPath)) && (!string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot)))
-            {
-                body += "<h2>" + title + "</h2>";
-                body += "<img width=" + width + " height=" + height + " src=\"" + TheTVDB.Instance.WebsiteRoot +
-                        "/banners/" + bannerPath + "\"><br/>";
-            }
+            string url = TheTVDB.GetBannerURL(bannerPath);
 
-            return body;
+            if ((string.IsNullOrEmpty(url))) return "";
+
+            return "<h2>" + title + "</h2><img width=" + width + " height=" + height + " src=\"" + url + "\"><br/>";
         }
 
         private string GetShowHTMLOverview(ShowItem si, SeriesInfo ser)
@@ -917,9 +915,8 @@ namespace TVRename
 
 
             if ((!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath())) &&
-                (!string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot)))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.WebsiteRoot + "/banners/" +
-                        ser.GetSeriesWideBannerPath() + "\"><br/>";
+                (!string.IsNullOrEmpty(TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) )))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
 
             body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName +
                     "</A> " + "</h1>";
@@ -989,9 +986,8 @@ namespace TVRename
             string body = "";
 
             if (!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath()) &&
-                !string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.WebsiteRoot + "/banners/" +
-                        ser.GetSeriesWideBannerPath() + "\"><br/>";
+                !string.IsNullOrEmpty(TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath())))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
 
             Season s = si.DVDOrder ? ser.DVDSeasons[snum]: ser.AiredSeasons[snum];
 
@@ -1056,8 +1052,7 @@ namespace TVRename
                     body += "<td width=100% valign=top>" + getOverview(ei) + "</td><td width=300 height=225>";
                     // 300x168 / 300x225
                     if (!string.IsNullOrEmpty(ei.GetFilename()))
-                        body += "<img src=" + TheTVDB.Instance.WebsiteRoot + "/banners/_cache/" + ei.GetFilename() +
-                                ">";
+                        body += "<img src=" + TheTVDB.GetThumbnailURL(ei.GetFilename()) +">";
                     body += "</td></tr></table>";
                 }
                 else

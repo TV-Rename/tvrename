@@ -256,7 +256,7 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionNFO nfo) && (nfo.Where == this.Where);
+            return (o is ActionNFO) && ((o as ActionNFO).Where == this.Where);
         }
 
         public override int Compare(Item o)

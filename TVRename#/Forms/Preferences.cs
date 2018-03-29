@@ -249,10 +249,7 @@ namespace TVRename
                     break;
                 }
             }
-            if (rbWTWScan.Checked)
-                S.WTWDoubleClick = TVSettings.WTWDoubleClickAction.Scan;
-            else
-                S.WTWDoubleClick = TVSettings.WTWDoubleClickAction.Search;
+            S.WTWDoubleClick = this.rbWTWScan.Checked ? TVSettings.WTWDoubleClickAction.Scan : TVSettings.WTWDoubleClickAction.Search;
 
             TheTVDB.Instance.SaveCache();
             TheTVDB.Instance.Unlock("Preferences-OK");
@@ -525,11 +522,13 @@ namespace TVRename
                     System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in
                         S.ShowStatusColors)
                 {
-                    ListViewItem item = new ListViewItem();
-                    item.Text = showStatusColor.Key.Text;
-                    item.Tag = showStatusColor.Key;
+                    ListViewItem item = new ListViewItem
+                    {
+                        Text = showStatusColor.Key.Text,
+                        Tag = showStatusColor.Key,
+                        ForeColor = showStatusColor.Value
+                    };
                     item.SubItems.Add(TranslateColorToHtml(showStatusColor.Value));
-                    item.ForeColor = showStatusColor.Value;
                     this.lvwDefinedColors.Items.Add(item);
                 }
             }
@@ -754,9 +753,8 @@ namespace TVRename
         private void lbSearchFolders_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
-            for (int i = 0; i < files.Length; i++)
+            foreach (string path in files)
             {
-                string path = files[i];
                 try
                 {
                     DirectoryInfo di = new DirectoryInfo(path);

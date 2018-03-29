@@ -39,14 +39,14 @@ namespace TVRename
     {
         static System.Timers.Timer _timer; // From System.Timers
 
-        static public void Start()
+        public static void Start()
         {
             _timer = new System.Timers.Timer(23 * 60 * 60 * 1000); // Set up the timer for 23 hours 
-            _timer.Elapsed += new System.Timers.ElapsedEventHandler(_timer_Elapsed);
+            _timer.Elapsed += _timer_Elapsed;
             _timer.Enabled = true; // Enable it
         }
 
-        static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             TheTVDB.Instance.RefreshToken();
         }
@@ -70,7 +70,7 @@ namespace TVRename
 
     public class TheTVDB
     {
-        public string WebsiteRoot;
+        private static string WebsiteRoot;
         private FileInfo CacheFile;
         public bool Connected;
         public string CurrentDLTask;
@@ -84,7 +84,7 @@ namespace TVRename
         private System.Collections.Generic.Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
         private long Srv_Time; // only update this after a 100% successful download
         // private List<String> WhoHasLock;
-        private string APIRoot;
+        private static string APIRoot;
         private string authenticationToken; //The JSON Web token issued by TVDB
 
         public String RequestLanguage = "en"; // Set and updated by TVDoc
@@ -98,7 +98,7 @@ namespace TVRename
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile TheTVDB instance;
-        private static object syncRoot = new Object();
+        private static object syncRoot = new object();
 
         public static TheTVDB Instance
         {
@@ -117,9 +117,9 @@ namespace TVRename
             }
         }
 
-        public void setup(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args)
+        public void Setup(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args)
         {
-            Args = args;
+            this.Args = args;
 
             System.Diagnostics.Debug.Assert(cacheFile != null);
             this.CacheFile = cacheFile;
@@ -129,11 +129,10 @@ namespace TVRename
             this.Connected = false;
             this.ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
 
-            this.LanguageList = new List<Language>();
-            this.LanguageList.Add(new Language(7,"en","English","English"));
+            this.LanguageList = new List<Language> {new Language(7, "en", "English", "English")};
 
-            this.WebsiteRoot = "http://thetvdb.com";
-            this.APIRoot = "https://api.thetvdb.com";
+            WebsiteRoot = "http://thetvdb.com";
+            APIRoot = "https://api.thetvdb.com";
 
             this.Series = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
 
@@ -145,7 +144,7 @@ namespace TVRename
 
             this.LoadOK = (loadFrom == null) || this.LoadCache(loadFrom);
 
-            this.ForceReloadOn = new System.Collections.Generic.List<int>();
+            this.ForceReloadOn = new List<int>();
         }
 
         private void LockEE()
@@ -195,7 +194,6 @@ namespace TVRename
             return matchingSeries;
         }
 
-
         public bool GetLock(string whoFor)
         {
             logger.Trace("Lock Series for " + whoFor);
@@ -229,7 +227,7 @@ namespace TVRename
         public bool LoadCache(FileInfo loadFrom)
         {
             logger.Info("Loading Cache from: {0}", loadFrom.FullName);
-            if ((loadFrom == null) || !loadFrom.Exists)
+            if (!loadFrom.Exists)
                 return true; // that's ok
 
             FileStream fs = null;
@@ -248,8 +246,7 @@ namespace TVRename
                 logger.Warn(e, "Problem on Startup loading File");
                 this.LoadErr = loadFrom.Name + " : " + e.Message;
 
-                if (fs != null)
-                    fs.Close();
+                fs?.Close();
 
                 fs = null;
 
@@ -419,7 +416,7 @@ namespace TVRename
         public static string BuildURL(bool withHttpAndKey, bool episodesToo, int code, string lang)
         //would rather make this private to hide api key from outside world
         {
-            string r = withHttpAndKey ? "http://thetvdb.com/api/" + APIKey() + "/" : "";
+            string r = withHttpAndKey ? WebsiteRoot + "/api/" + APIKey() + "/" : "";
             r += episodesToo ? "series/" + code + "/all/" + lang + ".zip" : "series/" + code + "/" + lang + ".xml";
             return r;
         }
@@ -431,7 +428,7 @@ namespace TVRename
 
         public string GetTVDBDownloadURL(string url)
         {
-            string mirr = this.WebsiteRoot;
+            string mirr = WebsiteRoot;
 
             if (url.StartsWith("/"))
                 url = url.Substring(1);
@@ -444,8 +441,6 @@ namespace TVRename
 
             return theURL;
         }
-
-
 
         public byte[] GetTVDBDownload(string url, bool forceReload = false)
         {
@@ -598,7 +593,6 @@ namespace TVRename
             }
 
         }
-
 
         public bool GetUpdates()
         {
@@ -913,6 +907,7 @@ namespace TVRename
 
             return true;
         }
+
         private bool ProcessXML(Stream str, Stream bannerStr, int? codeHint)
         {
             bool response = ProcessXML(str, codeHint);
@@ -1070,6 +1065,7 @@ namespace TVRename
             }
 
         }
+
         private int getLanguageId() {
             foreach (Language l in LanguageList) { 
                 if (l.abbreviation == this.RequestLanguage) return l.id;
@@ -1077,6 +1073,7 @@ namespace TVRename
 
             return -1;
         }
+
         private int getDefaultLanguageId()
         {
             foreach (Language l in LanguageList)
@@ -1086,6 +1083,7 @@ namespace TVRename
 
             return -1;
         }
+
         private bool ProcessXML(Stream str, int? codeHint)
         {
             // Will have one or more series, and episodes
@@ -1216,8 +1214,6 @@ namespace TVRename
 
             e.SetSeriesSeason(ser, airedSeason,dvdSeason);
         }
-
-
 
         public bool DoWeForceReloadFor(int code)
         {
@@ -1719,19 +1715,16 @@ namespace TVRename
             // Season 3: http://www.thetvdb.com/?tab=season&seriesid=75340&seasonid=28289&lid=7
 
             if (summaryPage || (seasid <= 0) || !this.Series.ContainsKey(code))
-                return this.WebsiteRoot + "/?tab=series&id=" + code;
+                return WebsiteRoot + "/?tab=series&id=" + code;
             else
-                return this.WebsiteRoot + "/?tab=season&seriesid=" + code + "&seasonid=" + seasid;
+                return WebsiteRoot + "/?tab=season&seriesid=" + code + "&seasonid=" + seasid;
         }
 
         public string WebsiteURL(int SeriesID, int SeasonID, int EpisodeID)
         {
             // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
-            return this.WebsiteRoot + "/?tab=episode&seriesid=" + SeriesID + "&seasonid=" + SeasonID + "&id=" + EpisodeID;
+            return WebsiteRoot + "/?tab=episode&seriesid=" + SeriesID + "&seasonid=" + SeasonID + "&id=" + EpisodeID;
         }
-
-        
-
 
         // Next episode to air of a given show		
         public Episode NextAiring(int code)
@@ -1764,6 +1757,15 @@ namespace TVRename
             }
 
             return next;
+        }
+
+        public static string GetBannerURL(string bannerPath)
+        {
+            return WebsiteRoot + "/banners/" + bannerPath;
+        }
+        public static string GetThumbnailURL(string filename)
+        {
+            return WebsiteRoot + "/banners/_cache/" + filename;
         }
     }
 }

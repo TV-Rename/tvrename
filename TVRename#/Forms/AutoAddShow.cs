@@ -63,7 +63,7 @@ namespace TVRename.Forms
         {
             if (TheTVDB.Instance.HasSeries(this.mTCCF.SelectedCode())) return true;
 
-            DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
+            DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Auto Add Show",
                 MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             return dr != DialogResult.No;
