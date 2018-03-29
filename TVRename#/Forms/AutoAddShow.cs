@@ -43,7 +43,8 @@ namespace TVRename.Forms
             this.mSI.AutoAdd_FolderBase = this.cbDirectory.Text+this.lblDirectoryName.Text;
             this.mSI.PadSeasonToTwoDigits = true;
             //Set Default Timezone based on Network??
-            //this.mSI.ShowTimeZone
+            this.mSI.ShowTimeZone = TimeZone.TimeZoneForNetwork(this.mTCCF.SelectedShowNetwork());
+
         }
 
         private void btnOK_Click(object sender, EventArgs e)
