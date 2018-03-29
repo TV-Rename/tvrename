@@ -3032,7 +3032,6 @@ namespace TVRename
             }
             List<ShowItem> addedShows = new List<ShowItem>();
 
-            
             foreach (string hint in possibleShowNames)
             {
                 //MessageBox.Show($"Search for {hint}");
@@ -3041,6 +3040,15 @@ namespace TVRename
 
                 //If the hint contains certain terms then we'll ignore it
                 if (IgnoreHint(hint)) continue;
+
+                //If there are no LibraryFolders then we cant use the simplified UI
+                if (TVSettings.Instance.LibraryFoldersNames.Count == 0)
+                {
+                    MessageBox.Show(
+                        "Please add some monitor (library) folders under 'Bulk Add Shows'to use the 'Auto Add' functionity (Alternatively you can turn it off in settings).",
+                        "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
                 string refinedHint = RemoveSeriesEpisodeIndicators(hint);

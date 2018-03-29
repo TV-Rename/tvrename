@@ -273,9 +273,9 @@ namespace TVRename
         }
 
 
-        public List<String> MonitorFoldersNames = new List<String>();
+        public List<String> LibraryFoldersNames = new List<String>();
         public List<String> IgnoreFoldersNames = new List<String>();
-        public List<String> SearchFoldersNames = new List<String>();
+        public List<String> DownloadFoldersNames = new List<String>();
 
 
         public bool AutoSelectShowInMyShows = true;

@@ -145,7 +145,7 @@ namespace TVRename
         {
             //if the directory is the root download folder do not delete
             if (TVSettings.Instance.MonitorFolders &&
-                TVSettings.Instance.SearchFoldersNames.Contains(this.toRemove.FullName))
+                TVSettings.Instance.DownloadFoldersNames.Contains(this.toRemove.FullName))
             {
                 this.Error = true;
                 this.ErrorText = $@"Not removing {this.toRemove.FullName} as it is a Search Folder";

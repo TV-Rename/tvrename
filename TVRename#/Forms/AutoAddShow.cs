@@ -22,7 +22,7 @@ namespace TVRename.Forms
 
             this.cbDirectory.SuspendLayout();
             this.cbDirectory.Items.Clear();
-            this.cbDirectory.Items.AddRange(TVSettings.Instance.MonitorFoldersNames.ToArray());
+            this.cbDirectory.Items.AddRange(TVSettings.Instance.LibraryFoldersNames.ToArray());
             this.cbDirectory.SelectedIndex = 0;
             this.cbDirectory.ResumeLayout();
         }
