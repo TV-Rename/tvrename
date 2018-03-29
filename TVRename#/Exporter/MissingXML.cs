@@ -51,7 +51,6 @@ namespace TVRename
                     writer.WriteEndElement(); // MissingItems
                     writer.WriteEndElement(); // tvrename
                     writer.WriteEndDocument();
-                    writer.Close();
                 }
             }
         }

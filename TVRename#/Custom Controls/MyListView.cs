@@ -94,22 +94,28 @@ namespace TVRename
         private const int SB_HORZ = 0;
         private const int SB_VERT = 1;
 
-        [DllImport("user32.dll")]
-        static extern int GetScrollPos(IntPtr hWnd, int nBar);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
         public int GetScrollVerticalPos()
         {
-            return GetScrollPos(this.Handle, SB_VERT);
+            return NativeMethods.GetScrollPos(this.Handle, SB_VERT);
         }
 
         public void SetScrollVerticalPos(int position)
         {
-            var currentPos = GetScrollPos(this.Handle, SB_VERT);
+            var currentPos = NativeMethods.GetScrollPos(this.Handle, SB_VERT);
             var delta = -(currentPos - position);
-            SendMessage(this.Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
+            NativeMethods.SendMessage(this.Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
         }
+    }
+    internal static partial class NativeMethods
+    {
+        [DllImport("user32.dll")]
+        internal static extern int GetScrollPos(IntPtr hWnd, int nBar);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        // MAH: Added in support of the Filter TextBox Button
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
     }
 }

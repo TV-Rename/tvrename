@@ -38,11 +38,12 @@ namespace TVRename.Forms
             request.Add("text", this.newVersion.ReleaseNotesText);
             request.Add("mode", "gfm");
             request.Add("context", "TV-Rename/tvrename");
-            
-            StreamWriter writer = new StreamWriter(req.GetRequestStream());
-            writer.Write(request.ToString());
-            writer.Close();
 
+            using (StreamWriter writer = new StreamWriter(req.GetRequestStream()))
+            {
+                writer.Write(request.ToString());
+            }
+            
             string result = null;
             using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
             {

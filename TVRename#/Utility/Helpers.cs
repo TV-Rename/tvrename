@@ -36,6 +36,14 @@ using NLog;
 
 namespace TVRename
 {
+    internal static partial class NativeMethods
+    {
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
+    }
+
+
     public delegate void SetProgressDelegate(int percent);
 
     public static class XMLHelper
@@ -294,10 +302,6 @@ namespace TVRename
         }
 
 
-        [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
-
         /// <summary>
         /// Gets the properties for this file system.
         /// </summary>
@@ -305,10 +309,7 @@ namespace TVRename
         /// <returns>A <see cref="FileSystemProperties"/> containing the properties for the specified file system.</returns>
         public static FileSystemProperties GetProperties(string volumeIdentifier)
         {
-            ulong available;
-            ulong total;
-            ulong free;
-            if (GetDiskFreeSpaceEx(volumeIdentifier, out available, out total, out free))
+            if (NativeMethods.GetDiskFreeSpaceEx(volumeIdentifier, out ulong available, out ulong total, out ulong free))
             {
                 return new FileSystemProperties((long)total, (long)free, (long)available);
             }
@@ -416,7 +417,6 @@ namespace TVRename
                 {
                     streamWriter.Write(json);
                     streamWriter.Flush();
-                    streamWriter.Close();
                 }
             }
 

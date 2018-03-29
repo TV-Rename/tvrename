@@ -3,6 +3,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     class DownloadMede8erMetaData : DownloadIdentifier
     {
         private List<string> doneFiles;
@@ -83,10 +84,9 @@ namespace TVRename
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void reset()
+        public sealed override void reset()
         {
             this.doneFiles = new List<string>();
-            base.reset();
         }
 
     }

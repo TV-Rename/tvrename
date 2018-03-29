@@ -48,9 +48,9 @@ namespace TVRename
                 txt.Append("\r\n");
                 try
                 {
-                    StreamReader sr = new StreamReader(PathManager.TVDocSettingsFile.FullName);
-                    txt.Append(sr.ReadToEnd());
-                    sr.Close();
+                    using (StreamReader sr = new StreamReader(PathManager.TVDocSettingsFile.FullName))
+                        txt.Append(sr.ReadToEnd());
+                    
                     txt.Append("\r\n");
                 }
                 catch

@@ -11,7 +11,7 @@ namespace TVRename
 
         public DownloadEpisodeJPG() 
         {
-            reset();
+            this.reset();
         }
 
         public override DownloadType GetDownloadType()
@@ -42,10 +42,9 @@ namespace TVRename
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void reset()
+        public sealed override void reset()
         {
             doneJPG = new List<string>();
-            base.reset();
         }
     }
 

@@ -111,7 +111,7 @@ namespace TVRename.App
                 if (!TheTVDB.Instance.LoadOK && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr)) recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
             } while (recover);
 
-            convertSeriesTimeZones(doc, TheTVDB.Instance);
+            ConvertSeriesTimeZones(doc, TheTVDB.Instance);
 
             // Show user interface
             UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen, !clargs.Unattended && !clargs.Hide);
@@ -122,7 +122,7 @@ namespace TVRename.App
             this.MainForm = ui;
         }
 
-        private void convertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
+        private static void ConvertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
         {
             //this is just to convert timezones in the TheTVDB into the TVDOC where they should be:
             //itshould only do anything the first time it is run and then be entirely begign
@@ -131,12 +131,14 @@ namespace TVRename.App
             foreach (ShowItem si in doc.ShowItems)
             {
                 string newTimeZone = tvdb.GetSeries(si.TVDBCode)?.tempTimeZone;
-                if ((si.ShowTimeZone == TimeZone.DefaultTimeZone()) && newTimeZone != TimeZone.DefaultTimeZone() && !string.IsNullOrWhiteSpace(newTimeZone))
-                {
-                    si.ShowTimeZone = newTimeZone;
-                    doc.SetDirty();
-                    logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
-                }
+
+                if (string.IsNullOrWhiteSpace(newTimeZone)) continue;
+                if ( newTimeZone == TimeZone.DefaultTimeZone() ) continue;
+                if (si.ShowTimeZone != TimeZone.DefaultTimeZone()) continue;
+
+                si.ShowTimeZone = newTimeZone;
+                doc.SetDirty();
+                logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
             }
 
         }

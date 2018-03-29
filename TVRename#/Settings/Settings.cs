@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -74,8 +75,16 @@ namespace TVRename
         }
     }
 
+    [Serializable()]
     public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, System.Drawing.Color>
     {
+        public ShowStatusColoringTypeList()
+        {
+        }
+        protected ShowStatusColoringTypeList(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
         public bool IsShowStatusDefined(string showStatus)
         {
             foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
@@ -122,11 +131,11 @@ namespace TVRename
             {
                 if (IsShowLevel && IsMetaType)
                 {
-                    return string.Format("Show Seasons Status: {0}", StatusTextForDisplay);
+                    return $"Show Seasons Status: {this.StatusTextForDisplay}";
                 }
                 if (!IsShowLevel && IsMetaType)
                 {
-                    return string.Format("Season Status: {0}", StatusTextForDisplay);
+                    return $"Season Status: {this.StatusTextForDisplay}";
                 }
                 if (IsShowLevel && !IsMetaType)
                 {

@@ -96,14 +96,9 @@ namespace TVRename
             this.Grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
         }
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        ~AddEditSearchEngine()
-        {
-            if (this.Cntfw != null)
-                this.Cntfw.Close();
-        }
+
+
+
 
         private void bnAdd_Click(object sender, System.EventArgs e)
         {

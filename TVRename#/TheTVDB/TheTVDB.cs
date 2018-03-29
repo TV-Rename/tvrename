@@ -25,7 +25,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-
+    [Serializable()]
     public class TVDBException : System.Exception
     {
         // Thrown if an error occurs in the XML when reading TheTVDB.xml
@@ -360,7 +360,6 @@ namespace TVRename
                 writer.WriteEndElement(); // data
 
                 writer.WriteEndDocument();
-                writer.Close();
             }
             this.Unlock("SaveCache");
         }
@@ -773,18 +772,16 @@ namespace TVRename
 
                             while (morePages)
                             {
-                                String episodeUri = APIRoot + "/series/" + id + "/episodes";
-                                JObject jsonEpisodeResponse;
+                                string episodeUri = APIRoot + "/series/" + id + "/episodes";
                                 try
                                 {
-                                    jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri,
+                                    JObject jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri,
                                         new Dictionary<string, string> {{"page", pageNumber.ToString()}},
                                         this.authenticationToken);
                                     episodeResponses.Add(jsonEpisodeResponse);
                                     int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
 
-                                    logger.Info("Page " + pageNumber + " of " + this.Series[id].Name + " had " +
-                                                numberOfResponses + " episodes listed");
+                                    logger.Info($"Page {pageNumber} of {this.Series[id].Name} had {numberOfResponses} episodes listed");
                                     if (numberOfResponses < 100)
                                     {
                                         morePages = false;
@@ -996,9 +993,8 @@ namespace TVRename
                     IgnoreComments = true,
                     IgnoreWhitespace = true
                 };
-                XmlReader r = XmlReader.Create(str, settings);
-
-                ProcessXMLBanner(r, codeHint);
+                using (XmlReader r = XmlReader.Create(str, settings))
+                    ProcessXMLBanner(r, codeHint);
 
             }
             catch (XmlException e)
@@ -1116,56 +1112,59 @@ namespace TVRename
                     IgnoreComments = true,
                     IgnoreWhitespace = true
                 };
-                XmlReader r = XmlReader.Create(str, settings);
-
-                r.Read();
-
-                while (!r.EOF)
+                using (XmlReader r = XmlReader.Create(str, settings))
                 {
-                    if ((r.Name == "Data") && !r.IsStartElement())
-                        break; // that's it.
-                    if (r.Name == "Series")
-                    {
-                        // The <series> returned by GetSeries have
-                        // less info than other results from
-                        // thetvdb.com, so we need to smartly merge
-                        // in a <Series> if we already have some/all
-                        // info on it (depending on which one came
-                        // first).
 
-                        SeriesInfo si = new SeriesInfo(r.ReadSubtree());
-                        if (this.Series.ContainsKey(si.TVDBCode))
-                            this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
-                        else
-                            this.Series[si.TVDBCode] = si;
-                        r.Read();
-                    }
-                    else if (r.Name == "Episode")
+                    r.Read();
+
+                    while (!r.EOF)
                     {
-                        Episode e = new Episode(null, null,null, r.ReadSubtree(), Args);
-                        if (e.OK())
+                        if ((r.Name == "Data") && !r.IsStartElement())
+                            break; // that's it.
+                        if (r.Name == "Series")
                         {
-                            AddOrUpdateEpisode(e);
+                            // The <series> returned by GetSeries have
+                            // less info than other results from
+                            // thetvdb.com, so we need to smartly merge
+                            // in a <Series> if we already have some/all
+                            // info on it (depending on which one came
+                            // first).
+
+                            SeriesInfo si = new SeriesInfo(r.ReadSubtree());
+                            if (this.Series.ContainsKey(si.TVDBCode))
+                                this.Series[si.TVDBCode].Merge(si, this.getLanguageId());
+                            else
+                                this.Series[si.TVDBCode] = si;
+                            r.Read();
                         }
-                        r.Read();
+                        else if (r.Name == "Episode")
+                        {
+                            Episode e = new Episode(null, null, null, r.ReadSubtree(), Args);
+                            if (e.OK())
+                            {
+                                AddOrUpdateEpisode(e);
+                            }
+
+                            r.Read();
+                        }
+                        else if (r.Name == "xml")
+                            r.Read();
+                        else if (r.Name == "BannersCache")
+                        {
+                            //this wil not be found in a standard response from the TVDB website
+                            //will only be in the response when we are reading from the cache
+                            ProcessXMLBannerCache(r);
+                            r.Read();
+                        }
+                        else if (r.Name == "Data")
+                        {
+                            string time = r.GetAttribute("time");
+                            this.New_Srv_Time = (time == null) ? 0 : long.Parse(time);
+                            r.Read();
+                        }
+                        else
+                            r.ReadOuterXml();
                     }
-                    else if (r.Name == "xml")
-                        r.Read();
-                    else if (r.Name == "BannersCache")
-                    {
-                        //this wil not be found in a standard response from the TVDB website
-                        //will only be in the response when we are reading from the cache
-                        ProcessXMLBannerCache(r);
-                        r.Read();
-                    }
-                    else if (r.Name == "Data")
-                    {
-                        string time = r.GetAttribute("time");
-                        this.New_Srv_Time = (time == null)?0:long.Parse(time);
-                        r.Read();
-                    }
-                    else
-                        r.ReadOuterXml();
                 }
             }
             catch (XmlException e)
@@ -1173,9 +1172,9 @@ namespace TVRename
 
 
                 str.Position = 0;
-                StreamReader sr = new StreamReader(str);
-                string myStr = sr.ReadToEnd();
-
+                string myStr;
+                using (StreamReader sr = new StreamReader(str)) myStr = sr.ReadToEnd();
+                
                 string message = "Error processing data from TheTVDB (top level).";
                 message += "\r\n" + myStr;
                 message += "\r\n" + e.Message;
@@ -1184,6 +1183,7 @@ namespace TVRename
                 {
                     name += "Show \"" + Series[codeHint.Value].Name + "\" ";
                 }
+
                 if (codeHint.HasValue)
                 {
                     name += "ID #" + codeHint.Value + " ";
@@ -1197,6 +1197,7 @@ namespace TVRename
             {
                 this.Unlock("ProcessTVDBResponse");
             }
+
             return true;
         }
 
@@ -1239,14 +1240,14 @@ namespace TVRename
 
             this.Say(txt);
 
-            String uri = APIRoot + "/series/" + code;
-            JObject jsonResponse = new JObject();
+            string uri = APIRoot + "/series/" + code;
+            JObject jsonResponse;
             JObject jsonDefaultLangResponse = new JObject();
             try
             {
                 jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
 
-                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, DefaultLanguage );
+                if (InForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, DefaultLanguage );
             }
             catch (WebException ex)
             {
@@ -1260,7 +1261,7 @@ namespace TVRename
             SeriesInfo si;
             JObject seriesData = (JObject)jsonResponse["data"];
 
-            if (inForeignLanguage()) {
+            if (InForeignLanguage()) {
                 JObject seriesDataDefaultLang = (JObject)jsonDefaultLangResponse["data"];
                 si = new SeriesInfo(seriesData,seriesDataDefaultLang, getLanguageId());
             }
@@ -1289,7 +1290,7 @@ namespace TVRename
                 while (morePages)
                 {
                     String episodeUri = APIRoot + "/series/" + code + "/episodes";
-                    JObject jsonEpisodeResponse = new JObject();
+                    JObject jsonEpisodeResponse;
                     try
                     {
                         jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri, new Dictionary<string, string> { { "page", pageNumber.ToString() } }, this.authenticationToken);
@@ -1368,7 +1369,7 @@ namespace TVRename
                     }
 
                 }
-                if (inForeignLanguage())
+                if (InForeignLanguage())
                 {
                     List<string> imageDefaultLangTypes = new List<string>();
 
@@ -1476,7 +1477,7 @@ namespace TVRename
 
         }
 
-        private bool inForeignLanguage() => DefaultLanguage != this.RequestLanguage;
+        private bool InForeignLanguage() => DefaultLanguage != this.RequestLanguage;
 
         private bool DownloadEpisodeNow(int seriesID, int episodeID, bool dvdOrder = false)
         {
@@ -1510,7 +1511,7 @@ namespace TVRename
             try {
                 jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
 
-                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, DefaultLanguage);
+                if (InForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, null, this.authenticationToken, DefaultLanguage);
             }
             catch (WebException ex)
             {
@@ -1529,7 +1530,7 @@ namespace TVRename
                 Episode e; 
                 JObject jsonResponseData = (JObject)jsonResponse["data"];
 
-                if (inForeignLanguage())
+                if (InForeignLanguage())
                 {
                     JObject seriesDataDefaultLang = (JObject)jsonDefaultLangResponse["data"];
                     e = new Episode(seriesID, jsonResponseData, seriesDataDefaultLang);
@@ -1628,7 +1629,7 @@ namespace TVRename
             try
             {
                 jsonResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken, TVSettings.Instance.PreferredLanguage);
-                if (inForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken,  DefaultLanguage);
+                if (InForeignLanguage()) jsonDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(uri, new Dictionary<string, string> { { "name", text } }, this.authenticationToken,  DefaultLanguage);
             }
             catch (WebException ex)
             {
@@ -1673,7 +1674,7 @@ namespace TVRename
 
                 }
 
-                if (inForeignLanguage())
+                if (InForeignLanguage())
                 {
                     //we also want to search for search terms that match in default language
                     try  {
@@ -1709,21 +1710,21 @@ namespace TVRename
 
         }
 
-        public string WebsiteURL(int code, int seasid, bool summaryPage)
+        public  string WebsiteURL(int seriesId, int seasonId, bool summaryPage)
         {
             // Summary: http://www.thetvdb.com/?tab=series&id=75340&lid=7
             // Season 3: http://www.thetvdb.com/?tab=season&seriesid=75340&seasonid=28289&lid=7
 
-            if (summaryPage || (seasid <= 0) || !this.Series.ContainsKey(code))
-                return WebsiteRoot + "/?tab=series&id=" + code;
+            if (summaryPage || (seasonId <= 0) || !this.Series.ContainsKey(seriesId))
+                return WebsiteRoot + "/?tab=series&id=" + seriesId;
             else
-                return WebsiteRoot + "/?tab=season&seriesid=" + code + "&seasonid=" + seasid;
+                return WebsiteRoot + "/?tab=season&seriesid=" + seriesId + "&seasonid=" + seasonId;
         }
 
-        public string WebsiteURL(int SeriesID, int SeasonID, int EpisodeID)
+        public  string WebsiteURL(int seriesId, int seasonId, int episodeId)
         {
             // http://www.thetvdb.com/?tab=episode&seriesid=73141&seasonid=5356&id=108303&lid=7
-            return WebsiteRoot + "/?tab=episode&seriesid=" + SeriesID + "&seasonid=" + SeasonID + "&id=" + EpisodeID;
+            return WebsiteRoot + "/?tab=episode&seriesid=" + seriesId + "&seasonid=" + seasonId + "&id=" + episodeId;
         }
 
         // Next episode to air of a given show		
