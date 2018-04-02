@@ -334,10 +334,7 @@ namespace TVRename
 
         public string[] AutoAddIgnoreSuffixesArray => AutoAddIgnoreSuffixes.Split(';');
 
-        public string[] keepTogetherExtensionsArray
-        {
-            get { return keepTogetherExtensionsString.Split(';'); }
-        }
+        public string[] keepTogetherExtensionsArray => keepTogetherExtensionsString.Split(';');
         public string keepTogetherExtensionsString = "";
 
         public string defaultSeasonWord = "Season";
