@@ -380,6 +380,7 @@ namespace TVRename
 
         public static string MakeValidPath(string input)
         {
+            if (string.IsNullOrWhiteSpace(input)) return "";
             string directoryName = input;
             string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
 

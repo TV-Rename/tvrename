@@ -319,7 +319,7 @@ namespace TVRename
             catch (UnauthorizedAccessException uae)
             {
                 // e.g. recycle bin, system volume information
-                logger.Warn(uae, "Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",di.FullName);
+                logger.Warn("Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",di.FullName);
                 subDirs = null;
             }
  

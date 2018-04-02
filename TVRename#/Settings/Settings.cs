@@ -1162,6 +1162,8 @@ namespace TVRename
 
         public string FilenameFriendly(string fn)
         {
+            if (string.IsNullOrWhiteSpace(fn)) return "";
+
             foreach (Replacement R in this.Replacements)
             {
                 if (R.CaseInsensitive)
