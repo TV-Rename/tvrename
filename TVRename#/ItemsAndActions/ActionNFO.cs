@@ -61,7 +61,7 @@ namespace TVRename
                 writer.WriteValue(episode.FirstAired.Value.ToString("yyyy-MM-dd"));
             writer.WriteEndElement();
 
-            XMLHelper.WriteElementToXML(writer, "mpaa", this.Episode.SI?.TheSeries()?.GetRating(),true);
+            XMLHelper.WriteElementToXML(writer, "mpaa", this.Episode.SI?.TheSeries()?.GetContentRating(),true);
 
             //Director(s)
             string epDirector = episode.EpisodeDirector;
@@ -199,7 +199,7 @@ namespace TVRename
 
                         XMLHelper.WriteElementToXML(writer, "premiered", this.SI.TheSeries().GetFirstAired());
                         XMLHelper.WriteElementToXML(writer, "year", this.SI.TheSeries().GetYear());
-                        XMLHelper.WriteElementToXML(writer, "rating", this.SI.TheSeries().GetRating());
+                        XMLHelper.WriteElementToXML(writer, "rating", this.SI.TheSeries().GetContentRating());
                         XMLHelper.WriteElementToXML(writer, "status", this.SI.TheSeries().getStatus());
 
                         // actors...
@@ -213,7 +213,7 @@ namespace TVRename
                             writer.WriteEndElement(); // actor
                         }
 
-                        XMLHelper.WriteElementToXML(writer, "mpaa", this.SI.TheSeries().GetRating());
+                        XMLHelper.WriteElementToXML(writer, "mpaa", this.SI.TheSeries().GetContentRating());
                         XMLHelper.WriteInfo(writer, "id", "moviedb", "imdb", this.SI.TheSeries().GetIMDB());
 
                         XMLHelper.WriteElementToXML(writer, "tvdbid", this.SI.TheSeries().TVDBCode);

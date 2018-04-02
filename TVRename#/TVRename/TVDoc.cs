@@ -124,12 +124,12 @@ namespace TVRename
             return distinctValues;
         }
 
-        public List<String> GetRatings()
+        public List<String> GetContentRatings()
         {
             List<String> allValues = new List<string> { };
             foreach (ShowItem si in ShowItems)
             {
-                if (si.TheSeries()?.GetRating() != null) allValues.Add(si.TheSeries().GetRating());
+                if (si.TheSeries()?.GetContentRating() != null) allValues.Add(si.TheSeries().GetContentRating());
             }
             List<String> distinctValues = allValues.Distinct().ToList();
             distinctValues.Sort();

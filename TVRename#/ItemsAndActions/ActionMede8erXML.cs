@@ -64,16 +64,21 @@ namespace TVRename
                         writer.WriteValue(this.Episode.FirstAired.Value.ToString("yyyy"));
                     writer.WriteEndElement();
 
-                    writer.WriteStartElement("rating");
-                    string rating = (this.Episode.EpisodeRating);
-                    if (!string.IsNullOrEmpty(rating))
-                    {
-                        rating = rating.Trim('.');
-                        rating = rating.Replace(".", "");
-                        writer.WriteValue(rating);
-                    }
+                    //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
+                    float siteRating = float.Parse(this.Episode.EpisodeRating) * 10;
+                    int intSiteRating = (int)siteRating;
+                    if (intSiteRating > 0) XMLHelper.WriteElementToXML(writer, "rating", intSiteRating);
 
-                    writer.WriteEndElement(); // rating
+//                        writer.WriteStartElement("rating");
+//                    string rating = (this.Episode.EpisodeRating);
+//                    if (!string.IsNullOrEmpty(rating))
+//                    {
+//                        rating = rating.Trim('.');
+//                        rating = rating.Replace(".", "");
+//                        writer.WriteValue(rating);
+//                    }
+//
+//                    writer.WriteEndElement(); // rating
 
                     //Get the Series OverView
                     string sov = this.Episode.SI.TheSeries().GetOverview();
@@ -87,7 +92,7 @@ namespace TVRename
 
                     if (this.Episode.SI != null)
                     {
-                        WriteInfo(writer, this.Episode.SI.TheSeries().GetRating(), "mpaa");
+                        WriteInfo(writer, this.Episode.SI.TheSeries().GetContentRating(), "mpaa");
                     }
 
                     //Runtime...taken from overall Series, not episode specific due to thetvdb
@@ -173,8 +178,15 @@ namespace TVRename
                     WriteInfo(writer, this.SI.TheSeries().GetFirstAired(), "premiered");
                     WriteInfo(writer, this.SI.TheSeries().GetYear(), "year");
 
+
+                    //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
+                    float siteRating = float.Parse(this.SI.TheSeries().GetSiteRating()) * 10;
+                    int intSiteRating = (int)siteRating;
+                    if (intSiteRating > 0) XMLHelper.WriteElementToXML(writer, "rating", intSiteRating);
+
+                    /*
                     writer.WriteStartElement("rating");
-                    string rating = this.SI.TheSeries().GetRating();
+                    string rating = this.SI.TheSeries().GetSiteRating();
                     if (!string.IsNullOrEmpty(rating))
                     {
                         rating = rating.Trim('.');
@@ -183,10 +195,11 @@ namespace TVRename
                     }
 
                     writer.WriteEndElement(); // rating
+                    */
 
                     WriteInfo(writer, this.SI.TheSeries().getStatus(), "status");
 
-                    WriteInfo(writer, this.SI.TheSeries().GetRating(), "mpaa");
+                    WriteInfo(writer, this.SI.TheSeries().GetContentRating(), "mpaa");
                     WriteInfo(writer, this.SI.TheSeries().GetIMDB(), "id", "moviedb", "imdb");
 
                     XMLHelper.WriteElementToXML(writer, "tvdbid", this.SI.TheSeries().TVDBCode);
