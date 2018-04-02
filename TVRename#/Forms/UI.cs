@@ -3090,14 +3090,12 @@ namespace TVRename
 
         private static bool IgnoreHint(string hint)
         {
-            string[] removeHintsContaining = { "dvdrip", "camrip", "screener", "dvdscr", "r5", "bluray" };
-
-            return removeHintsContaining.Any(hint.ToLower().Contains);
+            return TVSettings.Instance.AutoAddMovieTermsArray.Any(term => hint.Contains(term,StringComparison.OrdinalIgnoreCase));
         }
 
         private string RemoveSeriesEpisodeIndicators(string hint)
         {
-            string[] removeAfterTerms = {"1080p","720p"};
+            
 
             string hint2 =  Helpers.RemoveDiacritics(hint);
             hint2 = RemoveSE(hint2);
@@ -3105,7 +3103,7 @@ namespace TVRename
             hint2 = hint2.Replace("'", "");
             hint2 = hint2.Replace("&", "and");
             hint2 = Regex.Replace(hint2, "[_\\W]+", " ");
-            foreach (string term in removeAfterTerms)
+            foreach (string term in TVSettings.Instance.AutoAddIgnoreSuffixesArray)
             {
                 hint2 = hint2.RemoveAfter(term);
             }

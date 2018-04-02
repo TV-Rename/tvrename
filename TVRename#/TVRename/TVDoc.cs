@@ -307,7 +307,7 @@ namespace TVRename
                     {
                         if (subDir.Name.Contains(sw, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            logger.Info("Assuming {0} contains a show becasue keyword '{1}' is found in subdirectory {2}", di.FullName, sw, subDir.FullName);
+                            logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, sw, subDir.FullName);
                             folderName = sw;
                             return true;
 
@@ -376,9 +376,14 @@ namespace TVRename
                 bool hasSubFolders = subDirectories?.Length > 0;
                 if (!hasSubFolders || hasSeasonFolders)
                 {
+                    if (TVSettings.Instance.BulkAddCompareNoVideoFolders  && !HasFilmFiles(di2)) return false;
+
+                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin && di2.FullName.Contains("$RECYCLE.BIN",StringComparison.OrdinalIgnoreCase))
+                        return true;
+
                     // ....its good!
                     FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
-                    AddItems.Add(ai);
+                    this.AddItems.Add(ai);
                     logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
                         this.GuessShowItem(ai);
@@ -393,6 +398,11 @@ namespace TVRename
             }
 
             return hasSeasonFolders;
+        }
+
+        private static bool HasFilmFiles(DirectoryInfo directory)
+        {
+            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => TVSettings.Instance.UsefulExtension(file.Extension, false));
         }
 
         public void CheckFolderForShows(DirectoryInfo di, ref bool stop)

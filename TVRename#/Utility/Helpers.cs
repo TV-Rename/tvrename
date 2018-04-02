@@ -890,8 +890,8 @@ namespace TVRename
 
         public static string RemoveAfter(this string root, string ending)
         {
-            if (root.IndexOf(ending) !=-1)
-                return   root.Substring(0, root.IndexOf(ending));
+            if (root.IndexOf(ending, StringComparison.OrdinalIgnoreCase) !=-1)
+                return   root.Substring(0, root.IndexOf(ending,StringComparison.OrdinalIgnoreCase));
             return root;
         }
 

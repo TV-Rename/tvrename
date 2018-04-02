@@ -29,7 +29,7 @@ namespace TVRename.Forms
 
         private void MTCCF_SelectionChanged(object sender, EventArgs e)
         {
-            this.lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(this.mTCCF.SelectedShowName( )));
+            this.lblDirectoryName.Text = System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(this.mTCCF.SelectedShow()?.Name ));
         }
 
         public ShowItem ShowItem => this.mSI;
@@ -42,8 +42,8 @@ namespace TVRename.Forms
             this.mSI.TVDBCode = code;
             this.mSI.AutoAdd_FolderBase = this.cbDirectory.Text+this.lblDirectoryName.Text;
             this.mSI.PadSeasonToTwoDigits = true;
-            //Set Default Timezone based on Network??
-            this.mSI.ShowTimeZone = TimeZone.TimeZoneForNetwork(this.mTCCF.SelectedShowNetwork());
+            //Set Default Timezone based on Network
+            this.mSI.ShowTimeZone = TimeZone.TimeZoneForNetwork(this.mTCCF.SelectedShow()?.getNetwork());
 
         }
 

@@ -196,6 +196,11 @@ namespace TVRename
             S.Tidyup.EmptyMaxSizeCheck = this.cbEmptyMaxSize.Checked;
             int.TryParse(this.txtEmptyMaxSize.Text, out S.Tidyup.EmptyMaxSizeMB);
 
+            S.BulkAddCompareNoVideoFolders = this.cbIgnoreNoVideoFolders.Checked;
+            S.BulkAddIgnoreRecycleBin = this.cbIgnoreRecycleBin.Checked;
+            S.AutoAddIgnoreSuffixes = this.tbIgnoreSuffixes.Text;
+            S.AutoAddMovieTerms = this.tbMovieTerms.Text;
+
             if (this.rbFolderFanArt.Checked)
                 S.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
             else if (this.rbFolderBanner.Checked)
@@ -428,7 +433,11 @@ namespace TVRename
             this.txtEmptyMaxSize.Text = S.Tidyup.EmptyMaxSizeMB.ToString();
             this.txtSeasonFolderName.Text = S.defaultSeasonWord;
 
-
+            
+            this.cbIgnoreRecycleBin.Checked = S.BulkAddIgnoreRecycleBin;
+            this.cbIgnoreNoVideoFolders.Checked = S.BulkAddCompareNoVideoFolders;
+            this.tbMovieTerms.Text = S.AutoAddMovieTerms;
+            this.tbIgnoreSuffixes.Text = S.AutoAddIgnoreSuffixes;
 
             switch (S.WTWDoubleClick)
             {

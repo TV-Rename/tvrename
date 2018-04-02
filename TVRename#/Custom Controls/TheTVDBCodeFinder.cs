@@ -65,30 +65,18 @@ namespace TVRename
                 return -1;
             }
         }
-        public string SelectedShowName()
+
+        public SeriesInfo SelectedShow()
         {
             try
             {
-                if (this.lvMatches.SelectedItems.Count == 0) return "";
+                if (this.lvMatches.SelectedItems.Count == 0) return null;
 
-                return (string)(this.lvMatches.SelectedItems[0].SubItems[1].Text);
+                return ((SeriesInfo)(this.lvMatches.SelectedItems[0].Tag));
             }
             catch
             {
-                return "";
-            }
-        }
-        public string SelectedShowNetwork()
-        {
-            try
-            {
-                if (this.lvMatches.SelectedItems.Count == 0) return "";
-
-                return ((SeriesInfo)(this.lvMatches.SelectedItems[0].Tag)).getNetwork();
-            }
-            catch
-            {
-                return "";
+                return null;
             }
         }
         private void txtFindThis_TextChanged(object sender, EventArgs e)
