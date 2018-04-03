@@ -65,7 +65,6 @@ namespace TVRename
                     }
                     writer.WriteEndElement();
                     writer.WriteEndDocument();
-                    writer.Close();
                 }
                 return true;
             } // try

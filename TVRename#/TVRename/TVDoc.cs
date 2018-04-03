@@ -27,7 +27,7 @@ using Newtonsoft.Json.Linq;
 
 namespace TVRename
 {
-    public class TVDoc
+    public class TVDoc :IDisposable
     {
         public List<ShowItem> ShowItems;
         public List<string> MonitorFolders;
@@ -124,12 +124,12 @@ namespace TVRename
             return distinctValues;
         }
 
-        public List<String> GetRatings()
+        public List<String> GetContentRatings()
         {
             List<String> allValues = new List<string> { };
             foreach (ShowItem si in ShowItems)
             {
-                if (si.TheSeries()?.GetRating() != null) allValues.Add(si.TheSeries().GetRating());
+                if (si.TheSeries()?.GetContentRating() != null) allValues.Add(si.TheSeries().GetContentRating());
             }
             List<String> distinctValues = allValues.Distinct().ToList();
             distinctValues.Sort();
@@ -187,11 +187,6 @@ namespace TVRename
         public void UpdateTVDBLanguage()
         {
             TheTVDB.Instance.RequestLanguage = TVSettings.Instance.PreferredLanguage;
-        }
-
-        ~TVDoc()
-        {
-            this.StopBGDownloadThread();
         }
 
         private void LockShowItems()
@@ -312,7 +307,7 @@ namespace TVRename
                     {
                         if (subDir.Name.Contains(sw, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            logger.Info("Assuming {0} contains a show becasue keyword '{1}' is found in subdirectory {2}", di.FullName, sw, subDir.FullName);
+                            logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, sw, subDir.FullName);
                             folderName = sw;
                             return true;
 
@@ -324,7 +319,7 @@ namespace TVRename
             catch (UnauthorizedAccessException uae)
             {
                 // e.g. recycle bin, system volume information
-                logger.Warn(uae, "Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",di.FullName);
+                logger.Warn("Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",di.FullName);
                 subDirs = null;
             }
  
@@ -381,9 +376,14 @@ namespace TVRename
                 bool hasSubFolders = subDirectories?.Length > 0;
                 if (!hasSubFolders || hasSeasonFolders)
                 {
+                    if (TVSettings.Instance.BulkAddCompareNoVideoFolders  && !HasFilmFiles(di2)) return false;
+
+                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin && di2.FullName.Contains("$RECYCLE.BIN",StringComparison.OrdinalIgnoreCase))
+                        return true;
+
                     // ....its good!
                     FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
-                    AddItems.Add(ai);
+                    this.AddItems.Add(ai);
                     logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
                         this.GuessShowItem(ai);
@@ -398,6 +398,11 @@ namespace TVRename
             }
 
             return hasSeasonFolders;
+        }
+
+        private static bool HasFilmFiles(DirectoryInfo directory)
+        {
+            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => TVSettings.Instance.UsefulExtension(file.Extension, false));
         }
 
         public void CheckFolderForShows(DirectoryInfo di, ref bool stop)
@@ -1302,7 +1307,6 @@ namespace TVRename
 
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
-                writer.Close();
             }
 
             this.mDirty = false;
@@ -1331,98 +1335,99 @@ namespace TVRename
                     return true; // that's ok
                 }
 
-                XmlReader reader = XmlReader.Create(from.FullName, settings);
-
-                reader.Read();
-                if (reader.Name != "xml")
+                using (XmlReader reader = XmlReader.Create(from.FullName, settings))
                 {
-                    this.LoadErr = from.Name + " : Not a valid XML file";
-                    return false;
-                }
 
-                reader.Read();
-
-                if (reader.Name != "TVRename")
-                {
-                    this.LoadErr = from.Name + " : Not a TVRename settings file";
-                    return false;
-                }
-
-                if (reader.GetAttribute("Version") != "2.1")
-                {
-                    this.LoadErr = from.Name + " : Incompatible version";
-                    return false;
-                }
-
-                reader.Read(); // move forward one
-
-                while (!reader.EOF)
-                {
-                    if (reader.Name == "TVRename" && !reader.IsStartElement())
-                        break; // end of it all
-
-                    if (reader.Name == "Settings")
+                    reader.Read();
+                    if (reader.Name != "xml")
                     {
-                        TVSettings.Instance.load(reader.ReadSubtree());
-                        reader.Read();
+                        this.LoadErr = from.Name + " : Not a valid XML file";
+                        return false;
                     }
-                    else if (reader.Name == "MyShows")
+
+                    reader.Read();
+
+                    if (reader.Name != "TVRename")
                     {
-                        XmlReader r2 = reader.ReadSubtree();
-                        r2.Read();
-                        r2.Read();
-                        while (!r2.EOF)
+                        this.LoadErr = from.Name + " : Not a TVRename settings file";
+                        return false;
+                    }
+
+                    if (reader.GetAttribute("Version") != "2.1")
+                    {
+                        this.LoadErr = from.Name + " : Incompatible version";
+                        return false;
+                    }
+
+                    reader.Read(); // move forward one
+
+                    while (!reader.EOF)
+                    {
+                        if (reader.Name == "TVRename" && !reader.IsStartElement())
+                            break; // end of it all
+
+                        if (reader.Name == "Settings")
                         {
-                            if ((r2.Name == "MyShows") && (!r2.IsStartElement()))
-                                break;
-                            if (r2.Name == "ShowItem")
-                            {
-                                ShowItem si = new ShowItem(r2.ReadSubtree());
-
-                                if (si.UseCustomShowName) // see if custom show name is actually the real show name
-                                {
-                                    SeriesInfo ser = si.TheSeries();
-                                    if ((ser != null) && (si.CustomShowName == ser.Name))
-                                    {
-                                        // then, turn it off
-                                        si.CustomShowName = "";
-                                        si.UseCustomShowName = false;
-                                    }
-                                }
-                                ShowItems.Add(si);
-
-                                r2.Read();
-                            }
-                            else
-                                r2.ReadOuterXml();
+                            TVSettings.Instance.load(reader.ReadSubtree());
+                            reader.Read();
                         }
-                        reader.Read();
-                    }
-                    else if (reader.Name == "MonitorFolders")
-                        this.MonitorFolders = XMLHelper.ReadStringsFromXml(reader, "MonitorFolders", "Folder");
-                    else if (reader.Name == "IgnoreFolders")
-                        this.IgnoreFolders = XMLHelper.ReadStringsFromXml(reader, "IgnoreFolders", "Folder");
-                    else if (reader.Name == "FinderSearchFolders")
-                        this.SearchFolders = XMLHelper.ReadStringsFromXml(reader, "FinderSearchFolders", "Folder");
-                    else if (reader.Name == "IgnoreItems")
-                    {
-                        XmlReader r2 = reader.ReadSubtree();
-                        r2.Read();
-                        r2.Read();
-                        while (r2.Name == "Ignore")
-                            this.Ignore.Add(new IgnoreItem(r2));
-                        reader.Read();
-                    }
-                    else
-                        reader.ReadOuterXml();
-                }
+                        else if (reader.Name == "MyShows")
+                        {
+                            XmlReader r2 = reader.ReadSubtree();
+                            r2.Read();
+                            r2.Read();
+                            while (!r2.EOF)
+                            {
+                                if ((r2.Name == "MyShows") && (!r2.IsStartElement()))
+                                    break;
+                                if (r2.Name == "ShowItem")
+                                {
+                                    ShowItem si = new ShowItem(r2.ReadSubtree());
 
-                reader.Close();
-                reader = null;
+                                    if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                                    {
+                                        SeriesInfo ser = si.TheSeries();
+                                        if ((ser != null) && (si.CustomShowName == ser.Name))
+                                        {
+                                            // then, turn it off
+                                            si.CustomShowName = "";
+                                            si.UseCustomShowName = false;
+                                        }
+                                    }
+
+                                    ShowItems.Add(si);
+
+                                    r2.Read();
+                                }
+                                else
+                                    r2.ReadOuterXml();
+                            }
+
+                            reader.Read();
+                        }
+                        else if (reader.Name == "MonitorFolders")
+                            this.MonitorFolders = XMLHelper.ReadStringsFromXml(reader, "MonitorFolders", "Folder");
+                        else if (reader.Name == "IgnoreFolders")
+                            this.IgnoreFolders = XMLHelper.ReadStringsFromXml(reader, "IgnoreFolders", "Folder");
+                        else if (reader.Name == "FinderSearchFolders")
+                            this.SearchFolders = XMLHelper.ReadStringsFromXml(reader, "FinderSearchFolders", "Folder");
+                        else if (reader.Name == "IgnoreItems")
+                        {
+                            XmlReader r2 = reader.ReadSubtree();
+                            r2.Read();
+                            r2.Read();
+                            while (r2.Name == "Ignore")
+                                this.Ignore.Add(new IgnoreItem(r2));
+                            reader.Read();
+                        }
+                        else
+                            reader.ReadOuterXml();
+                    }
+                }
             }
             catch (Exception e)
             {
-                logger.Warn(e,"Problem on Startup loading File");
+                logger.Warn(e, "Problem on Startup loading File");
                 this.LoadErr = from.Name + " : " + e.Message;
                 return false;
             }
@@ -1436,10 +1441,10 @@ namespace TVRename
                 // not worried if stats loading fails
             }
 
-            //Set these on the settigns object so others can read them too - iealy shuld be refactored into the settings code
-            TVSettings.Instance.MonitorFoldersNames = this.MonitorFolders;
+            //Set these on the settings object so others can read them too - ideally should be refactored into the settings code
+            TVSettings.Instance.LibraryFoldersNames = this.MonitorFolders;
             TVSettings.Instance.IgnoreFoldersNames = this.IgnoreFolders;
-            TVSettings.Instance.SearchFoldersNames = this.SearchFolders;
+            TVSettings.Instance.DownloadFoldersNames = this.SearchFolders;
 
             return true;
         }
@@ -3295,6 +3300,34 @@ namespace TVRename
                     return latestBetaVersion;
 
                 return null;
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            this.StopBGDownloadThread();
+        }
+
+        private void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                // ReSharper disable once UseNullPropagation
+                if (this.ScanProgDlg != null) this.ScanProgDlg.Dispose();
+                // ReSharper disable once UseNullPropagation
+                if (this.WorkerSemaphore != null) this.WorkerSemaphore.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~TVDoc()
+        {
+            Dispose(false);
         }
     }
 

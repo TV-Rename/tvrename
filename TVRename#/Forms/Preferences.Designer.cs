@@ -128,6 +128,7 @@ namespace TVRename
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.chkAutoSearchForDownloadedFiles = new System.Windows.Forms.CheckBox();
             this.chkAutoMergeEpisodes = new System.Windows.Forms.CheckBox();
             this.chkPreventMove = new System.Windows.Forms.CheckBox();
             this.label40 = new System.Windows.Forms.Label();
@@ -235,7 +236,15 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkAutoSearchForDownloadedFiles = new System.Windows.Forms.CheckBox();
+            this.tpBulkAdd = new System.Windows.Forms.TabPage();
+            this.cbIgnoreRecycleBin = new System.Windows.Forms.CheckBox();
+            this.cbIgnoreNoVideoFolders = new System.Windows.Forms.CheckBox();
+            this.label41 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.tbIgnoreSuffixes = new System.Windows.Forms.TextBox();
+            this.tbMovieTerms = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -256,6 +265,7 @@ namespace TVRename
             this.groupBox6.SuspendLayout();
             this.tpTreeColoring.SuspendLayout();
             this.cmDefaults.SuspendLayout();
+            this.tpBulkAdd.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -584,6 +594,7 @@ namespace TVRename
             this.tabControl1.Controls.Add(this.tbSearchFolders);
             this.tabControl1.Controls.Add(this.tbuTorrentNZB);
             this.tabControl1.Controls.Add(this.tpTreeColoring);
+            this.tabControl1.Controls.Add(this.tpBulkAdd);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
@@ -981,10 +992,10 @@ namespace TVRename
             this.tbAutoExport.Controls.Add(this.groupBox2);
             this.tbAutoExport.Controls.Add(this.txtMissingCSV);
             this.tbAutoExport.Controls.Add(this.cbMissingCSV);
-            this.tbAutoExport.Location = new System.Drawing.Point(4, 40);
+            this.tbAutoExport.Location = new System.Drawing.Point(4, 22);
             this.tbAutoExport.Name = "tbAutoExport";
             this.tbAutoExport.Padding = new System.Windows.Forms.Padding(3);
-            this.tbAutoExport.Size = new System.Drawing.Size(416, 401);
+            this.tbAutoExport.Size = new System.Drawing.Size(416, 419);
             this.tbAutoExport.TabIndex = 2;
             this.tbAutoExport.Text = "Automatic Export";
             this.tbAutoExport.UseVisualStyleBackColor = true;
@@ -1199,13 +1210,23 @@ namespace TVRename
             this.tpScanOptions.Controls.Add(this.cbCheckSABnzbd);
             this.tpScanOptions.Controls.Add(this.cbCheckuTorrent);
             this.tpScanOptions.Controls.Add(this.cbSearchLocally);
-            this.tpScanOptions.Location = new System.Drawing.Point(4, 40);
+            this.tpScanOptions.Location = new System.Drawing.Point(4, 22);
             this.tpScanOptions.Name = "tpScanOptions";
             this.tpScanOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScanOptions.Size = new System.Drawing.Size(416, 401);
+            this.tpScanOptions.Size = new System.Drawing.Size(416, 419);
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
+            // 
+            // chkAutoSearchForDownloadedFiles
+            // 
+            this.chkAutoSearchForDownloadedFiles.AutoSize = true;
+            this.chkAutoSearchForDownloadedFiles.Location = new System.Drawing.Point(9, 334);
+            this.chkAutoSearchForDownloadedFiles.Name = "chkAutoSearchForDownloadedFiles";
+            this.chkAutoSearchForDownloadedFiles.Size = new System.Drawing.Size(186, 17);
+            this.chkAutoSearchForDownloadedFiles.TabIndex = 14;
+            this.chkAutoSearchForDownloadedFiles.Text = "Notify when new shows are found";
+            this.chkAutoSearchForDownloadedFiles.UseVisualStyleBackColor = true;
             // 
             // chkAutoMergeEpisodes
             // 
@@ -1368,10 +1389,10 @@ namespace TVRename
             this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreWords);
             this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreExtensions);
             this.tbFolderDeleting.Controls.Add(this.cbDeleteEmpty);
-            this.tbFolderDeleting.Location = new System.Drawing.Point(4, 40);
+            this.tbFolderDeleting.Location = new System.Drawing.Point(4, 22);
             this.tbFolderDeleting.Name = "tbFolderDeleting";
             this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFolderDeleting.Size = new System.Drawing.Size(416, 401);
+            this.tbFolderDeleting.Size = new System.Drawing.Size(416, 419);
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
@@ -2309,15 +2330,100 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // chkAutoSearchForDownloadedFiles
+            // tpBulkAdd
             // 
-            this.chkAutoSearchForDownloadedFiles.AutoSize = true;
-            this.chkAutoSearchForDownloadedFiles.Location = new System.Drawing.Point(9, 334);
-            this.chkAutoSearchForDownloadedFiles.Name = "chkAutoSearchForDownloadedFiles";
-            this.chkAutoSearchForDownloadedFiles.Size = new System.Drawing.Size(186, 17);
-            this.chkAutoSearchForDownloadedFiles.TabIndex = 14;
-            this.chkAutoSearchForDownloadedFiles.Text = "Notify when new shows are found";
-            this.chkAutoSearchForDownloadedFiles.UseVisualStyleBackColor = true;
+            this.tpBulkAdd.Controls.Add(this.label43);
+            this.tpBulkAdd.Controls.Add(this.label44);
+            this.tpBulkAdd.Controls.Add(this.tbIgnoreSuffixes);
+            this.tpBulkAdd.Controls.Add(this.tbMovieTerms);
+            this.tpBulkAdd.Controls.Add(this.label42);
+            this.tpBulkAdd.Controls.Add(this.label41);
+            this.tpBulkAdd.Controls.Add(this.cbIgnoreRecycleBin);
+            this.tpBulkAdd.Controls.Add(this.cbIgnoreNoVideoFolders);
+            this.tpBulkAdd.Location = new System.Drawing.Point(4, 40);
+            this.tpBulkAdd.Name = "tpBulkAdd";
+            this.tpBulkAdd.Padding = new System.Windows.Forms.Padding(3);
+            this.tpBulkAdd.Size = new System.Drawing.Size(416, 401);
+            this.tpBulkAdd.TabIndex = 10;
+            this.tpBulkAdd.Text = "Bulk/Auto Add";
+            this.tpBulkAdd.UseVisualStyleBackColor = true;
+            // 
+            // cbIgnoreRecycleBin
+            // 
+            this.cbIgnoreRecycleBin.AutoSize = true;
+            this.cbIgnoreRecycleBin.Location = new System.Drawing.Point(15, 62);
+            this.cbIgnoreRecycleBin.Name = "cbIgnoreRecycleBin";
+            this.cbIgnoreRecycleBin.Size = new System.Drawing.Size(116, 17);
+            this.cbIgnoreRecycleBin.TabIndex = 4;
+            this.cbIgnoreRecycleBin.Text = "Ignore &Recycle Bin";
+            this.toolTip1.SetToolTip(this.cbIgnoreRecycleBin, "If set then Bulk Add ignores all files in the Recycle Bin");
+            this.cbIgnoreRecycleBin.UseVisualStyleBackColor = true;
+            // 
+            // cbIgnoreNoVideoFolders
+            // 
+            this.cbIgnoreNoVideoFolders.AutoSize = true;
+            this.cbIgnoreNoVideoFolders.Location = new System.Drawing.Point(15, 39);
+            this.cbIgnoreNoVideoFolders.Name = "cbIgnoreNoVideoFolders";
+            this.cbIgnoreNoVideoFolders.Size = new System.Drawing.Size(225, 17);
+            this.cbIgnoreNoVideoFolders.TabIndex = 3;
+            this.cbIgnoreNoVideoFolders.Text = "&Only Include Folders containing Video files";
+            this.toolTip1.SetToolTip(this.cbIgnoreNoVideoFolders, "If set then only folders that contain video files are considered for the \'Bulk Ad" +
+        "d\' feature");
+            this.cbIgnoreNoVideoFolders.UseVisualStyleBackColor = true;
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(12, 13);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(53, 13);
+            this.label41.TabIndex = 5;
+            this.label41.Text = "Bulk Add:";
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(12, 92);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(54, 13);
+            this.label42.TabIndex = 6;
+            this.label42.Text = "Auto Add:";
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(12, 141);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(78, 13);
+            this.label43.TabIndex = 10;
+            this.label43.Text = "&Ignore suffixes:";
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(12, 115);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(71, 13);
+            this.label44.TabIndex = 8;
+            this.label44.Text = "&Movie Terms:";
+            // 
+            // tbIgnoreSuffixes
+            // 
+            this.tbIgnoreSuffixes.Location = new System.Drawing.Point(108, 138);
+            this.tbIgnoreSuffixes.Name = "tbIgnoreSuffixes";
+            this.tbIgnoreSuffixes.Size = new System.Drawing.Size(293, 20);
+            this.tbIgnoreSuffixes.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.tbIgnoreSuffixes, "These terms and any text after them will be ignored when\r\nsearching on TVDB for t" +
+        "he show title based on the filename.");
+            // 
+            // tbMovieTerms
+            // 
+            this.tbMovieTerms.Location = new System.Drawing.Point(108, 112);
+            this.tbMovieTerms.Name = "tbMovieTerms";
+            this.tbMovieTerms.Size = new System.Drawing.Size(293, 20);
+            this.tbMovieTerms.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.tbMovieTerms, "If a filename contains any of these terms then it is assumed\r\nthat it is a Film a" +
+        "nd not a TV Show. Hence \'Auto Add\' is not\r\ninvoked for this file.");
             // 
             // Preferences
             // 
@@ -2376,6 +2482,8 @@ namespace TVRename
             this.tpTreeColoring.ResumeLayout(false);
             this.tpTreeColoring.PerformLayout();
             this.cmDefaults.ResumeLayout(false);
+            this.tpBulkAdd.ResumeLayout(false);
+            this.tpBulkAdd.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2591,5 +2699,14 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkPreventMove;
         private System.Windows.Forms.CheckBox chkAutoMergeEpisodes;
         private System.Windows.Forms.CheckBox chkAutoSearchForDownloadedFiles;
+        private System.Windows.Forms.TabPage tpBulkAdd;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.CheckBox cbIgnoreRecycleBin;
+        private System.Windows.Forms.CheckBox cbIgnoreNoVideoFolders;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.TextBox tbIgnoreSuffixes;
+        private System.Windows.Forms.TextBox tbMovieTerms;
     }
 }

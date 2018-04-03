@@ -58,27 +58,27 @@ namespace TVRename
                 if (this.lvMatches.SelectedItems.Count == 0)
                     return int.Parse(this.txtFindThis.Text);
 
-                return (int) (this.lvMatches.SelectedItems[0].Tag);
+                return (int.Parse(this.lvMatches.SelectedItems[0].SubItems[0].Text));
             }
             catch
             {
                 return -1;
             }
         }
-        public string SelectedShowName()
+
+        public SeriesInfo SelectedShow()
         {
             try
             {
-                if (this.lvMatches.SelectedItems.Count == 0) return "";
+                if (this.lvMatches.SelectedItems.Count == 0) return null;
 
-                return (string)(this.lvMatches.SelectedItems[0].SubItems[1].Text);
+                return ((SeriesInfo)(this.lvMatches.SelectedItems[0].Tag));
             }
             catch
             {
-                return "";
+                return null;
             }
         }
-
         private void txtFindThis_TextChanged(object sender, EventArgs e)
         {
             if (!this.mInternal)
@@ -135,7 +135,7 @@ namespace TVRename
                         lvi.SubItems.Add(show);
                         lvi.SubItems.Add(kvp.Value.FirstAired != null ? kvp.Value.FirstAired.Value.Year.ToString() : "");
 
-                        lvi.Tag = num;
+                        lvi.Tag = kvp.Value;
                         if (numberMatch)
                             lvi.Selected = true;
                         this.lvMatches.Items.Add(lvi);

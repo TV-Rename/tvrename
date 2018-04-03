@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System.Linq.Expressions;
+
 namespace TVRename
 {
     using System;
@@ -43,33 +46,38 @@ namespace TVRename
                 Indent = true,
                 NewLineOnAttributes = true
             };
-            // "try" and silently fail.  eg. when file is use by other...
-            XmlWriter writer;
             try
             {
-                writer = XmlWriter.Create(this.Where.FullName, settings);
+                using (XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings))
+                {
+
+                    writer.WriteStartElement("FolderTag");
+                    // is it a show or season folder
+                    if (this.Snum >= 0)
+                    {
+                        // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
+                        XMLHelper.WriteElementToXML(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
+                        XMLHelper.WriteElementToXML(writer, "ViewType", "Video");
+                    }
+                    else
+                    {
+                        XMLHelper.WriteElementToXML(writer, "ViewMode", "Preview");
+                    }
+
+                    writer.WriteEndElement();
+
+                }
             }
-            catch (Exception)
+
+            catch (Exception e)
             {
+                this.Error = true;
+                this.ErrorText = e.Message;
                 this.Done = true;
-                return true;
+                return false;
+
             }
 
-            writer.WriteStartElement("FolderTag");
-            // is it a show or season folder
-            if (this.Snum >= 0)
-            {
-                // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
-                XMLHelper.WriteElementToXML(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
-                XMLHelper.WriteElementToXML(writer, "ViewType", "Video");
-            }
-            else
-            {
-                XMLHelper.WriteElementToXML(writer, "ViewMode", "Preview");
-            }
-            writer.WriteEndElement();
-
-            writer.Close();
             this.Done = true;
             return true;
         }

@@ -106,35 +106,35 @@ namespace TVRename
                     IgnoreComments = true,
                     IgnoreWhitespace = true
                 };
-                XmlReader reader = XmlReader.Create(ms, settings);
-
-                reader.Read();
-                if (reader.Name != "xml")
-                    return false;
-
-                reader.Read();
-
-                if (reader.Name != "rss")
-                    return false;
-
-                reader.Read();
-
-                while (!reader.EOF)
+                using (XmlReader reader = XmlReader.Create(ms, settings))
                 {
-                    if ((reader.Name == "rss") && (!reader.IsStartElement()))
-                        break;
 
-                    if (reader.Name == "channel")
+                    reader.Read();
+                    if (reader.Name != "xml")
+                        return false;
+
+                    reader.Read();
+
+                    if (reader.Name != "rss")
+                        return false;
+
+                    reader.Read();
+
+                    while (!reader.EOF)
                     {
-                        if (!this.ReadChannel(reader.ReadSubtree()))
-                            return false;
-                        reader.Read();
-                    }
-                    else
-                        reader.ReadOuterXml();
-                }
+                        if ((reader.Name == "rss") && (!reader.IsStartElement()))
+                            break;
 
-                ms.Close();
+                        if (reader.Name == "channel")
+                        {
+                            if (!this.ReadChannel(reader.ReadSubtree()))
+                                return false;
+                            reader.Read();
+                        }
+                        else
+                            reader.ReadOuterXml();
+                    }
+                }
             }
             catch
             {

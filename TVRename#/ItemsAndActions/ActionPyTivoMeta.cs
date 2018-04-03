@@ -27,46 +27,53 @@ namespace TVRename
 
         public override string Name => "Write pyTivo Meta";
 
-        public override bool Go( ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause, TVRenameStats stats)
         {
-            // "try" and silently fail.  eg. when file is use by other...
-            StreamWriter writer;
             try
             {
                 // create folder if it does not exist. (Only really applies when .meta\ folder is being used.)
                 if (!this.Where.Directory.Exists)
                     Directory.CreateDirectory(this.Where.Directory.FullName);
-                writer = new StreamWriter(this.Where.FullName, false, System.Text.Encoding.GetEncoding(1252));
-            }
-            catch (Exception)
-            {
+
+                using (
+                    StreamWriter writer = new StreamWriter(this.Where.FullName, false,
+                        System.Text.Encoding.GetEncoding(1252)))
+                {
+
+
+                    // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata
+                    writer.WriteLine($"title : {this.Episode.SI.ShowName}");
+                    writer.WriteLine($"seriesTitle : {this.Episode.SI.ShowName}");
+                    writer.WriteLine($"episodeTitle : {this.Episode.Name}");
+                    writer.WriteLine(
+                        $"episodeNumber : {this.Episode.AppropriateSeasonNumber}{this.Episode.AppropriateEpNum:0#}");
+                    writer.WriteLine("isEpisode : true");
+                    writer.WriteLine($"description : {this.Episode.Overview}");
+                    if (this.Episode.FirstAired != null)
+                        writer.WriteLine($"originalAirDate : {this.Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
+                    writer.WriteLine($"callsign : {this.Episode.SI.TheSeries().getNetwork()}");
+
+                    WriteEntries(writer, "vDirector", this.Episode.EpisodeDirector);
+                    WriteEntries(writer, "vWriter", this.Episode.Writer);
+                    WriteEntries(writer, "vActor", string.Join("|", this.Episode.SI.TheSeries().GetActors()));
+                    WriteEntries(writer, "vGuestStar",
+                        this.Episode.EpisodeGuestStars); // not worring about actors being repeated
+                    WriteEntries(writer, "vProgramGenre", string.Join("|", this.Episode.SI.TheSeries().GetGenres()));
+
+                }
+
                 this.Done = true;
                 return true;
             }
-
-            // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata
-            writer.WriteLine($"title : {this.Episode.SI.ShowName}");
-            writer.WriteLine($"seriesTitle : {this.Episode.SI.ShowName}");
-            writer.WriteLine($"episodeTitle : {this.Episode.Name}");
-            writer.WriteLine(
-                $"episodeNumber : {this.Episode.AppropriateSeasonNumber}{this.Episode.AppropriateEpNum:0#}");
-            writer.WriteLine("isEpisode : true");
-            writer.WriteLine($"description : {this.Episode.Overview}");
-            if (this.Episode.FirstAired != null)
-                writer.WriteLine($"originalAirDate : {this.Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
-            writer.WriteLine($"callsign : {this.Episode.SI.TheSeries().getNetwork()}");
-
-            WriteEntries(writer, "vDirector", this.Episode.EpisodeDirector);
-            WriteEntries(writer, "vWriter", this.Episode.Writer);
-            WriteEntries(writer, "vActor", String.Join("|", this.Episode.SI.TheSeries().GetActors()));
-            WriteEntries(writer, "vGuestStar", this.Episode.EpisodeGuestStars); // not worring about actors being repeated
-            WriteEntries(writer, "vProgramGenre", String.Join("|", this.Episode.SI.TheSeries().GetGenres()));
-
-            writer.Close();
-            this.Done = true;
-            return true;
+            catch (Exception e)
+            {
+                this.ErrorText = e.Message;
+                this.Error = true;
+                this.Done = true;
+                return false;
+            }
         }
-
+    
         private static void WriteEntries(TextWriter writer, string heading, string entries)
         {
             if (string.IsNullOrEmpty(entries))

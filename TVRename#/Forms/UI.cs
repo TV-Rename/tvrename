@@ -250,12 +250,6 @@ namespace TVRename
                 this.Close();
         }
 
-        ~UI()
-        {
-            //		mDoc->StopBGDownloadThread();  TODO
-            this.mDoc = null;
-        }
-
         public void UpdateSearchButton()
         {
             string name = this.mDoc.GetSearchers().Name(TVSettings.Instance.TheSearchers.CurrentSearchNum());
@@ -314,7 +308,7 @@ namespace TVRename
             filterButton.Click += filterButton_Click;
             filterTextBox.Controls.Add(filterButton);
             // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-            SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
+            NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
 
             this.betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
 
@@ -337,10 +331,6 @@ namespace TVRename
 
             if (TVSettings.Instance.RunOnStartUp()){ RunAutoScan("Startup Scan"); }
         }
-
-        // MAH: Added in support of the Filter TextBox Button
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
-        private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
 
         // MAH: Added in support of the Filter TextBox Button
         private void filterButton_Click(object sender, EventArgs e)
@@ -421,70 +411,71 @@ namespace TVRename
             if (!File.Exists(fn))
                 return true;
 
-            XmlReader reader = XmlReader.Create(fn, settings);
-
-            reader.Read();
-            if (reader.Name != "xml")
-                return false;
-
-            reader.Read();
-            if (reader.Name != "TVRename")
-                return false;
-
-            if (reader.GetAttribute("Version") != "2.1")
-                return false;
-
-            reader.Read();
-            if (reader.Name != "Layout")
-                return false;
-
-            reader.Read();
-            while (reader.Name != "Layout")
+            using (XmlReader reader = XmlReader.Create(fn, settings))
             {
-                if (reader.Name == "Window")
+
+                reader.Read();
+                if (reader.Name != "xml")
+                    return false;
+
+                reader.Read();
+                if (reader.Name != "TVRename")
+                    return false;
+
+                if (reader.GetAttribute("Version") != "2.1")
+                    return false;
+
+                reader.Read();
+                if (reader.Name != "Layout")
+                    return false;
+
+                reader.Read();
+                while (reader.Name != "Layout")
                 {
-                    reader.Read();
-                    while (reader.Name != "Window")
+                    if (reader.Name == "Window")
                     {
-                        if (reader.Name == "Size")
+                        reader.Read();
+                        while (reader.Name != "Window")
                         {
-                            int x = int.Parse(reader.GetAttribute("Width"));
-                            int y = int.Parse(reader.GetAttribute("Height"));
-                            this.Size = new System.Drawing.Size(x, y);
-                            reader.Read();
+                            if (reader.Name == "Size")
+                            {
+                                int x = int.Parse(reader.GetAttribute("Width"));
+                                int y = int.Parse(reader.GetAttribute("Height"));
+                                this.Size = new System.Drawing.Size(x, y);
+                                reader.Read();
+                            }
+                            else if (reader.Name == "Location")
+                            {
+                                int x = int.Parse(reader.GetAttribute("X"));
+                                int y = int.Parse(reader.GetAttribute("Y"));
+                                this.Location = new Point(x, y);
+                                reader.Read();
+                            }
+                            else if (reader.Name == "Maximized")
+                                this.WindowState = (reader.ReadElementContentAsBoolean()
+                                    ? FormWindowState.Maximized
+                                    : FormWindowState.Normal);
+                            else
+                                reader.ReadOuterXml();
                         }
-                        else if (reader.Name == "Location")
-                        {
-                            int x = int.Parse(reader.GetAttribute("X"));
-                            int y = int.Parse(reader.GetAttribute("Y"));
-                            this.Location = new Point(x, y);
-                            reader.Read();
-                        }
-                        else if (reader.Name == "Maximized")
-                            this.WindowState = (reader.ReadElementContentAsBoolean()
-                                ? FormWindowState.Maximized
-                                : FormWindowState.Normal);
-                        else
-                            reader.ReadOuterXml();
+
+                        reader.Read();
+                    } // window
+                    else if (reader.Name == "ColumnWidths")
+                        ok = this.LoadWidths(reader) && ok;
+                    else if (reader.Name == "Splitter")
+                    {
+                        this.splitContainer1.SplitterDistance = int.Parse(reader.GetAttribute("Distance"));
+                        this.splitContainer1.Panel2Collapsed = bool.Parse(reader.GetAttribute("HTMLCollapsed"));
+                        if (this.splitContainer1.Panel2Collapsed)
+                            this.bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
+                        reader.Read();
                     }
+                    else
+                        reader.ReadOuterXml();
+                } // while
+            }
 
-                    reader.Read();
-                } // window
-                else if (reader.Name == "ColumnWidths")
-                    ok = this.LoadWidths(reader) && ok;
-                else if (reader.Name == "Splitter")
-                {
-                    this.splitContainer1.SplitterDistance = int.Parse(reader.GetAttribute("Distance"));
-                    this.splitContainer1.Panel2Collapsed = bool.Parse(reader.GetAttribute("HTMLCollapsed"));
-                    if (this.splitContainer1.Panel2Collapsed)
-                        this.bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
-                    reader.Read();
-                }
-                else
-                    reader.ReadOuterXml();
-            } // while
-
-            reader.Close();
             return ok;
         }
 
@@ -533,8 +524,6 @@ namespace TVRename
                 writer.WriteEndElement(); // Layout
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
-
-                writer.Close();
             }
 
             return true;
@@ -865,11 +854,7 @@ namespace TVRename
 
         private string GetShowImagesHTMLOverview(ShowItem si, SeriesInfo ser)
         {
-            string body = "";
-
-            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName +
-                    "</A> " + "</h1>";
-
+            string body =$"<h1><A HREF=\"{TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
             body += ImageSection("Show Banner", 758, 140, ser.GetSeriesWideBannerPath());
             body += ImageSection("Show Poster", 350, 500, ser.GetSeriesPosterPath());
             body += ImageSection("Show Fanart", 960, 540, ser.GetSeriesFanartPath());
@@ -879,23 +864,21 @@ namespace TVRename
 
         private static string ImageSection(string title, int width, int height, string bannerPath)
         {
-            string body = "";
+            
+            if (string.IsNullOrEmpty(bannerPath)) return "";
 
-            if ((!string.IsNullOrEmpty(bannerPath)) && (!string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot)))
-            {
-                body += "<h2>" + title + "</h2>";
-                body += "<img width=" + width + " height=" + height + " src=\"" + TheTVDB.Instance.WebsiteRoot +
-                        "/banners/" + bannerPath + "\"><br/>";
-            }
+            string url = TheTVDB.GetBannerURL(bannerPath);
 
-            return body;
+            if ((string.IsNullOrEmpty(url))) return "";
+
+            return $"<h2>{title}</h2><img width={width} height={height} src=\"{url}\"><br/>";
         }
 
         private string GetShowHTMLOverview(ShowItem si, SeriesInfo ser)
         {
             string body = "";
 
-            List<string> skip = new List<String>
+            List<string> skip = new List<string>
             {
                 "Actors",
                 "banner",
@@ -917,27 +900,23 @@ namespace TVRename
 
 
             if ((!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath())) &&
-                (!string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot)))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.WebsiteRoot + "/banners/" +
-                        ser.GetSeriesWideBannerPath() + "\"><br/>";
+                (!string.IsNullOrEmpty(TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) )))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
 
-            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName +
-                    "</A> " + "</h1>";
+            body += $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
 
             body += "<h2>Overview</h2>" + ser.GetOverview(); //get overview in either format
 
             bool first = true;
             foreach (string aa in ser.GetActors())
             {
-                if (!string.IsNullOrEmpty(aa))
-                {
-                    if (!first)
-                        body += ", ";
-                    else
-                        body += "<h2>Actors</h2>";
-                    body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa + "\">" + aa + "</a>";
-                    first = false;
-                }
+                if (string.IsNullOrEmpty(aa)) continue;
+                if (!first)
+                    body += ", ";
+                else
+                    body += "<h2>Actors</h2>";
+                body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa + "\">" + aa + "</a>";
+                first = false;
             }
 
             string airsTime = ser.getAirsTime();
@@ -989,9 +968,8 @@ namespace TVRename
             string body = "";
 
             if (!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath()) &&
-                !string.IsNullOrEmpty(TheTVDB.Instance.WebsiteRoot))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.Instance.WebsiteRoot + "/banners/" +
-                        ser.GetSeriesWideBannerPath() + "\"><br/>";
+                !string.IsNullOrEmpty(TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath())))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
 
             Season s = si.DVDOrder ? ser.DVDSeasons[snum]: ser.AiredSeasons[snum];
 
@@ -1056,8 +1034,7 @@ namespace TVRename
                     body += "<td width=100% valign=top>" + getOverview(ei) + "</td><td width=300 height=225>";
                     // 300x168 / 300x225
                     if (!string.IsNullOrEmpty(ei.GetFilename()))
-                        body += "<img src=" + TheTVDB.Instance.WebsiteRoot + "/banners/_cache/" + ei.GetFilename() +
-                                ">";
+                        body += "<img src=" + TheTVDB.GetThumbnailURL(ei.GetFilename()) +">";
                     body += "</td></tr></table>";
                 }
                 else
@@ -1131,11 +1108,14 @@ namespace TVRename
             web.Navigate("about:blank"); // make it close any file it might have open
             try
             {
-                BinaryWriter bw = new BinaryWriter(new FileStream(path, System.IO.FileMode.Create));
-                bw.Write(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(html));
+                using (FileStream fs = new FileStream(path, System.IO.FileMode.Create))
+                {
+                    BinaryWriter bw = new BinaryWriter(fs);
 
-                bw.Close();
-                web.Navigate(LocalFileURLBase(path));
+                    bw.Write(System.Text.Encoding.GetEncoding("UTF-8").GetBytes(html));
+                }
+
+            web.Navigate(LocalFileURLBase(path));
             }
             catch (Exception ex)
             {
@@ -3052,7 +3032,6 @@ namespace TVRename
             }
             List<ShowItem> addedShows = new List<ShowItem>();
 
-            
             foreach (string hint in possibleShowNames)
             {
                 //MessageBox.Show($"Search for {hint}");
@@ -3061,6 +3040,15 @@ namespace TVRename
 
                 //If the hint contains certain terms then we'll ignore it
                 if (IgnoreHint(hint)) continue;
+
+                //If there are no LibraryFolders then we cant use the simplified UI
+                if (TVSettings.Instance.LibraryFoldersNames.Count == 0)
+                {
+                    MessageBox.Show(
+                        "Please add some monitor (library) folders under 'Bulk Add Shows'to use the 'Auto Add' functionity (Alternatively you can turn it off in settings).",
+                        "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
                 string refinedHint = RemoveSeriesEpisodeIndicators(hint);
@@ -3102,14 +3090,12 @@ namespace TVRename
 
         private static bool IgnoreHint(string hint)
         {
-            string[] removeHintsContaining = { "dvdrip", "camrip", "screener", "dvdscr", "r5", "bluray" };
-
-            return removeHintsContaining.Any(hint.ToLower().Contains);
+            return TVSettings.Instance.AutoAddMovieTermsArray.Any(term => hint.Contains(term,StringComparison.OrdinalIgnoreCase));
         }
 
         private string RemoveSeriesEpisodeIndicators(string hint)
         {
-            string[] removeAfterTerms = {"1080p","720p"};
+            
 
             string hint2 =  Helpers.RemoveDiacritics(hint);
             hint2 = RemoveSE(hint2);
@@ -3117,7 +3103,7 @@ namespace TVRename
             hint2 = hint2.Replace("'", "");
             hint2 = hint2.Replace("&", "and");
             hint2 = Regex.Replace(hint2, "[_\\W]+", " ");
-            foreach (string term in removeAfterTerms)
+            foreach (string term in TVSettings.Instance.AutoAddIgnoreSuffixesArray)
             {
                 hint2 = hint2.RemoveAfter(term);
             }
@@ -3949,7 +3935,7 @@ namespace TVRename
                 filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
                     (filterTextBox.ClientSize.Height - 16) / 2 + 1);
                 // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-                SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
+                NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
             }
         }
 

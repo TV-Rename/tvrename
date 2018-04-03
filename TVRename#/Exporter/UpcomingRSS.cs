@@ -54,7 +54,6 @@ namespace TVRename
                     writer.WriteEndElement(); //channel
                     writer.WriteEndElement(); //rss
                     writer.WriteEndDocument();
-                    writer.Close();
                 }
                 return true;
             } // try

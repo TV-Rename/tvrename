@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -28,14 +29,8 @@ namespace TVRename
         public bool EmptyMaxSizeCheck = true;
         public int EmptyMaxSizeMB = 100;
 
-        public string[] EmptyIgnoreExtensionsArray
-        {
-            get { return EmptyIgnoreExtensionList.Split(';'); }
-        }
-        public string[] EmptyIgnoreWordsArray
-        {
-            get { return EmptyIgnoreWordList.Split(';'); }
-        }
+        public string[] EmptyIgnoreExtensionsArray => EmptyIgnoreExtensionList.Split(';');
+        public string[] EmptyIgnoreWordsArray => EmptyIgnoreWordList.Split(';');
     }
 
     public class Replacement
@@ -74,8 +69,16 @@ namespace TVRename
         }
     }
 
+    [Serializable()]
     public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, System.Drawing.Color>
     {
+        public ShowStatusColoringTypeList()
+        {
+        }
+        protected ShowStatusColoringTypeList(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
+
         public bool IsShowStatusDefined(string showStatus)
         {
             foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
@@ -122,11 +125,11 @@ namespace TVRename
             {
                 if (IsShowLevel && IsMetaType)
                 {
-                    return string.Format("Show Seasons Status: {0}", StatusTextForDisplay);
+                    return $"Show Seasons Status: {this.StatusTextForDisplay}";
                 }
                 if (!IsShowLevel && IsMetaType)
                 {
-                    return string.Format("Season Status: {0}", StatusTextForDisplay);
+                    return $"Season Status: {this.StatusTextForDisplay}";
                 }
                 if (IsShowLevel && !IsMetaType)
                 {
@@ -264,9 +267,9 @@ namespace TVRename
         }
 
 
-        public List<String> MonitorFoldersNames = new List<String>();
+        public List<String> LibraryFoldersNames = new List<String>();
         public List<String> IgnoreFoldersNames = new List<String>();
-        public List<String> SearchFoldersNames = new List<String>();
+        public List<String> DownloadFoldersNames = new List<String>();
 
 
         public bool AutoSelectShowInMyShows = true;
@@ -321,20 +324,23 @@ namespace TVRename
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
         public  KeepTogetherModes  keepTogetherMode = KeepTogetherModes.All;
-        
 
-        public string[] keepTogetherExtensionsArray
-        {
-            get { return keepTogetherExtensionsString.Split(';'); }
-        }
+        public bool BulkAddIgnoreRecycleBin = false;
+        public bool BulkAddCompareNoVideoFolders = false;
+        public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
+        public string AutoAddIgnoreSuffixes = "1080p;720p";
+
+        public string[] AutoAddMovieTermsArray => AutoAddMovieTerms.Split(';');
+
+        public string[] AutoAddIgnoreSuffixesArray => AutoAddIgnoreSuffixes.Split(';');
+
+        public string[] keepTogetherExtensionsArray => keepTogetherExtensionsString.Split(';');
         public string keepTogetherExtensionsString = "";
 
         public string defaultSeasonWord = "Season";
 
-        public string[] searchSeasonWordsArray
-        {
-            get { return searchSeasonWordsString.Split(';'); }
-        }
+        public string[] searchSeasonWordsArray => searchSeasonWordsString.Split(';');
+
         public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
 
         
@@ -346,10 +352,7 @@ namespace TVRename
         public string OtherExtensionsString = "";
         public ShowFilter Filter = new ShowFilter();
 
-        public string[] OtherExtensionsArray
-        {
-            get { return OtherExtensionsString.Split(';'); }
-        }
+        public string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
 
         public int ParallelDownloads = 4;
         public List<string> RSSURLs = DefaultRSSURLList();
@@ -370,12 +373,8 @@ namespace TVRename
         public int StartupTab = 0;
         public Searchers TheSearchers = new Searchers();
 
-        public string[] VideoExtensionsArray
-        {
-            get { return VideoExtensionsString.Split(';'); }
-        }
+        public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
 
-        
 
         public bool AutoMergeEpisodes = false;
         public string VideoExtensionsString = "";
@@ -632,6 +631,15 @@ namespace TVRename
                     this.Tidyup.EmptyMaxSizeCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EmptyMaxSizeMB")
                     this.Tidyup.EmptyMaxSizeMB = reader.ReadElementContentAsInt();
+
+                else if (reader.Name == "BulkAddIgnoreRecycleBin")
+                    this.BulkAddIgnoreRecycleBin = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "BulkAddCompareNoVideoFolders")
+                    this.BulkAddCompareNoVideoFolders = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "AutoAddMovieTerms")
+                    this.AutoAddMovieTerms = reader.ReadElementContentAsString();
+                else if (reader.Name == "AutoAddIgnoreSuffixes")
+                    this.AutoAddIgnoreSuffixes = reader.ReadElementContentAsString();
 
                 else if (reader.Name == "BetaMode")
                     this.mode = (BetaMode)reader.ReadElementContentAsInt();
@@ -910,6 +918,11 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "BaseSeasonName", this.defaultSeasonWord);
             XMLHelper.WriteElementToXML(writer, "SearchSeasonNames", this.searchSeasonWordsString);
 
+            XMLHelper.WriteElementToXML(writer, "BulkAddIgnoreRecycleBin", this.BulkAddIgnoreRecycleBin);
+            XMLHelper.WriteElementToXML(writer, "BulkAddCompareNoVideoFolders", this.BulkAddCompareNoVideoFolders);
+            XMLHelper.WriteElementToXML(writer, "AutoAddMovieTerms", this.AutoAddMovieTerms);
+            XMLHelper.WriteElementToXML(writer, "AutoAddIgnoreSuffixes", this.AutoAddIgnoreSuffixes);
+
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in this.FNPRegexs)
             {
@@ -1146,6 +1159,8 @@ namespace TVRename
 
         public string FilenameFriendly(string fn)
         {
+            if (string.IsNullOrWhiteSpace(fn)) return "";
+
             foreach (Replacement R in this.Replacements)
             {
                 if (R.CaseInsensitive)

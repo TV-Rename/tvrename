@@ -65,7 +65,7 @@ namespace TVRename
                     XmlSerializer xs = new XmlSerializer(typeof (TVRenameStats));
                     sc = (TVRenameStats) xs.Deserialize(reader);
                     System.Diagnostics.Debug.Assert(sc != null);
-                    reader.Close();
+                    
                 }
             }
             catch (Exception e)
@@ -88,7 +88,6 @@ namespace TVRename
             {
                 XmlSerializer xs = new XmlSerializer(typeof (TVRenameStats));
                 xs.Serialize(writer, this);
-                writer.Close();
             }
         }
     }

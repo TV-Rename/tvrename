@@ -41,16 +41,19 @@ namespace TVRename
                 // when windows restarts, the share isn't "back" before this timer times out and fires
                 // windows explorer tends to lose explorer windows on shares when slept/resumed, too, so its not
                 // just me :P
-                
-                MemoryStream ms = new MemoryStream(); //duplicated the IF statement one for RSS and one for XML so that both can be generated.
-                List<ProcessedEpisode> lpe = mDoc.NextNShows(TVSettings.Instance.ExportRSSMaxShows, TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
-                if (lpe != null)
-                    if (this.Generate(ms,lpe ))
-                    {
-                        return System.Text.Encoding.ASCII.GetString(ms.ToArray());
-                    }
-               
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    List<ProcessedEpisode> lpe = mDoc.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                        TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
+                    if (lpe != null)
+                        if (this.Generate(ms, lpe))
+                        {
+                            return System.Text.Encoding.ASCII.GetString(ms.ToArray());
+                        }
+                }
             }
+
             catch (Exception e)
             {
                 Logger.Error(e, "Failed to produce records to put into Export file at: {0}", Location());
@@ -67,12 +70,13 @@ namespace TVRename
 
                     //Create the directory if needed
                     Directory.CreateDirectory(Path.GetDirectoryName(Location()) ??"");
+                    string contents = Produce();
 
                     //Write Contents to file
-                    StreamWriter file = new StreamWriter(Location());
-                    String contents = Produce();
-                    file.Write(contents);
-                    file.Close();
+                    using (StreamWriter file = new StreamWriter(Location()))
+                    {
+                        file.Write(contents);
+                    }
 
                     Logger.Info("Output File to :{0}", Location());
                     Logger.Trace("contents of File are :{0}", contents);
