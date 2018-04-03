@@ -246,6 +246,12 @@ namespace TVRename
 
                     if (matched)
                     {
+                        if (dce.LowerName.StartsWith("-.") && (dce.Length / 1024 < 10))
+                        {
+                            logger.Info($"Ignoring matched file {dce.TheFile.FullName} as it looks like a Mac Temp File");
+                            continue;
+                        }
+
                         if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.SI) && (seasF == season) && (epF == epnum)) ||
                             (me.Episode.SI.UseSequentialMatch && TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) && (epF == epnum)))
                         {
