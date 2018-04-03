@@ -37,18 +37,18 @@ namespace TVRename
             // 
             // pnlCF
             // 
-            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlCF.Location = new System.Drawing.Point(12, 25);
             this.pnlCF.Name = "pnlCF";
-            this.pnlCF.Size = new System.Drawing.Size(417, 231);
+            this.pnlCF.Size = new System.Drawing.Size(435, 245);
             this.pnlCF.TabIndex = 0;
             // 
             // bnOK
             // 
             this.bnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnOK.Location = new System.Drawing.Point(268, 262);
+            this.bnOK.Location = new System.Drawing.Point(286, 276);
             this.bnOK.Name = "bnOK";
             this.bnOK.Size = new System.Drawing.Size(75, 23);
             this.bnOK.TabIndex = 1;
@@ -60,7 +60,7 @@ namespace TVRename
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(354, 262);
+            this.bnCancel.Location = new System.Drawing.Point(372, 276);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 2;
@@ -82,12 +82,13 @@ namespace TVRename
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(441, 297);
+            this.ClientSize = new System.Drawing.Size(459, 311);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.bnCancel);
             this.Controls.Add(this.bnOK);
             this.Controls.Add(this.pnlCF);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimizeBox = false;
             this.Name = "FolderMonitorEdit";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

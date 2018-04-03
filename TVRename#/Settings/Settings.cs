@@ -12,6 +12,7 @@ using System.Runtime.Serialization;
 using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
+// ReSharper disable RedundantDefaultMemberInitializer
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -27,10 +28,11 @@ namespace TVRename
         public bool EmptyIgnoreExtensions = false;
         public string EmptyIgnoreExtensionList = ".nzb;.nfo;.par2;.txt;.srt";
         public bool EmptyMaxSizeCheck = true;
+        // ReSharper disable once InconsistentNaming
         public int EmptyMaxSizeMB = 100;
 
-        public string[] EmptyIgnoreExtensionsArray => EmptyIgnoreExtensionList.Split(';');
-        public string[] EmptyIgnoreWordsArray => EmptyIgnoreWordList.Split(';');
+        public string[] EmptyIgnoreExtensionsArray => this.EmptyIgnoreExtensionList.Split(';');
+        public string[] EmptyIgnoreWordsArray => this.EmptyIgnoreWordList.Split(';');
     }
 
     public class Replacement
@@ -123,17 +125,17 @@ namespace TVRename
         {
             get
             {
-                if (IsShowLevel && IsMetaType)
+                if (this.IsShowLevel && this.IsMetaType)
                 {
                     return $"Show Seasons Status: {this.StatusTextForDisplay}";
                 }
-                if (!IsShowLevel && IsMetaType)
+                if (!this.IsShowLevel && this.IsMetaType)
                 {
                     return $"Season Status: {this.StatusTextForDisplay}";
                 }
-                if (IsShowLevel && !IsMetaType)
+                if (this.IsShowLevel && !this.IsMetaType)
                 {
-                    return string.Format("Show Status: {0}", StatusTextForDisplay);
+                    return string.Format("Show Status: {0}", this.StatusTextForDisplay);
                 }
                 return "";
             }
@@ -143,14 +145,14 @@ namespace TVRename
         {
             get
             {
-                if (!IsMetaType)
+                if (!this.IsMetaType)
                 {
-                    return Status;
+                    return this.Status;
                 }
-                if (IsShowLevel)
+                if (this.IsShowLevel)
                 {
                     ShowItem.ShowAirStatus status =
-                        (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), Status);
+                        (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), this.Status);
                     switch (status)
                     {
                         case ShowItem.ShowAirStatus.Aired:
@@ -162,13 +164,13 @@ namespace TVRename
                         case ShowItem.ShowAirStatus.PartiallyAired:
                             return "Partially aired";
                         default:
-                            return Status;
+                            return this.Status;
                     }
                 }
                 else
                 {
                     Season.SeasonStatus status =
-                        (Season.SeasonStatus) Enum.Parse(typeof (Season.SeasonStatus), Status);
+                        (Season.SeasonStatus) Enum.Parse(typeof (Season.SeasonStatus), this.Status);
                     switch (status)
                     {
                         case Season.SeasonStatus.Aired:
@@ -180,7 +182,7 @@ namespace TVRename
                         case Season.SeasonStatus.PartiallyAired:
                             return "Partially aired";
                         default:
-                            return Status;
+                            return this.Status;
                     }
                 }
             }
@@ -194,8 +196,8 @@ namespace TVRename
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile TVSettings instance;
-        private static object syncRoot = new Object();
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly object syncRoot = new object();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVSettings Instance
         {
@@ -267,9 +269,9 @@ namespace TVRename
         }
 
 
-        public List<String> LibraryFoldersNames = new List<String>();
-        public List<String> IgnoreFoldersNames = new List<String>();
-        public List<String> DownloadFoldersNames = new List<String>();
+        public List<string> LibraryFoldersNames = new List<string>();
+        public List<string> IgnoreFoldersNames = new List<string>();
+        public List<string> DownloadFoldersNames = new List<string>();
 
 
         public bool AutoSelectShowInMyShows = true;
@@ -330,16 +332,16 @@ namespace TVRename
         public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
         public string AutoAddIgnoreSuffixes = "1080p;720p";
 
-        public string[] AutoAddMovieTermsArray => AutoAddMovieTerms.Split(';');
+        public string[] AutoAddMovieTermsArray => this.AutoAddMovieTerms.Split(';');
 
-        public string[] AutoAddIgnoreSuffixesArray => AutoAddIgnoreSuffixes.Split(';');
+        public string[] AutoAddIgnoreSuffixesArray => this.AutoAddIgnoreSuffixes.Split(';');
 
-        public string[] keepTogetherExtensionsArray => keepTogetherExtensionsString.Split(';');
+        public string[] keepTogetherExtensionsArray => this.keepTogetherExtensionsString.Split(';');
         public string keepTogetherExtensionsString = "";
 
         public string defaultSeasonWord = "Season";
 
-        public string[] searchSeasonWordsArray => searchSeasonWordsString.Split(';');
+        public string[] searchSeasonWordsArray => this.searchSeasonWordsString.Split(';');
 
         public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
 
@@ -352,7 +354,7 @@ namespace TVRename
         public string OtherExtensionsString = "";
         public ShowFilter Filter = new ShowFilter();
 
-        public string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
+        public string[] OtherExtensionsArray => this.OtherExtensionsString.Split(';');
 
         public int ParallelDownloads = 4;
         public List<string> RSSURLs = DefaultRSSURLList();
@@ -373,7 +375,7 @@ namespace TVRename
         public int StartupTab = 0;
         public Searchers TheSearchers = new Searchers();
 
-        public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
+        public string[] VideoExtensionsArray => this.VideoExtensionsString.Split(';');
 
 
         public bool AutoMergeEpisodes = false;
@@ -383,10 +385,10 @@ namespace TVRename
         public bool MonitorFolders = false;
         public bool RemoveDownloadDirectoriesFiles =false;
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
-        public String SABHostPort = "";
-        public String SABAPIKey = "";
+        public string SABHostPort = "";
+        public string SABAPIKey = "";
         public bool CheckSABnzbd = false;
-        public String PreferredLanguage = "en";
+        public string PreferredLanguage = "en";
         public WTWDoubleClickAction WTWDoubleClick;
 
         public TidySettings Tidyup = new TidySettings();
@@ -396,13 +398,13 @@ namespace TVRename
 
         private TVSettings()
         {
-            this.SetToDefaults();
+            SetToDefaults();
         }
 
         public void load(XmlReader reader)
         {
             
-            this.SetToDefaults();
+            SetToDefaults();
 
             reader.Read();
             if (reader.Name != "Settings")
@@ -746,27 +748,27 @@ namespace TVRename
                             break;
                         if (reader.Name == "ShowNameFilter")
                         {
-                            Filter.ShowName = reader.GetAttribute("ShowName");
+                            this.Filter.ShowName = reader.GetAttribute("ShowName");
                             reader.Read();
                         }
                         else if (reader.Name == "ShowStatusFilter")
                         {
-                            Filter.ShowStatus = reader.GetAttribute("ShowStatus");
+                            this.Filter.ShowStatus = reader.GetAttribute("ShowStatus");
                             reader.Read();
                         }
                         else if (reader.Name == "ShowRatingFilter")
                         {
-                            Filter.ShowRating = reader.GetAttribute("ShowRating");
+                            this.Filter.ShowRating = reader.GetAttribute("ShowRating");
                             reader.Read();
                         }
                         else if (reader.Name == "ShowNetworkFilter")
                         {
-                            Filter.ShowNetwork = reader.GetAttribute("ShowNetwork");
+                            this.Filter.ShowNetwork = reader.GetAttribute("ShowNetwork");
                             reader.Read();
                         }
                         else if (reader.Name == "GenreFilter")
                         {
-                            Filter.Genres.Add(reader.GetAttribute("Genre"));
+                            this.Filter.Genres.Add(reader.GetAttribute("Genre"));
                             reader.Read();
                         }
                         else
@@ -939,7 +941,7 @@ namespace TVRename
             foreach (string s in this.RSSURLs) XMLHelper.WriteElementToXML(writer,"URL",s);
             writer.WriteEndElement(); // RSSURLs
 
-            if (ShowStatusColors != null)
+            if (this.ShowStatusColors != null)
             {
                 writer.WriteStartElement("ShowStatusTVWColors");
                 foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this.ShowStatusColors)
@@ -955,16 +957,16 @@ namespace TVRename
                 writer.WriteEndElement(); // ShowStatusTVWColors
             }
 
-            if (Filter != null)
+            if (this.Filter != null)
             {
                 writer.WriteStartElement("ShowFilters");
 
-                XMLHelper.WriteInfo(writer, "NameFilter", "Name", Filter.ShowName);
-                XMLHelper.WriteInfo(writer, "ShowStatusFilter", "ShowStatus", Filter.ShowStatus);
-                XMLHelper.WriteInfo(writer, "ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork);
-                XMLHelper.WriteInfo(writer, "ShowRatingFilter", "ShowRating", Filter.ShowRating);
+                XMLHelper.WriteInfo(writer, "NameFilter", "Name", this.Filter.ShowName);
+                XMLHelper.WriteInfo(writer, "ShowStatusFilter", "ShowStatus", this.Filter.ShowStatus);
+                XMLHelper.WriteInfo(writer, "ShowNetworkFilter", "ShowNetwork", this.Filter.ShowNetwork);
+                XMLHelper.WriteInfo(writer, "ShowRatingFilter", "ShowRating", this.Filter.ShowRating);
 
-                foreach (String Genre in Filter.Genres) XMLHelper.WriteInfo(writer, "GenreFilter", "Genre", Genre);
+                foreach (string genre in this.Filter.Genres) XMLHelper.WriteInfo(writer, "GenreFilter", "Genre", genre);
  
                 writer.WriteEndElement(); //ShowFilters
             }
@@ -1083,7 +1085,7 @@ namespace TVRename
 
         private static List<string> DefaultRSSURLList()
         {
-            List<string> sl = new List<String>();
+            List<string> sl = new List<string>();
             return sl;
         }
 
@@ -1151,7 +1153,7 @@ namespace TVRename
             if (s == null)
                 return "";
 
-            String url = (epi.SI.UseCustomSearchURL && !String.IsNullOrWhiteSpace(epi.SI.CustomSearchURL))
+            string url = (epi.SI.UseCustomSearchURL && !string.IsNullOrWhiteSpace(epi.SI.CustomSearchURL))
                 ? epi.SI.CustomSearchURL
                 : this.TheSearchers.CurrentSearchURL();
             return CustomName.NameForNoExt(epi, url, true);
@@ -1161,12 +1163,12 @@ namespace TVRename
         {
             if (string.IsNullOrWhiteSpace(fn)) return "";
 
-            foreach (Replacement R in this.Replacements)
+            foreach (Replacement rep in this.Replacements)
             {
-                if (R.CaseInsensitive)
-                    fn = Regex.Replace(fn, Regex.Escape(R.This), Regex.Escape(R.That), RegexOptions.IgnoreCase);
+                if (rep.CaseInsensitive)
+                    fn = Regex.Replace(fn, Regex.Escape(rep.This), Regex.Escape(rep.That), RegexOptions.IgnoreCase);
                 else
-                    fn = fn.Replace(R.This, R.That);
+                    fn = fn.Replace(rep.This, rep.That);
             }
             if (this.ForceLowercaseFilenames)
                 fn = fn.ToLower();
@@ -1176,21 +1178,22 @@ namespace TVRename
         public bool NeedToDownloadBannerFile(){
             // Return true iff we need to download season specific images
             // There are 4 possible reasons
-            return (SeasonSpecificFolderJPG() || KODIImages || SeriesJpg ||FanArtJpg);
+            return (SeasonSpecificFolderJPG() || this.KODIImages || this.SeriesJpg || this.FanArtJpg);
         }
 
+        // ReSharper disable once InconsistentNaming
         public bool SeasonSpecificFolderJPG() {
-            return (FolderJpgIsType.SeasonPoster == FolderJpgIs);
+            return (FolderJpgIsType.SeasonPoster == this.FolderJpgIs);
         }
 
         public bool DownloadFrodoImages()
         {
-            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Frodo));
+            return (this.KODIImages && (this.SelectedKODIType == KODIType.Both || this.SelectedKODIType == KODIType.Frodo));
         }
 
         public bool DownloadEdenImages()
         {
-            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Eden)); 
+            return (this.KODIImages && (this.SelectedKODIType == KODIType.Both || this.SelectedKODIType == KODIType.Eden)); 
         }
 
         public bool KeepTogetherFilesWithType(string fileExtension)
@@ -1200,8 +1203,8 @@ namespace TVRename
             switch (this.keepTogetherMode)
             {
                 case KeepTogetherModes.All: return true;
-                case KeepTogetherModes.Just: return keepTogetherExtensionsArray.Contains(fileExtension);
-                case KeepTogetherModes.AllBut: return !keepTogetherExtensionsArray.Contains(fileExtension);
+                case KeepTogetherModes.Just: return this.keepTogetherExtensionsArray.Contains(fileExtension);
+                case KeepTogetherModes.AllBut: return !this.keepTogetherExtensionsArray.Contains(fileExtension);
 
             }
 
