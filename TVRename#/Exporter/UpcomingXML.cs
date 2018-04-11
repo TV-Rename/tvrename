@@ -6,7 +6,8 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class UpcomingXML : UpcomingExporter
+    // ReSharper disable once InconsistentNaming
+    internal class UpcomingXML : UpcomingExporter
     {
         public UpcomingXML(TVDoc i) : base(i) { }
 
@@ -18,10 +19,12 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             try
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.NewLineOnAttributes = true;
-                settings.Encoding = System.Text.Encoding.ASCII;
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    NewLineOnAttributes = true,
+                    Encoding = System.Text.Encoding.ASCII
+                };
                 using (XmlWriter writer = XmlWriter.Create(str, settings))
                 {
                     writer.WriteStartDocument();
@@ -40,15 +43,15 @@ namespace TVRename
                         writer.WriteStartElement("available");
                         DateTime? airdt = ei.GetAirDateDT(true);
 
-                        if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
+                        if (airdt.HasValue && airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
                         {
-                            List<FileInfo> fl = mDoc.FindEpOnDisk(dfc, ei);
+                            List<FileInfo> fl = this.Doc.FindEpOnDisk(dfc, ei);
                             if ((fl != null) && (fl.Count > 0))
                                 writer.WriteValue("true");
                             else if (ei.SI.DoMissingCheck)
                                 writer.WriteValue("false");
                         }
-
+                        
                         writer.WriteEndElement();
                         XMLHelper.WriteElementToXML( writer,"Overview",ei.Overview);
                         
@@ -70,7 +73,7 @@ namespace TVRename
             } // try
             catch (Exception e)
             {
-                if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(e.Message);
+                if ((!this.Doc.Args.Unattended) && (!this.Doc.Args.Hide)) MessageBox.Show(e.Message);
                 Logger.Error(e);
                 return false;
             }

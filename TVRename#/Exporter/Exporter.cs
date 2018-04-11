@@ -4,33 +4,48 @@ using System.IO;
 
 namespace TVRename
 {
-    abstract class Exporter
+    internal abstract class Exporter
     {
         public abstract bool Active();
+        public abstract void Run();
         protected abstract string Location();
         protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     }
 
-    abstract class ShowsExporter : Exporter
+    internal abstract class ShowsExporter : Exporter
     {
-        public abstract void Run(List<ShowItem> shows);
-    }
+        protected readonly List<ShowItem> Shows;
 
 
-    abstract class MissingExporter : Exporter
-    {
-        public abstract void Run(ItemList theActionList);
-    }
-
-    abstract class UpcomingExporter : Exporter
-    {
-        protected readonly TVDoc mDoc;
-        
-
-        public UpcomingExporter(TVDoc doc)
+        protected ShowsExporter(List<ShowItem> shows)
         {
-            this.mDoc = doc;
+            this.Shows = shows;
+        }
+    }
+
+
+    internal abstract class ActionListExporter : Exporter
+    {
+        protected readonly ItemList TheActionList;
+
+
+        protected ActionListExporter(ItemList theActionList)
+        {
+            this.TheActionList = theActionList;
+        }
+
+        public abstract bool ApplicableFor(TVSettings.ScanType st);
+    }
+
+    internal abstract class UpcomingExporter : Exporter
+    {
+        protected readonly TVDoc Doc;
+
+
+        protected UpcomingExporter(TVDoc doc)
+        {
+            this.Doc = doc;
         }
 
         private string Produce() 
@@ -44,10 +59,10 @@ namespace TVRename
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    List<ProcessedEpisode> lpe = mDoc.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                    List<ProcessedEpisode> lpe = this.Doc.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
                     if (lpe != null)
-                        if (this.Generate(ms, lpe))
+                        if (Generate(ms, lpe))
                         {
                             return System.Text.Encoding.ASCII.GetString(ms.ToArray());
                         }
@@ -61,7 +76,7 @@ namespace TVRename
             return "";
         }
 
-        public void Run()
+        public override void Run()
         {
             if (Active())
             {

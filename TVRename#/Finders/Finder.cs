@@ -1,16 +1,17 @@
 namespace TVRename
 {
-    abstract class Finder
+    internal abstract class Finder
     {
         protected ItemList TheActionList;
         protected bool ActionCancel = false;
-        protected TVDoc mDoc;
+        protected readonly TVDoc Doc;
 
-        public Finder(TVDoc doc)
+        protected Finder(TVDoc doc)
         {
-            this.mDoc = doc;
+            this.Doc = doc;
         }
 
+        // ReSharper disable once InconsistentNaming
         public enum FinderDisplayType { Local, Downloading, RSS};
 
         public abstract void Check(SetProgressDelegate prog, int startpct, int totPct);
@@ -19,10 +20,12 @@ namespace TVRename
 
         public abstract FinderDisplayType DisplayType();
 
-        public void setActionList(ItemList actionList) { this.TheActionList = actionList; }
+        public void SetActionList(ItemList actionList) { this.TheActionList = actionList; }
 
-        public void interrupt() { ActionCancel = true; }
-        public void reset() { ActionCancel = false; }
+        public void Interrupt() {
+            this.ActionCancel = true; }
+        public void Reset() {
+            this.ActionCancel = false; }
 
     }
 }

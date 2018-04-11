@@ -2952,7 +2952,7 @@ namespace TVRename
         {
             this.tabControl1.SelectedTab = this.tbAllInOne;
             this.Scan(null, unattended);
-            this.mDoc.ExportMissingXML(); //Save missing shows to XML
+            this.mDoc.ExportMissingXML(TVSettings.ScanType.Full ); //Save missing shows to XML
         }
 
         public void QuickScan()
@@ -3175,6 +3175,7 @@ namespace TVRename
             this.LessBusy();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
+            this.mDoc.ExportMissingXML(TVSettings.ScanType.Quick); //Save missing shows to XML
         }
 
 

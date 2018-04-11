@@ -227,6 +227,15 @@ namespace TVRename
             this.lvwDefinedColors = new System.Windows.Forms.ListView();
             this.colShowStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tpBulkAdd = new System.Windows.Forms.TabPage();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.tbIgnoreSuffixes = new System.Windows.Forms.TextBox();
+            this.tbMovieTerms = new System.Windows.Forms.TextBox();
+            this.label42 = new System.Windows.Forms.Label();
+            this.label41 = new System.Windows.Forms.Label();
+            this.cbIgnoreRecycleBin = new System.Windows.Forms.CheckBox();
+            this.cbIgnoreNoVideoFolders = new System.Windows.Forms.CheckBox();
             this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             this.openFile = new System.Windows.Forms.OpenFileDialog();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -236,15 +245,6 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tpBulkAdd = new System.Windows.Forms.TabPage();
-            this.cbIgnoreRecycleBin = new System.Windows.Forms.CheckBox();
-            this.cbIgnoreNoVideoFolders = new System.Windows.Forms.CheckBox();
-            this.label41 = new System.Windows.Forms.Label();
-            this.label42 = new System.Windows.Forms.Label();
-            this.label43 = new System.Windows.Forms.Label();
-            this.label44 = new System.Windows.Forms.Label();
-            this.tbIgnoreSuffixes = new System.Windows.Forms.TextBox();
-            this.tbMovieTerms = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -264,8 +264,8 @@ namespace TVRename
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.tpTreeColoring.SuspendLayout();
-            this.cmDefaults.SuspendLayout();
             this.tpBulkAdd.SuspendLayout();
+            this.cmDefaults.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -987,15 +987,12 @@ namespace TVRename
             this.tbAutoExport.Controls.Add(this.groupBox7);
             this.tbAutoExport.Controls.Add(this.groupBox5);
             this.tbAutoExport.Controls.Add(this.groupBox4);
-            this.tbAutoExport.Controls.Add(this.bnBrowseMissingCSV);
             this.tbAutoExport.Controls.Add(this.groupBox3);
             this.tbAutoExport.Controls.Add(this.groupBox2);
-            this.tbAutoExport.Controls.Add(this.txtMissingCSV);
-            this.tbAutoExport.Controls.Add(this.cbMissingCSV);
-            this.tbAutoExport.Location = new System.Drawing.Point(4, 22);
+            this.tbAutoExport.Location = new System.Drawing.Point(4, 40);
             this.tbAutoExport.Name = "tbAutoExport";
             this.tbAutoExport.Padding = new System.Windows.Forms.Padding(3);
-            this.tbAutoExport.Size = new System.Drawing.Size(416, 419);
+            this.tbAutoExport.Size = new System.Drawing.Size(416, 401);
             this.tbAutoExport.TabIndex = 2;
             this.tbAutoExport.Text = "Automatic Export";
             this.tbAutoExport.UseVisualStyleBackColor = true;
@@ -1005,7 +1002,7 @@ namespace TVRename
             this.groupBox7.Controls.Add(this.bnBrowseShowsTXT);
             this.groupBox7.Controls.Add(this.cbShowsTXT);
             this.groupBox7.Controls.Add(this.txtShowsTXTTo);
-            this.groupBox7.Location = new System.Drawing.Point(7, 180);
+            this.groupBox7.Location = new System.Drawing.Point(7, 203);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(402, 55);
             this.groupBox7.TabIndex = 4;
@@ -1014,7 +1011,7 @@ namespace TVRename
             // 
             // bnBrowseShowsTXT
             // 
-            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(321, 19);
+            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(321, 21);
             this.bnBrowseShowsTXT.Name = "bnBrowseShowsTXT";
             this.bnBrowseShowsTXT.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseShowsTXT.TabIndex = 5;
@@ -1025,7 +1022,7 @@ namespace TVRename
             // cbShowsTXT
             // 
             this.cbShowsTXT.AutoSize = true;
-            this.cbShowsTXT.Location = new System.Drawing.Point(10, 23);
+            this.cbShowsTXT.Location = new System.Drawing.Point(10, 25);
             this.cbShowsTXT.Name = "cbShowsTXT";
             this.cbShowsTXT.Size = new System.Drawing.Size(47, 17);
             this.cbShowsTXT.TabIndex = 3;
@@ -1035,7 +1032,7 @@ namespace TVRename
             // 
             // txtShowsTXTTo
             // 
-            this.txtShowsTXTTo.Location = new System.Drawing.Point(64, 21);
+            this.txtShowsTXTTo.Location = new System.Drawing.Point(64, 23);
             this.txtShowsTXTTo.Name = "txtShowsTXTTo";
             this.txtShowsTXTTo.Size = new System.Drawing.Size(251, 20);
             this.txtShowsTXTTo.TabIndex = 4;
@@ -1045,13 +1042,12 @@ namespace TVRename
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
             this.groupBox5.Controls.Add(this.cbFOXML);
             this.groupBox5.Controls.Add(this.txtFOXML);
-            this.groupBox5.Location = new System.Drawing.Point(6, 344);
+            this.groupBox5.Location = new System.Drawing.Point(6, 321);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(402, 55);
             this.groupBox5.TabIndex = 3;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Finding and Organising";
-            this.groupBox5.Visible = false;
             // 
             // bnBrowseFOXML
             // 
@@ -1086,13 +1082,12 @@ namespace TVRename
             this.groupBox4.Controls.Add(this.bnBrowseRenamingXML);
             this.groupBox4.Controls.Add(this.cbRenamingXML);
             this.groupBox4.Controls.Add(this.txtRenamingXML);
-            this.groupBox4.Location = new System.Drawing.Point(6, 288);
+            this.groupBox4.Location = new System.Drawing.Point(6, 259);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(402, 57);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Renaming";
-            this.groupBox4.Visible = false;
             // 
             // bnBrowseRenamingXML
             // 
@@ -1124,23 +1119,25 @@ namespace TVRename
             // 
             // bnBrowseMissingCSV
             // 
-            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(327, 257);
+            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(321, 47);
             this.bnBrowseMissingCSV.Name = "bnBrowseMissingCSV";
             this.bnBrowseMissingCSV.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingCSV.TabIndex = 2;
             this.bnBrowseMissingCSV.Text = "Browse...";
             this.bnBrowseMissingCSV.UseVisualStyleBackColor = true;
-            this.bnBrowseMissingCSV.Visible = false;
             this.bnBrowseMissingCSV.Click += new System.EventHandler(this.bnBrowseMissingCSV_Click);
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.bnBrowseMissingCSV);
             this.groupBox3.Controls.Add(this.bnBrowseMissingXML);
+            this.groupBox3.Controls.Add(this.txtMissingCSV);
             this.groupBox3.Controls.Add(this.cbMissingXML);
+            this.groupBox3.Controls.Add(this.cbMissingCSV);
             this.groupBox3.Controls.Add(this.txtMissingXML);
             this.groupBox3.Location = new System.Drawing.Point(6, 123);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(402, 55);
+            this.groupBox3.Size = new System.Drawing.Size(402, 79);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Missing";
@@ -1175,22 +1172,20 @@ namespace TVRename
             // 
             // txtMissingCSV
             // 
-            this.txtMissingCSV.Location = new System.Drawing.Point(70, 260);
+            this.txtMissingCSV.Location = new System.Drawing.Point(64, 48);
             this.txtMissingCSV.Name = "txtMissingCSV";
             this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
             this.txtMissingCSV.TabIndex = 1;
-            this.txtMissingCSV.Visible = false;
             // 
             // cbMissingCSV
             // 
             this.cbMissingCSV.AutoSize = true;
-            this.cbMissingCSV.Location = new System.Drawing.Point(16, 262);
+            this.cbMissingCSV.Location = new System.Drawing.Point(11, 48);
             this.cbMissingCSV.Name = "cbMissingCSV";
             this.cbMissingCSV.Size = new System.Drawing.Size(47, 17);
             this.cbMissingCSV.TabIndex = 0;
             this.cbMissingCSV.Text = "CSV";
             this.cbMissingCSV.UseVisualStyleBackColor = true;
-            this.cbMissingCSV.Visible = false;
             this.cbMissingCSV.CheckedChanged += new System.EventHandler(this.EnableDisable);
             // 
             // tpScanOptions
@@ -1210,10 +1205,10 @@ namespace TVRename
             this.tpScanOptions.Controls.Add(this.cbCheckSABnzbd);
             this.tpScanOptions.Controls.Add(this.cbCheckuTorrent);
             this.tpScanOptions.Controls.Add(this.cbSearchLocally);
-            this.tpScanOptions.Location = new System.Drawing.Point(4, 22);
+            this.tpScanOptions.Location = new System.Drawing.Point(4, 40);
             this.tpScanOptions.Name = "tpScanOptions";
             this.tpScanOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScanOptions.Size = new System.Drawing.Size(416, 419);
+            this.tpScanOptions.Size = new System.Drawing.Size(416, 401);
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
@@ -1389,10 +1384,10 @@ namespace TVRename
             this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreWords);
             this.tbFolderDeleting.Controls.Add(this.cbEmptyIgnoreExtensions);
             this.tbFolderDeleting.Controls.Add(this.cbDeleteEmpty);
-            this.tbFolderDeleting.Location = new System.Drawing.Point(4, 22);
+            this.tbFolderDeleting.Location = new System.Drawing.Point(4, 40);
             this.tbFolderDeleting.Name = "tbFolderDeleting";
             this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFolderDeleting.Size = new System.Drawing.Size(416, 419);
+            this.tbFolderDeleting.Size = new System.Drawing.Size(416, 401);
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
@@ -2283,6 +2278,101 @@ namespace TVRename
             this.colColor.Text = "Color";
             this.colColor.Width = 92;
             // 
+            // tpBulkAdd
+            // 
+            this.tpBulkAdd.Controls.Add(this.label43);
+            this.tpBulkAdd.Controls.Add(this.label44);
+            this.tpBulkAdd.Controls.Add(this.tbIgnoreSuffixes);
+            this.tpBulkAdd.Controls.Add(this.tbMovieTerms);
+            this.tpBulkAdd.Controls.Add(this.label42);
+            this.tpBulkAdd.Controls.Add(this.label41);
+            this.tpBulkAdd.Controls.Add(this.cbIgnoreRecycleBin);
+            this.tpBulkAdd.Controls.Add(this.cbIgnoreNoVideoFolders);
+            this.tpBulkAdd.Location = new System.Drawing.Point(4, 40);
+            this.tpBulkAdd.Name = "tpBulkAdd";
+            this.tpBulkAdd.Padding = new System.Windows.Forms.Padding(3);
+            this.tpBulkAdd.Size = new System.Drawing.Size(416, 401);
+            this.tpBulkAdd.TabIndex = 10;
+            this.tpBulkAdd.Text = "Bulk/Auto Add";
+            this.tpBulkAdd.UseVisualStyleBackColor = true;
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Location = new System.Drawing.Point(12, 141);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(78, 13);
+            this.label43.TabIndex = 10;
+            this.label43.Text = "&Ignore suffixes:";
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Location = new System.Drawing.Point(12, 115);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(71, 13);
+            this.label44.TabIndex = 8;
+            this.label44.Text = "&Movie Terms:";
+            // 
+            // tbIgnoreSuffixes
+            // 
+            this.tbIgnoreSuffixes.Location = new System.Drawing.Point(108, 138);
+            this.tbIgnoreSuffixes.Name = "tbIgnoreSuffixes";
+            this.tbIgnoreSuffixes.Size = new System.Drawing.Size(293, 20);
+            this.tbIgnoreSuffixes.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.tbIgnoreSuffixes, "These terms and any text after them will be ignored when\r\nsearching on TVDB for t" +
+        "he show title based on the filename.");
+            // 
+            // tbMovieTerms
+            // 
+            this.tbMovieTerms.Location = new System.Drawing.Point(108, 112);
+            this.tbMovieTerms.Name = "tbMovieTerms";
+            this.tbMovieTerms.Size = new System.Drawing.Size(293, 20);
+            this.tbMovieTerms.TabIndex = 9;
+            this.toolTip1.SetToolTip(this.tbMovieTerms, "If a filename contains any of these terms then it is assumed\r\nthat it is a Film a" +
+        "nd not a TV Show. Hence \'Auto Add\' is not\r\ninvoked for this file.");
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(12, 92);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(54, 13);
+            this.label42.TabIndex = 6;
+            this.label42.Text = "Auto Add:";
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(12, 13);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(53, 13);
+            this.label41.TabIndex = 5;
+            this.label41.Text = "Bulk Add:";
+            // 
+            // cbIgnoreRecycleBin
+            // 
+            this.cbIgnoreRecycleBin.AutoSize = true;
+            this.cbIgnoreRecycleBin.Location = new System.Drawing.Point(15, 62);
+            this.cbIgnoreRecycleBin.Name = "cbIgnoreRecycleBin";
+            this.cbIgnoreRecycleBin.Size = new System.Drawing.Size(116, 17);
+            this.cbIgnoreRecycleBin.TabIndex = 4;
+            this.cbIgnoreRecycleBin.Text = "Ignore &Recycle Bin";
+            this.toolTip1.SetToolTip(this.cbIgnoreRecycleBin, "If set then Bulk Add ignores all files in the Recycle Bin");
+            this.cbIgnoreRecycleBin.UseVisualStyleBackColor = true;
+            // 
+            // cbIgnoreNoVideoFolders
+            // 
+            this.cbIgnoreNoVideoFolders.AutoSize = true;
+            this.cbIgnoreNoVideoFolders.Location = new System.Drawing.Point(15, 39);
+            this.cbIgnoreNoVideoFolders.Name = "cbIgnoreNoVideoFolders";
+            this.cbIgnoreNoVideoFolders.Size = new System.Drawing.Size(225, 17);
+            this.cbIgnoreNoVideoFolders.TabIndex = 3;
+            this.cbIgnoreNoVideoFolders.Text = "&Only Include Folders containing Video files";
+            this.toolTip1.SetToolTip(this.cbIgnoreNoVideoFolders, "If set then only folders that contain video files are considered for the \'Bulk Ad" +
+        "d\' feature");
+            this.cbIgnoreNoVideoFolders.UseVisualStyleBackColor = true;
+            // 
             // folderBrowser
             // 
             this.folderBrowser.ShowNewFolderButton = false;
@@ -2330,101 +2420,6 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // tpBulkAdd
-            // 
-            this.tpBulkAdd.Controls.Add(this.label43);
-            this.tpBulkAdd.Controls.Add(this.label44);
-            this.tpBulkAdd.Controls.Add(this.tbIgnoreSuffixes);
-            this.tpBulkAdd.Controls.Add(this.tbMovieTerms);
-            this.tpBulkAdd.Controls.Add(this.label42);
-            this.tpBulkAdd.Controls.Add(this.label41);
-            this.tpBulkAdd.Controls.Add(this.cbIgnoreRecycleBin);
-            this.tpBulkAdd.Controls.Add(this.cbIgnoreNoVideoFolders);
-            this.tpBulkAdd.Location = new System.Drawing.Point(4, 40);
-            this.tpBulkAdd.Name = "tpBulkAdd";
-            this.tpBulkAdd.Padding = new System.Windows.Forms.Padding(3);
-            this.tpBulkAdd.Size = new System.Drawing.Size(416, 401);
-            this.tpBulkAdd.TabIndex = 10;
-            this.tpBulkAdd.Text = "Bulk/Auto Add";
-            this.tpBulkAdd.UseVisualStyleBackColor = true;
-            // 
-            // cbIgnoreRecycleBin
-            // 
-            this.cbIgnoreRecycleBin.AutoSize = true;
-            this.cbIgnoreRecycleBin.Location = new System.Drawing.Point(15, 62);
-            this.cbIgnoreRecycleBin.Name = "cbIgnoreRecycleBin";
-            this.cbIgnoreRecycleBin.Size = new System.Drawing.Size(116, 17);
-            this.cbIgnoreRecycleBin.TabIndex = 4;
-            this.cbIgnoreRecycleBin.Text = "Ignore &Recycle Bin";
-            this.toolTip1.SetToolTip(this.cbIgnoreRecycleBin, "If set then Bulk Add ignores all files in the Recycle Bin");
-            this.cbIgnoreRecycleBin.UseVisualStyleBackColor = true;
-            // 
-            // cbIgnoreNoVideoFolders
-            // 
-            this.cbIgnoreNoVideoFolders.AutoSize = true;
-            this.cbIgnoreNoVideoFolders.Location = new System.Drawing.Point(15, 39);
-            this.cbIgnoreNoVideoFolders.Name = "cbIgnoreNoVideoFolders";
-            this.cbIgnoreNoVideoFolders.Size = new System.Drawing.Size(225, 17);
-            this.cbIgnoreNoVideoFolders.TabIndex = 3;
-            this.cbIgnoreNoVideoFolders.Text = "&Only Include Folders containing Video files";
-            this.toolTip1.SetToolTip(this.cbIgnoreNoVideoFolders, "If set then only folders that contain video files are considered for the \'Bulk Ad" +
-        "d\' feature");
-            this.cbIgnoreNoVideoFolders.UseVisualStyleBackColor = true;
-            // 
-            // label41
-            // 
-            this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(12, 13);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(53, 13);
-            this.label41.TabIndex = 5;
-            this.label41.Text = "Bulk Add:";
-            // 
-            // label42
-            // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(12, 92);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(54, 13);
-            this.label42.TabIndex = 6;
-            this.label42.Text = "Auto Add:";
-            // 
-            // label43
-            // 
-            this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(12, 141);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(78, 13);
-            this.label43.TabIndex = 10;
-            this.label43.Text = "&Ignore suffixes:";
-            // 
-            // label44
-            // 
-            this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(12, 115);
-            this.label44.Name = "label44";
-            this.label44.Size = new System.Drawing.Size(71, 13);
-            this.label44.TabIndex = 8;
-            this.label44.Text = "&Movie Terms:";
-            // 
-            // tbIgnoreSuffixes
-            // 
-            this.tbIgnoreSuffixes.Location = new System.Drawing.Point(108, 138);
-            this.tbIgnoreSuffixes.Name = "tbIgnoreSuffixes";
-            this.tbIgnoreSuffixes.Size = new System.Drawing.Size(293, 20);
-            this.tbIgnoreSuffixes.TabIndex = 11;
-            this.toolTip1.SetToolTip(this.tbIgnoreSuffixes, "These terms and any text after them will be ignored when\r\nsearching on TVDB for t" +
-        "he show title based on the filename.");
-            // 
-            // tbMovieTerms
-            // 
-            this.tbMovieTerms.Location = new System.Drawing.Point(108, 112);
-            this.tbMovieTerms.Name = "tbMovieTerms";
-            this.tbMovieTerms.Size = new System.Drawing.Size(293, 20);
-            this.tbMovieTerms.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.tbMovieTerms, "If a filename contains any of these terms then it is assumed\r\nthat it is a Film a" +
-        "nd not a TV Show. Hence \'Auto Add\' is not\r\ninvoked for this file.");
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2452,7 +2447,6 @@ namespace TVRename
             this.tbFilesAndFolders.ResumeLayout(false);
             this.tbFilesAndFolders.PerformLayout();
             this.tbAutoExport.ResumeLayout(false);
-            this.tbAutoExport.PerformLayout();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
             this.groupBox5.ResumeLayout(false);
@@ -2481,9 +2475,9 @@ namespace TVRename
             this.groupBox6.PerformLayout();
             this.tpTreeColoring.ResumeLayout(false);
             this.tpTreeColoring.PerformLayout();
-            this.cmDefaults.ResumeLayout(false);
             this.tpBulkAdd.ResumeLayout(false);
             this.tpBulkAdd.PerformLayout();
+            this.cmDefaults.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

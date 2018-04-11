@@ -1,21 +1,37 @@
 using System;
+using System.Text;
 using System.Xml;
 
 namespace TVRename
 {
-    class MissingXML : MissingExporter
+    // ReSharper disable once InconsistentNaming
+    internal class MissingXML : ActionListExporter
     {
+        public MissingXML(ItemList theActionList) : base(theActionList)
+        {
+        }
+
         public override bool Active() =>TVSettings.Instance.ExportMissingXML;
         protected override string Location() =>TVSettings.Instance.ExportMissingXMLTo;
-        
-        public override void Run(ItemList TheActionList)
+
+        public override bool ApplicableFor(TVSettings.ScanType st)
         {
-            if (TVSettings.Instance.ExportMissingXML)
+            return (st == TVSettings.ScanType.Full);
+        }
+        public override void Run()
+        {
+            if (!Active()) return;
+
+            try
             {
-                XmlWriterSettings settings = new XmlWriterSettings();
-                //XmlWriterSettings settings = gcnew XmlWriterSettings();
-                settings.Indent = true;
-                settings.NewLineOnAttributes = true;
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    NewLineOnAttributes = true,
+                    Encoding = Encoding.ASCII
+                };
+
+            
                 using (XmlWriter writer = XmlWriter.Create(Location(), settings))
                 {
                     writer.WriteStartDocument();
@@ -24,34 +40,37 @@ namespace TVRename
                     XMLHelper.WriteAttributeToXML(writer,"Version","2.1");
                     writer.WriteStartElement("MissingItems");
 
-                    foreach (Item Action in TheActionList)
+                    foreach (Item action in this.TheActionList)
                     {
-                        if (Action is ItemMissing)
-                        {
-                            ItemMissing Missing = (ItemMissing)(Action);
-                            writer.WriteStartElement("MissingItem");
+                        if (!(action is ItemMissing)) continue;
 
-                            XMLHelper.WriteElementToXML(writer,"id",Missing.Episode.SI.TVDBCode);
-                            XMLHelper.WriteElementToXML(writer, "title",Missing.Episode.TheSeries.Name);
-                            XMLHelper.WriteElementToXML(writer, "season", Helpers.pad(Missing.Episode.AppropriateSeasonNumber));
-                            XMLHelper.WriteElementToXML(writer, "episode", Helpers.pad(Missing.Episode.AppropriateEpNum));
-                            XMLHelper.WriteElementToXML(writer, "episodeName",Missing.Episode.Name);
-                            XMLHelper.WriteElementToXML(writer, "description",Missing.Episode.Overview);
+                        ItemMissing missing = (ItemMissing)(action);
+                        writer.WriteStartElement("MissingItem");
 
-                            writer.WriteStartElement("pubDate");
-                            DateTime? dt = Missing.Episode.GetAirDateDT(true);
-                            if (dt != null)
-                                writer.WriteValue(dt.Value.ToString("F"));
-                            writer.WriteEndElement();
+                        XMLHelper.WriteElementToXML(writer,"id",missing.Episode.SI.TVDBCode);
+                        XMLHelper.WriteElementToXML(writer, "title",missing.Episode.TheSeries.Name);
+                        XMLHelper.WriteElementToXML(writer, "season", Helpers.pad(missing.Episode.AppropriateSeasonNumber));
+                        XMLHelper.WriteElementToXML(writer, "episode", Helpers.pad(missing.Episode.AppropriateEpNum));
+                        XMLHelper.WriteElementToXML(writer, "episodeName",missing.Episode.Name);
+                        XMLHelper.WriteElementToXML(writer, "description",missing.Episode.Overview);
+
+                        writer.WriteStartElement("pubDate");
+                        DateTime? dt = missing.Episode.GetAirDateDT(true);
+                        if (dt != null)
+                            writer.WriteValue(dt.Value.ToString("F"));
+                        writer.WriteEndElement();
                             
-                            writer.WriteEndElement(); // MissingItem
-
-                        }
+                        writer.WriteEndElement(); // MissingItem
                     }
                     writer.WriteEndElement(); // MissingItems
                     writer.WriteEndElement(); // tvrename
                     writer.WriteEndDocument();
                 }
+
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
             }
         }
     }

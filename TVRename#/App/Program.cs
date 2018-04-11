@@ -27,7 +27,7 @@ namespace TVRename.App
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(GlobalExceptionHandler);
+            AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler;
 
             if (args.Contains("/?", StringComparer.OrdinalIgnoreCase))
             {

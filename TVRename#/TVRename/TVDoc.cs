@@ -1449,16 +1449,22 @@ namespace TVRename
             return true;
         }
 
-        public void ExportMissingXML()
+        public void ExportMissingXML(TVSettings.ScanType st)
         {
-            MissingXML mx = new MissingXML();
-            mx.Run(TheActionList);
+
+                List<ActionListExporter> lup = new List<ActionListExporter> { new MissingXML(TheActionList),new MissingCSV(this.TheActionList),new CopyMoveXML(this.TheActionList),new RenamingXML(this.TheActionList) };
+
+
+                foreach (ActionListExporter ue in lup)
+                {
+                    if (ue.Active() && ue.ApplicableFor(st)) { ue.Run(); }
+                }
         }
 
         public void ExportShowInfo()
         {
-            ShowsTXT mx = new ShowsTXT();
-            mx.Run(this.ShowItems);
+            ShowsTXT mx = new ShowsTXT(this.ShowItems);
+            mx.Run();
         }
 
         public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
@@ -1519,10 +1525,8 @@ namespace TVRename
 
         public void WriteUpcoming()
         {
-            List<UpcomingExporter> lup = new List<UpcomingExporter>();
+            List<UpcomingExporter> lup = new List<UpcomingExporter> {new UpcomingRSS(this), new UpcomingXML(this)};
 
-            lup.Add(new UpcomingRSS(this));
-            lup.Add(new UpcomingXML(this));
 
             foreach (UpcomingExporter ue in lup)
             {
@@ -1792,7 +1796,7 @@ namespace TVRename
             Thread actionWork = new Thread(this.ScanWorker) {Name = "ActionWork"};
 
             this.ActionCancel = false;
-            foreach (Finder f in Finders) { f.reset(); }
+            foreach (Finder f in Finders) { f.Reset(); }
 
             if (!this.Args.Hide)
             {
@@ -1810,7 +1814,7 @@ namespace TVRename
             {
                 this.ActionCancel = true;
                 actionWork.Interrupt();
-                foreach (Finder f in Finders) { f.interrupt(); }
+                foreach (Finder f in Finders) { f.Interrupt(); }
             }
             else
                 actionWork.Join();
@@ -2686,7 +2690,7 @@ namespace TVRename
                     {
                         if (f.Active())
                         {
-                            f.setActionList(this.TheActionList);
+                            f.SetActionList(this.TheActionList);
 
                             switch (f.DisplayType())
                             {

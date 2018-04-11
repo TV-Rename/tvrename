@@ -29,7 +29,7 @@ namespace TVRename
                 {
                     string basefn = filo.RemoveExtension();
 
-                    FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + ".jpg");
+                    FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + defaultExtension);
 
                     if (forceRefresh || !imgjpg.Exists)
                         TheActionList.Add(new ActionDownloadImage(dbep.SI, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));

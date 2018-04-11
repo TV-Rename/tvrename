@@ -31,13 +31,13 @@ namespace TVRename
             ItemList toRemove = new ItemList();
 
             int fileCount = 0;
-            foreach (string s in this.mDoc.SearchFolders)
+            foreach (string s in this.Doc.SearchFolders)
                 fileCount += DirCache.CountFiles(s, true);
 
             int c = 0;
 
             DirCache dirCache = new DirCache();
-            foreach (String s in this.mDoc.SearchFolders)
+            foreach (string s in this.Doc.SearchFolders)
             {
                 if (this.ActionCancel)
                     return;
@@ -184,7 +184,7 @@ namespace TVRename
                     string t = "Path or filename too long. " + Action.From.FullName + ", " + e.Message;
                     logger.Warn(e, "Path or filename too long. " + Action.From.FullName);
 
-                    if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!this.Doc.Args.Unattended) && (!this.Doc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     
                 }
             }
@@ -269,10 +269,10 @@ namespace TVRename
                                 logger.Info($"Added new rule automatically for {sr}");
 
                                 //Regenerate the episodes with the new rule added
-                                this.mDoc.GenerateEpisodeDict(me.Episode.SI);
+                                this.Doc.GenerateEpisodeDict(me.Episode.SI);
 
                                 //Get the newly created processed episode we are after
-                                List<ProcessedEpisode> newSeason = this.mDoc.GetShowItem(me.Episode.SI.TVDBCode).SeasonEpisodes[seasF];
+                                List<ProcessedEpisode> newSeason = this.Doc.GetShowItem(me.Episode.SI.TVDBCode).SeasonEpisodes[seasF];
                                 ProcessedEpisode newPE = me.Episode;
 
                                 foreach (ProcessedEpisode pe in newSeason)
@@ -295,7 +295,7 @@ namespace TVRename
 
                             // don't remove the base search folders
                             bool doTidyup = true;
-                            foreach (string folder in this.mDoc.SearchFolders)
+                            foreach (string folder in this.Doc.SearchFolders)
                             {
                                 
                                 if (folder.SameDirectoryLocation(fi.Directory.FullName))
@@ -324,7 +324,7 @@ namespace TVRename
                     logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
 
                     t += ".  More information is available in the log file";
-                    if ((!this.mDoc.Args.Unattended) && (!this.mDoc.Args.Hide)) MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!this.Doc.Args.Unattended) && (!this.Doc.Args.Hide)) MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                     t = "DirectoryName " + dce.TheFile.DirectoryName + ", File name: " + dce.TheFile.Name;
                     t += matched ? ", matched.  " : ", no match.  ";
