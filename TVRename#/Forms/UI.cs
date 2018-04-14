@@ -3053,6 +3053,8 @@ namespace TVRename
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
                 string refinedHint = RemoveSeriesEpisodeIndicators(hint);
 
+                if (string.IsNullOrWhiteSpace(refinedHint)) continue;
+
                 logger.Info("****************");
                 logger.Info("Auto Adding New Show");
                 this.MoreBusy();
