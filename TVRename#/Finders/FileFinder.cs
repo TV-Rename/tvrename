@@ -266,6 +266,7 @@ namespace TVRename
                                 if (!me.Episode.SI.SeasonRules.ContainsKey(seasF)) me.Episode.SI.SeasonRules[seasF] = new List<ShowRule>();
 
                                 me.Episode.SI.SeasonRules[seasF].Add(sr);
+                                logger.Info($"Looking at {me.Episode.SI.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF } have been merged into one file {dce.TheFile.FullName}");
                                 logger.Info($"Added new rule automatically for {sr}");
 
                                 //Regenerate the episodes with the new rule added

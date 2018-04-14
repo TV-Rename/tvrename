@@ -70,7 +70,7 @@ namespace TVRename
 
         public override string ToString()
         {
-            return $"ShowRule: {ActionInWords()} with parameters {this.First}, {this.Second} and usertest: {this.UserSuppliedText}";
+            return $"ShowRule: {ActionInWords()} with parameters {this.First}, {this.Second} and usertext: {this.UserSuppliedText}";
         }
 
         public void SetToDefaults()
