@@ -2,9 +2,10 @@ namespace TVRename
 {
     internal abstract class Finder
     {
-        protected ItemList TheActionList;
         protected bool ActionCancel = false;
         protected readonly TVDoc Doc;
+
+        public ItemList ActionList { get; internal set; }
 
         protected Finder(TVDoc doc)
         {
@@ -19,8 +20,6 @@ namespace TVRename
         public abstract bool Active();
 
         public abstract FinderDisplayType DisplayType();
-
-        public void SetActionList(ItemList actionList) { this.TheActionList = actionList; }
 
         public void Interrupt() {
             this.ActionCancel = true; }

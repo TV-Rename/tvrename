@@ -2688,22 +2688,20 @@ namespace TVRename
 
                     foreach (Finder f in Finders)
                     {
-                        if (f.Active())
-                        {
-                            f.SetActionList(this.TheActionList);
+                        if (!f.Active()) continue;
+                        f.ActionList= this.TheActionList;
 
-                            switch (f.DisplayType())
-                            {
-                                case Finder.FinderDisplayType.Local:
-                                    activeLocalFinders++;
-                                    break;
-                                case Finder.FinderDisplayType.Downloading:
-                                    activeDownloadingFinders++;
-                                    break;
-                                case Finder.FinderDisplayType.RSS:
-                                    activeRSSFinders++;
-                                    break;
-                            }
+                        switch (f.DisplayType())
+                        {
+                            case Finder.FinderDisplayType.Local:
+                                activeLocalFinders++;
+                                break;
+                            case Finder.FinderDisplayType.Downloading:
+                                activeDownloadingFinders++;
+                                break;
+                            case Finder.FinderDisplayType.RSS:
+                                activeRSSFinders++;
+                                break;
                         }
                     }
 
@@ -2711,7 +2709,7 @@ namespace TVRename
                     int currentRSSFinderId = 0;
                     int currentDownloadingFinderId = 0;
 
-                    foreach (Finder f in Finders)
+                    foreach (Finder f in this.Finders)
                     {
                         if (this.ActionCancel)
                         {
@@ -2721,31 +2719,31 @@ namespace TVRename
                         if (f.Active() && this.ListHasMissingItems(this.TheActionList))
                         {
 
-                            int startPos = 0;
-                            int endpos = 0;
+                            int startPos;
+                            int endPos;
 
                             switch (f.DisplayType())
                             {
                                 case Finder.FinderDisplayType.Local:
                                     currentLocalFinderId++;
                                     startPos = 100 * (currentLocalFinderId - 1) / activeLocalFinders;
-                                    startPos = 100 * (currentLocalFinderId) / activeLocalFinders;
+                                    endPos = 100 * (currentLocalFinderId) / activeLocalFinders;
                                     f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.LocalSearchProg,
-                                        startPos, endpos);
+                                        startPos, endPos);
                                     break;
                                 case Finder.FinderDisplayType.Downloading:
                                     currentDownloadingFinderId++;
                                     startPos = 100 * (currentDownloadingFinderId - 1) / activeDownloadingFinders;
-                                    startPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
+                                    endPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
                                     f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.DownloadingProg,
-                                        startPos, endpos);
+                                        startPos, endPos);
                                     break;
                                 case Finder.FinderDisplayType.RSS:
                                     currentRSSFinderId++;
                                     startPos = 100 * (currentRSSFinderId - 1) / activeRSSFinders;
-                                    startPos = 100 * (currentRSSFinderId) / activeRSSFinders;
+                                    endPos = 100 * (currentRSSFinderId) / activeRSSFinders;
                                     f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.RSSProg, startPos,
-                                        endpos);
+                                        endPos);
                                     break;
                             }
 

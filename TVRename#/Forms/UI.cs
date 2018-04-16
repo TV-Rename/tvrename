@@ -3036,10 +3036,19 @@ namespace TVRename
             {
                 //MessageBox.Show($"Search for {hint}");
                 //if hint doesn't match existing added shows
-                if (LookForSeries(hint, addedShows)) continue;
+                if (LookForSeries(hint, addedShows)) { logger.Info($"Ignoring {hint} as it matches existing shows."); continue;}
 
                 //If the hint contains certain terms then we'll ignore it
-                if (IgnoreHint(hint)) continue;
+                if (IgnoreHint(hint)) { logger.Info($"Ignoring {hint} as it is in the ignore list."); continue;}
+
+                //Remove anything we can from hint to make it cleaner and hence more likely to match
+                string refinedHint = RemoveSeriesEpisodeIndicators(hint);
+
+                if (string.IsNullOrWhiteSpace(refinedHint))
+                {
+                    logger.Info($"Ignoring {hint} as it refines to nothing.");
+                    continue;
+                }
 
                 //If there are no LibraryFolders then we cant use the simplified UI
                 if (TVSettings.Instance.LibraryFoldersNames.Count == 0)
@@ -3049,11 +3058,6 @@ namespace TVRename
                         "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
-                //Remove anything we can from hint to make it cleaner and hence more likely to match
-                string refinedHint = RemoveSeriesEpisodeIndicators(hint);
-
-                if (string.IsNullOrWhiteSpace(refinedHint)) continue;
 
                 logger.Info("****************");
                 logger.Info("Auto Adding New Show");
