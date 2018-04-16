@@ -61,11 +61,17 @@ namespace TVRename
                     }
                 }
 
-                if ((numberMatched == 1) &&(!OtherActionsMatch(matchedFile,me,this.ActionList)))
+                if (numberMatched == 1 )
                 {
-                    toRemove.Add(action1);
-                    newList.AddRange(thisRound);
+                    if (!OtherActionsMatch(matchedFile, me, this.ActionList))
+                    {
+                        toRemove.Add(action1);
+                        newList.AddRange(thisRound);
+                    }
+                    else logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile.TheFile.FullName} as there are multiple actions for that file");
                 }
+                else if (numberMatched>1) { logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile.TheFile.FullName} as there are multiple files for that action");}
+
             }
 
             if (TVSettings.Instance.KeepTogether)
