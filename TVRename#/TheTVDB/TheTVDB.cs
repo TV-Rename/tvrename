@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using System.Xml;
 using System.Linq;
 using System.IO;
+using System.Threading.Tasks;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -738,7 +739,7 @@ namespace TVRename
 
             this.Say("Processing Updates from TVDB");
 
-            foreach (JObject jsonResponse in updatesResponses)
+            Parallel.ForEach(updatesResponses, jsonResponse =>
             {
                 // if updatetime > localtime for item, then remove it, so it will be downloaded later
                 try
@@ -781,7 +782,8 @@ namespace TVRename
                                     episodeResponses.Add(jsonEpisodeResponse);
                                     int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
 
-                                    logger.Info($"Page {pageNumber} of {this.Series[id].Name} had {numberOfResponses} episodes listed");
+                                    logger.Info(
+                                        $"Page {pageNumber} of {this.Series[id].Name} had {numberOfResponses} episodes listed");
                                     if (numberOfResponses < 100)
                                     {
                                         morePages = false;
@@ -863,12 +865,12 @@ namespace TVRename
                 }
                 catch (InvalidCastException ex)
                 {
-                    logger.Error("Did not recieve the expected format of json from {0}.",uri);
+                    logger.Error("Did not recieve the expected format of json from {0}.", uri);
                     logger.Error(ex);
                     logger.Error(jsonResponse["data"].ToString());
 
                 }
-            }
+            });
 
             this.Say("Upgrading dirty locks");
 
@@ -1311,15 +1313,15 @@ namespace TVRename
                 }
             }
 
-            foreach (JObject response in episodeResponses)
+            Parallel.ForEach(episodeResponses, response =>
             {
                 try
                 {
-                    foreach (JObject episodeData in response["data"])
+                    Parallel.ForEach(response["data"], episodeData =>
                     {
-                    //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                    this.DownloadEpisodeNow(code, (int)episodeData["id"]);
-                    }
+                        //The episode does not contain enough data (specifically image filename), so we'll get the full version
+                        this.DownloadEpisodeNow(code, (int) episodeData["id"]);
+                    });
                 }
                 catch (InvalidCastException ex)
                 {
@@ -1328,7 +1330,7 @@ namespace TVRename
                     logger.Error(jsonResponse["data"].ToString());
 
                 }
-            }
+            });
 
 
             List<JObject> bannerResponses = new List<JObject>();
@@ -1593,12 +1595,12 @@ namespace TVRename
             }
 
             this.LockEE();
-            foreach (ExtraEp ee in this.ExtraEpisodes)
+            Parallel.ForEach(this.ExtraEpisodes, ee =>
             {
-                if ((ee.SeriesID != code) || (ee.Done)) continue;
+                if (ee.SeriesID != code || ee.Done) return;
                 ok = this.DownloadEpisodeNow(ee.SeriesID, ee.EpisodeID) && ok;
                 ee.Done = true;
-            }
+            });
             this.UnlockEE();
 
             this.ForceReloadOn.Remove(code);
