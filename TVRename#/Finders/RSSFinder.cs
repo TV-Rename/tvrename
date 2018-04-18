@@ -9,21 +9,15 @@ namespace TVRename
     {
         public RSSFinder(TVDoc i) : base(i) { }
 
-        public override bool Active()
-        {
-            return TVSettings.Instance.SearchRSS;
-        }
+        public override bool Active() => TVSettings.Instance.SearchRSS;
 
-        public override Finder.FinderDisplayType DisplayType()
-        {
-            return FinderDisplayType.RSS;
-        }
+        public override Finder.FinderDisplayType DisplayType() => FinderDisplayType.RSS;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
-            int c = this.TheActionList.Count + 2;
+            int c = this.ActionList.Count + 2;
             int n = 1;
-            prog.Invoke(100 * n / c);
+            prog.Invoke(startpct);
             RSSItemList RSSList = new RSSItemList();
             foreach (string s in TVSettings.Instance.RSSURLs)
                 RSSList.DownloadRSS(s, TVSettings.Instance.FNPRegexs);
@@ -31,13 +25,12 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (Item Action1 in this.TheActionList)
+            foreach (Item Action1 in this.ActionList)
             {
                 if (this.ActionCancel)
                     return;
 
-                n++;
-                prog.Invoke(100 * n / c);
+                prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
 
                 if (!(Action1 is ItemMissing))
                     continue;
@@ -58,12 +51,12 @@ namespace TVRename
                 }
             }
             foreach (Item i in toRemove)
-                this.TheActionList.Remove(i);
+                this.ActionList.Remove(i);
 
             foreach (Item Action in newItems)
-                this.TheActionList.Add(Action);
+                this.ActionList.Add(Action);
 
-            prog.Invoke(100);
+            prog.Invoke(totPct);
 
         }
     

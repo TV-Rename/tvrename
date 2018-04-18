@@ -2952,7 +2952,7 @@ namespace TVRename
         {
             this.tabControl1.SelectedTab = this.tbAllInOne;
             this.Scan(null, unattended);
-            this.mDoc.ExportMissingXML(); //Save missing shows to XML
+            this.mDoc.ExportMissingXML(TVSettings.ScanType.Full ); //Save missing shows to XML
         }
 
         public void QuickScan()
@@ -3036,10 +3036,19 @@ namespace TVRename
             {
                 //MessageBox.Show($"Search for {hint}");
                 //if hint doesn't match existing added shows
-                if (LookForSeries(hint, addedShows)) continue;
+                if (LookForSeries(hint, addedShows)) { logger.Info($"Ignoring {hint} as it matches existing shows."); continue;}
 
                 //If the hint contains certain terms then we'll ignore it
-                if (IgnoreHint(hint)) continue;
+                if (IgnoreHint(hint)) { logger.Info($"Ignoring {hint} as it is in the ignore list."); continue;}
+
+                //Remove anything we can from hint to make it cleaner and hence more likely to match
+                string refinedHint = RemoveSeriesEpisodeIndicators(hint);
+
+                if (string.IsNullOrWhiteSpace(refinedHint))
+                {
+                    logger.Info($"Ignoring {hint} as it refines to nothing.");
+                    continue;
+                }
 
                 //If there are no LibraryFolders then we cant use the simplified UI
                 if (TVSettings.Instance.LibraryFoldersNames.Count == 0)
@@ -3049,9 +3058,6 @@ namespace TVRename
                         "Can't Auto Add Show", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
-                //Remove anything we can from hint to make it cleaner and hence more likely to match
-                string refinedHint = RemoveSeriesEpisodeIndicators(hint);
 
                 logger.Info("****************");
                 logger.Info("Auto Adding New Show");
@@ -3175,6 +3181,7 @@ namespace TVRename
             this.LessBusy();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
+            this.mDoc.ExportMissingXML(TVSettings.ScanType.Quick); //Save missing shows to XML
         }
 
 

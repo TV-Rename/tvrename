@@ -6,20 +6,13 @@ using System.Linq;
 
 namespace TVRename
 {
-    class uTorrentFinder:Finder
+    // ReSharper disable once InconsistentNaming
+    internal class uTorrentFinder:Finder
     {
         public uTorrentFinder(TVDoc i) : base(i) { }
-
-        public override bool Active()
-        {
-            return TVSettings.Instance.CheckuTorrent;
-        }
-
-        public override Finder.FinderDisplayType DisplayType()
-        {
-            return FinderDisplayType.Downloading;
-        }
-
+        public override bool Active() => TVSettings.Instance.CheckuTorrent;
+        public override FinderDisplayType DisplayType() =>FinderDisplayType.Downloading;
+        
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             // get list of files being downloaded by uTorrent
@@ -35,22 +28,19 @@ namespace TVRename
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = this.TheActionList.Count + 2;
+            int c = this.ActionList.Count + 2;
             int n = 1;
-            prog.Invoke(startpct + totPct * n / c);
-            foreach (Item Action1 in this.TheActionList)
+            prog.Invoke(startpct);            
+            foreach (Item action1 in this.ActionList)
             {
                 if (this.ActionCancel)
                     return;
 
-                n++;
-                prog.Invoke(100 * n / c);
+                prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
 
-                if (!(Action1 is ItemMissing))
+
+                if (!(action1 is ItemMissing action))
                     continue;
-
-                ItemMissing Action = (ItemMissing)(Action1);
-
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -59,14 +49,14 @@ namespace TVRename
                         continue;
 
                     //do any of the possible names for the series match the filename?
-                    Boolean matched = (Action.Episode.SI.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
+                    bool matched = (action.Episode.SI.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
 
                     if (!matched) continue;
 
-                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int maxEp, Action.Episode.SI) && (seasF == Action.Episode.AppropriateSeasonNumber) && (epF == Action.Episode.AppropriateEpNum))
+                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int maxEp, action.Episode.SI) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {
-                        toRemove.Add(Action1);
-                        newList.Add(new ItemuTorrenting(te, Action.Episode, Action.TheFileNoExt));
+                        toRemove.Add(action1);
+                        newList.Add(new ItemuTorrenting(te, action.Episode, action.TheFileNoExt));
                         break;
                     }
 
@@ -74,12 +64,12 @@ namespace TVRename
             }
 
             foreach (Item i in toRemove)
-                this.TheActionList.Remove(i);
+                this.ActionList.Remove(i);
 
-            foreach (Item Action in newList)
-                this.TheActionList.Add(Action);
+            foreach (Item action in newList)
+                this.ActionList.Add(action);
 
-            prog.Invoke(startpct + totPct);
+            prog.Invoke(totPct);
 
         }
     }

@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System.Globalization;
+
 namespace TVRename
 {
     using System;
@@ -65,7 +68,7 @@ namespace TVRename
                     writer.WriteEndElement();
 
                     //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
-                    float siteRating = float.Parse(this.Episode.EpisodeRating) * 10;
+                    float siteRating = float.Parse(this.Episode.EpisodeRating, new CultureInfo("en-US")) * 10;
                     int intSiteRating = (int)siteRating;
                     if (intSiteRating > 0) XMLHelper.WriteElementToXML(writer, "rating", intSiteRating);
 
@@ -180,7 +183,7 @@ namespace TVRename
 
 
                     //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
-                    float siteRating = float.Parse(this.SI.TheSeries().GetSiteRating()) * 10;
+                    float siteRating = float.Parse(this.SI.TheSeries().GetSiteRating(), new CultureInfo("en-US")) * 10;
                     int intSiteRating = (int)siteRating;
                     if (intSiteRating > 0) XMLHelper.WriteElementToXML(writer, "rating", intSiteRating);
 

@@ -60,7 +60,11 @@ namespace TVRename
             {
                 if (this.WhereFile != null)
                 {
+                    bool priorFileReadonly = this.WhereFile.IsReadOnly;
+                    if (priorFileReadonly) this.WhereFile.IsReadOnly = false;
                     System.IO.File.SetLastWriteTimeUtc(this.WhereFile.FullName, this.updateTime);
+                    if (priorFileReadonly) this.WhereFile.IsReadOnly = true;
+
                 }
                 if (this.WhereDirectory != null)
                 {

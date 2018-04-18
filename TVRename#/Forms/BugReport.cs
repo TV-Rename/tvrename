@@ -30,7 +30,7 @@ namespace TVRename
         public BugReport(TVDoc doc)
         {
             this.mDoc = doc;
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         private void bnCreate_Click(object sender, System.EventArgs e)
@@ -92,7 +92,7 @@ namespace TVRename
 
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
-                    foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                    foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
                         int snum = kvp.Key;
                         if (((snum == 0) && (si.CountSpecials)) || !si.AllFolderLocations().ContainsKey(snum))

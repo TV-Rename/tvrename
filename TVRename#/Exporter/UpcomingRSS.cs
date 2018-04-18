@@ -4,7 +4,8 @@ using System.Xml;
 
 namespace TVRename
 {
-    class UpcomingRSS :UpcomingExporter
+    // ReSharper disable once InconsistentNaming
+    internal class UpcomingRSS :UpcomingExporter
     {
         public UpcomingRSS(TVDoc i) : base(i) { }
         public override bool Active() =>TVSettings.Instance.ExportWTWRSS;

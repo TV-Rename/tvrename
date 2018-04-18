@@ -1449,16 +1449,22 @@ namespace TVRename
             return true;
         }
 
-        public void ExportMissingXML()
+        public void ExportMissingXML(TVSettings.ScanType st)
         {
-            MissingXML mx = new MissingXML();
-            mx.Run(TheActionList);
+
+                List<ActionListExporter> lup = new List<ActionListExporter> { new MissingXML(TheActionList),new MissingCSV(this.TheActionList),new CopyMoveXML(this.TheActionList),new RenamingXML(this.TheActionList) };
+
+
+                foreach (ActionListExporter ue in lup)
+                {
+                    if (ue.Active() && ue.ApplicableFor(st)) { ue.Run(); }
+                }
         }
 
         public void ExportShowInfo()
         {
-            ShowsTXT mx = new ShowsTXT();
-            mx.Run(this.ShowItems);
+            ShowsTXT mx = new ShowsTXT(this.ShowItems);
+            mx.Run();
         }
 
         public List<ProcessedEpisode> NextNShows(int nShows, int nDaysPast, int nDaysFuture)
@@ -1519,10 +1525,8 @@ namespace TVRename
 
         public void WriteUpcoming()
         {
-            List<UpcomingExporter> lup = new List<UpcomingExporter>();
+            List<UpcomingExporter> lup = new List<UpcomingExporter> {new UpcomingRSS(this), new UpcomingXML(this)};
 
-            lup.Add(new UpcomingRSS(this));
-            lup.Add(new UpcomingXML(this));
 
             foreach (UpcomingExporter ue in lup)
             {
@@ -1577,17 +1581,17 @@ namespace TVRename
 
             foreach (Item sli in theList)
             {
-                Action action = sli as Action;
-
-                if (action == null)
+                if (!(sli is Action action))
                     continue; // skip non-actions
 
-                if ((action is ActionWriteMetadata) || (action is ActionDateTouch )) // base interface that all metadata actions are derived from
+                if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownloadImage) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
                 else if (action is ActionCopyMoveRename)
                     queues[(action as ActionCopyMoveRename).QuickOperation() ? 1 : 0].Actions.Add(action);
+                else if (action is ActionDateTouch) // add these after the slow copy operations
+                    queues[0].Actions.Add(action);
                 else if ((action is ActionDeleteFile) || (action is ActionDeleteDirectory))
                     queues[1].Actions.Add(action);
                 else
@@ -1602,7 +1606,7 @@ namespace TVRename
             return queues;
         }
 
-        public void ActionProcessor(Object queuesIn)
+        private void ActionProcessor(object queuesIn)
         {
 #if DEBUG
             System.Diagnostics.Debug.Assert(queuesIn is ActionQueue[]);
@@ -1792,7 +1796,7 @@ namespace TVRename
             Thread actionWork = new Thread(this.ScanWorker) {Name = "ActionWork"};
 
             this.ActionCancel = false;
-            foreach (Finder f in Finders) { f.reset(); }
+            foreach (Finder f in Finders) { f.Reset(); }
 
             if (!this.Args.Hide)
             {
@@ -1810,7 +1814,7 @@ namespace TVRename
             {
                 this.ActionCancel = true;
                 actionWork.Interrupt();
-                foreach (Finder f in Finders) { f.interrupt(); }
+                foreach (Finder f in Finders) { f.Interrupt(); }
             }
             else
                 actionWork.Join();
@@ -2684,22 +2688,20 @@ namespace TVRename
 
                     foreach (Finder f in Finders)
                     {
-                        if (f.Active())
-                        {
-                            f.setActionList(this.TheActionList);
+                        if (!f.Active()) continue;
+                        f.ActionList= this.TheActionList;
 
-                            switch (f.DisplayType())
-                            {
-                                case Finder.FinderDisplayType.Local:
-                                    activeLocalFinders++;
-                                    break;
-                                case Finder.FinderDisplayType.Downloading:
-                                    activeDownloadingFinders++;
-                                    break;
-                                case Finder.FinderDisplayType.RSS:
-                                    activeRSSFinders++;
-                                    break;
-                            }
+                        switch (f.DisplayType())
+                        {
+                            case Finder.FinderDisplayType.Local:
+                                activeLocalFinders++;
+                                break;
+                            case Finder.FinderDisplayType.Downloading:
+                                activeDownloadingFinders++;
+                                break;
+                            case Finder.FinderDisplayType.RSS:
+                                activeRSSFinders++;
+                                break;
                         }
                     }
 
@@ -2707,7 +2709,7 @@ namespace TVRename
                     int currentRSSFinderId = 0;
                     int currentDownloadingFinderId = 0;
 
-                    foreach (Finder f in Finders)
+                    foreach (Finder f in this.Finders)
                     {
                         if (this.ActionCancel)
                         {
@@ -2717,31 +2719,31 @@ namespace TVRename
                         if (f.Active() && this.ListHasMissingItems(this.TheActionList))
                         {
 
-                            int startPos = 0;
-                            int endpos = 0;
+                            int startPos;
+                            int endPos;
 
                             switch (f.DisplayType())
                             {
                                 case Finder.FinderDisplayType.Local:
                                     currentLocalFinderId++;
                                     startPos = 100 * (currentLocalFinderId - 1) / activeLocalFinders;
-                                    startPos = 100 * (currentLocalFinderId) / activeLocalFinders;
+                                    endPos = 100 * (currentLocalFinderId) / activeLocalFinders;
                                     f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.LocalSearchProg,
-                                        startPos, endpos);
+                                        startPos, endPos);
                                     break;
                                 case Finder.FinderDisplayType.Downloading:
                                     currentDownloadingFinderId++;
                                     startPos = 100 * (currentDownloadingFinderId - 1) / activeDownloadingFinders;
-                                    startPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
+                                    endPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
                                     f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.DownloadingProg,
-                                        startPos, endpos);
+                                        startPos, endPos);
                                     break;
                                 case Finder.FinderDisplayType.RSS:
                                     currentRSSFinderId++;
                                     startPos = 100 * (currentRSSFinderId - 1) / activeRSSFinders;
-                                    startPos = 100 * (currentRSSFinderId) / activeRSSFinders;
+                                    endPos = 100 * (currentRSSFinderId) / activeRSSFinders;
                                     f.Check(this.ScanProgDlg == null ? noProgress : this.ScanProgDlg.RSSProg, startPos,
-                                        endpos);
+                                        endPos);
                                     break;
                             }
 

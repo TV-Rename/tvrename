@@ -26,7 +26,7 @@ namespace TVRename
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || String.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
-                prog.Invoke(startpct + totPct);
+                prog.Invoke(totPct);
                 return;
             }
 
@@ -50,7 +50,7 @@ namespace TVRename
 
             if (r == null)
             {
-                prog.Invoke(startpct + totPct);
+                prog.Invoke(totPct);
                 return;
             }
 
@@ -60,7 +60,7 @@ namespace TVRename
                 if (res != null && res.status == "False")
                 {
                     logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
-                    prog.Invoke(startpct + totPct);
+                    prog.Invoke(totPct);
                     return;
                 }
             }
@@ -77,7 +77,7 @@ namespace TVRename
             catch (Exception e)
             {
                 logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
-                prog.Invoke(startpct + totPct);
+                prog.Invoke(totPct);
                 return;
             }
 
@@ -87,16 +87,16 @@ namespace TVRename
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = this.TheActionList.Count + 2;
+            int c = this.ActionList.Count + 2;
             int n = 1;
 
-            foreach (Item Action1 in this.TheActionList)
+            foreach (Item Action1 in this.ActionList)
             {
                 if (this.ActionCancel)
                     return;
 
-                n++;
-                prog.Invoke(startpct + totPct * n / c);
+                prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
+
 
                 if (!(Action1 is ItemMissing))
                     continue;
@@ -124,12 +124,12 @@ namespace TVRename
             }
 
             foreach (Item i in toRemove)
-                this.TheActionList.Remove(i);
+                this.ActionList.Remove(i);
 
             foreach (Item Action in newList)
-                this.TheActionList.Add(Action);
+                this.ActionList.Add(Action);
 
-            prog.Invoke(startpct + totPct);
+            prog.Invoke(totPct);
         }
 
     }
