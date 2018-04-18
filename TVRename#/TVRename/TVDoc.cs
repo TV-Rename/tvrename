@@ -1581,17 +1581,17 @@ namespace TVRename
 
             foreach (Item sli in theList)
             {
-                Action action = sli as Action;
-
-                if (action == null)
+                if (!(sli is Action action))
                     continue; // skip non-actions
 
-                if ((action is ActionWriteMetadata) || (action is ActionDateTouch )) // base interface that all metadata actions are derived from
+                if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownloadImage) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
                 else if (action is ActionCopyMoveRename)
                     queues[(action as ActionCopyMoveRename).QuickOperation() ? 1 : 0].Actions.Add(action);
+                else if (action is ActionDateTouch) // add these after the slow copy operations
+                    queues[0].Actions.Add(action);
                 else if ((action is ActionDeleteFile) || (action is ActionDeleteDirectory))
                     queues[1].Actions.Add(action);
                 else
@@ -1606,7 +1606,7 @@ namespace TVRename
             return queues;
         }
 
-        public void ActionProcessor(Object queuesIn)
+        private void ActionProcessor(object queuesIn)
         {
 #if DEBUG
             System.Diagnostics.Debug.Assert(queuesIn is ActionQueue[]);
