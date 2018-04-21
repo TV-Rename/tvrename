@@ -257,11 +257,7 @@ namespace TVRename
 
             try
             {
-                if (!dce.HasUsefulExtension_NotOthersToo) // not a useful file extension
-                    return false;
-                if (TVSettings.Instance.IgnoreSamples && dce.LowerName.Contains("sample") &&
-                    ((dce.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
-                    return false;
+                if (FileHelper.IgnoreFile(dce.TheFile))return false;
 
                 //do any of the possible names for the series match the filename?
                 matched = (me.Episode.SI.getSimplifiedPossibleShowNames()
@@ -269,11 +265,7 @@ namespace TVRename
 
                 if (matched)
                 {
-                    if (dce.LowerName.StartsWith("-.") && (dce.Length / 1024 < 10))
-                    {
-                        logger.Info($"Ignoring matched file {dce.TheFile.FullName} as it looks like a Mac Temp File");
-                        return false;
-                    }
+
 
                     if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.SI) && (seasF == season) &&
                          (epF == epnum)) ||
