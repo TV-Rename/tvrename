@@ -42,36 +42,35 @@ namespace TVRename
             
             if (this.cbSettings.Checked)
             {
-                txt.Append("==== Settings Files ====" + "\r\n");
-                txt.Append("\r\n");
-                txt.Append("---- TVRenameSettings.xml" + "\r\n");
-                txt.Append("\r\n");
+                txt.AppendLine("==== Settings Files ====" );
+                txt.AppendLine();
+                txt.AppendLine("---- TVRenameSettings.xml" );
+                txt.AppendLine();
                 try
                 {
                     using (StreamReader sr = new StreamReader(PathManager.TVDocSettingsFile.FullName))
-                        txt.Append(sr.ReadToEnd());
+                        txt.AppendLine(sr.ReadToEnd());
                     
-                    txt.Append("\r\n");
                 }
                 catch
                 {
-                    txt.Append("Error reading TVRenameSettings.xml\r\n");
+                    txt.AppendLine("Error reading TVRenameSettings.xml");
                 }
-                txt.Append("\r\n");
+                txt.AppendLine("");
             }
 
             if (this.cbFOScan.Checked || this.cbFolderScan.Checked)
             {
-                txt.Append("==== Filename processors ====\r\n");
+                txt.AppendLine("==== Filename processors ====");
                 foreach (FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
-                    txt.Append((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RE + "\" " + (s.UseFullPath ? "(FullPath)" : "") + "\r\n");
-                txt.Append("\r\n");
+                    txt.AppendLine((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RE + "\" " + (s.UseFullPath ? "(FullPath)" : "") );
+                txt.AppendLine();
             }
 
             if (this.cbFOScan.Checked)
             {
-                txt.Append("==== Finding & Organising Directory Scan ====" + "\r\n");
-                txt.Append("\r\n");
+                txt.AppendLine( "==== Finding & Organising Directory Scan ====");
+                txt.AppendLine();
 
                 DirCache dirC = new DirCache();
                 foreach (string efi in this.mDoc.SearchFolders)
@@ -80,15 +79,15 @@ namespace TVRename
                 foreach (DirCacheEntry fi in dirC)
                 {
                     bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, null);
-                    bool useful = fi.HasUsefulExtension_NotOthersToo;
-                    txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
+                    bool useful = TVSettings.Instance.UsefulExtension(fi.TheFile.Extension, false);
+                    txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" );
                 }
-                txt.Append("\r\n");
+                txt.AppendLine();
             }
 
             if (this.cbFolderScan.Checked)
             {
-                txt.Append("==== Media Folders Directory Scan ====" + "\r\n");
+                txt.AppendLine("==== Media Folders Directory Scan ====" );
 
                 foreach (ShowItem si in this.mDoc.GetShowItems(true))
                 {
@@ -100,26 +99,26 @@ namespace TVRename
 
                         foreach (string folder in si.AllFolderLocations()[snum])
                         {
-                            txt.Append(si.TVDBCode + " : " + si.ShowName + " : S" + snum + "\r\n");
-                            txt.Append("Folder: " + folder);
-                            txt.Append("\r\n");
+                            txt.AppendLine(si.TVDBCode + " : " + si.ShowName + " : S" + snum );
+                            txt.AppendLine("Folder: " + folder);
+                            
                             DirCache files = new DirCache();
                             if (Directory.Exists(folder))
                                 files.AddFolder(null, 0, 0, folder, true);
                             foreach (DirCacheEntry fi in files)
                             {
                                 bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);
-                                bool useful = fi.HasUsefulExtension_NotOthersToo;
-                                txt.Append(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" + "\r\n");
+                                bool useful = TVSettings.Instance.UsefulExtension(fi.TheFile.Extension, false); 
+                                txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" );
                             }
-                            txt.Append("\r\n");
+                            txt.AppendLine();
                         }
                     }
-                    txt.Append("\r\n");
+                    txt.AppendLine();
                 }
                 this.mDoc.UnlockShowItems();
 
-                txt.Append("\r\n");
+                txt.AppendLine();
             }
 
             this.txtEmailText.Text = txt.ToString();
