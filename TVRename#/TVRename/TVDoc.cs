@@ -1449,7 +1449,7 @@ namespace TVRename
             return true;
         }
 
-        public void ExportMissingXML(TVSettings.ScanType st)
+        public void OutputActionXML(TVSettings.ScanType st)
         {
 
                 List<ActionListExporter> lup = new List<ActionListExporter> { new MissingXML(TheActionList),new MissingCSV(this.TheActionList),new CopyMoveXML(this.TheActionList),new RenamingXML(this.TheActionList) };
