@@ -32,8 +32,9 @@ namespace TVRename.App
             if (args.Contains("/?", StringComparer.OrdinalIgnoreCase))
             {
                 Logger.Info(CommandLineArgs.Helptext());
-                Console.WriteLine(CommandLineArgs.Helptext());
-            }
+                Console.Out.WriteLine(CommandLineArgs.Helptext());
+                return;
+            } 
             // Check if an application instance is already running
             Mutex mutex = new Mutex(true, "TVRename", out bool newInstance);
 
