@@ -125,8 +125,16 @@ namespace TVRename
                 return;
 
             //if there are sub-directories then we shouldn't remove this one
-            if (di.GetDirectories().Length > 0)
-                return;
+            DirectoryInfo[] directories = di.GetDirectories();
+            foreach (DirectoryInfo subdi in directories)
+            {
+                bool okToDelete = this.Tidyup.EmptyIgnoreWordsArray.Any(word => subdi.Name.Contains(word,StringComparison.OrdinalIgnoreCase));
+
+                if (!okToDelete)
+                    return;
+            }
+            //we know that each subfolder is OK to delete
+
 
             //if the directory is the root download folder do not delete
             if (TVSettings.Instance.DownloadFoldersNames.Contains(di.FullName))
@@ -141,7 +149,7 @@ namespace TVRename
             if (files.Length == 0)
             {
                 // its empty, so just delete it
-                di.Delete();
+                DeleteOrRecycleFolder(di);
                 return;
             }
 
@@ -158,7 +166,7 @@ namespace TVRename
                     continue; // onto the next file
 
                 // look in the filename
-                if (this.Tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word)))
+                if (this.Tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word,StringComparison.OrdinalIgnoreCase)))
                     okToDelete = true;
 
                 if (!okToDelete)

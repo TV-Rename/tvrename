@@ -243,7 +243,8 @@ namespace TVRename
         {
             Full,
             Recent,
-            Quick
+            Quick,
+            SingleShow
         }
 
         #endregion

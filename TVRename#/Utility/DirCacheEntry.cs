@@ -13,10 +13,7 @@ namespace TVRename
 {
     public class DirCacheEntry
     {
-        public bool HasUsefulExtension_NotOthersToo;
-        public bool HasUsefulExtension_OthersToo;
         public Int64 Length;
-        public string LowerName;
         public string SimplifiedFullName;
         public FileInfo TheFile;
 
@@ -24,14 +21,7 @@ namespace TVRename
         {
             this.TheFile = f;
             this.SimplifiedFullName = Helpers.SimplifyName(f.FullName);
-            this.LowerName = f.Name.ToLower();
             this.Length = f.Length;
-
-            if (TVSettings.Instance == null)
-                return;
-
-            this.HasUsefulExtension_NotOthersToo = TVSettings.Instance.UsefulExtension(f.Extension, false);
-            this.HasUsefulExtension_OthersToo = this.HasUsefulExtension_NotOthersToo | TVSettings.Instance.UsefulExtension(f.Extension, true);
         }
     }
 }

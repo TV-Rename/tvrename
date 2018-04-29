@@ -392,6 +392,22 @@ namespace TVRename
             return directoryName;
 
         }
+
+        public static bool IgnoreFile(FileInfo fi)
+        {
+            if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                return true; // move on
+
+            if (TVSettings.Instance.IgnoreSamples &&
+                Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
+                ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                return true;
+
+            if (fi.Name.StartsWith("-.") && (fi.Length / 1024 < 10)) return true;
+
+
+            return false;
+        }
     }
 
     public static class HTTPHelper

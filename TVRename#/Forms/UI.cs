@@ -1314,6 +1314,7 @@ namespace TVRename
                     break;
                 case TVSettings.WTWDoubleClickAction.Scan:
                     this.Scan(new List<ShowItem> {ei.SI},false);
+                    this.mDoc.OutputActionXML(TVSettings.ScanType.SingleShow);
                     this.tabControl1.SelectTab(this.tbAllInOne);
                     break;
             }
@@ -1885,7 +1886,8 @@ namespace TVRename
                         {
                             this.Scan(mLastShowsClicked,false);
                             this.tabControl1.SelectTab(this.tbAllInOne);
-                        }
+                            this.mDoc.OutputActionXML(TVSettings.ScanType.SingleShow);
+                            }
 
                         break;
                     }
@@ -2952,7 +2954,7 @@ namespace TVRename
         {
             this.tabControl1.SelectedTab = this.tbAllInOne;
             this.Scan(null, unattended);
-            this.mDoc.ExportMissingXML(TVSettings.ScanType.Full ); //Save missing shows to XML
+            this.mDoc.OutputActionXML(TVSettings.ScanType.Full ); //Save missing shows to XML
         }
 
         public void QuickScan()
@@ -2969,6 +2971,7 @@ namespace TVRename
         public void RecentScan(bool unattended)
         {
             Scan(this.mDoc.getRecentShows(),unattended );
+            this.mDoc.OutputActionXML(TVSettings.ScanType.Recent);
         }
 
         private void Scan(List<ShowItem> shows,bool unattended)
@@ -3007,13 +3010,7 @@ namespace TVRename
 
                     FileInfo fi = new FileInfo(filePath);
 
-                    if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
-                        continue; // move on
-
-                    if (TVSettings.Instance.IgnoreSamples &&
-                        Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
-                        ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
-                        continue;
+                    if (FileHelper.IgnoreFile(fi)) continue;
 
                     if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
 
@@ -3181,7 +3178,7 @@ namespace TVRename
             this.LessBusy();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
-            this.mDoc.ExportMissingXML(TVSettings.ScanType.Quick); //Save missing shows to XML
+            this.mDoc.OutputActionXML(TVSettings.ScanType.Quick); //Save missing shows to XML
         }
 
 

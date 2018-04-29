@@ -1449,7 +1449,7 @@ namespace TVRename
             return true;
         }
 
-        public void ExportMissingXML(TVSettings.ScanType st)
+        public void OutputActionXML(TVSettings.ScanType st)
         {
 
                 List<ActionListExporter> lup = new List<ActionListExporter> { new MissingXML(TheActionList),new MissingCSV(this.TheActionList),new CopyMoveXML(this.TheActionList),new RenamingXML(this.TheActionList) };
@@ -2248,11 +2248,7 @@ namespace TVRename
 
                     FileInfo fi = new FileInfo(filePath);
 
-                    if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
-                        continue; // move on
-
-                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
-                        continue;
+                    if (FileHelper.IgnoreFile(fi)) continue;
 
                     List<ShowItem> matchingShows = new List<ShowItem>();
 
@@ -2979,11 +2975,7 @@ namespace TVRename
 
                     FileInfo fi = new FileInfo(filePath);
 
-                    if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
-                        continue; // move on
-
-                    if (TVSettings.Instance.IgnoreSamples && Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) && ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
-                        continue;
+                    if (FileHelper.IgnoreFile(fi)) continue;
 
                     foreach (ShowItem si in this.ShowItems)
                     {

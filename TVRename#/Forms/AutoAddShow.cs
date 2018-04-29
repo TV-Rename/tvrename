@@ -7,6 +7,7 @@ namespace TVRename.Forms
     {
         private readonly ShowItem mSI;
         private readonly TheTVDBCodeFinder mTCCF;
+        private readonly string originalHint;
 
         public AutoAddShow(string hint)
         {
@@ -25,6 +26,8 @@ namespace TVRename.Forms
             this.cbDirectory.Items.AddRange(TVSettings.Instance.LibraryFoldersNames.ToArray());
             this.cbDirectory.SelectedIndex = 0;
             this.cbDirectory.ResumeLayout();
+
+            this.originalHint = hint;
         }
 
         private void MTCCF_SelectionChanged(object sender, EventArgs e)
@@ -44,6 +47,7 @@ namespace TVRename.Forms
             this.mSI.PadSeasonToTwoDigits = true;
             //Set Default Timezone based on Network
             this.mSI.ShowTimeZone = TimeZone.TimeZoneForNetwork(this.mTCCF.SelectedShow()?.getNetwork());
+            if (!this.originalHint.Contains(this.mTCCF.SelectedShow().Name, StringComparison.OrdinalIgnoreCase)) this.mSI.AliasNames.Add(this.originalHint);
 
         }
 
