@@ -32,7 +32,19 @@ namespace TVRename.App
             if (args.Contains("/?", StringComparer.OrdinalIgnoreCase))
             {
                 Logger.Info(CommandLineArgs.Helptext());
-                Console.Out.WriteLine(CommandLineArgs.Helptext());
+
+                //redirect console output to parent process;
+                //must be before any calls to Console.WriteLine()
+                //MS: Never got this to work quite right - seems there is no simple way to output
+                //to the command line console if you are a winforms app
+                if (NativeMethods.AttachParentConsole())
+                {
+                    Console.WriteLine(CommandLineArgs.Helptext());
+                }
+                else
+                {
+                    Logger.Info("Could not attach to console");
+                }
                 return;
             } 
             // Check if an application instance is already running
