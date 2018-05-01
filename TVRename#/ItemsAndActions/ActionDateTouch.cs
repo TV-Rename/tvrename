@@ -48,7 +48,7 @@ namespace TVRename
 
         #region Action Members
 
-        public override string Name => "Touch Update Time";
+        public override string Name => "Update Timestamp";
 
         public override string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
 
