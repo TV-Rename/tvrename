@@ -69,14 +69,15 @@ namespace TVRename
         public static string Helptext()
         {
             StringBuilder output = new StringBuilder();
+            output.AppendLine();
             output.AppendLine("/scan will Tell TV Rename to run a scan");
             output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/doall Tell TV Rename execute all the actions it can.");
             output.AppendLine("/quit Tell a running TV Rename session to exit.");
             output.AppendLine("");
-            output.AppendLine("/hide will hide the UI");
-            output.AppendLine("/unattended same as /hide");
+            output.AppendLine("/hide will hide the UI for all UI elements");
+            output.AppendLine("/unattended will hide the UI for all blocking UI elements");
             output.AppendLine("");
             output.AppendLine("/recover will load a dialog box that enables the user to recover a prior TVDB.xml or TVRenameSettings.xml file");
             output.AppendLine("/userfilepath:BLAH  Sets a custom folder path for the settings files.");

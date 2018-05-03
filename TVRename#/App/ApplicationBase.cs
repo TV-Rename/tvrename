@@ -22,7 +22,7 @@ namespace TVRename.App
             this.SplashScreen = new TVRenameSplash();
 
             CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
-            if ((clargs.Unattended) || (clargs.Hide)) this.SplashScreen.Visible  = false;
+            if (clargs.Hide) this.SplashScreen.Visible  = false;
                 
         }
 
@@ -33,7 +33,7 @@ namespace TVRename.App
         protected override void OnCreateMainForm()
         {
             CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
-            if ((clargs.Unattended) || (clargs.Hide))
+            if (clargs.Hide)
                 this.SplashScreen.SafeInvoke(
                     () => ((TVRenameSplash)this.SplashScreen).Visible = false,true);
 

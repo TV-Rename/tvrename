@@ -2109,10 +2109,10 @@ namespace TVRename
                                 {
                                     try
                                     {
+                                        logger.Info("Creating directory as it is missing: {0}", folder);
                                         Directory.CreateDirectory(folder);
-                                        logger.Info("Creating directory as it is missing: {0}",folder);
                                     }
-                                    catch (System.IO.IOException ioe)
+                                    catch (Exception ioe)
                                     {
                                         logger.Info("Could not directory: {0}", folder);
                                         logger.Info(ioe);
