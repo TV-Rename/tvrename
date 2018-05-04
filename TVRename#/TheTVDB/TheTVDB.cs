@@ -751,7 +751,7 @@ namespace TVRename
                     {
 
                         int id = (int) series["id"];
-                        int time = (int) series["lastUpdated"];
+                        long time = (long) series["lastUpdated"];
 
                         if (this.Series.ContainsKey(id)) // this is a series we have
                         {
@@ -816,7 +816,7 @@ namespace TVRename
                                 {
                                     foreach (JObject episodeData in response["data"])
                                     {
-                                        long serverUpdateTime = (int) episodeData["lastUpdated"];
+                                        long serverUpdateTime = (long) episodeData["lastUpdated"];
                                         int serverEpisodeId = (int) episodeData["id"];
 
                                         bool found = false;
