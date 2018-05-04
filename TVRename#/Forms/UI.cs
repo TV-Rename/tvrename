@@ -3518,7 +3518,7 @@ namespace TVRename
             this.mLastActionsClicked = null;
 
             this.showRightClickMenu.Items.Clear();
-            this.mFoldersToOpen = new List<String>();
+            this.mFoldersToOpen = new List<string>();
             this.mLastFL = new List<FileInfo>();
 
             this.mLastActionsClicked = new ItemList();
@@ -3526,27 +3526,24 @@ namespace TVRename
             foreach (Item ai in lvr.FlatList)
                 this.mLastActionsClicked.Add(ai);
 
-            if ((lvr.Count == 1) && (this.lvAction.FocusedItem != null) && (this.lvAction.FocusedItem.Tag != null))
-            {
-                Item action = this.lvAction.FocusedItem.Tag as Item;
-                if (action != null)
-                {
-                    this.mLastEpClicked = action.Episode;
-                    if (action.Episode != null)
-                    {
-                        this.mLastSeasonClicked = action.Episode.AppropriateSeason;
-                        this.mLastShowsClicked = new List<ShowItem>() {action.Episode.SI};
-                    }
-                    else
-                    {
-                        this.mLastSeasonClicked = null;
-                        this.mLastShowsClicked = null;
-                    }
+            if ((lvr.Count != 1) || lvAction.FocusedItem?.Tag == null) return;
 
-                    if ((this.mLastEpClicked != null) && (TVSettings.Instance.AutoSelectShowInMyShows))
-                        this.GotoEpguideFor(this.mLastEpClicked, false);
-                }
+            if (!(this.lvAction.FocusedItem.Tag is Item action)) return;
+
+            this.mLastEpClicked = action.Episode;
+            if (action.Episode != null)
+            {
+                this.mLastSeasonClicked = action.Episode.AppropriateSeason;
+                this.mLastShowsClicked = new List<ShowItem>() {action.Episode.SI};
             }
+            else
+            {
+                this.mLastSeasonClicked = null;
+                this.mLastShowsClicked = null;
+            }
+
+            if ((this.mLastEpClicked != null) && (TVSettings.Instance.AutoSelectShowInMyShows))
+                this.GotoEpguideFor(this.mLastEpClicked, false);
         }
 
         private void ActionDeleteSelected()
@@ -3656,8 +3653,7 @@ namespace TVRename
             foreach (ListViewItem lvi in this.lvAction.Items)
             {
                 Item i = (Item) (lvi.Tag);
-                if ((i != null) && (i is ActionCopyMoveRename) &&
-                    (((ActionCopyMoveRename) i).Operation == ActionCopyMoveRename.Op.Rename))
+                if (i is ActionCopyMoveRename rename && (rename.Operation == ActionCopyMoveRename.Op.Rename))
                     lvi.Checked = cs == CheckState.Checked;
             }
 
@@ -3678,8 +3674,7 @@ namespace TVRename
             foreach (ListViewItem lvi in this.lvAction.Items)
             {
                 Item i = (Item) (lvi.Tag);
-                if ((i != null) && (i is ActionCopyMoveRename) &&
-                    (((ActionCopyMoveRename) i).Operation != ActionCopyMoveRename.Op.Rename))
+                if (i is ActionCopyMoveRename copymove && (copymove.Operation != ActionCopyMoveRename.Op.Rename))
                     lvi.Checked = cs == CheckState.Checked;
             }
 
