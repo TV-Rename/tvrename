@@ -183,7 +183,7 @@ namespace TVRename
                         int.TryParse(dsn, out this.ReadDVDSeasonNum);
                     }
                     else if (r.Name == "lastupdated")
-                        this.Srv_LastUpdated = r.ReadElementContentAsInt();
+                        this.Srv_LastUpdated = r.ReadElementContentAsLong();
                     else if (r.Name == "Overview")
                         this.Overview = XMLHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "Rating")        
@@ -328,7 +328,7 @@ namespace TVRename
             }
 
             this.SeriesID = seriesId;
-
+            try{
             this.EpisodeID = (int)r["id"];
 
             if ((string)r["airedSeasonID"] != null) { this.SeasonID = (int)r["airedSeasonID"]; }
@@ -345,7 +345,7 @@ namespace TVRename
             if (string.IsNullOrWhiteSpace(dvdEpNumString)) this.DVDEpNum = 0;
             else if (!int.TryParse(dvdEpNumString, out this.DVDEpNum)) this.DVDEpNum = 0;
             
-            this.Srv_LastUpdated = (int)r["lastUpdated"];
+            this.Srv_LastUpdated = (long)r["lastUpdated"];
             this.Overview = (string)r["overview"];
             this.EpisodeRating = (string)r["siteRating"];
             this.Name = (string)r["episodeName"];
@@ -383,6 +383,11 @@ namespace TVRename
                 logger.Debug(e, "Failed to parse firstAired");
                 this.FirstAired = null;
 
+            }
+                            }
+            catch (Exception e)
+            {
+                logger.Error(e, $"Failed to parse : {r.ToString() }");
             }
         }
 
