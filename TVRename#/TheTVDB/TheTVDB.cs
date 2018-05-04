@@ -693,7 +693,10 @@ namespace TVRename
                 int numberOfResponses =0;
                 try
                 {
-                    numberOfResponses = ((JArray)jsonUdpateResponse["data"]).Count;
+                    var x = jsonUdpateResponse["data"];
+                    if (!x.HasValues) numberOfResponses = 0;
+                    else
+                        numberOfResponses = ((JArray)jsonUdpateResponse["data"]).Count;
 
                 }
                 catch (InvalidCastException ex) {
