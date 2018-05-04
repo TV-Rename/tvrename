@@ -129,15 +129,15 @@ namespace TVRename
             return dt.Add(tweakTime);
         }
 
-        public static uint Epoch() // unix epoch time for now (seconds since midnight 1 jan 1970 UTC)
+        public static long Epoch() // unix epoch time for now (seconds since midnight 1 jan 1970 UTC)
         {
-            return (uint) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            return (long) (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
         }
 
-        public static uint Epoch(DateTime dt)
+        public static long Epoch(DateTime dt)
         {
             DateTime uni = dt.ToUniversalTime();
-            uint r = (uint) (uni.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            long r = (long) (uni.Subtract(new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             return r;
         }
 
