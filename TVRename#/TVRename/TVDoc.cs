@@ -2558,6 +2558,14 @@ namespace TVRename
                             {
                                 string newname = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(ep, fi.Extension, folder.Length));
 
+                                if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
+                                    fi.IsLanguageSpecificSubtitle(out string subtitleExtension))
+                                {
+                                    newname = TVSettings.Instance.FilenameFriendly(
+                                        TVSettings.Instance.NamingStyle.NameForExt(ep, subtitleExtension,
+                                            folder.Length));
+                                }
+
                                 if (newname != actualFile.Name)
                                 {
                                     actualFile = FileHelper.FileInFolder(folder, newname); // rename updates the filename

@@ -244,6 +244,15 @@ namespace TVRename
 
     public static class FileHelper
     {
+        public static bool IsLanguageSpecificSubtitle(this FileInfo file, out string extension)
+        {
+            extension = "";
+            if (!Regex.IsMatch(file.Name, @"[.]\w\w[.]srt")) return false;
+            extension = file.Name.Substring(file.Name.Length - 7);
+            return true;
+
+        }
+
         public static int GetFilmLength(this FileInfo movieFile)
         {
             string duration;

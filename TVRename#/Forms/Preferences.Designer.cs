@@ -57,7 +57,6 @@ namespace TVRename
             this.txtExportRSSMaxDays = new System.Windows.Forms.TextBox();
             this.txtExportRSSMaxShows = new System.Windows.Forms.TextBox();
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
-            this.cbTxtToSub = new System.Windows.Forms.CheckBox();
             this.txtSpecialsFolderName = new System.Windows.Forms.TextBox();
             this.txtVideoExtensions = new System.Windows.Forms.TextBox();
             this.cbStartupTab = new System.Windows.Forms.ComboBox();
@@ -91,6 +90,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.txtParallelDownloads = new System.Windows.Forms.TextBox();
             this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
+            this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
             this.txtKeepTogether = new System.Windows.Forms.TextBox();
             this.label39 = new System.Windows.Forms.Label();
             this.cbKeepTogetherMode = new System.Windows.Forms.ComboBox();
@@ -103,6 +103,7 @@ namespace TVRename
             this.label3 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
             this.txtMaxSampleSize = new System.Windows.Forms.TextBox();
+            this.cbTxtToSub = new System.Windows.Forms.CheckBox();
             this.label22 = new System.Windows.Forms.Label();
             this.txtOtherExtensions = new System.Windows.Forms.TextBox();
             this.cbForceLower = new System.Windows.Forms.CheckBox();
@@ -120,13 +121,13 @@ namespace TVRename
             this.bnBrowseRenamingXML = new System.Windows.Forms.Button();
             this.cbRenamingXML = new System.Windows.Forms.CheckBox();
             this.txtRenamingXML = new System.Windows.Forms.TextBox();
-            this.bnBrowseMissingCSV = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.bnBrowseMissingCSV = new System.Windows.Forms.Button();
             this.bnBrowseMissingXML = new System.Windows.Forms.Button();
-            this.cbMissingXML = new System.Windows.Forms.CheckBox();
-            this.txtMissingXML = new System.Windows.Forms.TextBox();
             this.txtMissingCSV = new System.Windows.Forms.TextBox();
+            this.cbMissingXML = new System.Windows.Forms.CheckBox();
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
+            this.txtMissingXML = new System.Windows.Forms.TextBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
             this.chkAutoSearchForDownloadedFiles = new System.Windows.Forms.CheckBox();
             this.chkAutoMergeEpisodes = new System.Windows.Forms.CheckBox();
@@ -445,16 +446,6 @@ namespace TVRename
             // 
             this.saveFile.Filter = "RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|CSV files (*.csv)|*.csv|TXT files" +
     " (*.txt)|*.txt|HTML files (*.html)|*.html|All files (*.*)|*.*";
-            // 
-            // cbTxtToSub
-            // 
-            this.cbTxtToSub.AutoSize = true;
-            this.cbTxtToSub.Location = new System.Drawing.Point(29, 234);
-            this.cbTxtToSub.Name = "cbTxtToSub";
-            this.cbTxtToSub.Size = new System.Drawing.Size(118, 17);
-            this.cbTxtToSub.TabIndex = 9;
-            this.cbTxtToSub.Text = "&Rename .txt to .sub";
-            this.cbTxtToSub.UseVisualStyleBackColor = true;
             // 
             // txtSpecialsFolderName
             // 
@@ -805,6 +796,7 @@ namespace TVRename
             // 
             // tbFilesAndFolders
             // 
+            this.tbFilesAndFolders.Controls.Add(this.chkRetainLanguageSpecificSubtitles);
             this.tbFilesAndFolders.Controls.Add(this.txtKeepTogether);
             this.tbFilesAndFolders.Controls.Add(this.label39);
             this.tbFilesAndFolders.Controls.Add(this.cbKeepTogetherMode);
@@ -836,6 +828,16 @@ namespace TVRename
             this.tbFilesAndFolders.TabIndex = 1;
             this.tbFilesAndFolders.Text = "Files and Folders";
             this.tbFilesAndFolders.UseVisualStyleBackColor = true;
+            // 
+            // chkRetainLanguageSpecificSubtitles
+            // 
+            this.chkRetainLanguageSpecificSubtitles.AutoSize = true;
+            this.chkRetainLanguageSpecificSubtitles.Location = new System.Drawing.Point(172, 234);
+            this.chkRetainLanguageSpecificSubtitles.Name = "chkRetainLanguageSpecificSubtitles";
+            this.chkRetainLanguageSpecificSubtitles.Size = new System.Drawing.Size(192, 17);
+            this.chkRetainLanguageSpecificSubtitles.TabIndex = 24;
+            this.chkRetainLanguageSpecificSubtitles.Text = "Retain &Language Specific Subtitles";
+            this.chkRetainLanguageSpecificSubtitles.UseVisualStyleBackColor = true;
             // 
             // txtKeepTogether
             // 
@@ -945,6 +947,16 @@ namespace TVRename
             this.txtMaxSampleSize.Size = new System.Drawing.Size(53, 20);
             this.txtMaxSampleSize.TabIndex = 14;
             this.txtMaxSampleSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumberOnlyKeyPress);
+            // 
+            // cbTxtToSub
+            // 
+            this.cbTxtToSub.AutoSize = true;
+            this.cbTxtToSub.Location = new System.Drawing.Point(29, 234);
+            this.cbTxtToSub.Name = "cbTxtToSub";
+            this.cbTxtToSub.Size = new System.Drawing.Size(118, 17);
+            this.cbTxtToSub.TabIndex = 9;
+            this.cbTxtToSub.Text = "&Rename .txt to .sub";
+            this.cbTxtToSub.UseVisualStyleBackColor = true;
             // 
             // label22
             // 
@@ -1117,16 +1129,6 @@ namespace TVRename
             this.txtRenamingXML.Size = new System.Drawing.Size(251, 20);
             this.txtRenamingXML.TabIndex = 1;
             // 
-            // bnBrowseMissingCSV
-            // 
-            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(321, 47);
-            this.bnBrowseMissingCSV.Name = "bnBrowseMissingCSV";
-            this.bnBrowseMissingCSV.Size = new System.Drawing.Size(75, 23);
-            this.bnBrowseMissingCSV.TabIndex = 2;
-            this.bnBrowseMissingCSV.Text = "Browse...";
-            this.bnBrowseMissingCSV.UseVisualStyleBackColor = true;
-            this.bnBrowseMissingCSV.Click += new System.EventHandler(this.bnBrowseMissingCSV_Click);
-            // 
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.bnBrowseMissingCSV);
@@ -1142,6 +1144,16 @@ namespace TVRename
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Missing";
             // 
+            // bnBrowseMissingCSV
+            // 
+            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(321, 47);
+            this.bnBrowseMissingCSV.Name = "bnBrowseMissingCSV";
+            this.bnBrowseMissingCSV.Size = new System.Drawing.Size(75, 23);
+            this.bnBrowseMissingCSV.TabIndex = 2;
+            this.bnBrowseMissingCSV.Text = "Browse...";
+            this.bnBrowseMissingCSV.UseVisualStyleBackColor = true;
+            this.bnBrowseMissingCSV.Click += new System.EventHandler(this.bnBrowseMissingCSV_Click);
+            // 
             // bnBrowseMissingXML
             // 
             this.bnBrowseMissingXML.Location = new System.Drawing.Point(321, 19);
@@ -1151,6 +1163,13 @@ namespace TVRename
             this.bnBrowseMissingXML.Text = "Browse...";
             this.bnBrowseMissingXML.UseVisualStyleBackColor = true;
             this.bnBrowseMissingXML.Click += new System.EventHandler(this.bnBrowseMissingXML_Click);
+            // 
+            // txtMissingCSV
+            // 
+            this.txtMissingCSV.Location = new System.Drawing.Point(64, 48);
+            this.txtMissingCSV.Name = "txtMissingCSV";
+            this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
+            this.txtMissingCSV.TabIndex = 1;
             // 
             // cbMissingXML
             // 
@@ -1163,20 +1182,6 @@ namespace TVRename
             this.cbMissingXML.UseVisualStyleBackColor = true;
             this.cbMissingXML.CheckedChanged += new System.EventHandler(this.EnableDisable);
             // 
-            // txtMissingXML
-            // 
-            this.txtMissingXML.Location = new System.Drawing.Point(64, 21);
-            this.txtMissingXML.Name = "txtMissingXML";
-            this.txtMissingXML.Size = new System.Drawing.Size(251, 20);
-            this.txtMissingXML.TabIndex = 4;
-            // 
-            // txtMissingCSV
-            // 
-            this.txtMissingCSV.Location = new System.Drawing.Point(64, 48);
-            this.txtMissingCSV.Name = "txtMissingCSV";
-            this.txtMissingCSV.Size = new System.Drawing.Size(251, 20);
-            this.txtMissingCSV.TabIndex = 1;
-            // 
             // cbMissingCSV
             // 
             this.cbMissingCSV.AutoSize = true;
@@ -1187,6 +1192,13 @@ namespace TVRename
             this.cbMissingCSV.Text = "CSV";
             this.cbMissingCSV.UseVisualStyleBackColor = true;
             this.cbMissingCSV.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            // 
+            // txtMissingXML
+            // 
+            this.txtMissingXML.Location = new System.Drawing.Point(64, 21);
+            this.txtMissingXML.Name = "txtMissingXML";
+            this.txtMissingXML.Size = new System.Drawing.Size(251, 20);
+            this.txtMissingXML.TabIndex = 4;
             // 
             // tpScanOptions
             // 
@@ -2527,7 +2539,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbKeepTogether;
         private System.Windows.Forms.CheckBox cbLeadingZero;
         private System.Windows.Forms.CheckBox chkShowInTaskbar;
-        private System.Windows.Forms.CheckBox cbTxtToSub;
         private System.Windows.Forms.CheckBox cbShowEpisodePictures;
         private System.Windows.Forms.TextBox txtSpecialsFolderName;
         private System.Windows.Forms.Label label13;
@@ -2702,5 +2713,7 @@ namespace TVRename
         private System.Windows.Forms.Label label44;
         private System.Windows.Forms.TextBox tbIgnoreSuffixes;
         private System.Windows.Forms.TextBox tbMovieTerms;
+        private System.Windows.Forms.CheckBox chkRetainLanguageSpecificSubtitles;
+        private System.Windows.Forms.CheckBox cbTxtToSub;
     }
 }
