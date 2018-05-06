@@ -2965,11 +2965,14 @@ namespace TVRename
 
             List<ShowItem> showsToScan = new List<ShowItem>();
 
-            foreach (String dirPath in SearchFolders)
+            foreach (string dirPath in SearchFolders)
             {
                 if (!Directory.Exists(dirPath)) continue;
 
-                foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                logger.Info($"Processing {x.Length} files for shows that need to be scanned");
+
+                foreach (string filePath in x)
                 {
                     logger.Info($"Checking to see whether {filePath} is a file that for a show that need scanning");
 
@@ -2988,7 +2991,10 @@ namespace TVRename
                     }
                 }
 
-                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                string[] directories = Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                logger.Info($"Processing {directories.Length} directories for shows that need to be scanned");
+
+                foreach (string subDirPath in directories)
                 {
                     logger.Info($"Checking to see whether {subDirPath } has any shows that need scanning");
 
@@ -2998,7 +3004,7 @@ namespace TVRename
 
                     List<ShowItem> matchingShows = new List<ShowItem>();
 
-                    foreach (ShowItem si in ShowItems)
+                    foreach (ShowItem si in this.ShowItems)
                     {
                         if (showsToScan.Contains(si)) continue;
 
