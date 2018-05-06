@@ -2541,7 +2541,7 @@ namespace TVRename
 							
 							foreach (ProcessedEpisode x in eps)
 							{
-								if (((x.EpNum == epNum) && (x.SeasonNumber == seasNum)))
+								if (((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)))
 								{
 									ep = x;
 									break;
@@ -2971,6 +2971,8 @@ namespace TVRename
 
                 foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
                 {
+                    logger.Info($"Checking to see whether {filePath} is a file that for a show that need scanning");
+
                     if (!File.Exists(filePath)) continue;
 
                     FileInfo fi = new FileInfo(filePath);
@@ -2988,6 +2990,8 @@ namespace TVRename
 
                 foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
                 {
+                    logger.Info($"Checking to see whether {subDirPath } has any shows that need scanning");
+
                     if (!Directory.Exists(subDirPath)) continue;
 
                     DirectoryInfo di = new DirectoryInfo(subDirPath);
