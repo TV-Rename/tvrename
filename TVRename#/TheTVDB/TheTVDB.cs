@@ -854,7 +854,14 @@ namespace TVRename
                                 }
                                 catch (InvalidCastException ex)
                                 {
-                                    logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                                    logger.Error("Did not recieve the expected format of episode json from {0}.", uri);
+                                    logger.Error(ex);
+                                    logger.Error(jsonResponse["data"].ToString());
+
+                                }
+                                catch (OverflowException ex)
+                                {
+                                    logger.Error("Could not parse the episode json from {0}.", uri);
                                     logger.Error(ex);
                                     logger.Error(jsonResponse["data"].ToString());
 
@@ -869,6 +876,13 @@ namespace TVRename
                 catch (InvalidCastException ex)
                 {
                     logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                    logger.Error(ex);
+                    logger.Error(jsonResponse["data"].ToString());
+
+                }
+                catch (OverflowException  ex)
+                {
+                    logger.Error("Could not parse the json from {0}.", uri);
                     logger.Error(ex);
                     logger.Error(jsonResponse["data"].ToString());
 
@@ -1330,7 +1344,14 @@ namespace TVRename
                 {
                     logger.Error("Did not recieve the expected format of json from {0}.", uri);
                     logger.Error(ex);
-                    logger.Error(jsonResponse["data"].ToString());
+                    logger.Error(response.ToString());
+
+                }
+                catch (OverflowException ex)
+                {
+                    logger.Error("Could not parse the episode json from {0}.", uri);
+                    logger.Error(ex);
+                    logger.Error(response.ToString());
 
                 }
             });

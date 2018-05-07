@@ -134,8 +134,6 @@ namespace TVRename
             
         }
 
-        public string DVDEp => getValueAcrossVersions("dvdEpisodeNumber", "DVD_episodenumber", "");
-        public string DVDSeason => getValueAcrossVersions("dvdSeason", "DVD_season", "");
         public string AirsBeforeSeason => getValueAcrossVersions("airsBeforeSeason", "airsbefore_season", "");
         public string AirsBeforeEpisode => getValueAcrossVersions("airsBeforeEpisode", "airsbefore_episode", "");
 

@@ -2993,15 +2993,20 @@ namespace TVRename
             //for each saved show (order by recent)
             //does show match selected file?
             //if so add series to list of series scanned
-            if (!TVSettings.Instance.AutoSearchForDownloadedFiles) return;
+            if (!TVSettings.Instance.AutoSearchForDownloadedFiles)
+            {
+                logger.Info("Not looking for new shows as 'Auto-Add' is turned off");
+                return;
+            }
 
             //Dont support unattended mode
-            if (unattended) return;
+            if (unattended) { logger.Info("Not looking for new shows as app is unattended"); return;}
 
             List<string> possibleShowNames = new List<string>();
 
             foreach (string dirPath in this.mDoc.SearchFolders)
             {
+                logger.Info("Parsing {0} for new shows",dirPath);
                 if (!Directory.Exists(dirPath)) continue;
 
                 foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
@@ -3171,7 +3176,8 @@ namespace TVRename
         public void QuickScan(bool unattended)
         {
             logger.Info("*******************************");
-            logger.Info("Starting QuickScan...");
+            string desc = unattended ? "unattended " : "";
+            logger.Info($@"Starting {desc}QuickScan...");
             GetNewShows(unattended);
             this.MoreBusy();
             this.mDoc.QuickScan();

@@ -69,12 +69,16 @@ namespace TVRename
         private IEnumerable<string>  GetSeasonWords()
         {
             //See https://github.com/TV-Rename/tvrename/issues/241 for background
+            List<string> results = TVSettings.Instance.searchSeasonWordsArray.ToList();
 
-            IEnumerable<string>  seasonWordsFromShows = from si in this.ShowItems select si.AutoAdd_SeasonFolderName.Trim();
-            List<string> results =  seasonWordsFromShows.Distinct().ToList();
+            if (!TVSettings.Instance.ForceBulkAddToUseSettingsOnly)
+            {
+                IEnumerable<string> seasonWordsFromShows =
+                    from si in this.ShowItems select si.AutoAdd_SeasonFolderName.Trim();
+                results = seasonWordsFromShows.Distinct().ToList();
 
-            results.Add(TVSettings.Instance.defaultSeasonWord);
-            results.AddRange(TVSettings.Instance.searchSeasonWordsArray);
+                results.Add(TVSettings.Instance.defaultSeasonWord);
+            }
 
             return results.Where(t => !String.IsNullOrWhiteSpace(t)).Distinct();
         }
@@ -295,7 +299,7 @@ namespace TVRename
             this.SetDirty();
         }
 
-        public bool HasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs)
+        private bool HasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs)
         {
             try
             {
@@ -305,13 +309,14 @@ namespace TVRename
                 {
                     foreach (DirectoryInfo subDir in subDirs)
                     {
-                        if (subDir.Name.Contains(sw, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, sw, subDir.FullName);
-                            folderName = sw;
-                            return true;
+                        string regex = "^(?<folderName>"+sw+"\\s*)\\d+$";
+                        Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase );
+                        if (!m.Success) continue;
 
-                        }
+                        //We have a match!
+                        folderName = m.Groups["folderName"].ToString();
+                        logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, folderName, subDir.FullName);
+                        return true;
                     }
                 }
 
@@ -451,7 +456,7 @@ namespace TVRename
                 found.AutoAdd_FolderBase = ai.Folder;
                 found.AutoAdd_FolderPerSeason = ai.HasSeasonFoldersGuess;
 
-                found.AutoAdd_SeasonFolderName = ai.SeasonFolderName + " ";
+                found.AutoAdd_SeasonFolderName = ai.SeasonFolderName;
                 this.Stats().AutoAddedShows++;
             }
 
@@ -2541,7 +2546,7 @@ namespace TVRename
 							
 							foreach (ProcessedEpisode x in eps)
 							{
-								if (((x.EpNum == epNum) && (x.SeasonNumber == seasNum)))
+								if (((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)))
 								{
 									ep = x;
 									break;
@@ -2557,6 +2562,14 @@ namespace TVRename
                             if (renCheck && TVSettings.Instance.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
                             {
                                 string newname = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(ep, fi.Extension, folder.Length));
+
+                                if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
+                                    fi.IsLanguageSpecificSubtitle(out string subtitleExtension))
+                                {
+                                    newname = TVSettings.Instance.FilenameFriendly(
+                                        TVSettings.Instance.NamingStyle.NameForExt(ep, subtitleExtension,
+                                            folder.Length));
+                                }
 
                                 if (newname != actualFile.Name)
                                 {
@@ -2965,12 +2978,17 @@ namespace TVRename
 
             List<ShowItem> showsToScan = new List<ShowItem>();
 
-            foreach (String dirPath in SearchFolders)
+            foreach (string dirPath in SearchFolders)
             {
                 if (!Directory.Exists(dirPath)) continue;
 
-                foreach (String filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                logger.Info($"Processing {x.Length} files for shows that need to be scanned");
+
+                foreach (string filePath in x)
                 {
+                    logger.Info($"Checking to see whether {filePath} is a file that for a show that need scanning");
+
                     if (!File.Exists(filePath)) continue;
 
                     FileInfo fi = new FileInfo(filePath);
@@ -2986,15 +3004,20 @@ namespace TVRename
                     }
                 }
 
-                foreach (String subDirPath in Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                string[] directories = Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                logger.Info($"Processing {directories.Length} directories for shows that need to be scanned");
+
+                foreach (string subDirPath in directories)
                 {
+                    logger.Info($"Checking to see whether {subDirPath } has any shows that need scanning");
+
                     if (!Directory.Exists(subDirPath)) continue;
 
                     DirectoryInfo di = new DirectoryInfo(subDirPath);
 
                     List<ShowItem> matchingShows = new List<ShowItem>();
 
-                    foreach (ShowItem si in ShowItems)
+                    foreach (ShowItem si in this.ShowItems)
                     {
                         if (showsToScan.Contains(si)) continue;
 
