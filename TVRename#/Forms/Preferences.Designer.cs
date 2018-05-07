@@ -246,6 +246,7 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.chkForceBulkAddToUseSettingsOnly = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -2292,6 +2293,7 @@ namespace TVRename
             // 
             // tpBulkAdd
             // 
+            this.tpBulkAdd.Controls.Add(this.chkForceBulkAddToUseSettingsOnly);
             this.tpBulkAdd.Controls.Add(this.label43);
             this.tpBulkAdd.Controls.Add(this.label44);
             this.tpBulkAdd.Controls.Add(this.tbIgnoreSuffixes);
@@ -2311,7 +2313,7 @@ namespace TVRename
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Location = new System.Drawing.Point(12, 141);
+            this.label43.Location = new System.Drawing.Point(12, 180);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(78, 13);
             this.label43.TabIndex = 10;
@@ -2320,7 +2322,7 @@ namespace TVRename
             // label44
             // 
             this.label44.AutoSize = true;
-            this.label44.Location = new System.Drawing.Point(12, 115);
+            this.label44.Location = new System.Drawing.Point(12, 154);
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(71, 13);
             this.label44.TabIndex = 8;
@@ -2328,7 +2330,7 @@ namespace TVRename
             // 
             // tbIgnoreSuffixes
             // 
-            this.tbIgnoreSuffixes.Location = new System.Drawing.Point(108, 138);
+            this.tbIgnoreSuffixes.Location = new System.Drawing.Point(108, 177);
             this.tbIgnoreSuffixes.Name = "tbIgnoreSuffixes";
             this.tbIgnoreSuffixes.Size = new System.Drawing.Size(293, 20);
             this.tbIgnoreSuffixes.TabIndex = 11;
@@ -2337,7 +2339,7 @@ namespace TVRename
             // 
             // tbMovieTerms
             // 
-            this.tbMovieTerms.Location = new System.Drawing.Point(108, 112);
+            this.tbMovieTerms.Location = new System.Drawing.Point(108, 151);
             this.tbMovieTerms.Name = "tbMovieTerms";
             this.tbMovieTerms.Size = new System.Drawing.Size(293, 20);
             this.tbMovieTerms.TabIndex = 9;
@@ -2347,7 +2349,7 @@ namespace TVRename
             // label42
             // 
             this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(12, 92);
+            this.label42.Location = new System.Drawing.Point(12, 131);
             this.label42.Name = "label42";
             this.label42.Size = new System.Drawing.Size(54, 13);
             this.label42.TabIndex = 6;
@@ -2431,6 +2433,19 @@ namespace TVRename
             this.noneToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
+            // 
+            // chkForceBulkAddToUseSettingsOnly
+            // 
+            this.chkForceBulkAddToUseSettingsOnly.AutoSize = true;
+            this.chkForceBulkAddToUseSettingsOnly.Location = new System.Drawing.Point(15, 85);
+            this.chkForceBulkAddToUseSettingsOnly.Name = "chkForceBulkAddToUseSettingsOnly";
+            this.chkForceBulkAddToUseSettingsOnly.Size = new System.Drawing.Size(248, 17);
+            this.chkForceBulkAddToUseSettingsOnly.TabIndex = 12;
+            this.chkForceBulkAddToUseSettingsOnly.Text = "Force to Use Season Words from Settings Only";
+            this.toolTip1.SetToolTip(this.chkForceBulkAddToUseSettingsOnly, "If set then Bulk Add just uses the season words from settings. If not set (recomm" +
+        "ended) then Bulk Add finds addition season words from each show\'s configuration." +
+        "");
+            this.chkForceBulkAddToUseSettingsOnly.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -2715,5 +2730,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox tbMovieTerms;
         private System.Windows.Forms.CheckBox chkRetainLanguageSpecificSubtitles;
         private System.Windows.Forms.CheckBox cbTxtToSub;
+        private System.Windows.Forms.CheckBox chkForceBulkAddToUseSettingsOnly;
     }
 }

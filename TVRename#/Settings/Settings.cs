@@ -377,6 +377,8 @@ namespace TVRename
         public Searchers TheSearchers = new Searchers();
 
         public string[] VideoExtensionsArray => this.VideoExtensionsString.Split(';');
+        public bool ForceBulkAddToUseSettingsOnly = false;
+
         public bool RetainLanguageSpecificSubtitles = true;
 
 
@@ -601,6 +603,8 @@ namespace TVRename
                     this.AutoMergeEpisodes = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "RetainLanguageSpecificSubtitles")
                     this.RetainLanguageSpecificSubtitles = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ForceBulkAddToUseSettingsOnly")
+                    this.ForceBulkAddToUseSettingsOnly = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "MonitorFolders")
                     this.MonitorFolders = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "StartupScan")
@@ -895,6 +899,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"SearchLocally",this.SearchLocally);
             XMLHelper.WriteElementToXML(writer,"LeaveOriginals",this.LeaveOriginals);
             XMLHelper.WriteElementToXML(writer, "RetainLanguageSpecificSubtitles", this.RetainLanguageSpecificSubtitles);
+            XMLHelper.WriteElementToXML(writer, "ForceBulkAddToUseSettingsOnly", this.ForceBulkAddToUseSettingsOnly);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
             XMLHelper.WriteElementToXML(writer, "AutoMergeEpisodes", this.AutoMergeEpisodes);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);

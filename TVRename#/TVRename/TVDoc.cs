@@ -69,12 +69,16 @@ namespace TVRename
         private IEnumerable<string>  GetSeasonWords()
         {
             //See https://github.com/TV-Rename/tvrename/issues/241 for background
+            List<string> results = TVSettings.Instance.searchSeasonWordsArray.ToList();
 
-            IEnumerable<string>  seasonWordsFromShows = from si in this.ShowItems select si.AutoAdd_SeasonFolderName.Trim();
-            List<string> results =  seasonWordsFromShows.Distinct().ToList();
+            if (!TVSettings.Instance.ForceBulkAddToUseSettingsOnly)
+            {
+                IEnumerable<string> seasonWordsFromShows =
+                    from si in this.ShowItems select si.AutoAdd_SeasonFolderName.Trim();
+                results = seasonWordsFromShows.Distinct().ToList();
 
-            results.Add(TVSettings.Instance.defaultSeasonWord);
-            results.AddRange(TVSettings.Instance.searchSeasonWordsArray);
+                results.Add(TVSettings.Instance.defaultSeasonWord);
+            }
 
             return results.Where(t => !String.IsNullOrWhiteSpace(t)).Distinct();
         }
@@ -305,10 +309,12 @@ namespace TVRename
                 {
                     foreach (DirectoryInfo subDir in subDirs)
                     {
-                        if (subDir.Name.Contains(sw, StringComparison.InvariantCultureIgnoreCase))
+                        string regex = "^("+sw+"\\s*)\\d+$";
+                        Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase );
+                        if (m.Success)
                         {
-                            logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, sw, subDir.FullName);
-                            folderName = sw;
+                            folderName = m.Groups[1].ToString();
+                            logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, folderName, subDir.FullName);
                             return true;
 
                         }
@@ -451,7 +457,7 @@ namespace TVRename
                 found.AutoAdd_FolderBase = ai.Folder;
                 found.AutoAdd_FolderPerSeason = ai.HasSeasonFoldersGuess;
 
-                found.AutoAdd_SeasonFolderName = ai.SeasonFolderName + " ";
+                found.AutoAdd_SeasonFolderName = ai.SeasonFolderName;
                 this.Stats().AutoAddedShows++;
             }
 
