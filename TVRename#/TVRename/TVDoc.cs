@@ -299,7 +299,7 @@ namespace TVRename
             this.SetDirty();
         }
 
-        public bool HasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs)
+        private bool HasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs)
         {
             try
             {
@@ -309,15 +309,14 @@ namespace TVRename
                 {
                     foreach (DirectoryInfo subDir in subDirs)
                     {
-                        string regex = "^("+sw+"\\s*)\\d+$";
+                        string regex = "^(?<folderName>"+sw+"\\s*)\\d+$";
                         Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase );
-                        if (m.Success)
-                        {
-                            folderName = m.Groups[1].ToString();
-                            logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, folderName, subDir.FullName);
-                            return true;
+                        if (!m.Success) continue;
 
-                        }
+                        //We have a match!
+                        folderName = m.Groups["folderName"].ToString();
+                        logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, folderName, subDir.FullName);
+                        return true;
                     }
                 }
 
