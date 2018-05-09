@@ -88,10 +88,9 @@ namespace TVRename
             
             return base.ProcessSeason(si,folder,snum,forceRefresh);
         }
-        public override void reset()
+        public sealed override void reset()
         {
             doneFolderJPG  = new List<string>();
-            base.reset();
         }
     }
 

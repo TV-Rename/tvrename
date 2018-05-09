@@ -3,30 +3,34 @@ using System.Collections.Generic;
 
 namespace TVRename
 {
-    class ShowsTXT : ShowsExporter
+    // ReSharper disable once InconsistentNaming
+    internal class ShowsTXT : ShowsExporter
     {
+        public ShowsTXT(List<ShowItem> shows) : base(shows)
+        {
+        }
+
         public override bool Active() =>TVSettings.Instance.ExportShowsTXT;
         protected override string Location() =>TVSettings.Instance.ExportShowsTXTTo;
 
-        public override void Run(List<ShowItem> shows)
+        public override void Run()
         {
-            if (TVSettings.Instance.ExportShowsTXT )
-            {
-                try
-                {
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
-                    {
-                        foreach (ShowItem si in shows)
-                        {
-                            file.WriteLine(si.ShowName);
-                        }
+            if (!Active()) return;
 
-                    }
-                }
-                catch (Exception e)
+            try
+            {
+                using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
                 {
-                    Logger.Error(e);
+                    foreach (ShowItem si in this.Shows)
+                    {
+                        file.WriteLine(si.ShowName);
+                    }
+
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
             }
         }
     }

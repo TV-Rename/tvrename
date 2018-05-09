@@ -11,7 +11,7 @@ namespace TVRename
 
         public DownloadEpisodeJPG() 
         {
-            reset();
+            this.reset();
         }
 
         public override DownloadType GetDownloadType()
@@ -29,7 +29,7 @@ namespace TVRename
                 {
                     string basefn = filo.RemoveExtension();
 
-                    FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + ".jpg");
+                    FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + defaultExtension);
 
                     if (forceRefresh || !imgjpg.Exists)
                         TheActionList.Add(new ActionDownloadImage(dbep.SI, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
@@ -42,10 +42,9 @@ namespace TVRename
             return base.ProcessEpisode(dbep, filo, forceRefresh);
         }
 
-        public override void reset()
+        public sealed override void reset()
         {
             doneJPG = new List<string>();
-            base.reset();
         }
     }
 

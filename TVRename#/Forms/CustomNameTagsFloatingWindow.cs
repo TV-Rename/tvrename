@@ -22,7 +22,7 @@ namespace TVRename
     {
         public CustomNameTagsFloatingWindow(ProcessedEpisode pe)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             foreach (string s in CustomName.Tags)
             {

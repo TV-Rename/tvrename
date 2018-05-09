@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace TVRename
@@ -29,7 +29,7 @@ namespace TVRename
             Boolean isNetworkOK = (ShowNetwork == null) || (show.TheSeries() == null ) || show.TheSeries().getNetwork().Equals(ShowNetwork);
 
             //Filter on show rating
-            Boolean isRatingOK = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().GetRating().Equals(ShowRating);
+            Boolean isRatingOK = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().GetContentRating().Equals(ShowRating);
 
             //Filter on show genres
             Boolean areGenresIgnored = (Genres.Count == 0);

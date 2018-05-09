@@ -74,7 +74,6 @@ namespace TVRename
         public override void reset()
         {
             this.doneFilesAndFolders = new List<string>();
-            base.reset();
         }
 
     }

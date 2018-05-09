@@ -117,7 +117,7 @@ namespace TVRename
             Debug.Assert(this.Tidyup != null);
             Debug.Assert(this.Tidyup.DeleteEmpty);
 #else
-            if (_tidyup == null || !_tidyup.DeleteEmpty)
+            if (this.Tidyup == null || !this.Tidyup.DeleteEmpty)
                 return;
 #endif
             // See if we should now delete the folder we just moved that file from.
@@ -125,15 +125,23 @@ namespace TVRename
                 return;
 
             //if there are sub-directories then we shouldn't remove this one
-            if (di.GetDirectories().Length > 0)
-                return;
+            DirectoryInfo[] directories = di.GetDirectories();
+            foreach (DirectoryInfo subdi in directories)
+            {
+                bool okToDelete = this.Tidyup.EmptyIgnoreWordsArray.Any(word => subdi.Name.Contains(word,StringComparison.OrdinalIgnoreCase));
+
+                if (!okToDelete)
+                    return;
+            }
+            //we know that each subfolder is OK to delete
+
 
             //if the directory is the root download folder do not delete
-            if (TVSettings.Instance.SearchFoldersNames.Contains(di.FullName))
+            if (TVSettings.Instance.DownloadFoldersNames.Contains(di.FullName))
                 return;
 
             // Do not delete any monitor folders either
-            if (TVSettings.Instance.MonitorFoldersNames.Contains(di.FullName))
+            if (TVSettings.Instance.LibraryFoldersNames.Contains(di.FullName))
                 return;
 
 
@@ -141,7 +149,7 @@ namespace TVRename
             if (files.Length == 0)
             {
                 // its empty, so just delete it
-                di.Delete();
+                DeleteOrRecycleFolder(di);
                 return;
             }
 
@@ -158,7 +166,7 @@ namespace TVRename
                     continue; // onto the next file
 
                 // look in the filename
-                if (this.Tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word)))
+                if (this.Tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word,StringComparison.OrdinalIgnoreCase)))
                     okToDelete = true;
 
                 if (!okToDelete)
@@ -175,7 +183,6 @@ namespace TVRename
             }
             DeleteOrRecycleFolder(di);
         }
-        public ProcessedEpisode Episode { get; set; }
     }
 
     public abstract class ActionWriteMetadata : ActionDownload

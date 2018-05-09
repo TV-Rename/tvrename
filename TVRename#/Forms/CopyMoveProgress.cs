@@ -45,14 +45,7 @@ namespace TVRename
             this.diskSpaceTimer.Start();
         }
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        ~CopyMoveProgress()
-        {
-            this.copyTimer.Stop();
-            this.diskSpaceTimer.Stop();
-        }
+
 
         private void SetPercentages(double file, double group)
         {

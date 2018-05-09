@@ -5,6 +5,9 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System.Globalization;
+
 namespace TVRename
 {
     using System;
@@ -38,188 +41,207 @@ namespace TVRename
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
-            XmlWriterSettings settings = new XmlWriterSettings
-            {
-                Indent = true,
-                NewLineOnAttributes = true
-            };
-            // "try" and silently fail.  eg. when file is use by other...
-            XmlWriter writer;
             try
             {
-                writer = XmlWriter.Create(this.Where.FullName, settings);
-            }
-            catch (Exception)
-            {
-                this.Done = true;
-                return true;
-            }
-
-
-            if (this.Episode != null) // specific episode
-            {
-                // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
-                writer.WriteStartElement("details");
-                writer.WriteStartElement("movie");
-                XMLHelper.WriteElementToXML(writer,"title",this.Episode.Name);
-                XMLHelper.WriteElementToXML(writer,"season",this.Episode.AppropriateSeasonNumber);
-                XMLHelper.WriteElementToXML(writer,"episode",this.Episode.AppropriateEpNum);
-
-                writer.WriteStartElement("year");
-                if (this.Episode.FirstAired != null)
-                    writer.WriteValue(this.Episode.FirstAired.Value.ToString("yyyy"));
-                writer.WriteEndElement();
-
-                writer.WriteStartElement("rating");
-                string rating = (this.Episode.EpisodeRating);
-                if (!string.IsNullOrEmpty(rating))
+                XmlWriterSettings settings = new XmlWriterSettings
                 {
-                    rating = rating.Trim('.');
-                    rating = rating.Replace(".", "");
-                    writer.WriteValue(rating);
-                }
-                writer.WriteEndElement();  // rating
+                    Indent = true,
+                    NewLineOnAttributes = true
+                };
 
-                //Get the Series OverView
-                string sov = this.Episode.SI.TheSeries().GetOverview();
-                if (!string.IsNullOrEmpty(sov))
+                using (XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings))
                 {
-                    XMLHelper.WriteElementToXML(writer,"plot",sov);
-                }
 
-                //Get the Episode overview
-                XMLHelper.WriteElementToXML(writer,"episodeplot",this.Episode.Overview);
-           
-                if (this.Episode.SI != null)
+                
+                if (this.Episode != null) // specific episode
                 {
-                    WriteInfo(writer, this.Episode.SI.TheSeries().GetRating(), "mpaa");
-                }
+                    // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
+                    writer.WriteStartElement("details");
+                    writer.WriteStartElement("movie");
+                    XMLHelper.WriteElementToXML(writer, "title", this.Episode.Name);
+                    XMLHelper.WriteElementToXML(writer, "season", this.Episode.AppropriateSeasonNumber);
+                    XMLHelper.WriteElementToXML(writer, "episode", this.Episode.AppropriateEpNum);
 
-                //Runtime...taken from overall Series, not episode specific due to thetvdb
-                string rt = this.Episode.SI.TheSeries().GetRuntime();
-                if (!string.IsNullOrEmpty(rt))
-                {
-                    XMLHelper.WriteElementToXML(writer,"runtime",rt + " min");
-                }
+                    writer.WriteStartElement("year");
+                    if (this.Episode.FirstAired != null)
+                        writer.WriteValue(this.Episode.FirstAired.Value.ToString("yyyy"));
+                    writer.WriteEndElement();
 
-                //Genres...taken from overall Series, not episode specific due to thetvdb
-                writer.WriteStartElement("genres");
-                string genre = String.Join(" / ", this.Episode.SI.TheSeries().GetGenres());
-                if (!string.IsNullOrEmpty(genre))
-                {
-                    XMLHelper.WriteElementToXML(writer,"genre",genre);
-                }
-                writer.WriteEndElement();  // genres
+                    //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
+                    float siteRating = float.Parse(this.Episode.EpisodeRating, new CultureInfo("en-US")) * 10;
+                    int intSiteRating = (int)siteRating;
+                    if (intSiteRating > 0) XMLHelper.WriteElementToXML(writer, "rating", intSiteRating);
 
-                //Director(s)
-                if (!string.IsNullOrEmpty(this.Episode.EpisodeDirector))
-                {
-                    string epDirector = this.Episode.EpisodeDirector;
-                    if (!string.IsNullOrEmpty(epDirector))
+//                        writer.WriteStartElement("rating");
+//                    string rating = (this.Episode.EpisodeRating);
+//                    if (!string.IsNullOrEmpty(rating))
+//                    {
+//                        rating = rating.Trim('.');
+//                        rating = rating.Replace(".", "");
+//                        writer.WriteValue(rating);
+//                    }
+//
+//                    writer.WriteEndElement(); // rating
+
+                    //Get the Series OverView
+                    string sov = this.Episode.SI.TheSeries().GetOverview();
+                    if (!string.IsNullOrEmpty(sov))
                     {
-                        foreach (string daa in epDirector.Split('|'))
-                        {
-                            if (string.IsNullOrEmpty(daa))
-                                continue;
+                        XMLHelper.WriteElementToXML(writer, "plot", sov);
+                    }
 
-                            XMLHelper.WriteElementToXML(writer,"director",daa);
+                    //Get the Episode overview
+                    XMLHelper.WriteElementToXML(writer, "episodeplot", this.Episode.Overview);
+
+                    if (this.Episode.SI != null)
+                    {
+                        WriteInfo(writer, this.Episode.SI.TheSeries().GetContentRating(), "mpaa");
+                    }
+
+                    //Runtime...taken from overall Series, not episode specific due to thetvdb
+                    string rt = this.Episode.SI.TheSeries().GetRuntime();
+                    if (!string.IsNullOrEmpty(rt))
+                    {
+                        XMLHelper.WriteElementToXML(writer, "runtime", rt + " min");
+                    }
+
+                    //Genres...taken from overall Series, not episode specific due to thetvdb
+                    writer.WriteStartElement("genres");
+                    string genre = String.Join(" / ", this.Episode.SI.TheSeries().GetGenres());
+                    if (!string.IsNullOrEmpty(genre))
+                    {
+                        XMLHelper.WriteElementToXML(writer, "genre", genre);
+                    }
+
+                    writer.WriteEndElement(); // genres
+
+                    //Director(s)
+                    if (!string.IsNullOrEmpty(this.Episode.EpisodeDirector))
+                    {
+                        string epDirector = this.Episode.EpisodeDirector;
+                        if (!string.IsNullOrEmpty(epDirector))
+                        {
+                            foreach (string daa in epDirector.Split('|'))
+                            {
+                                if (string.IsNullOrEmpty(daa))
+                                    continue;
+
+                                XMLHelper.WriteElementToXML(writer, "director", daa);
+                            }
                         }
                     }
-                }
 
-                //Writers(s)
-                if (!String.IsNullOrEmpty(this.Episode.Writer))
-                {
-                    string epWriter = this.Episode.Writer;
-                    if (!string.IsNullOrEmpty(epWriter))
+                    //Writers(s)
+                    if (!String.IsNullOrEmpty(this.Episode.Writer))
                     {
-                        XMLHelper.WriteElementToXML(writer,"credits",epWriter);
+                        string epWriter = this.Episode.Writer;
+                        if (!string.IsNullOrEmpty(epWriter))
+                        {
+                            XMLHelper.WriteElementToXML(writer, "credits", epWriter);
+                        }
                     }
-                }
 
-               
-                writer.WriteStartElement("cast");
 
-                // actors...
-                if (this.Episode.SI != null)
-                {
+                    writer.WriteStartElement("cast");
+
+                    // actors...
+                    if (this.Episode.SI != null)
+                    {
                         foreach (string aa in this.Episode.SI.TheSeries().GetActors())
                         {
                             if (string.IsNullOrEmpty(aa))
                                 continue;
 
-                            XMLHelper.WriteElementToXML(writer,"actor",aa);
+                            XMLHelper.WriteElementToXML(writer, "actor", aa);
                         }
+                    }
+
+                    writer.WriteEndElement(); // cast
+                    writer.WriteEndElement(); // movie
+                    writer.WriteEndElement(); // details
+                }
+                else if (this.SI != null) // show overview (Series.xml)
+                {
+                    // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
+
+                    writer.WriteStartElement("details");
+                    writer.WriteStartElement("movie");
+
+                    XMLHelper.WriteElementToXML(writer, "title", this.SI.ShowName);
+
+                    writer.WriteStartElement("genres");
+                    string genre = String.Join(" / ", this.SI.TheSeries().GetGenres());
+                    if (!string.IsNullOrEmpty(genre))
+                    {
+                        XMLHelper.WriteElementToXML(writer, "genre", genre);
+                    }
+
+                    writer.WriteEndElement(); // genres
+
+                    WriteInfo(writer, this.SI.TheSeries().GetFirstAired(), "premiered");
+                    WriteInfo(writer, this.SI.TheSeries().GetYear(), "year");
+
+
+                    //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
+                    float siteRating = float.Parse(this.SI.TheSeries().GetSiteRating(), new CultureInfo("en-US")) * 10;
+                    int intSiteRating = (int)siteRating;
+                    if (intSiteRating > 0) XMLHelper.WriteElementToXML(writer, "rating", intSiteRating);
+
+                    /*
+                    writer.WriteStartElement("rating");
+                    string rating = this.SI.TheSeries().GetSiteRating();
+                    if (!string.IsNullOrEmpty(rating))
+                    {
+                        rating = rating.Trim('.');
+                        rating = rating.Replace(".", "");
+                        writer.WriteValue(rating);
+                    }
+
+                    writer.WriteEndElement(); // rating
+                    */
+
+                    WriteInfo(writer, this.SI.TheSeries().getStatus(), "status");
+
+                    WriteInfo(writer, this.SI.TheSeries().GetContentRating(), "mpaa");
+                    WriteInfo(writer, this.SI.TheSeries().GetIMDB(), "id", "moviedb", "imdb");
+
+                    XMLHelper.WriteElementToXML(writer, "tvdbid", this.SI.TheSeries().TVDBCode);
+
+                    string rt = this.SI.TheSeries().GetRuntime();
+                    if (!string.IsNullOrEmpty(rt))
+                    {
+                        XMLHelper.WriteElementToXML(writer, "runtime", rt + " min");
+                    }
+
+                    WriteInfo(writer, this.SI.TheSeries().GetOverview(), "plot");
+
+                    writer.WriteStartElement("cast");
+
+                    // actors...
+
+                    foreach (string aa in this.SI.TheSeries().GetActors())
+                    {
+                        if (string.IsNullOrEmpty(aa))
+                            continue;
+                        XMLHelper.WriteElementToXML(writer, "actor", aa);
+                    }
+
+                    writer.WriteEndElement(); // cast
+                    writer.WriteEndElement(); // movie
+                    writer.WriteEndElement(); // tvshow
                 }
 
-                writer.WriteEndElement(); // cast
-                writer.WriteEndElement(); // movie
-                writer.WriteEndElement(); // details
+                this.Done = true;
+                return true;
+                }
             }
-            else if (this.SI != null) // show overview (Series.xml)
+            catch (Exception e)
             {
-                // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
-
-                writer.WriteStartElement("details");
-                writer.WriteStartElement("movie");
-
-                XMLHelper.WriteElementToXML(writer,"title",this.SI.ShowName);
-              
-                writer.WriteStartElement("genres");
-                string genre = String.Join(" / ", this.SI.TheSeries().GetGenres());
-                if (!string.IsNullOrEmpty(genre))
-                {
-                    XMLHelper.WriteElementToXML(writer,"genre",genre);
-                }
-                writer.WriteEndElement();  // genres
-
-                WriteInfo(writer, this.SI.TheSeries().GetFirstAired(), "premiered");
-                WriteInfo(writer, this.SI.TheSeries().GetYear(), "year");
-
-                writer.WriteStartElement("rating");
-                string rating = this.SI.TheSeries().GetRating();
-                if (!string.IsNullOrEmpty(rating))
-                {
-                    rating = rating.Trim('.');
-                    rating = rating.Replace(".", "");
-                    writer.WriteValue(rating);
-                }
-                writer.WriteEndElement();  // rating
-
-                WriteInfo(writer, this.SI.TheSeries().getStatus(), "status");
-
-                WriteInfo(writer, this.SI.TheSeries().GetRating(), "mpaa");
-                WriteInfo(writer, this.SI.TheSeries().GetIMDB(), "id", "moviedb", "imdb");
-
-                XMLHelper.WriteElementToXML(writer,"tvdbid",this.SI.TheSeries().TVDBCode);
-
-                string rt = this.SI.TheSeries().GetRuntime();
-                if (!string.IsNullOrEmpty(rt))
-                {
-                    XMLHelper.WriteElementToXML(writer,"runtime",rt + " min");
-                }
-
-                WriteInfo(writer, this.SI.TheSeries().GetOverview(), "plot");
-                
-                writer.WriteStartElement("cast");
-
-                // actors...
-                
-                foreach (string aa in this.SI.TheSeries().GetActors())
-                {
-                    if (string.IsNullOrEmpty(aa))
-                        continue;
-                    XMLHelper.WriteElementToXML(writer,"actor",aa);
-                }
-                
-                writer.WriteEndElement(); // cast
-                writer.WriteEndElement(); // movie
-                writer.WriteEndElement(); // tvshow
+                this.ErrorText = e.Message;
+                this.Error = true;
+                this.Done = true;
+                return false;
             }
-
-            writer.Close();
-            this.Done = true;
-            return true;
         }
 
         #endregion

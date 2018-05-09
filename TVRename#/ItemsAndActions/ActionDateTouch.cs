@@ -48,7 +48,7 @@ namespace TVRename
 
         #region Action Members
 
-        public override string Name => "Touch Update Time";
+        public override string Name => "Update Timestamp";
 
         public override string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
 
@@ -60,7 +60,11 @@ namespace TVRename
             {
                 if (this.WhereFile != null)
                 {
+                    bool priorFileReadonly = this.WhereFile.IsReadOnly;
+                    if (priorFileReadonly) this.WhereFile.IsReadOnly = false;
                     System.IO.File.SetLastWriteTimeUtc(this.WhereFile.FullName, this.updateTime);
+                    if (priorFileReadonly) this.WhereFile.IsReadOnly = true;
+
                 }
                 if (this.WhereDirectory != null)
                 {

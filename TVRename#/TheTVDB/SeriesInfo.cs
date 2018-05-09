@@ -454,7 +454,8 @@ namespace TVRename
         public string getNetwork() => getValueAcrossVersions("Network", "network", "");
         public string GetOverview() => getValueAcrossVersions("Overview", "overview", "");
         public string GetRuntime() => getValueAcrossVersions("Runtime", "runtime", "");
-        public string GetRating() => getValueAcrossVersions("Rating","rating",""); // check , "ContentRating"
+        public string GetContentRating() => getValueAcrossVersions("Rating","rating",""); 
+        public string GetSiteRating() => getValueAcrossVersions("SiteRating", "siteRating", ""); 
         public string GetIMDB() => getValueAcrossVersions("IMDB_ID", "imdb_id", "");
         public string GetYear() => getValueAcrossVersions("Year", "year", "");
         public string GetFirstAired() => getValueAcrossVersions("FirstAired", "firstAired", "");
