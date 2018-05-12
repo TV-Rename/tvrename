@@ -60,8 +60,8 @@ namespace TVRename
             this.chkDVDOrder = new System.Windows.Forms.CheckBox();
             this.chkPadTwoDigits = new System.Windows.Forms.CheckBox();
             this.lvSeasonFolders = new System.Windows.Forms.ListView();
-            this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-            this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+            this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.txtSeasonNumber = new System.Windows.Forms.TextBox();
             this.txtFolder = new System.Windows.Forms.TextBox();
             this.bnBrowseFolder = new System.Windows.Forms.Button();
@@ -90,6 +90,8 @@ namespace TVRename
             this.lbTags = new System.Windows.Forms.Label();
             this.lbSearchURL = new System.Windows.Forms.Label();
             this.cbUseCustomSearch = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -514,6 +516,8 @@ namespace TVRename
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.label8);
+            this.tabPage3.Controls.Add(this.label4);
             this.tabPage3.Controls.Add(this.bnRemoveAlias);
             this.tabPage3.Controls.Add(this.bnAddAlias);
             this.tabPage3.Controls.Add(this.tbShowAlias);
@@ -528,9 +532,11 @@ namespace TVRename
             // 
             // bnRemoveAlias
             // 
-            this.bnRemoveAlias.Location = new System.Drawing.Point(6, 336);
+            this.bnRemoveAlias.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnRemoveAlias.Enabled = false;
+            this.bnRemoveAlias.Location = new System.Drawing.Point(336, 335);
             this.bnRemoveAlias.Name = "bnRemoveAlias";
-            this.bnRemoveAlias.Size = new System.Drawing.Size(413, 23);
+            this.bnRemoveAlias.Size = new System.Drawing.Size(83, 23);
             this.bnRemoveAlias.TabIndex = 3;
             this.bnRemoveAlias.Text = "&Remove Alias";
             this.bnRemoveAlias.UseVisualStyleBackColor = true;
@@ -538,9 +544,11 @@ namespace TVRename
             // 
             // bnAddAlias
             // 
-            this.bnAddAlias.Location = new System.Drawing.Point(6, 307);
+            this.bnAddAlias.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnAddAlias.Enabled = false;
+            this.bnAddAlias.Location = new System.Drawing.Point(336, 37);
             this.bnAddAlias.Name = "bnAddAlias";
-            this.bnAddAlias.Size = new System.Drawing.Size(413, 23);
+            this.bnAddAlias.Size = new System.Drawing.Size(83, 23);
             this.bnAddAlias.TabIndex = 2;
             this.bnAddAlias.Text = "&Add Alias";
             this.bnAddAlias.UseVisualStyleBackColor = true;
@@ -548,20 +556,22 @@ namespace TVRename
             // 
             // tbShowAlias
             // 
-            this.tbShowAlias.Location = new System.Drawing.Point(6, 281);
+            this.tbShowAlias.Location = new System.Drawing.Point(71, 11);
             this.tbShowAlias.Name = "tbShowAlias";
-            this.tbShowAlias.Size = new System.Drawing.Size(413, 20);
+            this.tbShowAlias.Size = new System.Drawing.Size(351, 20);
             this.tbShowAlias.TabIndex = 1;
+            this.tbShowAlias.TextChanged += new System.EventHandler(this.tbShowAlias_TextChanged);
             this.tbShowAlias.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbShowAlias_KeyDown);
             // 
             // lbShowAlias
             // 
             this.lbShowAlias.FormattingEnabled = true;
-            this.lbShowAlias.Location = new System.Drawing.Point(6, 6);
+            this.lbShowAlias.Location = new System.Drawing.Point(6, 84);
             this.lbShowAlias.Name = "lbShowAlias";
             this.lbShowAlias.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbShowAlias.Size = new System.Drawing.Size(413, 264);
+            this.lbShowAlias.Size = new System.Drawing.Size(413, 251);
             this.lbShowAlias.TabIndex = 0;
+            this.lbShowAlias.SelectedIndexChanged += new System.EventHandler(this.lbShowAlias_SelectedIndexChanged);
             // 
             // tabPage4
             // 
@@ -622,6 +632,27 @@ namespace TVRename
             this.cbUseCustomSearch.Text = "&Use Custom Search";
             this.cbUseCustomSearch.UseVisualStyleBackColor = true;
             this.cbUseCustomSearch.CheckedChanged += new System.EventHandler(this.cbUseCustomSearch_CheckedChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(9, 14);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(56, 13);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Alias Text:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(9, 68);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(40, 13);
+            this.label8.TabIndex = 9;
+            this.label8.Text = "Aliases";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // AddEditShow
             // 
@@ -710,5 +741,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbUseCustomSearch;
         private System.Windows.Forms.Label txtTagList;
         private System.Windows.Forms.Label lbTags;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label8;
     }
 }
