@@ -385,6 +385,10 @@ namespace TVRename
 
                     if (TVSettings.Instance.BulkAddIgnoreRecycleBin && di2.FullName.Contains("$RECYCLE.BIN",StringComparison.OrdinalIgnoreCase))
                         return true;
+                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin && di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase))
+                        return true;
+
+
 
                     // ....its good!
                     FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName);
