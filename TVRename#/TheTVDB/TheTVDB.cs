@@ -810,6 +810,15 @@ namespace TVRename
                             int numberOfNewEpisodes = 0;
                             int numberOfUpdatedEpisodes = 0;
 
+                            ICollection<int> oldEpisodeIds = new List<int>();
+                            foreach (KeyValuePair<int, Season> kvp2 in this.Series[id].AiredSeasons)
+                            {
+                                foreach (Episode ep in kvp2.Value.Episodes)
+                                {
+                                    oldEpisodeIds.Add(ep.EpisodeID);
+                                }
+                            }
+
                             foreach (JObject response in episodeResponses)
                             {
                                 try
@@ -827,12 +836,16 @@ namespace TVRename
 
                                             foreach (Episode ep in seas.Episodes)
                                             {
+                                                
                                                 if (ep.EpisodeID == serverEpisodeId)
                                                 {
+                                                    oldEpisodeIds.Remove(serverEpisodeId);
+
                                                     if (ep.Srv_LastUpdated < serverUpdateTime)
                                                     {
                                                         ep.Dirty = true; // mark episode as dirty.
                                                         numberOfUpdatedEpisodes++;
+                                                        
                                                     }
 
                                                     found = true;
@@ -870,6 +883,9 @@ namespace TVRename
 
                             logger.Info(this.Series[id].Name + " had " + numberOfUpdatedEpisodes +
                                         " episodes updated and " + numberOfNewEpisodes + " new episodes ");
+                            if (oldEpisodeIds.Count>0)
+                            logger.Error(this.Series[id].Name + " had " + oldEpisodeIds.Count +
+                                         " episodes deleted SOMETHING TO BE DONE HERE: "+String.Join(",",oldEpisodeIds));
                         }
                     }
                 }
@@ -1197,10 +1213,10 @@ namespace TVRename
                 string message = "Error processing data from TheTVDB (top level).";
                 message += "\r\n" + myStr;
                 message += "\r\n" + e.Message;
-                String name = "";
-                if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
+                string name = "";
+                if (codeHint.HasValue && this.Series.ContainsKey(codeHint.Value))
                 {
-                    name += "Show \"" + Series[codeHint.Value].Name + "\" ";
+                    name += "Show \"" + this.Series[codeHint.Value].Name + "\" ";
                 }
 
                 if (codeHint.HasValue)

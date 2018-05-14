@@ -15,10 +15,10 @@ namespace TVRename
 
     internal abstract class ShowsExporter : Exporter
     {
-        protected readonly List<ShowItem> Shows;
+        protected readonly ICollection<ShowItem> Shows;
 
 
-        protected ShowsExporter(List<ShowItem> shows)
+        protected ShowsExporter(ICollection<ShowItem> shows)
         {
             this.Shows = shows;
         }
@@ -59,7 +59,7 @@ namespace TVRename
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    List<ProcessedEpisode> lpe = this.Doc.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                    List<ProcessedEpisode> lpe = this.Doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
                     if (lpe != null)
                         if (Generate(ms, lpe))

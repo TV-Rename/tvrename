@@ -137,11 +137,11 @@ namespace TVRename
 
 
             //if the directory is the root download folder do not delete
-            if (TVSettings.Instance.DownloadFoldersNames.Contains(di.FullName))
+            if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
                 return;
 
             // Do not delete any monitor folders either
-            if (TVSettings.Instance.LibraryFoldersNames.Contains(di.FullName))
+            if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
                 return;
 
 

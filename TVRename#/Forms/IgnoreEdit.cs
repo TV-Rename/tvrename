@@ -29,7 +29,7 @@ namespace TVRename
             this.mDoc = doc;
             this.Ignore = new System.Collections.Generic.List<IgnoreItem>();
 
-            foreach (IgnoreItem ii in this.mDoc.Ignore)
+            foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
                 this.Ignore.Add(ii);
 
             this.InitializeComponent();
@@ -39,7 +39,7 @@ namespace TVRename
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            this.mDoc.Ignore = this.Ignore;
+            TVSettings.Instance.Ignore = this.Ignore;
             this.mDoc.SetDirty();
             this.Close();
         }

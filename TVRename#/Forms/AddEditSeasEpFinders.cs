@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Linq;
 using SourceGrid;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;		
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;		
@@ -30,10 +31,10 @@ namespace TVRename
         private List<FilenameProcessorRE> Rex;
         private List<ShowItem> SIL;
 
-        public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder)
+        public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, IEnumerable<ShowItem> sil, ShowItem initialShow, string initialFolder)
         {
             this.Rex = rex;
-            this.SIL = sil;
+            this.SIL = sil.ToList();
             
             this.InitializeComponent();
 

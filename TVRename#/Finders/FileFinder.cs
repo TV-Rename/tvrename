@@ -25,13 +25,13 @@ namespace TVRename
             ItemList toRemove = new ItemList();
 
             int fileCount = 0;
-            foreach (string s in this.Doc.SearchFolders)
+            foreach (string s in TVSettings.Instance.DownloadFolders)
                 fileCount += DirCache.CountFiles(s, true);
 
             int c = 0;
 
             DirCache dirCache = new DirCache();
-            foreach (string s in this.Doc.SearchFolders)
+            foreach (string s in TVSettings.Instance.DownloadFolders)
             {
                 if (this.ActionCancel)
                     return;
@@ -289,10 +289,10 @@ namespace TVRename
                             logger.Info($"Added new rule automatically for {sr}");
 
                             //Regenerate the episodes with the new rule added
-                            this.Doc.GenerateEpisodeDict(me.Episode.SI);
+                            this.Doc.Library.GenerateEpisodeDict(me.Episode.SI);
 
                             //Get the newly created processed episode we are after
-                            List<ProcessedEpisode> newSeason = this.Doc.GetShowItem(me.Episode.SI.TVDBCode).SeasonEpisodes[seasF];
+                            List<ProcessedEpisode> newSeason = this.Doc.Library.ShowItem(me.Episode.SI.TVDBCode).SeasonEpisodes[seasF];
                             // ReSharper disable once InconsistentNaming
                             ProcessedEpisode newPE = me.Episode;
 
@@ -318,7 +318,7 @@ namespace TVRename
 
                         // don't remove the base search folders
                         bool doTidyup = true;
-                        foreach (string folder in this.Doc.SearchFolders)
+                        foreach (string folder in TVSettings.Instance.DownloadFolders)
                         {
                             if (folder.SameDirectoryLocation(fi.Directory.FullName))
 

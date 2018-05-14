@@ -62,7 +62,7 @@ namespace TVRename.Forms
 
         private void btnRescan_Click(object sender, EventArgs e)
         {
-            this.dupEps = this.mDoc.findDoubleEps();
+            this.dupEps = this.mDoc.FindDoubleEps();
             updateUI();
         }
 

@@ -6,7 +6,7 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     internal class ShowsTXT : ShowsExporter
     {
-        public ShowsTXT(List<ShowItem> shows) : base(shows)
+        public ShowsTXT(ICollection<ShowItem> shows) : base(shows)
         {
         }
 

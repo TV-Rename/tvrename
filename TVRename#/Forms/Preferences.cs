@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
@@ -563,8 +562,7 @@ namespace TVRename
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            List<ShowItem> shows = this.mDoc.GetShowItems(false);
-            foreach (ShowItem show in shows)
+            foreach (ShowItem show in this.mDoc.Library.Shows)
             {
                 if(!showStatusList.Contains(show.ShowStatus))
                     showStatusList.Add(show.ShowStatus);
@@ -713,11 +711,11 @@ namespace TVRename
         private void bnAddSearchFolder_Click(object sender, System.EventArgs e)
         {
             int n = this.lbSearchFolders.SelectedIndex;
-            this.folderBrowser.SelectedPath = n != -1 ? this.mDoc.SearchFolders[n] : "";
+            this.folderBrowser.SelectedPath = n != -1 ? TVSettings.Instance.DownloadFolders[n] : "";
 
             if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                this.mDoc.SearchFolders.Add(this.folderBrowser.SelectedPath);
+                TVSettings.Instance.DownloadFolders.Add(this.folderBrowser.SelectedPath);
                 this.mDoc.SetDirty();
             }
 
@@ -730,7 +728,7 @@ namespace TVRename
             if (n == -1)
                 return;
 
-            this.mDoc.SearchFolders.RemoveAt(n);
+            TVSettings.Instance.DownloadFolders.RemoveAt(n);
             this.mDoc.SetDirty();
 
             this.FillSearchFolderList();
@@ -741,14 +739,14 @@ namespace TVRename
             int n = this.lbSearchFolders.SelectedIndex;
             if (n == -1)
                 return;
-            Helpers.SysOpen(this.mDoc.SearchFolders[n]);
+            Helpers.SysOpen(TVSettings.Instance.DownloadFolders[n]);
         }
 
         private void FillSearchFolderList()
         {
             this.lbSearchFolders.Items.Clear();
-            this.mDoc.SearchFolders.Sort();
-            foreach (string efi in this.mDoc.SearchFolders)
+            TVSettings.Instance.DownloadFolders.Sort();
+            foreach (string efi in TVSettings.Instance.DownloadFolders)
                 this.lbSearchFolders.Items.Add(efi);
         }
 
@@ -772,7 +770,7 @@ namespace TVRename
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
-                        this.mDoc.SearchFolders.Add(path.ToLower());
+                        TVSettings.Instance.DownloadFolders.Add(path.ToLower());
                 }
                 catch
                 {

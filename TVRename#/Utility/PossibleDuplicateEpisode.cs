@@ -49,7 +49,7 @@ namespace TVRename
                 lvi.SubItems.Add(this.episodeOne.Name + " & " + this.episodeTwo.Name);
                 
                 List<string> names = new List<string> {this.episodeOne.Name, this.episodeTwo.Name};
-                string combinedName = TVDoc.GetBestNameFor(names, "");
+                string combinedName = ShowLibrary.GetBestNameFor(names, "");
                 lvi.SubItems.Add(combinedName);
 
                 lvi.Tag = this;

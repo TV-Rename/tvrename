@@ -37,7 +37,7 @@ namespace TVRename
         {
             List<ShowSummaryData> showList = new List<ShowSummaryData>();
 
-            foreach (ShowItem si in this.mDoc.GetShowItems(false))
+            foreach (ShowItem si in this.mDoc.Library.Shows)
             {
                 ShowSummaryData show = this.AddShowDetails(si);
                 showList.Add(show);

@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace TVRename.Forms
+namespace TVRename
 {
     public partial class AutoAddShow : Form
     {
@@ -23,7 +23,7 @@ namespace TVRename.Forms
 
             this.cbDirectory.SuspendLayout();
             this.cbDirectory.Items.Clear();
-            this.cbDirectory.Items.AddRange(TVSettings.Instance.LibraryFoldersNames.ToArray());
+            this.cbDirectory.Items.AddRange(TVSettings.Instance.LibraryFolders.ToArray());
             this.cbDirectory.SelectedIndex = 0;
             this.cbDirectory.ResumeLayout();
 

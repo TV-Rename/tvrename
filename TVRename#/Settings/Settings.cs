@@ -269,10 +269,10 @@ namespace TVRename
             Just
         }
 
-
-        public List<string> LibraryFoldersNames = new List<string>();
-        public List<string> IgnoreFoldersNames = new List<string>();
-        public List<string> DownloadFoldersNames = new List<string>();
+        public List<string> LibraryFolders;
+        public List<string> IgnoreFolders;
+        public List<string> DownloadFolders;
+        public List<IgnoreItem> Ignore;
 
 
         public bool AutoSelectShowInMyShows = true;
@@ -792,6 +792,11 @@ namespace TVRename
         public void SetToDefaults()
         {
             // defaults that aren't handled with default initialisers
+            this.Ignore = new List<IgnoreItem>();
+
+            this.DownloadFolders = new List<string>();
+            this.IgnoreFolders = new List<string>();
+            this.LibraryFolders = new List<string>();
 
             this.VideoExtensionsString =
                 ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp";

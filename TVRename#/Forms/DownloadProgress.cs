@@ -20,9 +20,9 @@ namespace TVRename
     /// </summary>
     public partial class DownloadProgress : Form
     {
-        private TVDoc mDoc;
+        private CacheUpdater mDoc;
 
-        public DownloadProgress(TVDoc doc)
+        public DownloadProgress(CacheUpdater doc)
         {
             this.InitializeComponent();
 

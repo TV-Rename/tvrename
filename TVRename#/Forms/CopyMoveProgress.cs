@@ -33,10 +33,10 @@ namespace TVRename
 
         #endregion
 
-        private readonly TVDoc mDoc;
+        private readonly ActionEngine mDoc;
         private readonly ActionQueue[] mToDo;
 
-        public CopyMoveProgress(TVDoc doc, ActionQueue[] todo)
+        public CopyMoveProgress(ActionEngine doc, ActionQueue[] todo)
         {
             this.mDoc = doc;
             this.mToDo = todo;
@@ -229,7 +229,10 @@ namespace TVRename
 
         private void cbPause_CheckedChanged(object sender, EventArgs e)
         {
-            this.mDoc.ActionPause = this.cbPause.Checked;
+            if (this.cbPause.Checked)
+                this.mDoc.pause();
+            else
+                this.mDoc.unpause();
 
             bool en = !(this.cbPause.Checked);
             this.pbFile.Enabled = en;

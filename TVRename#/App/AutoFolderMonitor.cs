@@ -37,7 +37,7 @@ namespace TVRename
 
         public void StartMonitor()
         {
-            foreach (string efi in this.mDoc.SearchFolders)
+            foreach (string efi in TVSettings.Instance.DownloadFolders )
             {
                 if (!Directory.Exists(efi)) //Does not exist
                     continue;
@@ -93,7 +93,7 @@ namespace TVRename
 
                     mUI.Invoke(mUI.AFMDoAll);
 
-                    mDoc.OutputActionXML(TVSettings.Instance.MonitoredFoldersScanType); // Export Missing episodes to XML
+                    mDoc.OutputActionFiles(TVSettings.Instance.MonitoredFoldersScanType); // Export Missing episodes to XML
 
                 }
 
