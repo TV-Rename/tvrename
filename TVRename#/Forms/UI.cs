@@ -239,11 +239,11 @@ namespace TVRename
             // TODO: Unify command line handling between here and in Program.cs
 
             if (this.mDoc.Args.Scan)
-                this.Scan(true);
+                this.UIScan(null,true,TVSettings.ScanType.Full);
             if (this.mDoc.Args.QuickScan )
-                this.QuickScan(true);
+                this.UIScan(null,true,TVSettings.ScanType.Quick);
             if (this.mDoc.Args.RecentScan ) 
-                this.RecentScan(true);
+                this.UIScan(null,true,TVSettings.ScanType.Recent);
             if (this.mDoc.Args.DoAll)
                 this.ProcessAll();
             if (this.mDoc.Args.Quit || this.mDoc.Args.Hide)
@@ -991,7 +991,7 @@ namespace TVRename
                 if (si.UseSequentialMatch && (ei.OverallNumber != -1))
                     body += " (#" + ei.OverallNumber + ")";
 
-                List<FileInfo> fl = this.mDoc.FindEpOnDisk(dfc, ei);
+                List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc, ei);
                 if (fl != null)
                 {
                     foreach (FileInfo fi in fl)
@@ -1279,7 +1279,7 @@ namespace TVRename
                 return;
 
             ProcessedEpisode ei = (ProcessedEpisode) (this.lvWhenToWatch.SelectedItems[0].Tag);
-            List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, ei);
+            List<FileInfo> fl = TVDoc.FindEpOnDisk(null, ei);
             if ((fl != null) && (fl.Count > 0))
             {
                 Helpers.SysOpen(fl[0].FullName);
@@ -1295,8 +1295,7 @@ namespace TVRename
                     this.bnWTWBTSearch_Click(null, null);
                     break;
                 case TVSettings.WTWDoubleClickAction.Scan:
-                    this.Scan(new List<ShowItem> {ei.SI},false);
-                    this.mDoc.OutputActionFiles(TVSettings.ScanType.SingleShow);
+                    this.UIScan(new List<ShowItem> {ei.SI},false, TVSettings.ScanType.SingleShow);
                     this.tabControl1.SelectTab(this.tbAllInOne);
                     break;
             }
@@ -1450,7 +1449,7 @@ namespace TVRename
 
         public void Scan()
         {
-            Scan(true);
+            UIScan(null,true,TVSettings.ScanType.Full);
         }
 
         public void notifyIcon1_DoubleClick(object sender, MouseEventArgs e)
@@ -1635,7 +1634,7 @@ namespace TVRename
 
             if (ep != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
-                List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, ep);
+                List<FileInfo> fl = TVDoc.FindEpOnDisk(null, ep);
                 if (fl != null)
                 {
                     if (fl.Count > 0)
@@ -1660,7 +1659,7 @@ namespace TVRename
                 bool first = true;
                 foreach (ProcessedEpisode epds in si.SeasonEpisodes[seas.SeasonNumber])
                 {
-                    List<FileInfo> fl = this.mDoc.FindEpOnDisk(null, epds);
+                    List<FileInfo> fl = TVDoc.FindEpOnDisk(null, epds);
                     if ((fl != null) && (fl.Count > 0))
                     {
                         if (first)
@@ -1866,9 +1865,8 @@ namespace TVRename
                     {
                         if (mLastShowsClicked != null)
                         {
-                            this.Scan(mLastShowsClicked,false);
+                            this.UIScan(mLastShowsClicked,false, TVSettings.ScanType.SingleShow);
                             this.tabControl1.SelectTab(this.tbAllInOne);
-                            this.mDoc.OutputActionFiles(TVSettings.ScanType.SingleShow);
                             }
 
                         break;
@@ -2429,7 +2427,7 @@ namespace TVRename
 
             if (airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
             {
-                List<FileInfo> fl = this.mDoc.FindEpOnDisk(dfc, pe);
+                List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc, pe);
                 if ((fl != null) && (fl.Count > 0))
                     lvi.ImageIndex = 0;
                 else if (pe.SI.DoMissingCheck)
@@ -2887,40 +2885,33 @@ namespace TVRename
 
         private void bnActionCheck_Click(object sender, System.EventArgs e)
         {
-            this.Scan(false);
+            this.UIScan(null,false,TVSettings.ScanType.Full);
         }
 
-        public void Scan(bool unattended)
-        {
-            this.tabControl1.SelectedTab = this.tbAllInOne;
-            this.Scan(null, unattended);
-            this.mDoc.OutputActionFiles(TVSettings.ScanType.Full ); //Save missing shows to XML
-        }
+
 
         public void QuickScan()
         {
-            QuickScan(true);
+            UIScan(null,true,TVSettings.ScanType.Quick);
         }
 
         public void RecentScan()
         {
-            RecentScan(true);
+            UIScan(this.mDoc.Library.getRecentShows(), true, TVSettings.ScanType.Recent); 
         }
 
 
-        public void RecentScan(bool unattended)
-        {
-            Scan(this.mDoc.Library.getRecentShows(),unattended );
-            this.mDoc.OutputActionFiles(TVSettings.ScanType.Recent);
-        }
-
-        private void Scan(List<ShowItem> shows,bool unattended)
+        private void UIScan(List<ShowItem> shows,bool unattended, TVSettings.ScanType st)
         {
             logger.Info("*******************************");
-            logger.Info("Starting Scan for {0} shows...", shows?.Count > 0 ? shows.Count.ToString() : "all");
-            GetNewShows(unattended);
+            string desc = unattended ? "unattended " : "";
+            string showsdesc = shows?.Count > 0 ? shows.Count.ToString() : "all";
+            string scantype = st.PrettyPrint();
+
+            logger.Info($"Starting {desc}{scantype} Scan for {showsdesc} shows..." );
+            if (st != TVSettings.ScanType.SingleShow) GetNewShows(unattended);
             this.MoreBusy();
-            this.mDoc.Scan(shows);
+            this.mDoc.Scan(shows,unattended,st);
             this.LessBusy();
             this.FillMyShows(); // scanning can download more info to be displayed in my shows
             this.FillActionList();
@@ -3112,19 +3103,7 @@ namespace TVRename
             return false;
         }
 
-        public void QuickScan(bool unattended)
-        {
-            logger.Info("*******************************");
-            string desc = unattended ? "unattended " : "";
-            logger.Info($@"Starting {desc}QuickScan...");
-            GetNewShows(unattended);
-            this.MoreBusy();
-            this.mDoc.QuickScan();
-            this.LessBusy();
-            this.FillMyShows(); // scanning can download more info to be displayed in my shows
-            this.FillActionList();
-            this.mDoc.OutputActionFiles(TVSettings.ScanType.Quick); //Save missing shows to XML
-        }
+
 
 
         private ListViewItem LVIForItem(Item item)
@@ -3808,9 +3787,9 @@ namespace TVRename
             }
         }
 
-        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.RecentScan(false);
+        private void bnActionRecentCheck_Click(object sender, EventArgs e) => this.UIScan(null,false,TVSettings.ScanType.Recent);
 
-        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.QuickScan(false);
+        private void btnActionQuickScan_Click(object sender, EventArgs e) => this.UIScan(null, false,TVSettings.ScanType.Quick);
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
@@ -3951,19 +3930,7 @@ namespace TVRename
             {
                 logger.Info("*******************************");
                 logger.Info(scanType + " fired");
-                switch (TVSettings.Instance.MonitoredFoldersScanType)
-                {
-                    case TVRename.TVSettings.ScanType.Full:
-                        Scan(true);
-                        break;
-                    case TVRename.TVSettings.ScanType.Recent:
-                        RecentScan(true);
-                        break;
-                    case TVRename.TVSettings.ScanType.Quick:
-                        QuickScan(true);
-                        break;
-                }
-
+                UIScan(null, true, TVSettings.Instance.MonitoredFoldersScanType);
                 ProcessAll();
                 logger.Info(scanType + " complete");
             }

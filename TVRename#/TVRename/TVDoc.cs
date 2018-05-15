@@ -216,12 +216,12 @@ namespace TVRename
                 this.Library.GenDict();
         }
 
-        public List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ProcessedEpisode pe,bool checkDirectoryExist = true)
+        public static List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ProcessedEpisode pe,bool checkDirectoryExist = true)
         {
             return FindEpOnDisk(dfc, pe.SI, pe, checkDirectoryExist);
         }
 
-        private List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ShowItem si, Episode epi,bool checkDirectoryExist = true)
+        private static List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ShowItem si, Episode epi,bool checkDirectoryExist = true)
         {
             if (dfc == null)
                 dfc = new DirFilesCache();
@@ -303,7 +303,7 @@ namespace TVRename
             Stats().Save();
         }
 
-        public bool LoadXMLSettings(FileInfo from)
+        private bool LoadXMLSettings(FileInfo from)
         {
             logger.Info("Loading Settings from {0}", from.FullName);
             if (from == null)
@@ -404,7 +404,7 @@ namespace TVRename
             return true;
         }
 
-        public void OutputActionFiles(TVSettings.ScanType st)
+        private void OutputActionFiles(TVSettings.ScanType st)
         {
             List<ActionListExporter> ALExpoters = new List<ActionListExporter>
             {
@@ -447,9 +447,17 @@ namespace TVRename
             return false;
         }
 
-        public void Scan(List<ShowItem> shows)
+        public void Scan(IEnumerable< ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
             this.CurrentlyBusy = true;
+            if (shows == null)
+            {
+                if (st == TVSettings.ScanType.Full) shows = this.Library.Shows;
+                if (st == TVSettings.ScanType.Quick) shows = GetQuickShowsToScan(true,true);
+                if (st == TVSettings.ScanType.Recent) shows = this.Library.getRecentShows();
+            }
+
+
             if (TVSettings.Instance.MissingCheck && !CheckAllFoldersExist(shows)) // only check for folders existing for missing check
                 return;
 
@@ -485,6 +493,8 @@ namespace TVRename
             this.ScanProgDlg = null;
 
             this.DownloadIdentifiers.reset();
+
+            this.OutputActionFiles(st);//Save missing shows to XML (and others)
 
             this.CurrentlyBusy = false;
         }
@@ -629,9 +639,9 @@ namespace TVRename
             return returnValue;
         }
 
-        public void QuickScan() => QuickScan(true, true);
+        public void QuickScan() => Scan(null, true,TVSettings.ScanType.Quick);
 
-        private void QuickScan(bool doMissingRecents, bool doFilesInDownloadDir)
+        private IEnumerable<ShowItem> GetQuickShowsToScan(bool doMissingRecents, bool doFilesInDownloadDir)
         {
 
             this.CurrentlyBusy = true;
@@ -651,15 +661,12 @@ namespace TVRename
                 }
             }
 
-
-            Scan(showsToScan);
-
             this.CurrentlyBusy = false;
 
-
+            return showsToScan;
         }
 
-        private bool CheckAllFoldersExist(ICollection<ShowItem> showlist)
+        private bool CheckAllFoldersExist(IEnumerable< ShowItem> showlist)
         {
             // show MissingFolderAction for any folders that are missing
             // return false if user cancels
@@ -980,7 +987,7 @@ namespace TVRename
 
         }
 
-        private bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
+        private static bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
         {
             if (FindSeasEp(fi, out int seasF, out int epF, out int maxEp, si, out FilenameProcessorRE rex))
             {
@@ -1008,7 +1015,7 @@ namespace TVRename
             return true;
         }
 
-        private bool fileNeeded(DirectoryInfo di, ShowItem si, DirFilesCache dfc)
+        private static bool fileNeeded(DirectoryInfo di, ShowItem si, DirFilesCache dfc)
         {
             if (FindSeasEp(di, out int seasF, out int epF, si, out FilenameProcessorRE rex))
             {

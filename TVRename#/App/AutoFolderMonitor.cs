@@ -93,8 +93,6 @@ namespace TVRename
 
                     mUI.Invoke(mUI.AFMDoAll);
 
-                    mDoc.OutputActionFiles(TVSettings.Instance.MonitoredFoldersScanType); // Export Missing episodes to XML
-
                 }
 
             }

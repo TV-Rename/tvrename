@@ -786,6 +786,23 @@ namespace TVRename
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
 
 
+        public static string PrettyPrint(this TVSettings.ScanType st)
+        {
+            switch (st)
+            {
+                case TVSettings.ScanType.Quick:
+                    return "Quick";
+                case TVSettings.ScanType.Full:
+                    return "Full";
+                case TVSettings.ScanType.Recent:
+                    return "Recent";
+                case TVSettings.ScanType.SingleShow:
+                    return "Single";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(st), st, null);
+            }
+        }
+
         public static void Swap<T>(
             this IList<T> list,
             int firstIndex,

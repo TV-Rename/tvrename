@@ -201,7 +201,7 @@ namespace TVRename
                     if (ei.FirstAired != null && ei.FirstAired < DateTime.Now)
                         epAiredCount++;
 
-                    List<Alphaleonis.Win32.Filesystem.FileInfo> fl = this.mDoc.FindEpOnDisk(dfc,ei,false);
+                    List<Alphaleonis.Win32.Filesystem.FileInfo> fl = TVDoc.FindEpOnDisk(dfc,ei,false);
                     if (fl != null)
                     {
                         if (fl.Count != 0)
@@ -383,7 +383,7 @@ namespace TVRename
                     bool first = true;
                     foreach (ProcessedEpisode epds in this.show.SeasonEpisodes[seas.SeasonNumber])
                     {
-                        List<Alphaleonis.Win32.Filesystem.FileInfo> fl = this.gridSummary.mDoc.FindEpOnDisk(new DirFilesCache() , epds,false);
+                        List<Alphaleonis.Win32.Filesystem.FileInfo> fl = TVDoc.FindEpOnDisk(new DirFilesCache() , epds,false);
                         if ((fl != null) && (fl.Count > 0))
                         {
                             if (first)
