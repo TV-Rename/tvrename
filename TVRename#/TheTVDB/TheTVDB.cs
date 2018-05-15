@@ -76,6 +76,8 @@ namespace TVRename
         public bool Connected;
         public string CurrentDLTask;
         private System.Collections.Generic.List<ExtraEp> ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
+        private List<ExtraEp> RemoveEpisodeIds; // IDs of episodes that should be removed
+
         private System.Collections.Generic.List<int> ForceReloadOn;
         public List<Language> LanguageList;
         public string LastError;
@@ -129,6 +131,7 @@ namespace TVRename
             // this.WhoHasLock = new List<String>();
             this.Connected = false;
             this.ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
+            this.RemoveEpisodeIds = new System.Collections.Generic.List<ExtraEp>();
 
             this.LanguageList = new List<Language> {new Language(7, "en", "English", "English")};
 
@@ -157,6 +160,17 @@ namespace TVRename
         {
             Monitor.Exit(this.ExtraEpisodes);
         }
+
+        private void LockRE()
+        {
+            Monitor.Enter(this.RemoveEpisodeIds);
+        }
+
+        private void UnlockRE()
+        {
+            Monitor.Exit(this.RemoveEpisodeIds );
+        }
+
 
         public bool HasSeries(int id)
         {
@@ -884,8 +898,12 @@ namespace TVRename
                             logger.Info(this.Series[id].Name + " had " + numberOfUpdatedEpisodes +
                                         " episodes updated and " + numberOfNewEpisodes + " new episodes ");
                             if (oldEpisodeIds.Count>0)
-                            logger.Error(this.Series[id].Name + " had " + oldEpisodeIds.Count +
-                                         " episodes deleted SOMETHING TO BE DONE HERE: "+String.Join(",",oldEpisodeIds));
+                            logger.Warn(this.Series[id].Name + " had " + oldEpisodeIds.Count +
+                                         " episodes deleted: "+String.Join(",",oldEpisodeIds));
+                            this.LockRE();
+                            foreach (int episodeId in oldEpisodeIds)
+                                this.RemoveEpisodeIds.Add(new ExtraEp(id,episodeId) );
+                            this.UnlockRE();
                         }
                     }
                 }
@@ -1642,6 +1660,15 @@ namespace TVRename
                 ee.Done = true;
             });
             this.UnlockEE();
+
+            this.LockRE();
+            foreach (ExtraEp  episodetoRemove in this.RemoveEpisodeIds)
+            {
+                this.Series[episodetoRemove.SeriesID].RemoveEpisode(episodetoRemove.EpisodeID);
+            }
+
+            this.RemoveEpisodeIds.Clear();
+            this.UnlockRE();
 
             this.ForceReloadOn.Remove(code);
 

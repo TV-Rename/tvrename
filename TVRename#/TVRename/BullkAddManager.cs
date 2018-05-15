@@ -103,7 +103,7 @@ namespace TVRename
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
-            foreach (ShowItem si in mDoc.Library.Shows)
+            foreach (ShowItem si in this.mDoc.Library.GetShowItems())
             {
                 if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) &&
                     theFolder.IsSubfolderOf(si.AutoAdd_FolderBase))

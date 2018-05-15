@@ -128,7 +128,7 @@ namespace TVRename.App
             //itshould only do anything the first time it is run and then be entirely begign
             //can be removed after 1/1/19
 
-            foreach (ShowItem si in doc.Library.Shows)
+            foreach (ShowItem si in doc.Library.GetShowItems())
             {
                 string newTimeZone = tvdb.GetSeries(si.TVDBCode)?.tempTimeZone;
 

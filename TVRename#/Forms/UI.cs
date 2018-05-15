@@ -619,7 +619,7 @@ namespace TVRename
             this.MyShowTree.BeginUpdate();
 
             this.MyShowTree.Nodes.Clear();
-            IEnumerable<ShowItem> sil = this.mDoc.Library.Shows;
+            List<ShowItem> sil = this.mDoc.Library.GetShowItems();
             ShowFilter filter = TVSettings.Instance.Filter;
             foreach (ShowItem si in sil)
             {
@@ -2746,7 +2746,7 @@ namespace TVRename
                 pel = currentSI.SeasonEpisodes[snum];
             else
             {
-                foreach (ShowItem si in this.mDoc.Library.Shows)
+                foreach (ShowItem si in this.mDoc.Library.GetShowItems())
                 {
                     foreach (System.Collections.Generic.KeyValuePair<int, List<ProcessedEpisode>> kvp in si
                         .SeasonEpisodes)
@@ -2815,7 +2815,7 @@ namespace TVRename
             }
 
             AddEditSeasEpFinders d = new AddEditSeasEpFinders(TVSettings.Instance.FNPRegexs,
-                this.mDoc.Library.Shows, currentSI, theFolder);
+                this.mDoc.Library.GetShowItems(), currentSI, theFolder);
 
             DialogResult dr = d.ShowDialog();
             if (dr == DialogResult.OK)
@@ -3954,7 +3954,7 @@ namespace TVRename
         {
 
             TimeZoneTracker results = new TimeZoneTracker();
-            foreach (ShowItem si in this.mDoc.Library.Shows)
+            foreach (ShowItem si in this.mDoc.Library.GetShowItems())
             {
                 SeriesInfo ser = si.TheSeries();
 

@@ -562,7 +562,7 @@ namespace TVRename
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            foreach (ShowItem show in this.mDoc.Library.Shows)
+            foreach (ShowItem show in this.mDoc.Library.GetShowItems())
             {
                 if(!showStatusList.Contains(show.ShowStatus))
                     showStatusList.Add(show.ShowStatus);

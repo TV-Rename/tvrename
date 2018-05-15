@@ -89,7 +89,7 @@ namespace TVRename
             {
                 txt.AppendLine("==== Media Folders Directory Scan ====" );
 
-                foreach (ShowItem si in this.mDoc.Library.Shows)
+                foreach (ShowItem si in this.mDoc.Library.GetShowItems() )
                 {
                     foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
