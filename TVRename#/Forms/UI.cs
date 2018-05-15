@@ -2819,7 +2819,10 @@ namespace TVRename
 
             DialogResult dr = d.ShowDialog();
             if (dr == DialogResult.OK)
+            {
                 this.mDoc.SetDirty();
+                TVSettings.Instance.FNPRegexs = d.OutputRegularExpressions;
+            }
         }
 
         private void actorsToolStripMenuItem_Click(object sender, System.EventArgs e)
