@@ -6,6 +6,10 @@ using System.Xml;
 
 namespace TVRename
 {
+    /// <summary>
+    /// Handles a thread-safe implementation of the 'library' this will hold all the ShowItem configuration as well
+    /// many methods that provide summaries of the data in the library
+    /// </summary>
     public class ShowLibrary : ConcurrentDictionary<int,ShowItem>
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
