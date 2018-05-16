@@ -5,6 +5,11 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
+    /// <summary>
+    /// Updates TVDB cache in another thread and reports back progress to UI
+    /// Handles the update happening in the background and also presenting a UI and bringing the update into the
+    /// foreground
+    /// </summary>
     public class CacheUpdater:IDisposable
     {
         public bool DownloadDone;
