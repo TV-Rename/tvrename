@@ -447,12 +447,12 @@ namespace TVRename
             return false;
         }
 
-        public void Scan(IEnumerable< ShowItem> shows, bool unattended, TVSettings.ScanType st)
+        public void Scan(List< ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
             this.CurrentlyBusy = true;
             if (shows == null)
             {
-                if (st == TVSettings.ScanType.Full) shows = this.Library.Shows;
+                if (st == TVSettings.ScanType.Full) shows = this.Library.GetShowItems();
                 if (st == TVSettings.ScanType.Quick) shows = GetQuickShowsToScan(true,true);
                 if (st == TVSettings.ScanType.Recent) shows = this.Library.getRecentShows();
             }
@@ -479,7 +479,7 @@ namespace TVRename
             else
                 this.ScanProgDlg = null;
 
-            actionWork.Start(shows);
+            actionWork.Start(shows.ToList());
 
             if ((this.ScanProgDlg != null) && (this.ScanProgDlg.ShowDialog() == DialogResult.Cancel))
             {
@@ -641,7 +641,7 @@ namespace TVRename
 
         public void QuickScan() => Scan(null, true,TVSettings.ScanType.Quick);
 
-        private IEnumerable<ShowItem> GetQuickShowsToScan(bool doMissingRecents, bool doFilesInDownloadDir)
+        private List<ShowItem> GetQuickShowsToScan(bool doMissingRecents, bool doFilesInDownloadDir)
         {
 
             this.CurrentlyBusy = true;
