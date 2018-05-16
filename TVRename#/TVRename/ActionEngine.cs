@@ -8,20 +8,31 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
+    /// <summary>
+    /// Handles the multithreaded nature of actioning many actions at the same time. It will provide a UI to update the user on the status of the execution if required.
+    /// </summary>
     public class ActionEngine
     {
+        
         private Thread ActionProcessorThread;
         private bool ActionPause;
         private List<Thread> ActionWorkers;
         private Semaphore[] ActionSemaphores;
         private bool ActionStarting;
 
-        private TVRenameStats mStats;
+        private TVRenameStats mStats; //reference to the main TVRenameStats, so we can udpate the counts
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
 
+        /// <summary>
+        /// Asks for execution to pause
+        /// </summary>
         public void pause() { ActionPause = true; }
+        
+        /// <summary>
+        /// Asks for execution to resume
+        /// </summary>
         public void unpause() { ActionPause = false; }
 
         public ActionEngine(TVRenameStats stats)
@@ -29,6 +40,11 @@ namespace TVRename
             mStats = stats;
 
         }
+        
+        /// <summary>
+        /// Processes an Action by running it.
+        /// </summary>
+        /// <param name="infoIn">A ProcessActionInfo to be processed. It will contain the Action to be processed</param>
         public void ProcessSingleAction(Object infoIn)
         {
             try
@@ -76,6 +92,11 @@ namespace TVRename
 
 
 
+        /// <summary>
+        /// Processes a set of actions, running them in a multi-threaded way based on the application's settings.
+        /// </summary>
+        /// <param name="theList">An ItemList to be processed.</param>
+        /// <param name="showUI">Whether or not we should display a UI to inform the user about progress.</param>
         public void DoActions(ItemList theList, bool showUI)
         {
             logger.Info("**********************");
