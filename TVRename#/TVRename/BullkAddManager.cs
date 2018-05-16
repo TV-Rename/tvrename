@@ -8,18 +8,21 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
+    /// <summary>
+    /// Handles the logic behind the Bulk Add Function
+    /// Works in conjunction with a UI to show outcomes to the user
+    /// </summary>
     public class BulkAddManager
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public FolderMonitorEntryList AddItems;
+        private TVDoc mDoc;
+
         public BulkAddManager(TVDoc doc)
         {
             this.AddItems = new FolderMonitorEntryList();
             this.mDoc = doc;
         }
-
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        public FolderMonitorEntryList AddItems;
-        private TVDoc mDoc;
-
 
         public static void GuessShowItem(FolderMonitorEntry ai, ShowLibrary library)
         {
