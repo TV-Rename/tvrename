@@ -84,7 +84,10 @@ namespace TVRename
         public string LoadErr;
         public bool LoadOK;
         private long New_Srv_Time;
-        private System.Collections.Generic.Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
+
+        // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
+        private readonly Dictionary<int, SeriesInfo> Series= new System.Collections.Generic.Dictionary<int, SeriesInfo>();
+        
         private long Srv_Time; // only update this after a 100% successful download
         // private List<String> WhoHasLock;
         private static string APIRoot;
@@ -101,7 +104,7 @@ namespace TVRename
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile TheTVDB instance;
-        private static object syncRoot = new object();
+        private static readonly object syncRoot = new object();
 
         public static TheTVDB Instance
         {
@@ -137,8 +140,6 @@ namespace TVRename
 
             WebsiteRoot = "http://thetvdb.com";
             APIRoot = "https://api.thetvdb.com";
-
-            this.Series = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
 
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date

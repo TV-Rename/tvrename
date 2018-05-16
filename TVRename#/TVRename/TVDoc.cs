@@ -449,54 +449,72 @@ namespace TVRename
 
         public void Scan(List< ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
-            this.CurrentlyBusy = true;
-            if (shows == null)
+            try
             {
-                if (st == TVSettings.ScanType.Full) shows = this.Library.GetShowItems();
-                if (st == TVSettings.ScanType.Quick) shows = GetQuickShowsToScan(true,true);
-                if (st == TVSettings.ScanType.Recent) shows = this.Library.getRecentShows();
-            }
+                this.CurrentlyBusy = true;
+
+                if (shows == null)
+                {
+                    if (st == TVSettings.ScanType.Full) shows = this.Library.GetShowItems();
+                    if (st == TVSettings.ScanType.Quick) shows = GetQuickShowsToScan(true, true);
+                    if (st == TVSettings.ScanType.Recent) shows = this.Library.getRecentShows();
+                }
 
 
-            if (TVSettings.Instance.MissingCheck && !CheckAllFoldersExist(shows)) // only check for folders existing for missing check
-                return;
+                if (TVSettings.Instance.MissingCheck && !CheckAllFoldersExist(shows)
+                ) // only check for folders existing for missing check
+                    return;
 
-            if (!DoDownloadsFG())
-                return;
+                if (!DoDownloadsFG())
+                    return;
 
-            Thread actionWork = new Thread(ScanWorker) {Name = "ActionWork"};
+                Thread actionWork = new Thread(ScanWorker) {Name = "ActionWork"};
 
-            this.ActionCancel = false;
-            foreach (Finder f in this.Finders) { f.Reset(); }
+                this.ActionCancel = false;
+                foreach (Finder f in this.Finders)
+                {
+                    f.Reset();
+                }
 
-            if (!this.Args.Hide)
-            {
-                this.ScanProgDlg = new ScanProgress(TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
-                                                    TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchLocally,
-                                                    TVSettings.Instance.MissingCheck && (TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckSABnzbd),
-                                                    TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchRSS);
-            }
-            else
+                if (!this.Args.Hide)
+                {
+                    this.ScanProgDlg = new ScanProgress(
+                        TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
+                        TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchLocally,
+                        TVSettings.Instance.MissingCheck &&
+                        (TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckSABnzbd),
+                        TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchRSS);
+                }
+                else
+                    this.ScanProgDlg = null;
+
+                actionWork.Start(shows.ToList());
+
+                if ((this.ScanProgDlg != null) && (this.ScanProgDlg.ShowDialog() == DialogResult.Cancel))
+                {
+                    this.ActionCancel = true;
+                    actionWork.Interrupt();
+                    foreach (Finder f in this.Finders)
+                    {
+                        f.Interrupt();
+                    }
+                }
+                else
+                    actionWork.Join();
+
                 this.ScanProgDlg = null;
 
-            actionWork.Start(shows.ToList());
+                this.DownloadIdentifiers.reset();
 
-            if ((this.ScanProgDlg != null) && (this.ScanProgDlg.ShowDialog() == DialogResult.Cancel))
-            {
-                this.ActionCancel = true;
-                actionWork.Interrupt();
-                foreach (Finder f in this.Finders) { f.Interrupt(); }
+                this.OutputActionFiles(st); //Save missing shows to XML (and others)
+
+                this.CurrentlyBusy = false;
             }
-            else
-                actionWork.Join();
-
-            this.ScanProgDlg = null;
-
-            this.DownloadIdentifiers.reset();
-
-            this.OutputActionFiles(st);//Save missing shows to XML (and others)
-
-            this.CurrentlyBusy = false;
+            catch (Exception e)
+            {
+                logger.Fatal(e, "Unhandled Exception in ScanWorker");
+                
+            }
         }
 
         public void doAllActions()
