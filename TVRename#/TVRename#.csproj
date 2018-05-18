@@ -102,6 +102,7 @@
     <Compile Include="DownloadIdentifers\IncorrectFileDates.cs" />
     <Compile Include="Exporter\ActionListXML.cs" />
     <Compile Include="Exporter\MissingCSV.cs" />
+    <Compile Include="Exporter\ShowsHTML.cs" />
     <Compile Include="Forms\AutoAddShow.cs">
       <SubType>Form</SubType>
     </Compile>

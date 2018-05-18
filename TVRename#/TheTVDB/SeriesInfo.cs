@@ -8,6 +8,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Runtime.Serialization;
 
@@ -49,6 +50,11 @@ namespace TVRename
         public long Srv_LastUpdated;
         public int TVDBCode;
         public string tempTimeZone;
+
+        public int MinYear =>
+            this.AiredSeasons.DefaultIfEmpty().Min(assn => assn.Value.Episodes.DefaultIfEmpty().Min(ep => ep.GetAirDateDT().HasValue ? ep.GetAirDateDT().Value.Year : 9999));
+        public int MaxYear =>
+            this.AiredSeasons.DefaultIfEmpty().Max(assn => assn.Value.Episodes.DefaultIfEmpty().Max(ep => ep.GetAirDateDT().HasValue ? ep.GetAirDateDT().Value.Year : 0));
 
 
         public DateTime? LastAiredDate() {

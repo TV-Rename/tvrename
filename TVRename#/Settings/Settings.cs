@@ -293,6 +293,8 @@ namespace TVRename
         public string ExportMissingXMLTo = "";
         public bool ExportShowsTXT = false;
         public string ExportShowsTXTTo = "";
+        public bool ExportShowsHTML = false;
+        public string ExportShowsHTMLTo = "";
         public int ExportRSSMaxDays = 7;
         public int ExportRSSMaxShows = 10;
         public int ExportRSSDaysPast = 0;
@@ -542,6 +544,12 @@ namespace TVRename
                     this.ExportShowsTXT = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportShowsTXTTo")
                     this.ExportShowsTXTTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportShowsHTML")
+                    this.ExportShowsHTML = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportShowsHTMLTo")
+                    this.ExportShowsHTMLTo = reader.ReadElementContentAsString();
+
+                
                 else if (reader.Name == "ForceLowercaseFilenames")
                     this.ForceLowercaseFilenames = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "IgnoreSamples")
@@ -857,6 +865,8 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer,"ExportRenamingXMLTo",this.ExportRenamingXMLTo);
             XMLHelper.WriteElementToXML(writer,"ExportShowsTXT", this.ExportShowsTXT);
             XMLHelper.WriteElementToXML(writer, "ExportShowsTXTTo", this.ExportShowsTXTTo);
+            XMLHelper.WriteElementToXML(writer, "ExportShowsHTML", this.ExportShowsHTML);
+            XMLHelper.WriteElementToXML(writer, "ExportShowsHTMLTo", this.ExportShowsHTMLTo);
             XMLHelper.WriteElementToXML(writer,"ExportFOXML",this.ExportFOXML);
             XMLHelper.WriteElementToXML(writer,"ExportFOXMLTo",this.ExportFOXMLTo);
             XMLHelper.WriteElementToXML(writer,"StartupTab2",TabNameForNumber(this.StartupTab));

@@ -422,8 +422,19 @@ namespace TVRename
 
         public void ExportShowInfo()
         {
-            ShowsTXT mx = new ShowsTXT(this.Library.Values);
-            mx.Run();
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                /* run your code here */
+                new ShowsTXT(this.Library.GetShowItems()).Run();
+            }).Start();
+
+            new Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                /* run your code here */
+                new ShowsHTML(this.Library.GetShowItems()).Run();
+            }).Start();
         }
 
         public void WriteUpcoming()

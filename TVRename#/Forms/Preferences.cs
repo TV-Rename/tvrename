@@ -123,6 +123,8 @@ namespace TVRename
             S.ExportFOXMLTo = this.txtFOXML.Text;
             S.ExportShowsTXT = this.cbShowsTXT.Checked;
             S.ExportShowsTXTTo = this.txtShowsTXTTo.Text;
+            S.ExportShowsHTML = this.cbShowsHTML.Checked;
+            S.ExportShowsHTMLTo = this.txtShowsHTMLTo.Text;
 
             S.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
             S.StartupTab = this.cbStartupTab.SelectedIndex;
@@ -349,8 +351,11 @@ namespace TVRename
             this.cbMissingCSV.Checked = S.ExportMissingCSV;
             this.txtMissingCSV.Text = S.ExportMissingCSVTo;
 
+            
             this.cbShowsTXT.Checked = S.ExportShowsTXT ;
             this.txtShowsTXTTo.Text = S.ExportShowsTXTTo;
+            this.cbShowsHTML.Checked = S.ExportShowsHTML;
+            this.txtShowsHTMLTo.Text = S.ExportShowsHTMLTo;
 
 
             this.cbRenamingXML.Checked = S.ExportRenamingXML;
@@ -655,6 +660,11 @@ namespace TVRename
             this.Browse(this.txtShowsTXTTo, "txt", 4);
         }
 
+        private void bnBrowseShowsHTML_Click(object sender, EventArgs e)
+        {
+            this.Browse(this.txtShowsHTMLTo, "html", 5);
+        }
+
         private void bnBrowseRenamingXML_Click(object sender, System.EventArgs e)
         {
             this.Browse(this.txtRenamingXML,"xml",2);
@@ -694,6 +704,10 @@ namespace TVRename
             bool stxt = this.cbShowsTXT.Checked;
             this.txtShowsTXTTo.Enabled = stxt;
             this.bnBrowseShowsTXT.Enabled = stxt;
+
+            bool shtml = this.cbShowsHTML.Checked;
+            this.txtShowsHTMLTo.Enabled = shtml;
+            this.bnBrowseShowsHTML.Enabled = shtml;
 
             bool ren = this.cbRenamingXML.Checked;
             this.txtRenamingXML.Enabled = ren;
@@ -1250,6 +1264,11 @@ namespace TVRename
         {
                 e.SuppressKeyPress = true;
             
+        }
+
+        private void cbShowsHTML_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

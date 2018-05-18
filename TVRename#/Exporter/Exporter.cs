@@ -15,10 +15,10 @@ namespace TVRename
 
     internal abstract class ShowsExporter : Exporter
     {
-        protected readonly ICollection<ShowItem> Shows;
+        protected readonly List<ShowItem> Shows;
 
 
-        protected ShowsExporter(ICollection<ShowItem> shows)
+        protected ShowsExporter(List<ShowItem> shows)
         {
             this.Shows = shows;
         }
