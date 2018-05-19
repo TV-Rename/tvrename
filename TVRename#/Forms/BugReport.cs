@@ -73,7 +73,7 @@ namespace TVRename
                 txt.AppendLine();
 
                 DirCache dirC = new DirCache();
-                foreach (string efi in this.mDoc.SearchFolders)
+                foreach (string efi in TVSettings.Instance.DownloadFolders)
                     dirC.AddFolder(null, 0, 0, efi, true);
 
                 foreach (DirCacheEntry fi in dirC)
@@ -89,7 +89,7 @@ namespace TVRename
             {
                 txt.AppendLine("==== Media Folders Directory Scan ====" );
 
-                foreach (ShowItem si in this.mDoc.GetShowItems(true))
+                foreach (ShowItem si in this.mDoc.Library.GetShowItems() )
                 {
                     foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
@@ -116,7 +116,6 @@ namespace TVRename
                     }
                     txt.AppendLine();
                 }
-                this.mDoc.UnlockShowItems();
 
                 txt.AppendLine();
             }

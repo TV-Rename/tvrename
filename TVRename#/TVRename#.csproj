@@ -102,6 +102,7 @@
     <Compile Include="DownloadIdentifers\IncorrectFileDates.cs" />
     <Compile Include="Exporter\ActionListXML.cs" />
     <Compile Include="Exporter\MissingCSV.cs" />
+    <Compile Include="Exporter\ShowsHTML.cs" />
     <Compile Include="Forms\AutoAddShow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -171,6 +172,10 @@
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
+    <Compile Include="TVRename\ActionEngine.cs" />
+    <Compile Include="TVRename\BullkAddManager.cs" />
+    <Compile Include="TVRename\CacheUpdater.cs" />
+    <Compile Include="TVRename\ShowLibrary.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\ActorsGrid.cs">
@@ -333,6 +338,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\VersionUpdater.cs" />
     <EmbeddedResource Include="Forms\ActorsGrid.resx">
       <DependentUpon>ActorsGrid.cs</DependentUpon>
       <SubType>Designer</SubType>

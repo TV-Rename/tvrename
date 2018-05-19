@@ -342,5 +342,19 @@ namespace TVRename
             txtTagList.Enabled = en;
         }
 
+        private void tbShowAlias_TextChanged(object sender, EventArgs e)
+        {
+          this.bnAddAlias.Enabled = this.tbShowAlias.Text.Length > 0;
+        }
+
+        private void lbShowAlias_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            this.bnRemoveAlias.Enabled = this.lbShowAlias.SelectedItems.Count > 0;
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

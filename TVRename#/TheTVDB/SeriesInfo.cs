@@ -8,6 +8,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
 using System.Runtime.Serialization;
 
@@ -19,7 +20,7 @@ namespace TVRename
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
         public Dictionary<string, string> Items; // e.g. Overview, Banner, Poster, etc.
-        public int LanguageId;
+        private int LanguageId;
         public string Name;
         public bool BannersLoaded;
 
@@ -49,6 +50,11 @@ namespace TVRename
         public long Srv_LastUpdated;
         public int TVDBCode;
         public string tempTimeZone;
+
+        public int MinYear =>
+            this.AiredSeasons.DefaultIfEmpty().Min(assn => assn.Value.Episodes.DefaultIfEmpty().Min(ep => ep.GetAirDateDT().HasValue ? ep.GetAirDateDT().Value.Year : 9999));
+        public int MaxYear =>
+            this.AiredSeasons.DefaultIfEmpty().Max(assn => assn.Value.Episodes.DefaultIfEmpty().Max(ep => ep.GetAirDateDT().HasValue ? ep.GetAirDateDT().Value.Year : 0));
 
 
         public DateTime? LastAiredDate() {
@@ -776,6 +782,21 @@ namespace TVRename
             protected EpisodeNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
             {
             }
+        }
+
+        internal void RemoveEpisode(int episodeID)
+        {
+            //Remove from Aired and DVD Seasons
+            foreach (Season s in this.DVDSeasons.Values)
+            {
+                s.RemoveEpisode(episodeID);
+            }
+            foreach (Season s in this.AiredSeasons.Values)
+            {
+                s.RemoveEpisode(episodeID);
+            }
+
+
         }
     }
 }

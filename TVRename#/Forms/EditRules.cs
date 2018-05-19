@@ -171,7 +171,7 @@ namespace TVRename
                 foreach (ProcessedEpisode pe in this.mOriginalEps)
                     pel.Add(new ProcessedEpisode(pe));
 
-                TVDoc.ApplyRules(pel, this.WorkingRuleSet, this.mSI);
+                ShowLibrary.ApplyRules(pel, this.WorkingRuleSet, this.mSI);
             }
 
             this.lbEpsPreview.BeginUpdate();

@@ -110,6 +110,9 @@ namespace TVRename
             this.cbIgnoreSamples = new System.Windows.Forms.CheckBox();
             this.tbAutoExport = new System.Windows.Forms.TabPage();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.bnBrowseShowsHTML = new System.Windows.Forms.Button();
+            this.cbShowsHTML = new System.Windows.Forms.CheckBox();
+            this.txtShowsHTMLTo = new System.Windows.Forms.TextBox();
             this.bnBrowseShowsTXT = new System.Windows.Forms.Button();
             this.cbShowsTXT = new System.Windows.Forms.CheckBox();
             this.txtShowsTXTTo = new System.Windows.Forms.TextBox();
@@ -229,6 +232,7 @@ namespace TVRename
             this.colShowStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tpBulkAdd = new System.Windows.Forms.TabPage();
+            this.chkForceBulkAddToUseSettingsOnly = new System.Windows.Forms.CheckBox();
             this.label43 = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.tbIgnoreSuffixes = new System.Windows.Forms.TextBox();
@@ -246,7 +250,6 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chkForceBulkAddToUseSettingsOnly = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -364,7 +367,7 @@ namespace TVRename
             // cbWTWXML
             // 
             this.cbWTWXML.AutoSize = true;
-            this.cbWTWXML.Location = new System.Drawing.Point(10, 51);
+            this.cbWTWXML.Location = new System.Drawing.Point(8, 51);
             this.cbWTWXML.Name = "cbWTWXML";
             this.cbWTWXML.Size = new System.Drawing.Size(48, 17);
             this.cbWTWXML.TabIndex = 17;
@@ -392,7 +395,7 @@ namespace TVRename
             // cbWTWRSS
             // 
             this.cbWTWRSS.AutoSize = true;
-            this.cbWTWRSS.Location = new System.Drawing.Point(10, 22);
+            this.cbWTWRSS.Location = new System.Drawing.Point(8, 22);
             this.cbWTWRSS.Name = "cbWTWRSS";
             this.cbWTWRSS.Size = new System.Drawing.Size(48, 17);
             this.cbWTWRSS.TabIndex = 0;
@@ -1012,15 +1015,46 @@ namespace TVRename
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.bnBrowseShowsHTML);
+            this.groupBox7.Controls.Add(this.cbShowsHTML);
+            this.groupBox7.Controls.Add(this.txtShowsHTMLTo);
             this.groupBox7.Controls.Add(this.bnBrowseShowsTXT);
             this.groupBox7.Controls.Add(this.cbShowsTXT);
             this.groupBox7.Controls.Add(this.txtShowsTXTTo);
             this.groupBox7.Location = new System.Drawing.Point(7, 203);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(402, 55);
+            this.groupBox7.Size = new System.Drawing.Size(402, 72);
             this.groupBox7.TabIndex = 4;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "All Shows";
+            // 
+            // bnBrowseShowsHTML
+            // 
+            this.bnBrowseShowsHTML.Location = new System.Drawing.Point(321, 45);
+            this.bnBrowseShowsHTML.Name = "bnBrowseShowsHTML";
+            this.bnBrowseShowsHTML.Size = new System.Drawing.Size(75, 23);
+            this.bnBrowseShowsHTML.TabIndex = 8;
+            this.bnBrowseShowsHTML.Text = "Browse...";
+            this.bnBrowseShowsHTML.UseVisualStyleBackColor = true;
+            this.bnBrowseShowsHTML.Click += new System.EventHandler(this.bnBrowseShowsHTML_Click);
+            // 
+            // cbShowsHTML
+            // 
+            this.cbShowsHTML.AutoSize = true;
+            this.cbShowsHTML.Location = new System.Drawing.Point(8, 49);
+            this.cbShowsHTML.Name = "cbShowsHTML";
+            this.cbShowsHTML.Size = new System.Drawing.Size(56, 17);
+            this.cbShowsHTML.TabIndex = 6;
+            this.cbShowsHTML.Text = "HTML";
+            this.cbShowsHTML.UseVisualStyleBackColor = true;
+            this.cbShowsHTML.CheckedChanged += new System.EventHandler(this.EnableDisable);
+            // 
+            // txtShowsHTMLTo
+            // 
+            this.txtShowsHTMLTo.Location = new System.Drawing.Point(64, 47);
+            this.txtShowsHTMLTo.Name = "txtShowsHTMLTo";
+            this.txtShowsHTMLTo.Size = new System.Drawing.Size(251, 20);
+            this.txtShowsHTMLTo.TabIndex = 7;
             // 
             // bnBrowseShowsTXT
             // 
@@ -1035,7 +1069,7 @@ namespace TVRename
             // cbShowsTXT
             // 
             this.cbShowsTXT.AutoSize = true;
-            this.cbShowsTXT.Location = new System.Drawing.Point(10, 25);
+            this.cbShowsTXT.Location = new System.Drawing.Point(8, 25);
             this.cbShowsTXT.Name = "cbShowsTXT";
             this.cbShowsTXT.Size = new System.Drawing.Size(47, 17);
             this.cbShowsTXT.TabIndex = 3;
@@ -1055,7 +1089,7 @@ namespace TVRename
             this.groupBox5.Controls.Add(this.bnBrowseFOXML);
             this.groupBox5.Controls.Add(this.cbFOXML);
             this.groupBox5.Controls.Add(this.txtFOXML);
-            this.groupBox5.Location = new System.Drawing.Point(6, 321);
+            this.groupBox5.Location = new System.Drawing.Point(6, 343);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(402, 55);
             this.groupBox5.TabIndex = 3;
@@ -1075,7 +1109,7 @@ namespace TVRename
             // cbFOXML
             // 
             this.cbFOXML.AutoSize = true;
-            this.cbFOXML.Location = new System.Drawing.Point(10, 23);
+            this.cbFOXML.Location = new System.Drawing.Point(8, 23);
             this.cbFOXML.Name = "cbFOXML";
             this.cbFOXML.Size = new System.Drawing.Size(48, 17);
             this.cbFOXML.TabIndex = 0;
@@ -1095,7 +1129,7 @@ namespace TVRename
             this.groupBox4.Controls.Add(this.bnBrowseRenamingXML);
             this.groupBox4.Controls.Add(this.cbRenamingXML);
             this.groupBox4.Controls.Add(this.txtRenamingXML);
-            this.groupBox4.Location = new System.Drawing.Point(6, 259);
+            this.groupBox4.Location = new System.Drawing.Point(6, 281);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(402, 57);
             this.groupBox4.TabIndex = 2;
@@ -1115,7 +1149,7 @@ namespace TVRename
             // cbRenamingXML
             // 
             this.cbRenamingXML.AutoSize = true;
-            this.cbRenamingXML.Location = new System.Drawing.Point(10, 23);
+            this.cbRenamingXML.Location = new System.Drawing.Point(8, 23);
             this.cbRenamingXML.Name = "cbRenamingXML";
             this.cbRenamingXML.Size = new System.Drawing.Size(48, 17);
             this.cbRenamingXML.TabIndex = 0;
@@ -1175,7 +1209,7 @@ namespace TVRename
             // cbMissingXML
             // 
             this.cbMissingXML.AutoSize = true;
-            this.cbMissingXML.Location = new System.Drawing.Point(10, 23);
+            this.cbMissingXML.Location = new System.Drawing.Point(8, 23);
             this.cbMissingXML.Name = "cbMissingXML";
             this.cbMissingXML.Size = new System.Drawing.Size(48, 17);
             this.cbMissingXML.TabIndex = 3;
@@ -1186,7 +1220,7 @@ namespace TVRename
             // cbMissingCSV
             // 
             this.cbMissingCSV.AutoSize = true;
-            this.cbMissingCSV.Location = new System.Drawing.Point(11, 48);
+            this.cbMissingCSV.Location = new System.Drawing.Point(9, 48);
             this.cbMissingCSV.Name = "cbMissingCSV";
             this.cbMissingCSV.Size = new System.Drawing.Size(47, 17);
             this.cbMissingCSV.TabIndex = 0;
@@ -2310,6 +2344,19 @@ namespace TVRename
             this.tpBulkAdd.Text = "Bulk/Auto Add";
             this.tpBulkAdd.UseVisualStyleBackColor = true;
             // 
+            // chkForceBulkAddToUseSettingsOnly
+            // 
+            this.chkForceBulkAddToUseSettingsOnly.AutoSize = true;
+            this.chkForceBulkAddToUseSettingsOnly.Location = new System.Drawing.Point(15, 85);
+            this.chkForceBulkAddToUseSettingsOnly.Name = "chkForceBulkAddToUseSettingsOnly";
+            this.chkForceBulkAddToUseSettingsOnly.Size = new System.Drawing.Size(248, 17);
+            this.chkForceBulkAddToUseSettingsOnly.TabIndex = 12;
+            this.chkForceBulkAddToUseSettingsOnly.Text = "Force to Use Season Words from Settings Only";
+            this.toolTip1.SetToolTip(this.chkForceBulkAddToUseSettingsOnly, "If set then Bulk Add just uses the season words from settings. If not set (recomm" +
+        "ended) then Bulk Add finds addition season words from each show\'s configuration." +
+        "");
+            this.chkForceBulkAddToUseSettingsOnly.UseVisualStyleBackColor = true;
+            // 
             // label43
             // 
             this.label43.AutoSize = true;
@@ -2433,19 +2480,6 @@ namespace TVRename
             this.noneToolStripMenuItem.Size = new System.Drawing.Size(120, 22);
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
-            // 
-            // chkForceBulkAddToUseSettingsOnly
-            // 
-            this.chkForceBulkAddToUseSettingsOnly.AutoSize = true;
-            this.chkForceBulkAddToUseSettingsOnly.Location = new System.Drawing.Point(15, 85);
-            this.chkForceBulkAddToUseSettingsOnly.Name = "chkForceBulkAddToUseSettingsOnly";
-            this.chkForceBulkAddToUseSettingsOnly.Size = new System.Drawing.Size(248, 17);
-            this.chkForceBulkAddToUseSettingsOnly.TabIndex = 12;
-            this.chkForceBulkAddToUseSettingsOnly.Text = "Force to Use Season Words from Settings Only";
-            this.toolTip1.SetToolTip(this.chkForceBulkAddToUseSettingsOnly, "If set then Bulk Add just uses the season words from settings. If not set (recomm" +
-        "ended) then Bulk Add finds addition season words from each show\'s configuration." +
-        "");
-            this.chkForceBulkAddToUseSettingsOnly.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -2731,5 +2765,8 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkRetainLanguageSpecificSubtitles;
         private System.Windows.Forms.CheckBox cbTxtToSub;
         private System.Windows.Forms.CheckBox chkForceBulkAddToUseSettingsOnly;
+        private System.Windows.Forms.Button bnBrowseShowsHTML;
+        private System.Windows.Forms.CheckBox cbShowsHTML;
+        private System.Windows.Forms.TextBox txtShowsHTMLTo;
     }
 }

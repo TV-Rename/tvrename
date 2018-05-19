@@ -5,24 +5,27 @@ namespace TVRename
 {
     class DownloadIdentifiersController
     {
-        private List<DownloadIdentifier> Identifiers;
+        private readonly List<DownloadIdentifier> Identifiers;
         
         public DownloadIdentifiersController() {
-            Identifiers = new List<DownloadIdentifier>();
-            Identifiers.Add(new DownloadFolderJPG());
-            Identifiers.Add(new DownloadEpisodeJPG());
-            Identifiers.Add(new DownloadFanartJPG());
-            Identifiers.Add(new DownloadMede8erMetaData());
-            Identifiers.Add(new DownloadpyTivoMetaData());
-            Identifiers.Add(new DownloadSeriesJPG());
-            Identifiers.Add(new DownloadKodiMetaData());
-            Identifiers.Add(new DownloadKODIImages());
-            Identifiers.Add(new IncorrectFileDates());
+            this.Identifiers = new List<DownloadIdentifier>
+            {
+                new DownloadFolderJPG(),
+                new DownloadEpisodeJPG(),
+                new DownloadFanartJPG(),
+                new DownloadMede8erMetaData(),
+                new DownloadpyTivoMetaData(),
+                new DownloadSeriesJPG(),
+                new DownloadKodiMetaData(),
+                new DownloadKODIImages(),
+                new IncorrectFileDates(),
+                };
+
         }
 
         public void notifyComplete(FileInfo file)
         {
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in this.Identifiers)
             {
                 di.notifyComplete(file);
             }
@@ -31,7 +34,7 @@ namespace TVRename
         public ItemList ProcessShow(ShowItem si)
         {
             ItemList TheActionList = new ItemList(); 
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in this.Identifiers)
             {
                 TheActionList.Add(di.ProcessShow(si));
             }
@@ -41,7 +44,7 @@ namespace TVRename
         public ItemList ProcessSeason(ShowItem si, string folder, int snum)
         {
             ItemList TheActionList = new ItemList(); 
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in this.Identifiers)
             {
                 TheActionList.Add(di.ProcessSeason (si,folder,snum));
             }
@@ -51,7 +54,7 @@ namespace TVRename
         public ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo)
         {
             ItemList TheActionList = new ItemList();
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in this.Identifiers)
             {
                 TheActionList.Add(di.ProcessEpisode(dbep,filo));
             }
@@ -59,7 +62,7 @@ namespace TVRename
         }
 
         public  void reset() {
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in this.Identifiers)
             {
                 di.reset();
             }
@@ -68,7 +71,7 @@ namespace TVRename
         public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, ShowItem si)
         {
             ItemList TheActionList = new ItemList();
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in this.Identifiers)
             {
                 if (dt == di.GetDownloadType())
                     TheActionList.Add(di.ProcessShow(si,true));
@@ -79,7 +82,7 @@ namespace TVRename
         public ItemList ForceUpdateSeason(DownloadIdentifier.DownloadType dt, ShowItem si, string folder, int snum)
         {
             ItemList TheActionList = new ItemList();
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in this.Identifiers)
             {
                 if (dt == di.GetDownloadType())
                     TheActionList.Add(di.ProcessSeason(si, folder,snum, true));
@@ -90,7 +93,7 @@ namespace TVRename
         public ItemList ForceUpdateEpisode(DownloadIdentifier.DownloadType dt, ProcessedEpisode dbep, FileInfo filo)
         {
             ItemList TheActionList = new ItemList();
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in this.Identifiers)
             {
                 if (dt == di.GetDownloadType())
                     TheActionList.Add(di.ProcessEpisode(dbep,filo, true));

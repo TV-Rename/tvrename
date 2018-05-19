@@ -1,4 +1,4 @@
-namespace TVRename.Forms
+namespace TVRename
 {
     partial class AutoAddShow
     {
@@ -39,7 +39,7 @@ namespace TVRename.Forms
             // 
             // cbDirectory
             // 
-            this.cbDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbDirectory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbDirectory.FormattingEnabled = true;
@@ -73,8 +73,8 @@ namespace TVRename.Forms
             // 
             // pnlCF
             // 
-            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlCF.Location = new System.Drawing.Point(10, 10);
             this.pnlCF.Name = "pnlCF";

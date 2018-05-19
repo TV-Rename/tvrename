@@ -786,6 +786,23 @@ namespace TVRename
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
 
 
+        public static string PrettyPrint(this TVSettings.ScanType st)
+        {
+            switch (st)
+            {
+                case TVSettings.ScanType.Quick:
+                    return "Quick";
+                case TVSettings.ScanType.Full:
+                    return "Full";
+                case TVSettings.ScanType.Recent:
+                    return "Recent";
+                case TVSettings.ScanType.SingleShow:
+                    return "Single";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(st), st, null);
+            }
+        }
+
         public static void Swap<T>(
             this IList<T> list,
             int firstIndex,
@@ -989,12 +1006,12 @@ namespace TVRename
             string stFormD = stIn.Normalize(NormalizationForm.FormD);
             StringBuilder sb = new StringBuilder();
 
-            for (int ich = 0; ich < stFormD.Length; ich++)
+            foreach (char t in stFormD)
             {
-                UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(stFormD[ich]);
+                UnicodeCategory uc = CharUnicodeInfo.GetUnicodeCategory(t);
                 if (uc != UnicodeCategory.NonSpacingMark)
                 {
-                    sb.Append(stFormD[ich]);
+                    sb.Append(t);
                 }
             }
             return (sb.ToString().Normalize(NormalizationForm.FormC));

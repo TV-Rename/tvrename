@@ -30,6 +30,8 @@ namespace TVRename
         private List<FilenameProcessorRE> Rex;
         private List<ShowItem> SIL;
 
+        public List<FilenameProcessorRE> OutputRegularExpressions { get => Rex;}
+
         public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow, string initialFolder)
         {
             this.Rex = rex;
@@ -49,7 +51,7 @@ namespace TVRename
             this.txtFolder.Text = initialFolder;
         }
 
-        public void SetupGrid()
+        private void SetupGrid()
         {
             SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
                                                          {
@@ -112,13 +114,13 @@ namespace TVRename
             this.Grid1.Selection.SelectionChanged += this.SelectionChanged;
         }
 
-        public void SelectionChanged(Object sender, SourceGrid.RangeRegionChangedEventArgs e)
+        private void SelectionChanged(Object sender, SourceGrid.RangeRegionChangedEventArgs e)
         {
             SelectionOnSelectionChanged(sender, e);
             this.StartTimer();
         }
 
-        public void AddNewRow()
+        private void AddNewRow()
         {
             int r = this.Grid1.RowsCount;
             this.Grid1.RowsCount = r + 1;
@@ -133,7 +135,7 @@ namespace TVRename
                 this.Grid1[r, c].AddController(changed);
         }
 
-        public void FillGrid(List<FilenameProcessorRE> list)
+        private void FillGrid(List<FilenameProcessorRE> list)
         {
             while (this.Grid1.Rows.Count > 1) // leave header row
                 this.Grid1.Rows.Remove(1);

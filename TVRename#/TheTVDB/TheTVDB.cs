@@ -76,13 +76,18 @@ namespace TVRename
         public bool Connected;
         public string CurrentDLTask;
         private System.Collections.Generic.List<ExtraEp> ExtraEpisodes; // IDs of extra episodes to grab and merge in on next update
+        private List<ExtraEp> RemoveEpisodeIds; // IDs of episodes that should be removed
+
         private System.Collections.Generic.List<int> ForceReloadOn;
         public List<Language> LanguageList;
         public string LastError;
         public string LoadErr;
         public bool LoadOK;
         private long New_Srv_Time;
-        private System.Collections.Generic.Dictionary<int, SeriesInfo> Series; // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
+
+        // TODO: make this private or a property. have online/offline state that controls auto downloading of needed info.
+        private readonly Dictionary<int, SeriesInfo> Series= new System.Collections.Generic.Dictionary<int, SeriesInfo>();
+        
         private long Srv_Time; // only update this after a 100% successful download
         // private List<String> WhoHasLock;
         private static string APIRoot;
@@ -99,7 +104,7 @@ namespace TVRename
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
         private static volatile TheTVDB instance;
-        private static object syncRoot = new object();
+        private static readonly object syncRoot = new object();
 
         public static TheTVDB Instance
         {
@@ -129,13 +134,12 @@ namespace TVRename
             // this.WhoHasLock = new List<String>();
             this.Connected = false;
             this.ExtraEpisodes = new System.Collections.Generic.List<ExtraEp>();
+            this.RemoveEpisodeIds = new System.Collections.Generic.List<ExtraEp>();
 
             this.LanguageList = new List<Language> {new Language(7, "en", "English", "English")};
 
             WebsiteRoot = "http://thetvdb.com";
             APIRoot = "https://api.thetvdb.com";
-
-            this.Series = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
 
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date
@@ -157,6 +161,17 @@ namespace TVRename
         {
             Monitor.Exit(this.ExtraEpisodes);
         }
+
+        private void LockRE()
+        {
+            Monitor.Enter(this.RemoveEpisodeIds);
+        }
+
+        private void UnlockRE()
+        {
+            Monitor.Exit(this.RemoveEpisodeIds );
+        }
+
 
         public bool HasSeries(int id)
         {
@@ -810,6 +825,15 @@ namespace TVRename
                             int numberOfNewEpisodes = 0;
                             int numberOfUpdatedEpisodes = 0;
 
+                            ICollection<int> oldEpisodeIds = new List<int>();
+                            foreach (KeyValuePair<int, Season> kvp2 in this.Series[id].AiredSeasons)
+                            {
+                                foreach (Episode ep in kvp2.Value.Episodes)
+                                {
+                                    oldEpisodeIds.Add(ep.EpisodeID);
+                                }
+                            }
+
                             foreach (JObject response in episodeResponses)
                             {
                                 try
@@ -827,12 +851,16 @@ namespace TVRename
 
                                             foreach (Episode ep in seas.Episodes)
                                             {
+                                                
                                                 if (ep.EpisodeID == serverEpisodeId)
                                                 {
+                                                    oldEpisodeIds.Remove(serverEpisodeId);
+
                                                     if (ep.Srv_LastUpdated < serverUpdateTime)
                                                     {
                                                         ep.Dirty = true; // mark episode as dirty.
                                                         numberOfUpdatedEpisodes++;
+                                                        
                                                     }
 
                                                     found = true;
@@ -870,6 +898,13 @@ namespace TVRename
 
                             logger.Info(this.Series[id].Name + " had " + numberOfUpdatedEpisodes +
                                         " episodes updated and " + numberOfNewEpisodes + " new episodes ");
+                            if (oldEpisodeIds.Count>0)
+                            logger.Warn(this.Series[id].Name + " had " + oldEpisodeIds.Count +
+                                         " episodes deleted: "+String.Join(",",oldEpisodeIds));
+                            this.LockRE();
+                            foreach (int episodeId in oldEpisodeIds)
+                                this.RemoveEpisodeIds.Add(new ExtraEp(id,episodeId) );
+                            this.UnlockRE();
                         }
                     }
                 }
@@ -1197,10 +1232,10 @@ namespace TVRename
                 string message = "Error processing data from TheTVDB (top level).";
                 message += "\r\n" + myStr;
                 message += "\r\n" + e.Message;
-                String name = "";
-                if (codeHint.HasValue && Series.ContainsKey(codeHint.Value))
+                string name = "";
+                if (codeHint.HasValue && this.Series.ContainsKey(codeHint.Value))
                 {
-                    name += "Show \"" + Series[codeHint.Value].Name + "\" ";
+                    name += "Show \"" + this.Series[codeHint.Value].Name + "\" ";
                 }
 
                 if (codeHint.HasValue)
@@ -1626,6 +1661,15 @@ namespace TVRename
                 ee.Done = true;
             });
             this.UnlockEE();
+
+            this.LockRE();
+            foreach (ExtraEp  episodetoRemove in this.RemoveEpisodeIds)
+            {
+                this.Series[episodetoRemove.SeriesID].RemoveEpisode(episodetoRemove.EpisodeID);
+            }
+
+            this.RemoveEpisodeIds.Clear();
+            this.UnlockRE();
 
             this.ForceReloadOn.Remove(code);
 

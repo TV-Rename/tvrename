@@ -59,7 +59,7 @@ namespace TVRename
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    List<ProcessedEpisode> lpe = this.Doc.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                    List<ProcessedEpisode> lpe = this.Doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
                     if (lpe != null)
                         if (Generate(ms, lpe))

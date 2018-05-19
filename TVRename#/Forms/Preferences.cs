@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
@@ -124,6 +123,8 @@ namespace TVRename
             S.ExportFOXMLTo = this.txtFOXML.Text;
             S.ExportShowsTXT = this.cbShowsTXT.Checked;
             S.ExportShowsTXTTo = this.txtShowsTXTTo.Text;
+            S.ExportShowsHTML = this.cbShowsHTML.Checked;
+            S.ExportShowsHTMLTo = this.txtShowsHTMLTo.Text;
 
             S.WTWRecentDays = Convert.ToInt32(this.txtWTWDays.Text);
             S.StartupTab = this.cbStartupTab.SelectedIndex;
@@ -350,8 +351,11 @@ namespace TVRename
             this.cbMissingCSV.Checked = S.ExportMissingCSV;
             this.txtMissingCSV.Text = S.ExportMissingCSVTo;
 
+            
             this.cbShowsTXT.Checked = S.ExportShowsTXT ;
             this.txtShowsTXTTo.Text = S.ExportShowsTXTTo;
+            this.cbShowsHTML.Checked = S.ExportShowsHTML;
+            this.txtShowsHTMLTo.Text = S.ExportShowsHTMLTo;
 
 
             this.cbRenamingXML.Checked = S.ExportRenamingXML;
@@ -563,8 +567,7 @@ namespace TVRename
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
             }
             System.Collections.Generic.List<string> showStatusList = new System.Collections.Generic.List<string>();
-            List<ShowItem> shows = this.mDoc.GetShowItems(false);
-            foreach (ShowItem show in shows)
+            foreach (ShowItem show in this.mDoc.Library.GetShowItems())
             {
                 if(!showStatusList.Contains(show.ShowStatus))
                     showStatusList.Add(show.ShowStatus);
@@ -657,6 +660,11 @@ namespace TVRename
             this.Browse(this.txtShowsTXTTo, "txt", 4);
         }
 
+        private void bnBrowseShowsHTML_Click(object sender, EventArgs e)
+        {
+            this.Browse(this.txtShowsHTMLTo, "html", 5);
+        }
+
         private void bnBrowseRenamingXML_Click(object sender, System.EventArgs e)
         {
             this.Browse(this.txtRenamingXML,"xml",2);
@@ -697,6 +705,10 @@ namespace TVRename
             this.txtShowsTXTTo.Enabled = stxt;
             this.bnBrowseShowsTXT.Enabled = stxt;
 
+            bool shtml = this.cbShowsHTML.Checked;
+            this.txtShowsHTMLTo.Enabled = shtml;
+            this.bnBrowseShowsHTML.Enabled = shtml;
+
             bool ren = this.cbRenamingXML.Checked;
             this.txtRenamingXML.Enabled = ren;
             this.bnBrowseRenamingXML.Enabled = ren;
@@ -713,11 +725,11 @@ namespace TVRename
         private void bnAddSearchFolder_Click(object sender, System.EventArgs e)
         {
             int n = this.lbSearchFolders.SelectedIndex;
-            this.folderBrowser.SelectedPath = n != -1 ? this.mDoc.SearchFolders[n] : "";
+            this.folderBrowser.SelectedPath = n != -1 ? TVSettings.Instance.DownloadFolders[n] : "";
 
             if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                this.mDoc.SearchFolders.Add(this.folderBrowser.SelectedPath);
+                TVSettings.Instance.DownloadFolders.Add(this.folderBrowser.SelectedPath);
                 this.mDoc.SetDirty();
             }
 
@@ -730,7 +742,7 @@ namespace TVRename
             if (n == -1)
                 return;
 
-            this.mDoc.SearchFolders.RemoveAt(n);
+            TVSettings.Instance.DownloadFolders.RemoveAt(n);
             this.mDoc.SetDirty();
 
             this.FillSearchFolderList();
@@ -741,14 +753,14 @@ namespace TVRename
             int n = this.lbSearchFolders.SelectedIndex;
             if (n == -1)
                 return;
-            Helpers.SysOpen(this.mDoc.SearchFolders[n]);
+            Helpers.SysOpen(TVSettings.Instance.DownloadFolders[n]);
         }
 
         private void FillSearchFolderList()
         {
             this.lbSearchFolders.Items.Clear();
-            this.mDoc.SearchFolders.Sort();
-            foreach (string efi in this.mDoc.SearchFolders)
+            TVSettings.Instance.DownloadFolders.Sort();
+            foreach (string efi in TVSettings.Instance.DownloadFolders)
                 this.lbSearchFolders.Items.Add(efi);
         }
 
@@ -772,7 +784,7 @@ namespace TVRename
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
-                        this.mDoc.SearchFolders.Add(path.ToLower());
+                        TVSettings.Instance.DownloadFolders.Add(path.ToLower());
                 }
                 catch
                 {
@@ -1252,6 +1264,11 @@ namespace TVRename
         {
                 e.SuppressKeyPress = true;
             
+        }
+
+        private void cbShowsHTML_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -12,10 +12,10 @@ namespace TVRename.Forms
         {
             this.doc = doc;
             InitializeComponent();
-            this.clbGenre.Items.AddRange(doc.getGenres().Cast<object>().ToArray());
-            this.cmbNetwork.Items.AddRange(doc.getNetworks().Cast<object>().ToArray());
-            this.cmbShowStatus.Items.AddRange(doc.getStatuses().Cast<object>().ToArray());
-            this.cmbRating.Items.AddRange(doc.GetContentRatings().Cast<object>().ToArray());
+            this.clbGenre.Items.AddRange(doc.Library.getGenres().Cast<object>().ToArray());
+            this.cmbNetwork.Items.AddRange(doc.Library.getNetworks().Cast<object>().ToArray());
+            this.cmbShowStatus.Items.AddRange(doc.Library.getStatuses().Cast<object>().ToArray());
+            this.cmbRating.Items.AddRange(doc.Library.GetContentRatings().Cast<object>().ToArray());
 
             setButtonStates();
         }

@@ -47,7 +47,7 @@ namespace TVRename
         public override long SizeOfWork => 1000000;
 
         // http://www.codeproject.com/Articles/2941/Resizing-a-Photographic-image-with-GDI-for-NET
-        static Image MaxSize(Image imgPhoto, int width, int height)
+        private static Image MaxSize(Image imgPhoto, int width, int height)
         {
             int sourceWidth = imgPhoto.Width;
             int sourceHeight = imgPhoto.Height;
@@ -100,16 +100,32 @@ namespace TVRename
             {
                 // shrink images down to a maximum size of 156x232
                 Image im = new Bitmap(new MemoryStream(theData));
-                if ((im.Width > 156) || (im.Height > 232))
+                if (this.Episode == null)
                 {
-                    im = MaxSize(im, 156, 232);
-
-                    using (MemoryStream m = new MemoryStream())
+                    if ((im.Width > 156) || (im.Height > 232))
                     {
-                        im.Save(m, ImageFormat.Jpeg);
-                        theData = m.ToArray();
+                        im = MaxSize(im, 156, 232);
+
+                        using (MemoryStream m = new MemoryStream())
+                        {
+                            im.Save(m, ImageFormat.Jpeg);
+                            theData = m.ToArray();
+                        }
                     }
                 }
+                else {
+                    if ((im.Width > 232) || (im.Height > 156))
+                    {
+                        im = MaxSize(im, 232, 156);
+
+                        using (MemoryStream m = new MemoryStream())
+                        {
+                            im.Save(m, ImageFormat.Jpeg);
+                            theData = m.ToArray();
+                        }
+                    }
+                }
+                
             }
 
             try
