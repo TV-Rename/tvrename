@@ -56,17 +56,17 @@ namespace TVRename
             <div class=""row"">
             <div class=""col-md-4"">
                 <img class=""show-poster rounded w-100"" src=""{posterURL}"" alt=""{si.ShowName} Show Poster""></div>
-            <div class=""col-md-8"">
+            <div class=""col-md-8 d-flex flex-column"">
                 <div class=""row"">
                     <div class=""col-md-8""><h1>{si.ShowName}</h1></div>
                     <div class=""col-md-4 text-right""><h6>{yearRange} ({si.TheSeries().getStatus()})</h6><small class=""text-muted"">{episodeSummary } Episodes</small></div>
                 </div>
             <div><blockquote>{si.TheSeries().GetOverview()}</blockquote></div>
             <div><blockquote>{string.Join(", ",si.TheSeries().GetActors())}</blockquote></div>
-            <div class=""row"">
-                <div class=""col-md-4"">{stars}<br>{siteRating}</div>
-                <div class=""col-md-4 text-center"">{si.TheSeries().GetContentRating()}<br>{si.TheSeries().getNetwork()}</div>
-                <div class=""col-md-4 text-right"">{genreIcons}<br>{string.Join(", ",si.TheSeries().GetGenres()) }</div>
+            <div class=""row align-items-bottom flex-grow-1"">
+                <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}</div>
+                <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().GetContentRating()}<br>{si.TheSeries().getNetwork()}</div>
+                <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ",si.TheSeries().GetGenres()) }</div>
             </div>
             </div></div></div>";
         }
