@@ -11,7 +11,7 @@ namespace TVRename
     {
         public FileFinder(TVDoc i) : base(i) { }
 
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
 
@@ -56,9 +56,10 @@ namespace TVRename
 
                 foreach (DirCacheEntry dce in dirCache)
                 {
-                    if (ReviewFile(me, thisRound, dce)) {numberMatched++;
-                        matchedFile = dce;
-                    }
+                    if (!ReviewFile(me, thisRound, dce)) continue;
+
+                    numberMatched++;
+                    matchedFile = dce;
                 }
 
                 if (numberMatched == 1 )
@@ -68,9 +69,9 @@ namespace TVRename
                         toRemove.Add(action1);
                         newList.AddRange(thisRound);
                     }
-                    else logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile.TheFile.FullName} as there are multiple actions for that file");
+                    else Logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple actions for that file");
                 }
-                else if (numberMatched>1) { logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile.TheFile.FullName} as there are multiple files for that action");}
+                else if (numberMatched>1) { Logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");}
 
             }
 
@@ -133,7 +134,16 @@ namespace TVRename
                 if (!(testAction is ItemMissing testMissingAction)) continue;
                 if (testMissingAction.SameAs(me)) continue;
 
-                if (ReviewFile(testMissingAction, new ItemList(), matchedFile)) return true;
+                if (ReviewFile(testMissingAction, new ItemList(), matchedFile))
+                {
+                    //We have 2 options that match  me and testAction - See whether one is subset of the other
+
+                    if (me.Episode.SI.ShowName.Contains(testMissingAction.Episode.SI.ShowName)) continue; //'me' is a better match, so don't worry about the new one
+
+                    return true; 
+
+
+                }
 
             }
 
@@ -206,7 +216,7 @@ namespace TVRename
                 catch (System.IO.PathTooLongException e)
                 {
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
-                    logger.Warn(e, "Path or filename too long. " + action.From.FullName);
+                    Logger.Warn(e, "Path or filename too long. " + action.From.FullName);
 
                     if ((!this.Doc.Args.Unattended) && (!this.Doc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     
@@ -284,9 +294,9 @@ namespace TVRename
                             if (!me.Episode.SI.SeasonRules.ContainsKey(seasF)) me.Episode.SI.SeasonRules[seasF] = new List<ShowRule>();
 
                             me.Episode.SI.SeasonRules[seasF].Add(sr);
-                            logger.Info(
+                            Logger.Info(
                                 $"Looking at {me.Episode.SI.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.TheFile.FullName}");
-                            logger.Info($"Added new rule automatically for {sr}");
+                            Logger.Info($"Added new rule automatically for {sr}");
 
                             //Regenerate the episodes with the new rule added
                             this.Doc.Library.GenerateEpisodeDict(me.Episode.SI);
@@ -345,7 +355,7 @@ namespace TVRename
             catch (System.IO.PathTooLongException e)
             {
                 string t = "Path too long. " + dce.TheFile.FullName + ", " + e.Message;
-                logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
+                Logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
 
                 t += ".  More information is available in the log file";
                 if ((!this.Doc.Args.Unattended) && (!this.Doc.Args.Hide))
@@ -359,7 +369,7 @@ namespace TVRename
                     t += "To: " + me.TheFileNoExt;
                 }
 
-                logger.Warn(t);
+                Logger.Warn(t);
             }
 
             return false;

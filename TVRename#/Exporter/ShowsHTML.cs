@@ -43,8 +43,8 @@ namespace TVRename
         private static string CreateHTML(ShowItem si)
         {
             string posterURL = TheTVDB.GetBannerURL(si.TheSeries().GetImage(TVSettings.FolderJpgIsType.Poster));
-            int minYear = si.TheSeries().MinYear; 
-            int maxYear = si.TheSeries().MaxYear;
+            int minYear = si.TheSeries().MinYear(); 
+            int maxYear = si.TheSeries().MaxYear();
             string yearRange = (minYear==maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
             string episodeSummary = si.TheSeries().AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
             string stars = StarRating(si.TheSeries().GetSiteRating());

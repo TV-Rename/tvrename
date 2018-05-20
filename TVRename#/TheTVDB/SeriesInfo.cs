@@ -51,12 +51,41 @@ namespace TVRename
         public int TVDBCode;
         public string tempTimeZone;
 
-        public int MinYear =>
-            this.AiredSeasons.DefaultIfEmpty().Min(assn => assn.Value.Episodes.DefaultIfEmpty().Min(ep => ep.GetAirDateDT().HasValue ? ep.GetAirDateDT().Value.Year : 9999));
-        public int MaxYear =>
-            this.AiredSeasons.DefaultIfEmpty().Max(assn => assn.Value.Episodes.DefaultIfEmpty().Max(ep => ep.GetAirDateDT().HasValue ? ep.GetAirDateDT().Value.Year : 0));
+        public int MinYear()
+        {
+            int min = 9999;
+            foreach (Season s in this.AiredSeasons.Values)
+            {
+                foreach (Episode e in s.Episodes)
+                {
+                    if (e.GetAirDateDT().HasValue)
+                    {
+                        if (e.GetAirDateDT().Value.Year < min) min = e.GetAirDateDT().Value.Year;
+                    }
+                }
+            }
 
+            return min;
+        }
 
+        public int MaxYear()
+        {
+            int max = 0;
+            foreach (Season s in this.AiredSeasons.Values)
+            {
+                foreach (Episode e in s.Episodes)
+                {
+                    if (e.GetAirDateDT().HasValue)
+                    {
+                        if (e.GetAirDateDT().Value.Year > max) max = e.GetAirDateDT().Value.Year;
+                    }
+                }
+            }
+
+            return max;
+        }
+
+        
         public DateTime? LastAiredDate() {
             DateTime? returnValue = null; 
             foreach (Season s in this.AiredSeasons.Values) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD

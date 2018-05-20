@@ -135,7 +135,7 @@ namespace TVRename
 
         internal static bool FindSeasEp(FileInfo theFile, out int seasF, out int epF, out int maxEp, ShowItem sI)
         {
-            return FindSeasEp( theFile, out  seasF, out  epF, out  maxEp,  sI, out FilenameProcessorRE rex);
+            return FindSeasEp( theFile, out  seasF, out  epF, out  maxEp,  sI, out FilenameProcessorRE _);
         }
 
         public void SetSearcher(int n)
@@ -258,6 +258,7 @@ namespace TVRename
             return ret;
         }
 
+        // ReSharper disable once InconsistentNaming
         public void WriteXMLSettings()
         {
             // backup old settings before writing new ones
@@ -303,6 +304,7 @@ namespace TVRename
             Stats().Save();
         }
 
+        // ReSharper disable once InconsistentNaming
         private bool LoadXMLSettings(FileInfo from)
         {
             logger.Info("Loading Settings from {0}", from.FullName);
@@ -425,14 +427,12 @@ namespace TVRename
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                /* run your code here */
                 new ShowsTXT(this.Library.GetShowItems()).Run();
             }).Start();
 
             new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
-                /* run your code here */
                 new ShowsHTML(this.Library.GetShowItems()).Run();
             }).Start();
         }
@@ -441,10 +441,14 @@ namespace TVRename
         {
             List<UpcomingExporter> lup = new List<UpcomingExporter> {new UpcomingRSS(this), new UpcomingXML(this)};
 
-
             foreach (UpcomingExporter ue in lup)
             {
-                if (ue.Active()) { ue.Run(); }
+                new Thread(() =>
+                {
+                    Thread.CurrentThread.IsBackground = true;
+                    if (ue.Active()) { ue.Run(); }
+                }).Start();
+                
             }
         }
 
@@ -528,16 +532,16 @@ namespace TVRename
             }
         }
 
-        public void doAllActions()
+        public void DoAllActions()
         {
 
             ItemList theList = new ItemList();
 
-            foreach (Item action in this.TheActionList)
+            foreach (Item item in this.TheActionList)
             {
-                if (action is Item)
+                if (item is Action action)
                 {
-                    theList.Add((Item)(action));
+                    theList.Add(action);
 
                 }
             }
@@ -911,6 +915,7 @@ namespace TVRename
 
         }
 
+        // ReSharper disable once InconsistentNaming
         private void FindUnusedFilesInDLDirectory(ICollection<ShowItem> showList)
         {
 
@@ -954,7 +959,7 @@ namespace TVRename
 
                         foreach (ShowItem si in matchingShows)
                         {
-                            if (fileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
+                            if (FileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
                         }
 
                         if (fileCanBeRemoved)
@@ -993,7 +998,7 @@ namespace TVRename
 
                         foreach (ShowItem si in matchingShows)
                         {
-                            if (fileNeeded(di, si, dfc)) dirCanBeRemoved = false;
+                            if (FileNeeded(di, si, dfc)) dirCanBeRemoved = false;
                         }
 
                         if (dirCanBeRemoved)
@@ -1016,7 +1021,7 @@ namespace TVRename
 
         }
 
-        private static bool fileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
+        private static bool FileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
         {
             if (FindSeasEp(fi, out int seasF, out int epF, out int maxEp, si, out FilenameProcessorRE rex))
             {
@@ -1044,7 +1049,7 @@ namespace TVRename
             return true;
         }
 
-        private static bool fileNeeded(DirectoryInfo di, ShowItem si, DirFilesCache dfc)
+        private static bool FileNeeded(DirectoryInfo di, ShowItem si, DirFilesCache dfc)
         {
             if (FindSeasEp(di, out int seasF, out int epF, si, out FilenameProcessorRE rex))
             {
@@ -1344,7 +1349,7 @@ namespace TVRename
             RemoveIgnored();
         }
 
-        private void NoProgress(int pct)
+        private static void NoProgress(int pct)
         {
         }
 
@@ -1458,8 +1463,6 @@ namespace TVRename
                 return;
             }
         }
-
-
 
         public static bool MatchesSequentialNumber(string filename, ref int seas, ref int ep, ProcessedEpisode pe)
         {
@@ -1594,8 +1597,12 @@ namespace TVRename
                 List<FileInfo> fl = FindEpOnDisk(dfc, pe);
 
                 bool foundOnDisk = ((fl != null) && (fl.Count > 0));
-                bool alreadyAired = pe.GetAirDateDT(true).Value.CompareTo(DateTime.Now) < 0;
+                bool alreadyAired;
 
+                if (pe.GetAirDateDT(true).HasValue)
+                    alreadyAired = pe.GetAirDateDT(true).Value.CompareTo(DateTime.Now) < 0;
+                else
+                    alreadyAired = true;
 
                 if (!foundOnDisk && alreadyAired && (pe.SI.DoMissingCheck))
                 {
@@ -1773,8 +1780,8 @@ namespace TVRename
 
         private class ProcessActionInfo
         {
-            public readonly int SemaphoreNumber;
-            public readonly Action TheAction;
+            private readonly int SemaphoreNumber;
+            private readonly Action TheAction;
 
             public ProcessActionInfo(int n, Action a)
             {
@@ -1798,6 +1805,7 @@ namespace TVRename
                 // ReSharper disable once UseNullPropagation
                 if (this.ScanProgDlg != null) this.ScanProgDlg.Dispose();
 
+                // ReSharper disable once UseNullPropagation
                 if (this.cacheManager != null) this.cacheManager.Dispose();
             }
         }
