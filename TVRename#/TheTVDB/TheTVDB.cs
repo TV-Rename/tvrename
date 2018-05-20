@@ -1808,21 +1808,20 @@ namespace TVRename
             DateTime mostSoonAfterToday = new DateTime(0);
 
             SeriesInfo ser = this.Series[code];
-            foreach (System.Collections.Generic.KeyValuePair<int, Season> kvp2 in ser.AiredSeasons)
+            foreach (KeyValuePair<int, Season> kvp2 in ser.AiredSeasons)
             {
                 Season s = kvp2.Value;
 
                 foreach (Episode e in s.Episodes)
                 {
                     DateTime? adt = e.GetAirDateDT();
-                    if (adt != null)
+                    if (adt == null) continue;
+
+                    DateTime dt = (DateTime) adt;
+                    if ((dt.CompareTo(today) > 0) && ((mostSoonAfterToday.CompareTo(new DateTime(0)) == 0) || (dt.CompareTo(mostSoonAfterToday) < 0)))
                     {
-                        DateTime dt = (DateTime) adt;
-                        if ((dt.CompareTo(today) > 0) && ((mostSoonAfterToday.CompareTo(new DateTime(0)) == 0) || (dt.CompareTo(mostSoonAfterToday) < 0)))
-                        {
-                            mostSoonAfterToday = dt;
-                            next = e;
-                        }
+                        mostSoonAfterToday = dt;
+                        next = e;
                     }
                 }
             }
@@ -1830,14 +1829,8 @@ namespace TVRename
             return next;
         }
 
-        public static string GetBannerURL(string bannerPath)
-        {
-            return WebsiteRoot + "/banners/" + bannerPath;
-        }
-        public static string GetThumbnailURL(string filename)
-        {
-            return WebsiteRoot + "/banners/_cache/" + filename;
-        }
+        public static string GetBannerURL(string bannerPath) => WebsiteRoot + "/banners/" + bannerPath;
+        public static string GetThumbnailURL(string filename) => WebsiteRoot + "/banners/_cache/" + filename;
     }
 }
 

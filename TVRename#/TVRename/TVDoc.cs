@@ -1798,7 +1798,7 @@ namespace TVRename
                 // ReSharper disable once UseNullPropagation
                 if (this.ScanProgDlg != null) this.ScanProgDlg.Dispose();
 
-                this.cacheManager?.Dispose();
+                if (this.cacheManager != null) this.cacheManager.Dispose();
             }
         }
 
