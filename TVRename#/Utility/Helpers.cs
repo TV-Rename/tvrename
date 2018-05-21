@@ -220,9 +220,9 @@ namespace TVRename
     {
         public  FileSystemProperties(long? totalBytes, long? freeBytes, long? availableBytes)
         {
-            TotalBytes = totalBytes;
-            FreeBytes = freeBytes;
-            AvailableBytes = availableBytes;
+            this.TotalBytes = totalBytes;
+            this.FreeBytes = freeBytes;
+            this.AvailableBytes = availableBytes;
         }
 
         /// <summary>
@@ -1015,6 +1015,11 @@ namespace TVRename
                 }
             }
             return (sb.ToString().Normalize(NormalizationForm.FormC));
+        }
+
+        public static bool ContainsOneOf(this string source, string[] terms)
+        {
+            return terms.Any(source.Contains);
         }
     }
 }

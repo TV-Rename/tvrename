@@ -14,16 +14,18 @@ namespace TVRename
         public int TVDBCode;
         public bool HasSeasonFoldersGuess;
         public string SeasonFolderName;
+        public bool PadSeasonToTwoDigits;
 
         public bool CodeKnown { get { return !this.CodeUnknown; } }
         public bool CodeUnknown { get { return TVDBCode == -1; } }
 
-        public FolderMonitorEntry(string folder, bool seasonFolders, string seasonFolderName)
+        public FolderMonitorEntry(string folder, bool seasonFolders, string seasonFolderName,bool padSeasonToTwoDigits)
         {
             this.Folder = folder;
             this.TVDBCode = -1;
             this.HasSeasonFoldersGuess = seasonFolders;
             this.SeasonFolderName = seasonFolderName;
+            this.PadSeasonToTwoDigits = padSeasonToTwoDigits;
         }
     }
 

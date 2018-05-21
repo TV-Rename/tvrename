@@ -145,6 +145,9 @@ namespace TVRename
             S.AutoCreateFolders = this.cbAutoCreateFolders.Checked ;  
             S.SpecialsFolderName = this.txtSpecialsFolderName.Text;
             S.searchSeasonWordsString = this.tbSeasonSearchTerms.Text;
+            S.preferredRSSSearchTermsString = this.tbPreferredRSSTerms.Text;
+            
+
             S.defaultSeasonWord = this.txtSeasonFolderName.Text;
             S.keepTogetherExtensionsString = this.txtKeepTogether.Text;
 
@@ -370,6 +373,7 @@ namespace TVRename
             this.txtOtherExtensions.Text = S.GetOtherExtensionsString();
             this.txtKeepTogether.Text = S.GetKeepTogetherString();
             this.tbSeasonSearchTerms.Text = S.GetSeasonSearchTermsString();
+            this.tbPreferredRSSTerms .Text = S.GetPreferredRSSSearchTermsString();
 
             this.cbKeepTogether.Checked = S.KeepTogether;
             this.cbKeepTogether_CheckedChanged(null, null);

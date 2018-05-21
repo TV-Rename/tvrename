@@ -5,19 +5,23 @@ using System.Xml;
 
 namespace TVRename
 {
-    class RSSFinder:Finder
+    // ReSharper disable once InconsistentNaming
+    internal class RSSFinder:Finder
     {
         public RSSFinder(TVDoc i) : base(i) { }
 
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+
         public override bool Active() => TVSettings.Instance.SearchRSS;
 
-        public override Finder.FinderDisplayType DisplayType() => FinderDisplayType.RSS;
+        public override FinderDisplayType DisplayType() => FinderDisplayType.RSS;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             int c = this.ActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct);
+            // ReSharper disable once InconsistentNaming
             RSSItemList RSSList = new RSSItemList();
             foreach (string s in TVSettings.Instance.RSSURLs)
                 RSSList.DownloadRSS(s, TVSettings.Instance.FNPRegexs);
@@ -25,49 +29,95 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (Item Action1 in this.ActionList)
+            foreach (Item testItem in this.ActionList)
             {
                 if (this.ActionCancel)
                     return;
 
                 prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
 
-                if (!(Action1 is ItemMissing))
+                if (!(testItem is ItemMissing action))
                     continue;
 
-                ItemMissing Action = (ItemMissing)(Action1);
-
-                ProcessedEpisode pe = Action.Episode;
+                ProcessedEpisode pe = action.Episode;
                 string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName);
                 string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
 
                 foreach (RSSItem rss in RSSList)
                 {
-                    if ((FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) || (string.IsNullOrEmpty(rss.ShowName) && FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false))) && (rss.Season == pe.AppropriateSeasonNumber) && (rss.Episode == pe.AppropriateEpNum ))
+                    if (
+                        !FileHelper.SimplifyAndCheckFilename(rss.ShowName, simpleShowName, true, false) &&
+                        !(
+                            string.IsNullOrEmpty(rss.ShowName) &&
+                            FileHelper.SimplifyAndCheckFilename(rss.Title, simpleSeriesName, true, false)
+                         )
+                       ) continue;
+
+                    if (rss.Season != pe.AppropriateSeasonNumber) continue;
+                    if (rss.Episode != pe.AppropriateEpNum) continue;
+
+                    Logger.Info($"Adding {rss.URL} as it appears to be match for {testItem.Episode.SI.ShowName} S{testItem.Episode.AppropriateSeasonNumber}E{testItem.Episode.AppropriateEpNum}");
+                    newItems.Add(new ActionRSS(rss, action.TheFileNoExt, pe));
+                    toRemove.Add(testItem);
+                }
+            }
+
+            //We now want to rationlise the newItems - just in case we've added duplicates
+            List<ActionRSS>  duplicateActionRSS = new List<ActionRSS>();
+
+            foreach (Item x in newItems)
+            {
+                if (!(x is ActionRSS testActionRSSOne))
+                    continue;
+                foreach (Item y in newItems)
+                {
+                    if (!(y is ActionRSS testActionRSSTwo))
+                        continue;
+                    if (x.Equals(y)) continue;
+
+                    string[] preferredTerms = TVSettings.Instance.PreferredRSSSearchTerms();
+
+                    if (testActionRSSOne.RSS.ShowName.ContainsOneOf(preferredTerms) &&
+                        !testActionRSSTwo.RSS.ShowName.ContainsOneOf(preferredTerms))
                     {
-                        newItems.Add(new ActionRSS(rss, Action.TheFileNoExt, pe));
-                        toRemove.Add(Action1);
+                        duplicateActionRSS.Add(testActionRSSTwo);
+                        Logger.Info($"Removing {testActionRSSTwo.RSS.URL} as it is not as good a match as {testActionRSSOne.RSS.URL }");
+                    }
+
+                    if (testActionRSSOne.RSS.Title.ContainsOneOf(preferredTerms) &&
+                        !testActionRSSTwo.RSS.Title.ContainsOneOf(preferredTerms))
+                    {
+
+                        duplicateActionRSS.Add(testActionRSSTwo);
+                        Logger.Info(
+                            $"Removing {testActionRSSTwo.RSS.URL} as it is not as good a match as {testActionRSSOne.RSS.URL}");
                     }
                 }
             }
+
+            foreach (ActionRSS x in duplicateActionRSS)
+                newItems.Remove(x);
+
             foreach (Item i in toRemove)
                 this.ActionList.Remove(i);
 
-            foreach (Item Action in newItems)
-                this.ActionList.Add(Action);
+            foreach (Item action in newItems)
+                this.ActionList.Add(action);
 
             prog.Invoke(totPct);
 
         }
     
     }
+    // ReSharper disable once InconsistentNaming
     public class RSSItem
     {
-        public int Episode;
-        public int Season;
-        public string ShowName;
-        public string Title;
-        public string URL;
+        public readonly int Episode;
+        public readonly int Season;
+        public readonly string ShowName;
+        public readonly string Title;
+        // ReSharper disable once InconsistentNaming
+        public readonly string URL;
 
         public RSSItem(string url, string title, int season, int episode, string showName)
         {
@@ -79,13 +129,15 @@ namespace TVRename
         }
     }
 
-    public class RSSItemList : System.Collections.Generic.List<RSSItem>
+    // ReSharper disable once InconsistentNaming
+    public class RSSItemList : List<RSSItem>
     {
-        private List<FilenameProcessorRE> Rexps; // only trustable while in DownloadRSS or its called functions
+        private List<FilenameProcessorRE> regxps; // only trustable while in DownloadRSS or its called functions
 
+        // ReSharper disable once InconsistentNaming
         public bool DownloadRSS(string URL, List<FilenameProcessorRE> rexps)
         {
-            this.Rexps = rexps;
+            this.regxps = rexps;
 
             System.Net.WebClient wc = new System.Net.WebClient();
             try
@@ -120,7 +172,7 @@ namespace TVRename
 
                         if (reader.Name == "channel")
                         {
-                            if (!this.ReadChannel(reader.ReadSubtree()))
+                            if (!ReadChannel(reader.ReadSubtree()))
                                 return false;
                             reader.Read();
                         }
@@ -135,7 +187,7 @@ namespace TVRename
             }
             finally
             {
-                this.Rexps = null;
+                this.regxps = null;
             }
 
             return true;
@@ -151,7 +203,7 @@ namespace TVRename
                     break;
                 if (r.Name == "item")
                 {
-                    if (!this.ReadItem(r.ReadSubtree()))
+                    if (!ReadItem(r.ReadSubtree()))
                         return false;
                     r.Read();
                 }
@@ -161,7 +213,7 @@ namespace TVRename
             return true;
         }
 
-        public bool ReadItem(XmlReader r)
+        private bool ReadItem(XmlReader r)
         {
             string title = "";
             string link = "";
@@ -192,7 +244,7 @@ namespace TVRename
 
             string showName = "";
 
-            TVDoc.FindSeasEp("", title, out int season, out int episode, out int maxEp, null, this.Rexps);
+            TVDoc.FindSeasEp("", title, out int season, out int episode, out int maxEp, null, this.regxps);
 
             try
             {
@@ -208,10 +260,11 @@ namespace TVRename
             }
             catch
             {
+                // ignored
             }
 
             if ((season != -1) && (episode != -1))
-                this.Add(new RSSItem(link, title, season, episode, showName));
+                Add(new RSSItem(link, title, season, episode, showName));
 
             return true;
         }

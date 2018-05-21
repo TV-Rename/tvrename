@@ -345,10 +345,12 @@ namespace TVRename
         public string defaultSeasonWord = "Season";
 
         public string[] searchSeasonWordsArray => this.searchSeasonWordsString.Split(';');
+        public string[] PreferredRSSSearchTerms() => this.preferredRSSSearchTermsString.Split(';');
 
         public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
+        public string preferredRSSSearchTermsString = "720p;1080p";
 
-        
+
         internal bool IncludeBetaUpdates()
         {
             return (this.mode== BetaMode.BetaToo );
@@ -667,6 +669,8 @@ namespace TVRename
                     this.defaultSeasonWord = reader.ReadElementContentAsString( );
                 else if (reader.Name == "SearchSeasonNames")
                     this.searchSeasonWordsString = reader.ReadElementContentAsString();
+                else if (reader.Name == "PreferredRSSSearchTerms")
+                    this.preferredRSSSearchTermsString = reader.ReadElementContentAsString();
                 else if (reader.Name == "KeepTogetherType")
                     this.keepTogetherMode = (KeepTogetherModes) reader.ReadElementContentAsInt();
                 else if (reader.Name == "KeepTogetherExtensions")
@@ -944,7 +948,7 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "PercentDirtyUpgrade", this.upgradeDirtyPercent);
             XMLHelper.WriteElementToXML(writer, "BaseSeasonName", this.defaultSeasonWord);
             XMLHelper.WriteElementToXML(writer, "SearchSeasonNames", this.searchSeasonWordsString);
-
+            XMLHelper.WriteElementToXML(writer, "PreferredRSSSearchTerms", this.preferredRSSSearchTermsString);
             XMLHelper.WriteElementToXML(writer, "BulkAddIgnoreRecycleBin", this.BulkAddIgnoreRecycleBin);
             XMLHelper.WriteElementToXML(writer, "BulkAddCompareNoVideoFolders", this.BulkAddCompareNoVideoFolders);
             XMLHelper.WriteElementToXML(writer, "AutoAddMovieTerms", this.AutoAddMovieTerms);
@@ -1018,6 +1022,8 @@ namespace TVRename
         public bool RunOnStartUp() => this.runStartupCheck;
 
         public string GetSeasonSearchTermsString() => this.searchSeasonWordsString;
+        public string GetPreferredRSSSearchTermsString() => this.preferredRSSSearchTermsString;
+        
 
         public static bool OKExtensionsString(string s)
         {
@@ -1235,5 +1241,10 @@ namespace TVRename
 
             return true;
         }
+
+        
+        
+          
+        
     }
 }
