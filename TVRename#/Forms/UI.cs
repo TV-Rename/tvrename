@@ -850,7 +850,7 @@ namespace TVRename
             
             if (string.IsNullOrEmpty(bannerPath)) return "";
 
-            string url = TheTVDB.GetBannerURL(bannerPath);
+            string url = TheTVDB.GetImageURL(bannerPath);
 
             if ((string.IsNullOrEmpty(url))) return "";
 
@@ -883,8 +883,8 @@ namespace TVRename
 
 
             if ((!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath())) &&
-                (!string.IsNullOrEmpty(TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) )))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
+                (!string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) )))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
 
             body += $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
 
@@ -951,8 +951,8 @@ namespace TVRename
             string body = "";
 
             if (!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath()) &&
-                !string.IsNullOrEmpty(TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath())))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.GetBannerURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
+                !string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath())))
+                body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
 
             Season s = si.DVDOrder ? ser.DVDSeasons[snum]: ser.AiredSeasons[snum];
 
@@ -1017,7 +1017,7 @@ namespace TVRename
                     body += "<td width=100% valign=top>" + getOverview(ei) + "</td><td width=300 height=225>";
                     // 300x168 / 300x225
                     if (!string.IsNullOrEmpty(ei.GetFilename()))
-                        body += "<img src=" + TheTVDB.GetThumbnailURL(ei.GetFilename()) +">";
+                        body += "<img src=" + TheTVDB.GetImageURL(ei.GetFilename()) +">";
                     body += "</td></tr></table>";
                 }
                 else
