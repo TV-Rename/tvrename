@@ -998,7 +998,11 @@ namespace TVRename
 
                         foreach (ShowItem si in matchingShows)
                         {
-                            if (FileNeeded(di, si, dfc)) dirCanBeRemoved = false;
+                            if (FileNeeded(di, si, dfc))
+                            {
+                                logger.Info($"Not removing {di.FullName } as it may be needed for {si.ShowName}");
+                                dirCanBeRemoved = false;
+                            }
                         }
 
                         if (dirCanBeRemoved)
