@@ -203,9 +203,9 @@ namespace TVRename.Forms
                         sr.DoWhatNow = RuleAction.kMerge;
                         sr.First = this.mlastSelected.episodeOne.AppropriateEpNum;
                         sr.Second  = this.mlastSelected.episodeTwo.AppropriateEpNum;
-                        if (!si.SeasonRules.ContainsKey(this.mlastSelected.SeasonNumber)) si.SeasonRules[this.mlastSelected.SeasonNumber] = new List<ShowRule>();
 
-                        si.SeasonRules[this.mlastSelected.SeasonNumber].Add(sr);
+                        si?.AddSeasonRule(this.mlastSelected.SeasonNumber,sr);
+
                         this.lvDuplicates.Items.Remove(this.mlastClicked);
                         this.dupEps.Remove(this.mlastSelected);
                         break;

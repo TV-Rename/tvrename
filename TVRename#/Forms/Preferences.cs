@@ -177,7 +177,8 @@ namespace TVRename
             S.LeaveOriginals = this.cbLeaveOriginals.Checked;
             S.CheckuTorrent = this.cbCheckuTorrent.Checked;
             S.LookForDateInFilename = this.cbLookForAirdate.Checked;
-            S.AutoMergeEpisodes = this.chkAutoMergeEpisodes.Checked;
+            S.AutoMergeDownloadEpisodes = this.chkAutoMergeDownloadEpisodes.Checked;
+            S.AutoMergeLibraryEpisodes = this.chkAutoMergeLibraryEpisodes.Checked;
             S.RetainLanguageSpecificSubtitles = this.chkRetainLanguageSpecificSubtitles.Checked;
             S.ForceBulkAddToUseSettingsOnly = this.chkForceBulkAddToUseSettingsOnly.Checked;
 
@@ -412,7 +413,8 @@ namespace TVRename
             this.cbLookForAirdate.Checked = S.LookForDateInFilename;
             this.chkRetainLanguageSpecificSubtitles.Checked = S.RetainLanguageSpecificSubtitles;
             this.chkForceBulkAddToUseSettingsOnly.Checked = S.ForceBulkAddToUseSettingsOnly;
-            this.chkAutoMergeEpisodes.Checked = S.AutoMergeEpisodes;
+            this.chkAutoMergeDownloadEpisodes.Checked = S.AutoMergeDownloadEpisodes;
+            this.chkAutoMergeLibraryEpisodes.Checked = S.AutoMergeLibraryEpisodes;
             this.cbMonitorFolder.Checked = S.MonitorFolders;
             this.chkScheduledScan.Checked = S.RunPeriodicCheck();
             this.chkScanOnStartup.Checked = S.RunOnStartUp();
@@ -1268,11 +1270,6 @@ namespace TVRename
         {
                 e.SuppressKeyPress = true;
             
-        }
-
-        private void cbShowsHTML_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

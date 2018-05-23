@@ -428,7 +428,7 @@ namespace TVRename
             return this.Connected;
         }
 
-        public static string BuildURL(bool withHttpAndKey, bool episodesToo, int code, string lang)
+        internal static string BuildURL(bool withHttpAndKey, bool episodesToo, int code, string lang)
         //would rather make this private to hide api key from outside world
         {
             string r = withHttpAndKey ? WebsiteRoot + "/api/" + APIKey() + "/" : "";
@@ -441,7 +441,8 @@ namespace TVRename
             return "5FEC454623154441"; // tvrename's API key on thetvdb.com
         }
 
-        public string GetTVDBDownloadURL(string url)
+        // ReSharper disable once InconsistentNaming
+        public static string GetImageURL(string url)
         {
             string mirr = WebsiteRoot;
 
@@ -450,17 +451,13 @@ namespace TVRename
             if (!mirr.EndsWith("/"))
                 mirr += "/";
 
-            string theURL = mirr;
-            theURL += "banners/";
-            theURL += url;
-
-            return theURL;
+            return mirr + "banners/" + url;
         }
 
         public byte[] GetTVDBDownload(string url, bool forceReload = false)
         {
 
-            string theURL = GetTVDBDownloadURL(url);
+            string theURL = GetImageURL(url);
 
             System.Net.WebClient wc = new System.Net.WebClient();
 
@@ -1828,9 +1825,6 @@ namespace TVRename
 
             return next;
         }
-
-        public static string GetBannerURL(string bannerPath) => WebsiteRoot + "/banners/" + bannerPath;
-        public static string GetThumbnailURL(string filename) => WebsiteRoot + "/banners/_cache/" + filename;
     }
 }
 

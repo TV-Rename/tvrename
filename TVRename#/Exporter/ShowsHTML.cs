@@ -42,7 +42,7 @@ namespace TVRename
 
         private static string CreateHTML(ShowItem si)
         {
-            string posterURL = TheTVDB.GetBannerURL(si.TheSeries().GetImage(TVSettings.FolderJpgIsType.Poster));
+            string posterURL = TheTVDB.GetImageURL(si.TheSeries().GetImage(TVSettings.FolderJpgIsType.Poster));
             int minYear = si.TheSeries().MinYear(); 
             int maxYear = si.TheSeries().MaxYear();
             string yearRange = (minYear==maxYear) ? minYear.ToString() : minYear + "-" + maxYear;

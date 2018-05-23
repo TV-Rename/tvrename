@@ -788,5 +788,13 @@ public class ShowItem
         {
             return this.DVDOrder? TheSeries().DVDSeasons[snum]: TheSeries().AiredSeasons[snum];
         }
+
+        public void AddSeasonRule(int snum, ShowRule sr)
+        {
+            if (!this.SeasonRules.ContainsKey(snum)) this.SeasonRules[snum] = new List<ShowRule>();
+
+            this.SeasonRules[snum].Add(sr);
+
+        }
     }
 }

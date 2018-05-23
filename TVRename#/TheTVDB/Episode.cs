@@ -432,13 +432,7 @@ namespace TVRename
 
             string guest = this.EpisodeGuestStars;
 
-            if (!string.IsNullOrEmpty(guest))
-            {
-                return guest.Split('|');
-
-            }
-            return new string[] { };
-
+            return string.IsNullOrEmpty(guest) ? new string[] { }: guest.Split('|') ;
         }
 
         private string getValueAcrossVersions(string oldTag, string newTag, string defaultValue)
