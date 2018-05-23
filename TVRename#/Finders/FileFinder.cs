@@ -283,7 +283,7 @@ namespace TVRename
                          TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) &&
                          (epF == epnum)))
                     {
-                        if (maxEp != -1 && TVSettings.Instance.AutoMergeEpisodes)
+                        if (maxEp != -1 && TVSettings.Instance.AutoMergeDownloadEpisodes)
                         {
                             ShowRule sr = new ShowRule
                             {
@@ -291,9 +291,8 @@ namespace TVRename
                                 First = epF,
                                 Second = maxEp
                             };
-                            if (!me.Episode.SI.SeasonRules.ContainsKey(seasF)) me.Episode.SI.SeasonRules[seasF] = new List<ShowRule>();
+                            me.Episode.SI?.AddSeasonRule(seasF, sr);
 
-                            me.Episode.SI.SeasonRules[seasF].Add(sr);
                             Logger.Info(
                                 $"Looking at {me.Episode.SI.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.TheFile.FullName}");
                             Logger.Info($"Added new rule automatically for {sr}");
@@ -302,11 +301,9 @@ namespace TVRename
                             this.Doc.Library.GenerateEpisodeDict(me.Episode.SI);
 
                             //Get the newly created processed episode we are after
-                            List<ProcessedEpisode> newSeason = this.Doc.Library.ShowItem(me.Episode.SI.TVDBCode).SeasonEpisodes[seasF];
                             // ReSharper disable once InconsistentNaming
                             ProcessedEpisode newPE = me.Episode;
-
-                            foreach (ProcessedEpisode pe in newSeason)
+                            foreach (ProcessedEpisode pe in me.Episode.SI.SeasonEpisodes[seasF])
                             {
                                 if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
                             }

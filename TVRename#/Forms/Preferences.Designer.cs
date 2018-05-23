@@ -132,8 +132,9 @@ namespace TVRename
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.txtMissingXML = new System.Windows.Forms.TextBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.chkAutoMergeLibraryEpisodes = new System.Windows.Forms.CheckBox();
             this.chkAutoSearchForDownloadedFiles = new System.Windows.Forms.CheckBox();
-            this.chkAutoMergeEpisodes = new System.Windows.Forms.CheckBox();
+            this.chkAutoMergeDownloadEpisodes = new System.Windows.Forms.CheckBox();
             this.chkPreventMove = new System.Windows.Forms.CheckBox();
             this.label40 = new System.Windows.Forms.Label();
             this.cbxUpdateAirDate = new System.Windows.Forms.CheckBox();
@@ -203,6 +204,8 @@ namespace TVRename
             this.lbSearchFolders = new System.Windows.Forms.ListBox();
             this.label23 = new System.Windows.Forms.Label();
             this.tbuTorrentNZB = new System.Windows.Forms.TabPage();
+            this.label45 = new System.Windows.Forms.Label();
+            this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.txtSABHostPort = new System.Windows.Forms.TextBox();
             this.txtSABAPIKey = new System.Windows.Forms.TextBox();
@@ -250,8 +253,6 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.label45 = new System.Windows.Forms.Label();
-            this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -1239,8 +1240,9 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.chkAutoMergeLibraryEpisodes);
             this.tpScanOptions.Controls.Add(this.chkAutoSearchForDownloadedFiles);
-            this.tpScanOptions.Controls.Add(this.chkAutoMergeEpisodes);
+            this.tpScanOptions.Controls.Add(this.chkAutoMergeDownloadEpisodes);
             this.tpScanOptions.Controls.Add(this.chkPreventMove);
             this.tpScanOptions.Controls.Add(this.label40);
             this.tpScanOptions.Controls.Add(this.cbxUpdateAirDate);
@@ -1262,6 +1264,16 @@ namespace TVRename
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
             // 
+            // chkAutoMergeLibraryEpisodes
+            // 
+            this.chkAutoMergeLibraryEpisodes.AutoSize = true;
+            this.chkAutoMergeLibraryEpisodes.Location = new System.Drawing.Point(9, 334);
+            this.chkAutoMergeLibraryEpisodes.Name = "chkAutoMergeLibraryEpisodes";
+            this.chkAutoMergeLibraryEpisodes.Size = new System.Drawing.Size(306, 17);
+            this.chkAutoMergeLibraryEpisodes.TabIndex = 15;
+            this.chkAutoMergeLibraryEpisodes.Text = "Automatically create merge rules for merged library episodes";
+            this.chkAutoMergeLibraryEpisodes.UseVisualStyleBackColor = true;
+            // 
             // chkAutoSearchForDownloadedFiles
             // 
             this.chkAutoSearchForDownloadedFiles.AutoSize = true;
@@ -1272,15 +1284,15 @@ namespace TVRename
             this.chkAutoSearchForDownloadedFiles.Text = "Notify when new shows are found";
             this.chkAutoSearchForDownloadedFiles.UseVisualStyleBackColor = true;
             // 
-            // chkAutoMergeEpisodes
+            // chkAutoMergeDownloadEpisodes
             // 
-            this.chkAutoMergeEpisodes.AutoSize = true;
-            this.chkAutoMergeEpisodes.Location = new System.Drawing.Point(9, 334);
-            this.chkAutoMergeEpisodes.Name = "chkAutoMergeEpisodes";
-            this.chkAutoMergeEpisodes.Size = new System.Drawing.Size(276, 17);
-            this.chkAutoMergeEpisodes.TabIndex = 13;
-            this.chkAutoMergeEpisodes.Text = "Automatically create merge rules for merged episodes";
-            this.chkAutoMergeEpisodes.UseVisualStyleBackColor = true;
+            this.chkAutoMergeDownloadEpisodes.AutoSize = true;
+            this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(9, 312);
+            this.chkAutoMergeDownloadEpisodes.Name = "chkAutoMergeDownloadEpisodes";
+            this.chkAutoMergeDownloadEpisodes.Size = new System.Drawing.Size(337, 17);
+            this.chkAutoMergeDownloadEpisodes.TabIndex = 13;
+            this.chkAutoMergeDownloadEpisodes.Text = "Automatically create merge rules for merged downloaded episodes";
+            this.chkAutoMergeDownloadEpisodes.UseVisualStyleBackColor = true;
             // 
             // chkPreventMove
             // 
@@ -1295,7 +1307,7 @@ namespace TVRename
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(6, 295);
+            this.label40.Location = new System.Drawing.Point(6, 273);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(94, 13);
             this.label40.TabIndex = 11;
@@ -1304,7 +1316,7 @@ namespace TVRename
             // cbxUpdateAirDate
             // 
             this.cbxUpdateAirDate.AutoSize = true;
-            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 311);
+            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 289);
             this.cbxUpdateAirDate.Name = "cbxUpdateAirDate";
             this.cbxUpdateAirDate.Size = new System.Drawing.Size(197, 17);
             this.cbxUpdateAirDate.TabIndex = 10;
@@ -1314,7 +1326,7 @@ namespace TVRename
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(6, 248);
+            this.label33.Location = new System.Drawing.Point(6, 226);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(80, 13);
             this.label33.TabIndex = 9;
@@ -1323,7 +1335,7 @@ namespace TVRename
             // cbAutoCreateFolders
             // 
             this.cbAutoCreateFolders.AutoSize = true;
-            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 264);
+            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 242);
             this.cbAutoCreateFolders.Name = "cbAutoCreateFolders";
             this.cbAutoCreateFolders.Size = new System.Drawing.Size(192, 17);
             this.cbAutoCreateFolders.TabIndex = 8;
@@ -2046,6 +2058,22 @@ namespace TVRename
             this.tbuTorrentNZB.Text = "µTorrent / NZB";
             this.tbuTorrentNZB.UseVisualStyleBackColor = true;
             // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Location = new System.Drawing.Point(150, 9);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(85, 13);
+            this.label45.TabIndex = 24;
+            this.label45.Text = "Preferred Terms:";
+            // 
+            // tbPreferredRSSTerms
+            // 
+            this.tbPreferredRSSTerms.Location = new System.Drawing.Point(241, 6);
+            this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
+            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(169, 20);
+            this.tbPreferredRSSTerms.TabIndex = 23;
+            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.txtSABHostPort);
@@ -2485,22 +2513,6 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // label45
-            // 
-            this.label45.AutoSize = true;
-            this.label45.Location = new System.Drawing.Point(150, 9);
-            this.label45.Name = "label45";
-            this.label45.Size = new System.Drawing.Size(85, 13);
-            this.label45.TabIndex = 24;
-            this.label45.Text = "Preferred Terms:";
-            // 
-            // tbPreferredRSSTerms
-            // 
-            this.tbPreferredRSSTerms.Location = new System.Drawing.Point(241, 6);
-            this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
-            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(169, 20);
-            this.tbPreferredRSSTerms.TabIndex = 23;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2771,7 +2783,7 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkHideWtWSpoilers;
         private System.Windows.Forms.CheckBox chkHideMyShowsSpoilers;
         private System.Windows.Forms.CheckBox chkPreventMove;
-        private System.Windows.Forms.CheckBox chkAutoMergeEpisodes;
+        private System.Windows.Forms.CheckBox chkAutoMergeDownloadEpisodes;
         private System.Windows.Forms.CheckBox chkAutoSearchForDownloadedFiles;
         private System.Windows.Forms.TabPage tpBulkAdd;
         private System.Windows.Forms.Label label41;
@@ -2790,5 +2802,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtShowsHTMLTo;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.TextBox tbPreferredRSSTerms;
+        private System.Windows.Forms.CheckBox chkAutoMergeLibraryEpisodes;
     }
 }

@@ -386,7 +386,8 @@ namespace TVRename
         public bool RetainLanguageSpecificSubtitles = true;
 
 
-        public bool AutoMergeEpisodes = false;
+        public bool AutoMergeDownloadEpisodes = false;
+        public bool AutoMergeLibraryEpisodes = false;
         public string VideoExtensionsString = "";
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
@@ -610,7 +611,9 @@ namespace TVRename
                 else if (reader.Name == "LookForDateInFilename")
                     this.LookForDateInFilename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoMergeEpisodes")
-                    this.AutoMergeEpisodes = reader.ReadElementContentAsBoolean();
+                    this.AutoMergeDownloadEpisodes = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "AutoMergeLibraryEpisodes")
+                    this.AutoMergeLibraryEpisodes = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "RetainLanguageSpecificSubtitles")
                     this.RetainLanguageSpecificSubtitles = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ForceBulkAddToUseSettingsOnly")
@@ -920,7 +923,8 @@ namespace TVRename
             XMLHelper.WriteElementToXML(writer, "RetainLanguageSpecificSubtitles", this.RetainLanguageSpecificSubtitles);
             XMLHelper.WriteElementToXML(writer, "ForceBulkAddToUseSettingsOnly", this.ForceBulkAddToUseSettingsOnly);
             XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",this.LookForDateInFilename);
-            XMLHelper.WriteElementToXML(writer, "AutoMergeEpisodes", this.AutoMergeEpisodes);
+            XMLHelper.WriteElementToXML(writer, "AutoMergeEpisodes", this.AutoMergeDownloadEpisodes);
+            XMLHelper.WriteElementToXML(writer, "AutoMergeLibraryEpisodes", this.AutoMergeLibraryEpisodes);
             XMLHelper.WriteElementToXML(writer,"MonitorFolders",this.MonitorFolders);
             XMLHelper.WriteElementToXML(writer, "StartupScan", this.runStartupCheck);
             XMLHelper.WriteElementToXML(writer, "PeriodicScan", this.runPeriodicCheck);

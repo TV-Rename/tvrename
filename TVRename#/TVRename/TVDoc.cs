@@ -1081,16 +1081,105 @@ namespace TVRename
             return true;
         }
 
+        private void MergeLibraryEpisodes(ICollection<ShowItem> showList, DirFilesCache dfc)
+        {
+            if (!TVSettings.Instance.AutoMergeLibraryEpisodes) return;
+            logger.Info("Scanning for any duplicate episodes in library/monitor folders");
+            foreach (ShowItem si in showList)
+            {
+                if (this.ActionCancel)
+                    return;
+
+                if (si.AllFolderLocations().Count == 0) // no folders defined for this show
+                    continue; // so, nothing to do.
+
+                // process each folder for each season...
+
+                int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
+                si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
+                Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
+
+                foreach (int snum in numbers)
+                {
+                    if (this.ActionCancel)
+                        return;
+
+                    if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
+                        continue; // ignore/skip this season
+
+                    if ((snum == 0) && (si.CountSpecials))
+                        continue; // don't process the specials season, as they're merged into the seasons themselves
+
+                    // all the folders for this particular season
+                    List<string> folders = allFolders[snum];
+
+                    List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
+
+                    List < ShowRule > rulesToAdd = new List<ShowRule>();
+
+                    foreach (string folder in folders)
+                    {
+                        if (this.ActionCancel)
+                            return;
+
+                        FileInfo[] files = dfc.Get(folder);
+                        if (files == null)
+                            continue;
+
+                        foreach (FileInfo fi in files)
+                        {
+                            if (this.ActionCancel)
+                                return;
+
+                            if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                                continue; //not a video file, so ignore
+
+                            if (!FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si, out FilenameProcessorRE rex))
+                                continue; // can't find season & episode, so this file is of no interest to us
+
+                            if (seasNum == -1)
+                                seasNum = snum;
+
+                            int epIdx = eps.FindIndex(x => ((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)));
+                            if (epIdx == -1)
+                                continue; // season+episode number don't correspond to any episode we know of from thetvdb
+                            ProcessedEpisode ep = eps[epIdx];
+
+                            if (ep.type != ProcessedEpisode.ProcessedEpisodeType.merged && maxEp != -1)
+                            {
+                                logger.Info(
+                                    $"Looking at {ep.SI.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
+
+                                ShowRule sr = new ShowRule
+                                {
+                                    DoWhatNow = RuleAction.kMerge,
+                                    First = epNum,
+                                    Second = maxEp
+                                };
+                                rulesToAdd.Add(sr);
+                            }
+
+
+                        } // foreach file in folder
+                    } // for each folder for this season of this show
+
+                    foreach (ShowRule sr in rulesToAdd)
+                    {
+                        si.AddSeasonRule(snum, sr);
+                        logger.Info($"Added new rule automatically for {sr}");
+
+                        //Regenerate the episodes with the new rule added
+                        this.Library.GenerateEpisodeDict(si);
+                    }
+
+                } // for each season of this show
+            } // for each show
+        }
+
+
         private void RenameAndMissingCheck(SetProgressDelegate prog, ICollection<ShowItem> showList)
         {
             this.TheActionList = new ItemList();
-
-            //int totalEps = 0;
-
-
-            //foreach (ShowItem si in showlist)
-            //  if (si.DoRename)
-            //    totalEps += si.SeasonEpisodes.Count;
 
             if (TVSettings.Instance.RenameCheck)
                 Stats().RenameChecksDone++;
@@ -1109,6 +1198,9 @@ namespace TVRename
 
 
             DirFilesCache dfc = new DirFilesCache();
+
+            MergeLibraryEpisodes(showList, dfc);
+
             int c = 0;
             foreach (ShowItem si in showList)
             {
@@ -1222,6 +1314,8 @@ namespace TVRename
 
                             if (seasNum == -1)
                                 seasNum = snum;
+
+
 
 #if !NOLAMBDA
                             int epIdx = eps.FindIndex(x => ((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)));
