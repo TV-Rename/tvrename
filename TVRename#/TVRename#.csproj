@@ -178,6 +178,7 @@
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
+    <Compile Include="TheTVDB\TVSource.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BullkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />

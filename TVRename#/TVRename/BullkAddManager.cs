@@ -31,7 +31,7 @@ namespace TVRename
 
             TheTVDB.Instance.GetLock("GuessShowItem");
 
-            SeriesInfo ser = TheTVDB.Instance.FindSeriesForName(showName);
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(showName);
             if (ser != null)
                 ai.TVDBCode = ser.TVDBCode;
 

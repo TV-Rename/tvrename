@@ -365,7 +365,7 @@ namespace TVRename
 
                 logger.Error(e,message);
 
-                throw new TVDBException(e.Message);
+                throw new TheTVDB.TVDBException(e.Message);
             }
         }
 

@@ -26,51 +26,54 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    [Serializable()]
-    public class TVDBException : System.Exception
+
+    public class TheTVDB : TVSource
     {
-        // Thrown if an error occurs in the XML when reading TheTVDB.xml
-        public TVDBException(String message)
-            : base(message)
+        [Serializable()]
+        public class TVDBException : System.Exception
         {
+            // Thrown if an error occurs in the XML when reading TheTVDB.xml
+            public TVDBException(String message)
+                : base(message)
+            {
+            }
         }
-    }
 
-    public static class KeepTVDBAliveTimer
-    {
-        static System.Timers.Timer _timer; // From System.Timers
-
-        public static void Start()
+        private static class KeepTVDBAliveTimer
         {
-            _timer = new System.Timers.Timer(23 * 60 * 60 * 1000); // Set up the timer for 23 hours 
-            _timer.Elapsed += _timer_Elapsed;
-            _timer.Enabled = true; // Enable it
+            static System.Timers.Timer _timer; // From System.Timers
+
+            public static void Start()
+            {
+                _timer = new System.Timers.Timer(23 * 60 * 60 * 1000); // Set up the timer for 23 hours 
+                _timer.Elapsed += _timer_Elapsed;
+                _timer.Enabled = true; // Enable it
+            }
+
+            private static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+            {
+                TheTVDB.Instance.RefreshToken();
+            }
         }
 
-        private static void _timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        public class Language
         {
-            TheTVDB.Instance.RefreshToken();
+            public Language(int id, string abbreviation, string name, string englishName)
+            {
+                this.id = id;
+                this.abbreviation = abbreviation;
+                this.name = name;
+                this.englishName = englishName;
+
+
+            }
+            public int id { get; set; }
+            public string abbreviation { get; set; }
+            public string name { get; set; }
+            public string englishName { get; set; }
         }
-    }
 
-    public class Language
-    {
-        public Language(int id, string abbreviation, string name, string englishName) {
-            this.id = id;
-            this.abbreviation = abbreviation;
-            this.name = name;
-            this.englishName = englishName;
 
-            
-        }
-        public int id { get; set;}
-        public string abbreviation { get; set; }
-        public string name { get; set; }
-        public string englishName { get; set; }
-    }
-
-    public class TheTVDB
-    {
         private static string WebsiteRoot;
         private FileInfo CacheFile;
         public bool Connected;
@@ -188,7 +191,7 @@ namespace TVRename
             return this.Series;
         }
 
-        public System.Collections.Generic.Dictionary<int, SeriesInfo> GetSeriesDictMatching(string testShowName)
+        private System.Collections.Generic.Dictionary<int, SeriesInfo> GetSeriesDictMatching(string testShowName)
         {
             System.Collections.Generic.Dictionary<int, SeriesInfo> matchingSeries = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
 
@@ -240,7 +243,7 @@ namespace TVRename
             logger.Info("Status on screen updated: {0}",s);
         }
 
-        public bool LoadCache(FileInfo loadFrom)
+        private bool LoadCache(FileInfo loadFrom)
         {
             logger.Info("Loading Cache from: {0}", loadFrom.FullName);
             if (!loadFrom.Exists)
@@ -380,7 +383,7 @@ namespace TVRename
             this.Unlock("SaveCache");
         }
 
-        public SeriesInfo FindSeriesForName(string showName)
+        public SeriesInfo GetSeries(string showName)
         {
             this.Search(showName);
 
@@ -397,7 +400,10 @@ namespace TVRename
             return null;
         }
 
-        public Episode FindEpisodeByID(int id)
+
+
+
+        private Episode FindEpisodeByID(int id)
         {
             if (!this.GetLock("FindEpisodeByID"))
                 return null;
@@ -578,7 +584,7 @@ namespace TVRename
 
         }
 
-        public bool RefreshToken()
+        private bool RefreshToken()
         {
             
             this.Say("Reconnecting to TVDB");
@@ -1267,7 +1273,7 @@ namespace TVRename
             e.SetSeriesSeason(ser, airedSeason,dvdSeason);
         }
 
-        public bool DoWeForceReloadFor(int code)
+        private bool DoWeForceReloadFor(int code)
         {
             return this.ForceReloadOn.Contains(code) || !this.Series.ContainsKey(code);
         }
@@ -1619,7 +1625,7 @@ namespace TVRename
             return true;
         }
 
-        public SeriesInfo MakePlaceholderSeries(int code, string name)
+        private SeriesInfo MakePlaceholderSeries(int code, string name)
         {
             if (string.IsNullOrEmpty(name))
                 name = "";
@@ -1824,6 +1830,27 @@ namespace TVRename
             }
 
             return next;
+        }
+
+        public void Tidy(ICollection<ShowItem> libraryValues)
+        {
+            // remove any shows from thetvdb that aren't in My Shows
+            GetLock("TidyTVDB");
+            List<int> removeList = new List<int>();
+
+            foreach (KeyValuePair<int, SeriesInfo> kvp in GetSeriesDict())
+            {
+                bool found = libraryValues.Any(si => si.TVDBCode == kvp.Key);
+                if (!found)
+                    removeList.Add(kvp.Key);
+            }
+
+            foreach (int i in removeList)
+                ForgetShow(i, false);
+
+            Unlock("TheTVDB");
+            SaveCache();
+
         }
     }
 }

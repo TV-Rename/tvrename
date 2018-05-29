@@ -46,10 +46,10 @@ namespace TVRename
             // find actors that have been in more than one thing
             // Dictionary<String^, List<String> ^> ^whoInWhat = gcnew Dictionary<String^, List<String> ^>;
             TheTVDB.Instance.GetLock("Actors");
-            this.TheData = new DataArr(TheTVDB.Instance.GetSeriesDict().Count);
-            foreach (System.Collections.Generic.KeyValuePair<int, SeriesInfo> ser in TheTVDB.Instance.GetSeriesDict())
+            this.TheData = new DataArr(this.mDoc.Library.Count);
+            foreach (ShowItem ser in this.mDoc.Library.Shows)
             {
-                SeriesInfo si = ser.Value;
+                SeriesInfo si = TheTVDB.Instance.GetSeries(ser.TVDBCode);
                 foreach (string act in si.GetActors())
                 {
                     string aa = act.Trim();
