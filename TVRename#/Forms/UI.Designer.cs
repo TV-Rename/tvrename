@@ -270,7 +270,6 @@ namespace TVRename
             this.optionsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "&Options";
-            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // offlineOperationToolStripMenuItem
             // 
@@ -1443,7 +1442,6 @@ namespace TVRename
             this.showRightClickMenu.Name = "menuSearchSites";
             this.showRightClickMenu.ShowImageMargin = false;
             this.showRightClickMenu.Size = new System.Drawing.Size(36, 4);
-            this.showRightClickMenu.Opening += new System.ComponentModel.CancelEventHandler(this.showRightClickMenu_Opening);
             this.showRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.showRightClickMenu_ItemClicked);
             // 
             // folderRightClickMenu

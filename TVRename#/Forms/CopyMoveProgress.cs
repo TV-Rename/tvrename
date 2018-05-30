@@ -230,9 +230,9 @@ namespace TVRename
         private void cbPause_CheckedChanged(object sender, EventArgs e)
         {
             if (this.cbPause.Checked)
-                this.mDoc.pause();
+                this.mDoc.Pause();
             else
-                this.mDoc.unpause();
+                this.mDoc.Unpause();
 
             bool en = !(this.cbPause.Checked);
             this.pbFile.Enabled = en;
