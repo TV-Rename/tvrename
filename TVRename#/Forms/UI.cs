@@ -3761,12 +3761,15 @@ namespace TVRename
             UpdateActionCheckboxes();
         }
 
-        		         private void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+        private async  void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
          {
-            new ShowSummary(this.mDoc).ShowDialog();
+             ShowSummary f = new ShowSummary(this.mDoc);
+             await Task.Run(() => f.GenerateData() );
+             f.PopulateGrid();
+             f.Show();
          }
 
-    private void bnHideHTMLPanel_Click(object sender, EventArgs e)
+        private void bnHideHTMLPanel_Click(object sender, EventArgs e)
         {
             if (this.splitContainer1.Panel2Collapsed)
             {

@@ -5,67 +5,75 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-
+using Alphaleonis.Win32.Filesystem;
+using SourceGrid;
+using SourceGrid.Cells.Controllers;
+using SourceGrid.Cells.Views;
+using ColumnHeader = SourceGrid.Cells.ColumnHeader;
+using ContentAlignment = DevAge.Drawing.ContentAlignment;
+using Directory = System.IO.Directory;
+using RowHeader = SourceGrid.Cells.RowHeader;
 
 namespace TVRename
 {
-    using System.IO;
-
     public partial class ShowSummary : Form
     {
         private readonly TVDoc mDoc;
 
-        public List<String> mFoldersToOpen;
-        public List<Alphaleonis.Win32.Filesystem.FileInfo> mLastFL;
-        protected Season mLastSeasonClicked;
-        protected ShowItem mLastShowClicked;
+        private List<string> mFoldersToOpen;
+        private List<FileInfo> mLastFileList;
+        private Season mLastSeasonClicked;
+        private ShowItem mLastShowClicked;
+        private List<ShowSummaryData> showList ;
 
         public ShowSummary(TVDoc doc)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             this.mDoc = doc;
+            this.showList = new List<ShowSummaryData>();
 
-            this.GenerateData();
         }
 
-        private void GenerateData()
+        public void GenerateData()
         {
-            List<ShowSummaryData> showList = new List<ShowSummaryData>();
+            
 
-            foreach (ShowItem si in this.mDoc.Library.Shows)
+            foreach (ShowItem si in this.mDoc.Library.GetShowItems())
             {
-                ShowSummaryData show = this.AddShowDetails(si);
-                showList.Add(show);
+                ShowSummaryData show = AddShowDetails(si);
+                this.showList.Add(show);
             }
-            this.PopulateGrid(showList);
+            
         }
 
-        private void PopulateGrid(ICollection<ShowSummaryData> showList)
+        public void PopulateGrid()
         {
-            SourceGrid.Cells.Views.Cell colTitleModel = new SourceGrid.Cells.Views.Cell
+            Cell colTitleModel = new Cell
             {
                 ElementText = new ActorsGrid.RotatedText(-90.0f),
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
-                TextAlignment = DevAge.Drawing.ContentAlignment.BottomCenter
+                TextAlignment = ContentAlignment.BottomCenter
             };
 
-            SourceGrid.Cells.Views.Cell topleftTitleModel = new SourceGrid.Cells.Views.Cell
+            Cell topleftTitleModel = new Cell
             {
                 BackColor = Color.SteelBlue,
                 ForeColor = Color.White,
-                TextAlignment = DevAge.Drawing.ContentAlignment.BottomLeft
+                TextAlignment = ContentAlignment.BottomLeft
             };
 
             this.grid1.Columns.Clear();
             this.grid1.Rows.Clear();
 
-            int maxSeason = this.GetMaxSeason(showList);
+            int maxSeason = GetMaxSeason(showList);
 
             int cols = maxSeason + 2;
             int rows = showList.Count + 1;
@@ -80,7 +88,7 @@ namespace TVRename
             this.grid1.Rows[0].AutoSizeMode = SourceGrid.AutoSizeMode.MinimumSize;
             this.grid1.Rows[0].Height = 65;
 
-            SourceGrid.Cells.ColumnHeader h = new SourceGrid.Cells.ColumnHeader("Show")
+            ColumnHeader h = new ColumnHeader("Show")
             {
                 AutomaticSortEnabled = false,
                 ResizeEnabled = false
@@ -92,7 +100,7 @@ namespace TVRename
             // Draw season
             for (int c = 0; c < maxSeason + 1; c++)
             {
-                h = new SourceGrid.Cells.ColumnHeader(c == 0 ? "Specials" : string.Format("Season {0}", c))
+                h = new ColumnHeader(c == 0 ? "Specials" : $"Season {c}")
                 {
                     AutomaticSortEnabled = false,
                     ResizeEnabled = false
@@ -107,29 +115,27 @@ namespace TVRename
             this.grid1.Columns[0].Width = 150;
 
             // Draw Shows
-            SourceGrid.Cells.RowHeader rh;
 
             int r = 0; // TODO: remove reliance on index
             foreach (ShowSummaryData show in showList)
             {
-                rh = new SourceGrid.Cells.RowHeader(show.showName);
-                rh.ResizeEnabled = false;
+                RowHeader rh = new RowHeader(show.ShowName) {ResizeEnabled = false};
 
                 this.grid1[r + 1, 0] = rh;
-                this.grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.showItem));
+                this.grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowItem));
 
-                foreach (ShowSummaryData.ShowSummarySeasonData seasonData in show.seasonDataList)
+                foreach (ShowSummaryData.ShowSummarySeasonData seasonData in show.SeasonDataList)
                 {
-                    ShowSummaryData.SummaryOutput output = seasonData.getOuput();
-                    this.grid1[r + 1, seasonData.seasonNumber + 1] = new SourceGrid.Cells.Cell(output.details, typeof(string));
-                    this.grid1[r + 1, seasonData.seasonNumber + 1].View = new SourceGrid.Cells.Views.Cell
+                    ShowSummaryData.SummaryOutput output = seasonData.GetOuput();
+                    this.grid1[r + 1, seasonData.SeasonNumber + 1] = new SourceGrid.Cells.Cell(output.Details, typeof(string));
+                    this.grid1[r + 1, seasonData.SeasonNumber + 1].View = new Cell
                     {
-                        BackColor = output.color,
+                        BackColor = output.Color,
                         ForeColor = Color.White,
-                        TextAlignment = DevAge.Drawing.ContentAlignment.BottomRight
+                        TextAlignment = ContentAlignment.BottomRight
                     };
-                    this.grid1[r + 1, seasonData.seasonNumber + 1].AddController(new ShowClickEvent(this, show.showItem, seasonData.season));
-                    this.grid1[r + 1, seasonData.seasonNumber + 1].Editor.EditableMode = SourceGrid.EditableMode.None;
+                    this.grid1[r + 1, seasonData.SeasonNumber + 1].AddController(new ShowClickEvent(this, show.ShowItem, seasonData.Season));
+                    this.grid1[r + 1, seasonData.SeasonNumber + 1].Editor.EditableMode = EditableMode.None;
                 }
                 r++;
             }
@@ -141,8 +147,8 @@ namespace TVRename
             int maxSeason = 0;
             foreach (ShowSummaryData show in showList)
             {
-                if (show.maxSeason > maxSeason)
-                    maxSeason = show.maxSeason;
+                if (show.MaxSeason > maxSeason)
+                    maxSeason = show.MaxSeason;
             }
             return maxSeason;
         }
@@ -155,15 +161,15 @@ namespace TVRename
 
             ShowSummaryData showSummary = new ShowSummaryData
             {
-                showName = si.ShowName,
-                showItem = si
+                ShowName = si.ShowName,
+                ShowItem = si
             };
 
             if (ser != null)
             {
                 foreach (int snum in si.DVDOrder? ser.DVDSeasons.Keys: ser.AiredSeasons.Keys)
                 {
-                    ShowSummaryData.ShowSummarySeasonData seasonData = this.getSeasonDetails(si, ser, snum);
+                    ShowSummaryData.ShowSummarySeasonData seasonData = getSeasonDetails(si, ser, snum);
                     showSummary.AddSeason(seasonData);
                 }
             }
@@ -201,7 +207,7 @@ namespace TVRename
                     if (ei.FirstAired != null && ei.FirstAired < DateTime.Now)
                         epAiredCount++;
 
-                    List<Alphaleonis.Win32.Filesystem.FileInfo> fl = TVDoc.FindEpOnDisk(dfc,ei,false);
+                    List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc,ei,false);
                     if (fl != null)
                     {
                         if (fl.Count != 0)
@@ -220,25 +226,25 @@ namespace TVRename
             {
                 case RightClickCommands.kVisitTVDBSeason:
                     {
-                        this.TVDBFor(this.mLastSeasonClicked);
+                        TVDBFor(this.mLastSeasonClicked);
                         break;
                     }
 
                 case RightClickCommands.kVisitTVDBSeries:
                     {
-                        this.TVDBFor(this.mLastShowClicked);
+                        TVDBFor(this.mLastShowClicked);
                         break;
                     }
                 case RightClickCommands.kForceRefreshSeries:
-                    this.ForceRefresh(this.mLastShowClicked);
+                    ForceRefresh(this.mLastShowClicked);
                     break;
                 default:
                     {
                         if ((n >= RightClickCommands.kWatchBase) && (n < RightClickCommands.kOpenFolderBase))
                         {
                             int wn = n - RightClickCommands.kWatchBase;
-                            if ((this.mLastFL != null) && (wn >= 0) && (wn < this.mLastFL.Count))
-                                Helpers.SysOpen(this.mLastFL[wn].FullName);
+                            if ((this.mLastFileList != null) && (wn >= 0) && (wn < this.mLastFileList.Count))
+                                Helpers.SysOpen(this.mLastFileList[wn].FullName);
                         }
                         else if (n >= RightClickCommands.kOpenFolderBase)
                         {
@@ -251,16 +257,15 @@ namespace TVRename
                                 if (Directory.Exists(folder))
                                     Helpers.SysOpen(folder);
                             }
-                            return;
                         }
                         else
-                            System.Diagnostics.Debug.Fail("Unknown right-click action " + n);
+                            Debug.Fail("Unknown right-click action " + n);
                         break;
                     }
             }
         }
 
-        public void TVDBFor(Season seas)
+        private void TVDBFor(Season seas)
         {
             if (seas == null)
                 return;
@@ -268,7 +273,7 @@ namespace TVRename
             Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(seas.TheSeries.TVDBCode, seas.SeasonID, false));
         }
 
-        public void TVDBFor(ShowItem si)
+        private void TVDBFor(ShowItem si)
         {
             if (si == null)
                 return;
@@ -285,11 +290,11 @@ namespace TVRename
 
         #region Nested type: ShowClickEvent
 
-        private class ShowClickEvent : SourceGrid.Cells.Controllers.ControllerBase
+        private class ShowClickEvent : ControllerBase
         {
-            private ShowSummary gridSummary;
-            private Season season;
-            private ShowItem show;
+            private readonly ShowSummary gridSummary;
+            private readonly Season season;
+            private readonly ShowItem show;
 
             public ShowClickEvent(ShowSummary gridSummary, ShowItem show)
             {
@@ -304,7 +309,7 @@ namespace TVRename
                 this.gridSummary = gridSummary;
             }
 
-            public override void OnMouseDown(SourceGrid.CellContext sender, MouseEventArgs e)
+            public override void OnMouseDown(CellContext sender, MouseEventArgs e)
             {
                 if (e.Button != MouseButtons.Right)
                     return;
@@ -312,7 +317,7 @@ namespace TVRename
 
                 Season seas = this.season;
 
-                this.gridSummary.mLastFL = new List<Alphaleonis.Win32.Filesystem.FileInfo>();
+                this.gridSummary.mLastFileList = new List<FileInfo>();
                 this.gridSummary.mFoldersToOpen = new List<String>();
 
                 this.gridSummary.mLastShowClicked = this.show;
@@ -322,13 +327,13 @@ namespace TVRename
 
                 if (this.show != null && seas == null)
                 {
-                    this.GenerateMenu(this.gridSummary.showRightClickMenu, "Force Refresh", RightClickCommands.kForceRefreshSeries);
-                    this.GenerateSeparator(this.gridSummary.showRightClickMenu);
-                    this.GenerateMenu(this.gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTVDBSeries);
+                    GenerateMenu(this.gridSummary.showRightClickMenu, "Force Refresh", RightClickCommands.kForceRefreshSeries);
+                    GenerateSeparator(this.gridSummary.showRightClickMenu);
+                    GenerateMenu(this.gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTVDBSeries);
                 }
 
                 if (this.show != null && seas != null)
-                    this.GenerateMenu(this.gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTVDBSeason);
+                    GenerateMenu(this.gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTVDBSeason);
 
                 if ((seas != null) && (this.show != null) && (this.show.AllFolderLocations().ContainsKey(seas.SeasonNumber)))
                 {
@@ -341,11 +346,11 @@ namespace TVRename
                             added.Add(folder); // don't show the same folder more than once
                             if (first)
                             {
-                                this.GenerateSeparator(this.gridSummary.showRightClickMenu);
+                                GenerateSeparator(this.gridSummary.showRightClickMenu);
                                 first = false;
                             }
 
-                            this.GenerateMenu(this.gridSummary.showRightClickMenu, "Open: " + folder, (int)RightClickCommands.kOpenFolderBase + n);
+                            GenerateMenu(this.gridSummary.showRightClickMenu, "Open: " + folder, (int)RightClickCommands.kOpenFolderBase + n);
                             this.gridSummary.mFoldersToOpen.Add(folder);
                             n++;
                         }
@@ -365,11 +370,11 @@ namespace TVRename
                                 added.Add(folder); // don't show the same folder more than once
                                 if (first)
                                 {
-                                    this.GenerateSeparator(this.gridSummary.showRightClickMenu);
+                                    GenerateSeparator(this.gridSummary.showRightClickMenu);
                                     first = false;
                                 }
 
-                                this.GenerateMenu(this.gridSummary.showRightClickMenu, "Open: " + folder, (int)RightClickCommands.kOpenFolderBase + n);
+                                GenerateMenu(this.gridSummary.showRightClickMenu, "Open: " + folder, (int)RightClickCommands.kOpenFolderBase + n);
                                 this.gridSummary.mFoldersToOpen.Add(folder);
                                 n++;
                             }
@@ -383,20 +388,20 @@ namespace TVRename
                     bool first = true;
                     foreach (ProcessedEpisode epds in this.show.SeasonEpisodes[seas.SeasonNumber])
                     {
-                        List<Alphaleonis.Win32.Filesystem.FileInfo> fl = TVDoc.FindEpOnDisk(new DirFilesCache() , epds,false);
+                        List<FileInfo> fl = TVDoc.FindEpOnDisk(new DirFilesCache() , epds,false);
                         if ((fl != null) && (fl.Count > 0))
                         {
                             if (first)
                             {
-                                this.GenerateSeparator(this.gridSummary.showRightClickMenu);
+                                GenerateSeparator(this.gridSummary.showRightClickMenu);
                                 first = false;
                             }
 
-                            int n = this.gridSummary.mLastFL.Count;
-                            foreach (Alphaleonis.Win32.Filesystem.FileInfo fi in fl)
+                            int n = this.gridSummary.mLastFileList.Count;
+                            foreach (FileInfo fi in fl)
                             {
-                                this.GenerateMenu(this.gridSummary.showRightClickMenu, "Watch: " + fi.FullName, (int)RightClickCommands.kWatchBase + n);
-                                this.gridSummary.mLastFL.Add(fi);
+                                GenerateMenu(this.gridSummary.showRightClickMenu, "Watch: " + fi.FullName, (int)RightClickCommands.kWatchBase + n);
+                                this.gridSummary.mLastFileList.Add(fi);
                                 n++;
                             }
                         }
@@ -409,13 +414,12 @@ namespace TVRename
 
             private void GenerateMenu(ContextMenuStrip showRightClickMenu, string menuName, RightClickCommands rightClickCommand)
             {
-                this.GenerateMenu(showRightClickMenu, menuName, (int)rightClickCommand);
+                GenerateMenu(showRightClickMenu, menuName, (int)rightClickCommand);
             }
 
             private void GenerateMenu(ContextMenuStrip showRightClickMenu, string menuName, int rightClickCommand)
             {
-                ToolStripMenuItem tsi = new ToolStripMenuItem(menuName);
-                tsi.Tag = rightClickCommand;
+                ToolStripMenuItem tsi = new ToolStripMenuItem(menuName) {Tag = rightClickCommand};
                 showRightClickMenu.Items.Add(tsi);
             }
 
@@ -432,65 +436,65 @@ namespace TVRename
 
         public class ShowSummaryData
         {
-            public int maxSeason;
-            public List<ShowSummarySeasonData> seasonDataList = new List<ShowSummarySeasonData>();
-            public ShowItem showItem;
-            public string showName;
+            public int MaxSeason;
+            public readonly List<ShowSummarySeasonData> SeasonDataList = new List<ShowSummarySeasonData>();
+            public ShowItem ShowItem;
+            public string ShowName;
 
             public void AddSeason(ShowSummarySeasonData seasonData)
             {
-                this.seasonDataList.Add(seasonData);
+                this.SeasonDataList.Add(seasonData);
 
                 // set the max season number
-                if (seasonData.seasonNumber >= this.maxSeason)
-                    this.maxSeason = seasonData.seasonNumber;
+                if (seasonData.SeasonNumber >= this.MaxSeason)
+                    this.MaxSeason = seasonData.SeasonNumber;
             }
 
             #region Nested type: ShowSummarySeasonData
 
             public class ShowSummarySeasonData
             {
-                public int episodeAiredCount;
-                public int episodeCount;
+                private readonly int episodeAiredCount;
+                private readonly int episodeCount;
 
-                public int episodeGotCount;
+                private readonly int episodeGotCount;
 
-                public Season season;
-                public int seasonNumber;
+                public readonly Season Season;
+                public readonly int SeasonNumber;
 
                 public ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, Season season)
                 {
-                    this.seasonNumber = seasonNumber;
+                    this.SeasonNumber = seasonNumber;
                     this.episodeCount = episodeCount;
                     this.episodeAiredCount = episodeAiredCount;
                     this.episodeGotCount = episodeGotCount;
-                    this.season = season;
+                    this.Season = season;
                 }
 
-                public SummaryOutput getOuput()
+                public SummaryOutput GetOuput()
                 {
                     SummaryOutput output = new SummaryOutput();
-                    if (this.seasonNumber == 0)
+                    if (this.SeasonNumber == 0)
                     {
-                        output.details = string.Format("{0} / {1}", this.episodeGotCount, this.episodeCount);
+                        output.Details = $"{this.episodeGotCount} / {this.episodeCount}";
                         if (this.episodeGotCount == this.episodeCount)
-                            output.color = Color.Green;
+                            output.Color = Color.Green;
                         else if (this.episodeGotCount == 0)
-                            output.color = Color.Red;
+                            output.Color = Color.Red;
                         else
-                            output.color = Color.Orange;
+                            output.Color = Color.Orange;
                     }
                     else
                     {
                         // show amount of aired eps
-                        output.details = string.Format("{0} / {1}", this.episodeGotCount, this.episodeAiredCount);
+                        output.Details = $"{this.episodeGotCount} / {this.episodeAiredCount}";
                         // show amount of unaired eps
-                        output.details += this.episodeCount - this.episodeAiredCount == 0 ? string.Empty : string.Format(" ({0})", this.episodeCount - this.episodeAiredCount);
+                        output.Details += this.episodeCount - this.episodeAiredCount == 0 ? string.Empty : $" ({this.episodeCount - this.episodeAiredCount})";
 
                         if (this.episodeGotCount == this.episodeAiredCount)
-                            output.color = (this.episodeCount - this.episodeAiredCount) == 0 ? Color.Green : Color.GreenYellow;
+                            output.Color = (this.episodeCount - this.episodeAiredCount) == 0 ? Color.Green : Color.GreenYellow;
                         else
-                            output.color = this.episodeGotCount == 0 ? Color.Red : Color.Orange;
+                            output.Color = this.episodeGotCount == 0 ? Color.Red : Color.Orange;
                     }
                     return output;
                 }
@@ -502,8 +506,8 @@ namespace TVRename
 
             public class SummaryOutput
             {
-                public Color color;
-                public string details;
+                public Color Color;
+                public string Details;
             }
 
             #endregion

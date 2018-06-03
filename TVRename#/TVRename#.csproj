@@ -415,6 +415,9 @@
     <EmbeddedResource Include="Forms\DupEpFinder.resx">
       <DependentUpon>DupEpFinder.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ShowSummary.resx">
+      <DependentUpon>ShowSummary.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\UpdateNotification.resx">
       <DependentUpon>UpdateNotification.cs</DependentUpon>
     </EmbeddedResource>
