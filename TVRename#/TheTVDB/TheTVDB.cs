@@ -75,7 +75,7 @@ namespace TVRename
         private long Srv_Time; // only update this after a 100% successful download
         // private List<String> WhoHasLock;
         private static string APIRoot;
-        private TvDbTokenProvider tvDbTokenProvider = new TvDbTokenProvider();
+        private readonly TvDbTokenProvider tvDbTokenProvider = new TvDbTokenProvider();
 
 
         public String RequestLanguage = "en"; // Set and updated by TVDoc

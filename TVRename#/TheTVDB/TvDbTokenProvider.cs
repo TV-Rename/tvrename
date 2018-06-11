@@ -13,17 +13,13 @@ namespace TVRename
 {
     public class TvDbTokenProvider
     {
-        public const string TVDB_API_URL = "https://api.thetvdb.com";
-        public const string TVDB_API_KEY = "5FEC454623154441";
+        public static readonly string TVDB_API_URL = "https://api.thetvdb.com";
+        public static readonly string TVDB_API_KEY = "5FEC454623154441";
 
         private string lastKnownToken = string.Empty;
         private DateTime lastRefreshTime = DateTime.MinValue;
 
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-        public TvDbTokenProvider()
-        {
-        }
 
         public string GetToken()
         {
@@ -79,7 +75,7 @@ namespace TVRename
 
         private bool IsTokenAquired()
         {
-            return lastKnownToken == string.Empty;
+            return lastKnownToken != string.Empty;
         }
     }
 }
