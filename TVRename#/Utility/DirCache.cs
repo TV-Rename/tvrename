@@ -59,7 +59,7 @@ namespace TVRename
         {
             if (!Directory.Exists(folder))
             {
-                logger.Error("The search folder \"" + folder + " does not exist.\n");
+                logger.Error("The search folder \"" + folder + " does not exist.");
                 return count;
             }
 
