@@ -187,7 +187,7 @@ namespace TVRename
                         XMLHelper.WriteElementToXML(writer, "title", this.SI.ShowName);
 
                         XMLHelper.WriteElementToXML(writer, "episodeguideurl",
-                            TheTVDB.BuildURL(true, true, this.SI.TVDBCode, TheTVDB.Instance.RequestLanguage));
+                            TheTVDB.BuildURL(this.SI.TVDBCode, TheTVDB.Instance.RequestLanguage));
 
                         XMLHelper.WriteElementToXML(writer, "plot", this.SI.TheSeries().GetOverview());
 

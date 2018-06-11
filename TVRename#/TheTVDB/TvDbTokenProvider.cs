@@ -23,25 +23,31 @@ namespace TVRename
 
         public string GetToken()
         {
-            if (IsTokenAquired() && TokenIsValid())
+            //If we have not logged on at all then logon
+            if (!IsTokenAquired() )
             {
-                if (ShouldRefreshToken())
-                {
-                    logger.Info("Refreshing TheTVDB token... ");
-                    RefreshToken();
-                }
-
-                return lastKnownToken;
+                AcquireToken();
+            }
+            //If we have logged in but the token has expired so logon again
+            else if (!TokenIsValid())
+            {
+                AcquireToken();
+            }
+            //If we have logged on and have a valid token that is nearing its use-by date then refresh
+            else if (ShouldRefreshToken())
+            {
+                 RefreshToken();
             }
 
-            AcquireToken();
+
             return lastKnownToken;
         }
 
         private void AcquireToken()
         {
-            var request = new JObject(new JProperty("apikey", TVDB_API_KEY));
-            var jsonResponse = HTTPHelper.JsonHTTPPOSTRequest($"{TVDB_API_URL}/login", request);
+            logger.Info("Acquire a TheTVDB token... ");
+            JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY));
+            JObject jsonResponse = HTTPHelper.JsonHTTPPOSTRequest($"{TVDB_API_URL}/login", request);
 
             UpdateToken((string)jsonResponse["token"]);
             logger.Info("Performed login at " + System.DateTime.UtcNow);
@@ -50,22 +56,23 @@ namespace TVRename
 
         private void RefreshToken()
         {
-            var jsonResponse = HTTPHelper.JsonHTTPGETRequest($"{TVDB_API_URL}/refresh_token", null, lastKnownToken);
+            logger.Info("Refreshing TheTVDB token... ");
+            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest($"{TVDB_API_URL}/refresh_token", null, lastKnownToken);
 
             UpdateToken((string)jsonResponse["token"]);
             logger.Info("refreshed token at " + System.DateTime.UtcNow);
             logger.Info("New Token " + lastKnownToken);
         }
 
-        private bool ShouldRefreshToken()
-        {
-            return (DateTime.Now - lastRefreshTime) >= TimeSpan.FromHours(23);
-        }
-
         private void UpdateToken(string token)
         {
             lastKnownToken = token;
             lastRefreshTime = DateTime.Now;
+        }
+
+        private bool ShouldRefreshToken()
+        {
+            return (DateTime.Now - lastRefreshTime) >= TimeSpan.FromHours(23);
         }
 
         private bool TokenIsValid()

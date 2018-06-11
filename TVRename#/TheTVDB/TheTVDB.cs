@@ -413,17 +413,10 @@ namespace TVRename
             return this.Connected;
         }
 
-        internal static string BuildURL(bool withHttpAndKey, bool episodesToo, int code, string lang)
+        internal static string BuildURL(int code, string lang)
         //would rather make this private to hide api key from outside world
         {
-            string r = withHttpAndKey ? WebsiteRoot + "/api/" + APIKey() + "/" : "";
-            r += episodesToo ? "series/" + code + "/all/" + lang + ".zip" : "series/" + code + "/" + lang + ".xml";
-            return r;
-        }
-
-        private static string APIKey()
-        {
-            return "5FEC454623154441"; // tvrename's API key on thetvdb.com
+            return $"{WebsiteRoot}/api/{TvDbTokenProvider.TVDB_API_KEY}/series/{code}/all/{lang}.zip";
         }
 
         // ReSharper disable once InconsistentNaming
@@ -452,10 +445,6 @@ namespace TVRename
             try
             {
                 byte[] r = wc.DownloadData(theURL);
-                //HttpWebResponse ^wres = dynamic_cast<HttpWebResponse ^>(wr->GetResponse());
-                //Stream ^str = wres->GetResponseStream();
-                //array<unsigned char> ^r = gcnew array<unsigned char>((int)str->Length);
-                //str->Read(r, 0, (int)str->Length);
 
                 if (!url.EndsWith(".zip"))
                     logger.Info("Downloaded " + theURL + ", " + r.Length + " bytes");
