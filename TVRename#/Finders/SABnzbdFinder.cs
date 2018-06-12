@@ -19,9 +19,6 @@ namespace TVRename
             return FinderDisplayType.Downloading;
         }
 
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || String.IsNullOrEmpty(TVSettings.Instance.SABHostPort))

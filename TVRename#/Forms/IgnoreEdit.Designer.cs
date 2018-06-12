@@ -37,33 +37,33 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = (new System.ComponentModel.Container());
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(IgnoreEdit)));
-            this.bnOK = (new System.Windows.Forms.Button());
-            this.bnCancel = (new System.Windows.Forms.Button());
-            this.lbItems = (new System.Windows.Forms.ListBox());
-            this.bnRemove = (new System.Windows.Forms.Button());
-            this.label1 = (new System.Windows.Forms.Label());
-            this.txtFilter = (new System.Windows.Forms.TextBox());
-            this.timer1 = (new System.Windows.Forms.Timer(this.components));
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IgnoreEdit));
+            this.bnOK = new System.Windows.Forms.Button();
+            this.bnCancel = new System.Windows.Forms.Button();
+            this.lbItems = new System.Windows.Forms.ListBox();
+            this.bnRemove = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtFilter = new System.Windows.Forms.TextBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // bnOK
             // 
-            this.bnOK.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
-            this.bnOK.Location = new System.Drawing.Point(216, 425);
+            this.bnOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnOK.Location = new System.Drawing.Point(216, 426);
             this.bnOK.Name = "bnOK";
             this.bnOK.Size = new System.Drawing.Size(75, 23);
             this.bnOK.TabIndex = 0;
             this.bnOK.Text = "OK";
             this.bnOK.UseVisualStyleBackColor = true;
-            this.bnOK.Click += new System.EventHandler(bnOK_Click);
+            this.bnOK.Click += new System.EventHandler(this.bnOK_Click);
             // 
             // bnCancel
             // 
-            this.bnCancel.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(297, 425);
+            this.bnCancel.Location = new System.Drawing.Point(297, 426);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 1;
@@ -72,27 +72,29 @@ namespace TVRename
             // 
             // lbItems
             // 
-            this.lbItems.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.lbItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbItems.FormattingEnabled = true;
             this.lbItems.IntegralHeight = false;
             this.lbItems.Location = new System.Drawing.Point(9, 38);
             this.lbItems.Name = "lbItems";
             this.lbItems.ScrollAlwaysVisible = true;
             this.lbItems.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lbItems.Size = new System.Drawing.Size(363, 381);
+            this.lbItems.Size = new System.Drawing.Size(363, 382);
             this.lbItems.Sorted = true;
             this.lbItems.TabIndex = 2;
             // 
             // bnRemove
             // 
-            this.bnRemove.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
-            this.bnRemove.Location = new System.Drawing.Point(9, 425);
+            this.bnRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnRemove.Location = new System.Drawing.Point(9, 426);
             this.bnRemove.Name = "bnRemove";
             this.bnRemove.Size = new System.Drawing.Size(75, 23);
             this.bnRemove.TabIndex = 0;
             this.bnRemove.Text = "&Remove";
             this.bnRemove.UseVisualStyleBackColor = true;
-            this.bnRemove.Click += new System.EventHandler(bnRemove_Click);
+            this.bnRemove.Click += new System.EventHandler(this.bnRemove_Click);
             // 
             // label1
             // 
@@ -105,25 +107,26 @@ namespace TVRename
             // 
             // txtFilter
             // 
-            this.txtFilter.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFilter.Location = new System.Drawing.Point(44, 12);
             this.txtFilter.Name = "txtFilter";
             this.txtFilter.Size = new System.Drawing.Size(328, 20);
             this.txtFilter.TabIndex = 4;
-            this.txtFilter.TextChanged += new System.EventHandler(txtFilter_TextChanged);
+            this.txtFilter.TextChanged += new System.EventHandler(this.txtFilter_TextChanged);
             // 
             // timer1
             // 
             this.timer1.Interval = 500;
-            this.timer1.Tick += new System.EventHandler(timer1_Tick);
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // IgnoreEdit
             // 
             this.AcceptButton = this.bnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(384, 460);
+            this.ClientSize = new System.Drawing.Size(384, 461);
             this.Controls.Add(this.txtFilter);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lbItems);
@@ -131,8 +134,11 @@ namespace TVRename
             this.Controls.Add(this.bnRemove);
             this.Controls.Add(this.bnOK);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(350, 160);
             this.Name = "IgnoreEdit";
             this.ShowInTaskbar = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Edit Ignore List";
             this.ResumeLayout(false);

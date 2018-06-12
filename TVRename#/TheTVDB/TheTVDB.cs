@@ -55,7 +55,9 @@ namespace TVRename
 
     public class TheTVDB
     {
-        private static string WebsiteRoot;
+        private static string WebsiteRoot = "http://thetvdb.com";
+        private static string APIRoot = "https://api.thetvdb.com";
+
         private FileInfo CacheFile;
         public bool Connected;
         public string CurrentDLTask;
@@ -73,10 +75,7 @@ namespace TVRename
         private readonly Dictionary<int, SeriesInfo> Series = new System.Collections.Generic.Dictionary<int, SeriesInfo>();
 
         private long Srv_Time; // only update this after a 100% successful download
-        // private List<String> WhoHasLock;
-        private static string APIRoot;
         private readonly TvDbTokenProvider tvDbTokenProvider = new TvDbTokenProvider();
-
 
         public String RequestLanguage = "en"; // Set and updated by TVDoc
         private static String DefaultLanguage = "en"; //Default backup language
@@ -122,9 +121,6 @@ namespace TVRename
             this.RemoveEpisodeIds = new System.Collections.Generic.List<ExtraEp>();
 
             this.LanguageList = new List<Language> { new Language(7, "en", "English", "English") };
-
-            WebsiteRoot = "http://thetvdb.com";
-            APIRoot = "https://api.thetvdb.com";
 
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date

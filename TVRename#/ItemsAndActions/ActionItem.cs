@@ -79,9 +79,7 @@ namespace TVRename
     {
         
         protected TidySettings Tidyup;
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-
+        protected readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         protected void DeleteOrRecycleFile(FileInfo file)
         {
