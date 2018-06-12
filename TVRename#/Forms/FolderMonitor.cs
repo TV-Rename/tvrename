@@ -23,7 +23,7 @@ namespace TVRename
     /// </summary>
     public partial class FolderMonitor : Form
     {
-        public FolderMonitorProgress ProgressDialog;
+        private FolderMonitorProgress ProgressDialog;
         public int FMPPercent;
         public bool FMPStopNow;
         public string FMPUpto;
@@ -65,7 +65,7 @@ namespace TVRename
         {
             foreach (FolderMonitorEntry fme in this.engine.AddItems)
             {
-                if (fme.CodeKnown) return false;
+                if (fme.CodeKnown) {return false;}
             }
 
             return true;
@@ -199,8 +199,10 @@ namespace TVRename
             Thread fmpshower = new Thread(FMPShower) {Name = "'Bulk Add Shows' Progress (Folder Check)"};
             fmpshower.Start();
 
-            while ((this.ProgressDialog == null) || (!this.ProgressDialog.Ready))
+            while (this.ProgressDialog == null || !this.ProgressDialog.Ready)
+            {
                 Thread.Sleep(10);
+            }
 
             this.engine.CheckFolders(ref this.FMPStopNow, ref this.FMPPercent);
             
