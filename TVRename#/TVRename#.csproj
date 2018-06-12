@@ -115,6 +115,7 @@
     <Compile Include="Forms\AutoAddShow.Designer.cs">
       <DependentUpon>AutoAddShow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FolderBrowserDialogEx.cs" />
     <Compile Include="Forms\DupEpFinder.cs">
       <SubType>Form</SubType>
     </Compile>
