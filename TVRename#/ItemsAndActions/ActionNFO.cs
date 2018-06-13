@@ -8,13 +8,11 @@
 namespace TVRename
 {
     using System;
-    using System.Windows.Forms;
     using System.Xml;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionNFO : ActionWriteMetadata
     {
-        public ShowItem SI; // if for an entire show, rather than specific episode
 
         public ActionNFO(FileInfo nfo, ProcessedEpisode pe)
         {
@@ -266,40 +264,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem();
 
-                if (this.Episode != null)
-                {
-                    lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
-                    DateTime? dt = this.Episode.GetAirDateDT(true);
-                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                        lvi.SubItems.Add(dt.Value.ToShortDateString());
-                    else
-                        lvi.SubItems.Add("");
-                }
-                else
-                {
-                    lvi.Text = this.SI.ShowName;
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                }
-
-                lvi.SubItems.Add(this.Where.DirectoryName);
-                lvi.SubItems.Add(this.Where.Name);
-
-                lvi.Tag = this;
-
-                //lv->Items->Add(lvi);
-                return lvi;
-            }
-        }
 
 
 

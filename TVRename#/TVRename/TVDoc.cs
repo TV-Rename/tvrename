@@ -1353,13 +1353,13 @@ namespace TVRename
 
                         if (renCheck && TVSettings.Instance.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
                         {
-                            string newname = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(ep, fi.Extension, folder.Length));
+                            string newname = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(ep, fi.Extension, folder.Length));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
                                 fi.IsLanguageSpecificSubtitle(out string subtitleExtension))
                             {
                                 newname = TVSettings.Instance.FilenameFriendly(
-                                    TVSettings.Instance.NamingStyle.NameForExt(ep, subtitleExtension,
+                                    TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension,
                                         folder.Length));
                             }
 
@@ -1430,7 +1430,7 @@ namespace TVRename
                                     (si.ForceCheckNoAirdate && !dtOK))
                                 {
                                     // then add it as officially missing
-                                    this.TheActionList.Add(new ItemMissing(dbep, folder, TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(dbep, null, folder.Length))));
+                                    this.TheActionList.Add(new ItemMissing(dbep, folder, TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(dbep, null, folder.Length))));
                                 }
                             }
                             else

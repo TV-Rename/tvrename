@@ -14,8 +14,6 @@ namespace TVRename
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
-
-
     public abstract class Item // something shown in the list on the Scan tab (not always an Action)
     {
         public abstract ListViewItem ScanListViewItem { get; } // to add to Scan ListView
@@ -34,7 +32,6 @@ namespace TVRename
 
         public override string ScanListViewGroup => "lvgDownloading";
 
-
         public override IgnoreItem Ignore
         {
             get
@@ -45,6 +42,43 @@ namespace TVRename
             }
         }
 
+        public override string TargetFolder
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.Destination))
+                    return null;
+                return new FileInfo(this.Destination).DirectoryName;
+            }
+        }
+
+        public override ListViewItem ScanListViewItem
+        {
+            get
+            {
+                ListViewItem lvi = new ListViewItem();
+
+                lvi.Text = this.Episode.SI.ShowName;
+                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
+                lvi.SubItems.Add(this.Episode.NumsAsString());
+                DateTime? dt = this.Episode.GetAirDateDT(true);
+                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                    lvi.SubItems.Add(dt.Value.ToShortDateString());
+                else
+                    lvi.SubItems.Add("");
+
+                lvi.SubItems.Add(this.FileIdentifier);
+                lvi.SubItems.Add(this.Destination);
+                lvi.SubItems.Add(this.Remaining);
+
+                lvi.Tag = this;
+
+                return lvi;
+            }
+        }
+        public abstract string FileIdentifier { get; }
+        public abstract string Destination { get; }
+        public abstract string Remaining { get; }
     }
 
     public abstract class Action :Item // Something we can do
@@ -79,7 +113,7 @@ namespace TVRename
     {
         
         protected TidySettings Tidyup;
-        protected readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         protected void DeleteOrRecycleFile(FileInfo file)
         {
@@ -151,7 +185,6 @@ namespace TVRename
                 return;
             }
 
-
             if (this.Tidyup.EmptyIgnoreExtensions && !this.Tidyup.EmptyIgnoreWords)
                 return; // nope
 
@@ -181,11 +214,52 @@ namespace TVRename
             }
             DeleteOrRecycleFolder(di);
         }
+
+        public override ListViewItem ScanListViewItem
+        {
+            get
+            {
+                ListViewItem lvi = new ListViewItem();
+
+                if (this.Episode == null)
+                {
+                    lvi.Text = "";
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                }
+                else
+                {
+                    lvi.Text = this.Episode.TheSeries.Name;
+                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.NumsAsString());
+                    DateTime? dt = this.Episode.GetAirDateDT(true);
+                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                        lvi.SubItems.Add(dt.Value.ToShortDateString());
+                    else
+                        lvi.SubItems.Add("");
+                }
+
+                lvi.SubItems.Add(this.FileInfo1);
+                lvi.SubItems.Add(this.FileInfo2);
+                lvi.SubItems.Add(this.FileInfo3);
+                lvi.SubItems.Add(this.FileInfo4);
+
+                return lvi;
+            }
+        }
+
+        public abstract string FileInfo1 { get; }
+        public abstract string FileInfo2 { get; }
+        public abstract string FileInfo3 { get; }
+        public abstract string FileInfo4 { get; }
     }
 
     public abstract class ActionWriteMetadata : ActionDownload
     {
         public FileInfo Where;
+        public ShowItem SI; // if for an entire show, rather than specific episode
 
         public override string Produces => this.Where.FullName;
 
@@ -193,30 +267,47 @@ namespace TVRename
 
         public override long SizeOfWork => 10000;
 
+        public override string TargetFolder => this.Where == null ? null : this.Where.DirectoryName;
 
-        public override string TargetFolder
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return this.Where.DirectoryName;
-            }
-        }
-
-        public override IgnoreItem Ignore
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return new IgnoreItem(this.Where.FullName);
-            }
-        }
+        public override IgnoreItem Ignore => this.Where == null ? null : new IgnoreItem(this.Where.FullName);
 
         public override string ScanListViewGroup => "lvgActionMeta";
 
         public override int IconNumber => 7;
+
+        public override ListViewItem ScanListViewItem
+        {
+            get
+            {
+                ListViewItem lvi = new ListViewItem();
+
+                if (this.Episode != null)
+                {
+                    lvi.Text = this.Episode.SI.ShowName;
+                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.NumsAsString());
+                    DateTime? dt = this.Episode.GetAirDateDT(true);
+                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
+                        lvi.SubItems.Add(dt.Value.ToShortDateString());
+                    else
+                        lvi.SubItems.Add("");
+                }
+                else
+                {
+                    lvi.Text = this.SI.ShowName;
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                }
+
+                lvi.SubItems.Add(this.Where.DirectoryName);
+                lvi.SubItems.Add(this.Where.Name);
+
+                lvi.Tag = this;
+
+                return lvi;
+            }
+        }
     }
 
     public class ItemList : System.Collections.Generic.List<Item>

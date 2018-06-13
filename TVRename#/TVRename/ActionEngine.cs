@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TVRename
@@ -22,8 +19,8 @@ namespace TVRename
 
         private TVRenameStats mStats; //reference to the main TVRenameStats, so we can udpate the counts
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
 
         /// <summary>
         /// Asks for execution to pause
