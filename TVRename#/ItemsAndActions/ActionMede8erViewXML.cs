@@ -18,17 +18,13 @@ namespace TVRename
     {
         public int Snum;
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si)
+        public ActionMede8erViewXML(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            this.SI = si;
-            this.Where = nfo;
             this.Snum = -1;
         }
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum)
+        public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum) : base(nfo,si)
         {
-            this.SI = si;
-            this.Where = nfo;
             this.Snum = snum;
         }
 

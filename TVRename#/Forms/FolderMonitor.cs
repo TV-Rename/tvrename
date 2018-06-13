@@ -212,17 +212,17 @@ namespace TVRename
 
         }
 
-        private void lstFMMonitorFolders_DragOver(object sender, DragEventArgs e)
+        private static void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMIgnoreFolders_DragOver(object sender, DragEventArgs e)
+        private static void lstFMIgnoreFolders_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lstFMMonitorFolders_DragDrop(object sender, DragEventArgs e)
+        private void lstFMMonitorFolders_DragDrop(object _, DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)
@@ -242,7 +242,7 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lstFMIgnoreFolders_DragDrop(object sender, DragEventArgs e)
+        private void lstFMIgnoreFolders_DragDrop(object _, DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)
@@ -262,19 +262,19 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lstFMMonitorFolders_KeyDown(object sender, KeyEventArgs e)
+        private void lstFMMonitorFolders_KeyDown(object _, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
                 bnRemoveMonFolder_Click(null, null);
         }
 
-        private void lstFMIgnoreFolders_KeyDown(object sender, KeyEventArgs e)
+        private void lstFMIgnoreFolders_KeyDown(object _, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
                 bnRemoveIgFolder_Click(null, null);
         }
 
-        private void bnFullAuto_Click(object sender, System.EventArgs e)
+        private void bnFullAuto_Click(object _, System.EventArgs e)
         {
             if (this.engine.AddItems.Count == 0)
                 return;
@@ -315,7 +315,7 @@ namespace TVRename
             this.FMPStopNow = true;
         }
 
-        private void bnRemoveNewFolder_Click(object sender, System.EventArgs e)
+        private void bnRemoveNewFolder_Click(object _, System.EventArgs e)
         {
             if (this.lvFMNewShows.SelectedItems.Count == 0)
                 return;
@@ -327,7 +327,7 @@ namespace TVRename
             FillNewShowList(false);
         }
 
-        private void bnIgnoreNewFolder_Click(object sender, System.EventArgs e)
+        private void bnIgnoreNewFolder_Click(object _, System.EventArgs e)
         {
             if (this.lvFMNewShows.SelectedItems.Count == 0)
                 return;
@@ -347,12 +347,12 @@ namespace TVRename
             FillFolderStringLists();
         }
 
-        private void lvFMNewShows_DragOver(object sender, DragEventArgs e)
+        private void lvFMNewShows_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void lvFMNewShows_DragDrop(object sender, DragEventArgs e)
+        private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)
@@ -388,7 +388,6 @@ namespace TVRename
 
             if (this.lvFMNewShows.SelectedItems[0].Tag is FolderMonitorEntry ai)
             {
-
                 Helpers.SysOpen(ai.Folder);
             }
         }

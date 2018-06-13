@@ -138,7 +138,7 @@ namespace TVRename
             this.lstFMMonitorFolders.TabIndex = 6;
             this.lstFMMonitorFolders.SelectedIndexChanged += new System.EventHandler(this.lstFMMonitorFolders_SelectedIndexChanged);
             this.lstFMMonitorFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragDrop);
-            this.lstFMMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragOver);
+            this.lstFMMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(lstFMMonitorFolders_DragOver);
             this.lstFMMonitorFolders.DoubleClick += new System.EventHandler(this.lstFMMonitorFolders_DoubleClick);
             this.lstFMMonitorFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFMMonitorFolders_KeyDown);
             // 
@@ -213,7 +213,7 @@ namespace TVRename
             this.lstFMIgnoreFolders.TabIndex = 6;
             this.lstFMIgnoreFolders.SelectedIndexChanged += new System.EventHandler(this.lstFMIgnoreFolders_SelectedIndexChanged);
             this.lstFMIgnoreFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMIgnoreFolders_DragDrop);
-            this.lstFMIgnoreFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMIgnoreFolders_DragOver);
+            this.lstFMIgnoreFolders.DragOver += new System.Windows.Forms.DragEventHandler(lstFMIgnoreFolders_DragOver);
             this.lstFMIgnoreFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFMIgnoreFolders_KeyDown);
             // 
             // bnVisitTVcom

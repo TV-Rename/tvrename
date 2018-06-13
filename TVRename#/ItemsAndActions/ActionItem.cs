@@ -13,6 +13,7 @@ namespace TVRename
     using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
+    using Alphaleonis.Win32.Filesystem;
 
     public abstract class Item // something shown in the list on the Scan tab (not always an Action)
     {
@@ -258,8 +259,14 @@ namespace TVRename
 
     public abstract class ActionWriteMetadata : ActionDownload
     {
-        public FileInfo Where;
-        public ShowItem SI; // if for an entire show, rather than specific episode
+        protected readonly FileInfo Where;
+        protected readonly ShowItem SI; // if for an entire show, rather than specific episode
+
+        protected ActionWriteMetadata(FileInfo where, ShowItem sI)
+        {
+            Where = where;
+            SI = sI;
+        }
 
         public override string Produces => this.Where.FullName;
 

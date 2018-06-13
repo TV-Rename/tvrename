@@ -262,8 +262,7 @@ namespace TVRename
             bool customAction = false;
             foreach (ListViewItem lvi in lvAction.SelectedItems)
             {
-                ProcessedEpisode pe = lvi.Tag as ProcessedEpisode;
-                if (pe != null && pe.SI.UseCustomSearchURL && !String.IsNullOrWhiteSpace(pe.SI.CustomSearchURL))
+                if (lvi.Tag is ProcessedEpisode pe && pe.SI.UseCustomSearchURL && !String.IsNullOrWhiteSpace(pe.SI.CustomSearchURL))
                 {
                     customAction = true;
                     break;
@@ -275,9 +274,9 @@ namespace TVRename
             FillEpGuideHTML();
         }
 
-        private void exitToolStripMenuItem_Click() => Close();
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
-        private void visitWebsiteToolStripMenuItem_Click() => Helpers.SysOpen("http://tvrename.com");
+        private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) => Helpers.SysOpen("http://tvrename.com");
 
         private void UI_Load(object sender, EventArgs e)
         {
@@ -3839,6 +3838,10 @@ namespace TVRename
 
                 return sb.ToString();
             }
+        }
+
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
         }
     }
 }

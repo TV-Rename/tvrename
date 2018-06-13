@@ -18,18 +18,14 @@ namespace TVRename
     public class ActionMede8erXML : ActionWriteMetadata
     {
 
-        public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe)
+        public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
         {
-            this.SI = null;
             this.Episode = pe;
-            this.Where = nfo;
         }
 
-        public ActionMede8erXML(FileInfo nfo, ShowItem si)
+        public ActionMede8erXML(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            this.SI = si;
             this.Episode = null;
-            this.Where = nfo;
         }
 
 

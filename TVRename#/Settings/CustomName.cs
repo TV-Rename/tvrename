@@ -70,9 +70,11 @@ namespace TVRename
 
             int maxLenOk = 200 - (folderNameLength + (extension?.Length ?? 0));
             if (r.Length > maxLenOk)
+            {
                 r = r.Substring(0, maxLenOk);
+            }
 
-            if (string.IsNullOrEmpty(extension)) return r;
+            if (string.IsNullOrEmpty(extension)) {return r;}
 
             if (!extension.StartsWith("."))
                 r += ".";

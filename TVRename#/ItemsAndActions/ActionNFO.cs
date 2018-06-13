@@ -14,18 +14,14 @@ namespace TVRename
     public class ActionNFO : ActionWriteMetadata
     {
 
-        public ActionNFO(FileInfo nfo, ProcessedEpisode pe)
+        public ActionNFO(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
         {
-            this.SI = null;
             this.Episode = pe;
-            this.Where = nfo;
         }
 
-        public ActionNFO(FileInfo nfo, ShowItem si)
+        public ActionNFO(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            this.SI = si;
             this.Episode = null;
-            this.Where = nfo;
         }
 
         #region Action Members
