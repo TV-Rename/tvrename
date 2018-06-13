@@ -287,7 +287,9 @@ namespace TVRename
             fmpshower.Start();
 
             while ((this.ProgressDialog == null) || (!this.ProgressDialog.Ready))
+            {
                 Thread.Sleep(10);
+            }
 
             int n = 0;
             int n2 = this.engine.AddItems.Count;
@@ -376,7 +378,9 @@ namespace TVRename
         private void lvFMNewShows_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
+            {
                 bnRemoveNewFolder_Click(null, null);
+            }
         }
 
         private void bnNewFolderOpen_Click(object sender, System.EventArgs e)

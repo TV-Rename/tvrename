@@ -46,7 +46,7 @@ namespace TVRename
             return DefaultStyle();
         }
 
-        public static readonly List<string> Presets = new List<string>
+        protected static readonly List<string> Presets = new List<string>
                                                         {
                                                             "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
                                                             "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
@@ -59,6 +59,23 @@ namespace TVRename
                                                             "{Episode}[-{Episode2}] - {EpisodeName}",
                                                             "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
                                                         };
+
+        protected static readonly List<string> Tags = new List<string>
+        {
+            "{ShowName}",
+            "{Season}",
+            "{Season:2}",
+            "{Episode}",
+            "{Episode2}",
+            "{EpisodeName}",
+            "{Number}",
+            "{Number:2}",
+            "{Number:3}",
+            "{ShortDate}",
+            "{LongDate}",
+            "{YMDDate}",
+            "{AllEpisodes}"
+        };
 
         public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
 
@@ -150,23 +167,6 @@ namespace TVRename
 
             return name;
         }
-
-        public static readonly List<string> Tags = new List<string>
-                       {
-                           "{ShowName}",
-                           "{Season}",
-                           "{Season:2}",
-                           "{Episode}",
-                           "{Episode2}",
-                           "{EpisodeName}",
-                           "{Number}",
-                           "{Number:2}",
-                           "{Number:3}",
-                           "{ShortDate}",
-                           "{LongDate}",
-                           "{YMDDate}",
-                           "{AllEpisodes}"
-                       };
 
         public static string NameForNoExt(ProcessedEpisode pe, string styleString) => NameForNoExt(pe, styleString, false);
 

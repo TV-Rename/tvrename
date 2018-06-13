@@ -30,9 +30,12 @@ namespace TVRename
 
         public override int Compare(Item o)
         {
-            if (!(o is ItemSABnzbd ut)) {return 0;}
-            if (this.Episode == null)   {return 1;}
-            if (ut.Episode == null)     {return -1;}
+            if (!(o is ItemSABnzbd ut))
+                { return 0;}
+            if (this.Episode == null)
+                { return 1;}
+            if (ut.Episode == null)
+                { return -1;}
 
             return string.Compare((this.DesiredLocationNoExt), ut.DesiredLocationNoExt, StringComparison.Ordinal);
         }

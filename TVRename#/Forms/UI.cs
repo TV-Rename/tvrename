@@ -276,7 +276,7 @@ namespace TVRename
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
 
-        private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) => Helpers.SysOpen("http://tvrename.com");
+        private static void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) => Helpers.SysOpen("http://tvrename.com");
 
         private void UI_Load(object sender, EventArgs e)
         {
