@@ -13,16 +13,10 @@ namespace TVRename
         private List<string> doneFanartJPG;
         private List<string> doneTBN;
 
-        public DownloadKODIImages() 
-        {
-            reset();
-        }
-
-        public override DownloadType GetDownloadType()
-        {
-            return DownloadType.downloadImage;
-        }
-
+        public DownloadKODIImages() => reset();
+        
+        public override DownloadType GetDownloadType() => DownloadType.downloadImage;
+        
         public override void notifyComplete(FileInfo file)
         {
             if (file.Name.EndsWith(".tbn", true, new CultureInfo("en")))
@@ -83,7 +77,6 @@ namespace TVRename
                 }
                 return TheActionList;
             }
-
             return base.ProcessShow(si, forceRefresh);
         }
 
@@ -114,9 +107,7 @@ namespace TVRename
                         else filenamePrefix += snum;
 
                         filenamePrefix += "-";
-
                     }
-
                     FileInfo posterJPG = FileHelper.FileInFolder(folder, filenamePrefix + "poster.jpg");
                     if (forceRefresh || !posterJPG.Exists)
                     {
@@ -151,7 +142,6 @@ namespace TVRename
                 }
                 return TheActionList;
             }
-
             return base.ProcessSeason(si, folder, snum, forceRefresh);
         }
 
@@ -160,8 +150,6 @@ namespace TVRename
             if (TVSettings.Instance.EpTBNs || TVSettings.Instance.KODIImages)
             {
                 ItemList theActionList = new ItemList();
-
-
                 if (dbep.type == ProcessedEpisode.ProcessedEpisodeType.merged)
                 {
                     //We have a merged episode, so we'll also download the images for the episodes had they been separate.
@@ -180,7 +168,6 @@ namespace TVRename
                     ActionDownloadImage a = DoEpisode(dbep.SI, dbep, filo, ".tbn", forceRefresh);
                     if (a != null) theActionList.Add(a);
                 }
-
                 return theActionList;
             }
             return base.ProcessEpisode(dbep, filo, forceRefresh);
@@ -199,12 +186,9 @@ namespace TVRename
                         this.doneTBN.Add(imgtbn.FullName);
 
                         return new ActionDownloadImage(si, (ep is ProcessedEpisode) ? (ProcessedEpisode)ep  : new ProcessedEpisode(ep,si ), imgtbn, ban);
-                        
                     }
             }
-
             return null;
-
         }
 
         public sealed override void reset()
@@ -214,6 +198,5 @@ namespace TVRename
             doneFanartJPG = new List<String>();
             doneTBN = new List<String>();
         }
-
     }
 }
