@@ -41,113 +41,60 @@ namespace TVRename.SAB
         }
 
         private string uniconfigField;
-
         private string cache_sizeField;
-
         private string active_langField;
-
         private string pausedField;
-
         private string sessionField;
-
         private string restart_reqField;
-
         private string power_optionsField;
-
         private string speedField;
-
         private string helpuriField;
-
         private string sizeField;
-
         private string uptimeField;
-
         private string refresh_rateField;
-
         private string my_homeField;
-
         private string limitField;
-
         private string have_quotaField;
-
         private string isverboseField;
-
         private string startField;
-
         private string finishField;
-
         private string versionField;
-
         private string new_rel_urlField;
-
         private string my_lcldataField;
-
         private string color_schemeField;
-
         private string diskspacetotal1Field;
-
         private string ntField;
-
         private string statusField;
-
         private string last_warningField;
-
         private string have_warningsField;
-
         private string cache_artField;
-
         private string sizeleftField;
-
         private string finishactionField;
-
         private string paused_allField;
-
         private string quotaField;
-
         private string newzbin_urlField;
-
         private string new_releaseField;
-
         private string pause_intField;
-
         private string mbleftField;
-
         private string diskspace1Field;
-
         private string scriptsField;
-
         private string darwinField;
-
         private string timeleftField;
-
         private string mbField;
-
         private string noofslotsField;
-
         private string etaField;
-
         private string diskspacetotal2Field;
-
         private string nzb_quotaField;
-
         private string loadavgField;
-
         private string cache_maxField;
-
         private string kbpersecField;
-
         private string speedlimitField;
-
         private string webdirField;
-
         private string queue_detailsField;
-
         private string left_quotaField;
-
         private string diskspace2Field;
 
         private queueSlotsSlot[] slotsField;
-
         private queueCategories[] categoriesField;
 
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
@@ -160,7 +107,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("uniconfig");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cache_size
@@ -172,7 +118,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("cache_size");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string active_lang
@@ -184,8 +129,7 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("active_lang");
             }
         }
-
-       
+     
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string paused
         {
@@ -209,7 +153,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string restart_req
         {
@@ -220,7 +163,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("restart_req");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string power_options
@@ -232,7 +174,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("power_options");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string speed
@@ -244,7 +185,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("speed");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string helpuri
@@ -256,7 +196,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("helpuri");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string size
@@ -268,7 +207,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("size");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string uptime
@@ -280,7 +218,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("uptime");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string refresh_rate
@@ -292,7 +229,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("refresh_rate");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string my_home
@@ -304,7 +240,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("my_home");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string limit
@@ -316,7 +251,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("limit");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string have_quota
@@ -328,7 +262,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("have_quota");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string isverbose
@@ -340,7 +273,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("isverbose");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string start
@@ -352,7 +284,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("start");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string finish
@@ -364,7 +295,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("finish");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string version
@@ -376,7 +306,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("version");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string new_rel_url
@@ -400,7 +329,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("my_lcldata");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string color_scheme
@@ -412,7 +340,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("color_scheme");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspacetotal1
@@ -424,7 +351,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("diskspacetotal1");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nt
@@ -436,7 +362,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("nt");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
@@ -448,7 +373,6 @@ namespace TVRename.SAB
                 this.RaisePropertyChanged("status");
             }
         }
-
        
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string last_warning
@@ -461,7 +385,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string have_warnings
         {
@@ -473,7 +396,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cache_art
         {
@@ -485,7 +407,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string sizeleft
         {
@@ -497,7 +418,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string finishaction
         {
@@ -509,7 +429,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string paused_all
         {
@@ -521,7 +440,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string quota
         {
@@ -533,7 +451,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string newzbin_url
         {
@@ -545,7 +462,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string new_release
         {
@@ -557,7 +473,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string pause_int
         {
@@ -569,7 +484,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string mbleft
         {
@@ -581,7 +495,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspace1
         {
@@ -593,7 +506,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string scripts
         {
@@ -605,7 +517,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string darwin
         {
@@ -617,7 +528,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string timeleft
         {
@@ -629,7 +539,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string mb
         {
@@ -641,7 +550,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string noofslots
         {
@@ -653,7 +561,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string eta
         {
@@ -665,7 +572,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspacetotal2
         {
@@ -677,7 +583,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nzb_quota
         {
@@ -830,46 +735,26 @@ namespace TVRename.SAB
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class queueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged
     {
-
         private string statusField;
-
         private string indexField;
-
         private string etaField;
-
         private string missingField;
-
         private string avg_ageField;
-
         private string scriptField;
-
         private string msgidField;
-
         private string verbosityField;
-
         private double mbField;
-
         private string sizeleftField;
-
         private string filenameField;
-
         private string priorityField;
-
         private string catField;
-
         private double mbleftField;
-
         private string timeleftField;
-
         private string percentageField;
-
         private string nzo_idField;
-
         private string unpackoptsField;
-
         private string sizeField;
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
         {
@@ -881,7 +766,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string index
         {
@@ -893,7 +777,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string eta
         {
@@ -905,7 +788,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string missing
         {
@@ -917,7 +799,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string avg_age
         {
@@ -929,7 +810,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string script
         {
@@ -941,7 +821,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string msgid
         {
@@ -953,7 +832,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string verbosity
         {
@@ -965,7 +843,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public double mb
         {
@@ -977,7 +854,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string sizeleft
         {
@@ -989,7 +865,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string filename
         {
@@ -1001,7 +876,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string priority
         {
@@ -1013,7 +887,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cat
         {
@@ -1025,7 +898,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public double mbleft
         {
@@ -1037,7 +909,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string timeleft
         {
@@ -1049,7 +920,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string percentage
         {
@@ -1061,7 +931,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nzo_id
         {
@@ -1073,7 +942,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string unpackopts
         {
@@ -1085,7 +953,6 @@ namespace TVRename.SAB
             }
         }
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string size
         {
@@ -1109,17 +976,14 @@ namespace TVRename.SAB
         }
     }
 
-   
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
     public class queueCategories : object, System.ComponentModel.INotifyPropertyChanged
     {
-
         private string categoryField;
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string category
         {
@@ -1166,7 +1030,6 @@ namespace TVRename.SAB
         private string statusField;
         private string errorField;
 
-       
         [System.Xml.Serialization.XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
         {
@@ -1201,7 +1064,6 @@ namespace TVRename.SAB
         }
     }
 
-   
     [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "2.0.50727.1432")]
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
@@ -1209,9 +1071,7 @@ namespace TVRename.SAB
     [System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = false)]
     public class NewDataSet : object, System.ComponentModel.INotifyPropertyChanged
     {
-
         private queue[] itemsField;
-
        
         [System.Xml.Serialization.XmlElementAttribute("queue")]
         public queue[] Items
