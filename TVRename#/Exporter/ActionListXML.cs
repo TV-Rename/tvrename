@@ -15,7 +15,6 @@ namespace TVRename
             {
                 try
                 {
-
                     XmlWriterSettings settings = new XmlWriterSettings();
                     settings.Indent = true;
                     settings.NewLineOnAttributes = true;
@@ -26,7 +25,6 @@ namespace TVRename
                         writer.WriteStartElement("TVRename");
                         XMLHelper.WriteAttributeToXML(writer, "Version", "2.1");
                         writer.WriteStartElement(name());
-
 
                         foreach (Item action in TheActionList)
                         {
@@ -46,9 +44,7 @@ namespace TVRename
 
                                 writer.WriteEndElement(); //Item                                
                             }
-
                         }
-
                         writer.WriteEndElement(); // Name
                         writer.WriteEndElement(); // tvrename
                         writer.WriteEndDocument();
@@ -60,10 +56,8 @@ namespace TVRename
                 }
             }
         }
-
         protected abstract bool isOutput(Item a);
         protected abstract string name();
-
     }
 
     class RenamingXML : ActionListXML
@@ -81,7 +75,6 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportRenamingXML;
         protected override string Location() => TVSettings.Instance.ExportRenamingXMLTo;
         protected override string name() => "Renaming";
-
     }
 
     class CopyMoveXML : ActionListXML
@@ -100,6 +93,5 @@ namespace TVRename
         public override bool Active() => TVSettings.Instance.ExportFOXML;
         protected override string Location() => TVSettings.Instance.ExportFOXMLTo;
         protected override string name() => "FindingAndOrganising";
-
     }
 }
