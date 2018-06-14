@@ -16,7 +16,7 @@ InstallDir "$PROGRAMFILES\TVRename"
 
 OutFile "TVRename-${TAG}.exe"
 
-!define MUI_ICON "TVRename#\App\app.ico"
+!define MUI_ICON "TVRename\App\app.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
 
 Var STARTMENU_FOLDER
@@ -48,16 +48,16 @@ Section "Install"
 
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
-    File "TVRename#\bin\Release\TVRename.exe"
-    File "TVRename#\bin\Release\NLog.config"
-    File "TVRename#\bin\Release\AlphaFS.dll"
-    File "TVRename#\bin\Release\Newtonsoft.Json.dll"
-    File "TVRename#\bin\Release\NLog.dll"
-    File "TVRename#\bin\Release\SourceGrid.dll"
-    File "TVRename#\bin\Release\Humanizer.dll"
-    File "TVRename#\bin\Release\Microsoft.WindowsAPICodePack.dll"
-    File "TVRename#\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll"
-    File "TVRename#\bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.dll"
+    File "TVRename\bin\Release\TVRename.exe"
+    File "TVRename\bin\Release\NLog.config"
+    File "TVRename\bin\Release\AlphaFS.dll"
+    File "TVRename\bin\Release\Newtonsoft.Json.dll"
+    File "TVRename\bin\Release\NLog.dll"
+    File "TVRename\bin\Release\SourceGrid.dll"
+    File "TVRename\bin\Release\Humanizer.dll"
+    File "TVRename\bin\Release\Microsoft.WindowsAPICodePack.dll"
+    File "TVRename\bin\Release\Microsoft.WindowsAPICodePack.Shell.dll"
+    File "TVRename\bin\Release\Microsoft.WindowsAPICodePack.ShellExtensions.dll"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 

@@ -19,17 +19,17 @@ namespace TVRename
 
         public CustomName(CustomName o)
         {
-            this.StyleString = o.StyleString;
+            StyleString = o.StyleString;
         }
 
         public CustomName(string s)
         {
-            this.StyleString = s;
+            StyleString = s;
         }
 
         public CustomName()
         {
-            this.StyleString = DefaultStyle();
+            StyleString = DefaultStyle();
         }
 
         public static string DefaultStyle() => Presets[1];
@@ -46,7 +46,7 @@ namespace TVRename
             return DefaultStyle();
         }
 
-        protected static readonly List<string> Presets = new List<string>
+        protected internal static readonly List<string> Presets = new List<string>
                                                         {
                                                             "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
                                                             "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
@@ -60,7 +60,7 @@ namespace TVRename
                                                             "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
                                                         };
 
-        protected static readonly List<string> Tags = new List<string>
+        protected internal static readonly List<string> Tags = new List<string>
         {
             "{ShowName}",
             "{Season}",
@@ -83,7 +83,7 @@ namespace TVRename
         {
             // set folderNameLength to have the filename truncated if the total path length is too long
 
-            string r = NameForNoExt(pe, this.StyleString);
+            string r = NameForNoExt(pe, StyleString);
 
             int maxLenOk = 200 - (folderNameLength + (extension?.Length ?? 0));
             if (r.Length > maxLenOk)
@@ -105,7 +105,7 @@ namespace TVRename
         public string GetTargetEpisodeName(Episode ep, string showname, TimeZone tz, bool dvdOrder, bool urlEncode)
         {
             //note this is for an Episode and not a ProcessedEpisode
-            string name = this.StyleString;
+            string name = StyleString;
 
             string epname = ep.Name;
 

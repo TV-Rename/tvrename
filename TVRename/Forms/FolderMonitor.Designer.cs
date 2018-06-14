@@ -226,7 +226,6 @@ namespace TVRename
             this.bnVisitTVcom.TabIndex = 26;
             this.bnVisitTVcom.Text = "&Visit TVDB";
             this.bnVisitTVcom.UseVisualStyleBackColor = true;
-            this.bnVisitTVcom.UseWaitCursor = true;
             this.bnVisitTVcom.Click += new System.EventHandler(this.bnVisitTVcom_Click);
             // 
             // bnFullAuto
@@ -249,7 +248,6 @@ namespace TVRename
             this.bnFolderMonitorDone.TabIndex = 10;
             this.bnFolderMonitorDone.Text = "A&dd && Close";
             this.bnFolderMonitorDone.UseVisualStyleBackColor = true;
-            this.bnFolderMonitorDone.UseWaitCursor = true;
             this.bnFolderMonitorDone.Click += new System.EventHandler(this.bnFolderMonitorDone_Click);
             // 
             // label6
@@ -271,7 +269,6 @@ namespace TVRename
             this.bnRemoveNewFolder.TabIndex = 9;
             this.bnRemoveNewFolder.Text = "Re&move";
             this.bnRemoveNewFolder.UseVisualStyleBackColor = true;
-            this.bnRemoveNewFolder.UseWaitCursor = true;
             this.bnRemoveNewFolder.Click += new System.EventHandler(this.bnRemoveNewFolder_Click);
             // 
             // bnNewFolderOpen
@@ -284,7 +281,6 @@ namespace TVRename
             this.bnNewFolderOpen.TabIndex = 9;
             this.bnNewFolderOpen.Text = "Open &Folder";
             this.bnNewFolderOpen.UseVisualStyleBackColor = true;
-            this.bnNewFolderOpen.UseWaitCursor = true;
             this.bnNewFolderOpen.Click += new System.EventHandler(this.bnNewFolderOpen_Click);
             // 
             // bnIgnoreNewFolder
@@ -297,7 +293,6 @@ namespace TVRename
             this.bnIgnoreNewFolder.TabIndex = 9;
             this.bnIgnoreNewFolder.Text = "&Ignore";
             this.bnIgnoreNewFolder.UseVisualStyleBackColor = true;
-            this.bnIgnoreNewFolder.UseWaitCursor = true;
             this.bnIgnoreNewFolder.Click += new System.EventHandler(this.bnIgnoreNewFolder_Click);
             // 
             // folderBrowser
@@ -409,7 +404,6 @@ namespace TVRename
             this.bnEditEntry.TabIndex = 28;
             this.bnEditEntry.Text = "&Edit";
             this.bnEditEntry.UseVisualStyleBackColor = true;
-            this.bnEditEntry.UseWaitCursor = true;
             this.bnEditEntry.Click += new System.EventHandler(this.bnEditEntry_Click);
             // 
             // label4
@@ -439,7 +433,6 @@ namespace TVRename
             this.lvFMNewShows.Size = new System.Drawing.Size(839, 323);
             this.lvFMNewShows.TabIndex = 11;
             this.lvFMNewShows.UseCompatibleStateImageBehavior = false;
-            this.lvFMNewShows.UseWaitCursor = true;
             this.lvFMNewShows.View = System.Windows.Forms.View.Details;
             this.lvFMNewShows.SelectedIndexChanged += new System.EventHandler(this.lvFMNewShows_SelectedIndexChanged);
             this.lvFMNewShows.DragDrop += new System.Windows.Forms.DragEventHandler(this.lvFMNewShows_DragDrop);

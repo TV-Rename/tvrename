@@ -31,7 +31,7 @@ init:
 
 assembly_info:
   patch: true
-  file: TVRename#\Properties\AssemblyInfo.cs
+  file: TVRename\Properties\AssemblyInfo.cs
   assembly_informational_version: '$(APPVEYOR_BUILD_VERSION_FRIENDLY)'
 
 test: off
