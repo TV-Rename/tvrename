@@ -30,7 +30,7 @@ namespace TVRename
         private List<FileInfo> mLastFileList;
         private Season mLastSeasonClicked;
         private ShowItem mLastShowClicked;
-        private List<ShowSummaryData> showList ;
+        private List<ShowSummaryData> showList;
 
         public ShowSummary(TVDoc doc)
         {
@@ -38,19 +38,15 @@ namespace TVRename
 
             this.mDoc = doc;
             this.showList = new List<ShowSummaryData>();
-
         }
 
         public void GenerateData()
         {
-            
-
             foreach (ShowItem si in this.mDoc.Library.GetShowItems())
             {
                 ShowSummaryData show = AddShowDetails(si);
                 this.showList.Add(show);
             }
-            
         }
 
         public void PopulateGrid()
@@ -183,7 +179,6 @@ namespace TVRename
             int epGotCount = 0;
             int epAiredCount = 0;
             DirFilesCache dfc = new DirFilesCache();
-
             Season season = null;
 
             Dictionary<int, Season> seasons = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
@@ -456,9 +451,7 @@ namespace TVRename
             {
                 private readonly int episodeAiredCount;
                 private readonly int episodeCount;
-
                 private readonly int episodeGotCount;
-
                 public readonly Season Season;
                 public readonly int SeasonNumber;
 
@@ -509,10 +502,8 @@ namespace TVRename
                 public Color Color;
                 public string Details;
             }
-
             #endregion
         }
-
         #endregion
     }
 }

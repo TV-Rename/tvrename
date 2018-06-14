@@ -5,7 +5,6 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
-
 using System;
 using System.Drawing;
 using System.Globalization;
@@ -49,7 +48,6 @@ namespace TVRename
         // Attach to console window – this may modify the standard handles
         public static bool AttachParentConsole() =>AttachConsole(ATTACH_PARENT_PROCESS);
 
-
         public static void NewConsoleOutput(string text)
         {
             if (AllocConsole())
@@ -61,7 +59,6 @@ namespace TVRename
             }
         }
 
-
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();
@@ -69,9 +66,7 @@ namespace TVRename
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool FreeConsole();
-
     }
-
 
     public delegate void SetProgressDelegate(int percent);
 
@@ -241,7 +236,6 @@ namespace TVRename
         public long? AvailableBytes { get; private set; }
     }
 
-
     public static class FileHelper
     {
         public static bool IsLanguageSpecificSubtitle(this FileInfo file, out string extension)
@@ -267,9 +261,9 @@ namespace TVRename
                 duration = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
             }
 
-            return 3600 * int.Parse(duration.Split(':')[0]) + 60 * int.Parse(duration.Split(':')[1]) +
-                   int.Parse(duration.Split(':')[2]);
-
+            return (3600 * int.Parse(duration.Split(':')[0]))
+                + (60 * int.Parse(duration.Split(':')[1]))
+                + int.Parse(duration.Split(':')[2]);
         }
 
         public static bool SameDirectoryLocation(this string directoryPath1, string directoryPath2)
@@ -289,7 +283,6 @@ namespace TVRename
         public static string RemoveExtension(this FileInfo file, bool useFullPath = false)
         {
             string root = useFullPath ? file.FullName : file.Name;
-
             return root.Substring(0, root.Length - file.Extension.Length);
         }
 
@@ -307,7 +300,7 @@ namespace TVRename
             }
         }
 
-   public static bool IsSubfolderOf(this string thisOne, string ofThat)
+        public static bool IsSubfolderOf(this string thisOne, string ofThat)
         {
             // need terminating slash, otherwise "c:\abc def" will match "c:\abc"
             thisOne += System.IO.Path.DirectorySeparatorChar.ToString();
@@ -320,7 +313,6 @@ namespace TVRename
         {
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
-
 
         public static string GBMB(this long value, int decimalPlaces = 2)
         {
@@ -342,7 +334,6 @@ namespace TVRename
             return chosenValue;
         }
 
-
         /// <summary>
         /// Gets the properties for this file system.
         /// </summary>
@@ -357,7 +348,6 @@ namespace TVRename
             return new FileSystemProperties(null, null, null);
         }
 
-   
         public static void Rotate(string filenameBase)
         {
             if (File.Exists(filenameBase))
@@ -373,7 +363,6 @@ namespace TVRename
                         File.Move(fn, fn2);
                     }
                 }
-
                 File.Copy(filenameBase, filenameBase + ".0");
             }
         }
@@ -411,7 +400,6 @@ namespace TVRename
             return Regex.Match(simplifyfilename ? Helpers.SimplifyName(filename) : filename, "\\b" + (simplifyshowname ? Helpers.SimplifyName(showname) : showname) + "\\b", RegexOptions.IgnoreCase).Success;
         }
 
-
         public static bool SimplifyAndCheckFilename(string filename, string showname)
         {
             return SimplifyAndCheckFilename(filename, showname,true,true);
@@ -429,9 +417,7 @@ namespace TVRename
             {
                 directoryName = directoryName.Replace(c.ToString(), "");
             }
-
             return directoryName;
-
         }
 
         public static bool IgnoreFile(FileInfo fi)
@@ -445,7 +431,6 @@ namespace TVRename
                 return true;
 
             if (fi.Name.StartsWith("-.") && (fi.Length / 1024 < 10)) return true;
-
 
             return false;
         }
@@ -491,17 +476,13 @@ namespace TVRename
         public static JObject JsonHTTPPOSTRequest( String url, JObject request)
         {
             String response = HTTPHelper.HTTPRequest("POST",url, request.ToString(), "application/json");
-
             return JObject.Parse(response);
-            
         }
 
         public static JObject JsonHTTPGETRequest(String url, Dictionary<string, string> parameters, String authToken, String lang="")
         {
             String response = HTTPHelper.HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
-
             return JObject.Parse(response);
-
         }
 
         public static string getHTTPParameters(Dictionary<string, string> parameters)
@@ -518,7 +499,6 @@ namespace TVRename
             string finalUrl = sb.ToString();
             return finalUrl.Remove(finalUrl.LastIndexOf("&"));
         }
-
     }
 
     public static class JSONHelper {
@@ -526,7 +506,6 @@ namespace TVRename
         {
             if (ja == null) return "";
 
-            
             if (ja.Type == JTokenType.Array)
             {
                 JArray ja2 = (JArray)ja;
@@ -534,15 +513,11 @@ namespace TVRename
                 return String.Join(delimiter, values);
             }
             else { return ""; }
-
-                
-            
         }
     }
 
     public static class StringExtensions
     {
-
         public static string itemitems(this int n)
         {
             return n == 1 ? "Item" : "Items";
@@ -552,7 +527,6 @@ namespace TVRename
         {
             return source.IndexOf(toCheck, comp) >= 0;
         }
-
 
         public static string ReplaceInsensitive(this string source, string search, string replacement)
         {
@@ -768,13 +742,10 @@ namespace TVRename
                 SetBrowserEmulationVersion();
             }
         }
-
-
     }
 
     public static class Helpers
     {
-
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
         /// <summary>
@@ -784,7 +755,6 @@ namespace TVRename
         ///   <c>true</c> if application is running under Mono; otherwise, <c>false</c>.
         /// </value>
         public static bool OnMono => Type.GetType("Mono.Runtime") != null;
-
 
         public static string PrettyPrint(this TVSettings.ScanType st)
         {
@@ -861,11 +831,9 @@ namespace TVRename
             get
             {
                 string v = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false).Cast<AssemblyInformationalVersionAttribute>().First().InformationalVersion;
-
 #if DEBUG
                 v += " ** Debug Build **";
 #endif
-
                 return v;
             }
         }
@@ -932,9 +900,7 @@ namespace TVRename
             n = Helpers.RemoveDiacritics(n);
             n = Regex.Replace(n, "[^\\w ]", "");
             return SimplifyName(n);
-
         }
-
 
         public static string GetCommonStartString(List<string> testValues)
         {
@@ -951,7 +917,6 @@ namespace TVRename
                 {
                     root = GetCommonStartString(root, test);
                 }
-                
             }
             return root;
         }
@@ -977,7 +942,6 @@ namespace TVRename
             {
                 trimmedString = trimmedString.TrimEnd(ending);
             }
-
             return trimmedString;
         }
 
