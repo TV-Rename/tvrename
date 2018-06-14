@@ -13,7 +13,6 @@ namespace TVRename
 
     public class ActionNFO : ActionWriteMetadata
     {
-
         public ActionNFO(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
         {
             this.Episode = pe;
@@ -45,7 +44,6 @@ namespace TVRename
             {
                 XMLHelper.WriteElementToXML(writer, "season", episode.AiredSeasonNumber);
                 XMLHelper.WriteElementToXML(writer, "episode", episode.AiredEpNum);
-
             }
 
             XMLHelper.WriteElementToXML(writer, "plot", episode.Overview);
@@ -142,8 +140,6 @@ namespace TVRename
                 XMLHelper.WriteElementToXML(writer, "thumb",thumbFilename);
                 //Should be able to do this using the local filename, but only seems to work if you provide a URL
                 //XMLHelper.WriteElementToXML(writer, "thumb", TheTVDB.Instance.GetTVDBDownloadURL(episode.GetFilename()));
-
-
             }
             writer.WriteEndElement(); // episodedetails
         }
@@ -175,7 +171,6 @@ namespace TVRename
                     else if (this.SI != null) // show overview (tvshow.nfo)
                     {
                         // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
-
                         writer.WriteStartElement("tvshow");
 
                         XMLHelper.WriteElementToXML(writer, "title", this.SI.ShowName);
@@ -217,12 +212,10 @@ namespace TVRename
                         {
                             XMLHelper.WriteElementToXML(writer, "runtime", rt + " minutes");
                         }
-
                         writer.WriteEndElement(); // tvshow
                     }
                 }
             }
-
             catch (Exception e)
             {
                 this.ErrorText = e.Message;
@@ -230,16 +223,12 @@ namespace TVRename
                 this.Done = true;
                 return false;
             }
-
             this.Done = true;
             return true;
         }
-
-
         #endregion
 
         #region Item Members
-
         public override bool SameAs(Item o)
         {
             return (o is ActionNFO nfo) && (nfo.Where == this.Where);
@@ -255,15 +244,6 @@ namespace TVRename
                 return -1;
             return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
         }
-
-        #endregion
-
-        #region Item Members
-
-
-
-
-
         #endregion
     }
 }
