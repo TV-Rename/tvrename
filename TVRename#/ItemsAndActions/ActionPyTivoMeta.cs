@@ -15,12 +15,10 @@ namespace TVRename
 
     public class ActionPyTivoMeta : ActionWriteMetadata
     {
-
         public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe) :base(nfo,null)
         {
             this.Episode = pe;
         }
-
 
         #region Action Members
 
@@ -38,8 +36,6 @@ namespace TVRename
                     StreamWriter writer = new StreamWriter(this.Where.FullName, false,
                         System.Text.Encoding.GetEncoding(1252)))
                 {
-
-
                     // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata
                     writer.WriteLine($"title : {this.Episode.SI.ShowName}");
                     writer.WriteLine($"seriesTitle : {this.Episode.SI.ShowName}");
@@ -58,7 +54,6 @@ namespace TVRename
                     WriteEntries(writer, "vGuestStar",
                         this.Episode.EpisodeGuestStars); // not worring about actors being repeated
                     WriteEntries(writer, "vProgramGenre", string.Join("|", this.Episode.SI.TheSeries().GetGenres()));
-
                 }
 
                 this.Done = true;
@@ -110,9 +105,6 @@ namespace TVRename
         #endregion
 
         #region Item Members
-
-
-
         public override ListViewItem ScanListViewItem
         {
             get
@@ -132,14 +124,9 @@ namespace TVRename
 
                 lvi.Tag = this;
 
-                //lv->Items->Add(lvi);
                 return lvi;
             }
         }
-
-
-
         #endregion
-
     }
 }
