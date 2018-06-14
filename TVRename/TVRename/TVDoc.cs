@@ -1391,13 +1391,13 @@ namespace TVRename
 
                         switch (f.DisplayType())
                         {
-                            case Finder.FinderDisplayType.Local:
+                            case Finder.FinderDisplayType.local:
                                 activeLocalFinders++;
                                 break;
-                            case Finder.FinderDisplayType.Downloading:
+                            case Finder.FinderDisplayType.downloading:
                                 activeDownloadingFinders++;
                                 break;
-                            case Finder.FinderDisplayType.RSS:
+                            case Finder.FinderDisplayType.rss:
                                 activeRSSFinders++;
                                 break;
                         }
@@ -1421,21 +1421,21 @@ namespace TVRename
 
                             switch (f.DisplayType())
                             {
-                                case Finder.FinderDisplayType.Local:
+                                case Finder.FinderDisplayType.local:
                                     currentLocalFinderId++;
                                     startPos = 100 * (currentLocalFinderId - 1) / activeLocalFinders;
                                     endPos = 100 * (currentLocalFinderId) / activeLocalFinders;
                                     f.Check(ScanProgDlg == null ? noProgress : ScanProgDlg.LocalSearchProg,
                                         startPos, endPos);
                                     break;
-                                case Finder.FinderDisplayType.Downloading:
+                                case Finder.FinderDisplayType.downloading:
                                     currentDownloadingFinderId++;
                                     startPos = 100 * (currentDownloadingFinderId - 1) / activeDownloadingFinders;
                                     endPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
                                     f.Check(ScanProgDlg == null ? noProgress : ScanProgDlg.DownloadingProg,
                                         startPos, endPos);
                                     break;
-                                case Finder.FinderDisplayType.RSS:
+                                case Finder.FinderDisplayType.rss:
                                     currentRSSFinderId++;
                                     startPos = 100 * (currentRSSFinderId - 1) / activeRSSFinders;
                                     endPos = 100 * (currentRSSFinderId) / activeRSSFinders;

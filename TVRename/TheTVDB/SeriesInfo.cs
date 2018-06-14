@@ -360,8 +360,8 @@ namespace TVRename
             //save them all into the Items array for safe keeping
             foreach (JProperty seriesItems in r.Children<JProperty>())
             {
-                if (seriesItems.Name == "aliases") Items[seriesItems.Name] = JSONHelper.flatten((JToken)seriesItems.Value, "|");
-                else if (seriesItems.Name == "genre") Items[seriesItems.Name] = JSONHelper.flatten((JToken)seriesItems.Value, "|");
+                if (seriesItems.Name == "aliases") Items[seriesItems.Name] = JsonHelper.Flatten((JToken)seriesItems.Value, "|");
+                else if (seriesItems.Name == "genre") Items[seriesItems.Name] = JsonHelper.Flatten((JToken)seriesItems.Value, "|");
                 else try
                     {
                         if (seriesItems.Value != null) Items[seriesItems.Name] = (string)seriesItems.Value;
@@ -446,7 +446,7 @@ namespace TVRename
             
             if ((string.IsNullOrWhiteSpace(Items["aliases"])))
             {
-                Items["aliases"] = JSONHelper.flatten((JToken)backupLanguageR["aliases"], "|");
+                Items["aliases"] = JsonHelper.Flatten((JToken)backupLanguageR["aliases"], "|");
             }
 
             if ((string.IsNullOrWhiteSpace(Items["runtime"])))

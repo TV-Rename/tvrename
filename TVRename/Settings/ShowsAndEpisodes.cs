@@ -656,7 +656,7 @@ public class ShowItem
                     XmlHelper.WriteAttributeToXml(writer ,"SeasonNumber",kvp.Key);
 
                     foreach (ShowRule r in kvp.Value)
-                        r.WriteXML(writer);
+                        r.WriteXml(writer);
 
                     writer.WriteEndElement(); // Rules
                 }

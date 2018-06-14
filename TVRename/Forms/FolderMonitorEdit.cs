@@ -14,13 +14,13 @@ namespace TVRename
     {
         public int Code;
 
-        private readonly TheTVDBCodeFinder codeFinderControl;
+        private readonly TheTvdbCodeFinder codeFinderControl;
 
         public FolderMonitorEdit(FolderMonitorEntry hint)
         {
             InitializeComponent();
 
-            codeFinderControl = new TheTVDBCodeFinder("");
+            codeFinderControl = new TheTvdbCodeFinder("");
             codeFinderControl.Dock = DockStyle.Fill;
             codeFinderControl.SelectionChanged += CodeChanged;
             codeFinderControl.lvMatches.DoubleClick += MatchDoubleClick;

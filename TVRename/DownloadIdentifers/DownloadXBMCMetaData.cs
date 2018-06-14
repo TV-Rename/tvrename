@@ -39,7 +39,7 @@ namespace TVRename
 
                 if ((forceRefresh || needUpdate) && !alreadyOnTheList)
                 {
-                    theActionList.Add(new ActionNFO(tvshownfo, si));
+                    theActionList.Add(new ActionNfo(tvshownfo, si));
                     DoneNfo.Add(tvshownfo.FullName);
                 }
                 return theActionList;
@@ -62,7 +62,7 @@ namespace TVRename
                 //If we do not already have plans to put the file into place
                 if (!(DoneNfo.Contains(nfo.FullName)))
                 {
-                    theActionList.Add(new ActionNFO(nfo, dbep));
+                    theActionList.Add(new ActionNfo(nfo, dbep));
                     DoneNfo.Add(nfo.FullName);
                 }
             }

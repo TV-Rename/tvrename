@@ -5,7 +5,7 @@ namespace TVRename
 {
     public static class StringExtensions
     {
-        public static string itemitems(this int n)
+        public static string ItemItems(this int n)
         {
             return n == 1 ? "Item" : "Items";
         }

@@ -16,7 +16,7 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType()
         {
-            return FinderDisplayType.Downloading;
+            return FinderDisplayType.downloading;
         }
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
@@ -42,7 +42,7 @@ namespace TVRename
             }
             catch (WebException)
             {
-                logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theURL);
+                Logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theURL);
             }
 
             if (r == null)
@@ -56,7 +56,7 @@ namespace TVRename
                 SAB.result res = SAB.result.Deserialize(r);
                 if (res != null && res.status == "False")
                 {
-                    logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
+                    Logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
                     prog.Invoke(totPct);
                     return;
                 }
@@ -73,7 +73,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
+                Logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
                 prog.Invoke(totPct);
                 return;
             }

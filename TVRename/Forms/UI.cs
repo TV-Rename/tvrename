@@ -3147,7 +3147,7 @@ namespace TVRename
 
         private static string  PrettyPrint(int number)
         {
-            return number + " " + (number.itemitems());
+            return number + " " + (number.ItemItems());
         }
         private static string HeaderName(string name, int number, long filesize)
         {
@@ -3497,7 +3497,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvAction.Items)
             {
                 Item i = (Item) (lvi.Tag);
-                if ((i != null) && (i is ActionNFO))
+                if ((i != null) && (i is ActionNfo))
                     lvi.Checked = cs == CheckState.Checked;
             }
 

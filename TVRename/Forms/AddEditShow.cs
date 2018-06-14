@@ -28,7 +28,7 @@ namespace TVRename
     public partial class AddEditShow : Form
     {
         private readonly ShowItem selectedShow;
-        private readonly TheTVDBCodeFinder codeFinderForm;
+        private readonly TheTvdbCodeFinder codeFinderForm;
 
         public AddEditShow(ShowItem si)
         {
@@ -44,7 +44,7 @@ namespace TVRename
             cbTimeZone.EndUpdate();
             cbTimeZone.Text = si.ShowTimeZone;
 
-            codeFinderForm = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
+            codeFinderForm = new TheTvdbCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
             codeFinderForm.Dock = DockStyle.Fill;
 
             pnlCF.SuspendLayout();

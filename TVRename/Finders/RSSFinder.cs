@@ -14,7 +14,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchRSS;
 
-        public override FinderDisplayType DisplayType() => FinderDisplayType.RSS;
+        public override FinderDisplayType DisplayType() => FinderDisplayType.rss;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {

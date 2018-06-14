@@ -13,9 +13,9 @@ namespace TVRename
 
     public class ItemMissing : Item
     {
-        public string TheFileNoExt;
+        public readonly string TheFileNoExt;
         private readonly string folder;
-        public string Filename;
+        public readonly string Filename;
 
         public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder, string expectedFilenameNoExt)
         {
@@ -29,7 +29,7 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, TheFileNoExt) == 0);
+            return (o is ItemMissing) && (string.CompareOrdinal((o as ItemMissing).TheFileNoExt, TheFileNoExt) == 0);
         }
 
         public override int Compare(Item o)
@@ -43,7 +43,7 @@ namespace TVRename
 
             if (!Episode.SI.ShowName.Equals(miss.Episode.SI.ShowName))
             {
-                return Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
+                return string.Compare(Episode.SI.ShowName, miss.Episode.SI.ShowName, StringComparison.Ordinal);
             }
 
             if (!Episode.AppropriateSeasonNumber.Equals(miss.Episode.AppropriateSeasonNumber))

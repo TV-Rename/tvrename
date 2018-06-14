@@ -84,6 +84,7 @@ namespace TVRename
             return s.TrimEnd(System.IO.Path.DirectorySeparatorChar);
         }
 
+        // ReSharper disable once InconsistentNaming
         public static string GBMB(this long value, int decimalPlaces = 2)
         {
             const long oneKb = 1024;
@@ -139,7 +140,7 @@ namespace TVRename
 
         public static bool Same(FileInfo a, FileInfo b)
         {
-            return string.Compare(a.FullName, b.FullName, true) == 0; // true->ignore case
+            return string.Compare(a.FullName, b.FullName, StringComparison.OrdinalIgnoreCase) == 0; // true->ignore case
         }
 
         public static bool Same(DirectoryInfo a, DirectoryInfo b)
@@ -151,7 +152,7 @@ namespace TVRename
             if (!n2.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 n2 = n2 + Path.DirectorySeparatorChar;
 
-            return string.Compare(n1, n2, true) == 0; // true->ignore case
+            return string.Compare(n1, n2, StringComparison.OrdinalIgnoreCase) == 0; // true->ignore case
         }
 
         public static FileInfo FileInFolder(string dir, string fn)

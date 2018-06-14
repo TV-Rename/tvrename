@@ -22,7 +22,7 @@ namespace TVRename
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            this.Cntfw?.Close();
+            this.cntfw?.Close();
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -44,7 +44,7 @@ namespace TVRename
             this.bnCancel = (new System.Windows.Forms.Button());
             this.bnOK = (new System.Windows.Forms.Button());
             this.bnTags = (new System.Windows.Forms.Button());
-            this.Grid1 = (new SourceGrid.Grid());
+            this.grid1 = (new SourceGrid.Grid());
             this.SuspendLayout();
             // 
             // bnAdd
@@ -105,16 +105,16 @@ namespace TVRename
             // 
             // Grid1
             // 
-            this.Grid1.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.Grid1.BackColor = System.Drawing.SystemColors.Window;
-            this.Grid1.Location = new System.Drawing.Point(12, 12);
-            this.Grid1.Name = "Grid1";
-            this.Grid1.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
-            this.Grid1.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.Grid1.Size = new System.Drawing.Size(664, 321);
-            this.Grid1.TabIndex = 4;
-            this.Grid1.TabStop = true;
-            this.Grid1.ToolTipText = "";
+            this.grid1.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.grid1.BackColor = System.Drawing.SystemColors.Window;
+            this.grid1.Location = new System.Drawing.Point(12, 12);
+            this.grid1.Name = "grid1";
+            this.grid1.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
+            this.grid1.SelectionMode = SourceGrid.GridSelectionMode.Cell;
+            this.grid1.Size = new System.Drawing.Size(664, 321);
+            this.grid1.TabIndex = 4;
+            this.grid1.TabStop = true;
+            this.grid1.ToolTipText = "";
             // 
             // AddEditSearchEngine
             // 
@@ -123,7 +123,7 @@ namespace TVRename
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
             this.ClientSize = new System.Drawing.Size(688, 378);
-            this.Controls.Add(this.Grid1);
+            this.Controls.Add(this.grid1);
             this.Controls.Add(this.bnTags);
             this.Controls.Add(this.bnOK);
             this.Controls.Add(this.bnCancel);

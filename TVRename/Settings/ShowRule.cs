@@ -5,9 +5,7 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
-
 using System.Xml;
-
 // Per-season sets of rules for manipulating episodes from thetvdb into multi-episode files,
 // removing, adding, swapping them around, etc.
 
@@ -60,12 +58,12 @@ namespace TVRename
             }
         }
 
-        public ShowRule(ShowRule O)
+        public ShowRule(ShowRule o)
         {
-            DoWhatNow = O.DoWhatNow;
-            First = O.First;
-            Second = O.Second;
-            UserSuppliedText = O.UserSuppliedText;
+            DoWhatNow = o.DoWhatNow;
+            First = o.First;
+            Second = o.Second;
+            UserSuppliedText = o.UserSuppliedText;
         }
 
         public override string ToString()
@@ -73,14 +71,14 @@ namespace TVRename
             return $"ShowRule: {ActionInWords()} with parameters {First}, {Second} and usertext: {UserSuppliedText}";
         }
 
-        public void SetToDefaults()
+        private void SetToDefaults()
         {
             DoWhatNow = RuleAction.kIgnoreEp;
             First = Second = -1;
             UserSuppliedText = "";
         }
 
-        public void WriteXML(XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("Rule");
             XmlHelper.WriteElementToXml(writer,"DoWhatNow",(int) DoWhatNow);

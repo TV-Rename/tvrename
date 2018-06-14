@@ -29,7 +29,7 @@ namespace TVRename
         public System.Collections.Generic.List<ActionDownloadImage> Download;
         public ItemList FlatList;
         public System.Collections.Generic.List<ItemMissing> Missing;
-        public System.Collections.Generic.List<ActionNFO> NFO;
+        public System.Collections.Generic.List<ActionNfo> NFO;
         public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
         public System.Collections.Generic.List<ActionRSS> RSS;
         public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
@@ -53,7 +53,7 @@ namespace TVRename
             CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
             Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
             Download = new System.Collections.Generic.List<ActionDownloadImage>();
-            NFO = new System.Collections.Generic.List<ActionNFO>();
+            NFO = new System.Collections.Generic.List<ActionNfo>();
             PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
             FlatList = new ItemList();
 
@@ -110,8 +110,8 @@ namespace TVRename
                     RSS.Add((ActionRSS) (action));
                 else if (action is ItemMissing)
                     Missing.Add((ItemMissing) (action));
-                else if (action is ActionNFO)
-                    NFO.Add((ActionNFO) (action));
+                else if (action is ActionNfo)
+                    NFO.Add((ActionNfo) (action));
                 else if (action is ActionPyTivoMeta)
                     PyTivoMeta.Add((ActionPyTivoMeta) (action));
                 //else if (action is ItemuTorrenting)

@@ -33,7 +33,7 @@ namespace TVRename
         {
             ListViewItem lvi1 = x as ListViewItem;
             ListViewItem lvi2 = y as ListViewItem;
-            return string.CompareOrdinal(lvi1.SubItems[col].Text, lvi2.SubItems[col].Text);
+            return string.CompareOrdinal( lvi1.SubItems[col].Text, lvi2.SubItems[col].Text);
         }
 
         #endregion

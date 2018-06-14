@@ -22,25 +22,25 @@ namespace TVRename
     /// </summary>
     public partial class EditRules : Form
     {
-        private readonly CustomName NameStyle;
-        private readonly List<ShowRule> WorkingRuleSet;
+        private readonly CustomName nameStyle;
+        private readonly List<ShowRule> workingRuleSet;
         private readonly List<ProcessedEpisode> mOriginalEps;
-        private readonly ShowItem mSI;
+        private readonly ShowItem show;
         private readonly int mSeasonNumber;
 
         public EditRules(ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomName style)
         {
-            NameStyle = style;
+            nameStyle = style;
             InitializeComponent();
 
-            mSI = si;
+            show = si;
             mOriginalEps = originalEpList;
             mSeasonNumber = seasonNumber;
 
             if (si.SeasonRules.ContainsKey(seasonNumber))
-                WorkingRuleSet = new List<ShowRule>(si.SeasonRules[seasonNumber]);
+                workingRuleSet = new List<ShowRule>(si.SeasonRules[seasonNumber]);
             else
-                WorkingRuleSet = new List<ShowRule>();
+                workingRuleSet = new List<ShowRule>();
 
             txtShowName.Text = si.ShowName;
             txtSeasonNumber.Text = seasonNumber.ToString();
@@ -51,11 +51,11 @@ namespace TVRename
         private void bnAddRule_Click(object sender, System.EventArgs e)
         {
             ShowRule sr = new ShowRule();
-            AddModifyRule ar = new AddModifyRule(sr, mSI.GetSeason(mSeasonNumber), mSI.DVDOrder);
+            AddModifyRule ar = new AddModifyRule(sr, show.GetSeason(mSeasonNumber), show.DVDOrder);
 
             bool res = ar.ShowDialog() == DialogResult.OK;
             if (res)
-                WorkingRuleSet.Add(sr);
+                workingRuleSet.Add(sr);
 
             FillRuleList(false, 0);
         }
@@ -70,10 +70,10 @@ namespace TVRename
             }
 
             lvRuleList.Items.Clear();
-            foreach (ShowRule sr in WorkingRuleSet)
+            foreach (ShowRule sr in workingRuleSet)
             {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Text = sr.ActionInWords();
+                ListViewItem lvi = new ListViewItem {Text = sr.ActionInWords()};
+
                 lvi.SubItems.Add(sr.First == -1 ? "" : sr.First.ToString());
                 lvi.SubItems.Add(sr.Second == -1 ? "" : sr.Second.ToString());
                 lvi.SubItems.Add(sr.UserSuppliedText);
@@ -102,7 +102,7 @@ namespace TVRename
             if (lvRuleList.SelectedItems.Count == 0)
                 return;
             ShowRule sr = (ShowRule) (lvRuleList.SelectedItems[0].Tag);
-            AddModifyRule ar = new AddModifyRule(sr,mSI.GetSeason(mSeasonNumber),mSI.DVDOrder);
+            AddModifyRule ar = new AddModifyRule(sr,show.GetSeason(mSeasonNumber),show.DVDOrder);
             ar.ShowDialog(); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
         }
@@ -113,7 +113,7 @@ namespace TVRename
                 return;
             ShowRule sr = (ShowRule) (lvRuleList.SelectedItems[0].Tag);
 
-            WorkingRuleSet.Remove(sr);
+            workingRuleSet.Remove(sr);
             FillRuleList(false, 0);
         }
 
@@ -125,9 +125,9 @@ namespace TVRename
             if (p <= 0)
                 return;
 
-            ShowRule sr = WorkingRuleSet[p];
-            WorkingRuleSet.RemoveAt(p);
-            WorkingRuleSet.Insert(p - 1, sr);
+            ShowRule sr = workingRuleSet[p];
+            workingRuleSet.RemoveAt(p);
+            workingRuleSet.Insert(p - 1, sr);
 
             FillRuleList(true, -1);
         }
@@ -140,9 +140,9 @@ namespace TVRename
             if (p >= (lvRuleList.Items.Count - 1))
                 return;
 
-            ShowRule sr = WorkingRuleSet[p];
-            WorkingRuleSet.RemoveAt(p);
-            WorkingRuleSet.Insert(p + 1, sr);
+            ShowRule sr = workingRuleSet[p];
+            workingRuleSet.RemoveAt(p);
+            workingRuleSet.Insert(p + 1, sr);
             FillRuleList(true, +1);
         }
 
@@ -153,7 +153,7 @@ namespace TVRename
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            mSI.SeasonRules[mSeasonNumber] = WorkingRuleSet;
+            show.SeasonRules[mSeasonNumber] = workingRuleSet;
             Close();
         }
 
@@ -171,13 +171,13 @@ namespace TVRename
                 foreach (ProcessedEpisode pe in mOriginalEps)
                     pel.Add(new ProcessedEpisode(pe));
 
-                ShowLibrary.ApplyRules(pel, WorkingRuleSet, mSI);
+                ShowLibrary.ApplyRules(pel, workingRuleSet, show);
             }
 
             lbEpsPreview.BeginUpdate();
             lbEpsPreview.Items.Clear();
             foreach (ProcessedEpisode pe in pel)
-                lbEpsPreview.Items.Add(NameStyle.NameFor(pe));
+                lbEpsPreview.Items.Add(nameStyle.NameFor(pe));
             lbEpsPreview.EndUpdate();
         }
     }

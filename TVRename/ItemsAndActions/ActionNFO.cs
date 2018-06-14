@@ -11,14 +11,14 @@ namespace TVRename
     using System.Xml;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ActionNFO : ActionWriteMetadata
+    public class ActionNfo : ActionWriteMetadata
     {
-        public ActionNFO(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
+        public ActionNfo(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
         {
             Episode = pe;
         }
 
-        public ActionNFO(FileInfo nfo, ShowItem si) : base(nfo, si)
+        public ActionNfo(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
             Episode = null;
         }
@@ -231,18 +231,18 @@ namespace TVRename
         #region Item Members
         public override bool SameAs(Item o)
         {
-            return (o is ActionNFO nfo) && (nfo.Where == Where);
+            return (o is ActionNfo nfo) && (nfo.Where == Where);
         }
 
         public override int Compare(Item o)
         {
-            ActionNFO nfo = o as ActionNFO;
+            ActionNfo nfo = o as ActionNfo;
 
             if (Episode == null)
                 return 1;
             if (nfo?.Episode == null)
                 return -1;
-            return (Where.FullName + Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+            return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
         #endregion
     }

@@ -19,11 +19,11 @@ namespace TVRename
     /// <summary>
     /// Summary for TheTVDBCodeFinder
     /// </summary>
-    public partial class TheTVDBCodeFinder : UserControl
+    public partial class TheTvdbCodeFinder : UserControl
     {
         private bool mInternal;
 
-        public TheTVDBCodeFinder(string initialHint)
+        public TheTvdbCodeFinder(string initialHint)
         {
             mInternal = false;
 

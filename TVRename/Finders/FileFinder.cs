@@ -14,7 +14,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
 
-        public override FinderDisplayType DisplayType() => FinderDisplayType.Local;
+        public override FinderDisplayType DisplayType() => FinderDisplayType.local;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {

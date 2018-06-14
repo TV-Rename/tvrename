@@ -10,7 +10,7 @@ namespace TVRename
     {
         public uTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckuTorrent;
-        public override FinderDisplayType DisplayType() =>FinderDisplayType.Downloading;
+        public override FinderDisplayType DisplayType() =>FinderDisplayType.downloading;
         
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
