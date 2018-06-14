@@ -5,7 +5,6 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -146,7 +145,6 @@ namespace TVRename
 
             this.Text = this.Text + " " + Helpers.DisplayVersion;
 
-
             UpdateSplashStatus(splash, "Filling Shows");
             FillMyShows();
             UpdateSearchButtons();
@@ -169,7 +167,6 @@ namespace TVRename
             UpdateSplashStatus(splash, "Creating Monitors");
 
             this.mAutoFolderMonitor = new AutoFolderMonitor(this.mDoc, this);
-
 
             this.tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
 
@@ -296,7 +293,7 @@ namespace TVRename
             };
 
             filterButton.Location = new Point(this.filterTextBox.ClientSize.Width - filterButton.Width,
-                (this.filterTextBox.ClientSize.Height - 16) / 2 + 1);
+                ((this.filterTextBox.ClientSize.Height - 16) / 2) + 1);
 
             filterButton.Click += filterButton_Click;
             this.filterTextBox.Controls.Add(filterButton);
@@ -327,7 +324,6 @@ namespace TVRename
 
         // MAH: Added in support of the Filter TextBox Button
         private void filterButton_Click(object sender, EventArgs e) => this.filterTextBox.Clear();
-
 
         private ListView ListViewByName(string name)
         {
@@ -396,14 +392,12 @@ namespace TVRename
                 IgnoreWhitespace = true
             };
 
-
             string fn = PathManager.UILayoutFile.FullName;
             if (!File.Exists(fn))
                 return true;
 
             using (XmlReader reader = XmlReader.Create(fn, settings))
             {
-
                 reader.Read();
                 if (reader.Name != "xml")
                     return false;
@@ -448,7 +442,6 @@ namespace TVRename
                             else
                                 reader.ReadOuterXml();
                         }
-
                         reader.Read();
                     } // window
                     else if (reader.Name == "ColumnWidths")
@@ -465,7 +458,6 @@ namespace TVRename
                         reader.ReadOuterXml();
                 } // while
             }
-
             return ok;
         }
 
@@ -515,8 +507,7 @@ namespace TVRename
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
             }
-
-            return true;
+           return true;
         }
 
         private void WriteColWidthsXML(string thingName, XmlWriter writer)
@@ -794,7 +785,6 @@ namespace TVRename
             {
                 body += ImageSection("Series Banner", 758, 140, ser.GetSeasonWideBannerPath(snum));
                 body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
-
             }
             else
             {
@@ -816,7 +806,6 @@ namespace TVRename
 
         private static string ImageSection(string title, int width, int height, string bannerPath)
         {
-            
             if (string.IsNullOrEmpty(bannerPath)) return "";
 
             string url = TheTVDB.GetImageURL(bannerPath);
@@ -950,7 +939,8 @@ namespace TVRename
                 if (si.DVDOrder && snum == 0)
                 {
                     body += "<b>" + ei.Name + "</b>";
-                } else 
+                } 
+                else 
                     body += "<b>" + HttpUtility.HtmlEncode(CustomName.NameForNoExt(ei, CustomName.OldNStyle(6))) + "</b>";
                 body += "</A>"; // anchor
                 if (si.UseSequentialMatch && (ei.OverallNumber != -1))
@@ -1210,7 +1200,8 @@ namespace TVRename
             if (TVSettings.Instance.HideWtWSpoilers && (ei.HowLong() != "Aired" || this.lvWhenToWatch.Items[n].ImageIndex==1))
             {
                 this.txtWhenToWatchSynopsis.Text = "[Spoilers Hidden]";
-            } else 
+            } 
+            else 
                 this.txtWhenToWatchSynopsis.Text = ei.Overview;
 
             this.mInternalChange++;
@@ -2854,7 +2845,11 @@ namespace TVRename
             }
 
             //Dont support unattended mode
-            if (unattended) { logger.Info("Not looking for new shows as app is unattended"); return;}
+            if (unattended) 
+            {
+                logger.Info("Not looking for new shows as app is unattended"); 
+                return;
+            }
 
             List<string> possibleShowNames = new List<string>();
 
@@ -2881,7 +2876,11 @@ namespace TVRename
             {
                 //MessageBox.Show($"Search for {hint}");
                 //if hint doesn't match existing added shows
-                if (LookForSeries(hint, addedShows)) { logger.Info($"Ignoring {hint} as it matches existing shows."); continue;}
+                if (LookForSeries(hint, addedShows)) 
+                { 
+                    logger.Info($"Ignoring {hint} as it matches existing shows."); 
+                    continue;
+                }
 
                 //If the hint contains certain terms then we'll ignore it
                 if (IgnoreHint(hint)) { logger.Info($"Ignoring {hint} as it is in the ignore list."); continue;}
@@ -3727,7 +3726,7 @@ namespace TVRename
             {
                 var filterButton = this.filterTextBox.Controls["Clear"];
                 filterButton.Location = new Point(this.filterTextBox.ClientSize.Width - filterButton.Width,
-                    (this.filterTextBox.ClientSize.Height - 16) / 2 + 1);
+                    ((this.filterTextBox.ClientSize.Height - 16) / 2) + 1);
                 // Send EM_SETMARGINS to prevent text from disappearing underneath the button
                 NativeMethods.SendMessage(this.filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
             }
