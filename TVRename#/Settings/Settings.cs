@@ -20,7 +20,6 @@ namespace TVRename
 {   
     public class TidySettings
     {
-        
         public bool DeleteEmpty = false; // Delete empty folders after move
         public bool DeleteEmptyIsRecycle = true; // Recycle, rather than delete
         public bool EmptyIgnoreWords = false;
@@ -191,7 +190,6 @@ namespace TVRename
 
     public sealed class TVSettings
     {
-
         //We are using the singleton design pattern
         //http://msdn.microsoft.com/en-au/library/ff650316.aspx
 
@@ -211,7 +209,6 @@ namespace TVRename
                             instance = new TVSettings();
                     }
                 }
-
                 return instance;
             }
         }
@@ -273,8 +270,6 @@ namespace TVRename
         public List<string> IgnoreFolders;
         public List<string> DownloadFolders;
         public List<IgnoreItem> Ignore;
-
-
         public bool AutoSelectShowInMyShows = true;
         public bool AutoCreateFolders = false;
         public bool BGDownload = false;
@@ -350,7 +345,6 @@ namespace TVRename
         public string searchSeasonWordsString = "Season;Series;Saison;Temporada;Seizoen";
         public string preferredRSSSearchTermsString = "720p;1080p";
 
-
         internal bool IncludeBetaUpdates()
         {
             return (this.mode== BetaMode.BetaToo );
@@ -382,10 +376,7 @@ namespace TVRename
 
         public string[] VideoExtensionsArray => this.VideoExtensionsString.Split(';');
         public bool ForceBulkAddToUseSettingsOnly = false;
-
         public bool RetainLanguageSpecificSubtitles = true;
-
-
         public bool AutoMergeDownloadEpisodes = false;
         public bool AutoMergeLibraryEpisodes = false;
         public string VideoExtensionsString = "";
@@ -412,7 +403,6 @@ namespace TVRename
 
         public void load(XmlReader reader)
         {
-            
             SetToDefaults();
 
             reader.Read();
@@ -551,8 +541,6 @@ namespace TVRename
                     this.ExportShowsHTML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportShowsHTMLTo")
                     this.ExportShowsHTMLTo = reader.ReadElementContentAsString();
-
-                
                 else if (reader.Name == "ForceLowercaseFilenames")
                     this.ForceLowercaseFilenames = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "IgnoreSamples")
@@ -654,7 +642,6 @@ namespace TVRename
                     this.Tidyup.EmptyMaxSizeCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EmptyMaxSizeMB")
                     this.Tidyup.EmptyMaxSizeMB = reader.ReadElementContentAsInt();
-
                 else if (reader.Name == "BulkAddIgnoreRecycleBin")
                     this.BulkAddIgnoreRecycleBin = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "BulkAddCompareNoVideoFolders")
@@ -663,7 +650,6 @@ namespace TVRename
                     this.AutoAddMovieTerms = reader.ReadElementContentAsString();
                 else if (reader.Name == "AutoAddIgnoreSuffixes")
                     this.AutoAddIgnoreSuffixes = reader.ReadElementContentAsString();
-
                 else if (reader.Name == "BetaMode")
                     this.mode = (BetaMode)reader.ReadElementContentAsInt();
                 else if (reader.Name == "PercentDirtyUpgrade")
@@ -678,7 +664,6 @@ namespace TVRename
                     this.keepTogetherMode = (KeepTogetherModes) reader.ReadElementContentAsInt();
                 else if (reader.Name == "KeepTogetherExtensions")
                     this.keepTogetherExtensionsString = reader.ReadElementContentAsString();
-
                 else if (reader.Name == "FNPRegexs" && !reader.IsEmptyElement)
                 {
                     this.FNPRegexs.Clear();
@@ -758,8 +743,6 @@ namespace TVRename
                             reader.ReadOuterXml();
                     }
                     reader.Read();
-
-
                 }
                 else if (reader.Name == "ShowFilters" && !reader.IsEmptyElement)
                 {
@@ -840,7 +823,6 @@ namespace TVRename
                 new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"uTorrent\resume.dat"));
             this.ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
-
 
         public void WriteXML(XmlWriter writer)
         {
@@ -1015,11 +997,8 @@ namespace TVRename
         public FolderJpgIsType ItemForFolderJpg() => this.FolderJpgIs;
 
         public string GetVideoExtensionsString() =>this.VideoExtensionsString;
-        
         public string GetOtherExtensionsString() => this.OtherExtensionsString;
-
         public string GetKeepTogetherString() => this.keepTogetherExtensionsString;
-
         
         public bool RunPeriodicCheck() => this.runPeriodicCheck;
         public int PeriodicCheckPeriod() =>  this.periodCheckHours * 60* 60 * 1000;
@@ -1027,7 +1006,6 @@ namespace TVRename
 
         public string GetSeasonSearchTermsString() => this.searchSeasonWordsString;
         public string GetPreferredRSSSearchTermsString() => this.preferredRSSSearchTermsString;
-        
 
         public static bool OKExtensionsString(string s)
         {
@@ -1098,7 +1076,6 @@ namespace TVRename
                                                                           "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})",
                                                                           true, "Season 3\\Episode 23")
                                               };
-
             return l;
         }
 
@@ -1242,13 +1219,7 @@ namespace TVRename
                 case KeepTogetherModes.AllBut: return !this.keepTogetherExtensionsArray.Contains(fileExtension);
 
             }
-
             return true;
         }
-
-        
-        
-          
-        
     }
 }
