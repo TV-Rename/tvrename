@@ -174,25 +174,10 @@ namespace TVRename
         // -----------------------------------------------------------------------------
 
         public static Searchers GetSearchers() => TVSettings.Instance.TheSearchers;
-        
+
         public void TidyTVDB()
         {
-            // remove any shows from thetvdb that aren't in My Shows
-            TheTVDB.Instance.GetLock("TidyTVDB");
-            List<int> removeList = new List<int>();
-
-            foreach (KeyValuePair<int, SeriesInfo> kvp in TheTVDB.Instance.GetSeriesDict())
-            {
-                bool found = this.Library.Values.Any(si => si.TVDBCode == kvp.Key);
-                if (!found)
-                    removeList.Add(kvp.Key);
-            }
-
-            foreach (int i in removeList)
-                TheTVDB.Instance.ForgetShow(i, false);
-
-            TheTVDB.Instance.Unlock("TheTVDB");
-            TheTVDB.Instance.SaveCache();
+            TheTVDB.Instance.Tidy(this.Library.Values);
         }
 
         public void Closing()

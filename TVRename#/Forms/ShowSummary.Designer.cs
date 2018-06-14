@@ -31,16 +31,18 @@ namespace TVRename
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShowSummary));
             this.grid1 = new SourceGrid.Grid();
             this.showRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.SuspendLayout();
             // 
             // grid1
             // 
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.grid1.BackColor = System.Drawing.SystemColors.Window;
+            this.grid1.EnableSort = true;
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
             this.grid1.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
@@ -54,7 +56,7 @@ namespace TVRename
             // 
             this.showRightClickMenu.Name = "showRightClickMenu";
             this.showRightClickMenu.ShowImageMargin = false;
-            this.showRightClickMenu.Size = new System.Drawing.Size(128, 26);
+            this.showRightClickMenu.Size = new System.Drawing.Size(36, 4);
             this.showRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.showRightClickMenu_ItemClicked);
             // 
             // ShowSummary
@@ -63,6 +65,7 @@ namespace TVRename
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(725, 573);
             this.Controls.Add(this.grid1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "ShowSummary";
             this.Text = "Show Summary";
             this.ResumeLayout(false);

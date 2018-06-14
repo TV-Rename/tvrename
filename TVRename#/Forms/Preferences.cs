@@ -253,7 +253,7 @@ namespace TVRename
 
 
             TheTVDB.Instance.GetLock("Preferences-OK");
-            foreach (Language l in TheTVDB.Instance.LanguageList)
+            foreach (TheTVDB.Language l in TheTVDB.Instance.LanguageList)
             {
                 if (l.name == cbLanguages.Text)
                 {
@@ -993,7 +993,7 @@ namespace TVRename
             this.cbLanguages.Items.Clear();
 
             String pref = "";
-            foreach (Language l in TheTVDB.Instance.LanguageList)
+            foreach (TheTVDB.Language l in TheTVDB.Instance.LanguageList)
             {
                 this.cbLanguages.Items.Add(l.name);
 

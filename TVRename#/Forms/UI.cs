@@ -55,15 +55,15 @@ namespace TVRename
         kOpenFolderBase = 2000
     }
 
-    /// <summary>
-    /// Summary for UI
-    ///
-    /// WARNING: If you change the name of this class, you will need to change the
-    ///          'Resource File Name' property for the managed resource compiler tool
-    ///          associated with all .resx files this class depends on.  Otherwise,
-    ///          the designers will not be able to interact properly with localized
-    ///          resources associated with this form.
-    /// </summary>
+    /// <inheritdoc />
+    ///  <summary>
+    ///  Summary for UI
+    ///  WARNING: If you change the name of this class, you will need to change the
+    ///           'Resource File Name' property for the managed resource compiler tool
+    ///           associated with all .resx files this class depends on.  Otherwise,
+    ///           the designers will not be able to interact properly with localized
+    ///           resources associated with this form.
+    ///  </summary>
     // ReSharper disable once InconsistentNaming
     public partial class UI : Form, IRemoteActions
     {
@@ -115,7 +115,7 @@ namespace TVRename
             this.mLastActionsClicked = null;
 
             this.mInternalChange = 0;
-            this.mFoldersToOpen = new List<String>();
+            this.mFoldersToOpen = new List<string>();
 
             this.InternalCheckChange = false;
 
@@ -146,9 +146,10 @@ namespace TVRename
 
             this.Text = this.Text + " " + Helpers.DisplayVersion;
 
+
             UpdateSplashStatus(splash, "Filling Shows");
             FillMyShows();
-            UpdateSearchButton();
+            UpdateSearchButtons();
             ClearInfoWindows();
             UpdateSplashPercent(splash, 10);
             UpdateSplashStatus(splash, "Updating WTW");
@@ -165,16 +166,16 @@ namespace TVRename
             if (t < this.tabControl1.TabCount)
                 this.tabControl1.SelectedIndex = TVSettings.Instance.StartupTab;
             tabControl1_SelectedIndexChanged(null, null);
-
             UpdateSplashStatus(splash, "Creating Monitors");
 
-            this.mAutoFolderMonitor = new AutoFolderMonitor(mDoc, this);
-            
-            this.tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
-            
-            UpdateSplashStatus(splash, "Update Available?");
+            this.mAutoFolderMonitor = new AutoFolderMonitor(this.mDoc, this);
 
-            SearchForUpdates(false,!showUI);
+
+            this.tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
+
+            UpdateSplashStatus(splash, "Update Available?");
+            Task task = Task.Run(async () => { await CheckUpdatesOnStartup(showUI); });
+            task.Wait();
 
             UpdateSplashStatus(splash, "Starting Monitor");
             if (TVSettings.Instance.MonitorFolders)
@@ -184,6 +185,12 @@ namespace TVRename
 
             UpdateSplashStatus(splash, "Running autoscan");
             //splash.Close();
+        }
+
+        private async Task CheckUpdatesOnStartup(bool showUI)
+        {
+            Task<UpdateVersion> tuv = VersionUpdater.CheckForUpdatesAsync();
+            NotifyUpdates(await tuv, false, !showUI);
         }
 
         private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text)
@@ -245,39 +252,33 @@ namespace TVRename
                 Close();
         }
 
-        private void UpdateSearchButton()
+        private void UpdateSearchButtons()
         {
             string name = TVDoc.GetSearchers().Name(TVSettings.Instance.TheSearchers.CurrentSearchNum());
 
-            bool customWTW = false;
-            foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
-            {
-                ProcessedEpisode pe = lvi.Tag as ProcessedEpisode;
-                if (pe == null || !pe.SI.UseCustomSearchURL ||
-                    String.IsNullOrWhiteSpace(pe.SI.CustomSearchURL)) continue;
-                customWTW = true;
-                break;
-            }
+            this.bnWTWBTSearch.Text = UseCustom(this.lvWhenToWatch) ? "Search" : name;
+            this.bnActionBTSearch.Text = UseCustom(this.lvAction) ? "Search" : name;
 
-            bool customAction = false;
-            foreach (ListViewItem lvi in lvAction.SelectedItems)
-            {
-                if (lvi.Tag is ProcessedEpisode pe && pe.SI.UseCustomSearchURL && !String.IsNullOrWhiteSpace(pe.SI.CustomSearchURL))
-                {
-                    customAction = true;
-                    break;
-                }
-            }
-
-            this.bnWTWBTSearch.Text = customWTW ? "Search" : name;
-            this.bnActionBTSearch.Text = customAction ? "Search" : name;
             FillEpGuideHTML();
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
-
         private static void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) => Helpers.SysOpen("http://tvrename.com");
 
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
+
+        private static bool UseCustom(ListView view)
+        {
+            foreach (ListViewItem lvi in view.SelectedItems)
+            {
+                if (!(lvi.Tag is ProcessedEpisode pe)) continue;
+                if (!pe.SI.UseCustomSearchURL) continue;
+                if (string.IsNullOrWhiteSpace(pe.SI.CustomSearchURL)) continue;
+
+                return true;
+            }
+            return false;
+        }
+  
         private void UI_Load(object sender, EventArgs e)
         {
             this.ShowInTaskbar = TVSettings.Instance.ShowInTaskbar && !this.mDoc.Args.Hide;
@@ -286,17 +287,21 @@ namespace TVRename
                 tp.BackColor = SystemColors.Control;
 
             // MAH: Create a "Clear" button in the Filter Text Box
-            var filterButton = new Button();
-            filterButton.Size = new Size(16, 16);
-            filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
-                (filterTextBox.ClientSize.Height - 16) / 2 + 1);
-            filterButton.Cursor = Cursors.Default;
-            filterButton.Image = Resources.DeleteSmall;
-            filterButton.Name = "Clear";
+            Button filterButton = new Button
+            {
+                Size = new Size(16, 16),
+                Cursor = Cursors.Default,
+                Image = Properties.Resources.DeleteSmall,
+                Name = "Clear"
+            };
+
+            filterButton.Location = new Point(this.filterTextBox.ClientSize.Width - filterButton.Width,
+                (this.filterTextBox.ClientSize.Height - 16) / 2 + 1);
+
             filterButton.Click += filterButton_Click;
-            filterTextBox.Controls.Add(filterButton);
+            this.filterTextBox.Controls.Add(filterButton);
             // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-            NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
+            NativeMethods.SendMessage(this.filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
 
             this.betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
 
@@ -322,6 +327,7 @@ namespace TVRename
 
         // MAH: Added in support of the Filter TextBox Button
         private void filterButton_Click(object sender, EventArgs e) => this.filterTextBox.Clear();
+
 
         private ListView ListViewByName(string name)
         {
@@ -604,8 +610,8 @@ namespace TVRename
             foreach (ShowItem si in sil)
             {
                 if (filter.filter(si)
-                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.getSimplifiedPossibleShowNames().Any(name =>
-                           name.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
+                    & (string.IsNullOrEmpty(this.filterTextBox.Text) | si.getSimplifiedPossibleShowNames().Any(name =>
+                           name.Contains(this.filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
                     ))
                 {
                     TreeNode tvn = AddShowItemToTree(si);
@@ -1088,7 +1094,7 @@ namespace TVRename
         public void menuSearchSites_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             this.mDoc.SetSearcher((int) (e.ClickedItem.Tag));
-            UpdateSearchButton();
+            UpdateSearchButtons();
         }
 
         public void bnWhenToWatchCheck_Click(object sender, EventArgs e) => RefreshWTW(true);
@@ -1189,7 +1195,7 @@ namespace TVRename
 
         public void lvWhenToWatch_Click(object sender, EventArgs e)
         {
-            UpdateSearchButton();
+            UpdateSearchButtons();
 
             if (this.lvWhenToWatch.SelectedIndices.Count == 0)
             {
@@ -1538,41 +1544,35 @@ namespace TVRename
 
             if (si != null)
             {
-                tsi = new ToolStripMenuItem("Force Refresh");
-                tsi.Tag = (int) RightClickCommands.kForceRefreshSeries;
+                tsi = new ToolStripMenuItem("Force Refresh") {Tag = (int) RightClickCommands.kForceRefreshSeries};
                 this.showRightClickMenu.Items.Add(tsi);
 
-                tsi = new ToolStripMenuItem("Update Images");
-                tsi.Tag = (int) RightClickCommands.kUpdateImages;
+                tsi = new ToolStripMenuItem("Update Images") {Tag = (int) RightClickCommands.kUpdateImages};
                 this.showRightClickMenu.Items.Add(tsi);
 
                 ToolStripSeparator tss = new ToolStripSeparator();
                 this.showRightClickMenu.Items.Add(tss);
 
-                String scanText = this.mLastShowsClicked.Count > 1
+                string scanText = this.mLastShowsClicked.Count > 1
                     ? "Scan Multiple Shows"
                     : "Scan \"" + si.ShowName + "\"";
-                tsi = new ToolStripMenuItem(scanText);
-                tsi.Tag = (int) RightClickCommands.kScanSpecificSeries;
+                tsi = new ToolStripMenuItem(scanText) {Tag = (int) RightClickCommands.kScanSpecificSeries};
                 this.showRightClickMenu.Items.Add(tsi);
 
-                if (mLastShowsClicked != null && mLastShowsClicked.Count == 1)
+                if (this.mLastShowsClicked != null && this.mLastShowsClicked.Count == 1)
                 {
-                    tsi = new ToolStripMenuItem("When to Watch");
-                    tsi.Tag = (int) RightClickCommands.kWhenToWatchSeries;
+                    tsi = new ToolStripMenuItem("When to Watch") {Tag = (int) RightClickCommands.kWhenToWatchSeries};
                     this.showRightClickMenu.Items.Add(tsi);
 
-                    tsi = new ToolStripMenuItem("Edit Show");
-                    tsi.Tag = (int) RightClickCommands.kEditShow;
+                    tsi = new ToolStripMenuItem("Edit Show") {Tag = (int) RightClickCommands.kEditShow};
                     this.showRightClickMenu.Items.Add(tsi);
 
-                    tsi = new ToolStripMenuItem("Delete Show");
-                    tsi.Tag = (int) RightClickCommands.kDeleteShow;
+                    tsi = new ToolStripMenuItem("Delete Show") {Tag = (int) RightClickCommands.kDeleteShow};
                     this.showRightClickMenu.Items.Add(tsi);
                 }
             }
 
-            if (seas != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
+            if (seas != null && this.mLastShowsClicked != null && this.mLastShowsClicked.Count == 1)
             {
                 tsi = new ToolStripMenuItem("Edit " + (seas.SeasonNumber == 0 ?
                                                 TVSettings.Instance.SpecialsFolderName : TVSettings.Instance.defaultSeasonWord+" " + seas.SeasonNumber));
@@ -1580,28 +1580,28 @@ namespace TVRename
                 this.showRightClickMenu.Items.Add(tsi);
             }
 
-            if (ep != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
+            if (ep != null && this.mLastShowsClicked != null && this.mLastShowsClicked.Count == 1)
             {
                 List<FileInfo> fl = TVDoc.FindEpOnDisk(null, ep);
-                if (fl != null)
-                {
-                    if (fl.Count > 0)
-                    {
-                        ToolStripSeparator tss = new ToolStripSeparator();
-                        this.showRightClickMenu.Items.Add(tss);
+                if (fl == null) return;
 
-                        int n = this.mLastFL.Count;
-                        foreach (FileInfo fi in fl)
-                        {
-                            this.mLastFL.Add(fi);
-                            tsi = new ToolStripMenuItem("Watch: " + fi.FullName);
-                            tsi.Tag = (int) RightClickCommands.kWatchBase + n;
-                            this.showRightClickMenu.Items.Add(tsi);
-                        }
-                    }
+                if (fl.Count <= 0) return;
+
+                ToolStripSeparator tss = new ToolStripSeparator();
+                this.showRightClickMenu.Items.Add(tss);
+
+                int n = this.mLastFL.Count;
+                foreach (FileInfo fi in fl)
+                {
+                    this.mLastFL.Add(fi);
+                    tsi = new ToolStripMenuItem("Watch: " + fi.FullName)
+                    {
+                        Tag = (int) RightClickCommands.kWatchBase + n
+                    };
+                    this.showRightClickMenu.Items.Add(tsi);
                 }
             }
-            else if (seas != null && si != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
+            else if (seas != null && si != null && this.mLastShowsClicked != null && this.mLastShowsClicked.Count == 1)
             {
                 // for each episode in season, find it on disk
                 bool first = true;
@@ -1630,9 +1630,9 @@ namespace TVRename
             }
         }
 
-        public void MenuFolders(LVResults lvr)
+        private void MenuFolders(LVResults lvr)
         {
-            if (mLastShowsClicked == null || mLastShowsClicked.Count != 1)
+            if (this.mLastShowsClicked == null || this.mLastShowsClicked.Count != 1)
                 return;
 
             ShowItem si = (this.mLastShowsClicked != null) && (this.mLastShowsClicked.Count > 0)
@@ -1641,7 +1641,7 @@ namespace TVRename
             Season seas = this.mLastSeasonClicked;
             ProcessedEpisode ep = this.mLastEpClicked;
             ToolStripMenuItem tsi;
-            List<string> added = new List<String>();
+            List<string> added = new List<string>();
 
             if (ep != null)
             {
@@ -1755,7 +1755,7 @@ namespace TVRename
         public void BuildRightClickMenu(Point pt)
         {
             this.showRightClickMenu.Items.Clear();
-            this.mFoldersToOpen = new List<String>();
+            this.mFoldersToOpen = new List<string>();
             this.mLastFL = new List<FileInfo>();
 
             MenuGuideAndTVDB(false);
@@ -1765,7 +1765,7 @@ namespace TVRename
             this.showRightClickMenu.Show(pt);
         }
 
-        public void showRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void showRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             this.showRightClickMenu.Close();
 
@@ -1810,9 +1810,10 @@ namespace TVRename
                     }
                     case RightClickCommands.kScanSpecificSeries:
                     {
-                        if (mLastShowsClicked != null)
+                        if (this.mLastShowsClicked != null)
                         {
-                            UIScan(mLastShowsClicked,false, TVSettings.ScanType.SingleShow);
+                            UIScan(this.mLastShowsClicked,false, TVSettings.ScanType.SingleShow);
+
                             this.tabControl1.SelectTab(this.tbAllInOne);
                             }
 
@@ -1849,12 +1850,12 @@ namespace TVRename
                     }
                     case RightClickCommands.kForceRefreshSeries:
                         if (si != null)
-                            ForceRefresh(mLastShowsClicked);
+                            ForceRefresh(this.mLastShowsClicked);
                         break;
                     case RightClickCommands.kUpdateImages:
                         if (si != null)
                         {
-                            UpdateImages(mLastShowsClicked);
+                            UpdateImages(this.mLastShowsClicked);
                             this.tabControl1.SelectTab(this.tbAllInOne);
                         }
 
@@ -2018,12 +2019,13 @@ namespace TVRename
                 bnActionRecentCheck_Click(null, null);
         }
 
-        public void folderRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void folderRightClickMenu_ItemClicked(object sender,
+            ToolStripItemClickedEventArgs e)
         {
             if ((int) (e.ClickedItem.Tag) == 0) Helpers.SysOpen(this.mLastFolderClicked);
         }
 
-        public void lvWhenToWatch_MouseClick(object sender, MouseEventArgs e)
+        private void lvWhenToWatch_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right)
                 return;
@@ -2032,7 +2034,7 @@ namespace TVRename
 
             Point pt = this.lvWhenToWatch.PointToScreen(new Point(e.X, e.Y));
             List<ProcessedEpisode> eis = new List<ProcessedEpisode>();
-            foreach (ListViewItem lvi in lvWhenToWatch.SelectedItems)
+            foreach (ListViewItem lvi in this.lvWhenToWatch.SelectedItems)
             {
                 eis.Add(lvi.Tag as ProcessedEpisode);
             }
@@ -2040,9 +2042,9 @@ namespace TVRename
             WTWRightClickOnShow(eis, pt);
         }
 
-        public void preferencesToolStripMenuItem_Click(object sender, EventArgs e) => DoPrefs(false);
+        private void preferencesToolStripMenuItem_Click(object sender, EventArgs e) => DoPrefs(false);
 
-        public void DoPrefs(bool scanOptions)
+        private void DoPrefs(bool scanOptions)
         {
             MoreBusy(); // no background download while preferences are open!
 
@@ -2076,7 +2078,7 @@ namespace TVRename
                 Exception e2 = ex;
                 while (e2.InnerException != null)
                     e2 = e2.InnerException;
-                String m2 = e2.Message;
+                string m2 = e2.Message;
                 MessageBox.Show(this,
                     ex.Message + "\r\n\r\n" +
                     m2 + "\r\n\r\n" +
@@ -2128,7 +2130,7 @@ namespace TVRename
             }
         }
 
-        public void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
+        private void backgroundDownloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TVSettings.Instance.BGDownload = !TVSettings.Instance.BGDownload;
             this.backgroundDownloadToolStripMenuItem.Checked = TVSettings.Instance.BGDownload;
@@ -2141,7 +2143,7 @@ namespace TVRename
                 this.BGDownloadTimer.Stop();
         }
 
-        public void BGDownloadTimer_Tick(object sender, EventArgs e)
+        private void BGDownloadTimer_Tick(object sender, EventArgs e)
         {
             if (this.Busy != 0)
             {
@@ -2707,19 +2709,19 @@ namespace TVRename
             if (dr == DialogResult.OK)
             {
                 this.mDoc.SetDirty();
-                UpdateSearchButton();
+                UpdateSearchButtons();
             }
         }
 
         private void filenameProcessorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ShowItem currentSI = TreeNodeToShowItem(this.MyShowTree.SelectedNode);
+            ShowItem currentShow = TreeNodeToShowItem(this.MyShowTree.SelectedNode);
             string theFolder = "";
 
-            if (currentSI != null)
+            if (currentShow != null)
             {
                 foreach (KeyValuePair<int, List<string>> kvp in
-                    currentSI.AllFolderLocations())
+                    currentShow.AllFolderLocations())
                 {
                     foreach (string folder in kvp.Value)
                     {
@@ -2736,7 +2738,7 @@ namespace TVRename
             }
 
             AddEditSeasEpFinders d = new AddEditSeasEpFinders(TVSettings.Instance.FNPRegexs,
-                this.mDoc.Library.GetShowItems(), currentSI, theFolder);
+                this.mDoc.Library.GetShowItems(), currentShow, theFolder);
 
             DialogResult dr = d.ShowDialog();
             if (dr == DialogResult.OK)
@@ -2767,8 +2769,8 @@ namespace TVRename
         private void bnMyShowsCollapse_Click(object sender, EventArgs e)
         {
             this.MyShowTree.BeginUpdate();
-            treeExpandCollapseToggle = !treeExpandCollapseToggle;
-            if (treeExpandCollapseToggle)
+            this.treeExpandCollapseToggle = !this.treeExpandCollapseToggle;
+            if (this.treeExpandCollapseToggle)
                 this.MyShowTree.CollapseAll();
             else
                 this.MyShowTree.ExpandAll();
@@ -3021,7 +3023,7 @@ namespace TVRename
 
             Debug.Assert(lvi.SubItems.Count <= lvAction.Columns.Count - 1);
 
-            while (lvi.SubItems.Count < lvAction.Columns.Count - 1)
+            while (lvi.SubItems.Count < this.lvAction.Columns.Count - 1)
                 lvi.SubItems.Add(""); // pad our way to the error column
 
             Action act = item as Action;
@@ -3167,9 +3169,7 @@ namespace TVRename
             // remove items from master list, unless it had an error
             foreach (Item i2 in (new LVResults(this.lvAction, checkedNotSelected)).FlatList)
             {
-                Item sli = i2;
-
-                if ((sli != null) && (!lvr.FlatList.Contains(sli)))
+                if ((i2 != null) && (!lvr.FlatList.Contains(i2)))
                     this.mDoc.TheActionList.Remove(i2);
             }
 
@@ -3307,7 +3307,7 @@ namespace TVRename
 
         private void lvAction_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateSearchButton();
+            UpdateSearchButtons();
 
             LVResults lvr = new LVResults(this.lvAction, false);
 
@@ -3575,8 +3575,8 @@ namespace TVRename
         {
             if ((e.Index < 0) || (e.Index > this.lvAction.Items.Count))
                 return;
-            Item Action = (Item) (this.lvAction.Items[e.Index].Tag);
-            if ((Action != null) && ((Action is ItemMissing) || (Action is ItemuTorrenting) || (Action is ItemSABnzbd)))
+            Item action = (Item) (this.lvAction.Items[e.Index].Tag);
+            if ((action != null) && ((action is ItemMissing) || (action is ItemuTorrenting) || (action is ItemSABnzbd)))
                 e.NewValue = CheckState.Unchecked;
         }
 
@@ -3601,21 +3601,21 @@ namespace TVRename
 
             foreach (Item i in lvr.FlatList)
             {
-                Item sli = i;
-                if ((sli != null) && (sli.Episode != null))
-                    TVDoc.SearchForEpisode(sli.Episode);
+                if (i?.Episode != null)
+                    TVDoc.SearchForEpisode(i.Episode);
             }
         }
 
         private void bnRemoveSel_Click(object sender, EventArgs e) => ActionDeleteSelected();
 
+
         private void IgnoreSelected()
         {
             LVResults lvr = new LVResults(this.lvAction, false);
             bool added = false;
-            foreach (Item Action in lvr.FlatList)
+            foreach (Item action in lvr.FlatList)
             {
-                IgnoreItem ii = Action.Ignore;
+                IgnoreItem ii = action.Ignore;
                 if (ii != null)
                 {
                     TVSettings.Instance.Ignore.Add(ii);
@@ -3637,24 +3637,26 @@ namespace TVRename
             ie.ShowDialog();
         }
 
+        private async  void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+         {
+             ShowSummary f = new ShowSummary(this.mDoc);
+             await Task.Run(() => f.GenerateData() );
+             f.PopulateGrid();
+             f.Show();
+         }
         private void lvAction_ItemChecked(object sender, ItemCheckedEventArgs e) => UpdateActionCheckboxes();
-
-        private void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new ShowSummary(this.mDoc).ShowDialog();
-        }
 
         private void bnHideHTMLPanel_Click(object sender, EventArgs e)
         {
-            if (splitContainer1.Panel2Collapsed)
+            if (this.splitContainer1.Panel2Collapsed)
             {
-                splitContainer1.Panel2Collapsed = false;
-                bnHideHTMLPanel.ImageKey = "FillRight.bmp";
+                this.splitContainer1.Panel2Collapsed = false;
+                this.bnHideHTMLPanel.ImageKey = "FillRight.bmp";
             }
             else
             {
-                splitContainer1.Panel2Collapsed = true;
-                bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
+                this.splitContainer1.Panel2Collapsed = true;
+                this.bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
             }
         }
 
@@ -3678,8 +3680,8 @@ namespace TVRename
             string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop, false);
 
             // Establish item in list being dragged to, and exit if no item matched
-            Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
-            ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
+            Point localPoint = this.lvAction.PointToClient(new Point(e.X, e.Y));
+            ListViewItem lvi = this.lvAction.GetItemAt(localPoint.X, localPoint.Y);
             if (lvi == null) return;
 
             // Check at least one file was being dragged, and that dragged-to item is a "Missing Item" item.
@@ -3709,8 +3711,8 @@ namespace TVRename
         private void lvAction_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.All;
-            Point localPoint = lvAction.PointToClient(new Point(e.X, e.Y));
-            ListViewItem lvi = lvAction.GetItemAt(localPoint.X, localPoint.Y);
+            Point localPoint = this.lvAction.PointToClient(new Point(e.X, e.Y));
+            ListViewItem lvi = this.lvAction.GetItemAt(localPoint.X, localPoint.Y);
             // If we're not draging over a "ItemMissing" entry, or if we're not dragging a list of files, then change the DragDropEffect
             if (!(lvi?.Tag is ItemMissing) || !e.Data.GetDataPresent(DataFormats.FileDrop))
                 e.Effect = DragDropEffects.None;
@@ -3721,13 +3723,13 @@ namespace TVRename
         private void filterTextBox_SizeChanged(object sender, EventArgs e)
         {
             // MAH: move the "Clear" button in the Filter Text Box
-            if (filterTextBox.Controls.ContainsKey("Clear"))
+            if (this.filterTextBox.Controls.ContainsKey("Clear"))
             {
-                var filterButton = filterTextBox.Controls["Clear"];
-                filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
-                    (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+                var filterButton = this.filterTextBox.Controls["Clear"];
+                filterButton.Location = new Point(this.filterTextBox.ClientSize.Width - filterButton.Width,
+                    (this.filterTextBox.ClientSize.Height - 16) / 2 + 1);
                 // Send EM_SETMARGINS to prevent text from disappearing underneath the button
-                NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
+                NativeMethods.SendMessage(this.filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
             }
         }
 
@@ -3736,12 +3738,15 @@ namespace TVRename
 
         public void Quit() => Close();
 
-        private void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e) => SearchForUpdates(true);
 
-        private void SearchForUpdates(bool showNoUpdateRequiredDialog, bool inSilentMode = false)
+        private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            UpdateVersion update = VersionUpdater.CheckForUpdates();
+            Task<UpdateVersion> uv = VersionUpdater.CheckForUpdatesAsync();
+            NotifyUpdates(await uv, true);
+        }
 
+        private void NotifyUpdates(UpdateVersion update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
+        {
             if (update is null)
             {
                 //this.btnUpdateAvailable.Visible = false;
@@ -3773,8 +3778,12 @@ namespace TVRename
             form.ShowDialog();
         }
 
-        private void btnUpdateAvailable_Click(object sender, EventArgs e) => SearchForUpdates(true);
-
+        private async void btnUpdateAvailable_Click(object sender, EventArgs e)
+        {
+            Task<UpdateVersion> uv = VersionUpdater.CheckForUpdatesAsync();
+            NotifyUpdates(await uv, true);
+        }
+  
         private void tmrPeriodicScan_Tick(object sender, EventArgs e) => RunAutoScan("Periodic Scan");
 
         private void RunAutoScan(string scanType)
@@ -3810,11 +3819,11 @@ namespace TVRename
 
         private class TimeZoneTracker
         {
-            private readonly Dictionary<string,Dictionary<string,List<string>>> _s = new Dictionary<string, Dictionary<string, List<string>>>();
+            private readonly Dictionary<string,Dictionary<string,List<string>>> tzt = new Dictionary<string, Dictionary<string, List<string>>>();
             internal void Add(string network, string timezone, string show)
             {
-                if (!this._s.ContainsKey(network)) this._s.Add(network,new Dictionary<string, List<string>>());
-                Dictionary<string, List<string>> snet = this._s[network];
+                if (!this.tzt.ContainsKey(network)) this.tzt.Add(network,new Dictionary<string, List<string>>());
+                Dictionary<string, List<string>> snet = this.tzt[network];
 
                 if (!snet.ContainsKey(timezone)) snet.Add(timezone , new List<string>());
                 List<string> snettz = snet[timezone];
@@ -3828,7 +3837,7 @@ namespace TVRename
                 sb.AppendLine("***********************************");
                 sb.AppendLine("****Timezone Comparison       *****");
                 sb.AppendLine("***********************************");
-                foreach (KeyValuePair<string, Dictionary<string, List<string>>> kvp in this._s)
+                foreach (KeyValuePair<string, Dictionary<string, List<string>>> kvp in this.tzt)
                 {
                     foreach (KeyValuePair<string, List<string>> kvp2 in kvp.Value)
                     {

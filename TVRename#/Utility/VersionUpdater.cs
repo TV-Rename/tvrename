@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
 namespace TVRename
@@ -10,7 +11,7 @@ namespace TVRename
     {
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static UpdateVersion CheckForUpdates()
+        public static async Task<UpdateVersion> CheckForUpdatesAsync()
         {
             const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
             UpdateVersion currentVersion;
@@ -47,8 +48,8 @@ namespace TVRename
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent",
                     "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-                string response = client.DownloadString(GITHUB_RELEASES_API_URL);
-                JArray gitHubInfo = JArray.Parse(response);
+                Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
+                JArray gitHubInfo = JArray.Parse(await response);
 
                 foreach (JObject gitHubReleaseJSON in gitHubInfo.Children<JObject>())
                 {
@@ -204,7 +205,7 @@ public class UpdateVersion : IComparable
     {
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("************************");
-        sb.AppendLine("**New Update Available**");
+        sb.AppendLine("* New Update Available *");
         sb.AppendLine("************************");
         sb.AppendLine($"A new verion is available: {ToString()} since {ReleaseDate}");
         sb.AppendLine($"please download from {DownloadUrl}");

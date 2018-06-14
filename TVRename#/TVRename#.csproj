@@ -179,6 +179,7 @@
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
+    <Compile Include="TheTVDB\TVSource.cs" />
     <Compile Include="TheTVDB\TvDbTokenProvider.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BullkAddManager.cs" />
@@ -415,6 +416,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DupEpFinder.resx">
       <DependentUpon>DupEpFinder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ShowSummary.resx">
+      <DependentUpon>ShowSummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\UpdateNotification.resx">
       <DependentUpon>UpdateNotification.cs</DependentUpon>
