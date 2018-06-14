@@ -27,12 +27,12 @@ namespace TVRename
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = this.ActionList.Count + 2;
+            int c = ActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct);            
-            foreach (Item action1 in this.ActionList)
+            foreach (Item action1 in ActionList)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
@@ -63,10 +63,10 @@ namespace TVRename
             }
 
             foreach (Item i in toRemove)
-                this.ActionList.Remove(i);
+                ActionList.Remove(i);
 
             foreach (Item action in newList)
-                this.ActionList.Add(action);
+                ActionList.Add(action);
 
             prog.Invoke(totPct);
 

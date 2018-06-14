@@ -12,10 +12,10 @@ namespace TVRename.Forms
         {
             this.doc = doc;
             InitializeComponent();
-            this.clbGenre.Items.AddRange(doc.Library.getGenres().Cast<object>().ToArray());
-            this.cmbNetwork.Items.AddRange(doc.Library.getNetworks().Cast<object>().ToArray());
-            this.cmbShowStatus.Items.AddRange(doc.Library.getStatuses().Cast<object>().ToArray());
-            this.cmbRating.Items.AddRange(doc.Library.GetContentRatings().Cast<object>().ToArray());
+            clbGenre.Items.AddRange(doc.Library.getGenres().Cast<object>().ToArray());
+            cmbNetwork.Items.AddRange(doc.Library.getNetworks().Cast<object>().ToArray());
+            cmbShowStatus.Items.AddRange(doc.Library.getStatuses().Cast<object>().ToArray());
+            cmbRating.Items.AddRange(doc.Library.GetContentRatings().Cast<object>().ToArray());
 
             setButtonStates();
         }
@@ -68,15 +68,15 @@ namespace TVRename.Forms
                 filter.Genres.Add(genre);
             }
 
-            this.doc.SetDirty();
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            doc.SetDirty();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void bnReset_Click(object sender, EventArgs e)

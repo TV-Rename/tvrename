@@ -32,51 +32,51 @@ namespace TVRename
 
         public MyListView()
         {
-            this._keyCheck = false;
-            this._checkEnable = true;
-            this._onMouseDown = false;
-            this._menuCheck = false;
+            _keyCheck = false;
+            _checkEnable = true;
+            _onMouseDown = false;
+            _menuCheck = false;
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            this._onMouseDown = true;
+            _onMouseDown = true;
             base.OnMouseDown(e);
         }
 
         protected override void OnItemSelectionChanged(ListViewItemSelectionChangedEventArgs e)
         {
-            if (this._onMouseDown)
-                this._checkEnable = false;
+            if (_onMouseDown)
+                _checkEnable = false;
             base.OnItemSelectionChanged(e);
         }
 
         protected override void OnItemCheck(ItemCheckEventArgs ice)
         {
-            if (!this._menuCheck && !this._keyCheck && (false == this._checkEnable)) //  || (!_keyCheck && _checkEnable && SelectedItems->Count > 1)
+            if (!_menuCheck && !_keyCheck && (false == _checkEnable)) //  || (!_keyCheck && _checkEnable && SelectedItems->Count > 1)
             {
                 ice.NewValue = ice.CurrentValue;
                 return;
             }
             base.OnItemCheck(ice);
-            if (this.SelectedItems.Count == 1)
+            if (SelectedItems.Count == 1)
             {
-                this.Items[this.SelectedIndices[0]].Selected = false;
-                this.Items[ice.Index].Selected = true;
+                Items[SelectedIndices[0]].Selected = false;
+                Items[ice.Index].Selected = true;
             }
         }
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            this._checkEnable = true;
-            this._onMouseDown = false;
+            _checkEnable = true;
+            _onMouseDown = false;
             base.OnMouseUp(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
-                this._keyCheck = true;
+                _keyCheck = true;
             else
                 base.OnKeyDown(e);
         }
@@ -84,7 +84,7 @@ namespace TVRename
         protected override void OnKeyUp(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
-                this._keyCheck = false;
+                _keyCheck = false;
         }
 
         // The 'TopItem' function doesn't work in a ListView if groups are enabled. This is meant to be a workaround.
@@ -96,14 +96,14 @@ namespace TVRename
 
         public int GetScrollVerticalPos()
         {
-            return NativeMethods.GetScrollPos(this.Handle, SB_VERT);
+            return NativeMethods.GetScrollPos(Handle, SB_VERT);
         }
 
         public void SetScrollVerticalPos(int position)
         {
-            var currentPos = NativeMethods.GetScrollPos(this.Handle, SB_VERT);
+            var currentPos = NativeMethods.GetScrollPos(Handle, SB_VERT);
             var delta = -(currentPos - position);
-            NativeMethods.SendMessage(this.Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
+            NativeMethods.SendMessage(Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
         }
     }
     internal static partial class NativeMethods
@@ -115,7 +115,7 @@ namespace TVRename
         internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         // MAH: Added in support of the Filter TextBox Button
-        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        [DllImport("user32.dll")]
         internal static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
     }
 }

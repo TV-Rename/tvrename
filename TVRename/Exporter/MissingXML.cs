@@ -40,7 +40,7 @@ namespace TVRename
                     XMLHelper.WriteAttributeToXML(writer,"Version","2.1");
                     writer.WriteStartElement("MissingItems");
 
-                    foreach (Item action in this.TheActionList)
+                    foreach (Item action in TheActionList)
                     {
                         if (!(action is ItemMissing)) continue;
 

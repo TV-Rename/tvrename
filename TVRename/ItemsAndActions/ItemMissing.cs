@@ -19,17 +19,17 @@ namespace TVRename
 
         public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder, string expectedFilenameNoExt)
         {
-            this.Episode = pe;
-            this.TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + expectedFilenameNoExt;
-            this.folder = whereItShouldBeFolder;
-            this.Filename = expectedFilenameNoExt;
+            Episode = pe;
+            TheFileNoExt = whereItShouldBeFolder + System.IO.Path.DirectorySeparatorChar + expectedFilenameNoExt;
+            folder = whereItShouldBeFolder;
+            Filename = expectedFilenameNoExt;
         }
 
         #region Item Members
 
         public override bool SameAs(Item o)
         {
-            return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, this.TheFileNoExt) == 0);
+            return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, TheFileNoExt) == 0);
         }
 
         public override int Compare(Item o)
@@ -41,17 +41,17 @@ namespace TVRename
                 return 0;
             }
 
-            if (!this.Episode.SI.ShowName.Equals(miss.Episode.SI.ShowName))
+            if (!Episode.SI.ShowName.Equals(miss.Episode.SI.ShowName))
             {
-                return this.Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
+                return Episode.SI.ShowName.CompareTo(miss.Episode.SI.ShowName);
             }
 
-            if (!this.Episode.AppropriateSeasonNumber.Equals(miss.Episode.AppropriateSeasonNumber))
+            if (!Episode.AppropriateSeasonNumber.Equals(miss.Episode.AppropriateSeasonNumber))
             {
-                return this.Episode.AppropriateSeasonNumber.CompareTo(miss.Episode.AppropriateSeasonNumber);
+                return Episode.AppropriateSeasonNumber.CompareTo(miss.Episode.AppropriateSeasonNumber);
             }
 
-            return this.Episode.AppropriateEpNum.CompareTo(miss.Episode.AppropriateEpNum);
+            return Episode.AppropriateEpNum.CompareTo(miss.Episode.AppropriateEpNum);
         }
 
         #endregion
@@ -62,9 +62,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.TheFileNoExt))
+                if (string.IsNullOrEmpty(TheFileNoExt))
                     return null;
-                return new IgnoreItem(this.TheFileNoExt);
+                return new IgnoreItem(TheFileNoExt);
             }
         }
 
@@ -73,20 +73,20 @@ namespace TVRename
             get
             {
                 ListViewItem lvi = new ListViewItem {
-                                                        Text = this.Episode.SI.ShowName
+                                                        Text = Episode.SI.ShowName
                                                     };
 
-                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(this.Episode.NumsAsString());
+                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                lvi.SubItems.Add(Episode.NumsAsString());
 
-                DateTime? dt = this.Episode.GetAirDateDT(true);
+                DateTime? dt = Episode.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.folder);
-                lvi.SubItems.Add(this.Filename);
+                lvi.SubItems.Add(folder);
+                lvi.SubItems.Add(Filename);
 
                 lvi.Tag = this;
 
@@ -100,9 +100,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.TheFileNoExt))
+                if (string.IsNullOrEmpty(TheFileNoExt))
                     return null;
-                return new FileInfo(this.TheFileNoExt).DirectoryName;
+                return new FileInfo(TheFileNoExt).DirectoryName;
             }
         }
 

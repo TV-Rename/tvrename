@@ -19,9 +19,9 @@ namespace TVRename
 
         public DirCacheEntry(FileInfo f)
         {
-            this.TheFile = f;
-            this.SimplifiedFullName = Helpers.SimplifyName(f.FullName);
-            this.Length = f.Length;
+            TheFile = f;
+            SimplifiedFullName = Helpers.SimplifyName(f.FullName);
+            Length = f.Length;
         }
     }
 }

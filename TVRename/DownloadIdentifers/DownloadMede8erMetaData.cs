@@ -28,18 +28,18 @@ namespace TVRename
                 bool needUpdate = !tvshowxml.Exists ||
                                   (si.TheSeries().Srv_LastUpdated > TimeZone.Epoch(tvshowxml.LastWriteTime));
 
-                if ((forceRefresh || needUpdate) && (!this.doneFiles.Contains(tvshowxml.FullName)))
+                if ((forceRefresh || needUpdate) && (!doneFiles.Contains(tvshowxml.FullName)))
                 {
-                    this.doneFiles.Add(tvshowxml.FullName);
+                    doneFiles.Add(tvshowxml.FullName);
                     TheActionList.Add(new ActionMede8erXML(tvshowxml, si));
                 }
 
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
                 FileInfo viewxml = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "View.xml");
-                if ((!viewxml.Exists) && (!this.doneFiles.Contains(viewxml.FullName)))
+                if ((!viewxml.Exists) && (!doneFiles.Contains(viewxml.FullName)))
                 {
-                    this.doneFiles.Add(viewxml.FullName);
+                    doneFiles.Add(viewxml.FullName);
                     TheActionList.Add(new ActionMede8erViewXML(viewxml, si));
                 }
 
@@ -86,7 +86,7 @@ namespace TVRename
 
         public sealed override void reset()
         {
-            this.doneFiles = new List<string>();
+            doneFiles = new List<string>();
         }
 
     }

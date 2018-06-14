@@ -10,7 +10,7 @@ namespace TVRename
     {
         private readonly TVDoc mDoc;
         private readonly UI mUI;
-        private List<System.IO.FileSystemWatcher> Watchers = new List<System.IO.FileSystemWatcher>();
+        private List<FileSystemWatcher> Watchers = new List<FileSystemWatcher>();
         private System.Timers.Timer mScanDelayTimer;
         private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -69,7 +69,7 @@ namespace TVRename
         void mScanDelayTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             mScanDelayTimer.Stop();
-            this.StopMonitor();
+            StopMonitor();
 
             //We only wish to do a scan now if we are not already undertaking one
             if (!mDoc.CurrentlyBusy)
@@ -80,13 +80,13 @@ namespace TVRename
                 {
                     switch (TVSettings.Instance.MonitoredFoldersScanType)
                     {
-                        case TVRename.TVSettings.ScanType.Full:
+                        case TVSettings.ScanType.Full:
                             mUI.Invoke(mUI.AFMFullScan);
                             break;
-                        case TVRename.TVSettings.ScanType.Recent:
+                        case TVSettings.ScanType.Recent:
                             mUI.Invoke(mUI.AFMRecentScan);
                             break;
-                        case TVRename.TVSettings.ScanType.Quick:
+                        case TVSettings.ScanType.Quick:
                             mUI.Invoke(mUI.AFMQuickScan);
                             break;
                     }
@@ -100,7 +100,7 @@ namespace TVRename
             {
                logger.Info("Auto scan cancelled as the system is already busy");
             }
-            this.StartMonitor();
+            StartMonitor();
         }
 
         public void StopMonitor()
@@ -116,7 +116,7 @@ namespace TVRename
         public void Dispose()
         {
             // ReSharper disable once UseNullPropagation
-            if (this.mScanDelayTimer != null) this.mScanDelayTimer.Dispose();
+            if (mScanDelayTimer != null) mScanDelayTimer.Dispose();
         }
     }
 }

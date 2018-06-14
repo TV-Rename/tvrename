@@ -28,7 +28,7 @@ namespace TVRename
                 {
                     file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
 
-                    foreach (Item action in this.TheActionList)
+                    foreach (Item action in TheActionList)
                     {
                         if (action is ItemMissing im)
                         {

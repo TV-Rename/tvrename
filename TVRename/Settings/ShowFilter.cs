@@ -42,7 +42,7 @@ namespace TVRename
                     doAnyGenresMatch = false;
                 } else                 foreach(String showGenre in show.Genres)
                 {
-                    foreach (String filterGenre in this.Genres)
+                    foreach (String filterGenre in Genres)
                         if (showGenre == filterGenre) doAnyGenresMatch = true;
                 }
             }

@@ -30,65 +30,65 @@ namespace TVRename
 
         public ScanProgress(bool mediaLib, bool searchLocal, bool downloading, bool rss)
         {
-            this.Ready = false;
-            this.Finished = false;
-            this.InitializeComponent();
+            Ready = false;
+            Finished = false;
+            InitializeComponent();
 
-            this.lbMediaLibrary.Enabled = mediaLib;
-            this.lbSearchLocally.Enabled = searchLocal;
-            this.lbCheckDownloading.Enabled = downloading;
-            this.lbSearchRSS.Enabled = rss;
+            lbMediaLibrary.Enabled = mediaLib;
+            lbSearchLocally.Enabled = searchLocal;
+            lbCheckDownloading.Enabled = downloading;
+            lbSearchRSS.Enabled = rss;
         }
 
         public void UpdateProg()
         {
-            this.pbMediaLib.Value = ((this.pctMediaLib < 0) ? 0 : ((this.pctMediaLib > 100) ? 100 : this.pctMediaLib));
-            this.pbMediaLib.Update();
-            this.pbLocalSearch.Value = ((this.pctLocalSearch < 0) ? 0 : ((this.pctLocalSearch > 100) ? 100 : this.pctLocalSearch));
-            this.pbLocalSearch.Update();
-            this.pbRSS.Value = ((this.pctRSS < 0) ? 0 : ((this.pctRSS > 100) ? 100 : this.pctRSS));
-            this.pbRSS.Update();
-            this.pbDownloading.Value = ((this.pctuTorrent < 0) ? 0 : ((this.pctuTorrent > 100) ? 100 : this.pctuTorrent));
-            this.pbDownloading.Update();
+            pbMediaLib.Value = ((pctMediaLib < 0) ? 0 : ((pctMediaLib > 100) ? 100 : pctMediaLib));
+            pbMediaLib.Update();
+            pbLocalSearch.Value = ((pctLocalSearch < 0) ? 0 : ((pctLocalSearch > 100) ? 100 : pctLocalSearch));
+            pbLocalSearch.Update();
+            pbRSS.Value = ((pctRSS < 0) ? 0 : ((pctRSS > 100) ? 100 : pctRSS));
+            pbRSS.Update();
+            pbDownloading.Value = ((pctuTorrent < 0) ? 0 : ((pctuTorrent > 100) ? 100 : pctuTorrent));
+            pbDownloading.Update();
         }
 
         public void MediaLibProg(int p)
         {
-            this.pctMediaLib = p;
+            pctMediaLib = p;
         }
 
         public void LocalSearchProg(int p)
         {
-            this.pctLocalSearch = p;
+            pctLocalSearch = p;
         }
 
         public void RSSProg(int p)
         {
-            this.pctRSS = p;
+            pctRSS = p;
         }
 
         public void DownloadingProg(int p)
         {
-            this.pctuTorrent = p;
+            pctuTorrent = p;
         }
 
         private void ScanProgress_Load(object sender, System.EventArgs e)
         {
-            this.Ready = true;
-            this.timer1.Start();
+            Ready = true;
+            timer1.Start();
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            this.UpdateProg();
-            this.timer1.Start();
-            if (this.Finished)
-                this.Close();
+            UpdateProg();
+            timer1.Start();
+            if (Finished)
+                Close();
         }
 
         public void Done()
         {
-            this.Finished = true;
+            Finished = true;
         }
     }
 }

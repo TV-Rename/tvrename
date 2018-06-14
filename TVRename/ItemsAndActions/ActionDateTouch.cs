@@ -22,35 +22,35 @@ namespace TVRename
 
         public ActionDateTouch(FileInfo f, ProcessedEpisode pe, DateTime date)
         {
-            this.Episode = pe;
-            this.WhereFile = f;
-            this.updateTime = date;
+            Episode = pe;
+            WhereFile = f;
+            updateTime = date;
         }
 
         public ActionDateTouch(DirectoryInfo dir, Season sn, DateTime date)
         {
-            this.SN = sn;
-            this.WhereDirectory = dir;
-            this.updateTime = date;
+            SN = sn;
+            WhereDirectory = dir;
+            updateTime = date;
 
         }
 
         public ActionDateTouch(DirectoryInfo dir, ShowItem si, DateTime date)
         {
-            this.SI = si;
-            this.WhereDirectory = dir;
-            this.updateTime = date;
+            SI = si;
+            WhereDirectory = dir;
+            updateTime = date;
 
         }
 
 
-        public override string Produces => this.WhereFile?.FullName?? this.WhereDirectory?.FullName;
+        public override string Produces => WhereFile?.FullName?? WhereDirectory?.FullName;
 
         #region Action Members
 
         public override string Name => "Update Timestamp";
 
-        public override string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
+        public override string ProgressText => WhereFile?.Name??WhereDirectory?.Name;
 
         public override long SizeOfWork => 100;
 
@@ -58,28 +58,28 @@ namespace TVRename
         {
             try
             {
-                if (this.WhereFile != null)
+                if (WhereFile != null)
                 {
-                    bool priorFileReadonly = this.WhereFile.IsReadOnly;
-                    if (priorFileReadonly) this.WhereFile.IsReadOnly = false;
-                    System.IO.File.SetLastWriteTimeUtc(this.WhereFile.FullName, this.updateTime);
-                    if (priorFileReadonly) this.WhereFile.IsReadOnly = true;
+                    bool priorFileReadonly = WhereFile.IsReadOnly;
+                    if (priorFileReadonly) WhereFile.IsReadOnly = false;
+                    System.IO.File.SetLastWriteTimeUtc(WhereFile.FullName, updateTime);
+                    if (priorFileReadonly) WhereFile.IsReadOnly = true;
 
                 }
-                if (this.WhereDirectory != null)
+                if (WhereDirectory != null)
                 {
-                    System.IO.Directory.SetLastWriteTimeUtc(this.WhereDirectory.FullName, this.updateTime );
+                    System.IO.Directory.SetLastWriteTimeUtc(WhereDirectory.FullName, updateTime );
                 }
             }
             catch (Exception e)
             {
-                this.ErrorText = e.Message;
-                this.Error = true;
-                this.Done = true;
+                ErrorText = e.Message;
+                Error = true;
+                Done = true;
                 return false;
             }
 
-            this.Done = true;
+            Done = true;
             return true;
         }
 
@@ -89,20 +89,20 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionDateTouch) && ((o as ActionDateTouch).WhereFile == this.WhereFile) && ((o as ActionDateTouch).WhereDirectory == this.WhereDirectory);
+            return (o is ActionDateTouch) && ((o as ActionDateTouch).WhereFile == WhereFile) && ((o as ActionDateTouch).WhereDirectory == WhereDirectory);
         }
 
         public override int Compare(Item o)
         {
             ActionDateTouch nfo = o as ActionDateTouch;
 
-            if (this.Episode == null)
+            if (Episode == null)
                 return 1;
             if (nfo?.Episode == null)
                 return -1;
-            if (this.WhereFile != null)
-                return String.Compare((this.WhereFile.FullName + this.Episode.Name), nfo.WhereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
-            return String.Compare((this.WhereDirectory.FullName + this.Episode.Name), nfo.WhereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            if (WhereFile != null)
+                return String.Compare((WhereFile.FullName + Episode.Name), nfo.WhereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return String.Compare((WhereDirectory.FullName + Episode.Name), nfo.WhereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion
@@ -113,9 +113,9 @@ namespace TVRename
         {
             get
             {
-                if (this.WhereFile == null)
+                if (WhereFile == null)
                     return null;
-                return new IgnoreItem(this.WhereFile.FullName);
+                return new IgnoreItem(WhereFile.FullName);
             }
         }
 
@@ -126,37 +126,37 @@ namespace TVRename
 
                 ListViewItem lvi = new ListViewItem();
 
-                if (this.Episode != null)
+                if (Episode != null)
                 {
-                    lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
+                    lvi.Text = Episode.SI.ShowName;
+                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                    lvi.SubItems.Add(Episode.NumsAsString());
 
                 }
-                else if (this.SN != null)
+                else if (SN != null)
                 {
-                    lvi.Text = this.SN.TheSeries.Name;
-                    lvi.SubItems.Add(this.SN.SeasonNumber.ToString());
+                    lvi.Text = SN.TheSeries.Name;
+                    lvi.SubItems.Add(SN.SeasonNumber.ToString());
                     lvi.SubItems.Add("");
 
                 }
-                else if (this.SI != null)
+                else if (SI != null)
                 {
-                    lvi.Text = this.SI.ShowName;
+                    lvi.Text = SI.ShowName;
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");
 
                 }
 
-                DateTime dt = this.updateTime;
+                DateTime dt = updateTime;
 
                 if ((dt.CompareTo(DateTime.MaxValue)) != 0)
                     lvi.SubItems.Add(dt.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.WhereFile?.DirectoryName??this.WhereDirectory?.FullName);
-                lvi.SubItems.Add(this.WhereFile?.Name??this.WhereDirectory?.Name);
+                lvi.SubItems.Add(WhereFile?.DirectoryName??WhereDirectory?.FullName);
+                lvi.SubItems.Add(WhereFile?.Name??WhereDirectory?.Name);
 
                 lvi.Tag = this;
 
@@ -165,7 +165,7 @@ namespace TVRename
             }
         }
 
-        public override string TargetFolder => this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
+        public override string TargetFolder => WhereFile?.DirectoryName??WhereDirectory?.Name;
 
         public override string ScanListViewGroup => "lvgUpdateFileDates";
 

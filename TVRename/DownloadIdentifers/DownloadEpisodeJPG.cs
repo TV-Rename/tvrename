@@ -11,7 +11,7 @@ namespace TVRename
 
         public DownloadEpisodeJPG() 
         {
-            this.reset();
+            reset();
         }
 
         public override DownloadType GetDownloadType()

@@ -23,7 +23,7 @@ namespace TVRename
         {
             if (file.FullName.EndsWith(".nfo", true, new CultureInfo("en")))
             {
-                DownloadKodiMetaData.doneNFO.Add(file.FullName);
+                doneNFO.Add(file.FullName);
             }
             base.notifyComplete(file);
         }
@@ -41,12 +41,12 @@ namespace TVRename
                     // was it written before we fixed the bug in <episodeguideurl> ?
                                   (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
 
-                bool alreadyOnTheList = DownloadKodiMetaData.doneNFO.Contains(tvshownfo.FullName);
+                bool alreadyOnTheList = doneNFO.Contains(tvshownfo.FullName);
 
                 if ((forceRefresh || needUpdate) && !alreadyOnTheList)
                 {
                     TheActionList.Add(new ActionNFO(tvshownfo, si));
-                    DownloadKodiMetaData.doneNFO.Add(tvshownfo.FullName);
+                    doneNFO.Add(tvshownfo.FullName);
                 }
                 return TheActionList;
 
@@ -66,7 +66,7 @@ namespace TVRename
                 if (!nfo.Exists || (dbep.Srv_LastUpdated > TimeZone.Epoch(nfo.LastWriteTime)) || forceRefresh)
                 {
                     //If we do not already have plans to put the file into place
-                    if (!(DownloadKodiMetaData.doneNFO.Contains(nfo.FullName)))
+                    if (!(doneNFO.Contains(nfo.FullName)))
                     {
                         TheActionList.Add(new ActionNFO(nfo, dbep));
                         doneNFO.Add(nfo.FullName);

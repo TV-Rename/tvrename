@@ -26,10 +26,10 @@ namespace TVRename
 
         public Season(SeriesInfo theSeries, int number, int seasonid)
         {
-            this.TheSeries = theSeries;
-            this.SeasonNumber = number;
-            this.SeasonID = seasonid;
-            this.Episodes = new System.Collections.Generic.List<Episode>();
+            TheSeries = theSeries;
+            SeasonNumber = number;
+            SeasonID = seasonid;
+            Episodes = new System.Collections.Generic.List<Episode>();
         }
 
         public SeasonStatus Status(TimeZone tz)
@@ -61,17 +61,17 @@ namespace TVRename
             }
         }
 
-        private bool HasEpisodes => this.Episodes != null && this.Episodes.Count > 0;
+        private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
 
         private bool HasUnairedEpisodes(TimeZone tz)
         {
             if (HasEpisodes)
             {
-                foreach (Episode e in this.Episodes)
+                foreach (Episode e in Episodes)
                 {
                     if (e.GetAirDateDT(tz).HasValue)
                     {
-                        if (e.GetAirDateDT(tz).Value > System.DateTime.Now)
+                        if (e.GetAirDateDT(tz).Value > DateTime.Now)
                             return true;
                     }
                 }
@@ -84,11 +84,11 @@ namespace TVRename
         {
             if (HasEpisodes)
             {
-                foreach (Episode e in this.Episodes)
+                foreach (Episode e in Episodes)
                 {
                     if (e.GetAirDateDT(tz).HasValue)
                     {
-                        if (e.GetAirDateDT(tz).Value < System.DateTime.Now)
+                        if (e.GetAirDateDT(tz).Value < DateTime.Now)
                             return true;
                     }
                 }
@@ -100,7 +100,7 @@ namespace TVRename
         public DateTime? LastAiredDate()
         {
             DateTime? returnValue = null;
-            foreach (Episode a in this.Episodes)
+            foreach (Episode a in Episodes)
             {
                 DateTime? episodeAirDate = a.FirstAired;
 
@@ -123,35 +123,35 @@ namespace TVRename
 
         public string GetBannerPath()
         {
-            return this.TheSeries.GetSeasonBannerPath(this.SeasonNumber);
+            return TheSeries.GetSeasonBannerPath(SeasonNumber);
         }
 
         public string GetWideBannerPath()
         {
-            return this.TheSeries.GetSeasonWideBannerPath(this.SeasonNumber);
+            return TheSeries.GetSeasonWideBannerPath(SeasonNumber);
         }
 
         public void AddUpdateEpisode(Episode newEpisode)
         {
             bool added = false;
-            for (int i = 0; i < this.Episodes.Count; i++)
+            for (int i = 0; i < Episodes.Count; i++)
             {
-                Episode ep = this.Episodes[i];
+                Episode ep = Episodes[i];
                 if (ep.EpisodeID == newEpisode.EpisodeID)
                 {
-                    this.Episodes[i] = newEpisode;
+                    Episodes[i] = newEpisode;
                     added = true;
                     break;
                 }
             }
 
             if (!added)
-                this.Episodes.Add(newEpisode);
+                Episodes.Add(newEpisode);
         }
 
         public bool ContainsEpisode(int episodeNumber, bool dvdOrder)
         {
-            foreach (Episode ep in this.Episodes)
+            foreach (Episode ep in Episodes)
             {
                 if (dvdOrder && ep.DVDEpNum == episodeNumber) return true;
                 if (!dvdOrder && ep.AiredEpNum == episodeNumber) return true;
@@ -163,12 +163,12 @@ namespace TVRename
         public void RemoveEpisode(int episodeId)
         {
             Episode ep = GetEpisode(episodeId);
-            if (ep != null) this.Episodes.Remove(ep);
+            if (ep != null) Episodes.Remove(ep);
         }
 
         public Episode GetEpisode(int episodeId)
         {
-            foreach (Episode ep in this.Episodes)
+            foreach (Episode ep in Episodes)
             {
                 if (ep.EpisodeID == episodeId) return ep;
             }

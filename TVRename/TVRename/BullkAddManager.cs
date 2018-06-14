@@ -18,8 +18,8 @@ namespace TVRename
 
         public BulkAddManager(TVDoc doc)
         {
-            this.AddItems = new FolderMonitorEntryList();
-            this.mDoc = doc;
+            AddItems = new FolderMonitorEntryList();
+            mDoc = doc;
         }
 
         public static void GuessShowItem(FolderMonitorEntry ai, ShowLibrary library)
@@ -72,7 +72,7 @@ namespace TVRename
             {
                 subDirs = di.GetDirectories();
                 // keep in sync with ProcessAddItems, etc.
-                foreach (string sw in this.mDoc.Library.SeasonWords())
+                foreach (string sw in mDoc.Library.SeasonWords())
                 {
                     foreach (DirectoryInfo subDir in subDirs)
                     {
@@ -106,7 +106,7 @@ namespace TVRename
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
-            foreach (ShowItem si in this.mDoc.Library.GetShowItems())
+            foreach (ShowItem si in mDoc.Library.GetShowItems())
             {
                 if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) &&
                     theFolder.IsSubfolderOf(si.AutoAdd_FolderBase))
@@ -161,10 +161,10 @@ namespace TVRename
 
                     // ....its good!
                     FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName, padNumber);
-                    this.AddItems.Add(ai);
+                    AddItems.Add(ai);
                     Logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
-                        GuessShowItem(ai,this.mDoc.Library);
+                        GuessShowItem(ai,mDoc.Library);
                 }
 
             }
@@ -210,18 +210,18 @@ namespace TVRename
 
         public void AddAllToMyShows()
         {
-            foreach (FolderMonitorEntry ai in this.AddItems)
+            foreach (FolderMonitorEntry ai in AddItems)
             {
                 if (ai.CodeUnknown)
                     continue; // skip
 
                 // see if there is a matching show item
-                ShowItem found = this.mDoc.Library.ShowItem(ai.TVDBCode);
+                ShowItem found = mDoc.Library.ShowItem(ai.TVDBCode);
                 if (found == null)
                 {
                     // need to add a new showitem
                     found = new ShowItem(ai.TVDBCode);
-                    this.mDoc.Library.Add(found);
+                    mDoc.Library.Add(found);
                 }
 
                 found.AutoAdd_FolderBase = ai.Folder;
@@ -229,13 +229,13 @@ namespace TVRename
 
                 found.AutoAdd_SeasonFolderName = ai.SeasonFolderName;
                 found.PadSeasonToTwoDigits = ai.PadSeasonToTwoDigits;
-                this.mDoc.Stats().AutoAddedShows++;
+                mDoc.Stats().AutoAddedShows++;
             }
 
-            this.mDoc.Library.GenDict();
-            this.mDoc.Dirty();
-            this.AddItems.Clear();
-            this.mDoc.ExportShowInfo();
+            mDoc.Library.GenDict();
+            mDoc.Dirty();
+            AddItems.Clear();
+            mDoc.ExportShowInfo();
         }
 
 
@@ -248,7 +248,7 @@ namespace TVRename
             Logger.Info("*********************************************************************");
             Logger.Info("*Starting to find folders that contain files, but are not in library*");
 
-            this.AddItems = new FolderMonitorEntryList();
+            AddItems = new FolderMonitorEntryList();
 
             int c = TVSettings.Instance.LibraryFolders.Count;
 

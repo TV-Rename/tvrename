@@ -49,7 +49,7 @@ namespace TVRename
             JObject jsonResponse = HTTPHelper.JsonHTTPPOSTRequest($"{TVDB_API_URL}/login", request);
 
             UpdateToken((string)jsonResponse["token"]);
-            logger.Info("Performed login at " + System.DateTime.UtcNow);
+            logger.Info("Performed login at " + DateTime.UtcNow);
             logger.Info("New Token " + lastKnownToken);
         }
 
@@ -59,7 +59,7 @@ namespace TVRename
             JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest($"{TVDB_API_URL}/refresh_token", null, lastKnownToken);
 
             UpdateToken((string)jsonResponse["token"]);
-            logger.Info("refreshed token at " + System.DateTime.UtcNow);
+            logger.Info("refreshed token at " + DateTime.UtcNow);
             logger.Info("New Token " + lastKnownToken);
         }
 

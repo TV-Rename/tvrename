@@ -19,10 +19,10 @@ namespace TVRename.App
         /// </summary>
         protected override void OnCreateSplashScreen()
         {
-            this.SplashScreen = new TVRenameSplash();
+            SplashScreen = new TVRenameSplash();
 
-            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
-            if (clargs.Hide) this.SplashScreen.Visible  = false;
+            CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
+            if (clargs.Hide) SplashScreen.Visible  = false;
                 
         }
 
@@ -32,14 +32,14 @@ namespace TVRename.App
         /// </summary>
         protected override void OnCreateMainForm()
         {
-            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
+            CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
             if (clargs.Hide)
-                this.SplashScreen.SafeInvoke(
-                    () => ((TVRenameSplash)this.SplashScreen).Visible = false,true);
+                SplashScreen.SafeInvoke(
+                    () => ((TVRenameSplash)SplashScreen).Visible = false,true);
 
             // Update splash screen
-            this.SplashScreen.SafeInvoke(
-                () => ((TVRenameSplash) this.SplashScreen).UpdateStatus("Initializing"), true);
+            SplashScreen.SafeInvoke(
+                () => ((TVRenameSplash) SplashScreen).UpdateStatus("Initializing"), true);
 
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
@@ -114,12 +114,12 @@ namespace TVRename.App
             ConvertSeriesTimeZones(doc, TheTVDB.Instance);
 
             // Show user interface
-            UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen, !clargs.Unattended && !clargs.Hide);
+            UI ui = new UI(doc, (TVRenameSplash)SplashScreen, !clargs.Unattended && !clargs.Hide);
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
             RemoteClient.Bind(ui, doc);
 
-            this.MainForm = ui;
+            MainForm = ui;
         }
 
         private static void ConvertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)

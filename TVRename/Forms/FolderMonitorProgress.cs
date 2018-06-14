@@ -17,31 +17,31 @@ namespace TVRename
 
         public FolderMonitorProgress(FolderMonitor thefm)
         {
-            this.mFM = thefm;
-            this.InitializeComponent();
+            mFM = thefm;
+            InitializeComponent();
             timer1_Tick(null, null); // force immediate initial update
         }
 
         public void bnCancel_Click(object sender, System.EventArgs e)
         {
-            this.DialogResult = DialogResult.Abort;
-            this.mFM.FMPStopNow = true;
+            DialogResult = DialogResult.Abort;
+            mFM.FMPStopNow = true;
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            if (this.mFM == null)
+            if (mFM == null)
                 return;
 
             timer1.Stop();
 
-            this.BringToFront();
+            BringToFront();
 
-            this.pbProgress.Value = this.mFM.FMPPercent;
-            this.lbMessage.Text = this.mFM.FMPUpto;
+            pbProgress.Value = mFM.FMPPercent;
+            lbMessage.Text = mFM.FMPUpto;
             
-            if (this.mFM.FMPStopNow)
-                this.Close();
+            if (mFM.FMPStopNow)
+                Close();
 
             timer1.Start();
 
@@ -49,7 +49,7 @@ namespace TVRename
 
         private void FolderMonitorProgress_Load(object sender, System.EventArgs e)
         {
-            this.Ready = true;
+            Ready = true;
         }
     }
 }

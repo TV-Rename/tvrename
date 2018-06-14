@@ -18,24 +18,24 @@ namespace TVRename
         public IgnoreItem(XmlReader r)
         {
             if (r.Name == "Ignore")
-                this.FileAndPath = r.ReadElementContentAsString();
+                FileAndPath = r.ReadElementContentAsString();
         }
 
         public IgnoreItem(string fileAndPath)
         {
-            this.FileAndPath = fileAndPath;
+            FileAndPath = fileAndPath;
         }
 
         public bool SameFileAs(IgnoreItem o)
         {
-            if (string.IsNullOrEmpty(this.FileAndPath) || string.IsNullOrEmpty(o?.FileAndPath))
+            if (string.IsNullOrEmpty(FileAndPath) || string.IsNullOrEmpty(o?.FileAndPath))
                 return false;
-            return this.FileAndPath == o.FileAndPath;
+            return FileAndPath == o.FileAndPath;
         }
 
         public void Write(XmlWriter writer)
         {
-            XMLHelper.WriteElementToXML(writer,"Ignore",this.FileAndPath);
+            XMLHelper.WriteElementToXML(writer,"Ignore",FileAndPath);
         }
     }
 }

@@ -32,61 +32,61 @@ namespace TVRename
 
         public AddEditShow(ShowItem si)
         {
-            this.mSI = si;
-            this.InitializeComponent();
+            mSI = si;
+            InitializeComponent();
 
-            this.cbTimeZone.BeginUpdate();
-            this.cbTimeZone.Items.Clear();
+            cbTimeZone.BeginUpdate();
+            cbTimeZone.Items.Clear();
 
             foreach (string s in TimeZone.ZoneNames())
-                this.cbTimeZone.Items.Add(s);
+                cbTimeZone.Items.Add(s);
 
-            this.cbTimeZone.EndUpdate();
-            this.cbTimeZone.Text = si.ShowTimeZone;
+            cbTimeZone.EndUpdate();
+            cbTimeZone.Text = si.ShowTimeZone;
 
-            this.mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
-            this.mTCCF.Dock = DockStyle.Fill;
+            mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
+            mTCCF.Dock = DockStyle.Fill;
             //mTCCF->SelectionChanged += gcnew System::EventHandler(this, &AddEditShow::lvMatches_ItemSelectionChanged);
 
-            this.pnlCF.SuspendLayout();
-            this.pnlCF.Controls.Add(this.mTCCF);
-            this.pnlCF.ResumeLayout();
+            pnlCF.SuspendLayout();
+            pnlCF.Controls.Add(mTCCF);
+            pnlCF.ResumeLayout();
 
-            this.chkCustomShowName.Checked = si.UseCustomShowName;
-            if (this.chkCustomShowName.Checked)
-                this.txtCustomShowName.Text = si.CustomShowName;
-            this.chkCustomShowName_CheckedChanged(null, null);
+            chkCustomShowName.Checked = si.UseCustomShowName;
+            if (chkCustomShowName.Checked)
+                txtCustomShowName.Text = si.CustomShowName;
+            chkCustomShowName_CheckedChanged(null, null);
 
-            this.cbSequentialMatching.Checked = si.UseSequentialMatch;
-            this.chkShowNextAirdate.Checked = si.ShowNextAirdate;
-            this.chkSpecialsCount.Checked = si.CountSpecials;
-            this.chkFolderPerSeason.Checked = si.AutoAdd_FolderPerSeason;
-            this.txtSeasonFolderName.Text = si.AutoAdd_SeasonFolderName;
-            this.txtBaseFolder.Text = si.AutoAdd_FolderBase;
-            this.chkAutoFolders.Checked = si.AutoAddNewSeasons;
-            this.chkFolderPerSeason_CheckedChanged(null, null);
+            cbSequentialMatching.Checked = si.UseSequentialMatch;
+            chkShowNextAirdate.Checked = si.ShowNextAirdate;
+            chkSpecialsCount.Checked = si.CountSpecials;
+            chkFolderPerSeason.Checked = si.AutoAdd_FolderPerSeason;
+            txtSeasonFolderName.Text = si.AutoAdd_SeasonFolderName;
+            txtBaseFolder.Text = si.AutoAdd_FolderBase;
+            chkAutoFolders.Checked = si.AutoAddNewSeasons;
+            chkFolderPerSeason_CheckedChanged(null, null);
 
-            this.cbDoRenaming.Checked = si.DoRename;
-            this.cbDoMissingCheck.Checked = si.DoMissingCheck;
-            this.cbDoMissingCheck_CheckedChanged(null, null);
+            cbDoRenaming.Checked = si.DoRename;
+            cbDoMissingCheck.Checked = si.DoMissingCheck;
+            cbDoMissingCheck_CheckedChanged(null, null);
 
-            this.chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
+            chkPadTwoDigits.Checked = si.PadSeasonToTwoDigits;
 
-            this.chkDVDOrder.Checked = si.DVDOrder;
-            this.cbIncludeFuture.Checked = si.ForceCheckFuture;
-            this.cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
+            chkDVDOrder.Checked = si.DVDOrder;
+            cbIncludeFuture.Checked = si.ForceCheckFuture;
+            cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
 
             bool first = true;
             si.IgnoreSeasons.Sort();
             foreach (int i in si.IgnoreSeasons)
             {
                 if (!first)
-                    this.txtIgnoreSeasons.Text += " ";
-                this.txtIgnoreSeasons.Text += i.ToString();
+                    txtIgnoreSeasons.Text += " ";
+                txtIgnoreSeasons.Text += i.ToString();
                 first = false;
             }
 
-            foreach (System.Collections.Generic.KeyValuePair<int, List<string>> kvp in si.ManualFolderLocations)
+            foreach (KeyValuePair<int, List<string>> kvp in si.ManualFolderLocations)
             {
                 foreach (string s in kvp.Value)
                 {
@@ -94,17 +94,17 @@ namespace TVRename
                     lvi.Text = kvp.Key.ToString();
                     lvi.SubItems.Add(s);
 
-                    this.lvSeasonFolders.Items.Add(lvi);
+                    lvSeasonFolders.Items.Add(lvi);
                 }
             }
-            this.lvSeasonFolders.Sort();
+            lvSeasonFolders.Sort();
 
-            this.txtSeasonNumber_TextChanged(null, null);
-            this.txtFolder_TextChanged(null, null);
+            txtSeasonNumber_TextChanged(null, null);
+            txtFolder_TextChanged(null, null);
 
-            this.ActiveControl = mTCCF; // set initial focus to the code entry/show finder control
+            ActiveControl = mTCCF; // set initial focus to the code entry/show finder control
 
-            foreach (string aliasName in this.mSI.AliasNames)
+            foreach (string aliasName in mSI.AliasNames)
             {
                 lbShowAlias.Items.Add(aliasName);
             }
@@ -115,29 +115,29 @@ namespace TVRename
             {
                 tl.AppendLine(s);
             }
-            this.txtTagList.Text = tl.ToString();
+            txtTagList.Text = tl.ToString();
 
             cbUseCustomSearch.Checked = si.UseCustomSearchURL && !String.IsNullOrWhiteSpace(si.CustomSearchURL);
             txtSearchURL.Text = si.CustomSearchURL ?? "";
             EnableDisableCustomSearch();
         }
 
-        private void buttonOK_Click(object sender, System.EventArgs e)
+        private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (!this.OKToClose())
+            if (!OKToClose())
             {
-                this.DialogResult = DialogResult.None;
+                DialogResult = DialogResult.None;
                 return;
             }
 
-            this.SetmSI();
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.Close();
+            SetmSI();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private bool OKToClose()
         {
-            if (!TheTVDB.Instance.HasSeries(this.mTCCF.SelectedCode()))
+            if (!TheTVDB.Instance.HasSeries(mTCCF.SelectedCode()))
             {
                 DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -150,153 +150,153 @@ namespace TVRename
 
         private void SetmSI()
         {
-            int code = this.mTCCF.SelectedCode();
+            int code = mTCCF.SelectedCode();
 
 
-            this.mSI.CustomShowName = this.txtCustomShowName.Text;
-            this.mSI.UseCustomShowName = this.chkCustomShowName.Checked;
-            this.mSI.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TVRename.TimeZone.DefaultTimeZone();
-            this.mSI.ShowNextAirdate = this.chkShowNextAirdate.Checked;
-            this.mSI.PadSeasonToTwoDigits = this.chkPadTwoDigits.Checked;
-            this.mSI.TVDBCode = code;
+            mSI.CustomShowName = txtCustomShowName.Text;
+            mSI.UseCustomShowName = chkCustomShowName.Checked;
+            mSI.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
+            mSI.ShowNextAirdate = chkShowNextAirdate.Checked;
+            mSI.PadSeasonToTwoDigits = chkPadTwoDigits.Checked;
+            mSI.TVDBCode = code;
             //todo mSI->SeasonNumber = seasnum;
-            this.mSI.CountSpecials = this.chkSpecialsCount.Checked;
+            mSI.CountSpecials = chkSpecialsCount.Checked;
             //                                 mSI->Rules = mWorkingRuleSet;  // TODO
-            this.mSI.DoRename = this.cbDoRenaming.Checked;
-            this.mSI.DoMissingCheck = this.cbDoMissingCheck.Checked;
+            mSI.DoRename = cbDoRenaming.Checked;
+            mSI.DoMissingCheck = cbDoMissingCheck.Checked;
 
-            this.mSI.AutoAddNewSeasons = this.chkAutoFolders.Checked;
-            this.mSI.AutoAdd_FolderPerSeason = this.chkFolderPerSeason.Checked;
-            this.mSI.AutoAdd_SeasonFolderName = this.txtSeasonFolderName.Text;
-            this.mSI.AutoAdd_FolderBase = this.txtBaseFolder.Text;
+            mSI.AutoAddNewSeasons = chkAutoFolders.Checked;
+            mSI.AutoAdd_FolderPerSeason = chkFolderPerSeason.Checked;
+            mSI.AutoAdd_SeasonFolderName = txtSeasonFolderName.Text;
+            mSI.AutoAdd_FolderBase = txtBaseFolder.Text;
 
-            this.mSI.DVDOrder = this.chkDVDOrder.Checked;
-            this.mSI.ForceCheckFuture = this.cbIncludeFuture.Checked;
-            this.mSI.ForceCheckNoAirdate = this.cbIncludeNoAirdate.Checked;
-            this.mSI.UseCustomSearchURL = this.cbUseCustomSearch.Checked;
-            this.mSI.CustomSearchURL = this.txtSearchURL.Text;
+            mSI.DVDOrder = chkDVDOrder.Checked;
+            mSI.ForceCheckFuture = cbIncludeFuture.Checked;
+            mSI.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
+            mSI.UseCustomSearchURL = cbUseCustomSearch.Checked;
+            mSI.CustomSearchURL = txtSearchURL.Text;
 
-            this.mSI.UseSequentialMatch = this.cbSequentialMatching.Checked;
+            mSI.UseSequentialMatch = cbSequentialMatching.Checked;
 
-            string slist = this.txtIgnoreSeasons.Text;
-            this.mSI.IgnoreSeasons.Clear();
+            string slist = txtIgnoreSeasons.Text;
+            mSI.IgnoreSeasons.Clear();
             foreach (Match match in Regex.Matches(slist, "\\b[0-9]+\\b"))
-                this.mSI.IgnoreSeasons.Add(int.Parse(match.Value));
+                mSI.IgnoreSeasons.Add(int.Parse(match.Value));
 
-            this.mSI.ManualFolderLocations.Clear();
-            foreach (ListViewItem lvi in this.lvSeasonFolders.Items)
+            mSI.ManualFolderLocations.Clear();
+            foreach (ListViewItem lvi in lvSeasonFolders.Items)
             {
                 try
                 {
                     int seas = int.Parse(lvi.Text);
-                    if (!this.mSI.ManualFolderLocations.ContainsKey(seas))
-                        this.mSI.ManualFolderLocations.Add(seas, new List<String>());
+                    if (!mSI.ManualFolderLocations.ContainsKey(seas))
+                        mSI.ManualFolderLocations.Add(seas, new List<String>());
 
-                    this.mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
+                    mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
                 }
                 catch
                 {
                 }
             }
 
-            this.mSI.AliasNames.Clear();
-            foreach (string showAlias in this.lbShowAlias.Items)
+            mSI.AliasNames.Clear();
+            foreach (string showAlias in lbShowAlias.Items)
             {
-                if (!this.mSI.AliasNames.Contains(showAlias))
+                if (!mSI.AliasNames.Contains(showAlias))
                 {
-                    this.mSI.AliasNames.Add(showAlias);
+                    mSI.AliasNames.Add(showAlias);
                 }
             }
         }
 
-        private void bnCancel_Click(object sender, System.EventArgs e)
+        private void bnCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
-        private void chkFolderPerSeason_CheckedChanged(object sender, System.EventArgs e)
+        private void chkFolderPerSeason_CheckedChanged(object sender, EventArgs e)
         {
-            this.txtSeasonFolderName.Enabled = this.chkFolderPerSeason.Checked;
+            txtSeasonFolderName.Enabled = chkFolderPerSeason.Checked;
         }
 
-        private void bnBrowse_Click(object sender, System.EventArgs e)
+        private void bnBrowse_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(this.txtBaseFolder.Text))
-                this.folderBrowser.SelectedPath = this.txtBaseFolder.Text;
+            if (!string.IsNullOrEmpty(txtBaseFolder.Text))
+                folderBrowser.SelectedPath = txtBaseFolder.Text;
 
-            if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                this.txtBaseFolder.Text = this.folderBrowser.SelectedPath;
+            if (folderBrowser.ShowDialog() == DialogResult.OK)
+                txtBaseFolder.Text = folderBrowser.SelectedPath;
         }
 
-        private void cbDoMissingCheck_CheckedChanged(object sender, System.EventArgs e)
+        private void cbDoMissingCheck_CheckedChanged(object sender, EventArgs e)
         {
-            this.cbIncludeNoAirdate.Enabled = this.cbDoMissingCheck.Checked;
-            this.cbIncludeFuture.Enabled = this.cbDoMissingCheck.Checked;
+            cbIncludeNoAirdate.Enabled = cbDoMissingCheck.Checked;
+            cbIncludeFuture.Enabled = cbDoMissingCheck.Checked;
         }
 
-        private void bnRemove_Click(object sender, System.EventArgs e)
+        private void bnRemove_Click(object sender, EventArgs e)
         {
-            if (this.lvSeasonFolders.SelectedItems.Count > 0)
+            if (lvSeasonFolders.SelectedItems.Count > 0)
             {
-                foreach (ListViewItem lvi in this.lvSeasonFolders.SelectedItems)
-                    this.lvSeasonFolders.Items.Remove(lvi);
+                foreach (ListViewItem lvi in lvSeasonFolders.SelectedItems)
+                    lvSeasonFolders.Items.Remove(lvi);
             }
         }
 
-        private void bnAdd_Click(object sender, System.EventArgs e)
+        private void bnAdd_Click(object sender, EventArgs e)
         {
             ListViewItem lvi = new ListViewItem();
-            lvi.Text = this.txtSeasonNumber.Text;
-            lvi.SubItems.Add(this.txtFolder.Text);
+            lvi.Text = txtSeasonNumber.Text;
+            lvi.SubItems.Add(txtFolder.Text);
 
-            this.lvSeasonFolders.Items.Add(lvi);
+            lvSeasonFolders.Items.Add(lvi);
 
-            this.txtSeasonNumber.Text = "";
-            this.txtFolder.Text = "";
+            txtSeasonNumber.Text = "";
+            txtFolder.Text = "";
 
-            this.lvSeasonFolders.Sort();
+            lvSeasonFolders.Sort();
         }
 
-        private void bnBrowseFolder_Click(object sender, System.EventArgs e)
+        private void bnBrowseFolder_Click(object sender, EventArgs e)
         {
-            this.folderBrowser.SelectedPath = this.txtFolder.Text;
-            if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                this.txtFolder.Text = this.folderBrowser.SelectedPath;
+            folderBrowser.SelectedPath = txtFolder.Text;
+            if (folderBrowser.ShowDialog() == DialogResult.OK)
+                txtFolder.Text = folderBrowser.SelectedPath;
         }
 
-        private void txtSeasonNumber_TextChanged(object sender, System.EventArgs e)
+        private void txtSeasonNumber_TextChanged(object sender, EventArgs e)
         {
-            bool isNumber = Regex.Match(this.txtSeasonNumber.Text, "^[0-9]+$").Success;
-            this.bnAdd.Enabled = isNumber && (!string.IsNullOrEmpty(this.txtSeasonNumber.Text));
+            bool isNumber = Regex.Match(txtSeasonNumber.Text, "^[0-9]+$").Success;
+            bnAdd.Enabled = isNumber && (!string.IsNullOrEmpty(txtSeasonNumber.Text));
         }
 
-        private void txtFolder_TextChanged(object sender, System.EventArgs e)
+        private void txtFolder_TextChanged(object sender, EventArgs e)
         {
             bool ok = true;
-            if (!string.IsNullOrEmpty(this.txtFolder.Text))
+            if (!string.IsNullOrEmpty(txtFolder.Text))
             {
                 try
                 {
-                    ok = System.IO.Directory.Exists(this.txtFolder.Text);
+                    ok = System.IO.Directory.Exists(txtFolder.Text);
                 }
                 catch
                 {
                 }
             }
-            this.txtFolder.BackColor = ok ? System.Drawing.SystemColors.Window : Helpers.WarningColor();
+            txtFolder.BackColor = ok ? System.Drawing.SystemColors.Window : Helpers.WarningColor();
         }
 
-        private void chkCustomShowName_CheckedChanged(object sender, System.EventArgs e)
+        private void chkCustomShowName_CheckedChanged(object sender, EventArgs e)
         {
-            this.txtCustomShowName.Enabled = this.chkCustomShowName.Checked;
+            txtCustomShowName.Enabled = chkCustomShowName.Checked;
         }
 
-        private void chkAutoFolders_CheckedChanged(object sender, System.EventArgs e)
+        private void chkAutoFolders_CheckedChanged(object sender, EventArgs e)
         {
             gbAutoFolders.Enabled = chkAutoFolders.Checked;
         }
 
-        private void bnAddAlias_Click(object sender, System.EventArgs e)
+        private void bnAddAlias_Click(object sender, EventArgs e)
         {
             string aliasName = tbShowAlias.Text;
 
@@ -310,7 +310,7 @@ namespace TVRename
             }
         }
 
-        private void bnRemoveAlias_Click(object sender, System.EventArgs e)
+        private void bnRemoveAlias_Click(object sender, EventArgs e)
         {
             if (lbShowAlias.SelectedItems.Count > 0)
             {
@@ -324,10 +324,10 @@ namespace TVRename
         private void tbShowAlias_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                this.bnAddAlias_Click(null, null);
+                bnAddAlias_Click(null, null);
         }
 
-        private void cbUseCustomSearch_CheckedChanged(object sender, System.EventArgs e)
+        private void cbUseCustomSearch_CheckedChanged(object sender, EventArgs e)
         {
             EnableDisableCustomSearch();
         }
@@ -344,12 +344,12 @@ namespace TVRename
 
         private void tbShowAlias_TextChanged(object sender, EventArgs e)
         {
-          this.bnAddAlias.Enabled = this.tbShowAlias.Text.Length > 0;
+          bnAddAlias.Enabled = tbShowAlias.Text.Length > 0;
         }
 
         private void lbShowAlias_SelectedIndexChanged(object sender, EventArgs e)
         {
-            this.bnRemoveAlias.Enabled = this.lbShowAlias.SelectedItems.Count > 0;
+            bnRemoveAlias.Enabled = lbShowAlias.SelectedItems.Count > 0;
         }
 
         private void label8_Click(object sender, EventArgs e)

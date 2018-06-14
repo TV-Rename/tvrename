@@ -21,7 +21,7 @@ namespace TVRename
 
         public DirCache(SetProgressDelegate prog, string folder, bool subFolders)
         {
-            this.BuildDirCache(prog, 0, 0, folder, subFolders);
+            BuildDirCache(prog, 0, 0, folder, subFolders);
         }
 
         public static int CountFiles(string folder, bool subFolders)
@@ -51,7 +51,7 @@ namespace TVRename
 
         public int AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders)
         {
-            return this.BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
+            return BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
         }
         protected readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -87,7 +87,7 @@ namespace TVRename
 //                    if ((ff.Name.Length + folder.Length) >= 260)
 //                        logger.Error("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder);
 //                    else
-                        this.Add(new DirCacheEntry(ff));
+                        Add(new DirCacheEntry(ff));
                     if ((prog != null) && (totalFiles != 0))
                         prog.Invoke(100 * (count) / totalFiles);
                 }
@@ -96,7 +96,7 @@ namespace TVRename
                 {
                     DirectoryInfo[] dirs = di.GetDirectories();
                     foreach (DirectoryInfo di2 in dirs)
-                        count = this.BuildDirCache(prog, count, totalFiles, di2.FullName, subFolders);
+                        count = BuildDirCache(prog, count, totalFiles, di2.FullName, subFolders);
                 }
             }
             catch (UnauthorizedAccessException e)

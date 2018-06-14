@@ -20,7 +20,7 @@ namespace TVRename
 
         protected ShowsExporter(List<ShowItem> shows)
         {
-            this.Shows = shows;
+            Shows = shows;
         }
     }
 
@@ -32,7 +32,7 @@ namespace TVRename
 
         protected ActionListExporter(ItemList theActionList)
         {
-            this.TheActionList = theActionList;
+            TheActionList = theActionList;
         }
 
         public abstract bool ApplicableFor(TVSettings.ScanType st);
@@ -45,7 +45,7 @@ namespace TVRename
 
         protected UpcomingExporter(TVDoc doc)
         {
-            this.Doc = doc;
+            Doc = doc;
         }
 
         private string Produce() 
@@ -59,7 +59,7 @@ namespace TVRename
 
                 using (MemoryStream ms = new MemoryStream())
                 {
-                    List<ProcessedEpisode> lpe = this.Doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                    List<ProcessedEpisode> lpe = Doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
                     if (lpe != null)
                         if (Generate(ms, lpe))

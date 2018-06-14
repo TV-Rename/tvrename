@@ -22,9 +22,9 @@ namespace TVRename
                     newUpdateTime = Helpers.windowsStartDateTime;
 
                 DirectoryInfo di = new DirectoryInfo(si.AutoAdd_FolderBase);
-                if ((di.LastWriteTimeUtc != newUpdateTime.Value)&&(!this.doneFilesAndFolders.Contains(di.FullName)))
+                if ((di.LastWriteTimeUtc != newUpdateTime.Value)&&(!doneFilesAndFolders.Contains(di.FullName)))
                 {
-                    this.doneFilesAndFolders.Add(di.FullName);
+                    doneFilesAndFolders.Add(di.FullName);
                     return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
                 }
             }
@@ -43,9 +43,9 @@ namespace TVRename
 
 
                 DirectoryInfo di = new DirectoryInfo(folder);
-                if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!this.doneFilesAndFolders.Contains(di.FullName)))
+                if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!doneFilesAndFolders.Contains(di.FullName)))
                 {
-                    this.doneFilesAndFolders.Add(di.FullName);
+                    doneFilesAndFolders.Add(di.FullName);
                     return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
                 }
                 
@@ -63,9 +63,9 @@ namespace TVRename
                 if (newUpdateTime.CompareTo(Helpers.windowsStartDateTime) < 0)
                     newUpdateTime = Helpers.windowsStartDateTime;
 
-                if ((filo.LastWriteTimeUtc != newUpdateTime) && (!this.doneFilesAndFolders.Contains(filo.FullName)))
+                if ((filo.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(filo.FullName)))
                 {
-                    this.doneFilesAndFolders.Add(filo.FullName);
+                    doneFilesAndFolders.Add(filo.FullName);
                     return  new ItemList() { new ActionDateTouch(filo,dbep, newUpdateTime) };
                 }
             }
@@ -73,7 +73,7 @@ namespace TVRename
         }
         public override void reset()
         {
-            this.doneFilesAndFolders = new List<string>();
+            doneFilesAndFolders = new List<string>();
         }
 
     }

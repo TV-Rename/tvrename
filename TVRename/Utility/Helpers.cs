@@ -215,9 +215,9 @@ namespace TVRename
     {
         public  FileSystemProperties(long? totalBytes, long? freeBytes, long? availableBytes)
         {
-            this.TotalBytes = totalBytes;
-            this.FreeBytes = freeBytes;
-            this.AvailableBytes = availableBytes;
+            TotalBytes = totalBytes;
+            FreeBytes = freeBytes;
+            AvailableBytes = availableBytes;
         }
 
         /// <summary>
@@ -438,7 +438,7 @@ namespace TVRename
 
     public static class HTTPHelper
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         public static String HTTPRequest(String method, String url,String json, String contentType,String authToken = "", String lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -475,13 +475,13 @@ namespace TVRename
 
         public static JObject JsonHTTPPOSTRequest( String url, JObject request)
         {
-            String response = HTTPHelper.HTTPRequest("POST",url, request.ToString(), "application/json");
+            String response = HTTPRequest("POST",url, request.ToString(), "application/json");
             return JObject.Parse(response);
         }
 
         public static JObject JsonHTTPGETRequest(String url, Dictionary<string, string> parameters, String authToken, String lang="")
         {
-            String response = HTTPHelper.HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
+            String response = HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
             return JObject.Parse(response);
         }
 
@@ -546,7 +546,7 @@ namespace TVRename
         private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
         private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
 
         private enum BrowserEmulationVersion
         {
@@ -897,7 +897,7 @@ namespace TVRename
         public static string CompareName(string n)
         {
             //TODO consider whether merge with above
-            n = Helpers.RemoveDiacritics(n);
+            n = RemoveDiacritics(n);
             n = Regex.Replace(n, "[^\\w ]", "");
             return SimplifyName(n);
         }

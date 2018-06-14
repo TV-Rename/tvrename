@@ -18,32 +18,32 @@ namespace TVRename
 
         public FolderMonitorEdit(FolderMonitorEntry hint)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.mTCCF = new TheTVDBCodeFinder("");
-            this.mTCCF.Dock = DockStyle.Fill;
-            this.mTCCF.SelectionChanged += this.CodeChanged;
-            this.mTCCF.lvMatches.DoubleClick += this.MatchDoubleClick;
+            mTCCF = new TheTVDBCodeFinder("");
+            mTCCF.Dock = DockStyle.Fill;
+            mTCCF.SelectionChanged += CodeChanged;
+            mTCCF.lvMatches.DoubleClick += MatchDoubleClick;
 
 
-            this.pnlCF.SuspendLayout();
-            this.pnlCF.Controls.Add(this.mTCCF);
-            this.pnlCF.ResumeLayout();
+            pnlCF.SuspendLayout();
+            pnlCF.Controls.Add(mTCCF);
+            pnlCF.ResumeLayout();
 
             if (hint.CodeKnown)
-                this.mTCCF.SetHint(hint.TVDBCode.ToString());
+                mTCCF.SetHint(hint.TVDBCode.ToString());
             else
             {
                 string s = hint.Folder;
                 int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-                this.mTCCF.SetHint(s.Substring(p+1));
+                mTCCF.SetHint(s.Substring(p+1));
             }
-            this.Code = -1;
+            Code = -1;
         }
 
         private void MatchDoubleClick(object sender, EventArgs e)
         {
-            this.bnOK_Click(null, null);
+            bnOK_Click(null, null);
         }
 
         private void CodeChanged(object sender, EventArgs e)
@@ -52,15 +52,15 @@ namespace TVRename
 
         private void bnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void bnOK_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Code = this.mTCCF.SelectedCode();
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Code = mTCCF.SelectedCode();
+            Close();
         }
     }
 }

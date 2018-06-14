@@ -29,18 +29,18 @@ namespace TVRename
 
         public BugReport(TVDoc doc)
         {
-            this.mDoc = doc;
+            mDoc = doc;
             InitializeComponent();
         }
 
         private void bnCreate_Click(object sender, System.EventArgs e)
         {
-            this.txtEmailText.Text = "Working... This may take a while.";
-            this.txtEmailText.Update();
+            txtEmailText.Text = "Working... This may take a while.";
+            txtEmailText.Update();
 
             StringBuilder txt = new StringBuilder();
             
-            if (this.cbSettings.Checked)
+            if (cbSettings.Checked)
             {
                 txt.AppendLine("==== Settings Files ====" );
                 txt.AppendLine();
@@ -59,7 +59,7 @@ namespace TVRename
                 txt.AppendLine("");
             }
 
-            if (this.cbFOScan.Checked || this.cbFolderScan.Checked)
+            if (cbFOScan.Checked || cbFolderScan.Checked)
             {
                 txt.AppendLine("==== Filename processors ====");
                 foreach (FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
@@ -67,7 +67,7 @@ namespace TVRename
                 txt.AppendLine();
             }
 
-            if (this.cbFOScan.Checked)
+            if (cbFOScan.Checked)
             {
                 txt.AppendLine( "==== Finding & Organising Directory Scan ====");
                 txt.AppendLine();
@@ -85,11 +85,11 @@ namespace TVRename
                 txt.AppendLine();
             }
 
-            if (this.cbFolderScan.Checked)
+            if (cbFolderScan.Checked)
             {
                 txt.AppendLine("==== Media Folders Directory Scan ====" );
 
-                foreach (ShowItem si in this.mDoc.Library.GetShowItems() )
+                foreach (ShowItem si in mDoc.Library.GetShowItems() )
                 {
                     foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                     {
@@ -120,12 +120,12 @@ namespace TVRename
                 txt.AppendLine();
             }
 
-            this.txtEmailText.Text = txt.ToString();
+            txtEmailText.Text = txt.ToString();
         }
 
         private void bnCopy_Click(object sender, System.EventArgs e)
         {
-            Clipboard.SetDataObject(this.txtEmailText.Text);
+            Clipboard.SetDataObject(txtEmailText.Text);
         }
 
         private void linkForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

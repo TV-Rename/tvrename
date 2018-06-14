@@ -21,7 +21,7 @@ namespace TVRename
         {
             if (file.Name.EndsWith(".tbn", true, new CultureInfo("en")))
             {
-                this.doneTBN.Add(file.FullName);
+                doneTBN.Add(file.FullName);
             } 
             base.notifyComplete(file);
         }
@@ -181,9 +181,9 @@ namespace TVRename
                 string basefn = filo.RemoveExtension();
                 FileInfo imgtbn = FileHelper.FileInFolder(filo.Directory, basefn + extension);
                 if (!imgtbn.Exists || forceRefresh)
-                    if (!(this.doneTBN.Contains(imgtbn.FullName)))
+                    if (!(doneTBN.Contains(imgtbn.FullName)))
                     {
-                        this.doneTBN.Add(imgtbn.FullName);
+                        doneTBN.Add(imgtbn.FullName);
 
                         return new ActionDownloadImage(si, (ep is ProcessedEpisode) ? (ProcessedEpisode)ep  : new ProcessedEpisode(ep,si ), imgtbn, ban);
                     }

@@ -10,7 +10,7 @@ namespace TVRename
 
         protected Finder(TVDoc doc)
         {
-            this.Doc = doc;
+            Doc = doc;
         }
 
         // ReSharper disable once InconsistentNaming
@@ -23,9 +23,9 @@ namespace TVRename
         public abstract FinderDisplayType DisplayType();
 
         public void Interrupt() {
-            this.ActionCancel = true; }
+            ActionCancel = true; }
         public void Reset() {
-            this.ActionCancel = false; }
+            ActionCancel = false; }
 
     }
 }

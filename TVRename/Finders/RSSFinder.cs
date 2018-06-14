@@ -18,7 +18,7 @@ namespace TVRename
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
-            int c = this.ActionList.Count + 2;
+            int c = ActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct);
             // ReSharper disable once InconsistentNaming
@@ -29,9 +29,9 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (Item testItem in this.ActionList)
+            foreach (Item testItem in ActionList)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
@@ -99,10 +99,10 @@ namespace TVRename
                 newItems.Remove(x);
 
             foreach (Item i in toRemove)
-                this.ActionList.Remove(i);
+                ActionList.Remove(i);
 
             foreach (Item action in newItems)
-                this.ActionList.Add(action);
+                ActionList.Add(action);
 
             prog.Invoke(totPct);
         }
@@ -119,11 +119,11 @@ namespace TVRename
 
         public RSSItem(string url, string title, int season, int episode, string showName)
         {
-            this.URL = url;
-            this.Season = season;
-            this.Episode = episode;
-            this.Title = title;
-            this.ShowName = showName;
+            URL = url;
+            Season = season;
+            Episode = episode;
+            Title = title;
+            ShowName = showName;
         }
     }
 
@@ -135,7 +135,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public bool DownloadRSS(string URL, List<FilenameProcessorRE> rexps)
         {
-            this.regxps = rexps;
+            regxps = rexps;
 
             System.Net.WebClient wc = new System.Net.WebClient();
             try
@@ -184,7 +184,7 @@ namespace TVRename
             }
             finally
             {
-                this.regxps = null;
+                regxps = null;
             }
             return true;
         }
@@ -240,7 +240,7 @@ namespace TVRename
 
             string showName = "";
 
-            TVDoc.FindSeasEp("", title, out int season, out int episode, out int maxEp, null, this.regxps);
+            TVDoc.FindSeasEp("", title, out int season, out int episode, out int maxEp, null, regxps);
 
             try
             {

@@ -50,11 +50,11 @@ namespace DaveChambers.FolderBrowserDialogEx
             {
                 // We need to make copies of these values from the dialog.
                 // I tried passing the dlg obj itself in this struct, but Windows will barf after repeated invocations.
-                this.Title = dlg.Title;
-                this.InitialPath = dlg.SelectedPath;
-                this.ShowNewFolderButton = dlg.ShowNewFolderButton;
-                this.ShowEditbox = dlg.ShowEditbox;
-                this.StartPosition = dlg.StartPosition;
+                Title = dlg.Title;
+                InitialPath = dlg.SelectedPath;
+                ShowNewFolderButton = dlg.ShowNewFolderButton;
+                ShowEditbox = dlg.ShowEditbox;
+                StartPosition = dlg.StartPosition;
                 this.hParent = hParent;
             }
         }
@@ -76,13 +76,13 @@ namespace DaveChambers.FolderBrowserDialogEx
             Win32.BROWSEINFO bi = new Win32.BROWSEINFO();
             bi.iImage = 0;
             bi.hwndOwner = owner.Handle;
-            if (0 != Win32.SHGetSpecialFolderLocation(owner.Handle, (int)this.RootFolder, ref bi.pidlRoot))
+            if (0 != Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot))
                 bi.pidlRoot = IntPtr.Zero;
             bi.lpszTitle = "";
             bi.ulFlags = Win32.BIF_RETURNONLYFSDIRS;    // do NOT use BIF_NEWDIALOGSTYLE or BIF_STATUSTEXT
-            if (this.ShowEditbox)
+            if (ShowEditbox)
                 bi.ulFlags |= Win32.BIF_EDITBOX;
-            if (!this.ShowNewFolderButton)
+            if (!ShowNewFolderButton)
                 bi.ulFlags |= Win32.BIF_NONEWFOLDERBUTTON;
             bi.lpfn = new Win32.BrowseCallbackProc(_browseCallbackHandler);
             // Initialization data, used in _browseCallbackHandler
@@ -498,14 +498,14 @@ namespace DaveChambers.FolderBrowserDialogEx
 
                 public RECT(int left, int top, int width, int height)
                 {
-                    this.Left = left;
-                    this.Top = top;
-                    this.Right = left + width;
-                    this.Bottom = top + height;
+                    Left = left;
+                    Top = top;
+                    Right = left + width;
+                    Bottom = top + height;
                 }
 
-                public int Height { get { return this.Bottom - this.Top; } }
-                public int Width { get { return this.Right - this.Left; } }
+                public int Height { get { return Bottom - Top; } }
+                public int Width { get { return Right - Left; } }
             }
 
             [DllImport("user32.dll")]
@@ -523,16 +523,16 @@ namespace DaveChambers.FolderBrowserDialogEx
 
                 public POINT(int x, int y)
                 {
-                    this.X = x;
-                    this.Y = y;
+                    X = x;
+                    Y = y;
                 }
 
-                public static implicit operator System.Drawing.Point(POINT p)
+                public static implicit operator Point(POINT p)
                 {
-                    return new System.Drawing.Point(p.X, p.Y);
+                    return new Point(p.X, p.Y);
                 }
 
-                public static implicit operator POINT(System.Drawing.Point p)
+                public static implicit operator POINT(Point p)
                 {
                     return new POINT(p.X, p.Y);
                 }

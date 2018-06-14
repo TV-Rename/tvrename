@@ -27,230 +27,230 @@ namespace TVRename
 
         public AddModifyRule(ShowRule rule, Season season, bool dvdOrder)
         {
-            this.mRule = rule;
-            this.mSeason = season;
-            this.mdvdOrder = dvdOrder;
+            mRule = rule;
+            mSeason = season;
+            mdvdOrder = dvdOrder;
 
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.FillDialog();
+            FillDialog();
         }
 
-        private void rb_Click(object sender, System.EventArgs e)
+        private void rb_Click(object sender, EventArgs e)
         {
-            this.EnableDisableAndLabels();
+            EnableDisableAndLabels();
         }
 
         private void FillDialog()
         {
-            switch (this.mRule.DoWhatNow)
+            switch (mRule.DoWhatNow)
             {
                 case RuleAction.kRename:
-                    this.rbRename.Checked = true;
+                    rbRename.Checked = true;
                     break;
 
                 case RuleAction.kCollapse:
-                    this.rbCollapse.Checked = true;
+                    rbCollapse.Checked = true;
                     break;
 
                 case RuleAction.kRemove:
-                    this.rbRemove.Checked = true;
+                    rbRemove.Checked = true;
                     break;
 
                 case RuleAction.kSwap:
-                    this.rbSwap.Checked = true;
+                    rbSwap.Checked = true;
                     break;
 
                 case RuleAction.kMerge:
-                    this.rbMerge.Checked = true;
+                    rbMerge.Checked = true;
                     break;
 
                 case RuleAction.kSplit:
-                    this.rbSplit.Checked = true;
+                    rbSplit.Checked = true;
                     break;
 
                 case RuleAction.kInsert:
-                    this.rbInsert.Checked = true;
+                    rbInsert.Checked = true;
                     break;
 
                 default:
                 case RuleAction.kIgnoreEp:
-                    this.rbIgnore.Checked = true;
+                    rbIgnore.Checked = true;
                     break;
             }
 
-            this.txtUserText.Text = this.mRule.UserSuppliedText;
-            if (this.mRule.First != -1)
-                this.txtValue1.Text = this.mRule.First.ToString();
-            if (this.mRule.Second != -1)
-                this.txtValue2.Text = this.mRule.Second.ToString();
+            txtUserText.Text = mRule.UserSuppliedText;
+            if (mRule.First != -1)
+                txtValue1.Text = mRule.First.ToString();
+            if (mRule.Second != -1)
+                txtValue2.Text = mRule.Second.ToString();
 
-            this.EnableDisableAndLabels();
+            EnableDisableAndLabels();
         }
 
         private void EnableDisableAndLabels()
         {
-            if (this.rbRemove.Checked)
+            if (rbRemove.Checked)
             {
-                this.txtLabel1.Text = "&From/Number:";
-                this.txtLabel2.Text = "T&o:";
-                this.txtLeaveBlank.Visible = false;
-                this.txtLabel2.Enabled = true;
-                this.txtValue1.Enabled = true;
-                this.txtValue2.Enabled = true;
-                this.txtUserText.Enabled = false;
-                this.txtWithNameLabel.Enabled = false;
+                txtLabel1.Text = "&From/Number:";
+                txtLabel2.Text = "T&o:";
+                txtLeaveBlank.Visible = false;
+                txtLabel2.Enabled = true;
+                txtValue1.Enabled = true;
+                txtValue2.Enabled = true;
+                txtUserText.Enabled = false;
+                txtWithNameLabel.Enabled = false;
             }
-            else if (this.rbSwap.Checked)
+            else if (rbSwap.Checked)
             {
-                this.txtLabel1.Text = "&Number:";
-                this.txtLabel2.Text = "N&umber:";
-                this.txtLeaveBlank.Visible = false;
-                this.txtLabel2.Enabled = true;
-                this.txtValue1.Enabled = true;
-                this.txtValue2.Enabled = true;
-                this.txtUserText.Enabled = false;
-                this.txtWithNameLabel.Enabled = false;
+                txtLabel1.Text = "&Number:";
+                txtLabel2.Text = "N&umber:";
+                txtLeaveBlank.Visible = false;
+                txtLabel2.Enabled = true;
+                txtValue1.Enabled = true;
+                txtValue2.Enabled = true;
+                txtUserText.Enabled = false;
+                txtWithNameLabel.Enabled = false;
             }
-            else if (this.rbMerge.Checked || this.rbCollapse.Checked)
+            else if (rbMerge.Checked || rbCollapse.Checked)
             {
-                this.txtLabel1.Text = "&From:";
-                this.txtLabel2.Text = "T&o:";
-                this.txtLeaveBlank.Visible = true;
-                this.txtLabel2.Enabled = true;
-                this.txtValue1.Enabled = true;
-                this.txtValue2.Enabled = true;
-                this.txtUserText.Enabled = true;
-                this.txtWithNameLabel.Enabled = true;
+                txtLabel1.Text = "&From:";
+                txtLabel2.Text = "T&o:";
+                txtLeaveBlank.Visible = true;
+                txtLabel2.Enabled = true;
+                txtValue1.Enabled = true;
+                txtValue2.Enabled = true;
+                txtUserText.Enabled = true;
+                txtWithNameLabel.Enabled = true;
             }
-            else if (this.rbInsert.Checked)
+            else if (rbInsert.Checked)
             {
-                this.txtLabel1.Text = "&At:";
-                this.txtLabel2.Text = "N&umber:";
-                this.txtLeaveBlank.Visible = false;
-                this.txtLabel2.Enabled = false;
-                this.txtValue1.Enabled = true;
-                this.txtValue2.Enabled = false;
-                this.txtUserText.Enabled = true;
-                this.txtWithNameLabel.Enabled = true;
+                txtLabel1.Text = "&At:";
+                txtLabel2.Text = "N&umber:";
+                txtLeaveBlank.Visible = false;
+                txtLabel2.Enabled = false;
+                txtValue1.Enabled = true;
+                txtValue2.Enabled = false;
+                txtUserText.Enabled = true;
+                txtWithNameLabel.Enabled = true;
             }
-            else if (this.rbIgnore.Checked)
+            else if (rbIgnore.Checked)
             {
-                this.txtLabel1.Text = "&From/Number:";
-                this.txtLabel2.Text = "T&o:";
-                this.txtLeaveBlank.Visible = false;
-                this.txtLabel2.Enabled = true;
-                this.txtValue1.Enabled = true;
-                this.txtValue2.Enabled = true;
-                this.txtUserText.Enabled = false;
-                this.txtWithNameLabel.Enabled = false;
+                txtLabel1.Text = "&From/Number:";
+                txtLabel2.Text = "T&o:";
+                txtLeaveBlank.Visible = false;
+                txtLabel2.Enabled = true;
+                txtValue1.Enabled = true;
+                txtValue2.Enabled = true;
+                txtUserText.Enabled = false;
+                txtWithNameLabel.Enabled = false;
             }
-            else if (this.rbRename.Checked)
+            else if (rbRename.Checked)
             {
-                this.txtLabel1.Text = "&Number:";
-                this.txtLabel2.Text = "N&umber:";
-                this.txtLeaveBlank.Visible = false;
-                this.txtLabel2.Enabled = false;
-                this.txtValue1.Enabled = true;
-                this.txtValue2.Enabled = false;
-                this.txtUserText.Enabled = true;
-                this.txtWithNameLabel.Enabled = true;
+                txtLabel1.Text = "&Number:";
+                txtLabel2.Text = "N&umber:";
+                txtLeaveBlank.Visible = false;
+                txtLabel2.Enabled = false;
+                txtValue1.Enabled = true;
+                txtValue2.Enabled = false;
+                txtUserText.Enabled = true;
+                txtWithNameLabel.Enabled = true;
             }
-            else if (this.rbSplit.Checked)
+            else if (rbSplit.Checked)
             {
-                this.txtLabel1.Text = "&Number:";
-                this.txtLabel2.Text = "Int&o:";
-                this.txtLeaveBlank.Visible = false;
-                this.txtLabel2.Enabled = true;
-                this.txtValue1.Enabled = true;
-                this.txtValue2.Enabled = true;
-                this.txtUserText.Enabled = false;
-                this.txtWithNameLabel.Enabled = false;
+                txtLabel1.Text = "&Number:";
+                txtLabel2.Text = "Int&o:";
+                txtLeaveBlank.Visible = false;
+                txtLabel2.Enabled = true;
+                txtValue1.Enabled = true;
+                txtValue2.Enabled = true;
+                txtUserText.Enabled = false;
+                txtWithNameLabel.Enabled = false;
             }
         }
 
-        private void bnOK_Click(object sender, System.EventArgs e)
+        private void bnOK_Click(object sender, EventArgs e)
         {
             RuleAction dwn = RuleAction.kIgnoreEp;
 
-            if (this.rbIgnore.Checked)
+            if (rbIgnore.Checked)
                 dwn = RuleAction.kIgnoreEp;
-            else if (this.rbSwap.Checked)
+            else if (rbSwap.Checked)
                 dwn = RuleAction.kSwap;
-            else if (this.rbMerge.Checked)
+            else if (rbMerge.Checked)
                 dwn = RuleAction.kMerge;
-            else if (this.rbInsert.Checked)
+            else if (rbInsert.Checked)
                 dwn = RuleAction.kInsert;
-            else if (this.rbRemove.Checked)
+            else if (rbRemove.Checked)
                 dwn = RuleAction.kRemove;
-            else if (this.rbCollapse.Checked)
+            else if (rbCollapse.Checked)
                 dwn = RuleAction.kCollapse;
-            else if (this.rbRename.Checked)
+            else if (rbRename.Checked)
                 dwn = RuleAction.kRename;
-            else if (this.rbSplit.Checked)
+            else if (rbSplit.Checked)
                 dwn = RuleAction.kSplit;
 
-            this.mRule.DoWhatNow = dwn;
-            this.mRule.UserSuppliedText = this.txtUserText.Enabled ? this.txtUserText.Text : "";
+            mRule.DoWhatNow = dwn;
+            mRule.UserSuppliedText = txtUserText.Enabled ? txtUserText.Text : "";
 
             try
             {
-                this.mRule.First = this.txtValue1.Enabled ? Convert.ToInt32(this.txtValue1.Text) : -1;
+                mRule.First = txtValue1.Enabled ? Convert.ToInt32(txtValue1.Text) : -1;
             }
             catch
             {
-                this.mRule.First = -1;
+                mRule.First = -1;
             }
 
             try
             {
-                this.mRule.Second = this.txtValue2.Enabled ? Convert.ToInt32(this.txtValue2.Text) : -1;
+                mRule.Second = txtValue2.Enabled ? Convert.ToInt32(txtValue2.Text) : -1;
             }
             catch
             {
-                this.mRule.Second = -1;
+                mRule.Second = -1;
             }
 
             //validation Rules
-            if (!this.mSeason.ContainsEpisode(int.Parse(this.txtValue1.Text), this.mdvdOrder))
+            if (!mSeason.ContainsEpisode(int.Parse(txtValue1.Text), mdvdOrder))
             {
                 MessageBox.Show("First episode number is not valid for the selected season", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.txtValue1.Focus();
-                this.DialogResult = DialogResult.None;
+                txtValue1.Focus();
+                DialogResult = DialogResult.None;
                 return;
             }
 
             //these 3 tpyes only have one episode cited
-            if (!(this.mRule.DoWhatNow == RuleAction.kRename || this.mRule.DoWhatNow == RuleAction.kInsert || this.mRule.DoWhatNow == RuleAction.kSplit) &&
-                !this.mSeason.ContainsEpisode(int.Parse(this.txtValue2.Text), this.mdvdOrder))
+            if (!(mRule.DoWhatNow == RuleAction.kRename || mRule.DoWhatNow == RuleAction.kInsert || mRule.DoWhatNow == RuleAction.kSplit) &&
+                !mSeason.ContainsEpisode(int.Parse(txtValue2.Text), mdvdOrder))
             {
                 MessageBox.Show("Second episode number is not valid for the selected season", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.txtValue2.Focus();
-                this.DialogResult = DialogResult.None;
+                txtValue2.Focus();
+                DialogResult = DialogResult.None;
                 return;
             }
 
             //these 3 tpyes only have one episode cited - others must be in order
-            if (!(this.mRule.DoWhatNow == RuleAction.kRename || this.mRule.DoWhatNow == RuleAction.kInsert || this.mRule.DoWhatNow == RuleAction.kSplit) &&
-                int.Parse(this.txtValue2.Text) < int.Parse(this.txtValue1.Text))
+            if (!(mRule.DoWhatNow == RuleAction.kRename || mRule.DoWhatNow == RuleAction.kInsert || mRule.DoWhatNow == RuleAction.kSplit) &&
+                int.Parse(txtValue2.Text) < int.Parse(txtValue1.Text))
             {
                 MessageBox.Show("Second episode number must be before the first episode number", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.txtValue2.Focus();
-                this.DialogResult = DialogResult.None;
+                txtValue2.Focus();
+                DialogResult = DialogResult.None;
                 return;
             }
 
             //Swap, merge and collapse can't be done on the same episode numbers
-            if ((this.mRule.DoWhatNow == RuleAction.kSwap || this.mRule.DoWhatNow == RuleAction.kMerge || this.mRule.DoWhatNow == RuleAction.kCollapse) &&
-                (this.txtValue2.Text.Equals(this.txtValue1.Text)))
+            if ((mRule.DoWhatNow == RuleAction.kSwap || mRule.DoWhatNow == RuleAction.kMerge || mRule.DoWhatNow == RuleAction.kCollapse) &&
+                (txtValue2.Text.Equals(txtValue1.Text)))
             {
                 MessageBox.Show("Episode Numbers must be different", "Modify Rules",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                this.txtValue2.Focus();
-                this.DialogResult = DialogResult.None;
+                txtValue2.Focus();
+                DialogResult = DialogResult.None;
                 return;
             }
 

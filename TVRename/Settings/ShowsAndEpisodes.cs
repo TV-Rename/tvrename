@@ -38,78 +38,78 @@ namespace TVRename
         public ProcessedEpisode(SeriesInfo ser, Season airseas, Season dvdseas, ShowItem si)
             : base(ser, airseas,dvdseas)
         {
-            this.NextToAir = false;
-            this.OverallNumber = -1;
-            this.Ignore = false;
-            this.EpNum2 = si.DVDOrder? this.DVDEpNum: this.AiredEpNum;
-            this.SI = si;
-            this.type = ProcessedEpisodeType.single;
+            NextToAir = false;
+            OverallNumber = -1;
+            Ignore = false;
+            EpNum2 = si.DVDOrder? DVDEpNum: AiredEpNum;
+            SI = si;
+            type = ProcessedEpisodeType.single;
         }
 
         public ProcessedEpisode(ProcessedEpisode O)
             : base(O)
         {
-            this.NextToAir = O.NextToAir;
-            this.EpNum2 = O.EpNum2;
-            this.Ignore = O.Ignore;
-            this.SI = O.SI;
-            this.OverallNumber = O.OverallNumber;
-            this.type = O.type;
+            NextToAir = O.NextToAir;
+            EpNum2 = O.EpNum2;
+            Ignore = O.Ignore;
+            SI = O.SI;
+            OverallNumber = O.OverallNumber;
+            type = O.type;
         }
 
         public ProcessedEpisode(Episode e, ShowItem si)
             : base(e)
         {
-            this.OverallNumber = -1;
-            this.NextToAir = false;
-            this.EpNum2 = si.DVDOrder ? this.DVDEpNum : this.AiredEpNum;
-            this.Ignore = false;
-            this.SI = si;
-            this.type = ProcessedEpisodeType.single;
+            OverallNumber = -1;
+            NextToAir = false;
+            EpNum2 = si.DVDOrder ? DVDEpNum : AiredEpNum;
+            Ignore = false;
+            SI = si;
+            type = ProcessedEpisodeType.single;
         }
         public ProcessedEpisode(Episode e, ShowItem si, ProcessedEpisodeType t)
             : base(e)
         {
-            this.OverallNumber = -1;
-            this.NextToAir = false;
-            this.EpNum2 = si.DVDOrder ? this.DVDEpNum : this.AiredEpNum;
-            this.Ignore = false;
-            this.SI = si;
-            this.type = t;
+            OverallNumber = -1;
+            NextToAir = false;
+            EpNum2 = si.DVDOrder ? DVDEpNum : AiredEpNum;
+            Ignore = false;
+            SI = si;
+            type = t;
         }
 
         public ProcessedEpisode(Episode e, ShowItem si, List<Episode> episodes)
             : base(e)
         {
-            this.OverallNumber = -1;
-            this.NextToAir = false;
-            this.EpNum2 = si.DVDOrder ? this.DVDEpNum : this.AiredEpNum;
-            this.Ignore = false;
-            this.SI = si;
-            this.sourceEpisodes = episodes;
-            this.type = ProcessedEpisodeType.merged;
+            OverallNumber = -1;
+            NextToAir = false;
+            EpNum2 = si.DVDOrder ? DVDEpNum : AiredEpNum;
+            Ignore = false;
+            SI = si;
+            sourceEpisodes = episodes;
+            type = ProcessedEpisodeType.merged;
         }
 
-        public int AppropriateSeasonNumber => this.SI.DVDOrder ? this.DVDSeasonNumber : this.AiredSeasonNumber;
+        public int AppropriateSeasonNumber => SI.DVDOrder ? DVDSeasonNumber : AiredSeasonNumber;
 
-        public Season AppropriateSeason => this.SI.DVDOrder ? this.TheDVDSeason : this.TheAiredSeason;
+        public Season AppropriateSeason => SI.DVDOrder ? TheDVDSeason : TheAiredSeason;
 
         public int AppropriateEpNum
         {
-            get => this.SI.DVDOrder ? DVDEpNum : this.AiredEpNum;
+            get => SI.DVDOrder ? DVDEpNum : AiredEpNum;
             set
             {
-                if (this.SI.DVDOrder) DVDEpNum = value;
-                else this.AiredEpNum = value;
+                if (SI.DVDOrder) DVDEpNum = value;
+                else AiredEpNum = value;
             }
         }
 
         public string NumsAsString()
         {
-            if (this.AppropriateEpNum == this.EpNum2)
-                return this.AppropriateEpNum.ToString();
+            if (AppropriateEpNum == EpNum2)
+                return AppropriateEpNum.ToString();
             else
-                return this.AppropriateEpNum + "-" + this.EpNum2;
+                return AppropriateEpNum + "-" + EpNum2;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
@@ -135,7 +135,7 @@ namespace TVRename
             if (!inLocalTime)
                 return GetAirDateDT();
             // do timezone adjustment
-            return GetAirDateDT(this.SI.GetTimeZone());
+            return GetAirDateDT(SI.GetTimeZone());
         }
 
         public string HowLong()
@@ -216,28 +216,28 @@ public class ShowItem
         public ShowItem(int tvDBCode)
         {
             SetDefaults();
-            this.TVDBCode = tvDBCode;
+            TVDBCode = tvDBCode;
         }
 
         private void FigureOutTimeZone()
         {
-            string tzstr = this.ShowTimeZone;
+            string tzstr = ShowTimeZone;
 
             if (string.IsNullOrEmpty(tzstr))
                 tzstr = TimeZone.DefaultTimeZone();
 
-            this.SeriesTZ = TimeZone.TimeZoneFor(tzstr);
+            SeriesTZ = TimeZone.TimeZoneFor(tzstr);
 
-            this.LastFiguredTZ = tzstr;
+            LastFiguredTZ = tzstr;
         }
 
         public TimeZone GetTimeZone()
         {
             // we cache the timezone info, as the fetching is a bit slow, and we do this a lot
-            if (this.LastFiguredTZ != this.ShowTimeZone)
-                this.FigureOutTimeZone();
+            if (LastFiguredTZ != ShowTimeZone)
+                FigureOutTimeZone();
 
-            return this.SeriesTZ;
+            return SeriesTZ;
         }
 
         public ShowItem(XmlReader reader)
@@ -256,59 +256,59 @@ public class ShowItem
 
                 if (reader.Name == "ShowName")
                 {
-                    this.CustomShowName = reader.ReadElementContentAsString();
-                    this.UseCustomShowName = true;
+                    CustomShowName = reader.ReadElementContentAsString();
+                    UseCustomShowName = true;
                 }
                 if (reader.Name == "UseCustomShowName")
-                    this.UseCustomShowName = reader.ReadElementContentAsBoolean();
+                    UseCustomShowName = reader.ReadElementContentAsBoolean();
                 if (reader.Name == "CustomShowName")
-                    this.CustomShowName = reader.ReadElementContentAsString();
+                    CustomShowName = reader.ReadElementContentAsString();
                 else if (reader.Name == "TVDBID")
-                    this.TVDBCode = reader.ReadElementContentAsInt();
+                    TVDBCode = reader.ReadElementContentAsInt();
                 else if (reader.Name == "CountSpecials")
-                    this.CountSpecials = reader.ReadElementContentAsBoolean();
+                    CountSpecials = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ShowNextAirdate")
-                    this.ShowNextAirdate = reader.ReadElementContentAsBoolean();
+                    ShowNextAirdate = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "AutoAddNewSeasons")
-                    this.AutoAddNewSeasons = reader.ReadElementContentAsBoolean();
+                    AutoAddNewSeasons = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderBase")
-                    this.AutoAdd_FolderBase = reader.ReadElementContentAsString();
+                    AutoAdd_FolderBase = reader.ReadElementContentAsString();
                 else if (reader.Name == "FolderPerSeason")
-                    this.AutoAdd_FolderPerSeason = reader.ReadElementContentAsBoolean();
+                    AutoAdd_FolderPerSeason = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SeasonFolderName")
-                    this.AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
+                    AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
                 else if (reader.Name == "DoRename")
-                    this.DoRename = reader.ReadElementContentAsBoolean();
+                    DoRename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DoMissingCheck")
-                    this.DoMissingCheck = reader.ReadElementContentAsBoolean();
+                    DoMissingCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DVDOrder")
-                    this.DVDOrder = reader.ReadElementContentAsBoolean();
+                    DVDOrder = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "UseCustomSearchURL")
-                    this.UseCustomSearchURL = reader.ReadElementContentAsBoolean();
+                    UseCustomSearchURL = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CustomSearchURL")
-                    this.CustomSearchURL = reader.ReadElementContentAsString();
+                    CustomSearchURL = reader.ReadElementContentAsString();
                 else if (reader.Name == "TimeZone")
-                    this.ShowTimeZone = reader.ReadElementContentAsString();
+                    ShowTimeZone = reader.ReadElementContentAsString();
                 else if (reader.Name == "ForceCheckAll") // removed 2.2.0b2
-                    this.ForceCheckNoAirdate = this.ForceCheckFuture = reader.ReadElementContentAsBoolean();
+                    ForceCheckNoAirdate = ForceCheckFuture = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ForceCheckFuture")
-                    this.ForceCheckFuture = reader.ReadElementContentAsBoolean();
+                    ForceCheckFuture = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ForceCheckNoAirdate")
-                    this.ForceCheckNoAirdate = reader.ReadElementContentAsBoolean();
+                    ForceCheckNoAirdate = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "PadSeasonToTwoDigits")
-                    this.PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();
+                    PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "BannersLastUpdatedOnDisk")
                 {
                     if (!reader.IsEmptyElement)
                     {
-                        this.BannersLastUpdatedOnDisk = reader.ReadElementContentAsDateTime();
+                        BannersLastUpdatedOnDisk = reader.ReadElementContentAsDateTime();
                     }
                     else
                         reader.Read();
                 }
 
                 else if (reader.Name == "UseSequentialMatch")
-                    this.UseSequentialMatch = reader.ReadElementContentAsBoolean();
+                    UseSequentialMatch = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "IgnoreSeasons")
                 {
                     if (!reader.IsEmptyElement)
@@ -317,7 +317,7 @@ public class ShowItem
                         while (reader.Name != "IgnoreSeasons")
                         {
                             if (reader.Name == "Ignore")
-                                this.IgnoreSeasons.Add(reader.ReadElementContentAsInt());
+                                IgnoreSeasons.Add(reader.ReadElementContentAsInt());
                             else
                                 reader.ReadOuterXml();
                         }
@@ -332,7 +332,7 @@ public class ShowItem
                         while (reader.Name != "AliasNames")
                         {
                             if (reader.Name == "Alias")
-                                this.AliasNames.Add(reader.ReadElementContentAsString());
+                                AliasNames.Add(reader.ReadElementContentAsString());
                             else
                                 reader.ReadOuterXml();
                         }
@@ -344,13 +344,13 @@ public class ShowItem
                     if (!reader.IsEmptyElement)
                     {
                         int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-                        this.SeasonRules[snum] = new List<ShowRule>();
+                        SeasonRules[snum] = new List<ShowRule>();
                         reader.Read();
                         while (reader.Name != "Rules")
                         {
                             if (reader.Name == "Rule")
                             {
-                                this.SeasonRules[snum].Add(new ShowRule(reader.ReadSubtree()));
+                                SeasonRules[snum].Add(new ShowRule(reader.ReadSubtree()));
                                 reader.Read();
                             }
                         }
@@ -362,7 +362,7 @@ public class ShowItem
                     if (!reader.IsEmptyElement)
                     {
                         int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-                        this.ManualFolderLocations[snum] = new List<String>();
+                        ManualFolderLocations[snum] = new List<String>();
                         reader.Read();
                         while (reader.Name != "SeasonFolders")
                         {
@@ -370,7 +370,7 @@ public class ShowItem
                             {
                                 string ff = reader.GetAttribute("Location");
                                 if (AutoFolderNameForSeason(snum) != ff)
-                                    this.ManualFolderLocations[snum].Add(ff);
+                                    ManualFolderLocations[snum].Add(ff);
                             }
                             reader.Read();
                         }
@@ -384,24 +384,24 @@ public class ShowItem
 
         internal bool UsesManualFolders()
         {
-            return this.ManualFolderLocations.Count>0;
+            return ManualFolderLocations.Count>0;
         }
 
         public SeriesInfo TheSeries()
         {
-            return TheTVDB.Instance.GetSeries(this.TVDBCode);
+            return TheTVDB.Instance.GetSeries(TVDBCode);
         }
 
         public string ShowName
         {
             get
             {
-                if (this.UseCustomShowName)
-                    return this.CustomShowName;
+                if (UseCustomShowName)
+                    return CustomShowName;
                 SeriesInfo ser = TheSeries();
                 if (ser != null)
                     return ser.Name;
-                return "<" + this.TVDBCode + " not downloaded>";
+                return "<" + TVDBCode + " not downloaded>";
             }
         }
 
@@ -409,18 +409,18 @@ public class ShowItem
         {
             List<String> possibles = new List<String>();
 
-            String simplifiedShowName = Helpers.SimplifyName(this.ShowName);
+            String simplifiedShowName = Helpers.SimplifyName(ShowName);
             if (!(simplifiedShowName == "")) { possibles.Add( simplifiedShowName); }
 
             //Check the custom show name too
-            if (this.UseCustomShowName)
+            if (UseCustomShowName)
             {
-                String simplifiedCustomShowName = Helpers.SimplifyName(this.CustomShowName);
+                String simplifiedCustomShowName = Helpers.SimplifyName(CustomShowName);
                 if (!(simplifiedCustomShowName == "")) { possibles.Add(simplifiedCustomShowName); }
             }
 
             //Also add the aliases provided
-            possibles.AddRange(from alias in this.AliasNames select Helpers.SimplifyName(alias));
+            possibles.AddRange(from alias in AliasNames select Helpers.SimplifyName(alias));
 
             return possibles;
         }
@@ -446,17 +446,17 @@ public class ShowItem
         {
             get
             {
-                if (this.HasSeasonsAndEpisodes)
+                if (HasSeasonsAndEpisodes)
                 {
-                    if (this.HasAiredEpisodes && !this.HasUnairedEpisodes)
+                    if (HasAiredEpisodes && !HasUnairedEpisodes)
                     {
                         return ShowAirStatus.Aired;
                     }
-                    else if (this.HasUnairedEpisodes && !this.HasAiredEpisodes)
+                    else if (HasUnairedEpisodes && !HasAiredEpisodes)
                     {
                         return ShowAirStatus.NoneAired;
                     }
-                    else if (this.HasAiredEpisodes && this.HasUnairedEpisodes)
+                    else if (HasAiredEpisodes && HasUnairedEpisodes)
                     {
                         return ShowAirStatus.PartiallyAired;
                     }
@@ -481,7 +481,7 @@ public class ShowItem
                     return false;
                 foreach (KeyValuePair<int, Season> s in TheSeries().AiredSeasons)
                 {
-                    if(this.IgnoreSeasons.Contains(s.Key))
+                    if(IgnoreSeasons.Contains(s.Key))
                         continue;
                     if (s.Value.Episodes != null && s.Value.Episodes.Count > 0)
                     {
@@ -496,11 +496,11 @@ public class ShowItem
         {
             get
             {
-                if (!this.HasSeasonsAndEpisodes) return false;
+                if (!HasSeasonsAndEpisodes) return false;
 
                 foreach (KeyValuePair<int, Season> s in TheSeries().AiredSeasons)
                 {
-                    if (this.IgnoreSeasons.Contains(s.Key))
+                    if (IgnoreSeasons.Contains(s.Key))
                         continue;
                     if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.NoneAired ||
                         s.Value.Status(GetTimeZone()) == Season.SeasonStatus.PartiallyAired)
@@ -516,11 +516,11 @@ public class ShowItem
         private bool HasAiredEpisodes
         {
                 get{
-                    if (!this.HasSeasonsAndEpisodes) return false;
+                    if (!HasSeasonsAndEpisodes) return false;
 
                     foreach (KeyValuePair<int, Season> s in TheSeries().AiredSeasons)
                     {
-                        if(this.IgnoreSeasons.Contains(s.Key))
+                        if(IgnoreSeasons.Contains(s.Key))
                             continue;
                         if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.PartiallyAired || s.Value.Status(GetTimeZone()) == Season.SeasonStatus.Aired)
                         {
@@ -535,54 +535,54 @@ public class ShowItem
 
         public void SetDefaults()
         {
-            this.ManualFolderLocations = new Dictionary<int, List<string>>();
-            this.IgnoreSeasons = new List<int>();
-            this.UseCustomShowName = false;
-            this.CustomShowName = "";
-            this.UseSequentialMatch = false;
-            this.SeasonRules = new Dictionary<int, List<ShowRule>>();
-            this.SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
-            this.ShowNextAirdate = true;
-            this.TVDBCode = -1;
-            this.AutoAddNewSeasons = true;
-            this.PadSeasonToTwoDigits = false;
-            this.AutoAdd_FolderBase = "";
-            this.AutoAdd_FolderPerSeason = true;
-            this.AutoAdd_SeasonFolderName = "Season ";
-            this.DoRename = true;
-            this.DoMissingCheck = true;
-            this.CountSpecials = false;
-            this.DVDOrder = false;
-            this.CustomSearchURL = "";
-            this.UseCustomSearchURL = false;
-            this.ForceCheckNoAirdate = false;
-            this.ForceCheckFuture = false;
-            this.BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
-            this.ShowTimeZone = TVRename.TimeZone.DefaultTimeZone(); // default, is correct for most shows
-            this.LastFiguredTZ = "";
+            ManualFolderLocations = new Dictionary<int, List<string>>();
+            IgnoreSeasons = new List<int>();
+            UseCustomShowName = false;
+            CustomShowName = "";
+            UseSequentialMatch = false;
+            SeasonRules = new Dictionary<int, List<ShowRule>>();
+            SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
+            ShowNextAirdate = true;
+            TVDBCode = -1;
+            AutoAddNewSeasons = true;
+            PadSeasonToTwoDigits = false;
+            AutoAdd_FolderBase = "";
+            AutoAdd_FolderPerSeason = true;
+            AutoAdd_SeasonFolderName = "Season ";
+            DoRename = true;
+            DoMissingCheck = true;
+            CountSpecials = false;
+            DVDOrder = false;
+            CustomSearchURL = "";
+            UseCustomSearchURL = false;
+            ForceCheckNoAirdate = false;
+            ForceCheckFuture = false;
+            BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
+            ShowTimeZone = TimeZone.DefaultTimeZone(); // default, is correct for most shows
+            LastFiguredTZ = "";
         }
 
         public List<ShowRule> RulesForSeason(int n)
         {
-            return this.SeasonRules.ContainsKey(n) ? this.SeasonRules[n] : null;
+            return SeasonRules.ContainsKey(n) ? SeasonRules[n] : null;
         }
 
         public string AutoFolderNameForSeason(int n)
         {
-            bool leadingZero = TVSettings.Instance.LeadingZeroOnSeason || this.PadSeasonToTwoDigits;
-            string r = this.AutoAdd_FolderBase;
+            bool leadingZero = TVSettings.Instance.LeadingZeroOnSeason || PadSeasonToTwoDigits;
+            string r = AutoAdd_FolderBase;
             if (string.IsNullOrEmpty(r))
                 return "";
 
             if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
                 r += System.IO.Path.DirectorySeparatorChar.ToString();
-            if (this.AutoAdd_FolderPerSeason)
+            if (AutoAdd_FolderPerSeason)
             {
                 if (n == 0)
                     r += TVSettings.Instance.SpecialsFolderName;
                 else
                 {
-                    r += this.AutoAdd_SeasonFolderName;
+                    r += AutoAdd_SeasonFolderName;
                     if ((n < 10) && leadingZero)
                         r += "0";
                     r += n.ToString();
@@ -594,7 +594,7 @@ public class ShowItem
         public int MaxSeason()
         {
             int max = 0;
-            foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
+            foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
             {
                 if (kvp.Key > max)
                     max = kvp.Key;
@@ -612,43 +612,43 @@ public class ShowItem
         {
             writer.WriteStartElement("ShowItem");
 
-            XMLHelper.WriteElementToXML(writer,"UseCustomShowName",this.UseCustomShowName);
-            XMLHelper.WriteElementToXML(writer,"CustomShowName",this.CustomShowName);
-            XMLHelper.WriteElementToXML(writer,"ShowNextAirdate",this.ShowNextAirdate);
-            XMLHelper.WriteElementToXML(writer,"TVDBID",this.TVDBCode);
-            XMLHelper.WriteElementToXML(writer,"AutoAddNewSeasons",this.AutoAddNewSeasons);
-            XMLHelper.WriteElementToXML(writer,"FolderBase",this.AutoAdd_FolderBase);
-            XMLHelper.WriteElementToXML(writer,"FolderPerSeason",this.AutoAdd_FolderPerSeason);
-            XMLHelper.WriteElementToXML(writer,"SeasonFolderName",this.AutoAdd_SeasonFolderName);
-            XMLHelper.WriteElementToXML(writer,"DoRename",this.DoRename);
-            XMLHelper.WriteElementToXML(writer,"DoMissingCheck",this.DoMissingCheck);
-            XMLHelper.WriteElementToXML(writer,"CountSpecials",this.CountSpecials);
-            XMLHelper.WriteElementToXML(writer,"DVDOrder",this.DVDOrder);
-            XMLHelper.WriteElementToXML(writer,"ForceCheckNoAirdate",this.ForceCheckNoAirdate);
-            XMLHelper.WriteElementToXML(writer,"ForceCheckFuture",this.ForceCheckFuture);
-            XMLHelper.WriteElementToXML(writer,"UseSequentialMatch",this.UseSequentialMatch);
-            XMLHelper.WriteElementToXML(writer,"PadSeasonToTwoDigits",this.PadSeasonToTwoDigits);
-            XMLHelper.WriteElementToXML(writer, "BannersLastUpdatedOnDisk", this.BannersLastUpdatedOnDisk);
-            XMLHelper.WriteElementToXML(writer, "TimeZone", this.ShowTimeZone);
+            XMLHelper.WriteElementToXML(writer,"UseCustomShowName",UseCustomShowName);
+            XMLHelper.WriteElementToXML(writer,"CustomShowName",CustomShowName);
+            XMLHelper.WriteElementToXML(writer,"ShowNextAirdate",ShowNextAirdate);
+            XMLHelper.WriteElementToXML(writer,"TVDBID",TVDBCode);
+            XMLHelper.WriteElementToXML(writer,"AutoAddNewSeasons",AutoAddNewSeasons);
+            XMLHelper.WriteElementToXML(writer,"FolderBase",AutoAdd_FolderBase);
+            XMLHelper.WriteElementToXML(writer,"FolderPerSeason",AutoAdd_FolderPerSeason);
+            XMLHelper.WriteElementToXML(writer,"SeasonFolderName",AutoAdd_SeasonFolderName);
+            XMLHelper.WriteElementToXML(writer,"DoRename",DoRename);
+            XMLHelper.WriteElementToXML(writer,"DoMissingCheck",DoMissingCheck);
+            XMLHelper.WriteElementToXML(writer,"CountSpecials",CountSpecials);
+            XMLHelper.WriteElementToXML(writer,"DVDOrder",DVDOrder);
+            XMLHelper.WriteElementToXML(writer,"ForceCheckNoAirdate",ForceCheckNoAirdate);
+            XMLHelper.WriteElementToXML(writer,"ForceCheckFuture",ForceCheckFuture);
+            XMLHelper.WriteElementToXML(writer,"UseSequentialMatch",UseSequentialMatch);
+            XMLHelper.WriteElementToXML(writer,"PadSeasonToTwoDigits",PadSeasonToTwoDigits);
+            XMLHelper.WriteElementToXML(writer, "BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
+            XMLHelper.WriteElementToXML(writer, "TimeZone", ShowTimeZone);
 
             writer.WriteStartElement("IgnoreSeasons");
-            foreach (int i in this.IgnoreSeasons)
+            foreach (int i in IgnoreSeasons)
             {
                 XMLHelper.WriteElementToXML(writer,"Ignore",i);
             }
             writer.WriteEndElement();
 
             writer.WriteStartElement("AliasNames");
-            foreach (string str in this.AliasNames)
+            foreach (string str in AliasNames)
             {
                 XMLHelper.WriteElementToXML(writer,"Alias",str);
             }
             writer.WriteEndElement();
 
-            XMLHelper.WriteElementToXML(writer, "UseCustomSearchURL", this.UseCustomSearchURL);
-            XMLHelper.WriteElementToXML(writer, "CustomSearchURL",this.CustomSearchURL);
+            XMLHelper.WriteElementToXML(writer, "UseCustomSearchURL", UseCustomSearchURL);
+            XMLHelper.WriteElementToXML(writer, "CustomSearchURL",CustomSearchURL);
 
-            foreach (KeyValuePair<int, List<ShowRule>> kvp in this.SeasonRules)
+            foreach (KeyValuePair<int, List<ShowRule>> kvp in SeasonRules)
             {
                 if (kvp.Value.Count > 0)
                 {
@@ -661,7 +661,7 @@ public class ShowItem
                     writer.WriteEndElement(); // Rules
                 }
             }
-            foreach (KeyValuePair<int, List<String>> kvp in this.ManualFolderLocations)
+            foreach (KeyValuePair<int, List<String>> kvp in ManualFolderLocations)
             {
                 if (kvp.Value.Count > 0)
                 {
@@ -694,7 +694,7 @@ public class ShowItem
         {
             //We will create this on the fly
             Dictionary<int, List<ProcessedEpisode>> returnValue = new Dictionary<int, List<ProcessedEpisode>>();
-            foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
+            foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
             {
                 foreach (ProcessedEpisode ep in kvp.Value)
                 {
@@ -725,7 +725,7 @@ public class ShowItem
 
             if (manualToo)
             {
-                foreach (KeyValuePair<int, List<string>> kvp in this.ManualFolderLocations)
+                foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations)
                 {
                     if (!fld.ContainsKey(kvp.Key))
                         fld[kvp.Key] = new List<String>();
@@ -734,17 +734,17 @@ public class ShowItem
                 }
             }
 
-            if (this.AutoAddNewSeasons && (!string.IsNullOrEmpty(this.AutoAdd_FolderBase)))
+            if (AutoAddNewSeasons && (!string.IsNullOrEmpty(AutoAdd_FolderBase)))
             {
                 int highestThereIs = -1;
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in this.SeasonEpisodes)
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
                 {
                     if (kvp.Key > highestThereIs)
                         highestThereIs = kvp.Key;
                 }
-                foreach (int i in this.SeasonEpisodes.Keys)
+                foreach (int i in SeasonEpisodes.Keys)
                 {
-                    if (this.IgnoreSeasons.Contains(i)) continue;
+                    if (IgnoreSeasons.Contains(i)) continue;
 
                     string newName = AutoFolderNameForSeason(i);
                     if (string.IsNullOrEmpty(newName)) continue;
@@ -768,14 +768,14 @@ public class ShowItem
 
         public Season GetSeason(int snum)
         {
-            return this.DVDOrder? TheSeries().DVDSeasons[snum]: TheSeries().AiredSeasons[snum];
+            return DVDOrder? TheSeries().DVDSeasons[snum]: TheSeries().AiredSeasons[snum];
         }
 
         public void AddSeasonRule(int snum, ShowRule sr)
         {
-            if (!this.SeasonRules.ContainsKey(snum)) this.SeasonRules[snum] = new List<ShowRule>();
+            if (!SeasonRules.ContainsKey(snum)) SeasonRules[snum] = new List<ShowRule>();
 
-            this.SeasonRules[snum].Add(sr);
+            SeasonRules[snum].Add(sr);
         }
     }
 }
