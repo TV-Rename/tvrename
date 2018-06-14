@@ -78,7 +78,7 @@ namespace TVRename
             foreach (ProcessedEpisode pe in this.Eps)
             {
                 ListViewItem lvi = new ListViewItem();
-                string fn = TVSettings.Instance.FilenameFriendly(this.CN.NameForExt(pe));
+                string fn = TVSettings.Instance.FilenameFriendly(this.CN.NameFor(pe));
                 lvi.Text = fn;
 
                 bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.SI);

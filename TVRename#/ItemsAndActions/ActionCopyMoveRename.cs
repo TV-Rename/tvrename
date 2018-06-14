@@ -179,41 +179,6 @@ namespace TVRename
         #region Item Members
         public override IgnoreItem Ignore => this.To == null ? null : new IgnoreItem(this.To.FullName);
 
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem();
-
-	            if (this.Episode == null)
-	            {
-		            lvi.Text = "";
-		            lvi.SubItems.Add("");
-		            lvi.SubItems.Add("");
-		            lvi.SubItems.Add("");
-		            lvi.SubItems.Add("");
-	            }
-	            else
-	            {
-		            lvi.Text = this.Episode.TheSeries.Name;
-		            lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-		            lvi.SubItems.Add(this.Episode.NumsAsString());
-		            DateTime? dt = this.Episode.GetAirDateDT(true);
-		            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-			            lvi.SubItems.Add(dt.Value.ToShortDateString());
-		            else
-			            lvi.SubItems.Add("");
-	            }
-
-	            lvi.SubItems.Add(this.From.DirectoryName);
-                lvi.SubItems.Add(this.From.Name);
-                lvi.SubItems.Add(this.To.DirectoryName);
-                lvi.SubItems.Add(this.To.Name);
-
-                return lvi;
-            }
-        }
-
         public override string ScanListViewGroup
         {
             get
@@ -287,5 +252,10 @@ namespace TVRename
                 return 1;
             }
         }
+
+        public override string FileInfo1 => this.From.DirectoryName;
+        public override string FileInfo2 => this.From.Name;
+        public override string FileInfo3 => this.To.DirectoryName;
+        public override string FileInfo4 => this.To.Name;
     }
 }

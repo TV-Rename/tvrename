@@ -16,10 +16,9 @@ namespace TVRename
     public class ActionPyTivoMeta : ActionWriteMetadata
     {
 
-        public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe)
+        public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe) :base(nfo,null)
         {
             this.Episode = pe;
-            this.Where = nfo;
         }
 
 

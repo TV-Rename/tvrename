@@ -253,7 +253,7 @@ namespace TVRename
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
             this.exitToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.exitToolStripMenuItem.Text = "E&xit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exitToolStripMenuItem.Click += new System.EventHandler(exitToolStripMenuItem_Click);
             // 
             // optionsToolStripMenuItem
             // 
@@ -466,7 +466,7 @@ namespace TVRename
             this.visitWebsiteToolStripMenuItem.Name = "visitWebsiteToolStripMenuItem";
             this.visitWebsiteToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.visitWebsiteToolStripMenuItem.Text = "&Visit Website";
-            this.visitWebsiteToolStripMenuItem.Click += new System.EventHandler(this.visitWebsiteToolStripMenuItem_Click);
+            this.visitWebsiteToolStripMenuItem.Click += new System.EventHandler(visitWebsiteToolStripMenuItem_Click);
             // 
             // visitSupportForumToolStripMenuItem
             // 
@@ -1443,7 +1443,6 @@ namespace TVRename
             this.showRightClickMenu.Name = "menuSearchSites";
             this.showRightClickMenu.ShowImageMargin = false;
             this.showRightClickMenu.Size = new System.Drawing.Size(36, 4);
-            this.showRightClickMenu.Opening += new System.ComponentModel.CancelEventHandler(this.showRightClickMenu_Opening);
             this.showRightClickMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.showRightClickMenu_ItemClicked);
             // 
             // folderRightClickMenu

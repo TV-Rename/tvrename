@@ -11,27 +11,21 @@ using System.Globalization;
 namespace TVRename
 {
     using System;
-    using System.Windows.Forms;
     using System.Xml;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
     public class ActionMede8erXML : ActionWriteMetadata
     {
-           public ShowItem SI; // if for an entire show, rather than specific episode
 
-        public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe)
+        public ActionMede8erXML(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
         {
-            this.SI = null;
             this.Episode = pe;
-            this.Where = nfo;
         }
 
-        public ActionMede8erXML(FileInfo nfo, ShowItem si)
+        public ActionMede8erXML(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            this.SI = si;
             this.Episode = null;
-            this.Where = nfo;
         }
 
 
@@ -263,68 +257,6 @@ namespace TVRename
                 return -1;
             return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
         }
-
-        #endregion
-
-        #region Item Members
-        public override IgnoreItem Ignore
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return new IgnoreItem(this.Where.FullName);
-            }
-        }
-
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem();
-
-                if (this.Episode != null)
-                {
-                    lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
-                    DateTime? dt = this.Episode.GetAirDateDT(true);
-                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                        lvi.SubItems.Add(dt.Value.ToShortDateString());
-                    else
-                        lvi.SubItems.Add("");
-                }
-                else
-                {
-                    lvi.Text = this.SI.ShowName;
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                }
-
-                lvi.SubItems.Add(this.Where.DirectoryName);
-                lvi.SubItems.Add(this.Where.Name);
-
-                lvi.Tag = this;
-
-                //lv->Items->Add(lvi);
-                return lvi;
-            }
-        }
-
-        public override string TargetFolder
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return this.Where.DirectoryName;
-            }
-        }
-
-        public override string ScanListViewGroup => "lvgActionMeta";
-
-        public override int IconNumber => 7;
 
         #endregion
 

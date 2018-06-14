@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -310,7 +309,7 @@ namespace TVRename
 
 
                             me = new ItemMissing(newPE, me.TargetFolder,
-                                TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(newPE)));
+                                TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(newPE)));
                         }
 
                         FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);

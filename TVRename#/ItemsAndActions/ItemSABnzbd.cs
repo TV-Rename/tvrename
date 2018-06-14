@@ -5,12 +5,11 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System;
+
 namespace TVRename
 {
-    using System;
-    using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
-
     public class ItemSABnzbd : ItemInProgress
     {
         public SAB.queueSlotsSlot Entry;
@@ -32,64 +31,29 @@ namespace TVRename
         public override int Compare(Item o)
         {
             if (!(o is ItemSABnzbd ut))
-                return 0;
-
+                { return 0;}
             if (this.Episode == null)
-                return 1;
+                { return 1;}
             if (ut.Episode == null)
-                return -1;
+                { return -1;}
 
-            return (this.DesiredLocationNoExt).CompareTo(ut.DesiredLocationNoExt);
+            return string.Compare((this.DesiredLocationNoExt), ut.DesiredLocationNoExt, StringComparison.Ordinal);
         }
-
         #endregion
 
         #region Item Members
-
-        public override string TargetFolder
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(this.Entry.filename))
-                    return null;
-                return new FileInfo(this.Entry.filename).DirectoryName;
-            }
-        }
-
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem();
-
-                lvi.Text = this.Episode.SI.ShowName;
-                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(this.Episode.NumsAsString());
-                DateTime? dt = this.Episode.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
-                else
-                    lvi.SubItems.Add("");
-
-                lvi.SubItems.Add(this.Entry.filename);
-                String txt = this.Entry.status + ", " + (int) (0.5 + 100 - 100 * Entry.mbleft / Entry.mb) + "% Complete";
-                if (this.Entry.status == "Downloading")
-                    txt += ", " + this.Entry.timeleft + " left";
-                
-                lvi.SubItems.Add(txt);
-
-                lvi.SubItems.Add("");
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
-
-
-
         public override  int IconNumber => 8;
-
         #endregion
+
+        public override string FileIdentifier => this.Entry.filename;
+        public override string Destination => this.Entry.filename;
+        public override string Remaining {
+            get {
+                string txt = this.Entry.status + ", " + (int)(0.5 + 100 - 100 * this.Entry.mbleft / this.Entry.mb) + "% Complete";
+                if (this.Entry.status == "Downloading")
+                { txt += ", " + this.Entry.timeleft + " left";}
+                return txt;
+            }
+        }
     }
 }
