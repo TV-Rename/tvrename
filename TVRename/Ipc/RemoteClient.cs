@@ -16,11 +16,11 @@ namespace TVRename.Ipc
     /// <seealso cref="IRemoteActions" />
     internal class RemoteClient : MarshalByRefObject, IRemoteActions
     {
-        private const string IpcChannel = "TVRename";
-        private const string IpcService = "RemoteClient";
+        private const string IPC_CHANNEL = "TVRename";
+        private const string IPC_SERVICE = "RemoteClient";
 
-        private static UI ui;
-        private static TVDoc doc;
+        private static UI MainUi;
+        private static TVDoc Engine;
 
         /// <summary>
         /// Registers an IPC channel to an existing remote service.
@@ -29,7 +29,7 @@ namespace TVRename.Ipc
         public static void Proxy()
         {
             ChannelServices.RegisterChannel(new IpcClientChannel(), true);
-            RemotingConfiguration.RegisterWellKnownClientType(typeof(RemoteClient), $"ipc://{IpcChannel}/{IpcService}");
+            RemotingConfiguration.RegisterWellKnownClientType(typeof(RemoteClient), $"ipc://{IPC_CHANNEL}/{IPC_SERVICE}");
         }
 
         /// <summary>
@@ -39,15 +39,15 @@ namespace TVRename.Ipc
         /// <param name="settings">The global application settings.</param>
         public static void Bind(UI form, TVDoc settings)
         {
-            ui = form;
-            doc = settings;
+            MainUi = form;
+            Engine = settings;
 
-            Hashtable channelProperties = new Hashtable {{"exclusiveAddressUse", false}, {"portName", IpcChannel}};
+            Hashtable channelProperties = new Hashtable {{"exclusiveAddressUse", false}, {"portName", IPC_CHANNEL}};
 
             IpcServerChannel serverChannel = new IpcServerChannel(channelProperties,null);
             ChannelServices.RegisterChannel(serverChannel, true);
 
-            RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteClient), IpcService, WellKnownObjectMode.Singleton);
+            RemotingConfiguration.RegisterWellKnownServiceType(typeof(RemoteClient), IPC_SERVICE, WellKnownObjectMode.Singleton);
         }
 
         /// <summary>
@@ -58,13 +58,10 @@ namespace TVRename.Ipc
         /// </value>
         public CommandLineArgs.MissingFolderBehavior MissingFolderBehavior
         {
-            get
-            {
-                return doc?.Args.MissingFolder ?? CommandLineArgs.MissingFolderBehavior.Ask;
-            }
+            get => Engine?.Args.MissingFolder ?? CommandLineArgs.MissingFolderBehavior.Ask;
             set
             {
-                if (doc != null) doc.Args.MissingFolder = value;
+                if (Engine != null) Engine.Args.MissingFolder = value;
             }
         }
 
@@ -76,13 +73,10 @@ namespace TVRename.Ipc
         /// </value>
         public bool RenameBehavior
         {
-            get
-            {
-                return doc != null && TVSettings.Instance.RenameCheck;
-            }
+            get => Engine != null && TVSettings.Instance.RenameCheck;
             set
             {
-                if (doc != null) TVSettings.Instance.RenameCheck = value;
+                if (Engine != null) TVSettings.Instance.RenameCheck = value;
             }
         }
 
@@ -91,7 +85,7 @@ namespace TVRename.Ipc
         /// </summary>
         public void FocusWindow()
         {
-            ui?.BeginInvoke((MethodInvoker)ui.FocusWindow);
+            MainUi?.BeginInvoke((MethodInvoker)MainUi.FocusWindow);
         }
 
         /// <summary>
@@ -99,7 +93,7 @@ namespace TVRename.Ipc
         /// </summary>
         public void Scan()
         {
-            ui?.BeginInvoke((MethodInvoker)ui.Scan);
+            MainUi?.BeginInvoke((MethodInvoker)MainUi.Scan);
         }
 
         /// <summary>
@@ -107,7 +101,7 @@ namespace TVRename.Ipc
         /// </summary>
         public void RecentScan()
         {
-            ui?.BeginInvoke((MethodInvoker)ui.RecentScan);
+            MainUi?.BeginInvoke((MethodInvoker)MainUi.RecentScan);
         }
 
         /// <summary>
@@ -115,14 +109,14 @@ namespace TVRename.Ipc
         /// </summary>
         public void QuickScan()
         {
-            ui?.BeginInvoke((MethodInvoker)ui.QuickScan);
+            MainUi?.BeginInvoke((MethodInvoker)MainUi.QuickScan);
         }
         /// <summary>
          /// Processes all file tasks.
          /// </summary>
         public void ProcessAll()
         {
-            ui?.BeginInvoke((MethodInvoker)ui.ProcessAll);
+            MainUi?.BeginInvoke((MethodInvoker)MainUi.ProcessAll);
         }
 
         /// <summary>
@@ -130,7 +124,7 @@ namespace TVRename.Ipc
         /// </summary>
         public void Quit()
         {
-            ui?.BeginInvoke((MethodInvoker)ui.Quit);
+            MainUi?.BeginInvoke((MethodInvoker)MainUi.Quit);
         }
     }
 }

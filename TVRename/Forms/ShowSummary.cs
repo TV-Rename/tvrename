@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Alphaleonis.Win32.Filesystem;
 using SourceGrid;
@@ -30,7 +31,7 @@ namespace TVRename
         private List<FileInfo> mLastFileList;
         private Season mLastSeasonClicked;
         private ShowItem mLastShowClicked;
-        private List<ShowSummaryData> showList;
+        private readonly List<ShowSummaryData> showList;
 
         public ShowSummary(TVDoc doc)
         {
@@ -138,15 +139,9 @@ namespace TVRename
             grid1.AutoSizeCells();
         }
 
-        private int GetMaxSeason(IEnumerable<ShowSummaryData> showList)
+        private static int GetMaxSeason(IEnumerable<ShowSummaryData> shows)
         {
-            int maxSeason = 0;
-            foreach (ShowSummaryData show in showList)
-            {
-                if (show.MaxSeason > maxSeason)
-                    maxSeason = show.MaxSeason;
-            }
-            return maxSeason;
+            return shows.Select(x => x.MaxSeason).DefaultIfEmpty(0).Max();
         }
 
         private ShowSummaryData AddShowDetails(ShowItem si)
@@ -265,7 +260,7 @@ namespace TVRename
             if (seas == null)
                 return;
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(seas.TheSeries.TVDBCode, seas.SeasonID, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TVDBCode, seas.SeasonId, false));
         }
 
         private void TVDBFor(ShowItem si)
@@ -273,7 +268,7 @@ namespace TVRename
             if (si == null)
                 return;
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, false));
         }
 
         private void ForceRefresh(ShowItem si)
@@ -313,12 +308,12 @@ namespace TVRename
                 Season seas = season;
 
                 gridSummary.mLastFileList = new List<FileInfo>();
-                gridSummary.mFoldersToOpen = new List<String>();
+                gridSummary.mFoldersToOpen = new List<string>();
 
                 gridSummary.mLastShowClicked = show;
                 gridSummary.mLastSeasonClicked = season;
 
-                List<String> added = new List<String>();
+                List<string> added = new List<string>();
 
                 if (show != null && seas == null)
                 {
@@ -356,7 +351,7 @@ namespace TVRename
                     int n = gridSummary.mFoldersToOpen.Count;
                     bool first = true;
 
-                    foreach (KeyValuePair<int, List<String>> kvp in show.AllFolderLocations())
+                    foreach (KeyValuePair<int, List<string>> kvp in show.AllFolderLocations())
                     {
                         foreach (string folder in kvp.Value)
                         {

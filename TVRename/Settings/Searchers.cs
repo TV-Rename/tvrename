@@ -23,7 +23,7 @@ namespace TVRename
         }
 
         public string CurrentSearch;
-        private List<Choice> Choices = new List<Choice>();
+        private readonly List<Choice> Choices = new List<Choice>();
 
         public Searchers()
         {
@@ -100,13 +100,13 @@ namespace TVRename
         public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
-            XMLHelper.WriteElementToXML(writer,"Current",CurrentSearch);
+            XmlHelper.WriteElementToXml(writer,"Current",CurrentSearch);
 
             for (int i = 0; i < Count(); i++)
             {
                 writer.WriteStartElement("Choice");
-                XMLHelper.WriteAttributeToXML(writer,"Name",Choices[i].Name);
-                XMLHelper.WriteAttributeToXML(writer,"URL2",Choices[i].URL2);
+                XmlHelper.WriteAttributeToXml(writer,"Name",Choices[i].Name);
+                XmlHelper.WriteAttributeToXml(writer,"URL2",Choices[i].URL2);
                 writer.WriteEndElement();
             }
             writer.WriteEndElement(); // TheSearchers

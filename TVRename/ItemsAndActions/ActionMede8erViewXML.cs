@@ -49,12 +49,12 @@ namespace TVRename
                     if (Snum >= 0)
                     {
                         // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
-                        XMLHelper.WriteElementToXML(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
-                        XMLHelper.WriteElementToXML(writer, "ViewType", "Video");
+                        XmlHelper.WriteElementToXml(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
+                        XmlHelper.WriteElementToXml(writer, "ViewType", "Video");
                     }
                     else
                     {
-                        XMLHelper.WriteElementToXML(writer, "ViewMode", "Preview");
+                        XmlHelper.WriteElementToXml(writer, "ViewMode", "Preview");
                     }
 
                     writer.WriteEndElement();
@@ -101,7 +101,7 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = SI.ShowName;
+                lvi.Text = SelectedShow.ShowName;
                 lvi.SubItems.Add(Snum > 0 ? Snum.ToString() : "");
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");

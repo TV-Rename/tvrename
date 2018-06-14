@@ -27,8 +27,8 @@ namespace TVRename
     /// </summary>
     public partial class AddEditSeasEpFinders : Form
     {
-        private List<FilenameProcessorRE> Rex;
-        private List<ShowItem> SIL;
+        private readonly List<FilenameProcessorRE> Rex;
+        private readonly List<ShowItem> SIL;
 
         public List<FilenameProcessorRE> OutputRegularExpressions { get => Rex;}
 
@@ -114,7 +114,7 @@ namespace TVRename
             Grid1.Selection.SelectionChanged += SelectionChanged;
         }
 
-        private void SelectionChanged(Object sender, RangeRegionChangedEventArgs e)
+        private void SelectionChanged(object sender, RangeRegionChangedEventArgs e)
         {
             SelectionOnSelectionChanged(sender, e);
             StartTimer();
@@ -146,7 +146,7 @@ namespace TVRename
             foreach (FilenameProcessorRE re in list)
             {
                 Grid1[i, 0] = new SourceGrid.Cells.CheckBox(null, re.Enabled);
-                Grid1[i, 1] = new SourceGrid.Cells.Cell(re.RE, typeof(string));
+                Grid1[i, 1] = new SourceGrid.Cells.Cell(re.RegExpression, typeof(string));
                 Grid1[i, 2] = new SourceGrid.Cells.CheckBox(null, re.UseFullPath);
                 Grid1[i, 3] = new SourceGrid.Cells.Cell(re.Notes, typeof(string));
 
@@ -309,7 +309,7 @@ namespace TVRename
 
         public class ChangedCont : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private AddEditSeasEpFinders P;
+            private readonly AddEditSeasEpFinders P;
 
             public ChangedCont(AddEditSeasEpFinders p)
             {

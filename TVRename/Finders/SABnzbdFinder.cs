@@ -21,7 +21,7 @@ namespace TVRename
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
-            if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || String.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
+            if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
                 prog.Invoke(totPct);
                 return;

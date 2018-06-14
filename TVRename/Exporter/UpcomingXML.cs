@@ -34,11 +34,11 @@ namespace TVRename
                     {
                         
                         writer.WriteStartElement("item");
-                        XMLHelper.WriteElementToXML(writer,"id",ei.TheSeries.TVDBCode);
-                        XMLHelper.WriteElementToXML(writer,"SeriesName",ei.TheSeries.Name);
-                        XMLHelper.WriteElementToXML(writer,"SeasonNumber",Helpers.pad(ei.AppropriateSeasonNumber));
-                        XMLHelper.WriteElementToXML(writer, "EpisodeNumber", Helpers.pad(ei.AppropriateEpNum));
-                        XMLHelper.WriteElementToXML(writer,"EpisodeName",ei.Name);
+                        XmlHelper.WriteElementToXml(writer,"id",ei.TheSeries.TVDBCode);
+                        XmlHelper.WriteElementToXml(writer,"SeriesName",ei.TheSeries.Name);
+                        XmlHelper.WriteElementToXml(writer,"SeasonNumber",Helpers.Pad(ei.AppropriateSeasonNumber));
+                        XmlHelper.WriteElementToXml(writer, "EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));
+                        XmlHelper.WriteElementToXml(writer,"EpisodeName",ei.Name);
   
                         writer.WriteStartElement("available");
                         DateTime? airdt = ei.GetAirDateDT(true);
@@ -53,7 +53,7 @@ namespace TVRename
                         }
                         
                         writer.WriteEndElement();
-                        XMLHelper.WriteElementToXML( writer,"Overview",ei.Overview);
+                        XmlHelper.WriteElementToXml( writer,"Overview",ei.Overview);
                         
                         writer.WriteStartElement("FirstAired");
                         DateTime? dt = ei.GetAirDateDT(true);
@@ -61,8 +61,8 @@ namespace TVRename
                             writer.WriteValue(dt.Value.ToString("F"));
                         writer.WriteEndElement();
                         
-                        XMLHelper.WriteElementToXML( writer,"Rating",ei.EpisodeRating);
-                        XMLHelper.WriteElementToXML( writer,"filename",ei.GetFilename());
+                        XmlHelper.WriteElementToXml( writer,"Rating",ei.EpisodeRating);
+                        XmlHelper.WriteElementToXml( writer,"filename",ei.GetFilename());
 
                         writer.WriteEndElement(); // item
                     }

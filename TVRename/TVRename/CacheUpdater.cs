@@ -23,8 +23,8 @@ namespace TVRename
         private Thread mDownloaderThread;
         private ICollection<int> downloadIds;
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
 
         public CacheUpdater()
         {
@@ -105,7 +105,7 @@ namespace TVRename
             }
         }
 
-        private void GetThread(Object codeIn)
+        private void GetThread(object codeIn)
         {
             System.Diagnostics.Debug.Assert(WorkerSemaphore != null);
 
@@ -212,7 +212,7 @@ namespace TVRename
 
                 WaitForAllThreadsAndTidyUp();
 
-                TheTVDB.Instance.UpdatesDoneOK();
+                TheTVDB.Instance.UpdatesDoneOk();
                 DownloadDone = true;
                 DownloadOK = true;
                 return;

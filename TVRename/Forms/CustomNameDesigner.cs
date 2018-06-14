@@ -25,8 +25,8 @@ namespace TVRename
     /// </summary>
     public partial class CustomNameDesigner : Form
     {
-        private CustomName CN;
-        private List<ProcessedEpisode> Eps;
+        private readonly CustomName CN;
+        private readonly List<ProcessedEpisode> Eps;
         private TVDoc mDoc;
 
         public CustomNameDesigner(List<ProcessedEpisode> pel, CustomName cn, TVDoc doc)

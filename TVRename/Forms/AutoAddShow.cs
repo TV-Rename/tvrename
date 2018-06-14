@@ -46,7 +46,7 @@ namespace TVRename
             mSI.AutoAdd_FolderBase = cbDirectory.Text+lblDirectoryName.Text;
             mSI.PadSeasonToTwoDigits = true;
             //Set Default Timezone based on Network
-            mSI.ShowTimeZone = TimeZone.TimeZoneForNetwork(mTCCF.SelectedShow()?.getNetwork());
+            mSI.ShowTimeZone = TimeZone.TimeZoneForNetwork(mTCCF.SelectedShow()?.GetNetwork());
             if (!originalHint.Contains(mTCCF.SelectedShow().Name, StringComparison.OrdinalIgnoreCase)) mSI.AliasNames.Add(originalHint);
 
         }

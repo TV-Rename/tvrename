@@ -9,18 +9,18 @@ namespace TVRename
     public sealed class AutoFolderMonitor :IDisposable 
     {
         private readonly TVDoc mDoc;
-        private readonly UI mUI;
-        private List<FileSystemWatcher> Watchers = new List<FileSystemWatcher>();
-        private System.Timers.Timer mScanDelayTimer;
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly UI mainForm;
+        private readonly List<FileSystemWatcher> watchers = new List<FileSystemWatcher>();
+        private readonly System.Timers.Timer mScanDelayTimer;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AutoFolderMonitor(TVDoc Doc, UI ui)
+        public AutoFolderMonitor(TVDoc doc, UI ui)
         {
-            mDoc = Doc;
-            mUI = ui;
+            mDoc = doc;
+            mainForm = ui;
 
             mScanDelayTimer = new System.Timers.Timer(1000);
-            mScanDelayTimer.Elapsed += new System.Timers.ElapsedEventHandler(mScanDelayTimer_Elapsed);
+            mScanDelayTimer.Elapsed += mScanDelayTimer_Elapsed;
             mScanDelayTimer.Stop();
         }
 
@@ -47,21 +47,21 @@ namespace TVRename
 
 
                 FileSystemWatcher watcher = new FileSystemWatcher(efi);
-                watcher.Changed += new FileSystemEventHandler(watcher_Changed);
-                watcher.Created += new FileSystemEventHandler(watcher_Changed);
-                watcher.Renamed += new RenamedEventHandler(watcher_Changed);
+                watcher.Changed += watcher_Changed;
+                watcher.Created += watcher_Changed;
+                watcher.Renamed += watcher_Changed;
                 //watcher.Deleted += new FileSystemEventHandler(watcher_Changed);
                 //watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.CreationTime;
                 watcher.IncludeSubdirectories = true;
                 watcher.EnableRaisingEvents = true;
-                Watchers.Add(watcher);
-                logger.Trace("Starting logger for {0}", efi);
+                watchers.Add(watcher);
+                Logger.Trace("Starting logger for {0}", efi);
             }
         }
 
         void watcher_Changed(object sender, FileSystemEventArgs e)
         {
-            logger.Trace("Restarted delay timer");
+            Logger.Trace("Restarted delay timer");
             mScanDelayTimer.Stop();
             mScanDelayTimer.Start();
         }
@@ -74,43 +74,43 @@ namespace TVRename
             //We only wish to do a scan now if we are not already undertaking one
             if (!mDoc.CurrentlyBusy)
             {
-                logger.Info("*******************************");
-                logger.Info("Auto scan fired");
-                if (mUI != null)
+                Logger.Info("*******************************");
+                Logger.Info("Auto scan fired");
+                if (mainForm != null)
                 {
                     switch (TVSettings.Instance.MonitoredFoldersScanType)
                     {
                         case TVSettings.ScanType.Full:
-                            mUI.Invoke(mUI.AFMFullScan);
+                            mainForm.Invoke(mainForm.AFMFullScan);
                             break;
                         case TVSettings.ScanType.Recent:
-                            mUI.Invoke(mUI.AFMRecentScan);
+                            mainForm.Invoke(mainForm.AFMRecentScan);
                             break;
                         case TVSettings.ScanType.Quick:
-                            mUI.Invoke(mUI.AFMQuickScan);
+                            mainForm.Invoke(mainForm.AFMQuickScan);
                             break;
                     }
 
-                    mUI.Invoke(mUI.AFMDoAll);
+                    mainForm.Invoke(mainForm.AFMDoAll);
 
                 }
 
             }
             else
             {
-               logger.Info("Auto scan cancelled as the system is already busy");
+               Logger.Info("Auto scan cancelled as the system is already busy");
             }
             StartMonitor();
         }
 
         public void StopMonitor()
         {
-            foreach (FileSystemWatcher watcher in Watchers)
+            foreach (FileSystemWatcher watcher in watchers)
             {
                 watcher.EnableRaisingEvents = false;
                 watcher.Dispose();
             }
-            Watchers.Clear();
+            watchers.Clear();
         }
 
         public void Dispose()

@@ -22,11 +22,11 @@ namespace TVRename
     /// </summary>
     public partial class EditRules : Form
     {
-        private CustomName NameStyle;
-        private List<ShowRule> WorkingRuleSet;
-        private List<ProcessedEpisode> mOriginalEps;
-        private ShowItem mSI;
-        private int mSeasonNumber;
+        private readonly CustomName NameStyle;
+        private readonly List<ShowRule> WorkingRuleSet;
+        private readonly List<ProcessedEpisode> mOriginalEps;
+        private readonly ShowItem mSI;
+        private readonly int mSeasonNumber;
 
         public EditRules(ShowItem si, List<ProcessedEpisode> originalEpList, int seasonNumber, CustomName style)
         {

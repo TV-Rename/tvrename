@@ -41,7 +41,7 @@ namespace TVRename
             NextToAir = false;
             OverallNumber = -1;
             Ignore = false;
-            EpNum2 = si.DVDOrder? DVDEpNum: AiredEpNum;
+            EpNum2 = si.DVDOrder? DvdEpNum: AiredEpNum;
             SI = si;
             type = ProcessedEpisodeType.single;
         }
@@ -62,7 +62,7 @@ namespace TVRename
         {
             OverallNumber = -1;
             NextToAir = false;
-            EpNum2 = si.DVDOrder ? DVDEpNum : AiredEpNum;
+            EpNum2 = si.DVDOrder ? DvdEpNum : AiredEpNum;
             Ignore = false;
             SI = si;
             type = ProcessedEpisodeType.single;
@@ -72,7 +72,7 @@ namespace TVRename
         {
             OverallNumber = -1;
             NextToAir = false;
-            EpNum2 = si.DVDOrder ? DVDEpNum : AiredEpNum;
+            EpNum2 = si.DVDOrder ? DvdEpNum : AiredEpNum;
             Ignore = false;
             SI = si;
             type = t;
@@ -83,23 +83,23 @@ namespace TVRename
         {
             OverallNumber = -1;
             NextToAir = false;
-            EpNum2 = si.DVDOrder ? DVDEpNum : AiredEpNum;
+            EpNum2 = si.DVDOrder ? DvdEpNum : AiredEpNum;
             Ignore = false;
             SI = si;
             sourceEpisodes = episodes;
             type = ProcessedEpisodeType.merged;
         }
 
-        public int AppropriateSeasonNumber => SI.DVDOrder ? DVDSeasonNumber : AiredSeasonNumber;
+        public int AppropriateSeasonNumber => SI.DVDOrder ? DvdSeasonNumber : AiredSeasonNumber;
 
-        public Season AppropriateSeason => SI.DVDOrder ? TheDVDSeason : TheAiredSeason;
+        public Season AppropriateSeason => SI.DVDOrder ? TheDvdSeason : TheAiredSeason;
 
         public int AppropriateEpNum
         {
-            get => SI.DVDOrder ? DVDEpNum : AiredEpNum;
+            get => SI.DVDOrder ? DvdEpNum : AiredEpNum;
             set
             {
-                if (SI.DVDOrder) DVDEpNum = value;
+                if (SI.DVDOrder) DvdEpNum = value;
                 else AiredEpNum = value;
             }
         }
@@ -124,8 +124,8 @@ namespace TVRename
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static int DVDOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
-            int ep1 = e1.DVDEpNum;
-            int ep2 = e2.DVDEpNum;
+            int ep1 = e1.DvdEpNum;
+            int ep2 = e2.DvdEpNum;
 
             return ep1 - ep2;
         }
@@ -133,9 +133,9 @@ namespace TVRename
         public DateTime? GetAirDateDT(bool inLocalTime)
         {
             if (!inLocalTime)
-                return GetAirDateDT();
+                return GetAirDateDt();
             // do timezone adjustment
-            return GetAirDateDT(SI.GetTimeZone());
+            return GetAirDateDt(SI.GetTimeZone());
         }
 
         public string HowLong()
@@ -190,7 +190,7 @@ public class ShowItem
         public bool ForceCheckFuture;
         public bool ForceCheckNoAirdate;
         public List<int> IgnoreSeasons;
-        public Dictionary<int, List<String>> ManualFolderLocations;
+        public Dictionary<int, List<string>> ManualFolderLocations;
         public bool PadSeasonToTwoDigits;
         public Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
         public Dictionary<int, List<ShowRule>> SeasonRules;
@@ -200,9 +200,9 @@ public class ShowItem
         public bool UseSequentialMatch;
         public List<string> AliasNames = new List<string>();
         public bool UseCustomSearchURL;
-        public String CustomSearchURL;
+        public string CustomSearchURL;
 
-        public String ShowTimeZone;
+        public string ShowTimeZone;
         private TimeZone SeriesTZ;
         private string LastFiguredTZ;
         
@@ -362,7 +362,7 @@ public class ShowItem
                     if (!reader.IsEmptyElement)
                     {
                         int snum = int.Parse(reader.GetAttribute("SeasonNumber"));
-                        ManualFolderLocations[snum] = new List<String>();
+                        ManualFolderLocations[snum] = new List<string>();
                         reader.Read();
                         while (reader.Name != "SeasonFolders")
                         {
@@ -405,17 +405,17 @@ public class ShowItem
             }
         }
 
-        public List<String> getSimplifiedPossibleShowNames()
+        public List<string> getSimplifiedPossibleShowNames()
         {
-            List<String> possibles = new List<String>();
+            List<string> possibles = new List<string>();
 
-            String simplifiedShowName = Helpers.SimplifyName(ShowName);
+            string simplifiedShowName = Helpers.SimplifyName(ShowName);
             if (!(simplifiedShowName == "")) { possibles.Add( simplifiedShowName); }
 
             //Check the custom show name too
             if (UseCustomShowName)
             {
-                String simplifiedCustomShowName = Helpers.SimplifyName(CustomShowName);
+                string simplifiedCustomShowName = Helpers.SimplifyName(CustomShowName);
                 if (!(simplifiedCustomShowName == "")) { possibles.Add(simplifiedCustomShowName); }
             }
 
@@ -429,7 +429,7 @@ public class ShowItem
         {
             get{
                 SeriesInfo ser = TheSeries();
-                if (ser != null ) return ser.getStatus();
+                if (ser != null ) return ser.GetStatus();
                 return "Unknown";
             }
         }
@@ -502,8 +502,8 @@ public class ShowItem
                 {
                     if (IgnoreSeasons.Contains(s.Key))
                         continue;
-                    if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.NoneAired ||
-                        s.Value.Status(GetTimeZone()) == Season.SeasonStatus.PartiallyAired)
+                    if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.noneAired ||
+                        s.Value.Status(GetTimeZone()) == Season.SeasonStatus.partiallyAired)
                     {
                         return true;
                     }
@@ -522,7 +522,7 @@ public class ShowItem
                     {
                         if(IgnoreSeasons.Contains(s.Key))
                             continue;
-                        if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.PartiallyAired || s.Value.Status(GetTimeZone()) == Season.SeasonStatus.Aired)
+                        if (s.Value.Status(GetTimeZone()) == Season.SeasonStatus.partiallyAired || s.Value.Status(GetTimeZone()) == Season.SeasonStatus.aired)
                         {
                             return true;
                         }
@@ -612,48 +612,48 @@ public class ShowItem
         {
             writer.WriteStartElement("ShowItem");
 
-            XMLHelper.WriteElementToXML(writer,"UseCustomShowName",UseCustomShowName);
-            XMLHelper.WriteElementToXML(writer,"CustomShowName",CustomShowName);
-            XMLHelper.WriteElementToXML(writer,"ShowNextAirdate",ShowNextAirdate);
-            XMLHelper.WriteElementToXML(writer,"TVDBID",TVDBCode);
-            XMLHelper.WriteElementToXML(writer,"AutoAddNewSeasons",AutoAddNewSeasons);
-            XMLHelper.WriteElementToXML(writer,"FolderBase",AutoAdd_FolderBase);
-            XMLHelper.WriteElementToXML(writer,"FolderPerSeason",AutoAdd_FolderPerSeason);
-            XMLHelper.WriteElementToXML(writer,"SeasonFolderName",AutoAdd_SeasonFolderName);
-            XMLHelper.WriteElementToXML(writer,"DoRename",DoRename);
-            XMLHelper.WriteElementToXML(writer,"DoMissingCheck",DoMissingCheck);
-            XMLHelper.WriteElementToXML(writer,"CountSpecials",CountSpecials);
-            XMLHelper.WriteElementToXML(writer,"DVDOrder",DVDOrder);
-            XMLHelper.WriteElementToXML(writer,"ForceCheckNoAirdate",ForceCheckNoAirdate);
-            XMLHelper.WriteElementToXML(writer,"ForceCheckFuture",ForceCheckFuture);
-            XMLHelper.WriteElementToXML(writer,"UseSequentialMatch",UseSequentialMatch);
-            XMLHelper.WriteElementToXML(writer,"PadSeasonToTwoDigits",PadSeasonToTwoDigits);
-            XMLHelper.WriteElementToXML(writer, "BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
-            XMLHelper.WriteElementToXML(writer, "TimeZone", ShowTimeZone);
+            XmlHelper.WriteElementToXml(writer,"UseCustomShowName",UseCustomShowName);
+            XmlHelper.WriteElementToXml(writer,"CustomShowName",CustomShowName);
+            XmlHelper.WriteElementToXml(writer,"ShowNextAirdate",ShowNextAirdate);
+            XmlHelper.WriteElementToXml(writer,"TVDBID",TVDBCode);
+            XmlHelper.WriteElementToXml(writer,"AutoAddNewSeasons",AutoAddNewSeasons);
+            XmlHelper.WriteElementToXml(writer,"FolderBase",AutoAdd_FolderBase);
+            XmlHelper.WriteElementToXml(writer,"FolderPerSeason",AutoAdd_FolderPerSeason);
+            XmlHelper.WriteElementToXml(writer,"SeasonFolderName",AutoAdd_SeasonFolderName);
+            XmlHelper.WriteElementToXml(writer,"DoRename",DoRename);
+            XmlHelper.WriteElementToXml(writer,"DoMissingCheck",DoMissingCheck);
+            XmlHelper.WriteElementToXml(writer,"CountSpecials",CountSpecials);
+            XmlHelper.WriteElementToXml(writer,"DVDOrder",DVDOrder);
+            XmlHelper.WriteElementToXml(writer,"ForceCheckNoAirdate",ForceCheckNoAirdate);
+            XmlHelper.WriteElementToXml(writer,"ForceCheckFuture",ForceCheckFuture);
+            XmlHelper.WriteElementToXml(writer,"UseSequentialMatch",UseSequentialMatch);
+            XmlHelper.WriteElementToXml(writer,"PadSeasonToTwoDigits",PadSeasonToTwoDigits);
+            XmlHelper.WriteElementToXml(writer, "BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
+            XmlHelper.WriteElementToXml(writer, "TimeZone", ShowTimeZone);
 
             writer.WriteStartElement("IgnoreSeasons");
             foreach (int i in IgnoreSeasons)
             {
-                XMLHelper.WriteElementToXML(writer,"Ignore",i);
+                XmlHelper.WriteElementToXml(writer,"Ignore",i);
             }
             writer.WriteEndElement();
 
             writer.WriteStartElement("AliasNames");
             foreach (string str in AliasNames)
             {
-                XMLHelper.WriteElementToXML(writer,"Alias",str);
+                XmlHelper.WriteElementToXml(writer,"Alias",str);
             }
             writer.WriteEndElement();
 
-            XMLHelper.WriteElementToXML(writer, "UseCustomSearchURL", UseCustomSearchURL);
-            XMLHelper.WriteElementToXML(writer, "CustomSearchURL",CustomSearchURL);
+            XmlHelper.WriteElementToXml(writer, "UseCustomSearchURL", UseCustomSearchURL);
+            XmlHelper.WriteElementToXml(writer, "CustomSearchURL",CustomSearchURL);
 
             foreach (KeyValuePair<int, List<ShowRule>> kvp in SeasonRules)
             {
                 if (kvp.Value.Count > 0)
                 {
                     writer.WriteStartElement("Rules");
-                    XMLHelper.WriteAttributeToXML(writer ,"SeasonNumber",kvp.Key);
+                    XmlHelper.WriteAttributeToXml(writer ,"SeasonNumber",kvp.Key);
 
                     foreach (ShowRule r in kvp.Value)
                         r.WriteXML(writer);
@@ -661,18 +661,18 @@ public class ShowItem
                     writer.WriteEndElement(); // Rules
                 }
             }
-            foreach (KeyValuePair<int, List<String>> kvp in ManualFolderLocations)
+            foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations)
             {
                 if (kvp.Value.Count > 0)
                 {
                     writer.WriteStartElement("SeasonFolders");
 
-                    XMLHelper.WriteAttributeToXML(writer,"SeasonNumber",kvp.Key);
+                    XmlHelper.WriteAttributeToXml(writer,"SeasonNumber",kvp.Key);
 
                     foreach (string s in kvp.Value)
                     {
                         writer.WriteStartElement("Folder");
-                        XMLHelper.WriteAttributeToXML(writer,"Location",s);
+                        XmlHelper.WriteAttributeToXml(writer,"Location",s);
                         writer.WriteEndElement(); // Folder
                     }
 
@@ -698,11 +698,11 @@ public class ShowItem
             {
                 foreach (ProcessedEpisode ep in kvp.Value)
                 {
-                    if (!returnValue.ContainsKey(ep.DVDSeasonNumber ))
+                    if (!returnValue.ContainsKey(ep.DvdSeasonNumber ))
                     {
-                        returnValue.Add(ep.DVDSeasonNumber, new List<ProcessedEpisode>());
+                        returnValue.Add(ep.DvdSeasonNumber, new List<ProcessedEpisode>());
                     }
-                    returnValue[ep.DVDSeasonNumber].Add(ep);
+                    returnValue[ep.DvdSeasonNumber].Add(ep);
                 }
             }
 
@@ -728,9 +728,9 @@ public class ShowItem
                 foreach (KeyValuePair<int, List<string>> kvp in ManualFolderLocations)
                 {
                     if (!fld.ContainsKey(kvp.Key))
-                        fld[kvp.Key] = new List<String>();
+                        fld[kvp.Key] = new List<string>();
                     foreach (string s in kvp.Value)
-                        fld[kvp.Key].Add(s.TTS());
+                        fld[kvp.Key].Add(s.TrimSlash());
                 }
             }
 
@@ -753,7 +753,7 @@ public class ShowItem
 
                     if (!fld.ContainsKey(i)) fld[i] = new List<string>();
 
-                    if (!fld[i].Contains(newName)) fld[i].Add(newName.TTS());
+                    if (!fld[i].Contains(newName)) fld[i].Add(newName.TrimSlash());
                 }
             }
             return fld;

@@ -20,17 +20,16 @@ namespace TVRename
     /// </summary>
     public partial class IgnoreEdit : Form
     {
-        private System.Collections.Generic.List<IgnoreItem> DisplayedSet;
-        private System.Collections.Generic.List<IgnoreItem> Ignore;
-        private TVDoc mDoc;
+        private readonly System.Collections.Generic.List<IgnoreItem> ignore;
+        private readonly TVDoc mDoc;
 
         public IgnoreEdit(TVDoc doc)
         {
             mDoc = doc;
-            Ignore = new System.Collections.Generic.List<IgnoreItem>();
+            ignore = new System.Collections.Generic.List<IgnoreItem>();
 
             foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
-                Ignore.Add(ii);
+                ignore.Add(ii);
 
             InitializeComponent();
 
@@ -39,7 +38,7 @@ namespace TVRename
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            TVSettings.Instance.Ignore = Ignore;
+            TVSettings.Instance.Ignore = ignore;
             mDoc.SetDirty();
             Close();
         }
@@ -47,10 +46,10 @@ namespace TVRename
         private void bnRemove_Click(object sender, System.EventArgs e)
         {
             foreach (int i in lbItems.SelectedIndices)
-                foreach (IgnoreItem iitest in Ignore)
+                foreach (IgnoreItem iitest in ignore)
                     if (lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
                     {
-                        Ignore.Remove(iitest);
+                        ignore.Remove(iitest);
                         break;
                     }
             FillList();
@@ -64,15 +63,12 @@ namespace TVRename
             string f = txtFilter.Text.ToLower();
             bool all = string.IsNullOrEmpty(f);
 
-            DisplayedSet = new System.Collections.Generic.List<IgnoreItem>();
-
-            foreach (IgnoreItem ii in Ignore)
+            foreach (IgnoreItem ii in ignore)
             {
                 string s = ii.FileAndPath;
                 if (all || s.ToLower().Contains(f))
                 {
                     lbItems.Items.Add(s);
-                    DisplayedSet.Add(ii);
                 }
             }
 

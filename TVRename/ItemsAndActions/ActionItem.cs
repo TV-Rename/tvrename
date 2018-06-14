@@ -57,9 +57,8 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem();
+                ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
 
-                lvi.Text = Episode.SI.ShowName;
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
                 DateTime? dt = Episode.GetAirDateDT(true);
@@ -131,21 +130,21 @@ namespace TVRename
     public abstract class ActionFileOperation : Action
     {
         protected TidySettings Tidyup;
-        protected static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         protected void DeleteOrRecycleFile(FileInfo file)
         {
             if (file == null) return;
             if (Tidyup.DeleteEmptyIsRecycle)
             {
-                logger.Info($"Recycling {file.FullName}");
+                Logger.Info($"Recycling {file.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                     Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
-                logger.Info($"Deleting {file.FullName}");
+                Logger.Info($"Deleting {file.FullName}");
                 file.Delete(true);
             }
         }
@@ -155,14 +154,14 @@ namespace TVRename
             if (di == null) return;
             if (Tidyup.DeleteEmptyIsRecycle)
             {
-                logger.Info($"Recycling {di.FullName}");
+                Logger.Info($"Recycling {di.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                     Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
-                logger.Info($"Deleting {di.FullName}");
+                Logger.Info($"Deleting {di.FullName}");
                 di.Delete(true, true);
             }
         }
@@ -286,12 +285,12 @@ namespace TVRename
     public abstract class ActionWriteMetadata : ActionDownload
     {
         protected readonly FileInfo Where;
-        protected readonly ShowItem SI; // if for an entire show, rather than specific episode
+        protected readonly ShowItem SelectedShow; // if for an entire show, rather than specific episode
 
         protected ActionWriteMetadata(FileInfo where, ShowItem sI)
         {
             Where = where;
-            SI = sI;
+            SelectedShow = sI;
         }
 
         public override string Produces => Where.FullName;
@@ -327,7 +326,7 @@ namespace TVRename
                 }
                 else
                 {
-                    lvi.Text = SI.ShowName;
+                    lvi.Text = SelectedShow.ShowName;
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");
@@ -357,9 +356,9 @@ namespace TVRename
 
     public class ActionQueue
     {
-        public System.Collections.Generic.List<Action> Actions; // The contents of this queue
-        public int ParallelLimit; // Number of tasks in the queue than can be run at once
-        public string Name; // Name of this queue
+        public readonly System.Collections.Generic.List<Action> Actions; // The contents of this queue
+        public readonly int ParallelLimit; // Number of tasks in the queue than can be run at once
+        public readonly string Name; // Name of this queue
         public int ActionPosition; // Position in the queue list of the next item to process
 
         public ActionQueue(string name, int parallelLimit)

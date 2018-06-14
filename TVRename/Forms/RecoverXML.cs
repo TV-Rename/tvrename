@@ -21,38 +21,38 @@ namespace TVRename
     /// </summary>
     public partial class RecoverXML : Form
     {
-        public FileInfo DBFile;
-        private FileInfo[] DBList;
+        public FileInfo DbFile;
+        private FileInfo[] availableFiles;
 
         public FileInfo SettingsFile;
-        private FileInfo[] SettingsList;
+        private FileInfo[] settingsList;
 
         public RecoverXML(string hint)
         {
             InitializeComponent();
             SettingsFile = null;
-            DBFile = null;
+            DbFile = null;
             if (!string.IsNullOrEmpty(hint))
                 lbHint.Text = hint + "\r\n ";
         }
 
         private void RecoverXML_Load(object sender, System.EventArgs e)
         {
-            SettingsList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
-            DBList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TVDBFileName + "*");
+            settingsList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
+            availableFiles = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TVDBFileName + "*");
 
             lbSettings.Items.Add("Default settings");
-            if ((SettingsList != null) && SettingsList.Length > 0)
+            if ((settingsList != null) && settingsList.Length > 0)
             {
-                foreach (FileInfo fi in SettingsList)
+                foreach (FileInfo fi in settingsList)
                     lbSettings.Items.Add(fi.LastWriteTime.ToString("g"));
                 lbSettings.SelectedIndex = 0;
             }
 
             lbDB.Items.Add("None");
-            if ((DBList != null) && DBList.Length > 0)
+            if ((availableFiles != null) && availableFiles.Length > 0)
             {
-                foreach (FileInfo fi in DBList)
+                foreach (FileInfo fi in availableFiles)
                     lbDB.Items.Add(fi.LastWriteTime.ToString("g"));
                 lbDB.SelectedIndex = 0;
             }
@@ -65,12 +65,12 @@ namespace TVRename
             int n = lbDB.SelectedIndex;
             if (n == -1)
                 n = 0;
-            DBFile = (n == 0) ? null : DBList[n - 1];
+            DbFile = (n == 0) ? null : availableFiles[n - 1];
 
             n = lbSettings.SelectedIndex;
             if (n == -1)
                 n = 0;
-            SettingsFile = (n == 0) ? null : SettingsList[n];
+            SettingsFile = (n == 0) ? null : settingsList[n];
 
             DialogResult = DialogResult.OK;
             Close();

@@ -21,8 +21,8 @@ namespace TVRename
     /// </summary>
     public partial class TorrentMatch : Form
     {
-        private SetProgressDelegate SetProgress;
-        private TVDoc mDoc;
+        private readonly SetProgressDelegate SetProgress;
+        private readonly TVDoc mDoc;
 
         public TorrentMatch(TVDoc doc, SetProgressDelegate prog)
         {

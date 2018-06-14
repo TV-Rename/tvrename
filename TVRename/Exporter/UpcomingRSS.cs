@@ -28,11 +28,11 @@ namespace TVRename
                 {
                     writer.WriteStartDocument();
                     writer.WriteStartElement("rss");
-                    XMLHelper.WriteAttributeToXML(writer, "version", "2.0");
+                    XmlHelper.WriteAttributeToXml(writer, "version", "2.0");
                     writer.WriteStartElement("channel");
-                    XMLHelper.WriteElementToXML(writer, "title", "Upcoming Shows");
-                    XMLHelper.WriteElementToXML(writer, "title", "http://tvrename.com");
-                    XMLHelper.WriteElementToXML(writer, "description", "Upcoming shows, exported by TVRename");
+                    XmlHelper.WriteElementToXml(writer, "title", "Upcoming Shows");
+                    XmlHelper.WriteElementToXml(writer, "title", "http://tvrename.com");
+                    XmlHelper.WriteElementToXml(writer, "description", "Upcoming shows, exported by TVRename");
 
                     foreach (ProcessedEpisode ei in elist)
                     {
@@ -40,9 +40,9 @@ namespace TVRename
 
                         writer.WriteStartElement("item");
                         
-                        XMLHelper.WriteElementToXML(writer,"title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.SI.ShowName + " " + niceName);
-                        XMLHelper.WriteElementToXML(writer, "link", TheTVDB.Instance.WebsiteURL(ei.TheSeries.TVDBCode, ei.SeasonID, false));
-                        XMLHelper.WriteElementToXML(writer,"description", ei.SI.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
+                        XmlHelper.WriteElementToXml(writer,"title",ei.HowLong() + " " + ei.DayOfWeek() + " " + ei.TimeOfDay() + " " + ei.SI.ShowName + " " + niceName);
+                        XmlHelper.WriteElementToXml(writer, "link", TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TVDBCode, ei.SeasonId, false));
+                        XmlHelper.WriteElementToXml(writer,"description", ei.SI.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
 
                         writer.WriteStartElement("pubDate");
                         DateTime? dt = ei.GetAirDateDT(true);

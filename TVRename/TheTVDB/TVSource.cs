@@ -3,7 +3,8 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    public interface TVSource
+    // ReSharper disable once InconsistentNaming
+    public interface iTVSource
     {
         void Setup(FileInfo loadFrom, FileInfo cacheFile, CommandLineArgs args);
         bool Connect();
@@ -11,7 +12,7 @@ namespace TVRename
 
         bool EnsureUpdated(int code, bool bannersToo);
         bool GetUpdates();
-        void UpdatesDoneOK();
+        void UpdatesDoneOk();
 
         SeriesInfo GetSeries(string showName);
         SeriesInfo GetSeries(int id);

@@ -34,7 +34,7 @@ namespace TVRename
                         {
                             ProcessedEpisode pe = im.Episode;
                             DateTime? dt = pe.GetAirDateDT(true);
-                            file.WriteLine($"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.NumsAsString()},\"{pe.Name}\",{dt:G},\"{action.TargetFolder}\",\"{im.Filename }\",{pe.SeriesID}");
+                            file.WriteLine($"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.NumsAsString()},\"{pe.Name}\",{dt:G},\"{action.TargetFolder}\",\"{im.Filename }\",{pe.SeriesId}");
                         }
 
                     }

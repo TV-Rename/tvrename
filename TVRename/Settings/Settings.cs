@@ -38,9 +38,9 @@ namespace TVRename
     {
         // used for invalid (and general) character (and string) replacements in filenames
 
-        public bool CaseInsensitive;
-        public string That;
-        public string This;
+        public readonly bool CaseInsensitive;
+        public readonly string That;
+        public readonly string This;
 
         public Replacement(string a, string b, bool insens)
         {
@@ -56,15 +56,15 @@ namespace TVRename
     {
         // A regular expression to find the season and episode number in a filename
 
-        public bool Enabled;
-        public string Notes;
-        public string RE;
-        public bool UseFullPath;
+        public readonly bool Enabled;
+        public readonly string Notes;
+        public readonly string RegExpression;
+        public readonly bool UseFullPath;
 
         public FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
         {
             Enabled = enabled;
-            RE = re;
+            RegExpression = re;
             UseFullPath = useFullPath;
             Notes = notes;
         }
@@ -172,13 +172,13 @@ namespace TVRename
                         (Season.SeasonStatus) Enum.Parse(typeof (Season.SeasonStatus), Status);
                     switch (status)
                     {
-                        case Season.SeasonStatus.Aired:
+                        case Season.SeasonStatus.aired:
                             return "All aired";
-                        case Season.SeasonStatus.NoEpisodes:
+                        case Season.SeasonStatus.noEpisodes:
                             return "No Episodes";
-                        case Season.SeasonStatus.NoneAired:
+                        case Season.SeasonStatus.noneAired:
                             return "None aired";
-                        case Season.SeasonStatus.PartiallyAired:
+                        case Season.SeasonStatus.partiallyAired:
                             return "Partially aired";
                         default:
                             return Status;
@@ -723,6 +723,7 @@ namespace TVRename
                             }
                             catch
                             {
+                                // ignored
                             }
 
                             string color = reader.GetAttribute("Color");
@@ -735,6 +736,7 @@ namespace TVRename
                                 }
                                 catch
                                 {
+                                    // ignored
                                 }
                             }
                             reader.Read();
@@ -828,132 +830,132 @@ namespace TVRename
         {
             writer.WriteStartElement("Settings");
             TheSearchers.WriteXML(writer);
-            XMLHelper.WriteElementToXML(writer,"BGDownload",BGDownload);
-            XMLHelper.WriteElementToXML(writer,"OfflineMode",OfflineMode);
+            XmlHelper.WriteElementToXml(writer,"BGDownload",BGDownload);
+            XmlHelper.WriteElementToXml(writer,"OfflineMode",OfflineMode);
             writer.WriteStartElement("Replacements");
             foreach (Replacement R in Replacements)
             {
                 writer.WriteStartElement("Replace");
-                XMLHelper.WriteAttributeToXML(writer,"This",R.This);
-                XMLHelper.WriteAttributeToXML(writer, "That", R.That);
-                XMLHelper.WriteAttributeToXML(writer, "CaseInsensitive", R.CaseInsensitive ? "Y" : "N");
+                XmlHelper.WriteAttributeToXml(writer,"This",R.This);
+                XmlHelper.WriteAttributeToXml(writer, "That", R.That);
+                XmlHelper.WriteAttributeToXml(writer, "CaseInsensitive", R.CaseInsensitive ? "Y" : "N");
                 writer.WriteEndElement(); //Replace
             }
             writer.WriteEndElement(); //Replacements
             
-            XMLHelper.WriteElementToXML(writer,"ExportWTWRSS",ExportWTWRSS);
-            XMLHelper.WriteElementToXML(writer,"ExportWTWRSSTo",ExportWTWRSSTo);
-            XMLHelper.WriteElementToXML(writer,"ExportWTWXML",ExportWTWXML);
-            XMLHelper.WriteElementToXML(writer,"ExportWTWXMLTo",ExportWTWXMLTo);
-            XMLHelper.WriteElementToXML(writer,"WTWRecentDays",WTWRecentDays);
-            XMLHelper.WriteElementToXML(writer,"ExportMissingXML",ExportMissingXML);
-            XMLHelper.WriteElementToXML(writer,"ExportMissingXMLTo",ExportMissingXMLTo);
-            XMLHelper.WriteElementToXML(writer,"ExportMissingCSV",ExportMissingCSV);
-            XMLHelper.WriteElementToXML(writer,"ExportMissingCSVTo",ExportMissingCSVTo);
-            XMLHelper.WriteElementToXML(writer,"ExportRenamingXML",ExportRenamingXML);
-            XMLHelper.WriteElementToXML(writer,"ExportRenamingXMLTo",ExportRenamingXMLTo);
-            XMLHelper.WriteElementToXML(writer,"ExportShowsTXT", ExportShowsTXT);
-            XMLHelper.WriteElementToXML(writer, "ExportShowsTXTTo", ExportShowsTXTTo);
-            XMLHelper.WriteElementToXML(writer, "ExportShowsHTML", ExportShowsHTML);
-            XMLHelper.WriteElementToXML(writer, "ExportShowsHTMLTo", ExportShowsHTMLTo);
-            XMLHelper.WriteElementToXML(writer,"ExportFOXML",ExportFOXML);
-            XMLHelper.WriteElementToXML(writer,"ExportFOXMLTo",ExportFOXMLTo);
-            XMLHelper.WriteElementToXML(writer,"StartupTab2",TabNameForNumber(StartupTab));
-            XMLHelper.WriteElementToXML(writer,"NamingStyle",NamingStyle.StyleString);
-            XMLHelper.WriteElementToXML(writer,"NotificationAreaIcon",NotificationAreaIcon);
-            XMLHelper.WriteElementToXML(writer,"VideoExtensions",VideoExtensionsString);
-            XMLHelper.WriteElementToXML(writer,"OtherExtensions",OtherExtensionsString);
-            XMLHelper.WriteElementToXML(writer,"ExportRSSMaxDays",ExportRSSMaxDays);
-            XMLHelper.WriteElementToXML(writer,"ExportRSSMaxShows",ExportRSSMaxShows);
-            XMLHelper.WriteElementToXML(writer,"ExportRSSDaysPast",ExportRSSDaysPast);
-            XMLHelper.WriteElementToXML(writer,"KeepTogether",KeepTogether);
-            XMLHelper.WriteElementToXML(writer,"KeepTogetherType", (int)keepTogetherMode);
-            XMLHelper.WriteElementToXML(writer,"KeepTogetherExtensions", keepTogetherExtensionsString);
-            XMLHelper.WriteElementToXML(writer,"LeadingZeroOnSeason",LeadingZeroOnSeason);
-            XMLHelper.WriteElementToXML(writer,"ShowInTaskbar",ShowInTaskbar);
-            XMLHelper.WriteElementToXML(writer,"IgnoreSamples",IgnoreSamples);
-            XMLHelper.WriteElementToXML(writer,"ForceLowercaseFilenames",ForceLowercaseFilenames);
-            XMLHelper.WriteElementToXML(writer,"RenameTxtToSub",RenameTxtToSub);
-            XMLHelper.WriteElementToXML(writer,"ParallelDownloads",ParallelDownloads);
-            XMLHelper.WriteElementToXML(writer,"AutoSelectShowInMyShows",AutoSelectShowInMyShows);
-            XMLHelper.WriteElementToXML(writer,"AutoCreateFolders", AutoCreateFolders );
-            XMLHelper.WriteElementToXML(writer,"ShowEpisodePictures",ShowEpisodePictures);
-            XMLHelper.WriteElementToXML(writer, "HideWtWSpoilers", HideWtWSpoilers);
-            XMLHelper.WriteElementToXML(writer, "HideMyShowsSpoilers", HideMyShowsSpoilers);
-            XMLHelper.WriteElementToXML(writer,"SpecialsFolderName",SpecialsFolderName);
-            XMLHelper.WriteElementToXML(writer,"uTorrentPath",uTorrentPath);
-            XMLHelper.WriteElementToXML(writer,"ResumeDatPath",ResumeDatPath);
-            XMLHelper.WriteElementToXML(writer,"SearchRSS",SearchRSS);
-            XMLHelper.WriteElementToXML(writer,"EpImgs",EpTBNs);
-            XMLHelper.WriteElementToXML(writer,"NFOShows",NFOShows);
-            XMLHelper.WriteElementToXML(writer,"NFOEpisodes", NFOEpisodes);
-            XMLHelper.WriteElementToXML(writer,"KODIImages",KODIImages);
-            XMLHelper.WriteElementToXML(writer,"pyTivoMeta",pyTivoMeta);
-            XMLHelper.WriteElementToXML(writer,"pyTivoMetaSubFolder",pyTivoMetaSubFolder);
-            XMLHelper.WriteElementToXML(writer,"FolderJpg",FolderJpg);
-            XMLHelper.WriteElementToXML(writer,"FolderJpgIs",(int) FolderJpgIs);
-            XMLHelper.WriteElementToXML(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);
-            XMLHelper.WriteElementToXML(writer,"SelectedKODIType",(int)SelectedKODIType);
-            XMLHelper.WriteElementToXML(writer,"CheckuTorrent",CheckuTorrent);
-            XMLHelper.WriteElementToXML(writer,"RenameCheck",RenameCheck);
-            XMLHelper.WriteElementToXML(writer, "PreventMove", PreventMove);
-            XMLHelper.WriteElementToXML(writer,"MissingCheck",MissingCheck);
-            XMLHelper.WriteElementToXML(writer, "AutoSearchForDownloadedFiles", AutoSearchForDownloadedFiles);
-            XMLHelper.WriteElementToXML(writer, "UpdateFileDates", CorrectFileDates);
-            XMLHelper.WriteElementToXML(writer,"SearchLocally",SearchLocally);
-            XMLHelper.WriteElementToXML(writer,"LeaveOriginals",LeaveOriginals);
-            XMLHelper.WriteElementToXML(writer, "RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles);
-            XMLHelper.WriteElementToXML(writer, "ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly);
-            XMLHelper.WriteElementToXML(writer,"LookForDateInFilename",LookForDateInFilename);
-            XMLHelper.WriteElementToXML(writer, "AutoMergeEpisodes", AutoMergeDownloadEpisodes);
-            XMLHelper.WriteElementToXML(writer, "AutoMergeLibraryEpisodes", AutoMergeLibraryEpisodes);
-            XMLHelper.WriteElementToXML(writer,"MonitorFolders",MonitorFolders);
-            XMLHelper.WriteElementToXML(writer, "StartupScan", runStartupCheck);
-            XMLHelper.WriteElementToXML(writer, "PeriodicScan", runPeriodicCheck);
-            XMLHelper.WriteElementToXML(writer, "PeriodicScanHours", periodCheckHours);
-            XMLHelper.WriteElementToXML(writer,"RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
-            XMLHelper.WriteElementToXML(writer,"SABAPIKey",SABAPIKey);
-            XMLHelper.WriteElementToXML(writer,"CheckSABnzbd",CheckSABnzbd);
-            XMLHelper.WriteElementToXML(writer,"SABHostPort",SABHostPort);
-            XMLHelper.WriteElementToXML(writer,"PreferredLanguage",PreferredLanguage);
-            XMLHelper.WriteElementToXML(writer,"WTWDoubleClick",(int) WTWDoubleClick);
-            XMLHelper.WriteElementToXML(writer,"EpJPGs",EpJPGs);
-            XMLHelper.WriteElementToXML(writer,"SeriesJpg",SeriesJpg);
-            XMLHelper.WriteElementToXML(writer,"Mede8erXML",Mede8erXML);
-            XMLHelper.WriteElementToXML(writer,"ShrinkLargeMede8erImages",ShrinkLargeMede8erImages);
-            XMLHelper.WriteElementToXML(writer,"FanArtJpg",FanArtJpg);
-            XMLHelper.WriteElementToXML(writer,"DeleteEmpty",Tidyup.DeleteEmpty);
-            XMLHelper.WriteElementToXML(writer,"DeleteEmptyIsRecycle",Tidyup.DeleteEmptyIsRecycle);
-            XMLHelper.WriteElementToXML(writer,"EmptyIgnoreWords",Tidyup.EmptyIgnoreWords);
-            XMLHelper.WriteElementToXML(writer,"EmptyIgnoreWordList",Tidyup.EmptyIgnoreWordList);
-            XMLHelper.WriteElementToXML(writer,"EmptyIgnoreExtensions",Tidyup.EmptyIgnoreExtensions);
-            XMLHelper.WriteElementToXML(writer,"EmptyIgnoreExtensionList",Tidyup.EmptyIgnoreExtensionList);
-            XMLHelper.WriteElementToXML(writer,"EmptyMaxSizeCheck",Tidyup.EmptyMaxSizeCheck);
-            XMLHelper.WriteElementToXML(writer,"EmptyMaxSizeMB",Tidyup.EmptyMaxSizeMB);
-            XMLHelper.WriteElementToXML(writer, "BetaMode", (int)mode);
-            XMLHelper.WriteElementToXML(writer, "PercentDirtyUpgrade", upgradeDirtyPercent);
-            XMLHelper.WriteElementToXML(writer, "BaseSeasonName", defaultSeasonWord);
-            XMLHelper.WriteElementToXML(writer, "SearchSeasonNames", searchSeasonWordsString);
-            XMLHelper.WriteElementToXML(writer, "PreferredRSSSearchTerms", preferredRSSSearchTermsString);
-            XMLHelper.WriteElementToXML(writer, "BulkAddIgnoreRecycleBin", BulkAddIgnoreRecycleBin);
-            XMLHelper.WriteElementToXML(writer, "BulkAddCompareNoVideoFolders", BulkAddCompareNoVideoFolders);
-            XMLHelper.WriteElementToXML(writer, "AutoAddMovieTerms", AutoAddMovieTerms);
-            XMLHelper.WriteElementToXML(writer, "AutoAddIgnoreSuffixes", AutoAddIgnoreSuffixes);
+            XmlHelper.WriteElementToXml(writer,"ExportWTWRSS",ExportWTWRSS);
+            XmlHelper.WriteElementToXml(writer,"ExportWTWRSSTo",ExportWTWRSSTo);
+            XmlHelper.WriteElementToXml(writer,"ExportWTWXML",ExportWTWXML);
+            XmlHelper.WriteElementToXml(writer,"ExportWTWXMLTo",ExportWTWXMLTo);
+            XmlHelper.WriteElementToXml(writer,"WTWRecentDays",WTWRecentDays);
+            XmlHelper.WriteElementToXml(writer,"ExportMissingXML",ExportMissingXML);
+            XmlHelper.WriteElementToXml(writer,"ExportMissingXMLTo",ExportMissingXMLTo);
+            XmlHelper.WriteElementToXml(writer,"ExportMissingCSV",ExportMissingCSV);
+            XmlHelper.WriteElementToXml(writer,"ExportMissingCSVTo",ExportMissingCSVTo);
+            XmlHelper.WriteElementToXml(writer,"ExportRenamingXML",ExportRenamingXML);
+            XmlHelper.WriteElementToXml(writer,"ExportRenamingXMLTo",ExportRenamingXMLTo);
+            XmlHelper.WriteElementToXml(writer,"ExportShowsTXT", ExportShowsTXT);
+            XmlHelper.WriteElementToXml(writer, "ExportShowsTXTTo", ExportShowsTXTTo);
+            XmlHelper.WriteElementToXml(writer, "ExportShowsHTML", ExportShowsHTML);
+            XmlHelper.WriteElementToXml(writer, "ExportShowsHTMLTo", ExportShowsHTMLTo);
+            XmlHelper.WriteElementToXml(writer,"ExportFOXML",ExportFOXML);
+            XmlHelper.WriteElementToXml(writer,"ExportFOXMLTo",ExportFOXMLTo);
+            XmlHelper.WriteElementToXml(writer,"StartupTab2",TabNameForNumber(StartupTab));
+            XmlHelper.WriteElementToXml(writer,"NamingStyle",NamingStyle.StyleString);
+            XmlHelper.WriteElementToXml(writer,"NotificationAreaIcon",NotificationAreaIcon);
+            XmlHelper.WriteElementToXml(writer,"VideoExtensions",VideoExtensionsString);
+            XmlHelper.WriteElementToXml(writer,"OtherExtensions",OtherExtensionsString);
+            XmlHelper.WriteElementToXml(writer,"ExportRSSMaxDays",ExportRSSMaxDays);
+            XmlHelper.WriteElementToXml(writer,"ExportRSSMaxShows",ExportRSSMaxShows);
+            XmlHelper.WriteElementToXml(writer,"ExportRSSDaysPast",ExportRSSDaysPast);
+            XmlHelper.WriteElementToXml(writer,"KeepTogether",KeepTogether);
+            XmlHelper.WriteElementToXml(writer,"KeepTogetherType", (int)keepTogetherMode);
+            XmlHelper.WriteElementToXml(writer,"KeepTogetherExtensions", keepTogetherExtensionsString);
+            XmlHelper.WriteElementToXml(writer,"LeadingZeroOnSeason",LeadingZeroOnSeason);
+            XmlHelper.WriteElementToXml(writer,"ShowInTaskbar",ShowInTaskbar);
+            XmlHelper.WriteElementToXml(writer,"IgnoreSamples",IgnoreSamples);
+            XmlHelper.WriteElementToXml(writer,"ForceLowercaseFilenames",ForceLowercaseFilenames);
+            XmlHelper.WriteElementToXml(writer,"RenameTxtToSub",RenameTxtToSub);
+            XmlHelper.WriteElementToXml(writer,"ParallelDownloads",ParallelDownloads);
+            XmlHelper.WriteElementToXml(writer,"AutoSelectShowInMyShows",AutoSelectShowInMyShows);
+            XmlHelper.WriteElementToXml(writer,"AutoCreateFolders", AutoCreateFolders );
+            XmlHelper.WriteElementToXml(writer,"ShowEpisodePictures",ShowEpisodePictures);
+            XmlHelper.WriteElementToXml(writer, "HideWtWSpoilers", HideWtWSpoilers);
+            XmlHelper.WriteElementToXml(writer, "HideMyShowsSpoilers", HideMyShowsSpoilers);
+            XmlHelper.WriteElementToXml(writer,"SpecialsFolderName",SpecialsFolderName);
+            XmlHelper.WriteElementToXml(writer,"uTorrentPath",uTorrentPath);
+            XmlHelper.WriteElementToXml(writer,"ResumeDatPath",ResumeDatPath);
+            XmlHelper.WriteElementToXml(writer,"SearchRSS",SearchRSS);
+            XmlHelper.WriteElementToXml(writer,"EpImgs",EpTBNs);
+            XmlHelper.WriteElementToXml(writer,"NFOShows",NFOShows);
+            XmlHelper.WriteElementToXml(writer,"NFOEpisodes", NFOEpisodes);
+            XmlHelper.WriteElementToXml(writer,"KODIImages",KODIImages);
+            XmlHelper.WriteElementToXml(writer,"pyTivoMeta",pyTivoMeta);
+            XmlHelper.WriteElementToXml(writer,"pyTivoMetaSubFolder",pyTivoMetaSubFolder);
+            XmlHelper.WriteElementToXml(writer,"FolderJpg",FolderJpg);
+            XmlHelper.WriteElementToXml(writer,"FolderJpgIs",(int) FolderJpgIs);
+            XmlHelper.WriteElementToXml(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);
+            XmlHelper.WriteElementToXml(writer,"SelectedKODIType",(int)SelectedKODIType);
+            XmlHelper.WriteElementToXml(writer,"CheckuTorrent",CheckuTorrent);
+            XmlHelper.WriteElementToXml(writer,"RenameCheck",RenameCheck);
+            XmlHelper.WriteElementToXml(writer, "PreventMove", PreventMove);
+            XmlHelper.WriteElementToXml(writer,"MissingCheck",MissingCheck);
+            XmlHelper.WriteElementToXml(writer, "AutoSearchForDownloadedFiles", AutoSearchForDownloadedFiles);
+            XmlHelper.WriteElementToXml(writer, "UpdateFileDates", CorrectFileDates);
+            XmlHelper.WriteElementToXml(writer,"SearchLocally",SearchLocally);
+            XmlHelper.WriteElementToXml(writer,"LeaveOriginals",LeaveOriginals);
+            XmlHelper.WriteElementToXml(writer, "RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles);
+            XmlHelper.WriteElementToXml(writer, "ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly);
+            XmlHelper.WriteElementToXml(writer,"LookForDateInFilename",LookForDateInFilename);
+            XmlHelper.WriteElementToXml(writer, "AutoMergeEpisodes", AutoMergeDownloadEpisodes);
+            XmlHelper.WriteElementToXml(writer, "AutoMergeLibraryEpisodes", AutoMergeLibraryEpisodes);
+            XmlHelper.WriteElementToXml(writer,"MonitorFolders",MonitorFolders);
+            XmlHelper.WriteElementToXml(writer, "StartupScan", runStartupCheck);
+            XmlHelper.WriteElementToXml(writer, "PeriodicScan", runPeriodicCheck);
+            XmlHelper.WriteElementToXml(writer, "PeriodicScanHours", periodCheckHours);
+            XmlHelper.WriteElementToXml(writer,"RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
+            XmlHelper.WriteElementToXml(writer,"SABAPIKey",SABAPIKey);
+            XmlHelper.WriteElementToXml(writer,"CheckSABnzbd",CheckSABnzbd);
+            XmlHelper.WriteElementToXml(writer,"SABHostPort",SABHostPort);
+            XmlHelper.WriteElementToXml(writer,"PreferredLanguage",PreferredLanguage);
+            XmlHelper.WriteElementToXml(writer,"WTWDoubleClick",(int) WTWDoubleClick);
+            XmlHelper.WriteElementToXml(writer,"EpJPGs",EpJPGs);
+            XmlHelper.WriteElementToXml(writer,"SeriesJpg",SeriesJpg);
+            XmlHelper.WriteElementToXml(writer,"Mede8erXML",Mede8erXML);
+            XmlHelper.WriteElementToXml(writer,"ShrinkLargeMede8erImages",ShrinkLargeMede8erImages);
+            XmlHelper.WriteElementToXml(writer,"FanArtJpg",FanArtJpg);
+            XmlHelper.WriteElementToXml(writer,"DeleteEmpty",Tidyup.DeleteEmpty);
+            XmlHelper.WriteElementToXml(writer,"DeleteEmptyIsRecycle",Tidyup.DeleteEmptyIsRecycle);
+            XmlHelper.WriteElementToXml(writer,"EmptyIgnoreWords",Tidyup.EmptyIgnoreWords);
+            XmlHelper.WriteElementToXml(writer,"EmptyIgnoreWordList",Tidyup.EmptyIgnoreWordList);
+            XmlHelper.WriteElementToXml(writer,"EmptyIgnoreExtensions",Tidyup.EmptyIgnoreExtensions);
+            XmlHelper.WriteElementToXml(writer,"EmptyIgnoreExtensionList",Tidyup.EmptyIgnoreExtensionList);
+            XmlHelper.WriteElementToXml(writer,"EmptyMaxSizeCheck",Tidyup.EmptyMaxSizeCheck);
+            XmlHelper.WriteElementToXml(writer,"EmptyMaxSizeMB",Tidyup.EmptyMaxSizeMB);
+            XmlHelper.WriteElementToXml(writer, "BetaMode", (int)mode);
+            XmlHelper.WriteElementToXml(writer, "PercentDirtyUpgrade", upgradeDirtyPercent);
+            XmlHelper.WriteElementToXml(writer, "BaseSeasonName", defaultSeasonWord);
+            XmlHelper.WriteElementToXml(writer, "SearchSeasonNames", searchSeasonWordsString);
+            XmlHelper.WriteElementToXml(writer, "PreferredRSSSearchTerms", preferredRSSSearchTermsString);
+            XmlHelper.WriteElementToXml(writer, "BulkAddIgnoreRecycleBin", BulkAddIgnoreRecycleBin);
+            XmlHelper.WriteElementToXml(writer, "BulkAddCompareNoVideoFolders", BulkAddCompareNoVideoFolders);
+            XmlHelper.WriteElementToXml(writer, "AutoAddMovieTerms", AutoAddMovieTerms);
+            XmlHelper.WriteElementToXml(writer, "AutoAddIgnoreSuffixes", AutoAddIgnoreSuffixes);
 
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in FNPRegexs)
             {
                 writer.WriteStartElement("Regex");
-                XMLHelper.WriteAttributeToXML(writer,"Enabled",re.Enabled);
-                XMLHelper.WriteAttributeToXML(writer,"RE",re.RE);
-                XMLHelper.WriteAttributeToXML(writer,"UseFullPath",re.UseFullPath);
-                XMLHelper.WriteAttributeToXML(writer,"Notes",re.Notes);
+                XmlHelper.WriteAttributeToXml(writer,"Enabled",re.Enabled);
+                XmlHelper.WriteAttributeToXml(writer,"RE",re.RegExpression);
+                XmlHelper.WriteAttributeToXml(writer,"UseFullPath",re.UseFullPath);
+                XmlHelper.WriteAttributeToXml(writer,"Notes",re.Notes);
                 writer.WriteEndElement(); // Regex
             }
             writer.WriteEndElement(); // FNPRegexs
 
             writer.WriteStartElement("RSSURLs");
-            foreach (string s in RSSURLs) XMLHelper.WriteElementToXML(writer,"URL",s);
+            foreach (string s in RSSURLs) XmlHelper.WriteElementToXml(writer,"URL",s);
             writer.WriteEndElement(); // RSSURLs
 
             if (ShowStatusColors != null)
@@ -963,10 +965,10 @@ namespace TVRename
                 {
                     writer.WriteStartElement("ShowStatusTVWColor");
                     // TODO ... Write Meta Flags
-                    XMLHelper.WriteAttributeToXML(writer,"IsMeta",e.Key.IsMetaType);
-                    XMLHelper.WriteAttributeToXML(writer,"IsShowLevel",e.Key.IsShowLevel);
-                    XMLHelper.WriteAttributeToXML(writer,"ShowStatus",e.Key.Status);
-                    XMLHelper.WriteAttributeToXML(writer,"Color",Helpers.TranslateColorToHtml(e.Value));
+                    XmlHelper.WriteAttributeToXml(writer,"IsMeta",e.Key.IsMetaType);
+                    XmlHelper.WriteAttributeToXml(writer,"IsShowLevel",e.Key.IsShowLevel);
+                    XmlHelper.WriteAttributeToXml(writer,"ShowStatus",e.Key.Status);
+                    XmlHelper.WriteAttributeToXml(writer,"Color",Helpers.TranslateColorToHtml(e.Value));
                     writer.WriteEndElement(); //ShowStatusTVWColor
                 }
                 writer.WriteEndElement(); // ShowStatusTVWColors
@@ -976,12 +978,12 @@ namespace TVRename
             {
                 writer.WriteStartElement("ShowFilters");
 
-                XMLHelper.WriteInfo(writer, "NameFilter", "Name", Filter.ShowName);
-                XMLHelper.WriteInfo(writer, "ShowStatusFilter", "ShowStatus", Filter.ShowStatus);
-                XMLHelper.WriteInfo(writer, "ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork);
-                XMLHelper.WriteInfo(writer, "ShowRatingFilter", "ShowRating", Filter.ShowRating);
+                XmlHelper.WriteInfo(writer, "NameFilter", "Name", Filter.ShowName);
+                XmlHelper.WriteInfo(writer, "ShowStatusFilter", "ShowStatus", Filter.ShowStatus);
+                XmlHelper.WriteInfo(writer, "ShowNetworkFilter", "ShowNetwork", Filter.ShowNetwork);
+                XmlHelper.WriteInfo(writer, "ShowRatingFilter", "ShowRating", Filter.ShowRating);
 
-                foreach (string genre in Filter.Genres) XMLHelper.WriteInfo(writer, "GenreFilter", "Genre", genre);
+                foreach (string genre in Filter.Genres) XmlHelper.WriteInfo(writer, "GenreFilter", "Genre", genre);
  
                 writer.WriteEndElement(); //ShowFilters
             }

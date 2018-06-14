@@ -27,12 +27,12 @@ namespace TVRename
     /// </summary>
     public partial class AddEditShow : Form
     {
-        private ShowItem mSI;
-        private TheTVDBCodeFinder mTCCF;
+        private readonly ShowItem selectedShow;
+        private readonly TheTVDBCodeFinder codeFinderForm;
 
         public AddEditShow(ShowItem si)
         {
-            mSI = si;
+            selectedShow = si;
             InitializeComponent();
 
             cbTimeZone.BeginUpdate();
@@ -44,12 +44,11 @@ namespace TVRename
             cbTimeZone.EndUpdate();
             cbTimeZone.Text = si.ShowTimeZone;
 
-            mTCCF = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
-            mTCCF.Dock = DockStyle.Fill;
-            //mTCCF->SelectionChanged += gcnew System::EventHandler(this, &AddEditShow::lvMatches_ItemSelectionChanged);
+            codeFinderForm = new TheTVDBCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "");
+            codeFinderForm.Dock = DockStyle.Fill;
 
             pnlCF.SuspendLayout();
-            pnlCF.Controls.Add(mTCCF);
+            pnlCF.Controls.Add(codeFinderForm);
             pnlCF.ResumeLayout();
 
             chkCustomShowName.Checked = si.UseCustomShowName;
@@ -90,8 +89,7 @@ namespace TVRename
             {
                 foreach (string s in kvp.Value)
                 {
-                    ListViewItem lvi = new ListViewItem();
-                    lvi.Text = kvp.Key.ToString();
+                    ListViewItem lvi = new ListViewItem {Text = kvp.Key.ToString()};
                     lvi.SubItems.Add(s);
 
                     lvSeasonFolders.Items.Add(lvi);
@@ -100,11 +98,11 @@ namespace TVRename
             lvSeasonFolders.Sort();
 
             txtSeasonNumber_TextChanged(null, null);
-            txtFolder_TextChanged(null, null);
+            txtFolder_TextChanged();
 
-            ActiveControl = mTCCF; // set initial focus to the code entry/show finder control
+            ActiveControl = codeFinderForm; // set initial focus to the code entry/show finder control
 
-            foreach (string aliasName in mSI.AliasNames)
+            foreach (string aliasName in selectedShow.AliasNames)
             {
                 lbShowAlias.Items.Add(aliasName);
             }
@@ -117,27 +115,27 @@ namespace TVRename
             }
             txtTagList.Text = tl.ToString();
 
-            cbUseCustomSearch.Checked = si.UseCustomSearchURL && !String.IsNullOrWhiteSpace(si.CustomSearchURL);
+            cbUseCustomSearch.Checked = si.UseCustomSearchURL && !string.IsNullOrWhiteSpace(si.CustomSearchURL);
             txtSearchURL.Text = si.CustomSearchURL ?? "";
             EnableDisableCustomSearch();
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            if (!OKToClose())
+            if (!OkToClose())
             {
                 DialogResult = DialogResult.None;
                 return;
             }
 
-            SetmSI();
+            SetShow();
             DialogResult = DialogResult.OK;
             Close();
         }
 
-        private bool OKToClose()
+        private bool OkToClose()
         {
-            if (!TheTVDB.Instance.HasSeries(mTCCF.SelectedCode()))
+            if (!TheTVDB.Instance.HasSeries(codeFinderForm.SelectedCode()))
             {
                 DialogResult dr = MessageBox.Show("tvdb code unknown, close anyway?", "TVRename Add/Edit Show",
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -148,63 +146,61 @@ namespace TVRename
             return true;
         }
 
-        private void SetmSI()
+        private void SetShow()
         {
-            int code = mTCCF.SelectedCode();
+            int code = codeFinderForm.SelectedCode();
 
 
-            mSI.CustomShowName = txtCustomShowName.Text;
-            mSI.UseCustomShowName = chkCustomShowName.Checked;
-            mSI.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
-            mSI.ShowNextAirdate = chkShowNextAirdate.Checked;
-            mSI.PadSeasonToTwoDigits = chkPadTwoDigits.Checked;
-            mSI.TVDBCode = code;
-            //todo mSI->SeasonNumber = seasnum;
-            mSI.CountSpecials = chkSpecialsCount.Checked;
-            //                                 mSI->Rules = mWorkingRuleSet;  // TODO
-            mSI.DoRename = cbDoRenaming.Checked;
-            mSI.DoMissingCheck = cbDoMissingCheck.Checked;
+            selectedShow.CustomShowName = txtCustomShowName.Text;
+            selectedShow.UseCustomShowName = chkCustomShowName.Checked;
+            selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
+            selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
+            selectedShow.PadSeasonToTwoDigits = chkPadTwoDigits.Checked;
+            selectedShow.TVDBCode = code;
+            selectedShow.CountSpecials = chkSpecialsCount.Checked;
+            selectedShow.DoRename = cbDoRenaming.Checked;
+            selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;
+            selectedShow.AutoAddNewSeasons = chkAutoFolders.Checked;
+            selectedShow.AutoAdd_FolderPerSeason = chkFolderPerSeason.Checked;
+            selectedShow.AutoAdd_SeasonFolderName = txtSeasonFolderName.Text;
+            selectedShow.AutoAdd_FolderBase = txtBaseFolder.Text;
 
-            mSI.AutoAddNewSeasons = chkAutoFolders.Checked;
-            mSI.AutoAdd_FolderPerSeason = chkFolderPerSeason.Checked;
-            mSI.AutoAdd_SeasonFolderName = txtSeasonFolderName.Text;
-            mSI.AutoAdd_FolderBase = txtBaseFolder.Text;
+            selectedShow.DVDOrder = chkDVDOrder.Checked;
+            selectedShow.ForceCheckFuture = cbIncludeFuture.Checked;
+            selectedShow.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
+            selectedShow.UseCustomSearchURL = cbUseCustomSearch.Checked;
+            selectedShow.CustomSearchURL = txtSearchURL.Text;
 
-            mSI.DVDOrder = chkDVDOrder.Checked;
-            mSI.ForceCheckFuture = cbIncludeFuture.Checked;
-            mSI.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
-            mSI.UseCustomSearchURL = cbUseCustomSearch.Checked;
-            mSI.CustomSearchURL = txtSearchURL.Text;
-
-            mSI.UseSequentialMatch = cbSequentialMatching.Checked;
+            selectedShow.UseSequentialMatch = cbSequentialMatching.Checked;
 
             string slist = txtIgnoreSeasons.Text;
-            mSI.IgnoreSeasons.Clear();
+            selectedShow.IgnoreSeasons.Clear();
             foreach (Match match in Regex.Matches(slist, "\\b[0-9]+\\b"))
-                mSI.IgnoreSeasons.Add(int.Parse(match.Value));
+                selectedShow.IgnoreSeasons.Add(int.Parse(match.Value));
 
-            mSI.ManualFolderLocations.Clear();
+            selectedShow.ManualFolderLocations.Clear();
             foreach (ListViewItem lvi in lvSeasonFolders.Items)
             {
                 try
                 {
                     int seas = int.Parse(lvi.Text);
-                    if (!mSI.ManualFolderLocations.ContainsKey(seas))
-                        mSI.ManualFolderLocations.Add(seas, new List<String>());
+                    if (!selectedShow.ManualFolderLocations.ContainsKey(seas))
+                        selectedShow.ManualFolderLocations.Add(seas, new List<string>());
 
-                    mSI.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
+                    selectedShow.ManualFolderLocations[seas].Add(lvi.SubItems[1].Text);
                 }
                 catch
                 {
+                    // ignored
                 }
             }
 
-            mSI.AliasNames.Clear();
+            selectedShow.AliasNames.Clear();
             foreach (string showAlias in lbShowAlias.Items)
             {
-                if (!mSI.AliasNames.Contains(showAlias))
+                if (!selectedShow.AliasNames.Contains(showAlias))
                 {
-                    mSI.AliasNames.Add(showAlias);
+                    selectedShow.AliasNames.Add(showAlias);
                 }
             }
         }
@@ -270,7 +266,7 @@ namespace TVRename
             bnAdd.Enabled = isNumber && (!string.IsNullOrEmpty(txtSeasonNumber.Text));
         }
 
-        private void txtFolder_TextChanged(object sender, EventArgs e)
+        private void txtFolder_TextChanged()
         {
             bool ok = true;
             if (!string.IsNullOrEmpty(txtFolder.Text))
@@ -281,6 +277,7 @@ namespace TVRename
                 }
                 catch
                 {
+                    // ignored
                 }
             }
             txtFolder.BackColor = ok ? System.Drawing.SystemColors.Window : Helpers.WarningColor();

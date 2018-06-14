@@ -52,7 +52,7 @@ namespace TVRename
 
                     if (!matched) continue;
 
-                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int maxEp, action.Episode.SI) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
+                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.SI) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {
                         toRemove.Add(action1);
                         newList.Add(new ItemuTorrenting(te, action.Episode, action.TheFileNoExt));

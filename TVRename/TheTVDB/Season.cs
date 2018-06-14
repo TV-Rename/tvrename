@@ -13,14 +13,14 @@ namespace TVRename
     {
         public enum SeasonStatus
         {
-            Aired, // Season completely aired ... no further shows in this season scheduled to date
-            PartiallyAired, // Season partially aired ... there are further shows in this season which are unaired to date
-            NoneAired, // Season completely unaired ... no show of this season as aired yet
-            NoEpisodes,
+            aired, // Season completely aired ... no further shows in this season scheduled to date
+            partiallyAired, // Season partially aired ... there are further shows in this season which are unaired to date
+            noneAired, // Season completely unaired ... no show of this season as aired yet
+            noEpisodes,
         }
 
         public System.Collections.Generic.List<Episode> Episodes;
-        public int SeasonID;
+        public int SeasonId;
         public int SeasonNumber;
         public SeriesInfo TheSeries;
 
@@ -28,7 +28,7 @@ namespace TVRename
         {
             TheSeries = theSeries;
             SeasonNumber = number;
-            SeasonID = seasonid;
+            SeasonId = seasonid;
             Episodes = new System.Collections.Generic.List<Episode>();
         }
 
@@ -38,26 +38,26 @@ namespace TVRename
             {
                 if (HasAiredEpisodes(tz) && !HasUnairedEpisodes(tz))
                 {
-                    return SeasonStatus.Aired;
+                    return SeasonStatus.aired;
                 }
                 else if (HasAiredEpisodes(tz) && HasUnairedEpisodes(tz))
                 {
-                    return SeasonStatus.PartiallyAired;
+                    return SeasonStatus.partiallyAired;
                 }
                 else if (!HasAiredEpisodes(tz) && HasUnairedEpisodes(tz))
                 {
-                    return SeasonStatus.NoneAired;
+                    return SeasonStatus.noneAired;
                 }
                 else
                 {
                     // Can happen if a Season has Episodes WITHOUT Airdates. 
                     //System.Diagnostics.Debug.Assert(false, string.Format("That is weird ... we have 'episodes' in '{0}' Season {1}, but none are aired, nor unaired. That case shouldn't actually occur !", this.TheSeries.Name,SeasonNumber));
-                    return SeasonStatus.NoEpisodes;
+                    return SeasonStatus.noEpisodes;
                 }
             }
             else
             {
-                return SeasonStatus.NoEpisodes;
+                return SeasonStatus.noEpisodes;
             }
         }
 
@@ -69,9 +69,9 @@ namespace TVRename
             {
                 foreach (Episode e in Episodes)
                 {
-                    if (e.GetAirDateDT(tz).HasValue)
+                    if (e.GetAirDateDt(tz).HasValue)
                     {
-                        if (e.GetAirDateDT(tz).Value > DateTime.Now)
+                        if (e.GetAirDateDt(tz).Value > DateTime.Now)
                             return true;
                     }
                 }
@@ -86,9 +86,9 @@ namespace TVRename
             {
                 foreach (Episode e in Episodes)
                 {
-                    if (e.GetAirDateDT(tz).HasValue)
+                    if (e.GetAirDateDt(tz).HasValue)
                     {
-                        if (e.GetAirDateDT(tz).Value < DateTime.Now)
+                        if (e.GetAirDateDt(tz).Value < DateTime.Now)
                             return true;
                     }
                 }
@@ -137,7 +137,7 @@ namespace TVRename
             for (int i = 0; i < Episodes.Count; i++)
             {
                 Episode ep = Episodes[i];
-                if (ep.EpisodeID == newEpisode.EpisodeID)
+                if (ep.EpisodeId == newEpisode.EpisodeId)
                 {
                     Episodes[i] = newEpisode;
                     added = true;
@@ -153,7 +153,7 @@ namespace TVRename
         {
             foreach (Episode ep in Episodes)
             {
-                if (dvdOrder && ep.DVDEpNum == episodeNumber) return true;
+                if (dvdOrder && ep.DvdEpNum == episodeNumber) return true;
                 if (!dvdOrder && ep.AiredEpNum == episodeNumber) return true;
             }
 
@@ -170,7 +170,7 @@ namespace TVRename
         {
             foreach (Episode ep in Episodes)
             {
-                if (ep.EpisodeID == episodeId) return ep;
+                if (ep.EpisodeId == episodeId) return ep;
             }
 
             return null;

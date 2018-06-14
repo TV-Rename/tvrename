@@ -5,17 +5,17 @@ using System.Windows.Forms;
 
 namespace TVRename.Forms
 {
-    public partial class frmDupEpFinder : Form
+    public partial class DupEpFinder : Form
     {
         private List<PossibleDuplicateEpisode> dupEps;
-        private TVDoc mDoc;
+        private readonly TVDoc mDoc;
         private PossibleDuplicateEpisode mlastSelected;
-        private UI mainUI;
+        private readonly UI mainUI;
         private ListViewItem mlastClicked;
 
         public enum RightClickCommands
         {
-            None = 0,
+            none = 0,
             kEpisodeGuideForShow = 1,
             kForceRefreshSeries,
             kEditShow,
@@ -24,16 +24,17 @@ namespace TVRename.Forms
             kOpenFolderBase = 2000
         }
 
-        public frmDupEpFinder(List<PossibleDuplicateEpisode> x, TVDoc doc, UI main)
+        public DupEpFinder(List<PossibleDuplicateEpisode> x, TVDoc doc, UI main)
         {
             InitializeComponent();
             dupEps = x;
             mDoc = doc;
             mainUI = main;
-            updateUI();
+            UpdateUI();
         }
 
-        private void updateUI()
+        // ReSharper disable once InconsistentNaming
+        private void UpdateUI()
         {
             // Save where the list is currently scrolled too
             //int currentTop = this.lvDuplicates.GetScrollVerticalPos();
@@ -63,13 +64,13 @@ namespace TVRename.Forms
         private void btnRescan_Click(object sender, EventArgs e)
         {
             dupEps = mDoc.FindDoubleEps();
-            updateUI();
+            UpdateUI();
         }
 
         private void chkAirDateTest_CheckedChanged(object sender, EventArgs e)
         {
             chkAirDateTest.Checked = true;
-            updateUI();
+            UpdateUI();
         }
 
         private void UpdateCheckboxes()
@@ -79,7 +80,7 @@ namespace TVRename.Forms
             if (chkNameTest.Checked == false) chkMIssingTest.Checked = false;
             if (chkMIssingTest.Checked == false) chkFilesizeTest.Checked = false;
 
-            updateUI();
+            UpdateUI();
         }
 
         private void chkNameTest_CheckedChanged(object sender, EventArgs e)
@@ -90,7 +91,7 @@ namespace TVRename.Forms
                 chkMIssingTest.Checked = false;
             }
 
-            updateUI();
+            UpdateUI();
         }
 
         private void chkMIssingTest_CheckedChanged(object sender, EventArgs e)
@@ -100,7 +101,7 @@ namespace TVRename.Forms
             if (chkMIssingTest.Checked)
                 chkNameTest.Checked = true;
 
-            updateUI();
+            UpdateUI();
         }
 
         private void chkFilesizeTest_CheckedChanged(object sender, EventArgs e)
@@ -111,7 +112,7 @@ namespace TVRename.Forms
                 chkMIssingTest.Checked = true;
                 }
 
-            updateUI();
+            UpdateUI();
         }
 
         private void lvDuplicates_MouseClick(object sender, MouseEventArgs e)

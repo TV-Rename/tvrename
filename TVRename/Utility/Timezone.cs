@@ -31,7 +31,7 @@ namespace TVRename
         public int StandardBias;
         public SysTime StandardDate;
 
-        public TimeZone(Byte[] bytes)
+        public TimeZone(byte[] bytes)
         {
 #if DEBUG
             System.Diagnostics.Debug.Assert(bytes.Length == 44);
@@ -71,7 +71,7 @@ namespace TVRename
             if (rk == null)
                 return null;
             else
-                return new TimeZone((Byte[]) rk.GetValue("TZI"));
+                return new TimeZone((byte[]) rk.GetValue("TZI"));
         }
 
         public static string DefaultTimeZone()
@@ -154,7 +154,7 @@ namespace TVRename
             public short wSecond;
             public short wYear;
 
-            public SysTime(Byte[] bytes, int pos)
+            public SysTime(byte[] bytes, int pos)
             {
                 int y = bytes[pos + 0] + (bytes[pos + 1] << 8);
                 int m = bytes[pos + 2] + (bytes[pos + 3] << 8);

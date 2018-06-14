@@ -12,7 +12,7 @@ namespace TVRename
     /// </summary>
     public class ShowLibrary : ConcurrentDictionary<int,ShowItem>
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public IEnumerable<ShowItem> Shows => Values;
 
         private IEnumerable<string> GetSeasonWords()
@@ -70,7 +70,7 @@ namespace TVRename
             List<string> allValues = new List<string> { };
             foreach (ShowItem si in Values)
             {
-                if (si.TheSeries()?.getNetwork() != null) allValues.Add(si.TheSeries().getNetwork());
+                if (si.TheSeries()?.GetNetwork() != null) allValues.Add(si.TheSeries().GetNetwork());
             }
             List<string> distinctValues = allValues.Distinct().ToList();
             distinctValues.Sort();
@@ -99,7 +99,7 @@ namespace TVRename
         public List<ShowItem> GetShowItems()
         {
             List<ShowItem> returnList = Values.ToList();
-            returnList.Sort(new Comparison<ShowItem>(TVRename.ShowItem.CompareShowItemNames));
+            returnList.Sort(TVRename.ShowItem.CompareShowItemNames);
             return returnList;
         }
 
@@ -167,7 +167,7 @@ namespace TVRename
                     pe.OverallNumber = overallCount;
                     if (si.DVDOrder)
                     {
-                        overallCount += 1 + pe.EpNum2 - pe.DVDEpNum;
+                        overallCount += 1 + pe.EpNum2 - pe.DvdEpNum;
                     }
                     else
                     {
@@ -202,11 +202,11 @@ namespace TVRename
 
             if (si.DVDOrder)
             {
-                eis.Sort(new Comparison<ProcessedEpisode>(ProcessedEpisode.DVDOrderSorter));
+                eis.Sort(ProcessedEpisode.DVDOrderSorter);
                 Renumber(eis);
             }
             else
-                eis.Sort(new Comparison<ProcessedEpisode>(ProcessedEpisode.EPNumberSorter));
+                eis.Sort(ProcessedEpisode.EPNumberSorter);
 
             if (si.CountSpecials && seasonsToUse.ContainsKey(0))
             {
@@ -228,8 +228,8 @@ namespace TVRename
                             ProcessedEpisode pe = new ProcessedEpisode(ep, si)
                             {
                                 TheAiredSeason = eis[i].TheAiredSeason,
-                                TheDVDSeason = eis[i].TheDVDSeason,
-                                SeasonID = eis[i].SeasonID
+                                TheDvdSeason = eis[i].TheDvdSeason,
+                                SeasonId = eis[i].SeasonId
                             };
                             eis.Insert(i, pe);
                             break;
@@ -342,7 +342,7 @@ namespace TVRename
                                     {
                                         Name = nameBase + " (Part " + (i + 1) + ")",
                                         AiredEpNum = -2,
-                                        DVDEpNum = -2,
+                                        DvdEpNum = -2,
                                         EpNum2 = -2
                                     };
                                     eis.Insert(n1 + i, pe2);
@@ -385,7 +385,7 @@ namespace TVRename
                                 {
                                     Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt),
                                     AiredEpNum = -2,
-                                    DVDEpNum = -2
+                                    DvdEpNum = -2
                                 };
                                 if (sr.DoWhatNow == RuleAction.kMerge)
                                     pe2.EpNum2 = -2 + n2 - n1;
@@ -412,11 +412,11 @@ namespace TVRename
                             if ((n1 < ec) && (n1 >= 0))
                             {
                                 ProcessedEpisode t = eis[n1];
-                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDVDSeason, si)
+                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
                                 {
                                     Name = txt,
                                     AiredEpNum = -2,
-                                    DVDEpNum = -2,
+                                    DvdEpNum = -2,
                                     EpNum2 = -2
                                 };
                                 eis.Insert(n1, n);
@@ -424,11 +424,11 @@ namespace TVRename
                             else if (n1 == eis.Count)
                             {
                                 ProcessedEpisode t = eis[n1 - 1];
-                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDVDSeason, si)
+                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
                                 {
                                     Name = txt,
                                     AiredEpNum = -2,
-                                    DVDEpNum = -2,
+                                    DvdEpNum = -2,
                                     EpNum2 = -2
                                 };
                                 eis.Add(n);

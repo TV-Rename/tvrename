@@ -7,42 +7,42 @@ namespace TVRename
     {
         public ShowFilter() { }
 
-        public List<String> Genres { get; } = new List<String>();
+        public List<string> Genres { get; } = new List<string>();
 
-        public String ShowName { get; set; } 
+        public string ShowName { get; set; } 
 
-        public String ShowStatus { get; set; }
-        public String ShowNetwork { get; set; }
-        public String ShowRating { get; set; }
+        public string ShowStatus { get; set; }
+        public string ShowNetwork { get; set; }
+        public string ShowRating { get; set; }
 
 
-        public Boolean filter(ShowItem show)
+        public bool filter(ShowItem show)
         {
 
             //Filter on show name
-            Boolean isNameOK = (ShowName == null) || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
+            bool isNameOK = (ShowName == null) || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
 
             //Filter on show status
-            Boolean isStatusOK = (ShowStatus == null) || show.ShowStatus.Equals(ShowStatus);
+            bool isStatusOK = (ShowStatus == null) || show.ShowStatus.Equals(ShowStatus);
 
             //Filter on show network
-            Boolean isNetworkOK = (ShowNetwork == null) || (show.TheSeries() == null ) || show.TheSeries().getNetwork().Equals(ShowNetwork);
+            bool isNetworkOK = (ShowNetwork == null) || (show.TheSeries() == null ) || show.TheSeries().GetNetwork().Equals(ShowNetwork);
 
             //Filter on show rating
-            Boolean isRatingOK = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().GetContentRating().Equals(ShowRating);
+            bool isRatingOK = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().GetContentRating().Equals(ShowRating);
 
             //Filter on show genres
-            Boolean areGenresIgnored = (Genres.Count == 0);
+            bool areGenresIgnored = (Genres.Count == 0);
 
-            Boolean doAnyGenresMatch = false; //assume false
+            bool doAnyGenresMatch = false; //assume false
             if (!areGenresIgnored )
                 {
                 if (show.Genres == null)
                 {
                     doAnyGenresMatch = false;
-                } else                 foreach(String showGenre in show.Genres)
+                } else                 foreach(string showGenre in show.Genres)
                 {
-                    foreach (String filterGenre in Genres)
+                    foreach (string filterGenre in Genres)
                         if (showGenre == filterGenre) doAnyGenresMatch = true;
                 }
             }

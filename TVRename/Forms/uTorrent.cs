@@ -24,9 +24,9 @@ namespace TVRename
     /// </summary>
     public partial class uTorrent : Form
     {
-        private SetProgressDelegate SetProg;
+        private readonly SetProgressDelegate SetProg;
 
-        private TVDoc mDoc;
+        private readonly TVDoc mDoc;
         private System.IO.FileSystemWatcher watcher;
 
         public uTorrent(TVDoc doc, SetProgressDelegate progdel)
@@ -96,7 +96,7 @@ namespace TVRename
             if (!CheckResumeDatPath())
                 return;
 
-            List<string> checkedItems = new List<String>();
+            List<string> checkedItems = new List<string>();
             foreach (string torrent in lbUTTorrents.CheckedItems)
                 checkedItems.Add(torrent);
 
@@ -161,7 +161,7 @@ namespace TVRename
 
             BTResume btp = new BTResume(SetProg, resumeDatFile);
 
-            List<string> sl = new List<String>();
+            List<string> sl = new List<string>();
 
             foreach (string torrent in lbUTTorrents.CheckedItems)
                 sl.Add(torrent);

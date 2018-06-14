@@ -5,7 +5,7 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
-using System;
+
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
@@ -13,7 +13,7 @@ namespace TVRename
 {
     public class DirCacheEntry
     {
-        public Int64 Length;
+        public long Length;
         public string SimplifiedFullName;
         public FileInfo TheFile;
 

@@ -18,7 +18,7 @@ namespace TVRename
         private string lastKnownToken = string.Empty;
         private DateTime lastRefreshTime = DateTime.MinValue;
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public string GetToken()
         {
@@ -44,23 +44,23 @@ namespace TVRename
 
         private void AcquireToken()
         {
-            logger.Info("Acquire a TheTVDB token... ");
+            Logger.Info("Acquire a TheTVDB token... ");
             JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY));
             JObject jsonResponse = HTTPHelper.JsonHTTPPOSTRequest($"{TVDB_API_URL}/login", request);
 
             UpdateToken((string)jsonResponse["token"]);
-            logger.Info("Performed login at " + DateTime.UtcNow);
-            logger.Info("New Token " + lastKnownToken);
+            Logger.Info("Performed login at " + DateTime.UtcNow);
+            Logger.Info("New Token " + lastKnownToken);
         }
 
         private void RefreshToken()
         {
-            logger.Info("Refreshing TheTVDB token... ");
+            Logger.Info("Refreshing TheTVDB token... ");
             JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest($"{TVDB_API_URL}/refresh_token", null, lastKnownToken);
 
             UpdateToken((string)jsonResponse["token"]);
-            logger.Info("refreshed token at " + DateTime.UtcNow);
-            logger.Info("New Token " + lastKnownToken);
+            Logger.Info("refreshed token at " + DateTime.UtcNow);
+            Logger.Info("New Token " + lastKnownToken);
         }
 
         private void UpdateToken(string token)

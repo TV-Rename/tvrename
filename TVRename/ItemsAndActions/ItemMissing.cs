@@ -14,7 +14,7 @@ namespace TVRename
     public class ItemMissing : Item
     {
         public string TheFileNoExt;
-        private string folder;
+        private readonly string folder;
         public string Filename;
 
         public ItemMissing(ProcessedEpisode pe, string whereItShouldBeFolder, string expectedFilenameNoExt)

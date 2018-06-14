@@ -61,7 +61,7 @@ namespace TVRename
                 }
             }
             // assume last folder element is the show name
-            showName = showName.Substring(showName.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString()) + 1);
+            showName = showName.Substring(showName.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal) + 1);
 
             return showName;
         }

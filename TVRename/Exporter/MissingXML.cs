@@ -37,7 +37,7 @@ namespace TVRename
                     writer.WriteStartDocument();
                     
                     writer.WriteStartElement("TVRename");
-                    XMLHelper.WriteAttributeToXML(writer,"Version","2.1");
+                    XmlHelper.WriteAttributeToXml(writer,"Version","2.1");
                     writer.WriteStartElement("MissingItems");
 
                     foreach (Item action in TheActionList)
@@ -47,12 +47,12 @@ namespace TVRename
                         ItemMissing missing = (ItemMissing)(action);
                         writer.WriteStartElement("MissingItem");
 
-                        XMLHelper.WriteElementToXML(writer,"id",missing.Episode.SI.TVDBCode);
-                        XMLHelper.WriteElementToXML(writer, "title",missing.Episode.TheSeries.Name);
-                        XMLHelper.WriteElementToXML(writer, "season", Helpers.pad(missing.Episode.AppropriateSeasonNumber));
-                        XMLHelper.WriteElementToXML(writer, "episode", Helpers.pad(missing.Episode.AppropriateEpNum));
-                        XMLHelper.WriteElementToXML(writer, "episodeName",missing.Episode.Name);
-                        XMLHelper.WriteElementToXML(writer, "description",missing.Episode.Overview);
+                        XmlHelper.WriteElementToXml(writer,"id",missing.Episode.SI.TVDBCode);
+                        XmlHelper.WriteElementToXml(writer, "title",missing.Episode.TheSeries.Name);
+                        XmlHelper.WriteElementToXml(writer, "season", Helpers.Pad(missing.Episode.AppropriateSeasonNumber));
+                        XmlHelper.WriteElementToXml(writer, "episode", Helpers.Pad(missing.Episode.AppropriateEpNum));
+                        XmlHelper.WriteElementToXml(writer, "episodeName",missing.Episode.Name);
+                        XmlHelper.WriteElementToXml(writer, "description",missing.Episode.Overview);
 
                         writer.WriteStartElement("pubDate");
                         DateTime? dt = missing.Episode.GetAirDateDT(true);

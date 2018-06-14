@@ -2,6 +2,7 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     public partial class TVRenameSplash : Form
     {
         public TVRenameSplash()

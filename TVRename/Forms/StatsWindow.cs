@@ -20,29 +20,29 @@ namespace TVRename
     /// </summary>
     public partial class StatsWindow : Form
     {
-        private TVRenameStats Stats;
+        private readonly TVRenameStats stats;
 
         public StatsWindow(TVRenameStats s)
         {
-            Stats = s;
+            stats = s;
             InitializeComponent();
         }
 
         private void StatsWindow_Load(object sender, System.EventArgs e)
         {
-            txtFM.Text = Stats.FilesMoved.ToString();
-            txtFR.Text = Stats.FilesRenamed.ToString();
-            txtFC.Text = Stats.FilesCopied.ToString();
-            txtRCD.Text = Stats.RenameChecksDone.ToString();
-            txtMCD.Text = Stats.MissingChecksDone.ToString();
-            txtFAOD.Text = Stats.FindAndOrganisesDone.ToString();
-            txtAAS.Text = Stats.AutoAddedShows.ToString();
-            txtTM.Text = Stats.TorrentsMatched.ToString();
-            txtNOS.Text = Stats.NS_NumberOfShows.ToString();
-            txtNOSeas.Text = Stats.NS_NumberOfSeasons.ToString();
-            int noe = Stats.NS_NumberOfEpisodes;
+            txtFM.Text = stats.FilesMoved.ToString();
+            txtFR.Text = stats.FilesRenamed.ToString();
+            txtFC.Text = stats.FilesCopied.ToString();
+            txtRCD.Text = stats.RenameChecksDone.ToString();
+            txtMCD.Text = stats.MissingChecksDone.ToString();
+            txtFAOD.Text = stats.FindAndOrganisesDone.ToString();
+            txtAAS.Text = stats.AutoAddedShows.ToString();
+            txtTM.Text = stats.TorrentsMatched.ToString();
+            txtNOS.Text = stats.NS_NumberOfShows.ToString();
+            txtNOSeas.Text = stats.NS_NumberOfSeasons.ToString();
+            int noe = stats.NS_NumberOfEpisodes;
             txtEOD.Text = ((noe == -1) ? "?" : noe.ToString());
-            txtTE.Text = Stats.NS_NumberOfEpisodesExpected.ToString();
+            txtTE.Text = stats.NS_NumberOfEpisodesExpected.ToString();
         }
 
         private void button1_Click(object sender, System.EventArgs e)

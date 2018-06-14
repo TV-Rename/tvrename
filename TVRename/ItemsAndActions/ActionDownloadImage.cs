@@ -87,7 +87,7 @@ namespace TVRename
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
-            byte[] theData = TheTVDB.Instance.GetTVDBDownload(Path);
+            byte[] theData = TheTVDB.Instance.GetTvdbDownload(Path);
             if ((theData == null) || (theData.Length == 0))
             {
                 ErrorText = "Unable to download " + Path;

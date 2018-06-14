@@ -42,7 +42,7 @@ namespace TVRename
         /// Processes an Action by running it.
         /// </summary>
         /// <param name="infoIn">A ProcessActionInfo to be processed. It will contain the Action to be processed</param>
-        public void ProcessSingleAction(Object infoIn)
+        public void ProcessSingleAction(object infoIn)
         {
             try
             {

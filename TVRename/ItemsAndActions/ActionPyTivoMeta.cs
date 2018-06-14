@@ -46,7 +46,7 @@ namespace TVRename
                     writer.WriteLine($"description : {Episode.Overview}");
                     if (Episode.FirstAired != null)
                         writer.WriteLine($"originalAirDate : {Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
-                    writer.WriteLine($"callsign : {Episode.SI.TheSeries().getNetwork()}");
+                    writer.WriteLine($"callsign : {Episode.SI.TheSeries().GetNetwork()}");
 
                     WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
                     WriteEntries(writer, "vWriter", Episode.Writer);
@@ -99,7 +99,7 @@ namespace TVRename
                 return 1;
             if (nfo?.Episode == null)
                 return -1;
-            return (Where.FullName + Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+            return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion

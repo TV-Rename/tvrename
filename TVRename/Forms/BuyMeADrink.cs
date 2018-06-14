@@ -50,6 +50,7 @@ namespace TVRename
             }
             catch
             {
+                // ignored
             }
 
             string currency = comboBox2.Text;

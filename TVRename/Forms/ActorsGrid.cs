@@ -26,8 +26,8 @@ namespace TVRename
     public partial class ActorsGrid : Form
     {
         private int Internal;
-        private DataArr TheData;
-        private TVDoc mDoc;
+        private DataArr theData;
+        private readonly TVDoc mDoc;
 
         public ActorsGrid(TVDoc doc)
         {
@@ -46,7 +46,7 @@ namespace TVRename
             // find actors that have been in more than one thing
             // Dictionary<String^, List<String> ^> ^whoInWhat = gcnew Dictionary<String^, List<String> ^>;
             TheTVDB.Instance.GetLock("Actors");
-            TheData = new DataArr(mDoc.Library.Count);
+            theData = new DataArr(mDoc.Library.Count);
             foreach (ShowItem ser in mDoc.Library.Shows)
             {
                 SeriesInfo si = TheTVDB.Instance.GetSeries(ser.TVDBCode);
@@ -54,7 +54,7 @@ namespace TVRename
                 {
                     string aa = act.Trim();
                     if (!string.IsNullOrEmpty(aa))
-                        TheData.Set(si.Name, aa, true);
+                        theData.Set(si.Name, aa, true);
                 }
 
                 if (cbGuestStars.Checked)
@@ -67,7 +67,7 @@ namespace TVRename
                                 {
                                     string aa = g.Trim();
                                     if (!string.IsNullOrEmpty(aa))
-                                        TheData.Set(si.Name, aa, false);
+                                        theData.Set(si.Name, aa, false);
                                 }
                         }
                     }
@@ -75,7 +75,7 @@ namespace TVRename
             }
 
             TheTVDB.Instance.Unlock("Actors");
-            TheData.RemoveEmpties();
+            theData.RemoveEmpties();
         }
 
         private void SortByName()
@@ -83,8 +83,8 @@ namespace TVRename
             Internal++;
             rbName.Checked = true;
             Internal--;
-            TheData.SortRows(false);
-            TheData.SortCols(false);
+            theData.SortRows(false);
+            theData.SortCols(false);
         }
 
         private void SortByTotals()
@@ -92,8 +92,8 @@ namespace TVRename
             Internal++;
             rbTotals.Checked = true;
             Internal--;
-            TheData.SortRows(true);
-            TheData.SortCols(true);
+            theData.SortRows(true);
+            theData.SortCols(true);
         }
 
         private void SortRowsByCount()
@@ -101,7 +101,7 @@ namespace TVRename
             Internal++;
             rbCustom.Checked = true;
             Internal--;
-            TheData.SortRows(true);
+            theData.SortRows(true);
             FillGrid();
         }
 
@@ -110,7 +110,7 @@ namespace TVRename
             Internal++;
             rbCustom.Checked = true;
             Internal--;
-            TheData.SortCols(true);
+            theData.SortCols(true);
             FillGrid();
         }
 
@@ -120,18 +120,18 @@ namespace TVRename
             rbCustom.Checked = true;
             Internal--;
 
-            TheData.MoveColToTop(a);
+            theData.MoveColToTop(a);
 
             // also move the shows they've been in to the top, too
-            int c = TheData.Cols.IndexOf(a);
+            int c = theData.Cols.IndexOf(a);
             if (c != 0)
                 return; // uh oh!
             int end = 0;
-            for (int r = TheData.DataR - 1; r >= end; r--)
+            for (int r = theData.DataR - 1; r >= end; r--)
             {
-                if (TheData.Data[r][0].HasValue)
+                if (theData.Data[r][0].HasValue)
                 {
-                    TheData.MoveRowToTop(TheData.Rows[r++]);
+                    theData.MoveRowToTop(theData.Rows[r++]);
                     end++;
                 }
             }
@@ -144,18 +144,18 @@ namespace TVRename
             rbCustom.Checked = true;
             Internal--;
 
-            TheData.MoveRowToTop(s);
+            theData.MoveRowToTop(s);
 
             // also move the actors in this show to the top, too
-            int r = TheData.Rows.IndexOf(s);
+            int r = theData.Rows.IndexOf(s);
             if (r != 0)
                 return; // uh oh!
             int end = 0;
-            for (int c = TheData.DataC - 1; c >= end; c--)
+            for (int c = theData.DataC - 1; c >= end; c--)
             {
-                if (TheData.Data[0][c].HasValue)
+                if (theData.Data[0][c].HasValue)
                 {
-                    TheData.MoveColToTop(TheData.Cols[c++]);
+                    theData.MoveColToTop(theData.Cols[c++]);
                     end++;
                 }
             }
@@ -197,8 +197,8 @@ namespace TVRename
             grid1.Columns.Clear();
             grid1.Rows.Clear();
 
-            int rows = TheData.DataR + 2; // title and total
-            int cols = TheData.DataC + 2;
+            int rows = theData.DataR + 2; // title and total
+            int cols = theData.DataC + 2;
 
             grid1.ColumnsCount = cols;
             grid1.RowsCount = rows;
@@ -226,9 +226,9 @@ namespace TVRename
             grid1[0, 0].View = topleftTitleModel;
             grid1[0, 0].AddController(new SideClickEvent(this, null)); // default sort
 
-            for (int c = 0; c < TheData.DataC; c++)
+            for (int c = 0; c < theData.DataC; c++)
             {
-                h = new ColumnHeader(TheData.Cols[c])
+                h = new ColumnHeader(theData.Cols[c])
                 {
                     AutomaticSortEnabled = false,
                     ResizeEnabled = false
@@ -238,7 +238,7 @@ namespace TVRename
                 // h->SortComparer = gcnew SourceGrid::MultiColumnsComparer(c, 0); // TODO: remove?
                 grid1[0, c + 1] = h;
                 grid1[0, c + 1].View = colTitleModel;
-                grid1[0, c + 1].AddController(new TopClickEvent(this, TheData.Cols[c]));
+                grid1[0, c + 1].AddController(new TopClickEvent(this, theData.Cols[c]));
             }
 
             int totalCol = grid1.ColumnsCount - 1;
@@ -254,45 +254,45 @@ namespace TVRename
             grid1[0, totalCol].View = colTitleModel;
             grid1[0, totalCol].AddController(new SortRowsByCountEvent(this));
 
-            for (int r = 0; r < TheData.DataR; r++)
+            for (int r = 0; r < theData.DataR; r++)
             {
-                grid1[r + 1, 0] = new RowHeader(TheData.Rows[r])
+                grid1[r + 1, 0] = new RowHeader(theData.Rows[r])
                 {
                     ResizeEnabled = false
                 };
-                grid1[r + 1, 0].AddController(new SideClickEvent(this, TheData.Rows[r]));
+                grid1[r + 1, 0].AddController(new SideClickEvent(this, theData.Rows[r]));
             }
 
-            grid1[TheData.DataR + 1, 0] = new RowHeader("Totals")
+            grid1[theData.DataR + 1, 0] = new RowHeader("Totals")
             {
                 ResizeEnabled = false
             };
-            grid1[TheData.DataR + 1, 0].AddController(new SortColsByCountEvent(this));
+            grid1[theData.DataR + 1, 0].AddController(new SortColsByCountEvent(this));
 
-            for (int c = 0; c < TheData.DataC; c++)
+            for (int c = 0; c < theData.DataC; c++)
             {
-                for (int r = 0; r < TheData.DataR; r++)
+                for (int r = 0; r < theData.DataR; r++)
                 {
-                    if (TheData.Data[r][c].HasValue)
+                    if (theData.Data[r][c].HasValue)
                     {
                         grid1[r + 1, c + 1] = new Cell("Y")
                         {
-                            View = TheData.Data[r][c].Value ? isActorModel : isGuestModel
+                            View = theData.Data[r][c].Value ? isActorModel : isGuestModel
                         };
-                        grid1[r + 1, c + 1].AddController(new CellClickEvent(TheData.Cols[c], TheData.Rows[r]));
+                        grid1[r + 1, c + 1].AddController(new CellClickEvent(theData.Cols[c], theData.Rows[r]));
                     }
                     else
                         grid1[r + 1, c + 1] = new Cell("");
                 }
             }
 
-            for (int c = 0; c < TheData.DataC; c++)
-                grid1[rows - 1, c + 1] = new Cell(TheData.ColScore(c));
+            for (int c = 0; c < theData.DataC; c++)
+                grid1[rows - 1, c + 1] = new Cell(theData.ColScore(c));
 
-            for (int r = 0; r < TheData.DataR; r++)
-                grid1[r + 1, cols - 1] = new Cell(TheData.RowScore(r, null));
+            for (int r = 0; r < theData.DataR; r++)
+                grid1[r + 1, cols - 1] = new Cell(theData.RowScore(r, null));
 
-            grid1[TheData.DataR + 1, TheData.DataC + 1] = new Cell("");
+            grid1[theData.DataR + 1, theData.DataC + 1] = new Cell("");
 
             grid1.AutoSizeCells();
         }
@@ -347,18 +347,18 @@ namespace TVRename
 
         private class CellClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly string Show;
-            private readonly string Who;
+            private readonly string show;
+            private readonly string who;
 
             public CellClickEvent(string who, string show)
             {
-                Who = who;
-                Show = show;
+                this.who = who;
+                this.show = show;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                Helpers.SysOpen("http://www.imdb.com/find?s=nm&q=" + Who);
+                Helpers.SysOpen("http://www.imdb.com/find?s=nm&q=" + who);
             }
         }
 
@@ -378,8 +378,8 @@ namespace TVRename
 
             public DataArr(int rowCountPreAlloc)
             {
-                Rows = new List<String>();
-                Cols = new List<String>();
+                Rows = new List<string>();
+                Cols = new List<string>();
                 AllocR = rowCountPreAlloc;
                 AllocC = rowCountPreAlloc * 10;
                 Data = new bool?[AllocR][];
@@ -743,16 +743,16 @@ namespace TVRename
 
         private class SortRowsByCountEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly ActorsGrid G;
+            private readonly ActorsGrid grid;
 
             public SortRowsByCountEvent(ActorsGrid g)
             {
-                G = g;
+                grid = g;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)
             {
-                G.SortRowsByCount();
+                grid.SortRowsByCount();
             }
         }
 

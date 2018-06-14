@@ -5,100 +5,100 @@ namespace TVRename
 {
     class DownloadIdentifiersController
     {
-        private readonly List<DownloadIdentifier> Identifiers;
+        private readonly List<DownloadIdentifier> identifiers;
         
         public DownloadIdentifiersController() {
-            Identifiers = new List<DownloadIdentifier>
+            identifiers = new List<DownloadIdentifier>
             {
-                new DownloadFolderJPG(),
-                new DownloadEpisodeJPG(),
-                new DownloadFanartJPG(),
+                new DownloadFolderJpg(),
+                new DownloadEpisodeJpg(),
+                new DownloadFanartJpg(),
                 new DownloadMede8erMetaData(),
                 new DownloadpyTivoMetaData(),
-                new DownloadSeriesJPG(),
+                new DownloadSeriesJpg(),
                 new DownloadKodiMetaData(),
-                new DownloadKODIImages(),
+                new DownloadKodiImages(),
                 new IncorrectFileDates(),
                 };
 
         }
 
-        public void notifyComplete(FileInfo file)
+        public void NotifyComplete(FileInfo file)
         {
-            foreach (DownloadIdentifier di in Identifiers)
+            foreach (DownloadIdentifier di in identifiers)
             {
-                di.notifyComplete(file);
+                di.NotifyComplete(file);
             }
         }
 
         public ItemList ProcessShow(ShowItem si)
         {
-            ItemList TheActionList = new ItemList(); 
-            foreach (DownloadIdentifier di in Identifiers)
+            ItemList theActionList = new ItemList(); 
+            foreach (DownloadIdentifier di in identifiers)
             {
-                TheActionList.Add(di.ProcessShow(si));
+                theActionList.Add(di.ProcessShow(si));
             }
-            return TheActionList;
+            return theActionList;
         }
 
         public ItemList ProcessSeason(ShowItem si, string folder, int snum)
         {
-            ItemList TheActionList = new ItemList(); 
-            foreach (DownloadIdentifier di in Identifiers)
+            ItemList theActionList = new ItemList(); 
+            foreach (DownloadIdentifier di in identifiers)
             {
-                TheActionList.Add(di.ProcessSeason (si,folder,snum));
+                theActionList.Add(di.ProcessSeason (si,folder,snum));
             }
-            return TheActionList;
+            return theActionList;
         }
 
         public ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo)
         {
-            ItemList TheActionList = new ItemList();
-            foreach (DownloadIdentifier di in Identifiers)
+            ItemList theActionList = new ItemList();
+            foreach (DownloadIdentifier di in identifiers)
             {
-                TheActionList.Add(di.ProcessEpisode(dbep,filo));
+                theActionList.Add(di.ProcessEpisode(dbep,filo));
             }
-            return TheActionList;
+            return theActionList;
         }
 
-        public  void reset() {
-            foreach (DownloadIdentifier di in Identifiers)
+        public  void Reset() {
+            foreach (DownloadIdentifier di in identifiers)
             {
-                di.reset();
+                di.Reset();
             }
         }
 
         public ItemList ForceUpdateShow(DownloadIdentifier.DownloadType dt, ShowItem si)
         {
-            ItemList TheActionList = new ItemList();
-            foreach (DownloadIdentifier di in Identifiers)
+            ItemList theActionList = new ItemList();
+            foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
-                    TheActionList.Add(di.ProcessShow(si,true));
+                    theActionList.Add(di.ProcessShow(si,true));
             }
-            return TheActionList;
+            return theActionList;
         }
 
         public ItemList ForceUpdateSeason(DownloadIdentifier.DownloadType dt, ShowItem si, string folder, int snum)
         {
-            ItemList TheActionList = new ItemList();
-            foreach (DownloadIdentifier di in Identifiers)
+            ItemList theActionList = new ItemList();
+            foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
-                    TheActionList.Add(di.ProcessSeason(si, folder,snum, true));
+                    theActionList.Add(di.ProcessSeason(si, folder,snum, true));
             }
-            return TheActionList;
+            return theActionList;
         }
 
         public ItemList ForceUpdateEpisode(DownloadIdentifier.DownloadType dt, ProcessedEpisode dbep, FileInfo filo)
         {
-            ItemList TheActionList = new ItemList();
-            foreach (DownloadIdentifier di in Identifiers)
+            ItemList theActionList = new ItemList();
+            foreach (DownloadIdentifier di in identifiers)
             {
                 if (dt == di.GetDownloadType())
-                    TheActionList.Add(di.ProcessEpisode(dbep,filo, true));
+                    theActionList.Add(di.ProcessEpisode(dbep,filo, true));
             }
-            return TheActionList;
+            return theActionList;
         }
 
     }

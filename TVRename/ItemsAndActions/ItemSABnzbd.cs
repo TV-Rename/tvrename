@@ -10,6 +10,7 @@ using System;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     public class ItemSABnzbd : ItemInProgress
     {
         public SAB.queueSlotsSlot Entry;

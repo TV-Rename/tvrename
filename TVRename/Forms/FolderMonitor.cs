@@ -479,7 +479,7 @@ namespace TVRename
 
             int code = fme.TVDBCode;
             if (code != -1)
-                Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(code, -1, false));
+                Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(code, -1, false));
         }
 
         private void bnCheck2_Click(object sender, System.EventArgs e)

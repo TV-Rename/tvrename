@@ -9,7 +9,7 @@ namespace TVRename
 {
     public static class VersionUpdater
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static async Task<UpdateVersion> CheckForUpdatesAsync()
         {

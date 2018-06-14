@@ -25,35 +25,35 @@ namespace TVRename
     /// </summary>
     public class MyListView : ListViewFlickerFree
     {
-        private bool _checkEnable;
-        private bool _keyCheck;
-        private bool _menuCheck;
-        private bool _onMouseDown;
+        private bool checkEnable;
+        private bool keyCheck;
+        private readonly bool menuCheck;
+        private bool onMouseDown;
 
         public MyListView()
         {
-            _keyCheck = false;
-            _checkEnable = true;
-            _onMouseDown = false;
-            _menuCheck = false;
+            keyCheck = false;
+            checkEnable = true;
+            onMouseDown = false;
+            menuCheck = false;
         }
 
         protected override void OnMouseDown(MouseEventArgs e)
         {
-            _onMouseDown = true;
+            onMouseDown = true;
             base.OnMouseDown(e);
         }
 
         protected override void OnItemSelectionChanged(ListViewItemSelectionChangedEventArgs e)
         {
-            if (_onMouseDown)
-                _checkEnable = false;
+            if (onMouseDown)
+                checkEnable = false;
             base.OnItemSelectionChanged(e);
         }
 
         protected override void OnItemCheck(ItemCheckEventArgs ice)
         {
-            if (!_menuCheck && !_keyCheck && (false == _checkEnable)) //  || (!_keyCheck && _checkEnable && SelectedItems->Count > 1)
+            if (!menuCheck && !keyCheck && (false == checkEnable)) //  || (!_keyCheck && _checkEnable && SelectedItems->Count > 1)
             {
                 ice.NewValue = ice.CurrentValue;
                 return;
@@ -68,15 +68,15 @@ namespace TVRename
 
         protected override void OnMouseUp(MouseEventArgs e)
         {
-            _checkEnable = true;
-            _onMouseDown = false;
+            checkEnable = true;
+            onMouseDown = false;
             base.OnMouseUp(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
-                _keyCheck = true;
+                keyCheck = true;
             else
                 base.OnKeyDown(e);
         }
@@ -84,15 +84,16 @@ namespace TVRename
         protected override void OnKeyUp(KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Space)
-                _keyCheck = false;
+                keyCheck = false;
         }
 
         // The 'TopItem' function doesn't work in a ListView if groups are enabled. This is meant to be a workaround.
         // Problem is, it just doesn't work and I don't know why!
-        const Int32 LVM_FIRST = 0x1000;
-        const Int32 LVM_SCROLL = LVM_FIRST + 20;
+        // ReSharper disable once UnusedMember.Local
         private const int SB_HORZ = 0;
         private const int SB_VERT = 1;
+        private const int LVM_FIRST = 0x1000;
+        private const int LVM_SCROLL = LVM_FIRST + 20;
 
         public int GetScrollVerticalPos()
         {
@@ -101,8 +102,8 @@ namespace TVRename
 
         public void SetScrollVerticalPos(int position)
         {
-            var currentPos = NativeMethods.GetScrollPos(Handle, SB_VERT);
-            var delta = -(currentPos - position);
+            int currentPos = NativeMethods.GetScrollPos(Handle, SB_VERT);
+            int delta = -(currentPos - position);
             NativeMethods.SendMessage(Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
         }
     }
@@ -112,7 +113,7 @@ namespace TVRename
         internal static extern int GetScrollPos(IntPtr hWnd, int nBar);
 
         [DllImport("user32.dll")]
-        internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+        internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
         // MAH: Added in support of the Filter TextBox Button
         [DllImport("user32.dll")]

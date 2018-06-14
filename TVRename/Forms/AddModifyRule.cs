@@ -10,20 +10,20 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    /// <summary>
-    /// Summary for AddModifyRule
-    ///
-    /// WARNING: If you change the name of this class, you will need to change the
-    ///          'Resource File Name' property for the managed resource compiler tool
-    ///          associated with all .resx files this class depends on.  Otherwise,
-    ///          the designers will not be able to interact properly with localized
-    ///          resources associated with this form.
-    /// </summary>
+    /// <inheritdoc />
+    ///  <summary>
+    ///  Summary for AddModifyRule
+    ///  WARNING: If you change the name of this class, you will need to change the
+    ///           'Resource File Name' property for the managed resource compiler tool
+    ///           associated with all .resx files this class depends on.  Otherwise,
+    ///           the designers will not be able to interact properly with localized
+    ///           resources associated with this form.
+    ///  </summary>
     public partial class AddModifyRule : Form
     {
-        private ShowRule mRule;
-        private Season mSeason;
-        private bool mdvdOrder;
+        private readonly ShowRule mRule;
+        private readonly Season mSeason;
+        private readonly bool mdvdOrder;
 
         public AddModifyRule(ShowRule rule, Season season, bool dvdOrder)
         {
@@ -36,10 +36,7 @@ namespace TVRename
             FillDialog();
         }
 
-        private void rb_Click(object sender, EventArgs e)
-        {
-            EnableDisableAndLabels();
-        }
+        private void rb_Click(object sender, EventArgs e) => EnableDisableAndLabels();
 
         private void FillDialog()
         {
@@ -251,13 +248,7 @@ namespace TVRename
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtValue2.Focus();
                 DialogResult = DialogResult.None;
-                return;
             }
-
-
         }
-
-
-
     }
 }

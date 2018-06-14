@@ -15,7 +15,7 @@ namespace TVRename
 {
     public class TextSorter : IComparer
     {
-        private int col;
+        private readonly int col;
 
         public TextSorter()
         {
@@ -29,21 +29,21 @@ namespace TVRename
 
         #region IComparer Members
 
-        public virtual int Compare(Object x, Object y)
+        public virtual int Compare(object x, object y)
         {
             ListViewItem lvi1 = x as ListViewItem;
             ListViewItem lvi2 = y as ListViewItem;
-            return string.Compare(lvi1.SubItems[col].Text, lvi2.SubItems[col].Text);
+            return string.CompareOrdinal(lvi1.SubItems[col].Text, lvi2.SubItems[col].Text);
         }
 
         #endregion
     }
 
-    public class DateSorterWTW : IComparer
+    public sealed class DateSorterWTW : IComparer
     {
         #region IComparer Members
 
-        public virtual int Compare(Object x, Object y)
+        public int Compare(object x, object y)
         {
             DateTime? d1;
             DateTime? d2;
@@ -78,9 +78,9 @@ namespace TVRename
         #endregion
     }
 
-    public class DaySorter : IComparer
+    public sealed class DaySorter : IComparer
     {
-        private int col;
+        private readonly int col;
 
         public DaySorter()
         {
@@ -94,7 +94,7 @@ namespace TVRename
 
         #region IComparer Members
 
-        public virtual int Compare(Object x, Object y)
+        public int Compare(object x, object y)
         {
             int d1 = 8;
             int d2 = 8;
@@ -116,6 +116,7 @@ namespace TVRename
             }
             catch
             {
+                // ignored
             }
 
             return d1 - d2;
@@ -124,9 +125,9 @@ namespace TVRename
         #endregion
     }
 
-    public class NumberAsTextSorter : IComparer
+    public sealed class NumberAsTextSorter : IComparer
     {
-        private int col;
+        private readonly int col;
 
         public NumberAsTextSorter()
         {
@@ -140,7 +141,7 @@ namespace TVRename
 
         #region IComparer Members
 
-        public virtual int Compare(Object x, Object y)
+        public int Compare(object x, object y)
         {
             int one;
             int two;

@@ -25,7 +25,7 @@ namespace TVRename
     /// </summary>
     public partial class BugReport : Form
     {
-        private TVDoc mDoc;
+        private readonly TVDoc mDoc;
 
         public BugReport(TVDoc doc)
         {
@@ -63,7 +63,7 @@ namespace TVRename
             {
                 txt.AppendLine("==== Filename processors ====");
                 foreach (FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
-                    txt.AppendLine((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RE + "\" " + (s.UseFullPath ? "(FullPath)" : "") );
+                    txt.AppendLine((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RegExpression + "\" " + (s.UseFullPath ? "(FullPath)" : "") );
                 txt.AppendLine();
             }
 

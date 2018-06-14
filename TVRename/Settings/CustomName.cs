@@ -112,11 +112,11 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowName}", showname);
             if (dvdOrder)
             {
-                name = name.ReplaceInsensitive("{Season}", ep.DVDSeasonNumber.ToString());
-                name = name.ReplaceInsensitive("{Season:2}", ep.DVDSeasonNumber.ToString("00"));
-                name = name.ReplaceInsensitive("{Episode}", ep.DVDEpNum.ToString("00"));
-                name = name.ReplaceInsensitive("{Episode2}", ep.DVDEpNum.ToString("00"));
-                name = Regex.Replace(name, "{AllEpisodes}", ep.DVDEpNum.ToString("00"));
+                name = name.ReplaceInsensitive("{Season}", ep.DvdSeasonNumber.ToString());
+                name = name.ReplaceInsensitive("{Season:2}", ep.DvdSeasonNumber.ToString("00"));
+                name = name.ReplaceInsensitive("{Episode}", ep.DvdEpNum.ToString("00"));
+                name = name.ReplaceInsensitive("{Episode2}", ep.DvdEpNum.ToString("00"));
+                name = Regex.Replace(name, "{AllEpisodes}", ep.DvdEpNum.ToString("00"));
 
             }
             else
@@ -133,7 +133,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
             
-            name = ReplaceDates(urlEncode, name, ep.GetAirDateDT(tz));
+            name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(tz));
 
             name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
 
