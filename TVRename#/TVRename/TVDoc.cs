@@ -1181,7 +1181,6 @@ namespace TVRename
                 showList = this.Library.Values;
             }
 
-
             DirFilesCache dfc = new DirFilesCache();
 
             MergeLibraryEpisodes(showList, dfc);
@@ -1197,116 +1196,125 @@ namespace TVRename
 
                 prog.Invoke(100 * c / showList.Count);
 
-                if (si.AllFolderLocations().Count == 0) // no folders defined for this show
-                    continue; // so, nothing to do.
+                RenameAndMissingCheck(si,dfc);
+            } // for each show
 
-                //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
-                //it has all the required files for that show
-                if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations().Count > 0))
+            RemoveIgnored();
+        }
+
+
+        private void RenameAndMissingCheck(ShowItem si,DirFilesCache dfc)
+        {
+            if (si.AllFolderLocations().Count == 0) // no folders defined for this show
+                return; // so, nothing to do.
+
+            //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
+            //it has all the required files for that show
+            if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations().Count > 0))
+            {
+                this.TheActionList.Add(this.DownloadIdentifiers.ProcessShow(si));
+            }
+
+            //MS_TODO Put the bannerrefresh period into the settings file, we'll default to 3 months
+            DateTime cutOff = DateTime.Now.AddMonths(-3);
+            DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? DateTime.Now.AddMonths(-4);
+            bool timeForBannerUpdate = (cutOff.CompareTo(lastUpdate) == 1);
+
+            if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
+            {
+                this.TheActionList.Add(this.DownloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
+                si.BannersLastUpdatedOnDisk = DateTime.Now;
+                SetDirty();
+            }
+
+            // process each folder for each season...
+
+            int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
+            si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
+            Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
+
+            int lastSeason = numbers.Concat(new[] { 0 }).Max();
+
+            foreach (int snum in numbers)
+            {
+                if (this.ActionCancel)
+                    return;
+
+                if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
+                    continue; // ignore/skip this season
+
+                if ((snum == 0) && (si.CountSpecials))
+                    continue; // don't process the specials season, as they're merged into the seasons themselves
+
+                // all the folders for this particular season
+                List<string> folders = allFolders[snum];
+
+                bool folderNotDefined = (folders.Count == 0);
+                if (folderNotDefined && (TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons))
+                    continue; // folder for the season is not defined, and we're not auto-adding it
+
+                List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
+                int maxEpisodeNumber = 0;
+                foreach (ProcessedEpisode episode in eps)
                 {
+                    if (episode.AppropriateEpNum > maxEpisodeNumber)
+                        maxEpisodeNumber = episode.AppropriateEpNum;
+                }
+
+
+                // base folder:
+                if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(false).Count > 0))
+                {
+                    // main image for the folder itself
                     this.TheActionList.Add(this.DownloadIdentifiers.ProcessShow(si));
                 }
 
-                //MS_TODO Put the bannerrefresh period into the settings file, we'll default to 3 months
-                DateTime cutOff = DateTime.Now.AddMonths(-3);
-                DateTime lastUpdate = si.BannersLastUpdatedOnDisk ?? DateTime.Now.AddMonths(-4);
-                bool timeForBannerUpdate = (cutOff.CompareTo(lastUpdate) == 1);
 
-                if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
-                {
-                    this.TheActionList.Add(this.DownloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
-                    si.BannersLastUpdatedOnDisk = DateTime.Now;
-                    SetDirty();
-                }
-
-                // process each folder for each season...
-
-                int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
-                si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-                Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
-
-                int lastSeason = numbers.Concat(new[] {0}).Max();
-
-                foreach (int snum in numbers)
+                foreach (string folder in folders)
                 {
                     if (this.ActionCancel)
                         return;
 
-                    if ((si.IgnoreSeasons.Contains(snum)) || (!allFolders.ContainsKey(snum)))
-                        continue; // ignore/skip this season
+                    FileInfo[] files = dfc.Get(folder);
+                    if (files == null)
+                        continue;
 
-                    if ((snum == 0) && (si.CountSpecials))
-                        continue; // don't process the specials season, as they're merged into the seasons themselves
-
-                    // all the folders for this particular season
-                    List<string> folders = allFolders[snum];
-
-                    bool folderNotDefined = (folders.Count == 0);
-                    if (folderNotDefined && (TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons))
-                        continue; // folder for the season is not defined, and we're not auto-adding it
-
-                    List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
-                    int maxEpisodeNumber = 0;
-                    foreach (ProcessedEpisode episode in eps)
+                    if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
                     {
-                        if (episode.AppropriateEpNum > maxEpisodeNumber)
-                            maxEpisodeNumber = episode.AppropriateEpNum;
+                        //Image series checks here
+                        this.TheActionList.Add(this.DownloadIdentifiers.ForceUpdateSeason(DownloadIdentifier.DownloadType.downloadImage, si, folder, snum));
                     }
 
+                    bool renCheck = TVSettings.Instance.RenameCheck && si.DoRename && Directory.Exists(folder); // renaming check needs the folder to exist
+                    bool missCheck = TVSettings.Instance.MissingCheck && si.DoMissingCheck;
 
-                    // base folder:
-                    if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(false).Count > 0))
-                    {
-                        // main image for the folder itself
-                        this.TheActionList.Add(this.DownloadIdentifiers.ProcessShow(si));
-                    }
+                    //Image series checks here
+                    this.TheActionList.Add(this.DownloadIdentifiers.ProcessSeason(si, folder, snum));
 
+                    FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
 
-                    foreach (string folder in folders)
+                    int maxEpNumFound = 0;
+                    if (!renCheck && !missCheck)
+                        continue;
+
+                    foreach (FileInfo fi in files)
                     {
                         if (this.ActionCancel)
                             return;
 
-                        FileInfo[] files = dfc.Get(folder);
-                        if (files == null)
-                            continue;
+                        if (!FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si, out FilenameProcessorRE rex))
+                            continue; // can't find season & episode, so this file is of no interest to us
 
-                        if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
-                        {
-                            //Image series checks here
-                            this.TheActionList.Add(this.DownloadIdentifiers.ForceUpdateSeason(DownloadIdentifier.DownloadType.downloadImage, si, folder, snum));
-                        }
-
-                        bool renCheck = TVSettings.Instance.RenameCheck && si.DoRename && Directory.Exists(folder); // renaming check needs the folder to exist
-                        bool missCheck = TVSettings.Instance.MissingCheck && si.DoMissingCheck;
-
-                        //Image series checks here
-                        this.TheActionList.Add(this.DownloadIdentifiers.ProcessSeason(si, folder, snum));
-
-                        FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
-
-                        int maxEpNumFound = 0;
-                        if (!renCheck && !missCheck)
-                            continue;
-
-                        foreach (FileInfo fi in files)
-                        {
-                            if (this.ActionCancel)
-                                return;
-
-                            if (!FindSeasEp(fi, out int seasNum, out int epNum, out int maxEp, si, out FilenameProcessorRE rex))
-                                continue; // can't find season & episode, so this file is of no interest to us
-
-                            if (seasNum == -1)
-                                seasNum = snum;
+                        if (seasNum == -1)
+                            seasNum = snum;
 
 
 
 #if !NOLAMBDA
-                            int epIdx = eps.FindIndex(x => ((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)));
-                            if (epIdx == -1)
-                                continue; // season+episode number don't correspond to any episode we know of from thetvdb
-                            ProcessedEpisode ep = eps[epIdx];
+                        int epIdx = eps.FindIndex(x => ((x.AppropriateEpNum == epNum) && (x.AppropriateSeasonNumber == seasNum)));
+                        if (epIdx == -1)
+                            continue; // season+episode number don't correspond to any episode we know of from thetvdb
+                        ProcessedEpisode ep = eps[epIdx];
 #else
     // equivalent of the 4 lines above, if compiling on MonoDevelop on Windows which, for 
     // some reason, doesn't seem to support lambda functions (the => thing)
@@ -1326,110 +1334,106 @@ namespace TVRename
                             // season+episode number don't correspond to any episode we know of from thetvdb
 #endif
 
-                            FileInfo actualFile = fi;
+                        FileInfo actualFile = fi;
 
-                            if (renCheck && TVSettings.Instance.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
-                            {
-                                string newname = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(ep, fi.Extension, folder.Length));
-
-                                if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
-                                    fi.IsLanguageSpecificSubtitle(out string subtitleExtension))
-                                {
-                                    newname = TVSettings.Instance.FilenameFriendly(
-                                        TVSettings.Instance.NamingStyle.NameForExt(ep, subtitleExtension,
-                                            folder.Length));
-                                }
-
-                                if (newname != actualFile.Name)
-                                {
-                                    actualFile = FileHelper.FileInFolder(folder, newname); // rename updates the filename
-                                    this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep, null,null));
-
-                                    //The following section informs the DownloadIdentifers that we already plan to
-                                    //copy a file inthe appropriate place and they do not need to worry about downloading 
-                                    //one for that purpse
-
-                                    this.DownloadIdentifiers.notifyComplete(actualFile);
-
-                                }
-                            }
-                            if (missCheck && TVSettings.Instance.UsefulExtension(fi.Extension, false)) // == MISSING CHECK part 1/2 ==
-                            {
-                                // first pass of missing check is to tally up the episodes we do have
-                                localEps[epNum] = actualFile;
-                                if (epNum > maxEpNumFound)
-                                    maxEpNumFound = epNum;
-                            }
-                        } // foreach file in folder
-
-                        if (missCheck) // == MISSING CHECK part 2/2 (includes NFO and Thumbnails) ==
+                        if (renCheck && TVSettings.Instance.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
                         {
-                            // second part of missing check is to see what is missing!
+                            string newname = TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(ep, fi.Extension, folder.Length));
 
-                            // look at the offical list of episodes, and look to see if we have any gaps
-
-                            DateTime today = DateTime.Now;
-                            TheTVDB.Instance.GetLock("UpToDateCheck");
-                            foreach (ProcessedEpisode dbep in eps)
+                            if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
+                                fi.IsLanguageSpecificSubtitle(out string subtitleExtension))
                             {
-                                if ((dbep.AppropriateEpNum  > maxEpNumFound) || (localEps[dbep.AppropriateEpNum] == null)) // not here locally
+                                newname = TVSettings.Instance.FilenameFriendly(
+                                    TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension,
+                                        folder.Length));
+                            }
+
+                            if (newname != actualFile.Name)
+                            {
+                                actualFile = FileHelper.FileInFolder(folder, newname); // rename updates the filename
+                                this.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi, actualFile, ep, null, null));
+
+                                //The following section informs the DownloadIdentifers that we already plan to
+                                //copy a file inthe appropriate place and they do not need to worry about downloading 
+                                //one for that purpse
+
+                                this.DownloadIdentifiers.notifyComplete(actualFile);
+
+                            }
+                        }
+                        if (missCheck && TVSettings.Instance.UsefulExtension(fi.Extension, false)) // == MISSING CHECK part 1/2 ==
+                        {
+                            // first pass of missing check is to tally up the episodes we do have
+                            localEps[epNum] = actualFile;
+                            if (epNum > maxEpNumFound)
+                                maxEpNumFound = epNum;
+                        }
+                    } // foreach file in folder
+
+                    if (missCheck) // == MISSING CHECK part 2/2 (includes NFO and Thumbnails) ==
+                    {
+                        // second part of missing check is to see what is missing!
+
+                        // look at the offical list of episodes, and look to see if we have any gaps
+
+                        DateTime today = DateTime.Now;
+                        TheTVDB.Instance.GetLock("UpToDateCheck");
+                        foreach (ProcessedEpisode dbep in eps)
+                        {
+                            if ((dbep.AppropriateEpNum > maxEpNumFound) || (localEps[dbep.AppropriateEpNum] == null)) // not here locally
+                            {
+                                DateTime? dt = dbep.GetAirDateDT(true);
+                                bool dtOK = dt != null;
+
+                                bool notFuture = (dtOK && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
+
+                                bool noAirdatesUntilNow = true;
+                                // for specials "season", see if any season has any airdates
+                                // otherwise, check only up to the season we are considering
+                                for (int i = 1; i <= ((snum == 0) ? lastSeason : snum); i++)
                                 {
-                                    DateTime? dt = dbep.GetAirDateDT(true);
-                                    bool dtOK = dt != null;
-
-                                    bool notFuture = (dtOK && (dt.Value.CompareTo(today) < 0)); // isn't an episode yet to be aired
-
-                                    bool noAirdatesUntilNow = true;
-                                    // for specials "season", see if any season has any airdates
-                                    // otherwise, check only up to the season we are considering
-                                    for (int i = 1; i <= ((snum == 0) ? lastSeason : snum); i++)
+                                    if (ShowLibrary.HasAnyAirdates(si, i))
                                     {
-                                        if (ShowLibrary.HasAnyAirdates(si, i))
+                                        noAirdatesUntilNow = false;
+                                        break;
+                                    }
+                                    else
+                                    {//If the show is in its first season and no episodes have air dates
+                                        if (lastSeason == 1)
                                         {
                                             noAirdatesUntilNow = false;
-                                            break;
                                         }
-                                        else
-                                        {//If the show is in its first season and no episodes have air dates
-                                            if (lastSeason == 1)
-                                            {
-                                                noAirdatesUntilNow = false;
-                                            }
-                                        }
-                                    }
-
-                                    // only add to the missing list if, either:
-                                    // - force check is on
-                                    // - there are no airdates at all, for up to and including this season
-                                    // - there is an airdate, and it isn't in the future
-                                    if (noAirdatesUntilNow ||
-                                        ((si.ForceCheckFuture || notFuture) && dtOK) ||
-                                        (si.ForceCheckNoAirdate && !dtOK))
-                                    {
-                                        // then add it as officially missing
-                                        this.TheActionList.Add(new ItemMissing(dbep, folder, TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameForExt(dbep, null, folder.Length))));
                                     }
                                 }
-                                else
+
+                                // only add to the missing list if, either:
+                                // - force check is on
+                                // - there are no airdates at all, for up to and including this season
+                                // - there is an airdate, and it isn't in the future
+                                if (noAirdatesUntilNow ||
+                                    ((si.ForceCheckFuture || notFuture) && dtOK) ||
+                                    (si.ForceCheckNoAirdate && !dtOK))
                                 {
-                                    // the file is here
-                                    if (showList == null)
-                                        this.mStats.NS_NumberOfEpisodes++;
-
-                                    // do NFO and thumbnail checks if required
-                                    FileInfo filo = localEps[dbep.AppropriateEpNum ]; // filename (or future filename) of the file
-
-                                    this.TheActionList.Add(this.DownloadIdentifiers.ProcessEpisode(dbep, filo));
-
+                                    // then add it as officially missing
+                                    this.TheActionList.Add(new ItemMissing(dbep, folder, TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(dbep, null, folder.Length))));
                                 }
-                            } // up to date check, for each episode in thetvdb
-                            TheTVDB.Instance.Unlock("UpToDateCheck");
-                        } // if doing missing check
-                    } // for each folder for this season of this show
-                } // for each season of this show
-            } // for each show
+                            }
+                            else
+                            {
 
-            RemoveIgnored();
+
+                                // do NFO and thumbnail checks if required
+                                FileInfo filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
+
+                                this.TheActionList.Add(this.DownloadIdentifiers.ProcessEpisode(dbep, filo));
+
+                            }
+                        } // up to date check, for each episode in thetvdb
+                        TheTVDB.Instance.Unlock("UpToDateCheck");
+                    } // if doing missing check
+                } // for each folder for this season of this show
+            } // for each season of this show
+
         }
 
         private static void NoProgress(int pct)

@@ -4,6 +4,7 @@ namespace TVRename
     {
         protected bool ActionCancel = false;
         protected readonly TVDoc Doc;
+        protected readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public ItemList ActionList { get; internal set; }
 

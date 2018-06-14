@@ -8,26 +8,20 @@
 namespace TVRename
 {
     using System;
-    using System.Windows.Forms;
     using System.Xml;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
     public class ActionNFO : ActionWriteMetadata
     {
-        public ShowItem SI; // if for an entire show, rather than specific episode
 
-        public ActionNFO(FileInfo nfo, ProcessedEpisode pe)
+        public ActionNFO(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
         {
-            this.SI = null;
             this.Episode = pe;
-            this.Where = nfo;
         }
 
-        public ActionNFO(FileInfo nfo, ShowItem si)
+        public ActionNFO(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            this.SI = si;
             this.Episode = null;
-            this.Where = nfo;
         }
 
         #region Action Members
@@ -187,7 +181,7 @@ namespace TVRename
                         XMLHelper.WriteElementToXML(writer, "title", this.SI.ShowName);
 
                         XMLHelper.WriteElementToXML(writer, "episodeguideurl",
-                            TheTVDB.BuildURL(true, true, this.SI.TVDBCode, TheTVDB.Instance.RequestLanguage));
+                            TheTVDB.BuildURL(this.SI.TVDBCode, TheTVDB.Instance.RequestLanguage));
 
                         XMLHelper.WriteElementToXML(writer, "plot", this.SI.TheSeries().GetOverview());
 
@@ -266,40 +260,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem();
 
-                if (this.Episode != null)
-                {
-                    lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
-                    DateTime? dt = this.Episode.GetAirDateDT(true);
-                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                        lvi.SubItems.Add(dt.Value.ToShortDateString());
-                    else
-                        lvi.SubItems.Add("");
-                }
-                else
-                {
-                    lvi.Text = this.SI.ShowName;
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                }
-
-                lvi.SubItems.Add(this.Where.DirectoryName);
-                lvi.SubItems.Add(this.Where.Name);
-
-                lvi.Tag = this;
-
-                //lv->Items->Add(lvi);
-                return lvi;
-            }
-        }
 
 
 

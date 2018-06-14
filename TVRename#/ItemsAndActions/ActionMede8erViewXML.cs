@@ -6,8 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System.Linq.Expressions;
-
 namespace TVRename
 {
     using System;
@@ -18,20 +16,15 @@ namespace TVRename
 
     public class ActionMede8erViewXML : ActionWriteMetadata
     {
-        public ShowItem SI; // if for an entire show, rather than specific episode
         public int Snum;
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si)
+        public ActionMede8erViewXML(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            this.SI = si;
-            this.Where = nfo;
             this.Snum = -1;
         }
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum)
+        public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum) : base(nfo,si)
         {
-            this.SI = si;
-            this.Where = nfo;
             this.Snum = snum;
         }
 
@@ -102,16 +95,6 @@ namespace TVRename
 
         #region Item Members
 
-        public override  IgnoreItem Ignore
-        {
-            get
-            {
-                if (this.Where == null)
-                    return null;
-                return new IgnoreItem(this.Where.FullName);
-            }
-        }
-
         public override ListViewItem ScanListViewItem
         {
             get
@@ -131,12 +114,6 @@ namespace TVRename
                 return lvi;
             }
         }
-
-        public override string TargetFolder => this.Where == null ? null : this.Where.DirectoryName;
-
-        public override string ScanListViewGroup => "lvgActionMeta";
-
-        public override int IconNumber => 7;
 
         #endregion
 

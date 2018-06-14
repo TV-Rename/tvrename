@@ -53,13 +53,13 @@ namespace TVRename
         {
             return this.BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
         }
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders)
         {
             if (!Directory.Exists(folder))
             {
-                logger.Error("The search folder \"" + folder + " does not exist.\n");
+                logger.Error("The search folder \"" + folder + " does not exist.");
                 return count;
             }
 
