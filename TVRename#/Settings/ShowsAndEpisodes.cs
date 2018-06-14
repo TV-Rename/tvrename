@@ -33,8 +33,7 @@ namespace TVRename
         public ProcessedEpisodeType type;
         public List<Episode> sourceEpisodes;
 
-        public enum ProcessedEpisodeType { single, split, merged};
-
+        public enum ProcessedEpisodeType { single, split, merged}
 
         public ProcessedEpisode(SeriesInfo ser, Season airseas, Season dvdseas, ShowItem si)
             : base(ser, airseas,dvdseas)
@@ -88,7 +87,7 @@ namespace TVRename
             this.Ignore = false;
             this.SI = si;
             this.sourceEpisodes = episodes;
-            this.type = ProcessedEpisodeType.merged ;
+            this.type = ProcessedEpisodeType.merged;
         }
 
         public int AppropriateSeasonNumber => this.SI.DVDOrder ? this.DVDSeasonNumber : this.AiredSeasonNumber;
@@ -104,7 +103,6 @@ namespace TVRename
                 else this.AiredEpNum = value;
             }
         }
-
 
         public string NumsAsString()
         {
@@ -134,10 +132,8 @@ namespace TVRename
 
         public DateTime? GetAirDateDT(bool inLocalTime)
         {
-
             if (!inLocalTime)
                 return GetAirDateDT();
-
             // do timezone adjustment
             return GetAirDateDT(this.SI.GetTimeZone());
         }
@@ -177,7 +173,6 @@ namespace TVRename
             DateTime? dt = GetAirDateDT(true);
             return (dt != null) ? dt.Value.ToString("t") : "-";
         }
-
     }
 
 public class ShowItem
@@ -210,7 +205,6 @@ public class ShowItem
         public String ShowTimeZone;
         private TimeZone SeriesTZ;
         private string LastFiguredTZ;
-
         
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
 
@@ -307,10 +301,10 @@ public class ShowItem
                 {
                     if (!reader.IsEmptyElement)
                     {
-
                         this.BannersLastUpdatedOnDisk = reader.ReadElementContentAsDateTime();
-                    }else
-                    reader.Read();
+                    }
+                    else
+                        reader.Read();
                 }
 
                 else if (reader.Name == "UseSequentialMatch")
@@ -383,7 +377,6 @@ public class ShowItem
                     }
                     reader.Read();
                 }
-
                 else
                     reader.ReadOuterXml();
             } // while
@@ -430,7 +423,6 @@ public class ShowItem
             possibles.AddRange(from alias in this.AliasNames select Helpers.SimplifyName(alias));
 
             return possibles;
-
         }
 
         public string ShowStatus
@@ -497,7 +489,7 @@ public class ShowItem
                     }
                 }
                 return false;
-        }
+            }
         }
 
         private bool HasUnairedEpisodes
@@ -536,9 +528,8 @@ public class ShowItem
                         }
                     }
                     return false;
+             }
         }
-        }
-
 
         public string[] Genres => TheSeries()?.GetGenres();
 
@@ -553,8 +544,6 @@ public class ShowItem
             this.SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
             this.ShowNextAirdate = true;
             this.TVDBCode = -1;
-            //                WhichSeasons = gcnew List<int>;
-            //                NamingStyle = (int)NStyle.DefaultStyle();
             this.AutoAddNewSeasons = true;
             this.PadSeasonToTwoDigits = false;
             this.AutoAdd_FolderBase = "";
@@ -570,9 +559,7 @@ public class ShowItem
             this.ForceCheckFuture = false;
             this.BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
             this.ShowTimeZone = TVRename.TimeZone.DefaultTimeZone(); // default, is correct for most shows
-
             this.LastFiguredTZ = "";
-
         }
 
         public List<ShowRule> RulesForSeason(int n)
@@ -644,7 +631,6 @@ public class ShowItem
             XMLHelper.WriteElementToXML(writer, "BannersLastUpdatedOnDisk", this.BannersLastUpdatedOnDisk);
             XMLHelper.WriteElementToXML(writer, "TimeZone", this.ShowTimeZone);
 
-
             writer.WriteStartElement("IgnoreSeasons");
             foreach (int i in this.IgnoreSeasons)
             {
@@ -693,7 +679,6 @@ public class ShowItem
                     writer.WriteEndElement(); // Rules
                 }
             }
-
             writer.WriteEndElement(); // ShowItem
         }
 
@@ -713,11 +698,9 @@ public class ShowItem
             {
                 foreach (ProcessedEpisode ep in kvp.Value)
                 {
-
                     if (!returnValue.ContainsKey(ep.DVDSeasonNumber ))
                     {
                         returnValue.Add(ep.DVDSeasonNumber, new List<ProcessedEpisode>());
-                        
                     }
                     returnValue[ep.DVDSeasonNumber].Add(ep);
                 }
@@ -773,7 +756,6 @@ public class ShowItem
                     if (!fld[i].Contains(newName)) fld[i].Add(newName.TTS());
                 }
             }
-
             return fld;
         }
 
@@ -794,7 +776,6 @@ public class ShowItem
             if (!this.SeasonRules.ContainsKey(snum)) this.SeasonRules[snum] = new List<ShowRule>();
 
             this.SeasonRules[snum].Add(sr);
-
         }
     }
 }

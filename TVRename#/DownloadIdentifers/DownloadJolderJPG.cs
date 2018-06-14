@@ -20,8 +20,6 @@ namespace TVRename
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
-            
-
             if (TVSettings.Instance.FolderJpg)
             {
                 ItemList TheActionList = new ItemList();
@@ -42,13 +40,11 @@ namespace TVRename
                         downloadPath = si.TheSeries().GetImage(TVSettings.Instance.ItemForFolderJpg());
                     }
 
-
                     if (!string.IsNullOrEmpty(downloadPath))
                         TheActionList.Add(new ActionDownloadImage(si, null, fi, downloadPath, false));
                     doneFolderJPG.Add(fi.FullName);
                 }
                 return TheActionList;
-
             }
             return null;
         }
@@ -58,13 +54,11 @@ namespace TVRename
             if (TVSettings.Instance.FolderJpg)
             {
                 // season folders JPGs
-
                 ItemList TheActionList = new ItemList();
                 FileInfo fi = FileHelper.FileInFolder(folder, defaultFileName);
                 if (!doneFolderJPG.Contains(fi.FullName) && (!fi.Exists|| forceRefresh))
                 // some folders may come up multiple times
                 {
-
                     string bannerPath = "";
 
                     if (TVSettings.Instance.SeasonSpecificFolderJPG())
@@ -84,14 +78,12 @@ namespace TVRename
                 }
                 return TheActionList;
             }
-
-            
             return base.ProcessSeason(si,folder,snum,forceRefresh);
         }
+
         public sealed override void reset()
         {
             doneFolderJPG  = new List<string>();
         }
     }
-
 }

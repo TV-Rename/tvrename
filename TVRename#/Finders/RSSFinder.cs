@@ -34,7 +34,7 @@ namespace TVRename
                 if (this.ActionCancel)
                     return;
 
-                prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
+                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
 
                 if (!(testItem is ItemMissing action))
                     continue;
@@ -105,9 +105,7 @@ namespace TVRename
                 this.ActionList.Add(action);
 
             prog.Invoke(totPct);
-
         }
-    
     }
     // ReSharper disable once InconsistentNaming
     public class RSSItem
@@ -153,7 +151,6 @@ namespace TVRename
                 };
                 using (XmlReader reader = XmlReader.Create(ms, settings))
                 {
-
                     reader.Read();
                     if (reader.Name != "xml")
                         return false;
@@ -189,7 +186,6 @@ namespace TVRename
             {
                 this.regxps = null;
             }
-
             return true;
         }
 
@@ -269,5 +265,4 @@ namespace TVRename
             return true;
         }
     }
-
 }

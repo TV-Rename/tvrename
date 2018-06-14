@@ -18,7 +18,6 @@ namespace TVRename
 
             System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
 
-
             try
             {
                 string currentVersionString = Helpers.DisplayVersion;
@@ -36,7 +35,6 @@ namespace TVRename
             {
                 logger.Error("Failed to establish if there are any new releases as could not parse internal version: " + Helpers.DisplayVersion, e);
                 return null;
-
             }
 
             UpdateVersion latestVersion = null;
@@ -44,7 +42,6 @@ namespace TVRename
 
             try
             {
-
                 WebClient client = new WebClient();
                 client.Headers.Add("user-agent",
                     "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
@@ -87,31 +84,23 @@ namespace TVRename
                         logger.Debug(ex, gitHubReleaseJSON.ToString());
                         continue;
                     }
-
                 }
                 if (latestVersion == null)
                 {
                     logger.Error("Could not find latest version information from GitHub: {0}", response);
                     return null;
                 }
-
                 if (latestBetaVersion == null)
                 {
                     logger.Error("Could not find latest beta version information from GitHub: {0}", response);
                     return null;
                 }
-
             }
             catch (Exception e)
             {
                 logger.Error(e, "Failed to contact GitHub to identify new releases");
                 return null;
-
             }
-
-
-
-
 
             if ((TVSettings.Instance.mode == TVSettings.BetaMode.ProductionOnly) &&
                 (latestVersion.NewerThan(currentVersion))) return latestVersion;
@@ -122,11 +111,8 @@ namespace TVRename
 
             return null;
         }
-
-
     }
 }
-
 
 public class UpdateVersion : IComparable
 {
@@ -166,13 +152,9 @@ public class UpdateVersion : IComparable
 
     public int CompareTo(object obj)
     {
-
+        //Returns 1 if this > object, 0 if this=object and -1 if this< object
         if (obj == null) return 1;
         if (!(obj is UpdateVersion otherUpdateVersion)) throw new ArgumentException("Object is not a UpdateVersion");
-
-
-        //Returns 1 if this > object, 0 if this=object and -1 if this< object
-
 
         //Extract Version Numbers and then compare them
         if (this.VersionNumber.CompareTo(otherUpdateVersion.VersionNumber) != 0) return this.VersionNumber.CompareTo(otherUpdateVersion.VersionNumber);
