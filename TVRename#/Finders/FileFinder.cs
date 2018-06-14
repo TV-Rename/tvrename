@@ -45,7 +45,7 @@ namespace TVRename
                 if (this.ActionCancel)
                     return;
 
-                prog.Invoke(startpct + (totPct-startpct) * (++currentItem) / (totalN + 1));
+                prog.Invoke(startpct + ((totPct-startpct) * (++currentItem) / (totalN + 1)));
 
                 if (!(action1 is ItemMissing me)) continue;
 
@@ -70,8 +70,10 @@ namespace TVRename
                     }
                     else Logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple actions for that file");
                 }
-                else if (numberMatched>1) { Logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");}
-
+                else if (numberMatched>1) 
+                { 
+                    Logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+                }
             }
 
             if (TVSettings.Instance.KeepTogether)
@@ -88,7 +90,6 @@ namespace TVRename
                 newList.Sort(new ActionItemSorter());
 
                 // sort puts all the CopyMoveRenames together				
-
                 // then set the last of each source file to be a move
                 for (int i = 0; i < newList.Count; i++)
                 {
@@ -136,16 +137,11 @@ namespace TVRename
                 if (ReviewFile(testMissingAction, new ItemList(), matchedFile))
                 {
                     //We have 2 options that match  me and testAction - See whether one is subset of the other
-
                     if (me.Episode.SI.ShowName.Contains(testMissingAction.Episode.SI.ShowName)) continue; //'me' is a better match, so don't worry about the new one
 
                     return true; 
-
-
                 }
-
             }
-
             return false;
         }
 
@@ -153,8 +149,7 @@ namespace TVRename
         {
             // for each of the items in rcl, do the same copy/move if for other items with the same
             // base name, but different extensions
-
-            ItemList extras = new ItemList();
+           ItemList extras = new ItemList();
 
             foreach (Item action1 in actionlist)
             {
@@ -189,8 +184,6 @@ namespace TVRename
 
                         ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, null,null); // tidyup on main action, not this
 
-                        
-
                         // check this item isn't already in our to-do list
                         bool doNotAdd = false;
                         foreach (Item ai2 in actionlist)
@@ -218,7 +211,6 @@ namespace TVRename
                     Logger.Warn(e, "Path or filename too long. " + action.From.FullName);
 
                     if ((!this.Doc.Args.Unattended) && (!this.Doc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    
                 }
             }
 
@@ -252,16 +244,12 @@ namespace TVRename
         // consider each of the files, see if it is suitable for series "ser" and episode "epi"
         // if so, add a rcitem for copy to "fi"
 
-
         private bool ReviewFile(ItemMissing me, ItemList addTo, DirCacheEntry dce)
         {
+            if (this.ActionCancel) return true;
+            
             int season = me.Episode.AppropriateSeasonNumber;
-
             int epnum = me.Episode.AppropriateEpNum;
-
-            if (this.ActionCancel)
-                return true;
-
             bool matched = false;
 
             try
@@ -274,8 +262,6 @@ namespace TVRename
 
                 if (matched)
                 {
-
-
                     if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.SI) && (seasF == season) &&
                          (epF == epnum)) ||
                         (me.Episode.SI.UseSequentialMatch &&
@@ -307,13 +293,10 @@ namespace TVRename
                                 if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
                             }
 
-
                             me = new ItemMissing(newPE, me.TargetFolder,
                                 TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(newPE)));
                         }
-
                         FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
-
 
                         if (TVSettings.Instance.PreventMove)
                         {
@@ -327,8 +310,6 @@ namespace TVRename
                         foreach (string folder in TVSettings.Instance.DownloadFolders)
                         {
                             if (folder.SameDirectoryLocation(fi.Directory.FullName))
-
-
                             {
                                 doTidyup = false;
                                 break;
@@ -364,13 +345,9 @@ namespace TVRename
                     t += "Show: " + me.Episode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
                     t += "To: " + me.TheFileNoExt;
                 }
-
                 Logger.Warn(t);
             }
-
             return false;
         }
     }
 }
-
-
