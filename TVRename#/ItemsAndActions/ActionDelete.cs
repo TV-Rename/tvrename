@@ -47,7 +47,6 @@ namespace TVRename
                         DoTidyup(this.toRemove.Directory);
                     }
                 }
-
             }
             catch (Exception e)
             {
@@ -74,13 +73,9 @@ namespace TVRename
         public bool SameSource(ActionDeleteFile o) => FileHelper.Same(this.toRemove , o.toRemove);
     }
 
-
-
     public class ActionDeleteDirectory : ActionDelete
     {
-
         private readonly DirectoryInfo toRemove;
-
 
         public ActionDeleteDirectory(DirectoryInfo remove, ProcessedEpisode ep, TidySettings tidyup)
         {
@@ -91,12 +86,10 @@ namespace TVRename
 
         }
 
-
         public override string ProgressText => this.toRemove.Name;
         public override string Produces => this.toRemove.FullName;
         public override IgnoreItem Ignore => this.toRemove == null ? null : new IgnoreItem(this.toRemove.FullName);
         public override string TargetFolder => this.toRemove?.Parent.FullName;
-
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
@@ -120,7 +113,6 @@ namespace TVRename
                         DoTidyup(this.toRemove.Parent);
                     }
                 }
-
             }
             catch (Exception e)
             {
@@ -145,7 +137,5 @@ namespace TVRename
         }
 
         public bool SameSource(ActionDeleteDirectory o) => FileHelper.Same(this.toRemove, o.toRemove);
-
-
     }
 }
