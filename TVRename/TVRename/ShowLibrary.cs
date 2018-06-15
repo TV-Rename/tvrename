@@ -12,8 +12,8 @@ namespace TVRename
     /// </summary>
     public class ShowLibrary : ConcurrentDictionary<int,ShowItem>
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        public IEnumerable<ShowItem> Shows => this.Values;
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        public IEnumerable<ShowItem> Shows => Values;
 
         private IEnumerable<string> GetSeasonWords()
         {
@@ -23,7 +23,7 @@ namespace TVRename
             if (!TVSettings.Instance.ForceBulkAddToUseSettingsOnly)
             {
                 IEnumerable<string> seasonWordsFromShows =
-                    from si in this.Values select si.AutoAdd_SeasonFolderName.Trim();
+                    from si in Values select si.AutoAdd_SeasonFolderName.Trim();
                 results = seasonWordsFromShows.Distinct().ToList();
 
                 results.Add(TVSettings.Instance.defaultSeasonWord);
@@ -44,7 +44,7 @@ namespace TVRename
         public List<string> getGenres()
         {
             List<string> allGenres = new List<string> { };
-            foreach (ShowItem si in this.Values)
+            foreach (ShowItem si in Values)
             {
                 if (si.Genres != null) allGenres.AddRange(si.Genres);
             }
@@ -56,7 +56,7 @@ namespace TVRename
         public List<string> getStatuses()
         {
             List<string> allStatuses = new List<string> { };
-            foreach (ShowItem si in this.Values)
+            foreach (ShowItem si in Values)
             {
                 if (si.ShowStatus != null) allStatuses.Add(si.ShowStatus);
             }
@@ -68,9 +68,9 @@ namespace TVRename
         public List<string> getNetworks()
         {
             List<string> allValues = new List<string> { };
-            foreach (ShowItem si in this.Values)
+            foreach (ShowItem si in Values)
             {
-                if (si.TheSeries()?.getNetwork() != null) allValues.Add(si.TheSeries().getNetwork());
+                if (si.TheSeries()?.GetNetwork() != null) allValues.Add(si.TheSeries().GetNetwork());
             }
             List<string> distinctValues = allValues.Distinct().ToList();
             distinctValues.Sort();
@@ -80,7 +80,7 @@ namespace TVRename
         public List<string> GetContentRatings()
         {
             List<string> allValues = new List<string> { };
-            foreach (ShowItem si in this.Values)
+            foreach (ShowItem si in Values)
             {
                 if (si.TheSeries()?.GetContentRating() != null) allValues.Add(si.TheSeries().GetContentRating());
             }
@@ -98,23 +98,23 @@ namespace TVRename
 
         public List<ShowItem> GetShowItems()
         {
-            List<ShowItem> returnList = this.Values.ToList();
-            returnList.Sort(new Comparison<ShowItem>(TVRename.ShowItem.CompareShowItemNames));
+            List<ShowItem> returnList = Values.ToList();
+            returnList.Sort(TVRename.ShowItem.CompareShowItemNames);
             return returnList;
         }
 
 
         public ShowItem ShowItem(int id)
         {
-            return this.ContainsKey(id) ? this[id] : null;
+            return ContainsKey(id) ? this[id] : null;
         }
 
         public bool GenDict()
         {
             bool res = true;
-            foreach (ShowItem si in this.Values)
+            foreach (ShowItem si in Values)
             {
-                if (!this.GenerateEpisodeDict(si))
+                if (!GenerateEpisodeDict(si))
                     res = false;
             }
             return res;
@@ -167,7 +167,7 @@ namespace TVRename
                     pe.OverallNumber = overallCount;
                     if (si.DVDOrder)
                     {
-                        overallCount += 1 + pe.EpNum2 - pe.DVDEpNum;
+                        overallCount += 1 + pe.EpNum2 - pe.DvdEpNum;
                     }
                     else
                     {
@@ -202,11 +202,11 @@ namespace TVRename
 
             if (si.DVDOrder)
             {
-                eis.Sort(new System.Comparison<ProcessedEpisode>(ProcessedEpisode.DVDOrderSorter));
+                eis.Sort(ProcessedEpisode.DVDOrderSorter);
                 Renumber(eis);
             }
             else
-                eis.Sort(new System.Comparison<ProcessedEpisode>(ProcessedEpisode.EPNumberSorter));
+                eis.Sort(ProcessedEpisode.EPNumberSorter);
 
             if (si.CountSpecials && seasonsToUse.ContainsKey(0))
             {
@@ -228,8 +228,8 @@ namespace TVRename
                             ProcessedEpisode pe = new ProcessedEpisode(ep, si)
                             {
                                 TheAiredSeason = eis[i].TheAiredSeason,
-                                TheDVDSeason = eis[i].TheDVDSeason,
-                                SeasonID = eis[i].SeasonID
+                                TheDvdSeason = eis[i].TheDvdSeason,
+                                SeasonId = eis[i].SeasonId
                             };
                             eis.Insert(i, pe);
                             break;
@@ -342,7 +342,7 @@ namespace TVRename
                                     {
                                         Name = nameBase + " (Part " + (i + 1) + ")",
                                         AiredEpNum = -2,
-                                        DVDEpNum = -2,
+                                        DvdEpNum = -2,
                                         EpNum2 = -2
                                     };
                                     eis.Insert(n1 + i, pe2);
@@ -385,7 +385,7 @@ namespace TVRename
                                 {
                                     Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt),
                                     AiredEpNum = -2,
-                                    DVDEpNum = -2
+                                    DvdEpNum = -2
                                 };
                                 if (sr.DoWhatNow == RuleAction.kMerge)
                                     pe2.EpNum2 = -2 + n2 - n1;
@@ -412,11 +412,11 @@ namespace TVRename
                             if ((n1 < ec) && (n1 >= 0))
                             {
                                 ProcessedEpisode t = eis[n1];
-                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDVDSeason, si)
+                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
                                 {
                                     Name = txt,
                                     AiredEpNum = -2,
-                                    DVDEpNum = -2,
+                                    DvdEpNum = -2,
                                     EpNum2 = -2
                                 };
                                 eis.Insert(n1, n);
@@ -424,11 +424,11 @@ namespace TVRename
                             else if (n1 == eis.Count)
                             {
                                 ProcessedEpisode t = eis[n1 - 1];
-                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDVDSeason, si)
+                                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
                                 {
                                     Name = txt,
                                     AiredEpNum = -2,
-                                    DVDEpNum = -2,
+                                    DvdEpNum = -2,
                                     EpNum2 = -2
                                 };
                                 eis.Add(n);
@@ -493,7 +493,7 @@ namespace TVRename
             int dd = TVSettings.Instance.WTWRecentDays;
 
             // for each show, see if any episodes were aired in "recent" days...
-            foreach (ShowItem si in this.GetShowItems())
+            foreach (ShowItem si in GetShowItems())
             {
                 bool added = false;
 
@@ -535,7 +535,7 @@ namespace TVRename
             {
                 ProcessedEpisode nextAfterThat = null;
                 TimeSpan howClose = TimeSpan.MaxValue;
-                foreach (ShowItem si in this.GetShowItems())
+                foreach (ShowItem si in GetShowItems())
                 {
                     if (!si.ShowNextAirdate)
                         continue;
@@ -617,7 +617,7 @@ namespace TVRename
         {
             List<ProcessedEpisode> returnList = new List<ProcessedEpisode> { };
 
-            foreach (ShowItem si in this.Values)
+            foreach (ShowItem si in Values)
             {
                 if (!si.ShowNextAirdate)
                     continue;
@@ -681,7 +681,7 @@ namespace TVRename
                         }
                     }
 
-                    this.Add(si);
+                    Add(si);
 
                     r2.Read();
                 }

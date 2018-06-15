@@ -28,7 +28,7 @@ namespace TVRename
                 return 3;
             if (a is ActionDownloadImage)
                 return 4;
-            if (a is ActionNFO)
+            if (a is ActionNfo)
                 return 5;
             if (a is ItemuTorrenting || a is ItemSABnzbd)
                 return 6;

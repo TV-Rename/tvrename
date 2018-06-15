@@ -20,12 +20,12 @@ namespace TVRename
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            this.Snum = -1;
+            Snum = -1;
         }
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum) : base(nfo,si)
         {
-            this.Snum = snum;
+            Snum = snum;
         }
 
         #region Action Members
@@ -41,20 +41,20 @@ namespace TVRename
             };
             try
             {
-                using (XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings))
+                using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
                 {
 
                     writer.WriteStartElement("FolderTag");
                     // is it a show or season folder
-                    if (this.Snum >= 0)
+                    if (Snum >= 0)
                     {
                         // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
-                        XMLHelper.WriteElementToXML(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
-                        XMLHelper.WriteElementToXML(writer, "ViewType", "Video");
+                        XmlHelper.WriteElementToXml(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
+                        XmlHelper.WriteElementToXml(writer, "ViewType", "Video");
                     }
                     else
                     {
-                        XMLHelper.WriteElementToXML(writer, "ViewMode", "Preview");
+                        XmlHelper.WriteElementToXml(writer, "ViewMode", "Preview");
                     }
 
                     writer.WriteEndElement();
@@ -64,14 +64,14 @@ namespace TVRename
 
             catch (Exception e)
             {
-                this.Error = true;
-                this.ErrorText = e.Message;
-                this.Done = true;
+                Error = true;
+                ErrorText = e.Message;
+                Done = true;
                 return false;
 
             }
 
-            this.Done = true;
+            Done = true;
             return true;
         }
 
@@ -81,14 +81,14 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionMede8erViewXML xml) && (xml.Where == this.Where);
+            return (o is ActionMede8erViewXML xml) && (xml.Where == Where);
         }
 
         public override int Compare(Item o)
         {
             ActionMede8erViewXML nfo = o as ActionMede8erViewXML;
 
-            return (this.Where.FullName).CompareTo(nfo.Where.FullName);
+            return (Where.FullName).CompareTo(nfo.Where.FullName);
         }
 
         #endregion
@@ -101,13 +101,13 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                lvi.Text = this.SI.ShowName;
-                lvi.SubItems.Add(this.Snum > 0 ? this.Snum.ToString() : "");
+                lvi.Text = SelectedShow.ShowName;
+                lvi.SubItems.Add(Snum > 0 ? Snum.ToString() : "");
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.Where.DirectoryName);
-                lvi.SubItems.Add(this.Where.Name);
+                lvi.SubItems.Add(Where.DirectoryName);
+                lvi.SubItems.Add(Where.Name);
 
                 lvi.Tag = this;
 

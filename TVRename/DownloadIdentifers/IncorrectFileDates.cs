@@ -8,7 +8,7 @@ namespace TVRename
     sealed class IncorrectFileDates : DownloadIdentifier
     {
         private List<string> doneFilesAndFolders;
-        public IncorrectFileDates() => reset();
+        public IncorrectFileDates() => Reset();
 
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
@@ -18,13 +18,13 @@ namespace TVRename
             if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
             {
                 //Any series before 1980 will get 1980 as the timestamp
-                if (newUpdateTime.Value.CompareTo(Helpers.windowsStartDateTime) < 0)
-                    newUpdateTime = Helpers.windowsStartDateTime;
+                if (newUpdateTime.Value.CompareTo(Helpers.WindowsStartDateTime) < 0)
+                    newUpdateTime = Helpers.WindowsStartDateTime;
 
                 DirectoryInfo di = new DirectoryInfo(si.AutoAdd_FolderBase);
-                if ((di.LastWriteTimeUtc != newUpdateTime.Value)&&(!this.doneFilesAndFolders.Contains(di.FullName)))
+                if ((di.LastWriteTimeUtc != newUpdateTime.Value)&&(!doneFilesAndFolders.Contains(di.FullName)))
                 {
-                    this.doneFilesAndFolders.Add(di.FullName);
+                    doneFilesAndFolders.Add(di.FullName);
                     return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
                 }
             }
@@ -38,14 +38,14 @@ namespace TVRename
             if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
             {
                 //Any series before 1980 will get 1980 as the timestamp
-                if (newUpdateTime.Value.CompareTo(Helpers.windowsStartDateTime) < 0)
-                    newUpdateTime = Helpers.windowsStartDateTime;
+                if (newUpdateTime.Value.CompareTo(Helpers.WindowsStartDateTime) < 0)
+                    newUpdateTime = Helpers.WindowsStartDateTime;
 
 
                 DirectoryInfo di = new DirectoryInfo(folder);
-                if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!this.doneFilesAndFolders.Contains(di.FullName)))
+                if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!doneFilesAndFolders.Contains(di.FullName)))
                 {
-                    this.doneFilesAndFolders.Add(di.FullName);
+                    doneFilesAndFolders.Add(di.FullName);
                     return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
                 }
                 
@@ -60,20 +60,20 @@ namespace TVRename
                 DateTime newUpdateTime = dbep.FirstAired.Value;
 
                 //Any series before 1980 will get 1980 as the timestamp
-                if (newUpdateTime.CompareTo(Helpers.windowsStartDateTime) < 0)
-                    newUpdateTime = Helpers.windowsStartDateTime;
+                if (newUpdateTime.CompareTo(Helpers.WindowsStartDateTime) < 0)
+                    newUpdateTime = Helpers.WindowsStartDateTime;
 
-                if ((filo.LastWriteTimeUtc != newUpdateTime) && (!this.doneFilesAndFolders.Contains(filo.FullName)))
+                if ((filo.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(filo.FullName)))
                 {
-                    this.doneFilesAndFolders.Add(filo.FullName);
+                    doneFilesAndFolders.Add(filo.FullName);
                     return  new ItemList() { new ActionDateTouch(filo,dbep, newUpdateTime) };
                 }
             }
             return null;
         }
-        public override void reset()
+        public override void Reset()
         {
-            this.doneFilesAndFolders = new List<string>();
+            doneFilesAndFolders = new List<string>();
         }
 
     }

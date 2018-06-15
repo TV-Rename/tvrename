@@ -21,24 +21,24 @@ namespace TVRename
     /// </summary>
     public partial class ShowException : Form
     {
-        private Exception mException;
+        private readonly Exception mException;
 
         public ShowException(Exception e)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.mException = e;
+            mException = e;
         }
 
-        private void ShowException_Load(object sender, System.EventArgs e)
+        private void ShowException_Load(object sender, EventArgs e)
         {
-            string t = this.mException.Message + "\r\n\r\n" + this.mException.StackTrace;
-            this.txtText.Text = t;
+            string t = mException.Message + "\r\n\r\n" + mException.StackTrace;
+            txtText.Text = t;
         }
 
-        private void button1_Click(object sender, System.EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

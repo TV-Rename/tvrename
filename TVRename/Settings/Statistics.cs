@@ -35,11 +35,11 @@ namespace TVRename
         [XmlIgnoreAttribute] public int NS_NumberOfEpisodesExpected = 0;
         [XmlIgnoreAttribute] public int NS_NumberOfSeasons = 0;
         [XmlIgnoreAttribute] public int NS_NumberOfShows = 0;
-        [XmlIgnoreAttribute] private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        [XmlIgnoreAttribute] private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static TVRenameStats Load()
         {
-            String fn = PathManager.StatisticsFile.FullName;
+            string fn = PathManager.StatisticsFile.FullName;
             if (!File.Exists(fn))
                 return new TVRenameStats();
             return LoadFrom(fn);
@@ -50,7 +50,7 @@ namespace TVRename
             SaveToFile(PathManager.StatisticsFile.FullName);
         }
 
-        private static TVRenameStats LoadFrom(String filename)
+        private static TVRenameStats LoadFrom(string filename)
         {
             if (!File.Exists(filename))
                 return null;
@@ -77,7 +77,7 @@ namespace TVRename
             return sc;
         }
 
-        private void SaveToFile(String toFile)
+        private void SaveToFile(string toFile)
         {
             System.IO.DirectoryInfo di = new System.IO.FileInfo(toFile).Directory;
             if (!di.Exists)

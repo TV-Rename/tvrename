@@ -12,17 +12,17 @@ namespace TVRename.App
     /// <seealso cref="WindowsFormsApplicationBase" />
     internal class ApplicationBase : WindowsFormsApplicationBase
     {
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Initializes the splash screen.
         /// </summary>
         protected override void OnCreateSplashScreen()
         {
-            this.SplashScreen = new TVRenameSplash();
+            SplashScreen = new TVRenameSplash();
 
-            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
-            if (clargs.Hide) this.SplashScreen.Visible  = false;
+            CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
+            if (clargs.Hide) SplashScreen.Visible  = false;
                 
         }
 
@@ -32,14 +32,14 @@ namespace TVRename.App
         /// </summary>
         protected override void OnCreateMainForm()
         {
-            CommandLineArgs clargs = new CommandLineArgs(this.CommandLineArgs);
+            CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
             if (clargs.Hide)
-                this.SplashScreen.SafeInvoke(
-                    () => ((TVRenameSplash)this.SplashScreen).Visible = false,true);
+                SplashScreen.SafeInvoke(
+                    () => ((TVRenameSplash)SplashScreen).Visible = false,true);
 
             // Update splash screen
-            this.SplashScreen.SafeInvoke(
-                () => ((TVRenameSplash) this.SplashScreen).UpdateStatus("Initializing"), true);
+            SplashScreen.SafeInvoke(
+                () => ((TVRenameSplash) SplashScreen).UpdateStatus("Initializing"), true);
 
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
@@ -65,7 +65,7 @@ namespace TVRename.App
                 {
                     if (!clargs.Unattended && !clargs.Hide) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                    logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
+                    Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
 
                     Environment.Exit(1);
                 }
@@ -83,7 +83,7 @@ namespace TVRename.App
 
                     if (recoveryForm.ShowDialog() == DialogResult.OK)
                     {
-                        tvdbFile = recoveryForm.DBFile;
+                        tvdbFile = recoveryForm.DbFile;
                         settingsFile = recoveryForm.SettingsFile;
                     }
                     else
@@ -108,18 +108,18 @@ namespace TVRename.App
                 // Set recover message
                 recoverText = string.Empty;
                 if (!doc.LoadOK && !string.IsNullOrEmpty(doc.LoadErr)) recoverText = doc.LoadErr;
-                if (!TheTVDB.Instance.LoadOK && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr)) recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
+                if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr)) recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
             } while (recover);
 
             ConvertSeriesTimeZones(doc, TheTVDB.Instance);
 
             // Show user interface
-            UI ui = new UI(doc, (TVRenameSplash)this.SplashScreen, !clargs.Unattended && !clargs.Hide);
+            UI ui = new UI(doc, (TVRenameSplash)SplashScreen, !clargs.Unattended && !clargs.Hide);
 
             // Bind IPC actions to the form, this allows another instance to trigger form actions
             RemoteClient.Bind(ui, doc);
 
-            this.MainForm = ui;
+            MainForm = ui;
         }
 
         private static void ConvertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
@@ -130,7 +130,7 @@ namespace TVRename.App
 
             foreach (ShowItem si in doc.Library.GetShowItems())
             {
-                string newTimeZone = tvdb.GetSeries(si.TVDBCode)?.tempTimeZone;
+                string newTimeZone = tvdb.GetSeries(si.TVDBCode)?.TempTimeZone;
 
                 if (string.IsNullOrWhiteSpace(newTimeZone)) continue;
                 if ( newTimeZone == TimeZone.DefaultTimeZone() ) continue;
@@ -138,7 +138,7 @@ namespace TVRename.App
 
                 si.ShowTimeZone = newTimeZone;
                 doc.SetDirty();
-                logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
+                Logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
             }
 
         }

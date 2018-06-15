@@ -31,18 +31,18 @@ namespace TVRename
         public int StandardBias;
         public SysTime StandardDate;
 
-        public TimeZone(Byte[] bytes)
+        public TimeZone(byte[] bytes)
         {
 #if DEBUG
             System.Diagnostics.Debug.Assert(bytes.Length == 44);
 #endif
             // decode bytes from a Win32 TIMEZONEINFO struct
 
-            this.Bias = bytes[0] + (bytes[1] << 8) + (bytes[2] << 16) + (bytes[3] << 24);
-            this.StandardBias = bytes[4] + (bytes[5] << 8) + (bytes[6] << 16) + (bytes[7] << 24);
-            this.DaylightBias = bytes[8] + (bytes[9] << 8) + (bytes[10] << 16) + (bytes[11] << 24);
-            this.StandardDate = new SysTime(bytes, 12); // uses 16 bytes
-            this.DaylightDate = new SysTime(bytes, 28); // uses 16 bytes
+            Bias = bytes[0] + (bytes[1] << 8) + (bytes[2] << 16) + (bytes[3] << 24);
+            StandardBias = bytes[4] + (bytes[5] << 8) + (bytes[6] << 16) + (bytes[7] << 24);
+            DaylightBias = bytes[8] + (bytes[9] << 8) + (bytes[10] << 16) + (bytes[11] << 24);
+            StandardDate = new SysTime(bytes, 12); // uses 16 bytes
+            DaylightDate = new SysTime(bytes, 28); // uses 16 bytes
             // 28 + 16 = 44.  yay!
         }
 
@@ -71,7 +71,7 @@ namespace TVRename
             if (rk == null)
                 return null;
             else
-                return new TimeZone((Byte[]) rk.GetValue("TZI"));
+                return new TimeZone((byte[]) rk.GetValue("TZI"));
         }
 
         public static string DefaultTimeZone()
@@ -154,7 +154,7 @@ namespace TVRename
             public short wSecond;
             public short wYear;
 
-            public SysTime(Byte[] bytes, int pos)
+            public SysTime(byte[] bytes, int pos)
             {
                 int y = bytes[pos + 0] + (bytes[pos + 1] << 8);
                 int m = bytes[pos + 2] + (bytes[pos + 3] << 8);
@@ -165,14 +165,14 @@ namespace TVRename
                 int sec = bytes[pos + 12] + (bytes[pos + 13] << 8);
                 int msec = bytes[pos + 14] + (bytes[pos + 15] << 8);
 
-                this.wYear = (short) y;
-                this.wMonth = (short) m;
-                this.wDayOfWeek = (short) dow;
-                this.wDay = (short) day;
-                this.wHour = (short) hr;
-                this.wMinute = (short) min;
-                this.wSecond = (short) sec;
-                this.wMilliseconds = (short) msec;
+                wYear = (short) y;
+                wMonth = (short) m;
+                wDayOfWeek = (short) dow;
+                wDay = (short) day;
+                wHour = (short) hr;
+                wMinute = (short) min;
+                wSecond = (short) sec;
+                wMilliseconds = (short) msec;
             }
         }
 

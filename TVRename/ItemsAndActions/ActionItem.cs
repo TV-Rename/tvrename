@@ -5,6 +5,7 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
 namespace TVRename
 {
     using System;
@@ -13,7 +14,6 @@ namespace TVRename
     using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
-    using Alphaleonis.Win32.Filesystem;
 
     public abstract class Item // something shown in the list on the Scan tab (not always an Action)
     {
@@ -37,9 +37,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.DesiredLocationNoExt))
+                if (string.IsNullOrEmpty(DesiredLocationNoExt))
                     return null;
-                return new IgnoreItem(this.DesiredLocationNoExt);
+                return new IgnoreItem(DesiredLocationNoExt);
             }
         }
 
@@ -47,9 +47,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(this.Destination))
+                if (string.IsNullOrEmpty(Destination))
                     return null;
-                return new FileInfo(this.Destination).DirectoryName;
+                return new FileInfo(Destination).DirectoryName;
             }
         }
 
@@ -57,98 +57,120 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem();
+                ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
 
-                lvi.Text = this.Episode.SI.ShowName;
-                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(this.Episode.NumsAsString());
-                DateTime? dt = this.Episode.GetAirDateDT(true);
+                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                lvi.SubItems.Add(Episode.NumsAsString());
+                DateTime? dt = Episode.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.FileIdentifier);
-                lvi.SubItems.Add(this.Destination);
-                lvi.SubItems.Add(this.Remaining);
+                lvi.SubItems.Add(FileIdentifier);
+                lvi.SubItems.Add(Destination);
+                lvi.SubItems.Add(Remaining);
 
                 lvi.Tag = this;
 
                 return lvi;
             }
         }
+
         public abstract string FileIdentifier { get; }
         public abstract string Destination { get; }
         public abstract string Remaining { get; }
     }
 
-    public abstract class Action :Item // Something we can do
+    public abstract class Action : Item // Something we can do
     {
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
-        public bool Done { get; protected set; } // All work has been completed for this item, and can be removed from to-do list.  set to true on completion, even on error.
+
+        public bool
+            Done
+        {
+            get;
+            protected set;
+        } // All work has been completed for this item, and can be removed from to-do list.  set to true on completion, even on error.
+
         public bool Error { get; protected set; } // Error state, after trying to do work?
         public string ErrorText { get; protected set; } // Human-readable error message, for when Error is true
         public abstract string ProgressText { get; } // shortish text to display to user while task is running
 
         protected double Percent;
-        public double PercentDone  // 0.0 to 100.0
+
+        public double PercentDone // 0.0 to 100.0
         {
-            get => this.Done ? 100.0 : this.Percent;
-            set => this.Percent = value;
+            get => Done ? 100.0 : Percent;
+            set => Percent = value;
         }
-        
-        public abstract long SizeOfWork { get; } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
-        public abstract bool Go( ref bool pause, TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
+
+        public abstract long
+            SizeOfWork
+        {
+            get;
+        } // for file copy/move, number of bytes in file.  for simple tasks, 1, or something proportional to how slow it is to copy files around.
+
+        public abstract bool
+            Go(ref bool pause,
+                TVRenameStats stats); // action the action.  do not return until done.  will be run in a dedicated thread.  if pause is set to true, stop working until it goes back to false        
+
         public abstract string Produces { get; } //What does this action produce? typically a filename
     }
 
 
-
-    public abstract class ActionDownload : Action {
+    public abstract class ActionDownload : Action
+    {
     }
 
     public abstract class ActionFileMetaData : Action
     {
     }
+
     public abstract class ActionFileOperation : Action
     {
-        
         protected TidySettings Tidyup;
-        protected static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         protected void DeleteOrRecycleFile(FileInfo file)
         {
             if (file == null) return;
-            if (this.Tidyup.DeleteEmptyIsRecycle)
+            if (Tidyup.DeleteEmptyIsRecycle)
             {
-                logger.Info($"Recycling {file.FullName}");
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                Logger.Info($"Recycling {file.FullName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
-                logger.Info($"Deleting {file.FullName}");
+                Logger.Info($"Deleting {file.FullName}");
                 file.Delete(true);
             }
         }
+
         protected void DeleteOrRecycleFolder(DirectoryInfo di)
         {
             if (di == null) return;
-            if (this.Tidyup.DeleteEmptyIsRecycle)
+            if (Tidyup.DeleteEmptyIsRecycle)
             {
-                logger.Info($"Recycling {di.FullName}");
-                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                Logger.Info($"Recycling {di.FullName}");
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
+                    Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
-                logger.Info($"Deleting {di.FullName}");
+                Logger.Info($"Deleting {di.FullName}");
                 di.Delete(true, true);
             }
         }
+
         protected void DoTidyup(DirectoryInfo di)
         {
 #if DEBUG
-            Debug.Assert(this.Tidyup != null);
-            Debug.Assert(this.Tidyup.DeleteEmpty);
+            Debug.Assert(Tidyup != null);
+            Debug.Assert(Tidyup.DeleteEmpty);
 #else
             if (this.Tidyup == null || !this.Tidyup.DeleteEmpty)
                 return;
@@ -161,7 +183,8 @@ namespace TVRename
             DirectoryInfo[] directories = di.GetDirectories();
             foreach (DirectoryInfo subdi in directories)
             {
-                bool okToDelete = this.Tidyup.EmptyIgnoreWordsArray.Any(word => subdi.Name.Contains(word,StringComparison.OrdinalIgnoreCase));
+                bool okToDelete = Tidyup.EmptyIgnoreWordsArray.Any(word =>
+                    subdi.Name.Contains(word, StringComparison.OrdinalIgnoreCase));
 
                 if (!okToDelete)
                     return;
@@ -186,33 +209,35 @@ namespace TVRename
                 return;
             }
 
-            if (this.Tidyup.EmptyIgnoreExtensions && !this.Tidyup.EmptyIgnoreWords)
+            if (Tidyup.EmptyIgnoreExtensions && !Tidyup.EmptyIgnoreWords)
                 return; // nope
 
             foreach (FileInfo fi in files)
             {
-                bool okToDelete = this.Tidyup.EmptyIgnoreExtensions &&
-                                 Array.FindIndex(this.Tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
+                bool okToDelete = Tidyup.EmptyIgnoreExtensions &&
+                                  Array.FindIndex(Tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
 
                 if (okToDelete)
                     continue; // onto the next file
 
                 // look in the filename
-                if (this.Tidyup.EmptyIgnoreWordsArray.Any(word => fi.Name.Contains(word,StringComparison.OrdinalIgnoreCase)))
+                if (Tidyup.EmptyIgnoreWordsArray.Any(word =>
+                    fi.Name.Contains(word, StringComparison.OrdinalIgnoreCase)))
                     okToDelete = true;
 
                 if (!okToDelete)
                     return;
             }
 
-            if (this.Tidyup.EmptyMaxSizeCheck)
+            if (Tidyup.EmptyMaxSizeCheck)
             {
                 // how many MB are we deleting?
                 long totalBytes = files.Sum(fi => fi.Length);
 
-                if (totalBytes / (1024 * 1024) > this.Tidyup.EmptyMaxSizeMB)
+                if (totalBytes / (1024 * 1024) > Tidyup.EmptyMaxSizeMB)
                     return; // too much
             }
+
             DeleteOrRecycleFolder(di);
         }
 
@@ -222,7 +247,7 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                if (this.Episode == null)
+                if (Episode == null)
                 {
                     lvi.Text = "";
                     lvi.SubItems.Add("");
@@ -232,20 +257,20 @@ namespace TVRename
                 }
                 else
                 {
-                    lvi.Text = this.Episode.TheSeries.Name;
-                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
-                    DateTime? dt = this.Episode.GetAirDateDT(true);
+                    lvi.Text = Episode.TheSeries.Name;
+                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                    lvi.SubItems.Add(Episode.NumsAsString());
+                    DateTime? dt = Episode.GetAirDateDT(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                         lvi.SubItems.Add(dt.Value.ToShortDateString());
                     else
                         lvi.SubItems.Add("");
                 }
 
-                lvi.SubItems.Add(this.FileInfo1);
-                lvi.SubItems.Add(this.FileInfo2);
-                lvi.SubItems.Add(this.FileInfo3);
-                lvi.SubItems.Add(this.FileInfo4);
+                lvi.SubItems.Add(FileInfo1);
+                lvi.SubItems.Add(FileInfo2);
+                lvi.SubItems.Add(FileInfo3);
+                lvi.SubItems.Add(FileInfo4);
 
                 return lvi;
             }
@@ -260,23 +285,23 @@ namespace TVRename
     public abstract class ActionWriteMetadata : ActionDownload
     {
         protected readonly FileInfo Where;
-        protected readonly ShowItem SI; // if for an entire show, rather than specific episode
+        protected readonly ShowItem SelectedShow; // if for an entire show, rather than specific episode
 
         protected ActionWriteMetadata(FileInfo where, ShowItem sI)
         {
             Where = where;
-            SI = sI;
+            SelectedShow = sI;
         }
 
-        public override string Produces => this.Where.FullName;
+        public override string Produces => Where.FullName;
 
-        public override string ProgressText => this.Where.Name;
+        public override string ProgressText => Where.Name;
 
         public override long SizeOfWork => 10000;
 
-        public override string TargetFolder => this.Where == null ? null : this.Where.DirectoryName;
+        public override string TargetFolder => Where == null ? null : Where.DirectoryName;
 
-        public override IgnoreItem Ignore => this.Where == null ? null : new IgnoreItem(this.Where.FullName);
+        public override IgnoreItem Ignore => Where == null ? null : new IgnoreItem(Where.FullName);
 
         public override string ScanListViewGroup => "lvgActionMeta";
 
@@ -288,12 +313,12 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem();
 
-                if (this.Episode != null)
+                if (Episode != null)
                 {
-                    lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
-                    DateTime? dt = this.Episode.GetAirDateDT(true);
+                    lvi.Text = Episode.SI.ShowName;
+                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                    lvi.SubItems.Add(Episode.NumsAsString());
+                    DateTime? dt = Episode.GetAirDateDT(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
                         lvi.SubItems.Add(dt.Value.ToShortDateString());
                     else
@@ -301,14 +326,14 @@ namespace TVRename
                 }
                 else
                 {
-                    lvi.Text = this.SI.ShowName;
+                    lvi.Text = SelectedShow.ShowName;
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");
                     lvi.SubItems.Add("");
                 }
 
-                lvi.SubItems.Add(this.Where.DirectoryName);
-                lvi.SubItems.Add(this.Where.Name);
+                lvi.SubItems.Add(Where.DirectoryName);
+                lvi.SubItems.Add(Where.Name);
 
                 lvi.Tag = this;
 
@@ -331,18 +356,17 @@ namespace TVRename
 
     public class ActionQueue
     {
-        public System.Collections.Generic.List<Action> Actions; // The contents of this queue
-        public int ParallelLimit; // Number of tasks in the queue than can be run at once
-        public string Name; // Name of this queue
+        public readonly System.Collections.Generic.List<Action> Actions; // The contents of this queue
+        public readonly int ParallelLimit; // Number of tasks in the queue than can be run at once
+        public readonly string Name; // Name of this queue
         public int ActionPosition; // Position in the queue list of the next item to process
 
         public ActionQueue(string name, int parallelLimit)
         {
-            this.Name = name;
-            this.ParallelLimit = parallelLimit;
-            this.Actions = new System.Collections.Generic.List<Action>();
-            this.ActionPosition = 0;
+            Name = name;
+            ParallelLimit = parallelLimit;
+            Actions = new System.Collections.Generic.List<Action>();
+            ActionPosition = 0;
         }
     }
-
 }

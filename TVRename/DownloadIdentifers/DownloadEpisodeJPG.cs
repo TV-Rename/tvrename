@@ -1,51 +1,35 @@
-using System.Collections.Generic;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
 namespace TVRename
 {
-    class DownloadEpisodeJPG : DownloadIdentifier
+    class DownloadEpisodeJpg : DownloadIdentifier
     {
-        private List<string> doneJPG;
-        private const string defaultExtension = ".jpg";
+        private const string DEFAULT_EXTENSION = ".jpg";
 
-        public DownloadEpisodeJPG() 
-        {
-            this.reset();
-        }
-
-        public override DownloadType GetDownloadType()
-        {
-            return DownloadType.downloadImage;
-        }
+        public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (TVSettings.Instance.EpJPGs)
-            {
-                ItemList TheActionList = new ItemList(); 
-                string ban = dbep.GetFilename();
-                if (!string.IsNullOrEmpty(ban))
-                {
-                    string basefn = filo.RemoveExtension();
+            if (!TVSettings.Instance.EpJPGs) return null;
 
-                    FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + defaultExtension);
+            ItemList theActionList = new ItemList();
 
-                    if (forceRefresh || !imgjpg.Exists)
-                        TheActionList.Add(new ActionDownloadImage(dbep.SI, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
-                }
+            string ban = dbep.GetFilename();
+            if (string.IsNullOrEmpty(ban)) return null;
 
-                return TheActionList;
+            string basefn = filo.RemoveExtension();
 
-            }
+            FileInfo imgjpg = FileHelper.FileInFolder(filo.Directory, basefn + DEFAULT_EXTENSION);
 
-            return base.ProcessEpisode(dbep, filo, forceRefresh);
+            if (forceRefresh || !imgjpg.Exists)
+                theActionList.Add(new ActionDownloadImage(dbep.SI, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
+
+            return theActionList;
         }
 
-        public sealed override void reset()
+        public override void Reset()
         {
-            doneJPG = new List<string>();
         }
     }
-
 }

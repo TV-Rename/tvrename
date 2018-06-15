@@ -5,7 +5,6 @@ namespace TVRename
 {
     using Alphaleonis.Win32.Filesystem;
     using System;
-    using System.Windows.Forms;
 
     public class ActionCopyMoveRename : ActionFileOperation
     {
@@ -28,20 +27,20 @@ namespace TVRename
 
         public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup,ItemMissing undoItem)
         {
-            this.Tidyup = tidyup;
-            this.PercentDone = 0;
-            this.Episode = ep;
-            this.Operation = operation;
-            this.From = from;
-            this.To = to;
-            this.UndoItemMissing = undoItem;
+            Tidyup = tidyup;
+            PercentDone = 0;
+            Episode = ep;
+            Operation = operation;
+            From = from;
+            To = to;
+            UndoItemMissing = undoItem;
         }
 
         #region Action Members
 
         public override string Name => IsMoveRename() ? "Move" : "Copy";
 
-        public override string ProgressText => this.To.Name;
+        public override string ProgressText => To.Name;
 
 
         // 0.0 to 100.0
@@ -53,7 +52,7 @@ namespace TVRename
             FileSecurity security = null;
             try
             {
-                security = this.From.GetAccessControl();
+                security = From.GetAccessControl();
             }
             catch
             {
@@ -63,33 +62,33 @@ namespace TVRename
             try
             {
                 //we use a temp name just in case we are interruted or some other problem occurs
-                string tempName = TempFor(this.To);
+                string tempName = TempFor(To);
 
                 // If both full filenames are the same then we want to move it away and back
                 //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
-                if (IsMoveRename() || FileHelper.Same(this.From, this.To)) 
+                if (IsMoveRename() || FileHelper.Same(From, To)) 
                 {
                     // This step could be slow, so report progress
-                    CopyMoveResult moveResult = File.Move(this.From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
+                    CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
                     if (moveResult.ErrorCode != 0) throw new Exception(moveResult.ErrorMessage);
                 }
                 else
                 {
                     //we are copying
-                    Debug.Assert(this.Operation == Op.Copy);
+                    Debug.Assert(Operation == Op.Copy);
 
                     // This step could be slow, so report progress
-                    CopyMoveResult copyResult = File.Copy(this.From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
+                    CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
                     if (copyResult.ErrorCode != 0) throw new Exception(copyResult.ErrorMessage);
                 }
 
                 // Copying the temp file into the correct name is very quick, so no progress reporting		
-                File.Move(tempName, this.To.FullName, MoveOptions.ReplaceExisting);
-                logger.Info($"{this.Name} completed: {this.From.FullName} to {this.To.FullName } ");
+                File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
+                Logger.Info($"{Name} completed: {From.FullName} to {To.FullName } ");
 
-                this.Done = true;
+                Done = true;
 
-                switch (this.Operation)
+                switch (Operation)
                 {
                     case Op.Move:
                         stats.FilesMoved++;
@@ -107,15 +106,15 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                this.Done = true;
-                this.Error = true;
-                this.ErrorText = e.Message;
+                Done = true;
+                Error = true;
+                ErrorText = e.Message;
             }
 
             // set NTFS permissions
             try
             {
-                if (security != null) this.To.SetAccessControl(security);
+                if (security != null) To.SetAccessControl(security);
             }
             catch
             {
@@ -124,46 +123,46 @@ namespace TVRename
 
             try
             {
-                if (this.Operation == Op.Move && this.Tidyup != null && this.Tidyup.DeleteEmpty)
+                if (Operation == Op.Move && Tidyup != null && Tidyup.DeleteEmpty)
                 {
-                    logger.Info($"Testing {this.From.Directory.FullName} to see whether it should be tidied up");
-                    DoTidyup(this.From.Directory);
+                    Logger.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
+                    DoTidyup(From.Directory);
                 }
             }
             catch (Exception e)
             {
-                this.Done = true;
-                this.Error = true;
-                this.ErrorText = e.Message;
+                Done = true;
+                Error = true;
+                ErrorText = e.Message;
             }
 
-            return !this.Error;
+            return !Error;
         }
 
 
 
-        public override string Produces => this.To.FullName;
+        public override string Produces => To.FullName;
 
         
 
         public override bool SameAs(Item o)
         {
             return (o is ActionCopyMoveRename cmr)
-                   && (this.Operation == cmr.Operation)
-                   && FileHelper.Same(this.From, cmr.From)
-                   && FileHelper.Same(this.To, cmr.To);
+                   && (Operation == cmr.Operation)
+                   && FileHelper.Same(From, cmr.From)
+                   && FileHelper.Same(To, cmr.To);
         }
 
         public override int Compare(Item o)
         {
             if (!(o is ActionCopyMoveRename cmr)
-                || this.From.Directory == null
-                || this.To.Directory == null
+                || From.Directory == null
+                || To.Directory == null
                 || cmr.From.Directory == null
                 ||cmr.To.Directory == null)
                 return 0;
 
-            string s1 = this.From.FullName + (this.From.Directory.Root.FullName != this.To.Directory.Root.FullName ? "0" : "1");
+            string s1 = From.FullName + (From.Directory.Root.FullName != To.Directory.Root.FullName ? "0" : "1");
             string s2 = cmr.From.FullName +
                      (cmr.From.Directory.Root.FullName != cmr.To.Directory.Root.FullName ? "0" : "1");
 
@@ -177,13 +176,13 @@ namespace TVRename
 
 
         #region Item Members
-        public override IgnoreItem Ignore => this.To == null ? null : new IgnoreItem(this.To.FullName);
+        public override IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
 
         public override string ScanListViewGroup
         {
             get
             {
-                switch (this.Operation)
+                switch (Operation)
                 {
                     case Op.Rename:
                         return "lvgActionRename";
@@ -197,7 +196,7 @@ namespace TVRename
             }
         }
 
-        public override  string TargetFolder => this.To?.DirectoryName;
+        public override  string TargetFolder => To?.DirectoryName;
 
         #endregion
 
@@ -205,11 +204,11 @@ namespace TVRename
 
         public bool QuickOperation()
         {
-            if ((this.From == null) || (this.To == null) || (this.From.Directory == null) || (this.To.Directory == null))
+            if ((From == null) || (To == null) || (From.Directory == null) || (To.Directory == null))
                 return false;
 
             return IsMoveRename() &&
-                   string.Equals(this.From.Directory.Root.FullName, this.To.Directory.Root.FullName,
+                   string.Equals(From.Directory.Root.FullName, To.Directory.Root.FullName,
                        StringComparison.InvariantCultureIgnoreCase); // same device ... TODO: UNC paths?
         }
 
@@ -223,10 +222,10 @@ namespace TVRename
             to.LastWriteTimeUtc = from.LastWriteTimeUtc;
         }
 
-        private CopyMoveProgressResult CopyProgressCallback(long totalFileSize, long totalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, Object UserData)
+        private CopyMoveProgressResult CopyProgressCallback(long totalFileSize, long totalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, object UserData)
         {
             double pct = totalBytesTransferred * 100.0 / totalFileSize;
-            this.PercentDone = pct > 100.0 ? 100.0 : pct;
+            PercentDone = pct > 100.0 ? 100.0 : pct;
             return CopyMoveProgressResult.Continue;
         }
 
@@ -235,9 +234,9 @@ namespace TVRename
         // --------------------------------------------------------------------------------------------------------
 
         public bool IsMoveRename() // same thing to the OS
-            => (this.Operation == Op.Move) || (this.Operation == Op.Rename);
+            => (Operation == Op.Move) || (Operation == Op.Rename);
 
-        public bool SameSource(ActionCopyMoveRename o) => FileHelper.Same(this.From, o.From);
+        public bool SameSource(ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
 
         // ========================================================================================================
 
@@ -245,7 +244,7 @@ namespace TVRename
         {
             try
             {
-                return this.From.Length;
+                return From.Length;
             }
             catch
             {
@@ -253,9 +252,9 @@ namespace TVRename
             }
         }
 
-        public override string FileInfo1 => this.From.DirectoryName;
-        public override string FileInfo2 => this.From.Name;
-        public override string FileInfo3 => this.To.DirectoryName;
-        public override string FileInfo4 => this.To.Name;
+        public override string FileInfo1 => From.DirectoryName;
+        public override string FileInfo2 => From.Name;
+        public override string FileInfo3 => To.DirectoryName;
+        public override string FileInfo4 => To.Name;
     }
 }

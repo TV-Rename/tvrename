@@ -119,10 +119,8 @@ namespace TVRename
             this.Name = "AutoAddShow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "New Show Detected...";
-            this.Load += new System.EventHandler(this.AutoAddShow_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion

@@ -53,7 +53,6 @@ namespace TVRename
         kOpenFolderBase = 2000
     }
 
-    /// <inheritdoc />
     ///  <summary>
     ///  Summary for UI
     ///  WARNING: If you change the name of this class, you will need to change the
@@ -66,8 +65,6 @@ namespace TVRename
     public partial class UI : Form, IRemoteActions
     {
         #region Delegates
-
-        public delegate void IPCDelegate();
 
         public delegate void AutoFolderMonitorDelegate();
 
@@ -83,23 +80,23 @@ namespace TVRename
         public AutoFolderMonitorDelegate AFMQuickScan;
         public AutoFolderMonitorDelegate AFMDoAll;
 
-        private SetProgressDelegate SetProgress;
+        private readonly SetProgressDelegate SetProgress;
         private MyListView lvAction;
         private List<string> mFoldersToOpen;
         private int mInternalChange;
         private List<FileInfo> mLastFL;
         private Point mLastNonMaximizedLocation;
         private Size mLastNonMaximizedSize;
-        private AutoFolderMonitor mAutoFolderMonitor;
+        private readonly AutoFolderMonitor mAutoFolderMonitor;
         private bool treeExpandCollapseToggle = true;
 
         private ItemList mLastActionsClicked;
         private ProcessedEpisode mLastEpClicked;
-        private string mLastFolderClicked;
+        private readonly string mLastFolderClicked;
         private Season mLastSeasonClicked;
         private List<ShowItem> mLastShowsClicked;
 
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public UI(TVDoc doc, TVRenameSplash splash,bool showUI)
         {
@@ -476,21 +473,21 @@ namespace TVRename
 
                 writer.WriteStartDocument();
                 writer.WriteStartElement("TVRename");
-                XMLHelper.WriteAttributeToXML(writer, "Version", "2.1");
+                XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
                 writer.WriteStartElement("Layout");
                 writer.WriteStartElement("Window");
 
                 writer.WriteStartElement("Size");
-                XMLHelper.WriteAttributeToXML(writer, "Width", mLastNonMaximizedSize.Width);
-                XMLHelper.WriteAttributeToXML(writer, "Height", mLastNonMaximizedSize.Height);
+                XmlHelper.WriteAttributeToXml(writer, "Width", mLastNonMaximizedSize.Width);
+                XmlHelper.WriteAttributeToXml(writer, "Height", mLastNonMaximizedSize.Height);
                 writer.WriteEndElement(); // size
 
                 writer.WriteStartElement("Location");
-                XMLHelper.WriteAttributeToXML(writer, "X", mLastNonMaximizedLocation.X);
-                XMLHelper.WriteAttributeToXML(writer, "Y", mLastNonMaximizedLocation.Y);
+                XmlHelper.WriteAttributeToXml(writer, "X", mLastNonMaximizedLocation.X);
+                XmlHelper.WriteAttributeToXml(writer, "Y", mLastNonMaximizedLocation.Y);
                 writer.WriteEndElement(); // Location
 
-                XMLHelper.WriteElementToXML(writer, "Maximized", WindowState == FormWindowState.Maximized);
+                XmlHelper.WriteElementToXml(writer, "Maximized", WindowState == FormWindowState.Maximized);
 
                 writer.WriteEndElement(); // window
 
@@ -498,8 +495,8 @@ namespace TVRename
                 WriteColWidthsXML("AllInOne", writer);
 
                 writer.WriteStartElement("Splitter");
-                XMLHelper.WriteAttributeToXML(writer, "Distance", splitContainer1.SplitterDistance);
-                XMLHelper.WriteAttributeToXML(writer, "HTMLCollapsed", splitContainer1.Panel2Collapsed);
+                XmlHelper.WriteAttributeToXml(writer, "Distance", splitContainer1.SplitterDistance);
+                XmlHelper.WriteAttributeToXml(writer, "HTMLCollapsed", splitContainer1.Panel2Collapsed);
                 writer.WriteEndElement(); // splitter
 
                 writer.WriteEndElement(); // Layout
@@ -516,10 +513,10 @@ namespace TVRename
                 return;
 
             writer.WriteStartElement("ColumnWidths");
-            XMLHelper.WriteAttributeToXML(writer, "For", thingName);
+            XmlHelper.WriteAttributeToXml(writer, "For", thingName);
             foreach (ColumnHeader lvc in lv.Columns)
             {
-                XMLHelper.WriteElementToXML(writer, "Width", lvc.Width);
+                XmlHelper.WriteElementToXml(writer, "Width", lvc.Width);
             }
 
             writer.WriteEndElement(); // columnwidths
@@ -771,13 +768,13 @@ namespace TVRename
                 eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
 
             string seasText = snum == 0 ? TVSettings.Instance.SpecialsFolderName : (TVSettings.Instance.defaultSeasonWord +" " + snum);
-            if ((eis.Count > 0) && (eis[0].SeasonID > 0))
-                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, eis[0].SeasonID, false) + "\">" +
+            if ((eis.Count > 0) && (eis[0].SeasonId > 0))
+                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, eis[0].SeasonId, false) + "\">" +
                            seasText + "</a>";
             else
                 seasText = " - " + seasText;
 
-            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName +
+            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true) + "\">" + si.ShowName +
                     "</A>" + seasText + "</h1>";
 
             if (TVSettings.Instance.NeedToDownloadBannerFile())
@@ -796,7 +793,7 @@ namespace TVRename
 
         private static string GetShowImagesHTMLOverview(ShowItem si, SeriesInfo ser)
         {
-            string body =$"<h1><A HREF=\"{TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
+            string body =$"<h1><A HREF=\"{TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
             body += ImageSection("Show Banner", 758, 140, ser.GetSeriesWideBannerPath());
             body += ImageSection("Show Poster", 350, 500, ser.GetSeriesPosterPath());
             body += ImageSection("Show Fanart", 960, 540, ser.GetSeriesFanartPath());
@@ -842,7 +839,7 @@ namespace TVRename
                 (!string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) )))
                 body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) + "\"><br/>";
 
-            body += $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
+            body += $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
 
             body += "<h2>Overview</h2>" + ser.GetOverview(); //get overview in either format
 
@@ -858,12 +855,12 @@ namespace TVRename
                 first = false;
             }
 
-            string airsTime = ser.getAirsTime();
-            string airsDay = ser.getAirsDay();
+            string airsTime = ser.GetAirsTime();
+            string airsDay = ser.GetAirsDay();
             if ((!string.IsNullOrEmpty(airsTime)) && (!string.IsNullOrEmpty(airsDay)))
             {
                 body += "<h2>Airs</h2> " + airsTime + " " + airsDay;
-                string net = ser.getNetwork();
+                string net = ser.GetNetwork();
                 if (!string.IsNullOrEmpty(net))
                 {
                     skip.Add("Network");
@@ -918,13 +915,13 @@ namespace TVRename
 
             string seasText = SeasonName(si, snum);
 
-            if ((eis.Count > 0) && (eis[0].SeasonID > 0))
-                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, eis[0].SeasonID, false) + "\">" +
+            if ((eis.Count > 0) && (eis[0].SeasonId > 0))
+                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, eis[0].SeasonId, false) + "\">" +
                            seasText + "</a>";
             else
                 seasText = " - " + seasText;
 
-            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, true) + "\">" + si.ShowName +
+            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true) + "\">" + si.ShowName +
                     "</A>" + seasText + "</h1>";
 
             DirFilesCache dfc = new DirFilesCache();
@@ -932,7 +929,7 @@ namespace TVRename
             {
                 string epl = ei.NumsAsString();
 
-                string episodeURL = TheTVDB.Instance.WebsiteURL(ei.SeriesID, ei.SeasonID, ei.EpisodeID);
+                string episodeURL = TheTVDB.Instance.WebsiteUrl(ei.SeriesId, ei.SeasonId, ei.EpisodeId);
 
                 body += "<A href=\"" + episodeURL + "\" name=\"ep" + epl + "\">"; // anchor
                 if (si.DVDOrder && snum == 0)
@@ -1061,7 +1058,7 @@ namespace TVRename
             if (e == null)
                 return;
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(e.SI.TVDBCode, e.SeasonID, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(e.SI.TVDBCode, e.SeasonId, false));
         }
 
         private static void TVDBFor(Season seas)
@@ -1069,7 +1066,7 @@ namespace TVRename
             if (seas == null)
                 return;
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(seas.TheSeries.TVDBCode, -1, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TVDBCode, -1, false));
         }
 
         private static void TVDBFor(ShowItem si)
@@ -1077,7 +1074,7 @@ namespace TVRename
             if (si == null)
                 return;
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(si.TVDBCode, -1, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, false));
         }
 
         public void menuSearchSites_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -1339,7 +1336,7 @@ namespace TVRename
                 return; // don't intercept
             if (url.EndsWith("tvrenameimagesguide.html"))
                 return; // don't intercept
-            if (String.Compare(url, "about:blank", StringComparison.Ordinal) == 0)
+            if (string.Compare(url, "about:blank", StringComparison.Ordinal) == 0)
                 return; // don't intercept about:blank
             if (url == QuickStartGuide())
                 return; // let the quickstartguide be shown
@@ -1361,7 +1358,7 @@ namespace TVRename
                 Helpers.SysOpen(fileName);
             }
 
-            if ((String.Compare(url.Substring(0, 7), "http://", StringComparison.Ordinal) == 0) || (String.Compare(url.Substring(0, 7), "file://", StringComparison.Ordinal) == 0))
+            if ((string.Compare(url.Substring(0, 7), "http://", StringComparison.Ordinal) == 0) || (string.Compare(url.Substring(0, 7), "file://", StringComparison.Ordinal) == 0))
             {
                 e.Cancel = true;
                 Helpers.SysOpen(e.Url.AbsoluteUri);
@@ -2566,8 +2563,8 @@ namespace TVRename
 
             int sid = -1;
             if (seas != null)
-                sid = seas.SeasonID;
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteURL(si.TVDBCode, sid, false));
+                sid = seas.SeasonId;
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(si.TVDBCode, sid, false));
         }
 
         private void bnMyShowsOpenFolder_Click(object sender, EventArgs e)
@@ -2600,6 +2597,7 @@ namespace TVRename
                     }
                     catch
                     {
+                        // ignored
                     }
                 }
             }
@@ -2623,6 +2621,7 @@ namespace TVRename
             }
             catch
             {
+                // ignored
             }
         }
 
@@ -2965,7 +2964,7 @@ namespace TVRename
                     continue;
                 try
                 {
-                    Match m = Regex.Match(hint, re.RE, RegexOptions.IgnoreCase);
+                    Match m = Regex.Match(hint, re.RegExpression, RegexOptions.IgnoreCase);
                     if (m.Success)
                     {
                         if (!int.TryParse(m.Groups["s"].ToString(), out int seas))
@@ -3148,7 +3147,7 @@ namespace TVRename
 
         private static string  PrettyPrint(int number)
         {
-            return number + " " + (number.itemitems());
+            return number + " " + (number.ItemItems());
         }
         private static string HeaderName(string name, int number, long filesize)
         {
@@ -3498,7 +3497,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvAction.Items)
             {
                 Item i = (Item) (lvi.Tag);
-                if ((i != null) && (i is ActionNFO))
+                if ((i != null) && (i is ActionNfo))
                     lvi.Checked = cs == CheckState.Checked;
             }
 
@@ -3772,7 +3771,7 @@ namespace TVRename
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
         {
             List < PossibleDuplicateEpisode >  x = mDoc.FindDoubleEps();
-            frmDupEpFinder form = new frmDupEpFinder(x,mDoc,this);
+            DupEpFinder form = new DupEpFinder(x,mDoc,this);
             form.ShowDialog();
         }
 
@@ -3810,7 +3809,7 @@ namespace TVRename
 
                 //si.ShowTimeZone = TimeZone.TimeZoneForNetwork(ser.getNetwork());
 
-                results.Add(ser.getNetwork() ,si.ShowTimeZone,si.ShowName);
+                results.Add(ser.GetNetwork() ,si.ShowTimeZone,si.ShowName);
             }
             logger.Info(results.PrintVersion());
         }

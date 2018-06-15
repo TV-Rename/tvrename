@@ -19,7 +19,7 @@ namespace TVRename
     ///          the designers will not be able to interact properly with localized
     ///          resources associated with this form.
     /// </summary>
-    public enum FAResult
+    public enum FaResult
     {
         kfaNotSet,
         kfaRetry,
@@ -33,73 +33,73 @@ namespace TVRename
     public partial class MissingFolderAction : Form
     {
         public string FolderName;
-        public FAResult Result;
+        public FaResult Result;
 
         public MissingFolderAction(string showName, string season, string folderName)
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.Result = FAResult.kfaCancel;
-            this.FolderName = folderName;
-            this.txtShow.Text = showName;
-            this.txtSeason.Text = season;
-            this.txtFolder.Text = this.FolderName;
+            Result = FaResult.kfaCancel;
+            FolderName = folderName;
+            txtShow.Text = showName;
+            txtSeason.Text = season;
+            txtFolder.Text = FolderName;
 
-            if (string.IsNullOrEmpty(this.FolderName))
+            if (string.IsNullOrEmpty(FolderName))
             {
-                this.txtFolder.Text = "Click Browse..., or Drag+Drop a folder onto this window.";
-                this.bnCreate.Enabled = false;
-                this.bnRetry.Enabled = false;
+                txtFolder.Text = "Click Browse..., or Drag+Drop a folder onto this window.";
+                bnCreate.Enabled = false;
+                bnRetry.Enabled = false;
             }
         }
 
         private void bnIgnoreOnce_Click(object sender, System.EventArgs e)
         {
-            this.Result = FAResult.kfaIgnoreOnce;
-            this.Close();
+            Result = FaResult.kfaIgnoreOnce;
+            Close();
         }
 
         private void bnIgnoreAlways_Click(object sender, System.EventArgs e)
         {
-            this.Result = FAResult.kfaIgnoreAlways;
-            this.Close();
+            Result = FaResult.kfaIgnoreAlways;
+            Close();
         }
 
         private void bnCreate_Click(object sender, System.EventArgs e)
         {
-            this.Result = FAResult.kfaCreate;
-            this.Close();
+            Result = FaResult.kfaCreate;
+            Close();
         }
 
         private void bnRetry_Click(object sender, System.EventArgs e)
         {
-            this.Result = FAResult.kfaRetry;
-            this.Close();
+            Result = FaResult.kfaRetry;
+            Close();
         }
 
         private void bnCancel_Click(object sender, System.EventArgs e)
         {
-            this.Result = FAResult.kfaCancel;
-            this.Close();
+            Result = FaResult.kfaCancel;
+            Close();
         }
 
         private void bnBrowse_Click(object sender, System.EventArgs e)
         {
-            this.folderBrowser.SelectedPath = this.FolderName;
-            if (this.folderBrowser.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            folderBrowser.SelectedPath = FolderName;
+            if (folderBrowser.ShowDialog() == DialogResult.OK)
             {
-                this.Result = FAResult.kfaDifferentFolder;
-                this.FolderName = this.folderBrowser.SelectedPath;
-                this.Close();
+                Result = FaResult.kfaDifferentFolder;
+                FolderName = folderBrowser.SelectedPath;
+                Close();
             }
         }
 
-        private void MissingFolderAction_DragOver(object sender, System.Windows.Forms.DragEventArgs e)
+        private void MissingFolderAction_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }
 
-        private void MissingFolderAction_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+        private void MissingFolderAction_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
             for (int i = 0; i < files.Length; i++)
@@ -110,14 +110,15 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        this.FolderName = path;
-                        this.Result = FAResult.kfaDifferentFolder;
-                        this.Close();
+                        FolderName = path;
+                        Result = FaResult.kfaDifferentFolder;
+                        Close();
                         return;
                     }
                 }
                 catch
                 {
+                    // ignored
                 }
             }
         }

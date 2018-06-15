@@ -11,16 +11,16 @@ namespace TVRename
     using System.Xml;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ActionNFO : ActionWriteMetadata
+    public class ActionNfo : ActionWriteMetadata
     {
-        public ActionNFO(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
+        public ActionNfo(FileInfo nfo, ProcessedEpisode pe) : base(nfo, null)
         {
-            this.Episode = pe;
+            Episode = pe;
         }
 
-        public ActionNFO(FileInfo nfo, ShowItem si) : base(nfo, si)
+        public ActionNfo(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            this.Episode = null;
+            Episode = null;
         }
 
         #region Action Members
@@ -32,28 +32,28 @@ namespace TVRename
             // See: http://xbmc.org/wiki/?title=Import_-_Export_Library#TV_Episodes
             writer.WriteStartElement("episodedetails");
 
-            XMLHelper.WriteElementToXML(writer, "title", episode.Name);
-            XMLHelper.WriteElementToXML(writer,"showtitle", this.Episode.SI.ShowName );
-            XMLHelper.WriteElementToXML(writer, "rating", episode.EpisodeRating);
+            XmlHelper.WriteElementToXml(writer, "title", episode.Name);
+            XmlHelper.WriteElementToXml(writer,"showtitle", Episode.SI.ShowName );
+            XmlHelper.WriteElementToXml(writer, "rating", episode.EpisodeRating);
             if (dvdOrder)
             {
-                XMLHelper.WriteElementToXML(writer, "season", episode.DVDSeasonNumber);
-                XMLHelper.WriteElementToXML(writer, "episode", episode.DVDEpNum);
+                XmlHelper.WriteElementToXml(writer, "season", episode.DvdSeasonNumber);
+                XmlHelper.WriteElementToXml(writer, "episode", episode.DvdEpNum);
             }
             else
             {
-                XMLHelper.WriteElementToXML(writer, "season", episode.AiredSeasonNumber);
-                XMLHelper.WriteElementToXML(writer, "episode", episode.AiredEpNum);
+                XmlHelper.WriteElementToXml(writer, "season", episode.AiredSeasonNumber);
+                XmlHelper.WriteElementToXml(writer, "episode", episode.AiredEpNum);
             }
 
-            XMLHelper.WriteElementToXML(writer, "plot", episode.Overview);
+            XmlHelper.WriteElementToXml(writer, "plot", episode.Overview);
 
             writer.WriteStartElement("aired");
             if (episode.FirstAired != null)
                 writer.WriteValue(episode.FirstAired.Value.ToString("yyyy-MM-dd"));
             writer.WriteEndElement();
 
-            XMLHelper.WriteElementToXML(writer, "mpaa", this.Episode.SI?.TheSeries()?.GetContentRating(),true);
+            XmlHelper.WriteElementToXml(writer, "mpaa", Episode.SI?.TheSeries()?.GetContentRating(),true);
 
             //Director(s)
             string epDirector = episode.EpisodeDirector;
@@ -61,7 +61,7 @@ namespace TVRename
             {
                 foreach (string daa in epDirector.Split('|'))
                 {
-                    XMLHelper.WriteElementToXML(writer, "director", daa,true);
+                    XmlHelper.WriteElementToXml(writer, "director", daa,true);
                 }
             }
 
@@ -71,18 +71,18 @@ namespace TVRename
             {
                 foreach (string txtWriter in epWriter.Split('|'))
                 {
-                    XMLHelper.WriteElementToXML(writer, "credits", txtWriter, true);
+                    XmlHelper.WriteElementToXml(writer, "credits", txtWriter, true);
                 }
             }
 
             // Guest Stars...
-            if (!String.IsNullOrEmpty(episode.EpisodeGuestStars))
+            if (!string.IsNullOrEmpty(episode.EpisodeGuestStars))
             {
                 string recurringActors = "";
 
-                if (this.Episode.SI != null)
+                if (Episode.SI != null)
                 {
-                    recurringActors = String.Join("|", this.Episode.SI.TheSeries().GetActors());
+                    recurringActors = string.Join("|", Episode.SI.TheSeries().GetActors());
                 }
 
                 string guestActors = episode.EpisodeGuestStars;
@@ -100,22 +100,22 @@ namespace TVRename
                         }
 
                         writer.WriteStartElement("actor");
-                        XMLHelper.WriteElementToXML(writer, "name", gaa);
+                        XmlHelper.WriteElementToXml(writer, "name", gaa);
                         writer.WriteEndElement(); // actor
                     }
                 }
             }
 
             // actors...
-            if (this.Episode.SI != null)
+            if (Episode.SI != null)
             {
-                foreach (string aa in this.Episode.SI.TheSeries().GetActors())
+                foreach (string aa in Episode.SI.TheSeries().GetActors())
                 {
                     if (string.IsNullOrEmpty(aa))
                         continue;
 
                     writer.WriteStartElement("actor");
-                    XMLHelper.WriteElementToXML(writer, "name", aa);
+                    XmlHelper.WriteElementToXml(writer, "name", aa);
                     writer.WriteEndElement(); // actor
                 }
             }
@@ -124,20 +124,20 @@ namespace TVRename
             {
                 writer.WriteStartElement("resume");
                 //we have to put 0 as we don't know where the multipart episode starts/ends
-                XMLHelper.WriteElementToXML(writer, "position", 0);
-                XMLHelper.WriteElementToXML(writer, "total", 0);
+                XmlHelper.WriteElementToXml(writer, "position", 0);
+                XmlHelper.WriteElementToXml(writer, "total", 0);
                 writer.WriteEndElement(); // resume
 
                 //For now we only put art in for multipart episodes. Kodi finds the art appropriately
                 //without our help for the others
 
-                ShowItem episodeSi = this.Episode.SI??this.SI;
+                ShowItem episodeSi = Episode.SI??SelectedShow;
                 string filename =
                     TVSettings.Instance.FilenameFriendly(
                         TVSettings.Instance.NamingStyle.GetTargetEpisodeName(episode,episodeSi.ShowName, episodeSi.GetTimeZone(), episodeSi.DVDOrder));
 
                 string thumbFilename =  filename + ".jpg";
-                XMLHelper.WriteElementToXML(writer, "thumb",thumbFilename);
+                XmlHelper.WriteElementToXml(writer, "thumb",thumbFilename);
                 //Should be able to do this using the local filename, but only seems to work if you provide a URL
                 //XMLHelper.WriteElementToXML(writer, "thumb", TheTVDB.Instance.GetTVDBDownloadURL(episode.GetFilename()));
             }
@@ -157,60 +157,60 @@ namespace TVRename
             try
             {
                 // "try" and silently fail.  eg. when file is use by other...
-                using (XmlWriter writer = XmlWriter.Create(this.Where.FullName, settings))
+                using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
                 {
-                    if (this.Episode != null) // specific episode
+                    if (Episode != null) // specific episode
                     {
-                        if (this.Episode.type == ProcessedEpisode.ProcessedEpisodeType.merged)
+                        if (Episode.type == ProcessedEpisode.ProcessedEpisodeType.merged)
                         {
-                            foreach (Episode ep in this.Episode.sourceEpisodes)
-                                WriteEpisodeDetailsFor(ep, writer, true, this.Episode.SI.DVDOrder);
+                            foreach (Episode ep in Episode.sourceEpisodes)
+                                WriteEpisodeDetailsFor(ep, writer, true, Episode.SI.DVDOrder);
                         }
-                        else WriteEpisodeDetailsFor(this.Episode, writer, false, this.Episode.SI.DVDOrder);
+                        else WriteEpisodeDetailsFor(Episode, writer, false, Episode.SI.DVDOrder);
                     }
-                    else if (this.SI != null) // show overview (tvshow.nfo)
+                    else if (SelectedShow != null) // show overview (tvshow.nfo)
                     {
                         // http://www.xbmc.org/wiki/?title=Import_-_Export_Library#TV_Shows
                         writer.WriteStartElement("tvshow");
 
-                        XMLHelper.WriteElementToXML(writer, "title", this.SI.ShowName);
+                        XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
 
-                        XMLHelper.WriteElementToXML(writer, "episodeguideurl",
-                            TheTVDB.BuildURL(this.SI.TVDBCode, TheTVDB.Instance.RequestLanguage));
+                        XmlHelper.WriteElementToXml(writer, "episodeguideurl",
+                            TheTVDB.BuildUrl(SelectedShow.TVDBCode, TheTVDB.Instance.RequestLanguage));
 
-                        XMLHelper.WriteElementToXML(writer, "plot", this.SI.TheSeries().GetOverview());
+                        XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries().GetOverview());
 
-                        string genre = String.Join(" / ", this.SI.TheSeries().GetGenres());
+                        string genre = string.Join(" / ", SelectedShow.TheSeries().GetGenres());
                         if (!string.IsNullOrEmpty(genre))
                         {
-                            XMLHelper.WriteElementToXML(writer, "genre", genre);
+                            XmlHelper.WriteElementToXml(writer, "genre", genre);
                         }
 
-                        XMLHelper.WriteElementToXML(writer, "premiered", this.SI.TheSeries().GetFirstAired());
-                        XMLHelper.WriteElementToXML(writer, "year", this.SI.TheSeries().GetYear());
-                        XMLHelper.WriteElementToXML(writer, "rating", this.SI.TheSeries().GetContentRating());
-                        XMLHelper.WriteElementToXML(writer, "status", this.SI.TheSeries().getStatus());
+                        XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries().GetFirstAired());
+                        XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries().GetYear());
+                        XmlHelper.WriteElementToXml(writer, "rating", SelectedShow.TheSeries().GetContentRating());
+                        XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries().GetStatus());
 
                         // actors...
-                        foreach (string aa in this.SI.TheSeries().GetActors())
+                        foreach (string aa in SelectedShow.TheSeries().GetActors())
                         {
                             if (string.IsNullOrEmpty(aa))
                                 continue;
 
                             writer.WriteStartElement("actor");
-                            XMLHelper.WriteElementToXML(writer, "name", aa);
+                            XmlHelper.WriteElementToXml(writer, "name", aa);
                             writer.WriteEndElement(); // actor
                         }
 
-                        XMLHelper.WriteElementToXML(writer, "mpaa", this.SI.TheSeries().GetContentRating());
-                        XMLHelper.WriteInfo(writer, "id", "moviedb", "imdb", this.SI.TheSeries().GetIMDB());
+                        XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries().GetContentRating());
+                        XmlHelper.WriteInfo(writer, "id", "moviedb", "imdb", SelectedShow.TheSeries().GetImdb());
 
-                        XMLHelper.WriteElementToXML(writer, "tvdbid", this.SI.TheSeries().TVDBCode);
+                        XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries().TVDBCode);
 
-                        string rt = this.SI.TheSeries().GetRuntime();
+                        string rt = SelectedShow.TheSeries().GetRuntime();
                         if (!string.IsNullOrEmpty(rt))
                         {
-                            XMLHelper.WriteElementToXML(writer, "runtime", rt + " minutes");
+                            XmlHelper.WriteElementToXml(writer, "runtime", rt + " minutes");
                         }
                         writer.WriteEndElement(); // tvshow
                     }
@@ -218,12 +218,12 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                this.ErrorText = e.Message;
-                this.Error = true;
-                this.Done = true;
+                ErrorText = e.Message;
+                Error = true;
+                Done = true;
                 return false;
             }
-            this.Done = true;
+            Done = true;
             return true;
         }
         #endregion
@@ -231,18 +231,18 @@ namespace TVRename
         #region Item Members
         public override bool SameAs(Item o)
         {
-            return (o is ActionNFO nfo) && (nfo.Where == this.Where);
+            return (o is ActionNfo nfo) && (nfo.Where == Where);
         }
 
         public override int Compare(Item o)
         {
-            ActionNFO nfo = o as ActionNFO;
+            ActionNfo nfo = o as ActionNfo;
 
-            if (this.Episode == null)
+            if (Episode == null)
                 return 1;
             if (nfo?.Episode == null)
                 return -1;
-            return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+            return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
         #endregion
     }

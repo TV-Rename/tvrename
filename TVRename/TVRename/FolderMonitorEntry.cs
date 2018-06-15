@@ -10,22 +10,23 @@ namespace TVRename
     // "FolderMonitorItem" represents a folder found by doing a Check in the 'Bulk Add Shows' dialog
     public class FolderMonitorEntry
     {
-        public string Folder;
+        public readonly string Folder;
+        // ReSharper disable once InconsistentNaming
         public int TVDBCode;
-        public bool HasSeasonFoldersGuess;
-        public string SeasonFolderName;
-        public bool PadSeasonToTwoDigits;
+        public readonly bool HasSeasonFoldersGuess;
+        public readonly string SeasonFolderName;
+        public readonly bool PadSeasonToTwoDigits;
 
-        public bool CodeKnown { get { return !this.CodeUnknown; } }
-        public bool CodeUnknown { get { return TVDBCode == -1; } }
+        public bool CodeKnown => !CodeUnknown;
+        public bool CodeUnknown => TVDBCode == -1;
 
         public FolderMonitorEntry(string folder, bool seasonFolders, string seasonFolderName,bool padSeasonToTwoDigits)
         {
-            this.Folder = folder;
-            this.TVDBCode = -1;
-            this.HasSeasonFoldersGuess = seasonFolders;
-            this.SeasonFolderName = seasonFolderName;
-            this.PadSeasonToTwoDigits = padSeasonToTwoDigits;
+            Folder = folder;
+            TVDBCode = -1;
+            HasSeasonFoldersGuess = seasonFolders;
+            SeasonFolderName = seasonFolderName;
+            PadSeasonToTwoDigits = padSeasonToTwoDigits;
         }
     }
 

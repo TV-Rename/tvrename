@@ -7,6 +7,7 @@
 // 
 using Alphaleonis.Win32.Filesystem;
 using System;
+using System.Linq;
 
 // Recursively reads and caches files and folders, and info about them, as this is way faster
 // than repeatedly hitting the filesystem.
@@ -21,7 +22,7 @@ namespace TVRename
 
         public DirCache(SetProgressDelegate prog, string folder, bool subFolders)
         {
-            this.BuildDirCache(prog, 0, 0, folder, subFolders);
+            BuildDirCache(prog, 0, 0, folder, subFolders);
         }
 
         public static int CountFiles(string folder, bool subFolders)
@@ -29,8 +30,7 @@ namespace TVRename
             int n = 0;
             if (!Directory.Exists(folder))
                 return n;
-//            if (folder.Length >= 248)
-//                return n;
+
             try
             {
                 DirectoryInfo di = new DirectoryInfo(folder);
@@ -39,8 +39,7 @@ namespace TVRename
                 if (subFolders)
                 {
                     DirectoryInfo[] dirs = di.GetDirectories();
-                    foreach (DirectoryInfo di2 in dirs)
-                        n += CountFiles(di2.FullName, subFolders);
+                    n += dirs.Sum(di2 => CountFiles(di2.FullName, true));
                 }
             }
             catch (UnauthorizedAccessException)
@@ -49,45 +48,33 @@ namespace TVRename
             return n;
         }
 
-        public int AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder, bool subFolders)
+        public void AddFolder(SetProgressDelegate prog, int initialCount, int totalFiles, string folder,
+            bool subFolders)
         {
-            return this.BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
+            BuildDirCache(prog, initialCount, totalFiles, folder, subFolders);
         }
-        protected readonly static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         private int BuildDirCache(SetProgressDelegate prog, int count, int totalFiles, string folder, bool subFolders)
         {
             if (!Directory.Exists(folder))
             {
-                logger.Error("The search folder \"" + folder + " does not exist.");
+                Logger.Error("The search folder \"" + folder + " does not exist.");
                 return count;
             }
 
             try
             {
-                /*
-                 * if (folder.Length >= 248)
-                 
-                {
-                    logger.Error ("Skipping folder that has a name longer than the Windows permitted 247 characters: " + folder);
-                    return count;
-                }
-
-    */
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (!di.Exists)
                     return count;
-
-                //                DirectorySecurity ^ds = di->GetAccessControl();
 
                 FileInfo[] f2 = di.GetFiles();
                 foreach (FileInfo ff in f2)
                 {
                     count++;
-//                    if ((ff.Name.Length + folder.Length) >= 260)
-//                        logger.Error("Skipping file that has a path+name longer than the Windows permitted 259 characters: " + ff.Name + " in " + folder);
-//                    else
-                        this.Add(new DirCacheEntry(ff));
+                    Add(new DirCacheEntry(ff));
                     if ((prog != null) && (totalFiles != 0))
                         prog.Invoke(100 * (count) / totalFiles);
                 }
@@ -96,16 +83,16 @@ namespace TVRename
                 {
                     DirectoryInfo[] dirs = di.GetDirectories();
                     foreach (DirectoryInfo di2 in dirs)
-                        count = this.BuildDirCache(prog, count, totalFiles, di2.FullName, subFolders);
+                        count += BuildDirCache(prog, count, totalFiles, di2.FullName, true);
                 }
             }
             catch (UnauthorizedAccessException e)
             {
-                logger.Info(e);
+                Logger.Info(e);
             }
             catch (Exception exception)
             {
-                logger.Error(exception);
+                Logger.Error(exception);
             }
             return count;
         }

@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 using Alphaleonis.Win32.Filesystem;
 
@@ -9,14 +8,14 @@ namespace TVRename
 {
     public class DirFilesCache
     {
-        private Dictionary<String, FileInfo[]> Cache = new Dictionary<string, FileInfo[]>();
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly Dictionary<string, FileInfo[]> cache = new Dictionary<string, FileInfo[]>();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public FileInfo[] Get(String folder)
+        public FileInfo[] Get(string folder)
         {
-            if (Cache.ContainsKey(folder))
+            if (cache.ContainsKey(folder))
             {
-                return Cache[folder];
+                return cache[folder];
             }
 
             DirectoryInfo di;
@@ -26,28 +25,23 @@ namespace TVRename
             }
             catch
             {
-                Cache[folder] = null;
+                cache[folder] = null;
                 return null;
             }
             if (!di.Exists)
             {
-                Cache[folder] = null;
+                cache[folder] = null;
                 return null;
             }
             
             try {
                 FileInfo[] files = di.GetFiles();
-                Cache[folder] = files;
+                cache[folder] = files;
                 return files;
             } catch (System.IO.IOException) {
-               logger.Error ("IOException occurred trying to access " + folder);
+               Logger.Error ("IOException occurred trying to access " + folder);
                 return null;
             }
-        }
-
-        public void Clear()
-        {
-            Cache.Clear();
         }
     }
 }

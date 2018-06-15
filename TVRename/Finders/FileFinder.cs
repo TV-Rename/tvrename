@@ -14,7 +14,7 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.SearchLocally;
 
-        public override FinderDisplayType DisplayType() => FinderDisplayType.Local;
+        public override FinderDisplayType DisplayType() => FinderDisplayType.local;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
@@ -32,17 +32,17 @@ namespace TVRename
             DirCache dirCache = new DirCache();
             foreach (string s in TVSettings.Instance.DownloadFolders)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 dirCache.AddFolder(prog, c, fileCount, s, true);
             }
 
             int currentItem = 0;
-            int totalN = this.ActionList.Count;
-            foreach (Item action1 in this.ActionList)
+            int totalN = ActionList.Count;
+            foreach (Item action1 in ActionList)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 prog.Invoke(startpct + ((totPct-startpct) * (++currentItem) / (totalN + 1)));
@@ -63,7 +63,7 @@ namespace TVRename
 
                 if (numberMatched == 1 )
                 {
-                    if (!OtherActionsMatch(matchedFile, me, this.ActionList))
+                    if (!OtherActionsMatch(matchedFile, me, ActionList))
                     {
                         toRemove.Add(action1);
                         newList.AddRange(thisRound);
@@ -120,10 +120,10 @@ namespace TVRename
             }
 
             foreach (Item i in toRemove)
-                this.ActionList.Remove(i);
+                ActionList.Remove(i);
 
             foreach (Item i in newList)
-                this.ActionList.Add(i);
+                ActionList.Add(i);
         }
 
         private bool OtherActionsMatch(DirCacheEntry matchedFile, ItemMissing me, ItemList actionList)
@@ -210,7 +210,7 @@ namespace TVRename
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                     Logger.Warn(e, "Path or filename too long. " + action.From.FullName);
 
-                    if ((!this.Doc.Args.Unattended) && (!this.Doc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!Doc.Args.Unattended) && (!Doc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
 
@@ -246,7 +246,7 @@ namespace TVRename
 
         private bool ReviewFile(ItemMissing me, ItemList addTo, DirCacheEntry dce)
         {
-            if (this.ActionCancel) return true;
+            if (ActionCancel) return true;
             
             int season = me.Episode.AppropriateSeasonNumber;
             int epnum = me.Episode.AppropriateEpNum;
@@ -283,7 +283,7 @@ namespace TVRename
                             Logger.Info($"Added new rule automatically for {sr}");
 
                             //Regenerate the episodes with the new rule added
-                            this.Doc.Library.GenerateEpisodeDict(me.Episode.SI);
+                            Doc.Library.GenerateEpisodeDict(me.Episode.SI);
 
                             //Get the newly created processed episode we are after
                             // ReSharper disable once InconsistentNaming
@@ -335,7 +335,7 @@ namespace TVRename
                 Logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
 
                 t += ".  More information is available in the log file";
-                if ((!this.Doc.Args.Unattended) && (!this.Doc.Args.Hide))
+                if ((!Doc.Args.Unattended) && (!Doc.Args.Hide))
                     MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 t = "DirectoryName " + dce.TheFile.DirectoryName + ", File name: " + dce.TheFile.Name;

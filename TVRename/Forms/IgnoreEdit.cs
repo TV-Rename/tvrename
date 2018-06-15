@@ -20,74 +20,70 @@ namespace TVRename
     /// </summary>
     public partial class IgnoreEdit : Form
     {
-        private System.Collections.Generic.List<IgnoreItem> DisplayedSet;
-        private System.Collections.Generic.List<IgnoreItem> Ignore;
-        private TVDoc mDoc;
+        private readonly System.Collections.Generic.List<IgnoreItem> ignore;
+        private readonly TVDoc mDoc;
 
         public IgnoreEdit(TVDoc doc)
         {
-            this.mDoc = doc;
-            this.Ignore = new System.Collections.Generic.List<IgnoreItem>();
+            mDoc = doc;
+            ignore = new System.Collections.Generic.List<IgnoreItem>();
 
             foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
-                this.Ignore.Add(ii);
+                ignore.Add(ii);
 
-            this.InitializeComponent();
+            InitializeComponent();
 
-            this.FillList();
+            FillList();
         }
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            TVSettings.Instance.Ignore = this.Ignore;
-            this.mDoc.SetDirty();
-            this.Close();
+            TVSettings.Instance.Ignore = ignore;
+            mDoc.SetDirty();
+            Close();
         }
 
         private void bnRemove_Click(object sender, System.EventArgs e)
         {
-            foreach (int i in this.lbItems.SelectedIndices)
-                foreach (IgnoreItem iitest in this.Ignore)
-                    if (this.lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
+            foreach (int i in lbItems.SelectedIndices)
+                foreach (IgnoreItem iitest in ignore)
+                    if (lbItems.Items[i].ToString().Equals(iitest.FileAndPath))
                     {
-                        this.Ignore.Remove(iitest);
+                        ignore.Remove(iitest);
                         break;
                     }
-            this.FillList();
+            FillList();
         }
 
         private void FillList()
         {
-            this.lbItems.BeginUpdate();
-            this.lbItems.Items.Clear();
+            lbItems.BeginUpdate();
+            lbItems.Items.Clear();
 
-            string f = this.txtFilter.Text.ToLower();
+            string f = txtFilter.Text.ToLower();
             bool all = string.IsNullOrEmpty(f);
 
-            this.DisplayedSet = new System.Collections.Generic.List<IgnoreItem>();
-
-            foreach (IgnoreItem ii in this.Ignore)
+            foreach (IgnoreItem ii in ignore)
             {
                 string s = ii.FileAndPath;
                 if (all || s.ToLower().Contains(f))
                 {
-                    this.lbItems.Items.Add(s);
-                    this.DisplayedSet.Add(ii);
+                    lbItems.Items.Add(s);
                 }
             }
 
-            this.lbItems.EndUpdate();
+            lbItems.EndUpdate();
         }
 
         private void txtFilter_TextChanged(object sender, System.EventArgs e)
         {
-            this.timer1.Start();
+            timer1.Start();
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            this.timer1.Stop();
-            this.FillList();
+            timer1.Stop();
+            FillList();
         }
     }
 }

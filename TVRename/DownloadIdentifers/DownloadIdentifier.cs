@@ -4,11 +4,6 @@ namespace TVRename
 {
     abstract class DownloadIdentifier
     {
-        protected DownloadIdentifier()
-        {
-            
-        }
-
         public enum DownloadType
         {
             downloadImage,
@@ -31,25 +26,26 @@ namespace TVRename
         {
             return ProcessSeason(si,folder,snum,false);
         }
+
         public virtual ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
             return null;
         }
 
-
         public  ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo)
         {
             return ProcessEpisode(dbep,filo,false);
         }
+
         public virtual ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
             return null;
         }
 
-        public virtual void notifyComplete(FileInfo file)
+        public virtual void NotifyComplete(FileInfo file)
         {
         }
 
-        public abstract void reset();
+        public abstract void Reset();
     }
 }

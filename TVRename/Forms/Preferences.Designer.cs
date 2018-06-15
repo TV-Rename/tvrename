@@ -439,7 +439,7 @@ namespace TVRename
             this.txtExportRSSMaxDays.Name = "txtExportRSSMaxDays";
             this.txtExportRSSMaxDays.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSMaxDays.TabIndex = 6;
-            this.txtExportRSSMaxDays.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumberOnlyKeyPress);
+            this.txtExportRSSMaxDays.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // txtExportRSSMaxShows
             // 
@@ -447,7 +447,7 @@ namespace TVRename
             this.txtExportRSSMaxShows.Name = "txtExportRSSMaxShows";
             this.txtExportRSSMaxShows.Size = new System.Drawing.Size(28, 20);
             this.txtExportRSSMaxShows.TabIndex = 4;
-            this.txtExportRSSMaxShows.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumberOnlyKeyPress);
+            this.txtExportRSSMaxShows.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // saveFile
             // 
@@ -540,7 +540,7 @@ namespace TVRename
             this.txtWTWDays.Name = "txtWTWDays";
             this.txtWTWDays.Size = new System.Drawing.Size(28, 20);
             this.txtWTWDays.TabIndex = 1;
-            this.txtWTWDays.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumberOnlyKeyPress);
+            this.txtWTWDays.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // label2
             // 
@@ -799,7 +799,7 @@ namespace TVRename
             this.txtParallelDownloads.Name = "txtParallelDownloads";
             this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
             this.txtParallelDownloads.TabIndex = 12;
-            this.txtParallelDownloads.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumberOnlyKeyPress);
+            this.txtParallelDownloads.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // tbFilesAndFolders
             // 
@@ -953,7 +953,7 @@ namespace TVRename
             this.txtMaxSampleSize.Name = "txtMaxSampleSize";
             this.txtMaxSampleSize.Size = new System.Drawing.Size(53, 20);
             this.txtMaxSampleSize.TabIndex = 14;
-            this.txtMaxSampleSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtNumberOnlyKeyPress);
+            this.txtMaxSampleSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNumberOnlyKeyPress);
             // 
             // cbTxtToSub
             // 

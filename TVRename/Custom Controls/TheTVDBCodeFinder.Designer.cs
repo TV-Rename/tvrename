@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -9,7 +9,7 @@
 
 namespace TVRename
 {
-    partial class TheTVDBCodeFinder
+    partial class TheTvdbCodeFinder
     {
         /// <summary>
         /// Required designer variable.
@@ -137,7 +137,7 @@ namespace TVRename
             this.Controls.Add(this.txtFindThis);
             this.Controls.Add(this.lvMatches);
             this.Controls.Add(this.label3);
-            this.Name = "TheTVDBCodeFinder";
+            this.Name = "TheTvdbCodeFinder";
             this.Size = new System.Drawing.Size(403, 170);
             this.ResumeLayout(false);
             this.PerformLayout();

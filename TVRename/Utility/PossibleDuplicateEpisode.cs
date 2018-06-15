@@ -20,7 +20,7 @@ namespace TVRename
         {
             this.episodeTwo = episodeTwo;
             this.episodeOne = episodeOne;
-            this.SeasonNumber = season;
+            SeasonNumber = season;
             this.AirDatesMatch = AirDatesMatch;
             this.SimilarNames = SimilarNames;
             this.OneFound = OneFound;
@@ -34,21 +34,21 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem
                 {
-                    Text = this.episodeOne.SI.ShowName
+                    Text = episodeOne.SI.ShowName
                 };
 
-                lvi.SubItems.Add(this.episodeOne.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(this.episodeOne.NumsAsString() + " & " + this.episodeTwo.NumsAsString());
+                lvi.SubItems.Add(episodeOne.AppropriateSeasonNumber.ToString());
+                lvi.SubItems.Add(episodeOne.NumsAsString() + " & " + episodeTwo.NumsAsString());
 
-                DateTime? dt = this.episodeOne.GetAirDateDT(true);
+                DateTime? dt = episodeOne.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.episodeOne.Name + " & " + this.episodeTwo.Name);
+                lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
                 
-                List<string> names = new List<string> {this.episodeOne.Name, this.episodeTwo.Name};
+                List<string> names = new List<string> {episodeOne.Name, episodeTwo.Name};
                 string combinedName = ShowLibrary.GetBestNameFor(names, "");
                 lvi.SubItems.Add(combinedName);
 
@@ -58,8 +58,8 @@ namespace TVRename
             }
         }
 
-        public ShowItem ShowItem => this.episodeTwo.SI;
-        public ProcessedEpisode Episode => this.episodeOne;
+        public ShowItem ShowItem => episodeTwo.SI;
+        public ProcessedEpisode Episode => episodeOne;
     }
 
 }

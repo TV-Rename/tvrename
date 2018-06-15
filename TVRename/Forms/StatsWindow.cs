@@ -20,35 +20,35 @@ namespace TVRename
     /// </summary>
     public partial class StatsWindow : Form
     {
-        private TVRenameStats Stats;
+        private readonly TVRenameStats stats;
 
         public StatsWindow(TVRenameStats s)
         {
-            this.Stats = s;
-            this.InitializeComponent();
+            stats = s;
+            InitializeComponent();
         }
 
         private void StatsWindow_Load(object sender, System.EventArgs e)
         {
-            this.txtFM.Text = this.Stats.FilesMoved.ToString();
-            this.txtFR.Text = this.Stats.FilesRenamed.ToString();
-            this.txtFC.Text = this.Stats.FilesCopied.ToString();
-            this.txtRCD.Text = this.Stats.RenameChecksDone.ToString();
-            this.txtMCD.Text = this.Stats.MissingChecksDone.ToString();
-            this.txtFAOD.Text = this.Stats.FindAndOrganisesDone.ToString();
-            this.txtAAS.Text = this.Stats.AutoAddedShows.ToString();
-            this.txtTM.Text = this.Stats.TorrentsMatched.ToString();
-            this.txtNOS.Text = this.Stats.NS_NumberOfShows.ToString();
-            this.txtNOSeas.Text = this.Stats.NS_NumberOfSeasons.ToString();
-            int noe = this.Stats.NS_NumberOfEpisodes;
-            this.txtEOD.Text = ((noe == -1) ? "?" : noe.ToString());
-            this.txtTE.Text = this.Stats.NS_NumberOfEpisodesExpected.ToString();
+            txtFM.Text = stats.FilesMoved.ToString();
+            txtFR.Text = stats.FilesRenamed.ToString();
+            txtFC.Text = stats.FilesCopied.ToString();
+            txtRCD.Text = stats.RenameChecksDone.ToString();
+            txtMCD.Text = stats.MissingChecksDone.ToString();
+            txtFAOD.Text = stats.FindAndOrganisesDone.ToString();
+            txtAAS.Text = stats.AutoAddedShows.ToString();
+            txtTM.Text = stats.TorrentsMatched.ToString();
+            txtNOS.Text = stats.NS_NumberOfShows.ToString();
+            txtNOSeas.Text = stats.NS_NumberOfSeasons.ToString();
+            int noe = stats.NS_NumberOfEpisodes;
+            txtEOD.Text = ((noe == -1) ? "?" : noe.ToString());
+            txtTE.Text = stats.NS_NumberOfEpisodesExpected.ToString();
         }
 
         private void button1_Click(object sender, System.EventArgs e)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }

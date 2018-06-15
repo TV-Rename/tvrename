@@ -9,14 +9,14 @@ namespace TVRename
 {
     public static class VersionUpdater
     {
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static async Task<UpdateVersion> CheckForUpdatesAsync()
         {
             const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
             UpdateVersion currentVersion;
 
-            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             try
             {
@@ -142,12 +142,12 @@ public class UpdateVersion : IComparable
         if (!match.Success || !match.Groups["major"].Success || !match.Groups["minor"].Success) throw new ArgumentException("The provided version string is invalid.", nameof(version));
         if (type == VersionType.Semantic && !match.Groups["patch"].Success) throw new ArgumentException("The provided version string is invalid semantic version.", nameof(version));
 
-        this.VersionNumber = new Version(int.Parse(match.Groups["major"].Value),
+        VersionNumber = new Version(int.Parse(match.Groups["major"].Value),
             int.Parse(match.Groups["minor"].Value),
             match.Groups["patch"].Success ? int.Parse(match.Groups["patch"].Value) : 0);
 
-        this.Prerelease = match.Groups["pre"].Value.Replace(" ", string.Empty);
-        this.Build = match.Groups["build"].Value ?? string.Empty;
+        Prerelease = match.Groups["pre"].Value.Replace(" ", string.Empty);
+        Build = match.Groups["build"].Value ?? string.Empty;
     }
 
     public int CompareTo(object obj)
@@ -157,19 +157,19 @@ public class UpdateVersion : IComparable
         if (!(obj is UpdateVersion otherUpdateVersion)) throw new ArgumentException("Object is not a UpdateVersion");
 
         //Extract Version Numbers and then compare them
-        if (this.VersionNumber.CompareTo(otherUpdateVersion.VersionNumber) != 0) return this.VersionNumber.CompareTo(otherUpdateVersion.VersionNumber);
+        if (VersionNumber.CompareTo(otherUpdateVersion.VersionNumber) != 0) return VersionNumber.CompareTo(otherUpdateVersion.VersionNumber);
 
         //We have the same version - now we have to get tricky and look at the extension (rc1, beta2 etc)
         //if both have no extension then they are the same
-        if (string.IsNullOrWhiteSpace(this.Prerelease) && string.IsNullOrWhiteSpace(otherUpdateVersion.Prerelease)) return 0;
+        if (string.IsNullOrWhiteSpace(Prerelease) && string.IsNullOrWhiteSpace(otherUpdateVersion.Prerelease)) return 0;
 
         //If either are not present then you can assume they are FINAL versions and trump any rx1 verisons
-        if (string.IsNullOrWhiteSpace(this.Prerelease)) return 1;
+        if (string.IsNullOrWhiteSpace(Prerelease)) return 1;
         if (string.IsNullOrWhiteSpace(otherUpdateVersion.Prerelease)) return -1;
 
         //We have 2 suffixes
         //Compare alphabetically alpha1 < alpha2 < beta1 < beta2 < rc1 < rc2 etc
-        return (string.Compare(this.Prerelease, otherUpdateVersion.Prerelease, StringComparison.OrdinalIgnoreCase));
+        return (string.Compare(Prerelease, otherUpdateVersion.Prerelease, StringComparison.OrdinalIgnoreCase));
     }
 
     public bool NewerThan(UpdateVersion compare) => (CompareTo(compare) > 0);
@@ -177,9 +177,9 @@ public class UpdateVersion : IComparable
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.Append(this.VersionNumber);
-        if (!string.IsNullOrWhiteSpace(this.Prerelease)) sb.Append("-" + this.Prerelease);
-        if (!string.IsNullOrWhiteSpace(this.Build)) sb.Append("-(" + this.Build + ")");
+        sb.Append(VersionNumber);
+        if (!string.IsNullOrWhiteSpace(Prerelease)) sb.Append("-" + Prerelease);
+        if (!string.IsNullOrWhiteSpace(Build)) sb.Append("-(" + Build + ")");
         return sb.ToString();
     }
 

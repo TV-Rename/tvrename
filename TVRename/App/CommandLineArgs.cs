@@ -39,30 +39,30 @@ namespace TVRename
         /// <param name="args">The command line arguments.</param>
         public CommandLineArgs(ReadOnlyCollection<string> args)
         {
-            this.Help = args.Contains("/?", StringComparer.OrdinalIgnoreCase);
-            this.Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
-            this.RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
-            this.Quit = args.Contains("/quit", StringComparer.OrdinalIgnoreCase);
-            this.ForceRecover = args.Contains("/recover", StringComparer.OrdinalIgnoreCase);
-            this.DoAll = args.Contains("/doall", StringComparer.OrdinalIgnoreCase);
-            this.Scan = args.Contains("/scan", StringComparer.OrdinalIgnoreCase);
-            this.QuickScan = args.Contains("/quickscan", StringComparer.OrdinalIgnoreCase);
-            this.RecentScan = args.Contains("/recentscan", StringComparer.OrdinalIgnoreCase);
-            this.Unattended = args.Contains("/unattended", StringComparer.OrdinalIgnoreCase);
+            Help = args.Contains("/?", StringComparer.OrdinalIgnoreCase);
+            Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
+            RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
+            Quit = args.Contains("/quit", StringComparer.OrdinalIgnoreCase);
+            ForceRecover = args.Contains("/recover", StringComparer.OrdinalIgnoreCase);
+            DoAll = args.Contains("/doall", StringComparer.OrdinalIgnoreCase);
+            Scan = args.Contains("/scan", StringComparer.OrdinalIgnoreCase);
+            QuickScan = args.Contains("/quickscan", StringComparer.OrdinalIgnoreCase);
+            RecentScan = args.Contains("/recentscan", StringComparer.OrdinalIgnoreCase);
+            Unattended = args.Contains("/unattended", StringComparer.OrdinalIgnoreCase);
 
-            this.UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a.Substring(a.IndexOf(":", StringComparison.Ordinal) + 1)).FirstOrDefault();
+            UserFilePath = args.Where(a => a.StartsWith("/userfilepath:", StringComparison.OrdinalIgnoreCase)).Select(a => a.Substring(a.IndexOf(":", StringComparison.Ordinal) + 1)).FirstOrDefault();
 
             if (args.Contains("/createmissing", StringComparer.OrdinalIgnoreCase))
             {
-                this.MissingFolder = MissingFolderBehavior.Create;
+                MissingFolder = MissingFolderBehavior.Create;
             }
             else if (args.Contains("/ignoremissing", StringComparer.OrdinalIgnoreCase))
             {
-                this.MissingFolder = MissingFolderBehavior.Ignore;
+                MissingFolder = MissingFolderBehavior.Ignore;
             }
             else
             {
-                this.MissingFolder = MissingFolderBehavior.Ask;
+                MissingFolder = MissingFolderBehavior.Ask;
             }
         }
 

@@ -21,31 +21,30 @@ namespace TVRename
     /// </summary>
     public partial class AddEditSearchEngine : Form
     {
-        private CustomNameTagsFloatingWindow Cntfw;
-        private SourceGrid.Grid Grid1;
-        //array<SourceGrid::Cells::Editors::EditorBase ^> ^MyEditors;
-
-        private ProcessedEpisode SampleEpisode;
-        private Searchers mSearchers;
+        private CustomNameTagsFloatingWindow cntfw;
+        private SourceGrid.Grid grid1;
+        
+        private readonly ProcessedEpisode sampleEpisode;
+        private readonly Searchers mSearchers;
 
         public AddEditSearchEngine(Searchers s, ProcessedEpisode pe)
         {
-            this.SampleEpisode = pe;
-            this.InitializeComponent();
-            this.Cntfw = null;
+            sampleEpisode = pe;
+            InitializeComponent();
+            cntfw = null;
 
-            this.SetupGrid();
-            this.mSearchers = s;
+            SetupGrid();
+            mSearchers = s;
 
-            for (int i = 0; i < this.mSearchers.Count(); i++)
+            for (int i = 0; i < mSearchers.Count(); i++)
             {
-                this.AddNewRow();
-                this.Grid1[i + 1, 0].Value = this.mSearchers.Name(i);
-                this.Grid1[i + 1, 1].Value = this.mSearchers.URL(i);
+                AddNewRow();
+                grid1[i + 1, 0].Value = mSearchers.Name(i);
+                grid1[i + 1, 1].Value = mSearchers.URL(i);
             }
         }
 
-        public void SetupGrid()
+        private void SetupGrid()
         {
             SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
                                                          {
@@ -53,24 +52,23 @@ namespace TVRename
                                                              ForeColor = Color.White,
                                                              TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
                                                          };
+            grid1.Columns.Clear();
+            grid1.Rows.Clear();
 
-            this.Grid1.Columns.Clear();
-            this.Grid1.Rows.Clear();
+            grid1.RowsCount = 1;
+            grid1.ColumnsCount = 2;
+            grid1.FixedRows = 1;
+            grid1.FixedColumns = 0;
+            grid1.Selection.EnableMultiSelection = false;
 
-            this.Grid1.RowsCount = 1;
-            this.Grid1.ColumnsCount = 2;
-            this.Grid1.FixedRows = 1;
-            this.Grid1.FixedColumns = 0;
-            this.Grid1.Selection.EnableMultiSelection = false;
+            grid1.Columns[0].AutoSizeMode = SourceGrid.AutoSizeMode.None;
+            grid1.Columns[0].Width = 80;
 
-            this.Grid1.Columns[0].AutoSizeMode = SourceGrid.AutoSizeMode.None;
-            this.Grid1.Columns[0].Width = 80;
+            grid1.Columns[1].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize | SourceGrid.AutoSizeMode.EnableStretch;
 
-            this.Grid1.Columns[1].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize | SourceGrid.AutoSizeMode.EnableStretch;
-
-            this.Grid1.AutoStretchColumnsToFitWidth = true;
+            grid1.AutoStretchColumnsToFitWidth = true;
             //Grid1->AutoSizeCells();
-            this.Grid1.Columns.StretchToFit();
+            grid1.Columns.StretchToFit();
 
             //////////////////////////////////////////////////////////////////////
             // header row
@@ -78,22 +76,22 @@ namespace TVRename
             SourceGrid.Cells.ColumnHeader h;
             h = new SourceGrid.Cells.ColumnHeader("Name");
             h.AutomaticSortEnabled = false;
-            this.Grid1[0, 0] = h;
-            this.Grid1[0, 0].View = titleModel;
+            grid1[0, 0] = h;
+            grid1[0, 0].View = titleModel;
 
             h = new SourceGrid.Cells.ColumnHeader("URL");
             h.AutomaticSortEnabled = false;
-            this.Grid1[0, 1] = h;
-            this.Grid1[0, 1].View = titleModel;
+            grid1[0, 1] = h;
+            grid1[0, 1].View = titleModel;
         }
 
         public void AddNewRow()
         {
-            int r = this.Grid1.RowsCount;
-            this.Grid1.RowsCount = r + 1;
+            int r = grid1.RowsCount;
+            grid1.RowsCount = r + 1;
 
-            this.Grid1[r, 0] = new SourceGrid.Cells.Cell("", typeof(string));
-            this.Grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
+            grid1[r, 0] = new SourceGrid.Cells.Cell("", typeof(string));
+            grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
         }
 
 
@@ -102,35 +100,35 @@ namespace TVRename
 
         private void bnAdd_Click(object sender, System.EventArgs e)
         {
-            this.AddNewRow();
-            this.Grid1.Selection.Focus(new SourceGrid.Position(this.Grid1.RowsCount - 1, 1), true);
+            AddNewRow();
+            grid1.Selection.Focus(new SourceGrid.Position(grid1.RowsCount - 1, 1), true);
         }
 
         private void bnDelete_Click(object sender, System.EventArgs e)
         {
             // multiselection is off, so we can cheat...
-            int[] rowsIndex = this.Grid1.Selection.GetSelectionRegion().GetRowsIndex();
+            int[] rowsIndex = grid1.Selection.GetSelectionRegion().GetRowsIndex();
             if (rowsIndex.Length > 0)
-                this.Grid1.Rows.Remove(rowsIndex[0]);
+                grid1.Rows.Remove(rowsIndex[0]);
         }
 
         private void bnOK_Click(object sender, System.EventArgs e)
         {
-            this.mSearchers.Clear();
-            for (int i = 1; i < this.Grid1.RowsCount; i++) // skip header row
+            mSearchers.Clear();
+            for (int i = 1; i < grid1.RowsCount; i++) // skip header row
             {
-                string name = (string) (this.Grid1[i, 0].Value);
-                string url = (string) (this.Grid1[i, 1].Value);
+                string name = (string) (grid1[i, 0].Value);
+                string url = (string) (grid1[i, 1].Value);
                 if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(url))
-                    this.mSearchers.Add(name, url);
+                    mSearchers.Add(name, url);
             }
         }
 
         private void bnTags_Click(object sender, System.EventArgs e)
         {
-            this.Cntfw = new CustomNameTagsFloatingWindow(this.SampleEpisode);
-            this.Cntfw.Show(this);
-            this.Focus();
+            cntfw = new CustomNameTagsFloatingWindow(sampleEpisode);
+            cntfw.Show(this);
+            Focus();
         }
     }
 }

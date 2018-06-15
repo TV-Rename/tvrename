@@ -14,43 +14,40 @@ namespace TVRename
 
     public class ActionDateTouch : ActionFileMetaData
     {
-        public ShowItem SI; // if for an entire show, rather than specific episode
-        public Season SN; // if for an entire show, rather than specific episode
-        public FileInfo WhereFile;
-        public DirectoryInfo WhereDirectory;
+        private readonly ShowItem show; // if for an entire show, rather than specific episode
+        private readonly Season season; // if for an entire show, rather than specific episode
+        private readonly FileInfo whereFile;
+        private readonly DirectoryInfo whereDirectory;
         private readonly DateTime updateTime;
 
         public ActionDateTouch(FileInfo f, ProcessedEpisode pe, DateTime date)
         {
-            this.Episode = pe;
-            this.WhereFile = f;
-            this.updateTime = date;
+            Episode = pe;
+            whereFile = f;
+            updateTime = date;
         }
 
         public ActionDateTouch(DirectoryInfo dir, Season sn, DateTime date)
         {
-            this.SN = sn;
-            this.WhereDirectory = dir;
-            this.updateTime = date;
-
+            season = sn;
+            whereDirectory = dir;
+            updateTime = date;
         }
 
         public ActionDateTouch(DirectoryInfo dir, ShowItem si, DateTime date)
         {
-            this.SI = si;
-            this.WhereDirectory = dir;
-            this.updateTime = date;
-
+            show = si;
+            whereDirectory = dir;
+            updateTime = date;
         }
 
-
-        public override string Produces => this.WhereFile?.FullName?? this.WhereDirectory?.FullName;
+        public override string Produces => whereFile?.FullName?? whereDirectory?.FullName;
 
         #region Action Members
 
         public override string Name => "Update Timestamp";
 
-        public override string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
+        public override string ProgressText => whereFile?.Name??whereDirectory?.Name;
 
         public override long SizeOfWork => 100;
 
@@ -58,28 +55,27 @@ namespace TVRename
         {
             try
             {
-                if (this.WhereFile != null)
+                if (whereFile != null)
                 {
-                    bool priorFileReadonly = this.WhereFile.IsReadOnly;
-                    if (priorFileReadonly) this.WhereFile.IsReadOnly = false;
-                    System.IO.File.SetLastWriteTimeUtc(this.WhereFile.FullName, this.updateTime);
-                    if (priorFileReadonly) this.WhereFile.IsReadOnly = true;
-
+                    bool priorFileReadonly = whereFile.IsReadOnly;
+                    if (priorFileReadonly) whereFile.IsReadOnly = false;
+                    System.IO.File.SetLastWriteTimeUtc(whereFile.FullName, updateTime);
+                    if (priorFileReadonly) whereFile.IsReadOnly = true;
                 }
-                if (this.WhereDirectory != null)
+                if (whereDirectory != null)
                 {
-                    System.IO.Directory.SetLastWriteTimeUtc(this.WhereDirectory.FullName, this.updateTime );
+                    System.IO.Directory.SetLastWriteTimeUtc(whereDirectory.FullName, updateTime );
                 }
             }
             catch (Exception e)
             {
-                this.ErrorText = e.Message;
-                this.Error = true;
-                this.Done = true;
+                ErrorText = e.Message;
+                Error = true;
+                Done = true;
                 return false;
             }
 
-            this.Done = true;
+            Done = true;
             return true;
         }
 
@@ -89,89 +85,74 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionDateTouch) && ((o as ActionDateTouch).WhereFile == this.WhereFile) && ((o as ActionDateTouch).WhereDirectory == this.WhereDirectory);
+            return (o is ActionDateTouch touch) && (touch.whereFile == whereFile) && (touch.whereDirectory == whereDirectory);
         }
 
         public override int Compare(Item o)
         {
             ActionDateTouch nfo = o as ActionDateTouch;
 
-            if (this.Episode == null)
+            if (Episode == null)
                 return 1;
             if (nfo?.Episode == null)
                 return -1;
-            if (this.WhereFile != null)
-                return String.Compare((this.WhereFile.FullName + this.Episode.Name), nfo.WhereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
-            return String.Compare((this.WhereDirectory.FullName + this.Episode.Name), nfo.WhereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            if (whereFile != null)
+                return string.Compare((whereFile.FullName + Episode.Name), nfo.whereFile.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return string.Compare((whereDirectory.FullName + Episode.Name), nfo.whereDirectory.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion
 
         #region Item Members
 
-        public override IgnoreItem Ignore
-        {
-            get
-            {
-                if (this.WhereFile == null)
-                    return null;
-                return new IgnoreItem(this.WhereFile.FullName);
-            }
-        }
+        public override IgnoreItem Ignore => whereFile == null ? null : new IgnoreItem(whereFile.FullName);
 
         public override ListViewItem ScanListViewItem
         {
             get
             {
-
                 ListViewItem lvi = new ListViewItem();
 
-                if (this.Episode != null)
+                if (Episode != null)
                 {
-                    lvi.Text = this.Episode.SI.ShowName;
-                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(this.Episode.NumsAsString());
+                    lvi.Text = Episode.SI.ShowName;
+                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                    lvi.SubItems.Add(Episode.NumsAsString());
 
                 }
-                else if (this.SN != null)
+                else if (season != null)
                 {
-                    lvi.Text = this.SN.TheSeries.Name;
-                    lvi.SubItems.Add(this.SN.SeasonNumber.ToString());
-                    lvi.SubItems.Add("");
-
-                }
-                else if (this.SI != null)
-                {
-                    lvi.Text = this.SI.ShowName;
-                    lvi.SubItems.Add("");
+                    lvi.Text = season.TheSeries.Name;
+                    lvi.SubItems.Add(season.SeasonNumber.ToString());
                     lvi.SubItems.Add("");
 
                 }
-
-                DateTime dt = this.updateTime;
-
-                if ((dt.CompareTo(DateTime.MaxValue)) != 0)
-                    lvi.SubItems.Add(dt.ToShortDateString());
-                else
+                else if (show != null)
+                {
+                    lvi.Text = show.ShowName;
                     lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                }
 
-                lvi.SubItems.Add(this.WhereFile?.DirectoryName??this.WhereDirectory?.FullName);
-                lvi.SubItems.Add(this.WhereFile?.Name??this.WhereDirectory?.Name);
+                DateTime dt = updateTime;
+
+                lvi.SubItems.Add((dt.CompareTo(DateTime.MaxValue)) != 0 ? dt.ToShortDateString() : "");
+
+                lvi.SubItems.Add(whereFile?.DirectoryName??whereDirectory?.FullName);
+                lvi.SubItems.Add(whereFile?.Name??whereDirectory?.Name);
 
                 lvi.Tag = this;
 
-                //lv->Items->Add(lvi);
                 return lvi;
             }
         }
 
-        public override string TargetFolder => this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
+        public override string TargetFolder => whereFile?.DirectoryName??whereDirectory?.Name;
 
         public override string ScanListViewGroup => "lvgUpdateFileDates";
 
         public override int IconNumber => 7;
 
         #endregion
-
     }
 }

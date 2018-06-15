@@ -1,6 +1,6 @@
 namespace TVRename.Forms
 {
-    partial class frmDupEpFinder
+    partial class DupEpFinder
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace TVRename.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDupEpFinder));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DupEpFinder));
             this.lvDuplicates = new TVRename.MyListView();
             this.show = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.season = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -217,7 +217,7 @@ namespace TVRename.Forms
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(600, 400);
-            this.Name = "frmDupEpFinder";
+            this.Name = "DupEpFinder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Dupicate Episode Finder";
             this.duplicateRightClickMenu.ResumeLayout(false);

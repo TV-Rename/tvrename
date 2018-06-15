@@ -16,28 +16,28 @@ namespace TVRename
 
         public ItemuTorrenting(TorrentEntry te, ProcessedEpisode pe, string desiredLocationNoExt)
         {
-            this.Episode = pe;
-            this.DesiredLocationNoExt = desiredLocationNoExt;
-            this.Entry = te;
+            Episode = pe;
+            DesiredLocationNoExt = desiredLocationNoExt;
+            Entry = te;
         }
 
         #region Item Members
 
         public override bool SameAs(Item o)
         {
-            return (o is ItemuTorrenting torrenting) && this.Entry == torrenting.Entry;
+            return (o is ItemuTorrenting torrenting) && Entry == torrenting.Entry;
         }
 
         public override int Compare(Item o)
         {
             if (!(o is ItemuTorrenting ut))
                 { return 0;}
-            if (this.Episode == null)
+            if (Episode == null)
                 { return 1;}
             if (ut.Episode == null)
                 { return -1;}
 
-            return string.Compare((this.DesiredLocationNoExt), ut.DesiredLocationNoExt, StringComparison.Ordinal);
+            return string.Compare((DesiredLocationNoExt), ut.DesiredLocationNoExt, StringComparison.Ordinal);
         }
         #endregion
 
@@ -45,12 +45,12 @@ namespace TVRename
         public override int IconNumber => 2;
         #endregion
 
-        public override string FileIdentifier => this.Entry.TorrentFile;
-        public override string Destination => this.Entry.DownloadingTo;
+        public override string FileIdentifier => Entry.TorrentFile;
+        public override string Destination => Entry.DownloadingTo;
         public override string Remaining {
             get {
-                int p = this.Entry.PercentDone;
-                return p == -1 ? "" : this.Entry.PercentDone + "% Complete";
+                int p = Entry.PercentDone;
+                return p == -1 ? "" : Entry.PercentDone + "% Complete";
             }
         }
     }

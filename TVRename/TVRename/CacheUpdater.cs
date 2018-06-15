@@ -23,27 +23,27 @@ namespace TVRename
         private Thread mDownloaderThread;
         private ICollection<int> downloadIds;
 
-        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private static NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
 
         public CacheUpdater()
         {
-            this.DownloadDone = true;
-            this.DownloadOK = true;
+            DownloadDone = true;
+            DownloadOK = true;
         }
 
         public void StartBGDownloadThread(bool stopOnError, ICollection<int> shows)
         {
-            if (!this.DownloadDone)
+            if (!DownloadDone)
                 return;
-            this.DownloadStopOnError = stopOnError;
-            this.DownloadPct = 0;
-            this.DownloadDone = false;
-            this.DownloadOK = true;
+            DownloadStopOnError = stopOnError;
+            DownloadPct = 0;
+            DownloadDone = false;
+            DownloadOK = true;
 
-            this.downloadIds = shows;
-            this.mDownloaderThread = new Thread(this.Downloader) { Name = "Downloader" };
-            this.mDownloaderThread.Start();
+            downloadIds = shows;
+            mDownloaderThread = new Thread(Downloader) { Name = "Downloader" };
+            mDownloaderThread.Start();
         }
 
         public bool DoDownloadsFG(bool showProgress, bool showErrorMsgBox, ICollection<int> shows)
@@ -52,25 +52,25 @@ namespace TVRename
                 return true; // don't do internet in offline mode!
             logger.Info("Doing downloads in the foreground...");
 
-            this.StartBGDownloadThread(true, shows);
+            StartBGDownloadThread(true, shows);
 
             const int delayStep = 100;
             int count = 1000 / delayStep; // one second
-            while ((count-- > 0) && (!this.DownloadDone))
-                System.Threading.Thread.Sleep(delayStep);
+            while ((count-- > 0) && (!DownloadDone))
+                Thread.Sleep(delayStep);
 
-            if (!this.DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
+            if (!DownloadDone && showProgress) // downloading still going on, so time to show the dialog if we're not in /hide mode
             {
                 DownloadProgress dp = new DownloadProgress(this);
                 dp.ShowDialog();
                 dp.Update();
             }
 
-            this.WaitForBGDownloadDone();
+            WaitForBGDownloadDone();
 
             TheTVDB.Instance.SaveCache();
 
-            if (!this.DownloadOK)
+            if (!DownloadOK)
             {
                 logger.Warn(TheTVDB.Instance.LastError);
                 if (showErrorMsgBox)
@@ -78,15 +78,15 @@ namespace TVRename
                 TheTVDB.Instance.LastError = "";
             }
 
-            return this.DownloadOK;
+            return DownloadOK;
         }
 
         public void StopBGDownloadThread()
         {
-            if (this.mDownloaderThread != null)
+            if (mDownloaderThread != null)
             {
-                this.DownloadDone = true;
-                this.mDownloaderThread.Join();
+                DownloadDone = true;
+                mDownloaderThread.Join();
 
                 /*if (Workers != null)
                 {
@@ -101,17 +101,17 @@ namespace TVRename
                     mDownloaderThread = null;
                 }
                 */
-                this.mDownloaderThread = null;
+                mDownloaderThread = null;
             }
         }
 
-        private void GetThread(Object codeIn)
+        private void GetThread(object codeIn)
         {
-            System.Diagnostics.Debug.Assert(this.WorkerSemaphore != null);
+            System.Diagnostics.Debug.Assert(WorkerSemaphore != null);
 
             try
             {
-                this.WorkerSemaphore.WaitOne(); // don't start until we're allowed to
+                WorkerSemaphore.WaitOne(); // don't start until we're allowed to
 
                 int code = (int)(codeIn);
 
@@ -122,12 +122,12 @@ namespace TVRename
                 threadslogger.Trace("  Finished " + code);
                 if (!r)
                 {
-                    this.DownloadOK = false;
-                    if (this.DownloadStopOnError)
-                        this.DownloadDone = true;
+                    DownloadOK = false;
+                    if (DownloadStopOnError)
+                        DownloadDone = true;
                 }
 
-                this.WorkerSemaphore.Release(1);
+                WorkerSemaphore.Release(1);
             }
             catch (Exception e)
             {
@@ -138,17 +138,17 @@ namespace TVRename
 
         private void WaitForAllThreadsAndTidyUp()
         {
-            if (this.Workers != null)
+            if (Workers != null)
             {
-                foreach (Thread t in this.Workers)
+                foreach (Thread t in Workers)
                 {
                     if (t.IsAlive)
                         t.Join();
                 }
             }
 
-            this.Workers = null;
-            this.WorkerSemaphore = null;
+            Workers = null;
+            WorkerSemaphore = null;
         }
 
         private void Downloader()
@@ -160,15 +160,15 @@ namespace TVRename
             {
                 if (downloadIds.Count == 0)
                 {
-                    this.DownloadDone = true;
-                    this.DownloadOK = true;
+                    DownloadDone = true;
+                    DownloadOK = true;
                     return;
                 }
 
                 if (!TheTVDB.Instance.GetUpdates())
                 {
-                    this.DownloadDone = true;
-                    this.DownloadOK = false;
+                    DownloadDone = true;
+                    DownloadOK = false;
                     return;
                 }
 
@@ -179,70 +179,70 @@ namespace TVRename
 
                 int numWorkers = TVSettings.Instance.ParallelDownloads;
                 logger.Info("Setting up {0} threads to download information from TVDB.com", numWorkers);
-                this.Workers = new List<Thread>();
+                Workers = new List<Thread>();
 
-                this.WorkerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
+                WorkerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
 
                 foreach (int code in downloadIds)
                 {
-                    this.DownloadPct = 100 * (n + 1) / (totalItems + 1);
-                    this.DownloadsRemaining = totalItems - n;
+                    DownloadPct = 100 * (n + 1) / (totalItems + 1);
+                    DownloadsRemaining = totalItems - n;
                     n++;
 
-                    this.WorkerSemaphore.WaitOne(); // blocks until there is an available slot
-                    Thread t = new Thread(this.GetThread);
-                    this.Workers.Add(t);
+                    WorkerSemaphore.WaitOne(); // blocks until there is an available slot
+                    Thread t = new Thread(GetThread);
+                    Workers.Add(t);
                     t.Name = "GetThread:" + code;
                     t.Start(code); // will grab the semaphore as soon as we make it available
-                    int nfr = this.WorkerSemaphore
+                    int nfr = WorkerSemaphore
                         .Release(1); // release our hold on the semaphore, so that worker can grab it
                     threadslogger.Trace("Started " + code + " pool has " + nfr + " free");
                     Thread.Sleep(1); // allow the other thread a chance to run and grab
 
                     // tidy up any finished workers
-                    for (int i = this.Workers.Count - 1; i >= 0; i--)
+                    for (int i = Workers.Count - 1; i >= 0; i--)
                     {
-                        if (!this.Workers[i].IsAlive)
-                            this.Workers.RemoveAt(i); // remove dead worker
+                        if (!Workers[i].IsAlive)
+                            Workers.RemoveAt(i); // remove dead worker
                     }
 
-                    if (this.DownloadDone)
+                    if (DownloadDone)
                         break;
                 }
 
-                this.WaitForAllThreadsAndTidyUp();
+                WaitForAllThreadsAndTidyUp();
 
-                TheTVDB.Instance.UpdatesDoneOK();
-                this.DownloadDone = true;
-                this.DownloadOK = true;
+                TheTVDB.Instance.UpdatesDoneOk();
+                DownloadDone = true;
+                DownloadOK = true;
                 return;
             }
             catch (ThreadAbortException taa)
             {
-                this.DownloadDone = true;
-                this.DownloadOK = false;
+                DownloadDone = true;
+                DownloadOK = false;
                 logger.Error(taa);
                 return;
             }
             catch (Exception e)
             {
-                this.DownloadDone = true;
-                this.DownloadOK = false;
+                DownloadDone = true;
+                DownloadOK = false;
                 logger.Fatal(e, "UNHANDLED EXCEPTION IN DOWNLOAD THREAD");
                 return;
             }
             finally
             {
-                this.Workers = null;
-                this.WorkerSemaphore = null;
+                Workers = null;
+                WorkerSemaphore = null;
             }
         }
 
         private void WaitForBGDownloadDone()
         {
-            if ((this.mDownloaderThread != null) && (this.mDownloaderThread.IsAlive))
-                this.mDownloaderThread.Join();
-            this.mDownloaderThread = null;
+            if ((mDownloaderThread != null) && (mDownloaderThread.IsAlive))
+                mDownloaderThread.Join();
+            mDownloaderThread = null;
         }
 
         private void Dispose(bool disposing)
@@ -251,12 +251,12 @@ namespace TVRename
             if (disposing)
             {
                 // ReSharper disable once UseNullPropagation
-                if (this.WorkerSemaphore != null) this.WorkerSemaphore.Dispose();
+                if (WorkerSemaphore != null) WorkerSemaphore.Dispose();
             }
         }
         private void ReleaseUnmanagedResources()
         {
-            this.StopBGDownloadThread();
+            StopBGDownloadThread();
         }
 
         public void Dispose()

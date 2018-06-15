@@ -21,7 +21,7 @@ namespace TVRename
             {
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
                 {
-                    foreach (ShowItem si in this.Shows)
+                    foreach (ShowItem si in Shows)
                     {
                         file.WriteLine(si.ShowName);
                     }

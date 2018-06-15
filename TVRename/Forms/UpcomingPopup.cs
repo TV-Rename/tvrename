@@ -22,37 +22,37 @@ namespace TVRename
     /// </summary>
     public partial class UpcomingPopup : Form
     {
-        private TVDoc mDoc;
+        private readonly TVDoc mDoc;
 
         public UpcomingPopup(TVDoc doc)
         {
-            this.mDoc = doc;
-            this.InitializeComponent();
+            mDoc = doc;
+            InitializeComponent();
         }
 
         private void UpcomingPopup_Load(object sender, System.EventArgs e)
         {
             int screenWidth = Screen.PrimaryScreen.WorkingArea.Width;
             int screenHeight = Screen.PrimaryScreen.WorkingArea.Height;
-            this.Left = screenWidth - this.Width;
-            this.Top = screenHeight - this.Height;
+            Left = screenWidth - Width;
+            Top = screenHeight - Height;
 
-            this.FillSelf();
+            FillSelf();
         }
 
         private void TimerOfDeath_Tick(object sender, System.EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void FillSelf()
         {
-            this.lvUpcoming.BeginUpdate();
-            this.lvUpcoming.Items.Clear();
+            lvUpcoming.BeginUpdate();
+            lvUpcoming.Items.Clear();
 
             const int kN = 5;
 
-            List<ProcessedEpisode> next5 = this.mDoc.Library.NextNShows(kN, 0, 9999);
+            List<ProcessedEpisode> next5 = mDoc.Library.NextNShows(kN, 0, 9999);
 
             if (next5 != null)
             {
@@ -63,38 +63,38 @@ namespace TVRename
                     lvi.SubItems.Add(ei.DayOfWeek());
                     lvi.SubItems.Add(ei.TimeOfDay());
                     lvi.SubItems.Add(TVSettings.Instance.NamingStyle.NameFor(ei));
-                    this.lvUpcoming.Items.Add(lvi);
+                    lvUpcoming.Items.Add(lvi);
                 }
-                if (this.lvUpcoming.Items.Count > 0)
+                if (lvUpcoming.Items.Count > 0)
                 {
-                    int h1 = this.lvUpcoming.Items[0].GetBounds(ItemBoundsPortion.Entire).Height + 6;
-                    this.Height = (h1 * this.lvUpcoming.Items.Count);
+                    int h1 = lvUpcoming.Items[0].GetBounds(ItemBoundsPortion.Entire).Height + 6;
+                    Height = (h1 * lvUpcoming.Items.Count);
                 }
             }
 
             int w = 0;
-            for (int i = 0; i < this.lvUpcoming.Columns.Count; i++)
+            for (int i = 0; i < lvUpcoming.Columns.Count; i++)
             {
-                this.lvUpcoming.Columns[i].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-                w += this.lvUpcoming.Columns[i].Width;
+                lvUpcoming.Columns[i].AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                w += lvUpcoming.Columns[i].Width;
             }
 
-            this.lvUpcoming.Width = w;
-            this.lvUpcoming.SelectedIndices.Clear();
-            this.hiddenButton.Select();
+            lvUpcoming.Width = w;
+            lvUpcoming.SelectedIndices.Clear();
+            hiddenButton.Select();
 
-            this.lvUpcoming.EndUpdate();
+            lvUpcoming.EndUpdate();
         }
 
         private void lvUpcoming_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            this.lvUpcoming.SelectedIndices.Clear();
-            this.hiddenButton.Select();
+            lvUpcoming.SelectedIndices.Clear();
+            hiddenButton.Select();
         }
 
         private void lvUpcoming_Enter(object sender, System.EventArgs e)
         {
-            this.hiddenButton.Select();
+            hiddenButton.Select();
         }
     }
 }

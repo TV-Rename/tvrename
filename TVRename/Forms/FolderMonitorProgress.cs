@@ -11,45 +11,43 @@ namespace TVRename
 {
     public partial class FolderMonitorProgress : Form
     {
-        public bool StopNow = false;
-        public bool Ready = false;
-        private FolderMonitor mFM;
+        public bool Ready;
+        private readonly FolderMonitor mainForm;
 
         public FolderMonitorProgress(FolderMonitor thefm)
         {
-            this.mFM = thefm;
-            this.InitializeComponent();
+            mainForm = thefm;
+            InitializeComponent();
             timer1_Tick(null, null); // force immediate initial update
         }
 
-        public void bnCancel_Click(object sender, System.EventArgs e)
+        private void bnCancel_Click(object sender, System.EventArgs e)
         {
-            this.DialogResult = DialogResult.Abort;
-            this.mFM.FMPStopNow = true;
+            DialogResult = DialogResult.Abort;
+            mainForm.FMPStopNow = true;
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
         {
-            if (this.mFM == null)
+            if (mainForm == null)
                 return;
 
             timer1.Stop();
 
-            this.BringToFront();
+            BringToFront();
 
-            this.pbProgress.Value = this.mFM.FMPPercent;
-            this.lbMessage.Text = this.mFM.FMPUpto;
+            pbProgress.Value = mainForm.FMPPercent;
+            lbMessage.Text = mainForm.FMPUpto;
             
-            if (this.mFM.FMPStopNow)
-                this.Close();
+            if (mainForm.FMPStopNow)
+                Close();
 
             timer1.Start();
-
         }
 
         private void FolderMonitorProgress_Load(object sender, System.EventArgs e)
         {
-            this.Ready = true;
+            Ready = true;
         }
     }
 }

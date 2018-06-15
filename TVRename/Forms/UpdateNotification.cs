@@ -13,10 +13,10 @@ namespace TVRename.Forms
 
         public UpdateNotification(UpdateVersion update)
         {
-            this.newVersion = update;
+            newVersion = update;
             InitializeComponent();
-            this.tbReleaseNotes.Text = this.newVersion.ReleaseNotesText;
-            this.lblStatus.Text = $@"There is new version {update} available since {update.ReleaseDate.ToLocalTime()}.";
+            tbReleaseNotes.Text = newVersion.ReleaseNotesText;
+            lblStatus.Text = $@"There is new version {update} available since {update.ReleaseDate.ToLocalTime()}.";
 
             //If this call is slow then we can put it in a new thread and update the control as it comes back from GH
             UpdateWithMarkdown();
@@ -35,7 +35,7 @@ namespace TVRename.Forms
                 "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
 
             JObject request = new JObject();
-            request.Add("text", this.newVersion.ReleaseNotesText);
+            request.Add("text", newVersion.ReleaseNotesText);
             request.Add("mode", "gfm");
             request.Add("context", "TV-Rename/tvrename");
 
@@ -55,23 +55,23 @@ namespace TVRename.Forms
             string HTML_HEAD = "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
             string HTML_FOOTER = "</body></html>";
 
-            this.webReleaseNotes.DocumentText= HTML_HEAD+result+HTML_FOOTER;
+            webReleaseNotes.DocumentText= HTML_HEAD+result+HTML_FOOTER;
             
 
 
-            this.webReleaseNotes.Visible = true;
-            this.tbReleaseNotes.Visible = false;
+            webReleaseNotes.Visible = true;
+            tbReleaseNotes.Visible = false;
 
         }
 
         private void bnReleaseNotes_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen(this.newVersion.ReleaseNotesUrl);
+            Helpers.SysOpen(newVersion.ReleaseNotesUrl);
         }
 
         private void btnDownloadNow_Click(object sender, EventArgs e)
         {
-            Helpers.SysOpen(this.newVersion.DownloadUrl);
+            Helpers.SysOpen(newVersion.DownloadUrl);
         }
 
         private void NavigateTo(object sender, WebBrowserNavigatingEventArgs e)

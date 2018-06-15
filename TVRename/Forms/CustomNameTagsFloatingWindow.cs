@@ -30,7 +30,7 @@ namespace TVRename
                 if (pe != null)
                     txt += " - " + CustomName.NameForNoExt(pe, s);
 
-                this.label1.Text += txt + "\r\n";
+                label1.Text += txt + "\r\n";
             }
         }
     }

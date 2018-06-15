@@ -14,14 +14,14 @@ namespace TVRename
             return TVSettings.Instance.CheckSABnzbd;
         }
 
-        public override Finder.FinderDisplayType DisplayType()
+        public override FinderDisplayType DisplayType()
         {
-            return FinderDisplayType.Downloading;
+            return FinderDisplayType.downloading;
         }
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
-            if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || String.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
+            if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
                 prog.Invoke(totPct);
                 return;
@@ -42,7 +42,7 @@ namespace TVRename
             }
             catch (WebException)
             {
-                logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theURL);
+                Logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theURL);
             }
 
             if (r == null)
@@ -56,7 +56,7 @@ namespace TVRename
                 SAB.result res = SAB.result.Deserialize(r);
                 if (res != null && res.status == "False")
                 {
-                    logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
+                    Logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
                     prog.Invoke(totPct);
                     return;
                 }
@@ -73,7 +73,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
+                Logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
                 prog.Invoke(totPct);
                 return;
             }
@@ -84,12 +84,12 @@ namespace TVRename
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
-            int c = this.ActionList.Count + 2;
+            int c = ActionList.Count + 2;
             int n = 1;
 
-            foreach (Item Action1 in this.ActionList)
+            foreach (Item Action1 in ActionList)
             {
-                if (this.ActionCancel)
+                if (ActionCancel)
                     return;
 
                 prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
@@ -121,10 +121,10 @@ namespace TVRename
             }
 
             foreach (Item i in toRemove)
-                this.ActionList.Remove(i);
+                ActionList.Remove(i);
 
             foreach (Item Action in newList)
-                this.ActionList.Add(Action);
+                ActionList.Add(Action);
 
             prog.Invoke(totPct);
         }

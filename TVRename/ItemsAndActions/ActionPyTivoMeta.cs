@@ -17,7 +17,7 @@ namespace TVRename
     {
         public ActionPyTivoMeta(FileInfo nfo, ProcessedEpisode pe) :base(nfo,null)
         {
-            this.Episode = pe;
+            Episode = pe;
         }
 
         #region Action Members
@@ -29,41 +29,41 @@ namespace TVRename
             try
             {
                 // create folder if it does not exist. (Only really applies when .meta\ folder is being used.)
-                if (!this.Where.Directory.Exists)
-                    Directory.CreateDirectory(this.Where.Directory.FullName);
+                if (!Where.Directory.Exists)
+                    Directory.CreateDirectory(Where.Directory.FullName);
 
                 using (
-                    StreamWriter writer = new StreamWriter(this.Where.FullName, false,
+                    StreamWriter writer = new StreamWriter(Where.FullName, false,
                         System.Text.Encoding.GetEncoding(1252)))
                 {
                     // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata
-                    writer.WriteLine($"title : {this.Episode.SI.ShowName}");
-                    writer.WriteLine($"seriesTitle : {this.Episode.SI.ShowName}");
-                    writer.WriteLine($"episodeTitle : {this.Episode.Name}");
+                    writer.WriteLine($"title : {Episode.SI.ShowName}");
+                    writer.WriteLine($"seriesTitle : {Episode.SI.ShowName}");
+                    writer.WriteLine($"episodeTitle : {Episode.Name}");
                     writer.WriteLine(
-                        $"episodeNumber : {this.Episode.AppropriateSeasonNumber}{this.Episode.AppropriateEpNum:0#}");
+                        $"episodeNumber : {Episode.AppropriateSeasonNumber}{Episode.AppropriateEpNum:0#}");
                     writer.WriteLine("isEpisode : true");
-                    writer.WriteLine($"description : {this.Episode.Overview}");
-                    if (this.Episode.FirstAired != null)
-                        writer.WriteLine($"originalAirDate : {this.Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
-                    writer.WriteLine($"callsign : {this.Episode.SI.TheSeries().getNetwork()}");
+                    writer.WriteLine($"description : {Episode.Overview}");
+                    if (Episode.FirstAired != null)
+                        writer.WriteLine($"originalAirDate : {Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
+                    writer.WriteLine($"callsign : {Episode.SI.TheSeries().GetNetwork()}");
 
-                    WriteEntries(writer, "vDirector", this.Episode.EpisodeDirector);
-                    WriteEntries(writer, "vWriter", this.Episode.Writer);
-                    WriteEntries(writer, "vActor", string.Join("|", this.Episode.SI.TheSeries().GetActors()));
+                    WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
+                    WriteEntries(writer, "vWriter", Episode.Writer);
+                    WriteEntries(writer, "vActor", string.Join("|", Episode.SI.TheSeries().GetActors()));
                     WriteEntries(writer, "vGuestStar",
-                        this.Episode.EpisodeGuestStars); // not worring about actors being repeated
-                    WriteEntries(writer, "vProgramGenre", string.Join("|", this.Episode.SI.TheSeries().GetGenres()));
+                        Episode.EpisodeGuestStars); // not worring about actors being repeated
+                    WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.SI.TheSeries().GetGenres()));
                 }
 
-                this.Done = true;
+                Done = true;
                 return true;
             }
             catch (Exception e)
             {
-                this.ErrorText = e.Message;
-                this.Error = true;
-                this.Done = true;
+                ErrorText = e.Message;
+                Error = true;
+                Done = true;
                 return false;
             }
         }
@@ -88,18 +88,18 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionPyTivoMeta meta) && (meta.Where == this.Where);
+            return (o is ActionPyTivoMeta meta) && (meta.Where == Where);
         }
 
         public override int Compare(Item o)
         {
             ActionPyTivoMeta nfo = o as ActionPyTivoMeta;
 
-            if (this.Episode == null)
+            if (Episode == null)
                 return 1;
             if (nfo?.Episode == null)
                 return -1;
-            return (this.Where.FullName + this.Episode.Name).CompareTo(nfo.Where.FullName + nfo.Episode.Name);
+            return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion
@@ -109,18 +109,18 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem {Text = this.Episode.SI.ShowName};
+                ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
 
-                lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(this.Episode.NumsAsString());
-                DateTime? dt = this.Episode.GetAirDateDT(true);
+                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                lvi.SubItems.Add(Episode.NumsAsString());
+                DateTime? dt = Episode.GetAirDateDT(true);
                 if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
                     lvi.SubItems.Add(dt.Value.ToShortDateString());
                 else
                     lvi.SubItems.Add("");
 
-                lvi.SubItems.Add(this.Where.DirectoryName);
-                lvi.SubItems.Add(this.Where.Name);
+                lvi.SubItems.Add(Where.DirectoryName);
+                lvi.SubItems.Add(Where.Name);
 
                 lvi.Tag = this;
 

@@ -5,17 +5,17 @@ using System.Windows.Forms;
 
 namespace TVRename.Forms
 {
-    public partial class frmDupEpFinder : Form
+    public partial class DupEpFinder : Form
     {
         private List<PossibleDuplicateEpisode> dupEps;
-        private TVDoc mDoc;
+        private readonly TVDoc mDoc;
         private PossibleDuplicateEpisode mlastSelected;
-        private UI mainUI;
+        private readonly UI mainUI;
         private ListViewItem mlastClicked;
 
         public enum RightClickCommands
         {
-            None = 0,
+            none = 0,
             kEpisodeGuideForShow = 1,
             kForceRefreshSeries,
             kEditShow,
@@ -24,37 +24,38 @@ namespace TVRename.Forms
             kOpenFolderBase = 2000
         }
 
-        public frmDupEpFinder(List<PossibleDuplicateEpisode> x, TVDoc doc, UI main)
+        public DupEpFinder(List<PossibleDuplicateEpisode> x, TVDoc doc, UI main)
         {
             InitializeComponent();
-            this.dupEps = x;
-            this.mDoc = doc;
-            this.mainUI = main;
-            updateUI();
+            dupEps = x;
+            mDoc = doc;
+            mainUI = main;
+            UpdateUI();
         }
 
-        private void updateUI()
+        // ReSharper disable once InconsistentNaming
+        private void UpdateUI()
         {
             // Save where the list is currently scrolled too
             //int currentTop = this.lvDuplicates.GetScrollVerticalPos();
 
-            this.lvDuplicates.BeginUpdate();
-            this.lvDuplicates.Items.Clear();
+            lvDuplicates.BeginUpdate();
+            lvDuplicates.Items.Clear();
 
-            foreach (PossibleDuplicateEpisode item in this.dupEps)
+            foreach (PossibleDuplicateEpisode item in dupEps)
             {
                 ListViewItem possible = item.PresentationView;
 
-                bool passesAirDateTest = (this.chkAirDateTest.Checked == false || item.AirDatesMatch);
-                bool passesNameTest = (this.chkNameTest.Checked == false || item.SimilarNames);
-                bool passesMissingTest = (this.chkMIssingTest.Checked == false || item.OneFound);
-                bool passesSizeTest = (this.chkFilesizeTest.Checked == false || item.LargeFileSize);
+                bool passesAirDateTest = (chkAirDateTest.Checked == false || item.AirDatesMatch);
+                bool passesNameTest = (chkNameTest.Checked == false || item.SimilarNames);
+                bool passesMissingTest = (chkMIssingTest.Checked == false || item.OneFound);
+                bool passesSizeTest = (chkFilesizeTest.Checked == false || item.LargeFileSize);
 
                 if (passesSizeTest && passesAirDateTest && passesNameTest && passesMissingTest)
-                    this.lvDuplicates.Items.Add(possible);
+                    lvDuplicates.Items.Add(possible);
             }
 
-            this.lvDuplicates.EndUpdate();
+            lvDuplicates.EndUpdate();
 
             // Restore the scrolled to position
             //this.lvDuplicates.SetScrollVerticalPos(currentTop);
@@ -62,123 +63,123 @@ namespace TVRename.Forms
 
         private void btnRescan_Click(object sender, EventArgs e)
         {
-            this.dupEps = this.mDoc.FindDoubleEps();
-            updateUI();
+            dupEps = mDoc.FindDoubleEps();
+            UpdateUI();
         }
 
         private void chkAirDateTest_CheckedChanged(object sender, EventArgs e)
         {
-            this.chkAirDateTest.Checked = true;
-            updateUI();
+            chkAirDateTest.Checked = true;
+            UpdateUI();
         }
 
         private void UpdateCheckboxes()
         {
-            if (this.chkFilesizeTest.Checked) this.chkMIssingTest.Checked = true;
-            if (this.chkMIssingTest.Checked) this.chkNameTest.Checked = true;
-            if (this.chkNameTest.Checked == false) this.chkMIssingTest.Checked = false;
-            if (this.chkMIssingTest.Checked == false) this.chkFilesizeTest.Checked = false;
+            if (chkFilesizeTest.Checked) chkMIssingTest.Checked = true;
+            if (chkMIssingTest.Checked) chkNameTest.Checked = true;
+            if (chkNameTest.Checked == false) chkMIssingTest.Checked = false;
+            if (chkMIssingTest.Checked == false) chkFilesizeTest.Checked = false;
 
-            updateUI();
+            UpdateUI();
         }
 
         private void chkNameTest_CheckedChanged(object sender, EventArgs e)
         {
-            if (!this.chkNameTest.Checked)
+            if (!chkNameTest.Checked)
             {
-                this.chkFilesizeTest.Checked = false;
-                this.chkMIssingTest.Checked = false;
+                chkFilesizeTest.Checked = false;
+                chkMIssingTest.Checked = false;
             }
 
-            updateUI();
+            UpdateUI();
         }
 
         private void chkMIssingTest_CheckedChanged(object sender, EventArgs e)
         {
-            if (!this.chkMIssingTest.Checked)
-                this.chkFilesizeTest.Checked = false;
-            if (this.chkMIssingTest.Checked)
-                this.chkNameTest.Checked = true;
+            if (!chkMIssingTest.Checked)
+                chkFilesizeTest.Checked = false;
+            if (chkMIssingTest.Checked)
+                chkNameTest.Checked = true;
 
-            updateUI();
+            UpdateUI();
         }
 
         private void chkFilesizeTest_CheckedChanged(object sender, EventArgs e)
         {
-            if (this.chkFilesizeTest.Checked)
+            if (chkFilesizeTest.Checked)
             {
-                this.chkNameTest.Checked = true;
-                this.chkMIssingTest.Checked = true;
+                chkNameTest.Checked = true;
+                chkMIssingTest.Checked = true;
                 }
 
-            updateUI();
+            UpdateUI();
         }
 
         private void lvDuplicates_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Right)
                 return;
-            if (this.lvDuplicates.SelectedItems.Count == 0)
+            if (lvDuplicates.SelectedItems.Count == 0)
                 return;
 
-            this.mlastSelected = (PossibleDuplicateEpisode) this.lvDuplicates.SelectedItems[0].Tag;
-            this.mlastClicked = this.lvDuplicates.SelectedItems[0];
-            Point pt = this.lvDuplicates.PointToScreen(new Point(e.X, e.Y));
+            mlastSelected = (PossibleDuplicateEpisode) lvDuplicates.SelectedItems[0].Tag;
+            mlastClicked = lvDuplicates.SelectedItems[0];
+            Point pt = lvDuplicates.PointToScreen(new Point(e.X, e.Y));
 
-            this.duplicateRightClickMenu.Items.Clear();
+            duplicateRightClickMenu.Items.Clear();
 
             //kEpisodeGuideForShow = 1,
             ToolStripMenuItem tsi;
             tsi = new ToolStripMenuItem("Episode Guide") {Tag = (int) RightClickCommands.kEpisodeGuideForShow};
-            this.duplicateRightClickMenu.Items.Add(tsi);
+            duplicateRightClickMenu.Items.Add(tsi);
 
 
             //kForceRefreshSeries,
             tsi = new ToolStripMenuItem("Force Refresh") {Tag = (int) RightClickCommands.kForceRefreshSeries};
-            this.duplicateRightClickMenu.Items.Add(tsi);
+            duplicateRightClickMenu.Items.Add(tsi);
 
             //kEditShow,
             tsi = new ToolStripMenuItem("Edit Show") {Tag = (int) RightClickCommands.kEditShow};
-            this.duplicateRightClickMenu.Items.Add(tsi);
+            duplicateRightClickMenu.Items.Add(tsi);
 
             //kEditSeason,
-            tsi = new ToolStripMenuItem("Edit " + (this.mlastSelected.SeasonNumber == 0
+            tsi = new ToolStripMenuItem("Edit " + (mlastSelected.SeasonNumber == 0
                                             ? TVSettings.Instance.SpecialsFolderName
-                                            : TVSettings.Instance.defaultSeasonWord + " " + this.mlastSelected.SeasonNumber));
+                                            : TVSettings.Instance.defaultSeasonWord + " " + mlastSelected.SeasonNumber));
             tsi.Tag = (int) RightClickCommands.kEditSeason;
-            this.duplicateRightClickMenu.Items.Add(tsi);
+            duplicateRightClickMenu.Items.Add(tsi);
 
-            this.duplicateRightClickMenu.Items.Add(new ToolStripSeparator());
+            duplicateRightClickMenu.Items.Add(new ToolStripSeparator());
 
             //kAddRule,
             tsi = new ToolStripMenuItem("Add Rule") {Tag = (int) RightClickCommands.kAddRule};
-            this.duplicateRightClickMenu.Items.Add(tsi);
+            duplicateRightClickMenu.Items.Add(tsi);
 
-            this.duplicateRightClickMenu.Show(pt);
+            duplicateRightClickMenu.Show(pt);
         }
 
 
         public void duplicateRightClickMenu_ItemClicked(object sender,
             ToolStripItemClickedEventArgs e)
         {
-            this.duplicateRightClickMenu.Close();
+            duplicateRightClickMenu.Close();
 
             if (e.ClickedItem.Tag != null)
             {
 
                 RightClickCommands n = (RightClickCommands) e.ClickedItem.Tag;
 
-                ShowItem si = this.mlastSelected?.ShowItem;
+                ShowItem si = mlastSelected?.ShowItem;
 
                 switch (n)
                 {
                     case RightClickCommands.kEpisodeGuideForShow: // epguide
-                        if (this.mlastSelected != null)
-                            this.mainUI.GotoEpguideFor(this.mlastSelected.Episode, true);
+                        if (mlastSelected != null)
+                            mainUI.GotoEpguideFor(mlastSelected.Episode, true);
                         else
                         {
                             if (si != null)
-                                this.mainUI.GotoEpguideFor(si, true);
+                                mainUI.GotoEpguideFor(si, true);
                         }
                         Close();
                         break;
@@ -186,28 +187,28 @@ namespace TVRename.Forms
 
                     case RightClickCommands.kForceRefreshSeries:
                         if (si != null)
-                            this.mainUI.ForceRefresh(new List<ShowItem> {this.mlastSelected.ShowItem});
+                            mainUI.ForceRefresh(new List<ShowItem> {mlastSelected.ShowItem});
                         Close();
                         break;
                     case RightClickCommands.kEditShow:
                         if (si != null)
-                            this.mainUI.EditShow(si);
+                            mainUI.EditShow(si);
                         break;
 
                     case RightClickCommands.kEditSeason:
                         if (si != null)
-                            this.mainUI.EditSeason(si, this.mlastSelected.SeasonNumber);
+                            mainUI.EditSeason(si, mlastSelected.SeasonNumber);
                         break;
                     case RightClickCommands.kAddRule:
                         ShowRule sr = new ShowRule();
                         sr.DoWhatNow = RuleAction.kMerge;
-                        sr.First = this.mlastSelected.episodeOne.AppropriateEpNum;
-                        sr.Second  = this.mlastSelected.episodeTwo.AppropriateEpNum;
+                        sr.First = mlastSelected.episodeOne.AppropriateEpNum;
+                        sr.Second  = mlastSelected.episodeTwo.AppropriateEpNum;
 
-                        si?.AddSeasonRule(this.mlastSelected.SeasonNumber,sr);
+                        si?.AddSeasonRule(mlastSelected.SeasonNumber,sr);
 
-                        this.lvDuplicates.Items.Remove(this.mlastClicked);
-                        this.dupEps.Remove(this.mlastSelected);
+                        lvDuplicates.Items.Remove(mlastClicked);
+                        dupEps.Remove(mlastSelected);
                         break;
                     default:
                     {
@@ -241,7 +242,7 @@ namespace TVRename.Forms
                 }
             }
 
-            this.mlastSelected = null;
+            mlastSelected = null;
         }
 
     }

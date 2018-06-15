@@ -28,13 +28,13 @@ namespace TVRename
                 {
                     file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
 
-                    foreach (Item action in this.TheActionList)
+                    foreach (Item action in TheActionList)
                     {
                         if (action is ItemMissing im)
                         {
                             ProcessedEpisode pe = im.Episode;
                             DateTime? dt = pe.GetAirDateDT(true);
-                            file.WriteLine($"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.NumsAsString()},\"{pe.Name}\",{dt:G},\"{action.TargetFolder}\",\"{im.Filename }\",{pe.SeriesID}");
+                            file.WriteLine($"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.NumsAsString()},\"{pe.Name}\",{dt:G},\"{action.TargetFolder}\",\"{im.Filename }\",{pe.SeriesId}");
                         }
 
                     }

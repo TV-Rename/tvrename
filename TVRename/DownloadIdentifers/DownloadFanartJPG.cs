@@ -3,14 +3,14 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class DownloadFanartJPG : DownloadIdentifier
+    class DownloadFanartJpg : DownloadIdentifier
     {
-        private static List<string> doneFanartJPG;
-        private const string defaultFileName = "fanart.jpg";
+        private static List<string> DoneFanartJpg;
+        private const string DEFAULT_FILE_NAME = "fanart.jpg";
 
-        public DownloadFanartJPG() 
+        public DownloadFanartJpg() 
         {
-            reset();
+            Reset();
         }
 
         public override DownloadType GetDownloadType()
@@ -23,27 +23,27 @@ namespace TVRename
             //We only want to do something if the fanart option is enabled. If the KODI option is enabled then let it do the work.
             if ((TVSettings.Instance.FanArtJpg) && !TVSettings.Instance.KODIImages)
             {
-                ItemList TheActionList = new ItemList();
-                FileInfo fi = FileHelper.FileInFolder(si.AutoAdd_FolderBase, defaultFileName);
+                ItemList theActionList = new ItemList();
+                FileInfo fi = FileHelper.FileInFolder(si.AutoAdd_FolderBase, DEFAULT_FILE_NAME);
 
                 bool doesntExist =  !fi.Exists;
-                if ((forceRefresh ||doesntExist) &&(!doneFanartJPG.Contains(fi.FullName)))
+                if ((forceRefresh ||doesntExist) &&(!DoneFanartJpg.Contains(fi.FullName)))
                 {
                     string bannerPath = si.TheSeries().GetSeriesFanartPath();
 
                     if (!string.IsNullOrEmpty(bannerPath))
-                        TheActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, false));
-                    doneFanartJPG.Add(fi.FullName);
+                        theActionList.Add(new ActionDownloadImage(si, null, fi, bannerPath, false));
+                    DoneFanartJpg.Add(fi.FullName);
                 }
-                return TheActionList;
+                return theActionList;
 
             }
             return base.ProcessShow(si, forceRefresh);
         }
 
-        public sealed override void reset()
+        public sealed override void Reset()
         {
-            doneFanartJPG = new List<string>(); 
+            DoneFanartJpg = new List<string>(); 
         }
 
     }
