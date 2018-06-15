@@ -167,16 +167,8 @@ namespace TVRename
 
         public override int IconNumber => 5;
 
-        public override IgnoreItem Ignore
-        {
-            get
-            {
-                if (Destination == null)
-                    return null;
-                return new IgnoreItem(Destination.FullName);
-            }
-        }
-
+        public override IgnoreItem Ignore => GenerateIgnore(Destination?.FullName);
+        
         public override ListViewItem ScanListViewItem
         {
             get
@@ -187,18 +179,7 @@ namespace TVRename
 
                 lvi.SubItems.Add(Episode?.AppropriateSeasonNumber.ToString() ?? "");
                 lvi.SubItems.Add(Episode?.NumsAsString() ?? "");
-
-                if (Episode != null)
-                {
-                    DateTime? dt = Episode.GetAirDateDT(true);
-                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                        lvi.SubItems.Add(dt.Value.ToShortDateString());
-                    else
-                        lvi.SubItems.Add("");
-                }
-                else
-                    lvi.SubItems.Add("");
-
+                lvi.SubItems.Add(Episode != null ? Episode.GetAirDateDT(true).PrettyPrint() : "");
                 lvi.SubItems.Add(Destination.DirectoryName);
                 lvi.SubItems.Add(Path);
 

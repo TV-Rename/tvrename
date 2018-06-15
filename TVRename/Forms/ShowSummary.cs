@@ -45,8 +45,7 @@ namespace TVRename
         {
             foreach (ShowItem si in mDoc.Library.GetShowItems())
             {
-                ShowSummaryData show = AddShowDetails(si);
-                showList.Add(show);
+                showList.Add(AddShowDetails(si));
             }
         }
 

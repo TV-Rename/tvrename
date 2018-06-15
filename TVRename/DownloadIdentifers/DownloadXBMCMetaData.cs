@@ -69,9 +69,6 @@ namespace TVRename
             return theActionList;
         }
 
-        public sealed override void Reset()
-        {
-            DoneNfo = new List<string>();
-        }
+        public sealed override void Reset() => DoneNfo = new List<string>();
     }
 }

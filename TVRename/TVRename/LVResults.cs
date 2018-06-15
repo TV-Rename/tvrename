@@ -99,7 +99,7 @@ namespace TVRename
                 if (action is ActionCopyMoveRename)
                 {
                     ActionCopyMoveRename cmr = action as ActionCopyMoveRename;
-                    if (cmr.Operation == ActionCopyMoveRename.Op.Rename)
+                    if (cmr.Operation == ActionCopyMoveRename.Op.rename)
                         Rename.Add(cmr);
                     else // copy/move
                         CopyMove.Add(cmr);

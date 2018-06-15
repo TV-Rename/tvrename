@@ -108,13 +108,13 @@ namespace TVRename
                         ActionCopyMoveRename a1 = cmr1;
                         ActionCopyMoveRename a2 = cmr2;
                         if (!FileHelper.Same(a1.From, a2.From))
-                            a1.Operation = ActionCopyMoveRename.Op.Move;
+                            a1.Operation = ActionCopyMoveRename.Op.move;
                     }
                     else
                     {
                         // last item, or last copymoverename item in the list
                         ActionCopyMoveRename a1 = cmr1;
-                        a1.Operation = ActionCopyMoveRename.Op.Move;
+                        a1.Operation = ActionCopyMoveRename.Op.move;
                     }
                 }
             }
@@ -317,7 +317,7 @@ namespace TVRename
                         }
 
                         if (dce.TheFile.FullName != fi.FullName)
-                            addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Copy,  dce.TheFile, fi, me.Episode,
+                            addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy,  dce.TheFile, fi, me.Episode,
                                 doTidyup ? TVSettings.Instance.Tidyup : null, me));
 
                         DownloadIdentifiersController di = new DownloadIdentifiersController();

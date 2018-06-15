@@ -133,7 +133,6 @@ namespace TVRename.Forms
             tsi = new ToolStripMenuItem("Episode Guide") {Tag = (int) RightClickCommands.kEpisodeGuideForShow};
             duplicateRightClickMenu.Items.Add(tsi);
 
-
             //kForceRefreshSeries,
             tsi = new ToolStripMenuItem("Force Refresh") {Tag = (int) RightClickCommands.kForceRefreshSeries};
             duplicateRightClickMenu.Items.Add(tsi);
@@ -158,8 +157,7 @@ namespace TVRename.Forms
             duplicateRightClickMenu.Show(pt);
         }
 
-
-        public void duplicateRightClickMenu_ItemClicked(object sender,
+        private void duplicateRightClickMenu_ItemClicked(object sender,
             ToolStripItemClickedEventArgs e)
         {
             duplicateRightClickMenu.Close();
@@ -183,11 +181,9 @@ namespace TVRename.Forms
                         }
                         Close();
                         break;
-
-
                     case RightClickCommands.kForceRefreshSeries:
                         if (si != null)
-                            mainUI.ForceRefresh(new List<ShowItem> {mlastSelected.ShowItem});
+                            mainUI.ForceRefresh(new List<ShowItem> {si});
                         Close();
                         break;
                     case RightClickCommands.kEditShow:
@@ -200,51 +196,25 @@ namespace TVRename.Forms
                             mainUI.EditSeason(si, mlastSelected.SeasonNumber);
                         break;
                     case RightClickCommands.kAddRule:
-                        ShowRule sr = new ShowRule();
-                        sr.DoWhatNow = RuleAction.kMerge;
-                        sr.First = mlastSelected.episodeOne.AppropriateEpNum;
-                        sr.Second  = mlastSelected.episodeTwo.AppropriateEpNum;
+                        if (mlastSelected != null)
+                        {
+                            ShowRule sr = mlastSelected.GenerateRule();
 
-                        si?.AddSeasonRule(mlastSelected.SeasonNumber,sr);
+                            si?.AddSeasonRule(mlastSelected.SeasonNumber, sr);
 
-                        lvDuplicates.Items.Remove(mlastClicked);
-                        dupEps.Remove(mlastSelected);
+                            lvDuplicates.Items.Remove(mlastClicked);
+                            dupEps.Remove(mlastSelected);
+                        }
                         break;
                     default:
                     {
-/*                        if ((n >= RightClickCommands.kWatchBase) && (n < RightClickCommands.kOpenFolderBase))
-                        {
-                            int wn = n - RightClickCommands.kWatchBase;
-                            if ((this.mLastFL != null) && (wn >= 0) && (wn < this.mLastFL.Count))
-                                Helpers.SysOpen(this.mLastFL[wn].FullName);
-                        }
-                        else if (n >= RightClickCommands.kOpenFolderBase)
-                        {
-                            int fnum = n - RightClickCommands.kOpenFolderBase;
-
-                            if (fnum < this.mFoldersToOpen.Count)
-                            {
-                                string folder = this.mFoldersToOpen[fnum];
-
-                                if (Directory.Exists(folder))
-                                    Helpers.SysOpen(folder);
-                            }
-
-                            return;
-                        }
-                        else*/
                             System.Diagnostics.Debug.Fail("Unknown right-click action " + n);
-
                             break;
-
-
-                }
+                    }
                 }
             }
-
             mlastSelected = null;
         }
-
     }
 }
 

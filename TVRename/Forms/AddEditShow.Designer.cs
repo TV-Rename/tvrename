@@ -652,7 +652,6 @@ namespace TVRename
             this.label8.TabIndex = 9;
             this.label8.Text = "Aliases";
             this.label8.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
             // AddEditShow
             // 

@@ -12,18 +12,17 @@ namespace TVRename
 
         public enum Op
         {
-            Copy,
-            Move,
-            Rename
+            copy,
+            move,
+            rename
         }
 
         #endregion
 
-        public FileInfo From;
+        public readonly FileInfo From;
         public Op Operation;
-        public FileInfo To;
-        public ItemMissing UndoItemMissing;
-
+        public readonly FileInfo To;
+        public readonly ItemMissing UndoItemMissing;
 
         public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup,ItemMissing undoItem)
         {
@@ -41,7 +40,6 @@ namespace TVRename
         public override string Name => IsMoveRename() ? "Move" : "Copy";
 
         public override string ProgressText => To.Name;
-
 
         // 0.0 to 100.0
         public override long SizeOfWork => QuickOperation() ? 10000 : SourceFileSize();
@@ -75,7 +73,7 @@ namespace TVRename
                 else
                 {
                     //we are copying
-                    Debug.Assert(Operation == Op.Copy);
+                    Debug.Assert(Operation == Op.copy);
 
                     // This step could be slow, so report progress
                     CopyMoveResult copyResult = File.Copy(From.FullName, tempName, CopyOptions.None, true, CopyProgressCallback, null);
@@ -90,13 +88,13 @@ namespace TVRename
 
                 switch (Operation)
                 {
-                    case Op.Move:
+                    case Op.move:
                         stats.FilesMoved++;
                         break;
-                    case Op.Rename:
+                    case Op.rename:
                         stats.FilesRenamed++;
                         break;
-                    case Op.Copy:
+                    case Op.copy:
                         stats.FilesCopied++;
                         break;
                     default:
@@ -123,7 +121,7 @@ namespace TVRename
 
             try
             {
-                if (Operation == Op.Move && Tidyup != null && Tidyup.DeleteEmpty)
+                if (Operation == Op.move && Tidyup != null && Tidyup.DeleteEmpty)
                 {
                     Logger.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
                     DoTidyup(From.Directory);
@@ -139,11 +137,7 @@ namespace TVRename
             return !Error;
         }
 
-
-
         public override string Produces => To.FullName;
-
-        
 
         public override bool SameAs(Item o)
         {
@@ -169,11 +163,8 @@ namespace TVRename
             return string.Compare(s1, s2, StringComparison.Ordinal);
         }
 
-
-
         public override int IconNumber => IsMoveRename() ? 4 : 3;
         #endregion
-
 
         #region Item Members
         public override IgnoreItem Ignore => To == null ? null : new IgnoreItem(To.FullName);
@@ -184,11 +175,11 @@ namespace TVRename
             {
                 switch (Operation)
                 {
-                    case Op.Rename:
+                    case Op.rename:
                         return "lvgActionRename";
-                    case Op.Copy:
+                    case Op.copy:
                         return "lvgActionCopy";
-                    case Op.Move:
+                    case Op.move:
                         return "lvgActionMove";
                     default:
                         return "lvgActionCopy";
@@ -229,16 +220,10 @@ namespace TVRename
             return CopyMoveProgressResult.Continue;
         }
 
-
-
-        // --------------------------------------------------------------------------------------------------------
-
-        public bool IsMoveRename() // same thing to the OS
-            => (Operation == Op.Move) || (Operation == Op.Rename);
+        private bool IsMoveRename() // same thing to the OS
+            => (Operation == Op.move) || (Operation == Op.rename);
 
         public bool SameSource(ActionCopyMoveRename o) => FileHelper.Same(From, o.From);
-
-        // ========================================================================================================
 
         private long SourceFileSize()
         {
@@ -252,9 +237,9 @@ namespace TVRename
             }
         }
 
-        public override string FileInfo1 => From.DirectoryName;
-        public override string FileInfo2 => From.Name;
-        public override string FileInfo3 => To.DirectoryName;
-        public override string FileInfo4 => To.Name;
+        protected override string FileInfo1 => From.DirectoryName;
+        protected override string FileInfo2 => From.Name;
+        protected override string FileInfo3 => To.DirectoryName;
+        protected override string FileInfo4 => To.Name;
     }
 }

@@ -3,7 +3,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
-    class DownloadEpisodeJpg : DownloadIdentifier
+    internal class DownloadEpisodeJpg : DownloadIdentifier
     {
         private const string DEFAULT_EXTENSION = ".jpg";
 
@@ -26,10 +26,6 @@ namespace TVRename
                 theActionList.Add(new ActionDownloadImage(dbep.SI, dbep, imgjpg, ban, TVSettings.Instance.ShrinkLargeMede8erImages));
 
             return theActionList;
-        }
-
-        public override void Reset()
-        {
         }
     }
 }

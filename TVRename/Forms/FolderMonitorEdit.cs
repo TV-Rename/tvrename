@@ -47,6 +47,7 @@ namespace TVRename
 
         private void CodeChanged(object sender, EventArgs e)
         {
+            //Nothing to do
         }
 
         private void bnCancel_Click(object sender, EventArgs e)

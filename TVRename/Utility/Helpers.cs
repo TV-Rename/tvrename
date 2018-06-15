@@ -128,6 +128,16 @@ namespace TVRename
             }
         }
 
+        public static string PrettyPrint(this DateTime? dt)
+        {
+            if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
+                return dt.Value.ToShortDateString();
+
+            return string.Empty;
+        }
+
+
+
         public static long ToUnixTime(this DateTime date)
         {
             return Convert.ToInt64((date.ToUniversalTime() - Epoch).TotalSeconds);

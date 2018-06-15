@@ -455,6 +455,9 @@ namespace TVRename
 
                         break;
                     }
+                    default:
+                        throw new ArgumentException("Inappropriate ruleType " + sr.DoWhatNow);
+
                 } // switch DoWhatNow
 
                 Renumber(eis);

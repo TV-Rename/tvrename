@@ -12,10 +12,10 @@ namespace TVRename
         public override long SizeOfWork => 100;
         public override int IconNumber => 9;
         public override string ScanListViewGroup => "lvgActionDelete";
-        public override string FileInfo1 => TargetFolder;
-        public override string FileInfo2 => ProgressText;
-        public override string FileInfo3 => string.Empty;
-        public override string FileInfo4 => string.Empty;
+        protected override string FileInfo1 => TargetFolder;
+        protected override string FileInfo2 => ProgressText;
+        protected override string FileInfo3 => string.Empty;
+        protected override string FileInfo4 => string.Empty;
     }
     public class ActionDeleteFile : ActionDelete
     {

@@ -25,6 +25,11 @@ namespace TVRename
         public ProcessedEpisode Episode { get; protected set; } // associated episode
         public abstract int Compare(Item o); // for sorting items in scan list (ActionItemSorter)
         public abstract bool SameAs(Item o); // are we the same thing as that other one?
+
+        protected static IgnoreItem GenerateIgnore(string file)
+        {
+            return string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
+        }
     }
 
     public abstract class ItemInProgress : Item
@@ -33,16 +38,8 @@ namespace TVRename
 
         public override string ScanListViewGroup => "lvgDownloading";
 
-        public override IgnoreItem Ignore
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(DesiredLocationNoExt))
-                    return null;
-                return new IgnoreItem(DesiredLocationNoExt);
-            }
-        }
-
+        public override IgnoreItem Ignore => GenerateIgnore(DesiredLocationNoExt);
+        
         public override string TargetFolder
         {
             get
@@ -58,28 +55,20 @@ namespace TVRename
             get
             {
                 ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
-
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
-                DateTime? dt = Episode.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
-                else
-                    lvi.SubItems.Add("");
-
+                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
                 lvi.SubItems.Add(FileIdentifier);
                 lvi.SubItems.Add(Destination);
                 lvi.SubItems.Add(Remaining);
-
                 lvi.Tag = this;
-
                 return lvi;
             }
         }
 
-        public abstract string FileIdentifier { get; }
-        public abstract string Destination { get; }
-        public abstract string Remaining { get; }
+        protected abstract string FileIdentifier { get; }
+        protected abstract string Destination { get; }
+        protected abstract string Remaining { get; }
     }
 
     public abstract class Action : Item // Something we can do
@@ -260,11 +249,7 @@ namespace TVRename
                     lvi.Text = Episode.TheSeries.Name;
                     lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(Episode.NumsAsString());
-                    DateTime? dt = Episode.GetAirDateDT(true);
-                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                        lvi.SubItems.Add(dt.Value.ToShortDateString());
-                    else
-                        lvi.SubItems.Add("");
+                    lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
                 }
 
                 lvi.SubItems.Add(FileInfo1);
@@ -276,10 +261,10 @@ namespace TVRename
             }
         }
 
-        public abstract string FileInfo1 { get; }
-        public abstract string FileInfo2 { get; }
-        public abstract string FileInfo3 { get; }
-        public abstract string FileInfo4 { get; }
+        protected abstract string FileInfo1 { get; }
+        protected abstract string FileInfo2 { get; }
+        protected abstract string FileInfo3 { get; }
+        protected abstract string FileInfo4 { get; }
     }
 
     public abstract class ActionWriteMetadata : ActionDownload
@@ -318,11 +303,7 @@ namespace TVRename
                     lvi.Text = Episode.SI.ShowName;
                     lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(Episode.NumsAsString());
-                    DateTime? dt = Episode.GetAirDateDT(true);
-                    if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                        lvi.SubItems.Add(dt.Value.ToShortDateString());
-                    else
-                        lvi.SubItems.Add("");
+                    lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
                 }
                 else
                 {
