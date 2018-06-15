@@ -136,8 +136,6 @@ namespace TVRename
             return string.Empty;
         }
 
-
-
         public static long ToUnixTime(this DateTime date)
         {
             return Convert.ToInt64((date.ToUniversalTime() - Epoch).TotalSeconds);

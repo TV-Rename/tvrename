@@ -1921,7 +1921,6 @@ namespace TVRename
                     Revert(false);
                     break;
                 case RightClickCommands.kActionBrowseForFile:
-                    {
                     if ((mLastActionsClicked != null) && (mLastActionsClicked.Count > 0))
                     {
                         BrowseForMissingItem((ItemMissing)mLastActionsClicked[0]);
@@ -1929,7 +1928,6 @@ namespace TVRename
                         FillActionList();
                     }
                     break;
-                    }
                 case RightClickCommands.kActionIgnore:
                     IgnoreSelected();
                     break;
@@ -1949,15 +1947,15 @@ namespace TVRename
                 {
                     //The entries immedately above WatchBase are the Watchxx commands and the paths are stored in mLastFL
                     if ((n >= RightClickCommands.kWatchBase) && (n < RightClickCommands.kOpenFolderBase))
-                        {
-                            WatchEpisode(n - RightClickCommands.kWatchBase);
-                        }
-                        else if (n >= RightClickCommands.kOpenFolderBase)
-                        {
-                            OpenFolderForShow(n - RightClickCommands.kOpenFolderBase);
-                            return;
-                        }
-                        else
+                    {
+                        WatchEpisode(n - RightClickCommands.kWatchBase);
+                    }
+                    else if (n >= RightClickCommands.kOpenFolderBase)
+                    {
+                        OpenFolderForShow(n - RightClickCommands.kOpenFolderBase);
+                        return;
+                    }
+                    else
                         Debug.Fail("Unknown right-click action " + n);
                     break;
                 }

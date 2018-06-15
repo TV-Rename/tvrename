@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace TVRename
 {
     public class PossibleDuplicateEpisode
-
     {
         private readonly ProcessedEpisode episodeOne;
         private readonly ProcessedEpisode episodeTwo;
@@ -25,7 +23,6 @@ namespace TVRename
             this.OneFound = oneFound;
             this.LargeFileSize = largeFileSize;
         }
-
 
         public ListViewItem PresentationView
         {
@@ -62,8 +59,6 @@ namespace TVRename
                 First = episodeOne.AppropriateEpNum,
                 Second = episodeTwo.AppropriateEpNum
             };
-
         }
     }
-
 }
