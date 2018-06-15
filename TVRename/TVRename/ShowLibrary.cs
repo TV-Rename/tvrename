@@ -38,7 +38,6 @@ namespace TVRename
         {
             if (SeasonWordsCache == null) SeasonWordsCache = GetSeasonWords();
             return SeasonWordsCache;
-
         }
 
         public List<string> getGenres()
@@ -89,12 +88,9 @@ namespace TVRename
             return distinctValues;
         }
 
-
         public int getMinYear() => this.Min(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
 
         public int getMaxYear() => this.Max(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
-
-
 
         public List<ShowItem> GetShowItems()
         {
@@ -102,7 +98,6 @@ namespace TVRename
             returnList.Sort(TVRename.ShowItem.CompareShowItemNames);
             return returnList;
         }
-
 
         public ShowItem ShowItem(int id)
         {
@@ -615,7 +610,7 @@ namespace TVRename
 
         public IEnumerable<ProcessedEpisode> GetRecentAndFutureEps(int days)
         {
-            List<ProcessedEpisode> returnList = new List<ProcessedEpisode> { };
+            List<ProcessedEpisode> returnList = new List<ProcessedEpisode> ();
 
             foreach (ShowItem si in Values)
             {
@@ -656,9 +651,7 @@ namespace TVRename
             return returnList;
         }
 
-
-
-        public void LoadFromXML(XmlReader r2)
+        public void LoadFromXml(XmlReader r2)
         {
             r2.Read();
             r2.Read();

@@ -333,7 +333,7 @@ namespace TVRename
                         }
                         else if (reader.Name == "MyShows")
                         {
-                            Library.LoadFromXML(reader.ReadSubtree());
+                            Library.LoadFromXml(reader.ReadSubtree());
                             reader.Read();
                         }
                         else if (reader.Name == "MonitorFolders")
