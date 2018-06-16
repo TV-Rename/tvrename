@@ -13,24 +13,23 @@ namespace TVRename
     using System.Windows.Forms;
     using System.Xml;
 
-
     public class ActionMede8erViewXML : ActionWriteMetadata
     {
-        public int Snum;
+        private readonly int snum;
 
         public ActionMede8erViewXML(FileInfo nfo, ShowItem si) : base(nfo, si)
         {
-            Snum = -1;
+            snum = -1;
         }
 
-        public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum) : base(nfo,si)
+        public ActionMede8erViewXML(FileInfo nfo, ShowItem si, int snum) : base(nfo, si)
         {
-            Snum = snum;
+            this.snum = snum;
         }
 
         #region Action Members
 
-        public override  string Name => "Write Mede8er View Data";
+        public override string Name => "Write Mede8er View Data";
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
@@ -39,14 +38,14 @@ namespace TVRename
                 Indent = true,
                 NewLineOnAttributes = true
             };
+
             try
             {
                 using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
                 {
-
                     writer.WriteStartElement("FolderTag");
                     // is it a show or season folder
-                    if (Snum >= 0)
+                    if (snum >= 0)
                     {
                         // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
                         XmlHelper.WriteElementToXml(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
@@ -58,7 +57,6 @@ namespace TVRename
                     }
 
                     writer.WriteEndElement();
-
                 }
             }
 
@@ -68,7 +66,6 @@ namespace TVRename
                 ErrorText = e.Message;
                 Done = true;
                 return false;
-
             }
 
             Done = true;
@@ -88,7 +85,7 @@ namespace TVRename
         {
             ActionMede8erViewXML nfo = o as ActionMede8erViewXML;
 
-            return (Where.FullName).CompareTo(nfo.Where.FullName);
+            return string.Compare((Where.FullName), nfo?.Where.FullName, StringComparison.Ordinal);
         }
 
         #endregion
@@ -99,13 +96,11 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem();
+                ListViewItem lvi = new ListViewItem {Text = SelectedShow.ShowName};
 
-                lvi.Text = SelectedShow.ShowName;
-                lvi.SubItems.Add(Snum > 0 ? Snum.ToString() : "");
+                lvi.SubItems.Add(snum > 0 ? snum.ToString() : "");
                 lvi.SubItems.Add("");
                 lvi.SubItems.Add("");
-
                 lvi.SubItems.Add(Where.DirectoryName);
                 lvi.SubItems.Add(Where.Name);
 
@@ -116,6 +111,5 @@ namespace TVRename
         }
 
         #endregion
-
     }
 }
