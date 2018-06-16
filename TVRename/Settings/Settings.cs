@@ -134,7 +134,7 @@ namespace TVRename
                 }
                 if (IsShowLevel && !IsMetaType)
                 {
-                    return string.Format("Show Status: {0}", StatusTextForDisplay);
+                    return $"Show Status: {StatusTextForDisplay}";
                 }
                 return "";
             }

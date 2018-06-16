@@ -308,7 +308,7 @@ namespace TVRename
                 {
                     JToken currentData = episodeItems.Value;
                     if (currentData.Type == JTokenType.Array)
-                        items[episodeItems.Name] = JsonHelper.Flatten((JToken) currentData);
+                        items[episodeItems.Name] = JsonHelper.Flatten(currentData);
                     else if (currentData.Type != JTokenType.Object
                     ) //Ignore objects here as it is always the 'language' attribute that we do not need
                     {
@@ -375,9 +375,9 @@ namespace TVRename
                 if (string.IsNullOrWhiteSpace(dsn)) ReadDvdSeasonNum = 0;
                 else if (!int.TryParse(dsn, out ReadDvdSeasonNum)) ReadDvdSeasonNum = 0;
 
-                EpisodeGuestStars = JsonHelper.Flatten((JToken) r["guestStars"], "|");
-                EpisodeDirector = JsonHelper.Flatten((JToken) r["directors"], "|");
-                Writer = JsonHelper.Flatten((JToken) r["writers"], "|");
+                EpisodeGuestStars = JsonHelper.Flatten(r["guestStars"], "|");
+                EpisodeDirector = JsonHelper.Flatten(r["directors"], "|");
+                Writer = JsonHelper.Flatten(r["writers"], "|");
 
                 try
                 {

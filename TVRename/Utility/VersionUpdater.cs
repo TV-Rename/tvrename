@@ -147,7 +147,7 @@ public class UpdateVersion : IComparable
             match.Groups["patch"].Success ? int.Parse(match.Groups["patch"].Value) : 0);
 
         Prerelease = match.Groups["pre"].Value.Replace(" ", string.Empty);
-        Build = match.Groups["build"].Value ?? string.Empty;
+        Build = match.Groups["build"].Value;
     }
 
     public int CompareTo(object obj)

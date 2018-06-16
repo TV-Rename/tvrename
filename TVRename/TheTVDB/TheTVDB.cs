@@ -669,10 +669,10 @@ namespace TVRename
                 // if updatetime > localtime for item, then remove it, so it will be downloaded later
                 try
                 {
-                    foreach (JObject series in jsonResponse["data"])
+                    foreach (JObject seriesResponse in jsonResponse["data"])
                     {
-                        int id = (int) series["id"];
-                        long time = (long) series["lastUpdated"];
+                        int id = (int) seriesResponse["id"];
+                        long time = (long) seriesResponse["lastUpdated"];
 
                         if (this.series.ContainsKey(id)) // this is a series we have
                         {
@@ -1243,16 +1243,15 @@ namespace TVRename
                 while (morePages)
                 {
                     string episodeUri = ApiRoot + "/series/" + code + "/episodes";
-                    JObject jsonEpisodeResponse;
                     try
                     {
-                        jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri,
+                        JObject jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri,
                             new Dictionary<string, string> {{"page", pageNumber.ToString()}},
                             tvDbTokenProvider.GetToken());
 
                         episodeResponses.Add(jsonEpisodeResponse);
                         int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
-                        //logger.Info(code + "****" + jsonEpisodeResponse.ToString());
+
                         Logger.Info("Page " + pageNumber + " of " + si.Name + " had " + numberOfResponses +
                                     " episodes listed");
 
@@ -1634,7 +1633,7 @@ namespace TVRename
             {
                 try
                 {
-                    foreach (JObject series in jsonResponse["data"])
+                    foreach (JObject seriesResponse in jsonResponse["data"])
                     {
                         // The <series> returned by GetSeries have
                         // less info than other results from
@@ -1643,7 +1642,7 @@ namespace TVRename
                         // info on it (depending on which one came
                         // first).
 
-                        SeriesInfo si = new SeriesInfo(series, GetLanguageId());
+                        SeriesInfo si = new SeriesInfo(seriesResponse, GetLanguageId());
                         if (this.series.ContainsKey(si.TVDBCode))
                             this.series[si.TVDBCode].Merge(si, GetLanguageId());
                         else
@@ -1662,7 +1661,7 @@ namespace TVRename
                     //we also want to search for search terms that match in default language
                     try
                     {
-                        foreach (JObject series in jsonDefaultLangResponse["data"])
+                        foreach (JObject seriesResponse in jsonDefaultLangResponse["data"])
                         {
                             // The <series> returned by GetSeries have
                             // less info than other results from
@@ -1671,7 +1670,7 @@ namespace TVRename
                             // info on it (depending on which one came
                             // first).
 
-                            SeriesInfo si = new SeriesInfo(series, GetLanguageId());
+                            SeriesInfo si = new SeriesInfo(seriesResponse, GetLanguageId());
                             if (this.series.ContainsKey(si.TVDBCode))
                                 this.series[si.TVDBCode].Merge(si, GetLanguageId());
                             else

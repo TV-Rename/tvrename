@@ -18,7 +18,7 @@ namespace TVRename
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
             if (System.IO.File.Exists(path))
             {

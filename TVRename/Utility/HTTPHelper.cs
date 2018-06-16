@@ -65,7 +65,7 @@ namespace TVRename
 
             foreach (KeyValuePair<string,string>  item in parameters)
             {
-                sb.Append(string.Format("{0}={1}&", item.Key, item.Value));
+                sb.Append($"{item.Key}={item.Value}&");
             }
             string finalUrl = sb.ToString();
             return finalUrl.Remove(finalUrl.LastIndexOf("&"));

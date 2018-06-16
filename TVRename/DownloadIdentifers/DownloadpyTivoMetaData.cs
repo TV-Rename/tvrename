@@ -4,8 +4,6 @@ namespace TVRename
 {
     internal class DownloadpyTivoMetaData : DownloadIdentifier
     {
-        public DownloadpyTivoMetaData() => Reset();
-
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)

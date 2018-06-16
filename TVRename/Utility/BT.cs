@@ -645,23 +645,19 @@ namespace TVRename
             FileCacheWithSubFolders = false;
         }
 
-        protected void Prog(int percent)
-        {
-            if (SetProg != null)
-                SetProg.Invoke(percent);
-        }
+        protected void Prog(int percent) => SetProg?.Invoke(percent);
 
-        public abstract bool NewTorrentEntry(string torrentFile, int numberInTorrent);
+        protected abstract bool NewTorrentEntry(string torrentFile, int numberInTorrent);
 
-        public abstract bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent,
+        protected abstract bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent,
             string nameInTorrent);
 
-        public abstract bool DidNotFindFileOnDiskForFileInTorrent(string torrentFile, int numberInTorrent,
+        protected abstract bool DidNotFindFileOnDiskForFileInTorrent(string torrentFile, int numberInTorrent,
             string nameInTorrent);
 
-        public abstract bool FinishedTorrentEntry(string torrentFile, int numberInTorrent, string filename);
+        protected abstract bool FinishedTorrentEntry(string torrentFile, int numberInTorrent, string filename);
 
-        public FileInfo FindLocalFileWithHashAt(byte[] findMe, long whereInFile, long pieceSize, long fileSize)
+        private FileInfo FindLocalFileWithHashAt(byte[] findMe, long whereInFile, long pieceSize, long fileSize)
         {
             if (whereInFile < 0)
                 return null;
@@ -917,12 +913,12 @@ namespace TVRename
 
         //    String ^secondFolder; // resume.dat location, or where to copy/move to
 
-        public override bool NewTorrentEntry(string torrentFile, int numberInTorrent)
+        protected override bool NewTorrentEntry(string torrentFile, int numberInTorrent)
         {
             return true;
         }
 
-        public override bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent,
+        protected override bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent,
             string nameInTorrent)
         {
             RenameListOut.Add(new ActionCopyMoveRename(
@@ -933,13 +929,13 @@ namespace TVRename
             return true;
         }
 
-        public override bool DidNotFindFileOnDiskForFileInTorrent(string torrentFile, int numberInTorrent,
+        protected override bool DidNotFindFileOnDiskForFileInTorrent(string torrentFile, int numberInTorrent,
             string nameInTorrent)
         {
             return true;
         }
 
-        public override bool FinishedTorrentEntry(string torrentFile, int numberInTorrent, string filename)
+        protected override bool FinishedTorrentEntry(string torrentFile, int numberInTorrent, string filename)
         {
             return true;
         }
@@ -1061,12 +1057,10 @@ namespace TVRename
             List<TorrentEntry> r = new List<TorrentEntry>();
 
             BEncodeLoader bel = new BEncodeLoader();
-            foreach (BTDictionaryItem it in ResumeDat.GetDict().Items)
+            foreach (BTDictionaryItem dictitem in ResumeDat.GetDict().Items)
             {
-                if ((it.Type != BTChunk.kDictionaryItem))
+                if ((dictitem.Type != BTChunk.kDictionaryItem))
                     continue;
-
-                BTDictionaryItem dictitem = (BTDictionaryItem) (it);
 
                 if ((dictitem.Key == ".fileguard") || (dictitem.Data.Type != BTChunk.kDictionary))
                     continue;
@@ -1092,58 +1086,57 @@ namespace TVRename
                     continue;
 
                 List<string> a = tor.AllFilesInTorrent();
-                if (a != null)
+                if (a == null) continue;
+
+                int c = 0;
+
+                p = d2.GetItem("path");
+                if ((p == null) || (p.Type != BTChunk.kString))
+                    continue;
+
+                string defaultFolder = ((BTString) p).AsString();
+
+                BTItem targets = d2.GetItem("targets");
+                bool hasTargets = ((targets != null) && (targets.Type == BTChunk.kList));
+                BTList targetList = (BTList) (targets);
+
+                foreach (string s in a)
                 {
-                    int c = 0;
-
-                    p = d2.GetItem("path");
-                    if ((p == null) || (p.Type != BTChunk.kString))
-                        continue;
-
-                    string defaultFolder = ((BTString) p).AsString();
-
-                    BTItem targets = d2.GetItem("targets");
-                    bool hasTargets = ((targets != null) && (targets.Type == BTChunk.kList));
-                    BTList targetList = (BTList) (targets);
-
-                    foreach (string s in a)
+                    if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip))
                     {
-                        if ((c < prioString.Data.Length) && (prioString.Data[c] != BTPrio.Skip))
+                        try
                         {
-                            try
-                            {
-                                string saveTo = FileHelper
-                                    .FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
+                            string saveTo = FileHelper
+                                .FileInFolder(defaultFolder, TVSettings.Instance.FilenameFriendly(s)).Name;
 
-                                if (hasTargets)
+                            if (hasTargets)
+                            {
+                                // see if there is a target for this (the c'th) file
+                                foreach (BTItem t in targetList.Items)
                                 {
-                                    // see if there is a target for this (the c'th) file
-                                    foreach (BTItem t in targetList.Items)
+                                    BTList l = (BTList) (t);
+                                    BTInteger n = (BTInteger) (l.Items[0]);
+                                    BTString dest = (BTString) (l.Items[1]);
+                                    if (n.Value == c)
                                     {
-                                        BTList l = (BTList) (t);
-                                        BTInteger n = (BTInteger) (l.Items[0]);
-                                        BTString dest = (BTString) (l.Items[1]);
-                                        if (n.Value == c)
-                                        {
-                                            saveTo = dest.AsString();
-                                            break;
-                                        }
+                                        saveTo = dest.AsString();
+                                        break;
                                     }
                                 }
+                            }
 
-                                int percent = (a.Count == 1) ? PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
-                                TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent);
-                                r.Add(te);
-                            }
-                            catch (PathTooLongException ptle)
-                            {
-                                //this is not the file we are looking for
-                                logger.Debug(ptle);
-                            }
+                            int percent = (a.Count == 1) ? PercentBitsOn((BTString) (d2.GetItem("have"))) : -1;
+                            TorrentEntry te = new TorrentEntry(torrentFile, saveTo, percent);
+                            r.Add(te);
                         }
-
-                        c++;
+                        catch (PathTooLongException ptle)
+                        {
+                            //this is not the file we are looking for
+                            logger.Debug(ptle);
+                        }
                     }
+
+                    c++;
                 }
             }
 
@@ -1379,7 +1372,7 @@ namespace TVRename
             s.Close();
         }
 
-        public override bool NewTorrentEntry(string torrentFile, int numberInTorrent)
+        protected override bool NewTorrentEntry(string torrentFile, int numberInTorrent)
         {
             NewLocation = "";
             PrioWasSet = false;
@@ -1387,7 +1380,7 @@ namespace TVRename
             return true;
         }
 
-        public override bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent,
+        protected override bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent,
             string nameInTorrent)
         {
             NewLocation = onDisk.FullName;
@@ -1401,7 +1394,7 @@ namespace TVRename
             return true;
         }
 
-        public override bool DidNotFindFileOnDiskForFileInTorrent(string torrentFile, int numberInTorrent,
+        protected override bool DidNotFindFileOnDiskForFileInTorrent(string torrentFile, int numberInTorrent,
             string nameInTorrent)
         {
             Type = "Not Found";
@@ -1412,7 +1405,7 @@ namespace TVRename
             return true;
         }
 
-        public override bool FinishedTorrentEntry(string torrentFile, int numberInTorrent, string filename)
+        protected override bool FinishedTorrentEntry(string torrentFile, int numberInTorrent, string filename)
         {
             if (DoMatchMissing)
             {

@@ -367,8 +367,8 @@ namespace TVRename
             //save them all into the Items array for safe keeping
             foreach (JProperty seriesItems in r.Children<JProperty>())
             {
-                if (seriesItems.Name == "aliases") Items[seriesItems.Name] = JsonHelper.Flatten((JToken)seriesItems.Value, "|");
-                else if (seriesItems.Name == "genre") Items[seriesItems.Name] = JsonHelper.Flatten((JToken)seriesItems.Value, "|");
+                if (seriesItems.Name == "aliases") Items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
+                else if (seriesItems.Name == "genre") Items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
                 else try
                     {
                         if (seriesItems.Value != null) Items[seriesItems.Name] = (string)seriesItems.Value;
@@ -384,8 +384,7 @@ namespace TVRename
                 Name = (string)r["seriesName"];
             }
 
-            long updateTime;
-            if (long.TryParse((string)r["lastUpdated"], out updateTime) )
+            if (long.TryParse((string)r["lastUpdated"], out long updateTime) )
                 SrvLastUpdated = updateTime;
             else
                 SrvLastUpdated = 0;
@@ -454,7 +453,7 @@ namespace TVRename
             
             if ((string.IsNullOrWhiteSpace(Items["aliases"])))
             {
-                Items["aliases"] = JsonHelper.Flatten((JToken)backupLanguageR["aliases"], "|");
+                Items["aliases"] = JsonHelper.Flatten(backupLanguageR["aliases"], "|");
             }
 
             if ((string.IsNullOrWhiteSpace(Items["runtime"])))

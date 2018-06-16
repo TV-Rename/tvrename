@@ -293,7 +293,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         private bool LoadXMLSettings(FileInfo from)
         {
-            logger.Info("Loading Settings from {0}", from.FullName);
+            logger.Info("Loading Settings from {0}", from?.FullName);
             if (from == null)
                 return true;
 
@@ -853,10 +853,9 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             foreach (Item item in TheActionList)
             {
-                Item act = (Item) item;
                 foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
                 {
-                    if (!ii.SameFileAs(act.Ignore)) continue;
+                    if (!ii.SameFileAs(item.Ignore)) continue;
                     toRemove.Add(item);
                     break;
                 }
@@ -1879,6 +1878,7 @@ namespace TVRename
 
             return ((seas != -1) || (ep != -1));
         }
+
 
         private void ReleaseUnmanagedResources()
         {

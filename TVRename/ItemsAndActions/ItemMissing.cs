@@ -29,7 +29,7 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ItemMissing) && (string.CompareOrdinal((o as ItemMissing).TheFileNoExt, TheFileNoExt) == 0);
+            return (o is ItemMissing missing) && (string.CompareOrdinal(missing.TheFileNoExt, TheFileNoExt) == 0);
         }
 
         public override int Compare(Item o)
