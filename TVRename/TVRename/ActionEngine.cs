@@ -10,7 +10,6 @@ namespace TVRename
     /// </summary>
     public class ActionEngine
     {
-        
         private Thread actionProcessorThread;
         private bool actionPause;
         private List<Thread> actionWorkers;
@@ -25,19 +24,24 @@ namespace TVRename
         /// <summary>
         /// Asks for execution to pause
         /// </summary>
-        public void Pause() { actionPause = true; }
-        
+        public void Pause()
+        {
+            actionPause = true;
+        }
+
         /// <summary>
         /// Asks for execution to resume
         /// </summary>
-        public void Unpause() { actionPause = false; }
+        public void Unpause()
+        {
+            actionPause = false;
+        }
 
         public ActionEngine(TVRenameStats stats)
         {
             mStats = stats;
-
         }
-        
+
         /// <summary>
         /// Processes an Action by running it.
         /// </summary>
@@ -59,7 +63,6 @@ namespace TVRename
                     action.Go(ref actionPause, mStats);
                 }
 
-
                 actionSemaphores[info.SemaphoreNumber].Release(1);
             }
             catch (Exception e)
@@ -68,8 +71,6 @@ namespace TVRename
                 return;
             }
         }
-
-
 
         private void WaitForAllActionThreadsAndTidyUp()
         {
@@ -85,8 +86,6 @@ namespace TVRename
             actionWorkers = null;
             actionSemaphores = null;
         }
-
-
 
         /// <summary>
         /// Processes a set of actions, running them in a multi-threaded way based on the application's settings.
@@ -123,19 +122,19 @@ namespace TVRename
 
             actionProcessorThread.Join();
 
-            theList.RemoveAll(x => (x is Action) && ((Action)x).Done && !((Action)x).Error);
+            theList.RemoveAll(x => (x is Action) && ((Action) x).Done && !((Action) x).Error);
 
             foreach (Item sli in theList)
             {
                 if (sli is Action slia)
                 {
-                    logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name, slia.ToString(), slia.ErrorText);
+                    logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name,
+                        slia.ToString(), slia.ErrorText);
                 }
             }
 
             logger.Info("Completed Selected Actions");
             logger.Info("**************************");
-
         }
 
         private void ActionProcessor(object queuesIn)
@@ -158,14 +157,14 @@ namespace TVRename
                     actionSemaphores[i] =
                         new Semaphore(queues[i].ParallelLimit,
                             queues[i].ParallelLimit); // allow up to numWorkers working at once
+
                     logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name,
                         queues[i].ParallelLimit, i);
                 }
 
-
                 try
                 {
-                    for (; ; )
+                    for (;;)
                     {
                         while (actionPause)
                             Thread.Sleep(100);
@@ -205,12 +204,14 @@ namespace TVRename
                             {
                                 Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"
                             };
+
                             actionWorkers.Add(t);
                             actionStarting = true; // set to false in thread after it has the semaphore
                             t.Start(new ProcessActionInfo(which, act));
 
                             int nfr = actionSemaphores[which]
                                 .Release(1); // release our hold on the semaphore, so that worker can grab it
+
                             threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
                         }
 
@@ -231,6 +232,7 @@ namespace TVRename
                 {
                     foreach (Thread t in actionWorkers)
                         t.Abort();
+
                     WaitForAllActionThreadsAndTidyUp();
                 }
             }
@@ -239,11 +241,10 @@ namespace TVRename
                 logger.Fatal(e, "Unhandled Exception in ActionProcessor");
                 foreach (Thread t in actionWorkers)
                     t.Abort();
+
                 WaitForAllActionThreadsAndTidyUp();
-                return;
             }
         }
-
 
         private static ActionQueue[] ActionProcessorMakeQueues(ItemList theList)
         {
@@ -261,14 +262,16 @@ namespace TVRename
             queues[0] = new ActionQueue("Move/Copy", 1); // cross-filesystem moves (slow ones)
             queues[1] = new ActionQueue("Move/Delete", 1); // local rename/moves
             queues[2] = new ActionQueue("Write Metadata", 4); // writing KODI NFO files, etc.
-            queues[3] = new ActionQueue("Download", TVSettings.Instance.ParallelDownloads); // downloading torrents, banners, thumbnails
+            queues[3] = new ActionQueue("Download",
+                TVSettings.Instance.ParallelDownloads); // downloading torrents, banners, thumbnails
 
             foreach (Item sli in theList)
             {
                 if (!(sli is Action action))
                     continue; // skip non-actions
 
-                if ((action is ActionWriteMetadata) || (action is ActionDateTouch)) // base interface that all metadata actions are derived from
+                if ((action is ActionWriteMetadata) || (action is ActionDateTouch)
+                ) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownloadImage) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
@@ -278,17 +281,15 @@ namespace TVRename
                     queues[1].Actions.Add(action);
                 else
                 {
+                    logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
+                    queues[3].Actions.Add(action); // put it in this queue by default
 #if DEBUG
                     System.Diagnostics.Debug.Fail("Unknown action type for making processing queue");
 #endif
-                    logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
-                    queues[3].Actions.Add(action); // put it in this queue by default
                 }
             }
             return queues;
         }
-
-
         #region Nested type: ProcessActionInfo
 
         private class ProcessActionInfo
@@ -301,9 +302,7 @@ namespace TVRename
                 SemaphoreNumber = n;
                 TheAction = a;
             }
-        };
-
+        }
         #endregion
-
     }
 }

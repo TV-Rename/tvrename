@@ -226,7 +226,7 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             int vMargin = 10;
             // Accomodate the resizing handle's width
-            int hMargin = 10;// SystemInformation.VerticalScrollBarWidth;
+            int hMargin = 10; // SystemInformation.VerticalScrollBarWidth;
 
             // Move the Cancel button
             Win32.RECT rcCancel = new Win32.RECT();
@@ -271,7 +271,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             {
                 // Create a button - button is only auto-created under BIF_NEWDIALOGSTYLE
                 // This is failing, and I don't know why!
-                hBtn = Win32.CreateWindowEx(0x50010000,
+                Win32.CreateWindowEx(0x50010000,
                                             "button",
                                             "&Make New Folder",
                                             0x00000004,
@@ -352,7 +352,6 @@ namespace DaveChambers.FolderBrowserDialogEx
                                                 rcDlg.Height);
             Win32.MoveWindow(hDlg, rcNew, true);
         }
-
     }
 
         internal class Win32
@@ -397,7 +396,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             public const uint BIF_NOTRANSLATETARGETS = 0x0400;  // don't traverse target as shortcut
 
             public const uint BIF_BROWSEFORCOMPUTER = 0x1000;  // Browsing for Computers.
-            public const uint BIF_BROWSEFORPRINTER = 0x2000;// Browsing for Printers
+            public const uint BIF_BROWSEFORPRINTER = 0x2000; // Browsing for Printers
             public const uint BIF_BROWSEINCLUDEFILES = 0x4000; // Browsing for Everything
             public const uint BIF_SHAREABLE = 0x8000;  // sharable resources displayed (remote shares, requires BIF_USENEWUI)
 
@@ -447,9 +446,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             public const int SW_HIDE = 0;
             public const int SW_SHOW = 5;
             [DllImport("user32.dll")]
-            public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);//ShowWindowCommands nCmdShow);
-
-
+            public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow); //ShowWindowCommands nCmdShow);
 
             public const int SWP_ASYNCWINDOWPOS = 0x4000;
             public const int SWP_DEFERERASE = 0x2000;
@@ -472,12 +469,9 @@ namespace DaveChambers.FolderBrowserDialogEx
             public const int HWND_TOPMOST = -1;
             public const int HWND_NOTOPMOST = -2;
 
-
             [DllImport("user32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
             public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int x, int y, int cx, int cy, uint uFlags);
-
-
 
             [DllImport("user32.dll", SetLastError = true)]
             public static extern bool MoveWindow(IntPtr hWnd, int X, int Y, int nWidth, int nHeight, bool bRepaint);
@@ -556,7 +550,6 @@ namespace DaveChambers.FolderBrowserDialogEx
                 return true;
             }
 
-
             public static readonly int GWL_WNDPROC = (-4);
             public static readonly int GWL_HINSTANCE = (-6);
             public static readonly int GWL_HWNDPARENT = (-8);
@@ -579,7 +572,6 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             [DllImport("user32.dll", SetLastError = true)]
             public static extern IntPtr FindWindowEx(IntPtr hwndParent, IntPtr hwndChildAfter, string lpszClass, IntPtr windowTitle);
-
 
             public static readonly uint SHGFI_PIDL = 0x000000008;           // pszPath is a pidl
             public static readonly uint SHGFI_ATTRIBUTES = 0x000000800;     // get attributes
@@ -624,21 +616,6 @@ namespace DaveChambers.FolderBrowserDialogEx
 
             [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto)]
             public static extern IntPtr GetParent(IntPtr hWnd);
-
-            //[DllImport("user32.dll", SetLastError = true)]
-            //public static extern IntPtr CreateWindowEx(
-            //   WindowStylesEx dwExStyle,
-            //   string lpClassName,
-            //   string lpWindowName,
-            //   WindowStyles dwStyle,
-            //   int x,
-            //   int y,
-            //   int nWidth,
-            //   int nHeight,
-            //   IntPtr hWndParent,
-            //   IntPtr hMenu,
-            //   IntPtr hInstance,
-            //   IntPtr lpParam);
 
             [DllImport("user32.dll", SetLastError = true)]
             public static extern IntPtr CreateWindowEx(
