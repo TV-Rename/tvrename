@@ -283,7 +283,7 @@ namespace TVRename
                             Logger.Info($"Added new rule automatically for {sr}");
 
                             //Regenerate the episodes with the new rule added
-                            Doc.Library.GenerateEpisodeDict(me.Episode.SI);
+                            ShowLibrary.GenerateEpisodeDict(me.Episode.SI);
 
                             //Get the newly created processed episode we are after
                             // ReSharper disable once InconsistentNaming

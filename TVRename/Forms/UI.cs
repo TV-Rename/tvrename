@@ -22,6 +22,7 @@ using System.Xml;
 using NLog;
 using TVRename.Forms;
 using TVRename.Ipc;
+using TVRename.Utility;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -139,8 +140,6 @@ namespace TVRename
                 Visible = false;
                 Hide();
             }
-
-            Text = Text + " " + Helpers.DisplayVersion;
 
             UpdateSplashStatus(splash, "Filling Shows");
             FillMyShows();
@@ -616,7 +615,7 @@ namespace TVRename
             ShowFilter filter = TVSettings.Instance.Filter;
             foreach (ShowItem si in sil)
             {
-                if (filter.filter(si)
+                if (filter.Filter(si)
                     & (string.IsNullOrEmpty(filterTextBox.Text) | si.getSimplifiedPossibleShowNames().Any(name =>
                            name.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
                     ))
@@ -754,297 +753,29 @@ namespace TVRename
             string infoPaneBody;
             string imagesPaneBody;
 
+
             if (si.DVDOrder && (snum >= 0) && (ser.DVDSeasons.ContainsKey(snum)))
             {
-                infoPaneBody = GetSeasonHtmlOverview(si, ser, snum);
-                imagesPaneBody = GetSeasonImagesHTMLOverview(si, ser, snum);
+                Season s = ser.DVDSeasons[snum];
+                infoPaneBody = si.GetSeasonHtmlOverview(s);
+                imagesPaneBody = si.GetSeasonImagesHTMLOverview(s);
             }
             else if (!si.DVDOrder && (snum >= 0) && (ser.AiredSeasons.ContainsKey(snum)))
             {
-                infoPaneBody = GetSeasonHtmlOverview(si, ser, snum);
-                imagesPaneBody = GetSeasonImagesHTMLOverview(si, ser, snum);
+                Season s = ser.AiredSeasons[snum];
+                infoPaneBody = si.GetSeasonHtmlOverview(s);
+                imagesPaneBody = si.GetSeasonImagesHTMLOverview(s);
             }
             else
             {
                 // no epnum specified, just show an overview
-                infoPaneBody = GetShowHTMLOverview(si, ser);
-                imagesPaneBody = GetShowImagesHTMLOverview(si, ser);
+                infoPaneBody = si.GetShowHtmlOverview();
+                imagesPaneBody = ShowHtmlHelper.GetShowImagesHtmlOverview(si);
             }
 
             TheTVDB.Instance.Unlock("FillEpGuideHTML");
             SetHTMLbody(infoPaneBody, EpGuidePath(), epGuideHTML);
             SetHTMLbody(imagesPaneBody, ImagesGuidePath(), webBrowserImages);
-        }
-
-        private static string GetSeasonImagesHTMLOverview(ShowItem si, SeriesInfo ser, int snum)
-        {
-            string body = "";
-
-            Season s = si.DVDOrder ? ser.DVDSeasons[snum] : ser.AiredSeasons[snum];
-
-            List<ProcessedEpisode> eis = null;
-            // int snum = s.SeasonNumber;
-            if (si.SeasonEpisodes.ContainsKey(snum))
-                eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
-            else
-                eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
-
-            string seasText = snum == 0
-                ? TVSettings.Instance.SpecialsFolderName
-                : (TVSettings.Instance.defaultSeasonWord + " " + snum);
-
-            if ((eis.Count > 0) && (eis[0].SeasonId > 0))
-                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, eis[0].SeasonId, false) + "\">" +
-                           seasText + "</a>";
-            else
-                seasText = " - " + seasText;
-
-            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true) + "\">" + si.ShowName +
-                    "</A>" + seasText + "</h1>";
-
-            if (TVSettings.Instance.NeedToDownloadBannerFile())
-            {
-                body += ImageSection("Series Banner", 758, 140, ser.GetSeasonWideBannerPath(snum));
-                body += ImageSection("Series Poster", 350, 500, ser.GetSeasonBannerPath(snum));
-            }
-            else
-            {
-                body +=
-                    "<h2>Images are not being downloaded for this series. Please see Options -> Preferences -> Media Center to reconfigure.</h2>";
-            }
-
-            return body;
-        }
-
-        private static string GetShowImagesHTMLOverview(ShowItem si, SeriesInfo ser)
-        {
-            string body =
-                $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
-
-            body += ImageSection("Show Banner", 758, 140, ser.GetSeriesWideBannerPath());
-            body += ImageSection("Show Poster", 350, 500, ser.GetSeriesPosterPath());
-            body += ImageSection("Show Fanart", 960, 540, ser.GetSeriesFanartPath());
-            return body;
-        }
-
-        private static string ImageSection(string title, int width, int height, string bannerPath)
-        {
-            if (string.IsNullOrEmpty(bannerPath)) return "";
-
-            string url = TheTVDB.GetImageURL(bannerPath);
-
-            if ((string.IsNullOrEmpty(url))) return "";
-
-            return $"<h2>{title}</h2><img width={width} height={height} src=\"{url}\"><br/>";
-        }
-
-        private static string GetShowHTMLOverview(ShowItem si, SeriesInfo ser)
-        {
-            string body = "";
-
-            List<string> skip = new List<string>
-            {
-                "Actors",
-                "banner",
-                "Overview",
-                "overview",
-                "Airs_Time",
-                "airsTime",
-                "Airs_DayOfWeek",
-                "airsDayOfWeek",
-                "fanart",
-                "poster",
-                "zap2it_id",
-                "zap2itId",
-                "id",
-                "seriesName",
-                "lastUpdated",
-                "updatedBy"
-            };
-
-            if ((!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath())) &&
-                (!string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()))))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) +
-                        "\"><br/>";
-
-            body += $"<h1><A HREF=\"{TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true)}\">{si.ShowName}</A> </h1>";
-
-            body += "<h2>Overview</h2>" + ser.GetOverview(); //get overview in either format
-
-            bool first = true;
-            foreach (string aa in ser.GetActors())
-            {
-                if (string.IsNullOrEmpty(aa)) continue;
-                if (!first)
-                    body += ", ";
-                else
-                    body += "<h2>Actors</h2>";
-
-                body += "<A HREF=\"http://www.imdb.com/find?s=nm&q=" + aa + "\">" + aa + "</a>";
-                first = false;
-            }
-
-            string airsTime = ser.GetAirsTime();
-            string airsDay = ser.GetAirsDay();
-            if ((!string.IsNullOrEmpty(airsTime)) && (!string.IsNullOrEmpty(airsDay)))
-            {
-                body += "<h2>Airs</h2> " + airsTime + " " + airsDay;
-                string net = ser.GetNetwork();
-                if (!string.IsNullOrEmpty(net))
-                {
-                    skip.Add("Network");
-                    skip.Add("network");
-                    body += ", " + net;
-                }
-            }
-
-            bool firstInfo = true;
-            foreach (KeyValuePair<string, string> kvp in ser.Items)
-            {
-                if (firstInfo)
-                {
-                    body += "<h2>Information<table border=0>";
-                    firstInfo = false;
-                }
-
-                if (skip.Contains(kvp.Key)) continue;
-
-                if (((kvp.Key == "SeriesID") || (kvp.Key == "seriesId")) & (kvp.Value != ""))
-                    body += "<tr><td width=120px>tv.com</td><td><A HREF=\"http://www.tv.com/show/" + kvp.Value +
-                            "/summary.html\">Visit</a></td></tr>";
-                else if ((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId"))
-                    body += "<tr><td width=120px>imdb.com</td><td><A HREF=\"http://www.imdb.com/title/" +
-                            kvp.Value + "\">Visit</a></td></tr>";
-                else if (kvp.Value != "")
-                    body += "<tr><td width=120px>" + kvp.Key + "</td><td>" + kvp.Value + "</td></tr>";
-            }
-
-            if (!firstInfo)
-                body += "</table>";
-
-            return body;
-        }
-
-        private string GetSeasonHtmlOverview(ShowItem si, SeriesInfo ser, int snum)
-        {
-            string body = "";
-
-            if (!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath()) &&
-                !string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath())))
-                body += "<img width=758 height=140 src=\"" + TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()) +
-                        "\"><br/>";
-
-            Season s = si.DVDOrder ? ser.DVDSeasons[snum] : ser.AiredSeasons[snum];
-
-            List<ProcessedEpisode> eis = null;
-            // int snum = s.SeasonNumber;
-            if (si.SeasonEpisodes.ContainsKey(snum))
-                eis = si.SeasonEpisodes[snum]; // use processed episodes if they are available
-            else
-                eis = ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
-
-            string seasText = SeasonName(si, snum);
-
-            if ((eis.Count > 0) && (eis[0].SeasonId > 0))
-                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, eis[0].SeasonId, false) + "\">" +
-                           seasText + "</a>";
-            else
-                seasText = " - " + seasText;
-
-            body += "<h1><A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true) + "\">" + si.ShowName +
-                    "</A>" + seasText + "</h1>";
-
-            DirFilesCache dfc = new DirFilesCache();
-            foreach (ProcessedEpisode ei in eis)
-            {
-                string epl = ei.NumsAsString();
-
-                string episodeURL = TheTVDB.Instance.WebsiteUrl(ei.SeriesId, ei.SeasonId, ei.EpisodeId);
-
-                body += "<A href=\"" + episodeURL + "\" name=\"ep" + epl + "\">"; // anchor
-                if (si.DVDOrder && snum == 0)
-                {
-                    body += "<b>" + ei.Name + "</b>";
-                }
-                else
-                    body += "<b>" + HttpUtility.HtmlEncode(CustomName.NameForNoExt(ei, CustomName.OldNStyle(6))) +
-                            "</b>";
-
-                body += "</A>"; // anchor
-                if (si.UseSequentialMatch && (ei.OverallNumber != -1))
-                    body += " (#" + ei.OverallNumber + ")";
-
-                List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc, ei);
-                if (fl != null)
-                {
-                    foreach (FileInfo fi in fl)
-                    {
-                        string urlFilename = HttpUtility.UrlEncode(fi.FullName);
-                        body += $" <A HREF=\"watch://{urlFilename}\" class=\"search\">Watch</A>";
-                        body += $" <A HREF=\"explore://{urlFilename}\" class=\"search\">Show in Explorer</A>";
-                    }
-                }
-                else body += " <A HREF=\"" + TVSettings.Instance.BTSearchURL(ei) + "\" class=\"search\">Search</A>";
-
-                DateTime? dt = ei.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                    body += "<p>" + dt.Value.ToShortDateString() + " (" + ei.HowLong() + ")";
-
-                body += "<p><p>";
-
-                if ((TVSettings.Instance.ShowEpisodePictures) ||
-                    (TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired"))
-                {
-                    body += "<table><tr>";
-                    body += "<td width=100% valign=top>" + GetOverview(ei) + "</td><td width=300 height=225>";
-                    // 300x168 / 300x225
-                    if (!string.IsNullOrEmpty(ei.GetFilename()))
-                        body += "<img src=" + TheTVDB.GetImageURL(ei.GetFilename()) + ">";
-
-                    body += "</td></tr></table>";
-                }
-                else
-                    body += GetOverview(ei);
-
-                body += "<p><hr><p>";
-            } // for each episode in this season
-
-            return body;
-        }
-
-        private static string GetOverview(ProcessedEpisode ei)
-        {
-            string overviewString = ei.Overview;
-
-            if (TVSettings.Instance.HideMyShowsSpoilers && ei.HowLong() != "Aired")
-                overviewString = "[Spoilers Hidden]";
-
-            bool firstInfo = true;
-            foreach (KeyValuePair<string, string> kvp in ei.OtherItems())
-            {
-                if (firstInfo)
-                {
-                    overviewString += "<table border=0>";
-                    firstInfo = false;
-                }
-
-                if ((kvp.Value != "") && kvp.Value != "0")
-                {
-                    if (((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId")))
-                        overviewString += "<tr><td width=120px>imdb.com</td><td><A HREF=\"http://www.imdb.com/title/" +
-                                          kvp.Value + "\">Visit</a></td></tr>";
-                    else if (((kvp.Key == "showUrl")))
-                        overviewString += "<tr><td width=120px>Link</td><td><A HREF=\"" + kvp.Value +
-                                          "\">Visit</a></td></tr>";
-                    else
-                        overviewString += "<tr><td width=120px>" + kvp.Key + "</td><td>" + kvp.Value + "</td></tr>";
-                }
-            }
-
-            if (!firstInfo)
-                overviewString += "</table>";
-
-            return overviewString;
         }
 
         public static string EpGuidePath() => FileHelper.TempPath("tvrenameepguide.html");
@@ -1566,7 +1297,7 @@ namespace TVRename
             }
         }
 
-        public void MenuShowAndEpisodes()
+        private void MenuShowAndEpisodes()
         {
             ShowItem si = (mLastShowsClicked != null) && (mLastShowsClicked.Count > 0)
                 ? mLastShowsClicked[0]
@@ -2326,7 +2057,7 @@ namespace TVRename
                 {
                     Season s = si.DVDOrder ? ser.DVDSeasons[snum] : ser.AiredSeasons[snum];
 
-                    string nodeTitle = SeasonName(si, snum);
+                    string nodeTitle = ShowHtmlHelper.SeasonName(si, snum);
 
                     TreeNode n2 = new TreeNode(nodeTitle);
                     if (si.IgnoreSeasons.Contains(snum))
@@ -2354,25 +2085,6 @@ namespace TVRename
             TheTVDB.Instance.Unlock("AddShowItemToTree");
 
             return n;
-        }
-
-        private static string SeasonName(ShowItem si, int snum)
-        {
-            string nodeTitle;
-            if (si.DVDOrder)
-            {
-                nodeTitle = snum == 0
-                    ? "Not Available on DVD"
-                    : "DVD " + TVSettings.Instance.defaultSeasonWord + " " + snum;
-            }
-            else
-            {
-                nodeTitle = snum == 0
-                    ? TVSettings.Instance.SpecialsFolderName
-                    : TVSettings.Instance.defaultSeasonWord + " " + snum;
-            }
-
-            return nodeTitle;
         }
 
         private void UpdateWtw(DirFilesCache dfc, ProcessedEpisode pe, ListViewItem lvi)
@@ -2431,7 +2143,7 @@ namespace TVRename
             }
         }
 
-        public void SelectSeason(Season seas)
+        private void SelectSeason(Season seas)
         {
             foreach (TreeNode n in MyShowTree.Nodes)
             {
@@ -2449,7 +2161,7 @@ namespace TVRename
             FillEpGuideHTML(null);
         }
 
-        public void SelectShow(ShowItem si)
+        private void SelectShow(ShowItem si)
         {
             foreach (TreeNode n in MyShowTree.Nodes)
             {
@@ -2554,11 +2266,11 @@ namespace TVRename
 
             EditRules er = new EditRules(si, pel, seasnum, TVSettings.Instance.NamingStyle);
             DialogResult dr = er.ShowDialog();
-            Dictionary<int, Season> seasonsToUse = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
             TheTVDB.Instance.Unlock("EditSeason");
             if (dr == DialogResult.OK)
             {
                 ShowAddedOrEdited(false);
+                Dictionary<int, Season> seasonsToUse = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
                 SelectSeason(seasonsToUse[seasnum]);
             }
 
@@ -2882,7 +2594,7 @@ namespace TVRename
 
         public void QuickScan() => UIScan(null, true, TVSettings.ScanType.Quick);
 
-        public void RecentScan() => UIScan(mDoc.Library.getRecentShows(), true, TVSettings.ScanType.Recent);
+        public void RecentScan() => UIScan(mDoc.Library.GetRecentShows(), true, TVSettings.ScanType.Recent);
 
         private void UIScan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
@@ -3134,7 +2846,7 @@ namespace TVRename
             InternalCheckChange = true;
 
             // Save where the list is currently scrolled too
-            var currentTop = lvAction.GetScrollVerticalPos();
+            int currentTop = lvAction.GetScrollVerticalPos();
 
             if (lvAction.VirtualMode)
                 lvAction.VirtualListSize = mDoc.TheActionList.Count;
@@ -3812,7 +3524,7 @@ namespace TVRename
             // MAH: move the "Clear" button in the Filter Text Box
             if (filterTextBox.Controls.ContainsKey("Clear"))
             {
-                var filterButton = filterTextBox.Controls["Clear"];
+                Control filterButton = filterTextBox.Controls["Clear"];
                 filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
                     ((filterTextBox.ClientSize.Height - 16) / 2) + 1);
 
@@ -3865,7 +3577,7 @@ namespace TVRename
             form.ShowDialog();
         }
 
-        private async void btnUpdateAvailable_Click(object sender, EventArgs e)
+        private async void btnUpdateAvailable_Click(EventArgs e)
         {
             Task<UpdateVersion> uv = VersionUpdater.CheckForUpdatesAsync();
             NotifyUpdates(await uv, true);
@@ -3937,10 +3649,6 @@ namespace TVRename
 
                 return sb.ToString();
             }
-        }
-
-        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
         }
     }
 }

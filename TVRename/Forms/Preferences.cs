@@ -231,14 +231,7 @@ namespace TVRename
             else
                 s.SelectedKODIType = TVSettings.KODIType.Both;
 
-            if (cbMode.Text == "Beta")
-            {
-                s.mode = TVSettings.BetaMode.BetaToo;
-            }
-            else
-            {
-                s.mode = TVSettings.BetaMode.ProductionOnly;
-            }
+            s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
 
             if (cbKeepTogetherMode.Text == "All but these")
             {
@@ -316,10 +309,9 @@ namespace TVRename
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
                 if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
-                    item.Tag is ShowStatusColoringType)
+                    item.Tag is ShowStatusColoringType type)
                 {
-                    s.ShowStatusColors.Add(item.Tag as ShowStatusColoringType,
-                                           ColorTranslator.FromHtml(item.SubItems[1].Text));
+                    s.ShowStatusColors.Add(type,ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
             }
 
@@ -551,7 +543,7 @@ namespace TVRename
                         Tag = showStatusColor.Key,
                         ForeColor = showStatusColor.Value
                     };
-                    item.SubItems.Add(TranslateColorToHtml(showStatusColor.Value));
+                    item.SubItems.Add(Helpers.TranslateColorToHtml(showStatusColor.Value));
                     lvwDefinedColors.Items.Add(item);
                 }
             }
@@ -1127,14 +1119,9 @@ namespace TVRename
             }
             if (colorDialog.ShowDialog(this) == DialogResult.OK)
             {
-                txtShowStatusColor.Text =  TranslateColorToHtml(colorDialog.Color);
+                txtShowStatusColor.Text =  Helpers.TranslateColorToHtml(colorDialog.Color);
                 txtShowStatusColor.ForeColor = colorDialog.Color;
             }
-        }
-
-        string TranslateColorToHtml(Color c)
-        {
-            return string.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
         }
 
         private void lvwDefinedColors_DoubleClick(object sender, EventArgs e)

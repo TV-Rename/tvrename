@@ -43,9 +43,7 @@ namespace TVRename
         private ScanProgress ScanProgDlg;
         private bool mDirty;
 
-        public bool
-            CurrentlyBusy =
-                false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
+        public bool CurrentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
         {
@@ -295,7 +293,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         private bool LoadXMLSettings(FileInfo from)
         {
-            logger.Info("Loading Settings from {0}", from.FullName);
+            logger.Info("Loading Settings from {0}", from?.FullName);
             if (from == null)
                 return true;
 
@@ -469,7 +467,7 @@ namespace TVRename
                 {
                     if (st == TVSettings.ScanType.Full) shows = Library.GetShowItems();
                     if (st == TVSettings.ScanType.Quick) shows = GetQuickShowsToScan(true, true);
-                    if (st == TVSettings.ScanType.Recent) shows = Library.getRecentShows();
+                    if (st == TVSettings.ScanType.Recent) shows = Library.GetRecentShows();
                 }
 
                 if (TVSettings.Instance.MissingCheck && !CheckAllFoldersExist(shows)
@@ -677,7 +675,7 @@ namespace TVRename
         {
             CurrentlyBusy = true;
 
-            List<ShowItem> showsToScan = new List<ShowItem> { };
+            List<ShowItem> showsToScan = new List<ShowItem>();
             if (doFilesInDownloadDir) showsToScan = GetShowsThatHaveDownloads();
 
             if (doMissingRecents)
@@ -855,10 +853,9 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             foreach (Item item in TheActionList)
             {
-                Item act = (Item) item;
                 foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
                 {
-                    if (!ii.SameFileAs(act.Ignore)) continue;
+                    if (!ii.SameFileAs(item.Ignore)) continue;
                     toRemove.Add(item);
                     break;
                 }
@@ -1155,7 +1152,7 @@ namespace TVRename
                         logger.Info($"Added new rule automatically for {sr}");
 
                         //Regenerate the episodes with the new rule added
-                        Library.GenerateEpisodeDict(si);
+                        ShowLibrary.GenerateEpisodeDict(si);
                     }
                 } // for each season of this show
             } // for each show
@@ -1881,6 +1878,7 @@ namespace TVRename
 
             return ((seas != -1) || (ep != -1));
         }
+
 
         private void ReleaseUnmanagedResources()
         {

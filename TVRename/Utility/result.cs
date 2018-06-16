@@ -1,0 +1,62 @@
+using System.IO;
+using System.Xml.Serialization;
+
+namespace TVRename.SAB
+{
+    [System.SerializableAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [XmlType(AnonymousType = true)]
+    public class result : object, System.ComponentModel.INotifyPropertyChanged
+    {
+        public static result Deserialize(byte[] data)
+        {
+            MemoryStream ms = new MemoryStream(data);
+            XmlSerializer serializer = new XmlSerializer(typeof(result));
+            try
+            {
+                result r = (result) serializer.Deserialize(ms);
+                return r;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private string statusField;
+        private string errorField;
+
+        [XmlElement(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string status
+        {
+            get => statusField;
+            set
+            {
+                statusField = value;
+                RaisePropertyChanged("status");
+            }
+        }
+
+        [XmlElement(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+        public string error
+        {
+            get => errorField;
+            set
+            {
+                errorField = value;
+                RaisePropertyChanged("error");
+            }
+        }
+
+        public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+        protected void RaisePropertyChanged(string propertyName)
+        {
+            System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
+            if ((propertyChanged != null))
+            {
+                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            }
+        }
+    }
+}

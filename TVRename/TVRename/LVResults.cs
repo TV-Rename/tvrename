@@ -90,30 +90,29 @@ namespace TVRename
                     continue;
 
                 Item action = (Item) (lvi.Tag);
-                if (action is Item)
-                    FlatList.Add(action as Item);
+                if (action != null)
+                    FlatList.Add(action);
 
-                if (action.GetType() != firstType)
+                if (action != null && action.GetType() != firstType)
                     AllSameType = false;
 
-                if (action is ActionCopyMoveRename)
+                if (action is ActionCopyMoveRename cmr)
                 {
-                    ActionCopyMoveRename cmr = action as ActionCopyMoveRename;
                     if (cmr.Operation == ActionCopyMoveRename.Op.rename)
                         Rename.Add(cmr);
                     else // copy/move
                         CopyMove.Add(cmr);
                 }
-                else if (action is ActionDownloadImage)
-                    Download.Add((ActionDownloadImage) (action));
-                else if (action is ActionRSS)
-                    RSS.Add((ActionRSS) (action));
-                else if (action is ItemMissing)
-                    Missing.Add((ItemMissing) (action));
-                else if (action is ActionNfo)
-                    NFO.Add((ActionNfo) (action));
-                else if (action is ActionPyTivoMeta)
-                    PyTivoMeta.Add((ActionPyTivoMeta) (action));
+                else if (action is ActionDownloadImage item)
+                    Download.Add(item);
+                else if (action is ActionRSS rss)
+                    RSS.Add(rss);
+                else if (action is ItemMissing missing)
+                    Missing.Add(missing);
+                else if (action is ActionNfo nfo)
+                    NFO.Add(nfo);
+                else if (action is ActionPyTivoMeta meta)
+                    PyTivoMeta.Add(meta);
                 //else if (action is ItemuTorrenting)
                 //    this.uTorrenting.Add((ItemuTorrenting) (action));
             }

@@ -73,7 +73,7 @@ namespace TVRename
         {
             if (uiElement == null)
             {
-                throw new ArgumentNullException("uiElement");
+                throw new ArgumentNullException(nameof(uiElement));
             }
 
             if (uiElement.InvokeRequired)
@@ -166,7 +166,7 @@ namespace TVRename
 
         public static bool Contains(string source, string toCheck, StringComparison comp) => source.IndexOf(toCheck, comp) >= 0;
         
-        public static string TranslateColorToHtml(Color c) =>string.Format("#{0:X2}{1:X2}{2:X2}", c.R, c.G, c.B);
+        public static string TranslateColorToHtml(Color c) => $"#{c.R:X2}{c.G:X2}{c.B:X2}";
         
         public static string SimplifyName(string n)
         {

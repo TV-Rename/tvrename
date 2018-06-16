@@ -11,16 +11,18 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
+    // ReSharper disable once InconsistentNaming
     public class ActionRSS : ActionDownload
     {
+        // ReSharper disable once InconsistentNaming
         public RSSItem RSS;
-        public string TheFileNoExt;
+        private readonly string theFileNoExt;
 
         public ActionRSS(RSSItem rss, string toWhereNoExt, ProcessedEpisode pe)
         {
             Episode = pe;
             RSS = rss;
-            TheFileNoExt = toWhereNoExt;
+            theFileNoExt = toWhereNoExt;
         }
 
         #region Action Members
@@ -53,7 +55,7 @@ namespace TVRename
                     saveTemp += ".torrent";
                 File.WriteAllBytes(saveTemp, r);
 
-                System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "/directory \"" + (new FileInfo(TheFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
+                System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "/directory \"" + (new FileInfo(theFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
 
                 Done = true;
                 return true;
@@ -73,20 +75,20 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionRSS) && ((o as ActionRSS).RSS == RSS);
+            return (o is ActionRSS rss) && (rss.RSS == RSS);
         }
 
         public override int Compare(Item o)
         {
             ActionRSS rss = o as ActionRSS;
-            return rss == null ? 0 : RSS.URL.CompareTo(rss.RSS.URL);
+            return rss == null ? 0 : String.Compare(RSS.URL, rss.RSS.URL, StringComparison.Ordinal);
         }
 
         #endregion
 
         #region Item Members
 
-        public override IgnoreItem Ignore => GenerateIgnore(TheFileNoExt);
+        public override IgnoreItem Ignore => GenerateIgnore(theFileNoExt);
 
         public override ListViewItem ScanListViewItem
         {
@@ -97,7 +99,7 @@ namespace TVRename
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
                 lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                lvi.SubItems.Add(TheFileNoExt);
+                lvi.SubItems.Add(theFileNoExt);
                 lvi.SubItems.Add(RSS.Title);
 
                 lvi.Tag = this;
@@ -110,9 +112,9 @@ namespace TVRename
         {
             get
             {
-                if (string.IsNullOrEmpty(TheFileNoExt))
+                if (string.IsNullOrEmpty(theFileNoExt))
                     return null;
-                return new FileInfo(TheFileNoExt).DirectoryName;
+                return new FileInfo(theFileNoExt).DirectoryName;
             }
         }
 
