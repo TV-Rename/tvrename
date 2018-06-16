@@ -12,7 +12,7 @@ namespace TVRename
     /// </summary>
     public class ShowLibrary : ConcurrentDictionary<int, ShowItem>
     {
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public IEnumerable<ShowItem> Shows => Values;
 
         private IEnumerable<string> GetSeasonWords()
@@ -33,17 +33,16 @@ namespace TVRename
             return results.Where(t => !string.IsNullOrWhiteSpace(t)).Distinct();
         }
 
-        private IEnumerable<string> SeasonWordsCache;
+        private IEnumerable<string> seasonWordsCache;
 
         internal IEnumerable<string> SeasonWords()
         {
-            if (SeasonWordsCache == null) SeasonWordsCache = GetSeasonWords();
-            return SeasonWordsCache;
+            return seasonWordsCache ?? (seasonWordsCache = GetSeasonWords());
         }
 
-        public List<string> getGenres()
+        public List<string> GetGenres()
         {
-            List<string> allGenres = new List<string> { };
+            List<string> allGenres = new List<string>();
             foreach (ShowItem si in Values)
             {
                 if (si.Genres != null) allGenres.AddRange(si.Genres);
@@ -54,9 +53,9 @@ namespace TVRename
             return distinctGenres;
         }
 
-        public List<string> getStatuses()
+        public List<string> GetStatuses()
         {
-            List<string> allStatuses = new List<string> { };
+            List<string> allStatuses = new List<string>();
             foreach (ShowItem si in Values)
             {
                 if (si.ShowStatus != null) allStatuses.Add(si.ShowStatus);
@@ -67,9 +66,9 @@ namespace TVRename
             return distinctStatuses;
         }
 
-        public List<string> getNetworks()
+        public List<string> GetNetworks()
         {
-            List<string> allValues = new List<string> { };
+            List<string> allValues = new List<string>();
             foreach (ShowItem si in Values)
             {
                 if (si.TheSeries()?.GetNetwork() != null) allValues.Add(si.TheSeries().GetNetwork());
@@ -82,7 +81,7 @@ namespace TVRename
 
         public List<string> GetContentRatings()
         {
-            List<string> allValues = new List<string> { };
+            List<string> allValues = new List<string>();
             foreach (ShowItem si in Values)
             {
                 if (si.TheSeries()?.GetContentRating() != null) allValues.Add(si.TheSeries().GetContentRating());
@@ -93,9 +92,9 @@ namespace TVRename
             return distinctValues;
         }
 
-        public int getMinYear() => this.Min(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
+        public int GetMinYear() => this.Min(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
 
-        public int getMaxYear() => this.Max(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
+        public int GetMaxYear() => this.Max(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
 
         public List<ShowItem> GetShowItems()
         {
@@ -121,7 +120,7 @@ namespace TVRename
             return res;
         }
 
-        public bool GenerateEpisodeDict(ShowItem si)
+        public static bool GenerateEpisodeDict(ShowItem si)
         {
             si.SeasonEpisodes.Clear();
 
@@ -266,7 +265,7 @@ namespace TVRename
         {
             if (!TryAdd(found.TVDBCode, found))
             {
-                logger.Error($"Failed to Add {found.ShowName} with TVDBId={found.TVDBCode} to library");
+                Logger.Error($"Failed to Add {found.ShowName} with TVDBId={found.TVDBCode} to library");
             }
         }
 
@@ -340,121 +339,26 @@ namespace TVRename
                         break;
                     }
                     case RuleAction.kSplit:
-                    {
-                        // split one episode into a multi-parter
-                        if ((n1 < ec) && (n1 >= 0))
                         {
-                            ProcessedEpisode ei = eis[n1];
-                            string nameBase = ei.Name;
-                            eis.RemoveAt(n1); // remove old one
-                            for (int i = 0; i < nn2; i++) // make n2 new parts
-                            {
-                                ProcessedEpisode pe2 =
-                                    new ProcessedEpisode(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
-                                    {
-                                        Name = nameBase + " (Part " + (i + 1) + ")",
-                                        AiredEpNum = -2,
-                                        DvdEpNum = -2,
-                                        EpNum2 = -2
-                                    };
-
-                                eis.Insert(n1 + i, pe2);
-                            }
+                            SplitEpisode(eis, si, nn2, n1, ec);
+                            break;
                         }
-
-                        break;
-                    }
                     case RuleAction.kMerge:
                     case RuleAction.kCollapse:
-                    {
-                        if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec) && (n1 < n2))
                         {
-                            ProcessedEpisode oldFirstEI = eis[n1];
-                            List<string> episodeNames = new List<string> {eis[n1].Name};
-                            string defaultCombinedName = eis[n1].Name + " + ";
-                            string combinedSummary = eis[n1].Overview + "<br/><br/>";
-                            List<Episode> alleps = new List<Episode>();
-                            alleps.Add(eis[n1]);
-                            //int firstNum = eis[n1]->TVcomEpCount();
-                            for (int i = n1 + 1; i <= n2; i++)
-                            {
-                                episodeNames.Add(eis[i].Name);
-                                defaultCombinedName += eis[i].Name;
-                                combinedSummary += eis[i].Overview;
-                                alleps.Add(eis[i]);
-                                if (i != n2)
-                                {
-                                    defaultCombinedName += " + ";
-                                    combinedSummary += "<br/><br/>";
-                                }
-                            }
-
-                            eis.RemoveRange(n1, n2 - n1);
-
-                            eis.RemoveAt(n1);
-
-                            string combinedName = GetBestNameFor(episodeNames, defaultCombinedName);
-
-                            ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEI, si, alleps)
-                            {
-                                Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt),
-                                AiredEpNum = -2,
-                                DvdEpNum = -2
-                            };
-
-                            if (sr.DoWhatNow == RuleAction.kMerge)
-                                pe2.EpNum2 = -2 + n2 - n1;
-                            else
-                                pe2.EpNum2 = -2;
-
-                            pe2.Overview = combinedSummary;
-                            eis.Insert(n1, pe2);
+                            RemoveEpisode(eis, si, sr, n1, n2, txt, ec);
+                            break;
                         }
-
-                        break;
-                    }
                     case RuleAction.kSwap:
-                    {
-                        if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec))
                         {
-                            ProcessedEpisode t = eis[n1];
-                            eis[n1] = eis[n2];
-                            eis[n2] = t;
+                            SwapEpisode(eis, n1, n2, ec);
+                            break;
                         }
-
-                        break;
-                    }
                     case RuleAction.kInsert:
-                    {
-                        if ((n1 < ec) && (n1 >= 0))
                         {
-                            ProcessedEpisode t = eis[n1];
-                            ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
-                            {
-                                Name = txt,
-                                AiredEpNum = -2,
-                                DvdEpNum = -2,
-                                EpNum2 = -2
-                            };
-
-                            eis.Insert(n1, n);
+                            InsertEpisode(eis, si, n1, txt, ec);
+                            break;
                         }
-                        else if (n1 == eis.Count)
-                        {
-                            ProcessedEpisode t = eis[n1 - 1];
-                            ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
-                            {
-                                Name = txt,
-                                AiredEpNum = -2,
-                                DvdEpNum = -2,
-                                EpNum2 = -2
-                            };
-
-                            eis.Add(n);
-                        }
-
-                        break;
-                    }
                     default:
                         throw new ArgumentException("Inappropriate ruleType " + sr.DoWhatNow);
                 } // switch DoWhatNow
@@ -467,6 +371,117 @@ namespace TVRename
             {
                 if (eis[i].Ignore)
                     eis.RemoveAt(i);
+            }
+        }
+
+        private static void SplitEpisode(List<ProcessedEpisode> eis, ShowItem si, int nn2, int n1, int ec)
+        {
+            // split one episode into a multi-parter
+            if ((n1 < ec) && (n1 >= 0))
+            {
+                ProcessedEpisode ei = eis[n1];
+                string nameBase = ei.Name;
+                eis.RemoveAt(n1); // remove old one
+                for (int i = 0; i < nn2; i++) // make n2 new parts
+                {
+                    ProcessedEpisode pe2 =
+                        new ProcessedEpisode(ei, si, ProcessedEpisode.ProcessedEpisodeType.split)
+                        {
+                            Name = nameBase + " (Part " + (i + 1) + ")",
+                            AiredEpNum = -2,
+                            DvdEpNum = -2,
+                            EpNum2 = -2
+                        };
+
+                    eis.Insert(n1 + i, pe2);
+                }
+            }
+        }
+
+        private static void RemoveEpisode(List<ProcessedEpisode> eis, ShowItem si, ShowRule sr, int n1, int n2, string txt, int ec)
+        {
+            if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec) && (n1 < n2))
+            {
+                ProcessedEpisode oldFirstEi = eis[n1];
+                List<string> episodeNames = new List<string> { eis[n1].Name };
+                string defaultCombinedName = eis[n1].Name + " + ";
+                string combinedSummary = eis[n1].Overview + "<br/><br/>";
+                List<Episode> alleps = new List<Episode>();
+                alleps.Add(eis[n1]);
+                //int firstNum = eis[n1]->TVcomEpCount();
+                for (int i = n1 + 1; i <= n2; i++)
+                {
+                    episodeNames.Add(eis[i].Name);
+                    defaultCombinedName += eis[i].Name;
+                    combinedSummary += eis[i].Overview;
+                    alleps.Add(eis[i]);
+                    if (i != n2)
+                    {
+                        defaultCombinedName += " + ";
+                        combinedSummary += "<br/><br/>";
+                    }
+                }
+
+                eis.RemoveRange(n1, n2 - n1);
+
+                eis.RemoveAt(n1);
+
+                string combinedName = GetBestNameFor(episodeNames, defaultCombinedName);
+
+                ProcessedEpisode pe2 = new ProcessedEpisode(oldFirstEi, si, alleps)
+                {
+                    Name = ((string.IsNullOrEmpty(txt)) ? combinedName : txt),
+                    AiredEpNum = -2,
+                    DvdEpNum = -2
+                };
+
+                if (sr.DoWhatNow == RuleAction.kMerge)
+                    pe2.EpNum2 = -2 + n2 - n1;
+                else
+                    pe2.EpNum2 = -2;
+
+                pe2.Overview = combinedSummary;
+                eis.Insert(n1, pe2);
+            }
+        }
+
+        private static void InsertEpisode(List<ProcessedEpisode> eis, ShowItem si, int n1, string txt, int ec)
+        {
+            if ((n1 < ec) && (n1 >= 0))
+            {
+                ProcessedEpisode t = eis[n1];
+                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
+                {
+                    Name = txt,
+                    AiredEpNum = -2,
+                    DvdEpNum = -2,
+                    EpNum2 = -2
+                };
+
+                eis.Insert(n1, n);
+            }
+            else if (n1 == eis.Count)
+            {
+                ProcessedEpisode t = eis[n1 - 1];
+                ProcessedEpisode n = new ProcessedEpisode(t.TheSeries, t.TheAiredSeason, t.TheDvdSeason, si)
+                {
+                    Name = txt,
+                    AiredEpNum = -2,
+                    DvdEpNum = -2,
+                    EpNum2 = -2
+                };
+
+                eis.Add(n);
+            }
+        }
+
+        private static void SwapEpisode(List<ProcessedEpisode> eis, int n1, int n2, int ec)
+        {
+            if ((n1 != -1) && (n2 != -1) && (n1 < ec) && (n2 < ec))
+            {
+                ProcessedEpisode t = eis[n1];
+                eis[n1] = eis[n2];
+                eis[n2] = t;
             }
         }
 
@@ -508,7 +523,7 @@ namespace TVRename
             }
         }
 
-        internal List<ShowItem> getRecentShows()
+        internal List<ShowItem> GetRecentShows()
         {
             // only scan "recent" shows
             List<ShowItem> shows = new List<ShowItem>();
@@ -619,7 +634,7 @@ namespace TVRename
         {
             if (!TryRemove(si.TVDBCode, out _))
             {
-                logger.Error($"Failed to remove {si.ShowName} from the library with TVDBId={si.TVDBCode}");
+                Logger.Error($"Failed to remove {si.ShowName} from the library with TVDBId={si.TVDBCode}");
             }
         }
 

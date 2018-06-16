@@ -2882,7 +2882,7 @@ namespace TVRename
 
         public void QuickScan() => UIScan(null, true, TVSettings.ScanType.Quick);
 
-        public void RecentScan() => UIScan(mDoc.Library.getRecentShows(), true, TVSettings.ScanType.Recent);
+        public void RecentScan() => UIScan(mDoc.Library.GetRecentShows(), true, TVSettings.ScanType.Recent);
 
         private void UIScan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
@@ -3134,7 +3134,7 @@ namespace TVRename
             InternalCheckChange = true;
 
             // Save where the list is currently scrolled too
-            var currentTop = lvAction.GetScrollVerticalPos();
+            int currentTop = lvAction.GetScrollVerticalPos();
 
             if (lvAction.VirtualMode)
                 lvAction.VirtualListSize = mDoc.TheActionList.Count;
@@ -3812,7 +3812,7 @@ namespace TVRename
             // MAH: move the "Clear" button in the Filter Text Box
             if (filterTextBox.Controls.ContainsKey("Clear"))
             {
-                var filterButton = filterTextBox.Controls["Clear"];
+                Control filterButton = filterTextBox.Controls["Clear"];
                 filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
                     ((filterTextBox.ClientSize.Height - 16) / 2) + 1);
 

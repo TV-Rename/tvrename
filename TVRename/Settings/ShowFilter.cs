@@ -5,8 +5,6 @@ namespace TVRename
 {
     public class ShowFilter
     {
-        public ShowFilter() { }
-
         public List<string> Genres { get; } = new List<string>();
 
         public string ShowName { get; set; } 

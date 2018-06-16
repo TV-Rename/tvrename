@@ -39,13 +39,14 @@ namespace TVRename
         public override string ScanListViewGroup => "lvgDownloading";
 
         public override IgnoreItem Ignore => GenerateIgnore(DesiredLocationNoExt);
-        
+
         public override string TargetFolder
         {
             get
             {
                 if (string.IsNullOrEmpty(Destination))
                     return null;
+
                 return new FileInfo(Destination).DirectoryName;
             }
         }
@@ -106,7 +107,6 @@ namespace TVRename
 
         public abstract string Produces { get; } //What does this action produce? typically a filename
     }
-
 
     public abstract class ActionDownload : Action
     {
@@ -180,7 +180,6 @@ namespace TVRename
             }
             //we know that each subfolder is OK to delete
 
-
             //if the directory is the root download folder do not delete
             if (TVSettings.Instance.DownloadFolders.Contains(di.FullName))
                 return;
@@ -188,7 +187,6 @@ namespace TVRename
             // Do not delete any monitor folders either
             if (TVSettings.Instance.LibraryFolders.Contains(di.FullName))
                 return;
-
 
             FileInfo[] files = di.GetFiles();
             if (files.Length == 0)

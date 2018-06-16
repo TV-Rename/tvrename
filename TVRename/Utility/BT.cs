@@ -1040,10 +1040,10 @@ namespace TVRename
             int totalBits = 0;
             int bitsOn = 0;
 
-            for (int i = 0; i < s.Data.Length; i++)
+            foreach (byte t in s.Data)
             {
                 totalBits += 8;
-                byte c = s.Data[i];
+                byte c = t;
                 for (int j = 0; j < 8; j++)
                 {
                     if ((c & 0x01) != 0)
@@ -1118,9 +1118,9 @@ namespace TVRename
                                 if (hasTargets)
                                 {
                                     // see if there is a target for this (the c'th) file
-                                    for (int i = 0; i < targetList.Items.Count; i++)
+                                    foreach (BTItem t in targetList.Items)
                                     {
-                                        BTList l = (BTList) (targetList.Items[i]);
+                                        BTList l = (BTList) (t);
                                         BTInteger n = (BTInteger) (l.Items[0]);
                                         BTString dest = (BTString) (l.Items[1]);
                                         if (n.Value == c)
@@ -1256,12 +1256,12 @@ namespace TVRename
 
                 BTList thisFileList = null;
                 // see if this file is already in the list
-                for (int i = 0; i < theList.Items.Count; i++)
+                foreach (BTItem t in theList.Items)
                 {
-                    if (theList.Items[i].Type != BTChunk.kList)
+                    if (t.Type != BTChunk.kList)
                         return;
 
-                    BTList l2 = (BTList) (theList.Items[i]);
+                    BTList l2 = (BTList) (t);
                     if ((l2.Items.Count != 2) || (l2.Items[0].Type != BTChunk.kInteger) ||
                         (l2.Items[1].Type != BTChunk.kString))
                         return;

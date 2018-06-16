@@ -401,7 +401,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Failed to parse : {r.ToString()}");
+                Logger.Error(e, $"Failed to parse : {r}");
             }
         }
 

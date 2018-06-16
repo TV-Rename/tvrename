@@ -100,7 +100,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string uniconfig
         {
-            get { return uniconfigField; }
+            get => uniconfigField;
             set
             {
                 uniconfigField = value;
@@ -111,7 +111,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cache_size
         {
-            get { return cache_sizeField; }
+            get => cache_sizeField;
             set
             {
                 cache_sizeField = value;
@@ -122,7 +122,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string active_lang
         {
-            get { return active_langField; }
+            get => active_langField;
             set
             {
                 active_langField = value;
@@ -133,7 +133,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string paused
         {
-            get { return pausedField; }
+            get => pausedField;
             set
             {
                 pausedField = value;
@@ -144,7 +144,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string session
         {
-            get { return sessionField; }
+            get => sessionField;
             set
             {
                 sessionField = value;
@@ -155,7 +155,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string restart_req
         {
-            get { return restart_reqField; }
+            get => restart_reqField;
             set
             {
                 restart_reqField = value;
@@ -166,7 +166,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string power_options
         {
-            get { return power_optionsField; }
+            get => power_optionsField;
             set
             {
                 power_optionsField = value;
@@ -177,7 +177,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string speed
         {
-            get { return speedField; }
+            get => speedField;
             set
             {
                 speedField = value;
@@ -188,7 +188,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string helpuri
         {
-            get { return helpuriField; }
+            get => helpuriField;
             set
             {
                 helpuriField = value;
@@ -199,7 +199,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string size
         {
-            get { return sizeField; }
+            get => sizeField;
             set
             {
                 sizeField = value;
@@ -210,7 +210,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string uptime
         {
-            get { return uptimeField; }
+            get => uptimeField;
             set
             {
                 uptimeField = value;
@@ -221,7 +221,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string refresh_rate
         {
-            get { return refresh_rateField; }
+            get => refresh_rateField;
             set
             {
                 refresh_rateField = value;
@@ -232,7 +232,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string my_home
         {
-            get { return my_homeField; }
+            get => my_homeField;
             set
             {
                 my_homeField = value;
@@ -243,7 +243,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string limit
         {
-            get { return limitField; }
+            get => limitField;
             set
             {
                 limitField = value;
@@ -254,7 +254,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string have_quota
         {
-            get { return have_quotaField; }
+            get => have_quotaField;
             set
             {
                 have_quotaField = value;
@@ -265,7 +265,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string isverbose
         {
-            get { return isverboseField; }
+            get => isverboseField;
             set
             {
                 isverboseField = value;
@@ -276,7 +276,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string start
         {
-            get { return startField; }
+            get => startField;
             set
             {
                 startField = value;
@@ -287,7 +287,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string finish
         {
-            get { return finishField; }
+            get => finishField;
             set
             {
                 finishField = value;
@@ -298,7 +298,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string version
         {
-            get { return versionField; }
+            get => versionField;
             set
             {
                 versionField = value;
@@ -309,7 +309,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string new_rel_url
         {
-            get { return new_rel_urlField; }
+            get => new_rel_urlField;
             set
             {
                 new_rel_urlField = value;
@@ -320,7 +320,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string my_lcldata
         {
-            get { return my_lcldataField; }
+            get => my_lcldataField;
             set
             {
                 my_lcldataField = value;
@@ -331,7 +331,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string color_scheme
         {
-            get { return color_schemeField; }
+            get => color_schemeField;
             set
             {
                 color_schemeField = value;
@@ -342,7 +342,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspacetotal1
         {
-            get { return diskspacetotal1Field; }
+            get => diskspacetotal1Field;
             set
             {
                 diskspacetotal1Field = value;
@@ -353,7 +353,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nt
         {
-            get { return ntField; }
+            get => ntField;
             set
             {
                 ntField = value;
@@ -364,7 +364,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
         {
-            get { return statusField; }
+            get => statusField;
             set
             {
                 statusField = value;
@@ -375,7 +375,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string last_warning
         {
-            get { return last_warningField; }
+            get => last_warningField;
             set
             {
                 last_warningField = value;
@@ -386,7 +386,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string have_warnings
         {
-            get { return have_warningsField; }
+            get => have_warningsField;
             set
             {
                 have_warningsField = value;
@@ -397,7 +397,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cache_art
         {
-            get { return cache_artField; }
+            get => cache_artField;
             set
             {
                 cache_artField = value;
@@ -408,7 +408,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string sizeleft
         {
-            get { return sizeleftField; }
+            get => sizeleftField;
             set
             {
                 sizeleftField = value;
@@ -419,7 +419,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string finishaction
         {
-            get { return finishactionField; }
+            get => finishactionField;
             set
             {
                 finishactionField = value;
@@ -430,7 +430,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string paused_all
         {
-            get { return paused_allField; }
+            get => paused_allField;
             set
             {
                 paused_allField = value;
@@ -441,7 +441,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string quota
         {
-            get { return quotaField; }
+            get => quotaField;
             set
             {
                 quotaField = value;
@@ -452,7 +452,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string newzbin_url
         {
-            get { return newzbin_urlField; }
+            get => newzbin_urlField;
             set
             {
                 newzbin_urlField = value;
@@ -463,7 +463,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string new_release
         {
-            get { return new_releaseField; }
+            get => new_releaseField;
             set
             {
                 new_releaseField = value;
@@ -474,7 +474,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string pause_int
         {
-            get { return pause_intField; }
+            get => pause_intField;
             set
             {
                 pause_intField = value;
@@ -485,7 +485,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string mbleft
         {
-            get { return mbleftField; }
+            get => mbleftField;
             set
             {
                 mbleftField = value;
@@ -496,7 +496,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspace1
         {
-            get { return diskspace1Field; }
+            get => diskspace1Field;
             set
             {
                 diskspace1Field = value;
@@ -507,7 +507,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string scripts
         {
-            get { return scriptsField; }
+            get => scriptsField;
             set
             {
                 scriptsField = value;
@@ -518,7 +518,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string darwin
         {
-            get { return darwinField; }
+            get => darwinField;
             set
             {
                 darwinField = value;
@@ -529,7 +529,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string timeleft
         {
-            get { return timeleftField; }
+            get => timeleftField;
             set
             {
                 timeleftField = value;
@@ -540,7 +540,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string mb
         {
-            get { return mbField; }
+            get => mbField;
             set
             {
                 mbField = value;
@@ -551,7 +551,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string noofslots
         {
-            get { return noofslotsField; }
+            get => noofslotsField;
             set
             {
                 noofslotsField = value;
@@ -562,7 +562,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string eta
         {
-            get { return etaField; }
+            get => etaField;
             set
             {
                 etaField = value;
@@ -573,7 +573,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspacetotal2
         {
-            get { return diskspacetotal2Field; }
+            get => diskspacetotal2Field;
             set
             {
                 diskspacetotal2Field = value;
@@ -584,7 +584,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nzb_quota
         {
-            get { return nzb_quotaField; }
+            get => nzb_quotaField;
             set
             {
                 nzb_quotaField = value;
@@ -595,7 +595,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string loadavg
         {
-            get { return loadavgField; }
+            get => loadavgField;
             set
             {
                 loadavgField = value;
@@ -606,7 +606,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cache_max
         {
-            get { return cache_maxField; }
+            get => cache_maxField;
             set
             {
                 cache_maxField = value;
@@ -617,7 +617,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string kbpersec
         {
-            get { return kbpersecField; }
+            get => kbpersecField;
             set
             {
                 kbpersecField = value;
@@ -628,7 +628,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string speedlimit
         {
-            get { return speedlimitField; }
+            get => speedlimitField;
             set
             {
                 speedlimitField = value;
@@ -639,7 +639,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string webdir
         {
-            get { return webdirField; }
+            get => webdirField;
             set
             {
                 webdirField = value;
@@ -650,7 +650,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string queue_details
         {
-            get { return queue_detailsField; }
+            get => queue_detailsField;
             set
             {
                 queue_detailsField = value;
@@ -661,7 +661,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string left_quota
         {
-            get { return left_quotaField; }
+            get => left_quotaField;
             set
             {
                 left_quotaField = value;
@@ -672,7 +672,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string diskspace2
         {
-            get { return diskspace2Field; }
+            get => diskspace2Field;
             set
             {
                 diskspace2Field = value;
@@ -685,7 +685,7 @@ namespace TVRename.SAB
             Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
         public queueSlotsSlot[] slots
         {
-            get { return slotsField; }
+            get => slotsField;
             set
             {
                 slotsField = value;
@@ -696,7 +696,7 @@ namespace TVRename.SAB
         [XmlElementAttribute("categories", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public queueCategories[] categories
         {
-            get { return categoriesField; }
+            get => categoriesField;
             set
             {
                 categoriesField = value;
@@ -745,7 +745,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
         {
-            get { return statusField; }
+            get => statusField;
             set
             {
                 statusField = value;
@@ -756,7 +756,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string index
         {
-            get { return indexField; }
+            get => indexField;
             set
             {
                 indexField = value;
@@ -767,7 +767,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string eta
         {
-            get { return etaField; }
+            get => etaField;
             set
             {
                 etaField = value;
@@ -778,7 +778,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string missing
         {
-            get { return missingField; }
+            get => missingField;
             set
             {
                 missingField = value;
@@ -789,7 +789,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string avg_age
         {
-            get { return avg_ageField; }
+            get => avg_ageField;
             set
             {
                 avg_ageField = value;
@@ -800,7 +800,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string script
         {
-            get { return scriptField; }
+            get => scriptField;
             set
             {
                 scriptField = value;
@@ -811,7 +811,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string msgid
         {
-            get { return msgidField; }
+            get => msgidField;
             set
             {
                 msgidField = value;
@@ -822,7 +822,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string verbosity
         {
-            get { return verbosityField; }
+            get => verbosityField;
             set
             {
                 verbosityField = value;
@@ -833,7 +833,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public double mb
         {
-            get { return mbField; }
+            get => mbField;
             set
             {
                 mbField = value;
@@ -844,7 +844,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string sizeleft
         {
-            get { return sizeleftField; }
+            get => sizeleftField;
             set
             {
                 sizeleftField = value;
@@ -855,7 +855,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string filename
         {
-            get { return filenameField; }
+            get => filenameField;
             set
             {
                 filenameField = value;
@@ -866,7 +866,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string priority
         {
-            get { return priorityField; }
+            get => priorityField;
             set
             {
                 priorityField = value;
@@ -877,7 +877,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string cat
         {
-            get { return catField; }
+            get => catField;
             set
             {
                 catField = value;
@@ -888,7 +888,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public double mbleft
         {
-            get { return mbleftField; }
+            get => mbleftField;
             set
             {
                 mbleftField = value;
@@ -899,7 +899,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string timeleft
         {
-            get { return timeleftField; }
+            get => timeleftField;
             set
             {
                 timeleftField = value;
@@ -910,7 +910,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string percentage
         {
-            get { return percentageField; }
+            get => percentageField;
             set
             {
                 percentageField = value;
@@ -921,7 +921,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nzo_id
         {
-            get { return nzo_idField; }
+            get => nzo_idField;
             set
             {
                 nzo_idField = value;
@@ -932,7 +932,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string unpackopts
         {
-            get { return unpackoptsField; }
+            get => unpackoptsField;
             set
             {
                 unpackoptsField = value;
@@ -943,7 +943,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string size
         {
-            get { return sizeField; }
+            get => sizeField;
             set
             {
                 sizeField = value;
@@ -974,7 +974,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string category
         {
-            get { return categoryField; }
+            get => categoryField;
             set
             {
                 categoryField = value;
@@ -1020,7 +1020,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string status
         {
-            get { return statusField; }
+            get => statusField;
             set
             {
                 statusField = value;
@@ -1031,7 +1031,7 @@ namespace TVRename.SAB
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string error
         {
-            get { return errorField; }
+            get => errorField;
             set
             {
                 errorField = value;
@@ -1063,7 +1063,7 @@ namespace TVRename.SAB
         [XmlElementAttribute("queue")]
         public queue[] Items
         {
-            get { return itemsField; }
+            get => itemsField;
             set
             {
                 itemsField = value;

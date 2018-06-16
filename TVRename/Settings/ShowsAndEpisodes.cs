@@ -410,13 +410,13 @@ public class ShowItem
             List<string> possibles = new List<string>();
 
             string simplifiedShowName = Helpers.SimplifyName(ShowName);
-            if (!(simplifiedShowName == "")) { possibles.Add( simplifiedShowName); }
+            if (simplifiedShowName != "") { possibles.Add( simplifiedShowName); }
 
             //Check the custom show name too
             if (UseCustomShowName)
             {
                 string simplifiedCustomShowName = Helpers.SimplifyName(CustomShowName);
-                if (!(simplifiedCustomShowName == "")) { possibles.Add(simplifiedCustomShowName); }
+                if (simplifiedCustomShowName != "") { possibles.Add(simplifiedCustomShowName); }
             }
 
             //Also add the aliases provided

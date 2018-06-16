@@ -111,9 +111,8 @@ namespace TVRename
             if (resumeDat == null)
                 return;
             BTDictionary dict = resumeDat.GetDict();
-            for (int i = 0; i < dict.Items.Count; i++)
+            foreach (BTItem it in dict.Items)
             {
-                BTItem it = dict.Items[i];
                 if (it.Type == BTChunk.kDictionaryItem)
                 {
                     BTDictionaryItem d2 = (BTDictionaryItem) (it);

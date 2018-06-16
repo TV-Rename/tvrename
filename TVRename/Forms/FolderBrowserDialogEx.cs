@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Text;
 using System.Drawing;
@@ -496,8 +504,8 @@ namespace DaveChambers.FolderBrowserDialogEx
                     Bottom = top + height;
                 }
 
-                public int Height { get { return Bottom - Top; } }
-                public int Width { get { return Right - Left; } }
+                public int Height => Bottom - Top;
+                public int Width => Right - Left;
             }
 
             [DllImport("user32.dll")]
