@@ -1,32 +1,28 @@
-using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace TVRename
 {
     public class PossibleDuplicateEpisode
-
     {
-        public ProcessedEpisode episodeOne;
-        public ProcessedEpisode episodeTwo;
-        internal int SeasonNumber;
-        public bool AirDatesMatch;
-        public bool SimilarNames;
-        public bool OneFound;
-        public bool LargeFileSize;
+        private readonly ProcessedEpisode episodeOne;
+        private readonly ProcessedEpisode episodeTwo;
+        public readonly int SeasonNumber;
+        public readonly bool AirDatesMatch;
+        public readonly bool SimilarNames;
+        public readonly bool OneFound;
+        public readonly bool LargeFileSize;
 
-        public PossibleDuplicateEpisode(ProcessedEpisode episodeOne, ProcessedEpisode episodeTwo, int season,
-            bool AirDatesMatch, bool SimilarNames, bool OneFound, bool LargeFileSize)
+        public PossibleDuplicateEpisode(ProcessedEpisode episodeOne, ProcessedEpisode episodeTwo, int season, bool airDatesMatch, bool similarNames, bool oneFound, bool largeFileSize)
         {
             this.episodeTwo = episodeTwo;
             this.episodeOne = episodeOne;
-            SeasonNumber = season;
-            this.AirDatesMatch = AirDatesMatch;
-            this.SimilarNames = SimilarNames;
-            this.OneFound = OneFound;
-            this.LargeFileSize = LargeFileSize;
+            this.SeasonNumber = season;
+            this.AirDatesMatch = airDatesMatch;
+            this.SimilarNames = similarNames;
+            this.OneFound = oneFound;
+            this.LargeFileSize = largeFileSize;
         }
-
 
         public ListViewItem PresentationView
         {
@@ -39,13 +35,7 @@ namespace TVRename
 
                 lvi.SubItems.Add(episodeOne.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(episodeOne.NumsAsString() + " & " + episodeTwo.NumsAsString());
-
-                DateTime? dt = episodeOne.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
-                else
-                    lvi.SubItems.Add("");
-
+                lvi.SubItems.Add(episodeOne.GetAirDateDT(true).PrettyPrint());
                 lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
                 
                 List<string> names = new List<string> {episodeOne.Name, episodeTwo.Name};
@@ -60,6 +50,15 @@ namespace TVRename
 
         public ShowItem ShowItem => episodeTwo.SI;
         public ProcessedEpisode Episode => episodeOne;
-    }
 
+        public ShowRule GenerateRule()
+        {
+            return new ShowRule
+            {
+                DoWhatNow = RuleAction.kMerge,
+                First = episodeOne.AppropriateEpNum,
+                Second = episodeTwo.AppropriateEpNum
+            };
+        }
+    }
 }

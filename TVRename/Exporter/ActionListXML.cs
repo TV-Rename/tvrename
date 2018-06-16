@@ -69,7 +69,7 @@ namespace TVRename
 
         protected override bool IsOutput(Item a)
         {
-            return (a is ActionCopyMoveRename cmr) && ((cmr.Operation == ActionCopyMoveRename.Op.Rename));
+            return (a is ActionCopyMoveRename cmr) && ((cmr.Operation == ActionCopyMoveRename.Op.rename));
         }
         public override bool ApplicableFor(TVSettings.ScanType st) => true;
 
@@ -88,7 +88,7 @@ namespace TVRename
 
         protected override bool IsOutput(Item a)
         {
-            return (a is ActionCopyMoveRename cmr) && ((cmr.Operation != ActionCopyMoveRename.Op.Rename));
+            return (a is ActionCopyMoveRename cmr) && ((cmr.Operation != ActionCopyMoveRename.Op.rename));
         }
 
         public override bool Active() => TVSettings.Instance.ExportFOXML;

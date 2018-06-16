@@ -89,6 +89,9 @@ namespace TVRename
                         case TVSettings.ScanType.Quick:
                             mainForm.Invoke(mainForm.AFMQuickScan);
                             break;
+                        case TVSettings.ScanType.SingleShow:
+                        default:
+                            throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
                     }
 
                     mainForm.Invoke(mainForm.AFMDoAll);

@@ -1249,11 +1249,9 @@ namespace TVRename
                     cbFantArtJpg.Checked = false;
                     cbKODIImages.Checked = false;
                     break;
-#if DEBUG
                 default:
                     System.Diagnostics.Debug.Fail("Unknown default selected.");
                     break;
-#endif
             }
         }
 

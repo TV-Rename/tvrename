@@ -1023,24 +1023,9 @@ namespace TVRename
 
         private static bool FileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
         {
-            if (FindSeasEp(fi, out int seasF, out int epF, out int maxEp, si, out FilenameProcessorRE rex))
+            if (FindSeasEp(fi, out int seasF, out int epF, out _, si, out _))
             {
-                SeriesInfo s = si.TheSeries();
-                try
-                {
-                    Episode ep = s.GetEpisode(seasF, epF, si.DVDOrder);
-                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-
-                    if (FindEpOnDisk(dfc, si, pep).Count > 0)
-                    {
-                        return false;
-                    }
-                }
-                catch (SeriesInfo.EpisodeNotFoundException)
-                {
-                    //Ignore execption, we may need the file
-                    return true;
-                }
+                return EpisodeNeeded(si, dfc, seasF, epF);
             }
 
             //We may need the file
@@ -1049,27 +1034,33 @@ namespace TVRename
 
         private static bool FileNeeded(DirectoryInfo di, ShowItem si, DirFilesCache dfc)
         {
-            if (FindSeasEp(di, out int seasF, out int epF, si, out FilenameProcessorRE rex))
+            if (FindSeasEp(di, out int seasF, out int epF, si, out _))
             {
-                SeriesInfo s = si.TheSeries();
-                try
-                {
-                    Episode ep = s.GetEpisode(seasF, epF, si.DVDOrder);
-                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-
-                    if (FindEpOnDisk(dfc, si, pep).Count > 0)
-                    {
-                        return false;
-                    }
-                }
-                catch (SeriesInfo.EpisodeNotFoundException)
-                {
-                    //Ignore execption, we may need the file
-                    return true;
-                }
+                return EpisodeNeeded(si, dfc, seasF, epF);
             }
 
             //We may need the file
+            return true;
+        }
+
+        private static bool EpisodeNeeded(ShowItem si, DirFilesCache dfc, int seasF, int epF)
+        {
+            try
+            {
+                SeriesInfo s = si.TheSeries();
+                Episode ep = s.GetEpisode(seasF, epF, si.DVDOrder);
+                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+
+                if (FindEpOnDisk(dfc, si, pep).Count > 0)
+                {
+                    return false;
+                }
+            }
+            catch (SeriesInfo.EpisodeNotFoundException)
+            {
+                //Ignore execption, we may need the file
+                return true;
+            }
             return true;
         }
 
@@ -1346,7 +1337,7 @@ namespace TVRename
                             if (newname != actualFile.Name)
                             {
                                 actualFile = FileHelper.FileInFolder(folder, newname); // rename updates the filename
-                                TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.Rename, fi,
+                                TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
                                     actualFile, ep, null, null));
 
                                 //The following section informs the DownloadIdentifers that we already plan to
@@ -1438,6 +1429,7 @@ namespace TVRename
 
         private static void NoProgress(int pct)
         {
+            //Nothign to do - Method is called if we have no UI
         }
 
         private void ScanWorker(object o)
@@ -1482,6 +1474,8 @@ namespace TVRename
                             case Finder.FinderDisplayType.rss:
                                 activeRSSFinders++;
                                 break;
+                            default:
+                                throw new ArgumentException("Inappropriate displaytype identified " + f.DisplayType());
                         }
                     }
 
@@ -1887,22 +1881,6 @@ namespace TVRename
 
             return ((seas != -1) || (ep != -1));
         }
-
-        #region Nested type: ProcessActionInfo
-
-        private class ProcessActionInfo
-        {
-            private readonly int SemaphoreNumber;
-            private readonly Action TheAction;
-
-            public ProcessActionInfo(int n, Action a)
-            {
-                SemaphoreNumber = n;
-                TheAction = a;
-            }
-        };
-
-        #endregion
 
         private void ReleaseUnmanagedResources()
         {

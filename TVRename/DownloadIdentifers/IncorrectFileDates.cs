@@ -5,7 +5,7 @@ using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 
 namespace TVRename
 {
-    sealed class IncorrectFileDates : DownloadIdentifier
+    internal sealed class IncorrectFileDates : DownloadIdentifier
     {
         private List<string> doneFilesAndFolders;
         public IncorrectFileDates() => Reset();
@@ -71,10 +71,6 @@ namespace TVRename
             }
             return null;
         }
-        public override void Reset()
-        {
-            doneFilesAndFolders = new List<string>();
-        }
-
+        public override void Reset() => doneFilesAndFolders = new List<string>();
     }
 }

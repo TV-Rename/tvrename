@@ -348,10 +348,5 @@ namespace TVRename
         {
             bnRemoveAlias.Enabled = lbShowAlias.SelectedItems.Count > 0;
         }
-
-        private void label8_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

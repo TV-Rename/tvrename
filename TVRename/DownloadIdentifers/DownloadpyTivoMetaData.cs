@@ -25,9 +25,5 @@ namespace TVRename
 
             return theActionList;
         }
-
-        public sealed override void Reset()
-        {
-        }
     }
 }

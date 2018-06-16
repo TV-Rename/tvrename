@@ -114,36 +114,35 @@ namespace DaveChambers.FolderBrowserDialogEx
 
         private int _browseCallbackHandler(IntPtr hDlg, int msg, IntPtr lParam, IntPtr lpData)
         {
-            switch (msg)
+            if (msg == Win32.BFFM_INITIALIZED)
             {
-                case Win32.BFFM_INITIALIZED:
-                    // remove context help button from dialog caption
-                    int lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_STYLE);
-                    lStyle &= ~Win32.DS_CONTEXTHELP;
-                    Win32.SetWindowLong(hDlg, Win32.GWL_STYLE, lStyle);
-                    lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_EXSTYLE);
-                    lStyle &= ~Win32.WS_EX_CONTEXTHELP;
-                    Win32.SetWindowLong(hDlg, Win32.GWL_EXSTYLE, lStyle);
+                // remove context help button from dialog caption
+                int lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_STYLE);
+                lStyle &= ~Win32.DS_CONTEXTHELP;
+                Win32.SetWindowLong(hDlg, Win32.GWL_STYLE, lStyle);
+                lStyle = Win32.GetWindowLong(hDlg, Win32.GWL_EXSTYLE);
+                lStyle &= ~Win32.WS_EX_CONTEXTHELP;
+                Win32.SetWindowLong(hDlg, Win32.GWL_EXSTYLE, lStyle);
 
-                    _adjustUi(hDlg, lpData);
-                    break;
-                case Win32.BFFM_SELCHANGED:
-                    {
-                        bool ok = false;
-                        StringBuilder sb = new StringBuilder(Win32.MAX_PATH);
-                        if (Win32.SHGetPathFromIDList(lParam, sb))
-                        {
-                            ok = true;
-                            string dir = sb.ToString();
-                            IntPtr hEdit = Win32.GetDlgItem(hDlg, CtlIds.PATH_EDIT);
-                            Win32.SetWindowText(hEdit, dir);
+                _adjustUi(hDlg, lpData);
+            }
+            else if (msg == Win32.BFFM_SELCHANGED)
+            {
+                bool ok = false;
+                StringBuilder sb = new StringBuilder(Win32.MAX_PATH);
+                if (Win32.SHGetPathFromIDList(lParam, sb))
+                {
+                    ok = true;
+                    string dir = sb.ToString();
+                    IntPtr hEdit = Win32.GetDlgItem(hDlg, CtlIds.PATH_EDIT);
+                    Win32.SetWindowText(hEdit, dir);
 #if UsingStatusText
-                            // We're not using status text, but if we were, this is how you'd set it
+// We're not using status text, but if we were, this is how you'd set it
                             Win32.SendMessage(hDlg, Win32.BFFM_SETSTATUSTEXTW, 0, dir);
 #endif
 
 #if SHBrowseForFolder_lists_links
-                            // This check doesn't seem to be necessary - the SHBrowseForFolder dirtree doesn't seem to list links
+// This check doesn't seem to be necessary - the SHBrowseForFolder dirtree doesn't seem to list links
                             Win32.SHFILEINFO sfi = new Win32.SHFILEINFO();
                             Win32.SHGetFileInfo(lParam, 0, ref sfi, Marshal.SizeOf(sfi), Win32.SHGFI_PIDL | Win32.SHGFI_ATTRIBUTES);
 
@@ -151,14 +150,11 @@ namespace DaveChambers.FolderBrowserDialogEx
                             if ((sfi.dwAttributes & Win32.SFGAO_LINK) == Win32.SFGAO_LINK)
                                 ok = false;
 #endif
-                        }
+                }
 
-                        // if invalid selection, disable the OK button
-                        if (!ok)
-                            Win32.EnableWindow(Win32.GetDlgItem(hDlg, CtlIds.IDOK), false);
-
-                        break;
-                    }
+                // if invalid selection, disable the OK button
+                if (!ok)
+                    Win32.EnableWindow(Win32.GetDlgItem(hDlg, CtlIds.IDOK), false);
             }
 
             return 0;
@@ -307,7 +303,7 @@ namespace DaveChambers.FolderBrowserDialogEx
                     IntPtr hdc = Win32.GetDC(hLabel);
                     IntPtr hFont = Win32.SendMessage(hLabel, Win32.WM_GETFONT, IntPtr.Zero, IntPtr.Zero);
                     IntPtr oldfnt = Win32.SelectObject(hdc, hFont);
-                    Size szLabel = Size.Empty;
+                    Size szLabel;
                     Win32.GetTextExtentPoint32(hdc, labelText, labelText.Length, out szLabel);
                     Win32.SelectObject(hdc, oldfnt);
                     Win32.ReleaseDC(hLabel, hdc);

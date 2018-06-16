@@ -1,4 +1,4 @@
-// 
+// public override IgnoreItem Ignore
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -86,32 +86,17 @@ namespace TVRename
 
         #region Item Members
 
-        public override IgnoreItem Ignore
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(TheFileNoExt))
-                    return null;
-                return new IgnoreItem(TheFileNoExt);
-            }
-        }
+        public override IgnoreItem Ignore => GenerateIgnore(TheFileNoExt);
 
         public override ListViewItem ScanListViewItem
         {
             get
             {
-                ListViewItem lvi = new ListViewItem {
-                                                        Text = Episode.SI.ShowName
-                                                    };
+                ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
 
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
-                DateTime? dt = Episode.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
-                else
-                    lvi.SubItems.Add("");
-
+                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
                 lvi.SubItems.Add(TheFileNoExt);
                 lvi.SubItems.Add(RSS.Title);
 

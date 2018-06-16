@@ -46,6 +46,8 @@ namespace TVRename
         {
         }
 
-        public abstract void Reset();
+        public virtual void Reset()
+        {
+        }
     }
 }

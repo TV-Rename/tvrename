@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 // Opens, understands, manipulates, and writes out BEncoded .torrent files, and uTorrent's resume.dat
@@ -254,24 +255,15 @@ namespace TVRename
 
         public override string AsText()
         {
-            string r = "Dictionary=[";
-            for (int i = 0; i < Items.Count; i++)
-            {
-                r += Items[i].AsText();
-                if (i != (Items.Count - 1))
-                    r += ",";
-            }
-
-            r += "]";
-            return r;
+            return "Dictionary=[" + string.Join(",", Items.Select(x => x.AsText())) + "]";
         }
 
         public override void Tree(TreeNodeCollection tn)
         {
             TreeNode n = new TreeNode("Dictionary");
             tn.Add(n);
-            for (int i = 0; i < Items.Count; i++)
-                Items[i].Tree(n.Nodes);
+            foreach (BTDictionaryItem t in Items)
+                t.Tree(n.Nodes);
         }
 
         public bool RemoveItem(string key)
@@ -288,17 +280,14 @@ namespace TVRename
             return false;
         }
 
-        public BTItem GetItem(string key)
-        {
-            return GetItem(key, false);
-        }
+        public BTItem GetItem(string key) => GetItem(key, false);
 
         public BTItem GetItem(string key, bool ignoreCase)
         {
-            for (int i = 0; i < Items.Count; i++)
+            foreach (BTDictionaryItem t in Items)
             {
-                if ((Items[i].Key == key) || (ignoreCase && ((Items[i].Key.ToLower() == key.ToLower()))))
-                    return Items[i].Data;
+                if ((t.Key == key) || (ignoreCase && ((t.Key.ToLower() == key.ToLower()))))
+                    return t.Data;
             }
 
             return null;
@@ -316,7 +305,7 @@ namespace TVRename
 
     public class BTList : BTItem
     {
-        public List<BTItem> Items;
+        public readonly List<BTItem> Items;
 
         public BTList()
             : base(BTChunk.kList)
@@ -326,24 +315,15 @@ namespace TVRename
 
         public override string AsText()
         {
-            string r = "List={";
-            for (int i = 0; i < Items.Count; i++)
-            {
-                r += Items[i].AsText();
-                if (i != (Items.Count - 1))
-                    r += ",";
-            }
-
-            r += "}";
-            return r;
+            return "List={" + string.Join(",", Items.Select(x => x.AsText())) + "}";
         }
 
         public override void Tree(TreeNodeCollection tn)
         {
             TreeNode n = new TreeNode("List");
             tn.Add(n);
-            for (int i = 0; i < Items.Count; i++)
-                Items[i].Tree(n.Nodes);
+            foreach (BTItem t in Items)
+                t.Tree(n.Nodes);
         }
 
         public override void Write(Stream sw)
@@ -449,19 +429,15 @@ namespace TVRename
 
         public string AsText()
         {
-            string res = "File= ";
-            for (int i = 0; i < Items.Count; i++)
-                res += Items[i].AsText() + " ";
-
-            return res;
+            return "File= " + string.Join(" ", Items.Select(x => x.AsText()));
         }
 
         public void Tree(TreeNodeCollection tn)
         {
             TreeNode n = new TreeNode("BT File");
             tn.Add(n);
-            for (int i = 0; i < Items.Count; i++)
-                Items[i].Tree(n.Nodes);
+            foreach (BTItem t in Items)
+                t.Tree(n.Nodes);
         }
 
         public BTItem GetItem(string key)
@@ -624,7 +600,7 @@ namespace TVRename
         {
             BTFile f = new BTFile();
 
-            FileStream sr = null;
+            FileStream sr;
             try
             {
                 sr = new FileStream(filename, FileMode.Open, FileAccess.Read);
@@ -703,7 +679,7 @@ namespace TVRename
                 if (theHash == null)
                 {
                     // not cached, figure it out ourselves
-                    FileStream sr = null;
+                    FileStream sr;
                     try
                     {
                         sr = new FileStream(fiTemp.FullName, FileMode.Open);
@@ -950,7 +926,7 @@ namespace TVRename
             string nameInTorrent)
         {
             RenameListOut.Add(new ActionCopyMoveRename(
-                CopyNotMove ? ActionCopyMoveRename.Op.Copy : ActionCopyMoveRename.Op.Rename, onDisk,
+                CopyNotMove ? ActionCopyMoveRename.Op.copy : ActionCopyMoveRename.Op.rename, onDisk,
                 FileHelper.FileInFolder(CopyNotMove ? CopyToFolder : onDisk.Directory.Name, nameInTorrent),
                 null, null, null));
 

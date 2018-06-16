@@ -113,12 +113,7 @@ namespace TVRename
 
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
-                DateTime? dt = Episode.GetAirDateDT(true);
-                if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue)) != 0)
-                    lvi.SubItems.Add(dt.Value.ToShortDateString());
-                else
-                    lvi.SubItems.Add("");
-
+                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
                 lvi.SubItems.Add(Where.DirectoryName);
                 lvi.SubItems.Add(Where.Name);
 

@@ -45,9 +45,10 @@ namespace TVRename
         public override int IconNumber => 2;
         #endregion
 
-        public override string FileIdentifier => Entry.TorrentFile;
-        public override string Destination => Entry.DownloadingTo;
-        public override string Remaining {
+        protected override string FileIdentifier => Entry.TorrentFile;
+        protected override string Destination => Entry.DownloadingTo;
+
+        protected override string Remaining {
             get {
                 int p = Entry.PercentDone;
                 return p == -1 ? "" : Entry.PercentDone + "% Complete";

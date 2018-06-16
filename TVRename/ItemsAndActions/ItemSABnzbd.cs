@@ -46,9 +46,10 @@ namespace TVRename
         public override  int IconNumber => 8;
         #endregion
 
-        public override string FileIdentifier => Entry.filename;
-        public override string Destination => Entry.filename;
-        public override string Remaining {
+        protected override string FileIdentifier => Entry.filename;
+        protected override string Destination => Entry.filename;
+
+        protected override string Remaining {
             get {
                 string txt = Entry.status + ", " + (int)(0.5 + 100 - 100 * Entry.mbleft / Entry.mb) + "% Complete";
                 if (Entry.status == "Downloading")
