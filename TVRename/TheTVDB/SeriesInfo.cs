@@ -194,7 +194,9 @@ namespace TVRename
             if (o.SrvLastUpdated != 0 && o.SrvLastUpdated < SrvLastUpdated)
                 return; // older!?
 
-            bool betterLanguage = ((o.languageId ==-1)|| (o.languageId == preferredLanguageId) && (languageId != preferredLanguageId));
+            bool currentLanguageNotSet = o.languageId == -1;
+            bool newLanguageBetter = o.languageId == preferredLanguageId && languageId != preferredLanguageId;
+            bool betterLanguage = currentLanguageNotSet || newLanguageBetter;
 
             SrvLastUpdated = o.SrvLastUpdated;
 
@@ -282,33 +284,17 @@ namespace TVRename
                         Name = XmlHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "lastupdated")
                         SrvLastUpdated = r.ReadElementContentAsLong();
-                    else if ((r.Name == "Language") || (r.Name == "language")) { string ignore = r.ReadElementContentAsString(); }
+                    else if ((r.Name == "Language") || (r.Name == "language"))
+                        r.ReadElementContentAsString(); 
                     else if ((r.Name == "LanguageId") || (r.Name == "languageId"))
                         languageId = r.ReadElementContentAsInt();
                     else if (r.Name == "TimeZone")
                         TempTimeZone = r.ReadElementContentAsString();
                     else if (r.Name == "Airs_Time")
                     {
-                        AirsTime = DateTime.Parse("20:00");
-
                         string theTime = r.ReadElementContentAsString();
-                        try
-                        {
-                            if (!string.IsNullOrEmpty(theTime))
-                            {
-                                Items["Airs_Time"] = theTime;
-                                DateTime airsTime;
-                                if (DateTime.TryParse(theTime, out airsTime) |
-                                    DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
-                                    AirsTime = airsTime;
-                                else
-                                    AirsTime = null;
-                            }
-                        }
-                        catch (FormatException)
-                        {
-                            Logger.Trace("Failed to parse time: {0} ", theTime);
-                        }
+                        Items["Airs_Time"] = theTime;
+                        AirsTime = ParseAirTime(theTime);
                     }
                     else if (r.Name == "FirstAired")
                     {
@@ -354,6 +340,27 @@ namespace TVRename
             }
         }
 
+        private static DateTime? ParseAirTime(string theTime)
+        {
+
+            try
+            {
+                if (!string.IsNullOrEmpty(theTime))
+                {
+                    DateTime airsTime;
+                    if (DateTime.TryParse(theTime, out airsTime) |
+                        DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
+                        return airsTime;
+                }
+            }
+            catch (FormatException)
+            {
+                Logger.Info("Failed to parse time: {0} ", theTime);
+            }
+            return DateTime.Parse("20:00");
+
+        }
+
         public void LoadJson(JObject r)
         {
             //r should be a series of name/value pairs (ie a JArray of JPropertes)
@@ -390,7 +397,8 @@ namespace TVRename
                     FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
                     Items["firstAired"] = FirstAired.Value.ToString("yyyy-MM-dd");
                     Items["Year"] = FirstAired.Value.ToString("yyyy");
-                }else
+                }
+                else
                 {
                     FirstAired = null;
                     Items["firstAired"] = "";
@@ -647,7 +655,9 @@ namespace TVRename
         {
             if (AllBanners.ContainsKey(banner.BannerId)) {
                 AllBanners[banner.BannerId] = banner;
-            } else {
+            }
+            else
+            {
                 AllBanners.Add(banner.BannerId, banner);
             }
 

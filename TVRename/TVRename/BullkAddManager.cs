@@ -24,7 +24,7 @@ namespace TVRename
 
         public static void GuessShowItem(FolderMonitorEntry ai, ShowLibrary library)
         {
-            string showName = GuessShowName(ai,library);
+            string showName = GuessShowName(ai, library);
 
             if (string.IsNullOrEmpty(showName))
                 return;
@@ -38,7 +38,7 @@ namespace TVRename
             TheTVDB.Instance.Unlock("GuessShowItem");
         }
 
-        private static string GuessShowName(FolderMonitorEntry ai,ShowLibrary library)
+        private static string GuessShowName(FolderMonitorEntry ai, ShowLibrary library)
         {
             // see if we can guess a season number and show name, too
             // Assume is blah\blah\blah\show\season X
@@ -60,13 +60,16 @@ namespace TVRename
                 {
                 }
             }
+
             // assume last folder element is the show name
-            showName = showName.Substring(showName.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal) + 1);
+            showName = showName.Substring(showName.LastIndexOf(System.IO.Path.DirectorySeparatorChar.ToString(),
+                                              StringComparison.Ordinal) + 1);
 
             return showName;
         }
 
-        private bool HasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs, out bool padNumber)
+        private bool HasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs,
+            out bool padNumber)
         {
             try
             {
@@ -83,19 +86,22 @@ namespace TVRename
                         //We have a match!
                         folderName = m.Groups["folderName"].ToString();
                         padNumber = m.Groups["number"].ToString().StartsWith("0");
-                        Logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}", di.FullName, folderName, subDir.FullName);
+                        Logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}",
+                            di.FullName, folderName, subDir.FullName);
+
                         return true;
                     }
                 }
-
             }
             catch (UnauthorizedAccessException)
             {
                 // e.g. recycle bin, system volume information
-                Logger.Warn("Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information", di.FullName);
+                Logger.Warn(
+                    "Could not access {0} (or a subdir), may not be an issue as could be expected e.g. recycle bin, system volume information",
+                    di.FullName);
+
                 subDirs = null;
             }
-
 
             folderName = null;
             padNumber = false;
@@ -124,10 +130,12 @@ namespace TVRename
                     {
                         foreach (string folder in kvp.Value)
                         {
-                            if (theFolder.ToLower() != folder.ToLower())
+                            if (!string.Equals(theFolder, folder, StringComparison.CurrentCultureIgnoreCase))
                                 continue;
 
-                            Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName, folder);
+                            Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,
+                                folder);
+
                             subDirs = null;
                             return true;
                         }
@@ -135,12 +143,12 @@ namespace TVRename
                 }
             } // for each showitem
 
-
             //We don't have it already
             bool hasSeasonFolders;
             try
             {
-                hasSeasonFolders = HasSeasonFolders(di2, out string folderName, out DirectoryInfo[] subDirectories, out bool padNumber);
+                hasSeasonFolders = HasSeasonFolders(di2, out string folderName, out DirectoryInfo[] subDirectories,
+                    out bool padNumber);
 
                 subDirs = subDirectories;
 
@@ -152,21 +160,23 @@ namespace TVRename
                 {
                     if (TVSettings.Instance.BulkAddCompareNoVideoFolders && !HasFilmFiles(di2)) return false;
 
-                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin && di2.FullName.Contains("$RECYCLE.BIN", StringComparison.OrdinalIgnoreCase))
-                        return true;
-                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin && di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase))
+                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin &&
+                        di2.FullName.Contains("$RECYCLE.BIN", StringComparison.OrdinalIgnoreCase))
                         return true;
 
-
+                    if (TVSettings.Instance.BulkAddIgnoreRecycleBin &&
+                        di2.FullName.Contains("\\@Recycle\\", StringComparison.OrdinalIgnoreCase))
+                        return true;
 
                     // ....its good!
-                    FolderMonitorEntry ai = new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName, padNumber);
+                    FolderMonitorEntry ai =
+                        new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName, padNumber);
+
                     AddItems.Add(ai);
                     Logger.Info("Adding {0} as a new folder", theFolder);
                     if (andGuess)
-                        GuessShowItem(ai,mDoc.Library);
+                        GuessShowItem(ai, mDoc.Library);
                 }
-
             }
             catch (UnauthorizedAccessException)
             {
@@ -180,7 +190,8 @@ namespace TVRename
 
         private static bool HasFilmFiles(DirectoryInfo directory)
         {
-            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly).Any(file => TVSettings.Instance.UsefulExtension(file.Extension, false));
+            return directory.GetFiles("*", System.IO.SearchOption.TopDirectoryOnly)
+                .Any(file => TVSettings.Instance.UsefulExtension(file.Extension, false));
         }
 
         private void CheckFolderForShows(DirectoryInfo di, ref bool stop)
@@ -238,8 +249,6 @@ namespace TVRename
             mDoc.ExportShowInfo();
         }
 
-
-
         public void CheckFolders(ref bool stop, ref int percentDone)
         {
             // Check the  folder list, and build up a new "AddItems" list.
@@ -265,8 +274,6 @@ namespace TVRename
                 if (stop)
                     break;
             }
-
         }
-
     }
 }

@@ -10,13 +10,11 @@ namespace TVRename
         public abstract void Run();
         protected abstract string Location();
         protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
     }
 
     internal abstract class ShowsExporter : Exporter
     {
         protected readonly List<ShowItem> Shows;
-
 
         protected ShowsExporter(List<ShowItem> shows)
         {
@@ -24,11 +22,9 @@ namespace TVRename
         }
     }
 
-
     internal abstract class ActionListExporter : Exporter
     {
         protected readonly ItemList TheActionList;
-
 
         protected ActionListExporter(ItemList theActionList)
         {
@@ -42,13 +38,12 @@ namespace TVRename
     {
         protected readonly TVDoc Doc;
 
-
         protected UpcomingExporter(TVDoc doc)
         {
             Doc = doc;
         }
 
-        private string Produce() 
+        private string Produce()
         {
             try
             {
@@ -61,6 +56,7 @@ namespace TVRename
                 {
                     List<ProcessedEpisode> lpe = Doc.Library.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
                         TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
+
                     if (lpe != null)
                         if (Generate(ms, lpe))
                         {
@@ -73,6 +69,7 @@ namespace TVRename
             {
                 Logger.Error(e, "Failed to produce records to put into Export file at: {0}", Location());
             }
+
             return "";
         }
 
@@ -82,9 +79,8 @@ namespace TVRename
             {
                 try
                 {
-
                     //Create the directory if needed
-                    Directory.CreateDirectory(Path.GetDirectoryName(Location()) ??"");
+                    Directory.CreateDirectory(Path.GetDirectoryName(Location()) ?? "");
                     string contents = Produce();
 
                     //Write Contents to file
@@ -98,7 +94,7 @@ namespace TVRename
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e,"Failed to Output File to :{0}", Location());
+                    Logger.Error(e, "Failed to Output File to :{0}", Location());
                 }
             }
             else
@@ -109,5 +105,4 @@ namespace TVRename
 
         protected abstract bool Generate(Stream str, List<ProcessedEpisode> elist);
     }
-
 }
