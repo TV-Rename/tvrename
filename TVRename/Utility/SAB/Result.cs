@@ -6,15 +6,15 @@ namespace TVRename.SAB
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlType(AnonymousType = true)]
-    public class result : object, System.ComponentModel.INotifyPropertyChanged
+    public class Result : object, System.ComponentModel.INotifyPropertyChanged
     {
-        public static result Deserialize(byte[] data)
+        public static Result Deserialize(byte[] data)
         {
             MemoryStream ms = new MemoryStream(data);
-            XmlSerializer serializer = new XmlSerializer(typeof(result));
+            XmlSerializer serializer = new XmlSerializer(typeof(Result));
             try
             {
-                result r = (result) serializer.Deserialize(ms);
+                Result r = (Result) serializer.Deserialize(ms);
                 return r;
             }
             catch

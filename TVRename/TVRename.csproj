@@ -185,13 +185,13 @@
     <Compile Include="TVRename\BullkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
-    <Compile Include="Utility\Class1.cs" />
-    <Compile Include="Utility\FileHelper.cs" />
+    <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
+    <Compile Include="Utility\Helper\FileHelper.cs" />
     <Compile Include="Utility\FileSystemProperties.cs" />
-    <Compile Include="Utility\HTTPHelper.cs" />
-    <Compile Include="Utility\JSONHelper.cs" />
+    <Compile Include="Utility\Helper\HTTPHelper.cs" />
+    <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
-    <Compile Include="Utility\NewDataSet.cs" />
+    <Compile Include="Utility\SAB\NewDataSet.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
     <Compile Include="Forms\ActorsGrid.cs">
@@ -340,7 +340,7 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Utility\DirCacheEntry.cs" />
-    <Compile Include="Utility\Helpers.cs" />
+    <Compile Include="Utility\Helper\Helpers.cs" />
     <Compile Include="Forms\IgnoreEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -354,14 +354,14 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utility\queueCategories.cs" />
-    <Compile Include="Utility\queueSlotsSlot.cs" />
-    <Compile Include="Utility\RegistryHelper.cs" />
-    <Compile Include="Utility\result.cs" />
+    <Compile Include="Utility\SAB\QueueCategories.cs" />
+    <Compile Include="Utility\SAB\QueueSlotsSlot.cs" />
+    <Compile Include="Utility\Helper\RegistryHelper.cs" />
+    <Compile Include="Utility\SAB\Result.cs" />
     <Compile Include="Utility\SetProgressDelegate.cs" />
-    <Compile Include="Utility\StringExtensions.cs" />
+    <Compile Include="Utility\Helper\StringExtensions.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
-    <Compile Include="Utility\XMLHelper.cs" />
+    <Compile Include="Utility\Helper\XMLHelper.cs" />
     <EmbeddedResource Include="Forms\ActorsGrid.resx">
       <DependentUpon>ActorsGrid.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -520,7 +520,7 @@
     </Compile>
     <Compile Include="Settings\ShowsAndEpisodes.cs" />
     <Compile Include="Settings\ShowRule.cs" />
-    <Compile Include="Utility\Queue.cs" />
+    <Compile Include="Utility\SAB\Queue.cs" />
     <Compile Include="Utility\Sorters.cs" />
     <Compile Include="Settings\Statistics.cs" />
     <Compile Include="Forms\StatsWindow.cs">

@@ -13,9 +13,9 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public class ItemSABnzbd : ItemInProgress
     {
-        public SAB.queueSlotsSlot Entry;
+        public SAB.QueueSlotsSlot Entry;
 
-        public ItemSABnzbd(SAB.queueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
+        public ItemSABnzbd(SAB.QueueSlotsSlot qss, ProcessedEpisode pe, string desiredLocationNoExt)
         {
             Episode = pe;
             DesiredLocationNoExt = desiredLocationNoExt;

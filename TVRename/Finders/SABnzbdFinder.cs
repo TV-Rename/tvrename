@@ -53,7 +53,7 @@ namespace TVRename
 
             try
             {
-                SAB.result res = SAB.result.Deserialize(r);
+                SAB.Result res = SAB.Result.Deserialize(r);
                 if (res != null && res.status == "False")
                 {
                     Logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
@@ -102,7 +102,7 @@ namespace TVRename
 
                 string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName);
 
-                foreach (SAB.queueSlotsSlot te in sq.slots)
+                foreach (SAB.QueueSlotsSlot te in sq.slots)
                 {
                     //foreach (queueSlotsSlot te in qs)
                     {

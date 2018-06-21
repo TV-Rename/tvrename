@@ -6,12 +6,12 @@ namespace TVRename.SAB
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlType(AnonymousType = true)]
-    public class queueCategories : object, System.ComponentModel.INotifyPropertyChanged
+    public class QueueCategories : object, System.ComponentModel.INotifyPropertyChanged
     {
         private string categoryField;
 
         [XmlElement(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public string category
+        public string Category
         {
             get => categoryField;
             set

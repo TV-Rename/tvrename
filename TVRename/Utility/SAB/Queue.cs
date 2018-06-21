@@ -94,8 +94,8 @@ namespace TVRename.SAB
         private string left_quotaField;
         private string diskspace2Field;
 
-        private queueSlotsSlot[] slotsField;
-        private queueCategories[] categoriesField;
+        private QueueSlotsSlot[] slotsField;
+        private QueueCategories[] categoriesField;
 
         [XmlElementAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string uniconfig
@@ -681,9 +681,9 @@ namespace TVRename.SAB
         }
 
         [XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        [XmlArrayItemAttribute("slot", typeof(queueSlotsSlot),
+        [XmlArrayItemAttribute("slot", typeof(QueueSlotsSlot),
             Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-        public queueSlotsSlot[] slots
+        public QueueSlotsSlot[] slots
         {
             get => slotsField;
             set
@@ -694,7 +694,7 @@ namespace TVRename.SAB
         }
 
         [XmlElementAttribute("categories", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-        public queueCategories[] categories
+        public QueueCategories[] categories
         {
             get => categoriesField;
             set

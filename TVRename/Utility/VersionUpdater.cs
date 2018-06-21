@@ -9,31 +9,22 @@ namespace TVRename
 {
     public static class VersionUpdater
     {
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static async Task<UpdateVersion> CheckForUpdatesAsync()
         {
+            // ReSharper disable once InconsistentNaming
             const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
-            UpdateVersion currentVersion;
-
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            UpdateVersion currentVersion;
 
             try
             {
-                string currentVersionString = Helpers.DisplayVersion;
-
-                bool inDebug = currentVersionString.EndsWith(" ** Debug Build **");
-                //remove debug stuff
-                if (inDebug)
-                    currentVersionString = currentVersionString.Substring(0,
-                        currentVersionString.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
-
-                currentVersion =
-                    new UpdateVersion(currentVersionString, UpdateVersion.VersionType.Friendly);
+                currentVersion = ObtainCurrentVersion();
             }
             catch (ArgumentException e)
             {
-                logger.Error("Failed to establish if there are any new releases as could not parse internal version: " + Helpers.DisplayVersion, e);
+                Logger.Error("Failed to establish if there are any new releases as could not parse internal version: " + Helpers.DisplayVersion, e);
                 return null;
             }
 
@@ -48,19 +39,19 @@ namespace TVRename
                 Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
                 JArray gitHubInfo = JArray.Parse(await response);
 
-                foreach (JObject gitHubReleaseJSON in gitHubInfo.Children<JObject>())
+                foreach (JObject gitHubReleaseJson in gitHubInfo.Children<JObject>())
                 {
                     try
                     {
-                        DateTime.TryParse(gitHubReleaseJSON["published_at"].ToString(), out DateTime releaseDate);
-                        UpdateVersion testVersion = new UpdateVersion(gitHubReleaseJSON["tag_name"].ToString(),
-                            UpdateVersion.VersionType.Semantic)
+                        DateTime.TryParse(gitHubReleaseJson["published_at"].ToString(), out DateTime releaseDate);
+                        UpdateVersion testVersion = new UpdateVersion(gitHubReleaseJson["tag_name"].ToString(),
+                            UpdateVersion.VersionType.semantic)
                         {
-                            DownloadUrl = gitHubReleaseJSON["assets"][0]["browser_download_url"].ToString(),
-                            ReleaseNotesText = gitHubReleaseJSON["body"].ToString(),
-                            ReleaseNotesUrl = gitHubReleaseJSON["html_url"].ToString(),
+                            DownloadUrl = gitHubReleaseJson["assets"][0]["browser_download_url"].ToString(),
+                            ReleaseNotesText = gitHubReleaseJson["body"].ToString(),
+                            ReleaseNotesUrl = gitHubReleaseJson["html_url"].ToString(),
                             ReleaseDate = releaseDate,
-                            IsBeta = (gitHubReleaseJSON["prerelease"].ToString() == "True")
+                            IsBeta = (gitHubReleaseJson["prerelease"].ToString() == "True")
                         };
 
                         //all versions want to be considered if you are in the beta stream
@@ -74,31 +65,29 @@ namespace TVRename
                     }
                     catch (NullReferenceException ex)
                     {
-                        logger.Warn("Looks like the JSON payload from GitHub has changed");
-                        logger.Debug(ex, gitHubReleaseJSON.ToString());
-                        continue;
+                        Logger.Warn("Looks like the JSON payload from GitHub has changed");
+                        Logger.Debug(ex, gitHubReleaseJson.ToString());
                     }
                     catch (ArgumentOutOfRangeException ex)
                     {
-                        logger.Debug("Generally happens because the release did not have an exe attached");
-                        logger.Debug(ex, gitHubReleaseJSON.ToString());
-                        continue;
+                        Logger.Debug("Generally happens because the release did not have an exe attached");
+                        Logger.Debug(ex, gitHubReleaseJson.ToString());
                     }
                 }
                 if (latestVersion == null)
                 {
-                    logger.Error("Could not find latest version information from GitHub: {0}", response);
+                    Logger.Error("Could not find latest version information from GitHub: {0}", response);
                     return null;
                 }
                 if (latestBetaVersion == null)
                 {
-                    logger.Error("Could not find latest beta version information from GitHub: {0}", response);
+                    Logger.Error("Could not find latest beta version information from GitHub: {0}", response);
                     return null;
                 }
             }
             catch (Exception e)
             {
-                logger.Error(e, "Failed to contact GitHub to identify new releases");
+                Logger.Error(e, "Failed to contact GitHub to identify new releases");
                 return null;
             }
 
@@ -110,6 +99,22 @@ namespace TVRename
                 return latestBetaVersion;
 
             return null;
+        }
+
+        private static UpdateVersion ObtainCurrentVersion()
+        {
+            UpdateVersion currentVersion;
+            string currentVersionString = Helpers.DisplayVersion;
+
+            bool inDebug = currentVersionString.EndsWith(" ** Debug Build **");
+            //remove debug stuff
+            if (inDebug)
+                currentVersionString = currentVersionString.Substring(0,
+                    currentVersionString.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
+
+            currentVersion =
+                new UpdateVersion(currentVersionString, UpdateVersion.VersionType.friendly);
+            return currentVersion;
         }
     }
 }
@@ -126,13 +131,13 @@ public class UpdateVersion : IComparable
     public string Prerelease { get; }
     public string Build { get; }
 
-    public enum VersionType { Semantic, Friendly }
+    public enum VersionType { semantic, friendly }
 
     public UpdateVersion(string version, VersionType type)
     {
         if (string.IsNullOrWhiteSpace(version)) throw new ArgumentException("The provided version string is invalid.", nameof(version));
 
-        string matchString = (type == VersionType.Semantic)
+        string matchString = (type == VersionType.semantic)
             ? @"^(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?(\-(?<pre>[0-9A-Za-z\-\.]+|[*]))?(\+(?<build>[0-9A-Za-z\-\.]+|[*]))?$"
             : @"^(?<major>[0-9]+)((\.(?<minor>[0-9]+))(\.(?<patch>[0-9]+))?)?( (?<pre>[0-9A-Za-z\- \.]+))?$";
 
@@ -140,7 +145,7 @@ public class UpdateVersion : IComparable
         Match match = regex.Match(version);
 
         if (!match.Success || !match.Groups["major"].Success || !match.Groups["minor"].Success) throw new ArgumentException("The provided version string is invalid.", nameof(version));
-        if (type == VersionType.Semantic && !match.Groups["patch"].Success) throw new ArgumentException("The provided version string is invalid semantic version.", nameof(version));
+        if (type == VersionType.semantic && !match.Groups["patch"].Success) throw new ArgumentException("The provided version string is invalid semantic version.", nameof(version));
 
         VersionNumber = new Version(int.Parse(match.Groups["major"].Value),
             int.Parse(match.Groups["minor"].Value),
