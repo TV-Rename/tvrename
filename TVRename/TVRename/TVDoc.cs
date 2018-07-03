@@ -1336,10 +1336,10 @@ namespace TVRename
                         ProcessedEpisode ep = eps[epIdx];
                         FileInfo actualFile = fi;
 
-                        if (renCheck && TVSettings.Instance.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
+                        if (renCheck && TVSettings.Instance.FileHasUsefulExtension( fi, true, out string otherExtension)) // == RENAMING CHECK ==
                         {
                             string newname = TVSettings.Instance.FilenameFriendly(
-                                TVSettings.Instance.NamingStyle.NameFor(ep, fi.Extension, folder.Length));
+                                TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
                                 fi.IsLanguageSpecificSubtitle(out string subtitleExtension))

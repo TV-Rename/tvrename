@@ -353,7 +353,7 @@ namespace TVRename
         public string OtherExtensionsString = "";
         public ShowFilter Filter = new ShowFilter();
 
-        public string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
+        private string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
 
         public int ParallelDownloads = 4;
         public List<string> RSSURLs = DefaultRSSURLList();
@@ -1144,6 +1144,28 @@ namespace TVRename
             return false;
         }
 
+        public bool FileHasUsefulExtension(FileInfo file, bool otherExtensionsToo, out string extension)
+        {
+            foreach (string s in VideoExtensionsArray)
+            {
+                if (!file.Name.EndsWith(s)) continue;
+                extension = s;
+                return true;
+            }
+            if (otherExtensionsToo)
+            {
+                foreach (string s in OtherExtensionsArray)
+                {
+                    if (!file.Name.EndsWith(s)) continue;
+                    extension = s;
+                    return true;
+                }
+            }
+
+            extension = string.Empty;
+            return false;
+        }
+
         public bool KeepExtensionTogether(string extension)
         {
             if (KeepTogether == false) return false;
@@ -1160,10 +1182,7 @@ namespace TVRename
 
         public string BTSearchURL(ProcessedEpisode epi)
         {
-            if (epi == null)
-                return "";
-
-            SeriesInfo s = epi.TheSeries;
+            SeriesInfo s = epi?.TheSeries;
             if (s == null)
                 return "";
 

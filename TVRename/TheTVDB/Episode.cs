@@ -136,6 +136,10 @@ namespace TVRename
 
         public string AirsBeforeSeason => GetValueAcrossVersions("airsBeforeSeason", "airsbefore_season", "");
         public string AirsBeforeEpisode => GetValueAcrossVersions("airsBeforeEpisode", "airsbefore_episode", "");
+        public string SiteRatingCount => GetValueAcrossVersions("siteRatingCount", "SiteRatingCount", "");
+        public string ProductionCode => GetValueAcrossVersions("ProductionCode", "productionCode", "");
+        public string ImdbCode => GetValueAcrossVersions("IMDB_ID","imdbId", "");
+        public string ShowUrl => GetValueAcrossVersions("showUrl", "ShowUrl", "");
 
         public Episode(XmlReader r)
         {
@@ -444,14 +448,13 @@ namespace TVRename
             return (EpisodeId == o.EpisodeId);
         }
 
-        public string GetFilename() => GetValueAcrossVersions("filename", "Filename", "");
+        public string Filename => GetValueAcrossVersions("filename", "Filename", "");
 
-        public string[] GetGuestStars()
-        {
-            string guest = EpisodeGuestStars;
+        public IEnumerable<string> GuestStars => string.IsNullOrEmpty(EpisodeGuestStars) ? new string[] { } : EpisodeGuestStars.Split('|');
 
-            return string.IsNullOrEmpty(guest) ? new string[] { } : guest.Split('|');
-        }
+        public IEnumerable<string> Writers => string.IsNullOrEmpty(Writer) ? new string[] { } : Writer.Split('|');
+
+        public IEnumerable<string> Directors => string.IsNullOrEmpty(EpisodeDirector) ? new string[] { } : EpisodeDirector.Split('|');
 
         private string GetValueAcrossVersions(string oldTag, string newTag, string defaultValue)
         {
@@ -476,7 +479,7 @@ namespace TVRename
             return returnVal;
         }
 
-        public void SetDefaults(SeriesInfo ser, Season airSeas, Season dvdSeason)
+        private void SetDefaults(SeriesInfo ser, Season airSeas, Season dvdSeason)
         {
             items = new Dictionary<string, string>();
             TheAiredSeason = airSeas;
