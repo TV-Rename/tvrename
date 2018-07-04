@@ -9,6 +9,7 @@ using System;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Globalization;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 
@@ -25,7 +26,7 @@ namespace TVRename
     /// </summary>
     public partial class Preferences : Form
     {
-        delegate void LoadLanguageDoneDel();
+        private delegate void LoadLanguageDoneDel();
 
         private readonly TVDoc mDoc;
         private Thread loadLanguageThread;
@@ -56,7 +57,7 @@ namespace TVRename
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 tabControl1.SelectedTab = tbFolderDeleting;
-                txtVideoExtensions.Focus();
+                txtEmptyIgnoreExtensions.Focus();
                 return;
             }
 
@@ -69,13 +70,13 @@ namespace TVRename
                 txtVideoExtensions.Focus();
                 return;
             }
-            if (!TVSettings.OKExtensionsString(txtVideoExtensions.Text))
+            if (!TVSettings.OKExtensionsString(txtSubtitleExtensions.Text))
             {
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
-                txtVideoExtensions.Focus();
+                tabControl1.SelectedTab = tpSubtitles;
+                txtSubtitleExtensions.Focus();
                 return;
             }
             if (!TVSettings.OKExtensionsString(txtOtherExtensions.Text))
@@ -131,6 +132,7 @@ namespace TVRename
             s.NotificationAreaIcon = cbNotificationIcon.Checked;
             s.VideoExtensionsString = txtVideoExtensions.Text;
             s.OtherExtensionsString = txtOtherExtensions.Text;
+            s.subtitleExtensionsString = txtSubtitleExtensions.Text;
             s.ExportRSSMaxDays = Convert.ToInt32(txtExportRSSMaxDays.Text);
             s.ExportRSSMaxShows = Convert.ToInt32(txtExportRSSMaxShows.Text);
             s.ExportRSSDaysPast = Convert.ToInt32(txtExportRSSDaysPast.Text);
@@ -146,20 +148,15 @@ namespace TVRename
             s.SpecialsFolderName = txtSpecialsFolderName.Text;
             s.searchSeasonWordsString = tbSeasonSearchTerms.Text;
             s.preferredRSSSearchTermsString = tbPreferredRSSTerms.Text;
-            
-
             s.defaultSeasonWord = txtSeasonFolderName.Text;
             s.keepTogetherExtensionsString = txtKeepTogether.Text;
-
             s.ForceLowercaseFilenames = cbForceLower.Checked;
             s.IgnoreSamples = cbIgnoreSamples.Checked;
-
             s.uTorrentPath = txtRSSuTorrentPath.Text;
             s.ResumeDatPath = txtUTResumeDatPath.Text;
             s.SABHostPort = txtSABHostPort.Text;
             s.SABAPIKey = txtSABAPIKey.Text;
             s.CheckSABnzbd = cbCheckSABnzbd.Checked;
-
             s.SearchRSS = cbSearchRSS.Checked;
             s.EpTBNs = cbEpTBNs.Checked;
             s.NFOShows = cbNFOShows.Checked;
@@ -347,12 +344,10 @@ namespace TVRename
             cbMissingCSV.Checked = s.ExportMissingCSV;
             txtMissingCSV.Text = s.ExportMissingCSVTo;
 
-            
             cbShowsTXT.Checked = s.ExportShowsTXT ;
             txtShowsTXTTo.Text = s.ExportShowsTXTTo;
             cbShowsHTML.Checked = s.ExportShowsHTML;
             txtShowsHTMLTo.Text = s.ExportShowsHTMLTo;
-
 
             cbRenamingXML.Checked = s.ExportRenamingXML;
             txtRenamingXML.Text = s.ExportRenamingXMLTo;
@@ -364,6 +359,7 @@ namespace TVRename
             cbNotificationIcon.Checked = s.NotificationAreaIcon;
             txtVideoExtensions.Text = s.GetVideoExtensionsString();
             txtOtherExtensions.Text = s.GetOtherExtensionsString();
+            txtSubtitleExtensions.Text = s.subtitleExtensionsString;
             txtKeepTogether.Text = s.GetKeepTogetherString();
             tbSeasonSearchTerms.Text = s.GetSeasonSearchTermsString();
             tbPreferredRSSTerms .Text = s.GetPreferredRSSSearchTermsString();
@@ -389,7 +385,7 @@ namespace TVRename
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();
-            tbPercentDirty.Text = s.upgradeDirtyPercent.ToString();
+            tbPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
 
             cbSearchRSS.Checked = s.SearchRSS;
             cbEpTBNs.Checked = s.EpTBNs;
@@ -425,7 +421,6 @@ namespace TVRename
             cbShrinkLarge.Checked = s.ShrinkLargeMede8erImages;
             cbFantArtJpg.Checked = s.FanArtJpg;
 
-
 #if DEBUG
             System.Diagnostics.Debug.Assert(s.Tidyup != null);
 #endif
@@ -438,7 +433,6 @@ namespace TVRename
             cbEmptyMaxSize.Checked = s.Tidyup.EmptyMaxSizeCheck;
             txtEmptyMaxSize.Text = s.Tidyup.EmptyMaxSizeMB.ToString();
             txtSeasonFolderName.Text = s.defaultSeasonWord;
-
             
             cbIgnoreRecycleBin.Checked = s.BulkAddIgnoreRecycleBin;
             cbIgnoreNoVideoFolders.Checked = s.BulkAddCompareNoVideoFolders;
@@ -478,7 +472,6 @@ namespace TVRename
                 case TVSettings.BetaMode.BetaToo:
                     cbMode.Text = "Beta";
                     break;
-
             }
 
             EnableDisable(null, null);
@@ -551,8 +544,6 @@ namespace TVRename
             FillTreeViewColoringShowStatusTypeCombobox();
         }
 
-
-
         private void FillTreeViewColoringShowStatusTypeCombobox()
         {
             //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>();
@@ -599,7 +590,6 @@ namespace TVRename
                 txt.Text = saveFile.FileName;
         }
 
-
         private void bnBrowseWTWXML_Click(object sender, EventArgs e)
         {
             Browse(txtWTWXML,"xml",2);
@@ -641,7 +631,6 @@ namespace TVRename
         {
             Browse(txtMissingCSV,"csv",3);
         }
-
 
         private void bnBrowseWTWRSS_Click(object sender, EventArgs e)
         {
@@ -842,19 +831,15 @@ namespace TVRename
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            ColumnHeader h;
-            h = new ColumnHeader("Search");
-            h.AutomaticSortEnabled = false;
+            ColumnHeader h = new ColumnHeader("Search") {AutomaticSortEnabled = false};
             ReplacementsGrid[0, 0] = h;
             ReplacementsGrid[0, 0].View = titleModel;
 
-            h = new ColumnHeader("Replace");
-            h.AutomaticSortEnabled = false;
+            h = new ColumnHeader("Replace") {AutomaticSortEnabled = false};
             ReplacementsGrid[0, 1] = h;
             ReplacementsGrid[0, 1].View = titleModel;
 
-            h = new ColumnHeader("Case Ins.");
-            h.AutomaticSortEnabled = false;
+            h = new ColumnHeader("Case Ins.") {AutomaticSortEnabled = false};
             ReplacementsGrid[0, 2] = h;
             ReplacementsGrid[0, 2].View = titleModel;
         }
@@ -868,7 +853,7 @@ namespace TVRename
             ReplacementsGrid[r, 0] = new SourceGrid.Cells.Cell(from, typeof(string));
             ReplacementsGrid[r, 1] = new SourceGrid.Cells.Cell(to, typeof(string));
             ReplacementsGrid[r, 2] = new SourceGrid.Cells.CheckBox(null, ins);
-            if (!string.IsNullOrEmpty(from) && (TVSettings.CompulsoryReplacements().IndexOf(from) != -1))
+            if (!string.IsNullOrEmpty(from) && (TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) != -1))
             {
                 ReplacementsGrid[r, 0].Editor.EnableEdit = false;
                 ReplacementsGrid[r, 0].View = roModel;
@@ -900,9 +885,7 @@ namespace TVRename
 
             //////////////////////////////////////////////////////////////////////
             // header row
-
-            ColumnHeader h = new ColumnHeader("URL");
-            h.AutomaticSortEnabled = false;
+            ColumnHeader h = new ColumnHeader("URL") {AutomaticSortEnabled = false};
             RSSGrid[0, 0] = h;
             RSSGrid[0, 0].View = titleModel;
         }
@@ -1070,7 +1053,7 @@ namespace TVRename
                 // don't delete compulsory items
                 int n = rowsIndex[0];
                 string from = (string) (ReplacementsGrid[n, 0].Value);
-                if (string.IsNullOrEmpty(from) || (TVSettings.CompulsoryReplacements().IndexOf(from) == -1))
+                if (string.IsNullOrEmpty(from) || (TVSettings.CompulsoryReplacements().IndexOf(from, StringComparison.Ordinal) == -1))
                     ReplacementsGrid.Rows.Remove(n);
             }
         }
