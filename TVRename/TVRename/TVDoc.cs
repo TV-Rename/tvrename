@@ -463,55 +463,33 @@ namespace TVRename
             {
                 CurrentlyBusy = true;
 
+                //Get the defult set of shows defined by the specified type
+                if (shows == null) shows = GetShowList(st);
+
+                //If still null then return
                 if (shows == null)
                 {
-                    if (st == TVSettings.ScanType.Full) shows = Library.GetShowItems();
-                    if (st == TVSettings.ScanType.Quick) shows = GetQuickShowsToScan(true, true);
-                    if (st == TVSettings.ScanType.Recent) shows = Library.GetRecentShows();
+                    logger.Error("No Shows Provided to Scan");
+                    return;
                 }
 
-                if (TVSettings.Instance.MissingCheck && !CheckAllFoldersExist(shows)
-                ) // only check for folders existing for missing check
+                // only check for folders existing for missing check
+                if (TVSettings.Instance.MissingCheck && !CheckAllFoldersExist(shows))
                     return;
 
                 if (!DoDownloadsFG())
                     return;
 
-                Thread actionWork = new Thread(ScanWorker) {Name = "ActionWork"};
+                Thread actionWork = new Thread(ScanWorker) { Name = "ActionWork" };
 
                 ActionCancel = false;
-                foreach (Finder f in Finders)
-                {
-                    f.Reset();
-                }
+                ResetFinders();
 
-                if (!Args.Hide)
-                {
-                    ScanProgDlg = new ScanProgress(
-                        TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
-                        TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchLocally,
-                        TVSettings.Instance.MissingCheck &&
-                        (TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckSABnzbd),
-                        TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchRSS);
-                }
-                else
-                    ScanProgDlg = null;
+                SetupScanUi();
 
                 actionWork.Start(shows.ToList());
 
-                if ((ScanProgDlg != null) && (ScanProgDlg.ShowDialog() == DialogResult.Cancel))
-                {
-                    ActionCancel = true;
-                    actionWork.Interrupt();
-                    foreach (Finder f in Finders)
-                    {
-                        f.Interrupt();
-                    }
-                }
-                else
-                    actionWork.Join();
-
-                ScanProgDlg = null;
+                AwaitCancellation(actionWork);
 
                 DownloadIdentifiers.Reset();
 
@@ -523,6 +501,52 @@ namespace TVRename
             {
                 logger.Fatal(e, "Unhandled Exception in ScanWorker");
             }
+        }
+
+        private void AwaitCancellation(Thread actionWork)
+        {
+            if ((ScanProgDlg != null) && (ScanProgDlg.ShowDialog() == DialogResult.Cancel))
+            {
+                ActionCancel = true;
+                actionWork.Interrupt();
+                foreach (Finder f in Finders)
+                {
+                    f.Interrupt();
+                }
+            }
+            else
+                actionWork.Join();
+        }
+
+        private void SetupScanUi()
+        {
+            if (!Args.Hide)
+            {
+                ScanProgDlg = new ScanProgress(
+                    TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
+                    TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchLocally,
+                    TVSettings.Instance.MissingCheck &&
+                    (TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckSABnzbd),
+                    TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchRSS);
+            }
+            else
+                ScanProgDlg = null;
+        }
+
+        private void ResetFinders()
+        {
+            foreach (Finder f in Finders)
+            {
+                f.Reset();
+            }
+        }
+
+        private List<ShowItem> GetShowList(TVSettings.ScanType st)
+        {
+            if (st == TVSettings.ScanType.Full) return Library.GetShowItems();
+            if (st == TVSettings.ScanType.Quick) return GetQuickShowsToScan(true, true);
+            if (st == TVSettings.ScanType.Recent) return Library.GetRecentShows();
+            return null;
         }
 
         public void DoAllActions()
@@ -592,13 +616,11 @@ namespace TVRename
                                 //do the 'name' test
                                 string root = Helpers.GetCommonStartString(pep.Name, comparePep.Name);
                                 bool sameLength = (pep.Name.Length == comparePep.Name.Length);
-
                                 bool sameName = (!root.Trim().Equals("Episode") && sameLength && root.Length > 3 &&
                                                  root.Length > pep.Name.Length / 2);
 
                                 bool oneFound = false;
                                 bool largerFileSize = false;
-
                                 if (sameName)
                                 {
                                     output.AppendLine("####### POSSIBLE DUPLICATE DUE TO NAME##########");
@@ -606,9 +628,7 @@ namespace TVRename
                                     //Do the missing Test (ie is one missing and not the other)
                                     bool pepFound = FindEpOnDisk(dfc, pep).Count > 0;
                                     bool comparePepFound = FindEpOnDisk(dfc, comparePep).Count > 0;
-
                                     oneFound = (pepFound ^ comparePepFound);
-
                                     if (oneFound)
                                     {
                                         output.AppendLine(
@@ -620,7 +640,6 @@ namespace TVRename
                                         FileInfo possibleDupFile = FindEpOnDisk(dfc, possibleDupEpisode)[0];
                                         int dupMovieLength = possibleDupFile.GetFilmLength();
                                         List<int> otherMovieLengths = new List<int>();
-
                                         foreach (FileInfo file in possibleDupFile.Directory.EnumerateFiles())
                                         {
                                             if (TVSettings.Instance.UsefulExtension(file.Extension, false))
@@ -633,7 +652,6 @@ namespace TVRename
                                             (otherMovieLengths.Sum() - dupMovieLength) / (otherMovieLengths.Count - 1);
 
                                         largerFileSize = (dupMovieLength > averageMovieLength * 1.4);
-
                                         if (largerFileSize)
                                         {
                                             {
@@ -1318,10 +1336,10 @@ namespace TVRename
                         ProcessedEpisode ep = eps[epIdx];
                         FileInfo actualFile = fi;
 
-                        if (renCheck && TVSettings.Instance.UsefulExtension(fi.Extension, true)) // == RENAMING CHECK ==
+                        if (renCheck && TVSettings.Instance.FileHasUsefulExtension( fi, true, out string otherExtension)) // == RENAMING CHECK ==
                         {
                             string newname = TVSettings.Instance.FilenameFriendly(
-                                TVSettings.Instance.NamingStyle.NameFor(ep, fi.Extension, folder.Length));
+                                TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
                                 fi.IsLanguageSpecificSubtitle(out string subtitleExtension))
@@ -1878,7 +1896,6 @@ namespace TVRename
 
             return ((seas != -1) || (ep != -1));
         }
-
 
         private void ReleaseUnmanagedResources()
         {

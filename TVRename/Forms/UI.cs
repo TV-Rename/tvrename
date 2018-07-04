@@ -22,7 +22,6 @@ using System.Xml;
 using NLog;
 using TVRename.Forms;
 using TVRename.Ipc;
-using TVRename.Utility;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -201,8 +200,8 @@ namespace TVRename
 
         private void ClearInfoWindows(string defaultText)
         {
-            SetHTMLbody(defaultText, EpGuidePath(), epGuideHTML);
-            SetHTMLbody(defaultText, ImagesGuidePath(), webBrowserImages);
+            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), EpGuidePath(), epGuideHTML);
+            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), ImagesGuidePath(), webBrowserImages);
         }
 
         private static int BGDLLongInterval() => 1000 * 60 * 60; // one hour
@@ -758,13 +757,13 @@ namespace TVRename
             {
                 Season s = ser.DVDSeasons[snum];
                 infoPaneBody = si.GetSeasonHtmlOverview(s);
-                imagesPaneBody = si.GetSeasonImagesHTMLOverview(s);
+                imagesPaneBody = si.GetSeasonImagesHtmlOverview(s);
             }
             else if (!si.DVDOrder && (snum >= 0) && (ser.AiredSeasons.ContainsKey(snum)))
             {
                 Season s = ser.AiredSeasons[snum];
                 infoPaneBody = si.GetSeasonHtmlOverview(s);
-                imagesPaneBody = si.GetSeasonImagesHTMLOverview(s);
+                imagesPaneBody = si.GetSeasonImagesHtmlOverview(s);
             }
             else
             {
@@ -784,21 +783,6 @@ namespace TVRename
 
         public static void SetHTMLbody(string body, string path, WebBrowser web)
         {
-            Color col = Color.FromName("ButtonFace");
-
-            string css = "* { font-family: Tahoma, Arial; font-size 10pt; } " + "a:link { color: black } " +
-                         "a:visited { color:black } " + "a:hover { color:#000080 } " + "a:active { color:black } " +
-                         "a.search:link { color: #800000 } " + "a.search:visited { color:#800000 } " +
-                         "a.search:hover { color:#000080 } " + "a.search:active { color:#800000 } " +
-                         "* {background-color: #" + col.R.ToString("X2") + col.G.ToString("X2") + col.B.ToString("X2") +
-                         "}" + "* { color: black }";
-
-            string html = "<html><head><meta charset=\"UTF-8\"><STYLE type=\"text/css\">" + css + "</style>";
-
-            html += "</head><body>";
-            html += body;
-            html += "</body></html>";
-
             web.Navigate("about:blank"); // make it close any file it might have open
             try
             {
@@ -806,7 +790,7 @@ namespace TVRename
                 {
                     BinaryWriter bw = new BinaryWriter(fs);
 
-                    bw.Write(Encoding.GetEncoding("UTF-8").GetBytes(html));
+                    bw.Write(Encoding.GetEncoding("UTF-8").GetBytes(body));
                 }
 
                 web.Navigate(LocalFileURLBase(path));

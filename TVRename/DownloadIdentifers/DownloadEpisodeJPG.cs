@@ -15,7 +15,7 @@ namespace TVRename
 
             ItemList theActionList = new ItemList();
 
-            string ban = dbep.GetFilename();
+            string ban = dbep.Filename;
             if (string.IsNullOrEmpty(ban)) return null;
 
             string basefn = filo.RemoveExtension();

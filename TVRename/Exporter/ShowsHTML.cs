@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace TVRename
@@ -22,13 +23,13 @@ namespace TVRename
             {
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
                 {
-                    file.WriteLine(HTMLHeader());
+                    file.WriteLine(ShowHtmlHelper.HTMLHeader(8, Color.White));
                     foreach (ShowItem si in Shows)
                     {
                         file.WriteLine(CreateHtml(si));
                     }
 
-                    file.WriteLine(HTMLFooter());
+                    file.WriteLine(ShowHtmlHelper.HTMLFooter());
                 }
             }
             catch (Exception e)
@@ -44,8 +45,8 @@ namespace TVRename
             int maxYear = si.TheSeries().MaxYear();
             string yearRange = (minYear == maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
             string episodeSummary = si.TheSeries().AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
-            string stars = StarRating(si.TheSeries().GetSiteRating());
-            string genreIcons = string.Join("&nbsp;", si.TheSeries().GetGenres().Select(GenreIconHtml));
+            string stars = ShowHtmlHelper.StarRating(si.TheSeries().GetSiteRating());
+            string genreIcons = string.Join("&nbsp;", si.TheSeries().GetGenres().Select(ShowHtmlHelper.GenreIconHtml));
             bool ratingIsNumber = float.TryParse(si.TheSeries().GetSiteRating(), out float rating);
             string siteRating = ratingIsNumber && rating > 0 ? rating + "/10" : "";
 
@@ -68,65 +69,5 @@ namespace TVRename
             </div></div></div>";
         }
 
-        private static string GenreIconHtml(string genre)
-        {
-            string[] availbleIcons =
-            {
-                "Action", "Adventure", "Animation", "Children", "Comedy", "Crime", "Documentary", "Drama", "Family",
-                "Fantasy", "Food", "Horror", "Mini-Series", "Mystery", "Reality", "Romance", "Science-Fiction", "Soap",
-                "Talk Show", "Thriller", "Travel", "War", "Western"
-            };
-
-            const string root = "https://www.tvrename.com/assets/images/GenreIcons/";
-
-            return availbleIcons.Contains(genre)
-                ? $@"<img width=""30"" height=""30"" src=""{root}{genre}.svg"" alt=""{genre}"">"
-                : "";
-        }
-
-        private static string StarRating(string rating)
-        {
-            return StarRating(float.TryParse(rating, out float f) ? f / 2 : 3);
-        }
-
-        private static string StarRating(float f)
-        {
-            const string star = @"<i class=""fas fa-star""></i>";
-            const string halfstar = @"<i class=""fas fa-star-half""></i>";
-
-            if (f < .25) return "";
-            if (f <= .75) return halfstar;
-            if (f > 1) return star + StarRating(f - 1);
-            return star;
-        }
-
-        // ReSharper disable once InconsistentNaming
-        private static string HTMLHeader()
-        {
-            return @"<!DOCTYPE html>
-                <html><head>
-                <meta charset=""utf-8"">
-                <meta name = ""viewport"" content = ""width=device-width, initial-scale=1.0"" >
-                <title> TV Rename - Show Summary</title>
-                <link rel = ""stylesheet"" href = ""http://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"" />
-                <link rel = ""stylesheet"" href = ""https://use.fontawesome.com/releases/v5.0.13/css/all.css"" />
-                </head >
-                <body >
-                <div class=""col-sm-8 offset-sm-2"">";
-        }
-
-        // ReSharper disable once InconsistentNaming
-        private static string HTMLFooter()
-        {
-            return @"
-                </div>
-                <script src=""http://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js""></script>
-                <script src = ""http://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"" ></script>
-                <script src = ""http://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"" ></script>
-                <script >$(document).ready(function(){ })</script>
-                </body>
-                </html>
-                ";
-        }
     }
 }

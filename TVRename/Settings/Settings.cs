@@ -337,6 +337,9 @@ namespace TVRename
         public string[] keepTogetherExtensionsArray => keepTogetherExtensionsString.Split(';');
         public string keepTogetherExtensionsString = "";
 
+        public string[] subtitleExtensionsArray => subtitleExtensionsString.Split(';');
+        public string subtitleExtensionsString = "";
+
         public string defaultSeasonWord = "Season";
 
         public string[] searchSeasonWordsArray => searchSeasonWordsString.Split(';');
@@ -353,7 +356,7 @@ namespace TVRename
         public string OtherExtensionsString = "";
         public ShowFilter Filter = new ShowFilter();
 
-        public string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
+        private string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
 
         public int ParallelDownloads = 4;
         public List<string> RSSURLs = DefaultRSSURLList();
@@ -481,6 +484,8 @@ namespace TVRename
                     VideoExtensionsString = reader.ReadElementContentAsString();
                 else if (reader.Name == "OtherExtensions")
                     OtherExtensionsString = reader.ReadElementContentAsString();
+                else if (reader.Name == "SubtitleExtensions")
+                    subtitleExtensionsString = reader.ReadElementContentAsString();
                 else if (reader.Name == "ExportRSSMaxDays")
                     ExportRSSMaxDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportRSSMaxShows")
@@ -802,6 +807,7 @@ namespace TVRename
                 ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp";
             OtherExtensionsString = ".srt;.nfo;.txt;.tbn";
             keepTogetherExtensionsString = ".srt;.nfo;.txt;.tbn";
+            subtitleExtensionsString = ".srt;.sub;.sbv;.idx";
 
             // have a guess at utorrent's path
             string[] guesses = new string[3];
@@ -865,6 +871,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"NotificationAreaIcon",NotificationAreaIcon);
             XmlHelper.WriteElementToXml(writer,"VideoExtensions",VideoExtensionsString);
             XmlHelper.WriteElementToXml(writer,"OtherExtensions",OtherExtensionsString);
+            XmlHelper.WriteElementToXml(writer,"SubtitleExtensions", subtitleExtensionsString);
             XmlHelper.WriteElementToXml(writer,"ExportRSSMaxDays",ExportRSSMaxDays);
             XmlHelper.WriteElementToXml(writer,"ExportRSSMaxShows",ExportRSSMaxShows);
             XmlHelper.WriteElementToXml(writer,"ExportRSSDaysPast",ExportRSSDaysPast);
@@ -1144,6 +1151,28 @@ namespace TVRename
             return false;
         }
 
+        public bool FileHasUsefulExtension(FileInfo file, bool otherExtensionsToo, out string extension)
+        {
+            foreach (string s in VideoExtensionsArray)
+            {
+                if (!file.Name.EndsWith(s)) continue;
+                extension = s;
+                return true;
+            }
+            if (otherExtensionsToo)
+            {
+                foreach (string s in OtherExtensionsArray)
+                {
+                    if (!file.Name.EndsWith(s)) continue;
+                    extension = s;
+                    return true;
+                }
+            }
+
+            extension = string.Empty;
+            return false;
+        }
+
         public bool KeepExtensionTogether(string extension)
         {
             if (KeepTogether == false) return false;
@@ -1160,10 +1189,7 @@ namespace TVRename
 
         public string BTSearchURL(ProcessedEpisode epi)
         {
-            if (epi == null)
-                return "";
-
-            SeriesInfo s = epi.TheSeries;
+            SeriesInfo s = epi?.TheSeries;
             if (s == null)
                 return "";
 
@@ -1225,3 +1251,4 @@ namespace TVRename
         }
     }
 }
+

@@ -58,7 +58,6 @@ namespace TVRename
         }
 
         private static readonly string WebsiteRoot = "http://thetvdb.com";
-        private static readonly string ApiRoot = "https://api.thetvdb.com";
 
         private FileInfo cacheFile;
         public bool Connected;
@@ -464,7 +463,7 @@ namespace TVRename
             try
             {
                 JObject jsonResponse =
-                    HTTPHelper.JsonHTTPGETRequest(ApiRoot + "/languages", null, tvDbTokenProvider.GetToken());
+                    HTTPHelper.JsonHTTPGETRequest(TvDbTokenProvider.TVDB_API_URL + "/languages", null, tvDbTokenProvider.GetToken());
 
                 LanguageList.Clear();
 
@@ -553,7 +552,7 @@ namespace TVRename
 
             long epochTime = theTime;
 
-            string uri = ApiRoot + "/updated/query";
+            string uri = TvDbTokenProvider.TVDB_API_URL + "/updated/query";
 
             //We need to ask for updates in blocks of 7 days
             //We'll keep asking until we get to a date within 7 days of today 
@@ -696,7 +695,7 @@ namespace TVRename
 
                             while (morePages)
                             {
-                                string episodeUri = ApiRoot + "/series/" + id + "/episodes";
+                                string episodeUri = TvDbTokenProvider.TVDB_API_URL + "/series/" + id + "/episodes";
                                 try
                                 {
                                     JObject jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri,
@@ -1190,7 +1189,7 @@ namespace TVRename
 
             Say(txt);
 
-            string uri = ApiRoot + "/series/" + code;
+            string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code;
             JObject jsonResponse;
             JObject jsonDefaultLangResponse = new JObject();
             try
@@ -1242,7 +1241,7 @@ namespace TVRename
 
                 while (morePages)
                 {
-                    string episodeUri = ApiRoot + "/series/" + code + "/episodes";
+                    string episodeUri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/episodes";
                     try
                     {
                         JObject jsonEpisodeResponse = HTTPHelper.JsonHTTPGETRequest(episodeUri,
@@ -1307,7 +1306,7 @@ namespace TVRename
                 try
                 {
                     JObject jsonEpisodeSearchResponse = HTTPHelper.JsonHTTPGETRequest(
-                        ApiRoot + "/series/" + code + "/images", null, tvDbTokenProvider.GetToken(),
+                        TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images", null, tvDbTokenProvider.GetToken(),
                         TVSettings.Instance.PreferredLanguage);
 
                     JObject a = (JObject) jsonEpisodeSearchResponse["data"];
@@ -1321,7 +1320,7 @@ namespace TVRename
                 {
                     //no images for chosen language
                     Logger.Warn(ex,
-                        $"No images found for {ApiRoot}/series/{code}/images in language {TVSettings.Instance.PreferredLanguage}");
+                        $"No images found for {TvDbTokenProvider.TVDB_API_URL }/series/{code}/images in language {TVSettings.Instance.PreferredLanguage}");
                 }
 
                 foreach (string imageType in imageTypes)
@@ -1329,7 +1328,7 @@ namespace TVRename
                     try
                     {
                         JObject jsonImageResponse = HTTPHelper.JsonHTTPGETRequest(
-                            ApiRoot + "/series/" + code + "/images/query",
+                            TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query",
                             new Dictionary<string, string> {{"keyType", imageType}}, tvDbTokenProvider.GetToken(),
                             TVSettings.Instance.PreferredLanguage);
 
@@ -1351,7 +1350,7 @@ namespace TVRename
                     try
                     {
                         JObject jsonEpisodeSearchDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(
-                            ApiRoot + "/series/" + code + "/images", null, tvDbTokenProvider.GetToken(),
+                            TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images", null, tvDbTokenProvider.GetToken(),
                             DefaultLanguage);
 
                         JObject adl = (JObject) jsonEpisodeSearchDefaultLangResponse["data"];
@@ -1376,7 +1375,7 @@ namespace TVRename
                         try
                         {
                             JObject jsonImageDefaultLangResponse = HTTPHelper.JsonHTTPGETRequest(
-                                ApiRoot + "/series/" + code + "/images/query",
+                                TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query",
                                 new Dictionary<string, string> {{"keyType", imageType}}, tvDbTokenProvider.GetToken(),
                                 DefaultLanguage);
 
@@ -1440,7 +1439,7 @@ namespace TVRename
             //Get the actors too then well need another call for that
             try
             {
-                JObject jsonActorsResponse = HTTPHelper.JsonHTTPGETRequest(ApiRoot + "/series/" + code + "/actors",
+                JObject jsonActorsResponse = HTTPHelper.JsonHTTPGETRequest(TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/actors",
                     null, tvDbTokenProvider.GetToken());
 
                 IEnumerable<string> seriesActors = from a in jsonActorsResponse["data"] select (string) a["name"];
@@ -1482,7 +1481,7 @@ namespace TVRename
             else
                 return false; // shouldn't happen
 
-            string uri = ApiRoot + "/episodes/" + episodeId;
+            string uri = TvDbTokenProvider.TVDB_API_URL + "/episodes/" + episodeId;
             JObject jsonResponse;
             JObject jsonDefaultLangResponse = new JObject();
 
@@ -1609,7 +1608,7 @@ namespace TVRename
                 return;
             }
 
-            string uri = ApiRoot + "/search/series";
+            string uri = TvDbTokenProvider.TVDB_API_URL + "/search/series";
             JObject jsonResponse = new JObject();
             JObject jsonDefaultLangResponse = new JObject();
             try

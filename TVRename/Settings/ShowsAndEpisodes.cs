@@ -749,7 +749,7 @@ public class ShowItem
                     string newName = AutoFolderNameForSeason(i);
                     if (string.IsNullOrEmpty(newName)) continue;
 
-                    if (checkExist && !Directory.Exists(newName)) continue;
+                   if (checkExist && !Directory.Exists(newName)) continue;
 
                     if (!fld.ContainsKey(i)) fld[i] = new List<string>();
 

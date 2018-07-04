@@ -6,13 +6,13 @@ namespace TVRename.SAB
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlType(AnonymousType = true)]
-    public class queueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged
+    public class QueueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged
     {
         private string statusField;
         private string indexField;
         private string etaField;
         private string missingField;
-        private string avg_ageField;
+        private string avgAgeField;
         private string scriptField;
         private string msgidField;
         private string verbosityField;
@@ -24,7 +24,7 @@ namespace TVRename.SAB
         private double mbleftField;
         private string timeleftField;
         private string percentageField;
-        private string nzo_idField;
+        private string nzoIdField;
         private string unpackoptsField;
         private string sizeField;
 
@@ -75,10 +75,10 @@ namespace TVRename.SAB
         [XmlElement(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string avg_age
         {
-            get => avg_ageField;
+            get => avgAgeField;
             set
             {
-                avg_ageField = value;
+                avgAgeField = value;
                 RaisePropertyChanged("avg_age");
             }
         }
@@ -207,10 +207,10 @@ namespace TVRename.SAB
         [XmlElement(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
         public string nzo_id
         {
-            get => nzo_idField;
+            get => nzoIdField;
             set
             {
-                nzo_idField = value;
+                nzoIdField = value;
                 RaisePropertyChanged("nzo_id");
             }
         }

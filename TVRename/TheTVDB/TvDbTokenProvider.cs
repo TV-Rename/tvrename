@@ -12,6 +12,7 @@ namespace TVRename
 {
     public class TvDbTokenProvider
     {
+        //public static readonly string TVDB_API_URL = "https://api-dev.thetvdb.com";
         public static readonly string TVDB_API_URL = "https://api.thetvdb.com";
         public static readonly string TVDB_API_KEY = "5FEC454623154441";
 

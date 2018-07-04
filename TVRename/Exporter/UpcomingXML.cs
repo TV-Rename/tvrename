@@ -62,7 +62,7 @@ namespace TVRename
                         writer.WriteEndElement();
                         
                         XmlHelper.WriteElementToXml( writer,"Rating",ei.EpisodeRating);
-                        XmlHelper.WriteElementToXml( writer,"filename",ei.GetFilename());
+                        XmlHelper.WriteElementToXml( writer,"filename",ei.Filename);
 
                         writer.WriteEndElement(); // item
                     }

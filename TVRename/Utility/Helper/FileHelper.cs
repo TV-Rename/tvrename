@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
+using NLog.Internal;
 
 namespace TVRename
 {
@@ -10,14 +11,20 @@ namespace TVRename
     {
         public static bool IsLanguageSpecificSubtitle(this FileInfo file, out string extension)
         {
-            const string regex = @"(?<ext>\.\w{2,3}\.(srt|sub|sbv))$";
+            foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray)
+            {
+                string regex = @"(?<ext>\.\w{2,3}\"+subExtension+")$";
 
-            Match m = Regex.Match(file.Name, regex, RegexOptions.IgnoreCase);
-            extension = (m.Success)
-                ? m.Groups["ext"].ToString()
-                : "";
+                Match m = Regex.Match(file.Name, regex, RegexOptions.IgnoreCase);
 
-            return m.Success;
+                if (!m.Success) continue;
+
+                extension = m.Groups["ext"].ToString();
+                return true;
+            }
+
+            extension = string.Empty;
+            return false;
         }
 
         public static int GetFilmLength(this FileInfo movieFile)

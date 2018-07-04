@@ -63,7 +63,7 @@ namespace TVRename
                     {
                         foreach (Episode ep in kvp.Value.Episodes)
                         {
-                                foreach (string g in ep.GetGuestStars())
+                                foreach (string g in ep.GuestStars)
                                 {
                                     string aa = g.Trim();
                                     if (!string.IsNullOrEmpty(aa))

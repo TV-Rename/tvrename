@@ -1298,31 +1298,22 @@ namespace TVRename
             // returns true if we found a match (if actSetPrio is on, true also means we have set a priority for this file)
             string simplifiedfname = Helpers.SimplifyName(nameInTorrent);
 
-            foreach (Item Action1 in MissingList)
+            foreach (Item action1 in MissingList)
             {
-                if ((!(Action1 is ItemMissing)) && (!(Action1 is ItemuTorrenting)) && (!(Action1 is ItemSABnzbd)))
+                if ((!(action1 is ItemMissing)) && (!(action1 is ItemInProgress)))
                     continue;
 
-                ProcessedEpisode m = null;
+                ProcessedEpisode m = action1.Episode;
                 string name = null;
 
-                if (Action1 is ItemMissing)
+                switch (action1)
                 {
-                    ItemMissing Action = (ItemMissing) (Action1);
-                    m = Action.Episode;
-                    name = Action.TheFileNoExt;
-                }
-                else if (Action1 is ItemuTorrenting)
-                {
-                    ItemuTorrenting Action = (ItemuTorrenting) (Action1);
-                    m = Action.Episode;
-                    name = Action.DesiredLocationNoExt;
-                }
-                else if (Action1 is ItemSABnzbd)
-                {
-                    ItemSABnzbd Action = (ItemSABnzbd) (Action1);
-                    m = Action.Episode;
-                    name = Action.DesiredLocationNoExt;
+                    case ItemMissing action:
+                        name = action.TheFileNoExt;
+                        break;
+                    case ItemInProgress actionIp:
+                        name = actionIp.DesiredLocationNoExt;
+                        break;
                 }
 
                 if ((m == null) || string.IsNullOrEmpty(name))
@@ -1344,7 +1335,7 @@ namespace TVRename
                     {
                         // match!
                         // get extension from nameInTorrent
-                        int p = nameInTorrent.LastIndexOf(".");
+                        int p = nameInTorrent.LastIndexOf(".", StringComparison.Ordinal);
                         string ext = (p == -1) ? "" : nameInTorrent.Substring(p);
                         AlterResume(torrentFile, torrentFileNum, name + ext);
                         if (SetPrios)
@@ -1487,16 +1478,13 @@ namespace TVRename
             return r;
         }
 
-        public static string RemoveUT(string s)
+        private static string RemoveUT(string s)
         {
             // if it is a .!ut file, we can remove the extension
-            if (s.EndsWith(".!ut"))
-                return s.Remove(s.Length - 4);
-            else
-                return s;
+            return s.EndsWith(".!ut") ? s.Remove(s.Length - 4) : s;
         }
 
-        public void AddResult(string type, string torrent, string num, string prio, string location)
+        private void AddResult(string type, string torrent, string num, string prio, string location)
         {
             if (Results == null)
                 return;

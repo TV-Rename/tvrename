@@ -174,7 +174,7 @@ namespace TVRename
 
         private ActionDownloadImage DoEpisode(ShowItem si, Episode ep, FileInfo filo,string extension, bool forceRefresh)
         {
-            string ban = ep.GetFilename();
+            string ban = ep.Filename;
             if (!string.IsNullOrEmpty(ban))
             {
                 string basefn = filo.RemoveExtension();
