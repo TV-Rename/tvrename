@@ -68,6 +68,5 @@ namespace TVRename
             </div>
             </div></div></div>";
         }
-
     }
 }

@@ -66,6 +66,7 @@ namespace TVRename
                 new FileFinder(this),
                 new RSSFinder(this),
                 new uTorrentFinder(this),
+                new qBitTorrentFinder(this),
                 new SABnzbdFinder(this)
             };
 
@@ -1549,14 +1550,14 @@ namespace TVRename
                 // sort Action list by type
                 TheActionList.Sort(new ActionItemSorter()); // was new ActionSorter()
 
-                if (ScanProgDlg != null)
-                    ScanProgDlg.Done();
+                ScanProgDlg?.Done();
 
                 Stats().FindAndOrganisesDone++;
             }
             catch (Exception e)
             {
                 logger.Fatal(e, "Unhandled Exception in ScanWorker");
+                ScanProgDlg?.Done();
                 return;
             }
         }

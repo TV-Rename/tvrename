@@ -109,6 +109,8 @@
     <Compile Include="Exporter\ActionListXML.cs" />
     <Compile Include="Exporter\MissingCSV.cs" />
     <Compile Include="Exporter\ShowsHTML.cs" />
+    <Compile Include="Finders\qBitTorrentFinder.cs" />
+    <Compile Include="Finders\TorrentFinder.cs" />
     <Compile Include="Forms\AutoAddShow.cs">
       <SubType>Form</SubType>
     </Compile>
