@@ -59,7 +59,7 @@ namespace TVRename
 
         private static string GetHttpParameters(Dictionary<string, string> parameters)
         {
-            if (parameters == null) return "";
+            if (parameters == null) return string.Empty;
 
             StringBuilder sb = new StringBuilder();
             sb.Append("?");

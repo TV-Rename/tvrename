@@ -467,8 +467,9 @@ namespace TVRename
 
                 LanguageList.Clear();
 
-                foreach (JObject languageJson in jsonResponse["data"])
+                foreach (JToken jToken in jsonResponse["data"])
                 {
+                    JObject languageJson = (JObject) jToken;
                     int id = (int) languageJson["id"];
                     string name = (string) languageJson["name"];
                     string englishName = (string) languageJson["englishName"];
@@ -1278,8 +1279,16 @@ namespace TVRename
                 {
                     Parallel.ForEach(response["data"], episodeData =>
                     {
-                        //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                        DownloadEpisodeNow(code, (int) episodeData["id"]);
+                        if (string.IsNullOrEmpty(episodeData["filename"]?.ToString()))
+                        {
+                            //The episode does not contain enough data (specifically image filename), so we'll get the full version
+                            DownloadEpisodeNow(code, (int)episodeData["id"]);
+                        }
+                        else
+                        {
+                            ProcessEpisode(code, episodeData);
+                        }
+
                     });
                 }
                 catch (InvalidCastException ex)
@@ -1460,22 +1469,10 @@ namespace TVRename
 
         private bool DownloadEpisodeNow(int seriesId, int episodeId, bool dvdOrder = false)
         {
-            bool forceReload = forceReloadOn.Contains(seriesId);
-
             if (series.ContainsKey(seriesId))
             {
                 Episode ep = FindEpisodeById(episodeId);
-                string eptxt = "New Episode Id = " + episodeId;
-
-                if (ep != null)
-                {
-                    if ((dvdOrder) && (ep.TheDvdSeason != null))
-                        eptxt = $"S{ep.TheDvdSeason.SeasonNumber:00}E{ep.DvdEpNum:00}";
-
-                    if ((!dvdOrder) && (ep.TheAiredSeason != null))
-                        eptxt = $"S{ep.TheAiredSeason.SeasonNumber:00}E{ep.AiredEpNum:00}";
-                }
-
+                string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
                 Say(series[seriesId].Name + " (" + eptxt + ")");
             }
             else
@@ -1538,6 +1535,63 @@ namespace TVRename
             }
 
             return true;
+        }
+
+        private bool ProcessEpisode(int seriesId, JToken episodeData, bool dvdOrder = false)
+        {
+            if (series.ContainsKey(seriesId))
+            {
+                int episodeId = (int)episodeData["id"];
+
+                Episode ep = FindEpisodeById(episodeId);
+                string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
+
+                Say(series[seriesId].Name + " (" + eptxt + ")");
+            }
+            else
+                return false; // shouldn't happen
+
+            if (!GetLock("ProcessTVDBResponse"))
+                return false;
+
+            try
+            {
+                Episode e = new Episode(seriesId, (JObject)episodeData);
+
+                if (e.Ok())
+                {
+                    AddOrUpdateEpisode(e);
+                }
+            }
+            catch (TVDBException e)
+            {
+                Logger.Error("Could not parse TVDB Response " + e.Message);
+                LastError = e.Message;
+                Say("");
+                return false;
+            }
+            finally
+            {
+                Unlock("ProcessTVDBResponse");
+            }
+
+            return true;
+        }
+
+        private static string EpisodeDescription(bool dvdOrder, int episodeId, Episode ep)
+        {
+            string eptxt = "New Episode Id = " + episodeId;
+
+            if (ep != null)
+            {
+                if ((dvdOrder) && (ep.TheDvdSeason != null))
+                    eptxt = $"S{ep.TheDvdSeason.SeasonNumber:00}E{ep.DvdEpNum:00}";
+
+                if ((!dvdOrder) && (ep.TheAiredSeason != null))
+                    eptxt = $"S{ep.TheAiredSeason.SeasonNumber:00}E{ep.AiredEpNum:00}";
+            }
+
+            return eptxt;
         }
 
         private void AddPlaceholderSeries(int code, string name)
@@ -1609,7 +1663,7 @@ namespace TVRename
             }
 
             string uri = TvDbTokenProvider.TVDB_API_URL + "/search/series";
-            JObject jsonResponse = new JObject();
+            JObject jsonResponse;
             JObject jsonDefaultLangResponse = new JObject();
             try
             {
@@ -1632,8 +1686,9 @@ namespace TVRename
             {
                 try
                 {
-                    foreach (JObject seriesResponse in jsonResponse["data"])
+                    foreach (JToken jToken in jsonResponse["data"])
                     {
+                        JObject seriesResponse = (JObject) jToken;
                         // The <series> returned by GetSeries have
                         // less info than other results from
                         // thetvdb.com, so we need to smartly merge
@@ -1642,10 +1697,10 @@ namespace TVRename
                         // first).
 
                         SeriesInfo si = new SeriesInfo(seriesResponse, GetLanguageId());
-                        if (this.series.ContainsKey(si.TVDBCode))
-                            this.series[si.TVDBCode].Merge(si, GetLanguageId());
+                        if (series.ContainsKey(si.TVDBCode))
+                            series[si.TVDBCode].Merge(si, GetLanguageId());
                         else
-                            this.series[si.TVDBCode] = si;
+                            series[si.TVDBCode] = si;
                     }
                 }
                 catch (InvalidCastException ex)
@@ -1660,8 +1715,9 @@ namespace TVRename
                     //we also want to search for search terms that match in default language
                     try
                     {
-                        foreach (JObject seriesResponse in jsonDefaultLangResponse["data"])
+                        foreach (JToken jToken in jsonDefaultLangResponse["data"])
                         {
+                            JObject seriesResponse = (JObject) jToken;
                             // The <series> returned by GetSeries have
                             // less info than other results from
                             // thetvdb.com, so we need to smartly merge
@@ -1670,10 +1726,10 @@ namespace TVRename
                             // first).
 
                             SeriesInfo si = new SeriesInfo(seriesResponse, GetLanguageId());
-                            if (this.series.ContainsKey(si.TVDBCode))
-                                this.series[si.TVDBCode].Merge(si, GetLanguageId());
+                            if (series.ContainsKey(si.TVDBCode))
+                                series[si.TVDBCode].Merge(si, GetLanguageId());
                             else
-                                this.series[si.TVDBCode] = si;
+                                series[si.TVDBCode] = si;
                         }
                     }
                     catch (InvalidCastException ex)
