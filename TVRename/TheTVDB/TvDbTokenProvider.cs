@@ -47,7 +47,7 @@ namespace TVRename
         {
             Logger.Info("Acquire a TheTVDB token... ");
             JObject request = new JObject(new JProperty("apikey", TVDB_API_KEY));
-            JObject jsonResponse = HTTPHelper.JsonHTTPPOSTRequest($"{TVDB_API_URL}/login", request);
+            JObject jsonResponse = HttpHelper.JsonHttpPostRequest($"{TVDB_API_URL}/login", request);
 
             UpdateToken((string)jsonResponse["token"]);
             Logger.Info("Performed login at " + DateTime.UtcNow);
@@ -57,7 +57,7 @@ namespace TVRename
         private void RefreshToken()
         {
             Logger.Info("Refreshing TheTVDB token... ");
-            JObject jsonResponse = HTTPHelper.JsonHTTPGETRequest($"{TVDB_API_URL}/refresh_token", null, lastKnownToken);
+            JObject jsonResponse = HttpHelper.JsonHttpGetRequest($"{TVDB_API_URL}/refresh_token", null, lastKnownToken);
 
             UpdateToken((string)jsonResponse["token"]);
             Logger.Info("refreshed token at " + DateTime.UtcNow);

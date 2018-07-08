@@ -100,14 +100,14 @@ namespace TVRename.App
                 doc = new TVDoc(settingsFile, clargs);
 
                 if (recover) doc.SetDirty();
-                recover = !doc.LoadOK;
+                recover = !doc.LoadOk;
 
                 // Continue if correctly loaded
                 if (!recover) continue;
 
                 // Set recover message
                 recoverText = string.Empty;
-                if (!doc.LoadOK && !string.IsNullOrEmpty(doc.LoadErr)) recoverText = doc.LoadErr;
+                if (!doc.LoadOk && !string.IsNullOrEmpty(doc.LoadErr)) recoverText = doc.LoadErr;
                 if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr)) recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
             } while (recover);
 
