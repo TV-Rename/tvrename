@@ -35,6 +35,13 @@ namespace TVRename
             if (ser != null)
                 ai.TVDBCode = ser.TVDBCode;
 
+            //Try removing any year
+            string showNameNoYear = Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
+            ser = TheTVDB.Instance.GetSeries(showNameNoYear);
+            if (ser != null)
+                ai.TVDBCode = ser.TVDBCode;
+
+
             TheTVDB.Instance.Unlock("GuessShowItem");
         }
 

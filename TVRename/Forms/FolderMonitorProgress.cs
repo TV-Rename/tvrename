@@ -24,7 +24,7 @@ namespace TVRename
         private void bnCancel_Click(object sender, System.EventArgs e)
         {
             DialogResult = DialogResult.Abort;
-            mainForm.FMPStopNow = true;
+            mainForm.FmpStopNow = true;
         }
 
         private void timer1_Tick(object sender, System.EventArgs e)
@@ -36,10 +36,10 @@ namespace TVRename
 
             BringToFront();
 
-            pbProgress.Value = mainForm.FMPPercent;
-            lbMessage.Text = mainForm.FMPUpto;
+            pbProgress.Value = mainForm.FmpPercent;
+            lbMessage.Text = mainForm.FmpUpto;
             
-            if (mainForm.FMPStopNow)
+            if (mainForm.FmpStopNow)
                 Close();
 
             timer1.Start();

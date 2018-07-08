@@ -2654,8 +2654,12 @@ namespace TVRename
                     continue;
                 }
 
+
+                //Remove any (nnnn) in the hint - probably a year
+                string refinedHint = Regex.Replace(hint,@"\(\d{4}\)","");
+
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
-                string refinedHint = RemoveSeriesEpisodeIndicators(hint);
+                refinedHint = RemoveSeriesEpisodeIndicators(refinedHint);
 
                 if (string.IsNullOrWhiteSpace(refinedHint))
                 {
