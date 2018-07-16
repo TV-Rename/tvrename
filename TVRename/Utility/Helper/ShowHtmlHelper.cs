@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using Alphaleonis.Win32.Filesystem;
+using TVRename.ItemsAndActions;
 
 namespace TVRename
 {
@@ -508,7 +509,7 @@ namespace TVRename
 
             string seasText = snum == 0
                 ? TVSettings.Instance.SpecialsFolderName
-                : (TVSettings.Instance.defaultSeasonWord + " " + snum);
+                : new ActionBuildRightSeasonWord(snum).SeasonName;
 
             if ((eis.Count > 0) && (eis[0].SeasonId > 0))
                 seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, eis[0].SeasonId, false) + "\">" +
@@ -540,13 +541,13 @@ namespace TVRename
             {
                 nodeTitle = snum == 0
                     ? "Not Available on DVD"
-                    : "DVD " + TVSettings.Instance.defaultSeasonWord + " " + snum;
+                    : "DVD " + new ActionBuildRightSeasonWord(snum).SeasonName;
             }
             else
             {
                 nodeTitle = snum == 0
                     ? TVSettings.Instance.SpecialsFolderName
-                    : TVSettings.Instance.defaultSeasonWord + " " + snum;
+                    : new ActionBuildRightSeasonWord(snum).SeasonName;
             }
 
             return nodeTitle;

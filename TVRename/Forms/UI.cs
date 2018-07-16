@@ -22,6 +22,7 @@ using System.Xml;
 using NLog;
 using TVRename.Forms;
 using TVRename.Ipc;
+using TVRename.ItemsAndActions;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -1326,7 +1327,7 @@ namespace TVRename
             {
                 tsi = new ToolStripMenuItem("Edit " + (seas.SeasonNumber == 0
                                                 ? TVSettings.Instance.SpecialsFolderName
-                                                : TVSettings.Instance.defaultSeasonWord + " " + seas.SeasonNumber));
+                                                : new ActionBuildRightSeasonWord(seas.SeasonNumber).SeasonName));
 
                 tsi.Tag = (int) RightClickCommands.kEditSeason;
                 showRightClickMenu.Items.Add(tsi);
