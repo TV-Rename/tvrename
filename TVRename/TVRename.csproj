@@ -62,7 +62,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AlphaFS, Version=2.2.0.0, Culture=neutral, PublicKeyToken=4d31a58f7d7ad5c9, processorArchitecture=MSIL">
-      <HintPath>..\packages\AlphaFS.2.2.1\lib\net452\AlphaFS.dll</HintPath>
+      <HintPath>..\packages\AlphaFS.2.2.4\lib\net452\AlphaFS.dll</HintPath>
     </Reference>
     <Reference Include="Humanizer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
@@ -174,6 +174,7 @@
     <Compile Include="Forms\TVRenameSplash.Designer.cs">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemsAndActions\ActionBuildRightSeasonWord.cs" />
     <Compile Include="ItemsAndActions\ActionDelete.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
