@@ -299,6 +299,8 @@ namespace TVRename
         public string ExportWTWRSSTo = "";
         public bool ExportWTWXML = false;
         public string ExportWTWXMLTo = "";
+        public bool ExportWTWICAL = false;
+        public string ExportWTWICALTo = "";
         public List<FilenameProcessorRE> FNPRegexs = DefaultFNPList();
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
@@ -460,6 +462,10 @@ namespace TVRename
                     ExportWTWXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportWTWXMLTo")
                     ExportWTWXMLTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportWTWICAL")
+                    ExportWTWICAL = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportWTWICALTo")
+                    ExportWTWICALTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWRecentDays")
                     WTWRecentDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "StartupTab")
@@ -851,6 +857,8 @@ namespace TVRename
             
             XmlHelper.WriteElementToXml(writer,"ExportWTWRSS",ExportWTWRSS);
             XmlHelper.WriteElementToXml(writer,"ExportWTWRSSTo",ExportWTWRSSTo);
+            XmlHelper.WriteElementToXml(writer, "ExportWTWICAL", ExportWTWICAL);
+            XmlHelper.WriteElementToXml(writer, "ExportWTWICALTo", ExportWTWICALTo);
             XmlHelper.WriteElementToXml(writer,"ExportWTWXML",ExportWTWXML);
             XmlHelper.WriteElementToXml(writer,"ExportWTWXMLTo",ExportWTWXMLTo);
             XmlHelper.WriteElementToXml(writer,"WTWRecentDays",WTWRecentDays);

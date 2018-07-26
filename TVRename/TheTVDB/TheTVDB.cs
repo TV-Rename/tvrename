@@ -1403,8 +1403,9 @@ namespace TVRename
             {
                 try
                 {
-                    foreach (JObject bannerData in response["data"])
+                    foreach (JToken jToken in response["data"])
                     {
+                        JObject bannerData = (JObject) jToken;
                         Banner b = new Banner(si.TVDBCode, bannerData, GetLanguageId());
                         if (!series.ContainsKey(b.SeriesId))
                             throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");

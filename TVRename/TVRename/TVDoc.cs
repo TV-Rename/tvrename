@@ -434,7 +434,7 @@ namespace TVRename
 
         public void WriteUpcoming()
         {
-            List<UpcomingExporter> lup = new List<UpcomingExporter> {new UpcomingRSS(this), new UpcomingXML(this)};
+            List<UpcomingExporter> lup = new List<UpcomingExporter> {new UpcomingRSS(this), new UpcomingXML(this),new UpcomingiCAL(this)};
 
             foreach (UpcomingExporter ue in lup)
             {

@@ -67,6 +67,9 @@
     <Reference Include="Humanizer, Version=2.2.0.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\packages\Humanizer.Core.2.2.0\lib\netstandard1.0\Humanizer.dll</HintPath>
     </Reference>
+    <Reference Include="Ical.Net, Version=4.1.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ical.Net.4.1.8\lib\net46\Ical.Net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -84,6 +87,9 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.5.4\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="NodaTime, Version=2.0.2.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NodaTime.2.0.2\lib\net45\NodaTime.dll</HintPath>
+    </Reference>
     <Reference Include="SourceGrid, Version=4.40.4580.29115, Culture=neutral, PublicKeyToken=df6f5e538749e85d, processorArchitecture=MSIL">
       <HintPath>..\packages\SourceGrid.4.4.0\lib\net35\SourceGrid.dll</HintPath>
     </Reference>
@@ -93,8 +99,14 @@
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Reflection.TypeExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.TypeExtensions.4.1.0\lib\net46\System.Reflection.TypeExtensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Runtime.Serialization.Primitives, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.Serialization.Primitives.4.3.0\lib\net46\System.Runtime.Serialization.Primitives.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
@@ -109,6 +121,7 @@
     <Compile Include="Exporter\ActionListXML.cs" />
     <Compile Include="Exporter\MissingCSV.cs" />
     <Compile Include="Exporter\ShowsHTML.cs" />
+    <Compile Include="Exporter\UpcomingiCAL.cs" />
     <Compile Include="Finders\qBitTorrentFinder.cs" />
     <Compile Include="Finders\TorrentFinder.cs" />
     <Compile Include="Forms\AutoAddShow.cs">

@@ -114,6 +114,8 @@ namespace TVRename
             s.ExportWTWRSSTo = txtWTWRSS.Text;
             s.ExportWTWXML = cbWTWXML.Checked;
             s.ExportWTWXMLTo = txtWTWXML.Text;
+            s.ExportWTWICAL = cbWTWICAL.Checked;
+            s.ExportWTWICALTo = txtWTWICAL.Text;
             s.ExportMissingXML = cbMissingXML.Checked;
             s.ExportMissingXMLTo = txtMissingXML.Text;
             s.ExportMissingCSV = cbMissingCSV.Checked;
@@ -332,6 +334,8 @@ namespace TVRename
 
             cbWTWRSS.Checked = s.ExportWTWRSS;
             txtWTWRSS.Text = s.ExportWTWRSSTo;
+            cbWTWICAL.Checked = s.ExportWTWICAL;
+            txtWTWICAL.Text = s.ExportWTWICALTo;
             txtWTWDays.Text = s.WTWRecentDays.ToString();
             cbWTWXML.Checked = s.ExportWTWXML;
             txtWTWXML.Text = s.ExportWTWXMLTo;
@@ -670,8 +674,11 @@ namespace TVRename
             txtWTWXML.Enabled = cbWTWXML.Checked;
             bnBrowseWTWXML.Enabled = cbWTWXML.Checked;
 
+            txtWTWICAL.Enabled = cbWTWICAL.Checked;
+            bnBrowseWTWICAL.Enabled = cbWTWICAL.Checked;
+
             bool wtw;
-            if ((cbWTWRSS.Checked) || (cbWTWXML.Checked))
+            if ((cbWTWRSS.Checked) || (cbWTWXML.Checked) || (cbWTWICAL.Checked))
                 wtw = true;
             else
                 wtw = false;
@@ -1240,6 +1247,11 @@ namespace TVRename
         {
                 e.SuppressKeyPress = true;
             
+        }
+
+        private void bnBrowseWTWICAL_Click(object sender, EventArgs e)
+        {
+            Browse(txtWTWICAL, "iCal", 6);
         }
     }
 }
