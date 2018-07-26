@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
-using Path = Alphaleonis.Win32.Filesystem.Path;
+using System.Linq;
 
 namespace TVRename
 {
@@ -38,7 +38,12 @@ namespace TVRename
 
                 foreach (JToken file in stuff2.Children())
                 {
-                    ret.Add(new TorrentEntry(torrent["name"].ToString(), settings["save_path"] + Path.DirectorySeparator + file["name"], (int)(100 * file["progress"].ToObject<float>())));
+                    ret.Add(new TorrentEntry(torrent["name"].ToString(), settings["save_path"] + file["name"].ToString(), (int)(100 * file["progress"].ToObject<float>())));
+                }
+
+                if (!stuff2.Children().Any())
+                {
+                    ret.Add(new TorrentEntry(torrent["name"].ToString(), settings["save_path"] + torrent["name"].ToString() + TVSettings.Instance.VideoExtensionsArray[0], 0));
                 }
             }
 
