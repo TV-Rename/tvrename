@@ -525,12 +525,18 @@ namespace TVRename
         {
             if (!Args.Hide)
             {
+                bool anySearchDownloading =
+                    finders.Any(x => x.Active() && x.DisplayType() == Finder.FinderDisplayType.downloading);
+                bool anyActiveFileFinders =
+                    finders.Any(x => x.Active() && x.DisplayType() == Finder.FinderDisplayType.local);
+                bool anyActiveRssFinders =
+                    finders.Any(x => x.Active() && x.DisplayType() == Finder.FinderDisplayType.rss);
+
                 scanProgDlg = new ScanProgress(
                     TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
-                    TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchLocally,
-                    TVSettings.Instance.MissingCheck &&
-                    (TVSettings.Instance.CheckqBitTorrent || TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckSABnzbd),
-                    TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchRSS);
+                    TVSettings.Instance.MissingCheck && anyActiveFileFinders,
+                    TVSettings.Instance.MissingCheck && anySearchDownloading,
+                    TVSettings.Instance.MissingCheck && anyActiveRssFinders);
             }
             else
                 scanProgDlg = null;
@@ -756,9 +762,9 @@ namespace TVRename
                         folders.Add(si.AutoFolderNameForSeason(snum));
                     }
 
-                    foreach (string folderFE in folders)
+                    foreach (string folderExists in folders)
                     {
-                        string folder = folderFE;
+                        string folder = folderExists;
 
                         // generate new filename info
                         bool goAgain = false;
