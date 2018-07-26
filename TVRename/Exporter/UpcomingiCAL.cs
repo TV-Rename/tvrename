@@ -42,9 +42,9 @@ namespace TVRename
                         Description = ei.Overview,
                         Comments = new List<string>(){ei.Overview},
                         Summary = niceName,
+                        Location=ei.TheSeries.GetNetwork(),
                         Url = new Uri(TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TVDBCode, ei.SeasonId, false)),
                         Uid = ei.EpisodeId.ToString()
-
                     };
                     calendar.Events.Add(e);
                 }
