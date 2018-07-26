@@ -159,6 +159,9 @@ namespace TVRename
             s.SABHostPort = txtSABHostPort.Text;
             s.SABAPIKey = txtSABAPIKey.Text;
             s.CheckSABnzbd = cbCheckSABnzbd.Checked;
+            s.qBitTorrentHost= tbqBitTorrentHost.Text;
+            s.qBitTorrentPort= tbqBitTorrentPort.Text;
+            s.CheckqBitTorrent = cbCheckqBitTorrent.Checked;
             s.SearchRSS = cbSearchRSS.Checked;
             s.EpTBNs = cbEpTBNs.Checked;
             s.NFOShows = cbNFOShows.Checked;
@@ -386,6 +389,9 @@ namespace TVRename
             txtUTResumeDatPath.Text = s.ResumeDatPath;
             txtSABHostPort.Text = s.SABHostPort;
             txtSABAPIKey.Text = s.SABAPIKey;
+            tbqBitTorrentHost.Text = s.qBitTorrentHost;
+            tbqBitTorrentPort.Text = s.qBitTorrentPort;
+            cbCheckqBitTorrent.Checked= s.CheckqBitTorrent ;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();

@@ -529,7 +529,7 @@ namespace TVRename
                     TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
                     TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchLocally,
                     TVSettings.Instance.MissingCheck &&
-                    (TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckSABnzbd),
+                    (TVSettings.Instance.CheckqBitTorrent || TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckSABnzbd),
                     TVSettings.Instance.MissingCheck && TVSettings.Instance.SearchRSS);
             }
             else

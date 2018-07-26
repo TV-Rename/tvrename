@@ -8,12 +8,11 @@ namespace TVRename
     internal class qBitTorrentFinder : TorrentFinder
     {
         public qBitTorrentFinder(TVDoc i) : base(i) { }
-        public override bool Active() => true;
+        public override bool Active() => TVSettings.Instance.CheckqBitTorrent;
         
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             List<TorrentEntry> downloading = GetqBitTorrentDownloads();
-
             SearchForAppropriateDownloads(prog, startpct, totPct, downloading);
         }
 
@@ -22,8 +21,8 @@ namespace TVRename
             List < TorrentEntry >  ret = new List<TorrentEntry>();
 
             // get list of files being downloaded by qBitTorrentFinder
-            string host = "localhost";
-            string port = "8080";
+            string host = TVSettings.Instance.qBitTorrentHost;
+            string port = TVSettings.Instance.qBitTorrentPort;
             if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(host))
                 return ret;
 

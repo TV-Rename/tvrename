@@ -274,6 +274,9 @@ namespace TVRename
         public bool AutoCreateFolders = false;
         public bool BGDownload = false;
         public bool CheckuTorrent = false;
+        public bool CheckqBitTorrent = false;
+        public string qBitTorrentHost ="localhost";
+        public string qBitTorrentPort = "8080";
         public bool EpTBNs = false;
         public bool EpJPGs = false;
         public bool SeriesJpg = false;
@@ -597,6 +600,12 @@ namespace TVRename
                     PreventMove  = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
                     CheckuTorrent = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "CheckqBitTorrent")
+                    CheckqBitTorrent = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "qBitTorrentHost")
+                    qBitTorrentHost = reader.ReadElementContentAsString();
+                else if (reader.Name == "qBitTorrentPort")
+                    qBitTorrentPort = reader.ReadElementContentAsString();
                 else if (reader.Name == "MissingCheck")
                     MissingCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "UpdateFileDates")
@@ -912,6 +921,9 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);
             XmlHelper.WriteElementToXml(writer,"SelectedKODIType",(int)SelectedKODIType);
             XmlHelper.WriteElementToXml(writer,"CheckuTorrent",CheckuTorrent);
+            XmlHelper.WriteElementToXml(writer, "CheckqBitTorrent", CheckqBitTorrent);
+            XmlHelper.WriteElementToXml(writer, "qBitTorrentHost", qBitTorrentHost);
+            XmlHelper.WriteElementToXml(writer, "qBitTorrentPort", qBitTorrentPort);
             XmlHelper.WriteElementToXml(writer,"RenameCheck",RenameCheck);
             XmlHelper.WriteElementToXml(writer, "PreventMove", PreventMove);
             XmlHelper.WriteElementToXml(writer,"MissingCheck",MissingCheck);
