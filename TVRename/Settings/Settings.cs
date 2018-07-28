@@ -322,7 +322,7 @@ namespace TVRename
         public bool KODIImages = false;
         public bool pyTivoMeta = false;
         public bool pyTivoMetaSubFolder = false;
-        public CustomName NamingStyle = new CustomName();
+        public CustomEpisodeName NamingStyle = new CustomEpisodeName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
 
@@ -368,7 +368,7 @@ namespace TVRename
         public bool RenameCheck = true;
         public bool PreventMove = false;
         public bool RenameTxtToSub = false;
-        public List<Replacement> Replacements = DefaultListRE();
+        public readonly List<Replacement> Replacements = DefaultListRE();
         public string ResumeDatPath = "";
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
@@ -379,6 +379,7 @@ namespace TVRename
         public bool ShowInTaskbar = true;
         public bool AutoSearchForDownloadedFiles = false;
         public string SpecialsFolderName = "Specials";
+        public string SeasonFolderFormat = string.Empty;
         public int StartupTab = 0;
         public Searchers TheSearchers = new Searchers();
 
@@ -484,7 +485,7 @@ namespace TVRename
                 else if (reader.Name == "StartupTab2")
                     StartupTab = TabNumberFromName(reader.ReadElementContentAsString());
                 else if (reader.Name == "DefaultNamingStyle") // old naming style
-                    NamingStyle.StyleString = CustomName.OldNStyle(reader.ReadElementContentAsInt());
+                    NamingStyle.StyleString = CustomEpisodeName.OldNStyle(reader.ReadElementContentAsInt());
                 else if (reader.Name == "NamingStyle")
                     NamingStyle.StyleString = reader.ReadElementContentAsString();
                 else if (reader.Name == "NotificationAreaIcon")
@@ -521,6 +522,8 @@ namespace TVRename
                     AutoSelectShowInMyShows = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SpecialsFolderName")
                     SpecialsFolderName = reader.ReadElementContentAsString();
+                else if (reader.Name == "SeasonFolderFormat")
+                    SeasonFolderFormat = reader.ReadElementContentAsString();
                 else if (reader.Name == "SABAPIKey")
                     SABAPIKey = reader.ReadElementContentAsString();
                 else if (reader.Name == "CheckSABnzbd")
@@ -807,6 +810,12 @@ namespace TVRename
                 else
                     reader.ReadOuterXml();
             }
+
+            if (SeasonFolderFormat == string.Empty)
+            {
+                //this has not been set from the XML, so we should give it an appropriate default value
+                SeasonFolderFormat = defaultSeasonWord+" " + (LeadingZeroOnSeason ? "{Season:2}": "{Season}");
+            }
         }
 
         public void SetToDefaults()
@@ -907,6 +916,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "HideWtWSpoilers", HideWtWSpoilers);
             XmlHelper.WriteElementToXml(writer, "HideMyShowsSpoilers", HideMyShowsSpoilers);
             XmlHelper.WriteElementToXml(writer,"SpecialsFolderName",SpecialsFolderName);
+            XmlHelper.WriteElementToXml(writer, "SeasonFolderFormat", SeasonFolderFormat);
             XmlHelper.WriteElementToXml(writer,"uTorrentPath",uTorrentPath);
             XmlHelper.WriteElementToXml(writer,"ResumeDatPath",ResumeDatPath);
             XmlHelper.WriteElementToXml(writer,"SearchRSS",SearchRSS);
@@ -1216,7 +1226,7 @@ namespace TVRename
             string url = (epi.SI.UseCustomSearchURL && !string.IsNullOrWhiteSpace(epi.SI.CustomSearchURL))
                 ? epi.SI.CustomSearchURL
                 : TheSearchers.CurrentSearchURL();
-            return CustomName.NameForNoExt(epi, url, true);
+            return CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 
         public string FilenameFriendly(string fn)

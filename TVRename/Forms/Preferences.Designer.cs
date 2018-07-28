@@ -22,6 +22,7 @@ namespace TVRename
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            this.cntfw?.Close();
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -93,6 +94,9 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.txtParallelDownloads = new System.Windows.Forms.TextBox();
             this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
+            this.txtSeasonFormat = new System.Windows.Forms.TextBox();
+            this.label47 = new System.Windows.Forms.Label();
+            this.bnTags = new System.Windows.Forms.Button();
             this.txtKeepTogether = new System.Windows.Forms.TextBox();
             this.label39 = new System.Windows.Forms.Label();
             this.cbKeepTogetherMode = new System.Windows.Forms.ComboBox();
@@ -133,6 +137,7 @@ namespace TVRename
             this.cbMissingCSV = new System.Windows.Forms.CheckBox();
             this.txtMissingXML = new System.Windows.Forms.TextBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.cbCheckqBitTorrent = new System.Windows.Forms.CheckBox();
             this.chkAutoMergeLibraryEpisodes = new System.Windows.Forms.CheckBox();
             this.chkAutoMergeDownloadEpisodes = new System.Windows.Forms.CheckBox();
             this.chkPreventMove = new System.Windows.Forms.CheckBox();
@@ -204,6 +209,11 @@ namespace TVRename
             this.lbSearchFolders = new System.Windows.Forms.ListBox();
             this.label23 = new System.Windows.Forms.Label();
             this.tbuTorrentNZB = new System.Windows.Forms.TabPage();
+            this.qBitTorrent = new System.Windows.Forms.GroupBox();
+            this.tbqBitTorrentHost = new System.Windows.Forms.TextBox();
+            this.tbqBitTorrentPort = new System.Windows.Forms.TextBox();
+            this.label41 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
             this.label45 = new System.Windows.Forms.Label();
             this.tbPreferredRSSTerms = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -259,12 +269,6 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.qBitTorrent = new System.Windows.Forms.GroupBox();
-            this.tbqBitTorrentHost = new System.Windows.Forms.TextBox();
-            this.tbqBitTorrentPort = new System.Windows.Forms.TextBox();
-            this.label41 = new System.Windows.Forms.Label();
-            this.label42 = new System.Windows.Forms.Label();
-            this.cbCheckqBitTorrent = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -281,6 +285,7 @@ namespace TVRename
             this.panel1.SuspendLayout();
             this.tbSearchFolders.SuspendLayout();
             this.tbuTorrentNZB.SuspendLayout();
+            this.qBitTorrent.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.tpTreeColoring.SuspendLayout();
@@ -289,7 +294,6 @@ namespace TVRename
             this.groupBox8.SuspendLayout();
             this.tpSubtitles.SuspendLayout();
             this.cmDefaults.SuspendLayout();
-            this.qBitTorrent.SuspendLayout();
             this.SuspendLayout();
             // 
             // OKButton
@@ -325,7 +329,7 @@ namespace TVRename
             this.ReplacementsGrid.Name = "ReplacementsGrid";
             this.ReplacementsGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.ReplacementsGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.ReplacementsGrid.Size = new System.Drawing.Size(490, 62);
+            this.ReplacementsGrid.Size = new System.Drawing.Size(599, 62);
             this.ReplacementsGrid.TabIndex = 1;
             this.ReplacementsGrid.TabStop = true;
             this.ReplacementsGrid.ToolTipText = "";
@@ -352,7 +356,7 @@ namespace TVRename
             this.groupBox2.Controls.Add(this.txtExportRSSMaxShows);
             this.groupBox2.Location = new System.Drawing.Point(6, 6);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(495, 135);
+            this.groupBox2.Size = new System.Drawing.Size(604, 135);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "When to Watch";
@@ -360,7 +364,7 @@ namespace TVRename
             // bnBrowseWTWICAL
             // 
             this.bnBrowseWTWICAL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWTWICAL.Location = new System.Drawing.Point(412, 76);
+            this.bnBrowseWTWICAL.Location = new System.Drawing.Point(521, 76);
             this.bnBrowseWTWICAL.Name = "bnBrowseWTWICAL";
             this.bnBrowseWTWICAL.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseWTWICAL.TabIndex = 24;
@@ -374,7 +378,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWICAL.Location = new System.Drawing.Point(65, 78);
             this.txtWTWICAL.Name = "txtWTWICAL";
-            this.txtWTWICAL.Size = new System.Drawing.Size(340, 20);
+            this.txtWTWICAL.Size = new System.Drawing.Size(449, 20);
             this.txtWTWICAL.TabIndex = 23;
             // 
             // cbWTWICAL
@@ -407,7 +411,7 @@ namespace TVRename
             // bnBrowseWTWXML
             // 
             this.bnBrowseWTWXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWTWXML.Location = new System.Drawing.Point(412, 47);
+            this.bnBrowseWTWXML.Location = new System.Drawing.Point(521, 47);
             this.bnBrowseWTWXML.Name = "bnBrowseWTWXML";
             this.bnBrowseWTWXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseWTWXML.TabIndex = 19;
@@ -421,7 +425,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWXML.Location = new System.Drawing.Point(65, 49);
             this.txtWTWXML.Name = "txtWTWXML";
-            this.txtWTWXML.Size = new System.Drawing.Size(340, 20);
+            this.txtWTWXML.Size = new System.Drawing.Size(449, 20);
             this.txtWTWXML.TabIndex = 18;
             // 
             // cbWTWXML
@@ -438,7 +442,7 @@ namespace TVRename
             // bnBrowseWTWRSS
             // 
             this.bnBrowseWTWRSS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseWTWRSS.Location = new System.Drawing.Point(411, 18);
+            this.bnBrowseWTWRSS.Location = new System.Drawing.Point(520, 18);
             this.bnBrowseWTWRSS.Name = "bnBrowseWTWRSS";
             this.bnBrowseWTWRSS.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseWTWRSS.TabIndex = 2;
@@ -452,7 +456,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtWTWRSS.Location = new System.Drawing.Point(64, 20);
             this.txtWTWRSS.Name = "txtWTWRSS";
-            this.txtWTWRSS.Size = new System.Drawing.Size(341, 20);
+            this.txtWTWRSS.Size = new System.Drawing.Size(450, 20);
             this.txtWTWRSS.TabIndex = 1;
             // 
             // cbWTWRSS
@@ -521,7 +525,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSpecialsFolderName.Location = new System.Drawing.Point(113, 281);
             this.txtSpecialsFolderName.Name = "txtSpecialsFolderName";
-            this.txtSpecialsFolderName.Size = new System.Drawing.Size(383, 20);
+            this.txtSpecialsFolderName.Size = new System.Drawing.Size(492, 20);
             this.txtSpecialsFolderName.TabIndex = 12;
             // 
             // txtVideoExtensions
@@ -530,7 +534,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtVideoExtensions.Location = new System.Drawing.Point(99, 128);
             this.txtVideoExtensions.Name = "txtVideoExtensions";
-            this.txtVideoExtensions.Size = new System.Drawing.Size(397, 20);
+            this.txtVideoExtensions.Size = new System.Drawing.Size(506, 20);
             this.txtVideoExtensions.TabIndex = 5;
             // 
             // cbStartupTab
@@ -695,7 +699,7 @@ namespace TVRename
             this.tbGeneral.Location = new System.Drawing.Point(4, 40);
             this.tbGeneral.Name = "tbGeneral";
             this.tbGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tbGeneral.Size = new System.Drawing.Size(507, 456);
+            this.tbGeneral.Size = new System.Drawing.Size(616, 459);
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
@@ -869,6 +873,9 @@ namespace TVRename
             // 
             // tbFilesAndFolders
             // 
+            this.tbFilesAndFolders.Controls.Add(this.txtSeasonFormat);
+            this.tbFilesAndFolders.Controls.Add(this.label47);
+            this.tbFilesAndFolders.Controls.Add(this.bnTags);
             this.tbFilesAndFolders.Controls.Add(this.txtKeepTogether);
             this.tbFilesAndFolders.Controls.Add(this.label39);
             this.tbFilesAndFolders.Controls.Add(this.cbKeepTogetherMode);
@@ -895,10 +902,39 @@ namespace TVRename
             this.tbFilesAndFolders.Location = new System.Drawing.Point(4, 40);
             this.tbFilesAndFolders.Name = "tbFilesAndFolders";
             this.tbFilesAndFolders.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFilesAndFolders.Size = new System.Drawing.Size(507, 456);
+            this.tbFilesAndFolders.Size = new System.Drawing.Size(616, 459);
             this.tbFilesAndFolders.TabIndex = 1;
             this.tbFilesAndFolders.Text = "Files and Folders";
             this.tbFilesAndFolders.UseVisualStyleBackColor = true;
+            // 
+            // txtSeasonFormat
+            // 
+            this.txtSeasonFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSeasonFormat.Location = new System.Drawing.Point(113, 330);
+            this.txtSeasonFormat.Name = "txtSeasonFormat";
+            this.txtSeasonFormat.Size = new System.Drawing.Size(411, 20);
+            this.txtSeasonFormat.TabIndex = 26;
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Location = new System.Drawing.Point(6, 333);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(112, 13);
+            this.label47.TabIndex = 25;
+            this.label47.Text = "&Seasons folder format:";
+            // 
+            // bnTags
+            // 
+            this.bnTags.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnTags.Location = new System.Drawing.Point(530, 328);
+            this.bnTags.Name = "bnTags";
+            this.bnTags.Size = new System.Drawing.Size(75, 23);
+            this.bnTags.TabIndex = 24;
+            this.bnTags.Text = "Tags...";
+            this.bnTags.UseVisualStyleBackColor = true;
+            this.bnTags.Click += new System.EventHandler(this.bnTags_Click);
             // 
             // txtKeepTogether
             // 
@@ -906,7 +942,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtKeepTogether.Location = new System.Drawing.Point(204, 206);
             this.txtKeepTogether.Name = "txtKeepTogether";
-            this.txtKeepTogether.Size = new System.Drawing.Size(292, 20);
+            this.txtKeepTogether.Size = new System.Drawing.Size(401, 20);
             this.txtKeepTogether.TabIndex = 23;
             // 
             // label39
@@ -937,15 +973,15 @@ namespace TVRename
             // 
             this.tbSeasonSearchTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbSeasonSearchTerms.Location = new System.Drawing.Point(113, 329);
+            this.tbSeasonSearchTerms.Location = new System.Drawing.Point(113, 353);
             this.tbSeasonSearchTerms.Name = "tbSeasonSearchTerms";
-            this.tbSeasonSearchTerms.Size = new System.Drawing.Size(383, 20);
+            this.tbSeasonSearchTerms.Size = new System.Drawing.Size(492, 20);
             this.tbSeasonSearchTerms.TabIndex = 20;
             // 
             // label36
             // 
             this.label36.AutoSize = true;
-            this.label36.Location = new System.Drawing.Point(6, 332);
+            this.label36.Location = new System.Drawing.Point(6, 356);
             this.label36.Name = "label36";
             this.label36.Size = new System.Drawing.Size(109, 13);
             this.label36.TabIndex = 19;
@@ -955,19 +991,19 @@ namespace TVRename
             // 
             this.txtSeasonFolderName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSeasonFolderName.Location = new System.Drawing.Point(113, 305);
+            this.txtSeasonFolderName.Location = new System.Drawing.Point(113, 307);
             this.txtSeasonFolderName.Name = "txtSeasonFolderName";
-            this.txtSeasonFolderName.Size = new System.Drawing.Size(383, 20);
+            this.txtSeasonFolderName.Size = new System.Drawing.Size(492, 20);
             this.txtSeasonFolderName.TabIndex = 18;
             // 
             // label35
             // 
             this.label35.AutoSize = true;
-            this.label35.Location = new System.Drawing.Point(6, 308);
+            this.label35.Location = new System.Drawing.Point(6, 310);
             this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(109, 13);
+            this.label35.Size = new System.Drawing.Size(80, 13);
             this.label35.TabIndex = 17;
-            this.label35.Text = "&Seasons folder name:";
+            this.label35.Text = "&Seasons name:";
             // 
             // bnReplaceRemove
             // 
@@ -1001,7 +1037,7 @@ namespace TVRename
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(228, 355);
+            this.label19.Location = new System.Drawing.Point(228, 379);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(55, 13);
             this.label19.TabIndex = 15;
@@ -1009,7 +1045,7 @@ namespace TVRename
             // 
             // txtMaxSampleSize
             // 
-            this.txtMaxSampleSize.Location = new System.Drawing.Point(172, 352);
+            this.txtMaxSampleSize.Location = new System.Drawing.Point(172, 376);
             this.txtMaxSampleSize.Name = "txtMaxSampleSize";
             this.txtMaxSampleSize.Size = new System.Drawing.Size(53, 20);
             this.txtMaxSampleSize.TabIndex = 14;
@@ -1030,13 +1066,13 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtOtherExtensions.Location = new System.Drawing.Point(99, 154);
             this.txtOtherExtensions.Name = "txtOtherExtensions";
-            this.txtOtherExtensions.Size = new System.Drawing.Size(397, 20);
+            this.txtOtherExtensions.Size = new System.Drawing.Size(506, 20);
             this.txtOtherExtensions.TabIndex = 7;
             // 
             // cbForceLower
             // 
             this.cbForceLower.AutoSize = true;
-            this.cbForceLower.Location = new System.Drawing.Point(6, 377);
+            this.cbForceLower.Location = new System.Drawing.Point(6, 401);
             this.cbForceLower.Name = "cbForceLower";
             this.cbForceLower.Size = new System.Drawing.Size(167, 17);
             this.cbForceLower.TabIndex = 16;
@@ -1046,7 +1082,7 @@ namespace TVRename
             // cbIgnoreSamples
             // 
             this.cbIgnoreSamples.AutoSize = true;
-            this.cbIgnoreSamples.Location = new System.Drawing.Point(6, 354);
+            this.cbIgnoreSamples.Location = new System.Drawing.Point(6, 378);
             this.cbIgnoreSamples.Name = "cbIgnoreSamples";
             this.cbIgnoreSamples.Size = new System.Drawing.Size(166, 17);
             this.cbIgnoreSamples.TabIndex = 13;
@@ -1063,7 +1099,7 @@ namespace TVRename
             this.tbAutoExport.Location = new System.Drawing.Point(4, 40);
             this.tbAutoExport.Name = "tbAutoExport";
             this.tbAutoExport.Padding = new System.Windows.Forms.Padding(3);
-            this.tbAutoExport.Size = new System.Drawing.Size(507, 456);
+            this.tbAutoExport.Size = new System.Drawing.Size(616, 459);
             this.tbAutoExport.TabIndex = 2;
             this.tbAutoExport.Text = "Automatic Export";
             this.tbAutoExport.UseVisualStyleBackColor = true;
@@ -1080,7 +1116,7 @@ namespace TVRename
             this.groupBox7.Controls.Add(this.txtShowsTXTTo);
             this.groupBox7.Location = new System.Drawing.Point(7, 227);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(494, 72);
+            this.groupBox7.Size = new System.Drawing.Size(603, 72);
             this.groupBox7.TabIndex = 4;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "All Shows";
@@ -1088,7 +1124,7 @@ namespace TVRename
             // bnBrowseShowsHTML
             // 
             this.bnBrowseShowsHTML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseShowsHTML.Location = new System.Drawing.Point(411, 45);
+            this.bnBrowseShowsHTML.Location = new System.Drawing.Point(520, 45);
             this.bnBrowseShowsHTML.Name = "bnBrowseShowsHTML";
             this.bnBrowseShowsHTML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseShowsHTML.TabIndex = 8;
@@ -1113,13 +1149,13 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShowsHTMLTo.Location = new System.Drawing.Point(64, 47);
             this.txtShowsHTMLTo.Name = "txtShowsHTMLTo";
-            this.txtShowsHTMLTo.Size = new System.Drawing.Size(341, 20);
+            this.txtShowsHTMLTo.Size = new System.Drawing.Size(450, 20);
             this.txtShowsHTMLTo.TabIndex = 7;
             // 
             // bnBrowseShowsTXT
             // 
             this.bnBrowseShowsTXT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(411, 21);
+            this.bnBrowseShowsTXT.Location = new System.Drawing.Point(520, 21);
             this.bnBrowseShowsTXT.Name = "bnBrowseShowsTXT";
             this.bnBrowseShowsTXT.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseShowsTXT.TabIndex = 5;
@@ -1144,7 +1180,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtShowsTXTTo.Location = new System.Drawing.Point(64, 23);
             this.txtShowsTXTTo.Name = "txtShowsTXTTo";
-            this.txtShowsTXTTo.Size = new System.Drawing.Size(340, 20);
+            this.txtShowsTXTTo.Size = new System.Drawing.Size(449, 20);
             this.txtShowsTXTTo.TabIndex = 4;
             // 
             // groupBox5
@@ -1156,7 +1192,7 @@ namespace TVRename
             this.groupBox5.Controls.Add(this.txtFOXML);
             this.groupBox5.Location = new System.Drawing.Point(6, 367);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(495, 55);
+            this.groupBox5.Size = new System.Drawing.Size(604, 55);
             this.groupBox5.TabIndex = 3;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Finding and Organising";
@@ -1164,7 +1200,7 @@ namespace TVRename
             // bnBrowseFOXML
             // 
             this.bnBrowseFOXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseFOXML.Location = new System.Drawing.Point(411, 19);
+            this.bnBrowseFOXML.Location = new System.Drawing.Point(520, 19);
             this.bnBrowseFOXML.Name = "bnBrowseFOXML";
             this.bnBrowseFOXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseFOXML.TabIndex = 2;
@@ -1189,7 +1225,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFOXML.Location = new System.Drawing.Point(64, 21);
             this.txtFOXML.Name = "txtFOXML";
-            this.txtFOXML.Size = new System.Drawing.Size(341, 20);
+            this.txtFOXML.Size = new System.Drawing.Size(450, 20);
             this.txtFOXML.TabIndex = 1;
             // 
             // groupBox4
@@ -1201,7 +1237,7 @@ namespace TVRename
             this.groupBox4.Controls.Add(this.txtRenamingXML);
             this.groupBox4.Location = new System.Drawing.Point(6, 305);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(495, 57);
+            this.groupBox4.Size = new System.Drawing.Size(604, 57);
             this.groupBox4.TabIndex = 2;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Renaming";
@@ -1209,7 +1245,7 @@ namespace TVRename
             // bnBrowseRenamingXML
             // 
             this.bnBrowseRenamingXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseRenamingXML.Location = new System.Drawing.Point(411, 19);
+            this.bnBrowseRenamingXML.Location = new System.Drawing.Point(520, 19);
             this.bnBrowseRenamingXML.Name = "bnBrowseRenamingXML";
             this.bnBrowseRenamingXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseRenamingXML.TabIndex = 2;
@@ -1234,7 +1270,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRenamingXML.Location = new System.Drawing.Point(64, 21);
             this.txtRenamingXML.Name = "txtRenamingXML";
-            this.txtRenamingXML.Size = new System.Drawing.Size(341, 20);
+            this.txtRenamingXML.Size = new System.Drawing.Size(450, 20);
             this.txtRenamingXML.TabIndex = 1;
             // 
             // groupBox3
@@ -1249,7 +1285,7 @@ namespace TVRename
             this.groupBox3.Controls.Add(this.txtMissingXML);
             this.groupBox3.Location = new System.Drawing.Point(6, 147);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(495, 79);
+            this.groupBox3.Size = new System.Drawing.Size(604, 79);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Missing";
@@ -1257,7 +1293,7 @@ namespace TVRename
             // bnBrowseMissingCSV
             // 
             this.bnBrowseMissingCSV.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(411, 47);
+            this.bnBrowseMissingCSV.Location = new System.Drawing.Point(520, 47);
             this.bnBrowseMissingCSV.Name = "bnBrowseMissingCSV";
             this.bnBrowseMissingCSV.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingCSV.TabIndex = 2;
@@ -1268,7 +1304,7 @@ namespace TVRename
             // bnBrowseMissingXML
             // 
             this.bnBrowseMissingXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowseMissingXML.Location = new System.Drawing.Point(412, 19);
+            this.bnBrowseMissingXML.Location = new System.Drawing.Point(521, 19);
             this.bnBrowseMissingXML.Name = "bnBrowseMissingXML";
             this.bnBrowseMissingXML.Size = new System.Drawing.Size(75, 23);
             this.bnBrowseMissingXML.TabIndex = 5;
@@ -1282,7 +1318,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingCSV.Location = new System.Drawing.Point(64, 48);
             this.txtMissingCSV.Name = "txtMissingCSV";
-            this.txtMissingCSV.Size = new System.Drawing.Size(341, 20);
+            this.txtMissingCSV.Size = new System.Drawing.Size(450, 20);
             this.txtMissingCSV.TabIndex = 1;
             // 
             // cbMissingXML
@@ -1313,7 +1349,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMissingXML.Location = new System.Drawing.Point(64, 21);
             this.txtMissingXML.Name = "txtMissingXML";
-            this.txtMissingXML.Size = new System.Drawing.Size(341, 20);
+            this.txtMissingXML.Size = new System.Drawing.Size(450, 20);
             this.txtMissingXML.TabIndex = 4;
             // 
             // tpScanOptions
@@ -1341,6 +1377,16 @@ namespace TVRename
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
+            // 
+            // cbCheckqBitTorrent
+            // 
+            this.cbCheckqBitTorrent.AutoSize = true;
+            this.cbCheckqBitTorrent.Location = new System.Drawing.Point(40, 190);
+            this.cbCheckqBitTorrent.Name = "cbCheckqBitTorrent";
+            this.cbCheckqBitTorrent.Size = new System.Drawing.Size(145, 17);
+            this.cbCheckqBitTorrent.TabIndex = 16;
+            this.cbCheckqBitTorrent.Text = "Check &qBitTorrent queue";
+            this.cbCheckqBitTorrent.UseVisualStyleBackColor = true;
             // 
             // chkAutoMergeLibraryEpisodes
             // 
@@ -1516,7 +1562,7 @@ namespace TVRename
             this.tbFolderDeleting.Location = new System.Drawing.Point(4, 40);
             this.tbFolderDeleting.Name = "tbFolderDeleting";
             this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFolderDeleting.Size = new System.Drawing.Size(507, 456);
+            this.tbFolderDeleting.Size = new System.Drawing.Size(616, 459);
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
@@ -1652,7 +1698,7 @@ namespace TVRename
             this.tbMediaCenter.Location = new System.Drawing.Point(4, 40);
             this.tbMediaCenter.Name = "tbMediaCenter";
             this.tbMediaCenter.Padding = new System.Windows.Forms.Padding(3);
-            this.tbMediaCenter.Size = new System.Drawing.Size(507, 456);
+            this.tbMediaCenter.Size = new System.Drawing.Size(616, 459);
             this.tbMediaCenter.TabIndex = 8;
             this.tbMediaCenter.Text = "Media Center";
             this.tbMediaCenter.UseVisualStyleBackColor = true;
@@ -1673,7 +1719,7 @@ namespace TVRename
             this.panel2.Controls.Add(this.rdEden);
             this.panel2.Controls.Add(this.rdFrodo);
             this.panel2.Controls.Add(this.rdBoth);
-            this.panel2.Location = new System.Drawing.Point(495, 6);
+            this.panel2.Location = new System.Drawing.Point(604, 6);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(215, 32);
             this.panel2.TabIndex = 23;
@@ -1779,7 +1825,7 @@ namespace TVRename
             // bnMCPresets
             // 
             this.bnMCPresets.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnMCPresets.Location = new System.Drawing.Point(635, 370);
+            this.bnMCPresets.Location = new System.Drawing.Point(744, 370);
             this.bnMCPresets.Name = "bnMCPresets";
             this.bnMCPresets.Size = new System.Drawing.Size(75, 23);
             this.bnMCPresets.TabIndex = 16;
@@ -1942,7 +1988,7 @@ namespace TVRename
             this.tbSearchFolders.Controls.Add(this.label23);
             this.tbSearchFolders.Location = new System.Drawing.Point(4, 40);
             this.tbSearchFolders.Name = "tbSearchFolders";
-            this.tbSearchFolders.Size = new System.Drawing.Size(507, 456);
+            this.tbSearchFolders.Size = new System.Drawing.Size(616, 459);
             this.tbSearchFolders.TabIndex = 3;
             this.tbSearchFolders.Text = "Search Folders";
             this.tbSearchFolders.UseVisualStyleBackColor = true;
@@ -2055,7 +2101,7 @@ namespace TVRename
             // bnOpenSearchFolder
             // 
             this.bnOpenSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnOpenSearchFolder.Location = new System.Drawing.Point(165, 429);
+            this.bnOpenSearchFolder.Location = new System.Drawing.Point(165, 432);
             this.bnOpenSearchFolder.Name = "bnOpenSearchFolder";
             this.bnOpenSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnOpenSearchFolder.TabIndex = 4;
@@ -2066,7 +2112,7 @@ namespace TVRename
             // bnRemoveSearchFolder
             // 
             this.bnRemoveSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(84, 429);
+            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(84, 432);
             this.bnRemoveSearchFolder.Name = "bnRemoveSearchFolder";
             this.bnRemoveSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveSearchFolder.TabIndex = 3;
@@ -2077,7 +2123,7 @@ namespace TVRename
             // bnAddSearchFolder
             // 
             this.bnAddSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnAddSearchFolder.Location = new System.Drawing.Point(3, 429);
+            this.bnAddSearchFolder.Location = new System.Drawing.Point(3, 432);
             this.bnAddSearchFolder.Name = "bnAddSearchFolder";
             this.bnAddSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnAddSearchFolder.TabIndex = 2;
@@ -2095,7 +2141,7 @@ namespace TVRename
             this.lbSearchFolders.Location = new System.Drawing.Point(3, 153);
             this.lbSearchFolders.Name = "lbSearchFolders";
             this.lbSearchFolders.ScrollAlwaysVisible = true;
-            this.lbSearchFolders.Size = new System.Drawing.Size(700, 264);
+            this.lbSearchFolders.Size = new System.Drawing.Size(809, 264);
             this.lbSearchFolders.TabIndex = 1;
             this.lbSearchFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragDrop);
             this.lbSearchFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragOver);
@@ -2130,6 +2176,57 @@ namespace TVRename
             this.tbuTorrentNZB.Text = "µTorrent / NZB";
             this.tbuTorrentNZB.UseVisualStyleBackColor = true;
             // 
+            // qBitTorrent
+            // 
+            this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.qBitTorrent.Controls.Add(this.tbqBitTorrentHost);
+            this.qBitTorrent.Controls.Add(this.tbqBitTorrentPort);
+            this.qBitTorrent.Controls.Add(this.label41);
+            this.qBitTorrent.Controls.Add(this.label42);
+            this.qBitTorrent.Location = new System.Drawing.Point(3, 378);
+            this.qBitTorrent.Name = "qBitTorrent";
+            this.qBitTorrent.Size = new System.Drawing.Size(610, 81);
+            this.qBitTorrent.TabIndex = 7;
+            this.qBitTorrent.TabStop = false;
+            this.qBitTorrent.Text = "qBitTorrent";
+            // 
+            // tbqBitTorrentHost
+            // 
+            this.tbqBitTorrentHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbqBitTorrentHost.Location = new System.Drawing.Point(75, 19);
+            this.tbqBitTorrentHost.Name = "tbqBitTorrentHost";
+            this.tbqBitTorrentHost.Size = new System.Drawing.Size(529, 20);
+            this.tbqBitTorrentHost.TabIndex = 1;
+            // 
+            // tbqBitTorrentPort
+            // 
+            this.tbqBitTorrentPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbqBitTorrentPort.Location = new System.Drawing.Point(75, 48);
+            this.tbqBitTorrentPort.Name = "tbqBitTorrentPort";
+            this.tbqBitTorrentPort.Size = new System.Drawing.Size(529, 20);
+            this.tbqBitTorrentPort.TabIndex = 4;
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Location = new System.Drawing.Point(11, 51);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(29, 13);
+            this.label41.TabIndex = 3;
+            this.label41.Text = "Port:";
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Location = new System.Drawing.Point(11, 22);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(32, 13);
+            this.label42.TabIndex = 0;
+            this.label42.Text = "Host:";
+            // 
             // label45
             // 
             this.label45.AutoSize = true;
@@ -2145,7 +2242,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPreferredRSSTerms.Location = new System.Drawing.Point(241, 6);
             this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
-            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(578, 20);
+            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(366, 20);
             this.tbPreferredRSSTerms.TabIndex = 23;
             // 
             // groupBox1
@@ -2284,7 +2381,7 @@ namespace TVRename
             this.RSSGrid.Name = "RSSGrid";
             this.RSSGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.RSSGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.RSSGrid.Size = new System.Drawing.Size(816, 136);
+            this.RSSGrid.Size = new System.Drawing.Size(607, 136);
             this.RSSGrid.TabIndex = 1;
             this.RSSGrid.TabStop = true;
             this.RSSGrid.ToolTipText = "";
@@ -2341,7 +2438,7 @@ namespace TVRename
             this.tpTreeColoring.Location = new System.Drawing.Point(4, 40);
             this.tpTreeColoring.Name = "tpTreeColoring";
             this.tpTreeColoring.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTreeColoring.Size = new System.Drawing.Size(507, 456);
+            this.tpTreeColoring.Size = new System.Drawing.Size(616, 459);
             this.tpTreeColoring.TabIndex = 7;
             this.tpTreeColoring.Text = "Tree Coloring";
             this.tpTreeColoring.UseVisualStyleBackColor = true;
@@ -2450,7 +2547,7 @@ namespace TVRename
             this.tpBulkAdd.Location = new System.Drawing.Point(4, 40);
             this.tpBulkAdd.Name = "tpBulkAdd";
             this.tpBulkAdd.Padding = new System.Windows.Forms.Padding(3);
-            this.tpBulkAdd.Size = new System.Drawing.Size(507, 456);
+            this.tpBulkAdd.Size = new System.Drawing.Size(616, 459);
             this.tpBulkAdd.TabIndex = 10;
             this.tpBulkAdd.Text = "Bulk/Auto Add";
             this.tpBulkAdd.UseVisualStyleBackColor = true;
@@ -2464,7 +2561,7 @@ namespace TVRename
             this.groupBox9.Controls.Add(this.cbIgnoreNoVideoFolders);
             this.groupBox9.Location = new System.Drawing.Point(6, 10);
             this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(490, 111);
+            this.groupBox9.Size = new System.Drawing.Size(599, 111);
             this.groupBox9.TabIndex = 16;
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Bulk Add";
@@ -2516,7 +2613,7 @@ namespace TVRename
             this.groupBox8.Controls.Add(this.tbMovieTerms);
             this.groupBox8.Location = new System.Drawing.Point(6, 127);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(490, 107);
+            this.groupBox8.Size = new System.Drawing.Size(599, 107);
             this.groupBox8.TabIndex = 13;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Auto Add";
@@ -2555,7 +2652,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbIgnoreSuffixes.Location = new System.Drawing.Point(99, 66);
             this.tbIgnoreSuffixes.Name = "tbIgnoreSuffixes";
-            this.tbIgnoreSuffixes.Size = new System.Drawing.Size(388, 20);
+            this.tbIgnoreSuffixes.Size = new System.Drawing.Size(497, 20);
             this.tbIgnoreSuffixes.TabIndex = 15;
             this.toolTip1.SetToolTip(this.tbIgnoreSuffixes, "These terms and any text after them will be ignored when\r\nsearching on TVDB for t" +
         "he show title based on the filename.");
@@ -2566,7 +2663,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbMovieTerms.Location = new System.Drawing.Point(99, 40);
             this.tbMovieTerms.Name = "tbMovieTerms";
-            this.tbMovieTerms.Size = new System.Drawing.Size(388, 20);
+            this.tbMovieTerms.Size = new System.Drawing.Size(497, 20);
             this.tbMovieTerms.TabIndex = 13;
             this.toolTip1.SetToolTip(this.tbMovieTerms, "If a filename contains any of these terms then it is assumed\r\nthat it is a Film a" +
         "nd not a TV Show. Hence \'Auto Add\' is not\r\ninvoked for this file.");
@@ -2580,7 +2677,7 @@ namespace TVRename
             this.tpSubtitles.Location = new System.Drawing.Point(4, 40);
             this.tpSubtitles.Name = "tpSubtitles";
             this.tpSubtitles.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSubtitles.Size = new System.Drawing.Size(507, 456);
+            this.tpSubtitles.Size = new System.Drawing.Size(616, 459);
             this.tpSubtitles.TabIndex = 11;
             this.tpSubtitles.Text = "Subtitles";
             this.tpSubtitles.UseVisualStyleBackColor = true;
@@ -2670,67 +2767,6 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // qBitTorrent
-            // 
-            this.qBitTorrent.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.qBitTorrent.Controls.Add(this.tbqBitTorrentHost);
-            this.qBitTorrent.Controls.Add(this.tbqBitTorrentPort);
-            this.qBitTorrent.Controls.Add(this.label41);
-            this.qBitTorrent.Controls.Add(this.label42);
-            this.qBitTorrent.Location = new System.Drawing.Point(3, 378);
-            this.qBitTorrent.Name = "qBitTorrent";
-            this.qBitTorrent.Size = new System.Drawing.Size(610, 81);
-            this.qBitTorrent.TabIndex = 7;
-            this.qBitTorrent.TabStop = false;
-            this.qBitTorrent.Text = "SABnzbd";
-            // 
-            // tbqBitTorrentHost
-            // 
-            this.tbqBitTorrentHost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbqBitTorrentHost.Location = new System.Drawing.Point(75, 19);
-            this.tbqBitTorrentHost.Name = "tbqBitTorrentHost";
-            this.tbqBitTorrentHost.Size = new System.Drawing.Size(529, 20);
-            this.tbqBitTorrentHost.TabIndex = 1;
-            // 
-            // tbqBitTorrentPort
-            // 
-            this.tbqBitTorrentPort.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbqBitTorrentPort.Location = new System.Drawing.Point(75, 48);
-            this.tbqBitTorrentPort.Name = "tbqBitTorrentPort";
-            this.tbqBitTorrentPort.Size = new System.Drawing.Size(529, 20);
-            this.tbqBitTorrentPort.TabIndex = 4;
-            // 
-            // label41
-            // 
-            this.label41.AutoSize = true;
-            this.label41.Location = new System.Drawing.Point(11, 51);
-            this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(29, 13);
-            this.label41.TabIndex = 3;
-            this.label41.Text = "Port:";
-            // 
-            // label42
-            // 
-            this.label42.AutoSize = true;
-            this.label42.Location = new System.Drawing.Point(11, 22);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(32, 13);
-            this.label42.TabIndex = 0;
-            this.label42.Text = "Host:";
-            // 
-            // cbCheckqBitTorrent
-            // 
-            this.cbCheckqBitTorrent.AutoSize = true;
-            this.cbCheckqBitTorrent.Location = new System.Drawing.Point(40, 190);
-            this.cbCheckqBitTorrent.Name = "cbCheckqBitTorrent";
-            this.cbCheckqBitTorrent.Size = new System.Drawing.Size(145, 17);
-            this.cbCheckqBitTorrent.TabIndex = 16;
-            this.cbCheckqBitTorrent.Text = "Check &qBitTorrent queue";
-            this.cbCheckqBitTorrent.UseVisualStyleBackColor = true;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -2783,6 +2819,8 @@ namespace TVRename
             this.tbSearchFolders.PerformLayout();
             this.tbuTorrentNZB.ResumeLayout(false);
             this.tbuTorrentNZB.PerformLayout();
+            this.qBitTorrent.ResumeLayout(false);
+            this.qBitTorrent.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox6.ResumeLayout(false);
@@ -2797,8 +2835,6 @@ namespace TVRename
             this.tpSubtitles.ResumeLayout(false);
             this.tpSubtitles.PerformLayout();
             this.cmDefaults.ResumeLayout(false);
-            this.qBitTorrent.ResumeLayout(false);
-            this.qBitTorrent.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3043,5 +3079,8 @@ namespace TVRename
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.Label label42;
         private System.Windows.Forms.CheckBox cbCheckqBitTorrent;
+        private System.Windows.Forms.Button bnTags;
+        private System.Windows.Forms.TextBox txtSeasonFormat;
+        private System.Windows.Forms.Label label47;
     }
 }

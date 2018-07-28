@@ -42,7 +42,7 @@ namespace TVRename
 
             ShowItem.TVDBCode = code;
             ShowItem.AutoAdd_FolderBase = cbDirectory.Text+lblDirectoryName.Text;
-            ShowItem.PadSeasonToTwoDigits = true;
+            ShowItem.AutoAdd_Type = ShowItem.AutomaticFolderType.LibraryDefault;
             //Set Default Timezone based on Network
             ShowItem.ShowTimeZone = TimeZone.TimeZoneForNetwork(codeFinder.SelectedShow()?.GetNetwork());
             if (!originalHint.Contains(codeFinder.SelectedShow().Name, StringComparison.OrdinalIgnoreCase))

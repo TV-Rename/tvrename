@@ -184,7 +184,7 @@ namespace TVRename
                 ? string.Empty
                 : "Production Code <br/>" + ep.ProductionCode;
 
-            string episodeDescriptor =  CustomName.NameForNoExt(ep, CustomName.OldNStyle(6)); // may need to include (si.DVDOrder && snum == 0)? ep.Name:
+            string episodeDescriptor =  CustomEpisodeName.NameForNoExt(ep, CustomEpisodeName.OldNStyle(6)); // may need to include (si.DVDOrder && snum == 0)? ep.Name:
             string writersHtml = string.IsNullOrWhiteSpace(ep.Writer)?string.Empty:"<b>Writers:</b> "+ string.Join(", ", ep.Writers);
             string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + string.Join(", ",ep.Directors);
             string possibleBreak = (string.IsNullOrWhiteSpace(writersHtml) || string.IsNullOrWhiteSpace(directorsHtml))
@@ -402,7 +402,7 @@ namespace TVRename
                     body += "<b>" + ei.Name + "</b>";
                 }
                 else
-                    body += "<b>" + HttpUtility.HtmlEncode(CustomName.NameForNoExt(ei, CustomName.OldNStyle(6))) +
+                    body += "<b>" + HttpUtility.HtmlEncode(CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(6))) +
                             "</b>";
 
                 body += "</A>"; // anchor

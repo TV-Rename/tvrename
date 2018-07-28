@@ -615,7 +615,7 @@ namespace TVRename
             foreach (ShowItem si in sil)
             {
                 if (filter.Filter(si)
-                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.getSimplifiedPossibleShowNames().Any(name =>
+                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.GetSimplifiedPossibleShowNames().Any(name =>
                            name.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
                     ))
                 {
@@ -1065,7 +1065,7 @@ namespace TVRename
             if ((next1 != null) && (next1.Count >= 1))
             {
                 ProcessedEpisode ei = next1[0];
-                tsNextShowTxt.Text += CustomName.NameForNoExt(ei, CustomName.OldNStyle(1)) + ", " + ei.HowLong() +
+                tsNextShowTxt.Text += CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1)) + ", " + ei.HowLong() +
                                       " (" + ei.DayOfWeek() + ", " + ei.TimeOfDay() + ")";
             }
             else
@@ -1324,7 +1324,7 @@ namespace TVRename
 
             if (seas != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
-                tsi = new ToolStripMenuItem("Edit " + (seas.SeasonNumber == 0
+                tsi = new ToolStripMenuItem("Edit " + (seas.IsSpecial()
                                                 ? TVSettings.Instance.SpecialsFolderName
                                                 : TVSettings.Instance.defaultSeasonWord + " " + seas.SeasonNumber));
 
@@ -1817,7 +1817,7 @@ namespace TVRename
         {
             MoreBusy(); // no background download while preferences are open!
 
-            Preferences pref = new Preferences(mDoc, scanOptions);
+            Preferences pref = new Preferences(mDoc, scanOptions,CurrentlySelectedSeason());
             if (pref.ShowDialog() == DialogResult.OK)
             {
                 mDoc.SetDirty();
@@ -2424,6 +2424,33 @@ namespace TVRename
 
         private void quickstartGuideToolStripMenuItem_Click(object sender, EventArgs e) => ShowQuickStartGuide();
 
+        private Season CurrentlySelectedSeason()
+        {
+            Season currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
+            if (currentSeas != null) return currentSeas;
+
+            ShowItem currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
+            if (currentShow != null)
+            {
+                foreach (KeyValuePair<int, Season> s in currentShow.AppropriateSeasons())
+                {
+                    //Find first season we can
+                    return s.Value;
+                }
+            }
+
+            foreach (ShowItem si in mDoc.Library.GetShowItems())
+            {
+                foreach (KeyValuePair<int, Season> s in si.AppropriateSeasons())
+                {
+                    //Find first season we can
+                    return s.Value;
+                }
+
+            }
+
+            return null;
+        }
         private List<ProcessedEpisode> CurrentlySelectedPEL()
         {
             Season currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
@@ -2453,7 +2480,7 @@ namespace TVRename
 
         private void filenameTemplateEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CustomName cn = new CustomName(TVSettings.Instance.NamingStyle.StyleString);
+            CustomEpisodeName cn = new CustomEpisodeName(TVSettings.Instance.NamingStyle.StyleString);
             CustomNameDesigner cne = new CustomNameDesigner(CurrentlySelectedPEL(), cn, mDoc);
             DialogResult dr = cne.ShowDialog();
             if (dr == DialogResult.OK)
@@ -2776,7 +2803,7 @@ namespace TVRename
         {
             foreach (ShowItem si in shows)
             {
-                if (si.getSimplifiedPossibleShowNames()
+                if (si.GetSimplifiedPossibleShowNames()
                     .Any(name => FileHelper.SimplifyAndCheckFilename(test, name)))
                     return true;
             }

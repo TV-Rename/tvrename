@@ -95,7 +95,7 @@ namespace TVRename
 
                     string filenamePrefix = "";
 
-                    if (!si.AutoAdd_FolderPerSeason)
+                    if (si.InOneFolder())
                     {   // We have multiple seasons in the same folder
                         // We need to do slightly more work to come up with the filenamePrefix
 
@@ -175,19 +175,16 @@ namespace TVRename
         private ActionDownloadImage DoEpisode(ShowItem si, Episode ep, FileInfo filo,string extension, bool forceRefresh)
         {
             string ban = ep.Filename;
-            if (!string.IsNullOrEmpty(ban))
-            {
-                string basefn = filo.RemoveExtension();
-                FileInfo imgtbn = FileHelper.FileInFolder(filo.Directory, basefn + extension);
-                if (!imgtbn.Exists || forceRefresh)
-                    if (!(doneTbn.Contains(imgtbn.FullName)))
-                    {
-                        doneTbn.Add(imgtbn.FullName);
+            if (string.IsNullOrEmpty(ban)) return null;
 
-                        return new ActionDownloadImage(si, (ep is ProcessedEpisode) ? (ProcessedEpisode)ep  : new ProcessedEpisode(ep,si ), imgtbn, ban);
-                    }
-            }
-            return null;
+            string basefn = filo.RemoveExtension();
+            FileInfo imgtbn = FileHelper.FileInFolder(filo.Directory, basefn + extension);
+            if (imgtbn.Exists && !forceRefresh) return null;
+
+            if (doneTbn.Contains(imgtbn.FullName)) return null;
+
+            doneTbn.Add(imgtbn.FullName);
+            return new ActionDownloadImage(si, (ep is ProcessedEpisode episode) ? episode  : new ProcessedEpisode(ep,si ), imgtbn, ban);
         }
 
         public sealed override void Reset()

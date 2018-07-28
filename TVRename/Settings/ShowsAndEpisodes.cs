@@ -177,10 +177,9 @@ namespace TVRename
 
 public class ShowItem
     {
-        public bool AutoAddNewSeasons;
         public string AutoAdd_FolderBase; // TODO: use magical renaming tokens here
-        public bool AutoAdd_FolderPerSeason;
-        public string AutoAdd_SeasonFolderName; // TODO: use magical renaming tokens here
+        public string AutoAdd_CustomFolderFormat;
+        public AutomaticFolderType AutoAdd_Type;
 
         public bool CountSpecials;
         public string CustomShowName;
@@ -191,7 +190,6 @@ public class ShowItem
         public bool ForceCheckNoAirdate;
         public List<int> IgnoreSeasons;
         public Dictionary<int, List<string>> ManualFolderLocations;
-        public bool PadSeasonToTwoDigits;
         public Dictionary<int, List<ProcessedEpisode>> SeasonEpisodes; // built up by applying rules.
         public Dictionary<int, List<ShowRule>> SeasonRules;
         public bool ShowNextAirdate;
@@ -207,6 +205,16 @@ public class ShowItem
         private string LastFiguredTZ;
         
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
+
+        #region AutomaticFolderType enum
+        public enum AutomaticFolderType
+        {
+            None,
+            BaseOnly,
+            LibraryDefault,
+            Custom
+        }
+        #endregion
 
         public ShowItem()
         {
@@ -244,6 +252,13 @@ public class ShowItem
         {
             SetDefaults();
 
+            //These variables have been discontinued (JULY 2018).  if we have any then we should migrate to the new values;
+            bool upgradeFromOldAutoAddFunction = false;
+            bool TEMP_AutoAddNewSeasons = true;
+            bool TEMP_AutoAdd_FolderPerSeason = true;
+            bool TEMP_PadSeasonToTwoDigits = true;
+            string TEMP_AutoAdd_SeasonFolderName = string.Empty;
+
             reader.Read();
             if (reader.Name != "ShowItem")
                 return; // bail out
@@ -259,24 +274,41 @@ public class ShowItem
                     CustomShowName = reader.ReadElementContentAsString();
                     UseCustomShowName = true;
                 }
+
                 if (reader.Name == "UseCustomShowName")
                     UseCustomShowName = reader.ReadElementContentAsBoolean();
+
                 if (reader.Name == "CustomShowName")
                     CustomShowName = reader.ReadElementContentAsString();
                 else if (reader.Name == "TVDBID")
                     TVDBCode = reader.ReadElementContentAsInt();
+                else if (reader.Name == "AutoAddNewSeasons")
+                {
+                    TEMP_AutoAddNewSeasons = reader.ReadElementContentAsBoolean();
+                    upgradeFromOldAutoAddFunction = true;
+                }
+                else if (reader.Name == "FolderPerSeason")
+                {
+                    TEMP_AutoAdd_FolderPerSeason = reader.ReadElementContentAsBoolean();
+                    upgradeFromOldAutoAddFunction = true;
+                }
+                else if (reader.Name == "SeasonFolderName")
+                {
+                    TEMP_AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
+                    upgradeFromOldAutoAddFunction = true;
+                }
+
+                else if (reader.Name == "PadSeasonToTwoDigits")
+                { 
+                    TEMP_PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();
+                    upgradeFromOldAutoAddFunction = true;
+                }
                 else if (reader.Name == "CountSpecials")
                     CountSpecials = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ShowNextAirdate")
                     ShowNextAirdate = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "AutoAddNewSeasons")
-                    AutoAddNewSeasons = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderBase")
                     AutoAdd_FolderBase = reader.ReadElementContentAsString();
-                else if (reader.Name == "FolderPerSeason")
-                    AutoAdd_FolderPerSeason = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SeasonFolderName")
-                    AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
                 else if (reader.Name == "DoRename")
                     DoRename = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DoMissingCheck")
@@ -295,8 +327,10 @@ public class ShowItem
                     ForceCheckFuture = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ForceCheckNoAirdate")
                     ForceCheckNoAirdate = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "PadSeasonToTwoDigits")
-                    PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "CustomFolderFormat")
+                    AutoAdd_CustomFolderFormat = reader.ReadElementContentAsString();
+                else if (reader.Name == "AutoAddType")
+                    AutoAdd_Type = (AutomaticFolderType) reader.ReadElementContentAsInt();
                 else if (reader.Name == "BannersLastUpdatedOnDisk")
                 {
                     if (!reader.IsEmptyElement)
@@ -369,7 +403,7 @@ public class ShowItem
                             if ((reader.Name == "Folder") && reader.IsStartElement())
                             {
                                 string ff = reader.GetAttribute("Location");
-                                if (AutoFolderNameForSeason(snum) != ff)
+                                if (AutoFolderNameForSeason(GetSeason(snum)) != ff)
                                     ManualFolderLocations[snum].Add(ff);
                             }
                             reader.Read();
@@ -380,17 +414,35 @@ public class ShowItem
                 else
                     reader.ReadOuterXml();
             } // while
+
+            if (upgradeFromOldAutoAddFunction)
+            {
+                if (TEMP_AutoAddNewSeasons)
+                {
+                    if (TEMP_AutoAdd_FolderPerSeason)
+                    {
+                        AutoAdd_CustomFolderFormat = TEMP_AutoAdd_SeasonFolderName + ((TEMP_PadSeasonToTwoDigits||TVSettings.Instance.LeadingZeroOnSeason)?"{Season:2}":"{Season}");
+                        AutoAdd_Type = (AutoAdd_CustomFolderFormat == TVSettings.Instance.SeasonFolderFormat)
+                            ? AutomaticFolderType.LibraryDefault
+                            : AutomaticFolderType.Custom;
+                    }
+                    else
+                    {
+                        AutoAdd_CustomFolderFormat = string.Empty;
+                        AutoAdd_Type = AutomaticFolderType.BaseOnly;
+                    }
+                }
+                else
+                {
+                    AutoAdd_CustomFolderFormat = string.Empty;
+                    AutoAdd_Type = AutomaticFolderType.None;
+                }
+            }
         }
 
-        internal bool UsesManualFolders()
-        {
-            return ManualFolderLocations.Count>0;
-        }
+        internal bool UsesManualFolders() => ManualFolderLocations.Count > 0;
 
-        public SeriesInfo TheSeries()
-        {
-            return TheTVDB.Instance.GetSeries(TVDBCode);
-        }
+        public SeriesInfo TheSeries() => TheTVDB.Instance.GetSeries(TVDBCode);
 
         public string ShowName
         {
@@ -405,7 +457,7 @@ public class ShowItem
             }
         }
 
-        public List<string> getSimplifiedPossibleShowNames()
+        public List<string> GetSimplifiedPossibleShowNames()
         {
             List<string> possibles = new List<string>();
 
@@ -544,11 +596,9 @@ public class ShowItem
             SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
             ShowNextAirdate = true;
             TVDBCode = -1;
-            AutoAddNewSeasons = true;
-            PadSeasonToTwoDigits = false;
             AutoAdd_FolderBase = "";
-            AutoAdd_FolderPerSeason = true;
-            AutoAdd_SeasonFolderName = "Season ";
+            AutoAdd_CustomFolderFormat = "Season {Season:2}";
+            AutoAdd_Type = AutomaticFolderType.LibraryDefault;
             DoRename = true;
             DoMissingCheck = true;
             CountSpecials = false;
@@ -567,27 +617,40 @@ public class ShowItem
             return SeasonRules.ContainsKey(n) ? SeasonRules[n] : null;
         }
 
-        public string AutoFolderNameForSeason(int n)
+        public string AutoFolderNameForSeason(Season s)
         {
-            bool leadingZero = TVSettings.Instance.LeadingZeroOnSeason || PadSeasonToTwoDigits;
             string r = AutoAdd_FolderBase;
             if (string.IsNullOrEmpty(r))
                 return "";
 
             if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
                 r += System.IO.Path.DirectorySeparatorChar.ToString();
-            if (AutoAdd_FolderPerSeason)
+
+            if (AutoAdd_Type == AutomaticFolderType.None)
             {
-                if (n == 0)
-                    r += TVSettings.Instance.SpecialsFolderName;
-                else
-                {
-                    r += AutoAdd_SeasonFolderName;
-                    if ((n < 10) && leadingZero)
-                        r += "0";
-                    r += n.ToString();
-                }
+                return r;
             }
+
+            if (AutoAdd_Type == AutomaticFolderType.BaseOnly)
+            {
+                return r;
+            }
+
+            if (s.IsSpecial())
+            {
+                return r + TVSettings.Instance.SpecialsFolderName;
+            }
+
+            if (AutoAdd_Type == AutomaticFolderType.LibraryDefault)
+            {
+                return r + CustomSeasonName.NameFor(s, TVSettings.Instance.SeasonFolderFormat);
+            }
+
+            if (AutoAdd_Type == AutomaticFolderType.Custom)
+            {
+                return r + CustomSeasonName.NameFor(s, AutoAdd_CustomFolderFormat);
+            }
+
             return r;
         }
 
@@ -616,10 +679,7 @@ public class ShowItem
             XmlHelper.WriteElementToXml(writer,"CustomShowName",CustomShowName);
             XmlHelper.WriteElementToXml(writer,"ShowNextAirdate",ShowNextAirdate);
             XmlHelper.WriteElementToXml(writer,"TVDBID",TVDBCode);
-            XmlHelper.WriteElementToXml(writer,"AutoAddNewSeasons",AutoAddNewSeasons);
-            XmlHelper.WriteElementToXml(writer,"FolderBase",AutoAdd_FolderBase);
-            XmlHelper.WriteElementToXml(writer,"FolderPerSeason",AutoAdd_FolderPerSeason);
-            XmlHelper.WriteElementToXml(writer,"SeasonFolderName",AutoAdd_SeasonFolderName);
+            XmlHelper.WriteElementToXml(writer, "FolderBase", AutoAdd_FolderBase);
             XmlHelper.WriteElementToXml(writer,"DoRename",DoRename);
             XmlHelper.WriteElementToXml(writer,"DoMissingCheck",DoMissingCheck);
             XmlHelper.WriteElementToXml(writer,"CountSpecials",CountSpecials);
@@ -627,7 +687,8 @@ public class ShowItem
             XmlHelper.WriteElementToXml(writer,"ForceCheckNoAirdate",ForceCheckNoAirdate);
             XmlHelper.WriteElementToXml(writer,"ForceCheckFuture",ForceCheckFuture);
             XmlHelper.WriteElementToXml(writer,"UseSequentialMatch",UseSequentialMatch);
-            XmlHelper.WriteElementToXml(writer,"PadSeasonToTwoDigits",PadSeasonToTwoDigits);
+            XmlHelper.WriteElementToXml(writer, "CustomFolderFormat", AutoAdd_CustomFolderFormat);
+            XmlHelper.WriteElementToXml(writer, "AutoAddType", (int)AutoAdd_Type );
             XmlHelper.WriteElementToXml(writer, "BannersLastUpdatedOnDisk", BannersLastUpdatedOnDisk);
             XmlHelper.WriteElementToXml(writer, "TimeZone", ShowTimeZone);
 
@@ -734,7 +795,7 @@ public class ShowItem
                 }
             }
 
-            if (AutoAddNewSeasons && (!string.IsNullOrEmpty(AutoAdd_FolderBase)))
+            if (AutoAddNewSeasons() && (!string.IsNullOrEmpty(AutoAdd_FolderBase)))
             {
                 int highestThereIs = -1;
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
@@ -768,7 +829,7 @@ public class ShowItem
 
         public Season GetSeason(int snum)
         {
-            return DVDOrder? TheSeries().DVDSeasons[snum]: TheSeries().AiredSeasons[snum];
+            return AppropriateSeasons()[snum];
         }
 
         public void AddSeasonRule(int snum, ShowRule sr)
@@ -776,6 +837,33 @@ public class ShowItem
             if (!SeasonRules.ContainsKey(snum)) SeasonRules[snum] = new List<ShowRule>();
 
             SeasonRules[snum].Add(sr);
+        }
+
+        public Dictionary<int,Season> AppropriateSeasons()
+        {
+            return DVDOrder ? TheSeries().DVDSeasons : TheSeries().AiredSeasons;
+        }
+
+        public Season GetFirstAvailableSeason()
+        {
+            foreach (KeyValuePair<int, Season> x in AppropriateSeasons())
+            {
+                return x.Value;
+            }
+
+            return null;
+        }
+
+        public bool InOneFolder()
+        {
+            return (AutoAdd_Type == AutomaticFolderType.BaseOnly);
+        }
+
+        public string AutoFolderNameForSeason(int snum) => AutoFolderNameForSeason(GetSeason(snum));
+
+        public bool AutoAddNewSeasons()
+        {
+            return (AutoAdd_Type != AutomaticFolderType.None);
         }
     }
 }

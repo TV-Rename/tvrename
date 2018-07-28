@@ -32,7 +32,7 @@ namespace TVRename
                         continue;
 
                     //do any of the possible names for the series match the filename?
-                    bool matched = (action.Episode.SI.getSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
+                    bool matched = (action.Episode.SI.GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
 
                     if (!matched) continue;
 

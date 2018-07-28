@@ -175,5 +175,10 @@ namespace TVRename
 
             return null;
         }
+
+        public bool IsSpecial()
+        {
+            return (SeasonNumber == 0);
+        }
     }
 }

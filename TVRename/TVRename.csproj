@@ -193,6 +193,7 @@
     <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
+    <Compile Include="Settings\CustomSeasonName.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="TheTVDB\TVSource.cs" />
     <Compile Include="TheTVDB\TvDbTokenProvider.cs" />
@@ -334,7 +335,7 @@
     <Compile Include="Forms\CopyMoveProgress.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Settings\CustomName.cs" />
+    <Compile Include="Settings\CustomEpisodeName.cs" />
     <Compile Include="Forms\CustomNameDesigner.cs">
       <SubType>Form</SubType>
     </Compile>

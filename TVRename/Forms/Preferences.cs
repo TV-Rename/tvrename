@@ -32,11 +32,14 @@ namespace TVRename
         private Thread loadLanguageThread;
         private string enterPreferredLanguage; // hold here until background language download task is done
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private CustomNameTagsFloatingWindow cntfw;
+        private readonly Season sampleSeason;
 
         private readonly LoadLanguageDoneDel loadLanguageDone;
 
-        public Preferences(TVDoc doc, bool goToScanOpts)
+        public Preferences(TVDoc doc, bool goToScanOpts, Season s)
         {
+            sampleSeason = s;
             InitializeComponent();
             loadLanguageDone += LoadLanguageDoneFunc;
 
@@ -44,6 +47,7 @@ namespace TVRename
             SetupReplacementsGrid();
 
             mDoc = doc;
+            cntfw = null;
 
             if (goToScanOpts)
                 tabControl1.SelectedTab = tpScanOptions;
@@ -148,6 +152,7 @@ namespace TVRename
             s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
             s.AutoCreateFolders = cbAutoCreateFolders.Checked ;  
             s.SpecialsFolderName = txtSpecialsFolderName.Text;
+            s.SeasonFolderFormat = txtSeasonFormat.Text;
             s.searchSeasonWordsString = tbSeasonSearchTerms.Text;
             s.preferredRSSSearchTermsString = tbPreferredRSSTerms.Text;
             s.defaultSeasonWord = txtSeasonFolderName.Text;
@@ -383,6 +388,7 @@ namespace TVRename
             cbAutoCreateFolders.Checked = s.AutoCreateFolders; 
             cbAutoSelInMyShows.Checked = s.AutoSelectShowInMyShows;
             txtSpecialsFolderName.Text = s.SpecialsFolderName;
+            txtSeasonFormat.Text= s.SeasonFolderFormat ;
             cbForceLower.Checked = s.ForceLowercaseFilenames;
             cbIgnoreSamples.Checked = s.IgnoreSamples;
             txtRSSuTorrentPath.Text = s.uTorrentPath;
@@ -1252,12 +1258,18 @@ namespace TVRename
         private void domainUpDown1_KeyDown(object sender, KeyEventArgs e)
         {
                 e.SuppressKeyPress = true;
-            
         }
 
         private void bnBrowseWTWICAL_Click(object sender, EventArgs e)
         {
             Browse(txtWTWICAL, "iCal", 6);
+        }
+
+        private void bnTags_Click(object sender, EventArgs e)
+        {
+            cntfw = new CustomNameTagsFloatingWindow(sampleSeason);
+            cntfw.Show(this);
+            Focus();
         }
     }
 }

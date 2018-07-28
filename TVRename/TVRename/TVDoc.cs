@@ -753,7 +753,7 @@ namespace TVRename
                     if (flocs.ContainsKey(snum))
                         folders = flocs[snum];
 
-                    if ((folders.Count == 0) && (!si.AutoAddNewSeasons))
+                    if ((folders.Count == 0) && (!si.AutoAddNewSeasons()))
                         continue; // no folders defined or found, autoadd off, so onto the next
 
                     if (folders.Count == 0)
@@ -812,11 +812,6 @@ namespace TVRename
                                 if (whatToDo == FaResult.kfaNotSet)
                                 {
                                     // no command line guidance, so ask the user
-                                    // 									MissingFolderAction ^mfa = gcnew MissingFolderAction(sn, text, theFolder);
-                                    // 									mfa->ShowDialog();
-                                    // 									whatToDo = mfa->Result;
-                                    // 									otherFolder = mfa->FolderName;
-
                                     MissingFolderAction mfa = new MissingFolderAction(sn, text, theFolder);
                                     mfa.ShowDialog();
                                     whatToDo = mfa.Result;
@@ -969,7 +964,7 @@ namespace TVRename
 
                     foreach (ShowItem si in showList)
                     {
-                        if (si.getSimplifiedPossibleShowNames()
+                        if (si.GetSimplifiedPossibleShowNames()
                             .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
                             matchingShows.Add(si);
                     }
@@ -1009,7 +1004,7 @@ namespace TVRename
 
                     foreach (ShowItem si in showList)
                     {
-                        if (si.getSimplifiedPossibleShowNames()
+                        if (si.GetSimplifiedPossibleShowNames()
                             .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
                             matchingShows.Add(si);
                     }
@@ -1273,7 +1268,7 @@ namespace TVRename
                 List<string> folders = allFolders[snum];
 
                 bool folderNotDefined = (folders.Count == 0);
-                if (folderNotDefined && (TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons))
+                if (folderNotDefined && (TVSettings.Instance.MissingCheck && !si.AutoAddNewSeasons()))
                     continue; // folder for the season is not defined, and we're not auto-adding it
 
                 List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
@@ -1757,7 +1752,7 @@ namespace TVRename
                     {
                         if (showsToScan.Contains(si)) continue;
 
-                        if (si.getSimplifiedPossibleShowNames()
+                        if (si.GetSimplifiedPossibleShowNames()
                             .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
                             showsToScan.Add(si);
                     }
@@ -1778,7 +1773,7 @@ namespace TVRename
                     {
                         if (showsToScan.Contains(si)) continue;
 
-                        if (si.getSimplifiedPossibleShowNames()
+                        if (si.GetSimplifiedPossibleShowNames()
                             .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
                             showsToScan.Add(si);
                     }
