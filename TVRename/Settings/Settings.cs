@@ -13,6 +13,7 @@ using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
 // ReSharper disable RedundantDefaultMemberInitializer
+// ReSharper disable InconsistentNaming
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -116,9 +117,9 @@ namespace TVRename
             Status = status;
         }
 
-        public bool IsMetaType;
-        public bool IsShowLevel;
-        public string Status;
+        public readonly bool IsMetaType;
+        public readonly bool IsShowLevel;
+        public readonly string Status;
 
         public string Text
         {
@@ -364,7 +365,7 @@ namespace TVRename
         private string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
 
         public int ParallelDownloads = 4;
-        public List<string> RSSURLs = DefaultRSSURLList();
+        public readonly List<string> RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
         public bool PreventMove = false;
         public bool RenameTxtToSub = false;
@@ -400,7 +401,7 @@ namespace TVRename
         public string PreferredLanguage = "en";
         public WTWDoubleClickAction WTWDoubleClick;
 
-        public TidySettings Tidyup = new TidySettings();
+        public readonly TidySettings Tidyup = new TidySettings();
         public bool runPeriodicCheck = false;
         public int periodCheckHours =1;
         public bool runStartupCheck = false;
@@ -1140,19 +1141,16 @@ namespace TVRename
             return sl;
         }
 
-        public static string[] TabNames()
-        {
-            return new[] {"MyShows", "Scan", "WTW"};
-        }
+        private static string[] TabNames() => new[] {"MyShows", "Scan", "WTW"};
 
-        public static string TabNameForNumber(int n)
+        private static string TabNameForNumber(int n)
         {
             if ((n >= 0) && (n < TabNames().Length))
                 return TabNames()[n];
             return "";
         }
 
-        public static int TabNumberFromName(string n)
+        private static int TabNumberFromName(string n)
         {
             int r = 0;
             if (!string.IsNullOrEmpty(n))
