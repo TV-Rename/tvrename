@@ -818,7 +818,7 @@ namespace TVRename
             }
         }
 
-        public void SetToDefaults()
+        private void SetToDefaults()
         {
             // defaults that aren't handled with default initialisers
             Ignore = new List<IgnoreItem>();

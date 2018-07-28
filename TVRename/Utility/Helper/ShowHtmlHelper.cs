@@ -506,9 +506,7 @@ namespace TVRename
                 ? si.SeasonEpisodes[snum]
                 : ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
 
-            string seasText = snum == 0
-                ? TVSettings.Instance.SpecialsFolderName
-                : (TVSettings.Instance.defaultSeasonWord + " " + snum);
+            string seasText = Season.UIFullSeasonWord(snum);
 
             if ((eis.Count > 0) && (eis[0].SeasonId > 0))
                 seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, eis[0].SeasonId, false) + "\">" +
@@ -535,21 +533,16 @@ namespace TVRename
 
         public static string SeasonName(ShowItem si, int snum)
         {
-            string nodeTitle;
             if (si.DVDOrder)
             {
-                nodeTitle = snum == 0
+                return (snum == 0)
                     ? "Not Available on DVD"
-                    : "DVD " + TVSettings.Instance.defaultSeasonWord + " " + snum;
+                    : "DVD " + Season.UISeasonWord(snum);
             }
             else
             {
-                nodeTitle = snum == 0
-                    ? TVSettings.Instance.SpecialsFolderName
-                    : TVSettings.Instance.defaultSeasonWord + " " + snum;
+                return Season.UIFullSeasonWord(snum);
             }
-
-            return nodeTitle;
         }
 
         internal static string GenreIconHtml(string genre)

@@ -1324,10 +1324,7 @@ namespace TVRename
 
             if (seas != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
-                tsi = new ToolStripMenuItem("Edit " + (seas.IsSpecial()
-                                                ? TVSettings.Instance.SpecialsFolderName
-                                                : TVSettings.Instance.defaultSeasonWord + " " + seas.SeasonNumber));
-
+                tsi = new ToolStripMenuItem("Edit " + Season.UIFullSeasonWord(seas.SeasonNumber));
                 tsi.Tag = (int) RightClickCommands.kEditSeason;
                 showRightClickMenu.Items.Add(tsi);
             }
