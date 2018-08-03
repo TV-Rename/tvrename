@@ -43,12 +43,12 @@ namespace TVRename
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10,col));
-            sb.AppendShow(si);
+            sb.AppendShow(si,col);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
 
-        private static void AppendShow(this StringBuilder sb,ShowItem si)
+        private static void AppendShow(this StringBuilder sb,ShowItem si, Color backgroundColour)
         {
             SeriesInfo ser = si.TheSeries();
             string horizontalBanner = CreateHorizontalBannerHtml(ser);
@@ -71,8 +71,8 @@ namespace TVRename
             string tvLink =  string.IsNullOrWhiteSpace(ser.GetSeriesId()) ?string.Empty: "http://www.tv.com/show/" + ser.GetSeriesId() + "/summary.html"; 
             string imdbLink = string.IsNullOrWhiteSpace(ser.GetImdb()) ?string.Empty: "http://www.imdb.com/title/" + ser.GetImdb();
 
-            sb.AppendLine($@"<div class=""card card-body"">
-            	<div class=""text-center"">
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                <div class=""text-center"">
 	             {horizontalBanner}
                   <div class=""row"">
                    <div class=""col-md-4"">
@@ -147,30 +147,30 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             Color col = Color.FromName("ButtonFace");
             sb.AppendLine(HTMLHeader(10,col));
-            sb.AppendSeason(s,si);
+            sb.AppendSeason(s,si,col);
             foreach (ProcessedEpisode ep in GetBestEpisodes(si,s))
             {
                 List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc, ep);
-                sb.AppendEpisode(ep,fl);
+                sb.AppendEpisode(ep,fl,col);
             }
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
 
-        private static void AppendSeason(this StringBuilder sb, Season s, ShowItem si)
+        private static void AppendSeason(this StringBuilder sb, Season s, ShowItem si,Color backgroundColour)
         {
             SeriesInfo ser = s.TheSeries;
             string seasonLink = TheTVDB.Instance.WebsiteUrl(ser.TVDBCode, s.SeasonId, false);
             string showLink = TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true);
 
-            sb.AppendLine($@"<div class=""card card-body"">
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
 				{s.CreateHorizontalBannerHtml()}
 				<br/>
 				<h1><A HREF=""{showLink}"">{ser.Name}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1>
 				</div>");
         }
 
-        private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo> fl)
+        private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo> fl,Color backgroundColour)
         {
             string stars = StarRating(ep.EpisodeRating);
             string episodeUrl = TheTVDB.Instance.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);
@@ -212,7 +212,7 @@ namespace TVRename
             string tvButton = CreateButton(ep.ShowUrl, "TV.com");
 
             sb.AppendLine($@"
-                <div class=""card card-body"">
+                <div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                  <div class=""row"">
                   <div class=""col-md-5"">{ep.ScreenShotHtml()}</div>
                    <div class=""col-md-7 d-flex flex-column"">
@@ -585,7 +585,6 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         internal static string HTMLHeader(int size,Color backgroundColour)
         {
-            string hexColour = "#"+backgroundColour.R.ToString("X2") + backgroundColour.G.ToString("X2") + backgroundColour.B.ToString("X2");
             return @"<!DOCTYPE html>
                 <html><head>
                 <meta charset=""utf-8"">
@@ -594,7 +593,12 @@ namespace TVRename
                 <link rel = ""stylesheet"" href = ""http://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"" />
                 <link rel = ""stylesheet"" href = ""https://use.fontawesome.com/releases/v5.0.13/css/all.css"" />
                 </head >"
-                + $"<body style=\"background-color: {hexColour}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
+                + $"<body style=\"background-color: {backgroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
+        }
+
+        private static string HexColour(this Color c)
+        {
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
 
         // ReSharper disable once InconsistentNaming
