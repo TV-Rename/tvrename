@@ -37,7 +37,7 @@ namespace TVRename
 
             string result;
             HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
             {
                 result = streamReader.ReadToEnd();
             }
@@ -51,7 +51,10 @@ namespace TVRename
             return JObject.Parse(response);
         }
 
-        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, string lang="")
+        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken) =>
+            JsonHttpGetRequest(url, parameters, authToken, string.Empty);
+
+        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, string lang)
         {
             string response = HttpRequest("GET", url + GetHttpParameters(parameters), null, "application/json", authToken,lang);
             return JObject.Parse(response);

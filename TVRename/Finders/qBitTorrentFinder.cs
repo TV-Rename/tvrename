@@ -23,7 +23,7 @@ namespace TVRename
             // get list of files being downloaded by qBitTorrentFinder
             string host = TVSettings.Instance.qBitTorrentHost;
             string port = TVSettings.Instance.qBitTorrentPort;
-            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(host))
+            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
                 return ret;
 
             string url = $"http://{host}:{port}/query/";

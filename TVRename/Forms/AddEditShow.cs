@@ -393,10 +393,7 @@ namespace TVRename
                 Focus();
         }
 
-        private void txtFolder_TextChanged(object sender, EventArgs e)
-        {
-            CheckToEnableAddButton();
-        }
+        private void txtFolder_TextChanged(object sender, EventArgs e) => CheckToEnableAddButton();
 
         private void lvSeasonFolders_SelectedIndexChanged(object sender, EventArgs e)
         {
