@@ -41,7 +41,6 @@ namespace TVRename
             if (ser != null)
                 ai.TVDBCode = ser.TVDBCode;
 
-
             TheTVDB.Instance.Unlock("GuessShowItem");
         }
 

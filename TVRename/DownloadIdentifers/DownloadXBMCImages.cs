@@ -184,7 +184,7 @@ namespace TVRename
             if (doneTbn.Contains(imgtbn.FullName)) return null;
 
             doneTbn.Add(imgtbn.FullName);
-            return new ActionDownloadImage(si, (ep is ProcessedEpisode episode) ? episode  : new ProcessedEpisode(ep,si ), imgtbn, ban);
+            return new ActionDownloadImage(si, ep is ProcessedEpisode episode ? episode  : new ProcessedEpisode(ep,si ), imgtbn, ban);
         }
 
         public sealed override void Reset()

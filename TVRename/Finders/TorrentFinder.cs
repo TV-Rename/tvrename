@@ -20,7 +20,7 @@ namespace TVRename
                 if (ActionCancel)
                     return;
 
-                prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
+                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
 
                 if (!(action1 is ItemMissing action))
                     continue;
@@ -42,7 +42,6 @@ namespace TVRename
                         newList.Add(new ItemuTorrenting(te, action.Episode, action.TheFileNoExt));
                         break;
                     }
-
                 }
             }
 

@@ -1288,7 +1288,6 @@ namespace TVRename
                         {
                             ProcessEpisode(code, episodeData);
                         }
-
                     });
                 }
                 catch (InvalidCastException ex)

@@ -40,7 +40,7 @@ namespace TVRename
                         Start = new CalDateTime(startTime),
                         End = new CalDateTime(endTime),
                         Description = ei.Overview,
-                        Comments = new List<string>(){ei.Overview},
+                        Comments = new List<string>{ei.Overview},
                         Summary = niceName,
                         Location=ei.TheSeries.GetNetwork(),
                         Url = new Uri(TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TVDBCode, ei.SeasonId, false)),

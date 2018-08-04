@@ -244,7 +244,6 @@ namespace TVRename
             searchFolderBrowser.ShowNewFolderButton = true;
             searchFolderBrowser.StartPosition = FormStartPosition.CenterScreen;
 
-
             if (!string.IsNullOrEmpty(txtBaseFolder.Text))
                 searchFolderBrowser.SelectedPath = txtBaseFolder.Text;
 
@@ -269,8 +268,7 @@ namespace TVRename
 
         private void bnAdd_Click(object sender, EventArgs e)
         {
-            ListViewItem lvi = new ListViewItem();
-            lvi.Text = txtSeasonNumber.Text;
+            ListViewItem lvi = new ListViewItem {Text = txtSeasonNumber.Text};
             lvi.SubItems.Add(txtFolder.Text);
 
             lvSeasonFolders.Items.Add(lvi);
@@ -298,10 +296,7 @@ namespace TVRename
                 txtFolder.Text = searchFolderBrowser.SelectedPath;
         }
 
-        private void txtSeasonNumber_TextChanged(object sender, EventArgs e)
-        {
-            CheckToEnableAddButton();
-        }
+        private void txtSeasonNumber_TextChanged(object sender, EventArgs e) => CheckToEnableAddButton();
 
         private void CheckToEnableAddButton()
         {
@@ -323,7 +318,7 @@ namespace TVRename
                     // ignored
                 }
             }
-            txtFolder.BackColor = ok ? System.Drawing.SystemColors.Window : Helpers.WarningColor();
+            txtFolder.BackColor = ok ? SystemColors.Window : Helpers.WarningColor();
         }
 
         private void chkCustomShowName_CheckedChanged(object sender, EventArgs e)

@@ -45,6 +45,5 @@ namespace TVRename
 
             return JToken.Parse(responseText);
         }
-
     }
 }

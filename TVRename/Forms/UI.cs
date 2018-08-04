@@ -2457,9 +2457,7 @@ namespace TVRename
                     //Find first season we can
                     return s.Value;
                 }
-
             }
-
             return null;
         }
         private List<ProcessedEpisode> CurrentlySelectedPEL()
@@ -2691,7 +2689,6 @@ namespace TVRename
                     logger.Info($"Ignoring {hint} as it is in the ignore list.");
                     continue;
                 }
-
 
                 //Remove any (nnnn) in the hint - probably a year
                 string refinedHint = Regex.Replace(hint,@"\(\d{4}\)","");
@@ -3580,7 +3577,6 @@ namespace TVRename
                     MessageBox.Show(@"There is no update available please try again later.", @"No update available",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-
                 return;
             }
 
@@ -3675,11 +3671,6 @@ namespace TVRename
 
                 return sb.ToString();
             }
-        }
-
-        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-
         }
     }
 }

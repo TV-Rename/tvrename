@@ -340,7 +340,6 @@ public class ShowItem
                     else
                         reader.Read();
                 }
-
                 else if (reader.Name == "UseSequentialMatch")
                     UseSequentialMatch = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "IgnoreSeasons")

@@ -32,13 +32,10 @@ namespace TVRename
             StyleString = DefaultStyle();
         }
 
-        public static string DefaultStyle() => Presets[1];
+        private static string DefaultStyle() => Presets[1];
 
         public static string OldNStyle(int n)
         {
-            // enum class Style {Name_xxx_EpName = 0, Name_SxxEyy_EpName, xxx_EpName, SxxEyy_EpName, Eyy_EpName, 
-            // Exx_Show_Sxx_EpName, yy_EpName, NameSxxEyy_EpName, xXxx_EpName };
-
             // for now, this maps onto the presets
             if ((n >= 0) && (n < 9))
                 return Presets[n];
@@ -91,7 +88,10 @@ namespace TVRename
                 r = r.Substring(0, maxLenOk);
             }
 
-            if (string.IsNullOrEmpty(extension)) {return r;}
+            if (string.IsNullOrEmpty(extension))
+            {
+                return r;
+            }
 
             if (!extension.StartsWith("."))
                 r += ".";
@@ -102,7 +102,7 @@ namespace TVRename
         public string GetTargetEpisodeName(Episode ep, string showname, TimeZone tz, bool dvdOrder)
             => GetTargetEpisodeName(ep, showname, tz, dvdOrder, false);
 
-        public string GetTargetEpisodeName(Episode ep, string showname, TimeZone tz, bool dvdOrder, bool urlEncode)
+        private string GetTargetEpisodeName(Episode ep, string showname, TimeZone tz, bool dvdOrder, bool urlEncode)
         {
             //note this is for an Episode and not a ProcessedEpisode
             string name = StyleString;
@@ -117,7 +117,6 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{Episode}", ep.DvdEpNum.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode2}", ep.DvdEpNum.ToString("00"));
                 name = Regex.Replace(name, "{AllEpisodes}", ep.DvdEpNum.ToString("00"));
-
             }
             else
             {
@@ -126,7 +125,6 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{Episode}", ep.AiredEpNum.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode2}", ep.AiredEpNum.ToString("00"));
                 name = Regex.Replace(name, "{AllEpisodes}", ep.AiredEpNum.ToString("00"));
-
             }
             name = name.ReplaceInsensitive("{EpisodeName}", epname);
             name = name.ReplaceInsensitive("{Number}", "");
