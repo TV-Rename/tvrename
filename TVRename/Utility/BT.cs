@@ -1324,10 +1324,10 @@ namespace TVRename
                 {
                     // see if season and episode match
                     bool findFile = TVDoc.FindSeasEp("", simplifiedfname, out int seasF, out int epF, out int maxEp,
-                        m.SI, Rexps,
+                        m.Show, Rexps,
                         out FilenameProcessorRE rex);
 
-                    bool matchSeasonEpisode = m.SI.DVDOrder
+                    bool matchSeasonEpisode = m.Show.DvdOrder
                         ? (seasF == m.AiredSeasonNumber) && (epF == m.AiredEpNum)
                         : (seasF == m.DvdSeasonNumber) && (epF == m.DvdEpNum);
 

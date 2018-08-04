@@ -171,7 +171,7 @@ namespace TVRename
 
             //String ^url = "http://www.tv.com/search.php?stype=program&qs="+txtFindThis->Text+"&type=11&stype=search&tag=search%3Bbutton";
 
-            if (!String.IsNullOrEmpty(txtFindThis.Text))
+            if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
                 TheTVDB.Instance.Search(txtFindThis.Text);
                 DoFind(true);

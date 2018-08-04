@@ -113,7 +113,7 @@ namespace TVRename
         public bool DoDownloadsFG()
         {
             ICollection<int> shows = Library.Keys;
-            bool returnValue = cacheManager.DoDownloadsFG((!Args.Hide), (!Args.Unattended) && (!Args.Hide), shows);
+            bool returnValue = cacheManager.DoDownloadsFg((!Args.Hide), (!Args.Unattended) && (!Args.Hide), shows);
             Library.GenDict();
             return returnValue;
         }
@@ -122,7 +122,7 @@ namespace TVRename
         public void DoDownloadsBG()
         {
             ICollection<int> shows = Library.Keys;
-            cacheManager.StartBGDownloadThread(false, shows);
+            cacheManager.StartBgDownloadThread(false, shows);
         }
 
         public int DownloadsRemaining() =>
@@ -178,7 +178,7 @@ namespace TVRename
 
         public void Closing()
         {
-            cacheManager.StopBGDownloadThread();
+            cacheManager.StopBgDownloadThread();
             Stats().Save();
         }
 
@@ -202,7 +202,7 @@ namespace TVRename
         public static List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ProcessedEpisode pe,
             bool checkDirectoryExist = true)
         {
-            return FindEpOnDisk(dfc, pe.SI, pe, checkDirectoryExist);
+            return FindEpOnDisk(dfc, pe.Show, pe, checkDirectoryExist);
         }
 
         private static List<FileInfo> FindEpOnDisk(DirFilesCache dfc, ShowItem si, Episode epi,
@@ -213,8 +213,8 @@ namespace TVRename
 
             List<FileInfo> ret = new List<FileInfo>();
 
-            int seasWanted = si.DVDOrder ? epi.TheDvdSeason.SeasonNumber : epi.TheAiredSeason.SeasonNumber;
-            int epWanted = si.DVDOrder ? epi.DvdEpNum : epi.AiredEpNum;
+            int seasWanted = si.DvdOrder ? epi.TheDvdSeason.SeasonNumber : epi.TheAiredSeason.SeasonNumber;
+            int epWanted = si.DvdOrder ? epi.DvdEpNum : epi.AiredEpNum;
 
             int snum = seasWanted;
 
@@ -269,7 +269,7 @@ namespace TVRename
 
                 writer.WriteStartElement("MyShows");
                 foreach (ShowItem si in Library.Values)
-                    si.WriteXMLSettings(writer);
+                    si.WriteXmlSettings(writer);
 
                 writer.WriteEndElement(); // myshows
 
@@ -601,12 +601,12 @@ namespace TVRename
                     //Search through each pair of episodes for the same season
                     foreach (ProcessedEpisode pep in kvp.Value)
                     {
-                        if (pep.type == ProcessedEpisode.ProcessedEpisodeType.merged)
+                        if (pep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
                         {
                             output.AppendLine(si.ShowName + " - Season: " + kvp.Key + " - " + pep.NumsAsString() +
                                               " - " + pep.Name + " is:");
 
-                            foreach (Episode sourceEpisode in pep.sourceEpisodes)
+                            foreach (Episode sourceEpisode in pep.SourceEpisodes)
                             {
                                 output.AppendLine("                      - " + sourceEpisode.AiredEpNum + " - " +
                                                   sourceEpisode.Name);
@@ -712,7 +712,7 @@ namespace TVRename
                 {
                     foreach (ProcessedEpisode pe in lpe)
                     {
-                        if (!showsToScan.Contains(pe.SI)) showsToScan.Add(pe.SI);
+                        if (!showsToScan.Contains(pe.Show)) showsToScan.Add(pe.Show);
                     }
                 }
             }
@@ -795,9 +795,9 @@ namespace TVRename
 
                                 FaResult whatToDo = FaResult.kfaNotSet;
 
-                                if (Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.Create)
+                                if (Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create)
                                     whatToDo = FaResult.kfaCreate;
-                                else if (Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.Ignore)
+                                else if (Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.ignore)
                                     whatToDo = FaResult.kfaIgnoreOnce;
 
                                 if (Args.Hide && (whatToDo == FaResult.kfaNotSet))
@@ -894,7 +894,7 @@ namespace TVRename
             Logger.Info("*******************************");
             Logger.Info("Force Update Images: " + si.ShowName);
 
-            if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations().Count > 0))
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AllFolderLocations().Count > 0))
             {
                 TheActionList.Add(
                     downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
@@ -983,7 +983,7 @@ namespace TVRename
                             ShowItem si = matchingShows[0]; //Choose the first series
                             FindSeasEp(fi, out int seasF, out int epF, out int _, si, out FilenameProcessorRE _);
                             SeriesInfo s = si.TheSeries();
-                            Episode ep = s.GetEpisode(seasF, epF, si.DVDOrder);
+                            Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
                             Logger.Info(
                                 $"Removing {fi.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
@@ -1027,7 +1027,7 @@ namespace TVRename
                             ShowItem si = matchingShows[0]; //Choose the first series
                             FindSeasEp(di, out int seasF, out int epF, si, out FilenameProcessorRE _);
                             SeriesInfo s = si.TheSeries();
-                            Episode ep = s.GetEpisode(seasF, epF, si.DVDOrder);
+                            Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
                             Logger.Info(
                                 $"Removing {di.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
@@ -1066,7 +1066,7 @@ namespace TVRename
             try
             {
                 SeriesInfo s = si.TheSeries();
-                Episode ep = s.GetEpisode(seasF, epF, si.DVDOrder);
+                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
                 ProcessedEpisode pep = new ProcessedEpisode(ep, si);
 
                 if (FindEpOnDisk(dfc, si, pep).Count > 0)
@@ -1150,10 +1150,10 @@ namespace TVRename
 
                             ProcessedEpisode ep = eps[epIdx];
 
-                            if (ep.type != ProcessedEpisode.ProcessedEpisodeType.merged && maxEp != -1)
+                            if (ep.Type != ProcessedEpisode.ProcessedEpisodeType.merged && maxEp != -1)
                             {
                                 Logger.Info(
-                                    $"Looking at {ep.SI.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
+                                    $"Looking at {ep.Show.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
 
                                 ShowRule sr = new ShowRule
                                 {
@@ -1226,7 +1226,7 @@ namespace TVRename
 
             //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
             //it has all the required files for that show
-            if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations().Count > 0))
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AllFolderLocations().Count > 0))
             {
                 TheActionList.Add(downloadIdentifiers.ProcessShow(si));
             }
@@ -1280,7 +1280,7 @@ namespace TVRename
                 }
 
                 // base folder:
-                if (!string.IsNullOrEmpty(si.AutoAdd_FolderBase) && (si.AllFolderLocations(false).Count > 0))
+                if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AllFolderLocations(false).Count > 0))
                 {
                     // main image for the folder itself
                     TheActionList.Add(downloadIdentifiers.ProcessShow(si));
@@ -1639,7 +1639,7 @@ namespace TVRename
             // look for a valid airdate in the filename
             // check for YMD, DMY, and MDY
             // only check against airdates we expect for the given show
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
             string[] dateFormats = new[] {"yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy", "yy-MM-dd", "dd-MM-yy", "MM-dd-yy"};
             string filename = fi.Name;
             // force possible date separators to a dash
@@ -1651,7 +1651,7 @@ namespace TVRename
             ep = -1;
             seas = -1;
             maxEp = -1;
-            Dictionary<int, Season> seasonsToUse = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
 
             foreach (KeyValuePair<int, Season> kvp in seasonsToUse)
             {
@@ -1675,8 +1675,8 @@ namespace TVRename
                             TimeSpan timeAgo = DateTime.Now.Subtract(dtInFilename);
                             if (timeAgo < closestDate)
                             {
-                                seas = (si.DVDOrder ? epi.DvdSeasonNumber : epi.AiredSeasonNumber);
-                                ep = si.DVDOrder ? epi.DvdEpNum : epi.AiredEpNum;
+                                seas = (si.DvdOrder ? epi.DvdSeasonNumber : epi.AiredSeasonNumber);
+                                ep = si.DvdOrder ? epi.DvdEpNum : epi.AiredEpNum;
                                 closestDate = timeAgo;
                             }
                         }
@@ -1712,7 +1712,7 @@ namespace TVRename
                 else
                     alreadyAired = true;
 
-                if (!foundOnDisk && alreadyAired && (pe.SI.DoMissingCheck))
+                if (!foundOnDisk && alreadyAired && (pe.Show.DoMissingCheck))
                 {
                     missing.Add(pe);
                 }
@@ -1789,7 +1789,7 @@ namespace TVRename
             {
                 foreach (ShowItem si in sis)
                 {
-                    TheTVDB.Instance.ForgetShow(si.TVDBCode, true);
+                    TheTVDB.Instance.ForgetShow(si.TvdbCode, true);
                 }
             }
 
@@ -1902,7 +1902,7 @@ namespace TVRename
 
         private void ReleaseUnmanagedResources()
         {
-            cacheManager.StopBGDownloadThread();
+            cacheManager.StopBgDownloadThread();
         }
 
         private void Dispose(bool disposing)

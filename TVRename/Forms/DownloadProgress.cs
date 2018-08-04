@@ -32,7 +32,7 @@ namespace TVRename
         private void bnCancel_Click(object sender, System.EventArgs e)
         {
             tmrUpdate.Stop();
-            mDoc.StopBGDownloadThread();
+            mDoc.StopBgDownloadThread();
             DialogResult = DialogResult.Abort;
         }
 

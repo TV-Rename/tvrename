@@ -38,7 +38,7 @@ namespace TVRename
                     continue;
 
                 ProcessedEpisode pe = action.Episode;
-                string simpleShowName = Helpers.SimplifyName(pe.SI.ShowName);
+                string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
                 string simpleSeriesName = Helpers.SimplifyName(pe.TheSeries.Name);
 
                 foreach (RSSItem rss in RSSList)
@@ -54,7 +54,7 @@ namespace TVRename
                     if (rss.Season != pe.AppropriateSeasonNumber) continue;
                     if (rss.Episode != pe.AppropriateEpNum) continue;
 
-                    Logger.Info($"Adding {rss.URL} as it appears to be match for {testItem.Episode.SI.ShowName} S{testItem.Episode.AppropriateSeasonNumber}E{testItem.Episode.AppropriateEpNum}");
+                    Logger.Info($"Adding {rss.URL} as it appears to be match for {testItem.Episode.Show.ShowName} S{testItem.Episode.AppropriateSeasonNumber}E{testItem.Episode.AppropriateEpNum}");
                     newItems.Add(new ActionRSS(rss, action.TheFileNoExt, pe));
                     toRemove.Add(testItem);
                 }

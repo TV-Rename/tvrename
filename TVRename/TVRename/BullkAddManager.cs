@@ -119,8 +119,8 @@ namespace TVRename
             string theFolder = di2.FullName.ToLower();
             foreach (ShowItem si in mDoc.Library.GetShowItems())
             {
-                if (si.AutoAddNewSeasons() && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) &&
-                    theFolder.IsSubfolderOf(si.AutoAdd_FolderBase))
+                if (si.AutoAddNewSeasons() && !string.IsNullOrEmpty(si.AutoAddFolderBase) &&
+                    theFolder.IsSubfolderOf(si.AutoAddFolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
                     Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
@@ -239,19 +239,19 @@ namespace TVRename
                     mDoc.Library.Add(found);
                 }
 
-                found.AutoAdd_FolderBase = ai.Folder;
+                found.AutoAddFolderBase = ai.Folder;
 
                 if (ai.HasSeasonFoldersGuess)
                 {
-                    found.AutoAdd_Type = (ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat)
-                        ? ShowItem.AutomaticFolderType.LibraryDefault
-                        : ShowItem.AutomaticFolderType.Custom;
+                    found.AutoAddType = (ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat)
+                        ? ShowItem.AutomaticFolderType.libraryDefault
+                        : ShowItem.AutomaticFolderType.custom;
 
-                    found.AutoAdd_CustomFolderFormat = ai.SeasonFolderFormat;
+                    found.AutoAddCustomFolderFormat = ai.SeasonFolderFormat;
                 }
                 else
                 {
-                    found.AutoAdd_Type = ShowItem.AutomaticFolderType.BaseOnly;
+                    found.AutoAddType = ShowItem.AutomaticFolderType.baseOnly;
                 }
                 mDoc.Stats().AutoAddedShows++;
             }

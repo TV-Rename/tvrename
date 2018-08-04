@@ -23,7 +23,7 @@ namespace TVRename
             if (!TVSettings.Instance.FolderJpg) return null;
 
             ItemList theActionList = new ItemList();
-            FileInfo fi = FileHelper.FileInFolder(si.AutoAdd_FolderBase, DEFAULT_FILE_NAME);
+            FileInfo fi = FileHelper.FileInFolder(si.AutoAddFolderBase, DEFAULT_FILE_NAME);
             bool fileDoesntExist = !doneFolderJpg.Contains(fi.FullName) && !fi.Exists;
 
             if (forceRefresh || fileDoesntExist)

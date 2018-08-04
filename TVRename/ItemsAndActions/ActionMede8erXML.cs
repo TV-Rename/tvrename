@@ -74,7 +74,7 @@ namespace TVRename
 //                    writer.WriteEndElement(); // rating
 
                         //Get the Series OverView
-                        string sov = Episode.SI.TheSeries().GetOverview();
+                        string sov = Episode.Show.TheSeries().GetOverview();
                         if (!string.IsNullOrEmpty(sov))
                         {
                             XmlHelper.WriteElementToXml(writer, "plot", sov);
@@ -83,13 +83,13 @@ namespace TVRename
                         //Get the Episode overview
                         XmlHelper.WriteElementToXml(writer, "episodeplot", Episode.Overview);
 
-                        if (Episode.SI != null)
+                        if (Episode.Show != null)
                         {
-                            WriteInfo(writer, Episode.SI.TheSeries().GetContentRating(), "mpaa");
+                            WriteInfo(writer, Episode.Show.TheSeries().GetContentRating(), "mpaa");
                         }
 
                         //Runtime...taken from overall Series, not episode specific due to thetvdb
-                        string rt = Episode.SI.TheSeries().GetRuntime();
+                        string rt = Episode.Show.TheSeries().GetRuntime();
                         if (!string.IsNullOrEmpty(rt))
                         {
                             XmlHelper.WriteElementToXml(writer, "runtime", rt + " min");
@@ -97,7 +97,7 @@ namespace TVRename
 
                         //Genres...taken from overall Series, not episode specific due to thetvdb
                         writer.WriteStartElement("genres");
-                        string genre = string.Join(" / ", Episode.SI.TheSeries().GetGenres());
+                        string genre = string.Join(" / ", Episode.Show.TheSeries().GetGenres());
                         if (!string.IsNullOrEmpty(genre))
                         {
                             XmlHelper.WriteElementToXml(writer, "genre", genre);
@@ -134,9 +134,9 @@ namespace TVRename
                         writer.WriteStartElement("cast");
 
                         // actors...
-                        if (Episode.SI != null)
+                        if (Episode.Show != null)
                         {
-                            foreach (string aa in Episode.SI.TheSeries().GetActors())
+                            foreach (string aa in Episode.Show.TheSeries().GetActors())
                             {
                                 if (string.IsNullOrEmpty(aa))
                                     continue;
@@ -254,7 +254,7 @@ namespace TVRename
             if (nfo?.Episode == null)
                 return -1;
 
-            return String.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
+            return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
 
         #endregion

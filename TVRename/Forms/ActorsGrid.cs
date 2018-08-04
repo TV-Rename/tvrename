@@ -49,7 +49,7 @@ namespace TVRename
             theData = new DataArr(mDoc.Library.Count);
             foreach (ShowItem ser in mDoc.Library.Shows)
             {
-                SeriesInfo si = TheTVDB.Instance.GetSeries(ser.TVDBCode);
+                SeriesInfo si = TheTVDB.Instance.GetSeries(ser.TvdbCode);
                 foreach (string act in si.GetActors())
                 {
                     string aa = act.Trim();

@@ -55,7 +55,7 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
+                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
                 lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
@@ -298,7 +298,7 @@ namespace TVRename
 
                 if (Episode != null)
                 {
-                    lvi.Text = Episode.SI.ShowName;
+                    lvi.Text = Episode.Show.ShowName;
                     lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(Episode.NumsAsString());
                     lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());

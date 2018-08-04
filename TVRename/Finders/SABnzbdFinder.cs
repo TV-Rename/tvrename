@@ -101,7 +101,7 @@ namespace TVRename
 
                 ItemMissing action = (ItemMissing)(action1);
 
-                string showname = Helpers.SimplifyName(action.Episode.SI.ShowName);
+                string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
 
                 foreach (SAB.QueueSlotsSlot te in sq.slots)
                 {
@@ -112,7 +112,7 @@ namespace TVRename
                         //    continue;
 
                         if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
-                        if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.SI) ||
+                        if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
                             (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum )) continue;
                         toRemove.Add(action1);
                         newList.Add(new ItemSABnzbd(te, action.Episode, action.TheFileNoExt));

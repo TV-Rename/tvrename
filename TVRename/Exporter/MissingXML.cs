@@ -47,7 +47,7 @@ namespace TVRename
                         ItemMissing missing = (ItemMissing)(action);
                         writer.WriteStartElement("MissingItem");
 
-                        XmlHelper.WriteElementToXml(writer,"id",missing.Episode.SI.TVDBCode);
+                        XmlHelper.WriteElementToXml(writer,"id",missing.Episode.Show.TvdbCode);
                         XmlHelper.WriteElementToXml(writer, "title",missing.Episode.TheSeries.Name);
                         XmlHelper.WriteElementToXml(writer, "season", Helpers.Pad(missing.Episode.AppropriateSeasonNumber));
                         XmlHelper.WriteElementToXml(writer, "episode", Helpers.Pad(missing.Episode.AppropriateEpNum));
