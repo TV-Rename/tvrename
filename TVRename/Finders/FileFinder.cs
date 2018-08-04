@@ -10,8 +10,6 @@ namespace TVRename
     {
         public FileFinder(TVDoc i) : base(i) { }
 
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
         public override bool Active() => TVSettings.Instance.SearchLocally;
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.local;
