@@ -32,11 +32,14 @@ namespace TVRename
         private Thread loadLanguageThread;
         private string enterPreferredLanguage; // hold here until background language download task is done
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private CustomNameTagsFloatingWindow cntfw;
+        private readonly Season sampleSeason;
 
         private readonly LoadLanguageDoneDel loadLanguageDone;
 
-        public Preferences(TVDoc doc, bool goToScanOpts)
+        public Preferences(TVDoc doc, bool goToScanOpts, Season s)
         {
+            sampleSeason = s;
             InitializeComponent();
             loadLanguageDone += LoadLanguageDoneFunc;
 
@@ -44,6 +47,7 @@ namespace TVRename
             SetupReplacementsGrid();
 
             mDoc = doc;
+            cntfw = null;
 
             if (goToScanOpts)
                 tabControl1.SelectedTab = tpScanOptions;
@@ -114,6 +118,8 @@ namespace TVRename
             s.ExportWTWRSSTo = txtWTWRSS.Text;
             s.ExportWTWXML = cbWTWXML.Checked;
             s.ExportWTWXMLTo = txtWTWXML.Text;
+            s.ExportWTWICAL = cbWTWICAL.Checked;
+            s.ExportWTWICALTo = txtWTWICAL.Text;
             s.ExportMissingXML = cbMissingXML.Checked;
             s.ExportMissingXMLTo = txtMissingXML.Text;
             s.ExportMissingCSV = cbMissingCSV.Checked;
@@ -146,6 +152,7 @@ namespace TVRename
             s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
             s.AutoCreateFolders = cbAutoCreateFolders.Checked ;  
             s.SpecialsFolderName = txtSpecialsFolderName.Text;
+            s.SeasonFolderFormat = txtSeasonFormat.Text;
             s.searchSeasonWordsString = tbSeasonSearchTerms.Text;
             s.preferredRSSSearchTermsString = tbPreferredRSSTerms.Text;
             s.defaultSeasonWord = txtSeasonFolderName.Text;
@@ -157,6 +164,9 @@ namespace TVRename
             s.SABHostPort = txtSABHostPort.Text;
             s.SABAPIKey = txtSABAPIKey.Text;
             s.CheckSABnzbd = cbCheckSABnzbd.Checked;
+            s.qBitTorrentHost= tbqBitTorrentHost.Text;
+            s.qBitTorrentPort= tbqBitTorrentPort.Text;
+            s.CheckqBitTorrent = cbCheckqBitTorrent.Checked;
             s.SearchRSS = cbSearchRSS.Checked;
             s.EpTBNs = cbEpTBNs.Checked;
             s.NFOShows = cbNFOShows.Checked;
@@ -332,6 +342,8 @@ namespace TVRename
 
             cbWTWRSS.Checked = s.ExportWTWRSS;
             txtWTWRSS.Text = s.ExportWTWRSSTo;
+            cbWTWICAL.Checked = s.ExportWTWICAL;
+            txtWTWICAL.Text = s.ExportWTWICALTo;
             txtWTWDays.Text = s.WTWRecentDays.ToString();
             cbWTWXML.Checked = s.ExportWTWXML;
             txtWTWXML.Text = s.ExportWTWXMLTo;
@@ -376,12 +388,16 @@ namespace TVRename
             cbAutoCreateFolders.Checked = s.AutoCreateFolders; 
             cbAutoSelInMyShows.Checked = s.AutoSelectShowInMyShows;
             txtSpecialsFolderName.Text = s.SpecialsFolderName;
+            txtSeasonFormat.Text= s.SeasonFolderFormat ;
             cbForceLower.Checked = s.ForceLowercaseFilenames;
             cbIgnoreSamples.Checked = s.IgnoreSamples;
             txtRSSuTorrentPath.Text = s.uTorrentPath;
             txtUTResumeDatPath.Text = s.ResumeDatPath;
             txtSABHostPort.Text = s.SABHostPort;
             txtSABAPIKey.Text = s.SABAPIKey;
+            tbqBitTorrentHost.Text = s.qBitTorrentHost;
+            tbqBitTorrentPort.Text = s.qBitTorrentPort;
+            cbCheckqBitTorrent.Checked= s.CheckqBitTorrent ;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();
@@ -670,8 +686,11 @@ namespace TVRename
             txtWTWXML.Enabled = cbWTWXML.Checked;
             bnBrowseWTWXML.Enabled = cbWTWXML.Checked;
 
+            txtWTWICAL.Enabled = cbWTWICAL.Checked;
+            bnBrowseWTWICAL.Enabled = cbWTWICAL.Checked;
+
             bool wtw;
-            if ((cbWTWRSS.Checked) || (cbWTWXML.Checked))
+            if ((cbWTWRSS.Checked) || (cbWTWXML.Checked) || (cbWTWICAL.Checked))
                 wtw = true;
             else
                 wtw = false;
@@ -1239,7 +1258,18 @@ namespace TVRename
         private void domainUpDown1_KeyDown(object sender, KeyEventArgs e)
         {
                 e.SuppressKeyPress = true;
-            
+        }
+
+        private void bnBrowseWTWICAL_Click(object sender, EventArgs e)
+        {
+            Browse(txtWTWICAL, "iCal", 6);
+        }
+
+        private void bnTags_Click(object sender, EventArgs e)
+        {
+            cntfw = new CustomNameTagsFloatingWindow(sampleSeason);
+            cntfw.Show(this);
+            Focus();
         }
     }
 }

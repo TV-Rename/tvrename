@@ -44,18 +44,8 @@ namespace TVRename
                 using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
                 {
                     writer.WriteStartElement("FolderTag");
-                    // is it a show or season folder
-                    if (snum >= 0)
-                    {
-                        // if episode thumbnails are generated, use ViewMode Photo, otherwise use List
-                        XmlHelper.WriteElementToXml(writer, "ViewMode", TVSettings.Instance.EpJPGs ? "Photo" : "List");
-                        XmlHelper.WriteElementToXml(writer, "ViewType", "Video");
-                    }
-                    else
-                    {
-                        XmlHelper.WriteElementToXml(writer, "ViewMode", "Preview");
-                    }
-
+                    XmlHelper.WriteElementToXml(writer, "ViewMode", "Movie");
+                    XmlHelper.WriteElementToXml(writer, "ViewType", "Video");
                     writer.WriteEndElement();
                 }
             }

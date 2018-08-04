@@ -23,10 +23,10 @@ namespace TVRename
     /// </summary>
     public partial class FolderMonitor : Form
     {
-        private FolderMonitorProgress ProgressDialog;
-        public int FMPPercent;
-        public bool FMPStopNow;
-        public string FMPUpto;
+        private FolderMonitorProgress progressDialog;
+        public int FmpPercent;
+        public bool FmpStopNow;
+        public string FmpUpto;
         private readonly TVDoc mDoc;
         private readonly BulkAddManager engine;
 
@@ -41,11 +41,11 @@ namespace TVRename
             tbResults.Parent = null;
         }
 
-        public void FMPShower()
+        private void FmpShower()
         {
-            ProgressDialog = new FolderMonitorProgress(this);
-            ProgressDialog.ShowDialog();
-            ProgressDialog = null;
+            progressDialog = new FolderMonitorProgress(this);
+            progressDialog.ShowDialog();
+            progressDialog = null;
         }
 
         private void bnClose_Click(object sender, System.EventArgs e)
@@ -125,8 +125,6 @@ namespace TVRename
                 StartPosition = FormStartPosition.CenterScreen
             };
 
-
-
             if (lstFMMonitorFolders.SelectedIndex != -1)
             {
                 int n = lstFMMonitorFolders.SelectedIndex;
@@ -151,9 +149,10 @@ namespace TVRename
                 StartPosition = FormStartPosition.CenterScreen
             };
 
-
             if (lstFMIgnoreFolders.SelectedIndex != -1)
+            {
                 ignoreFolderBrowser.SelectedPath = TVSettings.Instance.IgnoreFolders[lstFMIgnoreFolders.SelectedIndex];
+            }
 
             if (ignoreFolderBrowser.ShowDialog(this) == DialogResult.OK)
             {
@@ -192,24 +191,23 @@ namespace TVRename
             tabControl1.SelectedTab = tbResults;
             tabControl1.Update();
 
-            FMPStopNow = false;
-            FMPUpto = "Checking folders";
-            FMPPercent = 0;
+            FmpStopNow = false;
+            FmpUpto = "Checking folders";
+            FmpPercent = 0;
 
-            Thread fmpshower = new Thread(FMPShower) {Name = "'Bulk Add Shows' Progress (Folder Check)"};
+            Thread fmpshower = new Thread(FmpShower) {Name = "'Bulk Add Shows' Progress (Folder Check)"};
             fmpshower.Start();
 
-            while (ProgressDialog == null || !ProgressDialog.Ready)
+            while (progressDialog == null || !progressDialog.Ready)
             {
                 Thread.Sleep(10);
             }
 
-            engine.CheckFolders(ref FMPStopNow, ref FMPPercent);
+            engine.CheckFolders(ref FmpStopNow, ref FmpPercent);
             
-            FMPStopNow = true;
+            FmpStopNow = true;
 
             FillNewShowList(false);
-
         }
 
         private static void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
@@ -279,14 +277,14 @@ namespace TVRename
             if (engine.AddItems.Count == 0)
                 return;
 
-            FMPStopNow = false;
-            FMPUpto = "Identifying shows";
-            FMPPercent = 0;
+            FmpStopNow = false;
+            FmpUpto = "Identifying shows";
+            FmpPercent = 0;
 
-            Thread fmpshower = new Thread(FMPShower) {Name = "Bulk Add Shows Progress (Full Auto)"};
+            Thread fmpshower = new Thread(FmpShower) {Name = "Bulk Add Shows Progress (Full Auto)"};
             fmpshower.Start();
 
-            while ((ProgressDialog == null) || (!ProgressDialog.Ready))
+            while ((progressDialog == null) || (!progressDialog.Ready))
             {
                 Thread.Sleep(10);
             }
@@ -296,16 +294,16 @@ namespace TVRename
 
             foreach (FolderMonitorEntry ai in engine.AddItems)
             {
-                FMPPercent = 100 * n++ / n2;
+                FmpPercent = 100 * n++ / n2;
 
-               if (FMPStopNow)
+               if (FmpStopNow)
                    break;
 
                 if (ai.CodeKnown)
                     continue;
 
                 int p = ai.Folder.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-                FMPUpto = ai.Folder.Substring(p + 1); // +1 makes -1 "not found" result ok
+                FmpUpto = ai.Folder.Substring(p + 1); // +1 makes -1 "not found" result ok
                 
                 BulkAddManager.GuessShowItem(ai,mDoc.Library);
                 
@@ -314,7 +312,7 @@ namespace TVRename
                 lvFMNewShows.Update();
                 Update();
             }
-            FMPStopNow = true;
+            FmpStopNow = true;
         }
 
         private void bnRemoveNewFolder_Click(object _, System.EventArgs e)

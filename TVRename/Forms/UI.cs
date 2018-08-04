@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
+using Microsoft.Toolkit.Win32.UI.Controls.WinForms;
 using NLog;
 using TVRename.Forms;
 using TVRename.Ipc;
@@ -200,8 +201,8 @@ namespace TVRename
 
         private void ClearInfoWindows(string defaultText)
         {
-            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), EpGuidePath(), epGuideHTML);
-            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), ImagesGuidePath(), webBrowserImages);
+            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), webImages);
+            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), webInformation);
         }
 
         private static int BGDLLongInterval() => 1000 * 60 * 60; // one hour
@@ -615,7 +616,7 @@ namespace TVRename
             foreach (ShowItem si in sil)
             {
                 if (filter.Filter(si)
-                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.getSimplifiedPossibleShowNames().Any(name =>
+                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.GetSimplifiedPossibleShowNames().Any(name =>
                            name.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
                     ))
                 {
@@ -647,8 +648,8 @@ namespace TVRename
         private void ShowQuickStartGuide()
         {
             tabControl1.SelectTab(tbMyShows);
-            epGuideHTML.Navigate(QuickStartGuide());
-            webBrowserImages.Navigate(QuickStartGuide());
+            webInformation.Navigate(QuickStartGuide());
+            webImages.Navigate(QuickStartGuide());
         }
 
         private void FillEpGuideHTML()
@@ -773,8 +774,8 @@ namespace TVRename
             }
 
             TheTVDB.Instance.Unlock("FillEpGuideHTML");
-            SetHTMLbody(infoPaneBody, EpGuidePath(), epGuideHTML);
-            SetHTMLbody(imagesPaneBody, ImagesGuidePath(), webBrowserImages);
+            SetHTMLbody(imagesPaneBody, webImages);
+            SetHTMLbody(infoPaneBody, webInformation);
         }
 
         public static string EpGuidePath() => FileHelper.TempPath("tvrenameepguide.html");
@@ -799,6 +800,19 @@ namespace TVRename
             {
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
                 //May get errors if TV Rename cannot access the filesystem or disk is full etc
+                logger.Error(ex);
+            }
+        }
+
+        private static void SetHTMLbody(string body, WebView web)
+        {
+            try
+            {
+                web.NavigateToString(body);
+            }
+            catch (Exception ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
                 logger.Error(ex);
             }
         }
@@ -1065,7 +1079,7 @@ namespace TVRename
             if ((next1 != null) && (next1.Count >= 1))
             {
                 ProcessedEpisode ei = next1[0];
-                tsNextShowTxt.Text += CustomName.NameForNoExt(ei, CustomName.OldNStyle(1)) + ", " + ei.HowLong() +
+                tsNextShowTxt.Text += CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(1)) + ", " + ei.HowLong() +
                                       " (" + ei.DayOfWeek() + ", " + ei.TimeOfDay() + ")";
             }
             else
@@ -1324,10 +1338,7 @@ namespace TVRename
 
             if (seas != null && mLastShowsClicked != null && mLastShowsClicked.Count == 1)
             {
-                tsi = new ToolStripMenuItem("Edit " + (seas.SeasonNumber == 0
-                                                ? TVSettings.Instance.SpecialsFolderName
-                                                : TVSettings.Instance.defaultSeasonWord + " " + seas.SeasonNumber));
-
+                tsi = new ToolStripMenuItem("Edit " + Season.UIFullSeasonWord(seas.SeasonNumber));
                 tsi.Tag = (int) RightClickCommands.kEditSeason;
                 showRightClickMenu.Items.Add(tsi);
             }
@@ -1817,7 +1828,7 @@ namespace TVRename
         {
             MoreBusy(); // no background download while preferences are open!
 
-            Preferences pref = new Preferences(mDoc, scanOptions);
+            Preferences pref = new Preferences(mDoc, scanOptions,CurrentlySelectedSeason());
             if (pref.ShowDialog() == DialogResult.OK)
             {
                 mDoc.SetDirty();
@@ -2424,6 +2435,31 @@ namespace TVRename
 
         private void quickstartGuideToolStripMenuItem_Click(object sender, EventArgs e) => ShowQuickStartGuide();
 
+        private Season CurrentlySelectedSeason()
+        {
+            Season currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
+            if (currentSeas != null) return currentSeas;
+
+            ShowItem currentShow = TreeNodeToShowItem(MyShowTree.SelectedNode);
+            if (currentShow != null)
+            {
+                foreach (KeyValuePair<int, Season> s in currentShow.AppropriateSeasons())
+                {
+                    //Find first season we can
+                    return s.Value;
+                }
+            }
+
+            foreach (ShowItem si in mDoc.Library.GetShowItems())
+            {
+                foreach (KeyValuePair<int, Season> s in si.AppropriateSeasons())
+                {
+                    //Find first season we can
+                    return s.Value;
+                }
+            }
+            return null;
+        }
         private List<ProcessedEpisode> CurrentlySelectedPEL()
         {
             Season currentSeas = TreeNodeToSeason(MyShowTree.SelectedNode);
@@ -2453,7 +2489,7 @@ namespace TVRename
 
         private void filenameTemplateEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CustomName cn = new CustomName(TVSettings.Instance.NamingStyle.StyleString);
+            CustomEpisodeName cn = new CustomEpisodeName(TVSettings.Instance.NamingStyle.StyleString);
             CustomNameDesigner cne = new CustomNameDesigner(CurrentlySelectedPEL(), cn, mDoc);
             DialogResult dr = cne.ShowDialog();
             if (dr == DialogResult.OK)
@@ -2654,8 +2690,11 @@ namespace TVRename
                     continue;
                 }
 
+                //Remove any (nnnn) in the hint - probably a year
+                string refinedHint = Regex.Replace(hint,@"\(\d{4}\)","");
+
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
-                string refinedHint = RemoveSeriesEpisodeIndicators(hint);
+                refinedHint = RemoveSeriesEpisodeIndicators(refinedHint);
 
                 if (string.IsNullOrWhiteSpace(refinedHint))
                 {
@@ -2772,7 +2811,7 @@ namespace TVRename
         {
             foreach (ShowItem si in shows)
             {
-                if (si.getSimplifiedPossibleShowNames()
+                if (si.GetSimplifiedPossibleShowNames()
                     .Any(name => FileHelper.SimplifyAndCheckFilename(test, name)))
                     return true;
             }
@@ -3538,7 +3577,6 @@ namespace TVRename
                     MessageBox.Show(@"There is no update available please try again later.", @"No update available",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-
                 return;
             }
 

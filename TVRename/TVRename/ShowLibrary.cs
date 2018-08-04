@@ -23,7 +23,7 @@ namespace TVRename
             if (!TVSettings.Instance.ForceBulkAddToUseSettingsOnly)
             {
                 IEnumerable<string> seasonWordsFromShows =
-                    from si in Values select si.AutoAdd_SeasonFolderName.Trim();
+                    from si in Values select CustomSeasonName.GetTextFromPattern(si.AutoAdd_CustomFolderFormat);
 
                 results = seasonWordsFromShows.Distinct().ToList();
 
@@ -568,17 +568,17 @@ namespace TVRename
         {
             DateTime notBefore = DateTime.Now.AddDays(-nDaysPast);
             List<ProcessedEpisode> found = new List<ProcessedEpisode>();
-
+            
             for (int i = 0; i < nShows; i++)
             {
                 ProcessedEpisode nextAfterThat = null;
                 TimeSpan howClose = TimeSpan.MaxValue;
-                foreach (ShowItem si in GetShowItems())
+                foreach (ShowItem si in GetShowItems().ToList())
                 {
                     if (!si.ShowNextAirdate)
                         continue;
 
-                    foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes)
+                    foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes.ToList())
                     {
                         if (si.IgnoreSeasons.Contains(v.Key))
                             continue; // ignore this season

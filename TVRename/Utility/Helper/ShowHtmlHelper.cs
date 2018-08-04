@@ -43,12 +43,12 @@ namespace TVRename
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(HTMLHeader(10,col));
-            sb.AppendShow(si);
+            sb.AppendShow(si,col);
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
 
-        private static void AppendShow(this StringBuilder sb,ShowItem si)
+        private static void AppendShow(this StringBuilder sb,ShowItem si, Color backgroundColour)
         {
             SeriesInfo ser = si.TheSeries();
             string horizontalBanner = CreateHorizontalBannerHtml(ser);
@@ -71,8 +71,8 @@ namespace TVRename
             string tvLink =  string.IsNullOrWhiteSpace(ser.GetSeriesId()) ?string.Empty: "http://www.tv.com/show/" + ser.GetSeriesId() + "/summary.html"; 
             string imdbLink = string.IsNullOrWhiteSpace(ser.GetImdb()) ?string.Empty: "http://www.imdb.com/title/" + ser.GetImdb();
 
-            sb.AppendLine($@"<div class=""card card-body"">
-            	<div class=""text-center"">
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
+                <div class=""text-center"">
 	             {horizontalBanner}
                   <div class=""row"">
                    <div class=""col-md-4"">
@@ -86,23 +86,18 @@ namespace TVRename
                     <div><p class=""lead"">{ser.GetOverview()}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
-			         {CreateButtonLink(tvdbLink, "TVDB.com")}
-			         {CreateButtonLink(imdbLink, "IMDB.com")}
-			         {CreateButtonLink(tvLink, "TV.com")}
+			         {CreateButton(tvdbLink, "TVDB.com","View on TVDB")}
+			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
+			         {CreateButton(tvLink, "TV.com", "View on TV.com")}
 			        </div>
 		            <div class=""row align-items-bottom flex-grow-1"">
-                     <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating} (From {ser.GetSiteRatingVotes()} Votes)</div>
+                     <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.GetSiteRatingVotes())}</div>
                      <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().GetContentRating()}<br>{si.TheSeries().GetNetwork()}, {dayTime}</div>
                      <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", si.TheSeries().GetGenres())}</div>
                     </div>
                    </div>
                   </div>
                  </div>");
-        }
-
-        private static string CreateButtonLink(string link, string label)
-        {
-            return string.IsNullOrWhiteSpace(link) ? string.Empty : $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\">{label}</a>";
         }
 
         private static string CreateHorizontalBannerHtml(SeriesInfo ser)
@@ -147,72 +142,72 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             Color col = Color.FromName("ButtonFace");
             sb.AppendLine(HTMLHeader(10,col));
-            sb.AppendSeason(s,si);
+            sb.AppendSeason(s,si,col);
             foreach (ProcessedEpisode ep in GetBestEpisodes(si,s))
             {
                 List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc, ep);
-                sb.AppendEpisode(ep,fl);
+                sb.AppendEpisode(ep,fl,col);
             }
             sb.AppendLine(HTMLFooter());
             return sb.ToString();
         }
 
-        private static void AppendSeason(this StringBuilder sb, Season s, ShowItem si)
+        private static void AppendSeason(this StringBuilder sb, Season s, ShowItem si,Color backgroundColour)
         {
             SeriesInfo ser = s.TheSeries;
             string seasonLink = TheTVDB.Instance.WebsiteUrl(ser.TVDBCode, s.SeasonId, false);
             string showLink = TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, true);
 
-            sb.AppendLine($@"<div class=""card card-body"">
+            sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
 				{s.CreateHorizontalBannerHtml()}
 				<br/>
 				<h1><A HREF=""{showLink}"">{ser.Name}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1>
 				</div>");
         }
 
-        private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo> fl)
+        private static void AppendEpisode(this StringBuilder sb, ProcessedEpisode ep, IReadOnlyCollection<FileInfo> fl,Color backgroundColour)
         {
             string stars = StarRating(ep.EpisodeRating);
             string episodeUrl = TheTVDB.Instance.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);
             bool ratingIsNumber = float.TryParse(ep.EpisodeRating, out float rating);
-            string siteRating = ratingIsNumber && rating > 0 ? rating + "/10" : "";
-            if (!string.IsNullOrWhiteSpace(ep.SiteRatingCount))
-                siteRating += $" (From {ep.SiteRatingCount} Votes)";
+            string siteRating = ratingIsNumber && rating > 0
+                ? rating + "/10" + AddRatingCount(ep.SiteRatingCount)
+                : "";
 
             string imdbLink = string.IsNullOrWhiteSpace(ep.ImdbCode) ? string.Empty : "http://www.imdb.com/title/" + ep.ImdbCode;
             string productionCode = string.IsNullOrWhiteSpace(ep.ProductionCode)
                 ? string.Empty
                 : "Production Code <br/>" + ep.ProductionCode;
 
-            string episodeDescriptor =  CustomName.NameForNoExt(ep, CustomName.OldNStyle(6)); // may need to include (si.DVDOrder && snum == 0)? ep.Name:
-            string writersHtml = string.IsNullOrWhiteSpace(ep.Writer)?string.Empty:"<b>Writers:</b> "+ string.Join(", ", ep.Writers);
-            string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + string.Join(", ",ep.Directors);
+            string episodeDescriptor = CustomEpisodeName.NameForNoExt(ep, CustomEpisodeName.OldNStyle(6)); // may need to include (si.DVDOrder && snum == 0)? ep.Name:
+            string writersHtml = string.IsNullOrWhiteSpace(ep.Writer) ? string.Empty : "<b>Writers:</b> " + string.Join(", ", ep.Writers);
+            string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + string.Join(", ", ep.Directors);
             string possibleBreak = (string.IsNullOrWhiteSpace(writersHtml) || string.IsNullOrWhiteSpace(directorsHtml))
                 ? string.Empty
                 : "<br />";
 
             string searchButton = (fl == null)
-                ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>")
+                ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>","Search for Torrent...")
                 : string.Empty;
 
             string viewButton = string.Empty;
             string explorerButton = string.Empty;
             if (fl != null)
-            { 
-            foreach (FileInfo fi in fl)
+            {
+                foreach (FileInfo fi in fl)
                 {
                     string urlFilename = HttpUtility.UrlEncode(fi.FullName);
-                    viewButton += CreateButton($"watch://{urlFilename}", "<i class=\"far fa-eye\"></i>");
-                    explorerButton += CreateButton($"explore://{urlFilename}", "<i class=\"far fa-folder-open\"></i>");
+                    viewButton += CreateButton($"watch://{urlFilename}", "<i class=\"far fa-eye\"></i>","Watch Now");
+                    explorerButton += CreateButton($"explore://{urlFilename}", "<i class=\"far fa-folder-open\"></i>","Open Containing Folder");
                 }
             }
 
-            string tvdbButton = CreateButton(episodeUrl, "TVDB.com");
-            string imdbButton = CreateButton(imdbLink, "IMDB.com");
-            string tvButton = CreateButton(ep.ShowUrl, "TV.com");
+            string tvdbButton = CreateButton(episodeUrl, "TVDB.com","View on TVDB");
+            string imdbButton = CreateButton(imdbLink, "IMDB.com","View on IMDB");
+            string tvButton = CreateButton(ep.ShowUrl, "TV.com","View on TV.com");
 
             sb.AppendLine($@"
-                <div class=""card card-body"">
+                <div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                  <div class=""row"">
                   <div class=""col-md-5"">{ep.ScreenShotHtml()}</div>
                    <div class=""col-md-7 d-flex flex-column"">
@@ -239,11 +234,19 @@ namespace TVRename
                 </div>");
         }
 
-        private static string CreateButton(string link, string text)
+        private static string AddRatingCount(string siteRatingCount)
+        {
+            if (!string.IsNullOrWhiteSpace(siteRatingCount) && int.Parse(siteRatingCount) > 0)
+                return $" (From {siteRatingCount} Vote{(int.Parse(siteRatingCount) == 1 ? "" : "s")})";
+
+            return string.Empty;
+        }
+
+        private static string CreateButton(string link, string text, string tooltip)
         {
             if (string.IsNullOrWhiteSpace(link)) return string.Empty;
 
-            return $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\">{text}</i></a>";
+            return $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"{tooltip}\">{text}</i></a>";
         }
 
         private static string DateDetailsHtml(this ProcessedEpisode ei)
@@ -402,7 +405,7 @@ namespace TVRename
                     body += "<b>" + ei.Name + "</b>";
                 }
                 else
-                    body += "<b>" + HttpUtility.HtmlEncode(CustomName.NameForNoExt(ei, CustomName.OldNStyle(6))) +
+                    body += "<b>" + HttpUtility.HtmlEncode(CustomEpisodeName.NameForNoExt(ei, CustomEpisodeName.OldNStyle(6))) +
                             "</b>";
 
                 body += "</A>"; // anchor
@@ -506,9 +509,7 @@ namespace TVRename
                 ? si.SeasonEpisodes[snum]
                 : ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
 
-            string seasText = snum == 0
-                ? TVSettings.Instance.SpecialsFolderName
-                : (TVSettings.Instance.defaultSeasonWord + " " + snum);
+            string seasText = Season.UIFullSeasonWord(snum);
 
             if ((eis.Count > 0) && (eis[0].SeasonId > 0))
                 seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(si.TVDBCode, eis[0].SeasonId, false) + "\">" +
@@ -535,21 +536,16 @@ namespace TVRename
 
         public static string SeasonName(ShowItem si, int snum)
         {
-            string nodeTitle;
             if (si.DVDOrder)
             {
-                nodeTitle = snum == 0
+                return (snum == 0)
                     ? "Not Available on DVD"
-                    : "DVD " + TVSettings.Instance.defaultSeasonWord + " " + snum;
+                    : "DVD " + Season.UISeasonWord(snum);
             }
             else
             {
-                nodeTitle = snum == 0
-                    ? TVSettings.Instance.SpecialsFolderName
-                    : TVSettings.Instance.defaultSeasonWord + " " + snum;
+                return Season.UIFullSeasonWord(snum);
             }
-
-            return nodeTitle;
         }
 
         internal static string GenreIconHtml(string genre)
@@ -592,7 +588,6 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         internal static string HTMLHeader(int size,Color backgroundColour)
         {
-            string hexColour = "#"+backgroundColour.R.ToString("X2") + backgroundColour.G.ToString("X2") + backgroundColour.B.ToString("X2");
             return @"<!DOCTYPE html>
                 <html><head>
                 <meta charset=""utf-8"">
@@ -601,7 +596,12 @@ namespace TVRename
                 <link rel = ""stylesheet"" href = ""http://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css"" />
                 <link rel = ""stylesheet"" href = ""https://use.fontawesome.com/releases/v5.0.13/css/all.css"" />
                 </head >"
-                + $"<body style=\"background-color: {hexColour}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
+                + $"<body style=\"background-color: {backgroundColour.HexColour()}\" ><div class=\"col-sm-{size} offset-sm-{(12 - size) / 2}\">";
+        }
+
+        private static string HexColour(this Color c)
+        {
+            return "#" + c.R.ToString("X2") + c.G.ToString("X2") + c.B.ToString("X2");
         }
 
         // ReSharper disable once InconsistentNaming

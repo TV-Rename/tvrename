@@ -14,19 +14,17 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public int TVDBCode;
         public readonly bool HasSeasonFoldersGuess;
-        public readonly string SeasonFolderName;
-        public readonly bool PadSeasonToTwoDigits;
+        public readonly string SeasonFolderFormat;
 
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => TVDBCode == -1;
 
-        public FolderMonitorEntry(string folder, bool seasonFolders, string seasonFolderName,bool padSeasonToTwoDigits)
+        public FolderMonitorEntry(string folder, bool seasonFolders, string folderFormat)
         {
             Folder = folder;
             TVDBCode = -1;
             HasSeasonFoldersGuess = seasonFolders;
-            SeasonFolderName = seasonFolderName;
-            PadSeasonToTwoDigits = padSeasonToTwoDigits;
+            SeasonFolderFormat = folderFormat;
         }
     }
 

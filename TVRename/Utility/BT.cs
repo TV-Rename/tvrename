@@ -1365,7 +1365,7 @@ namespace TVRename
 
         protected override bool NewTorrentEntry(string torrentFile, int numberInTorrent)
         {
-            NewLocation = "";
+            NewLocation = string.Empty;
             PrioWasSet = false;
             Type = "?";
             return true;
@@ -1418,7 +1418,7 @@ namespace TVRename
             bool prioChanged = SetPrios && PrioWasSet;
             if (prioChanged || (!string.IsNullOrEmpty(NewLocation)))
                 AddResult(Type, torrentFile, (numberInTorrent + 1).ToString(),
-                    prioChanged ? GetResumePrio(torrentFile, numberInTorrent) : "", NewLocation);
+                    prioChanged ? GetResumePrio(torrentFile, numberInTorrent) : string.Empty, NewLocation);
 
             return true;
         }

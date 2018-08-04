@@ -142,9 +142,7 @@ namespace TVRename.Forms
             duplicateRightClickMenu.Items.Add(tsi);
 
             //kEditSeason,
-            tsi = new ToolStripMenuItem("Edit " + (mlastSelected.SeasonNumber == 0
-                                            ? TVSettings.Instance.SpecialsFolderName
-                                            : TVSettings.Instance.defaultSeasonWord + " " + mlastSelected.SeasonNumber));
+            tsi = new ToolStripMenuItem("Edit " + Season.UIFullSeasonWord(mlastSelected.SeasonNumber));
             tsi.Tag = (int) RightClickCommands.kEditSeason;
             duplicateRightClickMenu.Items.Add(tsi);
 
