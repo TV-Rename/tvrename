@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
+using Microsoft.Toolkit.Win32.UI.Controls.WinForms;
 using NLog;
 using TVRename.Forms;
 using TVRename.Ipc;
@@ -200,8 +201,8 @@ namespace TVRename
 
         private void ClearInfoWindows(string defaultText)
         {
-            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), EpGuidePath(), epGuideHTML);
-            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), ImagesGuidePath(), webBrowserImages);
+            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), webImages);
+            SetHTMLbody(ShowHtmlHelper.CreateOldPage(defaultText), webInformation);
         }
 
         private static int BGDLLongInterval() => 1000 * 60 * 60; // one hour
@@ -647,8 +648,8 @@ namespace TVRename
         private void ShowQuickStartGuide()
         {
             tabControl1.SelectTab(tbMyShows);
-            epGuideHTML.Navigate(QuickStartGuide());
-            webBrowserImages.Navigate(QuickStartGuide());
+            webInformation.Navigate(QuickStartGuide());
+            webImages.Navigate(QuickStartGuide());
         }
 
         private void FillEpGuideHTML()
@@ -773,8 +774,8 @@ namespace TVRename
             }
 
             TheTVDB.Instance.Unlock("FillEpGuideHTML");
-            SetHTMLbody(infoPaneBody, EpGuidePath(), epGuideHTML);
-            SetHTMLbody(imagesPaneBody, ImagesGuidePath(), webBrowserImages);
+            SetHTMLbody(imagesPaneBody, webImages);
+            SetHTMLbody(infoPaneBody, webInformation);
         }
 
         public static string EpGuidePath() => FileHelper.TempPath("tvrenameepguide.html");
@@ -799,6 +800,19 @@ namespace TVRename
             {
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
                 //May get errors if TV Rename cannot access the filesystem or disk is full etc
+                logger.Error(ex);
+            }
+        }
+
+        private static void SetHTMLbody(string body, WebView web)
+        {
+            try
+            {
+                web.NavigateToString(body);
+            }
+            catch (Exception ex)
+            {
+                //Fail gracefully - no RHS episode guide is not too big of a problem.
                 logger.Error(ex);
             }
         }
@@ -3661,6 +3675,11 @@ namespace TVRename
 
                 return sb.ToString();
             }
+        }
+
+        private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+
         }
     }
 }

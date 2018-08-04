@@ -86,23 +86,18 @@ namespace TVRename
                     <div><p class=""lead"">{ser.GetOverview()}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
-			         {CreateButtonLink(tvdbLink, "TVDB.com")}
-			         {CreateButtonLink(imdbLink, "IMDB.com")}
-			         {CreateButtonLink(tvLink, "TV.com")}
+			         {CreateButton(tvdbLink, "TVDB.com","View on TVDB")}
+			         {CreateButton(imdbLink, "IMDB.com", "View on IMDB")}
+			         {CreateButton(tvLink, "TV.com", "View on TV.com")}
 			        </div>
 		            <div class=""row align-items-bottom flex-grow-1"">
-                     <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating} (From {ser.GetSiteRatingVotes()} Votes)</div>
+                     <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.GetSiteRatingVotes())}</div>
                      <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().GetContentRating()}<br>{si.TheSeries().GetNetwork()}, {dayTime}</div>
                      <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", si.TheSeries().GetGenres())}</div>
                     </div>
                    </div>
                   </div>
                  </div>");
-        }
-
-        private static string CreateButtonLink(string link, string label)
-        {
-            return string.IsNullOrWhiteSpace(link) ? string.Empty : $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\">{label}</a>";
         }
 
         private static string CreateHorizontalBannerHtml(SeriesInfo ser)
@@ -175,41 +170,41 @@ namespace TVRename
             string stars = StarRating(ep.EpisodeRating);
             string episodeUrl = TheTVDB.Instance.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);
             bool ratingIsNumber = float.TryParse(ep.EpisodeRating, out float rating);
-            string siteRating = ratingIsNumber && rating > 0 ? rating + "/10" : "";
-            if (!string.IsNullOrWhiteSpace(ep.SiteRatingCount))
-                siteRating += $" (From {ep.SiteRatingCount} Votes)";
+            string siteRating = ratingIsNumber && rating > 0
+                ? rating + "/10" + AddRatingCount(ep.SiteRatingCount)
+                : "";
 
             string imdbLink = string.IsNullOrWhiteSpace(ep.ImdbCode) ? string.Empty : "http://www.imdb.com/title/" + ep.ImdbCode;
             string productionCode = string.IsNullOrWhiteSpace(ep.ProductionCode)
                 ? string.Empty
                 : "Production Code <br/>" + ep.ProductionCode;
 
-            string episodeDescriptor =  CustomEpisodeName.NameForNoExt(ep, CustomEpisodeName.OldNStyle(6)); // may need to include (si.DVDOrder && snum == 0)? ep.Name:
-            string writersHtml = string.IsNullOrWhiteSpace(ep.Writer)?string.Empty:"<b>Writers:</b> "+ string.Join(", ", ep.Writers);
-            string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + string.Join(", ",ep.Directors);
+            string episodeDescriptor = CustomEpisodeName.NameForNoExt(ep, CustomEpisodeName.OldNStyle(6)); // may need to include (si.DVDOrder && snum == 0)? ep.Name:
+            string writersHtml = string.IsNullOrWhiteSpace(ep.Writer) ? string.Empty : "<b>Writers:</b> " + string.Join(", ", ep.Writers);
+            string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + string.Join(", ", ep.Directors);
             string possibleBreak = (string.IsNullOrWhiteSpace(writersHtml) || string.IsNullOrWhiteSpace(directorsHtml))
                 ? string.Empty
                 : "<br />";
 
             string searchButton = (fl == null)
-                ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>")
+                ? CreateButton(TVSettings.Instance.BTSearchURL(ep), "<i class=\"fas fa-search\"></i>","Search for Torrent...")
                 : string.Empty;
 
             string viewButton = string.Empty;
             string explorerButton = string.Empty;
             if (fl != null)
-            { 
-            foreach (FileInfo fi in fl)
+            {
+                foreach (FileInfo fi in fl)
                 {
                     string urlFilename = HttpUtility.UrlEncode(fi.FullName);
-                    viewButton += CreateButton($"watch://{urlFilename}", "<i class=\"far fa-eye\"></i>");
-                    explorerButton += CreateButton($"explore://{urlFilename}", "<i class=\"far fa-folder-open\"></i>");
+                    viewButton += CreateButton($"watch://{urlFilename}", "<i class=\"far fa-eye\"></i>","Watch Now");
+                    explorerButton += CreateButton($"explore://{urlFilename}", "<i class=\"far fa-folder-open\"></i>","Open Containing Folder");
                 }
             }
 
-            string tvdbButton = CreateButton(episodeUrl, "TVDB.com");
-            string imdbButton = CreateButton(imdbLink, "IMDB.com");
-            string tvButton = CreateButton(ep.ShowUrl, "TV.com");
+            string tvdbButton = CreateButton(episodeUrl, "TVDB.com","View on TVDB");
+            string imdbButton = CreateButton(imdbLink, "IMDB.com","View on IMDB");
+            string tvButton = CreateButton(ep.ShowUrl, "TV.com","View on TV.com");
 
             sb.AppendLine($@"
                 <div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -239,11 +234,19 @@ namespace TVRename
                 </div>");
         }
 
-        private static string CreateButton(string link, string text)
+        private static string AddRatingCount(string siteRatingCount)
+        {
+            if (!string.IsNullOrWhiteSpace(siteRatingCount) && int.Parse(siteRatingCount) > 0)
+                return $" (From {siteRatingCount} Vote{(int.Parse(siteRatingCount) == 1 ? "" : "s")})";
+
+            return string.Empty;
+        }
+
+        private static string CreateButton(string link, string text, string tooltip)
         {
             if (string.IsNullOrWhiteSpace(link)) return string.Empty;
 
-            return $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\">{text}</i></a>";
+            return $"<a href=\"{link}\" class=\"btn btn-outline-secondary\" role=\"button\" aria-disabled=\"true\" data-toggle=\"tooltip\" data-placement=\"top\" title=\"{tooltip}\">{text}</i></a>";
         }
 
         private static string DateDetailsHtml(this ProcessedEpisode ei)
