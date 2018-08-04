@@ -1684,64 +1684,45 @@ namespace TVRename
 
             if (GetLock("ProcessTVDBResponse"))
             {
-                try
-                {
-                    foreach (JToken jToken in jsonResponse["data"])
-                    {
-                        JObject seriesResponse = (JObject) jToken;
-                        // The <series> returned by GetSeries have
-                        // less info than other results from
-                        // thetvdb.com, so we need to smartly merge
-                        // in a <Series> if we already have some/all
-                        // info on it (depending on which one came
-                        // first).
-
-                        SeriesInfo si = new SeriesInfo(seriesResponse, GetLanguageId());
-                        if (series.ContainsKey(si.TVDBCode))
-                            series[si.TVDBCode].Merge(si, GetLanguageId());
-                        else
-                            series[si.TVDBCode] = si;
-                    }
-                }
-                catch (InvalidCastException ex)
-                {
-                    Logger.Error("Did not recieve the expected format of json from {0}.", uri);
-                    Logger.Error(ex);
-                    Logger.Error(jsonResponse["data"].ToString());
-                }
+                ProcessSearchResult(uri, jsonResponse,GetLanguageId());
 
                 if (InForeignLanguage())
                 {
                     //we also want to search for search terms that match in default language
-                    try
-                    {
-                        foreach (JToken jToken in jsonDefaultLangResponse["data"])
-                        {
-                            JObject seriesResponse = (JObject) jToken;
-                            // The <series> returned by GetSeries have
-                            // less info than other results from
-                            // thetvdb.com, so we need to smartly merge
-                            // in a <Series> if we already have some/all
-                            // info on it (depending on which one came
-                            // first).
-
-                            SeriesInfo si = new SeriesInfo(seriesResponse, GetLanguageId());
-                            if (series.ContainsKey(si.TVDBCode))
-                                series[si.TVDBCode].Merge(si, GetLanguageId());
-                            else
-                                series[si.TVDBCode] = si;
-                        }
-                    }
-                    catch (InvalidCastException ex)
-                    {
-                        Logger.Error("Did not recieve the expected format of json from {0}.", uri);
-                        Logger.Error(ex);
-                        Logger.Error(jsonResponse["data"].ToString());
-                    }
+                    ProcessSearchResult(uri, jsonDefaultLangResponse,GetDefaultLanguageId());
                 }
             }
 
             Unlock("ProcessTVDBResponse");
+        }
+
+        private void ProcessSearchResult(string uri, JObject jsonResponse, int languageId)
+        {
+            try
+            {
+                foreach (JToken jToken in jsonResponse["data"])
+                {
+                    JObject seriesResponse = (JObject)jToken;
+                    // The <series> returned by GetSeries have
+                    // less info than other results from
+                    // thetvdb.com, so we need to smartly merge
+                    // in a <Series> if we already have some/all
+                    // info on it (depending on which one came
+                    // first).
+
+                    SeriesInfo si = new SeriesInfo(seriesResponse, languageId);
+                    if (series.ContainsKey(si.TVDBCode))
+                        series[si.TVDBCode].Merge(si, languageId);
+                    else
+                        series[si.TVDBCode] = si;
+                }
+            }
+            catch (InvalidCastException ex)
+            {
+                Logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                Logger.Error(ex);
+                Logger.Error(jsonResponse["data"].ToString());
+            }
         }
 
         public string WebsiteUrl(int seriesId, int seasonId, bool summaryPage)
