@@ -190,11 +190,12 @@ namespace TVRename
         private async Task CheckUpdatesOnStartup(bool showUi)
         {
             Task<UpdateVersion> tuv = VersionUpdater.CheckForUpdatesAsync();
-            NotifyUpdates(await tuv, false, !showUi);
+            //NotifyUpdates(await tuv, false, !showUi);
         }
 
         private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text)
         {
+            Logger.Info($"Splash Screen Updated with: {text}");
             splashScreen.Invoke((System.Action) delegate { splashScreen.UpdateStatus(text); });
         }
 
@@ -3507,7 +3508,7 @@ namespace TVRename
             NotifyUpdates(await uv, true);
         }
 
-        private void NotifyUpdates(UpdateVersion update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
+        private static void NotifyUpdates(UpdateVersion update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
         {
             if (update is null)
             {
@@ -3520,16 +3521,13 @@ namespace TVRename
                 return;
             }
 
-            if (inSilentMode)
-            {
-                Logger.Warn(update.LogMessage());
-            }
-            else
-            {
-                UpdateNotification unForm = new UpdateNotification(update);
-                unForm.ShowDialog();
-                //this.btnUpdateAvailable.Visible = true;
-            }
+            Logger.Warn(update.LogMessage());
+
+            if (inSilentMode) return;
+
+            UpdateNotification unForm = new UpdateNotification(update);
+            unForm.ShowDialog();
+            //this.btnUpdateAvailable.Visible = true;
         }
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
