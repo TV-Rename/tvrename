@@ -35,6 +35,7 @@ namespace TVRename.Forms
             this.btnCancel = new System.Windows.Forms.Button();
             this.tbReleaseNotes = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.webReleaseNotes = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
             // label1
@@ -112,6 +113,18 @@ namespace TVRename.Forms
             this.lblStatus.Size = new System.Drawing.Size(0, 13);
             this.lblStatus.TabIndex = 6;
             // 
+            // webReleaseNotes
+            // 
+            this.webReleaseNotes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.webReleaseNotes.Location = new System.Drawing.Point(26, 92);
+            this.webReleaseNotes.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webReleaseNotes.Name = "webReleaseNotes";
+            this.webReleaseNotes.Size = new System.Drawing.Size(382, 333);
+            this.webReleaseNotes.TabIndex = 7;
+            this.webReleaseNotes.Visible = false;
+            // 
             // UpdateNotification
             // 
             this.AcceptButton = this.btnDownloadNow;
@@ -119,6 +132,7 @@ namespace TVRename.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(420, 496);
+            this.Controls.Add(this.webReleaseNotes);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.tbReleaseNotes);
             this.Controls.Add(this.btnCancel);
@@ -149,5 +163,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox tbReleaseNotes;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.WebBrowser webReleaseNotes;
     }
 }
