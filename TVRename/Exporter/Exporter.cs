@@ -89,17 +89,17 @@ namespace TVRename
                         file.Write(contents);
                     }
 
-                    Logger.Info("Output File to :{0}", Location());
-                    Logger.Trace("contents of File are :{0}", contents);
+                    Logger.Info("Output File to: {0}", Location());
+                    Logger.Trace("contents of File are: {0}", contents);
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e, "Failed to Output File to :{0}", Location());
+                    Logger.Error(e, "Failed to Output File to: {0}", Location());
                 }
             }
             else
             {
-                Logger.Trace("SKipped (Disabled) Output File to :{0}", Location());
+                Logger.Trace("Skipped (Disabled) Output File to: {0}", Location());
             }
         }
 

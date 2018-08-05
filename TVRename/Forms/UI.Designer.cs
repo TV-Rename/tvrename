@@ -7,7 +7,7 @@
 //
 
 using System;
-using Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT;
+using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -107,9 +107,7 @@ namespace TVRename
             this.filterTextBox = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.webInformation = new Microsoft.Toolkit.Win32.UI.Controls.WinForms.WebView();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.webImages = new Microsoft.Toolkit.Win32.UI.Controls.WinForms.WebView();
             this.bnMyShowsCollapse = new System.Windows.Forms.Button();
             this.bnMyShowsRefresh = new System.Windows.Forms.Button();
             this.bnMyShowsDelete = new System.Windows.Forms.Button();
@@ -185,6 +183,8 @@ namespace TVRename
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
             this.tmrPeriodicScan = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.webImages = new System.Windows.Forms.WebBrowser();
+            this.webInformation = new System.Windows.Forms.WebBrowser();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -194,9 +194,7 @@ namespace TVRename
             this.splitContainer1.SuspendLayout();
             this.tabControl2.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webInformation)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.webImages)).BeginInit();
             this.tbAllInOne.SuspendLayout();
             this.tbWTW.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -662,17 +660,6 @@ namespace TVRename
             this.tabPage1.Text = "Information";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // webInformation
-            // 
-            this.webInformation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webInformation.Location = new System.Drawing.Point(3, 3);
-            this.webInformation.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webInformation.Name = "webInformation";
-            this.webInformation.Size = new System.Drawing.Size(618, 431);
-            this.webInformation.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.webInformation, "webview");
-            this.webInformation.NavigationStarting += new System.EventHandler<Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlNavigationStartingEventArgs>(this.NavigateTo);
-            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.webImages);
@@ -683,16 +670,6 @@ namespace TVRename
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Images";
             this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // webImages
-            // 
-            this.webImages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webImages.Location = new System.Drawing.Point(3, 3);
-            this.webImages.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webImages.Name = "webImages";
-            this.webImages.Size = new System.Drawing.Size(618, 431);
-            this.webImages.TabIndex = 0;
-            this.webImages.NavigationStarting += new System.EventHandler<Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlNavigationStartingEventArgs>(this.NavigateTo);
             // 
             // bnMyShowsCollapse
             // 
@@ -1454,6 +1431,24 @@ namespace TVRename
             this.tmrPeriodicScan.Enabled = true;
             this.tmrPeriodicScan.Tick += new System.EventHandler(this.tmrPeriodicScan_Tick);
             // 
+            // webImages
+            // 
+            this.webImages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webImages.Location = new System.Drawing.Point(3, 3);
+            this.webImages.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webImages.Name = "webImages";
+            this.webImages.Size = new System.Drawing.Size(618, 431);
+            this.webImages.TabIndex = 0;
+            // 
+            // webInformation
+            // 
+            this.webInformation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webInformation.Location = new System.Drawing.Point(3, 3);
+            this.webInformation.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webInformation.Name = "webInformation";
+            this.webInformation.Size = new System.Drawing.Size(618, 431);
+            this.webInformation.TabIndex = 0;
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1485,9 +1480,7 @@ namespace TVRename
             this.splitContainer1.ResumeLayout(false);
             this.tabControl2.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webInformation)).EndInit();
             this.tabPage2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.webImages)).EndInit();
             this.tbAllInOne.ResumeLayout(false);
             this.tbAllInOne.PerformLayout();
             this.tbWTW.ResumeLayout(false);
@@ -1626,7 +1619,7 @@ namespace TVRename
         private System.Windows.Forms.Timer tmrPeriodicScan;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem timezoneInconsistencyLOGToolStripMenuItem;
-        private Microsoft.Toolkit.Win32.UI.Controls.WinForms.WebView webInformation;
-        private Microsoft.Toolkit.Win32.UI.Controls.WinForms.WebView webImages;
+        private WebBrowser webInformation;
+        private WebBrowser webImages;
     }
 }
