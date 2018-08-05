@@ -56,8 +56,6 @@ namespace TVRename.Forms
             string HTML_FOOTER = "</body></html>";
 
             webReleaseNotes.DocumentText= HTML_HEAD+result+HTML_FOOTER;
-            
-
 
             webReleaseNotes.Visible = true;
             tbReleaseNotes.Visible = false;

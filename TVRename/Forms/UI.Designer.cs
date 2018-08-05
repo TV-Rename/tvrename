@@ -7,7 +7,7 @@
 //
 
 using System;
-using Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT;
+using System.Windows.Forms;
 
 namespace TVRename
 {
@@ -107,9 +107,9 @@ namespace TVRename
             this.filterTextBox = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.webInformation = new Microsoft.Toolkit.Win32.UI.Controls.WinForms.WebView();
+            this.webInformation = new WebBrowser();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.webImages = new Microsoft.Toolkit.Win32.UI.Controls.WinForms.WebView();
+            this.webImages = new WebBrowser();
             this.bnMyShowsCollapse = new System.Windows.Forms.Button();
             this.bnMyShowsRefresh = new System.Windows.Forms.Button();
             this.bnMyShowsDelete = new System.Windows.Forms.Button();
@@ -671,7 +671,7 @@ namespace TVRename
             this.webInformation.Size = new System.Drawing.Size(618, 431);
             this.webInformation.TabIndex = 8;
             this.toolTip1.SetToolTip(this.webInformation, "webview");
-            this.webInformation.NavigationStarting += new System.EventHandler<Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlNavigationStartingEventArgs>(this.NavigateTo);
+            this.webInformation.Navigating += new WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // tabPage2
             // 
@@ -692,7 +692,7 @@ namespace TVRename
             this.webImages.Name = "webImages";
             this.webImages.Size = new System.Drawing.Size(618, 431);
             this.webImages.TabIndex = 0;
-            this.webImages.NavigationStarting += new System.EventHandler<Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT.WebViewControlNavigationStartingEventArgs>(this.NavigateTo);
+            this.webImages.Navigating += new WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // bnMyShowsCollapse
             // 
@@ -1626,7 +1626,7 @@ namespace TVRename
         private System.Windows.Forms.Timer tmrPeriodicScan;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripMenuItem timezoneInconsistencyLOGToolStripMenuItem;
-        private Microsoft.Toolkit.Win32.UI.Controls.WinForms.WebView webInformation;
-        private Microsoft.Toolkit.Win32.UI.Controls.WinForms.WebView webImages;
+        private System.Windows.Forms.WebBrowser webInformation;
+        private System.Windows.Forms.WebBrowser webImages;
     }
 }

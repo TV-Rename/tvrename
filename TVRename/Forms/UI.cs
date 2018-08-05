@@ -19,8 +19,6 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
-using Microsoft.Toolkit.Win32.UI.Controls.Interop.WinRT;
-using Microsoft.Toolkit.Win32.UI.Controls.WinForms;
 using NLog;
 using TVRename.Forms;
 using TVRename.Ipc;
@@ -785,11 +783,11 @@ namespace TVRename
             SetHtmlBody(infoPaneBody, webInformation);
         }
 
-        private static void SetHtmlBody(string body, WebView web)
+        private static void SetHtmlBody(string body, WebBrowser web)
         {
             try
             {
-                web.NavigateToString(body);
+                web.DocumentText = body;
             }
             catch (Exception ex)
             {
@@ -1072,11 +1070,11 @@ namespace TVRename
                 TVDoc.SearchForEpisode((ProcessedEpisode) lvi.Tag);
         }
 
-        private void NavigateTo(object sender, WebViewControlNavigationStartingEventArgs e)
+        private void NavigateTo(object sender, WebBrowserNavigatingEventArgs e)
         {
-            if (e.Uri == null) return;
+            if (e.Url == null) return;
 
-            string url = e.Uri.AbsoluteUri;
+            string url = e.Url.AbsoluteUri;
 
             if (string.Compare(url, "about:blank", StringComparison.Ordinal) == 0)
                 return; // don't intercept about:blank
@@ -1085,7 +1083,7 @@ namespace TVRename
                 return; // let the quickstartguide be shown
 
             if (url.Contains(@"ieframe.dll"))
-                url = e.Uri.Fragment.Substring(1);
+                url = e.Url.Fragment.Substring(1);
 
             if (url.StartsWith(EXPLORE_PROXY, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -1108,7 +1106,7 @@ namespace TVRename
                 string.Compare(url.Substring(0, 8), "https://", StringComparison.Ordinal) == 0)
             {
                 e.Cancel = true;
-                Helpers.SysOpen(e.Uri.AbsoluteUri);
+                Helpers.SysOpen(e.Url.AbsoluteUri);
             }
         }
 
