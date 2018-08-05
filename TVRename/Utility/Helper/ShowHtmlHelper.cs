@@ -66,7 +66,7 @@ namespace TVRename
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.GetRuntime()) ? string.Empty : $"<br/> {ser.GetRuntime()} min";
             string actorLinks = string.Join(", ", si.TheSeries().GetActors().Select(ActorLinkHtml));
             string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
-            string airsTime = DateTime.Parse(ser.GetAirsTime()).ToString("h tt");
+            string airsTime = ParseAirsTime(ser);
             string airsDay = ser.GetAirsDay();
             string dayTime = $"{airsDay} {airsTime}";
 
@@ -104,6 +104,12 @@ namespace TVRename
                    </div>
                   </div>
                  </div>");
+        }
+
+        private static string ParseAirsTime(SeriesInfo ser)
+        {
+            bool success = DateTime.TryParse(ser.GetAirsTime(), out DateTime airsTime);
+            return success ? airsTime.ToString("h tt"): string.Empty ;
         }
 
         private static string GetBestFolderLocationToOpen(this ShowItem si)

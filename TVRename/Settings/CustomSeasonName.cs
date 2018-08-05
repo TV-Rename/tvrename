@@ -60,6 +60,8 @@ namespace TVRename
         {
             string name = styleString;
 
+            if (s == null) return string.Empty;
+
             string showname = s.TheSeries.Name;
             if (urlEncode)
             {

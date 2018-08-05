@@ -684,6 +684,8 @@ namespace TVRename
 
         public Dictionary<int,Season> AppropriateSeasons()
         {
+            SeriesInfo s = TheSeries();
+            if (s==null)return new Dictionary<int, Season>();
             return DvdOrder ? TheSeries().DVDSeasons : TheSeries().AiredSeasons;
         }
 
