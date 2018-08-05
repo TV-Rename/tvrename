@@ -103,7 +103,6 @@ namespace TVRename
 
         private static UpdateVersion ObtainCurrentVersion()
         {
-            UpdateVersion currentVersion;
             string currentVersionString = Helpers.DisplayVersion;
 
             bool inDebug = currentVersionString.EndsWith(" ** Debug Build **");
@@ -112,9 +111,7 @@ namespace TVRename
                 currentVersionString = currentVersionString.Substring(0,
                     currentVersionString.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
 
-            currentVersion =
-                new UpdateVersion(currentVersionString, UpdateVersion.VersionType.friendly);
-            return currentVersion;
+            return new UpdateVersion(currentVersionString, UpdateVersion.VersionType.friendly);
         }
     }
 }
