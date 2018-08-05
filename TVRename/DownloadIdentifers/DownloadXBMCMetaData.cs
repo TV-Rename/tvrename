@@ -28,7 +28,7 @@ namespace TVRename
             if (TVSettings.Instance.NFOShows)
             {
                 ItemList theActionList = new ItemList();
-                FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "tvshow.nfo");
+                FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAddFolderBase, "tvshow.nfo");
 
                 bool needUpdate = !tvshownfo.Exists ||
                                   (si.TheSeries().SrvLastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime)) ||

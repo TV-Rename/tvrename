@@ -147,7 +147,7 @@ namespace TVRename
         {
             TheTVDB db = TheTVDB.Instance;
             db.GetLock("ShowSummary");
-            SeriesInfo ser = db.GetSeries(si.TVDBCode);
+            SeriesInfo ser = db.GetSeries(si.TvdbCode);
 
             ShowSummaryData showSummary = new ShowSummaryData
             {
@@ -157,7 +157,7 @@ namespace TVRename
 
             if (ser != null)
             {
-                foreach (int snum in si.DVDOrder? ser.DVDSeasons.Keys: ser.AiredSeasons.Keys)
+                foreach (int snum in si.DvdOrder? ser.DVDSeasons.Keys: ser.AiredSeasons.Keys)
                 {
                     ShowSummaryData.ShowSummarySeasonData seasonData = getSeasonDetails(si, ser, snum);
                     showSummary.AddSeason(seasonData);
@@ -175,7 +175,7 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             Season season = null;
 
-            Dictionary<int, Season> seasons = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasons = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
 
             if ((snum >= 0) && (seasons.ContainsKey(snum)))
             {
@@ -213,13 +213,13 @@ namespace TVRename
             RightClickCommands n = (RightClickCommands)e.ClickedItem.Tag;
             switch (n)
             {
-                case RightClickCommands.kVisitTVDBSeason:
+                case RightClickCommands.kVisitTvdbSeason:
                     {
                         TVDBFor(mLastSeasonClicked);
                         break;
                     }
 
-                case RightClickCommands.kVisitTVDBSeries:
+                case RightClickCommands.kVisitTvdbSeries:
                     {
                         TVDBFor(mLastShowClicked);
                         break;
@@ -267,13 +267,13 @@ namespace TVRename
             if (si == null)
                 return;
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(si.TVDBCode, -1, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, false));
         }
 
         private void ForceRefresh(ShowItem si)
         {
             if (si != null)
-                TheTVDB.Instance.ForgetShow(si.TVDBCode, true);
+                TheTVDB.Instance.ForgetShow(si.TvdbCode, true);
             mDoc.DoDownloadsFG();
         }
 
@@ -318,11 +318,11 @@ namespace TVRename
                 {
                     GenerateMenu(gridSummary.showRightClickMenu, "Force Refresh", RightClickCommands.kForceRefreshSeries);
                     GenerateSeparator(gridSummary.showRightClickMenu);
-                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTVDBSeries);
+                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTvdbSeries);
                 }
 
                 if (show != null && seas != null)
-                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTVDBSeason);
+                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTvdbSeason);
 
                 if ((seas != null) && (show != null) && (show.AllFolderLocations().ContainsKey(seas.SeasonNumber)))
                 {

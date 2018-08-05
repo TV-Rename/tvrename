@@ -32,7 +32,7 @@ namespace TVRename
                     if (!stTime.HasValue) continue;
 
                     DateTime startTime = stTime.Value;
-                    String s = ei.SI.TheSeries().GetRuntime();
+                    string s = ei.Show.TheSeries().GetRuntime();
                     DateTime endTime = stTime.Value.AddMinutes(int.Parse(s));
 
                     CalendarEvent e = new CalendarEvent

@@ -24,7 +24,7 @@ namespace TVRename
             if ((TVSettings.Instance.FanArtJpg) && !TVSettings.Instance.KODIImages)
             {
                 ItemList theActionList = new ItemList();
-                FileInfo fi = FileHelper.FileInFolder(si.AutoAdd_FolderBase, DEFAULT_FILE_NAME);
+                FileInfo fi = FileHelper.FileInFolder(si.AutoAddFolderBase, DEFAULT_FILE_NAME);
 
                 bool doesntExist =  !fi.Exists;
                 if ((forceRefresh ||doesntExist) &&(!DoneFanartJpg.Contains(fi.FullName)))

@@ -55,13 +55,7 @@ namespace TVRename
             int min = 9999;
             foreach (Season s in AiredSeasons.Values)
             {
-                foreach (Episode e in s.Episodes)
-                {
-                    if (e.GetAirDateDt().HasValue)
-                    {
-                        if (e.GetAirDateDt().Value.Year < min) min = e.GetAirDateDt().Value.Year;
-                    }
-                }
+                min = Math.Min(min,s.MinYear());
             }
             return min;
         }
@@ -71,13 +65,7 @@ namespace TVRename
             int max = 0;
             foreach (Season s in AiredSeasons.Values)
             {
-                foreach (Episode e in s.Episodes)
-                {
-                    if (e.GetAirDateDt().HasValue)
-                    {
-                        if (e.GetAirDateDt().Value.Year > max) max = e.GetAirDateDt().Value.Year;
-                    }
-                }
+                max = Math.Max(max, s.MaxYear());
             }
             return max;
         }

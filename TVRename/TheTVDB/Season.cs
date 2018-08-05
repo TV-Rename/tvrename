@@ -90,6 +90,34 @@ namespace TVRename
             }
         }
 
+        internal int MinYear()
+        {
+            int min = 9999;
+
+            foreach (Episode e in Episodes)
+            {
+                if (e.GetAirDateDt().HasValue)
+                {
+                    if (e.GetAirDateDt().Value.Year < min) min = e.GetAirDateDt().Value.Year;
+                }
+            }
+
+            return min;
+        }
+
+        internal int MaxYear()
+        {
+            int max = 0;
+
+            foreach (Episode e in Episodes)
+            {
+                if (e.GetAirDateDt().HasValue)
+                {
+                    if (e.GetAirDateDt().Value.Year > max) max = e.GetAirDateDt().Value.Year;
+                }
+            }
+            return max;
+        }
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
 
         private bool HasUnairedEpisodes(TimeZone tz)

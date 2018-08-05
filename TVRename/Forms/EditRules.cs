@@ -51,7 +51,7 @@ namespace TVRename
         private void bnAddRule_Click(object sender, System.EventArgs e)
         {
             ShowRule sr = new ShowRule();
-            AddModifyRule ar = new AddModifyRule(sr, show.GetSeason(mSeasonNumber), show.DVDOrder);
+            AddModifyRule ar = new AddModifyRule(sr, show.GetSeason(mSeasonNumber), show.DvdOrder);
 
             bool res = ar.ShowDialog() == DialogResult.OK;
             if (res)
@@ -102,7 +102,7 @@ namespace TVRename
             if (lvRuleList.SelectedItems.Count == 0)
                 return;
             ShowRule sr = (ShowRule) (lvRuleList.SelectedItems[0].Tag);
-            AddModifyRule ar = new AddModifyRule(sr,show.GetSeason(mSeasonNumber),show.DVDOrder);
+            AddModifyRule ar = new AddModifyRule(sr,show.GetSeason(mSeasonNumber),show.DvdOrder);
             ar.ShowDialog(); // modifies rule in-place if OK'd
             FillRuleList(false, 0);
         }

@@ -52,7 +52,7 @@ namespace TVRename
             cbTimeZone.Text = si.ShowTimeZone;
 
             codeFinderForm =
-                new TheTvdbCodeFinder(si.TVDBCode != -1 ? si.TVDBCode.ToString() : "") {Dock = DockStyle.Fill};
+                new TheTvdbCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "") {Dock = DockStyle.Fill};
 
             pnlCF.SuspendLayout();
             pnlCF.Controls.Add(codeFinderForm);
@@ -67,35 +67,35 @@ namespace TVRename
             cbSequentialMatching.Checked = si.UseSequentialMatch;
             chkShowNextAirdate.Checked = si.ShowNextAirdate;
             chkSpecialsCount.Checked = si.CountSpecials;
-            txtBaseFolder.Text = si.AutoAdd_FolderBase;
+            txtBaseFolder.Text = si.AutoAddFolderBase;
 
             cbDoRenaming.Checked = si.DoRename;
             cbDoMissingCheck.Checked = si.DoMissingCheck;
             cbDoMissingCheck_CheckedChanged(null, null);
 
-            switch (si.AutoAdd_Type)
+            switch (si.AutoAddType)
             {
-                case ShowItem.AutomaticFolderType.None:
+                case ShowItem.AutomaticFolderType.none:
                     chkAutoFolders.Checked = false;
                     break;
-                case ShowItem.AutomaticFolderType.BaseOnly:
+                case ShowItem.AutomaticFolderType.baseOnly:
                     chkAutoFolders.Checked = true;
                     rdoFolderBaseOnly.Checked = true;
                     break;
-                case ShowItem.AutomaticFolderType.Custom:
+                case ShowItem.AutomaticFolderType.custom:
                     chkAutoFolders.Checked = true;
                     rdoFolderCustom.Checked = true;
                     break;
-                case ShowItem.AutomaticFolderType.LibraryDefault:
+                case ShowItem.AutomaticFolderType.libraryDefault:
                 default:
                     chkAutoFolders.Checked = true;
                     rdoFolderLibraryDefault.Checked = true;
                     break;
             }
 
-            txtSeasonFormat.Text = si.AutoAdd_CustomFolderFormat;
+            txtSeasonFormat.Text = si.AutoAddCustomFolderFormat;
 
-            chkDVDOrder.Checked = si.DVDOrder;
+            chkDVDOrder.Checked = si.DvdOrder;
             cbIncludeFuture.Checked = si.ForceCheckFuture;
             cbIncludeNoAirdate.Checked = si.ForceCheckNoAirdate;
 
@@ -139,8 +139,8 @@ namespace TVRename
             }
             txtTagList.Text = tl.ToString();
 
-            cbUseCustomSearch.Checked = si.UseCustomSearchURL && !string.IsNullOrWhiteSpace(si.CustomSearchURL);
-            txtSearchURL.Text = si.CustomSearchURL ?? "";
+            cbUseCustomSearch.Checked = si.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(si.CustomSearchUrl);
+            txtSearchURL.Text = si.CustomSearchUrl ?? "";
             EnableDisableCustomSearch();
         }
 
@@ -179,27 +179,27 @@ namespace TVRename
             selectedShow.UseCustomShowName = chkCustomShowName.Checked;
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
-            selectedShow.TVDBCode = code;
+            selectedShow.TvdbCode = code;
             selectedShow.CountSpecials = chkSpecialsCount.Checked;
             selectedShow.DoRename = cbDoRenaming.Checked;
             selectedShow.DoMissingCheck = cbDoMissingCheck.Checked;
-            selectedShow.AutoAdd_CustomFolderFormat = txtSeasonFormat.Text;
-            selectedShow.AutoAdd_FolderBase = txtBaseFolder.Text;
+            selectedShow.AutoAddCustomFolderFormat = txtSeasonFormat.Text;
+            selectedShow.AutoAddFolderBase = txtBaseFolder.Text;
 
             if (rdoFolderCustom.Checked)
-                selectedShow.AutoAdd_Type = ShowItem.AutomaticFolderType.Custom;
+                selectedShow.AutoAddType = ShowItem.AutomaticFolderType.custom;
             else if (rdoFolderBaseOnly.Checked)
-                selectedShow.AutoAdd_Type = ShowItem.AutomaticFolderType.BaseOnly;
+                selectedShow.AutoAddType = ShowItem.AutomaticFolderType.baseOnly;
             else if (rdoFolderLibraryDefault.Checked)
-                selectedShow.AutoAdd_Type = ShowItem.AutomaticFolderType.LibraryDefault;
+                selectedShow.AutoAddType = ShowItem.AutomaticFolderType.libraryDefault;
             else
-                selectedShow.AutoAdd_Type = ShowItem.AutomaticFolderType.None;
+                selectedShow.AutoAddType = ShowItem.AutomaticFolderType.none;
 
-            selectedShow.DVDOrder = chkDVDOrder.Checked;
+            selectedShow.DvdOrder = chkDVDOrder.Checked;
             selectedShow.ForceCheckFuture = cbIncludeFuture.Checked;
             selectedShow.ForceCheckNoAirdate = cbIncludeNoAirdate.Checked;
-            selectedShow.UseCustomSearchURL = cbUseCustomSearch.Checked;
-            selectedShow.CustomSearchURL = txtSearchURL.Text;
+            selectedShow.UseCustomSearchUrl = cbUseCustomSearch.Checked;
+            selectedShow.CustomSearchUrl = txtSearchURL.Text;
 
             selectedShow.UseSequentialMatch = cbSequentialMatching.Checked;
 

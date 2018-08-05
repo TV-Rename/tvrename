@@ -23,7 +23,7 @@ namespace TVRename
             {
                 ItemList theActionList = new ItemList();
 
-                FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "series.xml");
+                FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
 
                 bool needUpdate = !tvshowxml.Exists ||
                                   (si.TheSeries().SrvLastUpdated > TimeZone.Epoch(tvshowxml.LastWriteTime));
@@ -35,7 +35,7 @@ namespace TVRename
                 }
 
                 //Updates requested by zakwaan@gmail.com on 18/4/2013
-                FileInfo viewxml = FileHelper.FileInFolder(si.AutoAdd_FolderBase, "View.xml");
+                FileInfo viewxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "View.xml");
                 if ((!viewxml.Exists) && (!doneFiles.Contains(viewxml.FullName)))
                 {
                     doneFiles.Add(viewxml.FullName);

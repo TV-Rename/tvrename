@@ -58,7 +58,7 @@ namespace TVRename.Ipc
         /// </value>
         public CommandLineArgs.MissingFolderBehavior MissingFolderBehavior
         {
-            get => Engine?.Args.MissingFolder ?? CommandLineArgs.MissingFolderBehavior.Ask;
+            get => Engine?.Args.MissingFolder ?? CommandLineArgs.MissingFolderBehavior.ask;
             set
             {
                 if (Engine != null) Engine.Args.MissingFolder = value;

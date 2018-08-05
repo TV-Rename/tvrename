@@ -38,7 +38,7 @@ namespace TVRename
             {
                 ListViewItem lvi = new ListViewItem
                 {
-                    Text = episodeOne.SI.ShowName
+                    Text = episodeOne.Show.ShowName
                 };
 
                 lvi.SubItems.Add(episodeOne.AppropriateSeasonNumber.ToString());
@@ -56,7 +56,7 @@ namespace TVRename
             }
         }
 
-        public ShowItem ShowItem => episodeTwo.SI;
+        public ShowItem ShowItem => episodeTwo.Show;
         public ProcessedEpisode Episode => episodeOne;
 
         public ShowRule GenerateRule()

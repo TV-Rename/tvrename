@@ -37,8 +37,8 @@ namespace TVRename
                         System.Text.Encoding.GetEncoding(1252)))
                 {
                     // See: http://pytivo.sourceforge.net/wiki/index.php/Metadata
-                    writer.WriteLine($"title : {Episode.SI.ShowName}");
-                    writer.WriteLine($"seriesTitle : {Episode.SI.ShowName}");
+                    writer.WriteLine($"title : {Episode.Show.ShowName}");
+                    writer.WriteLine($"seriesTitle : {Episode.Show.ShowName}");
                     writer.WriteLine($"episodeTitle : {Episode.Name}");
                     writer.WriteLine(
                         $"episodeNumber : {Episode.AppropriateSeasonNumber}{Episode.AppropriateEpNum:0#}");
@@ -46,14 +46,14 @@ namespace TVRename
                     writer.WriteLine($"description : {Episode.Overview}");
                     if (Episode.FirstAired != null)
                         writer.WriteLine($"originalAirDate : {Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
-                    writer.WriteLine($"callsign : {Episode.SI.TheSeries().GetNetwork()}");
+                    writer.WriteLine($"callsign : {Episode.Show.TheSeries().GetNetwork()}");
 
                     WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
                     WriteEntries(writer, "vWriter", Episode.Writer);
-                    WriteEntries(writer, "vActor", string.Join("|", Episode.SI.TheSeries().GetActors()));
+                    WriteEntries(writer, "vActor", string.Join("|", Episode.Show.TheSeries().GetActors()));
                     WriteEntries(writer, "vGuestStar",
                         Episode.EpisodeGuestStars); // not worring about actors being repeated
-                    WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.SI.TheSeries().GetGenres()));
+                    WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.TheSeries().GetGenres()));
                 }
 
                 Done = true;
@@ -109,7 +109,7 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
+                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
 
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());

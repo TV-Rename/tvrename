@@ -155,13 +155,13 @@ namespace TVRename
                         (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), Status);
                     switch (status)
                     {
-                        case ShowItem.ShowAirStatus.Aired:
+                        case ShowItem.ShowAirStatus.aired:
                             return "All aired";
-                        case ShowItem.ShowAirStatus.NoEpisodesOrSeasons:
+                        case ShowItem.ShowAirStatus.noEpisodesOrSeasons:
                             return "No Seasons or Episodes in Seasons";
-                        case ShowItem.ShowAirStatus.NoneAired:
+                        case ShowItem.ShowAirStatus.noneAired:
                             return "None aired";
-                        case ShowItem.ShowAirStatus.PartiallyAired:
+                        case ShowItem.ShowAirStatus.partiallyAired:
                             return "Partially aired";
                         default:
                             return Status;
@@ -1221,8 +1221,8 @@ namespace TVRename
             if (s == null)
                 return "";
 
-            string url = (epi.SI.UseCustomSearchURL && !string.IsNullOrWhiteSpace(epi.SI.CustomSearchURL))
-                ? epi.SI.CustomSearchURL
+            string url = (epi.Show.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(epi.Show.CustomSearchUrl))
+                ? epi.Show.CustomSearchUrl
                 : TheSearchers.CurrentSearchURL();
             return CustomEpisodeName.NameForNoExt(epi, url, true);
         }

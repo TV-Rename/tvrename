@@ -204,7 +204,9 @@
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
     <Compile Include="Settings\CustomSeasonName.cs" />
+    <Compile Include="Settings\ProcessedEpisode.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
+    <Compile Include="Settings\ShowItem.cs" />
     <Compile Include="TheTVDB\TVSource.cs" />
     <Compile Include="TheTVDB\TvDbTokenProvider.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />
@@ -544,7 +546,6 @@
     <Compile Include="Forms\ShowException.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Settings\ShowsAndEpisodes.cs" />
     <Compile Include="Settings\ShowRule.cs" />
     <Compile Include="Utility\SAB\Queue.cs" />
     <Compile Include="Utility\Sorters.cs" />

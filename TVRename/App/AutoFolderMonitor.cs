@@ -81,20 +81,20 @@ namespace TVRename
                     switch (TVSettings.Instance.MonitoredFoldersScanType)
                     {
                         case TVSettings.ScanType.Full:
-                            mainForm.Invoke(mainForm.AFMFullScan);
+                            mainForm.Invoke(mainForm.AfmFullScan);
                             break;
                         case TVSettings.ScanType.Recent:
-                            mainForm.Invoke(mainForm.AFMRecentScan);
+                            mainForm.Invoke(mainForm.AfmRecentScan);
                             break;
                         case TVSettings.ScanType.Quick:
-                            mainForm.Invoke(mainForm.AFMQuickScan);
+                            mainForm.Invoke(mainForm.AfmQuickScan);
                             break;
                         case TVSettings.ScanType.SingleShow:
                         default:
                             throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
                     }
 
-                    mainForm.Invoke(mainForm.AFMDoAll);
+                    mainForm.Invoke(mainForm.AfmDoAll);
 
                 }
 

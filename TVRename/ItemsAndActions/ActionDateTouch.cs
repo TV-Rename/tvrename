@@ -115,7 +115,7 @@ namespace TVRename
 
                 if (Episode != null)
                 {
-                    lvi.Text = Episode.SI.ShowName;
+                    lvi.Text = Episode.Show.ShowName;
                     lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(Episode.NumsAsString());
 

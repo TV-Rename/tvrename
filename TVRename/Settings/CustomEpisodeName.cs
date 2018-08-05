@@ -172,7 +172,7 @@ namespace TVRename
         {
             string name = styleString;
 
-            string showname = pe.SI.ShowName;
+            string showname = pe.Show.ShowName;
             string epname = pe.Name;
             if (urlEncode)
             {

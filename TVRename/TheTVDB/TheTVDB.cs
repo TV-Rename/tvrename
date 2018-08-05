@@ -1783,7 +1783,7 @@ namespace TVRename
 
             foreach (KeyValuePair<int, SeriesInfo> kvp in GetSeriesDict())
             {
-                bool found = libraryValues.Any(si => si.TVDBCode == kvp.Key);
+                bool found = libraryValues.Any(si => si.TvdbCode == kvp.Key);
                 if (!found)
                     removeList.Add(kvp.Key);
             }

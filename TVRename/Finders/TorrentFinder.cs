@@ -32,11 +32,11 @@ namespace TVRename
                         continue;
 
                     //do any of the possible names for the series match the filename?
-                    bool matched = (action.Episode.SI.GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
+                    bool matched = (action.Episode.Show.GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.FullName, name)));
 
                     if (!matched) continue;
 
-                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.SI) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
+                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {
                         toRemove.Add(action1);
                         newList.Add(new ItemuTorrenting(te, action.Episode, action.TheFileNoExt));

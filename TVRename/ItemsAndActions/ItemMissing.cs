@@ -41,9 +41,9 @@ namespace TVRename
                 return 0;
             }
 
-            if (!Episode.SI.ShowName.Equals(miss.Episode.SI.ShowName))
+            if (!Episode.Show.ShowName.Equals(miss.Episode.Show.ShowName))
             {
-                return string.Compare(Episode.SI.ShowName, miss.Episode.SI.ShowName, StringComparison.Ordinal);
+                return string.Compare(Episode.Show.ShowName, miss.Episode.Show.ShowName, StringComparison.Ordinal);
             }
 
             if (!Episode.AppropriateSeasonNumber.Equals(miss.Episode.AppropriateSeasonNumber))
@@ -64,7 +64,7 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
+                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());
                 lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());

@@ -66,11 +66,11 @@ namespace TVRename
                         toRemove.Add(action1);
                         newList.AddRange(thisRound);
                     }
-                    else Logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple actions for that file");
+                    else Logger.Warn($"Ignoring potential match for {action1.Episode.Show.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple actions for that file");
                 }
                 else if (numberMatched>1) 
                 { 
-                    Logger.Warn($"Ignoring potential match for {action1.Episode.SI.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+                    Logger.Warn($"Ignoring potential match for {action1.Episode.Show.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
                 }
             }
 
@@ -135,7 +135,7 @@ namespace TVRename
                 if (ReviewFile(testMissingAction, new ItemList(), matchedFile))
                 {
                     //We have 2 options that match  me and testAction - See whether one is subset of the other
-                    if (me.Episode.SI.ShowName.Contains(testMissingAction.Episode.SI.ShowName)) continue; //'me' is a better match, so don't worry about the new one
+                    if (me.Episode.Show.ShowName.Contains(testMissingAction.Episode.Show.ShowName)) continue; //'me' is a better match, so don't worry about the new one
 
                     return true; 
                 }
@@ -255,14 +255,14 @@ namespace TVRename
                 if (FileHelper.IgnoreFile(dce.TheFile))return false;
 
                 //do any of the possible names for the series match the filename?
-                matched = (me.Episode.SI.GetSimplifiedPossibleShowNames()
+                matched = (me.Episode.Show.GetSimplifiedPossibleShowNames()
                     .Any(name => FileHelper.SimplifyAndCheckFilename(dce.SimplifiedFullName, name)));
 
                 if (matched)
                 {
-                    if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.SI) && (seasF == season) &&
+                    if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.Show) && (seasF == season) &&
                          (epF == epnum)) ||
-                        (me.Episode.SI.UseSequentialMatch &&
+                        (me.Episode.Show.UseSequentialMatch &&
                          TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) &&
                          (epF == epnum)))
                     {
@@ -274,19 +274,19 @@ namespace TVRename
                                 First = epF,
                                 Second = maxEp
                             };
-                            me.Episode.SI?.AddSeasonRule(seasF, sr);
+                            me.Episode.Show?.AddSeasonRule(seasF, sr);
 
                             Logger.Info(
-                                $"Looking at {me.Episode.SI.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.TheFile.FullName}");
+                                $"Looking at {me.Episode.Show.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.TheFile.FullName}");
                             Logger.Info($"Added new rule automatically for {sr}");
 
                             //Regenerate the episodes with the new rule added
-                            ShowLibrary.GenerateEpisodeDict(me.Episode.SI);
+                            ShowLibrary.GenerateEpisodeDict(me.Episode.Show);
 
                             //Get the newly created processed episode we are after
                             // ReSharper disable once InconsistentNaming
                             ProcessedEpisode newPE = me.Episode;
-                            foreach (ProcessedEpisode pe in me.Episode.SI.SeasonEpisodes[seasF])
+                            foreach (ProcessedEpisode pe in me.Episode.Show.SeasonEpisodes[seasF])
                             {
                                 if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
                             }
