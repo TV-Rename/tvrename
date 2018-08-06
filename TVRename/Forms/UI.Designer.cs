@@ -107,7 +107,9 @@ namespace TVRename
             this.filterTextBox = new System.Windows.Forms.TextBox();
             this.tabControl2 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.webInformation = new System.Windows.Forms.WebBrowser();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.webImages = new System.Windows.Forms.WebBrowser();
             this.bnMyShowsCollapse = new System.Windows.Forms.Button();
             this.bnMyShowsRefresh = new System.Windows.Forms.Button();
             this.bnMyShowsDelete = new System.Windows.Forms.Button();
@@ -178,13 +180,13 @@ namespace TVRename
             this.folderRightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.statusTimer = new System.Windows.Forms.Timer(this.components);
             this.BGDownloadTimer = new System.Windows.Forms.Timer(this.components);
+            this.UpdateTimer = new System.Windows.Forms.Timer(this.components);
             this.saveFile = new System.Windows.Forms.SaveFileDialog();
             this.tmrShowUpcomingPopup = new System.Windows.Forms.Timer(this.components);
             this.quickTimer = new System.Windows.Forms.Timer(this.components);
             this.tmrPeriodicScan = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.webImages = new System.Windows.Forms.WebBrowser();
-            this.webInformation = new System.Windows.Forms.WebBrowser();
+            this.btnUpdateAvailable = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -660,6 +662,18 @@ namespace TVRename
             this.tabPage1.Text = "Information";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // webInformation
+            // 
+            this.webInformation.AllowWebBrowserDrop = false;
+            this.webInformation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webInformation.Location = new System.Drawing.Point(3, 3);
+            this.webInformation.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webInformation.Name = "webInformation";
+            this.webInformation.Size = new System.Drawing.Size(618, 431);
+            this.webInformation.TabIndex = 0;
+            this.webInformation.WebBrowserShortcutsEnabled = false;
+            this.webInformation.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
+            // 
             // tabPage2
             // 
             this.tabPage2.Controls.Add(this.webImages);
@@ -670,6 +684,18 @@ namespace TVRename
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Images";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // webImages
+            // 
+            this.webImages.AllowWebBrowserDrop = false;
+            this.webImages.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webImages.Location = new System.Drawing.Point(3, 3);
+            this.webImages.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webImages.Name = "webImages";
+            this.webImages.Size = new System.Drawing.Size(618, 431);
+            this.webImages.TabIndex = 0;
+            this.webImages.WebBrowserShortcutsEnabled = false;
+            this.webImages.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // bnMyShowsCollapse
             // 
@@ -1416,6 +1442,12 @@ namespace TVRename
             this.BGDownloadTimer.Interval = 10000;
             this.BGDownloadTimer.Tick += new System.EventHandler(this.BGDownloadTimer_Tick);
             // 
+            // UpdateTimer
+            // 
+            this.UpdateTimer.Enabled = true;
+            this.UpdateTimer.Interval = 1000;
+            this.UpdateTimer.Tick += new System.EventHandler(this.UpdateTimer_Tick);
+            // 
             // tmrShowUpcomingPopup
             // 
             this.tmrShowUpcomingPopup.Interval = 250;
@@ -1431,35 +1463,25 @@ namespace TVRename
             this.tmrPeriodicScan.Enabled = true;
             this.tmrPeriodicScan.Tick += new System.EventHandler(this.tmrPeriodicScan_Tick);
             // 
-            // webImages
+            // btnUpdateAvailable
             // 
-            this.webImages.AllowWebBrowserDrop = false;
-            this.webImages.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webImages.Location = new System.Drawing.Point(3, 3);
-            this.webImages.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webImages.Name = "webImages";
-            this.webImages.Size = new System.Drawing.Size(618, 431);
-            this.webImages.TabIndex = 0;
-            this.webImages.WebBrowserShortcutsEnabled = false;
-            this.webImages.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
-            // 
-            // webInformation
-            // 
-            this.webInformation.AllowWebBrowserDrop = false;
-            this.webInformation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webInformation.Location = new System.Drawing.Point(3, 3);
-            this.webInformation.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webInformation.Name = "webInformation";
-            this.webInformation.Size = new System.Drawing.Size(618, 431);
-            this.webInformation.TabIndex = 0;
-            this.webInformation.WebBrowserShortcutsEnabled = false;
-            this.webInformation.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
+            this.btnUpdateAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateAvailable.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.btnUpdateAvailable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnUpdateAvailable.Location = new System.Drawing.Point(808, 0);
+            this.btnUpdateAvailable.Name = "btnUpdateAvailable";
+            this.btnUpdateAvailable.Size = new System.Drawing.Size(116, 23);
+            this.btnUpdateAvailable.TabIndex = 10;
+            this.btnUpdateAvailable.Text = "Update Available...";
+            this.btnUpdateAvailable.UseVisualStyleBackColor = false;
+            this.btnUpdateAvailable.Click += new System.EventHandler(this.btnUpdateAvailable_Click);
             // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(931, 582);
+            this.Controls.Add(this.btnUpdateAvailable);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.tabControl1);
@@ -1582,6 +1604,7 @@ namespace TVRename
         private System.Windows.Forms.Label txtDLStatusLabel;
         private System.Windows.Forms.ProgressBar pbProgressBarx;
         private System.Windows.Forms.Timer BGDownloadTimer;
+        private System.Windows.Forms.Timer UpdateTimer;
         private System.Windows.Forms.ToolStripMenuItem bugReportToolStripMenuItem;
         private System.Windows.Forms.ImageList ilIcons;
         private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
@@ -1627,5 +1650,6 @@ namespace TVRename
         private System.Windows.Forms.ToolStripMenuItem timezoneInconsistencyLOGToolStripMenuItem;
         private WebBrowser webInformation;
         private WebBrowser webImages;
+        private Button btnUpdateAvailable;
     }
 }
