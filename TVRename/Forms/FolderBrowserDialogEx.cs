@@ -83,9 +83,12 @@ namespace DaveChambers.FolderBrowserDialogEx
         {
             InitData initdata = new InitData(this, owner.Handle);
 
-            Win32.BROWSEINFO bi = new Win32.BROWSEINFO();
-            bi.iImage = 0;
-            bi.hwndOwner = owner.Handle;
+            Win32.BROWSEINFO bi = new Win32.BROWSEINFO
+            {
+                iImage = 0,
+                hwndOwner = owner.Handle
+            };
+
             if (0 != Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot))
                 bi.pidlRoot = IntPtr.Zero;
             bi.lpszTitle = "";

@@ -329,6 +329,8 @@ namespace TVRename
             if (TVSettings.Instance.BGDownload)
                 BGDownloadTimer.Start();
 
+            UpdateTimer.Start();
+
             quickTimer.Start();
 
             if (TVSettings.Instance.RunOnStartUp())
@@ -1880,6 +1882,14 @@ namespace TVRename
                 BGDownloadTimer.Stop();
         }
 
+        private async void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            UpdateTimer.Stop();
+
+            Task<UpdateVersion> tuv = VersionUpdater.CheckForUpdatesAsync();
+            NotifyUpdates(await tuv, false);
+        }
+
         private void BGDownloadTimer_Tick(object sender, EventArgs e)
         {
             if (busy != 0)
@@ -2296,80 +2306,6 @@ namespace TVRename
             bool showSelected = MyShowTree.SelectedNode != null;
             bnMyShowsEdit.Enabled = showSelected;
             bnMyShowsDelete.Enabled = showSelected;
-        }
-
-        private void bnMyShowsVisitTVDB_Click(object sender, EventArgs e)
-        {
-            TreeNode n = MyShowTree.SelectedNode;
-            ShowItem si = TreeNodeToShowItem(n);
-            if (si == null)
-                return;
-
-            Season seas = TreeNodeToSeason(n);
-
-            int sid = -1;
-            if (seas != null)
-                sid = seas.SeasonId;
-
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(si.TvdbCode, sid, false));
-        }
-
-        private void bnMyShowsOpenFolder_Click(object sender, EventArgs e)
-        {
-            TreeNode n = MyShowTree.SelectedNode;
-            ShowItem si = TreeNodeToShowItem(n);
-            if (si == null)
-                return;
-
-            Season seas = TreeNodeToSeason(n);
-            Dictionary<int, List<string>> afl = si.AllFolderLocations();
-            int[] keys = new int[afl.Count];
-            afl.Keys.CopyTo(keys, 0);
-            if (seas == null && keys.Length > 0)
-            {
-                string f = si.AutoAddFolderBase;
-                if (string.IsNullOrEmpty(f))
-                {
-                    int n2 = keys[0];
-                    if (afl[n2].Count > 0)
-                        f = afl[n2][0];
-                }
-
-                if (!string.IsNullOrEmpty(f))
-                {
-                    try
-                    {
-                        Helpers.SysOpen(f);
-                        return;
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-            }
-
-            if (seas != null && afl.ContainsKey(seas.SeasonNumber))
-            {
-                foreach (string folder in afl[seas.SeasonNumber])
-                {
-                    if (Directory.Exists(folder))
-                    {
-                        Helpers.SysOpen(folder);
-                        return;
-                    }
-                }
-            }
-
-            try
-            {
-                if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && Directory.Exists(si.AutoAddFolderBase))
-                    Helpers.SysOpen(si.AutoAddFolderBase);
-            }
-            catch
-            {
-                // ignored
-            }
         }
 
         private void MyShowTree_MouseClick(object sender, MouseEventArgs e)
@@ -3508,11 +3444,11 @@ namespace TVRename
             NotifyUpdates(await uv, true);
         }
 
-        private static void NotifyUpdates(UpdateVersion update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
+        private void NotifyUpdates(UpdateVersion update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
         {
             if (update is null)
             {
-                //this.btnUpdateAvailable.Visible = false;
+                this.btnUpdateAvailable.Visible = false;
                 if (showNoUpdateRequiredDialog && !inSilentMode)
                 {
                     MessageBox.Show(@"There is no update available please try again later.", @"No update available",
@@ -3527,7 +3463,7 @@ namespace TVRename
 
             UpdateNotification unForm = new UpdateNotification(update);
             unForm.ShowDialog();
-            //this.btnUpdateAvailable.Visible = true;
+            this.btnUpdateAvailable.Visible = true;
         }
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3537,9 +3473,9 @@ namespace TVRename
             form.ShowDialog();
         }
 
-        // ReSharper disable once UnusedMember.Local
-        private async void btnUpdateAvailable_Click()
+        private async void btnUpdateAvailable_Click(object sender, EventArgs e)
         {
+            btnUpdateAvailable.Visible = false;
             Task<UpdateVersion> uv = VersionUpdater.CheckForUpdatesAsync();
             NotifyUpdates(await uv, true);
         }

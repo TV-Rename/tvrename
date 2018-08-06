@@ -783,7 +783,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbDoRenaming;
         private System.Windows.Forms.CheckBox cbDoMissingCheck;
         private System.Windows.Forms.FolderBrowserDialog folderBrowser;
-        private DaveChambers.FolderBrowserDialogEx.FolderBrowserDialogEx searchFolderBrowser;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox chkDVDOrder;
         private System.Windows.Forms.CheckBox cbSequentialMatching;
