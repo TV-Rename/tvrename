@@ -44,7 +44,7 @@ Var STARTMENU_FOLDER
 Section "Install"
     SetOutPath "$INSTDIR"
 
-    !insertmacro CheckNetFramework 46
+    !insertmacro CheckNetFramework 462
 
     Delete "$INSTDIR\Ionic.Utils.Zip.dll" ; Remove old dependency
 
@@ -53,6 +53,8 @@ Section "Install"
     File "TVRename\bin\Release\AlphaFS.dll"
     File "TVRename\bin\Release\Newtonsoft.Json.dll"
     File "TVRename\bin\Release\NLog.dll"
+    File "TVRename\bin\Release\Ical.Net.dll"
+    File "TVRename\bin\Release\NodaTime.dll"
     File "TVRename\bin\Release\SourceGrid.dll"
     File "TVRename\bin\Release\Humanizer.dll"
     File "TVRename\bin\Release\Microsoft.WindowsAPICodePack.dll"
@@ -90,6 +92,9 @@ Section "Uninstall"
     Delete "$INSTDIR\NLog.dll"
     Delete "$INSTDIR\SourceGrid.dll"
     Delete "$INSTDIR\Humanizer.dll"
+    Delete "$INSTDIR\Ical.Net.dll"
+    Delete "$INSTDIR\NodaTime.dll"
+    Delete "$INSTDIR\Microsoft.Toolkit.Win32.UI.Controls.dll"
     Delete "$INSTDIR\Microsoft.WindowsAPICodePack.dll"
     Delete "$INSTDIR\Microsoft.WindowsAPICodePack.Shell.dll"
     Delete "$INSTDIR\Microsoft.WindowsAPICodePack.ShellExtensions.dll"
