@@ -1345,7 +1345,8 @@ namespace TVRename
                                 TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
-                                fi.IsLanguageSpecificSubtitle(out string subtitleExtension))
+                                fi.IsLanguageSpecificSubtitle(out string subtitleExtension) &&
+                                actualFile.Name!=newname)
                             {
                                 newname = TVSettings.Instance.FilenameFriendly(
                                     TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension,
