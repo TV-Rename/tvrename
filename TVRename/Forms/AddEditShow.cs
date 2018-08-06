@@ -239,16 +239,17 @@ namespace TVRename
 
         private void bnBrowse_Click(object sender, EventArgs e)
         {
-            searchFolderBrowser.Title = "Add Folder...";
-            searchFolderBrowser.ShowEditbox = true;
-            searchFolderBrowser.ShowNewFolderButton = true;
-            searchFolderBrowser.StartPosition = FormStartPosition.CenterScreen;
+            //folderBrowser.Title = "Add Folder...";
+            //folderBrowser.ShowEditbox = true;
+            //folderBrowser.StartPosition = FormStartPosition.CenterParent;
+
+            folderBrowser.ShowNewFolderButton = true;
 
             if (!string.IsNullOrEmpty(txtBaseFolder.Text))
-                searchFolderBrowser.SelectedPath = txtBaseFolder.Text;
+                folderBrowser.SelectedPath = txtBaseFolder.Text;
 
-            if (searchFolderBrowser.ShowDialog(this) == DialogResult.OK)
-                txtBaseFolder.Text = searchFolderBrowser.SelectedPath;
+            if (folderBrowser.ShowDialog(this) == DialogResult.OK)
+                txtBaseFolder.Text = folderBrowser.SelectedPath;
         }
 
         private void cbDoMissingCheck_CheckedChanged(object sender, EventArgs e)
@@ -281,19 +282,19 @@ namespace TVRename
 
         private void bnBrowseFolder_Click(object sender, EventArgs e)
         {
-            searchFolderBrowser.Title = "Add Folder...";
-            searchFolderBrowser.ShowEditbox = true;
-            searchFolderBrowser.ShowNewFolderButton = true;
-            searchFolderBrowser.StartPosition = FormStartPosition.CenterScreen;
+            //folderBrowser.Title = "Add Folder...";
+            //folderBrowser.ShowEditbox = true;
+            //folderBrowser.StartPosition = FormStartPosition.CenterParent;
+            folderBrowser.ShowNewFolderButton = true;
 
             if (!string.IsNullOrEmpty(txtFolder.Text))
-                searchFolderBrowser.SelectedPath = txtFolder.Text;
+                folderBrowser.SelectedPath = txtFolder.Text;
 
-            if(string.IsNullOrWhiteSpace(searchFolderBrowser.SelectedPath) && !string.IsNullOrWhiteSpace(txtBaseFolder.Text))
-                searchFolderBrowser.SelectedPath = txtBaseFolder.Text;
+            if(string.IsNullOrWhiteSpace(folderBrowser.SelectedPath) && !string.IsNullOrWhiteSpace(txtBaseFolder.Text))
+                folderBrowser.SelectedPath = txtBaseFolder.Text;
 
-            if (searchFolderBrowser.ShowDialog(this) == DialogResult.OK)
-                txtFolder.Text = searchFolderBrowser.SelectedPath;
+            if (folderBrowser.ShowDialog(this) == DialogResult.OK)
+                txtFolder.Text = folderBrowser.SelectedPath;
         }
 
         private void txtSeasonNumber_TextChanged(object sender, EventArgs e) => CheckToEnableAddButton();
