@@ -1433,21 +1433,27 @@ namespace TVRename
             // 
             // webImages
             // 
+            this.webImages.AllowWebBrowserDrop = false;
             this.webImages.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webImages.Location = new System.Drawing.Point(3, 3);
             this.webImages.MinimumSize = new System.Drawing.Size(20, 20);
             this.webImages.Name = "webImages";
             this.webImages.Size = new System.Drawing.Size(618, 431);
             this.webImages.TabIndex = 0;
+            this.webImages.WebBrowserShortcutsEnabled = false;
+            this.webImages.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // webInformation
             // 
+            this.webInformation.AllowWebBrowserDrop = false;
             this.webInformation.Dock = System.Windows.Forms.DockStyle.Fill;
             this.webInformation.Location = new System.Drawing.Point(3, 3);
             this.webInformation.MinimumSize = new System.Drawing.Size(20, 20);
             this.webInformation.Name = "webInformation";
             this.webInformation.Size = new System.Drawing.Size(618, 431);
             this.webInformation.TabIndex = 0;
+            this.webInformation.WebBrowserShortcutsEnabled = false;
+            this.webInformation.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // UI
             // 
