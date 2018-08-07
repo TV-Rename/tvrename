@@ -231,13 +231,6 @@ namespace TVRename
             else
                 s.MonitoredFoldersScanType = TVSettings.ScanType.Full;
 
-            if (rdEden.Checked)
-                s.SelectedKODIType= TVSettings.KODIType.Eden;
-            else if (rdFrodo.Checked)
-                s.SelectedKODIType = TVSettings.KODIType.Frodo;
-            else
-                s.SelectedKODIType = TVSettings.KODIType.Both;
-
             s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
 
             if (cbKeepTogetherMode.Text == "All but these")
@@ -524,19 +517,6 @@ namespace TVRename
                     break;
                 default:
                     rdoFullScan.Checked = true;
-                    break;
-            }
-
-            switch (s.SelectedKODIType)
-            {
-                case TVSettings.KODIType.Eden:
-                    rdEden.Checked = true;
-                    break;
-                case TVSettings.KODIType.Frodo:
-                    rdFrodo.Checked = true;
-                    break;
-                default:
-                    rdBoth.Checked = true;
                     break;
             }
 
