@@ -83,7 +83,7 @@ namespace TVRename.App
                     ipc.RenameBehavior = false;
                 }
 
-                if (clargs.MissingFolder != CommandLineArgs.MissingFolderBehavior.Ask)
+                if (clargs.MissingFolder != CommandLineArgs.MissingFolderBehavior.ask)
                 {
                     // Temporarily override behavior for missing folders
                     ipc.MissingFolderBehavior = clargs.MissingFolder;

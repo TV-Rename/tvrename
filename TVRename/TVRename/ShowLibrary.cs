@@ -23,7 +23,7 @@ namespace TVRename
             if (!TVSettings.Instance.ForceBulkAddToUseSettingsOnly)
             {
                 IEnumerable<string> seasonWordsFromShows =
-                    from si in Values select si.AutoAdd_SeasonFolderName.Trim();
+                    from si in Values select CustomSeasonName.GetTextFromPattern(si.AutoAddCustomFolderFormat);
 
                 results = seasonWordsFromShows.Distinct().ToList();
 
@@ -130,7 +130,7 @@ namespace TVRename
 
             TheTVDB.Instance.GetLock("GenerateEpisodeDict");
 
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
 
             if (ser == null)
             {
@@ -139,7 +139,7 @@ namespace TVRename
             }
 
             bool r = true;
-            Dictionary<int, Season> seasonsToUse = si.DVDOrder
+            Dictionary<int, Season> seasonsToUse = si.DvdOrder
                 ? ser.DVDSeasons
                 : ser.AiredSeasons;
 
@@ -166,7 +166,7 @@ namespace TVRename
                 foreach (ProcessedEpisode pe in si.SeasonEpisodes[snum])
                 {
                     pe.OverallNumber = overallCount;
-                    if (si.DVDOrder)
+                    if (si.DvdOrder)
                     {
                         overallCount += 1 + pe.EpNum2 - pe.DvdEpNum;
                     }
@@ -188,7 +188,7 @@ namespace TVRename
 
             if (ser == null) return null;
 
-            Dictionary<int, Season> seasonsToUse = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
 
             if (!seasonsToUse.ContainsKey(snum))
                 return null; // todo.. something?
@@ -201,7 +201,7 @@ namespace TVRename
             foreach (Episode e in seas.Episodes)
                 eis.Add(new ProcessedEpisode(e, si)); // add a copy
 
-            if (si.DVDOrder)
+            if (si.DvdOrder)
             {
                 eis.Sort(ProcessedEpisode.DVDOrderSorter);
                 Renumber(eis);
@@ -263,9 +263,9 @@ namespace TVRename
 
         internal void Add(ShowItem found)
         {
-            if (!TryAdd(found.TVDBCode, found))
+            if (!TryAdd(found.TvdbCode, found))
             {
-                Logger.Error($"Failed to Add {found.ShowName} with TVDBId={found.TVDBCode} to library");
+                Logger.Error($"Failed to Add {found.ShowName} with TVDBId={found.TvdbCode} to library");
             }
         }
 
@@ -568,17 +568,17 @@ namespace TVRename
         {
             DateTime notBefore = DateTime.Now.AddDays(-nDaysPast);
             List<ProcessedEpisode> found = new List<ProcessedEpisode>();
-
+            
             for (int i = 0; i < nShows; i++)
             {
                 ProcessedEpisode nextAfterThat = null;
                 TimeSpan howClose = TimeSpan.MaxValue;
-                foreach (ShowItem si in GetShowItems())
+                foreach (ShowItem si in GetShowItems().ToList())
                 {
                     if (!si.ShowNextAirdate)
                         continue;
 
-                    foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes)
+                    foreach (KeyValuePair<int, List<ProcessedEpisode>> v in si.SeasonEpisodes.ToList())
                     {
                         if (si.IgnoreSeasons.Contains(v.Key))
                             continue; // ignore this season
@@ -632,19 +632,19 @@ namespace TVRename
 
         internal void Remove(ShowItem si)
         {
-            if (!TryRemove(si.TVDBCode, out _))
+            if (!TryRemove(si.TvdbCode, out _))
             {
-                Logger.Error($"Failed to remove {si.ShowName} from the library with TVDBId={si.TVDBCode}");
+                Logger.Error($"Failed to remove {si.ShowName} from the library with TVDBId={si.TvdbCode}");
             }
         }
 
         public static bool HasAnyAirdates(ShowItem si, int snum)
         {
-            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TVDBCode);
+            SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
 
             if (ser == null) return false;
 
-            Dictionary<int, Season> seasonsToUse = si.DVDOrder ? ser.DVDSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
 
             if (!seasonsToUse.ContainsKey(snum)) return false;
 

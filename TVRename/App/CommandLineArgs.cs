@@ -15,9 +15,9 @@ namespace TVRename
         /// </summary>
         public enum MissingFolderBehavior
         {
-            Ask,
-            Ignore,
-            Create
+            ask,
+            ignore,
+            create
         }
 
         public bool Help { get; }
@@ -54,15 +54,15 @@ namespace TVRename
 
             if (args.Contains("/createmissing", StringComparer.OrdinalIgnoreCase))
             {
-                MissingFolder = MissingFolderBehavior.Create;
+                MissingFolder = MissingFolderBehavior.create;
             }
             else if (args.Contains("/ignoremissing", StringComparer.OrdinalIgnoreCase))
             {
-                MissingFolder = MissingFolderBehavior.Ignore;
+                MissingFolder = MissingFolderBehavior.ignore;
             }
             else
             {
-                MissingFolder = MissingFolderBehavior.Ask;
+                MissingFolder = MissingFolderBehavior.ask;
             }
         }
 

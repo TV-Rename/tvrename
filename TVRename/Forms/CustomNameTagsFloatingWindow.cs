@@ -24,11 +24,25 @@ namespace TVRename
         {
             InitializeComponent();
 
-            foreach (string s in CustomName.Tags)
+            foreach (string s in CustomEpisodeName.Tags)
             {
                 string txt = s;
                 if (pe != null)
-                    txt += " - " + CustomName.NameForNoExt(pe, s);
+                    txt += " - " + CustomEpisodeName.NameForNoExt(pe, s);
+
+                label1.Text += txt + "\r\n";
+            }
+        }
+
+        public CustomNameTagsFloatingWindow(Season pe)
+        {
+            InitializeComponent();
+
+            foreach (string s in CustomSeasonName.Tags)
+            {
+                string txt = s;
+                if (pe != null)
+                    txt += " - " + CustomSeasonName.NameFor(pe, s);
 
                 label1.Text += txt + "\r\n";
             }

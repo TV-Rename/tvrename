@@ -13,6 +13,7 @@ using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
 // ReSharper disable RedundantDefaultMemberInitializer
+// ReSharper disable InconsistentNaming
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
@@ -116,9 +117,9 @@ namespace TVRename
             Status = status;
         }
 
-        public bool IsMetaType;
-        public bool IsShowLevel;
-        public string Status;
+        public readonly bool IsMetaType;
+        public readonly bool IsShowLevel;
+        public readonly string Status;
 
         public string Text
         {
@@ -154,13 +155,13 @@ namespace TVRename
                         (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), Status);
                     switch (status)
                     {
-                        case ShowItem.ShowAirStatus.Aired:
+                        case ShowItem.ShowAirStatus.aired:
                             return "All aired";
-                        case ShowItem.ShowAirStatus.NoEpisodesOrSeasons:
+                        case ShowItem.ShowAirStatus.noEpisodesOrSeasons:
                             return "No Seasons or Episodes in Seasons";
-                        case ShowItem.ShowAirStatus.NoneAired:
+                        case ShowItem.ShowAirStatus.noneAired:
                             return "None aired";
-                        case ShowItem.ShowAirStatus.PartiallyAired:
+                        case ShowItem.ShowAirStatus.partiallyAired:
                             return "Partially aired";
                         default:
                             return Status;
@@ -274,6 +275,9 @@ namespace TVRename
         public bool AutoCreateFolders = false;
         public bool BGDownload = false;
         public bool CheckuTorrent = false;
+        public bool CheckqBitTorrent = false;
+        public string qBitTorrentHost ="localhost";
+        public string qBitTorrentPort = "8080";
         public bool EpTBNs = false;
         public bool EpJPGs = false;
         public bool SeriesJpg = false;
@@ -299,6 +303,8 @@ namespace TVRename
         public string ExportWTWRSSTo = "";
         public bool ExportWTWXML = false;
         public string ExportWTWXMLTo = "";
+        public bool ExportWTWICAL = false;
+        public string ExportWTWICALTo = "";
         public List<FilenameProcessorRE> FNPRegexs = DefaultFNPList();
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
@@ -317,7 +323,7 @@ namespace TVRename
         public bool KODIImages = false;
         public bool pyTivoMeta = false;
         public bool pyTivoMetaSubFolder = false;
-        public CustomName NamingStyle = new CustomName();
+        public CustomEpisodeName NamingStyle = new CustomEpisodeName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
 
@@ -359,11 +365,11 @@ namespace TVRename
         private string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
 
         public int ParallelDownloads = 4;
-        public List<string> RSSURLs = DefaultRSSURLList();
+        public readonly List<string> RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
         public bool PreventMove = false;
         public bool RenameTxtToSub = false;
-        public List<Replacement> Replacements = DefaultListRE();
+        public readonly List<Replacement> Replacements = DefaultListRE();
         public string ResumeDatPath = "";
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
@@ -374,6 +380,7 @@ namespace TVRename
         public bool ShowInTaskbar = true;
         public bool AutoSearchForDownloadedFiles = false;
         public string SpecialsFolderName = "Specials";
+        public string SeasonFolderFormat = string.Empty;
         public int StartupTab = 0;
         public Searchers TheSearchers = new Searchers();
 
@@ -394,7 +401,7 @@ namespace TVRename
         public string PreferredLanguage = "en";
         public WTWDoubleClickAction WTWDoubleClick;
 
-        public TidySettings Tidyup = new TidySettings();
+        public readonly TidySettings Tidyup = new TidySettings();
         public bool runPeriodicCheck = false;
         public int periodCheckHours =1;
         public bool runStartupCheck = false;
@@ -460,6 +467,10 @@ namespace TVRename
                     ExportWTWXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportWTWXMLTo")
                     ExportWTWXMLTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportWTWICAL")
+                    ExportWTWICAL = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportWTWICALTo")
+                    ExportWTWICALTo = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWRecentDays")
                     WTWRecentDays = reader.ReadElementContentAsInt();
                 else if (reader.Name == "StartupTab")
@@ -475,7 +486,7 @@ namespace TVRename
                 else if (reader.Name == "StartupTab2")
                     StartupTab = TabNumberFromName(reader.ReadElementContentAsString());
                 else if (reader.Name == "DefaultNamingStyle") // old naming style
-                    NamingStyle.StyleString = CustomName.OldNStyle(reader.ReadElementContentAsInt());
+                    NamingStyle.StyleString = CustomEpisodeName.OldNStyle(reader.ReadElementContentAsInt());
                 else if (reader.Name == "NamingStyle")
                     NamingStyle.StyleString = reader.ReadElementContentAsString();
                 else if (reader.Name == "NotificationAreaIcon")
@@ -512,6 +523,8 @@ namespace TVRename
                     AutoSelectShowInMyShows = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SpecialsFolderName")
                     SpecialsFolderName = reader.ReadElementContentAsString();
+                else if (reader.Name == "SeasonFolderFormat")
+                    SeasonFolderFormat = reader.ReadElementContentAsString();
                 else if (reader.Name == "SABAPIKey")
                     SABAPIKey = reader.ReadElementContentAsString();
                 else if (reader.Name == "CheckSABnzbd")
@@ -591,6 +604,12 @@ namespace TVRename
                     PreventMove  = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
                     CheckuTorrent = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "CheckqBitTorrent")
+                    CheckqBitTorrent = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "qBitTorrentHost")
+                    qBitTorrentHost = reader.ReadElementContentAsString();
+                else if (reader.Name == "qBitTorrentPort")
+                    qBitTorrentPort = reader.ReadElementContentAsString();
                 else if (reader.Name == "MissingCheck")
                     MissingCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "UpdateFileDates")
@@ -792,9 +811,15 @@ namespace TVRename
                 else
                     reader.ReadOuterXml();
             }
+
+            if (SeasonFolderFormat == string.Empty)
+            {
+                //this has not been set from the XML, so we should give it an appropriate default value
+                SeasonFolderFormat = defaultSeasonWord+" " + (LeadingZeroOnSeason ? "{Season:2}": "{Season}");
+            }
         }
 
-        public void SetToDefaults()
+        private void SetToDefaults()
         {
             // defaults that aren't handled with default initialisers
             Ignore = new List<IgnoreItem>();
@@ -851,6 +876,8 @@ namespace TVRename
             
             XmlHelper.WriteElementToXml(writer,"ExportWTWRSS",ExportWTWRSS);
             XmlHelper.WriteElementToXml(writer,"ExportWTWRSSTo",ExportWTWRSSTo);
+            XmlHelper.WriteElementToXml(writer, "ExportWTWICAL", ExportWTWICAL);
+            XmlHelper.WriteElementToXml(writer, "ExportWTWICALTo", ExportWTWICALTo);
             XmlHelper.WriteElementToXml(writer,"ExportWTWXML",ExportWTWXML);
             XmlHelper.WriteElementToXml(writer,"ExportWTWXMLTo",ExportWTWXMLTo);
             XmlHelper.WriteElementToXml(writer,"WTWRecentDays",WTWRecentDays);
@@ -890,6 +917,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "HideWtWSpoilers", HideWtWSpoilers);
             XmlHelper.WriteElementToXml(writer, "HideMyShowsSpoilers", HideMyShowsSpoilers);
             XmlHelper.WriteElementToXml(writer,"SpecialsFolderName",SpecialsFolderName);
+            XmlHelper.WriteElementToXml(writer, "SeasonFolderFormat", SeasonFolderFormat);
             XmlHelper.WriteElementToXml(writer,"uTorrentPath",uTorrentPath);
             XmlHelper.WriteElementToXml(writer,"ResumeDatPath",ResumeDatPath);
             XmlHelper.WriteElementToXml(writer,"SearchRSS",SearchRSS);
@@ -904,6 +932,9 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);
             XmlHelper.WriteElementToXml(writer,"SelectedKODIType",(int)SelectedKODIType);
             XmlHelper.WriteElementToXml(writer,"CheckuTorrent",CheckuTorrent);
+            XmlHelper.WriteElementToXml(writer, "CheckqBitTorrent", CheckqBitTorrent);
+            XmlHelper.WriteElementToXml(writer, "qBitTorrentHost", qBitTorrentHost);
+            XmlHelper.WriteElementToXml(writer, "qBitTorrentPort", qBitTorrentPort);
             XmlHelper.WriteElementToXml(writer,"RenameCheck",RenameCheck);
             XmlHelper.WriteElementToXml(writer, "PreventMove", PreventMove);
             XmlHelper.WriteElementToXml(writer,"MissingCheck",MissingCheck);
@@ -1110,19 +1141,16 @@ namespace TVRename
             return sl;
         }
 
-        public static string[] TabNames()
-        {
-            return new[] {"MyShows", "Scan", "WTW"};
-        }
+        private static string[] TabNames() => new[] {"MyShows", "Scan", "WTW"};
 
-        public static string TabNameForNumber(int n)
+        private static string TabNameForNumber(int n)
         {
             if ((n >= 0) && (n < TabNames().Length))
                 return TabNames()[n];
             return "";
         }
 
-        public static int TabNumberFromName(string n)
+        private static int TabNumberFromName(string n)
         {
             int r = 0;
             if (!string.IsNullOrEmpty(n))
@@ -1193,10 +1221,10 @@ namespace TVRename
             if (s == null)
                 return "";
 
-            string url = (epi.SI.UseCustomSearchURL && !string.IsNullOrWhiteSpace(epi.SI.CustomSearchURL))
-                ? epi.SI.CustomSearchURL
+            string url = (epi.Show.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(epi.Show.CustomSearchUrl))
+                ? epi.Show.CustomSearchUrl
                 : TheSearchers.CurrentSearchURL();
-            return CustomName.NameForNoExt(epi, url, true);
+            return CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 
         public string FilenameFriendly(string fn)
@@ -1251,4 +1279,3 @@ namespace TVRename
         }
     }
 }
-

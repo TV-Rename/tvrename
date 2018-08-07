@@ -5,6 +5,7 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
 {
+    // ReSharper disable once InconsistentNaming
     class SABnzbdFinder :Finder
     {
         public SABnzbdFinder(TVDoc i) : base(i) { }
@@ -31,18 +32,18 @@ namespace TVRename
 
             // Something like:
             // http://localhost:8080/sabnzbd/api?mode=queue&apikey=xxx&start=0&limit=8888&output=xml
-            string theURL = "http://" + TVSettings.Instance.SABHostPort +
+            string theUrl = "http://" + TVSettings.Instance.SABHostPort +
                             "/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey=" + TVSettings.Instance.SABAPIKey;
 
             WebClient wc = new WebClient();
             byte[] r = null;
             try
             {
-                r = wc.DownloadData(theURL);
+                r = wc.DownloadData(theUrl);
             }
             catch (WebException)
             {
-                Logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theURL);
+                Logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theUrl);
             }
 
             if (r == null)
@@ -66,7 +67,7 @@ namespace TVRename
                 // wasn't a result/error combo.  this is good!
             }
 
-            SAB.Queue sq = null;
+            SAB.Queue sq;
             try
             {
                 sq = SAB.Queue.Deserialize(r);
@@ -87,7 +88,7 @@ namespace TVRename
             int c = ActionList.Count + 2;
             int n = 1;
 
-            foreach (Item Action1 in ActionList)
+            foreach (Item action1 in ActionList)
             {
                 if (ActionCancel)
                     return;
@@ -95,12 +96,12 @@ namespace TVRename
                 prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
 
 
-                if (!(Action1 is ItemMissing))
+                if (!(action1 is ItemMissing))
                     continue;
 
-                ItemMissing Action = (ItemMissing)(Action1);
+                ItemMissing action = (ItemMissing)(action1);
 
-                string showname = Helpers.SimplifyName(Action.Episode.SI.ShowName);
+                string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
 
                 foreach (SAB.QueueSlotsSlot te in sq.slots)
                 {
@@ -111,10 +112,10 @@ namespace TVRename
                         //    continue;
 
                         if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
-                        if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int maxEp, Action.Episode.SI) ||
-                            (seasF != Action.Episode.AppropriateSeasonNumber) || (epF != Action.Episode.AppropriateEpNum )) continue;
-                        toRemove.Add(Action1);
-                        newList.Add(new ItemSABnzbd(te, Action.Episode, Action.TheFileNoExt));
+                        if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
+                            (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum )) continue;
+                        toRemove.Add(action1);
+                        newList.Add(new ItemSABnzbd(te, action.Episode, action.TheFileNoExt));
                         break;
                     }
                 }
@@ -123,8 +124,8 @@ namespace TVRename
             foreach (Item i in toRemove)
                 ActionList.Remove(i);
 
-            foreach (Item Action in newList)
-                ActionList.Add(Action);
+            foreach (Item action in newList)
+                ActionList.Add(action);
 
             prog.Invoke(totPct);
         }

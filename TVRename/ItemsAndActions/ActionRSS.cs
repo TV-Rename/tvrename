@@ -81,7 +81,7 @@ namespace TVRename
         public override int Compare(Item o)
         {
             ActionRSS rss = o as ActionRSS;
-            return rss == null ? 0 : String.Compare(RSS.URL, rss.RSS.URL, StringComparison.Ordinal);
+            return rss == null ? 0 : string.Compare(RSS.URL, rss.RSS.URL, StringComparison.Ordinal);
         }
 
         #endregion
@@ -94,7 +94,7 @@ namespace TVRename
         {
             get
             {
-                ListViewItem lvi = new ListViewItem {Text = Episode.SI.ShowName};
+                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
 
                 lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(Episode.NumsAsString());

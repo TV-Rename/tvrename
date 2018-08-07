@@ -1324,10 +1324,10 @@ namespace TVRename
                 {
                     // see if season and episode match
                     bool findFile = TVDoc.FindSeasEp("", simplifiedfname, out int seasF, out int epF, out int maxEp,
-                        m.SI, Rexps,
+                        m.Show, Rexps,
                         out FilenameProcessorRE rex);
 
-                    bool matchSeasonEpisode = m.SI.DVDOrder
+                    bool matchSeasonEpisode = m.Show.DvdOrder
                         ? (seasF == m.AiredSeasonNumber) && (epF == m.AiredEpNum)
                         : (seasF == m.DvdSeasonNumber) && (epF == m.DvdEpNum);
 
@@ -1365,7 +1365,7 @@ namespace TVRename
 
         protected override bool NewTorrentEntry(string torrentFile, int numberInTorrent)
         {
-            NewLocation = "";
+            NewLocation = string.Empty;
             PrioWasSet = false;
             Type = "?";
             return true;
@@ -1418,7 +1418,7 @@ namespace TVRename
             bool prioChanged = SetPrios && PrioWasSet;
             if (prioChanged || (!string.IsNullOrEmpty(NewLocation)))
                 AddResult(Type, torrentFile, (numberInTorrent + 1).ToString(),
-                    prioChanged ? GetResumePrio(torrentFile, numberInTorrent) : "", NewLocation);
+                    prioChanged ? GetResumePrio(torrentFile, numberInTorrent) : string.Empty, NewLocation);
 
             return true;
         }

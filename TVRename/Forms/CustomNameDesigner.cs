@@ -25,11 +25,11 @@ namespace TVRename
     /// </summary>
     public partial class CustomNameDesigner : Form
     {
-        private readonly CustomName CN;
+        private readonly CustomEpisodeName CN;
         private readonly List<ProcessedEpisode> Eps;
         private TVDoc mDoc;
 
-        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomName cn, TVDoc doc)
+        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomEpisodeName cn, TVDoc doc)
         {
             Eps = pel;
             CN = cn;
@@ -55,17 +55,17 @@ namespace TVRename
             else
                 pe = (ProcessedEpisode) (lvTest.SelectedItems[0].Tag);
 
-            foreach (string s in CustomName.Tags)
+            foreach (string s in CustomEpisodeName.Tags)
             {
                 string txt = s;
                 if (pe != null)
-                    txt += " - " + CustomName.NameForNoExt(pe, s);
+                    txt += " - " + CustomEpisodeName.NameForNoExt(pe, s);
                 cbTags.Items.Add(txt);
             }
 
-            foreach (string s in CustomName.Presets)
+            foreach (string s in CustomEpisodeName.Presets)
             {
-                cbPresets.Items.Add(pe != null ? CustomName.NameForNoExt(pe, s) : s);
+                cbPresets.Items.Add(pe != null ? CustomEpisodeName.NameForNoExt(pe, s) : s);
             }
         }
 
@@ -81,7 +81,7 @@ namespace TVRename
                 string fn = TVSettings.Instance.FilenameFriendly(CN.NameFor(pe));
                 lvi.Text = fn;
 
-                bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.SI);
+                bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.Show);
                 bool ok1 = ok && (seas == pe.AppropriateSeasonNumber);
                 bool ok2 = ok && (ep == pe.AppropriateEpNum);
                 string pre1 = ok1 ? "" : "* ";
@@ -105,7 +105,7 @@ namespace TVRename
             if (n == -1)
                 return;
 
-            txtTemplate.Text = CustomName.Presets[n];
+            txtTemplate.Text = CustomEpisodeName.Presets[n];
             cbPresets.SelectedIndex = -1;
         }
 
@@ -123,7 +123,7 @@ namespace TVRename
 
             int p = txtTemplate.SelectionStart;
             string s = txtTemplate.Text;
-            txtTemplate.Text = s.Substring(0, p) + CustomName.Tags[cbTags.SelectedIndex] + s.Substring(p);
+            txtTemplate.Text = s.Substring(0, p) + CustomEpisodeName.Tags[cbTags.SelectedIndex] + s.Substring(p);
 
             cbTags.SelectedIndex = -1;
         }

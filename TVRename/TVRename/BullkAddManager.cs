@@ -35,6 +35,12 @@ namespace TVRename
             if (ser != null)
                 ai.TVDBCode = ser.TVDBCode;
 
+            //Try removing any year
+            string showNameNoYear = Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
+            ser = TheTVDB.Instance.GetSeries(showNameNoYear);
+            if (ser != null)
+                ai.TVDBCode = ser.TVDBCode;
+
             TheTVDB.Instance.Unlock("GuessShowItem");
         }
 
@@ -68,8 +74,7 @@ namespace TVRename
             return showName;
         }
 
-        private bool HasSeasonFolders(DirectoryInfo di, out string folderName, out DirectoryInfo[] subDirs,
-            out bool padNumber)
+        private bool HasSeasonFolders(DirectoryInfo di, out DirectoryInfo[] subDirs, out string folderFormat)
         {
             try
             {
@@ -79,15 +84,17 @@ namespace TVRename
                 {
                     foreach (DirectoryInfo subDir in subDirs)
                     {
+                        //TODO - this could make use of the presets to see whether they match
+
                         string regex = "^(?<folderName>" + sw + "\\s*)(?<number>\\d+)$";
                         Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase);
                         if (!m.Success) continue;
 
                         //We have a match!
-                        folderName = m.Groups["folderName"].ToString();
-                        padNumber = m.Groups["number"].ToString().StartsWith("0");
-                        Logger.Info("Assuming {0} contains a show because keyword '{1}' is found in subdirectory {2}",
-                            di.FullName, folderName, subDir.FullName);
+                        
+                        folderFormat = m.Groups["folderName"]+" " +(m.Groups["number"].ToString().StartsWith("0")?"{Season:2}":"{Season}");
+                        Logger.Info("Assuming {0} contains a show because pattern '{1}' is found in subdirectory {2}",
+                            di.FullName, folderFormat, subDir.FullName);
 
                         return true;
                     }
@@ -102,9 +109,7 @@ namespace TVRename
 
                 subDirs = null;
             }
-
-            folderName = null;
-            padNumber = false;
+            folderFormat=string.Empty;
             return false;
         }
 
@@ -114,8 +119,8 @@ namespace TVRename
             string theFolder = di2.FullName.ToLower();
             foreach (ShowItem si in mDoc.Library.GetShowItems())
             {
-                if (si.AutoAddNewSeasons && !string.IsNullOrEmpty(si.AutoAdd_FolderBase) &&
-                    theFolder.IsSubfolderOf(si.AutoAdd_FolderBase))
+                if (si.AutoAddNewSeasons() && !string.IsNullOrEmpty(si.AutoAddFolderBase) &&
+                    theFolder.IsSubfolderOf(si.AutoAddFolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
                     Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
@@ -147,8 +152,7 @@ namespace TVRename
             bool hasSeasonFolders;
             try
             {
-                hasSeasonFolders = HasSeasonFolders(di2, out string folderName, out DirectoryInfo[] subDirectories,
-                    out bool padNumber);
+                hasSeasonFolders = HasSeasonFolders(di2, out DirectoryInfo[] subDirectories, out string folderFormat);
 
                 subDirs = subDirectories;
 
@@ -170,7 +174,7 @@ namespace TVRename
 
                     // ....its good!
                     FolderMonitorEntry ai =
-                        new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderName, padNumber);
+                        new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderFormat);
 
                     AddItems.Add(ai);
                     Logger.Info("Adding {0} as a new folder", theFolder);
@@ -235,11 +239,20 @@ namespace TVRename
                     mDoc.Library.Add(found);
                 }
 
-                found.AutoAdd_FolderBase = ai.Folder;
-                found.AutoAdd_FolderPerSeason = ai.HasSeasonFoldersGuess;
+                found.AutoAddFolderBase = ai.Folder;
 
-                found.AutoAdd_SeasonFolderName = ai.SeasonFolderName;
-                found.PadSeasonToTwoDigits = ai.PadSeasonToTwoDigits;
+                if (ai.HasSeasonFoldersGuess)
+                {
+                    found.AutoAddType = (ai.SeasonFolderFormat == TVSettings.Instance.SeasonFolderFormat)
+                        ? ShowItem.AutomaticFolderType.libraryDefault
+                        : ShowItem.AutomaticFolderType.custom;
+
+                    found.AutoAddCustomFolderFormat = ai.SeasonFolderFormat;
+                }
+                else
+                {
+                    found.AutoAddType = ShowItem.AutomaticFolderType.baseOnly;
+                }
                 mDoc.Stats().AutoAddedShows++;
             }
 

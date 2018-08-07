@@ -3,7 +3,6 @@ using System.Text.RegularExpressions;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.WindowsAPICodePack.Shell;
 using Microsoft.WindowsAPICodePack.Shell.PropertySystem;
-using NLog.Internal;
 
 namespace TVRename
 {
@@ -182,8 +181,6 @@ namespace TVRename
         {
             return SimplifyAndCheckFilename(filename, showname,true,true);
         }
-
-        internal static string TempPath(string v) => Path.GetTempPath() + v;
 
         public static string MakeValidPath(string input)
         {

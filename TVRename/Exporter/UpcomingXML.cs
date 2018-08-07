@@ -48,7 +48,7 @@ namespace TVRename
                             List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc, ei);
                             if ((fl != null) && (fl.Count > 0))
                                 writer.WriteValue("true");
-                            else if (ei.SI.DoMissingCheck)
+                            else if (ei.Show.DoMissingCheck)
                                 writer.WriteValue("false");
                         }
                         

@@ -33,7 +33,7 @@ namespace TVRename
             writer.WriteStartElement("episodedetails");
 
             XmlHelper.WriteElementToXml(writer, "title", episode.Name);
-            XmlHelper.WriteElementToXml(writer,"showtitle", Episode.SI.ShowName );
+            XmlHelper.WriteElementToXml(writer,"showtitle", Episode.Show.ShowName );
             XmlHelper.WriteElementToXml(writer, "rating", episode.EpisodeRating);
             if (dvdOrder)
             {
@@ -53,7 +53,7 @@ namespace TVRename
                 writer.WriteValue(episode.FirstAired.Value.ToString("yyyy-MM-dd"));
             writer.WriteEndElement();
 
-            XmlHelper.WriteElementToXml(writer, "mpaa", Episode.SI?.TheSeries()?.GetContentRating(),true);
+            XmlHelper.WriteElementToXml(writer, "mpaa", Episode.Show?.TheSeries()?.GetContentRating(),true);
 
             //Director(s)
             string epDirector = episode.EpisodeDirector;
@@ -80,9 +80,9 @@ namespace TVRename
             {
                 string recurringActors = "";
 
-                if (Episode.SI != null)
+                if (Episode.Show != null)
                 {
-                    recurringActors = string.Join("|", Episode.SI.TheSeries().GetActors());
+                    recurringActors = string.Join("|", Episode.Show.TheSeries().GetActors());
                 }
 
                 string guestActors = episode.EpisodeGuestStars;
@@ -107,9 +107,9 @@ namespace TVRename
             }
 
             // actors...
-            if (Episode.SI != null)
+            if (Episode.Show != null)
             {
-                foreach (string aa in Episode.SI.TheSeries().GetActors())
+                foreach (string aa in Episode.Show.TheSeries().GetActors())
                 {
                     if (string.IsNullOrEmpty(aa))
                         continue;
@@ -131,10 +131,10 @@ namespace TVRename
                 //For now we only put art in for multipart episodes. Kodi finds the art appropriately
                 //without our help for the others
 
-                ShowItem episodeSi = Episode.SI??SelectedShow;
+                ShowItem episodeSi = Episode.Show??SelectedShow;
                 string filename =
                     TVSettings.Instance.FilenameFriendly(
-                        TVSettings.Instance.NamingStyle.GetTargetEpisodeName(episode,episodeSi.ShowName, episodeSi.GetTimeZone(), episodeSi.DVDOrder));
+                        TVSettings.Instance.NamingStyle.GetTargetEpisodeName(episode,episodeSi.ShowName, episodeSi.GetTimeZone(), episodeSi.DvdOrder));
 
                 string thumbFilename =  filename + ".jpg";
                 XmlHelper.WriteElementToXml(writer, "thumb",thumbFilename);
@@ -161,12 +161,12 @@ namespace TVRename
                 {
                     if (Episode != null) // specific episode
                     {
-                        if (Episode.type == ProcessedEpisode.ProcessedEpisodeType.merged)
+                        if (Episode.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
                         {
-                            foreach (Episode ep in Episode.sourceEpisodes)
-                                WriteEpisodeDetailsFor(ep, writer, true, Episode.SI.DVDOrder);
+                            foreach (Episode ep in Episode.SourceEpisodes)
+                                WriteEpisodeDetailsFor(ep, writer, true, Episode.Show.DvdOrder);
                         }
-                        else WriteEpisodeDetailsFor(Episode, writer, false, Episode.SI.DVDOrder);
+                        else WriteEpisodeDetailsFor(Episode, writer, false, Episode.Show.DvdOrder);
                     }
                     else if (SelectedShow != null) // show overview (tvshow.nfo)
                     {
@@ -176,7 +176,7 @@ namespace TVRename
                         XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
 
                         XmlHelper.WriteElementToXml(writer, "episodeguideurl",
-                            TheTVDB.BuildUrl(SelectedShow.TVDBCode, TheTVDB.Instance.RequestLanguage));
+                            TheTVDB.BuildUrl(SelectedShow.TvdbCode, TheTVDB.Instance.RequestLanguage));
 
                         XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries().GetOverview());
 

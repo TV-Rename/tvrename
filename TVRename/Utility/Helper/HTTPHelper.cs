@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -7,11 +8,11 @@ using NLog;
 
 namespace TVRename
 {
-    public static class HTTPHelper
+    public static class HttpHelper
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
-        public static string HTTPRequest(string method, string url,string json, string contentType,string authToken = "", string lang = "") {
+        private static string HttpRequest(string method, string url,string json, string contentType,string authToken = "", string lang = "") {
             HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
             httpWebRequest.ContentType = contentType;
             httpWebRequest.Method = method;
@@ -24,7 +25,7 @@ namespace TVRename
                 httpWebRequest.Headers.Add("Accept-Language",lang);
             }
 
-            logger.Trace("Obtaining {0}", url);
+            Logger.Trace("Obtaining {0}", url);
 
             if (method == "POST") { 
                 using (StreamWriter streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
@@ -36,29 +37,32 @@ namespace TVRename
 
             string result;
             HttpWebResponse httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            using (StreamReader streamReader = new StreamReader(httpResponse.GetResponseStream() ?? throw new InvalidOperationException()))
             {
                 result = streamReader.ReadToEnd();
             }
-            logger.Trace("Returned {0}", result);
+            Logger.Trace("Returned {0}", result);
             return result;
         }
 
-        public static JObject JsonHTTPPOSTRequest( string url, JObject request)
+        public static JObject JsonHttpPostRequest( string url, JObject request)
         {
-            string response = HTTPRequest("POST",url, request.ToString(), "application/json");
+            string response = HttpRequest("POST",url, request.ToString(), "application/json");
             return JObject.Parse(response);
         }
 
-        public static JObject JsonHTTPGETRequest(string url, Dictionary<string, string> parameters, string authToken, string lang="")
+        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken) =>
+            JsonHttpGetRequest(url, parameters, authToken, string.Empty);
+
+        public static JObject JsonHttpGetRequest(string url, Dictionary<string, string> parameters, string authToken, string lang)
         {
-            string response = HTTPRequest("GET", url + getHTTPParameters(parameters), null, "application/json", authToken,lang);
+            string response = HttpRequest("GET", url + GetHttpParameters(parameters), null, "application/json", authToken,lang);
             return JObject.Parse(response);
         }
 
-        public static string getHTTPParameters(Dictionary<string, string> parameters)
+        private static string GetHttpParameters(Dictionary<string, string> parameters)
         {
-            if (parameters == null) return "";
+            if (parameters == null) return string.Empty;
 
             StringBuilder sb = new StringBuilder();
             sb.Append("?");
@@ -68,7 +72,7 @@ namespace TVRename
                 sb.Append($"{item.Key}={item.Value}&");
             }
             string finalUrl = sb.ToString();
-            return finalUrl.Remove(finalUrl.LastIndexOf("&"));
+            return finalUrl.Remove(finalUrl.LastIndexOf("&", StringComparison.Ordinal));
         }
     }
 }

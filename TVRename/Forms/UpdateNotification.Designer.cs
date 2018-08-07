@@ -124,7 +124,6 @@ namespace TVRename.Forms
             this.webReleaseNotes.Size = new System.Drawing.Size(382, 333);
             this.webReleaseNotes.TabIndex = 7;
             this.webReleaseNotes.Visible = false;
-            this.webReleaseNotes.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // UpdateNotification
             // 

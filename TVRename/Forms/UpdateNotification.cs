@@ -34,10 +34,12 @@ namespace TVRename.Forms
             req.UserAgent= 
                 "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
 
-            JObject request = new JObject();
-            request.Add("text", newVersion.ReleaseNotesText);
-            request.Add("mode", "gfm");
-            request.Add("context", "TV-Rename/tvrename");
+            JObject request = new JObject
+            {
+                {"text", newVersion.ReleaseNotesText},
+                {"mode", "gfm"},
+                {"context", "TV-Rename/tvrename"}
+            };
 
             using (StreamWriter writer = new StreamWriter(req.GetRequestStream()))
             {
@@ -56,8 +58,6 @@ namespace TVRename.Forms
             string HTML_FOOTER = "</body></html>";
 
             webReleaseNotes.DocumentText= HTML_HEAD+result+HTML_FOOTER;
-            
-
 
             webReleaseNotes.Visible = true;
             tbReleaseNotes.Visible = false;

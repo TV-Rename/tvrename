@@ -32,6 +32,35 @@ namespace TVRename
             Episodes = new System.Collections.Generic.List<Episode>();
         }
 
+        // ReSharper disable once InconsistentNaming
+        public static string UISeasonWord(int season)
+        {
+            if (TVSettings.Instance.defaultSeasonWord.Length > 1)
+            {
+                return TVSettings.Instance.defaultSeasonWord + " " + season;
+            }
+            else
+            {
+                bool leadingZero = TVSettings.Instance.LeadingZeroOnSeason;
+                if (leadingZero == true)
+                {
+                    return TVSettings.Instance.defaultSeasonWord + season.ToString("00");
+                }
+                else
+                {
+                    return TVSettings.Instance.defaultSeasonWord + season.ToString();
+                }
+            }
+        }
+
+        // ReSharper disable once InconsistentNaming
+        public static string UIFullSeasonWord(int snum)
+        {
+            return (snum == 0)
+                ? TVSettings.Instance.SpecialsFolderName
+                : UISeasonWord(snum);
+        }
+
         public SeasonStatus Status(TimeZone tz)
         {
             if (HasEpisodes)
@@ -61,6 +90,34 @@ namespace TVRename
             }
         }
 
+        internal int MinYear()
+        {
+            int min = 9999;
+
+            foreach (Episode e in Episodes)
+            {
+                if (e.GetAirDateDt().HasValue)
+                {
+                    if (e.GetAirDateDt().Value.Year < min) min = e.GetAirDateDt().Value.Year;
+                }
+            }
+
+            return min;
+        }
+
+        internal int MaxYear()
+        {
+            int max = 0;
+
+            foreach (Episode e in Episodes)
+            {
+                if (e.GetAirDateDt().HasValue)
+                {
+                    if (e.GetAirDateDt().Value.Year > max) max = e.GetAirDateDt().Value.Year;
+                }
+            }
+            return max;
+        }
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
 
         private bool HasUnairedEpisodes(TimeZone tz)
@@ -174,6 +231,11 @@ namespace TVRename
             }
 
             return null;
+        }
+
+        public bool IsSpecial()
+        {
+            return (SeasonNumber == 0);
         }
     }
 }

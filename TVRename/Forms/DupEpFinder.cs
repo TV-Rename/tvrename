@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using TVRename.ItemsAndActions;
 
 namespace TVRename.Forms
 {
@@ -143,10 +142,7 @@ namespace TVRename.Forms
             duplicateRightClickMenu.Items.Add(tsi);
 
             //kEditSeason,
-            tsi = new ToolStripMenuItem("Edit " + (mlastSelected.SeasonNumber == 0
-                                            ? TVSettings.Instance.SpecialsFolderName
-                                            : new ActionBuildRightSeasonWord(mlastSelected.SeasonNumber).SeasonName));
-
+            tsi = new ToolStripMenuItem("Edit " + Season.UIFullSeasonWord(mlastSelected.SeasonNumber));
             tsi.Tag = (int) RightClickCommands.kEditSeason;
             duplicateRightClickMenu.Items.Add(tsi);
 

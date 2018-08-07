@@ -40,9 +40,9 @@ namespace TVRename
         {
             int code = codeFinder.SelectedCode();
 
-            ShowItem.TVDBCode = code;
-            ShowItem.AutoAdd_FolderBase = cbDirectory.Text+lblDirectoryName.Text;
-            ShowItem.PadSeasonToTwoDigits = true;
+            ShowItem.TvdbCode = code;
+            ShowItem.AutoAddFolderBase = cbDirectory.Text+lblDirectoryName.Text;
+            ShowItem.AutoAddType = ShowItem.AutomaticFolderType.libraryDefault;
             //Set Default Timezone based on Network
             ShowItem.ShowTimeZone = TimeZone.TimeZoneForNetwork(codeFinder.SelectedShow()?.GetNetwork());
             if (!originalHint.Contains(codeFinder.SelectedShow().Name, StringComparison.OrdinalIgnoreCase))
