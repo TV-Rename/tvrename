@@ -559,7 +559,7 @@ namespace TVRename
                 if (!e.Cancel)
                 {
                     SaveLayoutXml();
-                    mDoc.TidyTVDB();
+                    mDoc.TidyTvdb();
                     mDoc.Closing();
                 }
             }
@@ -1210,44 +1210,30 @@ namespace TVRename
             Season seas = mLastSeasonClicked;
             ProcessedEpisode ep = mLastEpClicked;
 
-            if (si != null)
+            if (addSep)
             {
-                if (addSep)
-                {
-                    showRightClickMenu.Items.Add(new ToolStripSeparator());
-                    addSep = false;
-                }
-
-                AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
+                showRightClickMenu.Items.Add(new ToolStripSeparator());
             }
 
             if (ep != null)
             {
-                if (addSep)
+                if (si != null)
                 {
-                    showRightClickMenu.Items.Add(new ToolStripSeparator());
-                    addSep = false;
+                    AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
                 }
-
                 AddRcMenuItem("Visit thetvdb.com", RightClickCommands.kVisitTvdbEpisode);
             }
             else if (seas != null)
             {
-                if (addSep)
+                if (si != null)
                 {
-                    showRightClickMenu.Items.Add(new ToolStripSeparator());
-                    addSep = false;
+                    AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
                 }
-
                 AddRcMenuItem("Visit thetvdb.com", RightClickCommands.kVisitTvdbSeason);
             }
             else if (si != null)
             {
-                if (addSep)
-                {
-                    showRightClickMenu.Items.Add(new ToolStripSeparator());
-                    addSep = false;
-                }
+                AddRcMenuItem("Episode Guide", RightClickCommands.kEpisodeGuideForShow);
                 AddRcMenuItem("Visit thetvdb.com", RightClickCommands.kVisitTvdbSeries);
             }
         }
@@ -2571,7 +2557,14 @@ namespace TVRename
                 //If the hint contains certain terms then we'll ignore it
                 if (IgnoreHint(hint))
                 {
-                    Logger.Info($"Ignoring {hint} as it is in the ignore list.");
+                    Logger.Info($"Ignoring {hint} as it is in the ignore list (from Settings).");
+                    continue;
+                }
+
+                //If the hint contains certain terms then we'll ignore it
+                if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
+                {
+                    Logger.Info($"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
                     continue;
                 }
 
@@ -2612,7 +2605,18 @@ namespace TVRename
                     //If added add show to collection
                     addedShows.Add(askForMatch.ShowItem);
                 }
-                else Logger.Info("Cancelled Auto adding new show");
+                else if (dr == DialogResult.Abort)
+                {
+                    Logger.Info("Skippng Auto Add Process");
+                    LessBusy();
+                    break;
+                }
+                else if (dr == DialogResult.Ignore)
+                {
+                    Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
+                    TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
+                }
+                else Logger.Info($"Cancelled Auto adding new show {hint}");
 
                 LessBusy();
             }
@@ -2655,7 +2659,7 @@ namespace TVRename
             return hint2;
         }
 
-        private string RemoveSe(string hint)
+        private static string RemoveSe(string hint)
         {
             foreach (FilenameProcessorRE re in TVSettings.Instance.FNPRegexs)
             {

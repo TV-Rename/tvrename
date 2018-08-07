@@ -1,6 +1,8 @@
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 
 namespace TVRename
 {
@@ -28,22 +30,33 @@ namespace TVRename
 
             string url = $"http://{host}:{port}/query/";
 
-            JToken settings = JsonHelper.ObtainToken(url + "preferences");
-            JArray currentDownloads = JsonHelper.ObtainArray(url + "torrents?filter=all");
-
-            foreach (JToken torrent in currentDownloads.Children())
+            try
             {
-                JArray stuff2 = JsonHelper.ObtainArray(url + "propertiesFiles/" + torrent["hash"]);
+                JToken settings = JsonHelper.ObtainToken(url + "preferences");
+                JArray currentDownloads = JsonHelper.ObtainArray(url + "torrents?filter=all");
 
-                foreach (JToken file in stuff2.Children())
+                foreach (JToken torrent in currentDownloads.Children())
                 {
-                    ret.Add(new TorrentEntry(torrent["name"].ToString(), settings["save_path"] + file["name"].ToString(), (int)(100 * file["progress"].ToObject<float>())));
-                }
+                    JArray stuff2 = JsonHelper.ObtainArray(url + "propertiesFiles/" + torrent["hash"]);
 
-                if (!stuff2.Children().Any())
-                {
-                    ret.Add(new TorrentEntry(torrent["name"].ToString(), settings["save_path"] + torrent["name"].ToString() + TVSettings.Instance.VideoExtensionsArray[0], 0));
+                    foreach (JToken file in stuff2.Children())
+                    {
+                        ret.Add(new TorrentEntry(torrent["name"].ToString(),
+                            settings["save_path"] + file["name"].ToString(),
+                            (int) (100 * file["progress"].ToObject<float>())));
+                    }
+
+                    if (!stuff2.Children().Any())
+                    {
+                        ret.Add(new TorrentEntry(torrent["name"].ToString(),
+                            settings["save_path"] + torrent["name"].ToString() +
+                            TVSettings.Instance.VideoExtensionsArray[0], 0));
+                    }
                 }
+            }
+            catch (WebException e)
+            {
+                Logger.Warn($"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
 
             return ret;

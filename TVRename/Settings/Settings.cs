@@ -263,6 +263,7 @@ namespace TVRename
         public List<string> LibraryFolders;
         public List<string> IgnoreFolders;
         public List<string> DownloadFolders;
+        public List<string> IgnoredAutoAddHints;
         public List<IgnoreItem> Ignore;
         public bool AutoSelectShowInMyShows = true;
         public bool AutoCreateFolders = false;
@@ -819,6 +820,7 @@ namespace TVRename
             DownloadFolders = new List<string>();
             IgnoreFolders = new List<string>();
             LibraryFolders = new List<string>();
+            IgnoredAutoAddHints = new List<string>();
 
             VideoExtensionsString =
                 ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp";

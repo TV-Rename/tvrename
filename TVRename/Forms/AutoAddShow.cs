@@ -73,5 +73,17 @@ namespace TVRename
 
             return dr != DialogResult.No;
         }
+
+        private void btnSkipAutoAdd_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Abort;
+            Close();
+        }
+
+        private void btnIgnoreFile_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Ignore;
+            Close();
+        }
     }
 }
