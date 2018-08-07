@@ -173,10 +173,6 @@ namespace TVRename
 
             tmrPeriodicScan.Interval = TVSettings.Instance.PeriodicCheckPeriod();
 
-            UpdateSplashStatus(splash, "Update Available?");
-            Task task = Task.Run(async () => { await CheckUpdatesOnStartup(showUi); });
-            task.Wait();
-
             UpdateSplashStatus(splash, "Starting Monitor");
             if (TVSettings.Instance.MonitorFolders)
                 mAutoFolderMonitor.StartMonitor();
@@ -184,13 +180,6 @@ namespace TVRename
             tmrPeriodicScan.Enabled = TVSettings.Instance.RunPeriodicCheck();
 
             UpdateSplashStatus(splash, "Running autoscan");
-            //splash.Close();
-        }
-
-        private async Task CheckUpdatesOnStartup(bool showUi)
-        {
-            Task<UpdateVersion> tuv = VersionUpdater.CheckForUpdatesAsync();
-            //NotifyUpdates(await tuv, false, !showUi);
         }
 
         private static void UpdateSplashStatus(TVRenameSplash splashScreen, string text)
@@ -1220,7 +1209,6 @@ namespace TVRename
 
             Season seas = mLastSeasonClicked;
             ProcessedEpisode ep = mLastEpClicked;
-            ToolStripMenuItem tsi;
 
             if (si != null)
             {
