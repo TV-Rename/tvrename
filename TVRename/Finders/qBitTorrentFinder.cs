@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 
 namespace TVRename
@@ -60,6 +61,47 @@ namespace TVRename
             }
 
             return ret;
+        }
+
+        internal static async void StartTorrentDownload(string torrentURL)
+        {
+            //throw new System.NotImplementedException();
+
+            string host = TVSettings.Instance.qBitTorrentHost;
+            string port = TVSettings.Instance.qBitTorrentPort;
+            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
+            {
+                Logger.Error(
+                    $"Could not download {torrentURL} via qBitTorrent as settings are not entered for host and port");
+                return;
+            }
+
+            string url = $"http://{host}:{port}/command/download";
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    Dictionary<string, string> values = new Dictionary<string, string> {{"urls", torrentURL}};
+                    FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+                    HttpResponseMessage response = client.PostAsync(url, content).Result;
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Logger.Warn(
+                            $"Tried to download {torrentURL} from qBitTorrent via {url}. Got following response {response.StatusCode}");
+                    }
+                    else
+                    {
+                        Logger.Info(
+                            $"Started download of {torrentURL} via qBitTorrent using {url}. Got following response {response.StatusCode}");
+                    }
+                }
+            }
+            catch (WebException e)
+            {
+                Logger.Warn($"Could not connect to {url} to downlaod {torrentURL}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+            }
+
         }
     }
 }

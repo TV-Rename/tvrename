@@ -27,35 +27,41 @@ namespace TVRename
 
         #region Action Members
 
-        public override  string ProgressText => RSS.Title;
-
-
+        public override string ProgressText => RSS.Title;
         public override string Name => "Get Torrent";
-
         public override long SizeOfWork => 1000000;
-
         public override string Produces => RSS.URL;
 
         public override bool Go( ref bool pause, TVRenameStats stats)
         {
-            System.Net.WebClient wc = new System.Net.WebClient();
             try
             {
-                byte[] r = wc.DownloadData(RSS.URL);
-                if ((r == null) || (r.Length == 0))
+                if (!(TVSettings.Instance.CheckuTorrent || TVSettings.Instance.CheckqBitTorrent))
                 {
                     Error = true;
-                    ErrorText = "No data downloaded";
+                    ErrorText = "No torrent clients enabled to download RSS";
                     Done = true;
                     return false;
                 }
 
-                string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(RSS.Title);
-                if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
-                    saveTemp += ".torrent";
-                File.WriteAllBytes(saveTemp, r);
+                if (TVSettings.Instance.CheckuTorrent)
+                {
+                    byte[] r = new System.Net.WebClient().DownloadData(RSS.URL);
+                    if ((r == null) || (r.Length == 0))
+                    {
+                        Error = true;
+                        ErrorText = "No data downloaded";
+                        Done = true;
+                        return false;
+                    }
 
-                System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "/directory \"" + (new FileInfo(theFileNoExt).Directory.FullName) + "\" \"" + saveTemp + "\"");
+                    string saveTemp = SaveDownloadedData(r, RSS.Title);
+                    uTorrentFinder.StartTorrentDownload(saveTemp, theFileNoExt);
+                }
+                    
+                
+                if (TVSettings.Instance.CheckqBitTorrent)
+                    qBitTorrentFinder.StartTorrentDownload(RSS.URL);
 
                 Done = true;
                 return true;
@@ -67,6 +73,15 @@ namespace TVRename
                 Done = true;
                 return false;
             }
+        }
+
+        private static string SaveDownloadedData(byte[] r,string name)
+        {
+            string saveTemp = Path.GetTempPath() + System.IO.Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(name);
+            if (new FileInfo(saveTemp).Extension.ToLower() != "torrent")
+                saveTemp += ".torrent";
+            File.WriteAllBytes(saveTemp, r);
+            return saveTemp;
         }
 
         #endregion
