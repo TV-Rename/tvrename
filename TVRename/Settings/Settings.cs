@@ -406,7 +406,7 @@ namespace TVRename
         public void load(XmlReader reader)
         {
             SetToDefaults();
-
+            int ignoredInt;
             reader.Read();
             if (reader.Name != "Settings")
                 return; // bail out
@@ -589,7 +589,7 @@ namespace TVRename
                 else if (reader.Name == "MonitoredFoldersScanType")
                     MonitoredFoldersScanType = (ScanType)reader.ReadElementContentAsInt();
                 else if ((reader.Name == "SelectedXBMCType") || (reader.Name == "SelectedKODIType"))
-                    int ignored = reader.ReadElementContentAsInt(); //Ignored as this settign was removed from 2.5 onwards
+                    ignoredInt = reader.ReadElementContentAsInt(); //Ignored as this settign was removed from 2.5 onwards
                 else if (reader.Name == "RenameCheck")
                     RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "PreventMove")

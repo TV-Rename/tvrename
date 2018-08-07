@@ -1171,7 +1171,6 @@ namespace TVRename
                     cbEpThumbJpg.Checked = false;
                     cbFantArtJpg.Checked = false;
                     cbKODIImages.Checked = true;
-                    rdBoth.Checked = true;
                     break;
                 case 2: // pytivo
                     cbEpTBNs.Checked = false;
