@@ -247,13 +247,6 @@ namespace TVRename
 
         #endregion
 
-        public enum KODIType
-        {
-            Eden,
-            Frodo,
-            Both
-        }
-
         public enum BetaMode
         {
             BetaToo,
@@ -309,7 +302,6 @@ namespace TVRename
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;
         public ScanType MonitoredFoldersScanType = ScanType.Full;
-        public KODIType SelectedKODIType = KODIType.Both;
         public bool ForceLowercaseFilenames = false;
         public bool IgnoreSamples = true;
         public bool KeepTogether = true;
@@ -597,7 +589,7 @@ namespace TVRename
                 else if (reader.Name == "MonitoredFoldersScanType")
                     MonitoredFoldersScanType = (ScanType)reader.ReadElementContentAsInt();
                 else if ((reader.Name == "SelectedXBMCType") || (reader.Name == "SelectedKODIType"))
-                    SelectedKODIType = (KODIType)reader.ReadElementContentAsInt();
+                    int ignored = reader.ReadElementContentAsInt(); //Ignored as this settign was removed from 2.5 onwards
                 else if (reader.Name == "RenameCheck")
                     RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "PreventMove")
@@ -930,7 +922,6 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"FolderJpg",FolderJpg);
             XmlHelper.WriteElementToXml(writer,"FolderJpgIs",(int) FolderJpgIs);
             XmlHelper.WriteElementToXml(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);
-            XmlHelper.WriteElementToXml(writer,"SelectedKODIType",(int)SelectedKODIType);
             XmlHelper.WriteElementToXml(writer,"CheckuTorrent",CheckuTorrent);
             XmlHelper.WriteElementToXml(writer, "CheckqBitTorrent", CheckqBitTorrent);
             XmlHelper.WriteElementToXml(writer, "qBitTorrentHost", qBitTorrentHost);
@@ -1252,16 +1243,6 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public bool SeasonSpecificFolderJPG() {
             return (FolderJpgIsType.SeasonPoster == FolderJpgIs);
-        }
-
-        public bool DownloadFrodoImages()
-        {
-            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Frodo));
-        }
-
-        public bool DownloadEdenImages()
-        {
-            return (KODIImages && (SelectedKODIType == KODIType.Both || SelectedKODIType == KODIType.Eden)); 
         }
 
         public bool KeepTogetherFilesWithType(string fileExtension)

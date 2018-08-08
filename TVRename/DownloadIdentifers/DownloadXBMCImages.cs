@@ -84,60 +84,41 @@ namespace TVRename
             if (TVSettings.Instance.KODIImages)
             {
                 ItemList theActionList = new ItemList();
-                if (TVSettings.Instance.DownloadFrodoImages())
-                {
-                    //If we have KODI New style images being downloaded then we want to check that 3 files exist
-                    //for the series:
-                    //http://wiki.xbmc.org/index.php?title=XBMC_v12_(Frodo)_FAQ#Local_images
-                    //poster
-                    //banner
-                    //fanart - we do not have the option in TVDB to get season specific fanart, so we'll leave that
+                //If we have KODI New style images being downloaded then we want to check that 3 files exist
+                //for the series:
+                //http://wiki.xbmc.org/index.php?title=XBMC_v12_(Frodo)_FAQ#Local_images
+                //poster
+                //banner
+                //fanart - we do not have the option in TVDB to get season specific fanart, so we'll leave that
 
-                    string filenamePrefix = "";
+                string filenamePrefix = "";
 
-                    if (si.InOneFolder())
-                    {   // We have multiple seasons in the same folder
-                        // We need to do slightly more work to come up with the filenamePrefix
+                if (si.InOneFolder())
+                {   // We have multiple seasons in the same folder
+                    // We need to do slightly more work to come up with the filenamePrefix
 
-                        filenamePrefix = "season";
-
-                        if (snum == 0) filenamePrefix += "-specials";
-                        else if (snum < 10) filenamePrefix += "0" + snum;
-                        else filenamePrefix += snum;
-
-                        filenamePrefix += "-";
-                    }
-                    FileInfo posterJpg = FileHelper.FileInFolder(folder, filenamePrefix + "poster.jpg");
-                    if (forceRefresh || !posterJpg.Exists)
-                    {
-                        string path = si.TheSeries().GetSeasonBannerPath(snum);
-                        if (!string.IsNullOrEmpty(path))
-                            theActionList.Add(new ActionDownloadImage(si, null, posterJpg, path));
-                    }
-
-                    FileInfo bannerJpg = FileHelper.FileInFolder(folder, filenamePrefix + "banner.jpg");
-                    if (forceRefresh || !bannerJpg.Exists)
-                    {
-                        string path = si.TheSeries().GetSeasonWideBannerPath(snum);
-                        if (!string.IsNullOrEmpty(path))
-                            theActionList.Add(new ActionDownloadImage(si, null, bannerJpg, path));
-                    }
-                }
-                if (TVSettings.Instance.DownloadEdenImages())
-                {
-                    string filenamePrefix = "season";
+                    filenamePrefix = "season";
 
                     if (snum == 0) filenamePrefix += "-specials";
                     else if (snum < 10) filenamePrefix += "0" + snum;
                     else filenamePrefix += snum;
 
-                    FileInfo posterTbn = FileHelper.FileInFolder(si.AutoAddFolderBase, filenamePrefix + ".tbn");
-                    if (forceRefresh || !posterTbn.Exists)
-                    {
-                        string path = si.TheSeries().GetSeasonBannerPath(snum);
-                        if (!string.IsNullOrEmpty(path))
-                            theActionList.Add(new ActionDownloadImage(si, null, posterTbn, path));
-                    }
+                    filenamePrefix += "-";
+                }
+                FileInfo posterJpg = FileHelper.FileInFolder(folder, filenamePrefix + "poster.jpg");
+                if (forceRefresh || !posterJpg.Exists)
+                {
+                    string path = si.TheSeries().GetSeasonBannerPath(snum);
+                    if (!string.IsNullOrEmpty(path))
+                        theActionList.Add(new ActionDownloadImage(si, null, posterJpg, path));
+                }
+
+                FileInfo bannerJpg = FileHelper.FileInFolder(folder, filenamePrefix + "banner.jpg");
+                if (forceRefresh || !bannerJpg.Exists)
+                {
+                    string path = si.TheSeries().GetSeasonWideBannerPath(snum);
+                    if (!string.IsNullOrEmpty(path))
+                        theActionList.Add(new ActionDownloadImage(si, null, bannerJpg, path));
                 }
                 return theActionList;
             }
