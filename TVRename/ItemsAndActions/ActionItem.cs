@@ -87,12 +87,12 @@ namespace TVRename
         public string ErrorText { get; protected set; } // Human-readable error message, for when Error is true
         public abstract string ProgressText { get; } // shortish text to display to user while task is running
 
-        protected double Percent;
+        private double percent;
 
         public double PercentDone // 0.0 to 100.0
         {
-            get => Done ? 100.0 : Percent;
-            set => Percent = value;
+            get => Done ? 100.0 : percent;
+            protected set => percent = value;
         }
 
         public abstract long

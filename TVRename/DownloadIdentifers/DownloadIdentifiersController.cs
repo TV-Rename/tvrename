@@ -15,6 +15,7 @@ namespace TVRename
                 new DownloadFanartJpg(),
                 new DownloadMede8erMetaData(),
                 new DownloadpyTivoMetaData(),
+                new DownloadWdtvMetaData(),
                 new DownloadSeriesJpg(),
                 new DownloadKodiMetaData(),
                 new DownloadKodiImages(),

@@ -244,7 +244,11 @@ namespace TVRename
             string episodeDescriptor = CustomEpisodeName.NameForNoExt(ep, CustomEpisodeName.OldNStyle(6)); // may need to include (si.DVDOrder && snum == 0)? ep.Name:
             string writersHtml = string.IsNullOrWhiteSpace(ep.Writer) ? string.Empty : "<b>Writers:</b> " + string.Join(", ", ep.Writers);
             string directorsHtml = string.IsNullOrWhiteSpace(ep.EpisodeDirector) ? string.Empty : "<b>Directors:</b> " + string.Join(", ", ep.Directors);
-            string possibleBreak = (string.IsNullOrWhiteSpace(writersHtml) || string.IsNullOrWhiteSpace(directorsHtml))
+            string guestHtml = string.IsNullOrWhiteSpace(ep.EpisodeGuestStars) ? string.Empty : "<b>Guest Stars:</b> " + string.Join(", ", ep.GuestStars);
+            string possibleBreak1 = (string.IsNullOrWhiteSpace(writersHtml) || string.IsNullOrWhiteSpace(directorsHtml))
+                ? string.Empty
+                : "<br />";
+            string possibleBreak2 = ((string.IsNullOrWhiteSpace(writersHtml)&&string.IsNullOrWhiteSpace(directorsHtml)) || string.IsNullOrWhiteSpace(guestHtml))
                 ? string.Empty
                 : "<br />";
 
@@ -279,8 +283,9 @@ namespace TVRename
                     </div>
 				   <div>
                     <blockquote>
-                     {writersHtml}{possibleBreak}
-                     {directorsHtml}
+                     {writersHtml}{possibleBreak1}
+                     {directorsHtml}{possibleBreak2}
+                     {guestHtml}
                     </blockquote>
                    </div>
                    <div><p class=""lead"">{ep.HiddenOverview()}</p></div>
@@ -355,7 +360,7 @@ namespace TVRename
             body += "<h2>Overview</h2>" + ser.GetOverview(); //get overview in either format
 
             bool first = true;
-            foreach (string aa in ser.GetActors())
+            foreach (string aa in ser.GetActorNames())
             {
                 if (string.IsNullOrEmpty(aa)) continue;
                 if (!first)
@@ -626,9 +631,10 @@ namespace TVRename
                 : "";
         }
 
-        private static string ActorLinkHtml(string actor)
+        private static string ActorLinkHtml(Actor actor)
         {
-            return $@"<a href=""http://www.imdb.com/find?s=nm&q={actor}"">{actor}</a>";
+            string asText = string.IsNullOrWhiteSpace(actor.ActorRole) ? string.Empty : (" as " + actor.ActorRole);
+            return $@"<a href=""http://www.imdb.com/find?s=nm&q={actor.ActorName}"">{actor.ActorName}</a>{asText}";
         }
 
         internal static string StarRating(string rating)

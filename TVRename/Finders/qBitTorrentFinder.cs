@@ -1,6 +1,9 @@
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Sockets;
 
 namespace TVRename
 {
@@ -28,25 +31,76 @@ namespace TVRename
 
             string url = $"http://{host}:{port}/query/";
 
-            JToken settings = JsonHelper.ObtainToken(url + "preferences");
-            JArray currentDownloads = JsonHelper.ObtainArray(url + "torrents?filter=all");
-
-            foreach (JToken torrent in currentDownloads.Children())
+            try
             {
-                JArray stuff2 = JsonHelper.ObtainArray(url + "propertiesFiles/" + torrent["hash"]);
+                JToken settings = JsonHelper.ObtainToken(url + "preferences");
+                JArray currentDownloads = JsonHelper.ObtainArray(url + "torrents?filter=all");
 
-                foreach (JToken file in stuff2.Children())
+                foreach (JToken torrent in currentDownloads.Children())
                 {
-                    ret.Add(new TorrentEntry(torrent["name"].ToString(), settings["save_path"] + file["name"].ToString(), (int)(100 * file["progress"].ToObject<float>())));
-                }
+                    JArray stuff2 = JsonHelper.ObtainArray(url + "propertiesFiles/" + torrent["hash"]);
 
-                if (!stuff2.Children().Any())
-                {
-                    ret.Add(new TorrentEntry(torrent["name"].ToString(), settings["save_path"] + torrent["name"].ToString() + TVSettings.Instance.VideoExtensionsArray[0], 0));
+                    foreach (JToken file in stuff2.Children())
+                    {
+                        ret.Add(new TorrentEntry(torrent["name"].ToString(),
+                            settings["save_path"] + file["name"].ToString(),
+                            (int) (100 * file["progress"].ToObject<float>())));
+                    }
+
+                    if (!stuff2.Children().Any())
+                    {
+                        ret.Add(new TorrentEntry(torrent["name"].ToString(),
+                            settings["save_path"] + torrent["name"].ToString() +
+                            TVSettings.Instance.VideoExtensionsArray[0], 0));
+                    }
                 }
+            }
+            catch (WebException e)
+            {
+                Logger.Warn($"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
 
             return ret;
+        }
+
+        internal static async void StartTorrentDownload(string torrentURL)
+        {
+            //throw new System.NotImplementedException();
+
+            string host = TVSettings.Instance.qBitTorrentHost;
+            string port = TVSettings.Instance.qBitTorrentPort;
+            if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
+            {
+                Logger.Error(
+                    $"Could not download {torrentURL} via qBitTorrent as settings are not entered for host and port");
+                return;
+            }
+
+            string url = $"http://{host}:{port}/command/download";
+
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    Dictionary<string, string> values = new Dictionary<string, string> {{"urls", torrentURL}};
+                    FormUrlEncodedContent content = new FormUrlEncodedContent(values);
+                    HttpResponseMessage response = client.PostAsync(url, content).Result;
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        Logger.Warn(
+                            $"Tried to download {torrentURL} from qBitTorrent via {url}. Got following response {response.StatusCode}");
+                    }
+                    else
+                    {
+                        Logger.Info(
+                            $"Started download of {torrentURL} via qBitTorrent using {url}. Got following response {response.StatusCode}");
+                    }
+                }
+            }
+            catch (WebException e)
+            {
+                Logger.Warn($"Could not connect to {url} to downlaod {torrentURL}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+            }
         }
     }
 }

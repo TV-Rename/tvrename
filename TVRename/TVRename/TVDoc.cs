@@ -44,6 +44,7 @@ namespace TVRename
         private ScanProgress scanProgDlg;
         private bool mDirty;
 
+        // ReSharper disable once RedundantDefaultMemberInitializer
         public bool CurrentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
@@ -171,7 +172,7 @@ namespace TVRename
 
         public static Searchers GetSearchers() => TVSettings.Instance.TheSearchers;
 
-        public void TidyTVDB()
+        public void TidyTvdb()
         {
             TheTVDB.Instance.Tidy(Library.Values);
         }
@@ -277,6 +278,8 @@ namespace TVRename
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoreFolders, writer, "IgnoreFolders", "Folder");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.DownloadFolders, writer, "FinderSearchFolders",
                     "Folder");
+                XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints, writer, "IgnoredAutoAddHints",
+                    "Hint");
 
                 writer.WriteStartElement("IgnoreItems");
                 foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
@@ -363,6 +366,9 @@ namespace TVRename
                         else if (reader.Name == "FinderSearchFolders")
                             TVSettings.Instance.DownloadFolders =
                                 XmlHelper.ReadStringsFromXml(reader, "FinderSearchFolders", "Folder");
+                        else if (reader.Name == "IgnoredAutoAddHints")
+                            TVSettings.Instance.IgnoredAutoAddHints =
+                                XmlHelper.ReadStringsFromXml(reader, "IgnoredAutoAddHints", "Hint");
                         else if (reader.Name == "IgnoreItems")
                         {
                             XmlReader r2 = reader.ReadSubtree();
@@ -767,6 +773,7 @@ namespace TVRename
                         string folder = folderExists;
 
                         // generate new filename info
+                        // ReSharper disable once RedundantAssignment
                         bool goAgain = false;
                         DirectoryInfo di = null;
                         bool firstAttempt = true;
@@ -781,85 +788,83 @@ namespace TVRename
                                 }
                                 catch
                                 {
-                                    goAgain = false;
                                     break;
                                 }
                             }
 
-                            if ((di == null) || (!di.Exists))
+                            if ((di != null) && (di.Exists)) continue;
+
+                            string sn = si.ShowName;
+                            string text = snum + " of " + si.MaxSeason();
+                            string theFolder = folder;
+                            string otherFolder = null;
+
+                            FaResult whatToDo = FaResult.kfaNotSet;
+
+                            if (Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create)
+                                whatToDo = FaResult.kfaCreate;
+                            else if (Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.ignore)
+                                whatToDo = FaResult.kfaIgnoreOnce;
+
+                            if (Args.Hide && (whatToDo == FaResult.kfaNotSet))
+                                whatToDo = FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
+
+                            if (TVSettings.Instance.AutoCreateFolders && firstAttempt)
                             {
-                                string sn = si.ShowName;
-                                string text = snum + " of " + si.MaxSeason();
-                                string theFolder = folder;
-                                string otherFolder = null;
+                                whatToDo = FaResult.kfaCreate;
+                                firstAttempt = false;
+                            }
 
-                                FaResult whatToDo = FaResult.kfaNotSet;
+                            if (whatToDo == FaResult.kfaNotSet)
+                            {
+                                // no command line guidance, so ask the user
+                                MissingFolderAction mfa = new MissingFolderAction(sn, text, theFolder);
+                                mfa.ShowDialog();
+                                whatToDo = mfa.Result;
+                                otherFolder = mfa.FolderName;
+                            }
 
-                                if (Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create)
-                                    whatToDo = FaResult.kfaCreate;
-                                else if (Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.ignore)
-                                    whatToDo = FaResult.kfaIgnoreOnce;
-
-                                if (Args.Hide && (whatToDo == FaResult.kfaNotSet))
-                                    whatToDo = FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
-
-                                if (TVSettings.Instance.AutoCreateFolders && firstAttempt)
+                            if (whatToDo == FaResult.kfaCancel)
+                            {
+                                return false;
+                            }
+                            else if (whatToDo == FaResult.kfaCreate)
+                            {
+                                try
                                 {
-                                    whatToDo = FaResult.kfaCreate;
-                                    firstAttempt = false;
+                                    Logger.Info("Creating directory as it is missing: {0}", folder);
+                                    Directory.CreateDirectory(folder);
+                                }
+                                catch (Exception ioe)
+                                {
+                                    Logger.Info("Could not directory: {0}", folder);
+                                    Logger.Info(ioe);
                                 }
 
-                                if (whatToDo == FaResult.kfaNotSet)
+                                goAgain = true;
+                            }
+                            else if (whatToDo == FaResult.kfaIgnoreAlways)
+                            {
+                                si.IgnoreSeasons.Add(snum);
+                                SetDirty();
+                                break;
+                            }
+                            else if (whatToDo == FaResult.kfaIgnoreOnce)
+                                break;
+                            else if (whatToDo == FaResult.kfaRetry)
+                                goAgain = true;
+                            else if (whatToDo == FaResult.kfaDifferentFolder)
+                            {
+                                folder = otherFolder;
+                                di = new DirectoryInfo(folder);
+                                goAgain = !di.Exists;
+                                if (di.Exists && (si.AutoFolderNameForSeason(snum).ToLower() != folder.ToLower()))
                                 {
-                                    // no command line guidance, so ask the user
-                                    MissingFolderAction mfa = new MissingFolderAction(sn, text, theFolder);
-                                    mfa.ShowDialog();
-                                    whatToDo = mfa.Result;
-                                    otherFolder = mfa.FolderName;
-                                }
+                                    if (!si.ManualFolderLocations.ContainsKey(snum))
+                                        si.ManualFolderLocations[snum] = new List<string>();
 
-                                if (whatToDo == FaResult.kfaCancel)
-                                {
-                                    return false;
-                                }
-                                else if (whatToDo == FaResult.kfaCreate)
-                                {
-                                    try
-                                    {
-                                        Logger.Info("Creating directory as it is missing: {0}", folder);
-                                        Directory.CreateDirectory(folder);
-                                    }
-                                    catch (Exception ioe)
-                                    {
-                                        Logger.Info("Could not directory: {0}", folder);
-                                        Logger.Info(ioe);
-                                    }
-
-                                    goAgain = true;
-                                }
-                                else if (whatToDo == FaResult.kfaIgnoreAlways)
-                                {
-                                    si.IgnoreSeasons.Add(snum);
+                                    si.ManualFolderLocations[snum].Add(folder);
                                     SetDirty();
-                                    break;
-                                }
-                                else if (whatToDo == FaResult.kfaIgnoreOnce)
-                                    break;
-                                else if (whatToDo == FaResult.kfaRetry)
-                                    goAgain = true;
-                                else if (whatToDo == FaResult.kfaDifferentFolder)
-                                {
-                                    folder = otherFolder;
-                                    di = new DirectoryInfo(folder);
-                                    goAgain = !di.Exists;
-                                    if (di.Exists && (si.AutoFolderNameForSeason(snum).ToLower() != folder.ToLower()))
-                                    {
-                                        if (!si.ManualFolderLocations.ContainsKey(snum))
-                                            si.ManualFolderLocations[snum] = new List<string>();
-
-                                        si.ManualFolderLocations[snum].Add(folder);
-                                        SetDirty();
-                                    }
                                 }
                             }
                         } while (goAgain);
@@ -1561,7 +1566,6 @@ namespace TVRename
             {
                 Logger.Fatal(e, "Unhandled Exception in ScanWorker");
                 scanProgDlg?.Done();
-                return;
             }
         }
 

@@ -43,6 +43,8 @@ namespace TVRename
                 {
                     try
                     {
+                        if (!gitHubReleaseJson["assets"].HasValues) continue; //we have no files for this release, so ignore
+
                         DateTime.TryParse(gitHubReleaseJson["published_at"].ToString(), out DateTime releaseDate);
                         UpdateVersion testVersion = new UpdateVersion(gitHubReleaseJson["tag_name"].ToString(),
                             UpdateVersion.VersionType.semantic)

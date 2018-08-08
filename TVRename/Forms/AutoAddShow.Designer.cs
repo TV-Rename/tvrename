@@ -35,11 +35,13 @@ namespace TVRename
             this.pnlCF = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.lblDirectoryName = new System.Windows.Forms.Label();
+            this.btnIgnoreFile = new System.Windows.Forms.Button();
+            this.btnSkipAutoAdd = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cbDirectory
             // 
-            this.cbDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.cbDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbDirectory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbDirectory.FormattingEnabled = true;
@@ -73,8 +75,8 @@ namespace TVRename
             // 
             // pnlCF
             // 
-            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.pnlCF.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlCF.Location = new System.Drawing.Point(10, 10);
             this.pnlCF.Name = "pnlCF";
@@ -100,6 +102,30 @@ namespace TVRename
             this.lblDirectoryName.Size = new System.Drawing.Size(0, 13);
             this.lblDirectoryName.TabIndex = 5;
             // 
+            // btnIgnoreFile
+            // 
+            this.btnIgnoreFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnIgnoreFile.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnIgnoreFile.Location = new System.Drawing.Point(185, 350);
+            this.btnIgnoreFile.Name = "btnIgnoreFile";
+            this.btnIgnoreFile.Size = new System.Drawing.Size(105, 23);
+            this.btnIgnoreFile.TabIndex = 6;
+            this.btnIgnoreFile.Text = "Ignore File Forever";
+            this.btnIgnoreFile.UseVisualStyleBackColor = true;
+            this.btnIgnoreFile.Click += new System.EventHandler(this.btnIgnoreFile_Click);
+            // 
+            // btnSkipAutoAdd
+            // 
+            this.btnSkipAutoAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSkipAutoAdd.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnSkipAutoAdd.Location = new System.Drawing.Point(89, 350);
+            this.btnSkipAutoAdd.Name = "btnSkipAutoAdd";
+            this.btnSkipAutoAdd.Size = new System.Drawing.Size(90, 23);
+            this.btnSkipAutoAdd.TabIndex = 7;
+            this.btnSkipAutoAdd.Text = "Skip Auto Add";
+            this.btnSkipAutoAdd.UseVisualStyleBackColor = true;
+            this.btnSkipAutoAdd.Click += new System.EventHandler(this.btnSkipAutoAdd_Click);
+            // 
             // AutoAddShow
             // 
             this.AcceptButton = this.btnOK;
@@ -107,6 +133,8 @@ namespace TVRename
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(479, 385);
+            this.Controls.Add(this.btnSkipAutoAdd);
+            this.Controls.Add(this.btnIgnoreFile);
             this.Controls.Add(this.lblDirectoryName);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pnlCF);
@@ -121,6 +149,7 @@ namespace TVRename
             this.Text = "New Show Detected...";
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion
@@ -131,5 +160,7 @@ namespace TVRename
         private System.Windows.Forms.Panel pnlCF;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblDirectoryName;
+        private System.Windows.Forms.Button btnIgnoreFile;
+        private System.Windows.Forms.Button btnSkipAutoAdd;
     }
 }

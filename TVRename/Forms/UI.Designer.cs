@@ -1474,6 +1474,8 @@ namespace TVRename
             this.btnUpdateAvailable.TabIndex = 10;
             this.btnUpdateAvailable.Text = "Update Available...";
             this.btnUpdateAvailable.UseVisualStyleBackColor = false;
+            this.btnUpdateAvailable.Visible = false;
+
             this.btnUpdateAvailable.Click += new System.EventHandler(this.btnUpdateAvailable_Click);
             // 
             // UI

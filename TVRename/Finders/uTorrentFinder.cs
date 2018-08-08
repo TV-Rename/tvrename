@@ -24,5 +24,10 @@ namespace TVRename
 
             SearchForAppropriateDownloads(prog, startpct, totPct, downloading);
         }
+
+        internal static void StartTorrentDownload(string torrentFileName, string directoryName = "")
+        {
+            System.Diagnostics.Process.Start(TVSettings.Instance.uTorrentPath, "/directory \"" + (new FileInfo(directoryName).Directory.FullName) + "\" \"" + torrentFileName + "\"");
+        }
     }
 }

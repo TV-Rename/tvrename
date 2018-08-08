@@ -60,7 +60,7 @@ namespace TVRename
                     <div class=""col-md-4 text-right""><h6>{yearRange} ({si.TheSeries().GetStatus()})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
                 </div>
             <div><blockquote>{si.TheSeries().GetOverview()}</blockquote></div>
-            <div><blockquote>{string.Join(", ", si.TheSeries().GetActors())}</blockquote></div>
+            <div><blockquote>{string.Join(", ", si.TheSeries().GetActorNames())}</blockquote></div>
             <div class=""row align-items-bottom flex-grow-1"">
                 <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}</div>
                 <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().GetContentRating()}<br>{si.TheSeries().GetNetwork()}</div>

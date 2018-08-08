@@ -50,9 +50,9 @@ namespace TVRename
             foreach (ShowItem ser in mDoc.Library.Shows)
             {
                 SeriesInfo si = TheTVDB.Instance.GetSeries(ser.TvdbCode);
-                foreach (string act in si.GetActors())
+                foreach (Actor act in si.GetActors())
                 {
-                    string aa = act.Trim();
+                    string aa = act.ActorName.Trim();
                     if (!string.IsNullOrEmpty(aa))
                         theData.Set(si.Name, aa, true);
                 }

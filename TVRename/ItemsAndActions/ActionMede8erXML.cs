@@ -62,17 +62,6 @@ namespace TVRename
                         int intSiteRating = (int) siteRating;
                         if (intSiteRating > 0) XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
 
-//                        writer.WriteStartElement("rating");
-//                    string rating = (this.Episode.EpisodeRating);
-//                    if (!string.IsNullOrEmpty(rating))
-//                    {
-//                        rating = rating.Trim('.');
-//                        rating = rating.Replace(".", "");
-//                        writer.WriteValue(rating);
-//                    }
-//
-//                    writer.WriteEndElement(); // rating
-
                         //Get the Series OverView
                         string sov = Episode.Show.TheSeries().GetOverview();
                         if (!string.IsNullOrEmpty(sov))
@@ -136,7 +125,7 @@ namespace TVRename
                         // actors...
                         if (Episode.Show != null)
                         {
-                            foreach (string aa in Episode.Show.TheSeries().GetActors())
+                            foreach (string aa in Episode.Show.TheSeries().GetActorNames())
                             {
                                 if (string.IsNullOrEmpty(aa))
                                     continue;
@@ -176,20 +165,7 @@ namespace TVRename
 
                         int intSiteRating = (int) siteRating;
                         if (intSiteRating > 0) XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
-
-                        /*
-                        writer.WriteStartElement("rating");
-                        string rating = this.SI.TheSeries().GetSiteRating();
-                        if (!string.IsNullOrEmpty(rating))
-                        {
-                            rating = rating.Trim('.');
-                            rating = rating.Replace(".", "");
-                            writer.WriteValue(rating);
-                        }
-    
-                        writer.WriteEndElement(); // rating
-                        */
-
+                        
                         WriteInfo(writer, SelectedShow.TheSeries().GetStatus(), "status");
 
                         WriteInfo(writer, SelectedShow.TheSeries().GetContentRating(), "mpaa");
@@ -209,7 +185,7 @@ namespace TVRename
 
                         // actors...
 
-                        foreach (string aa in SelectedShow.TheSeries().GetActors())
+                        foreach (string aa in SelectedShow.TheSeries().GetActorNames())
                         {
                             if (string.IsNullOrEmpty(aa))
                                 continue;

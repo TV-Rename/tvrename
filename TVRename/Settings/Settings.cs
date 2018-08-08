@@ -263,6 +263,7 @@ namespace TVRename
         public List<string> LibraryFolders;
         public List<string> IgnoreFolders;
         public List<string> DownloadFolders;
+        public List<string> IgnoredAutoAddHints;
         public List<IgnoreItem> Ignore;
         public bool AutoSelectShowInMyShows = true;
         public bool AutoCreateFolders = false;
@@ -314,6 +315,7 @@ namespace TVRename
         public bool NFOEpisodes = false;
         public bool KODIImages = false;
         public bool pyTivoMeta = false;
+        public bool wdLiveTvMeta = false;
         public bool pyTivoMetaSubFolder = false;
         public CustomEpisodeName NamingStyle = new CustomEpisodeName();
         public bool NotificationAreaIcon = false;
@@ -406,7 +408,7 @@ namespace TVRename
         public void load(XmlReader reader)
         {
             SetToDefaults();
-
+            int ignoredInt;
             reader.Read();
             if (reader.Name != "Settings")
                 return; // bail out
@@ -580,6 +582,8 @@ namespace TVRename
                     KODIImages = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMeta")
                     pyTivoMeta = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "wdLiveTvMeta")
+                    wdLiveTvMeta = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMetaSubFolder")
                     pyTivoMetaSubFolder = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpg")
@@ -589,7 +593,7 @@ namespace TVRename
                 else if (reader.Name == "MonitoredFoldersScanType")
                     MonitoredFoldersScanType = (ScanType)reader.ReadElementContentAsInt();
                 else if ((reader.Name == "SelectedXBMCType") || (reader.Name == "SelectedKODIType"))
-                    int ignored = reader.ReadElementContentAsInt(); //Ignored as this settign was removed from 2.5 onwards
+                    ignoredInt = reader.ReadElementContentAsInt(); //Ignored as this settign was removed from 2.5 onwards
                 else if (reader.Name == "RenameCheck")
                     RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "PreventMove")
@@ -819,6 +823,7 @@ namespace TVRename
             DownloadFolders = new List<string>();
             IgnoreFolders = new List<string>();
             LibraryFolders = new List<string>();
+            IgnoredAutoAddHints = new List<string>();
 
             VideoExtensionsString =
                 ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp";
@@ -919,6 +924,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"KODIImages",KODIImages);
             XmlHelper.WriteElementToXml(writer,"pyTivoMeta",pyTivoMeta);
             XmlHelper.WriteElementToXml(writer,"pyTivoMetaSubFolder",pyTivoMetaSubFolder);
+            XmlHelper.WriteElementToXml(writer,"wdLiveTvMeta", wdLiveTvMeta);
             XmlHelper.WriteElementToXml(writer,"FolderJpg",FolderJpg);
             XmlHelper.WriteElementToXml(writer,"FolderJpgIs",(int) FolderJpgIs);
             XmlHelper.WriteElementToXml(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);

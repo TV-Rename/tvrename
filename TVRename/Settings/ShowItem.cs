@@ -246,7 +246,7 @@ namespace TVRename
                             if ((reader.Name == "Folder") && reader.IsStartElement())
                             {
                                 string ff = reader.GetAttribute("Location");
-                                if (AutoFolderNameForSeason(GetSeason(snum)) != ff)
+                                if (AutoFolderNameForSeason(snum) != ff)
                                     ManualFolderLocations[snum].Add(ff);
                             }
                             reader.Read();
@@ -464,7 +464,9 @@ namespace TVRename
         {
             string r = AutoAddFolderBase;
             if (string.IsNullOrEmpty(r))
-                return "";
+                return string.Empty;
+
+            if (s == null) return string.Empty;
 
             if (!r.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
                 r += System.IO.Path.DirectorySeparatorChar.ToString();
@@ -667,12 +669,13 @@ namespace TVRename
         {
             string ones = one.ShowName; // + " " +one->SeasonNumber.ToString("D3");
             string twos = two.ShowName; // + " " +two->SeasonNumber.ToString("D3");
-            return String.Compare(ones, twos, StringComparison.Ordinal);
+            return string.Compare(ones, twos, StringComparison.Ordinal);
         }
 
         public Season GetSeason(int snum)
         {
-            return AppropriateSeasons()[snum];
+            Dictionary<int, Season> ssn = AppropriateSeasons();
+            return ssn.ContainsKey(snum) ? ssn[snum] : null;
         }
 
         public void AddSeasonRule(int snum, ShowRule sr)

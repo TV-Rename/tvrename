@@ -50,7 +50,7 @@ namespace TVRename
 
                     WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
                     WriteEntries(writer, "vWriter", Episode.Writer);
-                    WriteEntries(writer, "vActor", string.Join("|", Episode.Show.TheSeries().GetActors()));
+                    WriteEntries(writer, "vActor", string.Join("|", Episode.Show.TheSeries().GetActorNames()));
                     WriteEntries(writer, "vGuestStar",
                         Episode.EpisodeGuestStars); // not worring about actors being repeated
                     WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.TheSeries().GetGenres()));
