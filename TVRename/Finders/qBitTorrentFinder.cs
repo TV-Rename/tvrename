@@ -101,7 +101,6 @@ namespace TVRename
             {
                 Logger.Warn($"Could not connect to {url} to downlaod {torrentURL}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
-
         }
     }
 }
