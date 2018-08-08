@@ -187,7 +187,7 @@ namespace TVRename
                 return;
 
             SeriesInfo ser = s.TheSeries;
-            string seasonLink = TheTVDB.Instance.WebsiteUrl(ser.TVDBCode, s.SeasonId, false);
+            string seasonLink = TheTVDB.Instance.WebsiteUrl(ser.TvdbCode, s.SeasonId, false);
             string showLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
             string urlFilename = HttpUtility.UrlEncode(si.GetBestFolderLocationToOpen(s));
 
@@ -451,7 +451,7 @@ namespace TVRename
             string seasText = SeasonName(si, snum);
 
             if ((eis.Count > 0) && (eis[0].SeasonId > 0))
-                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(ser.TVDBCode, eis[0].SeasonId, false) + "\">" +
+                seasText = " - <A HREF=\"" + TheTVDB.Instance.WebsiteUrl(ser.TvdbCode, eis[0].SeasonId, false) + "\">" +
                            seasText + "</a>";
             else
                 seasText = " - " + seasText;

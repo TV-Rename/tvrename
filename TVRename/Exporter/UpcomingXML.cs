@@ -34,7 +34,7 @@ namespace TVRename
                     {
                         
                         writer.WriteStartElement("item");
-                        XmlHelper.WriteElementToXml(writer,"id",ei.TheSeries.TVDBCode);
+                        XmlHelper.WriteElementToXml(writer,"id",ei.TheSeries.TvdbCode);
                         XmlHelper.WriteElementToXml(writer,"SeriesName",ei.TheSeries.Name);
                         XmlHelper.WriteElementToXml(writer,"SeasonNumber",Helpers.Pad(ei.AppropriateSeasonNumber));
                         XmlHelper.WriteElementToXml(writer, "EpisodeNumber", Helpers.Pad(ei.AppropriateEpNum));

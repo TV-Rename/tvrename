@@ -157,7 +157,7 @@ namespace TVRename
 
             if (ser != null)
             {
-                foreach (int snum in si.DvdOrder? ser.DVDSeasons.Keys: ser.AiredSeasons.Keys)
+                foreach (int snum in si.DvdOrder? ser.DvdSeasons.Keys: ser.AiredSeasons.Keys)
                 {
                     ShowSummaryData.ShowSummarySeasonData seasonData = getSeasonDetails(si, ser, snum);
                     showSummary.AddSeason(seasonData);
@@ -175,7 +175,7 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             Season season = null;
 
-            Dictionary<int, Season> seasons = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasons = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
 
             if ((snum >= 0) && (seasons.ContainsKey(snum)))
             {
@@ -259,7 +259,7 @@ namespace TVRename
             if (seas == null)
                 return;
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TVDBCode, seas.SeasonId, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TvdbCode, seas.SeasonId, false));
         }
 
         private void TVDBFor(ShowItem si)

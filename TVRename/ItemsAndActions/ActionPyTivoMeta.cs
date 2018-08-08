@@ -103,25 +103,5 @@ namespace TVRename
         }
 
         #endregion
-
-        #region Item Members
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
-
-                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(Episode.NumsAsString());
-                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                lvi.SubItems.Add(Where.DirectoryName);
-                lvi.SubItems.Add(Where.Name);
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
-        #endregion
     }
 }

@@ -171,7 +171,7 @@ namespace TVRename
                         WriteInfo(writer, SelectedShow.TheSeries().GetContentRating(), "mpaa");
                         WriteInfo(writer, SelectedShow.TheSeries().GetImdb(), "id", "moviedb", "imdb");
 
-                        XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries().TVDBCode);
+                        XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries().TvdbCode);
 
                         string rt = SelectedShow.TheSeries().GetRuntime();
                         if (!string.IsNullOrEmpty(rt))

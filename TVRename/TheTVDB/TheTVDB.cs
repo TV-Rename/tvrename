@@ -854,7 +854,7 @@ namespace TVRename
                 {
                     kvp.Value.Dirty = true;
                     kvp.Value.AiredSeasons.Clear();
-                    kvp.Value.DVDSeasons.Clear();
+                    kvp.Value.DvdSeasons.Clear();
                     Logger.Info("Planning to download all of {0} as {1}% of the episodes need to be updated",
                         kvp.Value.Name, percentDirty);
                 }
@@ -1085,10 +1085,10 @@ namespace TVRename
                             // first).
 
                             SeriesInfo si = new SeriesInfo(r.ReadSubtree());
-                            if (series.ContainsKey(si.TVDBCode))
-                                series[si.TVDBCode].Merge(si, GetLanguageId());
+                            if (series.ContainsKey(si.TvdbCode))
+                                series[si.TvdbCode].Merge(si, GetLanguageId());
                             else
-                                series[si.TVDBCode] = si;
+                                series[si.TvdbCode] = si;
 
                             r.Read();
                         }
@@ -1229,10 +1229,10 @@ namespace TVRename
                 si = new SeriesInfo(seriesData, GetLanguageId());
             }
 
-            if (series.ContainsKey(si.TVDBCode))
-                series[si.TVDBCode].Merge(si, GetLanguageId());
+            if (series.ContainsKey(si.TvdbCode))
+                series[si.TvdbCode].Merge(si, GetLanguageId());
             else
-                series[si.TVDBCode] = si;
+                series[si.TvdbCode] = si;
 
             //Now deal with obtaining any episodes for the series (we then group them into seasons)
             //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
@@ -1410,7 +1410,7 @@ namespace TVRename
                     foreach (JToken jToken in response["data"])
                     {
                         JObject bannerData = (JObject) jToken;
-                        Banner b = new Banner(si.TVDBCode, bannerData, GetLanguageId());
+                        Banner b = new Banner(si.TvdbCode, bannerData, GetLanguageId());
                         if (!series.ContainsKey(b.SeriesId))
                             throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
 
@@ -1432,7 +1432,7 @@ namespace TVRename
                 {
                     foreach (JObject bannerData in response["data"])
                     {
-                        Banner b = new Banner(si.TVDBCode, bannerData, GetDefaultLanguageId());
+                        Banner b = new Banner(si.TvdbCode, bannerData, GetDefaultLanguageId());
                         if (!series.ContainsKey(b.SeriesId))
                             throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
 
@@ -1448,7 +1448,7 @@ namespace TVRename
                 }
             }
 
-            series[si.TVDBCode].BannersLoaded = true;
+            series[si.TvdbCode].BannersLoaded = true;
 
             //Get the actors too then well need another call for that
             try
@@ -1456,7 +1456,7 @@ namespace TVRename
                 JObject jsonActorsResponse = HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/actors",
                     null, tvDbTokenProvider.GetToken());
 
-                series[si.TVDBCode].ClearActors();
+                series[si.TvdbCode].ClearActors();
                 foreach (JToken jsonActor in jsonActorsResponse["data"])
                 {
                     int actorId = (int)jsonActor["id"];
@@ -1466,13 +1466,13 @@ namespace TVRename
                     int actorSeriesId = (int)jsonActor["seriesId"];
                     int actorSortOrder = (int)jsonActor["sortOrder"];
 
-                    series[si.TVDBCode].AddActor(new Actor(actorId, actorImage, actorName, actorRole, actorSeriesId,
+                    series[si.TvdbCode].AddActor(new Actor(actorId, actorImage, actorName, actorRole, actorSeriesId,
                         actorSortOrder));
                 }
             }
             catch (WebException ex)
             {
-                Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TVDBCode].Name);
+                Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
                 LastError = ex.Message;
             }
 
@@ -1727,10 +1727,10 @@ namespace TVRename
                     // first).
 
                     SeriesInfo si = new SeriesInfo(seriesResponse, languageId);
-                    if (series.ContainsKey(si.TVDBCode))
-                        series[si.TVDBCode].Merge(si, languageId);
+                    if (series.ContainsKey(si.TvdbCode))
+                        series[si.TvdbCode].Merge(si, languageId);
                     else
-                        series[si.TVDBCode] = si;
+                        series[si.TvdbCode] = si;
                 }
             }
             catch (InvalidCastException ex)

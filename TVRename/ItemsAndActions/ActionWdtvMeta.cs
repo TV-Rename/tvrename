@@ -41,10 +41,10 @@ namespace TVRename
 
                 using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
                 {
-
                     writer.WriteStartElement("details");
                     XmlHelper.WriteElementToXml(writer, "title", TVSettings.Instance.NamingStyle.NameFor(Episode));
                     XmlHelper.WriteElementToXml(writer, "mpaa", Episode.TheSeries.GetContentRating());
+
                     if (Episode.FirstAired.HasValue)
                     {
                         XmlHelper.WriteElementToXml(writer, "year", Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
@@ -84,11 +84,8 @@ namespace TVRename
                     XmlHelper.WriteElementToXml(writer, "thumbnail", TheTVDB.GetImageURL(Episode.Filename));
                     XmlHelper.WriteElementToXml(writer, "banner", TheTVDB.GetImageURL(Episode.AppropriateSeason.GetWideBannerPath()));
                     XmlHelper.WriteElementToXml(writer, "backdrop", TheTVDB.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
-
                     writer.WriteEndElement(); // details
-
                 }
-
                 Done = true;
                 return true;
             }
@@ -105,10 +102,7 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
-        {
-            return (o is ActionWdtvMeta meta) && (meta.Where == Where);
-        }
+        public override bool SameAs(Item o) => (o is ActionWdtvMeta meta) && (meta.Where == Where);
 
         public override int Compare(Item o)
         {
@@ -120,29 +114,6 @@ namespace TVRename
                 return -1;
             return string.Compare((Where.FullName + Episode.Name), nfo.Where.FullName + nfo.Episode.Name, StringComparison.Ordinal);
         }
-
-        #endregion
-
-        #region Item Members
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
-
-                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(Episode.NumsAsString());
-                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                lvi.SubItems.Add(Where.DirectoryName);
-                lvi.SubItems.Add(Where.Name);
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
         #endregion
     }
 }
-
-

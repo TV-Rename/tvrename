@@ -140,7 +140,7 @@ namespace TVRename
 
             bool r = true;
             Dictionary<int, Season> seasonsToUse = si.DvdOrder
-                ? ser.DVDSeasons
+                ? ser.DvdSeasons
                 : ser.AiredSeasons;
 
             foreach (KeyValuePair<int, Season> kvp in seasonsToUse)
@@ -188,7 +188,7 @@ namespace TVRename
 
             if (ser == null) return null;
 
-            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
 
             if (!seasonsToUse.ContainsKey(snum))
                 return null; // todo.. something?
@@ -644,7 +644,7 @@ namespace TVRename
 
             if (ser == null) return false;
 
-            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
 
             if (!seasonsToUse.ContainsKey(snum)) return false;
 
