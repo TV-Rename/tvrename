@@ -169,10 +169,6 @@ namespace TVRename
             this.tbMediaCenter = new System.Windows.Forms.TabPage();
             this.cbWDLiveEpisodeFiles = new System.Windows.Forms.CheckBox();
             this.cbNFOEpisodes = new System.Windows.Forms.CheckBox();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.rdEden = new System.Windows.Forms.RadioButton();
-            this.rdFrodo = new System.Windows.Forms.RadioButton();
-            this.rdBoth = new System.Windows.Forms.RadioButton();
             this.panel1 = new System.Windows.Forms.Panel();
             this.rbFolderBanner = new System.Windows.Forms.RadioButton();
             this.rbFolderPoster = new System.Windows.Forms.RadioButton();
@@ -282,7 +278,6 @@ namespace TVRename
             this.tpScanOptions.SuspendLayout();
             this.tbFolderDeleting.SuspendLayout();
             this.tbMediaCenter.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tbSearchFolders.SuspendLayout();
             this.tbuTorrentNZB.SuspendLayout();
@@ -1724,50 +1719,6 @@ namespace TVRename
             this.cbNFOEpisodes.Text = "&NFO files for episodes";
             this.cbNFOEpisodes.UseVisualStyleBackColor = true;
             // 
-            // panel2
-            // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.Controls.Add(this.rdEden);
-            this.panel2.Controls.Add(this.rdFrodo);
-            this.panel2.Controls.Add(this.rdBoth);
-            this.panel2.Location = new System.Drawing.Point(259, 6);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(226, 32);
-            this.panel2.TabIndex = 23;
-            // 
-            // rdEden
-            // 
-            this.rdEden.AutoSize = true;
-            this.rdEden.Location = new System.Drawing.Point(112, -1);
-            this.rdEden.Name = "rdEden";
-            this.rdEden.Size = new System.Drawing.Size(50, 17);
-            this.rdEden.TabIndex = 20;
-            this.rdEden.TabStop = true;
-            this.rdEden.Text = "&Eden";
-            this.rdEden.UseVisualStyleBackColor = true;
-            // 
-            // rdFrodo
-            // 
-            this.rdFrodo.AutoSize = true;
-            this.rdFrodo.Location = new System.Drawing.Point(54, -1);
-            this.rdFrodo.Name = "rdFrodo";
-            this.rdFrodo.Size = new System.Drawing.Size(52, 17);
-            this.rdFrodo.TabIndex = 19;
-            this.rdFrodo.TabStop = true;
-            this.rdFrodo.Text = "&Frodo";
-            this.rdFrodo.UseVisualStyleBackColor = true;
-            // 
-            // rdBoth
-            // 
-            this.rdBoth.AutoSize = true;
-            this.rdBoth.Location = new System.Drawing.Point(168, -2);
-            this.rdBoth.Name = "rdBoth";
-            this.rdBoth.Size = new System.Drawing.Size(47, 17);
-            this.rdBoth.TabIndex = 21;
-            this.rdBoth.TabStop = true;
-            this.rdBoth.Text = "&Both";
-            this.rdBoth.UseVisualStyleBackColor = true;
-            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.rbFolderBanner);
@@ -2873,8 +2824,6 @@ namespace TVRename
             this.tbFolderDeleting.PerformLayout();
             this.tbMediaCenter.ResumeLayout(false);
             this.tbMediaCenter.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.tbSearchFolders.ResumeLayout(false);
