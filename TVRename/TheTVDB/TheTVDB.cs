@@ -232,34 +232,7 @@ namespace TVRename
             if (!GetLock("SaveCache"))
                 return;
 
-            if (cacheFile.Exists)
-            {
-                double hours = 999.9;
-                if (File.Exists(cacheFile.FullName + ".0"))
-                {
-                    // see when the last rotate was, and only rotate if its been at least an hour since the last save
-                    DateTime dt = File.GetLastWriteTime(cacheFile.FullName + ".0");
-                    hours = DateTime.Now.Subtract(dt).TotalHours;
-                }
-
-                if (hours >= 24.0) // rotate the save file daily
-                {
-                    for (int i = 8; i >= 0; i--)
-                    {
-                        string fn = cacheFile.FullName + "." + i;
-                        if (File.Exists(fn))
-                        {
-                            string fn2 = cacheFile.FullName + "." + (i + 1);
-                            if (File.Exists(fn2))
-                                File.Delete(fn2);
-
-                            File.Move(fn, fn2);
-                        }
-                    }
-
-                    File.Copy(cacheFile.FullName, cacheFile.FullName + ".0");
-                }
-            }
+            RotateCacheFiles();
 
             // write ourselves to disc for next time.  use same structure as thetvdb.com (limited fields, though)
             // to make loading easy
@@ -281,7 +254,7 @@ namespace TVRename
                     {
                         kvp.Value.WriteXml(writer);
                         foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
-                            //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                        //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                         {
                             Season seas = kvp2.Value;
                             foreach (Episode e in seas.Episodes)
@@ -327,6 +300,38 @@ namespace TVRename
             }
 
             Unlock("SaveCache");
+        }
+
+        private void RotateCacheFiles()
+        {
+            if (cacheFile.Exists)
+            {
+                double hours = 999.9;
+                if (File.Exists(cacheFile.FullName + ".0"))
+                {
+                    // see when the last rotate was, and only rotate if its been at least an hour since the last save
+                    DateTime dt = File.GetLastWriteTime(cacheFile.FullName + ".0");
+                    hours = DateTime.Now.Subtract(dt).TotalHours;
+                }
+
+                if (hours >= 24.0) // rotate the save file daily
+                {
+                    for (int i = 8; i >= 0; i--)
+                    {
+                        string fn = cacheFile.FullName + "." + i;
+                        if (File.Exists(fn))
+                        {
+                            string fn2 = cacheFile.FullName + "." + (i + 1);
+                            if (File.Exists(fn2))
+                                File.Delete(fn2);
+
+                            File.Move(fn, fn2);
+                        }
+                    }
+
+                    File.Copy(cacheFile.FullName, cacheFile.FullName + ".0");
+                }
+            }
         }
 
         public SeriesInfo GetSeries(string showName)
@@ -1451,8 +1456,19 @@ namespace TVRename
                 JObject jsonActorsResponse = HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/actors",
                     null, tvDbTokenProvider.GetToken());
 
-                IEnumerable<string> seriesActors = from a in jsonActorsResponse["data"] select (string) a["name"];
-                series[si.TVDBCode].SetActors(seriesActors);
+                series[si.TVDBCode].ClearActors();
+                foreach (JToken jsonActor in jsonActorsResponse["data"])
+                {
+                    int actorId = (int)jsonActor["id"];
+                    string actorImage = (string) jsonActor["image"];
+                    string actorName = (string)jsonActor["name"];
+                    string actorRole = (string)jsonActor["role"];
+                    int actorSeriesId = (int)jsonActor["seriesId"];
+                    int actorSortOrder = (int)jsonActor["sortOrder"];
+
+                    series[si.TVDBCode].AddActor(new Actor(actorId, actorImage, actorName, actorRole, actorSeriesId,
+                        actorSortOrder));
+                }
             }
             catch (WebException ex)
             {

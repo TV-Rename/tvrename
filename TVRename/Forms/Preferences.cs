@@ -174,6 +174,7 @@ namespace TVRename
             s.KODIImages = cbKODIImages.Checked;
             s.pyTivoMeta = cbMeta.Checked;
             s.pyTivoMetaSubFolder = cbMetaSubfolder.Checked;
+            s.wdLiveTvMeta = cbWDLiveEpisodeFiles.Checked;
             s.FolderJpg = cbFolderJpg.Checked;
             s.RenameCheck = cbRenameCheck.Checked;
             s.PreventMove = chkPreventMove.Checked;
@@ -398,6 +399,7 @@ namespace TVRename
 
             cbSearchRSS.Checked = s.SearchRSS;
             cbEpTBNs.Checked = s.EpTBNs;
+            cbWDLiveEpisodeFiles.Checked= s.wdLiveTvMeta ;
             cbNFOShows.Checked = s.NFOShows;
             cbNFOEpisodes.Checked = s.NFOEpisodes;
             cbKODIImages.Checked = s.KODIImages;

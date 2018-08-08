@@ -82,7 +82,7 @@ namespace TVRename
 
                 if (Episode.Show != null)
                 {
-                    recurringActors = string.Join("|", Episode.Show.TheSeries().GetActors());
+                    recurringActors = string.Join("|", Episode.Show.TheSeries().GetActorNames());
                 }
 
                 string guestActors = episode.EpisodeGuestStars;
@@ -109,13 +109,16 @@ namespace TVRename
             // actors...
             if (Episode.Show != null)
             {
-                foreach (string aa in Episode.Show.TheSeries().GetActors())
+                foreach (Actor aa in Episode.Show.TheSeries().GetActors())
                 {
-                    if (string.IsNullOrEmpty(aa))
+                    if (string.IsNullOrEmpty(aa.ActorName))
                         continue;
 
                     writer.WriteStartElement("actor");
-                    XmlHelper.WriteElementToXml(writer, "name", aa);
+                    XmlHelper.WriteElementToXml(writer, "name", aa.ActorName);
+                    XmlHelper.WriteElementToXml(writer, "role", aa.ActorRole);
+                    XmlHelper.WriteElementToXml(writer, "order", aa.ActorSortOrder);
+                    XmlHelper.WriteElementToXml(writer, "thumb", aa.ActorImage);
                     writer.WriteEndElement(); // actor
                 }
             }
@@ -192,13 +195,16 @@ namespace TVRename
                         XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries().GetStatus());
 
                         // actors...
-                        foreach (string aa in SelectedShow.TheSeries().GetActors())
+                        foreach (Actor aa in SelectedShow.TheSeries().GetActors())
                         {
-                            if (string.IsNullOrEmpty(aa))
+                            if (string.IsNullOrEmpty(aa.ActorName))
                                 continue;
 
                             writer.WriteStartElement("actor");
-                            XmlHelper.WriteElementToXml(writer, "name", aa);
+                            XmlHelper.WriteElementToXml(writer, "name", aa.ActorName);
+                            XmlHelper.WriteElementToXml(writer, "role", aa.ActorRole);
+                            XmlHelper.WriteElementToXml(writer, "order", aa.ActorSortOrder);
+                            XmlHelper.WriteElementToXml(writer, "thumb", aa.ActorImage);
                             writer.WriteEndElement(); // actor
                         }
 

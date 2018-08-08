@@ -167,6 +167,7 @@ namespace TVRename
             this.cbEmptyIgnoreExtensions = new System.Windows.Forms.CheckBox();
             this.cbDeleteEmpty = new System.Windows.Forms.CheckBox();
             this.tbMediaCenter = new System.Windows.Forms.TabPage();
+            this.cbWDLiveEpisodeFiles = new System.Windows.Forms.CheckBox();
             this.cbNFOEpisodes = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.rbFolderBanner = new System.Windows.Forms.RadioButton();
@@ -1671,6 +1672,7 @@ namespace TVRename
             // 
             // tbMediaCenter
             // 
+            this.tbMediaCenter.Controls.Add(this.cbWDLiveEpisodeFiles);
             this.tbMediaCenter.Controls.Add(this.cbNFOEpisodes);
             this.tbMediaCenter.Controls.Add(this.panel1);
             this.tbMediaCenter.Controls.Add(this.cbKODIImages);
@@ -1696,6 +1698,16 @@ namespace TVRename
             this.tbMediaCenter.TabIndex = 8;
             this.tbMediaCenter.Text = "Media Centres";
             this.tbMediaCenter.UseVisualStyleBackColor = true;
+            // 
+            // cbWDLiveEpisodeFiles
+            // 
+            this.cbWDLiveEpisodeFiles.AutoSize = true;
+            this.cbWDLiveEpisodeFiles.Location = new System.Drawing.Point(38, 399);
+            this.cbWDLiveEpisodeFiles.Name = "cbWDLiveEpisodeFiles";
+            this.cbWDLiveEpisodeFiles.Size = new System.Drawing.Size(200, 17);
+            this.cbWDLiveEpisodeFiles.TabIndex = 25;
+            this.cbWDLiveEpisodeFiles.Text = "WD TV Live Hub Episode Files (.xml)";
+            this.cbWDLiveEpisodeFiles.UseVisualStyleBackColor = true;
             // 
             // cbNFOEpisodes
             // 
@@ -1775,7 +1787,7 @@ namespace TVRename
             // bnMCPresets
             // 
             this.bnMCPresets.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnMCPresets.Location = new System.Drawing.Point(428, 376);
+            this.bnMCPresets.Location = new System.Drawing.Point(428, 399);
             this.bnMCPresets.Name = "bnMCPresets";
             this.bnMCPresets.Size = new System.Drawing.Size(75, 23);
             this.bnMCPresets.TabIndex = 16;
@@ -3026,5 +3038,6 @@ namespace TVRename
         private System.Windows.Forms.Button bnTags;
         private System.Windows.Forms.TextBox txtSeasonFormat;
         private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.CheckBox cbWDLiveEpisodeFiles;
     }
 }

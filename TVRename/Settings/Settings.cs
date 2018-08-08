@@ -315,6 +315,7 @@ namespace TVRename
         public bool NFOEpisodes = false;
         public bool KODIImages = false;
         public bool pyTivoMeta = false;
+        public bool wdLiveTvMeta = false;
         public bool pyTivoMetaSubFolder = false;
         public CustomEpisodeName NamingStyle = new CustomEpisodeName();
         public bool NotificationAreaIcon = false;
@@ -581,6 +582,8 @@ namespace TVRename
                     KODIImages = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMeta")
                     pyTivoMeta = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "wdLiveTvMeta")
+                    wdLiveTvMeta = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "pyTivoMetaSubFolder")
                     pyTivoMetaSubFolder = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "FolderJpg")
@@ -921,6 +924,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"KODIImages",KODIImages);
             XmlHelper.WriteElementToXml(writer,"pyTivoMeta",pyTivoMeta);
             XmlHelper.WriteElementToXml(writer,"pyTivoMetaSubFolder",pyTivoMetaSubFolder);
+            XmlHelper.WriteElementToXml(writer,"wdLiveTvMeta", wdLiveTvMeta);
             XmlHelper.WriteElementToXml(writer,"FolderJpg",FolderJpg);
             XmlHelper.WriteElementToXml(writer,"FolderJpgIs",(int) FolderJpgIs);
             XmlHelper.WriteElementToXml(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);
