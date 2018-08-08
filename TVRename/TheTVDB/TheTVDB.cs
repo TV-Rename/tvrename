@@ -1252,7 +1252,7 @@ namespace TVRename
                     {
                         JObject jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(episodeUri,
                             new Dictionary<string, string> {{"page", pageNumber.ToString()}},
-                            tvDbTokenProvider.GetToken());
+                            tvDbTokenProvider.GetToken(), TVSettings.Instance.PreferredLanguage);
 
                         episodeResponses.Add(jsonEpisodeResponse);
                         int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
