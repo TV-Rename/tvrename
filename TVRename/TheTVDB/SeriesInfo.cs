@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Runtime.Serialization;
-using NLog;
 
 namespace TVRename
 {
@@ -26,7 +25,7 @@ namespace TVRename
         public bool BannersLoaded;
 
         public Dictionary<int, Season> AiredSeasons;
-        public Dictionary<int, Season> DVDSeasons;
+        public Dictionary<int, Season> DvdSeasons;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         //All Banners
@@ -49,7 +48,7 @@ namespace TVRename
         private int bestSeriesLangFanartId;
 
         public long SrvLastUpdated;
-        public int TVDBCode;
+        public int TvdbCode;
         public string TempTimeZone;
 
         public int MinYear()
@@ -93,7 +92,7 @@ namespace TVRename
         {
             SetToDefauts();
             Name = name;
-            TVDBCode = id;
+            TvdbCode = id;
         }
 
         public SeriesInfo(XmlReader r)
@@ -109,7 +108,7 @@ namespace TVRename
             LoadJson(json);
 
             if (string.IsNullOrEmpty(Name)            ){
-               Logger.Warn("Issue with series " + TVDBCode );
+               Logger.Warn("Issue with series " + TvdbCode );
                Logger.Warn(json.ToString());
             }
         }
@@ -120,7 +119,7 @@ namespace TVRename
             languageId = langId;
             LoadJson(json,jsonInDefaultLang);
             if (string.IsNullOrEmpty(Name)            ){
-               Logger.Warn("Issue with series " + TVDBCode );
+               Logger.Warn("Issue with series " + TvdbCode );
                Logger.Warn(json.ToString());
                Logger.Info(jsonInDefaultLang .ToString());
             }
@@ -141,12 +140,12 @@ namespace TVRename
         {
             Items = new Dictionary<string, string>();
             AiredSeasons = new Dictionary<int, Season>();
-            DVDSeasons = new Dictionary<int, Season>();
+            DvdSeasons = new Dictionary<int, Season>();
             actors=new List<Actor>();
             Dirty = false;
             Name = "";
             AirsTime = null;
-            TVDBCode = -1;
+            TvdbCode = -1;
             languageId = -1;
             ResetBanners();
         }
@@ -170,7 +169,7 @@ namespace TVRename
 
         public void Merge(SeriesInfo o, int preferredLanguageId)
         {
-            if (o.TVDBCode != TVDBCode)
+            if (o.TvdbCode != TvdbCode)
                 return; // that's not us!
             if (o.SrvLastUpdated != 0 && o.SrvLastUpdated < SrvLastUpdated)
                 return; // older!?
@@ -199,8 +198,8 @@ namespace TVRename
 
             if ((o.AiredSeasons != null) && (o.AiredSeasons.Count != 0))
                 AiredSeasons = o.AiredSeasons;
-            if ((o.DVDSeasons != null) && (o.DVDSeasons.Count != 0))
-                DVDSeasons = o.DVDSeasons;
+            if ((o.DvdSeasons != null) && (o.DvdSeasons.Count != 0))
+                DvdSeasons = o.DvdSeasons;
 
             if ((o.seasonBanners != null) && (o.seasonBanners.Count != 0))
                 seasonBanners = o.seasonBanners;
@@ -230,7 +229,7 @@ namespace TVRename
             Dirty = o.Dirty;
         }
 
-        public void LoadXml(XmlReader r)
+        private void LoadXml(XmlReader r)
         {
             //<Data>
             // <Series>
@@ -261,7 +260,7 @@ namespace TVRename
                         break;
 
                     if (r.Name == "id")
-                        TVDBCode = r.ReadElementContentAsInt();
+                        TvdbCode = r.ReadElementContentAsInt();
                     else if (r.Name == "SeriesName")
                         Name = XmlHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "lastupdated")
@@ -335,8 +334,8 @@ namespace TVRename
             catch (XmlException e)
             {
                 string message = "Error processing data from TheTVDB for a show.";
-                if (TVDBCode != -1)
-                    message += "\r\nTheTVDB Code: " + TVDBCode;
+                if (TvdbCode != -1)
+                    message += "\r\nTheTVDB Code: " + TvdbCode;
                 if (!string.IsNullOrEmpty(Name))
                     message += "\r\nName: " + Name;
 
@@ -352,13 +351,11 @@ namespace TVRename
 
         private static DateTime? ParseAirTime(string theTime)
         {
-
             try
             {
                 if (!string.IsNullOrEmpty(theTime))
                 {
-                    DateTime airsTime;
-                    if (DateTime.TryParse(theTime, out airsTime) |
+                    if (DateTime.TryParse(theTime, out DateTime airsTime) |
                         DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
                         return airsTime;
                 }
@@ -368,10 +365,9 @@ namespace TVRename
                 Logger.Info("Failed to parse time: {0} ", theTime);
             }
             return DateTime.Parse("20:00");
-
         }
 
-        public void LoadJson(JObject r)
+        private void LoadJson(JObject r)
         {
             //r should be a series of name/value pairs (ie a JArray of JPropertes)
             //save them all into the Items array for safe keeping
@@ -388,7 +384,7 @@ namespace TVRename
                     }
             }
 
-            TVDBCode = (int)r["id"];
+            TvdbCode = (int)r["id"];
             if ((string)r["seriesName"] != null)
             {
                 Name = (string)r["seriesName"];
@@ -428,8 +424,7 @@ namespace TVRename
                 if (!string.IsNullOrEmpty(theAirsTime))
                 {
                     Items["airsTime"] = theAirsTime;
-                    DateTime airsTime;
-                    if (DateTime.TryParse(theAirsTime, out airsTime) |
+                    if (DateTime.TryParse(theAirsTime, out DateTime airsTime) |
                         DateTime.TryParse(theAirsTime.Replace('.', ':'), out airsTime))
                         AirsTime = airsTime;
                     else
@@ -441,7 +436,7 @@ namespace TVRename
             }
         }
 
-        public void LoadJson(JObject bestLanguageR, JObject backupLanguageR)
+        private void LoadJson(JObject bestLanguageR, JObject backupLanguageR)
         {
             //Here we have two pieces of JSON. One in local language and one in the default language (English). 
             //We will populate with the best language frst and then fill in any gaps with the backup Language
@@ -527,7 +522,7 @@ namespace TVRename
         {
             writer.WriteStartElement("Series");
 
-            XmlHelper.WriteElementToXml(writer, "id", TVDBCode);
+            XmlHelper.WriteElementToXml(writer, "id", TvdbCode);
             XmlHelper.WriteElementToXml(writer, "SeriesName", Name);
             XmlHelper.WriteElementToXml(writer, "lastupdated", SrvLastUpdated);
             XmlHelper.WriteElementToXml(writer, "LanguageId", languageId);
@@ -579,11 +574,11 @@ namespace TVRename
 
         public Season GetOrAddDvdSeason(int num, int seasonId)
         {
-            if (DVDSeasons.ContainsKey(num))
-                return DVDSeasons[num];
+            if (DvdSeasons.ContainsKey(num))
+                return DvdSeasons[num];
 
             Season s = new Season(this, num, seasonId);
-            DVDSeasons[num] = s;
+            DvdSeasons[num] = s;
 
             return s;
         }
@@ -749,7 +744,7 @@ namespace TVRename
         {
             if (dvdOrder)
             {
-                foreach (Season s in DVDSeasons.Values)
+                foreach (Season s in DvdSeasons.Values)
                 {
                     if (s.SeasonNumber == seasF)
                     {
@@ -799,7 +794,7 @@ namespace TVRename
         internal void RemoveEpisode(int episodeId)
         {
             //Remove from Aired and DVD Seasons
-            foreach (Season s in DVDSeasons.Values)
+            foreach (Season s in DvdSeasons.Values)
             {
                 s.RemoveEpisode(episodeId);
             }
@@ -817,81 +812,6 @@ namespace TVRename
         public void AddActor(Actor actor)
         {
             actors.Add(actor);
-        }
-    }
-
-    public class Actor
-    {
-        private readonly int actorId;
-        private readonly string actorImage;
-        private readonly string actorName;
-        private readonly string actorRole;
-        private readonly int actorSeriesId;
-        private readonly int actorSortOrder;
-
-        public int ActorId => actorId;
-        public string ActorImage => actorImage;
-        public string ActorName => actorName;
-        public string ActorRole => actorRole;
-        public int ActorSeriesId => actorSeriesId;
-        public int ActorSortOrder => actorSortOrder;
-
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
-        public Actor(string name)
-        {
-            this.actorName = name;
-        }
-        public Actor(int actorId, string actorImage, string actorName, string actorRole, int actorSeriesId, int actorSortOrder)
-        {
-            this.actorId = actorId;
-            this.actorImage = actorImage;
-            this.actorName = actorName;
-            this.actorRole = actorRole;
-            this.actorSeriesId = actorSeriesId;
-            this.actorSortOrder = actorSortOrder;
-        }
-        public Actor(XmlReader r)
-        {
-            try
-            {
-                r.Read();
-                if (r.Name != "Actor")
-                    return;
-
-                r.Read();
-                while (!r.EOF)
-                {
-                    if ((r.Name == "Actor") && (!r.IsStartElement()))
-                        break;
-
-                    if (r.Name == "Id") actorId = r.ReadElementContentAsInt();
-                    else if (r.Name == "Image") actorImage = r.ReadElementContentAsString();
-                    else if (r.Name == "Name") actorName = r.ReadElementContentAsString();
-                    else if (r.Name == "Role") actorRole = r.ReadElementContentAsString();
-                    else if (r.Name == "SeriesId") actorSeriesId = r.ReadElementContentAsInt();
-                    else if (r.Name == "SortOrder") actorSortOrder = r.ReadElementContentAsInt();
-                    //   r->ReadOuterXml(); // skip
-                } // while
-            } // try
-            catch (XmlException e)
-            {
-                string message = "Error processing data from TheTVDB for a show.";
-                Logger.Error(e, message);
-                throw new TheTVDB.TVDBException(e.Message);
-            }
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-            writer.WriteStartElement("Actor");
-            XmlHelper.WriteElementToXml(writer, "Id", ActorId);
-            XmlHelper.WriteElementToXml(writer, "Image", ActorImage);
-            XmlHelper.WriteElementToXml(writer, "Name", ActorName);
-            XmlHelper.WriteElementToXml(writer, "Role", ActorRole);
-            XmlHelper.WriteElementToXml(writer, "SeriesId", ActorSeriesId);
-            XmlHelper.WriteElementToXml(writer, "SortOrder", ActorSortOrder);
-            writer.WriteEndElement();
         }
     }
 }

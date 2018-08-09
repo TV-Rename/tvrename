@@ -1656,7 +1656,7 @@ namespace TVRename
             ep = -1;
             seas = -1;
             maxEp = -1;
-            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
+            Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
 
             foreach (KeyValuePair<int, Season> kvp in seasonsToUse)
             {

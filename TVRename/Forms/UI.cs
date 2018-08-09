@@ -675,7 +675,7 @@ namespace TVRename
             {
                 if (seas.Episodes.Count == 0) return null;
 
-                return mDoc.Library.ShowItem(seas.TheSeries.TVDBCode);
+                return mDoc.Library.ShowItem(seas.TheSeries.TvdbCode);
             }
 
             return null;
@@ -707,7 +707,7 @@ namespace TVRename
                 // we have a TVDB season, but need to find the equiavlent one in our local processed episode collection
                 if (seas.Episodes.Count > 0)
                 {
-                    int tvdbcode = seas.TheSeries.TVDBCode;
+                    int tvdbcode = seas.TheSeries.TvdbCode;
                     foreach (ShowItem si in mDoc.Library.Values)
                     {
                         if (si.TvdbCode == tvdbcode)
@@ -751,9 +751,9 @@ namespace TVRename
             string imagesPaneBody;
 
 
-            if (si.DvdOrder && snum >= 0 && ser.DVDSeasons.ContainsKey(snum))
+            if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
             {
-                Season s = ser.DVDSeasons[snum];
+                Season s = ser.DvdSeasons[snum];
                 infoPaneBody = si.GetSeasonHtmlOverview(s);
                 imagesPaneBody = si.GetSeasonImagesHtmlOverview(s);
             }
@@ -801,7 +801,7 @@ namespace TVRename
             if (seas == null)
                 return;
 
-            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TVDBCode, -1, false));
+            Helpers.SysOpen(TheTVDB.Instance.WebsiteUrl(seas.TheSeries.TvdbCode, -1, false));
         }
 
         private static void TvdbFor(ShowItem si)
@@ -1171,7 +1171,7 @@ namespace TVRename
 
         private void RightClickOnMyShows(Season seas, Point pt)
         {
-            mLastShowsClicked = new List<ShowItem> {mDoc.Library.ShowItem(seas.TheSeries.TVDBCode)};
+            mLastShowsClicked = new List<ShowItem> {mDoc.Library.ShowItem(seas.TheSeries.TvdbCode)};
             mLastEpClicked = null;
             mLastSeasonClicked = seas;
             mLastActionsClicked = null;
@@ -1518,7 +1518,7 @@ namespace TVRename
                     {
                         int code = -1;
                         if (mLastEpClicked != null)
-                            code = mLastEpClicked.TheSeries.TVDBCode;
+                            code = mLastEpClicked.TheSeries.TvdbCode;
 
                         if (si != null)
                             code = si.TvdbCode;
@@ -1709,7 +1709,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvWhenToWatch.Items)
             {
                 ProcessedEpisode ei = (ProcessedEpisode)lvi.Tag;
-                lvi.Selected = ei != null && ei.TheSeries.TVDBCode == tvdbSeriesCode;
+                lvi.Selected = ei != null && ei.TheSeries.TvdbCode == tvdbSeriesCode;
             }
             lvWhenToWatch.Focus();
         }
@@ -1979,7 +1979,7 @@ namespace TVRename
                 }
 
                 List<int> theKeys = si.DvdOrder
-                    ? new List<int>(ser.DVDSeasons.Keys)
+                    ? new List<int>(ser.DvdSeasons.Keys)
                     : new List<int>(ser.AiredSeasons.Keys);
                 // now, go through and number them all sequentially
                 //foreach (int snum in ser.Seasons.Keys)
@@ -1989,7 +1989,7 @@ namespace TVRename
 
                 foreach (int snum in theKeys)
                 {
-                    Season s = si.DvdOrder ? ser.DVDSeasons[snum] : ser.AiredSeasons[snum];
+                    Season s = si.DvdOrder ? ser.DvdSeasons[snum] : ser.AiredSeasons[snum];
 
                     string nodeTitle = ShowHtmlHelper.SeasonName(si, snum);
 
@@ -2204,7 +2204,7 @@ namespace TVRename
             if (dr == DialogResult.OK)
             {
                 ShowAddedOrEdited(false);
-                Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DVDSeasons : ser.AiredSeasons;
+                Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
                 SelectSeason(seasonsToUse[seasnum]);
             }
 
