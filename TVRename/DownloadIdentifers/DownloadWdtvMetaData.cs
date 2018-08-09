@@ -25,11 +25,8 @@ namespace TVRename
             if (TVSettings.Instance.wdLiveTvMeta)
             {
                 ItemList theActionList = new ItemList();
-
                 FileInfo tvshowxml = FileHelper.FileInFolder(si.AutoAddFolderBase, "series.xml");
-
-                bool needUpdate = !tvshowxml.Exists ||
-                                  (si.TheSeries().SrvLastUpdated > TimeZone.Epoch(tvshowxml.LastWriteTime));
+                bool needUpdate = !tvshowxml.Exists || (si.TheSeries().SrvLastUpdated > TimeZone.Epoch(tvshowxml.LastWriteTime));
 
                 if ((forceRefresh || needUpdate) && (!doneFiles.Contains(tvshowxml.FullName)))
                 {
