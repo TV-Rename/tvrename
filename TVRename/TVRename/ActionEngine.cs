@@ -122,7 +122,7 @@ namespace TVRename
 
             actionProcessorThread.Join();
 
-            theList.RemoveAll(x => (x is Action) && ((Action) x).Done && !((Action) x).Error);
+            theList.RemoveAll(x => (x is Action action) && action.Done && !action.Error);
 
             foreach (Item sli in theList)
             {

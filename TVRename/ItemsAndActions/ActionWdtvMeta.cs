@@ -6,10 +6,11 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Globalization;
+
 namespace TVRename
 {
     using System;
-    using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using System.Xml;
 
@@ -26,11 +27,78 @@ namespace TVRename
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
-            if (Episode == null) return false;
             if (Where == null) return false;
 
-            // "try" and silently fail.  eg. when file is use by other...
+            if (Episode != null) return WriteEpisodeMetaDataFile();
+            
+            if (SelectedShow != null) return WriteSeriesXml();
 
+            return false;
+        }
+
+        private bool WriteSeriesXml()
+        {
+            try
+            {
+                XmlWriterSettings settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    NewLineOnAttributes = true
+                };
+
+                using (XmlWriter writer = XmlWriter.Create(Where.FullName, settings))
+                {
+                    writer.WriteStartElement("details");
+                    writer.WriteStartElement("show");
+
+                    XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
+
+                    foreach (string genre in SelectedShow.TheSeries().GetGenres())
+                    {
+                        XmlHelper.WriteElementToXml(writer, "genre", genre);
+                    }
+
+                    XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries().GetFirstAired());
+                    XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries().GetYear());
+
+                    float siteRating =
+                        float.Parse(SelectedShow.TheSeries().GetSiteRating(), new CultureInfo("en-US")) * 10;
+
+                    int intSiteRating = (int)siteRating;
+                    if (intSiteRating > 0) XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
+
+                    XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries().GetStatus());
+
+                    XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries().GetContentRating());
+                    XmlHelper.WriteInfo(writer, "moviedb", "imdb", "id", SelectedShow.TheSeries().GetImdb());
+                    XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries().TvdbCode);
+
+                    string rt = SelectedShow.TheSeries().GetRuntime();
+                    if (!string.IsNullOrEmpty(rt))
+                    {
+                        XmlHelper.WriteElementToXml(writer, "runtime", rt + " min");
+                    }
+
+                    XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries().GetOverview());
+
+                    writer.WriteEndElement(); // show
+                    writer.WriteEndElement(); // tvshow
+                }
+                Done = true;
+                return true;
+            }
+            catch (Exception e)
+            {
+                ErrorText = e.Message;
+                Error = true;
+                Done = true;
+                return false;
+            }
+        }
+
+        private bool WriteEpisodeMetaDataFile()
+        {
+            // "try" and silently fail.  eg. when file is use by other...
             try
             {
                 XmlWriterSettings settings = new XmlWriterSettings
@@ -52,12 +120,7 @@ namespace TVRename
                             Episode.FirstAired.Value.ToString("yyyy-MM-dd"));
                     }
 
-                    string rt = Episode.TheSeries.GetRuntime();
-                    if (!string.IsNullOrEmpty(rt))
-                    {
-                        XmlHelper.WriteElementToXml(writer, "runtime", rt);
-                    }
-
+                    XmlHelper.WriteElementToXml(writer, "runtime", Episode.TheSeries.GetRuntime(), true);
                     XmlHelper.WriteElementToXml(writer, "rating", Episode.EpisodeRating);
                     XmlHelper.WriteElementToXml(writer, "studio", Episode.TheSeries.GetNetwork());
                     XmlHelper.WriteElementToXml(writer, "plot", Episode.TheSeries.GetOverview());
@@ -73,11 +136,11 @@ namespace TVRename
                     // actors...
                     foreach (Actor aa in Episode.TheSeries.GetActors())
                     {
-                        if (string.IsNullOrEmpty(aa.ActorName))continue;
+                        if (string.IsNullOrEmpty(aa.ActorName)) continue;
 
                         writer.WriteStartElement("actor");
                         XmlHelper.WriteElementToXml(writer, "name", aa.ActorName);
-                        XmlHelper.WriteElementToXml(writer, "role", aa.ActorRole); 
+                        XmlHelper.WriteElementToXml(writer, "role", aa.ActorRole);
                         writer.WriteEndElement(); // actor
                     }
 
@@ -97,7 +160,7 @@ namespace TVRename
                 return false;
             }
         }
-    
+
         #endregion
 
         #region Item Members

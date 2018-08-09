@@ -74,7 +74,7 @@ namespace TVRename
 
                         if (Episode.Show != null)
                         {
-                            WriteInfo(writer, Episode.Show.TheSeries().GetContentRating(), "mpaa");
+                            XmlHelper.WriteElementToXml(writer, "mpaa", Episode.Show.TheSeries().GetContentRating());
                         }
 
                         //Runtime...taken from overall Series, not episode specific due to thetvdb
@@ -153,11 +153,10 @@ namespace TVRename
                         {
                             XmlHelper.WriteElementToXml(writer, "genre", genre);
                         }
-
                         writer.WriteEndElement(); // genres
 
-                        WriteInfo(writer, SelectedShow.TheSeries().GetFirstAired(), "premiered");
-                        WriteInfo(writer, SelectedShow.TheSeries().GetYear(), "year");
+                        XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries().GetFirstAired());
+                        XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries().GetYear());
 
                         //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
                         float siteRating =
@@ -165,11 +164,12 @@ namespace TVRename
 
                         int intSiteRating = (int) siteRating;
                         if (intSiteRating > 0) XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
-                        
-                        WriteInfo(writer, SelectedShow.TheSeries().GetStatus(), "status");
 
-                        WriteInfo(writer, SelectedShow.TheSeries().GetContentRating(), "mpaa");
-                        WriteInfo(writer, SelectedShow.TheSeries().GetImdb(), "id", "moviedb", "imdb");
+                        XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries().GetStatus());
+
+                        XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries().GetContentRating());
+                        XmlHelper.WriteInfo(writer, "moviedb", "imdb","id", SelectedShow.TheSeries().GetImdb());
+                        
 
                         XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries().TvdbCode);
 
@@ -179,7 +179,7 @@ namespace TVRename
                             XmlHelper.WriteElementToXml(writer, "runtime", rt + " min");
                         }
 
-                        WriteInfo(writer, SelectedShow.TheSeries().GetOverview(), "plot");
+                        XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries().GetOverview());
 
                         writer.WriteStartElement("cast");
 
@@ -234,21 +234,5 @@ namespace TVRename
         }
 
         #endregion
-
-        private static void WriteInfo(XmlWriter writer, string value, string elemName, string attribute = null,
-            string attributeVal = null)
-        {
-            if (!string.IsNullOrEmpty(value))
-            {
-                writer.WriteStartElement(elemName);
-                if (!string.IsNullOrEmpty(attribute) && !string.IsNullOrEmpty(attributeVal))
-                {
-                    writer.WriteAttributeString(attribute, attributeVal);
-                }
-
-                writer.WriteValue(value);
-                writer.WriteEndElement();
-            }
-        }
     }
 }
