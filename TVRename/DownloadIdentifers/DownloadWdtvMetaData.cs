@@ -18,6 +18,7 @@ namespace TVRename
         {
             Reset();
         }
+
         public override DownloadType GetDownloadType() => DownloadType.downloadMetaData;
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
@@ -33,7 +34,8 @@ namespace TVRename
 
             return theActionList;
         }
-        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
+
+      public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             if (TVSettings.Instance.wdLiveTvMeta)
             {
@@ -50,6 +52,7 @@ namespace TVRename
             }
             return base.ProcessShow(si, forceRefresh);
         }
+
         public sealed override void Reset()
         {
             doneFiles = new List<string>();

@@ -20,6 +20,7 @@ namespace TVRename
         {
             Episode = pe;
         }
+
         public ActionWdtvMeta(FileInfo where, ShowItem si) : base(where, si)
         {
             Episode = null;
