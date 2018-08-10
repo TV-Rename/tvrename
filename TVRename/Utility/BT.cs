@@ -607,7 +607,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Error(e);
+                Logger.Error(e);
                 return null;
             }
 
@@ -619,7 +619,7 @@ namespace TVRename
             return f;
         }
 
-        protected static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
     }
 
     public abstract class BTCore

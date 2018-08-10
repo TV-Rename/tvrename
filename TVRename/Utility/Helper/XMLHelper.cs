@@ -77,10 +77,10 @@ namespace TVRename
             writer.WriteValue(value);
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string attributeName, DateTime? value)
+        public static void WriteElementToXml(XmlWriter writer, string elementName, DateTime? value)
         {
-            writer.WriteStartElement(attributeName);
-            if (!(value == null))
+            writer.WriteStartElement(elementName);
+            if (value != null)
                 writer.WriteValue(value);
             writer.WriteEndElement();
         }
@@ -94,7 +94,7 @@ namespace TVRename
         public static void WriteAttributeToXml(XmlWriter writer, string attributeName, DateTime?  value)
         {
             writer.WriteStartAttribute(attributeName);
-            if (!(value == null))
+            if (value != null)
                 writer.WriteValue(value);
             writer.WriteEndAttribute();
         }

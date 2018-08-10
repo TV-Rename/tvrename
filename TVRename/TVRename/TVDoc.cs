@@ -305,8 +305,6 @@ namespace TVRename
 
                 if (!from.Exists)
                 {
-                    //LoadErr = from->Name + " : File does not exist";
-                    //return false;
                     return true; // that's ok
                 }
 
@@ -743,7 +741,6 @@ namespace TVRename
                     if (si.IgnoreSeasons.Contains(snum))
                         continue; // ignore this season
 
-                    //int snum = kvp->Key;
                     if ((snum == 0) && (si.CountSpecials))
                         continue; // no specials season, they're merged into the seasons themselves
 
@@ -1249,7 +1246,7 @@ namespace TVRename
             si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
             Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
 
-            int lastSeason = numbers.Concat(new[] {0}).Max();
+            int lastSeason = numbers.DefaultIfEmpty(0).Max();
 
             foreach (int snum in numbers)
             {

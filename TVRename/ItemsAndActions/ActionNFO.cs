@@ -142,7 +142,7 @@ namespace TVRename
                 string thumbFilename =  filename + ".jpg";
                 XmlHelper.WriteElementToXml(writer, "thumb",thumbFilename);
                 //Should be able to do this using the local filename, but only seems to work if you provide a URL
-                //XMLHelper.WriteElementToXML(writer, "thumb", TheTVDB.Instance.GetTVDBDownloadURL(episode.GetFilename()));
+                //XMLHelper.WriteElementToXML(writer, "thumb", TheTVDB.Instance.GetTVDBDownloadURL(episode.GetFilename()))
             }
             writer.WriteEndElement(); // episodedetails
         }

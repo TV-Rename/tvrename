@@ -408,7 +408,6 @@ namespace TVRename
                 string combinedSummary = eis[n1].Overview + "<br/><br/>";
                 List<Episode> alleps = new List<Episode>();
                 alleps.Add(eis[n1]);
-                //int firstNum = eis[n1]->TVcomEpCount();
                 for (int i = n1 + 1; i <= n2; i++)
                 {
                     episodeNames.Add(eis[i].Name);

@@ -613,7 +613,7 @@ namespace TVRename
             foreach (ShowItem si in sil)
             {
                 if (filter.Filter(si)
-                    & (string.IsNullOrEmpty(filterTextBox.Text) | si.GetSimplifiedPossibleShowNames().Any(name =>
+                    & (string.IsNullOrEmpty(filterTextBox.Text) || si.GetSimplifiedPossibleShowNames().Any(name =>
                            name.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
                     ))
                 {

@@ -55,7 +55,6 @@ namespace TVRename
             float nPercentW = (width / (float)sourceWidth);
             float nPercentH = (height / (float)sourceHeight);
 
-            //float nPercent = Math.Min(nPercentH, nPercentW);
             int destWidth, destHeight;
 
             if (nPercentH < nPercentW)

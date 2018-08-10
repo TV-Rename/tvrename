@@ -562,20 +562,15 @@ namespace TVRename
             foreach (string status in showStatusList)
             {
                 ShowStatusColoringType t = new ShowStatusColoringType(false, true, status);
-                //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Show  Status: " + status, new ShowStatusColoringType(false, true, status));
                 cboShowStatus.Items.Add(t);
             }
-            //this.cboShowStatus.Items.Add(new System.Collections.Generic.KeyValuePair<string, object>("Show Seasons Status: Custom", null));
             // Seasons
             foreach (string status in Enum.GetNames(typeof(Season.SeasonStatus)))
             {
                 ShowStatusColoringType t = new ShowStatusColoringType(true, false, status);
-                //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Seasons Status: " + status, new ShowStatusColoringType(true, false, status));
                 cboShowStatus.Items.Add(t);
-                //this.cboShowStatus.Items.Add("Seasons Status: " + status);
             }
             cboShowStatus.DisplayMember = "Text";
-            //this.cboShowStatus.ValueMember = ";
         }
 
         private void Browse(TextBox txt, string defaultExt, int filterIndex)

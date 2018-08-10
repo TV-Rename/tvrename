@@ -169,8 +169,6 @@ namespace TVRename
             txtSearchStatus.Text = "Searching on TheTVDB.com";
             txtSearchStatus.Update();
 
-            //String ^url = "http://www.tv.com/search.php?stype=program&qs="+txtFindThis->Text+"&type=11&stype=search&tag=search%3Bbutton";
-
             if (!string.IsNullOrEmpty(txtFindThis.Text))
             {
                 TheTVDB.Instance.Search(txtFindThis.Text);
@@ -180,8 +178,7 @@ namespace TVRename
 
         private void lvMatches_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (SelectionChanged != null)
-                SelectionChanged(sender, e);
+            SelectionChanged?.Invoke(sender, e);
         }
 
         public void TakeFocus()

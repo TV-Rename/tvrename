@@ -355,7 +355,7 @@ namespace TVRename
             {
                 if (!string.IsNullOrEmpty(theTime))
                 {
-                    if (DateTime.TryParse(theTime, out DateTime airsTime) |
+                    if (DateTime.TryParse(theTime, out DateTime airsTime) ||
                         DateTime.TryParse(theTime.Replace('.', ':'), out airsTime))
                         return airsTime;
                 }
@@ -424,7 +424,7 @@ namespace TVRename
                 if (!string.IsNullOrEmpty(theAirsTime))
                 {
                     Items["airsTime"] = theAirsTime;
-                    if (DateTime.TryParse(theAirsTime, out DateTime airsTime) |
+                    if (DateTime.TryParse(theAirsTime, out DateTime airsTime) ||
                         DateTime.TryParse(theAirsTime.Replace('.', ':'), out airsTime))
                         AirsTime = airsTime;
                     else

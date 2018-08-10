@@ -232,10 +232,8 @@ namespace TVRename
                 {
                     AutomaticSortEnabled = false,
                     ResizeEnabled = false
-                }; // "<A HREF=\"http://www.imdb.com/find?s=nm&q="+kvp->Key+"\">"+kvp->Key+"</a>");
+                }; 
 
-                // h->AddController(sortableController);
-                // h->SortComparer = gcnew SourceGrid::MultiColumnsComparer(c, 0); // TODO: remove?
                 grid1[0, c + 1] = h;
                 grid1[0, c + 1].View = colTitleModel;
                 grid1[0, c + 1].AddController(new TopClickEvent(this, theData.Cols[c]));
@@ -247,8 +245,6 @@ namespace TVRename
                 AutomaticSortEnabled = false,
                 ResizeEnabled = false
             };
-            //h->AddController(sortableController);
-            // h->SortComparer = gcnew SourceGrid::MultiColumnsComparer(c, 0);
             grid1.Columns[totalCol].Width = 48;
             grid1[0, totalCol] = h;
             grid1[0, totalCol].View = colTitleModel;
@@ -548,7 +544,7 @@ namespace TVRename
                 Data[r][c] = isActor;
             }
 
-            public void SortCols(bool score) // false->name
+            public void SortCols(bool score)
             {
                 for (int c2 = 0; c2 < (DataC - 1); c2++)
                 {
@@ -620,7 +616,7 @@ namespace TVRename
                 Rows[0] = t2;
             }
 
-            public void SortRows(bool score) // false->name
+            public void SortRows(bool score) 
             {
                 for (int r2 = 0; r2 < (DataR - 1); r2++)
                 {

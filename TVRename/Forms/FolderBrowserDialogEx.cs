@@ -457,7 +457,7 @@ namespace DaveChambers.FolderBrowserDialogEx
             public const int SW_HIDE = 0;
             public const int SW_SHOW = 5;
             [DllImport("user32.dll")]
-            public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow); //ShowWindowCommands nCmdShow);
+            public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow); 
 
             public const int SWP_ASYNCWINDOWPOS = 0x4000;
             public const int SWP_DEFERERASE = 0x2000;

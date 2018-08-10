@@ -37,7 +37,7 @@ namespace TVRename
                 client.Headers.Add("user-agent",
                     "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
                 Task<string> response = client.DownloadStringTaskAsync(GITHUB_RELEASES_API_URL);
-                JArray gitHubInfo = JArray.Parse(await response);
+                JArray gitHubInfo = JArray.Parse(await response.ConfigureAwait(false));
 
                 foreach (JObject gitHubReleaseJson in gitHubInfo.Children<JObject>())
                 {

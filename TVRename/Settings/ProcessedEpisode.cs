@@ -135,7 +135,7 @@ namespace TVRename
                 {
                     if (ts.Minutes >= 30)
                         h += 1;
-                    return ts.Days + "d " + h + "h"; // +ts->Minutes+"m "+ts->Seconds+"s";
+                    return ts.Days + "d " + h + "h";
                 }
                 else
                     return Math.Round(ts.TotalMinutes) + "min";

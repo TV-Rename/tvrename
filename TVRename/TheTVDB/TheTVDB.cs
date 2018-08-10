@@ -117,7 +117,6 @@ namespace TVRename
             cacheFile = cache;
 
             LastError = "";
-            // this.WhoHasLock = new List<String>();
             Connected = false;
             extraEpisodes = new List<ExtraEp>();
             removeEpisodeIds = new List<ExtraEp>();
@@ -630,9 +629,17 @@ namespace TVRename
 
                 updatesResponses.Add(jsonUdpateResponse);
                 numberofCallsMade++;
-
-                IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long) a["lastUpdated"];
-                long maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
+                long maxUpdateTime;
+                try
+                {
+                    IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long) a["lastUpdated"];
+                    maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e,jsonUdpateResponse.ToString() );
+                    maxUpdateTime = 0;
+                }
 
                 if (maxUpdateTime > 0)
                 {

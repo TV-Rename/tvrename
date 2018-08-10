@@ -53,7 +53,7 @@ namespace TVRename
 
         protected override void OnItemCheck(ItemCheckEventArgs ice)
         {
-            if (!menuCheck && !keyCheck && (false == checkEnable)) //  || (!_keyCheck && _checkEnable && SelectedItems->Count > 1)
+            if (!menuCheck && !keyCheck && (false == checkEnable))
             {
                 ice.NewValue = ice.CurrentValue;
                 return;
