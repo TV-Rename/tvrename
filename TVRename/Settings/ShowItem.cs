@@ -96,7 +96,7 @@ namespace TVRename
         {
             SetDefaults();
 
-            //These variables have been discontinued (JULY 2018).  if we have any then we should migrate to the new values;
+            //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
             bool upgradeFromOldAutoAddFunction = false;
             bool TEMP_AutoAddNewSeasons = true;
             bool TEMP_AutoAdd_FolderPerSeason = true;
@@ -588,7 +588,7 @@ namespace TVRename
             writer.WriteEndElement(); // ShowItem
         }
 
-        public static List<ProcessedEpisode> ProcessedListFromEpisodes(List<Episode> el, ShowItem si)
+        public static List<ProcessedEpisode> ProcessedListFromEpisodes(IEnumerable<Episode> el, ShowItem si)
         {
             List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
             foreach (Episode e in el)
@@ -615,17 +615,13 @@ namespace TVRename
             return returnValue;
         }
 
-        public Dictionary<int, List<string>> AllFolderLocations()
-        {
-            return AllFolderLocations( true);
-        }
+        public Dictionary<int, List<string>> AllFolderLocations() => AllFolderLocations( true);
 
-        public Dictionary<int, List<string>> AllFolderLocationsEpCheck(bool checkExist)
-        {
-            return AllFolderLocations(true, checkExist);
-        }
+        public Dictionary<int, List<string>> AllFolderLocationsEpCheck(bool checkExist) => AllFolderLocations(true, checkExist);
 
-        public Dictionary<int, List<string>> AllFolderLocations(bool manualToo,bool checkExist=true)
+        public Dictionary<int, List<string>> AllFolderLocations(bool manualToo)=> AllFolderLocations(manualToo,true);
+
+        public Dictionary<int, List<string>> AllFolderLocations(bool manualToo,bool checkExist)
         {
             Dictionary<int, List<string>> fld = new Dictionary<int, List<string>>();
 
@@ -667,8 +663,8 @@ namespace TVRename
 
         public static int CompareShowItemNames(ShowItem one, ShowItem two)
         {
-            string ones = one.ShowName; // + " " +one->SeasonNumber.ToString("D3");
-            string twos = two.ShowName; // + " " +two->SeasonNumber.ToString("D3");
+            string ones = one.ShowName; 
+            string twos = two.ShowName; 
             return string.Compare(ones, twos, StringComparison.Ordinal);
         }
 

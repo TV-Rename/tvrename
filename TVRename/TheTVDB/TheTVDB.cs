@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -117,7 +118,6 @@ namespace TVRename
             cacheFile = cache;
 
             LastError = "";
-            // this.WhoHasLock = new List<String>();
             Connected = false;
             extraEpisodes = new List<ExtraEp>();
             removeEpisodeIds = new List<ExtraEp>();
@@ -257,7 +257,7 @@ namespace TVRename
                         //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                         {
                             Season seas = kvp2.Value;
-                            foreach (Episode e in seas.Episodes)
+                            foreach (Episode e in seas.Episodes.Values)
                                 e.WriteXml(writer);
                         }
                     }
@@ -361,14 +361,11 @@ namespace TVRename
                 foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
                     //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                 {
-                    Season seas = kvp2.Value;
-                    foreach (Episode e in seas.Episodes)
+                    if (kvp2.Value.Episodes.ContainsKey(id))
                     {
-                        if (e.EpisodeId == id)
-                        {
-                            Unlock("FindEpisodeByID");
-                            return e;
-                        }
+                        Episode e = kvp2.Value.Episodes[id];
+                        Unlock("FindEpisodeByID");
+                        return e;
                     }
                 }
             }
@@ -523,7 +520,7 @@ namespace TVRename
                     {
                         Season seas = kvp2.Value;
 
-                        foreach (Episode e in seas.Episodes)
+                        foreach (Episode e in seas.Episodes.Values)
                         {
                             if ((theTime == 0) || ((e.SrvLastUpdated != 0) && (e.SrvLastUpdated < theTime)))
                                 theTime = e.SrvLastUpdated;
@@ -542,7 +539,7 @@ namespace TVRename
 
                 foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
                 {
-                    foreach (Episode ep in kvp2.Value.Episodes)
+                    foreach (Episode ep in kvp2.Value.Episodes.Values)
                     {
                         if (ep.SrvLastUpdated == 0)
                             ep.Dirty = true;
@@ -630,9 +627,17 @@ namespace TVRename
 
                 updatesResponses.Add(jsonUdpateResponse);
                 numberofCallsMade++;
-
-                IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long) a["lastUpdated"];
-                long maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
+                long maxUpdateTime;
+                try
+                {
+                    IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long) a["lastUpdated"];
+                    maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e,jsonUdpateResponse.ToString() );
+                    maxUpdateTime = 0;
+                }
 
                 if (maxUpdateTime > 0)
                 {
@@ -689,7 +694,12 @@ namespace TVRename
                                             Helpers.FromUnixTime(time));
 
                             //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
+                            List<JObject> episodeDefaultLangResponses=null;
                             List<JObject> episodeResponses = GetEpisodes(id, TVSettings.Instance.PreferredLanguage);
+                            if (InForeignLanguage()) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguage);
+
+                            Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
+                                MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
 
                             int numberOfNewEpisodes = 0;
                             int numberOfUpdatedEpisodes = 0;
@@ -697,7 +707,7 @@ namespace TVRename
                             ICollection<int> oldEpisodeIds = new List<int>();
                             foreach (KeyValuePair<int, Season> kvp2 in this.series[id].AiredSeasons)
                             {
-                                foreach (Episode ep in kvp2.Value.Episodes)
+                                foreach (Episode ep in kvp2.Value.Episodes.Values)
                                 {
                                     oldEpisodeIds.Add(ep.EpisodeId);
                                 }
@@ -707,17 +717,18 @@ namespace TVRename
                             {
                                 try
                                 {
-                                    foreach (JObject episodeData in response["data"])
+                                    foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
                                     {
-                                        long serverUpdateTime = (long)episodeData["lastUpdated"];
-                                        int serverEpisodeId = (int)episodeData["id"];
+                                        JToken episodeToUse = (episodeData.Value.Item1??episodeData.Value.Item2);
+                                        long serverUpdateTime = (long)episodeToUse["lastUpdated"];
+                                        int serverEpisodeId = episodeData.Key;
 
                                         bool found = false;
                                         foreach (KeyValuePair<int, Season> kvp2 in this.series[id].AiredSeasons)
                                         {
                                             Season seas = kvp2.Value;
 
-                                            foreach (Episode ep in seas.Episodes)
+                                            foreach (Episode ep in seas.Episodes.Values)
                                             {
                                                 if (ep.EpisodeId == serverEpisodeId)
                                                 {
@@ -797,7 +808,7 @@ namespace TVRename
                 int totaldirty = 0;
                 foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
                 {
-                    foreach (Episode ep in kvp2.Value.Episodes)
+                    foreach (Episode ep in kvp2.Value.Episodes.Values)
                     {
                         if (ep.Dirty)
                             totaldirty++;
@@ -1429,38 +1440,77 @@ namespace TVRename
 
         private void ReloadEpisodes(int code)
         {
-            List<JObject> episodeResponses = GetEpisodes(code, TVSettings.Instance.PreferredLanguage);
+            List<JObject> episodePrefLangResponses = GetEpisodes(code, TVSettings.Instance.PreferredLanguage);
+            List<JObject> episodeDefaultLangResponses = null;
+            if (InForeignLanguage()) episodeDefaultLangResponses = GetEpisodes(code, DefaultLanguage);
 
-            Parallel.ForEach(episodeResponses, response =>
+            Dictionary<int, Tuple<JToken, JToken>>  episodeResponses = MergeEpisodeResponses(episodePrefLangResponses, episodeDefaultLangResponses);
+
+            Parallel.ForEach(episodeResponses, episodeData =>
             {
+                int episodeId = episodeData.Key;
+                JToken prefLangEpisode = episodeData.Value.Item1;
+                JToken defltLangEpisode = episodeData.Value.Item2;
                 try
                 {
-                    Parallel.ForEach(response["data"], episodeData =>
+                    if (string.IsNullOrEmpty(prefLangEpisode?["filename"]?.ToString()) && string.IsNullOrEmpty(defltLangEpisode?["filename"]?.ToString()))
                     {
-                        if (string.IsNullOrEmpty(episodeData["filename"]?.ToString()))
-                        {
-                            //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                            DownloadEpisodeNow(code, (int)episodeData["id"]);
-                        }
-                        else
-                        {
-                            ProcessEpisode(code, episodeData);
-                        }
-                    });
+                        //The episode does not contain enough data (specifically image filename), so we'll get the full version
+                        DownloadEpisodeNow(code, episodeId);
+                    }
+                    else
+                    {
+                        ProcessEpisode(code,episodeId, prefLangEpisode, defltLangEpisode);
+                    }
                 }
                 catch (InvalidCastException ex)
                 {
-                    Logger.Error("Did not recieve the expected format of json from {0}.", EpisodeUri(code));
-                    Logger.Error(ex);
-                    Logger.Error(response.ToString());
+                    Logger.Error(ex,"Did not recieve the expected format of json from {0}.", EpisodeUri(code));
+                    Logger.Error(prefLangEpisode?.ToString());
+                    Logger.Error(defltLangEpisode?.ToString());
                 }
                 catch (OverflowException ex)
                 {
-                    Logger.Error("Could not parse the episode json from {0}.", EpisodeUri(code));
-                    Logger.Error(ex);
-                    Logger.Error(response.ToString());
+                    Logger.Error(ex,"Could not parse the episode json from {0}.", EpisodeUri(code));
+                    Logger.Error(prefLangEpisode?.ToString());
+                    Logger.Error(defltLangEpisode?.ToString());
                 }
             });
+        }
+
+        private static Dictionary<int, Tuple<JToken, JToken>> MergeEpisodeResponses(List<JObject> episodeResponses, List<JObject> episodeDefaultLangResponses)
+        {
+            Dictionary<int, Tuple<JToken, JToken>> episodeIds = new Dictionary<int, Tuple<JToken, JToken>>();
+
+            if(episodeResponses!=null) foreach (JObject epResponse in episodeResponses)
+            {
+                foreach (JToken episodeData in epResponse["data"])
+                {
+                    int x = (int)episodeData["id"];
+                    if (x > 0) { episodeIds.Add(x, new Tuple<JToken, JToken>(episodeData, null)); }
+                }
+            }
+            if (episodeDefaultLangResponses != null) foreach (JObject epResponse in episodeDefaultLangResponses)
+            {
+                foreach (JToken episodeData in epResponse["data"])
+                {
+                    int x = (int)episodeData["id"];
+                    if (x > 0)
+                    {
+                        if (episodeIds.ContainsKey(x))
+                        {
+                            JToken old = episodeIds[x].Item1;
+                            episodeIds[x] = new Tuple<JToken, JToken>(old, episodeData);
+                        }
+                        else
+                        {
+                            episodeIds.Add(x, new Tuple<JToken, JToken>(null, episodeData));
+                        }
+                    }
+                }
+            }
+
+            return episodeIds;
         }
 
         private bool InForeignLanguage() => DefaultLanguage != TVSettings.Instance.PreferredLanguage;
@@ -1477,16 +1527,16 @@ namespace TVRename
                 return false; // shouldn't happen
 
             string uri = TvDbTokenProvider.TVDB_API_URL + "/episodes/" + episodeId;
-            JObject jsonResponse;
-            JObject jsonDefaultLangResponse = new JObject();
+            JObject jsonEpisodeResponse;
+            JObject jsonEpisodeDefaultLangResponse = new JObject();
 
             try
             {
-                jsonResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(),
+                jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(),
                     TVSettings.Instance.PreferredLanguage);
 
                 if (InForeignLanguage())
-                    jsonDefaultLangResponse =
+                    jsonEpisodeDefaultLangResponse =
                         HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), DefaultLanguage);
             }
             catch (WebException ex)
@@ -1503,11 +1553,11 @@ namespace TVRename
             try
             {
                 Episode e;
-                JObject jsonResponseData = (JObject) jsonResponse["data"];
+                JObject jsonResponseData = (JObject)jsonEpisodeResponse["data"];
 
                 if (InForeignLanguage())
                 {
-                    JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
+                    JObject seriesDataDefaultLang = (JObject) jsonEpisodeDefaultLangResponse["data"];
                     e = new Episode(seriesId, jsonResponseData, seriesDataDefaultLang);
                 }
                 else
@@ -1532,6 +1582,47 @@ namespace TVRename
                 Unlock("ProcessTVDBResponse");
             }
 
+            return true;
+        }
+
+        private bool ProcessEpisode(int seriesId,int episodeId, JToken prefLangEpisodeData, JToken defLangEpisodeData,
+            bool dvdOrder = false)
+        {
+            if (prefLangEpisodeData == null) return ProcessEpisode(seriesId, defLangEpisodeData, dvdOrder);
+            if (defLangEpisodeData == null) return ProcessEpisode(seriesId, prefLangEpisodeData, dvdOrder);
+
+            if (series.ContainsKey(seriesId))
+            {
+                Episode ep = FindEpisodeById(episodeId);
+                string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
+                Say(series[seriesId].Name + " (" + eptxt + ")");
+            }
+            else
+                return false; // shouldn't happen
+
+            if (!GetLock("ProcessTVDBResponse"))
+                return false;
+
+            try
+            {
+                Episode e= new Episode(seriesId, (JObject)prefLangEpisodeData, (JObject)defLangEpisodeData);
+
+                if (e.Ok())
+                {
+                    AddOrUpdateEpisode(e);
+                }
+            }
+            catch (TVDBException e)
+            {
+                Logger.Error("Could not parse TVDB Response " + e.Message);
+                LastError = e.Message;
+                Say("");
+                return false;
+            }
+             finally
+            {
+                Unlock("ProcessTVDBResponse");
+            }
             return true;
         }
 
@@ -1610,7 +1701,7 @@ namespace TVRename
             foreach (KeyValuePair<int, Season> kvp in series[code].AiredSeasons)
             {
                 Season seas = kvp.Value;
-                foreach (Episode e in seas.Episodes)
+                foreach (Episode e in seas.Episodes.Values)
                 {
                     if (!e.Dirty || e.EpisodeId <= 0) continue;
                     LockExtraEpisodes();
@@ -1661,15 +1752,15 @@ namespace TVRename
             }
 
             string uri = TvDbTokenProvider.TVDB_API_URL + "/search/series";
-            JObject jsonResponse;
-            JObject jsonDefaultLangResponse = new JObject();
+            JObject jsonSearchResponse;
+            JObject jsonSearchDefaultLangResponse = new JObject();
             try
             {
-                jsonResponse = HttpHelper.JsonHttpGetRequest(uri, new Dictionary<string, string> {{"name", text}},
+                jsonSearchResponse = HttpHelper.JsonHttpGetRequest(uri, new Dictionary<string, string> {{"name", text}},
                     tvDbTokenProvider.GetToken(), TVSettings.Instance.PreferredLanguage);
 
                 if (InForeignLanguage())
-                    jsonDefaultLangResponse = HttpHelper.JsonHttpGetRequest(uri,
+                    jsonSearchDefaultLangResponse = HttpHelper.JsonHttpGetRequest(uri,
                         new Dictionary<string, string> {{"name", text}}, tvDbTokenProvider.GetToken(), DefaultLanguage);
             }
             catch (WebException ex)
@@ -1682,12 +1773,12 @@ namespace TVRename
 
             if (GetLock("ProcessTVDBResponse"))
             {
-                ProcessSearchResult(uri, jsonResponse,GetLanguageId());
+                ProcessSearchResult(uri, jsonSearchResponse,GetLanguageId());
 
                 if (InForeignLanguage())
                 {
                     //we also want to search for search terms that match in default language
-                    ProcessSearchResult(uri, jsonDefaultLangResponse,GetDefaultLanguageId());
+                    ProcessSearchResult(uri, jsonSearchDefaultLangResponse,GetDefaultLanguageId());
                 }
             }
 
@@ -1755,7 +1846,7 @@ namespace TVRename
             {
                 Season s = kvp2.Value;
 
-                foreach (Episode e in s.Episodes)
+                foreach (Episode e in s.Episodes.Values)
                 {
                     DateTime? adt = e.GetAirDateDt();
                     if (adt == null) continue;
@@ -1794,3 +1885,4 @@ namespace TVRename
         }
     }
 }
+

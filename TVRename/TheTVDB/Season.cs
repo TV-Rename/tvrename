@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -19,7 +20,7 @@ namespace TVRename
             noEpisodes,
         }
 
-        public System.Collections.Generic.List<Episode> Episodes;
+        public System.Collections.Generic.Dictionary<int,Episode> Episodes;
         public int SeasonId;
         public int SeasonNumber;
         public SeriesInfo TheSeries;
@@ -29,7 +30,7 @@ namespace TVRename
             TheSeries = theSeries;
             SeasonNumber = number;
             SeasonId = seasonid;
-            Episodes = new System.Collections.Generic.List<Episode>();
+            Episodes = new Dictionary<int, Episode>();
         }
 
         // ReSharper disable once InconsistentNaming
@@ -94,7 +95,7 @@ namespace TVRename
         {
             int min = 9999;
 
-            foreach (Episode e in Episodes)
+            foreach (Episode e in Episodes.Values)
             {
                 if (e.GetAirDateDt().HasValue)
                 {
@@ -109,7 +110,7 @@ namespace TVRename
         {
             int max = 0;
 
-            foreach (Episode e in Episodes)
+            foreach (Episode e in Episodes.Values)
             {
                 if (e.GetAirDateDt().HasValue)
                 {
@@ -124,7 +125,7 @@ namespace TVRename
         {
             if (HasEpisodes)
             {
-                foreach (Episode e in Episodes)
+                foreach (Episode e in Episodes.Values)
                 {
                     if (e.GetAirDateDt(tz).HasValue)
                     {
@@ -141,7 +142,7 @@ namespace TVRename
         {
             if (HasEpisodes)
             {
-                foreach (Episode e in Episodes)
+                foreach (Episode e in Episodes.Values)
                 {
                     if (e.GetAirDateDt(tz).HasValue)
                     {
@@ -157,7 +158,7 @@ namespace TVRename
         public DateTime? LastAiredDate()
         {
             DateTime? returnValue = null;
-            foreach (Episode a in Episodes)
+            foreach (Episode a in Episodes.Values)
             {
                 DateTime? episodeAirDate = a.FirstAired;
 
@@ -190,25 +191,19 @@ namespace TVRename
 
         public void AddUpdateEpisode(Episode newEpisode)
         {
-            bool added = false;
-            for (int i = 0; i < Episodes.Count; i++)
+            if (Episodes.ContainsKey(newEpisode.EpisodeId))
             {
-                Episode ep = Episodes[i];
-                if (ep.EpisodeId == newEpisode.EpisodeId)
-                {
-                    Episodes[i] = newEpisode;
-                    added = true;
-                    break;
-                }
+                Episodes[newEpisode.EpisodeId] = newEpisode;
             }
-
-            if (!added)
-                Episodes.Add(newEpisode);
+            else
+            {
+                Episodes.Add(newEpisode.EpisodeId,newEpisode);
+            }
         }
 
         public bool ContainsEpisode(int episodeNumber, bool dvdOrder)
         {
-            foreach (Episode ep in Episodes)
+            foreach (Episode ep in Episodes.Values)
             {
                 if (dvdOrder && ep.DvdEpNum == episodeNumber) return true;
                 if (!dvdOrder && ep.AiredEpNum == episodeNumber) return true;
@@ -219,18 +214,10 @@ namespace TVRename
 
         public void RemoveEpisode(int episodeId)
         {
-            Episode ep = GetEpisode(episodeId);
-            if (ep != null) Episodes.Remove(ep);
-        }
-
-        public Episode GetEpisode(int episodeId)
-        {
-            foreach (Episode ep in Episodes)
+            if (Episodes.ContainsKey(episodeId))
             {
-                if (ep.EpisodeId == episodeId) return ep;
+                Episodes.Remove(episodeId);
             }
-
-            return null;
         }
 
         public bool IsSpecial()

@@ -198,7 +198,7 @@ namespace TVRename
             if (seas == null)
                 return null; // TODO: warn user
 
-            foreach (Episode e in seas.Episodes)
+            foreach (Episode e in seas.Episodes.Values)
                 eis.Add(new ProcessedEpisode(e, si)); // add a copy
 
             if (si.DvdOrder)
@@ -212,7 +212,7 @@ namespace TVRename
             if (si.CountSpecials && seasonsToUse.ContainsKey(0))
             {
                 // merge specials in
-                foreach (Episode ep in seasonsToUse[0].Episodes)
+                foreach (Episode ep in seasonsToUse[0].Episodes.Values)
                 {
                     string seasstr = ep.AirsBeforeSeason;
                     string epstr = ep.AirsBeforeEpisode;
@@ -408,7 +408,6 @@ namespace TVRename
                 string combinedSummary = eis[n1].Overview + "<br/><br/>";
                 List<Episode> alleps = new List<Episode>();
                 alleps.Add(eis[n1]);
-                //int firstNum = eis[n1]->TVcomEpCount();
                 for (int i = n1 + 1; i <= n2; i++)
                 {
                     episodeNames.Add(eis[i].Name);
@@ -648,7 +647,7 @@ namespace TVRename
 
             if (!seasonsToUse.ContainsKey(snum)) return false;
 
-            foreach (Episode e in seasonsToUse[snum].Episodes)
+            foreach (Episode e in seasonsToUse[snum].Episodes.Values)
             {
                 if (e.FirstAired != null) return true;
             }

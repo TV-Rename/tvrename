@@ -36,9 +36,6 @@ namespace TVRename.Forms
         // ReSharper disable once InconsistentNaming
         private void UpdateUI()
         {
-            // Save where the list is currently scrolled too
-            //int currentTop = this.lvDuplicates.GetScrollVerticalPos();
-
             lvDuplicates.BeginUpdate();
             lvDuplicates.Items.Clear();
 
@@ -56,9 +53,6 @@ namespace TVRename.Forms
             }
 
             lvDuplicates.EndUpdate();
-
-            // Restore the scrolled to position
-            //this.lvDuplicates.SetScrollVerticalPos(currentTop);
         }
 
         private void btnRescan_Click(object sender, EventArgs e)

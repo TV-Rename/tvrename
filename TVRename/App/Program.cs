@@ -33,7 +33,7 @@ namespace TVRename.App
             {
                 Logger.Info(CommandLineArgs.Helptext());
 
-                //redirect console output to parent process;
+                //redirect console output to parent process
                 //must be before any calls to Console.WriteLine()
                 //MS: Never got this to work quite right - seems there is no simple way to output
                 //to the command line console if you are a winforms app

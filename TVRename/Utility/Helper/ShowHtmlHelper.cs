@@ -397,7 +397,7 @@ namespace TVRename
 
                 if (skip.Contains(kvp.Key)) continue;
 
-                if (((kvp.Key == "SeriesID") || (kvp.Key == "seriesId")) & (kvp.Value != ""))
+                if (((kvp.Key == "SeriesID") || (kvp.Key == "seriesId")) && (kvp.Value != ""))
                     body += "<tr><td width=120px>tv.com</td><td><A HREF=\"http://www.tv.com/show/" + kvp.Value +
                             "/summary.html\">Visit</a></td></tr>";
                 else if ((kvp.Key == "IMDB_ID") || (kvp.Key == "imdbId"))
@@ -521,7 +521,7 @@ namespace TVRename
         {
             return si.SeasonEpisodes.ContainsKey(s.SeasonNumber)
                 ? si.SeasonEpisodes[s.SeasonNumber]
-                : ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
+                : ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
         }
 
         private static string GetOverview(ProcessedEpisode ei)
@@ -571,10 +571,9 @@ namespace TVRename
             int snum = s.SeasonNumber;
             string body = "";
 
-            // int snum = s.SeasonNumber;
             List<ProcessedEpisode> eis = si.SeasonEpisodes.ContainsKey(snum)
                 ? si.SeasonEpisodes[snum]
-                : ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
+                : ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
 
             string seasText = Season.UIFullSeasonWord(snum);
 

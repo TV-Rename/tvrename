@@ -52,21 +52,17 @@ namespace TVRename
         {
             if (!TVSettings.Instance.NFOEpisodes) return null;
 
-            ItemList theActionList = new ItemList();
-
             string fn = filo.RemoveExtension() + ".nfo";
             FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
-            if (!nfo.Exists || (dbep.SrvLastUpdated > TimeZone.Epoch(nfo.LastWriteTime)) || forceRefresh)
-            {
-                //If we do not already have plans to put the file into place
-                if (!(DoneNfo.Contains(nfo.FullName)))
-                {
-                    theActionList.Add(new ActionNfo(nfo, dbep));
-                    DoneNfo.Add(nfo.FullName);
-                }
-            }
-            return theActionList;
+            if (nfo.Exists && (dbep.SrvLastUpdated <= TimeZone.Epoch(nfo.LastWriteTime)) && !forceRefresh)
+                return new ItemList();
+
+            //If we do not already have plans to put the file into place
+            if (DoneNfo.Contains(nfo.FullName)) return new ItemList();
+
+            DoneNfo.Add(nfo.FullName);
+            return new ItemList { new ActionNfo(nfo, dbep) };
         }
 
         public sealed override void Reset() => DoneNfo = new List<string>();

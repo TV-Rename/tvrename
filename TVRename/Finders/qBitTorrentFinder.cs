@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace TVRename
 {
@@ -63,16 +63,14 @@ namespace TVRename
             return ret;
         }
 
-        internal static async void StartTorrentDownload(string torrentURL)
+        internal static async Task StartTorrentDownload(string torrentUrl)
         {
-            //throw new System.NotImplementedException();
-
             string host = TVSettings.Instance.qBitTorrentHost;
             string port = TVSettings.Instance.qBitTorrentPort;
             if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
             {
                 Logger.Error(
-                    $"Could not download {torrentURL} via qBitTorrent as settings are not entered for host and port");
+                    $"Could not download {torrentUrl} via qBitTorrent as settings are not entered for host and port");
                 return;
             }
 
@@ -82,24 +80,24 @@ namespace TVRename
             {
                 using (HttpClient client = new HttpClient())
                 {
-                    Dictionary<string, string> values = new Dictionary<string, string> {{"urls", torrentURL}};
+                    Dictionary<string, string> values = new Dictionary<string, string> {{"urls", torrentUrl}};
                     FormUrlEncodedContent content = new FormUrlEncodedContent(values);
                     HttpResponseMessage response = client.PostAsync(url, content).Result;
                     if (!response.IsSuccessStatusCode)
                     {
                         Logger.Warn(
-                            $"Tried to download {torrentURL} from qBitTorrent via {url}. Got following response {response.StatusCode}");
+                            $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}");
                     }
                     else
                     {
                         Logger.Info(
-                            $"Started download of {torrentURL} via qBitTorrent using {url}. Got following response {response.StatusCode}");
+                            $"Started download of {torrentUrl} via qBitTorrent using {url}. Got following response {response.StatusCode}");
                     }
                 }
             }
             catch (WebException e)
             {
-                Logger.Warn($"Could not connect to {url} to downlaod {torrentURL}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                Logger.Warn($"Could not connect to {url} to downlaod {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
         }
     }

@@ -32,8 +32,8 @@ namespace TVRename
 
     public partial class MissingFolderAction : Form
     {
-        public string FolderName;
-        public FaResult Result;
+        public string FolderName { get; private set; }
+        public FaResult Result { get; private set; }
 
         public MissingFolderAction(string showName, string season, string folderName)
         {
@@ -94,7 +94,7 @@ namespace TVRename
             }
         }
 
-        private void MissingFolderAction_DragOver(object sender, DragEventArgs e)
+        private static void MissingFolderAction_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
         }

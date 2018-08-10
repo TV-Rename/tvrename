@@ -38,8 +38,8 @@ namespace TVRename
 
         private void RecoverXML_Load(object sender, System.EventArgs e)
         {
-            settingsList = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDocSettingsFile.FullName)).GetFiles(PathManager.SettingsFileName + "*");
-            availableFiles = new DirectoryInfo(System.IO.Path.GetDirectoryName(PathManager.TVDBFile.FullName)).GetFiles(PathManager.TvdbFileName + "*");
+            settingsList = PathManager.GetPossibleSettingsHistory();
+            availableFiles = PathManager.GetPossibleTvdbHistory();
 
             lbSettings.Items.Add("Default settings");
             if ((settingsList != null) && settingsList.Length > 0)

@@ -22,8 +22,6 @@ namespace TVRename
 
         #endregion
 
-        public bool AllSameType;
-
         public System.Collections.Generic.List<ActionCopyMoveRename> CopyMove;
         public int Count;
         public System.Collections.Generic.List<ActionDownloadImage> Download;
@@ -33,7 +31,6 @@ namespace TVRename
         public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
         public System.Collections.Generic.List<ActionRSS> RSS;
         public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
-        //public System.Collections.Generic.List<ItemuTorrenting> uTorrenting;
 
         public LVResults(ListView lv, bool isChecked) // if not checked, then selected items
         {
@@ -47,7 +44,6 @@ namespace TVRename
 
         public void Go(ListView lv, WhichResults which)
         {
-            //this.uTorrenting = new System.Collections.Generic.List<ItemuTorrenting>();
             Missing = new System.Collections.Generic.List<ItemMissing>();
             RSS = new System.Collections.Generic.List<ActionRSS>();
             CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
@@ -83,7 +79,6 @@ namespace TVRename
 
             System.Type firstType = ((Item) (sel[0].Tag)).GetType();
 
-            AllSameType = true;
             foreach (ListViewItem lvi in sel)
             {
                 if (lvi == null)
@@ -94,7 +89,6 @@ namespace TVRename
                     FlatList.Add(action);
 
                 if (action != null && action.GetType() != firstType)
-                    AllSameType = false;
 
                 if (action is ActionCopyMoveRename cmr)
                 {
@@ -113,8 +107,6 @@ namespace TVRename
                     NFO.Add(nfo);
                 else if (action is ActionPyTivoMeta meta)
                     PyTivoMeta.Add(meta);
-                //else if (action is ItemuTorrenting)
-                //    this.uTorrenting.Add((ItemuTorrenting) (action));
             }
         }
     }

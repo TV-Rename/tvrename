@@ -5,6 +5,8 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Threading;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -222,34 +224,45 @@ namespace TVRename
 
         private void lstFMMonitorFolders_DragDrop(object _, DragEventArgs e)
         {
-            string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
+            AddDraggedFiles(e, TVSettings.Instance.LibraryFolders);
+        }
+
+        private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
+        {
+            string[] files = (string[])(e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)
             {
                 try
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
-                        TVSettings.Instance.LibraryFolders.Add(path.ToLower());
+                    {
+                        engine.CheckFolderForShows(di, true, out DirectoryInfo[] _);
+                        FillNewShowList(true);
+                    }
                 }
                 catch
                 {
                     // ignored
                 }
             }
-            mDoc.SetDirty();
-            FillFolderStringLists();
         }
 
         private void lstFMIgnoreFolders_DragDrop(object _, DragEventArgs e)
         {
-            string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
+            AddDraggedFiles(e, TVSettings.Instance.IgnoreFolders);
+        }
+
+        private void AddDraggedFiles(DragEventArgs e, List<string> strings)
+        {
+            string[] files = (string[])(e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)
             {
                 try
                 {
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
-                        TVSettings.Instance.IgnoreFolders.Add(path.ToLower());
+                        strings.Add(path.ToLower());
                 }
                 catch
                 {
@@ -350,27 +363,6 @@ namespace TVRename
         private void lvFMNewShows_DragOver(object _, DragEventArgs e)
         {
             e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
-        }
-
-        private void lvFMNewShows_DragDrop(object _, DragEventArgs e)
-        {
-            string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
-            foreach (string path in files)
-            {
-                try
-                {
-                    DirectoryInfo di = new DirectoryInfo(path);
-                    if (di.Exists)
-                    {
-                        engine.CheckFolderForShows(di, true,out DirectoryInfo[] _);
-                        FillNewShowList(true);
-                    }
-                }
-                catch
-                {
-                    // ignored
-                }
-            }
         }
 
         private void lvFMNewShows_KeyDown(object sender, KeyEventArgs e)
