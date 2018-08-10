@@ -20,7 +20,10 @@ namespace TVRename
         {
             Episode = pe;
         }
-
+        public ActionWdtvMeta(FileInfo where, ShowItem si) : base(where, si)
+        {
+            Episode = null;
+        }
         #region Action Members
 
         public override string Name => "Write WD TV Live Hub Meta";
