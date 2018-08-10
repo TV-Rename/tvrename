@@ -521,7 +521,7 @@ namespace TVRename
         {
             return si.SeasonEpisodes.ContainsKey(s.SeasonNumber)
                 ? si.SeasonEpisodes[s.SeasonNumber]
-                : ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
+                : ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
         }
 
         private static string GetOverview(ProcessedEpisode ei)
@@ -573,7 +573,7 @@ namespace TVRename
 
             List<ProcessedEpisode> eis = si.SeasonEpisodes.ContainsKey(snum)
                 ? si.SeasonEpisodes[snum]
-                : ShowItem.ProcessedListFromEpisodes(s.Episodes, si);
+                : ShowItem.ProcessedListFromEpisodes(s.Episodes.Values, si);
 
             string seasText = Season.UIFullSeasonWord(snum);
 

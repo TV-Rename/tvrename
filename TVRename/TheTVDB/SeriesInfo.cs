@@ -748,7 +748,7 @@ namespace TVRename
                 {
                     if (s.SeasonNumber == seasF)
                     {
-                        foreach (Episode pe in s.Episodes)
+                        foreach (Episode pe in s.Episodes.Values)
                         {
                             if (pe.DvdEpNum == epF) return pe;
                         }
@@ -761,7 +761,7 @@ namespace TVRename
                 {
                     if (s.SeasonNumber == seasF)
                     {
-                        foreach (Episode pe in s.Episodes)
+                        foreach (Episode pe in s.Episodes.Values)
                         {
                             if (pe.AiredEpNum == epF) return pe;
                         }

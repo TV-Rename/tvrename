@@ -588,7 +588,7 @@ namespace TVRename
             writer.WriteEndElement(); // ShowItem
         }
 
-        public static List<ProcessedEpisode> ProcessedListFromEpisodes(List<Episode> el, ShowItem si)
+        public static List<ProcessedEpisode> ProcessedListFromEpisodes(IEnumerable<Episode> el, ShowItem si)
         {
             List<ProcessedEpisode> pel = new List<ProcessedEpisode>();
             foreach (Episode e in el)

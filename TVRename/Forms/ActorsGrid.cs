@@ -61,7 +61,7 @@ namespace TVRename
                 {
                     foreach (KeyValuePair<int, Season> kvp in si.AiredSeasons) //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
                     {
-                        foreach (Episode ep in kvp.Value.Episodes)
+                        foreach (Episode ep in kvp.Value.Episodes.Values)
                         {
                                 foreach (string g in ep.GuestStars)
                                 {

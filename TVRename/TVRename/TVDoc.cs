@@ -1653,7 +1653,7 @@ namespace TVRename
                 if (si.IgnoreSeasons.Contains(kvp.Value.SeasonNumber))
                     continue;
 
-                foreach (Episode epi in kvp.Value.Episodes)
+                foreach (Episode epi in kvp.Value.Episodes.Values)
                 {
                     DateTime? dt = epi.GetAirDateDt(); // file will have local timezone date, not ours
                     if (dt == null)
