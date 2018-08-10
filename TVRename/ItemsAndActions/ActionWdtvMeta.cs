@@ -25,7 +25,6 @@ namespace TVRename
         {
             Episode = null;
         }
-
         #region Action Members
 
         public override string Name => "Write WD TV Live Hub Meta";

@@ -689,49 +689,7 @@ namespace TVRename
                                             Helpers.FromUnixTime(time));
 
                             //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
-
-                            //Now deal with obtaining any episodes for the series 
-                            //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
-                            //We push the results into a bag to use later
-                            //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
-                            List<JObject> episodeResponses = new List<JObject>();
-
-                            int pageNumber = 1;
-                            bool morePages = true;
-
-                            while (morePages)
-                            {
-                                string episodeUri = TvDbTokenProvider.TVDB_API_URL + "/series/" + id + "/episodes";
-                                try
-                                {
-                                    JObject jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(episodeUri,
-                                        new Dictionary<string, string> {{"page", pageNumber.ToString()}},
-                                        tvDbTokenProvider.GetToken());
-
-                                    episodeResponses.Add(jsonEpisodeResponse);
-                                    int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
-
-                                    Logger.Info(
-                                        $"Page {pageNumber} of {this.series[id].Name} had {numberOfResponses} episodes listed");
-
-                                    if (numberOfResponses < 100)
-                                    {
-                                        morePages = false;
-                                    }
-                                    else
-                                    {
-                                        pageNumber++;
-                                    }
-                                }
-                                catch (WebException ex)
-                                {
-                                    Logger.Info("Error obtaining page " + pageNumber + " of " + episodeUri + ": " +
-                                                ex.Message);
-
-                                    //There may be exactly 100 or 200 episodes, may not be a problem
-                                    morePages = false;
-                                }
-                            }
+                            List<JObject> episodeResponses = GetEpisodes(id, TVSettings.Instance.PreferredLanguage);
 
                             int numberOfNewEpisodes = 0;
                             int numberOfUpdatedEpisodes = 0;
@@ -751,8 +709,8 @@ namespace TVRename
                                 {
                                     foreach (JObject episodeData in response["data"])
                                     {
-                                        long serverUpdateTime = (long) episodeData["lastUpdated"];
-                                        int serverEpisodeId = (int) episodeData["id"];
+                                        long serverUpdateTime = (long)episodeData["lastUpdated"];
+                                        int serverEpisodeId = (int)episodeData["id"];
 
                                         bool found = false;
                                         foreach (KeyValuePair<int, Season> kvp2 in this.series[id].AiredSeasons)
@@ -867,6 +825,59 @@ namespace TVRename
             Say("");
 
             return true;
+        }
+
+        private List<JObject> GetEpisodes(int id,string lang)
+        {
+            //Now deal with obtaining any episodes for the series 
+            //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
+            //We push the results into a bag to use later
+            //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
+            string episodeUri = EpisodeUri(id);
+            List<JObject> episodeResponses = new List<JObject>();
+
+            int pageNumber = 1;
+            bool morePages = true;
+
+            while (morePages)
+            {
+
+                try
+                {
+                    JObject jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(episodeUri,
+                        new Dictionary<string, string> { { "page", pageNumber.ToString() } },
+                        tvDbTokenProvider.GetToken(),lang);
+
+                    episodeResponses.Add(jsonEpisodeResponse);
+                    int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
+
+                    Logger.Info(
+                        $"Page {pageNumber} of {this.series[id].Name} had {numberOfResponses} episodes listed in {lang}");
+
+                    if (numberOfResponses < 100)
+                    {
+                        morePages = false;
+                    }
+                    else
+                    {
+                        pageNumber++;
+                    }
+                }
+                catch (WebException ex)
+                {
+                    Logger.Info(ex, $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang}");
+
+                    //There may be exactly 100 or 200 episodes, may not be a problem
+                    morePages = false;
+                }
+            }
+
+            return episodeResponses;
+        }
+
+        private static string EpisodeUri(int id)
+        {
+            return TvDbTokenProvider.TVDB_API_URL + "/series/" + id + "/episodes";
         }
 
         private void ProcessXmlBannerCache(XmlReader r)
@@ -1017,7 +1028,7 @@ namespace TVRename
         {
             foreach (Language l in LanguageList)
             {
-                if (l.Abbreviation == RequestLanguage) return l.Id;
+                if (l.Abbreviation == TVSettings.Instance.PreferredLanguage) return l.Id;
             }
 
             return -1;
@@ -1238,76 +1249,11 @@ namespace TVRename
             //tvDB only gives us responses in blocks of 100, so we need to iterate over the pages until we get one with <100 rows
             //We push the results into a bag to use later
             //If there is a problem with the while method then we can be proactive by using /series/{id}/episodes/summary to get the total
-            List<JObject> episodeResponses = new List<JObject>();
 
             if (episodesToo || forceReload)
             {
-                int pageNumber = 1;
-                bool morePages = true;
-
-                while (morePages)
-                {
-                    string episodeUri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/episodes";
-                    try
-                    {
-                        JObject jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(episodeUri,
-                            new Dictionary<string, string> {{"page", pageNumber.ToString()}},
-                            tvDbTokenProvider.GetToken(), tvDbTokenProvider.GetToken());
-
-                        episodeResponses.Add(jsonEpisodeResponse);
-                        int numberOfResponses = ((JArray) jsonEpisodeResponse["data"]).Count;
-
-                        Logger.Info("Page " + pageNumber + " of " + si.Name + " had " + numberOfResponses +
-                                    " episodes listed");
-
-                        if (numberOfResponses < 100)
-                        {
-                            morePages = false;
-                        }
-                        else
-                        {
-                            pageNumber++;
-                        }
-                    }
-                    catch (WebException ex)
-                    {
-                        Logger.Info("Error obtaining page " + pageNumber + " of " + episodeUri + ": " + ex.Message);
-                        //There may be exactly 100 or 200 episodes, may not be a problem
-                        morePages = false;
-                    }
-                }
+                ReloadEpisodes(code);
             }
-
-            Parallel.ForEach(episodeResponses, response =>
-            {
-                try
-                {
-                    Parallel.ForEach(response["data"], episodeData =>
-                    {
-                        if (string.IsNullOrEmpty(episodeData["filename"]?.ToString()))
-                        {
-                            //The episode does not contain enough data (specifically image filename), so we'll get the full version
-                            DownloadEpisodeNow(code, (int)episodeData["id"]);
-                        }
-                        else
-                        {
-                            ProcessEpisode(code, episodeData);
-                        }
-                    });
-                }
-                catch (InvalidCastException ex)
-                {
-                    Logger.Error("Did not recieve the expected format of json from {0}.", uri);
-                    Logger.Error(ex);
-                    Logger.Error(response.ToString());
-                }
-                catch (OverflowException ex)
-                {
-                    Logger.Error("Could not parse the episode json from {0}.", uri);
-                    Logger.Error(ex);
-                    Logger.Error(response.ToString());
-                }
-            });
 
             List<JObject> bannerResponses = new List<JObject>();
             List<JObject> bannerDefaultLangResponses = new List<JObject>();
@@ -1481,7 +1427,43 @@ namespace TVRename
             return (series.ContainsKey(code)) ? series[code] : null;
         }
 
-        private bool InForeignLanguage() => DefaultLanguage != RequestLanguage;
+        private void ReloadEpisodes(int code)
+        {
+            List<JObject> episodeResponses = GetEpisodes(code, TVSettings.Instance.PreferredLanguage);
+
+            Parallel.ForEach(episodeResponses, response =>
+            {
+                try
+                {
+                    Parallel.ForEach(response["data"], episodeData =>
+                    {
+                        if (string.IsNullOrEmpty(episodeData["filename"]?.ToString()))
+                        {
+                            //The episode does not contain enough data (specifically image filename), so we'll get the full version
+                            DownloadEpisodeNow(code, (int)episodeData["id"]);
+                        }
+                        else
+                        {
+                            ProcessEpisode(code, episodeData);
+                        }
+                    });
+                }
+                catch (InvalidCastException ex)
+                {
+                    Logger.Error("Did not recieve the expected format of json from {0}.", EpisodeUri(code));
+                    Logger.Error(ex);
+                    Logger.Error(response.ToString());
+                }
+                catch (OverflowException ex)
+                {
+                    Logger.Error("Could not parse the episode json from {0}.", EpisodeUri(code));
+                    Logger.Error(ex);
+                    Logger.Error(response.ToString());
+                }
+            });
+        }
+
+        private bool InForeignLanguage() => DefaultLanguage != TVSettings.Instance.PreferredLanguage;
 
         private bool DownloadEpisodeNow(int seriesId, int episodeId, bool dvdOrder = false)
         {

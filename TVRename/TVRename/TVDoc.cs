@@ -75,8 +75,6 @@ namespace TVRename
             downloadIdentifiers = new DownloadIdentifiersController();
 
             LoadOk = ((settingsFile == null) || LoadXMLSettings(settingsFile)) && TheTVDB.Instance.LoadOk;
-
-            SetPreferredLanguage();
         }
 
         public TVRenameStats Stats()
@@ -94,11 +92,6 @@ namespace TVRename
             }
 
             return mStats;
-        }
-
-        public static void SetPreferredLanguage()
-        {
-            TheTVDB.Instance.RequestLanguage = TVSettings.Instance.PreferredLanguage;
         }
 
         public void SetDirty() => mDirty = true;

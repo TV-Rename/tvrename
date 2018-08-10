@@ -179,7 +179,7 @@ namespace TVRename
                         XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
 
                         XmlHelper.WriteElementToXml(writer, "episodeguideurl",
-                            TheTVDB.BuildUrl(SelectedShow.TvdbCode, TheTVDB.Instance.RequestLanguage));
+                            TheTVDB.BuildUrl(SelectedShow.TvdbCode, TVSettings.Instance.PreferredLanguage));
 
                         XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries().GetOverview());
 
