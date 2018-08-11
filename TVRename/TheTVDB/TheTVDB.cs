@@ -852,7 +852,6 @@ namespace TVRename
 
             while (morePages)
             {
-
                 try
                 {
                     JObject jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(episodeUri,
@@ -861,11 +860,12 @@ namespace TVRename
 
                     episodeResponses.Add(jsonEpisodeResponse);
                     int numberOfResponses = ((JArray)jsonEpisodeResponse["data"]).Count;
-
+                    JToken x = jsonEpisodeResponse["links"]["next"];
+                    bool moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
                     Logger.Info(
-                        $"Page {pageNumber} of {this.series[id].Name} had {numberOfResponses} episodes listed in {lang}");
+                        $"Page {pageNumber} of {this.series[id].Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses?"":"no ")}more to come");
 
-                    if (numberOfResponses < 100)
+                    if (numberOfResponses < 100 || !moreResponses)
                     {
                         morePages = false;
                     }
@@ -876,7 +876,14 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    Logger.Info(ex, $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang}");
+                    if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound )
+                    {
+                        Logger.Info($"Coujld not find page {pageNumber} of {episodeUri} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri} which is epected as there must be exacty 100,200 episodes");
+                    }
+                    else
+                    {
+                        Logger.Error(ex, $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang}");
+                    }
 
                     //There may be exactly 100 or 200 episodes, may not be a problem
                     morePages = false;
@@ -1429,7 +1436,15 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
+                if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
+                {
+                    Logger.Info($"No actors found for {series[si.TvdbCode].Name} using url {ex.Response.ResponseUri.AbsoluteUri}");
+                }
+                else
+                {
+                    Logger.Error(ex, "Unble to obtain actors for {0}", series[si.TvdbCode].Name);
+                }
+
                 LastError = ex.Message;
             }
 
@@ -1487,7 +1502,14 @@ namespace TVRename
                 foreach (JToken episodeData in epResponse["data"])
                 {
                     int x = (int)episodeData["id"];
-                    if (x > 0) { episodeIds.Add(x, new Tuple<JToken, JToken>(episodeData, null)); }
+                    if (x > 0)
+                    {
+                        if (episodeIds.ContainsKey(x))
+                        {
+                            Logger.Warn($"Duplicate episode {x} contained in episode data call");
+                        }
+                        else episodeIds.Add(x, new Tuple<JToken, JToken>(episodeData, null));
+                    }
                 }
             }
             if (episodeDefaultLangResponses != null) foreach (JObject epResponse in episodeDefaultLangResponses)
