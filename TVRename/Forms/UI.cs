@@ -755,19 +755,19 @@ namespace TVRename
             {
                 Season s = ser.DvdSeasons[snum];
                 infoPaneBody = si.GetSeasonHtmlOverview(s);
-                imagesPaneBody = si.GetSeasonImagesHtmlOverview(s);
+                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s));
             }
             else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
             {
                 Season s = ser.AiredSeasons[snum];
                 infoPaneBody = si.GetSeasonHtmlOverview(s);
-                imagesPaneBody = si.GetSeasonImagesHtmlOverview(s);
+                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s));
             }
             else
             {
                 // no epnum specified, just show an overview
                 infoPaneBody = si.GetShowHtmlOverview();
-                imagesPaneBody = si.GetShowImagesHtmlOverview();
+                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview());
             }
 
             TheTVDB.Instance.Unlock("FillEpGuideHTML");
