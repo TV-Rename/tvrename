@@ -133,8 +133,8 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
-            name = name.ReplaceInsensitive("{Year}", show.GetSeason(dvdOrder?ep.DvdSeasonNumber:ep.AiredSeasonNumber).MinYear().ToString());
-            name = name.ReplaceInsensitive("{SeasonYear}", show.TheSeries().MinYear().ToString());
+            name = name.ReplaceInsensitive("{Year}", show.TheSeries().MinYear().ToString());
+            name = name.ReplaceInsensitive("{SeasonYear}", show.GetSeason(dvdOrder ? ep.DvdSeasonNumber : ep.AiredSeasonNumber).MinYear().ToString());
 
             name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(tz));
 
@@ -194,8 +194,8 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", pe.OverallNumber.ToString());
             name = name.ReplaceInsensitive("{Number:2}", pe.OverallNumber.ToString("00"));
             name = name.ReplaceInsensitive("{Number:3}", pe.OverallNumber.ToString("000"));
-            name = name.ReplaceInsensitive("{Year}", pe.AppropriateSeason.MinYear().ToString());
-            name = name.ReplaceInsensitive("{SeasonYear}", pe.TheSeries.MinYear().ToString());
+            name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear().ToString());
+            name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateSeason.MinYear().ToString());
 
             name = ReplaceDates(urlEncode, name, pe.GetAirDateDT(false));
 

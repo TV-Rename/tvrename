@@ -94,7 +94,7 @@ namespace TVRename
             grid1[0, 0].View = topleftTitleModel;
 
             // Draw season
-            for (int c = 0; c < maxSeason + 1; c++)
+            for (int c = (chkHideSpecials.Checked?1:0); c < maxSeason + 1; c++)
             {
                 h = new ColumnHeader(c == 0 ? "Specials" : $"Season {c}")
                 {
@@ -112,9 +112,15 @@ namespace TVRename
 
             // Draw Shows
 
-            int r = 0; // TODO: remove reliance on index
+            int r = 0; 
             foreach (ShowSummaryData show in showList)
             {
+                //Ignore shows with no missing episodes
+                if (chkHideComplete.Checked && !show.HasMssingEpisodes(chkHideSpecials.Checked, chkHideIgnored.Checked)) continue;
+
+                //Ignore shows with no missing aired episodes
+                if (chkHideUnaired.Checked && !show.HasAiredMssingEpisodes(chkHideSpecials.Checked, chkHideIgnored.Checked)) continue;
+
                 RowHeader rh = new RowHeader(show.ShowName) {ResizeEnabled = false};
 
                 grid1[r + 1, 0] = rh;
@@ -123,15 +129,26 @@ namespace TVRename
                 foreach (ShowSummaryData.ShowSummarySeasonData seasonData in show.SeasonDataList)
                 {
                     ShowSummaryData.SummaryOutput output = seasonData.GetOuput();
-                    grid1[r + 1, seasonData.SeasonNumber + 1] = new SourceGrid.Cells.Cell(output.Details, typeof(string));
-                    grid1[r + 1, seasonData.SeasonNumber + 1].View = new Cell
-                    {
-                        BackColor = output.Color,
-                        ForeColor = Color.White,
-                        TextAlignment = ContentAlignment.BottomRight
-                    };
+
+                    //Ignore Season if checkbox is checked
+                    if ((chkHideSpecials.Checked) && output.Special) continue;
+
+                    //Ignore Season if checkbox is checked
+                    if ((chkHideIgnored.Checked) && output.Ignored) continue;
+
+                    grid1[r + 1, seasonData.SeasonNumber + 1] =
+                        new SourceGrid.Cells.Cell(output.Details, typeof(string))
+                        {
+                            View = new Cell
+                            {
+                                BackColor = output.Color,
+                                ForeColor = Color.White,
+                                TextAlignment = ContentAlignment.BottomRight
+                            },
+                            Editor = {EditableMode = EditableMode.None}
+                        };
+
                     grid1[r + 1, seasonData.SeasonNumber + 1].AddController(new ShowClickEvent(this, show.ShowItem, seasonData.Season));
-                    grid1[r + 1, seasonData.SeasonNumber + 1].Editor.EditableMode = EditableMode.None;
                 }
                 r++;
             }
@@ -204,7 +221,7 @@ namespace TVRename
                     }
                 }
             }
-            return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount, season);
+            return new ShowSummaryData.ShowSummarySeasonData(snum, epCount, epAiredCount, epGotCount, season,si.IgnoreSeasons.Contains(snum));
         }
 
         private void showRightClickMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -448,23 +465,32 @@ namespace TVRename
                 private readonly int episodeGotCount;
                 public readonly Season Season;
                 public readonly int SeasonNumber;
+                public readonly bool Ignored;
 
-                public ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, Season season)
+                public ShowSummarySeasonData(int seasonNumber, int episodeCount, int episodeAiredCount, int episodeGotCount, Season season,bool ignored)
                 {
                     SeasonNumber = seasonNumber;
                     this.episodeCount = episodeCount;
                     this.episodeAiredCount = episodeAiredCount;
                     this.episodeGotCount = episodeGotCount;
                     Season = season;
+                    this.Ignored = ignored;
                 }
 
                 public SummaryOutput GetOuput()
                 {
-                    SummaryOutput output = new SummaryOutput();
+                    SummaryOutput output = new SummaryOutput
+                    {
+                        Ignored = Ignored,
+                        Special = (SeasonNumber == 0)
+                    };
+
                     if (SeasonNumber == 0)
                     {
                         output.Details = $"{episodeGotCount} / {episodeCount}";
-                        if (episodeGotCount == episodeCount)
+                        if (Ignored)
+                            output.Color = Color.LightSlateGray;
+                        else if (episodeGotCount == episodeCount)
                             output.Color = Color.Green;
                         else if (episodeGotCount == 0)
                             output.Color = Color.Red;
@@ -476,14 +502,27 @@ namespace TVRename
                         // show amount of aired eps
                         output.Details = $"{episodeGotCount} / {episodeAiredCount}";
                         // show amount of unaired eps
-                        output.Details += episodeCount - episodeAiredCount == 0 ? string.Empty : $" ({episodeCount - episodeAiredCount})";
+                        if (episodeCount > episodeAiredCount)
+                            output.Details += $" ({episodeCount - episodeAiredCount})";
 
-                        if (episodeGotCount == episodeAiredCount)
+                        if (Ignored)
+                            output.Color = Color.LightSlateGray;
+                        else if (episodeGotCount == episodeAiredCount)
                             output.Color = (episodeCount - episodeAiredCount) == 0 ? Color.Green : Color.GreenYellow;
                         else
                             output.Color = episodeGotCount == 0 ? Color.Red : Color.Orange;
                     }
                     return output;
+                }
+
+                public bool HasMissingEpisodes()
+                {
+                    return (episodeGotCount!=episodeCount);
+                }
+
+                public bool HasAiredMssingEpisodes()
+                {
+                    return (episodeGotCount != episodeAiredCount);
                 }
             }
 
@@ -495,9 +534,64 @@ namespace TVRename
             {
                 public Color Color;
                 public string Details;
+                public bool Ignored;
+                public bool Special;
             }
             #endregion
+
+            public bool HasMssingEpisodes(bool ignoreSpecials,bool ignoreIgnoredSeasons)
+            {
+                foreach (ShowSummarySeasonData ssn in SeasonDataList)
+                {
+                    if (ignoreIgnoredSeasons && ssn.Ignored) continue;
+                    if (ignoreSpecials && ssn.SeasonNumber == 0) continue;
+                    if (ssn.HasMissingEpisodes()) return true;
+                }
+
+                return false;
+            }
+
+            public bool HasAiredMssingEpisodes(bool ignoreSpecials, bool ignoreIgnoredSeasons)
+            {
+                foreach (ShowSummarySeasonData ssn in SeasonDataList)
+                {
+                    if (ignoreIgnoredSeasons && ssn.Ignored) continue;
+                    if (ignoreSpecials && ssn.SeasonNumber == 0) continue;
+                    if (ssn.HasAiredMssingEpisodes()) return true;
+                }
+
+                return false;
+            }
         }
         #endregion
+
+        private void chkHideIgnored_CheckedChanged(object sender, EventArgs e)
+        {
+            PopulateGrid();
+        }
+
+        private void chkHideSpecials_CheckedChanged(object sender, EventArgs e)
+        {
+            PopulateGrid();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            PopulateGrid();
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            chkHideIgnored.Checked = false;
+            chkHideComplete.Checked = false;
+            chkHideSpecials.Checked = false;
+            chkHideUnaired.Checked = false;
+            PopulateGrid();
+        }
+
+        private void chkHideComplete_CheckedChanged(object sender, EventArgs e)
+        {
+            PopulateGrid();
+        }
     }
 }
