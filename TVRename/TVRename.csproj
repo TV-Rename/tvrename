@@ -132,23 +132,23 @@
     <Compile Include="Exporter\UpcomingiCAL.cs" />
     <Compile Include="Finders\qBitTorrentFinder.cs" />
     <Compile Include="Finders\TorrentFinder.cs" />
-    <Compile Include="Forms\AutoAddShow.cs">
+    <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AutoAddShow.Designer.cs">
+    <Compile Include="Forms\ShowPreferences\AutoAddShow.Designer.cs">
       <DependentUpon>AutoAddShow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FolderBrowserDialogEx.cs" />
-    <Compile Include="Forms\DupEpFinder.cs">
+    <Compile Include="Forms\ShowPreferences\FolderBrowserDialogEx.cs" />
+    <Compile Include="Forms\Tools\DupEpFinder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\DupEpFinder.Designer.cs">
+    <Compile Include="Forms\Tools\DupEpFinder.Designer.cs">
       <DependentUpon>DupEpFinder.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UpdateNotification.cs">
+    <Compile Include="Forms\Supporting\UpdateNotification.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UpdateNotification.Designer.cs">
+    <Compile Include="Forms\Supporting\UpdateNotification.Designer.cs">
       <DependentUpon>UpdateNotification.cs</DependentUpon>
     </Compile>
     <Compile Include="Ipc\IRemoteActions.cs" />
@@ -179,22 +179,22 @@
     <Compile Include="Finders\uTorrentFinder.cs" />
     <Compile Include="Finders\SABnzbdFinder.cs" />
     <Compile Include="Finders\Finder.cs" />
-    <Compile Include="Forms\Filters.cs">
+    <Compile Include="Forms\Supporting\Filters.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Filters.Designer.cs">
+    <Compile Include="Forms\Supporting\Filters.Designer.cs">
       <DependentUpon>Filters.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ShowSummary.cs">
+    <Compile Include="Forms\Tools\ShowSummary.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ShowSummary.Designer.cs">
+    <Compile Include="Forms\Tools\ShowSummary.Designer.cs">
       <DependentUpon>ShowSummary.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TVRenameSplash.cs">
+    <Compile Include="Forms\Supporting\TVRenameSplash.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\TVRenameSplash.Designer.cs">
+    <Compile Include="Forms\Supporting\TVRenameSplash.Designer.cs">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </Compile>
     <Compile Include="ItemsAndActions\ActionDelete.cs" />
@@ -222,97 +222,97 @@
     <Compile Include="Utility\SAB\NewDataSet.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
-    <Compile Include="Forms\ActorsGrid.cs">
+    <Compile Include="Forms\Tools\ActorsGrid.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ActorsGrid.Designer.cs">
+    <Compile Include="Forms\Tools\ActorsGrid.Designer.cs">
       <DependentUpon>ActorsGrid.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AddEditSearchEngine.cs">
+    <Compile Include="Forms\Preferences\AddEditSearchEngine.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AddEditSearchEngine.Designer.cs">
+    <Compile Include="Forms\Preferences\AddEditSearchEngine.Designer.cs">
       <DependentUpon>AddEditSearchEngine.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AddEditSeasEpFinders.cs">
+    <Compile Include="Forms\Preferences\AddEditSeasEpFinders.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AddEditSeasEpFinders.Designer.cs">
+    <Compile Include="Forms\Preferences\AddEditSeasEpFinders.Designer.cs">
       <DependentUpon>AddEditSeasEpFinders.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AddEditShow.cs">
+    <Compile Include="Forms\ShowPreferences\AddEditShow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AddEditShow.Designer.cs">
+    <Compile Include="Forms\ShowPreferences\AddEditShow.Designer.cs">
       <DependentUpon>AddEditShow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AddModifyRule.Designer.cs">
+    <Compile Include="Forms\ShowPreferences\AddModifyRule.Designer.cs">
       <DependentUpon>AddModifyRule.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\BugReport.Designer.cs">
+    <Compile Include="Forms\Utilities\BugReport.Designer.cs">
       <DependentUpon>BugReport.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\BuyMeADrink.Designer.cs">
+    <Compile Include="Forms\Utilities\BuyMeADrink.Designer.cs">
       <DependentUpon>BuyMeADrink.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CopyMoveProgress.Designer.cs">
+    <Compile Include="Forms\Supporting\CopyMoveProgress.Designer.cs">
       <DependentUpon>CopyMoveProgress.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CustomNameDesigner.Designer.cs">
+    <Compile Include="Forms\Preferences\CustomNameDesigner.Designer.cs">
       <DependentUpon>CustomNameDesigner.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\CustomNameTagsFloatingWindow.Designer.cs">
+    <Compile Include="Forms\Preferences\CustomNameTagsFloatingWindow.Designer.cs">
       <DependentUpon>CustomNameTagsFloatingWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\DownloadProgress.Designer.cs">
+    <Compile Include="Forms\Supporting\DownloadProgress.Designer.cs">
       <DependentUpon>DownloadProgress.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\EditRules.Designer.cs">
+    <Compile Include="Forms\ShowPreferences\EditRules.Designer.cs">
       <DependentUpon>EditRules.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FolderMonitor.Designer.cs">
-      <DependentUpon>FolderMonitor.cs</DependentUpon>
+    <Compile Include="Forms\BulkAdd\BulkAdd.Designer.cs">
+      <DependentUpon>BulkAdd.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FolderMonitorEdit.cs">
+    <Compile Include="Forms\BulkAdd\BulkAddEditShow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FolderMonitorEdit.Designer.cs">
-      <DependentUpon>FolderMonitorEdit.cs</DependentUpon>
+    <Compile Include="Forms\BulkAdd\BulkAddEditShow.Designer.cs">
+      <DependentUpon>BulkAddEditShow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FolderMonitorProgress.Designer.cs">
-      <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
+    <Compile Include="Forms\BulkAdd\BulkAddProgress.Designer.cs">
+      <DependentUpon>BulkAddProgress.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\IgnoreEdit.Designer.cs">
+    <Compile Include="Forms\Preferences\IgnoreEdit.Designer.cs">
       <DependentUpon>IgnoreEdit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MissingFolderAction.Designer.cs">
+    <Compile Include="Forms\Supporting\MissingFolderAction.Designer.cs">
       <DependentUpon>MissingFolderAction.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Preferences.Designer.cs">
+    <Compile Include="Forms\Preferences\Preferences.Designer.cs">
       <DependentUpon>Preferences.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\RecoverXML.Designer.cs">
+    <Compile Include="Forms\Utilities\RecoverXML.Designer.cs">
       <DependentUpon>RecoverXML.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ScanProgress.Designer.cs">
+    <Compile Include="Forms\Supporting\ScanProgress.Designer.cs">
       <DependentUpon>ScanProgress.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ShowException.Designer.cs">
+    <Compile Include="Forms\Utilities\ShowException.Designer.cs">
       <DependentUpon>ShowException.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\StatsWindow.Designer.cs">
+    <Compile Include="Forms\Utilities\StatsWindow.Designer.cs">
       <DependentUpon>StatsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TorrentMatch.Designer.cs">
+    <Compile Include="Forms\Torrent\TorrentMatch.Designer.cs">
       <DependentUpon>TorrentMatch.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\UI.Designer.cs">
       <DependentUpon>UI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\UpcomingPopup.Designer.cs">
+    <Compile Include="Forms\Supporting\UpcomingPopup.Designer.cs">
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\uTorrent.Designer.cs">
+    <Compile Include="Forms\Torrent\uTorrent.Designer.cs">
       <DependentUpon>uTorrent.cs</DependentUpon>
     </Compile>
     <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
@@ -330,55 +330,55 @@
     <Compile Include="ItemsAndActions\ActionRSS.cs" />
     <Compile Include="ItemsAndActions\ActionItemSorter.cs" />
     <Compile Include="ItemsAndActions\ItemuTorrenting.cs" />
-    <Compile Include="TVRename\FolderMonitorEntry.cs" />
-    <Compile Include="Forms\AddModifyRule.cs">
+    <Compile Include="TVRename\FoundFolder.cs" />
+    <Compile Include="Forms\ShowPreferences\AddModifyRule.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TVRename\IgnoreItem.cs" />
     <Compile Include="TVRename\LVResults.cs" />
     <Compile Include="TVRename\PathManager.cs" />
     <Compile Include="Utility\BT.cs" />
-    <Compile Include="Forms\BugReport.cs">
+    <Compile Include="Forms\Utilities\BugReport.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\BuyMeADrink.cs">
+    <Compile Include="Forms\Utilities\BuyMeADrink.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\CopyMoveProgress.cs">
+    <Compile Include="Forms\Supporting\CopyMoveProgress.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings\CustomEpisodeName.cs" />
-    <Compile Include="Forms\CustomNameDesigner.cs">
+    <Compile Include="Forms\Preferences\CustomNameDesigner.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\CustomNameTagsFloatingWindow.cs">
+    <Compile Include="Forms\Preferences\CustomNameTagsFloatingWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Utility\DirCache.cs" />
-    <Compile Include="Forms\DownloadProgress.cs">
+    <Compile Include="Forms\Supporting\DownloadProgress.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\EditRules.cs">
+    <Compile Include="Forms\ShowPreferences\EditRules.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FolderMonitor.cs">
+    <Compile Include="Forms\BulkAdd\BulkAdd.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FolderMonitorProgress.cs">
+    <Compile Include="Forms\BulkAdd\BulkAddProgress.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Utility\DirCacheEntry.cs" />
     <Compile Include="Utility\Helper\Helpers.cs" />
-    <Compile Include="Forms\IgnoreEdit.cs">
+    <Compile Include="Forms\Preferences\IgnoreEdit.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\MissingFolderAction.cs">
+    <Compile Include="Forms\Supporting\MissingFolderAction.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Custom Controls\MyListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Forms\Preferences.cs">
+    <Compile Include="Forms\Preferences\Preferences.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -390,86 +390,86 @@
     <Compile Include="Utility\Helper\StringExtensions.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
-    <EmbeddedResource Include="Forms\ActorsGrid.resx">
+    <EmbeddedResource Include="Forms\Tools\ActorsGrid.resx">
       <DependentUpon>ActorsGrid.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AddEditSearchEngine.resx">
+    <EmbeddedResource Include="Forms\Preferences\AddEditSearchEngine.resx">
       <DependentUpon>AddEditSearchEngine.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AddEditSeasEpFinders.resx">
+    <EmbeddedResource Include="Forms\Preferences\AddEditSeasEpFinders.resx">
       <DependentUpon>AddEditSeasEpFinders.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AddEditShow.resx">
+    <EmbeddedResource Include="Forms\ShowPreferences\AddEditShow.resx">
       <DependentUpon>AddEditShow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AddModifyRule.resx">
+    <EmbeddedResource Include="Forms\ShowPreferences\AddModifyRule.resx">
       <DependentUpon>AddModifyRule.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AutoAddShow.resx">
+    <EmbeddedResource Include="Forms\ShowPreferences\AutoAddShow.resx">
       <DependentUpon>AutoAddShow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BugReport.resx">
+    <EmbeddedResource Include="Forms\Utilities\BugReport.resx">
       <DependentUpon>BugReport.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BuyMeADrink.resx">
+    <EmbeddedResource Include="Forms\Utilities\BuyMeADrink.resx">
       <DependentUpon>BuyMeADrink.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CopyMoveProgress.resx">
+    <EmbeddedResource Include="Forms\Supporting\CopyMoveProgress.resx">
       <DependentUpon>CopyMoveProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CustomNameDesigner.resx">
+    <EmbeddedResource Include="Forms\Preferences\CustomNameDesigner.resx">
       <DependentUpon>CustomNameDesigner.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\CustomNameTagsFloatingWindow.resx">
+    <EmbeddedResource Include="Forms\Preferences\CustomNameTagsFloatingWindow.resx">
       <DependentUpon>CustomNameTagsFloatingWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DownloadProgress.resx">
+    <EmbeddedResource Include="Forms\Supporting\DownloadProgress.resx">
       <DependentUpon>DownloadProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EditRules.resx">
+    <EmbeddedResource Include="Forms\ShowPreferences\EditRules.resx">
       <DependentUpon>EditRules.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Filters.resx">
+    <EmbeddedResource Include="Forms\Supporting\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FolderMonitor.resx">
-      <DependentUpon>FolderMonitor.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\BulkAdd\BulkAdd.resx">
+      <DependentUpon>BulkAdd.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FolderMonitorEdit.resx">
-      <DependentUpon>FolderMonitorEdit.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\BulkAdd\BulkAddEditShow.resx">
+      <DependentUpon>BulkAddEditShow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FolderMonitorProgress.resx">
-      <DependentUpon>FolderMonitorProgress.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\BulkAdd\BulkAddProgress.resx">
+      <DependentUpon>BulkAddProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DupEpFinder.resx">
+    <EmbeddedResource Include="Forms\Tools\DupEpFinder.resx">
       <DependentUpon>DupEpFinder.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ShowSummary.resx">
+    <EmbeddedResource Include="Forms\Tools\ShowSummary.resx">
       <DependentUpon>ShowSummary.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UpdateNotification.resx">
+    <EmbeddedResource Include="Forms\Supporting\UpdateNotification.resx">
       <DependentUpon>UpdateNotification.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\IgnoreEdit.resx">
+    <EmbeddedResource Include="Forms\Preferences\IgnoreEdit.resx">
       <DependentUpon>IgnoreEdit.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MissingFolderAction.resx">
+    <EmbeddedResource Include="Forms\Supporting\MissingFolderAction.resx">
       <DependentUpon>MissingFolderAction.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -477,11 +477,11 @@
       <DependentUpon>MyListView.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Preferences.resx">
+    <EmbeddedResource Include="Forms\Preferences\Preferences.resx">
       <DependentUpon>Preferences.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TVRenameSplash.resx">
+    <EmbeddedResource Include="Forms\Supporting\TVRenameSplash.resx">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -489,19 +489,19 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\RecoverXML.resx">
+    <EmbeddedResource Include="Forms\Utilities\RecoverXML.resx">
       <DependentUpon>RecoverXML.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ScanProgress.resx">
+    <EmbeddedResource Include="Forms\Supporting\ScanProgress.resx">
       <DependentUpon>ScanProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ShowException.resx">
+    <EmbeddedResource Include="Forms\Utilities\ShowException.resx">
       <DependentUpon>ShowException.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\StatsWindow.resx">
+    <EmbeddedResource Include="Forms\Utilities\StatsWindow.resx">
       <DependentUpon>StatsWindow.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -509,7 +509,7 @@
       <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TorrentMatch.resx">
+    <EmbeddedResource Include="Forms\Torrent\TorrentMatch.resx">
       <DependentUpon>TorrentMatch.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -517,11 +517,11 @@
       <DependentUpon>UI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\UpcomingPopup.resx">
+    <EmbeddedResource Include="Forms\Supporting\UpcomingPopup.resx">
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\uTorrent.resx">
+    <EmbeddedResource Include="Forms\Torrent\uTorrent.resx">
       <DependentUpon>uTorrent.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -535,22 +535,22 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
-    <Compile Include="Forms\RecoverXML.cs">
+    <Compile Include="Forms\Utilities\RecoverXML.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ScanProgress.cs">
+    <Compile Include="Forms\Supporting\ScanProgress.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings\Searchers.cs" />
     <Compile Include="Settings\Settings.cs" />
-    <Compile Include="Forms\ShowException.cs">
+    <Compile Include="Forms\Utilities\ShowException.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Settings\ShowRule.cs" />
     <Compile Include="Utility\SAB\Queue.cs" />
     <Compile Include="Utility\Sorters.cs" />
     <Compile Include="Settings\Statistics.cs" />
-    <Compile Include="Forms\StatsWindow.cs">
+    <Compile Include="Forms\Utilities\StatsWindow.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TheTVDB\TheTVDB.cs" />
@@ -558,7 +558,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Utility\Timezone.cs" />
-    <Compile Include="Forms\TorrentMatch.cs">
+    <Compile Include="Forms\Torrent\TorrentMatch.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TVRename\TVDoc.cs" />
@@ -566,10 +566,10 @@
     <Compile Include="Forms\UI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\UpcomingPopup.cs">
+    <Compile Include="Forms\Supporting\UpcomingPopup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\uTorrent.cs">
+    <Compile Include="Forms\Torrent\uTorrent.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
