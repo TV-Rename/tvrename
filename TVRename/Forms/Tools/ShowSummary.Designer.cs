@@ -39,6 +39,7 @@ namespace TVRename
             this.chkHideComplete = new System.Windows.Forms.CheckBox();
             this.chkHideUnaired = new System.Windows.Forms.CheckBox();
             this.btnClear = new System.Windows.Forms.Button();
+            this.chkHideNotScanned = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // grid1
@@ -52,7 +53,7 @@ namespace TVRename
             this.grid1.Name = "grid1";
             this.grid1.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.grid1.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.grid1.Size = new System.Drawing.Size(721, 534);
+            this.grid1.Size = new System.Drawing.Size(965, 534);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = true;
             this.grid1.ToolTipText = "";
@@ -111,7 +112,7 @@ namespace TVRename
             // btnClear
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClear.Location = new System.Drawing.Point(646, 9);
+            this.btnClear.Location = new System.Drawing.Point(890, 9);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(75, 23);
             this.btnClear.TabIndex = 5;
@@ -119,11 +120,23 @@ namespace TVRename
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
+            // chkHideNotScanned
+            // 
+            this.chkHideNotScanned.AutoSize = true;
+            this.chkHideNotScanned.Location = new System.Drawing.Point(630, 12);
+            this.chkHideNotScanned.Name = "chkHideNotScanned";
+            this.chkHideNotScanned.Size = new System.Drawing.Size(149, 17);
+            this.chkHideNotScanned.TabIndex = 6;
+            this.chkHideNotScanned.Text = "Hide Not Scanned Shows";
+            this.chkHideNotScanned.UseVisualStyleBackColor = true;
+            this.chkHideNotScanned.CheckedChanged += new System.EventHandler(this.chkHideNotScanned_CheckedChanged);
+            // 
             // ShowSummary
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(725, 573);
+            this.ClientSize = new System.Drawing.Size(969, 573);
+            this.Controls.Add(this.chkHideNotScanned);
             this.Controls.Add(this.btnClear);
             this.Controls.Add(this.chkHideUnaired);
             this.Controls.Add(this.chkHideComplete);
@@ -148,5 +161,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox chkHideComplete;
         private System.Windows.Forms.CheckBox chkHideUnaired;
         private System.Windows.Forms.Button btnClear;
+        private System.Windows.Forms.CheckBox chkHideNotScanned;
     }
 }

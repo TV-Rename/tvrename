@@ -121,7 +121,16 @@ namespace TVRename
                 //Ignore shows with no missing aired episodes
                 if (chkHideUnaired.Checked && !show.HasAiredMssingEpisodes(chkHideSpecials.Checked, chkHideIgnored.Checked)) continue;
 
-                RowHeader rh = new RowHeader(show.ShowName) {ResizeEnabled = false};
+                //Ignore shows which do not have the missing check
+                if (chkHideNotScanned.Checked && !show.ShowItem.DoMissingCheck) continue;
+
+                RowHeader rh = new RowHeader(show.ShowName)
+                {
+                    ResizeEnabled = false,
+                    View = new Cell{ForeColor = (show.ShowItem.DoMissingCheck ? Color.Black : Color.Gray)}
+                };
+
+                //Gray if the show is not checked for missing episodes in the scan
 
                 grid1[r + 1, 0] = rh;
                 grid1[r + 1, 0].AddController(new ShowClickEvent(this, show.ShowItem));
@@ -586,10 +595,16 @@ namespace TVRename
             chkHideComplete.Checked = false;
             chkHideSpecials.Checked = false;
             chkHideUnaired.Checked = false;
+            chkHideNotScanned.Checked = false;
             PopulateGrid();
         }
 
         private void chkHideComplete_CheckedChanged(object sender, EventArgs e)
+        {
+            PopulateGrid();
+        }
+
+        private void chkHideNotScanned_CheckedChanged(object sender, EventArgs e)
         {
             PopulateGrid();
         }
