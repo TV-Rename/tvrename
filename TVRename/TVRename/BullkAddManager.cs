@@ -22,7 +22,7 @@ namespace TVRename
             mDoc = doc;
         }
 
-        public static void GuessShowItem(FolderMonitorEntry ai, ShowLibrary library)
+        public static void GuessShowItem(FoundFolder ai, ShowLibrary library)
         {
             string showName = GuessShowName(ai, library);
 
@@ -44,7 +44,7 @@ namespace TVRename
             TheTVDB.Instance.Unlock("GuessShowItem");
         }
 
-        private static string GuessShowName(FolderMonitorEntry ai, ShowLibrary library)
+        private static string GuessShowName(FoundFolder ai, ShowLibrary library)
         {
             // see if we can guess a season number and show name, too
             // Assume is blah\blah\blah\show\season X
@@ -173,8 +173,8 @@ namespace TVRename
                         return true;
 
                     // ....its good!
-                    FolderMonitorEntry ai =
-                        new FolderMonitorEntry(di2.FullName, hasSeasonFolders, folderFormat);
+                    FoundFolder ai =
+                        new FoundFolder(di2.FullName, hasSeasonFolders, folderFormat);
 
                     AddItems.Add(ai);
                     Logger.Info("Adding {0} as a new folder", theFolder);
@@ -225,7 +225,7 @@ namespace TVRename
 
         public void AddAllToMyShows()
         {
-            foreach (FolderMonitorEntry ai in AddItems)
+            foreach (FoundFolder ai in AddItems)
             {
                 if (ai.CodeUnknown)
                     continue; // skip
