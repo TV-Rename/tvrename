@@ -137,7 +137,7 @@ namespace TVRename
                 ShowItem episodeSi = Episode.Show??SelectedShow;
                 string filename =
                     TVSettings.Instance.FilenameFriendly(
-                        TVSettings.Instance.NamingStyle.GetTargetEpisodeName(episode,episodeSi.ShowName, episodeSi.GetTimeZone(), episodeSi.DvdOrder));
+                        TVSettings.Instance.NamingStyle.GetTargetEpisodeName(episodeSi,episode,episodeSi.GetTimeZone(), episodeSi.DvdOrder));
 
                 string thumbFilename =  filename + ".jpg";
                 XmlHelper.WriteElementToXml(writer, "thumb",thumbFilename);
