@@ -43,6 +43,7 @@ namespace TVRename.Forms
             this.cmbRating = new System.Windows.Forms.ComboBox();
             this.cmbNetwork = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.chkHideIgnoredSeasons = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // tbShowName
@@ -70,7 +71,7 @@ namespace TVRename.Forms
             this.clbGenre.Location = new System.Drawing.Point(13, 132);
             this.clbGenre.MultiColumn = true;
             this.clbGenre.Name = "clbGenre";
-            this.clbGenre.Size = new System.Drawing.Size(276, 259);
+            this.clbGenre.Size = new System.Drawing.Size(276, 214);
             this.clbGenre.TabIndex = 5;
             // 
             // btnCancel
@@ -159,11 +160,23 @@ namespace TVRename.Forms
             this.label4.TabIndex = 14;
             this.label4.Text = "Network";
             // 
+            // chkHideIgnoredSeasons
+            // 
+            this.chkHideIgnoredSeasons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.chkHideIgnoredSeasons.AutoSize = true;
+            this.chkHideIgnoredSeasons.Location = new System.Drawing.Point(15, 366);
+            this.chkHideIgnoredSeasons.Name = "chkHideIgnoredSeasons";
+            this.chkHideIgnoredSeasons.Size = new System.Drawing.Size(151, 17);
+            this.chkHideIgnoredSeasons.TabIndex = 15;
+            this.chkHideIgnoredSeasons.Text = "Filter Out Ignored Seasons";
+            this.chkHideIgnoredSeasons.UseVisualStyleBackColor = true;
+            // 
             // Filters
             // 
             this.AcceptButton = this.btnOk;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(306, 433);
+            this.Controls.Add(this.chkHideIgnoredSeasons);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.cmbNetwork);
             this.Controls.Add(this.cmbRating);
@@ -203,5 +216,6 @@ namespace TVRename.Forms
         private System.Windows.Forms.ComboBox cmbRating;
         private System.Windows.Forms.ComboBox cmbNetwork;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkHideIgnoredSeasons;
     }
 }

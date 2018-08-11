@@ -1954,7 +1954,7 @@ namespace TVRename
                 if (ser != null)
                     name = ser.Name;
                 else
-                    name = "-- Unknown : " + si.TvdbCode + " --";
+                    name += "-- Unknown : " + si.TvdbCode + " --";
             }
 
             TreeNode n = new TreeNode(name) {Tag = si};
@@ -1980,15 +1980,16 @@ namespace TVRename
                 List<int> theKeys = si.DvdOrder
                     ? new List<int>(ser.DvdSeasons.Keys)
                     : new List<int>(ser.AiredSeasons.Keys);
-                // now, go through and number them all sequentially
-                //foreach (int snum in ser.Seasons.Keys)
-                //    theKeys.Add(snum);
 
                 theKeys.Sort();
 
+                SeasonFilter sf = TVSettings.Instance.SeasonFilter;
                 foreach (int snum in theKeys)
                 {
                     Season s = si.DvdOrder ? ser.DvdSeasons[snum] : ser.AiredSeasons[snum];
+
+                    //Ignore the season if it is filtered out
+                    if (!sf.Filter(si, s)) continue;
 
                     string nodeTitle = ShowHtmlHelper.SeasonName(si, snum);
 

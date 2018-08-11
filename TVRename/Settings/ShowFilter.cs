@@ -41,4 +41,14 @@ namespace TVRename
             return show.Genres.Any(showGenre => Genres.Contains(showGenre));
         }
     }
+
+    public class SeasonFilter
+    {
+        public bool HideIgnoredSeasons { get; set; }
+
+        public bool Filter(ShowItem si, Season sea)
+        {
+            return !HideIgnoredSeasons || !si.IgnoreSeasons.Contains(sea.SeasonNumber);
+        }
+    }
 }
