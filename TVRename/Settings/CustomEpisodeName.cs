@@ -71,7 +71,10 @@ namespace TVRename
             "{ShortDate}",
             "{LongDate}",
             "{YMDDate}",
-            "{AllEpisodes}"
+            "{AllEpisodes}",
+            "{Year}",
+            "{SeasonYear}"
+
         };
 
         public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
@@ -99,17 +102,17 @@ namespace TVRename
             return r;
         }
 
-        public string GetTargetEpisodeName(Episode ep, string showname, TimeZone tz, bool dvdOrder)
-            => GetTargetEpisodeName(ep, showname, tz, dvdOrder, false);
+        public string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZone tz, bool dvdOrder)
+            => GetTargetEpisodeName(show, ep,  tz, dvdOrder, false);
 
-        private string GetTargetEpisodeName(Episode ep, string showname, TimeZone tz, bool dvdOrder, bool urlEncode)
+        private string GetTargetEpisodeName(ShowItem show, Episode ep, TimeZone tz, bool dvdOrder, bool urlEncode)
         {
             //note this is for an Episode and not a ProcessedEpisode
             string name = StyleString;
 
             string epname = ep.Name;
 
-            name = name.ReplaceInsensitive("{ShowName}", showname);
+            name = name.ReplaceInsensitive("{ShowName}", show.ShowName);
             if (dvdOrder)
             {
                 name = name.ReplaceInsensitive("{Season}", ep.DvdSeasonNumber.ToString());
@@ -130,7 +133,9 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
-            
+            name = name.ReplaceInsensitive("{Year}", show.GetSeason(dvdOrder?ep.DvdSeasonNumber:ep.AiredSeasonNumber).MinYear().ToString());
+            name = name.ReplaceInsensitive("{SeasonYear}", show.TheSeries().MinYear().ToString());
+
             name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(tz));
 
             name = Regex.Replace(name, "([^\\\\])\\[.*?[^\\\\]\\]", "$1"); // remove optional parts
@@ -189,7 +194,9 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", pe.OverallNumber.ToString());
             name = name.ReplaceInsensitive("{Number:2}", pe.OverallNumber.ToString("00"));
             name = name.ReplaceInsensitive("{Number:3}", pe.OverallNumber.ToString("000"));
-            
+            name = name.ReplaceInsensitive("{Year}", pe.AppropriateSeason.MinYear().ToString());
+            name = name.ReplaceInsensitive("{SeasonYear}", pe.TheSeries.MinYear().ToString());
+
             name = ReplaceDates(urlEncode, name, pe.GetAirDateDT(false));
 
             string allEps = "";

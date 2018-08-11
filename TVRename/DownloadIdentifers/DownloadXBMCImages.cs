@@ -138,7 +138,7 @@ namespace TVRename
                         string foldername = filo.DirectoryName;
                         string filename =
                             TVSettings.Instance.FilenameFriendly(
-                                TVSettings.Instance.NamingStyle.GetTargetEpisodeName(sourceEp,dbep.Show.ShowName, dbep.Show.GetTimeZone(), dbep.Show.DvdOrder));
+                                TVSettings.Instance.NamingStyle.GetTargetEpisodeName(dbep.Show,sourceEp,dbep.Show.GetTimeZone(), dbep.Show.DvdOrder));
                         ActionDownloadImage b = DoEpisode(dbep.Show,sourceEp,new FileInfo(foldername+"/"+filename), ".jpg", forceRefresh);
                         if (b != null) theActionList.Add(b);
                     }
