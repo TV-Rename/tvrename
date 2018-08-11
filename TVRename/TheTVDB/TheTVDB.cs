@@ -876,16 +876,7 @@ namespace TVRename
                 }
                 catch (WebException ex)
                 {
-                    if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound )
-                    {
-                        Logger.Info($"Coujld not find page {pageNumber} of {episodeUri} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri} which is epected as there must be exacty 100,200 episodes");
-                    }
-                    else
-                    {
-                        Logger.Error(ex, $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang}");
-                    }
-
-                    //There may be exactly 100 or 200 episodes, may not be a problem
+                    Logger.Error(ex, $"Error obtaining page {pageNumber} of {episodeUri} in lang {lang} using url {ex.Response.ResponseUri.AbsoluteUri}");
                     morePages = false;
                 }
             }
@@ -1774,34 +1765,58 @@ namespace TVRename
             }
 
             string uri = TvDbTokenProvider.TVDB_API_URL + "/search/series";
-            JObject jsonSearchResponse;
-            JObject jsonSearchDefaultLangResponse = new JObject();
+            JObject jsonSearchResponse = null;
+            JObject jsonSearchDefaultLangResponse = null;
             try
             {
                 jsonSearchResponse = HttpHelper.JsonHttpGetRequest(uri, new Dictionary<string, string> {{"name", text}},
                     tvDbTokenProvider.GetToken(), TVSettings.Instance.PreferredLanguage);
-
-                if (InForeignLanguage())
-                    jsonSearchDefaultLangResponse = HttpHelper.JsonHttpGetRequest(uri,
-                        new Dictionary<string, string> {{"name", text}}, tvDbTokenProvider.GetToken(), DefaultLanguage);
             }
             catch (WebException ex)
             {
-                Logger.Error("Error obtaining " + uri + ": " + ex.Message);
-                LastError = ex.Message;
-                Say("");
-                return;
+                if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
+                {
+                    Logger.Info(
+                        $"Could not find any earch results for {text} in {TVSettings.Instance.PreferredLanguage}");
+                }
+                else
+                {
+                    Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                    LastError = ex.Message;
+                    Say("");
+                }
+            }
+
+            if (InForeignLanguage())
+            { 
+                try
+                {
+                    jsonSearchDefaultLangResponse = HttpHelper.JsonHttpGetRequest(uri,
+                        new Dictionary<string, string> {{"name", text}}, tvDbTokenProvider.GetToken(), DefaultLanguage);
+                }
+                catch (WebException ex)
+                {
+                    if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.NotFound)
+                    {
+                        Logger.Info(
+                            $"Could not find any earch results for {text} in {DefaultLanguage}");
+                    }
+                    else
+                    {
+                        Logger.Error("Error obtaining " + uri + ": " + ex.Message);
+                        LastError = ex.Message;
+                        Say("");
+                    }
+                }
             }
 
             if (GetLock("ProcessTVDBResponse"))
             {
-                ProcessSearchResult(uri, jsonSearchResponse,GetLanguageId());
+                if (jsonSearchResponse != null) ProcessSearchResult(uri, jsonSearchResponse,GetLanguageId());
 
-                if (InForeignLanguage())
-                {
+                if (jsonSearchDefaultLangResponse != null)
                     //we also want to search for search terms that match in default language
                     ProcessSearchResult(uri, jsonSearchDefaultLangResponse,GetDefaultLanguageId());
-                }
             }
 
             Unlock("ProcessTVDBResponse");
