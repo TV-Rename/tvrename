@@ -256,7 +256,7 @@ namespace TVRename
             FillEpGuideHtml();
         }
 
-        private static void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
+        private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs eventArgs) =>
             Helpers.SysOpen("http://tvrename.com");
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e) => Close();
@@ -3440,7 +3440,7 @@ namespace TVRename
         {
             if (update is null)
             {
-                this.btnUpdateAvailable.Visible = false;
+                btnUpdateAvailable.Visible = false;
                 if (showNoUpdateRequiredDialog && !inSilentMode)
                 {
                     MessageBox.Show(@"There is no update available please try again later.", @"No update available",
@@ -3455,7 +3455,7 @@ namespace TVRename
 
             UpdateNotification unForm = new UpdateNotification(update);
             unForm.ShowDialog();
-            this.btnUpdateAvailable.Visible = true;
+            btnUpdateAvailable.Visible = true;
         }
 
         private void duplicateFinderLOGToolStripMenuItem_Click(object sender, EventArgs e)
