@@ -355,6 +355,7 @@ namespace TVRename
 
         public string OtherExtensionsString = "";
         public ShowFilter Filter = new ShowFilter();
+        public SeasonFilter SeasonFilter = new SeasonFilter();
 
         private string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
 
@@ -804,6 +805,24 @@ namespace TVRename
                     }
                     reader.Read();
                 }
+                else if (reader.Name == "SeasonFilters" && !reader.IsEmptyElement)
+                {
+                    SeasonFilter = new SeasonFilter();
+                    reader.Read();
+                    while (!reader.EOF)
+                    {
+                        if ((reader.Name == "SeasonFilters") && (!reader.IsStartElement()))
+                            break;
+                        if (reader.Name == "SeasonIgnoredFilter")
+                        {
+                            SeasonFilter.HideIgnoredSeasons = reader.ReadElementContentAsBoolean();
+                        }
+                        else
+                            reader.ReadOuterXml();
+                    }
+                    reader.Read();
+                }
+
                 else
                     reader.ReadOuterXml();
             }
@@ -1023,6 +1042,12 @@ namespace TVRename
                 writer.WriteEndElement(); //ShowFilters
             }
 
+            if (SeasonFilter != null)
+            {
+                writer.WriteStartElement("SeasonFilters");
+                XmlHelper.WriteElementToXml(writer, "SeasonIgnoredFilter", SeasonFilter.HideIgnoredSeasons);
+                writer.WriteEndElement(); //SeasonFilters
+            }
             writer.WriteEndElement(); // settings
         }
 

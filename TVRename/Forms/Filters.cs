@@ -49,13 +49,17 @@ namespace TVRename.Forms
                     clbGenre.SetItemChecked(genreIndex, true);
                 }
             }
+
+            SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
+            if (sFilter != null)
+            {
+                chkHideIgnoredSeasons.Checked = sFilter.HideIgnoredSeasons;
+            }
         }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
             ShowFilter filter = TVSettings.Instance.Filter;
-
-            //Filter By Show Name
 
             filter.ShowName = string.IsNullOrEmpty(tbShowName.Text) ? null : tbShowName.Text;
             filter.ShowStatus = string.IsNullOrEmpty(cmbShowStatus.Text) ? null : cmbShowStatus.SelectedItem.ToString();
@@ -67,6 +71,9 @@ namespace TVRename.Forms
             {
                 filter.Genres.Add(genre);
             }
+
+            SeasonFilter sFilter = TVSettings.Instance.SeasonFilter;
+            sFilter.HideIgnoredSeasons = chkHideIgnoredSeasons.Checked;
 
             doc.SetDirty();
             DialogResult = DialogResult.OK;
@@ -91,8 +98,9 @@ namespace TVRename.Forms
             {
                 clbGenre.SetItemChecked(i, false);
             }
-        }
 
+            chkHideIgnoredSeasons.Checked = false;
+        }
     }
 }
 
