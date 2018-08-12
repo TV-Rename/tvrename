@@ -16,4 +16,4 @@ using System.Resources;
 
 [assembly: AssemblyVersion("2.5.0.0")]
 [assembly: AssemblyFileVersion("2.5.0")]
-[assembly: AssemblyInformationalVersion("2.5 RC4")] // Display version
+[assembly: AssemblyInformationalVersion("2.5 RC5")] // Display version
