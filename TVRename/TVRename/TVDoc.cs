@@ -22,6 +22,7 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
+using NodaTime.Extensions;
 
 namespace TVRename
 {
@@ -46,6 +47,7 @@ namespace TVRename
 
         // ReSharper disable once RedundantDefaultMemberInitializer
         public bool CurrentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
+        private DateTime BusySince;
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
         {
@@ -461,7 +463,7 @@ namespace TVRename
         {
             try
             {
-                CurrentlyBusy = true;
+                SetBusy("Scan "+st.PrettyPrint());
 
                 //Get the defult set of shows defined by the specified type
                 if (shows == null) shows = GetShowList(st);
@@ -480,7 +482,7 @@ namespace TVRename
                 if (!DoDownloadsFG())
                     return;
 
-                Thread actionWork = new Thread(ScanWorker) { Name = "ActionWork" };
+                Thread actionWork = new Thread(ScanWorker) {Name = "ActionWork"};
 
                 actionCancel = false;
                 ResetFinders();
@@ -494,12 +496,15 @@ namespace TVRename
                 downloadIdentifiers.Reset();
 
                 OutputActionFiles(st); //Save missing shows to XML (and others)
-
-                CurrentlyBusy = false;
             }
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in ScanWorker");
+
+            }
+            finally
+            {
+                SetNotBusy();
             }
         }
 
@@ -697,8 +702,6 @@ namespace TVRename
 
         private List<ShowItem> GetQuickShowsToScan(bool doMissingRecents, bool doFilesInDownloadDir)
         {
-            CurrentlyBusy = true;
-
             List<ShowItem> showsToScan = new List<ShowItem>();
             if (doFilesInDownloadDir) showsToScan = GetShowsThatHaveDownloads();
 
@@ -713,9 +716,6 @@ namespace TVRename
                     }
                 }
             }
-
-            CurrentlyBusy = false;
-
             return showsToScan;
         }
 
@@ -1922,6 +1922,20 @@ namespace TVRename
         ~TVDoc()
         {
             Dispose(false);
+        }
+
+
+        public void SetBusy(string v)
+        {
+            Logger.Info($"TV Rename is about to be busy doing {v} since {DateTime.Now.ToLocalDateTime()}");
+            CurrentlyBusy = true;
+            BusySince = DateTime.Now;
+        }
+
+        public void SetNotBusy()
+        {
+            Logger.Info($"TV Rename free again (busy since {BusySince})");
+            CurrentlyBusy =false;
         }
     }
 }
