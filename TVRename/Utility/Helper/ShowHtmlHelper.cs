@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web;
 using Alphaleonis.Win32.Filesystem;
+using NLog;
 
 namespace TVRename
 {
@@ -436,7 +438,16 @@ namespace TVRename
 
         internal static string StarRating(string rating)
         {
-            return StarRating(float.TryParse(rating, out float f) ? f / 2 : 0);
+            try
+            {
+                float f = float.Parse(rating, CultureInfo.CreateSpecificCulture("en-US"));
+
+                return StarRating(f / 2);
+            }
+            catch (FormatException fe)
+            {
+                return StarRating(0);
+            }
         }
 
         private static string StarRating(float f)
