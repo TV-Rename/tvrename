@@ -2859,7 +2859,7 @@ namespace TVRename
 
         private void ActionAction(bool checkedNotSelected)
         {
-            mDoc.CurrentlyBusy = true;
+            mDoc.SetBusy("Action Selected Items");
             LVResults lvr = new LVResults(lvAction, checkedNotSelected);
             mDoc.DoActions(lvr.FlatList);
             // remove items from master list, unless it had an error
@@ -2871,12 +2871,12 @@ namespace TVRename
 
             FillActionList();
             RefreshWTW(false);
-            mDoc.CurrentlyBusy = false;
+            mDoc.SetNotBusy();
         }
 
         private void Revert(bool checkedNotSelected)
         {
-            mDoc.CurrentlyBusy = true;
+            mDoc.SetBusy("Reverting item");
 
             foreach (Item item in new LVResults(lvAction, checkedNotSelected).FlatList)
             {
@@ -2915,7 +2915,7 @@ namespace TVRename
 
             FillActionList();
             RefreshWTW(false);
-            mDoc.CurrentlyBusy = false;
+            mDoc.SetNotBusy();
         }
 
         private void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3538,6 +3538,11 @@ namespace TVRename
 
                 return sb.ToString();
             }
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
