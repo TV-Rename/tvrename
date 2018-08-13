@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 
 namespace TVRename
@@ -47,7 +48,7 @@ namespace TVRename
             string episodeSummary = si.TheSeries().AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
             string stars = ShowHtmlHelper.StarRating(si.TheSeries().GetSiteRating());
             string genreIcons = string.Join("&nbsp;", si.TheSeries().GetGenres().Select(ShowHtmlHelper.GenreIconHtml));
-            bool ratingIsNumber = float.TryParse(si.TheSeries().GetSiteRating(), out float rating);
+            bool ratingIsNumber = float.TryParse(si.TheSeries().GetSiteRating(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
             string siteRating = ratingIsNumber && rating > 0 ? rating + "/10" : "";
 
             return $@"<div class=""card card-body"">

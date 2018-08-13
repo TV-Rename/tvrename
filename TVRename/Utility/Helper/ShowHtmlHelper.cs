@@ -63,7 +63,7 @@ namespace TVRename
             string episodeSummary = si.TheSeries().AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
             string stars = StarRating(si.TheSeries().GetSiteRating());
             string genreIcons = string.Join("&nbsp;", si.TheSeries().GetGenres().Select(GenreIconHtml));
-            bool ratingIsNumber = float.TryParse(si.TheSeries().GetSiteRating(), out float rating);
+            bool ratingIsNumber = float.TryParse(si.TheSeries().GetSiteRating(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
             string siteRating = ratingIsNumber && rating > 0 ? rating + "/10" : "";
             string runTimeHtml = string.IsNullOrWhiteSpace(ser.GetRuntime()) ? string.Empty : $"<br/> {ser.GetRuntime()} min";
             string actorLinks = string.Join(", ", si.TheSeries().GetActors().Select(ActorLinkHtml));
@@ -233,7 +233,7 @@ namespace TVRename
         {
             string stars = StarRating(ep.EpisodeRating);
             string episodeUrl = TheTVDB.Instance.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);
-            bool ratingIsNumber = float.TryParse(ep.EpisodeRating, out float rating);
+            bool ratingIsNumber = float.TryParse(ep.EpisodeRating, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
             string siteRating = ratingIsNumber && rating > 0
                 ? rating + "/10" + AddRatingCount(ep.SiteRatingCount)
                 : "";

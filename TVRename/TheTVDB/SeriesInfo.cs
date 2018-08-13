@@ -417,23 +417,7 @@ namespace TVRename
                 Items["Year"] = "";
             }
 
-            AirsTime = DateTime.Parse("20:00");
-            string theAirsTime = (string)r["airsTime"];
-            try
-            {
-                if (!string.IsNullOrEmpty(theAirsTime))
-                {
-                    Items["airsTime"] = theAirsTime;
-                    if (DateTime.TryParse(theAirsTime, out DateTime airsTime) ||
-                        DateTime.TryParse(theAirsTime.Replace('.', ':'), out airsTime))
-                        AirsTime = airsTime;
-                    else
-                        AirsTime = null;
-                }
-            }
-            catch (FormatException)
-            {
-            }
+            AirsTime = ParseAirTime((string) r["airsTime"]);
         }
 
         private void LoadJson(JObject bestLanguageR, JObject backupLanguageR)
