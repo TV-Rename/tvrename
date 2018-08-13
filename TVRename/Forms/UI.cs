@@ -1753,6 +1753,7 @@ namespace TVRename
         private void DoPrefs(bool scanOptions)
         {
             MoreBusy(); // no background download while preferences are open!
+            mDoc.PreventAutoScan("Preferences are open");
 
             Preferences pref = new Preferences(mDoc, scanOptions,CurrentlySelectedSeason());
             if (pref.ShowDialog() == DialogResult.OK)
@@ -1767,6 +1768,7 @@ namespace TVRename
                 ForceRefresh(null);
             }
 
+            mDoc.AllowAutoScan();
             LessBusy();
         }
 
@@ -2493,12 +2495,16 @@ namespace TVRename
             string desc = unattended ? "unattended " : "";
             string showsdesc = shows?.Count > 0 ? shows.Count.ToString() : "all";
             string scantype = st.PrettyPrint();
-
             Logger.Info($"Starting {desc}{scantype} Scan for {showsdesc} shows...");
+
+            mDoc.PreventAutoScan("Assessing New Shows");
             if (st != TVSettings.ScanType.SingleShow) GetNewShows(unattended);
+            mDoc.AllowAutoScan();
+
             MoreBusy();
             mDoc.Scan(shows, unattended, st);
             LessBusy();
+
             FillMyShows(); // scanning can download more info to be displayed in my shows
             FillActionList();
         }
@@ -2838,15 +2844,9 @@ namespace TVRename
             UpdateActionCheckboxes();
         }
 
-        private static string HeaderName(string name, int number)
-        {
-            return $"{name} ({PrettyPrint(number)})";
-        }
+        private static string HeaderName(string name, int number) => $"{name} ({PrettyPrint(number)})";
 
-        private static string PrettyPrint(int number)
-        {
-            return number + " " + number.ItemItems();
-        }
+        private static string PrettyPrint(int number) => number + " " + number.ItemItems();
 
         private static string HeaderName(string name, int number, long filesize)
         {
@@ -2859,7 +2859,7 @@ namespace TVRename
 
         private void ActionAction(bool checkedNotSelected)
         {
-            mDoc.SetBusy("Action Selected Items");
+            mDoc.PreventAutoScan("Action Selected Items");
             LVResults lvr = new LVResults(lvAction, checkedNotSelected);
             mDoc.DoActions(lvr.FlatList);
             // remove items from master list, unless it had an error
@@ -2871,13 +2871,11 @@ namespace TVRename
 
             FillActionList();
             RefreshWTW(false);
-            mDoc.SetNotBusy();
+            mDoc.AllowAutoScan();
         }
 
         private void Revert(bool checkedNotSelected)
         {
-            mDoc.SetBusy("Reverting item");
-
             foreach (Item item in new LVResults(lvAction, checkedNotSelected).FlatList)
             {
                 ActionCopyMoveRename i2 = (ActionCopyMoveRename) item;
@@ -2915,7 +2913,6 @@ namespace TVRename
 
             FillActionList();
             RefreshWTW(false);
-            mDoc.SetNotBusy();
         }
 
         private void folderMonitorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3477,7 +3474,7 @@ namespace TVRename
         private void RunAutoScan(string scanType)
         {
             //We only wish to do a scan now if we are not already undertaking one
-            if (!mDoc.CurrentlyBusy)
+            if (mDoc.AutoScanCanRun())
             {
                 Logger.Info("*******************************");
                 Logger.Info(scanType + " fired");
