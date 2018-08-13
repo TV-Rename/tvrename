@@ -8,6 +8,7 @@
 // For more information see http://thetvdb.com/wiki/index.php/API:banners.xml
 //  
 
+using System.Globalization;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 
@@ -154,7 +155,7 @@ namespace TVRename
             bannerType = (string)json["keyType"];
             LanguageId = (json["languageId"] == null) ? langId  : (int)json["languageId"];
             
-            double.TryParse((string)(json["ratingsInfo"]["average"]), out Rating);
+            double.TryParse((string)(json["ratingsInfo"]["average"]), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out Rating);
             ratingCount = (int)(json["ratingsInfo"]["count"]);
 
             resolution = (string)json["resolution"];
