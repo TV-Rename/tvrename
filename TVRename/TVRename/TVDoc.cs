@@ -46,8 +46,8 @@ namespace TVRename
         private bool mDirty;
 
         // ReSharper disable once RedundantDefaultMemberInitializer
-        public bool CurrentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
-        private DateTime BusySince;
+        private bool currentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
+        private DateTime busySince;
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
         {
@@ -87,8 +87,8 @@ namespace TVRename
 
             foreach (ShowItem si in Library.Shows)
             {
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> k in si.SeasonEpisodes)
-                    mStats.NS_NumberOfEpisodesExpected += k.Value.Count;
+                foreach (List<ProcessedEpisode> k in si.SeasonEpisodes.Values)
+                    mStats.NS_NumberOfEpisodesExpected += k.Count;
 
                 mStats.NS_NumberOfSeasons += si.SeasonEpisodes.Count;
             }
@@ -463,7 +463,7 @@ namespace TVRename
         {
             try
             {
-                SetBusy("Scan "+st.PrettyPrint());
+                PreventAutoScan("Scan "+st.PrettyPrint());
 
                 //Get the defult set of shows defined by the specified type
                 if (shows == null) shows = GetShowList(st);
@@ -504,7 +504,7 @@ namespace TVRename
             }
             finally
             {
-                SetNotBusy();
+                AllowAutoScan();
             }
         }
 
@@ -562,6 +562,7 @@ namespace TVRename
 
         public void DoAllActions()
         {
+            PreventAutoScan("Do all actions");
             ItemList theList = new ItemList();
 
             foreach (Item item in TheActionList)
@@ -573,10 +574,12 @@ namespace TVRename
             }
 
             DoActions(theList);
+            AllowAutoScan();
         }
 
         protected internal List<PossibleDuplicateEpisode> FindDoubleEps()
         {
+            PreventAutoScan("Find Double Episodes");
             StringBuilder output = new StringBuilder();
             List<PossibleDuplicateEpisode> returnValue = new List<PossibleDuplicateEpisode>();
 
@@ -695,6 +698,7 @@ namespace TVRename
             output.AppendLine("##################################################");
 
             Logger.Info(output.ToString());
+            AllowAutoScan();
             return returnValue;
         }
 
@@ -1780,6 +1784,7 @@ namespace TVRename
 
         internal void ForceRefresh(List<ShowItem> sis)
         {
+            PreventAutoScan("Force Refresh");
             if (sis != null)
             {
                 foreach (ShowItem si in sis)
@@ -1789,6 +1794,7 @@ namespace TVRename
             }
 
             DoDownloadsFG();
+            AllowAutoScan();
         }
 
         private static bool FindSeasEp(FileInfo fi, out int seas, out int ep, out int maxEp, ShowItem si,
@@ -1924,18 +1930,19 @@ namespace TVRename
             Dispose(false);
         }
 
-
-        public void SetBusy(string v)
+        public void PreventAutoScan(string v)
         {
             Logger.Info($"TV Rename is about to be busy doing {v} since {DateTime.Now.ToLocalDateTime()}");
-            CurrentlyBusy = true;
-            BusySince = DateTime.Now;
+            currentlyBusy = true;
+            busySince = DateTime.Now;
         }
 
-        public void SetNotBusy()
+        public void AllowAutoScan()
         {
-            Logger.Info($"TV Rename free again (busy since {BusySince})");
-            CurrentlyBusy =false;
+            Logger.Info($"TV Rename free again (busy since {busySince})");
+            currentlyBusy =false;
         }
+
+        public bool AutoScanCanRun() => !currentlyBusy;
     }
 }
