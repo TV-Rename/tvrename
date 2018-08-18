@@ -162,6 +162,8 @@ namespace TVRename
             UpdateSplashStatus(splash, "Setting Notifications");
             ShowHideNotificationIcon();
 
+            BuildCollectionsMenu();
+
             int t = TVSettings.Instance.StartupTab;
             if (t < tabControl1.TabCount)
                 tabControl1.SelectedIndex = TVSettings.Instance.StartupTab;
@@ -548,7 +550,13 @@ namespace TVRename
                         MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
                     if (res == DialogResult.Yes)
+                    {
                         mDoc.WriteXMLSettings();
+                        if (!string.IsNullOrEmpty(PathManager.ShowCollection))
+                        {
+                            mDoc.WriteXMLShows();
+                        }
+                    }
                     else if (res == DialogResult.Cancel)
                         e.Cancel = true;
                     else if (res == DialogResult.No)
@@ -1443,6 +1451,84 @@ namespace TVRename
             }
         }
 
+        private void BuildCollectionsMenu ()
+        {
+            // ActualCollMenuItem
+            if (mDoc.ShowCollections.Count > 0)
+            {
+                ToolStripItem[] CollMenu = new ToolStripItem[mDoc.ShowCollections.Count];
+                int i = 0;
+                foreach (ShowCollection ShowColl in mDoc.ShowCollections)
+                {
+                    CollMenu[i] = new ToolStripMenuItem();
+                    CollMenu[i].Name = "CollectionMenuItem" + i.ToString();
+                    CollMenu[i].Tag = ShowColl.Path;
+                    CollMenu[i].Text = ShowColl.Name;
+                    CollMenu[i].ToolTipText = ShowColl.Description;
+                    CollMenu[i].Click += new EventHandler(SelCollMenuItemClickHandler);
+                    i++;
+                }
+
+                collToolStripMenuItem.DropDownItems.AddRange(CollMenu);
+            }
+        }
+
+        private void RemoveCollectionsMenu ()
+        {
+            int iCount = collToolStripMenuItem.DropDownItems.Count -2;
+            string MenuItemName = "";
+            for (int iCurr = 0; iCurr < iCount; iCurr++)
+            {
+                MenuItemName = "CollectionMenuItem" + iCurr.ToString();
+                collToolStripMenuItem.DropDownItems.RemoveAt(2);
+            }
+        }
+
+        private void SelCollMenuItemClickHandler(object sender, EventArgs e)
+        {
+            bool bNeedCancel = false;
+            ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
+            string SelectedCollection = (string)clickedItem.Tag;
+
+            try
+            {
+                if (mDoc.Dirty())
+                {
+                    DialogResult res = MessageBox.Show(
+                        "Your changes have not been saved.  Do you wish to save before changing show collection?", "Unsaved data",
+                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                    if (res == DialogResult.Yes)
+                    {
+                        mDoc.WriteXMLSettings();
+                        if (!string.IsNullOrEmpty(PathManager.ShowCollection))
+                        {
+                            mDoc.WriteXMLShows();
+                        }
+                    }
+                    else if (res == DialogResult.Cancel)
+                        bNeedCancel = true;
+                    else if (res == DialogResult.No)
+                    {
+                        bNeedCancel = false;
+                    }
+                }
+
+                if (!bNeedCancel)
+                {
+                    mDoc.SwitchToCollection(SelectedCollection);
+                    mDoc.WriteXMLCollections();
+
+                    FillMyShows();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex.Message + "\r\n\r\n" + ex.StackTrace, "Switch Show Collection",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void BuildRightClickMenu(Point pt)
         {
             showRightClickMenu.Items.Clear();
@@ -1777,6 +1863,11 @@ namespace TVRename
             try
             {
                 mDoc.WriteXMLSettings();
+                mDoc.WriteXMLCollections();
+                if (!string.IsNullOrEmpty(PathManager.ShowCollection))
+                {
+                    mDoc.WriteXMLShows();
+                }
                 TheTVDB.Instance.SaveCache();
                 if (!SaveLayoutXml())
                 {
@@ -3540,6 +3631,13 @@ namespace TVRename
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void aeCollToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var Frm = new AddEditCollection(mDoc);
+            RemoveCollectionsMenu();
+            BuildCollectionsMenu();
         }
     }
 }
