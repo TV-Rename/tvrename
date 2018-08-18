@@ -16,7 +16,7 @@ namespace TVRename
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             List<TorrentEntry> downloading = GetqBitTorrentDownloads();
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, TorrentApp.qBitTorrent);
         }
 
         private static List<TorrentEntry> GetqBitTorrentDownloads()
@@ -57,6 +57,7 @@ namespace TVRename
             }
             catch (WebException e)
             {
+                // To not get CS0168 for unused var (release compilation)
                 string message = e.Message;
                 Logger.Warn($"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
@@ -64,7 +65,8 @@ namespace TVRename
             return ret;
         }
 
-//        internal static async Task StartTorrentDownload(string torrentUrl)
+        // CS1998 no 'await' in this method so everthing will be done sync (release compilation)
+        //        internal static async Task StartTorrentDownload(string torrentUrl)
         internal static void StartTorrentDownload(string torrentUrl)
         {
             string host = TVSettings.Instance.qBitTorrentHost;
@@ -99,6 +101,7 @@ namespace TVRename
             }
             catch (WebException e)
             {
+                // To not get CS0168 for unused var (release compilation)
                 string message = e.Message;
                 Logger.Warn($"Could not connect to {url} to downlaod {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
