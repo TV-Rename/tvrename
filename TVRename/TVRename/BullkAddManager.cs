@@ -91,8 +91,14 @@ namespace TVRename
                         if (!m.Success) continue;
 
                         //We have a match!
-                        
-                        folderFormat = m.Groups["folderName"]+" " +(m.Groups["number"].ToString().StartsWith("0")?"{Season:2}":"{Season}");
+                        if (m.Groups["folderName"].Length > 1)
+                        {
+                            folderFormat = m.Groups["folderName"] + " " + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
+                        }
+                        else
+                        {
+                            folderFormat = m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
+                        }
                         Logger.Info("Assuming {0} contains a show because pattern '{1}' is found in subdirectory {2}",
                             di.FullName, folderFormat, subDir.FullName);
 
