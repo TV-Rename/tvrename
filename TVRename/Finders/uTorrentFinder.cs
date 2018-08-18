@@ -22,7 +22,7 @@ namespace TVRename
 
             List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded();
 
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, TorrentApp.uTorrent);
         }
 
         internal static void StartTorrentDownload(string torrentFileName, string directoryName = "")
