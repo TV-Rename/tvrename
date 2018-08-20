@@ -88,8 +88,6 @@ namespace TVRename
                 if (action != null)
                     FlatList.Add(action);
 
-                if (action != null && action.GetType() != firstType)
-
                 if (action is ActionCopyMoveRename cmr)
                 {
                     if (cmr.Operation == ActionCopyMoveRename.Op.rename)
