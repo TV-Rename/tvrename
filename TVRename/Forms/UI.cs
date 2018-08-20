@@ -348,6 +348,12 @@ namespace TVRename
 
         private void flushCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (busy != 0)
+            {
+                MessageBox.Show("Can't refresh until background download is complete");
+                return;
+            }
+
             DialogResult res = MessageBox.Show(
                 "Are you sure you want to remove all " +
                 "locally stored TheTVDB information?  This information will have to be downloaded again.  You " +
@@ -357,11 +363,12 @@ namespace TVRename
 
             if (res == DialogResult.Yes)
             {
+                
                 TheTVDB.Instance.ForgetEverything();
                 FillMyShows();
                 FillEpGuideHtml();
                 FillWhenToWatchList();
-                backgroundDownloadToolStripMenuItem_Click(sender, e);
+                BGDownloadTimer_QuickFire();
             }
         }
 
@@ -1989,19 +1996,25 @@ namespace TVRename
             {
                 BGDownloadTimer.Interval = 10000; // come back in 10 seconds
                 BGDownloadTimer.Start();
+                Logger.Info("BG Download is busy - try again in 10 seconds");
                 return;
             }
 
             BGDownloadTimer.Interval = BgdlLongInterval(); // after first time (10 seconds), put up to 60 minutes
             BGDownloadTimer.Start();
 
-            if (TVSettings.Instance.BGDownload && mDoc.DownloadsRemaining() == 0
-            ) // only do auto-download if don't have stuff to do already
+            if (TVSettings.Instance.BGDownload && mDoc.DownloadsRemaining() == 0)
+                // only do auto-download if don't have stuff to do already
             {
-                mDoc.DoDownloadsBG();
-
-                statusTimer_Tick(null, null);
+                BackgroundDownloadNow();
             }
+        }
+
+        private void BGDownloadTimer_QuickFire()
+        {
+            BGDownloadTimer.Stop();
+            BGDownloadTimer.Interval = 1000;
+            BGDownloadTimer.Start();
         }
 
         private void backgroundDownloadNowToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2015,6 +2028,11 @@ namespace TVRename
                     return;
             }
 
+            BackgroundDownloadNow();
+        }
+
+        private void BackgroundDownloadNow()
+        {
             BGDownloadTimer.Stop();
             BGDownloadTimer.Start();
 

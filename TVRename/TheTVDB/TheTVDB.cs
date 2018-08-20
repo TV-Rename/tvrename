@@ -740,7 +740,7 @@ namespace TVRename
                             int numberOfUpdatedEpisodes = 0;
 
                             ICollection<int> oldEpisodeIds = new List<int>();
-                            foreach (KeyValuePair<int, Season> kvp2 in this.series[id].AiredSeasons)
+                            foreach (KeyValuePair<int, Season> kvp2 in GetSeries(id)?.AiredSeasons??new Dictionary<int, Season>())
                             {
                                 foreach (Episode ep in kvp2.Value.Episodes.Values)
                                 {
@@ -898,7 +898,7 @@ namespace TVRename
                     JToken x = jsonEpisodeResponse["links"]["next"];
                     bool moreResponses = !string.IsNullOrWhiteSpace(x.ToString());
                     Logger.Info(
-                        $"Page {pageNumber} of {this.series[id].Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses?"":"no ")}more to come");
+                        $"Page {pageNumber} of {GetSeries(id)?.Name} had {numberOfResponses} episodes listed in {lang} with {(moreResponses?"":"no ")}more to come");
 
                     if (numberOfResponses < 100 || !moreResponses)
                     {
@@ -1446,7 +1446,7 @@ namespace TVRename
                 JObject jsonActorsResponse = HttpHelper.JsonHttpGetRequest(TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/actors",
                     null, tvDbTokenProvider.GetToken());
 
-                series[si.TvdbCode].ClearActors();
+                GetSeries(si.TvdbCode)?.ClearActors();
                 foreach (JToken jsonActor in jsonActorsResponse["data"])
                 {
                     int actorId = (int)jsonActor["id"];
@@ -1456,7 +1456,7 @@ namespace TVRename
                     int actorSeriesId = (int)jsonActor["seriesId"];
                     int actorSortOrder = (int)jsonActor["sortOrder"];
 
-                    series[si.TvdbCode].AddActor(new Actor(actorId, actorImage, actorName, actorRole, actorSeriesId,
+                    GetSeries(si.TvdbCode)?.AddActor(new Actor(actorId, actorImage, actorName, actorRole, actorSeriesId,
                         actorSortOrder));
                 }
             }
@@ -1746,7 +1746,7 @@ namespace TVRename
             if ((series[code].Dirty) || (bannersToo && !series[code].BannersLoaded))
                 ok = (DownloadSeriesNow(code, false, bannersToo) != null);
 
-            foreach (KeyValuePair<int, Season> kvp in series[code].AiredSeasons)
+            foreach (KeyValuePair<int, Season> kvp in GetSeries(code)?.AiredSeasons??new Dictionary<int, Season>())
             {
                 Season seas = kvp.Value;
                 foreach (Episode e in seas.Episodes.Values)
