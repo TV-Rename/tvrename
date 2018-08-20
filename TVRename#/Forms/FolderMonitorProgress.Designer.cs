@@ -46,7 +46,8 @@ namespace TVRename
             // 
             // bnCancel
             // 
-            this.bnCancel.Location = new System.Drawing.Point(114, 59);
+            this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnCancel.Location = new System.Drawing.Point(200, 60);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 0;
@@ -70,9 +71,11 @@ namespace TVRename
             // 
             // pbProgress
             // 
+            this.pbProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pbProgress.Location = new System.Drawing.Point(12, 27);
             this.pbProgress.Name = "pbProgress";
-            this.pbProgress.Size = new System.Drawing.Size(177, 23);
+            this.pbProgress.Size = new System.Drawing.Size(263, 23);
             this.pbProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.pbProgress.TabIndex = 29;
             // 
@@ -80,11 +83,13 @@ namespace TVRename
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(201, 92);
+            this.ClientSize = new System.Drawing.Size(287, 93);
             this.Controls.Add(this.pbProgress);
             this.Controls.Add(this.lbMessage);
             this.Controls.Add(this.bnCancel);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FolderMonitorProgress";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

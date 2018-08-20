@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -15,7 +15,7 @@ namespace TVRename.Forms
             this.clbGenre.Items.AddRange(doc.getGenres().Cast<object>().ToArray());
             this.cmbNetwork.Items.AddRange(doc.getNetworks().Cast<object>().ToArray());
             this.cmbShowStatus.Items.AddRange(doc.getStatuses().Cast<object>().ToArray());
-            this.cmbRating.Items.AddRange(doc.GetRatings().Cast<object>().ToArray());
+            this.cmbRating.Items.AddRange(doc.GetContentRatings().Cast<object>().ToArray());
 
             setButtonStates();
         }

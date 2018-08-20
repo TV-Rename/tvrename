@@ -20,6 +20,7 @@ namespace TVRename
             Create
         }
 
+        public bool Help { get; }
         public bool Hide { get; }
         public MissingFolderBehavior MissingFolder { get; set; } // TODO: Make read only
         public bool RenameCheck { get; }
@@ -38,6 +39,7 @@ namespace TVRename
         /// <param name="args">The command line arguments.</param>
         public CommandLineArgs(ReadOnlyCollection<string> args)
         {
+            this.Help = args.Contains("/?", StringComparer.OrdinalIgnoreCase);
             this.Hide = args.Contains("/hide", StringComparer.OrdinalIgnoreCase);
             this.RenameCheck = !args.Contains("/norenamecheck", StringComparer.OrdinalIgnoreCase);
             this.Quit = args.Contains("/quit", StringComparer.OrdinalIgnoreCase);
@@ -67,20 +69,21 @@ namespace TVRename
         public static string Helptext()
         {
             StringBuilder output = new StringBuilder();
+            output.AppendLine();
             output.AppendLine("/scan will Tell TV Rename to run a scan");
             output.AppendLine("/quickscan will scan shows most likely to need an update: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/recentscan will scan recent shows: http://www.tvrename.com/userguide#scan");
             output.AppendLine("/doall Tell TV Rename execute all the actions it can.");
             output.AppendLine("/quit Tell a running TV Rename session to exit.");
             output.AppendLine("");
-            output.AppendLine("/hide will hide the UI");
-            output.AppendLine("/unattended same as /hide");
+            output.AppendLine("/hide will hide the UI for all UI elements");
+            output.AppendLine("/unattended will hide the UI for all blocking UI elements");
             output.AppendLine("");
-            output.AppendLine("/recover will Recover will load a dialog box that enables the user to recover a prior TVDB.xml or TVRenameSettings.xml file");
+            output.AppendLine("/recover will load a dialog box that enables the user to recover a prior TVDB.xml or TVRenameSettings.xml file");
             output.AppendLine("/userfilepath:BLAH  Sets a custom folder path for the settings files.");
             output.AppendLine("/createmissing will Create folders if they are missing.");
             output.AppendLine("/ignoremissing will Ignore missing folders.");
-            output.AppendLine("/norenamecheck will Allows a request to an existing TV Rename session to scan without renaming.");
+            output.AppendLine("/norenamecheck requests an existing TV Rename session to scan without renaming.");
             output.AppendLine("");
             output.AppendLine("Further information is available at http://www.tvrename.com/cmd-line");
 

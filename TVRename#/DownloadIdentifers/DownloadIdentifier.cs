@@ -4,8 +4,7 @@ namespace TVRename
 {
     abstract class DownloadIdentifier
     {
-        
-        public DownloadIdentifier()
+        protected DownloadIdentifier()
         {
             
         }
@@ -51,6 +50,6 @@ namespace TVRename
         {
         }
 
-        public virtual void reset() { }
+        public abstract void reset();
     }
 }

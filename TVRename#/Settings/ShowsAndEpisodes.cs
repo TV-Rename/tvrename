@@ -126,25 +126,8 @@ namespace TVRename
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static int DVDOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
-            int ep1 = e1.AiredEpNum;
-            int ep2 = e2.AiredEpNum;
-
-            string n1 = e1.DVDEp;
-            string n2 = e2.DVDEp;
-
-            if ((!string.IsNullOrEmpty(n1)) && (!string.IsNullOrEmpty(n2)))
-            {
-                try
-                {
-                    int t1 = (int) (1000.0 * double.Parse(n1));
-                    int t2 = (int) (1000.0 * double.Parse(n2));
-                    ep1 = t1;
-                    ep2 = t2;
-                }
-                catch (FormatException)
-                {
-                }
-            }
+            int ep1 = e1.DVDEpNum;
+            int ep2 = e2.DVDEpNum;
 
             return ep1 - ep2;
         }
@@ -730,17 +713,13 @@ public class ShowItem
             {
                 foreach (ProcessedEpisode ep in kvp.Value)
                 {
-                    if (string.IsNullOrWhiteSpace(ep.DVDSeason))
-                        continue;
 
-                    if (!int.TryParse( ep.DVDSeason,out int dvdSeasonId))
-                        return null;
-                    if (!returnValue.ContainsKey(dvdSeasonId))
+                    if (!returnValue.ContainsKey(ep.DVDSeasonNumber ))
                     {
-                        returnValue.Add(dvdSeasonId, new List<ProcessedEpisode>());
+                        returnValue.Add(ep.DVDSeasonNumber, new List<ProcessedEpisode>());
                         
                     }
-                    returnValue[dvdSeasonId].Add(ep);
+                    returnValue[ep.DVDSeasonNumber].Add(ep);
                 }
             }
 

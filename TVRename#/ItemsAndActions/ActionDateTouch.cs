@@ -12,7 +12,7 @@ namespace TVRename
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ActionDateTouch : Item, Action, ScanListItem
+    public class ActionDateTouch : ActionFileMetaData
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
         public Season SN; // if for an entire show, rather than specific episode
@@ -44,29 +44,27 @@ namespace TVRename
         }
 
 
-        public string produces => this.WhereFile?.FullName?? this.WhereDirectory?.FullName;
+        public override string Produces => this.WhereFile?.FullName?? this.WhereDirectory?.FullName;
 
         #region Action Members
 
-        public string Name => "Touch Update Time";
+        public override string Name => "Update Timestamp";
 
-        public bool Done { get; private set; }
-        public bool Error { get; private set; }
-        public string ErrorText { get; set; }
+        public override string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
 
-        public string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
+        public override long SizeOfWork => 100;
 
-        public double PercentDone => this.Done ? 100 : 0;
-
-        public long SizeOfWork => 100;
-
-        public bool Go(ref bool pause, TVRenameStats stats)
+        public override bool Go(ref bool pause, TVRenameStats stats)
         {
             try
             {
                 if (this.WhereFile != null)
                 {
+                    bool priorFileReadonly = this.WhereFile.IsReadOnly;
+                    if (priorFileReadonly) this.WhereFile.IsReadOnly = false;
                     System.IO.File.SetLastWriteTimeUtc(this.WhereFile.FullName, this.updateTime);
+                    if (priorFileReadonly) this.WhereFile.IsReadOnly = true;
+
                 }
                 if (this.WhereDirectory != null)
                 {
@@ -89,12 +87,12 @@ namespace TVRename
 
         #region Item Members
 
-        public bool SameAs(Item o)
+        public override bool SameAs(Item o)
         {
             return (o is ActionDateTouch) && ((o as ActionDateTouch).WhereFile == this.WhereFile) && ((o as ActionDateTouch).WhereDirectory == this.WhereDirectory);
         }
 
-        public int Compare(Item o)
+        public override int Compare(Item o)
         {
             ActionDateTouch nfo = o as ActionDateTouch;
 
@@ -109,9 +107,9 @@ namespace TVRename
 
         #endregion
 
-        #region ScanListItem Members
+        #region Item Members
 
-        public IgnoreItem Ignore
+        public override IgnoreItem Ignore
         {
             get
             {
@@ -121,7 +119,7 @@ namespace TVRename
             }
         }
 
-        public ListViewItem ScanListViewItem
+        public override ListViewItem ScanListViewItem
         {
             get
             {
@@ -167,13 +165,11 @@ namespace TVRename
             }
         }
 
-        string ScanListItem.TargetFolder => this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
+        public override string TargetFolder => this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
 
-        public string ScanListViewGroup => "lvgUpdateFileDates";
+        public override string ScanListViewGroup => "lvgUpdateFileDates";
 
-        public int IconNumber => 7;
-
-        public ProcessedEpisode Episode { get; }
+        public override int IconNumber => 7;
 
         #endregion
 

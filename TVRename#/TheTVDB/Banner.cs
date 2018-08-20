@@ -211,7 +211,7 @@ namespace TVRename
             return ((this.BannerType == "fanart") );
         }
 
-        public void SetDefaults(SeriesInfo ser, Season seas)
+        private void SetDefaults(SeriesInfo ser, Season seas)
         {
             this.TheSeason = seas;
             this.TheSeries = ser;

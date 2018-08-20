@@ -34,7 +34,7 @@ namespace TVRename
                 else
                 {
                     lvi.Text = this.Episode.TheSeries.Name;
-                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                    lvi.SubItems.Add(this.Episode.AppropriateSeasonNumber.ToString());
                     lvi.SubItems.Add(this.Episode.NumsAsString());
                     DateTime? dt = this.Episode.GetAirDateDT(true);
                     if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
@@ -62,7 +62,7 @@ namespace TVRename
 
         public ActionDeleteFile(FileInfo remove, ProcessedEpisode ep, TidySettings tidyup)
         {
-            this._tidyup = tidyup;
+            this.Tidyup = tidyup;
             this.PercentDone = 0;
             this.Episode = ep;
             this.toRemove = remove;
@@ -70,7 +70,7 @@ namespace TVRename
         }
         
         public override string ProgressText => this.toRemove.Name;
-        public override string produces => this.toRemove.FullName;
+        public override string Produces => this.toRemove.FullName;
         public override IgnoreItem Ignore => this.toRemove == null ? null : new IgnoreItem(this.toRemove.FullName);
         public override string TargetFolder => this.toRemove?.DirectoryName;
 
@@ -81,7 +81,7 @@ namespace TVRename
                 if (this.toRemove.Exists)
                 {
                     DeleteOrRecycleFile(this.toRemove);
-                    if (this._tidyup != null && this._tidyup.DeleteEmpty)
+                    if (this.Tidyup != null && this.Tidyup.DeleteEmpty)
                     {
                         logger.Info($"Testing {this.toRemove.Directory.FullName } to see whether it should be tidied up");
                         DoTidyup(this.toRemove.Directory);
@@ -127,7 +127,7 @@ namespace TVRename
 
         public ActionDeleteDirectory(DirectoryInfo remove, ProcessedEpisode ep, TidySettings tidyup)
         {
-            this._tidyup = tidyup;
+            this.Tidyup = tidyup;
             this.PercentDone = 0;
             this.Episode = ep;
             this.toRemove = remove;
@@ -136,7 +136,7 @@ namespace TVRename
 
 
         public override string ProgressText => this.toRemove.Name;
-        public override string produces => this.toRemove.FullName;
+        public override string Produces => this.toRemove.FullName;
         public override IgnoreItem Ignore => this.toRemove == null ? null : new IgnoreItem(this.toRemove.FullName);
         public override string TargetFolder => this.toRemove?.Parent.FullName;
 
@@ -145,7 +145,7 @@ namespace TVRename
         {
             //if the directory is the root download folder do not delete
             if (TVSettings.Instance.MonitorFolders &&
-                TVSettings.Instance.SearchFoldersNames.Contains(this.toRemove.FullName))
+                TVSettings.Instance.DownloadFoldersNames.Contains(this.toRemove.FullName))
             {
                 this.Error = true;
                 this.ErrorText = $@"Not removing {this.toRemove.FullName} as it is a Search Folder";
@@ -157,7 +157,7 @@ namespace TVRename
                 if ((this.toRemove.Exists) )
                 {
                     DeleteOrRecycleFolder(this.toRemove);
-                    if (this._tidyup != null && this._tidyup.DeleteEmpty)
+                    if (this.Tidyup != null && this.Tidyup.DeleteEmpty)
                     {
                         logger.Info($"Testing {this.toRemove.Parent.FullName } to see whether it should be tidied up");
                         DoTidyup(this.toRemove.Parent);
@@ -176,16 +176,12 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            ActionDeleteDirectory cmr = o as ActionDeleteDirectory;
-
-            return (cmr != null) && FileHelper.Same(this.toRemove, cmr.toRemove);
+            return (o is ActionDeleteDirectory cmr) && FileHelper.Same(this.toRemove, cmr.toRemove);
         }
 
         public override int Compare(Item o)
         {
-            ActionDeleteDirectory cmr = o as ActionDeleteDirectory;
-
-            if (cmr == null || this.toRemove.Parent.FullName == null || cmr.toRemove.Parent.FullName == null)
+            if (!(o is ActionDeleteDirectory cmr) || this.toRemove.Parent.FullName == null || cmr.toRemove.Parent.FullName == null)
                 return 0;
 
             return string.Compare(this.toRemove.FullName, cmr.toRemove.FullName, StringComparison.Ordinal);

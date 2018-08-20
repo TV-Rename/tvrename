@@ -207,13 +207,12 @@ namespace TVRename
 
         }
 
-        public override void reset()
+        public sealed override void reset()
         {
             doneBannerJPG = new List<String>();
             donePosterJPG = new List<String>();
             doneFanartJPG = new List<String>();
             doneTBN = new List<String>();
-            base.reset();
         }
 
     }

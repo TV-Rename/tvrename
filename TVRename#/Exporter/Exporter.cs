@@ -4,33 +4,48 @@ using System.IO;
 
 namespace TVRename
 {
-    abstract class Exporter
+    internal abstract class Exporter
     {
         public abstract bool Active();
+        public abstract void Run();
         protected abstract string Location();
         protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
     }
 
-    abstract class ShowsExporter : Exporter
+    internal abstract class ShowsExporter : Exporter
     {
-        public abstract void Run(List<ShowItem> shows);
-    }
+        protected readonly List<ShowItem> Shows;
 
 
-    abstract class MissingExporter : Exporter
-    {
-        public abstract void Run(ItemList theActionList);
-    }
-
-    abstract class UpcomingExporter : Exporter
-    {
-        protected readonly TVDoc mDoc;
-        
-
-        public UpcomingExporter(TVDoc doc)
+        protected ShowsExporter(List<ShowItem> shows)
         {
-            this.mDoc = doc;
+            this.Shows = shows;
+        }
+    }
+
+
+    internal abstract class ActionListExporter : Exporter
+    {
+        protected readonly ItemList TheActionList;
+
+
+        protected ActionListExporter(ItemList theActionList)
+        {
+            this.TheActionList = theActionList;
+        }
+
+        public abstract bool ApplicableFor(TVSettings.ScanType st);
+    }
+
+    internal abstract class UpcomingExporter : Exporter
+    {
+        protected readonly TVDoc Doc;
+
+
+        protected UpcomingExporter(TVDoc doc)
+        {
+            this.Doc = doc;
         }
 
         private string Produce() 
@@ -41,16 +56,19 @@ namespace TVRename
                 // when windows restarts, the share isn't "back" before this timer times out and fires
                 // windows explorer tends to lose explorer windows on shares when slept/resumed, too, so its not
                 // just me :P
-                
-                MemoryStream ms = new MemoryStream(); //duplicated the IF statement one for RSS and one for XML so that both can be generated.
-                List<ProcessedEpisode> lpe = mDoc.NextNShows(TVSettings.Instance.ExportRSSMaxShows, TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
-                if (lpe != null)
-                    if (this.Generate(ms,lpe ))
-                    {
-                        return System.Text.Encoding.ASCII.GetString(ms.ToArray());
-                    }
-               
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    List<ProcessedEpisode> lpe = this.Doc.NextNShows(TVSettings.Instance.ExportRSSMaxShows,
+                        TVSettings.Instance.ExportRSSDaysPast, TVSettings.Instance.ExportRSSMaxDays);
+                    if (lpe != null)
+                        if (Generate(ms, lpe))
+                        {
+                            return System.Text.Encoding.ASCII.GetString(ms.ToArray());
+                        }
+                }
             }
+
             catch (Exception e)
             {
                 Logger.Error(e, "Failed to produce records to put into Export file at: {0}", Location());
@@ -58,7 +76,7 @@ namespace TVRename
             return "";
         }
 
-        public void Run()
+        public override void Run()
         {
             if (Active())
             {
@@ -67,12 +85,13 @@ namespace TVRename
 
                     //Create the directory if needed
                     Directory.CreateDirectory(Path.GetDirectoryName(Location()) ??"");
+                    string contents = Produce();
 
                     //Write Contents to file
-                    StreamWriter file = new StreamWriter(Location());
-                    String contents = Produce();
-                    file.Write(contents);
-                    file.Close();
+                    using (StreamWriter file = new StreamWriter(Location()))
+                    {
+                        file.Write(contents);
+                    }
 
                     Logger.Info("Output File to :{0}", Location());
                     Logger.Trace("contents of File are :{0}", contents);

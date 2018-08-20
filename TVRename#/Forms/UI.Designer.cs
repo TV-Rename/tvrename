@@ -22,9 +22,15 @@ namespace TVRename
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            this.mDoc = null;
+
             if (disposing && (components != null))
             {
                 components.Dispose();
+            }
+            if (disposing && (this.mAutoFolderMonitor  != null))
+            {
+                mAutoFolderMonitor.Dispose();
             }
             base.Dispose(disposing);
         }

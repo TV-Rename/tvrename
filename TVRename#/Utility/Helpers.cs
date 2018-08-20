@@ -36,6 +36,43 @@ using NLog;
 
 namespace TVRename
 {
+    internal static partial class NativeMethods
+    {
+        [return: MarshalAs(UnmanagedType.Bool)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
+
+        [DllImport("kernel32.dll")]
+        static extern bool AttachConsole(UInt32 dwProcessId);
+        private const UInt32 ATTACH_PARENT_PROCESS = 0xFFFFFFFF;
+
+        // Attach to console window – this may modify the standard handles
+        public static bool AttachParentConsole() =>AttachConsole(ATTACH_PARENT_PROCESS);
+
+
+        public static void NewConsoleOutput(string text)
+        {
+            if (AllocConsole())
+            {
+                Console.Out.WriteLine(text);
+                Console.In.ReadLine();
+
+                FreeConsole();
+            }
+        }
+
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FreeConsole();
+
+    }
+
+
     public delegate void SetProgressDelegate(int percent);
 
     public static class XMLHelper
@@ -207,6 +244,18 @@ namespace TVRename
 
     public static class FileHelper
     {
+        public static bool IsLanguageSpecificSubtitle(this FileInfo file, out string extension)
+        {
+            const string regex = @"(?<ext>\.\w{2,3}\.(srt|sub|sbv))$";
+
+            Match m = Regex.Match(file.Name, regex, RegexOptions.IgnoreCase);
+            extension = (m.Success)
+                ? m.Groups["ext"].ToString()
+                : "";
+
+            return m.Success;
+        }
+
         public static int GetFilmLength(this FileInfo movieFile)
         {
             string duration;
@@ -294,10 +343,6 @@ namespace TVRename
         }
 
 
-        [return: MarshalAs(UnmanagedType.Bool)]
-        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern bool GetDiskFreeSpaceEx(string lpDirectoryName, out ulong lpFreeBytesAvailable, out ulong lpTotalNumberOfBytes, out ulong lpTotalNumberOfFreeBytes);
-
         /// <summary>
         /// Gets the properties for this file system.
         /// </summary>
@@ -305,10 +350,7 @@ namespace TVRename
         /// <returns>A <see cref="FileSystemProperties"/> containing the properties for the specified file system.</returns>
         public static FileSystemProperties GetProperties(string volumeIdentifier)
         {
-            ulong available;
-            ulong total;
-            ulong free;
-            if (GetDiskFreeSpaceEx(volumeIdentifier, out available, out total, out free))
+            if (NativeMethods.GetDiskFreeSpaceEx(volumeIdentifier, out ulong available, out ulong total, out ulong free))
             {
                 return new FileSystemProperties((long)total, (long)free, (long)available);
             }
@@ -379,6 +421,7 @@ namespace TVRename
 
         public static string MakeValidPath(string input)
         {
+            if (string.IsNullOrWhiteSpace(input)) return "";
             string directoryName = input;
             string invalid = new string(Path.GetInvalidFileNameChars()) + new string(Path.GetInvalidPathChars());
 
@@ -389,6 +432,22 @@ namespace TVRename
 
             return directoryName;
 
+        }
+
+        public static bool IgnoreFile(FileInfo fi)
+        {
+            if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                return true; // move on
+
+            if (TVSettings.Instance.IgnoreSamples &&
+                Helpers.Contains(fi.FullName, "sample", StringComparison.OrdinalIgnoreCase) &&
+                ((fi.Length / (1024 * 1024)) < TVSettings.Instance.SampleFileMaxSizeMB))
+                return true;
+
+            if (fi.Name.StartsWith("-.") && (fi.Length / 1024 < 10)) return true;
+
+
+            return false;
         }
     }
 
@@ -416,7 +475,6 @@ namespace TVRename
                 {
                     streamWriter.Write(json);
                     streamWriter.Flush();
-                    streamWriter.Close();
                 }
             }
 
@@ -890,8 +948,8 @@ namespace TVRename
 
         public static string RemoveAfter(this string root, string ending)
         {
-            if (root.IndexOf(ending) !=-1)
-                return   root.Substring(0, root.IndexOf(ending));
+            if (root.IndexOf(ending, StringComparison.OrdinalIgnoreCase) !=-1)
+                return   root.Substring(0, root.IndexOf(ending,StringComparison.OrdinalIgnoreCase));
             return root;
         }
 

@@ -22,9 +22,20 @@ namespace TVRename
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
+            this.copyTimer.Stop();
+            this.diskSpaceTimer.Stop();
+
             if (disposing && (components != null))
             {
                 components.Dispose();
+            }
+            if (disposing && (copyTimer != null))
+            {
+                copyTimer.Dispose();
+            }
+            if (disposing && (diskSpaceTimer != null))
+            {
+                diskSpaceTimer.Dispose();
             }
             base.Dispose(disposing);
         }

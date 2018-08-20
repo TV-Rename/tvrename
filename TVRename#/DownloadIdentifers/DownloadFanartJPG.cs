@@ -41,10 +41,9 @@ namespace TVRename
             return base.ProcessShow(si, forceRefresh);
         }
 
-        public override void reset()
+        public sealed override void reset()
         {
             doneFanartJPG = new List<string>(); 
-            base.reset();
         }
 
     }
