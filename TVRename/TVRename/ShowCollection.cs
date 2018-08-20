@@ -17,7 +17,6 @@ namespace TVRename
 {
     public class ShowCollection
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public string Path { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
@@ -47,7 +46,9 @@ namespace TVRename
             while (!reader.EOF)
             {
                 if ((reader.Name == "CollectionItem") && (!reader.IsStartElement()))
+                {
                     break;
+                }
 
                 if (reader.Name == "Path")
                 {

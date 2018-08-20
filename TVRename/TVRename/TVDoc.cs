@@ -281,7 +281,7 @@ namespace TVRename
             return ret;
         }
 
-        private void WriteXMLHeader(XmlWriter writer)
+        private static void WriteXMLHeader(XmlWriter writer)
         {
             writer.WriteStartDocument();
             writer.WriteStartElement("TVRename");
@@ -289,7 +289,7 @@ namespace TVRename
             XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
         }
 
-        private void WriteXMLFooter(XmlWriter writer)
+        private static void WriteXMLFooter(XmlWriter writer)
         {
             writer.WriteEndElement(); // tvrename
             writer.WriteEndDocument();
