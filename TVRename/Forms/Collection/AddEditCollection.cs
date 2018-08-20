@@ -13,7 +13,7 @@ namespace TVRename
     public partial class AddEditCollection : Form
     {
         private readonly TVDoc  mDoc;
-        private ShowCollection  mColl;
+        private int             iColl = -1;
         private bool            bActualMode;
         private bool            bActualButtons;
         private bool            bAddMode = false;
@@ -46,7 +46,9 @@ namespace TVRename
         private bool SetButtons(bool bMode, bool bFull = false)
         {
             BtEdit.Enabled = bMode;
-            BtRemove.Enabled = bMode;
+            BtDel.Enabled = bMode;
+            BtUp.Enabled = bMode;
+            BtDown.Enabled = bMode;
             if (bFull)
             {
                 BtSave.Enabled = bMode;
@@ -85,23 +87,20 @@ namespace TVRename
             {
                 TreeNode RootNode;
                 RootNode = TvColl.Nodes.Add("Root");
+                int iCurr = 0;
                 foreach (ShowCollection ShowColl in mDoc.ShowCollections)
                 {
                     TreeNode CurNode;
                     CurNode = RootNode.Nodes.Add(ShowColl.Name);
                     CurNode.ToolTipText = ShowColl.Description;
-                    CurNode.Tag = ShowColl;
+                    CurNode.Tag = iCurr;
+                    iCurr++;
                 }
                 TvColl.ExpandAll();
             }
         }
 
         #region Control functions
-        private void AddEditCollection_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void TvColl_AfterSelect(object sender, TreeViewEventArgs e)
         {
             TreeNode Node = TvColl.SelectedNode;
@@ -109,40 +108,37 @@ namespace TVRename
 
             if (Nodelevels.Length == 2)
             {
-                mColl = (ShowCollection)Node.Tag;
-                FillTextBoxes(mColl);
+                iColl = (int)Node.Tag;
+                FillTextBoxes(mDoc.ShowCollections[iColl]);
                 bActualButtons = SetButtons(true);
             }
         }
 
-        private void BtRemove_Click(object sender, EventArgs e)
+        private void BtDel_Click(object sender, EventArgs e)
         {
-            ShowCollection Sc = FillCollectionFromTextBoxes();
-            int iD = 0;
-            foreach (ShowCollection S in mDoc.ShowCollections)
+            if (iColl != -1)
             {
-                if (S.Path == Sc.Path)
-                {
-                    mDoc.ShowCollections.RemoveAt(iD);
-                    break;
-                }
-                iD++;
+                mDoc.ShowCollections.RemoveAt(iColl);
             }
 
             mDoc.WriteXMLCollections();
             ClearTextBoxes();
             bActualButtons = SetButtons(false, true);
+            iColl = -1;
             FillCollTreeView();
         }
 
         private void BtEdit_Click(object sender, EventArgs e)
         {
-            bActualButtons = SetButtons(true, true);
-            bActualButtons = SetButtons(false);
-            bActualMode    = SetTextBoxes(true);
-            BtAdd.Enabled  = false;
-            bAddMode       = false;
-            TvColl.Enabled = false;
+            if (iColl > 0)
+            {
+                bActualButtons = SetButtons(true, true);
+                bActualButtons = SetButtons(false);
+                bActualMode = SetTextBoxes(true);
+                BtAdd.Enabled = false;
+                bAddMode = false;
+                TvColl.Enabled = false;
+            }
         }
 
         private void BtSave_Click(object sender, EventArgs e)
@@ -150,21 +146,11 @@ namespace TVRename
             ShowCollection Sc = FillCollectionFromTextBoxes();
             if (bAddMode)
             {
-                Sc = FillCollectionFromTextBoxes();
                 mDoc.ShowCollections.Add(Sc);
             }
             else
             {
-                int iD = 0;
-                foreach (ShowCollection S in mDoc.ShowCollections)
-                {
-                    if (S.Path == Sc.Path)
-                    {
-                        mDoc.ShowCollections[iD] = Sc;
-                        break;
-                    }
-                    iD++;
-                }
+                mDoc.ShowCollections[iColl] = Sc;
             }
 
             mDoc.WriteXMLCollections();
@@ -175,15 +161,18 @@ namespace TVRename
             TvColl.Enabled = true;
             bActualMode    = SetTextBoxes(false, true);
             bActualButtons = SetButtons(false, true);
+            iColl = -1;
             BtAdd.Enabled  = true;
         }
 
         private void BtAdd_Click(object sender, EventArgs e)
         {
+            ClearTextBoxes();
             bActualButtons = SetButtons(true, true);
             bActualButtons = SetButtons(false);
             bActualMode    = SetTextBoxes(true, true);
             BtAdd.Enabled  = false;
+            iColl          = -1;
             bAddMode       = true;
             TvColl.Enabled = false;
         }
@@ -197,11 +186,41 @@ namespace TVRename
         private void BtCancel_Click(object sender, EventArgs e)
         {
             ClearTextBoxes();
-            bActualMode = SetTextBoxes(false, true);
+            bActualMode    = SetTextBoxes(false, true);
             bActualButtons = SetButtons(false, true);
-
+            BtAdd.Enabled  = true;
+            bAddMode       = false;
+            iColl          = -1;
             FillCollTreeView();
             TvColl.Enabled = true;
+        }
+
+        private void BtUp_Click(object sender, EventArgs e)
+        {
+            ShowCollection Sc;
+            // No swap over the Default collection
+            if (iColl > 1)
+            {
+                Sc = mDoc.ShowCollections[iColl];
+                mDoc.ShowCollections[iColl] = mDoc.ShowCollections[iColl - 1];
+                mDoc.ShowCollections[iColl - 1] = Sc;
+            }
+            iColl = -1;
+            FillCollTreeView();
+        }
+
+        private void BtDown_Click(object sender, EventArgs e)
+        {
+            ShowCollection Sc;
+            // No Swap after last collection
+            if (iColl < mDoc.ShowCollections.Count - 1)
+            {
+                Sc = mDoc.ShowCollections[iColl];
+                mDoc.ShowCollections[iColl] = mDoc.ShowCollections[iColl + 1];
+                mDoc.ShowCollections[iColl + 1] = Sc;
+            }
+            iColl = -1;
+            FillCollTreeView();
         }
         #endregion
     }

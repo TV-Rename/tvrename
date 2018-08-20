@@ -1454,23 +1454,30 @@ namespace TVRename
         private void BuildCollectionsMenu ()
         {
             // ActualCollMenuItem
-            if (mDoc.ShowCollections.Count > 0)
+            if (mDoc.ShowCollections.Count == 0)
             {
-                ToolStripItem[] CollMenu = new ToolStripItem[mDoc.ShowCollections.Count];
-                int i = 0;
-                foreach (ShowCollection ShowColl in mDoc.ShowCollections)
-                {
-                    CollMenu[i] = new ToolStripMenuItem();
-                    CollMenu[i].Name = "CollectionMenuItem" + i.ToString();
-                    CollMenu[i].Tag = ShowColl.Path;
-                    CollMenu[i].Text = ShowColl.Name;
-                    CollMenu[i].ToolTipText = ShowColl.Description;
-                    CollMenu[i].Click += new EventHandler(SelCollMenuItemClickHandler);
-                    i++;
-                }
-
-                collToolStripMenuItem.DropDownItems.AddRange(CollMenu);
+                // Setup a default collection when we come's from 2.4.x RCy
+                ShowCollection Sc = new ShowCollection("2.1");
+                Sc.Name = "Default";
+                Sc.Description = "Default collection in mono collection use";
+                mDoc.ShowCollections.Add(Sc);
+                mDoc.WriteXMLCollections();
             }
+
+            ToolStripItem[] CollMenu = new ToolStripItem[mDoc.ShowCollections.Count];
+            int i = 0;
+            foreach (ShowCollection ShowColl in mDoc.ShowCollections)
+            {
+                CollMenu[i] = new ToolStripMenuItem();
+                CollMenu[i].Name = "CollectionMenuItem" + i.ToString();
+                CollMenu[i].Tag = ShowColl;
+                CollMenu[i].Text = ShowColl.Name;
+                CollMenu[i].ToolTipText = ShowColl.Description;
+                CollMenu[i].Click += new EventHandler(SelCollMenuItemClickHandler);
+                i++;
+            }
+
+            collToolStripMenuItem.DropDownItems.AddRange(CollMenu);
         }
 
         private void RemoveCollectionsMenu ()
@@ -1487,8 +1494,8 @@ namespace TVRename
         private void SelCollMenuItemClickHandler(object sender, EventArgs e)
         {
             bool bNeedCancel = false;
-            ToolStripMenuItem clickedItem = (ToolStripMenuItem)sender;
-            string SelectedCollection = (string)clickedItem.Tag;
+            ToolStripMenuItem clickedItem     = (ToolStripMenuItem)sender;
+            ShowCollection SelectedCollection = (ShowCollection)clickedItem.Tag;
 
             try
             {
@@ -1516,9 +1523,8 @@ namespace TVRename
 
                 if (!bNeedCancel)
                 {
-                    mDoc.SwitchToCollection(SelectedCollection);
+                    mDoc.SwitchToCollection(SelectedCollection.Path);
                     mDoc.WriteXMLCollections();
-
                     FillMyShows();
                 }
             }
