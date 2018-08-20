@@ -57,21 +57,21 @@ namespace TVRename
             return bMode;
         }
 
-        private static void ClearTextBoxes ()
+        private void ClearTextBoxes ()
         {
             TxtCollName.Text = "";
             TxtCollPath.Text = "";
             TxtCollDesc.Text = "";
         }
 
-        private static void FillTextBoxes (ShowCollection Collection)
+        private void FillTextBoxes (ShowCollection Collection)
         {
             TxtCollName.Text = Collection.Name;
             TxtCollPath.Text = Collection.Path;
             TxtCollDesc.Text = Collection.Description;
         }
 
-        private static ShowCollection FillCollectionFromTextBoxes ()
+        private ShowCollection FillCollectionFromTextBoxes ()
         {
             ShowCollection Collection = new ShowCollection(TxtCollPath.Text);
             Collection.Name = TxtCollName.Text;
@@ -80,7 +80,7 @@ namespace TVRename
             return Collection;
         }
 
-        private static void FillCollTreeView()
+        private void FillCollTreeView()
         {
             TvColl.Nodes.Clear();
             if (mDoc.ShowCollections.Count > 0)
