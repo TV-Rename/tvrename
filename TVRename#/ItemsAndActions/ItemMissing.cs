@@ -11,7 +11,7 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
-    public class ItemMissing : Item
+    public class ItemMissing : Item, ScanListItem
     {
         public string TheFileNoExt;
         private string folder;
@@ -27,12 +27,12 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
+        public bool SameAs(Item o)
         {
             return (o is ItemMissing) && (string.Compare((o as ItemMissing).TheFileNoExt, this.TheFileNoExt) == 0);
         }
 
-        public override int Compare(Item o)
+        public int Compare(Item o)
         {
             ItemMissing miss = o as ItemMissing;
             //return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
@@ -56,9 +56,11 @@ namespace TVRename
 
         #endregion
 
-        #region Item Members
+        #region ScanListItem Members
 
-        public override  IgnoreItem Ignore
+        public ProcessedEpisode Episode { get; private set; }
+
+        public IgnoreItem Ignore
         {
             get
             {
@@ -68,7 +70,7 @@ namespace TVRename
             }
         }
 
-        public override ListViewItem ScanListViewItem
+        public ListViewItem ScanListViewItem
         {
             get
             {
@@ -94,12 +96,12 @@ namespace TVRename
             }
         }
 
-        public override string ScanListViewGroup
+        public string ScanListViewGroup
         {
             get { return "lvgActionMissing"; }
         }
 
-        public override string TargetFolder
+        public string TargetFolder
         {
             get
             {
@@ -109,7 +111,7 @@ namespace TVRename
             }
         }
 
-        public override int IconNumber
+        public int IconNumber
         {
             get { return 1; }
         }

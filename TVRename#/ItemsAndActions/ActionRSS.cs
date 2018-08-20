@@ -11,7 +11,8 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Windows.Forms;
 
-    public class ActionRSS : ActionDownload
+    // MS_TODO: derive this from ActionDownloadImage?
+    public class ActionRSS : Item, Action, ScanListItem
     {
         public RSSItem RSS;
         public string TheFileNoExt;
@@ -25,28 +26,36 @@ namespace TVRename
 
         #region Action Members
 
-        public override  string ProgressText
+        public bool Done { get; private set; }
+        public bool Error { get; private set; }
+        public string ErrorText { get; private set; }
+
+        public string ProgressText
         {
             get { return this.RSS.Title; }
         }
 
+        public double PercentDone
+        {
+            get { return this.Done ? 100 : 0; }
+        }
 
-        public override string Name
+        public string Name
         {
             get { return "Get Torrent"; }
         }
 
-        public override long SizeOfWork
+        public long SizeOfWork
         {
             get { return 1000000; }
         }
 
-        public override string produces
+        public string produces
         {
             get { return this.RSS.URL; }
         }
 
-        public override bool Go( ref bool pause, TVRenameStats stats)
+        public bool Go( ref bool pause, TVRenameStats stats)
         {
             System.Net.WebClient wc = new System.Net.WebClient();
             try
@@ -83,12 +92,12 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
+        public bool SameAs(Item o)
         {
             return (o is ActionRSS) && ((o as ActionRSS).RSS == this.RSS);
         }
 
-        public override int Compare(Item o)
+        public int Compare(Item o)
         {
             ActionRSS rss = o as ActionRSS;
             return rss == null ? 0 : this.RSS.URL.CompareTo(rss.RSS.URL);
@@ -96,9 +105,11 @@ namespace TVRename
 
         #endregion
 
-        #region Item Members
+        #region ScanListItem Members
 
-        public override IgnoreItem Ignore
+        public ProcessedEpisode Episode { get; private set; }
+
+        public IgnoreItem Ignore
         {
             get
             {
@@ -108,7 +119,7 @@ namespace TVRename
             }
         }
 
-        public override ListViewItem ScanListViewItem
+        public ListViewItem ScanListViewItem
         {
             get
             {
@@ -133,7 +144,7 @@ namespace TVRename
             }
         }
 
-        public override string TargetFolder
+        string ScanListItem.TargetFolder
         {
             get
             {
@@ -143,12 +154,12 @@ namespace TVRename
             }
         }
 
-public override string ScanListViewGroup
+        public string ScanListViewGroup
         {
             get { return "lvgActionDownloadRSS"; }
         }
 
-        public override int IconNumber
+        int ScanListItem.IconNumber
         {
             get { return 6; }
         }

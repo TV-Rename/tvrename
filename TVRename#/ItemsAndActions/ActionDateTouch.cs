@@ -12,7 +12,7 @@ namespace TVRename
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-    public class ActionDateTouch : Action
+    public class ActionDateTouch : Item, Action, ScanListItem
     {
         public ShowItem SI; // if for an entire show, rather than specific episode
         public Season SN; // if for an entire show, rather than specific episode
@@ -44,17 +44,23 @@ namespace TVRename
         }
 
 
-        public override string produces => this.WhereFile?.FullName?? this.WhereDirectory?.FullName;
+        public string produces => this.WhereFile?.FullName?? this.WhereDirectory?.FullName;
 
         #region Action Members
 
-        public override string Name => "Touch Update Time";
+        public string Name => "Touch Update Time";
 
-        public override string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
+        public bool Done { get; private set; }
+        public bool Error { get; private set; }
+        public string ErrorText { get; set; }
 
-        public override long SizeOfWork => 100;
+        public string ProgressText => this.WhereFile?.Name??this.WhereDirectory?.Name;
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public double PercentDone => this.Done ? 100 : 0;
+
+        public long SizeOfWork => 100;
+
+        public bool Go(ref bool pause, TVRenameStats stats)
         {
             try
             {
@@ -83,12 +89,12 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
+        public bool SameAs(Item o)
         {
             return (o is ActionDateTouch) && ((o as ActionDateTouch).WhereFile == this.WhereFile) && ((o as ActionDateTouch).WhereDirectory == this.WhereDirectory);
         }
 
-        public override int Compare(Item o)
+        public int Compare(Item o)
         {
             ActionDateTouch nfo = o as ActionDateTouch;
 
@@ -103,9 +109,9 @@ namespace TVRename
 
         #endregion
 
-        #region Item Members
+        #region ScanListItem Members
 
-        public override IgnoreItem Ignore
+        public IgnoreItem Ignore
         {
             get
             {
@@ -115,7 +121,7 @@ namespace TVRename
             }
         }
 
-        public override ListViewItem ScanListViewItem
+        public ListViewItem ScanListViewItem
         {
             get
             {
@@ -161,11 +167,13 @@ namespace TVRename
             }
         }
 
-        public override string TargetFolder => this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
+        string ScanListItem.TargetFolder => this.WhereFile?.DirectoryName??this.WhereDirectory?.Name;
 
-        public override string ScanListViewGroup => "lvgUpdateFileDates";
+        public string ScanListViewGroup => "lvgUpdateFileDates";
 
-        public override int IconNumber => 7;
+        public int IconNumber => 7;
+
+        public ProcessedEpisode Episode { get; }
 
         #endregion
 

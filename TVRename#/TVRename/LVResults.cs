@@ -1,4 +1,4 @@
-// 
+﻿// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -27,7 +27,7 @@ namespace TVRename
         public System.Collections.Generic.List<ActionCopyMoveRename> CopyMove;
         public int Count;
         public System.Collections.Generic.List<ActionDownloadImage> Download;
-        public ItemList FlatList;
+        public ScanListItemList FlatList;
         public System.Collections.Generic.List<ItemMissing> Missing;
         public System.Collections.Generic.List<ActionNFO> NFO;
         public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
@@ -55,7 +55,7 @@ namespace TVRename
             this.Download = new System.Collections.Generic.List<ActionDownloadImage>();
             this.NFO = new System.Collections.Generic.List<ActionNFO>();
             this.PyTivoMeta = new System.Collections.Generic.List<ActionPyTivoMeta>();
-            this.FlatList = new ItemList();
+            this.FlatList = new ScanListItemList();
 
             System.Collections.Generic.List<ListViewItem> sel = new System.Collections.Generic.List<ListViewItem>();
             if (which == WhichResults.Checked)
@@ -90,8 +90,8 @@ namespace TVRename
                     continue;
 
                 Item action = (Item) (lvi.Tag);
-                if (action is Item)
-                    this.FlatList.Add(action as Item);
+                if (action is ScanListItem)
+                    this.FlatList.Add(action as ScanListItem);
 
                 if (action.GetType() != firstType)
                     this.AllSameType = false;

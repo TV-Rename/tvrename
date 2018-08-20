@@ -17,7 +17,7 @@ namespace TVRename
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using System.IO;
 
-    public class ActionDownloadImage : ActionDownload
+    public class ActionDownloadImage : Item, Action, ScanListItem
     {
         private readonly string Path;
         private readonly FileInfo Destination;
@@ -37,14 +37,20 @@ namespace TVRename
 
         #region Action Members
 
-        public override string Name => "Download";
+        public bool Done { get; set; }
+        public bool Error { get; set; }
+        public string ErrorText { get; set; }
 
-        public override string ProgressText => this.Destination.Name;
+        public string Name => "Download";
 
-        public override string produces => this.Destination.FullName;
+        public string ProgressText => this.Destination.Name;
+
+        public double PercentDone => this.Done ? 100 : 0;
+
+        public string produces => this.Destination.FullName;
 
         // 0 to 100
-        public override long SizeOfWork => 1000000;
+        public long SizeOfWork => 1000000;
 
         // http://www.codeproject.com/Articles/2941/Resizing-a-Photographic-image-with-GDI-for-NET
         static Image MaxSize(Image imgPhoto, int Width, int Height)
@@ -85,7 +91,7 @@ namespace TVRename
             return bmPhoto;
         }
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public bool Go(ref bool pause, TVRenameStats stats)
         {
             byte[] theData = TheTVDB.Instance.GetTVDBDownload(this.Path);
             if ((theData == null) || (theData.Length == 0))
@@ -135,12 +141,12 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
+        public bool SameAs(Item o)
         {
             return (o is ActionDownloadImage) && ((o as ActionDownloadImage).Destination == this.Destination);
         }
 
-        public override int Compare(Item o)
+        public int Compare(Item o)
         {
             ActionDownloadImage dl = o as ActionDownloadImage;
             return dl == null ? 0 : this.Destination.FullName.CompareTo(dl.Destination.FullName);
@@ -148,11 +154,13 @@ namespace TVRename
 
         #endregion
 
-        #region Item Members
+        #region ScanListItem Members
 
-        public override int IconNumber => 5;
+        public int IconNumber => 5;
 
-        public override IgnoreItem Ignore
+        public ProcessedEpisode Episode { get; set; }
+
+        public IgnoreItem Ignore
         {
             get
             {
@@ -162,7 +170,7 @@ namespace TVRename
             }
         }
 
-        public override ListViewItem ScanListViewItem
+        public ListViewItem ScanListViewItem
         {
             get
             {
@@ -198,9 +206,9 @@ namespace TVRename
             }
         }
 
-        public override string ScanListViewGroup => "lvgActionDownload";
+        public string ScanListViewGroup => "lvgActionDownload";
 
-        public override string TargetFolder
+        public string TargetFolder
         {
             get
             {

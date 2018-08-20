@@ -13,7 +13,7 @@ namespace TVRename
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 
-    public class ActionMede8erXML : ActionWriteMetadata
+    public class ActionMede8erXML : Item, Action, ScanListItem, ActionWriteMetadata
     {
            public ShowItem SI; // if for an entire show, rather than specific episode
         public FileInfo Where;
@@ -32,30 +32,38 @@ namespace TVRename
             this.Where = nfo;
         }
 
-        public override string produces
+        public string produces
         {
             get { return this.Where.FullName; }
         }
 
         #region Action Members
 
-        public override string Name
+        public string Name
         {
             get { return "Write Mede8er Metadata"; }
         }
 
-        public override string ProgressText
+        public bool Done { get; private set; }
+        public bool Error { get; private set; }
+        public string ErrorText { get; set; }
+
+        public string ProgressText
         {
             get { return this.Where.Name; }
         }
 
+        public double PercentDone
+        {
+            get { return this.Done ? 100 : 0; }
+        }
 
-        public override long SizeOfWork
+        public long SizeOfWork
         {
             get { return 10000; }
         }
 
-        public override bool Go(ref bool pause, TVRenameStats stats)
+        public bool Go(ref bool pause, TVRenameStats stats)
         {
             XmlWriterSettings settings = new XmlWriterSettings
             {
@@ -248,12 +256,12 @@ namespace TVRename
 
         #region Item Members
 
-        public override bool SameAs(Item o)
+        public bool SameAs(Item o)
         {
             return (o is ActionMede8erXML) && ((o as ActionMede8erXML).Where == this.Where);
         }
 
-        public override int Compare(Item o)
+        public int Compare(Item o)
         {
             ActionMede8erXML nfo = o as ActionMede8erXML;
 
@@ -266,8 +274,9 @@ namespace TVRename
 
         #endregion
 
-        #region Item Members
-        public override IgnoreItem Ignore
+        #region ScanListItem Members
+
+        public IgnoreItem Ignore
         {
             get
             {
@@ -277,7 +286,7 @@ namespace TVRename
             }
         }
 
-        public override ListViewItem ScanListViewItem
+        public ListViewItem ScanListViewItem
         {
             get
             {
@@ -312,7 +321,7 @@ namespace TVRename
             }
         }
 
-        public override string TargetFolder
+        string ScanListItem.TargetFolder
         {
             get
             {
@@ -322,16 +331,17 @@ namespace TVRename
             }
         }
 
-        public override string ScanListViewGroup
+        public string ScanListViewGroup
         {
             get { return "lvgActionMeta"; }
         }
 
-        public override int IconNumber
+        public int IconNumber
         {
             get { return 7; }
         }
 
+        public ProcessedEpisode Episode { get; private set; }
 
         #endregion
 
