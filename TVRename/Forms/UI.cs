@@ -1464,7 +1464,7 @@ namespace TVRename
                 mDoc.WriteXMLCollections();
             }
 
-            ToolStripItem[] CollMenu = new ToolStripItem[mDoc.ShowCollections.Count];
+            ToolStripMenuItem[] CollMenu = new ToolStripMenuItem[mDoc.ShowCollections.Count];
             int i = 0;
             foreach (ShowCollection ShowColl in mDoc.ShowCollections)
             {
@@ -1473,6 +1473,10 @@ namespace TVRename
                 CollMenu[i].Tag = ShowColl;
                 CollMenu[i].Text = ShowColl.Name;
                 CollMenu[i].ToolTipText = ShowColl.Description;
+                if (ShowColl.Path == PathManager.ShowCollection)
+                {
+                    CollMenu[i].Checked = true;
+                }
                 CollMenu[i].Click += new EventHandler(SelCollMenuItemClickHandler);
                 i++;
             }
@@ -1523,6 +1527,23 @@ namespace TVRename
 
                 if (!bNeedCancel)
                 {
+                    int iMnu = 0;
+                    ToolStripItemCollection TSMIC = collToolStripMenuItem.DropDownItems;
+                    ToolStripMenuItem TsM;
+                    foreach (ToolStripItem TsI in TSMIC)
+                    {
+                        try
+                        {
+                            TsM = (ToolStripMenuItem)TsI;
+                            TsM.Checked = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            string Message = ex.Message;
+                        }
+                    }
+                    clickedItem.Checked = true;
+
                     mDoc.SwitchToCollection(SelectedCollection.Path);
                     mDoc.WriteXMLCollections();
                     FillMyShows();
