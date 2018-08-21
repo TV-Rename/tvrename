@@ -14,11 +14,12 @@ namespace TVRename
     {
         public TorrentEntry Entry;
 
-        public ItemuTorrenting(TorrentEntry te, ProcessedEpisode pe, string desiredLocationNoExt)
+        public ItemuTorrenting(TorrentEntry te, ProcessedEpisode pe, string desiredLocationNoExt, TorrentApp tApp)
         {
             Episode = pe;
             DesiredLocationNoExt = desiredLocationNoExt;
             Entry = te;
+            IconNumber = (tApp == TorrentApp.uTorrent) ? 2 : 10;
         }
 
         #region Item Members
@@ -42,7 +43,7 @@ namespace TVRename
         #endregion
 
         #region Item Members
-        public override int IconNumber => 2;
+        public override int IconNumber { get; }
         #endregion
 
         protected override string FileIdentifier => Entry.TorrentFile;
