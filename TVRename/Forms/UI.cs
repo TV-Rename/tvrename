@@ -2183,6 +2183,24 @@ namespace TVRename
             if (res != DialogResult.Yes)
                 return;
 
+            if (Directory.Exists(si.AutoAddFolderBase))
+            {
+                DialogResult res3 = MessageBox.Show(
+                    $"Remove folder \"{si.AutoAddFolderBase}\" from disk?",
+                    "Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (res3 == DialogResult.Yes)
+                {
+                    Logger.Info($"Recycling {si.AutoAddFolderBase} as part of the removal of {si.ShowName}");
+                    Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(si.AutoAddFolderBase,
+                        Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                        Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                }
+            }
+
+            Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.Library.Remove(si);
             ShowAddedOrEdited(false);
         }
