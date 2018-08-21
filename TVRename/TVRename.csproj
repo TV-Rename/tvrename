@@ -336,7 +336,7 @@
     <Compile Include="ItemsAndActions\ActionNFO.cs" />
     <Compile Include="ItemsAndActions\ActionRSS.cs" />
     <Compile Include="ItemsAndActions\ActionItemSorter.cs" />
-    <Compile Include="ItemsAndActions\ItemuTorrenting.cs" />
+    <Compile Include="ItemsAndActions\ItemTorrentDownload.cs" />
     <Compile Include="TVRename\FoundFolder.cs" />
     <Compile Include="Forms\ShowPreferences\AddModifyRule.cs">
       <SubType>Form</SubType>
