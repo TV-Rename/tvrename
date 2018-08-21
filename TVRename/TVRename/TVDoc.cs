@@ -1181,6 +1181,7 @@ namespace TVRename
         private void RenameAndMissingCheck(SetProgressDelegate prog, ICollection<ShowItem> showList)
         {
             TheActionList = new ItemList();
+            bool fullScan = (showList.Count == Library.Shows.Count());
 
             if (TVSettings.Instance.RenameCheck)
                 Stats().RenameChecksDone++;
@@ -1190,7 +1191,7 @@ namespace TVRename
 
             prog.Invoke(0);
 
-            if (showList == null)
+            if (fullScan)
             {
                 // only do episode count if we're doing all shows and seasons
                 mStats.NS_NumberOfEpisodes = 0;
@@ -1212,13 +1213,13 @@ namespace TVRename
 
                 prog.Invoke(100 * c / showList.Count);
 
-                RenameAndMissingCheck(si, dfc);
+                RenameAndMissingCheck(si, dfc, fullScan);
             } // for each show
 
             RemoveIgnored();
         }
 
-        private void RenameAndMissingCheck(ShowItem si, DirFilesCache dfc)
+        private void RenameAndMissingCheck(ShowItem si, DirFilesCache dfc,bool fullscan)
         {
             if (si.AllFolderLocations().Count == 0) // no folders defined for this show
                 return; // so, nothing to do.
@@ -1431,6 +1432,8 @@ namespace TVRename
                             }
                             else
                             {
+                                if (fullscan) mStats.NS_NumberOfEpisodes++;
+
                                 // do NFO and thumbnail checks if required
                                 FileInfo
                                     filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
