@@ -320,6 +320,7 @@ namespace TVRename
         public CustomEpisodeName NamingStyle = new CustomEpisodeName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
+        public bool ShowCollections = false;
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
@@ -434,6 +435,8 @@ namespace TVRename
                     BGDownload = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "OfflineMode")
                     OfflineMode = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ShowCollections")
+                    ShowCollections = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "Replacements" && !reader.IsEmptyElement)
                 {
                     Replacements.Clear();
@@ -879,6 +882,7 @@ namespace TVRename
             TheSearchers.WriteXML(writer);
             XmlHelper.WriteElementToXml(writer,"BGDownload",BGDownload);
             XmlHelper.WriteElementToXml(writer,"OfflineMode",OfflineMode);
+            XmlHelper.WriteElementToXml(writer,"ShowCollections", ShowCollections);
             writer.WriteStartElement("Replacements");
             foreach (Replacement R in Replacements)
             {

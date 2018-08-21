@@ -148,6 +148,13 @@ namespace TVRename
             }
 
             UpdateSplashStatus(splash, "Filling Shows");
+
+            if (!TVSettings.Instance.ShowCollections)
+            {
+                collToolStripMenuItem.Visible = false;
+                toolStripSeparator0.Visible = false;
+            }
+
             FillMyShows();
             UpdateSearchButtons();
             ClearInfoWindows();
@@ -1534,7 +1541,6 @@ namespace TVRename
 
                 if (!bNeedCancel)
                 {
-                    int iMnu = 0;
                     ToolStripItemCollection TSMIC = collToolStripMenuItem.DropDownItems;
                     ToolStripMenuItem TsM;
                     foreach (ToolStripItem TsI in TSMIC)
@@ -1544,9 +1550,9 @@ namespace TVRename
                             TsM = (ToolStripMenuItem)TsI;
                             TsM.Checked = false;
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            string Message = ex.Message;
+                            // Just a pass thru for MenuSeparators
                         }
                     }
                     clickedItem.Checked = true;
@@ -1882,6 +1888,8 @@ namespace TVRename
                 ShowHideNotificationIcon();
                 FillWhenToWatchList();
                 ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
+                collToolStripMenuItem.Visible = (TVSettings.Instance.ShowCollections) ? true : false;
+                toolStripSeparator0.Visible = (TVSettings.Instance.ShowCollections) ? true : false;
                 FillEpGuideHtml();
                 mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
                 betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
