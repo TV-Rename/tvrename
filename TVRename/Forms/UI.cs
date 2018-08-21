@@ -2840,7 +2840,7 @@ namespace TVRename
                     metaCount++;
                 else if (action is ActionDateTouch)
                     fileMetaCount++;
-                else if (action is ItemuTorrenting || action is ItemSABnzbd)
+                else if (action is ItemDownloading)
                     dlCount++;
                 else if (action is ActionDeleteFile || action is ActionDeleteDirectory)
                     removeCount++;
@@ -3279,7 +3279,7 @@ namespace TVRename
                 return;
 
             Item action = (Item) lvAction.Items[e.Index].Tag;
-            if (action != null && (action is ItemMissing || action is ItemuTorrenting || action is ItemSABnzbd))
+            if (action != null && (action is ItemMissing || action is ItemDownloading))
                 e.NewValue = CheckState.Unchecked;
         }
 

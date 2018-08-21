@@ -16,7 +16,7 @@ namespace TVRename
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             List<TorrentEntry> downloading = GetqBitTorrentDownloads();
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, TorrentApp.qBitTorrent);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.qBitTorrent);
         }
 
         private static List<TorrentEntry> GetqBitTorrentDownloads()

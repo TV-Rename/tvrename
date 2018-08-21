@@ -115,7 +115,7 @@ namespace TVRename
                         if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
                             (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum )) continue;
                         toRemove.Add(action1);
-                        newList.Add(new ItemSABnzbd(te, action.Episode, action.TheFileNoExt));
+                        newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt,DownloadApp.SABnzbd));
                         break;
                     }
                 }
