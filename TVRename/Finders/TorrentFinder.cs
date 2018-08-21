@@ -4,11 +4,17 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
+    public enum TorrentApp
+    {
+        uTorrent,
+        qBitTorrent
+    }
+
     internal abstract class TorrentFinder : Finder
     {
         public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
-        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading)
+        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading, TorrentApp tApp)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -39,7 +45,7 @@ namespace TVRename
                     if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {
                         toRemove.Add(action1);
-                        newList.Add(new ItemuTorrenting(te, action.Episode, action.TheFileNoExt));
+                        newList.Add(new ItemuTorrenting(te, action.Episode, action.TheFileNoExt, tApp));
                         break;
                     }
                 }
