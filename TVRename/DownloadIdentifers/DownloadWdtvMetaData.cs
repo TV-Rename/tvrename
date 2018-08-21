@@ -35,7 +35,7 @@ namespace TVRename
             return theActionList;
         }
 
-      public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
+        public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
             if (TVSettings.Instance.wdLiveTvMeta)
             {
