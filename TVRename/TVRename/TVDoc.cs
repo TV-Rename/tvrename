@@ -65,13 +65,13 @@ namespace TVRename
 
             scanProgDlg = null;
 
-            finders = new List<Finder>
+            finders = new List<Finder> //These should be in order
             {
                 new FileFinder(this),
-                new RSSFinder(this),
                 new uTorrentFinder(this),
                 new qBitTorrentFinder(this),
-                new SABnzbdFinder(this)
+                new SABnzbdFinder(this),
+                new RSSFinder(this) //RSS Finder Should Be last as it is the finder if all others fail
             };
 
             downloadIdentifiers = new DownloadIdentifiersController();
