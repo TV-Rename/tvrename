@@ -33,7 +33,7 @@ namespace TVRename
         kBTEOF
     }
 
-    public class TorrentEntry // represents a torrent downloading in uTorrent
+    public class TorrentEntry: DownloadInformation // represents a torrent downloading in uTorrent
     {
         public string DownloadingTo;
         public int PercentDone;
@@ -44,6 +44,19 @@ namespace TVRename
             TorrentFile = torrentfile;
             DownloadingTo = to;
             PercentDone = percent;
+        }
+
+        string DownloadInformation.FileIdentifier => TorrentFile;
+
+        string DownloadInformation.Destination => DownloadingTo;
+
+        string DownloadInformation.RemainingText  
+        {
+            get
+            {
+                int p = PercentDone;
+                return p == -1 ? "" : PercentDone + "% Complete";
+            }
         }
     }
 
@@ -1300,7 +1313,7 @@ namespace TVRename
 
             foreach (Item action1 in MissingList)
             {
-                if ((!(action1 is ItemMissing)) && (!(action1 is ItemInProgress)))
+                if ((!(action1 is ItemMissing)) && (!(action1 is ItemDownloading)))
                     continue;
 
                 ProcessedEpisode m = action1.Episode;
@@ -1311,7 +1324,7 @@ namespace TVRename
                     case ItemMissing action:
                         name = action.TheFileNoExt;
                         break;
-                    case ItemInProgress actionIp:
+                    case ItemDownloading actionIp:
                         name = actionIp.DesiredLocationNoExt;
                         break;
                 }

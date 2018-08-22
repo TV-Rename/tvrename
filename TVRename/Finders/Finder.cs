@@ -1,7 +1,14 @@
 namespace TVRename
 {
-    internal abstract class Finder
+    public abstract class Finder
     {
+        public enum DownloadApp
+        {
+            SABnzbd,
+            uTorrent,
+            qBitTorrent
+        }
+
         protected bool ActionCancel;
         protected readonly TVDoc Doc;
         protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();

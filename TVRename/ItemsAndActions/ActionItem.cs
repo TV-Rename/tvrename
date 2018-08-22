@@ -32,46 +32,6 @@ namespace TVRename
         }
     }
 
-    public abstract class ItemInProgress : Item
-    {
-        public string DesiredLocationNoExt;
-
-        public override string ScanListViewGroup => "lvgDownloading";
-
-        public override IgnoreItem Ignore => GenerateIgnore(DesiredLocationNoExt);
-
-        public override string TargetFolder
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(Destination))
-                    return null;
-
-                return new FileInfo(Destination).DirectoryName;
-            }
-        }
-
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
-                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(Episode.NumsAsString());
-                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                lvi.SubItems.Add(FileIdentifier);
-                lvi.SubItems.Add(Destination);
-                lvi.SubItems.Add(Remaining);
-                lvi.Tag = this;
-                return lvi;
-            }
-        }
-
-        protected abstract string FileIdentifier { get; }
-        protected abstract string Destination { get; }
-        protected abstract string Remaining { get; }
-    }
-
     public abstract class Action : Item // Something we can do
     {
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"

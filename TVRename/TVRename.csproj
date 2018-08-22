@@ -135,7 +135,11 @@
     <Compile Include="Forms\Collection\AddEditCollection.cs">
       <SubType>Form</SubType>
     </Compile>
+<<<<<<< HEAD
     <Compile Include="Forms\Collection\AddEditCollection.Designer.cs">
+=======
+    <Compile Include="Forms\Collection\AddEditCollection.designer.cs">
+>>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
       <DependentUpon>AddEditCollection.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
@@ -226,6 +230,7 @@
     <Compile Include="Utility\Helper\HTTPHelper.cs" />
     <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
+    <Compile Include="Utility\DownloadInformation.cs" />
     <Compile Include="Utility\SAB\NewDataSet.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
@@ -323,7 +328,6 @@
       <DependentUpon>uTorrent.cs</DependentUpon>
     </Compile>
     <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
-    <Compile Include="ItemsAndActions\ItemSABnzbd.cs" />
     <Compile Include="TheTVDB\Banner.cs" />
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
@@ -336,7 +340,7 @@
     <Compile Include="ItemsAndActions\ActionNFO.cs" />
     <Compile Include="ItemsAndActions\ActionRSS.cs" />
     <Compile Include="ItemsAndActions\ActionItemSorter.cs" />
-    <Compile Include="ItemsAndActions\ItemuTorrenting.cs" />
+    <Compile Include="ItemsAndActions\ItemDownloading.cs" />
     <Compile Include="TVRename\FoundFolder.cs" />
     <Compile Include="Forms\ShowPreferences\AddModifyRule.cs">
       <SubType>Form</SubType>

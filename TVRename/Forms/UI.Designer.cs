@@ -64,7 +64,13 @@ namespace TVRename
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+<<<<<<< HEAD
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
+=======
+            this.aeCollToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator0 = new System.Windows.Forms.ToolStripSeparator();
+>>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -229,7 +235,11 @@ namespace TVRename
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.collToolStripMenuItem,
+<<<<<<< HEAD
             this.toolStripMenuItem1,
+=======
+            this.toolStripSeparator0,
+>>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
             this.exportToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.toolStripSeparator1,
@@ -243,16 +253,39 @@ namespace TVRename
             // 
             this.collToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aeCollToolStripMenuItem,
+<<<<<<< HEAD
             this.toolStripMenuItem2});
+=======
+            this.toolStripSeparator8});
+>>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
             this.collToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("collToolStripMenuItem.Image")));
             this.collToolStripMenuItem.Name = "collToolStripMenuItem";
             this.collToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.collToolStripMenuItem.Text = "&Collection";
             // 
+<<<<<<< HEAD
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
+=======
+            // aeCollToolStripMenuItem
+            // 
+            this.aeCollToolStripMenuItem.Name = "aeCollToolStripMenuItem";
+            this.aeCollToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aeCollToolStripMenuItem.Text = "Add / Edit";
+            this.aeCollToolStripMenuItem.Click += new System.EventHandler(this.aeCollToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(177, 6);
+            // 
+            // toolStripSeparator0
+            // 
+            this.toolStripSeparator0.Name = "toolStripSeparator0";
+            this.toolStripSeparator0.Size = new System.Drawing.Size(177, 6);
+>>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
             // 
             // exportToolStripMenuItem
             // 
@@ -428,19 +461,19 @@ namespace TVRename
             // 
             this.statisticsToolStripMenuItem.Image = global::TVRename.Properties.Resources.graphhs;
             this.statisticsToolStripMenuItem.Name = "statisticsToolStripMenuItem";
-            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.statisticsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.statisticsToolStripMenuItem.Text = "&Statistics...";
             this.statisticsToolStripMenuItem.Click += new System.EventHandler(this.statisticsToolStripMenuItem_Click);
             // 
             // toolStripSeparator5
             // 
             this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(163, 6);
+            this.toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
             // 
             // showSummaryToolStripMenuItem
             // 
             this.showSummaryToolStripMenuItem.Name = "showSummaryToolStripMenuItem";
-            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.showSummaryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showSummaryToolStripMenuItem.Text = "Show Summary...";
             this.showSummaryToolStripMenuItem.Click += new System.EventHandler(this.showSummaryToolStripMenuItem_Click);
             // 
@@ -448,7 +481,7 @@ namespace TVRename
             // 
             this.actorsToolStripMenuItem.Image = global::TVRename.Properties.Resources.TableHS;
             this.actorsToolStripMenuItem.Name = "actorsToolStripMenuItem";
-            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(166, 22);
+            this.actorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.actorsToolStripMenuItem.Text = "&Actors Grid...";
             this.actorsToolStripMenuItem.Click += new System.EventHandler(this.actorsToolStripMenuItem_Click);
             // 
@@ -1722,8 +1755,14 @@ namespace TVRename
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripMenuItem collToolStripMenuItem;
+<<<<<<< HEAD
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem aeCollToolStripMenuItem;
         private ToolStripSeparator toolStripMenuItem2;
+=======
+        private ToolStripSeparator toolStripSeparator0;
+        private ToolStripMenuItem aeCollToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator8;
+>>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
     }
 }

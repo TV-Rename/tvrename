@@ -148,6 +148,13 @@ namespace TVRename
             }
 
             UpdateSplashStatus(splash, "Filling Shows");
+
+            if (!TVSettings.Instance.ShowCollections)
+            {
+                collToolStripMenuItem.Visible = false;
+                toolStripSeparator0.Visible = false;
+            }
+
             FillMyShows();
             UpdateSearchButtons();
             ClearInfoWindows();
@@ -1534,7 +1541,10 @@ namespace TVRename
 
                 if (!bNeedCancel)
                 {
+<<<<<<< HEAD
                     int iMnu = 0;
+=======
+>>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
                     ToolStripItemCollection TSMIC = collToolStripMenuItem.DropDownItems;
                     ToolStripMenuItem TsM;
                     foreach (ToolStripItem TsI in TSMIC)
@@ -1544,9 +1554,15 @@ namespace TVRename
                             TsM = (ToolStripMenuItem)TsI;
                             TsM.Checked = false;
                         }
+<<<<<<< HEAD
                         catch (Exception ex)
                         {
                             string Message = ex.Message;
+=======
+                        catch (Exception)
+                        {
+                            // Just a pass thru for MenuSeparators
+>>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
                         }
                     }
                     clickedItem.Checked = true;
@@ -1882,6 +1898,8 @@ namespace TVRename
                 ShowHideNotificationIcon();
                 FillWhenToWatchList();
                 ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
+                collToolStripMenuItem.Visible = (TVSettings.Instance.ShowCollections) ? true : false;
+                toolStripSeparator0.Visible = (TVSettings.Instance.ShowCollections) ? true : false;
                 FillEpGuideHtml();
                 mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
                 betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
@@ -2958,7 +2976,7 @@ namespace TVRename
                     metaCount++;
                 else if (action is ActionDateTouch)
                     fileMetaCount++;
-                else if (action is ItemuTorrenting || action is ItemSABnzbd)
+                else if (action is ItemDownloading)
                     dlCount++;
                 else if (action is ActionDeleteFile || action is ActionDeleteDirectory)
                     removeCount++;
@@ -3397,7 +3415,7 @@ namespace TVRename
                 return;
 
             Item action = (Item) lvAction.Items[e.Index].Tag;
-            if (action != null && (action is ItemMissing || action is ItemuTorrenting || action is ItemSABnzbd))
+            if (action != null && (action is ItemMissing || action is ItemDownloading))
                 e.NewValue = CheckState.Unchecked;
         }
 
