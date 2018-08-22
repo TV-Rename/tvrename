@@ -58,7 +58,6 @@ namespace TVRename
                     string saveTemp = SaveDownloadedData(r, RSS.Title);
                     uTorrentFinder.StartTorrentDownload(saveTemp, theFileNoExt);
                 }
-                    
                 
                 if (TVSettings.Instance.CheckqBitTorrent)
                     qBitTorrentFinder.StartTorrentDownload(RSS.URL);
