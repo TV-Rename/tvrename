@@ -214,10 +214,12 @@ namespace TVRename
 
             int snum = seasWanted;
 
-            if (!si.AllFolderLocationsEpCheck(checkDirectoryExist).ContainsKey(snum))
+            Dictionary<int, List<string>> dirs = si.AllFolderLocationsEpCheck(checkDirectoryExist);
+
+            if (!dirs.ContainsKey(snum))
                 return ret;
 
-            foreach (string folder in si.AllFolderLocationsEpCheck(checkDirectoryExist)[snum])
+            foreach (string folder in dirs[snum])
             {
                 FileInfo[] files = dfc.Get(folder);
                 if (files == null)
