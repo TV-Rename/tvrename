@@ -893,7 +893,9 @@ namespace TVRename
             Logger.Info("*******************************");
             Logger.Info("Force Update Images: " + si.ShowName);
 
-            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AllFolderLocations().Count > 0))
+            Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
+
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (allFolders.Count > 0))
             {
                 TheActionList.Add(
                     downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
@@ -905,7 +907,6 @@ namespace TVRename
             // process each folder for each season...
             int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
             si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-            Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
 
             foreach (int snum in numbers)
             {
@@ -1090,14 +1091,15 @@ namespace TVRename
                 if (actionCancel)
                     return;
 
-                if (si.AllFolderLocations().Count == 0) // no folders defined for this show
+                Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
+
+                if (allFolders.Count == 0) // no folders defined for this show
                     continue; // so, nothing to do.
 
                 // process each folder for each season...
 
                 int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
                 si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-                Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
 
                 foreach (int snum in numbers)
                 {
@@ -1221,12 +1223,13 @@ namespace TVRename
 
         private void RenameAndMissingCheck(ShowItem si, DirFilesCache dfc,bool fullscan)
         {
-            if (si.AllFolderLocations().Count == 0) // no folders defined for this show
+            Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
+            if (allFolders.Count == 0) // no folders defined for this show
                 return; // so, nothing to do.
 
             //This is the code that will iterate over the DownloadIdentifiers and ask each to ensure that
             //it has all the required files for that show
-            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AllFolderLocations().Count > 0))
+            if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (allFolders.Count > 0))
             {
                 TheActionList.Add(downloadIdentifiers.ProcessShow(si));
             }
@@ -1249,7 +1252,6 @@ namespace TVRename
 
             int[] numbers = new int[si.SeasonEpisodes.Keys.Count];
             si.SeasonEpisodes.Keys.CopyTo(numbers, 0);
-            Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
 
             int lastSeason = numbers.DefaultIfEmpty(0).Max();
 
@@ -1280,7 +1282,7 @@ namespace TVRename
                 }
 
                 // base folder:
-                if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AllFolderLocations(false).Count > 0))
+                if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AutoAddType!= ShowItem.AutomaticFolderType.none))
                 {
                     // main image for the folder itself
                     TheActionList.Add(downloadIdentifiers.ProcessShow(si));
