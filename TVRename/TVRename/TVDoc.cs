@@ -491,7 +491,7 @@ namespace TVRename
 
                 SetupScanUi();
 
-                actionWork.Start(shows.ToList());
+                actionWork.Start(shows.ToList().OrderBy(show =>show.ShowName));
 
                 AwaitCancellation(actionWork);
 
