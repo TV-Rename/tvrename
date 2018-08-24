@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="\218cc178" t="IncludeRecursive" />
+    <e p="\app" t="IncludeRecursive" />
+    <e p="C:\Users\Thierry\.Rider2018.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Thierry\.Rider2018.2\system\resharper-host\local\Transient\ReSharperHost\v182\SolutionCaches\_TVRename.-7511170.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Thierry\Documents\RiderProjects\tvrename" t="IncludeFlat">
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="tvrename" t="IncludeRecursive">
+        <e p="app" t="Include">
+          <e p="app.ico" t="Include" />
+          <e p="ApplicationBase.cs" t="Include" />
+          <e p="AutoFolderMonitor.cs" t="Include" />
+          <e p="CommandLineArgs.cs" t="Include" />
+          <e p="Program.cs" t="Include" />
+        </e>
+        <e p="app.config" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Custom Controls" t="Include">
+          <e p="ListViewFlickerFree.cs" t="Include" />
+          <e p="MyListView.cs" t="Include" />
+          <e p="MyListView.resx" t="Include" />
+          <e p="TheTVDBCodeFinder.cs" t="Include" />
+          <e p="TheTVDBCodeFinder.Designer.cs" t="Include" />
+          <e p="TheTVDBCodeFinder.resx" t="Include" />
+        </e>
+        <e p="DownloadIdentifers" t="Include">
+          <e p="DownloadEpisodeJPG.cs" t="Include" />
+          <e p="DownloadFanartJPG.cs" t="Include" />
+          <e p="DownloadIdentifier.cs" t="Include" />
+          <e p="DownloadIdentifiersController.cs" t="Include" />
+          <e p="DownloadJolderJPG.cs" t="Include" />
+          <e p="DownloadMede8erMetaData.cs" t="Include" />
+          <e p="DownloadpyTivoMetaData.cs" t="Include" />
+          <e p="DownloadSeriesJPG.cs" t="Include" />
+          <e p="DownloadWdtvMetaData.cs" t="Include" />
+          <e p="DownloadXBMCImages.cs" t="Include" />
+          <e p="DownloadXBMCMetaData.cs" t="Include" />
+          <e p="IncorrectFileDates.cs" t="Include" />
+        </e>
+        <e p="Exporter" t="Include">
+          <e p="ActionListXML.cs" t="Include" />
+          <e p="Exporter.cs" t="Include" />
+          <e p="MissingCSV.cs" t="Include" />
+          <e p="MissingXML.cs" t="Include" />
+          <e p="ShowsHTML.cs" t="Include" />
+          <e p="ShowsTXT.cs" t="Include" />
+          <e p="UpcomingiCAL.cs" t="Include" />
+          <e p="UpcomingRSS.cs" t="Include" />
+          <e p="UpcomingXML.cs" t="Include" />
+        </e>
+        <e p="Finders" t="Include">
+          <e p="FileFinder.cs" t="Include" />
+          <e p="Finder.cs" t="Include" />
+          <e p="qBitTorrentFinder.cs" t="Include" />
+          <e p="RSSFinder.cs" t="Include" />
+          <e p="SABnzbdFinder.cs" t="Include" />
+          <e p="TorrentFinder.cs" t="Include" />
+          <e p="uTorrentFinder.cs" t="Include" />
+        </e>
+        <e p="Forms" t="Include">
+          <e p="BulkAdd" t="Include">
+            <e p="BulkAdd.cs" t="Include" />
+            <e p="BulkAdd.Designer.cs" t="Include" />
+            <e p="BulkAdd.resx" t="Include" />
+            <e p="BulkAddEditShow.cs" t="Include" />
+            <e p="BulkAddEditShow.Designer.cs" t="Include" />
+            <e p="BulkAddEditShow.resx" t="Include" />
+            <e p="BulkAddProgress.cs" t="Include" />
+            <e p="BulkAddProgress.Designer.cs" t="Include" />
+            <e p="BulkAddProgress.resx" t="Include" />
+          </e>
+          <e p="Preferences" t="Include">
+            <e p="AddEditSearchEngine.cs" t="Include" />
+            <e p="AddEditSearchEngine.Designer.cs" t="Include" />
+            <e p="AddEditSearchEngine.resx" t="Include" />
+            <e p="AddEditSeasEpFinders.cs" t="Include" />
+            <e p="AddEditSeasEpFinders.Designer.cs" t="Include" />
+            <e p="AddEditSeasEpFinders.resx" t="Include" />
+            <e p="CustomNameDesigner.cs" t="Include" />
+            <e p="CustomNameDesigner.Designer.cs" t="Include" />
+            <e p="CustomNameDesigner.resx" t="Include" />
+            <e p="CustomNameTagsFloatingWindow.cs" t="Include" />
+            <e p="CustomNameTagsFloatingWindow.Designer.cs" t="Include" />
+            <e p="CustomNameTagsFloatingWindow.resx" t="Include" />
+            <e p="IgnoreEdit.cs" t="Include" />
+            <e p="IgnoreEdit.Designer.cs" t="Include" />
+            <e p="IgnoreEdit.resx" t="Include" />
+            <e p="Preferences.cs" t="Include" />
+            <e p="Preferences.Designer.cs" t="Include" />
+            <e p="Preferences.resx" t="Include" />
+          </e>
+          <e p="ShowPreferences" t="Include">
+            <e p="AddEditShow.cs" t="Include" />
+            <e p="AddEditShow.Designer.cs" t="Include" />
+            <e p="AddEditShow.resx" t="Include" />
+            <e p="AddModifyRule.cs" t="Include" />
+            <e p="AddModifyRule.Designer.cs" t="Include" />
+            <e p="AddModifyRule.resx" t="Include" />
+            <e p="AutoAddShow.cs" t="Include" />
+            <e p="AutoAddShow.Designer.cs" t="Include" />
+            <e p="AutoAddShow.resx" t="Include" />
+            <e p="EditRules.cs" t="Include" />
+            <e p="EditRules.Designer.cs" t="Include" />
+            <e p="EditRules.resx" t="Include" />
+            <e p="FolderBrowserDialogEx.cs" t="Include" />
+          </e>
+          <e p="Supporting" t="Include">
+            <e p="CopyMoveProgress.cs" t="Include" />
+            <e p="CopyMoveProgress.Designer.cs" t="Include" />
+            <e p="CopyMoveProgress.resx" t="Include" />
+            <e p="DownloadProgress.cs" t="Include" />
+            <e p="DownloadProgress.Designer.cs" t="Include" />
+            <e p="DownloadProgress.resx" t="Include" />
+            <e p="Filters.cs" t="Include" />
+            <e p="Filters.Designer.cs" t="Include" />
+            <e p="Filters.resx" t="Include" />
+            <e p="MissingFolderAction.cs" t="Include" />
+            <e p="MissingFolderAction.Designer.cs" t="Include" />
+            <e p="MissingFolderAction.resx" t="Include" />
+            <e p="ScanProgress.cs" t="Include" />
+            <e p="ScanProgress.Designer.cs" t="Include" />
+            <e p="ScanProgress.resx" t="Include" />
+            <e p="TVRenameSplash.cs" t="Include" />
+            <e p="TVRenameSplash.Designer.cs" t="Include" />
+            <e p="TVRenameSplash.resx" t="Include" />
+            <e p="UpcomingPopup.cs" t="Include" />
+            <e p="UpcomingPopup.Designer.cs" t="Include" />
+            <e p="UpcomingPopup.resx" t="Include" />
+            <e p="UpdateNotification.cs" t="Include" />
+            <e p="UpdateNotification.Designer.cs" t="Include" />
+            <e p="UpdateNotification.resx" t="Include" />
+          </e>
+          <e p="Tools" t="Include">
+            <e p="ActorsGrid.cs" t="Include" />
+            <e p="ActorsGrid.Designer.cs" t="Include" />
+            <e p="ActorsGrid.resx" t="Include" />
+            <e p="DupEpFinder.cs" t="Include" />
+            <e p="DupEpFinder.Designer.cs" t="Include" />
+            <e p="DupEpFinder.resx" t="Include" />
+            <e p="ShowSummary.cs" t="Include" />
+            <e p="ShowSummary.Designer.cs" t="Include" />
+            <e p="ShowSummary.resx" t="Include" />
+          </e>
+          <e p="Torrent" t="Include">
+            <e p="TorrentMatch.cs" t="Include" />
+            <e p="TorrentMatch.Designer.cs" t="Include" />
+            <e p="TorrentMatch.resx" t="Include" />
+            <e p="uTorrent.cs" t="Include" />
+            <e p="uTorrent.Designer.cs" t="Include" />
+            <e p="uTorrent.resx" t="Include" />
+          </e>
+          <e p="UI.cs" t="Include" />
+          <e p="UI.Designer.cs" t="Include" />
+          <e p="UI.resx" t="Include" />
+          <e p="Utilities" t="Include">
+            <e p="BugReport.cs" t="Include" />
+            <e p="BugReport.Designer.cs" t="Include" />
+            <e p="BugReport.resx" t="Include" />
+            <e p="BuyMeADrink.cs" t="Include" />
+            <e p="BuyMeADrink.Designer.cs" t="Include" />
+            <e p="BuyMeADrink.resx" t="Include" />
+            <e p="RecoverXML.cs" t="Include" />
+            <e p="RecoverXML.Designer.cs" t="Include" />
+            <e p="RecoverXML.resx" t="Include" />
+            <e p="ShowException.cs" t="Include" />
+            <e p="ShowException.Designer.cs" t="Include" />
+            <e p="ShowException.resx" t="Include" />
+            <e p="StatsWindow.cs" t="Include" />
+            <e p="StatsWindow.Designer.cs" t="Include" />
+            <e p="StatsWindow.resx" t="Include" />
+          </e>
+        </e>
+        <e p="Ipc" t="Include">
+          <e p="IRemoteActions.cs" t="Include" />
+          <e p="RemoteClient.cs" t="Include" />
+        </e>
+        <e p="ItemsAndActions" t="Include">
+          <e p="ActionCopyMoveRename.cs" t="Include" />
+          <e p="ActionDateTouch.cs" t="Include" />
+          <e p="ActionDelete.cs" t="Include" />
+          <e p="ActionDownloadImage.cs" t="Include" />
+          <e p="ActionItem.cs" t="Include" />
+          <e p="ActionItemSorter.cs" t="Include" />
+          <e p="ActionMede8erViewXML.cs" t="Include" />
+          <e p="ActionMede8erXML.cs" t="Include" />
+          <e p="ActionNFO.cs" t="Include" />
+          <e p="ActionPyTivoMeta.cs" t="Include" />
+          <e p="ActionRSS.cs" t="Include" />
+          <e p="ActionWdtvMeta.cs" t="Include" />
+          <e p="ItemDownloading.cs" t="Include" />
+          <e p="ItemMissing.cs" t="Include" />
+        </e>
+        <e p="NLog.config" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+          <e p="Resources.Designer.cs" t="Include" />
+          <e p="Resources.resx" t="Include" />
+        </e>
+        <e p="Resources" t="Include">
+          <e p="Black-Red_256x256.png" t="Include" />
+          <e p="ButtonSmall_Delete.png" t="Include" />
+          <e p="EditInformationHS.png" t="Include" />
+          <e p="FindHS.png" t="Include" />
+          <e p="FormulaEvaluatorHS.png" t="Include" />
+          <e p="GetLatestVersion.png" t="Include" />
+          <e p="graphhs.png" t="Include" />
+          <e p="Help.png" t="Include" />
+          <e p="RefreshDocViewHS.png" t="Include" />
+          <e p="saveHS.png" t="Include" />
+          <e p="SearchFolderHS.png" t="Include" />
+          <e p="SearchWebHS.png" t="Include" />
+          <e p="TableHS.png" t="Include" />
+          <e p="tv3white.png" t="Include" />
+          <e p="Web.png" t="Include" />
+          <e p="ZoomHS.png" t="Include" />
+        </e>
+        <e p="Settings" t="Include">
+          <e p="CustomEpisodeName.cs" t="Include" />
+          <e p="CustomSeasonName.cs" t="Include" />
+          <e p="ProcessedEpisode.cs" t="Include" />
+          <e p="Searchers.cs" t="Include" />
+          <e p="Settings.cs" t="Include" />
+          <e p="ShowFilter.cs" t="Include" />
+          <e p="ShowItem.cs" t="Include" />
+          <e p="ShowRule.cs" t="Include" />
+          <e p="Statistics.cs" t="Include" />
+        </e>
+        <e p="TheTVDB" t="Include">
+          <e p="Actor.cs" t="Include" />
+          <e p="Banner.cs" t="Include" />
+          <e p="Episode.cs" t="Include" />
+          <e p="ExtraEp.cs" t="Include" />
+          <e p="Season.cs" t="Include" />
+          <e p="SeriesInfo.cs" t="Include" />
+          <e p="TheTVDB.cs" t="Include" />
+          <e p="TvDbTokenProvider.cs" t="Include" />
+          <e p="TVSource.cs" t="Include" />
+        </e>
+        <e p="tvrename" t="Include">
+          <e p="ActionEngine.cs" t="Include" />
+          <e p="BullkAddManager.cs" t="Include" />
+          <e p="CacheUpdater.cs" t="Include" />
+          <e p="FoundFolder.cs" t="Include" />
+          <e p="IgnoreItem.cs" t="Include" />
+          <e p="LVResults.cs" t="Include" />
+          <e p="PathManager.cs" t="Include" />
+          <e p="ShowLibrary.cs" t="Include" />
+          <e p="TVDoc.cs" t="Include" />
+        </e>
+        <e p="TVRename.csproj" t="IncludeRecursive" />
+        <e p="Utility" t="Include">
+          <e p="BT.cs" t="Include" />
+          <e p="DirCache.cs" t="Include" />
+          <e p="DirCacheEntry.cs" t="Include" />
+          <e p="DirFilesCache.cs" t="Include" />
+          <e p="DownloadInformation.cs" t="Include" />
+          <e p="FileSystemProperties.cs" t="Include" />
+          <e p="Helper" t="Include">
+            <e p="FileHelper.cs" t="Include" />
+            <e p="Helpers.cs" t="Include" />
+            <e p="HTTPHelper.cs" t="Include" />
+            <e p="JSONHelper.cs" t="Include" />
+            <e p="RegistryHelper.cs" t="Include" />
+            <e p="ShowHtmlHelper.cs" t="Include" />
+            <e p="StringExtensions.cs" t="Include" />
+            <e p="XMLHelper.cs" t="Include" />
+          </e>
+          <e p="NativeMethods.cs" t="Include" />
+          <e p="PossibleDuplicateEpisode.cs" t="Include" />
+          <e p="SAB" t="Include">
+            <e p="NewDataSet.cs" t="Include" />
+            <e p="Queue.cs" t="Include" />
+            <e p="QueueCategories.cs" t="Include" />
+            <e p="QueueSlotsSlot.cs" t="Include" />
+            <e p="Result.cs" t="Include" />
+          </e>
+          <e p="SetProgressDelegate.cs" t="Include" />
+          <e p="Sorters.cs" t="Include" />
+          <e p="Timezone.cs" t="Include" />
+          <e p="VersionUpdater.cs" t="Include" />
+        </e>
+      </e>
+      <e p="TVRename.sln" t="IncludeFlat" />
+    </e>
+  </component>
+</project>
