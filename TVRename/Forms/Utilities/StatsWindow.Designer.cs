@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -130,8 +130,8 @@ namespace TVRename
             // 
             // txtFM
             // 
-            this.txtFM.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFM.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFM.Location = new System.Drawing.Point(138, 9);
             this.txtFM.Name = "txtFM";
             this.txtFM.Size = new System.Drawing.Size(46, 13);
@@ -141,8 +141,8 @@ namespace TVRename
             // 
             // txtFC
             // 
-            this.txtFC.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFC.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFC.Location = new System.Drawing.Point(138, 55);
             this.txtFC.Name = "txtFC";
             this.txtFC.Size = new System.Drawing.Size(46, 13);
@@ -152,8 +152,8 @@ namespace TVRename
             // 
             // txtRCD
             // 
-            this.txtRCD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtRCD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtRCD.Location = new System.Drawing.Point(138, 78);
             this.txtRCD.Name = "txtRCD";
             this.txtRCD.Size = new System.Drawing.Size(46, 13);
@@ -163,8 +163,8 @@ namespace TVRename
             // 
             // txtMCD
             // 
-            this.txtMCD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtMCD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMCD.Location = new System.Drawing.Point(138, 101);
             this.txtMCD.Name = "txtMCD";
             this.txtMCD.Size = new System.Drawing.Size(46, 13);
@@ -174,8 +174,8 @@ namespace TVRename
             // 
             // txtFAOD
             // 
-            this.txtFAOD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFAOD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFAOD.Location = new System.Drawing.Point(138, 124);
             this.txtFAOD.Name = "txtFAOD";
             this.txtFAOD.Size = new System.Drawing.Size(46, 13);
@@ -185,8 +185,8 @@ namespace TVRename
             // 
             // txtAAS
             // 
-            this.txtAAS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtAAS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtAAS.Location = new System.Drawing.Point(138, 147);
             this.txtAAS.Name = "txtAAS";
             this.txtAAS.Size = new System.Drawing.Size(46, 13);
@@ -196,8 +196,8 @@ namespace TVRename
             // 
             // txtTM
             // 
-            this.txtTM.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTM.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTM.Location = new System.Drawing.Point(138, 170);
             this.txtTM.Name = "txtTM";
             this.txtTM.Size = new System.Drawing.Size(46, 13);
@@ -228,8 +228,8 @@ namespace TVRename
             // 
             // txtFR
             // 
-            this.txtFR.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFR.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFR.Location = new System.Drawing.Point(138, 32);
             this.txtFR.Name = "txtFR";
             this.txtFR.Size = new System.Drawing.Size(46, 13);
@@ -248,8 +248,8 @@ namespace TVRename
             // 
             // txtNOS
             // 
-            this.txtNOS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtNOS.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNOS.Location = new System.Drawing.Point(138, 193);
             this.txtNOS.Name = "txtNOS";
             this.txtNOS.Size = new System.Drawing.Size(46, 13);
@@ -268,8 +268,8 @@ namespace TVRename
             // 
             // txtNOSeas
             // 
-            this.txtNOSeas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtNOSeas.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtNOSeas.Location = new System.Drawing.Point(138, 216);
             this.txtNOSeas.Name = "txtNOSeas";
             this.txtNOSeas.Size = new System.Drawing.Size(46, 13);
@@ -288,8 +288,8 @@ namespace TVRename
             // 
             // txtEOD
             // 
-            this.txtEOD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtEOD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtEOD.Location = new System.Drawing.Point(138, 239);
             this.txtEOD.Name = "txtEOD";
             this.txtEOD.Size = new System.Drawing.Size(46, 13);
@@ -308,8 +308,8 @@ namespace TVRename
             // 
             // txtTE
             // 
-            this.txtTE.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtTE.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtTE.Location = new System.Drawing.Point(138, 262);
             this.txtTE.Name = "txtTE";
             this.txtTE.Size = new System.Drawing.Size(46, 13);
@@ -351,6 +351,8 @@ namespace TVRename
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "StatsWindow";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

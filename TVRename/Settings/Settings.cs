@@ -1198,14 +1198,14 @@ namespace TVRename
         {
             foreach (string s in VideoExtensionsArray)
             {
-                if (sn.ToLower() == s)
+                if (sn.ToLower() == s.ToLower())
                     return true;
             }
             if (otherExtensionsToo)
             {
                 foreach (string s in OtherExtensionsArray)
                 {
-                    if (sn.ToLower() == s)
+                    if (sn.ToLower() == s.ToLower())
                         return true;
                 }
             }
@@ -1217,7 +1217,7 @@ namespace TVRename
         {
             foreach (string s in VideoExtensionsArray)
             {
-                if (!file.Name.EndsWith(s)) continue;
+                if (!file.Name.EndsWith(s,StringComparison.InvariantCultureIgnoreCase)) continue;
                 extension = s;
                 return true;
             }
@@ -1225,7 +1225,7 @@ namespace TVRename
             {
                 foreach (string s in OtherExtensionsArray)
                 {
-                    if (!file.Name.EndsWith(s)) continue;
+                    if (!file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)) continue;
                     extension = s;
                     return true;
                 }

@@ -1362,11 +1362,12 @@ namespace TVRename
 
             if (ep != null)
             {
-                if (ep.Show.AllFolderLocations().ContainsKey(ep.AppropriateSeasonNumber))
+                Dictionary<int, List<string>> afl = ep.Show.AllFolderLocations();
+                if (afl.ContainsKey(ep.AppropriateSeasonNumber))
                 {
                     int n = mFoldersToOpen.Count;
                     bool first = true;
-                    foreach (string folder in ep.Show.AllFolderLocations()[ep.AppropriateSeasonNumber])
+                    foreach (string folder in afl[ep.AppropriateSeasonNumber])
                     {
                         if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder))
                         {
@@ -1386,30 +1387,36 @@ namespace TVRename
                     }
                 }
             }
-            else if (seas != null && si != null && si.AllFolderLocations().ContainsKey(seas.SeasonNumber))
+            else if (seas != null && si != null)
             {
-                int n = mFoldersToOpen.Count;
-                bool first = true;
-                foreach (string folder in si.AllFolderLocations()[seas.SeasonNumber])
-                {
-                    if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
-                    {
-                        added.Add(folder); // don't show the same folder more than once
-                        if (first)
-                        {
-                            showRightClickMenu.Items.Add(new ToolStripSeparator());
-                            first = false;
-                        }
+                Dictionary<int, List<string>> folders = si.AllFolderLocations();
 
-                        tsi = new ToolStripMenuItem("Open: " + folder);
-                        mFoldersToOpen.Add(folder);
-                        tsi.Tag = (int) RightClickCommands.kOpenFolderBase + n;
-                        n++;
-                        showRightClickMenu.Items.Add(tsi);
+                if (folders.ContainsKey(seas.SeasonNumber))
+                {
+                    int n = mFoldersToOpen.Count;
+                    bool first = true;
+                    foreach (string folder in folders[seas.SeasonNumber])
+                    {
+                        if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
+                        {
+                            added.Add(folder); // don't show the same folder more than once
+                            if (first)
+                            {
+                                showRightClickMenu.Items.Add(new ToolStripSeparator());
+                                first = false;
+                            }
+
+                            tsi = new ToolStripMenuItem("Open: " + folder);
+                            mFoldersToOpen.Add(folder);
+                            tsi.Tag = (int) RightClickCommands.kOpenFolderBase + n;
+                            n++;
+                            showRightClickMenu.Items.Add(tsi);
+                        }
                     }
                 }
             }
-            else if (si != null)
+
+            if (si != null)
             {
                 int n = mFoldersToOpen.Count;
                 bool first = true;
@@ -2319,6 +2326,24 @@ namespace TVRename
             if (res != DialogResult.Yes)
                 return;
 
+            if (Directory.Exists(si.AutoAddFolderBase))
+            {
+                DialogResult res3 = MessageBox.Show(
+                    $"Remove folder \"{si.AutoAddFolderBase}\" from disk?",
+                    "Confirmation",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning);
+
+                if (res3 == DialogResult.Yes)
+                {
+                    Logger.Info($"Recycling {si.AutoAddFolderBase} as part of the removal of {si.ShowName}");
+                    Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(si.AutoAddFolderBase,
+                        Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
+                        Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
+                }
+            }
+
+            Logger.Info($"User asked to remove {si.ShowName} - removing now");
             mDoc.Library.Remove(si);
             ShowAddedOrEdited(false);
         }
