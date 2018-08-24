@@ -348,30 +348,37 @@ namespace TVRename
                 }
 
                 if (show != null && seas != null)
-                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTvdbSeason);
-
-                if ((seas != null) && (show != null) && (show.AllFolderLocations().ContainsKey(seas.SeasonNumber)))
                 {
-                    int n = gridSummary.mFoldersToOpen.Count;
-                    bool first = true;
-                    foreach (string folder in show.AllFolderLocations()[seas.SeasonNumber])
-                    {
-                        if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
-                        {
-                            added.Add(folder); // don't show the same folder more than once
-                            if (first)
-                            {
-                                GenerateSeparator(gridSummary.showRightClickMenu);
-                                first = false;
-                            }
+                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com",
+                        RightClickCommands.kVisitTvdbSeason);
 
-                            GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder, (int)RightClickCommands.kOpenFolderBase + n);
-                            gridSummary.mFoldersToOpen.Add(folder);
-                            n++;
+                    Dictionary<int, List<string>> afl = show.AllFolderLocations();
+
+                    if (afl.ContainsKey(seas.SeasonNumber))
+                    {
+                        int n = gridSummary.mFoldersToOpen.Count;
+                        bool first = true;
+                        foreach (string folder in afl[seas.SeasonNumber])
+                        {
+                            if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
+                            {
+                                added.Add(folder); // don't show the same folder more than once
+                                if (first)
+                                {
+                                    GenerateSeparator(gridSummary.showRightClickMenu);
+                                    first = false;
+                                }
+
+                                GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder,
+                                    (int) RightClickCommands.kOpenFolderBase + n);
+
+                                gridSummary.mFoldersToOpen.Add(folder);
+                                n++;
+                            }
                         }
                     }
                 }
-                else if (show != null)
+                if (show != null)
                 {
                     int n = gridSummary.mFoldersToOpen.Count;
                     bool first = true;

@@ -270,15 +270,16 @@ namespace TVRename
                 if (!(sli is Action action))
                     continue; // skip non-actions
 
-                if ((action is ActionWriteMetadata) || (action is ActionDateTouch)
-                ) // base interface that all metadata actions are derived from
+                if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
                 else if ((action is ActionDownloadImage) || (action is ActionRSS))
                     queues[3].Actions.Add(action);
-                else if (action is ActionCopyMoveRename)
-                    queues[(action as ActionCopyMoveRename).QuickOperation() ? 1 : 0].Actions.Add(action);
+                else if (action is ActionCopyMoveRename rename)
+                    queues[rename.QuickOperation() ? 1 : 0].Actions.Add(rename);
                 else if ((action is ActionDeleteFile) || (action is ActionDeleteDirectory))
                     queues[1].Actions.Add(action);
+                else if (action is ActionDateTouch)
+                    queues[0].Actions.Add(action); // add them after the slow move/reanems (ie last)
                 else
                 {
                     logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
