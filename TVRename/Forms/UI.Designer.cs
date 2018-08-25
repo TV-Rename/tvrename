@@ -1237,7 +1237,6 @@ namespace TVRename
             // calCalendar
             // 
             this.calCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.calCalendar.FirstDayOfWeek = System.Windows.Forms.Day.Sunday;
             this.calCalendar.Location = new System.Drawing.Point(696, 344);
             this.calCalendar.MaxSelectionCount = 1;
             this.calCalendar.Name = "calCalendar";
