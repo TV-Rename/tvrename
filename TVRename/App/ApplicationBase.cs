@@ -54,8 +54,6 @@ namespace TVRename.App
                 recoverText = "Recover manually requested.";
             }
 
-            FileInfo ShowCollFile = PathManager.ShowCollectionFile;
-
             PathManager.ShowCollection = "";
 
             // Check arguments for custom settings path
@@ -83,7 +81,7 @@ namespace TVRename.App
                 // Try loading settings file
                 doc = new TVDoc(showColls, clargs);
 
-                FileInfo tvdbFile = PathManager.TVDBFile;
+                FileInfo tvdbFile  = PathManager.TVDBFile;
                 FileInfo showsFile = PathManager.TVDocShowsFile;
 
                 if (recover) doc.SetDirty();

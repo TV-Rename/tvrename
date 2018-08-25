@@ -135,11 +135,7 @@
     <Compile Include="Forms\Collection\AddEditCollection.cs">
       <SubType>Form</SubType>
     </Compile>
-<<<<<<< HEAD
-    <Compile Include="Forms\Collection\AddEditCollection.Designer.cs">
-=======
     <Compile Include="Forms\Collection\AddEditCollection.designer.cs">
->>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
       <DependentUpon>AddEditCollection.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">

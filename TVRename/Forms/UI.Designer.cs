@@ -64,13 +64,9 @@ namespace TVRename
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.collToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-<<<<<<< HEAD
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-=======
             this.aeCollToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator0 = new System.Windows.Forms.ToolStripSeparator();
->>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -199,8 +195,6 @@ namespace TVRename
             this.columnHeader33 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader34 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader35 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.aeCollToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -235,11 +229,7 @@ namespace TVRename
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.collToolStripMenuItem,
-<<<<<<< HEAD
-            this.toolStripMenuItem1,
-=======
             this.toolStripSeparator0,
->>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
             this.exportToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.toolStripSeparator1,
@@ -253,22 +243,12 @@ namespace TVRename
             // 
             this.collToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.aeCollToolStripMenuItem,
-<<<<<<< HEAD
-            this.toolStripMenuItem2});
-=======
             this.toolStripSeparator8});
->>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
             this.collToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("collToolStripMenuItem.Image")));
             this.collToolStripMenuItem.Name = "collToolStripMenuItem";
             this.collToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.collToolStripMenuItem.Text = "&Collection";
             // 
-<<<<<<< HEAD
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(177, 6);
-=======
             // aeCollToolStripMenuItem
             // 
             this.aeCollToolStripMenuItem.Name = "aeCollToolStripMenuItem";
@@ -285,7 +265,6 @@ namespace TVRename
             // 
             this.toolStripSeparator0.Name = "toolStripSeparator0";
             this.toolStripSeparator0.Size = new System.Drawing.Size(177, 6);
->>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
             // 
             // exportToolStripMenuItem
             // 
@@ -1176,7 +1155,6 @@ namespace TVRename
             // calCalendar
             // 
             this.calCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.calCalendar.FirstDayOfWeek = System.Windows.Forms.Day.Sunday;
             this.calCalendar.Location = new System.Drawing.Point(696, 344);
             this.calCalendar.MaxSelectionCount = 1;
             this.calCalendar.Name = "calCalendar";
@@ -1570,11 +1548,6 @@ namespace TVRename
             this.aeCollToolStripMenuItem.Text = "Add / Edit";
             this.aeCollToolStripMenuItem.Click += new System.EventHandler(this.aeCollToolStripMenuItem_Click);
             // 
-            // toolStripMenuItem2
-            // 
-            this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(177, 6);
-            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1755,14 +1728,8 @@ namespace TVRename
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripMenuItem collToolStripMenuItem;
-<<<<<<< HEAD
-        private ToolStripSeparator toolStripMenuItem1;
-        private ToolStripMenuItem aeCollToolStripMenuItem;
-        private ToolStripSeparator toolStripMenuItem2;
-=======
         private ToolStripSeparator toolStripSeparator0;
         private ToolStripMenuItem aeCollToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator8;
->>>>>>> 4bc73e173b8f7eb1543dab782078b2d7d54c93d1
     }
 }
