@@ -388,20 +388,36 @@ namespace TVRename
             writer.WriteEndDocument();
         }
 
-        private bool LoadXMLFile (FileToHandle Files, bool bInit )
+        private bool LoadXMLFile (FileToHandle Files, bool bInit)
         {
             bool bLoadOk = false;
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                IgnoreComments = true,
+                IgnoreWhitespace = true
+            };
 
             if ((Files & FileToHandle.Collections) > 0)
             {
                 FileInfo showColls = PathManager.ShowCollectionFile;
+                Logger.Info("Loading Collections from {0}", showColls.FullName);
                 if (showColls == null)
                 {
                     bLoadOk = true;
                 }
                 else
                 {
-                    bLoadOk = LoadXMLCollections(showColls);
+                    try
+                    {
+                        XmlReader reader = XmlReader.Create(showColls.FullName, settings);
+                        bLoadOk = LoadXMLCollections(reader, showColls);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Warn(e, "Problem on Startup loading Collection File");
+                        LoadErr = showColls.Name + " : " + e.Message;
+                        bLoadOk = false;
+                    }
                 }
             }
             if ((Files & FileToHandle.TvDB) > 0)
@@ -427,226 +443,181 @@ namespace TVRename
             if ((Files & FileToHandle.Settings) > 0)
             {
                 FileInfo settingsFile = PathManager.TVDocSettingsFile;
+                Logger.Info("Loading Settings from {0}", settingsFile.FullName);
                 if (settingsFile == null)
                 {
                     bLoadOk = true;
                 }
                 else
                 {
-                    bLoadOk = LoadXMLSettings(settingsFile);
+                    try
+                    {
+                        XmlReader reader = XmlReader.Create(settingsFile.FullName, settings);
+                        bLoadOk = LoadXMLSettings(reader, settingsFile);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Warn(e, "Problem on Startup loading Settings File");
+                        LoadErr = settingsFile.Name + " : " + e.Message;
+                        bLoadOk = false;
+                    }
                 }
             }
             if ((Files & FileToHandle.Shows) > 0)
             {
                 FileInfo showsFile = PathManager.TVDocShowsFile;
+                Logger.Info("Loading Shows from {0}", showsFile.FullName);
                 if (showsFile == null)
                 {
                     bLoadOk = true;
                 }
                 else
                 {
-                    bLoadOk = LoadXMLSHows(showsFile);
+                    try
+                    {
+                        XmlReader reader = XmlReader.Create(showsFile.FullName, settings);
+                        bLoadOk = LoadXMLSHows(reader, showsFile);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Warn(e, "Problem on Startup loading Shows File");
+                        LoadErr = showsFile.Name + " : " + e.Message;
+                        bLoadOk = false;
+                    }
                 }
             }
 
             return bLoadOk;
         }
 
-        private bool LoadXMLCollections(FileInfo from)
+        private bool LoadXMLCollections(XmlReader reader, FileInfo from)
         {
-            Logger.Info("Loading Collections from {0}", from.FullName);
-
-            try
+            using (reader)
             {
-                XmlReaderSettings settings = new XmlReaderSettings
+                bool bGoodHeader = ReadXmlHeaderFromFile(reader, from, "Collections");
+                if (bGoodHeader)
                 {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true
-                };
-
-                if (!from.Exists)
-                {
-                    return true; // that's ok
-                }
-
-                using (XmlReader reader = XmlReader.Create(from.FullName, settings))
-                {
-                    bool bGoodHeader = ReadXmlHeaderFromFile(reader, from, "Collections");
-                    if (bGoodHeader)
+                    while (!reader.EOF)
                     {
-                        while (!reader.EOF)
+                        if (reader.Name == "TVRename" && !reader.IsStartElement())
+                            break; // end of it all
+
+                        if (reader.Name == "Collections")
                         {
-                            if (reader.Name == "TVRename" && !reader.IsStartElement())
-                                break; // end of it all
-
-                            if (reader.Name == "Collections")
+                            while (!reader.EOF)
                             {
-                                while (!reader.EOF)
+                                reader.Read();
+
+                                if ((reader.Name == "Collections") && (!reader.IsStartElement()))
                                 {
-                                    reader.Read();
+                                    break;
+                                }
 
-                                    if ((reader.Name == "Collections") && (!reader.IsStartElement()))
-                                    {
-                                        break;
-                                    }
+                                if (reader.Name == "CollectionItem")
+                                {
+                                    ShowCollection Collection = new ShowCollection(reader);
 
-                                    if (reader.Name == "CollectionItem")
-                                    {
-                                        ShowCollection Collection = new ShowCollection(reader);
-
-                                        ShowCollections.Add(Collection);
-                                    }
-                                    else
-                                    {
-                                        reader.ReadOuterXml();
-                                    }
+                                    ShowCollections.Add(Collection);
+                                }
+                                else
+                                {
+                                    reader.ReadOuterXml();
                                 }
                             }
-                            else if (reader.Name == "Current")
-                            {
-                                PathManager.ShowCollection = reader.ReadElementContentAsString();
-                            }
-                            else
-                            {
-                                reader.ReadOuterXml();
-                            }
-                            reader.Read();
                         }
+                        else if (reader.Name == "Current")
+                        {
+                            PathManager.ShowCollection = reader.ReadElementContentAsString();
+                        }
+                        else
+                        {
+                            reader.ReadOuterXml();
+                        }
+                        reader.Read();
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Warn(e, "Problem on Startup loading Collection File");
-                LoadErr = from.Name + " : " + e.Message;
-                return false;
             }
 
             return true;
         }
 
         // ReSharper disable once InconsistentNaming
-        private bool LoadXMLSettings(FileInfo from)
+        private bool LoadXMLSettings(XmlReader reader, FileInfo from)
         {
-            Logger.Info("Loading Settings from {0}", from.FullName);
-
-            try
+            using (reader)
             {
-                XmlReaderSettings settings = new XmlReaderSettings
+                bool bGoodHeader = ReadXmlHeaderFromFile(reader, from, "Settings");
+                if (bGoodHeader)
                 {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true
-                };
-
-                if (!from.Exists)
-                {
-                    return true; // that's ok
-                }
-
-                using (XmlReader reader = XmlReader.Create(from.FullName, settings))
-                {
-                    bool bGoodHeader = ReadXmlHeaderFromFile(reader, from, "Settings");
-                    if (bGoodHeader)
+                    while (!reader.EOF)
                     {
-                        while (!reader.EOF)
+                        if (reader.Name == "TVRename" && !reader.IsStartElement())
                         {
-                            if (reader.Name == "TVRename" && !reader.IsStartElement())
-                            {
-                                break; // end of it all
-                            }
+                            break; // end of it all
+                        }
 
-                            if (reader.Name == "Settings")
-                            {
-                                TVSettings.Instance.load(reader.ReadSubtree());
-                                reader.Read();
-                            }
-                            else
-                            {
-                                reader.ReadOuterXml();
-                            }
+                        if (reader.Name == "Settings")
+                        {
+                            TVSettings.Instance.load(reader.ReadSubtree());
+                            reader.Read();
+                        }
+                        else
+                        {
+                            reader.ReadOuterXml();
                         }
                     }
                 }
             }
-            catch (Exception e)
-            {
-                Logger.Warn(e, "Problem on Startup loading File");
-                LoadErr = from.Name + " : " + e.Message;
-                return false;
-            }
-
             return true;
         }
 
-        private bool LoadXMLSHows(FileInfo from)
+        private bool LoadXMLSHows(XmlReader reader, FileInfo from)
         {
-            Logger.Info("Loading Shows from {0}", from.FullName);
-
-            try
+            using (reader)
             {
-                XmlReaderSettings settings = new XmlReaderSettings
+                bool bGoodHeader = ReadXmlHeaderFromFile(reader, from, "Shows");
+                if (bGoodHeader)
                 {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true
-                };
-
-                if (!from.Exists)
-                {
-                    return true; // that's ok
-                }
-
-                using (XmlReader reader = XmlReader.Create(from.FullName, settings))
-                {
-                    bool bGoodHeader = ReadXmlHeaderFromFile(reader, from, "Shows");
-                    if (bGoodHeader)
+                    while (!reader.EOF)
                     {
-                        while (!reader.EOF)
+                        if (reader.Name == "TVRename" && !reader.IsStartElement())
                         {
-                            if (reader.Name == "TVRename" && !reader.IsStartElement())
-                            {
-                                break; // end of it all
-                            }
+                            break; // end of it all
+                        }
 
-                            if (reader.Name == "MyShows")
-                            {
-                                Library.LoadFromXml(reader.ReadSubtree());
-                                reader.Read();
-                            }
-                            else if (reader.Name == "MonitorFolders")
-                                TVSettings.Instance.LibraryFolders =
-                                    XmlHelper.ReadStringsFromXml(reader, "MonitorFolders", "Folder");
-                            else if (reader.Name == "IgnoreFolders")
-                                TVSettings.Instance.IgnoreFolders =
-                                    XmlHelper.ReadStringsFromXml(reader, "IgnoreFolders", "Folder");
-                            else if (reader.Name == "FinderSearchFolders")
-                                TVSettings.Instance.DownloadFolders =
-                                    XmlHelper.ReadStringsFromXml(reader, "FinderSearchFolders", "Folder");
-                            else if (reader.Name == "IgnoredAutoAddHints")
-                                TVSettings.Instance.IgnoredAutoAddHints =
-                                    XmlHelper.ReadStringsFromXml(reader, "IgnoredAutoAddHints", "Hint");
-                            else if (reader.Name == "IgnoreItems")
-                            {
-                                XmlReader r2 = reader.ReadSubtree();
-                                r2.Read();
-                                r2.Read();
-                                while (r2.Name == "Ignore")
-                                    TVSettings.Instance.Ignore.Add(new IgnoreItem(r2));
+                        if (reader.Name == "MyShows")
+                        {
+                            Library.LoadFromXml(reader.ReadSubtree());
+                            reader.Read();
+                        }
+                        else if (reader.Name == "MonitorFolders")
+                            TVSettings.Instance.LibraryFolders =
+                                XmlHelper.ReadStringsFromXml(reader, "MonitorFolders", "Folder");
+                        else if (reader.Name == "IgnoreFolders")
+                            TVSettings.Instance.IgnoreFolders =
+                                XmlHelper.ReadStringsFromXml(reader, "IgnoreFolders", "Folder");
+                        else if (reader.Name == "FinderSearchFolders")
+                            TVSettings.Instance.DownloadFolders =
+                                XmlHelper.ReadStringsFromXml(reader, "FinderSearchFolders", "Folder");
+                        else if (reader.Name == "IgnoredAutoAddHints")
+                            TVSettings.Instance.IgnoredAutoAddHints =
+                                XmlHelper.ReadStringsFromXml(reader, "IgnoredAutoAddHints", "Hint");
+                        else if (reader.Name == "IgnoreItems")
+                        {
+                            XmlReader r2 = reader.ReadSubtree();
+                            r2.Read();
+                            r2.Read();
+                            while (r2.Name == "Ignore")
+                                TVSettings.Instance.Ignore.Add(new IgnoreItem(r2));
 
-                                reader.Read();
-                            }
-                            else
-                            {
-                                reader.ReadOuterXml();
-                            }
+                            reader.Read();
+                        }
+                        else
+                        {
+                            reader.ReadOuterXml();
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Logger.Warn(e, "Problem on Startup loading Shows File");
-                LoadErr = from.Name + " : " + e.Message;
-                return false;
             }
 
             try
@@ -674,7 +645,7 @@ namespace TVRename
 
             if (reader.Name != "TVRename")
             {
-                LoadErr = from.Name + " : Not a TVRename "+ contains  + " file";
+                LoadErr = from.Name + " : Not a TVRename " + contains  + " file";
                 return false;
             }
 
