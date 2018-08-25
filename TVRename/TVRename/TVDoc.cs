@@ -101,7 +101,7 @@ namespace TVRename
 
             TheTVDB.Instance.ClearCache();
 
-            bool Loaded = LoadXMLFile(FileToHandle.TvDB | FileToHandle.Settings | FileToHandle.Shows, false);
+            LoadXMLFile(FileToHandle.TvDB | FileToHandle.Settings | FileToHandle.Shows, false);
         }
 
         public TVRenameStats Stats()
@@ -289,14 +289,6 @@ namespace TVRename
                 Logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
                 XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings);
                 WriteXMLSettings(writer);
-                if (string.IsNullOrEmpty(PathManager.ShowCollection))
-                {
-                    WriteXMLShows(writer);
-                }
-                else
-                {
-                    WriteXMLFooter(writer);
-                }
             }
             if (((Files & FileToHandle.Shows) > 0) && (!string.IsNullOrEmpty(PathManager.ShowCollection)))
             {
@@ -340,6 +332,15 @@ namespace TVRename
                 WriteXMLHeader(writer);
 
                 TVSettings.Instance.WriteXML(writer); // <Settings>
+
+                if (string.IsNullOrEmpty(PathManager.ShowCollection))
+                {
+                    WriteXMLShows(writer);
+                }
+                else
+                {
+                    WriteXMLFooter(writer);
+                }
             }
 
             mDirty = false;
