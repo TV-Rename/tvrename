@@ -565,11 +565,7 @@ namespace TVRename
 
                     if (res == DialogResult.Yes)
                     {
-                        mDoc.WriteXMLSettings();
-                        if (!string.IsNullOrEmpty(PathManager.ShowCollection))
-                        {
-                            mDoc.WriteXMLShows();
-                        }
+                        mDoc.WriteXMLFile(FileToHandle.Settings | FileToHandle.Shows | FileToHandle.TvDB);
                     }
                     else if (res == DialogResult.Cancel)
                         e.Cancel = true;
@@ -1482,7 +1478,7 @@ namespace TVRename
                 Sc.Name = "Default";
                 Sc.Description = "Default collection in mono collection use";
                 mDoc.ShowCollections.Add(Sc);
-                mDoc.WriteXMLCollections();
+                mDoc.WriteXMLFile(FileToHandle.Collections);
             }
 
             ToolStripMenuItem[] CollMenu = new ToolStripMenuItem[mDoc.ShowCollections.Count];
@@ -1532,11 +1528,7 @@ namespace TVRename
 
                     if (res == DialogResult.Yes)
                     {
-                        mDoc.WriteXMLSettings();
-                        if (!string.IsNullOrEmpty(PathManager.ShowCollection))
-                        {
-                            mDoc.WriteXMLShows();
-                        }
+                        mDoc.WriteXMLFile(FileToHandle.Settings | FileToHandle.Shows | FileToHandle.TvDB);
                     }
                     else if (res == DialogResult.Cancel)
                         bNeedCancel = true;
@@ -1565,7 +1557,7 @@ namespace TVRename
                     clickedItem.Checked = true;
 
                     mDoc.SwitchToCollection(SelectedCollection.Path);
-                    mDoc.WriteXMLCollections();
+                    mDoc.WriteXMLFile(FileToHandle.Collections);
                     FillMyShows();
                 }
             }
@@ -1911,13 +1903,7 @@ namespace TVRename
         {
             try
             {
-                mDoc.WriteXMLSettings();
-                mDoc.WriteXMLCollections();
-                if (!string.IsNullOrEmpty(PathManager.ShowCollection))
-                {
-                    mDoc.WriteXMLShows();
-                }
-                TheTVDB.Instance.SaveCache();
+                mDoc.WriteXMLFile(FileToHandle.Collections | FileToHandle.Settings | FileToHandle.Shows | FileToHandle.TvDB);
                 if (!SaveLayoutXml())
                 {
                     Logger.Error("Failed to Save Layout Configuration Files");
@@ -1974,7 +1960,7 @@ namespace TVRename
                 if (n == 0 && lastDlRemaining > 0)
                 {
                     // we've just finished a bunch of background downloads
-                    TheTVDB.Instance.SaveCache();
+                    mDoc.WriteXMLFile(FileToHandle.TvDB);
                     RefreshWTW(false);
 
                     backgroundDownloadNowToolStripMenuItem.Enabled = true;

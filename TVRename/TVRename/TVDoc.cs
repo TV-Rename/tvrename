@@ -26,6 +26,14 @@ using NodaTime.Extensions;
 
 namespace TVRename
 {
+    public enum FileToHandle
+    {
+        Collections =  1,
+        Settings    =  2,
+        Shows       =  4,
+        TvDB        =  8
+    }
+
     // ReSharper disable once InconsistentNaming
     public class TVDoc : IDisposable
     {
@@ -50,7 +58,7 @@ namespace TVRename
         private bool currentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
         private DateTime busySince;
 
-        public TVDoc(FileInfo showColl, CommandLineArgs args)
+        public TVDoc(CommandLineArgs args)
         {
             Args = args;
 
@@ -77,47 +85,23 @@ namespace TVRename
             };
 
             downloadIdentifiers = new DownloadIdentifiersController();
-
-            LoadOk = ((showColl == null) || LoadXMLCollections(showColl));
+            LoadOk = LoadXMLFile(FileToHandle.Collections, true);
 
             if (LoadOk)
             {
-                FileInfo settingsFile = PathManager.TVDocSettingsFile;
-                FileInfo showsFile = PathManager.TVDocShowsFile;
-                FileInfo tvdbFile = PathManager.TVDBFile;
-
-                // Try loading TheTVDB cache file
-                TheTVDB.Instance.Setup(tvdbFile, PathManager.TVDBFile, args);
-
-                LoadOk = ((settingsFile == null) || LoadXMLSettings(settingsFile)) && ((showsFile == null) || LoadXMLSHows(showsFile)) && TheTVDB.Instance.LoadOk;
+                LoadOk = LoadXMLFile(FileToHandle.TvDB | FileToHandle.Settings | FileToHandle.Shows, true);
             }
         }
 
         public void SwitchToCollection (string Collection)
         {
-            if (this.Dirty())
-            {
-                WriteXMLSettings();
-                if (!string.IsNullOrEmpty(PathManager.ShowCollection))
-                {
-                    WriteXMLShows();
-                }
-                TheTVDB.Instance.SaveCache();
-
-                Stats().Save();
-                mDirty = false;
-            }
-
             PathManager.ShowCollection = Collection;
             Library.Clear();
+            TheActionList.Clear();
+
             TheTVDB.Instance.ClearCache();
 
-            FileInfo settingsFile = PathManager.TVDocSettingsFile;
-            FileInfo showsFile = PathManager.TVDocShowsFile;
-            FileInfo tvdbFile = PathManager.TVDBFile;
-
-            TheTVDB.Instance.RelaodCache(tvdbFile, PathManager.TVDBFile);
-            bool Loaded = ((settingsFile == null) || LoadXMLSettings(settingsFile)) && ((showsFile == null) || LoadXMLSHows(showsFile));
+            bool Loaded = LoadXMLFile(FileToHandle.TvDB | FileToHandle.Settings | FileToHandle.Shows, false);
         }
 
         public TVRenameStats Stats()
@@ -284,85 +268,90 @@ namespace TVRename
             return ret;
         }
 
-        private static void WriteXMLHeader(XmlWriter writer)
+        public void WriteXMLFile (FileToHandle Files)
         {
-            writer.WriteStartDocument();
-            writer.WriteStartElement("TVRename");
-
-            XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
-        }
-
-        private static void WriteXMLFooter(XmlWriter writer)
-        {
-            writer.WriteEndElement(); // tvrename
-            writer.WriteEndDocument();
-        }
-
-        // ReSharper disable once InconsistentNaming
-        public void WriteXMLSettings()
-        {
-            // backup old settings before writing new ones
-            FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
-            Logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
-
             XmlWriterSettings settings = new XmlWriterSettings
             {
                 Indent = true,
                 NewLineOnAttributes = true
             };
 
-            using (XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings))
+            if ((Files & FileToHandle.Collections) > 0)
+            {
+                FileHelper.Rotate(PathManager.ShowCollectionFile.FullName);
+                Logger.Info("Saving Collections to {0}", PathManager.ShowCollectionFile.FullName);
+                XmlWriter writer = XmlWriter.Create(PathManager.ShowCollectionFile.FullName, settings);
+                WriteXMLCollections(writer);
+            }
+            if ((Files & FileToHandle.Settings) > 0)
+            {
+                FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
+                Logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
+                XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings);
+                WriteXMLSettings(writer);
+                if (string.IsNullOrEmpty(PathManager.ShowCollection))
+                {
+                    WriteXMLShows(writer);
+                }
+                else
+                {
+                    WriteXMLFooter(writer);
+                }
+            }
+            if ((Files & FileToHandle.Shows) > 0)
+            {
+                if (!string.IsNullOrEmpty(PathManager.ShowCollection))
+                { 
+                    FileHelper.Rotate(PathManager.TVDocShowsFile.FullName);
+                    Logger.Info("Saving Shows to {0}", PathManager.TVDocShowsFile.FullName);
+                    XmlWriter writer = XmlWriter.Create(PathManager.TVDocShowsFile.FullName, settings);
+                    WriteXMLHeader(writer);
+                    WriteXMLShows(writer);
+                }
+            }
+
+            if ((Files & FileToHandle.TvDB) > 0)
+            {
+                TheTVDB.Instance.SaveCache();
+            }
+        }
+
+        private void WriteXMLCollections(XmlWriter writer)
+        {
+            using (writer)
+            {
+                WriteXMLHeader(writer);
+
+                writer.WriteStartElement("Collections");
+                foreach (ShowCollection sc in ShowCollections)
+                {
+                    sc.WriteXMLCollectionItem(writer);
+                }
+
+                writer.WriteEndElement(); // Collections
+                XmlHelper.WriteElementToXml(writer, "Current", (PathManager.ShowCollection == "" ? "2.1" : PathManager.ShowCollection));
+
+                WriteXMLFooter(writer);
+            }
+        }
+
+        // ReSharper disable once InconsistentNaming
+        private void WriteXMLSettings(XmlWriter writer)
+        {
+            using (writer)
             {
                 WriteXMLHeader(writer);
 
                 TVSettings.Instance.WriteXML(writer); // <Settings>
-
-                // To hold compatibility with 2.1 format ( all in one file )
-                // there is no need to end document WriteXMLShows do it for us !
-                if (!string.IsNullOrEmpty(PathManager.ShowCollection))
-                {
-                    WriteXMLFooter(writer);
-                } 
-                else
-                {
-                    WriteXMLShows(writer);
-                }
             }
 
             mDirty = false;
         }
 
-        public void WriteXMLShows(XmlWriter xwriter = null)
+        private void WriteXMLShows(XmlWriter writer)
         {
-            XmlWriter writer;
-
-            if (xwriter == null)
-            {
-                // backup old shows before writing new ones
-                FileHelper.Rotate(PathManager.TVDocShowsFile.FullName);
-                Logger.Info("Saving Shows to {0}", PathManager.TVDocShowsFile.FullName);
-
-                XmlWriterSettings settings = new XmlWriterSettings
-                {
-                    Indent = true,
-                    NewLineOnAttributes = true
-                };
-                writer = XmlWriter.Create(PathManager.TVDocShowsFile.FullName, settings);
-            }
-            else
-            {
-                writer = xwriter;
-            }
-
             using (writer)
             {
-                // To hold compatibility with 2.1 format ( all in one file )
-                // there is no need to start document again WriteXMLSettings do it for us !
-                if (!string.IsNullOrEmpty(PathManager.ShowCollection))
-                {
-                    WriteXMLHeader(writer);
-                }
-
                 writer.WriteStartElement("MyShows");
                 foreach (ShowItem si in Library.Values)
                     si.WriteXmlSettings(writer);
@@ -387,41 +376,161 @@ namespace TVRename
             Stats().Save();
         }
 
-        public void WriteXMLCollections()
+        private static void WriteXMLHeader(XmlWriter writer)
         {
-            // backup old settings before writing new ones
-            FileHelper.Rotate(PathManager.TVDocShowsFile.FullName);
-            Logger.Info("Saving Collections to {0}", PathManager.ShowCollectionFile.FullName);
+            writer.WriteStartDocument();
+            writer.WriteStartElement("TVRename");
 
-            XmlWriterSettings settings = new XmlWriterSettings
+            XmlHelper.WriteAttributeToXml(writer, "Version", "2.1");
+        }
+
+        private static void WriteXMLFooter(XmlWriter writer)
+        {
+            writer.WriteEndElement(); // tvrename
+            writer.WriteEndDocument();
+        }
+
+        private bool LoadXMLFile (FileToHandle Files, bool bInit )
+        {
+            bool bLoadOk = false;
+
+            if ((Files & FileToHandle.Collections) > 0)
             {
-                Indent = true,
-                NewLineOnAttributes = true
-            };
-
-            using (XmlWriter writer = XmlWriter.Create(PathManager.ShowCollectionFile.FullName, settings))
-            {
-                WriteXMLHeader(writer);
-
-                writer.WriteStartElement("Collections");
-                foreach (ShowCollection sc in ShowCollections)
+                FileInfo showColls = PathManager.ShowCollectionFile;
+                if (showColls == null)
                 {
-                    sc.WriteXMLCollectionItem(writer);
+                    bLoadOk = true;
+                }
+                else
+                {
+                    bLoadOk = LoadXMLCollections(showColls);
+                }
+            }
+            if ((Files & FileToHandle.TvDB) > 0)
+            {
+                FileInfo tvdbFile = PathManager.TVDBFile;
+                if (tvdbFile == null)
+                {
+                    bLoadOk = true;
+                }
+                else
+                {
+                    if (bInit)
+                    {
+                        TheTVDB.Instance.Setup(tvdbFile, PathManager.TVDBFile, Args);
+                    }
+                    else
+                    {
+                        TheTVDB.Instance.RelaodCache(tvdbFile, PathManager.TVDBFile);
+                    }
+                    bLoadOk = TheTVDB.Instance.LoadOk;
+                }
+            }
+            if ((Files & FileToHandle.Settings) > 0)
+            {
+                FileInfo settingsFile = PathManager.TVDocSettingsFile;
+                if (settingsFile == null)
+                {
+                    bLoadOk = true;
+                }
+                else
+                {
+                    bLoadOk = LoadXMLSettings(settingsFile);
+                }
+            }
+            if ((Files & FileToHandle.Shows) > 0)
+            {
+                FileInfo showsFile = PathManager.TVDocShowsFile;
+                if (showsFile == null)
+                {
+                    bLoadOk = true;
+                }
+                else
+                {
+                    bLoadOk = LoadXMLSHows(showsFile);
+                }
+            }
+
+            return bLoadOk;
+        }
+
+        private bool LoadXMLCollections(FileInfo from)
+        {
+            Logger.Info("Loading Collections from {0}", from.FullName);
+
+            try
+            {
+                XmlReaderSettings settings = new XmlReaderSettings
+                {
+                    IgnoreComments = true,
+                    IgnoreWhitespace = true
+                };
+
+                if (!from.Exists)
+                {
+                    return true; // that's ok
                 }
 
-                writer.WriteEndElement(); // Collections
-                XmlHelper.WriteElementToXml(writer, "Current", (PathManager.ShowCollection == "" ? "2.1" : PathManager.ShowCollection));
+                using (XmlReader reader = XmlReader.Create(from.FullName, settings))
+                {
+                    bool bGoodHeader = ReadXmlHeaderFromFile(reader, from, "Collections");
+                    if (bGoodHeader)
+                    {
+                        while (!reader.EOF)
+                        {
+                            if (reader.Name == "TVRename" && !reader.IsStartElement())
+                                break; // end of it all
 
-                WriteXMLFooter(writer);
+                            if (reader.Name == "Collections")
+                            {
+                                while (!reader.EOF)
+                                {
+                                    reader.Read();
+
+                                    if ((reader.Name == "Collections") && (!reader.IsStartElement()))
+                                    {
+                                        break;
+                                    }
+
+                                    if (reader.Name == "CollectionItem")
+                                    {
+                                        ShowCollection Collection = new ShowCollection(reader);
+
+                                        ShowCollections.Add(Collection);
+                                    }
+                                    else
+                                    {
+                                        reader.ReadOuterXml();
+                                    }
+                                }
+                            }
+                            else if (reader.Name == "Current")
+                            {
+                                PathManager.ShowCollection = reader.ReadElementContentAsString();
+                            }
+                            else
+                            {
+                                reader.ReadOuterXml();
+                            }
+                            reader.Read();
+                        }
+                    }
+                }
             }
+            catch (Exception e)
+            {
+                Logger.Warn(e, "Problem on Startup loading Collection File");
+                LoadErr = from.Name + " : " + e.Message;
+                return false;
+            }
+
+            return true;
         }
 
         // ReSharper disable once InconsistentNaming
         private bool LoadXMLSettings(FileInfo from)
         {
-            Logger.Info("Loading Settings from {0}", from?.FullName);
-            if (from == null)
-                return true;
+            Logger.Info("Loading Settings from {0}", from.FullName);
 
             try
             {
@@ -473,9 +582,7 @@ namespace TVRename
 
         private bool LoadXMLSHows(FileInfo from)
         {
-            Logger.Info("Loading Shows from {0}", from?.FullName);
-            if (from == null)
-                return true;
+            Logger.Info("Loading Shows from {0}", from.FullName);
 
             try
             {
@@ -551,83 +658,6 @@ namespace TVRename
             catch (Exception)
             {
                 // not worried if stats loading fails
-            }
-
-            return true;
-        }
-
-        private bool LoadXMLCollections(FileInfo from)
-        {
-            Logger.Info("Loading Collections from {0}", from?.FullName);
-            if (from == null)
-            {
-                return true;
-            }
-
-            try
-            {
-                XmlReaderSettings settings = new XmlReaderSettings
-                {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true
-                };
-
-                if (!from.Exists)
-                {
-                    return true; // that's ok
-                }
-
-                using (XmlReader reader = XmlReader.Create(from.FullName, settings))
-                {
-                    bool bGoodHeader = ReadXmlHeaderFromFile(reader, from, "Collections");
-                    if (bGoodHeader)
-                    {
-                        while (!reader.EOF)
-                        {
-                            if (reader.Name == "TVRename" && !reader.IsStartElement())
-                                break; // end of it all
-
-                            if (reader.Name == "Collections")
-                            {
-                                while (!reader.EOF)
-                                {
-                                    reader.Read();
-
-                                    if ((reader.Name == "Collections") && (!reader.IsStartElement()))
-                                    {
-                                        break;
-                                    }
-
-                                    if (reader.Name == "CollectionItem")
-                                    {
-                                        ShowCollection Collection = new ShowCollection(reader);
-
-                                        ShowCollections.Add(Collection);
-                                    }
-                                    else
-                                    {
-                                        reader.ReadOuterXml();
-                                    }
-                                }
-                            }
-                            else if (reader.Name == "Current")
-                            {
-                                PathManager.ShowCollection = reader.ReadElementContentAsString();
-                            }
-                            else
-                            {
-                                reader.ReadOuterXml();
-                            }
-                            reader.Read();
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Warn(e, "Problem on Startup loading Collection File");
-                LoadErr = from.Name + " : " + e.Message;
-                return false;
             }
 
             return true;

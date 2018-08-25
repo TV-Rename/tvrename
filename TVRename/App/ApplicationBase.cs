@@ -73,13 +73,12 @@ namespace TVRename.App
                 }
             }
 
-            FileInfo showColls = PathManager.ShowCollectionFile;
             TVDoc doc;
 
             do // Loop until files correctly load
             {
                 // Try loading settings file
-                doc = new TVDoc(showColls, clargs);
+                doc = new TVDoc(clargs);
 
                 FileInfo tvdbFile  = PathManager.TVDBFile;
                 FileInfo showsFile = PathManager.TVDocShowsFile;

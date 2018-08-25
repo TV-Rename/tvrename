@@ -120,7 +120,7 @@ namespace TVRename
                 mDoc.ShowCollections.RemoveAt(iColl);
             }
 
-            mDoc.WriteXMLCollections();
+            mDoc.WriteXMLFile(FileToHandle.Collections);
             ClearTextBoxes();
             bActualButtons = SetButtons(false, true);
             iColl = -1;
@@ -152,7 +152,7 @@ namespace TVRename
                 mDoc.ShowCollections[iColl] = Sc;
             }
 
-            mDoc.WriteXMLCollections();
+            mDoc.WriteXMLFile(FileToHandle.Collections);
 
             ClearTextBoxes();
             FillCollTreeView();
