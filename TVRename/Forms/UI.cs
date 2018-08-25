@@ -3713,9 +3713,12 @@ namespace TVRename
 
         private void aeCollToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var Frm = new AddEditCollection(mDoc);
-            RemoveCollectionsMenu();
-            BuildCollectionsMenu();
+            AddEditCollection AEC = new AddEditCollection(mDoc);
+            if (AEC.ShowDialog() == DialogResult.OK)
+            {
+                RemoveCollectionsMenu();
+                BuildCollectionsMenu();
+            }
         }
     }
 }

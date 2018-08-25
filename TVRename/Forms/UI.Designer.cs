@@ -1541,13 +1541,6 @@ namespace TVRename
             this.columnHeader35.Text = "Episode Name";
             this.columnHeader35.Width = 360;
             // 
-            // aeCollToolStripMenuItem
-            // 
-            this.aeCollToolStripMenuItem.Name = "aeCollToolStripMenuItem";
-            this.aeCollToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.aeCollToolStripMenuItem.Text = "Add / Edit";
-            this.aeCollToolStripMenuItem.Click += new System.EventHandler(this.aeCollToolStripMenuItem_Click);
-            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);

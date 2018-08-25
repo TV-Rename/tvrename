@@ -12,83 +12,82 @@ namespace TVRename
 {
     public partial class AddEditCollection : Form
     {
+        private static AddEditCollection aecf;
         private readonly TVDoc  mDoc;
         private int             iColl = -1;
         private bool            bActualMode;
         private bool            bActualButtons;
-        private bool            bAddMode = false;
+        private bool            bAddMode;
 
         public AddEditCollection(TVDoc doc)
         {
             InitializeComponent();
-            mDoc = doc;
-
-            bActualMode = SetTextBoxes(false, true);
+            mDoc           = doc;
+            aecf           = this;
+            bActualMode    = SetTextBoxes(false, true);
             bActualButtons = SetButtons(false, true);
 
             FillCollTreeView();
-
-            this.ShowDialog();
         }
 
-        private bool SetTextBoxes(bool bMode, bool bFull = false)
+        private static bool SetTextBoxes(bool bMode, bool bFull = false)
         {
             if (bFull)
             {
-                TxtCollPath.Enabled = bMode;
+                aecf.TxtCollPath.Enabled = bMode;
             }
-            TxtCollName.Enabled = bMode;
-            TxtCollDesc.Enabled = bMode;
+            aecf.TxtCollName.Enabled = bMode;
+            aecf.TxtCollDesc.Enabled = bMode;
 
             return bMode;
         }
 
-        private bool SetButtons(bool bMode, bool bFull = false)
+        private static bool SetButtons(bool bMode, bool bFull = false)
         {
-            BtEdit.Enabled = bMode;
-            BtDel.Enabled = bMode;
-            BtUp.Enabled = bMode;
-            BtDown.Enabled = bMode;
+            aecf.BtEdit.Enabled = bMode;
+            aecf.BtDel.Enabled = bMode;
+            aecf.BtUp.Enabled = bMode;
+            aecf.BtDown.Enabled = bMode;
             if (bFull)
             {
-                BtSave.Enabled = bMode;
-                BtCancel.Enabled = bMode;
+                aecf.BtSave.Enabled = bMode;
+                aecf.BtCancel.Enabled = bMode;
             }
             return bMode;
         }
 
-        private void ClearTextBoxes ()
+        private static void ClearTextBoxes ()
         {
-            TxtCollName.Text = "";
-            TxtCollPath.Text = "";
-            TxtCollDesc.Text = "";
+            aecf.TxtCollName.Text = "";
+            aecf.TxtCollPath.Text = "";
+            aecf.TxtCollDesc.Text = "";
         }
 
-        private void FillTextBoxes (ShowCollection Collection)
+        private static void FillTextBoxes (ShowCollection Collection)
         {
-            TxtCollName.Text = Collection.Name;
-            TxtCollPath.Text = Collection.Path;
-            TxtCollDesc.Text = Collection.Description;
+            aecf.TxtCollName.Text = Collection.Name;
+            aecf.TxtCollPath.Text = Collection.Path;
+            aecf.TxtCollDesc.Text = Collection.Description;
         }
 
-        private ShowCollection FillCollectionFromTextBoxes ()
+        private static ShowCollection FillCollectionFromTextBoxes ()
         {
-            ShowCollection Collection = new ShowCollection(TxtCollPath.Text);
-            Collection.Name = TxtCollName.Text;
-            Collection.Description = TxtCollDesc.Text;
+            ShowCollection Collection = new ShowCollection(aecf.TxtCollPath.Text);
+            Collection.Name = aecf.TxtCollName.Text;
+            Collection.Description = aecf.TxtCollDesc.Text;
 
             return Collection;
         }
 
-        private void FillCollTreeView()
+        private static void FillCollTreeView()
         {
-            TvColl.Nodes.Clear();
-            if (mDoc.ShowCollections.Count > 0)
+            aecf.TvColl.Nodes.Clear();
+            if (aecf.mDoc.ShowCollections.Count > 0)
             {
                 TreeNode RootNode;
-                RootNode = TvColl.Nodes.Add("Root");
+                RootNode = aecf.TvColl.Nodes.Add("Root");
                 int iCurr = 0;
-                foreach (ShowCollection ShowColl in mDoc.ShowCollections)
+                foreach (ShowCollection ShowColl in aecf.mDoc.ShowCollections)
                 {
                     TreeNode CurNode;
                     CurNode = RootNode.Nodes.Add(ShowColl.Name);
@@ -96,7 +95,7 @@ namespace TVRename
                     CurNode.Tag = iCurr;
                     iCurr++;
                 }
-                TvColl.ExpandAll();
+                aecf.TvColl.ExpandAll();
             }
         }
 
@@ -179,8 +178,8 @@ namespace TVRename
 
         private void BtOk_Click(object sender, EventArgs e)
         {
-            this.Hide();
-            this.Dispose();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void BtCancel_Click(object sender, EventArgs e)
