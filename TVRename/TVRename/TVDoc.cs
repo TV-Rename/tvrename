@@ -298,16 +298,13 @@ namespace TVRename
                     WriteXMLFooter(writer);
                 }
             }
-            if ((Files & FileToHandle.Shows) > 0)
+            if (((Files & FileToHandle.Shows) > 0) && (!string.IsNullOrEmpty(PathManager.ShowCollection)))
             {
-                if (!string.IsNullOrEmpty(PathManager.ShowCollection))
-                { 
-                    FileHelper.Rotate(PathManager.TVDocShowsFile.FullName);
-                    Logger.Info("Saving Shows to {0}", PathManager.TVDocShowsFile.FullName);
-                    XmlWriter writer = XmlWriter.Create(PathManager.TVDocShowsFile.FullName, settings);
-                    WriteXMLHeader(writer);
-                    WriteXMLShows(writer);
-                }
+                FileHelper.Rotate(PathManager.TVDocShowsFile.FullName);
+                Logger.Info("Saving Shows to {0}", PathManager.TVDocShowsFile.FullName);
+                XmlWriter writer = XmlWriter.Create(PathManager.TVDocShowsFile.FullName, settings);
+                WriteXMLHeader(writer);
+                WriteXMLShows(writer);
             }
 
             if ((Files & FileToHandle.TvDB) > 0)
