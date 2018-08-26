@@ -643,20 +643,28 @@ namespace TVRename
             return true;
         }
 
-        private void LoadXMLShowFolderStuff (XmlReader reader)
+        private void LoadXMLShowFolderStuff(XmlReader reader)
         {
             if (reader.Name == "MonitorFolders")
+            {
                 TVSettings.Instance.LibraryFolders =
                     XmlHelper.ReadStringsFromXml(reader, "MonitorFolders", "Folder");
+            }
             else if (reader.Name == "IgnoreFolders")
+            {
                 TVSettings.Instance.IgnoreFolders =
                     XmlHelper.ReadStringsFromXml(reader, "IgnoreFolders", "Folder");
+            }
             else if (reader.Name == "FinderSearchFolders")
+            { 
                 TVSettings.Instance.DownloadFolders =
                     XmlHelper.ReadStringsFromXml(reader, "FinderSearchFolders", "Folder");
+            }
             else if (reader.Name == "IgnoredAutoAddHints")
+            {
                 TVSettings.Instance.IgnoredAutoAddHints =
                     XmlHelper.ReadStringsFromXml(reader, "IgnoredAutoAddHints", "Hint");
+            }
             else if (reader.Name == "IgnoreItems")
             {
                 XmlReader r2 = reader.ReadSubtree();
