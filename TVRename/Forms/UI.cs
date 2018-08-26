@@ -3366,9 +3366,11 @@ namespace TVRename
 
         private async void showSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            UseWaitCursor = true;
             ShowSummary f = new ShowSummary(mDoc);
             await Task.Run(() => f.GenerateData());
             f.PopulateGrid();
+            UseWaitCursor = false;
             f.Show();
         }
 

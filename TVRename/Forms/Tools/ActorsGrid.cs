@@ -36,9 +36,10 @@ namespace TVRename
             InitializeComponent();
 
             mDoc = doc;
-
+            Cursor.Current = Cursors.WaitCursor;
             BuildData();
             DoSort();
+            Cursor.Current = Cursors.Default;
         }
 
         private void BuildData()
