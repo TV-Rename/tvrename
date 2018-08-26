@@ -23,3 +23,5 @@ and you want them named like:
 * Correctly name downloads, using filenames from a .torrent file
 
 and more!
+
+For more details visit https://www.tvrename.com...
