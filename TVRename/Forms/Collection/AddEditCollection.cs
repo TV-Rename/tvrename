@@ -102,8 +102,10 @@ namespace TVRename
         #region Control functions
         private void TvColl_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            TreeView Tv   = (TreeView)sender;
             TreeNode Node = TvColl.SelectedNode;
-            string[] Nodelevels = Node.FullPath.Split('\\');
+            string Sep = Tv.PathSeparator;
+            string[] Nodelevels = Node.FullPath.Split(Sep[0]);
 
             if (Nodelevels.Length == 2)
             {
