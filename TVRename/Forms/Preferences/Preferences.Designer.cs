@@ -76,6 +76,7 @@ namespace TVRename
             this.label6 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbGeneral = new System.Windows.Forms.TabPage();
+            this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.chkHideWtWSpoilers = new System.Windows.Forms.CheckBox();
             this.chkHideMyShowsSpoilers = new System.Windows.Forms.CheckBox();
             this.label37 = new System.Windows.Forms.Label();
@@ -266,7 +267,7 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cbShowCollections = new System.Windows.Forms.CheckBox();
+            this.cbDeleteShowFromDisk = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -296,7 +297,7 @@ namespace TVRename
             // OKButton
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OKButton.Location = new System.Drawing.Point(369, 551);
+            this.OKButton.Location = new System.Drawing.Point(369, 554);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 0;
@@ -308,7 +309,7 @@ namespace TVRename
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(450, 551);
+            this.bnCancel.Location = new System.Drawing.Point(450, 554);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 1;
@@ -664,7 +665,7 @@ namespace TVRename
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(517, 533);
+            this.tabControl1.Size = new System.Drawing.Size(517, 536);
             this.tabControl1.TabIndex = 0;
             // 
             // tbGeneral
@@ -697,10 +698,20 @@ namespace TVRename
             this.tbGeneral.Location = new System.Drawing.Point(4, 40);
             this.tbGeneral.Name = "tbGeneral";
             this.tbGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tbGeneral.Size = new System.Drawing.Size(509, 489);
+            this.tbGeneral.Size = new System.Drawing.Size(509, 492);
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
+            // 
+            // cbShowCollections
+            // 
+            this.cbShowCollections.AutoSize = true;
+            this.cbShowCollections.Location = new System.Drawing.Point(9, 115);
+            this.cbShowCollections.Name = "cbShowCollections";
+            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
+            this.cbShowCollections.TabIndex = 2;
+            this.cbShowCollections.Text = "Multiple Show collections";
+            this.cbShowCollections.UseVisualStyleBackColor = true;
             // 
             // chkHideWtWSpoilers
             // 
@@ -1545,6 +1556,7 @@ namespace TVRename
             // 
             // tbFolderDeleting
             // 
+            this.tbFolderDeleting.Controls.Add(this.cbDeleteShowFromDisk);
             this.tbFolderDeleting.Controls.Add(this.cbCleanUpDownloadDir);
             this.tbFolderDeleting.Controls.Add(this.label32);
             this.tbFolderDeleting.Controls.Add(this.label30);
@@ -1560,7 +1572,7 @@ namespace TVRename
             this.tbFolderDeleting.Location = new System.Drawing.Point(4, 40);
             this.tbFolderDeleting.Name = "tbFolderDeleting";
             this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFolderDeleting.Size = new System.Drawing.Size(509, 489);
+            this.tbFolderDeleting.Size = new System.Drawing.Size(509, 492);
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
@@ -2735,15 +2747,15 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // cbShowCollections
+            // cbDeleteShowFromDisk
             // 
-            this.cbShowCollections.AutoSize = true;
-            this.cbShowCollections.Location = new System.Drawing.Point(9, 115);
-            this.cbShowCollections.Name = "cbShowCollections";
-            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
-            this.cbShowCollections.TabIndex = 2;
-            this.cbShowCollections.Text = "Multiple Show collections";
-            this.cbShowCollections.UseVisualStyleBackColor = true;
+            this.cbDeleteShowFromDisk.AutoSize = true;
+            this.cbDeleteShowFromDisk.Location = new System.Drawing.Point(16, 267);
+            this.cbDeleteShowFromDisk.Name = "cbDeleteShowFromDisk";
+            this.cbDeleteShowFromDisk.Size = new System.Drawing.Size(269, 17);
+            this.cbDeleteShowFromDisk.TabIndex = 11;
+            this.cbDeleteShowFromDisk.Text = "Delete from disk when deleting show from database";
+            this.cbDeleteShowFromDisk.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -2751,7 +2763,7 @@ namespace TVRename
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(541, 576);
+            this.ClientSize = new System.Drawing.Size(541, 579);
             this.ControlBox = false;
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.bnCancel);
@@ -3056,5 +3068,6 @@ namespace TVRename
         private System.Windows.Forms.Label label47;
         private System.Windows.Forms.CheckBox cbWDLiveEpisodeFiles;
         private System.Windows.Forms.CheckBox cbShowCollections;
+        private System.Windows.Forms.CheckBox cbDeleteShowFromDisk;
     }
 }
