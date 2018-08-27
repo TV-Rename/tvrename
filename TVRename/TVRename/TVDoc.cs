@@ -431,7 +431,7 @@ namespace TVRename
                 try
                 {
                     XmlReader reader = XmlReader.Create(showColls.FullName, settings);
-                    bLoadOk = LoadXMLCollections(reader, showColls, lSc, Err);
+                    bLoadOk = LoadXMLCollections(reader, showColls, lSc,  Err);
                 }
                 catch (Exception e)
                 {
@@ -684,30 +684,38 @@ namespace TVRename
 
         private static bool ReadXmlHeaderFromFile (XmlReader reader, FileInfo from, string contains, string Err)
         {
+            bool bIsValidHeader;
+
             reader.Read();
             if (reader.Name != "xml")
             {
                 Err = from.Name + " : Not a valid XML file";
-                return false;
+                bIsValidHeader = false;
             }
-
-            reader.Read();
-
-            if (reader.Name != "TVRename")
+            else
             {
-                Err = from.Name + " : Not a TVRename " + contains  + " file";
-                return false;
+                reader.Read();
+                if (reader.Name != "TVRename")
+                {
+                    Err = from.Name + " : Not a TVRename " + contains + " file";
+                    bIsValidHeader = false;
+                }
+                else
+                {
+                    if (reader.GetAttribute("Version") != "2.1")
+                    {
+                        Err = from.Name + " : Incompatible version";
+                        bIsValidHeader = false;
+                    }
+                    else
+                    {
+                        reader.Read(); // move forward one
+                        bIsValidHeader = true;
+                    }
+                }
             }
 
-            if (reader.GetAttribute("Version") != "2.1")
-            {
-                Err = from.Name + " : Incompatible version";
-                return false;
-            }
-
-            reader.Read(); // move forward one
-
-            return true;
+            return bIsValidHeader;
         }
 
         private void OutputActionFiles(TVSettings.ScanType st)
