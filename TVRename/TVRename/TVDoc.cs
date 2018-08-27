@@ -431,7 +431,7 @@ namespace TVRename
                 try
                 {
                     XmlReader reader = XmlReader.Create(showColls.FullName, settings);
-                    bLoadOk = LoadXMLCollections(reader, showColls, lSc,  Err);
+                    bLoadOk = LoadXMLCollections(reader, showColls, lSc, Err);
                 }
                 catch (Exception e)
                 {
@@ -689,7 +689,7 @@ namespace TVRename
             reader.Read();
             if (reader.Name != "xml")
             {
-                Err = from.Name + " : Not a valid XML file";
+                Err            = from.Name + " : Not a valid XML file";
                 bIsValidHeader = false;
             }
             else
@@ -697,19 +697,20 @@ namespace TVRename
                 reader.Read();
                 if (reader.Name != "TVRename")
                 {
-                    Err = from.Name + " : Not a TVRename " + contains + " file";
+                    Err            = from.Name + " : Not a TVRename " + contains + " file";
                     bIsValidHeader = false;
                 }
                 else
                 {
                     if (reader.GetAttribute("Version") != "2.1")
                     {
-                        Err = from.Name + " : Incompatible version";
+                        Err            = from.Name + " : Incompatible version";
                         bIsValidHeader = false;
                     }
                     else
                     {
                         reader.Read(); // move forward one
+                        Err            = "";
                         bIsValidHeader = true;
                     }
                 }
