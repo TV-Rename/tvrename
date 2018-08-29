@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using Alphaleonis.Win32.Filesystem;
-using NLog;
 
 namespace TVRename
 {
@@ -30,17 +29,8 @@ namespace TVRename
             html += "</body></html>";
             return html;
         }
+
         public static string GetShowHtmlOverview(this ShowItem si)
-        {
-            return si.GetShowHtmlOverviewNew();
-        }
-
-        public static string GetSeasonHtmlOverview(this ShowItem si, Season s)
-        {
-            return si.GetSeasonHtmlOverviewNew(s);
-        }
-
-        private static string GetShowHtmlOverviewNew(this ShowItem si)
         {
             Color col = Color.FromName("ButtonFace");
             StringBuilder sb = new StringBuilder();
@@ -167,7 +157,7 @@ namespace TVRename
             return $"<img class=\"rounded w-100\" src=\"{TheTVDB.GetImageURL(ei.Filename)}\" alt=\"{ei.Name} Screenshot\">";
         }
 
-        private static string GetSeasonHtmlOverviewNew(this ShowItem si, Season s)
+        public static string GetSeasonHtmlOverview(this ShowItem si, Season s)
         {
             StringBuilder sb = new StringBuilder();
             DirFilesCache dfc = new DirFilesCache();
@@ -444,7 +434,7 @@ namespace TVRename
 
                 return StarRating(f / 2);
             }
-            catch (FormatException fe)
+            catch (FormatException)
             {
                 return StarRating(0);
             }
