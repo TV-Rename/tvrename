@@ -696,7 +696,7 @@ namespace TVRename
             this.rdoFolderCustom.Size = new System.Drawing.Size(94, 17);
             this.rdoFolderCustom.TabIndex = 7;
             this.rdoFolderCustom.TabStop = true;
-            this.rdoFolderCustom.Text = "Custom Patern";
+            this.rdoFolderCustom.Text = "Custom Pattern";
             this.rdoFolderCustom.UseVisualStyleBackColor = true;
             // 
             // rdoFolderLibraryDefault

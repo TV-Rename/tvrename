@@ -85,20 +85,13 @@ namespace TVRename
                     foreach (DirectoryInfo subDir in subDirs)
                     {
                         //TODO - this could make use of the presets to see whether they match
-
                         string regex = "^(?<folderName>" + sw + "\\s*)(?<number>\\d+)$";
                         Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase);
                         if (!m.Success) continue;
 
                         //We have a match!
-                        if (m.Groups["folderName"].Length > 1)
-                        {
-                            folderFormat = m.Groups["folderName"] + " " + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
-                        }
-                        else
-                        {
-                            folderFormat = m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
-                        }
+                        folderFormat = m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
+
                         Logger.Info("Assuming {0} contains a show because pattern '{1}' is found in subdirectory {2}",
                             di.FullName, folderFormat, subDir.FullName);
 

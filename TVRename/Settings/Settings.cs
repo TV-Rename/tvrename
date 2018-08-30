@@ -839,11 +839,11 @@ namespace TVRename
                 //this has not been set from the XML, so we should give it an appropriate default value
                 if (defaultSeasonWord.Length > 1)
                 {
-                    SeasonFolderFormat = defaultSeasonWord + " " + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
+                    SeasonFolderFormat = defaultSeasonWord.Trim() + " " + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
                 }
                 else
                 {
-                    SeasonFolderFormat = defaultSeasonWord + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
+                    SeasonFolderFormat = defaultSeasonWord.Trim() + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
                 }
             }
         }
