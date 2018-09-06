@@ -300,6 +300,8 @@ namespace TVRename
                 items["overview"] = (string) backupLanguageR["overview"];
                 Overview = (string) backupLanguageR["overview"];
             }
+
+            items["overview"] = System.Web.HttpUtility.HtmlDecode(items["overview"]);
         }
 
         private void LoadJson(int seriesId, JObject r)
@@ -360,9 +362,9 @@ namespace TVRename
                 else if (!int.TryParse(dvdEpNumString, out DvdEpNum)) DvdEpNum = 0;
 
                 SrvLastUpdated = (long) r["lastUpdated"];
-                Overview = (string) r["overview"];
+                Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"]);
                 EpisodeRating = (string) r["siteRating"];
-                Name = (string) r["episodeName"];
+                Name = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
 
                 string sn = (string) r["airedSeason"];
                 if (sn == null)
@@ -415,9 +417,9 @@ namespace TVRename
                 if (string.IsNullOrEmpty(mName))
                     return "Aired Episode " + AiredEpNum;
 
-                return mName;
+                return System.Web.HttpUtility.HtmlDecode(mName);
             }
-            set => mName = value;
+            set => mName = System.Web.HttpUtility.HtmlDecode(value);
         }
 
         public int AiredSeasonNumber
