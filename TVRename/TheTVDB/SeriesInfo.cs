@@ -387,7 +387,7 @@ namespace TVRename
             TvdbCode = (int)r["id"];
             if ((string)r["seriesName"] != null)
             {
-                Name = (string)r["seriesName"];
+                Name = System.Web.HttpUtility.HtmlDecode((string)r["seriesName"]);
             }
 
             if (long.TryParse((string)r["lastUpdated"], out long updateTime) )
@@ -438,8 +438,10 @@ namespace TVRename
                 Items["overview"] = (string)backupLanguageR["overview"];
             }
 
+            Items["overview"] = System.Web.HttpUtility.HtmlDecode(Items["overview"]);
+
             //Looking at the data then the aliases, banner and runtime are also different by language
-            
+
             if ((string.IsNullOrWhiteSpace(Items["aliases"])))
             {
                 Items["aliases"] = JsonHelper.Flatten(backupLanguageR["aliases"], "|");
