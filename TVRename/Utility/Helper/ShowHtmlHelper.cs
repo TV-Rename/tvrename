@@ -212,7 +212,7 @@ namespace TVRename
                     }
                 }
             }
-            
+
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && Directory.Exists(si.AutoAddFolderBase))
                 return si.AutoAddFolderBase;
 

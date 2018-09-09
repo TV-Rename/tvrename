@@ -122,7 +122,7 @@ namespace TVRename
             extraEpisodes = new List<ExtraEp>();
             removeEpisodeIds = new List<ExtraEp>();
 
-            LanguageList = new List<Language> {new Language(7, "en", "English", "English")};
+            LanguageList = new List<Language> {new Language(7, "en", "English", "English"), new Language(17, "fr", "Français", "French")};
 
             //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
             //If we have no prior install then the app has no shows and is by definition up-to-date
@@ -448,10 +448,11 @@ namespace TVRename
             if (series.ContainsKey(id))
             {
                 string name = series[id].Name;
+                int langId = series[id].languageId;
                 series.Remove(id);
                 if (makePlaceholder)
                 {
-                    AddPlaceholderSeries(id, name);
+                    AddPlaceholderSeries(id, name, langId);
                     forceReloadOn.Add(id);
                 }
             }
@@ -695,8 +696,8 @@ namespace TVRename
 
                             //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
                             List<JObject> episodeDefaultLangResponses=null;
-                            List<JObject> episodeResponses = GetEpisodes(id, TVSettings.Instance.PreferredLanguage);
-                            if (InForeignLanguage()) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguage);
+                            List<JObject> episodeResponses = GetEpisodes(id, GetLanguage(series[id].languageId));
+                            if (InForeignLanguage(GetLanguage(series[id].languageId))) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguage);
 
                             Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
                                 MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
@@ -1043,6 +1044,24 @@ namespace TVRename
             return -1;
         }
 
+        private int GetLanguageId(string lang)
+        {
+            foreach (Language l in LanguageList)
+                if (l.Abbreviation == lang)
+                    return l.Id;
+
+            return -1;
+        }
+
+        internal string GetLanguage(int langId)
+        {
+            foreach (Language l in LanguageList)
+                if (l.Id == langId)
+                    return l.Abbreviation;
+
+            return "";
+        }
+
         private int GetDefaultLanguageId()
         {
             foreach (Language l in LanguageList)
@@ -1106,7 +1125,7 @@ namespace TVRename
 
                             SeriesInfo si = new SeriesInfo(r.ReadSubtree());
                             if (series.ContainsKey(si.TvdbCode))
-                                series[si.TvdbCode].Merge(si, GetLanguageId());
+                                series[si.TvdbCode].Merge(si, series[si.TvdbCode].languageId);
                             else
                                 series[si.TvdbCode] = si;
 
@@ -1215,15 +1234,19 @@ namespace TVRename
 
             Say(txt);
 
+            string serieLang = series.ContainsKey(code)
+                ? GetLanguage(series[code].languageId)
+                : TVSettings.Instance.PreferredLanguage;
+
             string uri = TvDbTokenProvider.TVDB_API_URL + "/series/" + code;
             JObject jsonResponse;
             JObject jsonDefaultLangResponse = new JObject();
             try
             {
                 jsonResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(),
-                    TVSettings.Instance.PreferredLanguage);
+                    serieLang);
 
-                if (InForeignLanguage())
+                if (InForeignLanguage(serieLang))
                     jsonDefaultLangResponse =
                         HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), DefaultLanguage);
             }
@@ -1239,18 +1262,18 @@ namespace TVRename
             SeriesInfo si;
             JObject seriesData = (JObject) jsonResponse["data"];
 
-            if (InForeignLanguage())
+            if (InForeignLanguage(serieLang))
             {
                 JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
-                si = new SeriesInfo(seriesData, seriesDataDefaultLang, GetLanguageId());
+                si = new SeriesInfo(seriesData, seriesDataDefaultLang, GetLanguageId(serieLang));
             }
             else
             {
-                si = new SeriesInfo(seriesData, GetLanguageId());
+                si = new SeriesInfo(seriesData, GetLanguageId(serieLang));
             }
 
             if (series.ContainsKey(si.TvdbCode))
-                series[si.TvdbCode].Merge(si, GetLanguageId());
+                series[si.TvdbCode].Merge(si, series[si.TvdbCode].languageId);
             else
                 series[si.TvdbCode] = si;
 
@@ -1275,7 +1298,7 @@ namespace TVRename
                 {
                     JObject jsonEpisodeSearchResponse = HttpHelper.JsonHttpGetRequest(
                         TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images", null, tvDbTokenProvider.GetToken(),
-                        TVSettings.Instance.PreferredLanguage);
+                        serieLang);
 
                     JObject a = (JObject) jsonEpisodeSearchResponse["data"];
 
@@ -1288,7 +1311,7 @@ namespace TVRename
                 {
                     //no images for chosen language
                     Logger.Warn(ex,
-                        $"No images found for {TvDbTokenProvider.TVDB_API_URL }/series/{code}/images in language {TVSettings.Instance.PreferredLanguage}");
+                        $"No images found for {TvDbTokenProvider.TVDB_API_URL }/series/{code}/images in language {serieLang}");
                 }
 
                 foreach (string imageType in imageTypes)
@@ -1298,7 +1321,7 @@ namespace TVRename
                         JObject jsonImageResponse = HttpHelper.JsonHttpGetRequest(
                             TvDbTokenProvider.TVDB_API_URL + "/series/" + code + "/images/query",
                             new Dictionary<string, string> {{"keyType", imageType}}, tvDbTokenProvider.GetToken(),
-                            TVSettings.Instance.PreferredLanguage);
+                            serieLang);
 
                         bannerResponses.Add(jsonImageResponse);
                     }
@@ -1311,7 +1334,7 @@ namespace TVRename
                     }
                 }
 
-                if (InForeignLanguage())
+                if (InForeignLanguage(serieLang))
                 {
                     List<string> imageDefaultLangTypes = new List<string>();
 
@@ -1365,7 +1388,7 @@ namespace TVRename
                     foreach (JToken jToken in response["data"])
                     {
                         JObject bannerData = (JObject) jToken;
-                        Banner b = new Banner(si.TvdbCode, bannerData, GetLanguageId());
+                        Banner b = new Banner(si.TvdbCode, bannerData, GetLanguageId(serieLang));
                         if (!series.ContainsKey(b.SeriesId))
                             throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
 
@@ -1446,9 +1469,13 @@ namespace TVRename
 
         private void ReloadEpisodes(int code)
         {
-            List<JObject> episodePrefLangResponses = GetEpisodes(code, TVSettings.Instance.PreferredLanguage);
+            string serieLang = series.ContainsKey(code)
+                ? GetLanguage(series[code].languageId)
+                : TVSettings.Instance.PreferredLanguage;
+
+            List<JObject> episodePrefLangResponses = GetEpisodes(code, serieLang);
             List<JObject> episodeDefaultLangResponses = null;
-            if (InForeignLanguage()) episodeDefaultLangResponses = GetEpisodes(code, DefaultLanguage);
+            if (InForeignLanguage(serieLang)) episodeDefaultLangResponses = GetEpisodes(code, DefaultLanguage);
 
             Dictionary<int, Tuple<JToken, JToken>>  episodeResponses = MergeEpisodeResponses(episodePrefLangResponses, episodeDefaultLangResponses);
 
@@ -1527,6 +1554,7 @@ namespace TVRename
         }
 
         private bool InForeignLanguage() => DefaultLanguage != TVSettings.Instance.PreferredLanguage;
+        private bool InForeignLanguage(string lang) => DefaultLanguage != lang;
 
         private bool DownloadEpisodeNow(int seriesId, int episodeId, bool dvdOrder = false)
         {
@@ -1539,6 +1567,10 @@ namespace TVRename
             else
                 return false; // shouldn't happen
 
+            string serieLang = series.ContainsKey(seriesId)
+                ? GetLanguage(series[seriesId].languageId)
+                : TVSettings.Instance.PreferredLanguage;
+
             string uri = TvDbTokenProvider.TVDB_API_URL + "/episodes/" + episodeId;
             JObject jsonEpisodeResponse;
             JObject jsonEpisodeDefaultLangResponse = new JObject();
@@ -1546,9 +1578,9 @@ namespace TVRename
             try
             {
                 jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(),
-                    TVSettings.Instance.PreferredLanguage);
+                    serieLang);
 
-                if (InForeignLanguage())
+                if (InForeignLanguage(serieLang))
                     jsonEpisodeDefaultLangResponse =
                         HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), DefaultLanguage);
             }
@@ -1696,9 +1728,9 @@ namespace TVRename
             return eptxt;
         }
 
-        private void AddPlaceholderSeries(int code, string name)
+        private void AddPlaceholderSeries(int code, string name, int langId)
         {
-            series[code] = new SeriesInfo(name ?? "", code) {Dirty = true};
+            series[code] = new SeriesInfo(name ?? "", code) {Dirty = true, languageId = langId};
         }
 
         public bool EnsureUpdated(int code, bool bannersToo)
@@ -1838,7 +1870,7 @@ namespace TVRename
 
                     SeriesInfo si = new SeriesInfo(seriesResponse, languageId);
                     if (series.ContainsKey(si.TvdbCode))
-                        series[si.TvdbCode].Merge(si, languageId);
+                        series[si.TvdbCode].Merge(si, series[si.TvdbCode].languageId);
                     else
                         series[si.TvdbCode] = si;
                 }

@@ -20,7 +20,7 @@ namespace TVRename
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
         public Dictionary<string, string> Items; // e.g. Overview, Banner, Poster, etc.
-        private int languageId;
+        public int languageId;
         public string Name;
         public bool BannersLoaded;
 
@@ -176,7 +176,10 @@ namespace TVRename
 
             bool currentLanguageNotSet = o.languageId == -1;
             bool newLanguageBetter = o.languageId == preferredLanguageId && languageId != preferredLanguageId;
-            bool betterLanguage = currentLanguageNotSet || newLanguageBetter;
+            // bool betterLanguage = currentLanguageNotSet || newLanguageBetter;
+
+            // we make sure other language is not set or is really better than ours
+            bool betterLanguage = !currentLanguageNotSet;
 
             SrvLastUpdated = o.SrvLastUpdated;
 
