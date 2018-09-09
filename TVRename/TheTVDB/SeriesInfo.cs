@@ -262,7 +262,7 @@ namespace TVRename
                     if (r.Name == "id")
                         TvdbCode = r.ReadElementContentAsInt();
                     else if (r.Name == "SeriesName")
-                        Name = XmlHelper.ReadStringFixQuotesAndSpaces(r);
+                        Name = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r));
                     else if (r.Name == "lastupdated")
                         SrvLastUpdated = r.ReadElementContentAsLong();
                     else if ((r.Name == "Language") || (r.Name == "language"))
@@ -375,6 +375,8 @@ namespace TVRename
             {
                 if (seriesItems.Name == "aliases") Items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
                 else if (seriesItems.Name == "genre") Items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
+                else if (seriesItems.Name == "overview")
+                    Items[seriesItems.Name] = System.Web.HttpUtility.HtmlDecode((string)seriesItems.Value);
                 else try
                     {
                         if (seriesItems.Value != null) Items[seriesItems.Name] = (string)seriesItems.Value;
@@ -431,14 +433,12 @@ namespace TVRename
 
             if ((string.IsNullOrWhiteSpace(Name) && ((string)backupLanguageR["seriesName"] != null)) ){
                 Name = (string)backupLanguageR["seriesName"];
-                Items["seriesName"] = Name;
+                Items["seriesName"] = System.Web.HttpUtility.HtmlDecode(Name);
             }
 
             if ((string.IsNullOrWhiteSpace(Items["overview"]) && ((string)backupLanguageR["overview"] != null)) ){
-                Items["overview"] = (string)backupLanguageR["overview"];
+                Items["overview"] = System.Web.HttpUtility.HtmlDecode((string)backupLanguageR["overview"]);
             }
-
-            Items["overview"] = System.Web.HttpUtility.HtmlDecode(Items["overview"]);
 
             //Looking at the data then the aliases, banner and runtime are also different by language
 
@@ -451,6 +451,7 @@ namespace TVRename
             {
                 Items["runtime"] = (string)backupLanguageR["runtime"];
             }
+
             if ((string.IsNullOrWhiteSpace(Items["banner"])))
             {
                 Items["banner"] = (string)backupLanguageR["banner"];
