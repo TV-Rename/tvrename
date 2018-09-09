@@ -188,7 +188,7 @@ namespace TVRename
                     else if (r.Name == "lastupdated")
                         SrvLastUpdated = r.ReadElementContentAsLong();
                     else if (r.Name == "Overview")
-                        Overview = XmlHelper.ReadStringFixQuotesAndSpaces(r);
+                        Overview = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r));
                     else if (r.Name == "Rating")
                         EpisodeRating = XmlHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "GuestStars")
@@ -198,7 +198,7 @@ namespace TVRename
                     else if (r.Name == "Writer")
                         Writer = XmlHelper.ReadStringFixQuotesAndSpaces(r);
                     else if (r.Name == "EpisodeName")
-                        Name = XmlHelper.ReadStringFixQuotesAndSpaces(r);
+                        Name = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r));
                     else if (r.Name == "FirstAired")
                     {
                         try
@@ -291,17 +291,15 @@ namespace TVRename
             if ((string.IsNullOrWhiteSpace((string) bestLanguageR["episodeName"]) &&
                  ((string) backupLanguageR["episodeName"] != null)))
             {
-                Name = (string) backupLanguageR["episodeName"];
+                Name = System.Web.HttpUtility.HtmlDecode((string) backupLanguageR["episodeName"]);
                 items["episodeName"] = Name;
             }
 
             if ((string.IsNullOrWhiteSpace(items["overview"]) && ((string) backupLanguageR["overview"] != null)))
             {
-                items["overview"] = (string) backupLanguageR["overview"];
-                Overview = (string) backupLanguageR["overview"];
+                Overview = System.Web.HttpUtility.HtmlDecode((string)backupLanguageR["overview"]);
+                items["overview"] = Overview;
             }
-
-            items["overview"] = System.Web.HttpUtility.HtmlDecode(items["overview"]);
         }
 
         private void LoadJson(int seriesId, JObject r)
@@ -417,7 +415,7 @@ namespace TVRename
                 if (string.IsNullOrEmpty(mName))
                     return "Aired Episode " + AiredEpNum;
 
-                return System.Web.HttpUtility.HtmlDecode(mName);
+                return mName;
             }
             set => mName = System.Web.HttpUtility.HtmlDecode(value);
         }

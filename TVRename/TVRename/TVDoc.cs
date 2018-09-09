@@ -1772,8 +1772,8 @@ namespace TVRename
                                 {
                                     // then add it as officially missing
                                     TheActionList.Add(new ItemMissing(dbep, folder,
-                                        System.Web.HttpUtility.HtmlDecode(TVSettings.Instance.FilenameFriendly(
-                                            TVSettings.Instance.NamingStyle.NameFor(dbep, null, folder.Length)))));
+                                        TVSettings.Instance.FilenameFriendly(
+                                            TVSettings.Instance.NamingStyle.NameFor(dbep, null, folder.Length))));
                                 }
                             }
                             else
