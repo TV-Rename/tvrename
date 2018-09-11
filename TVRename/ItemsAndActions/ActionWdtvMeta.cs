@@ -148,6 +148,12 @@ namespace TVRename
                         writer.WriteEndElement(); // actor
                     }
 
+                    // guest stars...
+                    foreach(string guest in Episode.GuestStars)
+                    {
+                        XmlHelper.WriteElementToXml(writer, "guest", guest);
+                    }
+
                     XmlHelper.WriteElementToXml(writer, "thumbnail", TheTVDB.GetImageURL(Episode.Filename));
                     XmlHelper.WriteElementToXml(writer, "banner", TheTVDB.GetImageURL(Episode.AppropriateSeason.GetWideBannerPath()));
                     XmlHelper.WriteElementToXml(writer, "backdrop", TheTVDB.GetImageURL(Episode.TheSeries.GetSeriesFanartPath()));
