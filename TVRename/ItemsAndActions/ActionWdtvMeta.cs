@@ -129,8 +129,15 @@ namespace TVRename
                     XmlHelper.WriteElementToXml(writer, "studio", Episode.TheSeries.GetNetwork());
                     XmlHelper.WriteElementToXml(writer, "plot", Episode.TheSeries.GetOverview());
                     XmlHelper.WriteElementToXml(writer, "overview", Episode.Overview);
-                    XmlHelper.WriteElementToXml(writer, "directors", string.Join(",", Episode.Directors));
-                    XmlHelper.WriteElementToXml(writer, "writers", string.Join(",", Episode.Writers));
+                    foreach (string director in Episode.Directors)
+                    {
+                        XmlHelper.WriteElementToXml(writer, "directors", director);
+                    }
+
+                    foreach(string epwriter in Episode.Writers)
+                    {
+                        XmlHelper.WriteElementToXml(writer, "writers", epwriter);
+                    }
 
                     foreach (string genre in Episode.TheSeries.GetGenres())
                     {
