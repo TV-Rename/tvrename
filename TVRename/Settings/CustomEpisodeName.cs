@@ -188,7 +188,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
             name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
-            if (pe.AppropriateSeason.Episodes.Count > 100)
+            if (pe.AppropriateSeason.Episodes.Count >= 100)
             {
                 name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString("000"));
                 name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString("000"));
