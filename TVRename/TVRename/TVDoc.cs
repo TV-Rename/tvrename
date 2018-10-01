@@ -1366,8 +1366,10 @@ namespace TVRename
                             if (newName != actualFile.Name) 
                             {
                                 //Check that the file does not already exist
-                                if (newFile.Exists)
-                                {
+                                //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
+                                if (FileHelper.FileExistsCaseSensitive(files,newFile))
+
+                                    {
                                     Logger.Warn($"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
                                 }
                                 else
