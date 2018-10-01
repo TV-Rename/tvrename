@@ -152,7 +152,7 @@ namespace TVRename
                 if (IsShowLevel)
                 {
                     ShowItem.ShowAirStatus status =
-                        (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), Status);
+                        (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), Status,true);
                     switch (status)
                     {
                         case ShowItem.ShowAirStatus.aired:
