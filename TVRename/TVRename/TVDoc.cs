@@ -1349,29 +1349,38 @@ namespace TVRename
 
                         if (renCheck && TVSettings.Instance.FileHasUsefulExtension( fi, true, out string otherExtension)) // == RENAMING CHECK ==
                         {
-                            string newname = TVSettings.Instance.FilenameFriendly(
+                            string newName = TVSettings.Instance.FilenameFriendly(
                                 TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
                                 fi.IsLanguageSpecificSubtitle(out string subtitleExtension) &&
-                                actualFile.Name!=newname)
+                                actualFile.Name!= newName)
                             {
-                                newname = TVSettings.Instance.FilenameFriendly(
+                                newName = TVSettings.Instance.FilenameFriendly(
                                     TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension,
                                         folder.Length));
                             }
 
-                            if (newname != actualFile.Name)
+                            FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
+
+                            if (newName != actualFile.Name) 
                             {
-                                actualFile = FileHelper.FileInFolder(folder, newname); // rename updates the filename
-                                TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
-                                    actualFile, ep, null, null));
+                                //Check that the file does not already exist
+                                if (newFile.Exists)
+                                {
+                                    Logger.Warn($"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
+                                }
+                                else
+                                {
+                                    TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
+                                        newFile, ep, null, null));
 
-                                //The following section informs the DownloadIdentifers that we already plan to
-                                //copy a file inthe appropriate place and they do not need to worry about downloading 
-                                //one for that purpse
+                                    //The following section informs the DownloadIdentifers that we already plan to
+                                    //copy a file inthe appropriate place and they do not need to worry about downloading 
+                                    //one for that purpse
 
-                                downloadIdentifiers.NotifyComplete(actualFile);
+                                    downloadIdentifiers.NotifyComplete(newFile);
+                                }
                             }
                         }
 
