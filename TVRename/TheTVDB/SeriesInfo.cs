@@ -441,7 +441,7 @@ namespace TVRename
             }
 
             //Looking at the data then the aliases, banner and runtime are also different by language
-
+            
             if ((string.IsNullOrWhiteSpace(Items["aliases"])))
             {
                 Items["aliases"] = JsonHelper.Flatten(backupLanguageR["aliases"], "|");

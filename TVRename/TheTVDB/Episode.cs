@@ -360,9 +360,9 @@ namespace TVRename
                 else if (!int.TryParse(dvdEpNumString, out DvdEpNum)) DvdEpNum = 0;
 
                 SrvLastUpdated = (long) r["lastUpdated"];
-                Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"]);
+                Overview = System.Web.HttpUtility.HtmlDecode((string) r["overview"]);
                 EpisodeRating = (string) r["siteRating"];
-                Name = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
+                Name = System.Web.HttpUtility.HtmlDecode((string) r["episodeName"]);
 
                 string sn = (string) r["airedSeason"];
                 if (sn == null)
