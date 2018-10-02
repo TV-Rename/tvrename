@@ -939,7 +939,7 @@ namespace TVRename
             //for each directory in settings directory
             //for each file in directory
             //for each saved show (order by recent)
-            //is file aready availabele? 
+            //is file already available? 
             //if so add show to list of files to be removed
 
             DirFilesCache dfc = new DirFilesCache();
@@ -1045,7 +1045,7 @@ namespace TVRename
         {
             if (FindSeasEp(fi, out int seasF, out int epF, out _, si, out _))
             {
-                return EpisodeNeeded(si, dfc, seasF, epF);
+                return EpisodeNeeded(si, dfc, seasF, epF,fi);
             }
 
             //We may need the file
@@ -1056,14 +1056,14 @@ namespace TVRename
         {
             if (FindSeasEp(di, out int seasF, out int epF, si, out _))
             {
-                return EpisodeNeeded(si, dfc, seasF, epF);
+                return EpisodeNeeded(si, dfc, seasF, epF,di);
             }
 
             //We may need the file
             return true;
         }
 
-        private static bool EpisodeNeeded(ShowItem si, DirFilesCache dfc, int seasF, int epF)
+        private static bool EpisodeNeeded(ShowItem si, DirFilesCache dfc, int seasF, int epF,FileSystemInfo fi)
         {
             try
             {
@@ -1071,8 +1071,12 @@ namespace TVRename
                 Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
                 ProcessedEpisode pep = new ProcessedEpisode(ep, si);
 
-                if (FindEpOnDisk(dfc, si, pep).Count > 0)
+                foreach (FileInfo testFileInfo in FindEpOnDisk(dfc, si, pep))
                 {
+                    //We will check that the file that is found is not the one we are testing
+                    if (fi.FullName == testFileInfo.FullName) continue;
+
+                    //We have found another file that matches
                     return false;
                 }
             }
@@ -1345,29 +1349,40 @@ namespace TVRename
 
                         if (renCheck && TVSettings.Instance.FileHasUsefulExtension( fi, true, out string otherExtension)) // == RENAMING CHECK ==
                         {
-                            string newname = TVSettings.Instance.FilenameFriendly(
+                            string newName = TVSettings.Instance.FilenameFriendly(
                                 TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
                                 fi.IsLanguageSpecificSubtitle(out string subtitleExtension) &&
-                                actualFile.Name!=newname)
+                                actualFile.Name!= newName)
                             {
-                                newname = TVSettings.Instance.FilenameFriendly(
+                                newName = TVSettings.Instance.FilenameFriendly(
                                     TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension,
                                         folder.Length));
                             }
 
-                            if (newname != actualFile.Name)
+                            FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
+
+                            if (newName != actualFile.Name) 
                             {
-                                actualFile = FileHelper.FileInFolder(folder, newname); // rename updates the filename
-                                TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
-                                    actualFile, ep, null, null));
+                                //Check that the file does not already exist
+                                //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
+                                if (FileHelper.FileExistsCaseSensitive(files,newFile))
 
-                                //The following section informs the DownloadIdentifers that we already plan to
-                                //copy a file inthe appropriate place and they do not need to worry about downloading 
-                                //one for that purpse
+                                    {
+                                    Logger.Warn($"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
+                                }
+                                else
+                                {
+                                    TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
+                                        newFile, ep, null, null));
 
-                                downloadIdentifiers.NotifyComplete(actualFile);
+                                    //The following section informs the DownloadIdentifers that we already plan to
+                                    //copy a file inthe appropriate place and they do not need to worry about downloading 
+                                    //one for that purpse
+
+                                    downloadIdentifiers.NotifyComplete(newFile);
+                                }
                             }
                         }
 

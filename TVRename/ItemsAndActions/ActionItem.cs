@@ -6,6 +6,8 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Collections.Generic;
+
 namespace TVRename
 {
     using System;
@@ -291,6 +293,8 @@ namespace TVRename
                 Add(sli);
             }
         }
+
+        public IEnumerable<Action> Actions( ) => this.OfType<Action>();
     }
 
     public class ActionQueue

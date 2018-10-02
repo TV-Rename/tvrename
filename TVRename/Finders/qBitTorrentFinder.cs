@@ -49,9 +49,13 @@ namespace TVRename
 
                     if (!stuff2.Children().Any())
                     {
-                        ret.Add(new TorrentEntry(torrent["name"].ToString(),
-                            settings["save_path"] + torrent["name"].ToString() +
-                            TVSettings.Instance.VideoExtensionsArray[0], 0));
+                        ret.Add(
+                            new TorrentEntry(
+                                torrent["name"].ToString()
+                                ,TVSettings.Instance.FilenameFriendly(settings["save_path"] + torrent["name"].ToString()) + TVSettings.Instance.VideoExtensionsArray[0]
+                                , 0
+                                )
+                            );
                     }
                 }
             }

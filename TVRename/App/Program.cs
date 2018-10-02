@@ -53,7 +53,6 @@ namespace TVRename.App
             if (!newInstance)
             {
                 // Already running
-
                 Logger.Warn("An instance is already running");
 
                 // Create an IPC channel to the existing instance
@@ -90,10 +89,8 @@ namespace TVRename.App
                 }
 
                 // TODO: Unify command line handling between here and in UI.cs (ProcessArgs). Just send in clargs via IPC?
-
                 
                 if (clargs.Scan) ipc.Scan();
-
                 if (clargs.QuickScan) ipc.QuickScan();
                 if (clargs.RecentScan) ipc.RecentScan();
 

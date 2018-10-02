@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.WindowsAPICodePack.Shell;
@@ -40,6 +41,14 @@ namespace TVRename
             return (3600 * int.Parse(duration.Split(':')[0]))
                    + (60 * int.Parse(duration.Split(':')[1]))
                    + int.Parse(duration.Split(':')[2]);
+        }
+
+        public static bool FileExistsCaseSensitive(string filename)
+        {
+            string name = Path.GetDirectoryName(filename);
+
+            return name != null
+                   && Array.Exists(Directory.GetFiles(name), s => s == Path.GetFullPath(filename));
         }
 
         public static bool SameDirectoryLocation(this string directoryPath1, string directoryPath2)
@@ -208,6 +217,11 @@ namespace TVRename
             if (fi.Name.StartsWith("-.") && (fi.Length / 1024 < 10)) return true;
 
             return false;
+        }
+
+        internal static bool FileExistsCaseSensitive(FileInfo[] files, FileInfo newFile)
+        {
+            return files.Any(testFile => string.Equals(testFile.Name, newFile.Name, StringComparison.CurrentCulture));
         }
     }
 }
