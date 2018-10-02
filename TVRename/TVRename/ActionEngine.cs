@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -94,10 +95,15 @@ namespace TVRename
         /// <param name="showUI">Whether or not we should display a UI to inform the user about progress.</param>
         public void DoActions(ItemList theList, bool showUI)
         {
-            logger.Info("**********************");
-            logger.Info("Doing Selected Actions....");
             if (theList == null)
+            {
+                logger.Info($"Asked to do actions, but none provided....");
                 return;
+            }
+                
+
+            logger.Info("**********************");
+            logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions().Count()} actions to be completed )");
 
             // Run tasks in parallel (as much as is sensible)
 
@@ -124,13 +130,9 @@ namespace TVRename
 
             theList.RemoveAll(x => (x is Action action) && action.Done && !action.Error);
 
-            foreach (Item sli in theList)
+            foreach (Action slia in theList.Actions())
             {
-                if (sli is Action slia)
-                {
-                    logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name,
-                        slia.ToString(), slia.ErrorText);
-                }
+                logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name, slia.ToString(), slia.ErrorText);
             }
 
             logger.Info("Completed Selected Actions");
