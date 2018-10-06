@@ -1382,6 +1382,7 @@ namespace TVRename
                                     //one for that purpse
 
                                     downloadIdentifiers.NotifyComplete(newFile);
+                                    localEps[epNum] = newFile;
                                 }
                             }
                         }
@@ -1390,7 +1391,8 @@ namespace TVRename
                         ) // == MISSING CHECK part 1/2 ==
                         {
                             // first pass of missing check is to tally up the episodes we do have
-                            localEps[epNum] = actualFile;
+                            if (localEps[epNum] is null) localEps[epNum] = actualFile;
+
                             if (epNum > maxEpNumFound)
                                 maxEpNumFound = epNum;
                         }
