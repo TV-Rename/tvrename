@@ -3586,5 +3586,11 @@ namespace TVRename
         {
 
         }
+
+        private void logToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmLogging form = new frmLogging();
+            form.Show();
+        }
     }
 }

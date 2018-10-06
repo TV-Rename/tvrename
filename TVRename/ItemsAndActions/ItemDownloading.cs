@@ -32,21 +32,14 @@ namespace TVRename
 
         public override string ScanListViewGroup => "lvgDownloading";
 
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem { Text = Episode.Show.ShowName };
-                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(Episode.NumsAsString());
-                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                lvi.SubItems.Add(FileIdentifier);
-                lvi.SubItems.Add(Destination);
-                lvi.SubItems.Add(Remaining);
-                lvi.Tag = this;
-                return lvi;
-            }
-        }
+
+        protected override string SeriesName => Episode.Show.ShowName;
+        protected override string SeasonNumber => Episode.AppropriateSeasonNumber.ToString();
+        protected override string EpisodeNumber => Episode.NumsAsString();
+        protected override string AirDate => Episode.GetAirDateDT(true).PrettyPrint();
+        protected override string DestinationFolder => FileIdentifier;
+        protected override string DestinationFile => Destination;
+        protected override string SourceDetails => Remaining;
 
         public override string TargetFolder
         {

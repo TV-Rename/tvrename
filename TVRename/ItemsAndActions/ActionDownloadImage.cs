@@ -167,44 +167,19 @@ namespace TVRename
         public override int IconNumber => 5;
 
         public override IgnoreItem Ignore => GenerateIgnore(Destination?.FullName);
-        
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {
-                                                        Text = (Episode != null) ? Episode.Show.ShowName : ((SI != null) ? SI.ShowName : "")
-                                                    };
 
-                lvi.SubItems.Add(Episode?.AppropriateSeasonNumber.ToString() ?? "");
-                lvi.SubItems.Add(Episode?.NumsAsString() ?? "");
-                lvi.SubItems.Add(Episode != null ? Episode.GetAirDateDT(true).PrettyPrint() : "");
-                lvi.SubItems.Add(Destination.DirectoryName);
-                lvi.SubItems.Add(Path);
+        protected override string SeriesName =>
+            (Episode != null) ? Episode.Show.ShowName : ((SI != null) ? SI.ShowName : "");
 
-                if (string.IsNullOrEmpty(Path))
-                    lvi.BackColor = Helpers.WarningColor();
-
-                lvi.SubItems.Add(Destination.Name);
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
-
+        protected override string SeasonNumber => Episode?.AppropriateSeasonNumber.ToString() ?? "";
+        protected override string EpisodeNumber => Episode?.NumsAsString() ?? "";
+        protected override string AirDate => Episode != null ? Episode.GetAirDateDT(true).PrettyPrint() : "";
+        protected override string DestinationFolder => TargetFolder;
+        protected override string DestinationFile => Destination.Name;
+        protected override string SourceDetails => Path;
+        protected override bool InError => string.IsNullOrEmpty(Path);
         public override string ScanListViewGroup => "lvgActionDownload";
-
-        public override string TargetFolder
-        {
-            get
-            {
-                if (Destination == null)
-                    return null;
-                return Destination.DirectoryName;
-            }
-        }
-
+        public override string TargetFolder => Destination == null ? null : Destination.DirectoryName;
         #endregion
     }
 }
