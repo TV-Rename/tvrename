@@ -9,7 +9,6 @@ namespace TVRename
 {
     using System;
     using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
 
     public class ItemMissing : Item
     {

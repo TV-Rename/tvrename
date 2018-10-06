@@ -1,6 +1,6 @@
 namespace TVRename
 {
-    partial class frmLogging
+    partial class LogViewer
     {
         /// <summary>
         /// Required designer variable.
@@ -49,7 +49,7 @@ namespace TVRename
             this.Controls.Add(this.logData);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MinimizeBox = false;
-            this.Name = "frmLogging";
+            this.Name = "LogViewer";
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "TV Rename Log Viewer";

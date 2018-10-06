@@ -10,7 +10,6 @@ namespace TVRename
 {
     using System;
     using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
     using System.Xml;
 
     public class ActionMede8erViewXML : ActionWriteMetadata

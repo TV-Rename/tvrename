@@ -13,7 +13,6 @@ using System.Drawing.Imaging;
 namespace TVRename
 {
     using System;
-    using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using System.IO;
 

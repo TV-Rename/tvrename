@@ -153,12 +153,9 @@ namespace TVRename
             int diskValue = 0;
             string diskText = "--- GB free";
 
-            ActionCopyMoveRename activeCMAction = null;
-
-            activeCMAction = GetActiveCmAction();
+            ActionCopyMoveRename activeCMAction = GetActiveCmAction();
 
             if (activeCMAction is null) return;
-
 
             string folder = activeCMAction.TargetFolder;
             DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
@@ -185,10 +182,10 @@ namespace TVRename
                 }
             }
 
-            DirectoryInfo toUNCRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
-            if (toUNCRoot != null)
+            DirectoryInfo toUncRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
+            if (toUncRoot != null)
             {
-                FileSystemProperties driveStats = FileHelper.GetProperties(toUNCRoot.ToString());
+                FileSystemProperties driveStats = FileHelper.GetProperties(toUncRoot.ToString());
                 if (driveStats != null)
                 {
                     int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);

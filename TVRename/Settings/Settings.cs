@@ -822,7 +822,6 @@ namespace TVRename
                     }
                     reader.Read();
                 }
-
                 else
                     reader.ReadOuterXml();
             }
@@ -876,7 +875,7 @@ namespace TVRename
         public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("Settings");
-            TheSearchers.WriteXML(writer);
+            TheSearchers.WriteXml(writer);
             XmlHelper.WriteElementToXml(writer,"BGDownload",BGDownload);
             XmlHelper.WriteElementToXml(writer,"OfflineMode",OfflineMode);
             writer.WriteStartElement("Replacements");
@@ -1245,7 +1244,7 @@ namespace TVRename
 
             string url = (epi.Show.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(epi.Show.CustomSearchUrl))
                 ? epi.Show.CustomSearchUrl
-                : TheSearchers.CurrentSearchURL();
+                : TheSearchers.CurrentSearchUrl();
             return CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 
@@ -1285,7 +1284,6 @@ namespace TVRename
                 case KeepTogetherModes.All: return true;
                 case KeepTogetherModes.Just: return keepTogetherExtensionsArray.Contains(fileExtension);
                 case KeepTogetherModes.AllBut: return !keepTogetherExtensionsArray.Contains(fileExtension);
-
             }
             return true;
         }

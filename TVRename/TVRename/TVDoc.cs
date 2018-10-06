@@ -502,7 +502,6 @@ namespace TVRename
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in ScanWorker");
-
             }
             finally
             {
@@ -1368,8 +1367,7 @@ namespace TVRename
                                 //Check that the file does not already exist
                                 //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
                                 if (FileHelper.FileExistsCaseSensitive(files,newFile))
-
-                                    {
+                                {
                                     Logger.Warn($"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
                                 }
                                 else

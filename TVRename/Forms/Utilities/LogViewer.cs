@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using NLog;
 using NLog.Config;
@@ -7,9 +6,9 @@ using NLog.Windows.Forms;
 
 namespace TVRename
 {
-    public partial class frmLogging : Form
+    public partial class LogViewer : Form
     {
-        public frmLogging()
+        public LogViewer()
         {
             InitializeComponent();
         }
@@ -21,7 +20,7 @@ namespace TVRename
                 Name ="UI Target",
                 Layout = "${date:format=HH\\:MM\\:ss} ${level:uppercase=true} ${message}",
                 ControlName = "logData",
-                FormName = "frmLogging",
+                FormName = "LogViewer",
                 AutoScroll = true,
                 ToolWindow=true,
                 UseDefaultRowColoringRules = true,

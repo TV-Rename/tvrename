@@ -1,4 +1,3 @@
-// public override IgnoreItem Ignore
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -9,7 +8,6 @@ namespace TVRename
 {
     using System;
     using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
 
     // ReSharper disable once InconsistentNaming
     public class ActionRSS : ActionDownload
