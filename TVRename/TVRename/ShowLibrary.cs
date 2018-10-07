@@ -502,7 +502,7 @@ namespace TVRename
             return root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
         }
 
-        public static void Renumber(List<ProcessedEpisode> eis)
+        private static void Renumber(List<ProcessedEpisode> eis)
         {
             if (eis.Count == 0)
                 return; // nothing to do
@@ -592,13 +592,16 @@ namespace TVRename
                             if ((airdt == null) || (airdt == DateTime.MaxValue))
                                 continue;
 
-                            DateTime dt = (DateTime) airdt;
+                            DateTime dt = airdt.Value;
+
+                            TimeSpan timeUntil = dt.Subtract(DateTime.Now);
+                            if (timeUntil.TotalDays > nDaysFuture) continue; //episode is too far in the future
 
                             TimeSpan ts = dt.Subtract(notBefore);
-                            TimeSpan timeUntil = dt.Subtract(DateTime.Now);
-                            if (((howClose == TimeSpan.MaxValue) ||
-                                 (ts.CompareTo(howClose) <= 0) && (ts.TotalHours >= 0)) && (ts.TotalHours >= 0) &&
-                                (timeUntil.TotalDays <= nDaysFuture))
+                            if (ts.TotalSeconds<0) continue; //episode is too far in the past
+
+                            //if we have a closer match
+                            if (TimeSpan.Compare(ts,howClose)<0)
                             {
                                 howClose = ts;
                                 nextAfterThat = ei;

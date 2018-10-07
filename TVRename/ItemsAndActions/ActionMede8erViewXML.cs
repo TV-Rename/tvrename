@@ -10,7 +10,6 @@ namespace TVRename
 {
     using System;
     using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
     using System.Xml;
 
     public class ActionMede8erViewXML : ActionWriteMetadata
@@ -82,23 +81,13 @@ namespace TVRename
 
         #region Item Members
 
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {Text = SelectedShow.ShowName};
-
-                lvi.SubItems.Add(snum > 0 ? snum.ToString() : "");
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add("");
-                lvi.SubItems.Add(Where.DirectoryName);
-                lvi.SubItems.Add(Where.Name);
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
+        protected override string SeriesName => SelectedShow.ShowName;
+        protected override string SeasonNumber => snum > 0 ? snum.ToString() : "";
+        protected override string EpisodeNumber => string.Empty;
+        protected override string AirDate => string.Empty;
+        protected override string DestinationFolder => Where.DirectoryName;
+        protected override string DestinationFile => Where.Name;
+        protected override string SourceDetails => string.Empty;
 
         #endregion
     }

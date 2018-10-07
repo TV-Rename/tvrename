@@ -76,7 +76,6 @@ namespace TVRename
             this.label6 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbGeneral = new System.Windows.Forms.TabPage();
-            this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.chkHideWtWSpoilers = new System.Windows.Forms.CheckBox();
             this.chkHideMyShowsSpoilers = new System.Windows.Forms.CheckBox();
             this.label37 = new System.Windows.Forms.Label();
@@ -267,7 +266,6 @@ namespace TVRename
             this.pyTivoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mede8erToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.noneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cbDeleteShowFromDisk = new System.Windows.Forms.CheckBox();
             this.groupBox2.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbGeneral.SuspendLayout();
@@ -297,7 +295,7 @@ namespace TVRename
             // OKButton
             // 
             this.OKButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.OKButton.Location = new System.Drawing.Point(369, 554);
+            this.OKButton.Location = new System.Drawing.Point(369, 551);
             this.OKButton.Name = "OKButton";
             this.OKButton.Size = new System.Drawing.Size(75, 23);
             this.OKButton.TabIndex = 0;
@@ -309,7 +307,7 @@ namespace TVRename
             // 
             this.bnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.bnCancel.Location = new System.Drawing.Point(450, 554);
+            this.bnCancel.Location = new System.Drawing.Point(450, 551);
             this.bnCancel.Name = "bnCancel";
             this.bnCancel.Size = new System.Drawing.Size(75, 23);
             this.bnCancel.TabIndex = 1;
@@ -551,7 +549,7 @@ namespace TVRename
             // cbShowEpisodePictures
             // 
             this.cbShowEpisodePictures.AutoSize = true;
-            this.cbShowEpisodePictures.Location = new System.Drawing.Point(9, 159);
+            this.cbShowEpisodePictures.Location = new System.Drawing.Point(9, 138);
             this.cbShowEpisodePictures.Name = "cbShowEpisodePictures";
             this.cbShowEpisodePictures.Size = new System.Drawing.Size(218, 17);
             this.cbShowEpisodePictures.TabIndex = 10;
@@ -582,7 +580,7 @@ namespace TVRename
             // chkShowInTaskbar
             // 
             this.chkShowInTaskbar.AutoSize = true;
-            this.chkShowInTaskbar.Location = new System.Drawing.Point(169, 136);
+            this.chkShowInTaskbar.Location = new System.Drawing.Point(169, 115);
             this.chkShowInTaskbar.Name = "chkShowInTaskbar";
             this.chkShowInTaskbar.Size = new System.Drawing.Size(102, 17);
             this.chkShowInTaskbar.TabIndex = 9;
@@ -593,7 +591,7 @@ namespace TVRename
             // cbNotificationIcon
             // 
             this.cbNotificationIcon.AutoSize = true;
-            this.cbNotificationIcon.Location = new System.Drawing.Point(9, 136);
+            this.cbNotificationIcon.Location = new System.Drawing.Point(9, 115);
             this.cbNotificationIcon.Name = "cbNotificationIcon";
             this.cbNotificationIcon.Size = new System.Drawing.Size(154, 17);
             this.cbNotificationIcon.TabIndex = 8;
@@ -665,12 +663,11 @@ namespace TVRename
             this.tabControl1.Multiline = true;
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(517, 536);
+            this.tabControl1.Size = new System.Drawing.Size(517, 533);
             this.tabControl1.TabIndex = 0;
             // 
             // tbGeneral
             // 
-            this.tbGeneral.Controls.Add(this.cbShowCollections);
             this.tbGeneral.Controls.Add(this.chkHideWtWSpoilers);
             this.tbGeneral.Controls.Add(this.chkHideMyShowsSpoilers);
             this.tbGeneral.Controls.Add(this.label37);
@@ -698,25 +695,15 @@ namespace TVRename
             this.tbGeneral.Location = new System.Drawing.Point(4, 40);
             this.tbGeneral.Name = "tbGeneral";
             this.tbGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tbGeneral.Size = new System.Drawing.Size(509, 492);
+            this.tbGeneral.Size = new System.Drawing.Size(509, 489);
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
             // 
-            // cbShowCollections
-            // 
-            this.cbShowCollections.AutoSize = true;
-            this.cbShowCollections.Location = new System.Drawing.Point(9, 115);
-            this.cbShowCollections.Name = "cbShowCollections";
-            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
-            this.cbShowCollections.TabIndex = 2;
-            this.cbShowCollections.Text = "Multiple Show collections";
-            this.cbShowCollections.UseVisualStyleBackColor = true;
-            // 
             // chkHideWtWSpoilers
             // 
             this.chkHideWtWSpoilers.AutoSize = true;
-            this.chkHideWtWSpoilers.Location = new System.Drawing.Point(9, 205);
+            this.chkHideWtWSpoilers.Location = new System.Drawing.Point(9, 184);
             this.chkHideWtWSpoilers.Name = "chkHideWtWSpoilers";
             this.chkHideWtWSpoilers.Size = new System.Drawing.Size(182, 17);
             this.chkHideWtWSpoilers.TabIndex = 24;
@@ -726,7 +713,7 @@ namespace TVRename
             // chkHideMyShowsSpoilers
             // 
             this.chkHideMyShowsSpoilers.AutoSize = true;
-            this.chkHideMyShowsSpoilers.Location = new System.Drawing.Point(9, 182);
+            this.chkHideMyShowsSpoilers.Location = new System.Drawing.Point(9, 161);
             this.chkHideMyShowsSpoilers.Name = "chkHideMyShowsSpoilers";
             this.chkHideMyShowsSpoilers.Size = new System.Drawing.Size(151, 17);
             this.chkHideMyShowsSpoilers.TabIndex = 23;
@@ -736,7 +723,7 @@ namespace TVRename
             // label37
             // 
             this.label37.AutoSize = true;
-            this.label37.Location = new System.Drawing.Point(6, 250);
+            this.label37.Location = new System.Drawing.Point(6, 229);
             this.label37.Name = "label37";
             this.label37.Size = new System.Drawing.Size(114, 13);
             this.label37.TabIndex = 20;
@@ -745,7 +732,7 @@ namespace TVRename
             // label38
             // 
             this.label38.AutoSize = true;
-            this.label38.Location = new System.Drawing.Point(158, 250);
+            this.label38.Location = new System.Drawing.Point(158, 229);
             this.label38.Name = "label38";
             this.label38.Size = new System.Drawing.Size(132, 13);
             this.label38.TabIndex = 22;
@@ -753,7 +740,7 @@ namespace TVRename
             // 
             // tbPercentDirty
             // 
-            this.tbPercentDirty.Location = new System.Drawing.Point(123, 247);
+            this.tbPercentDirty.Location = new System.Drawing.Point(123, 226);
             this.tbPercentDirty.Name = "tbPercentDirty";
             this.tbPercentDirty.Size = new System.Drawing.Size(28, 20);
             this.tbPercentDirty.TabIndex = 21;
@@ -765,7 +752,7 @@ namespace TVRename
             this.cbMode.Items.AddRange(new object[] {
             "Beta",
             "Production"});
-            this.cbMode.Location = new System.Drawing.Point(112, 341);
+            this.cbMode.Location = new System.Drawing.Point(112, 320);
             this.cbMode.Name = "cbMode";
             this.cbMode.Size = new System.Drawing.Size(146, 21);
             this.cbMode.Sorted = true;
@@ -774,7 +761,7 @@ namespace TVRename
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(6, 344);
+            this.label34.Location = new System.Drawing.Point(6, 323);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(37, 13);
             this.label34.TabIndex = 18;
@@ -805,7 +792,7 @@ namespace TVRename
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 320);
+            this.label10.Location = new System.Drawing.Point(6, 299);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(100, 13);
             this.label10.TabIndex = 16;
@@ -814,7 +801,7 @@ namespace TVRename
             // cbLookForAirdate
             // 
             this.cbLookForAirdate.AutoSize = true;
-            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 296);
+            this.cbLookForAirdate.Location = new System.Drawing.Point(9, 275);
             this.cbLookForAirdate.Name = "cbLookForAirdate";
             this.cbLookForAirdate.Size = new System.Drawing.Size(158, 17);
             this.cbLookForAirdate.TabIndex = 15;
@@ -829,7 +816,7 @@ namespace TVRename
             "My Shows",
             "Scan",
             "When to Watch"});
-            this.cbLanguages.Location = new System.Drawing.Point(112, 317);
+            this.cbLanguages.Location = new System.Drawing.Point(112, 296);
             this.cbLanguages.Name = "cbLanguages";
             this.cbLanguages.Size = new System.Drawing.Size(146, 21);
             this.cbLanguages.Sorted = true;
@@ -838,7 +825,7 @@ namespace TVRename
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(6, 226);
+            this.label21.Location = new System.Drawing.Point(6, 205);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(82, 13);
             this.label21.TabIndex = 11;
@@ -847,7 +834,7 @@ namespace TVRename
             // cbAutoSelInMyShows
             // 
             this.cbAutoSelInMyShows.AutoSize = true;
-            this.cbAutoSelInMyShows.Location = new System.Drawing.Point(9, 273);
+            this.cbAutoSelInMyShows.Location = new System.Drawing.Point(9, 252);
             this.cbAutoSelInMyShows.Name = "cbAutoSelInMyShows";
             this.cbAutoSelInMyShows.Size = new System.Drawing.Size(268, 17);
             this.cbAutoSelInMyShows.TabIndex = 14;
@@ -866,7 +853,7 @@ namespace TVRename
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(126, 226);
+            this.label20.Location = new System.Drawing.Point(126, 205);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(170, 13);
             this.label20.TabIndex = 13;
@@ -874,7 +861,7 @@ namespace TVRename
             // 
             // txtParallelDownloads
             // 
-            this.txtParallelDownloads.Location = new System.Drawing.Point(92, 223);
+            this.txtParallelDownloads.Location = new System.Drawing.Point(92, 202);
             this.txtParallelDownloads.Name = "txtParallelDownloads";
             this.txtParallelDownloads.Size = new System.Drawing.Size(28, 20);
             this.txtParallelDownloads.TabIndex = 12;
@@ -1556,7 +1543,6 @@ namespace TVRename
             // 
             // tbFolderDeleting
             // 
-            this.tbFolderDeleting.Controls.Add(this.cbDeleteShowFromDisk);
             this.tbFolderDeleting.Controls.Add(this.cbCleanUpDownloadDir);
             this.tbFolderDeleting.Controls.Add(this.label32);
             this.tbFolderDeleting.Controls.Add(this.label30);
@@ -1572,7 +1558,7 @@ namespace TVRename
             this.tbFolderDeleting.Location = new System.Drawing.Point(4, 40);
             this.tbFolderDeleting.Name = "tbFolderDeleting";
             this.tbFolderDeleting.Padding = new System.Windows.Forms.Padding(3);
-            this.tbFolderDeleting.Size = new System.Drawing.Size(509, 492);
+            this.tbFolderDeleting.Size = new System.Drawing.Size(509, 489);
             this.tbFolderDeleting.TabIndex = 9;
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
@@ -2747,23 +2733,13 @@ namespace TVRename
             this.noneToolStripMenuItem.Tag = "4";
             this.noneToolStripMenuItem.Text = "&None";
             // 
-            // cbDeleteShowFromDisk
-            // 
-            this.cbDeleteShowFromDisk.AutoSize = true;
-            this.cbDeleteShowFromDisk.Location = new System.Drawing.Point(16, 267);
-            this.cbDeleteShowFromDisk.Name = "cbDeleteShowFromDisk";
-            this.cbDeleteShowFromDisk.Size = new System.Drawing.Size(269, 17);
-            this.cbDeleteShowFromDisk.TabIndex = 11;
-            this.cbDeleteShowFromDisk.Text = "Delete from disk when deleting show from database";
-            this.cbDeleteShowFromDisk.UseVisualStyleBackColor = true;
-            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(541, 579);
+            this.ClientSize = new System.Drawing.Size(541, 576);
             this.ControlBox = false;
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.bnCancel);
@@ -3067,7 +3043,5 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtSeasonFormat;
         private System.Windows.Forms.Label label47;
         private System.Windows.Forms.CheckBox cbWDLiveEpisodeFiles;
-        private System.Windows.Forms.CheckBox cbShowCollections;
-        private System.Windows.Forms.CheckBox cbDeleteShowFromDisk;
     }
 }

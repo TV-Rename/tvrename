@@ -25,21 +25,19 @@ namespace TVRename
     /// </summary>
     public partial class CustomNameDesigner : Form
     {
-        private readonly CustomEpisodeName CN;
-        private readonly List<ProcessedEpisode> Eps;
-        private TVDoc mDoc;
+        private readonly CustomEpisodeName cn;
+        private readonly List<ProcessedEpisode> eps;
 
-        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomEpisodeName cn, TVDoc doc)
+        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomEpisodeName cn)
         {
-            Eps = pel;
-            CN = cn;
-            mDoc = doc;
+            eps = pel;
+            this.cn = cn;
 
             InitializeComponent();
 
-            if (Eps == null)
+            if (eps == null)
                 lvTest.Enabled = false;
-            txtTemplate.Text = CN.StyleString;
+            txtTemplate.Text = this.cn.StyleString;
 
             FillExamples();
             FillCombos();
@@ -49,9 +47,9 @@ namespace TVRename
         {
             cbTags.Items.Clear();
             cbPresets.Items.Clear();
-            ProcessedEpisode pe = null;
+            ProcessedEpisode pe;
             if (lvTest.SelectedItems.Count == 0)
-                pe = ((Eps != null) && (Eps.Count > 0)) ? Eps[0] : null;
+                pe = ((eps != null) && (eps.Count > 0)) ? eps[0] : null;
             else
                 pe = (ProcessedEpisode) (lvTest.SelectedItems[0].Tag);
 
@@ -71,14 +69,14 @@ namespace TVRename
 
         private void FillExamples()
         {
-            if (Eps == null)
+            if (eps == null)
                 return;
 
             lvTest.Items.Clear();
-            foreach (ProcessedEpisode pe in Eps)
+            foreach (ProcessedEpisode pe in eps)
             {
                 ListViewItem lvi = new ListViewItem();
-                string fn = TVSettings.Instance.FilenameFriendly(CN.NameFor(pe));
+                string fn = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
                 lvi.Text = fn;
 
                 bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.Show);
@@ -111,7 +109,7 @@ namespace TVRename
 
         private void txtTemplate_TextChanged(object sender, System.EventArgs e)
         {
-            CN.StyleString = txtTemplate.Text;
+            cn.StyleString = txtTemplate.Text;
             FillExamples();
         }
 

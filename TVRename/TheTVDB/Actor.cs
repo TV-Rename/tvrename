@@ -1,17 +1,12 @@
-﻿// 
+// 
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
 using System.Xml;
-using System.Runtime.Serialization;
-using NLog;
 
 namespace TVRename
 {
@@ -35,7 +30,7 @@ namespace TVRename
 
         public Actor(string name)
         {
-            this.actorName = name;
+            actorName = name;
         }
         public Actor(int actorId, string actorImage, string actorName, string actorRole, int actorSeriesId, int actorSortOrder)
         {

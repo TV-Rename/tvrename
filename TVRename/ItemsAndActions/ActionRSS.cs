@@ -1,4 +1,3 @@
-// public override IgnoreItem Ignore
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -9,7 +8,6 @@ namespace TVRename
 {
     using System;
     using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
 
     // ReSharper disable once InconsistentNaming
     public class ActionRSS : ActionDownload
@@ -104,23 +102,13 @@ namespace TVRename
 
         public override IgnoreItem Ignore => GenerateIgnore(theFileNoExt);
 
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
-
-                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(Episode.NumsAsString());
-                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                lvi.SubItems.Add(theFileNoExt);
-                lvi.SubItems.Add(RSS.Title);
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
+        protected override string SeriesName => Episode.Show.ShowName;
+        protected override string SeasonNumber => Episode.AppropriateSeasonNumber.ToString();
+        protected override string EpisodeNumber => Episode.NumsAsString();
+        protected override string AirDate => Episode.GetAirDateDT(true).PrettyPrint();
+        protected override string DestinationFolder => TargetFolder;
+        protected override string DestinationFile => theFileNoExt;
+        protected override string SourceDetails => RSS.Title;
 
         public override string TargetFolder
         {
@@ -132,7 +120,7 @@ namespace TVRename
             }
         }
 
-public override string ScanListViewGroup => "lvgActionDownloadRSS";
+        public override string ScanListViewGroup => "lvgActionDownloadRSS";
 
         public override int IconNumber => 6;
 
