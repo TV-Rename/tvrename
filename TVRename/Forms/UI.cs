@@ -148,13 +148,6 @@ namespace TVRename
             }
 
             UpdateSplashStatus(splash, "Filling Shows");
-
-            if (!TVSettings.Instance.ShowCollections)
-            {
-                collToolStripMenuItem.Visible = false;
-                toolStripSeparator0.Visible = false;
-            }
-
             FillMyShows();
             UpdateSearchButtons();
             ClearInfoWindows();
@@ -168,8 +161,6 @@ namespace TVRename
             mDoc.WriteUpcoming();
             UpdateSplashStatus(splash, "Setting Notifications");
             ShowHideNotificationIcon();
-
-            BuildCollectionsMenu();
 
             int t = TVSettings.Instance.StartupTab;
             if (t < tabControl1.TabCount)
@@ -564,9 +555,7 @@ namespace TVRename
                         MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
                     if (res == DialogResult.Yes)
-                    {
-                        mDoc.WriteXMLFile(FileToHandle.Settings | FileToHandle.Shows | FileToHandle.TvDB);
-                    }
+                        mDoc.WriteXMLSettings();
                     else if (res == DialogResult.Cancel)
                         e.Cancel = true;
                     else if (res == DialogResult.No)
@@ -1468,106 +1457,6 @@ namespace TVRename
             }
         }
 
-        private void BuildCollectionsMenu ()
-        {
-            // ActualCollMenuItem
-            if (mDoc.ShowCollections.Count == 0)
-            {
-                // Setup a default collection when we come's from 2.4.x RCy
-                ShowCollection Sc = new ShowCollection("2.1");
-                Sc.Name = "Default";
-                Sc.Description = "Default collection in mono collection use";
-                mDoc.ShowCollections.Add(Sc);
-                mDoc.WriteXMLFile(FileToHandle.Collections);
-            }
-
-            ToolStripMenuItem[] CollMenu = new ToolStripMenuItem[mDoc.ShowCollections.Count];
-            int i = 0;
-            foreach (ShowCollection ShowColl in mDoc.ShowCollections)
-            {
-                CollMenu[i] = new ToolStripMenuItem();
-                CollMenu[i].Name = "CollectionMenuItem" + i.ToString();
-                CollMenu[i].Tag = ShowColl;
-                CollMenu[i].Text = ShowColl.Name;
-                CollMenu[i].ToolTipText = ShowColl.Description;
-                if (ShowColl.Path == PathManager.ShowCollection)
-                {
-                    CollMenu[i].Checked = true;
-                }
-                CollMenu[i].Click += new EventHandler(SelCollMenuItemClickHandler);
-                i++;
-            }
-
-            collToolStripMenuItem.DropDownItems.AddRange(CollMenu);
-        }
-
-        private void RemoveCollectionsMenu ()
-        {
-            int iCount = collToolStripMenuItem.DropDownItems.Count -2;
-            string MenuItemName = "";
-            for (int iCurr = 0; iCurr < iCount; iCurr++)
-            {
-                MenuItemName = "CollectionMenuItem" + iCurr.ToString();
-                collToolStripMenuItem.DropDownItems.RemoveAt(2);
-            }
-        }
-
-        private void SelCollMenuItemClickHandler(object sender, EventArgs e)
-        {
-            bool bNeedCancel = false;
-            ToolStripMenuItem clickedItem     = (ToolStripMenuItem)sender;
-            ShowCollection SelectedCollection = (ShowCollection)clickedItem.Tag;
-
-            try
-            {
-                if (mDoc.Dirty())
-                {
-                    DialogResult res = MessageBox.Show(
-                        "Your changes have not been saved.  Do you wish to save before changing show collection?", "Unsaved data",
-                        MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                    if (res == DialogResult.Yes)
-                    {
-                        mDoc.WriteXMLFile(FileToHandle.Settings | FileToHandle.Shows | FileToHandle.TvDB);
-                    }
-                    else if (res == DialogResult.Cancel)
-                        bNeedCancel = true;
-                    else if (res == DialogResult.No)
-                    {
-                        bNeedCancel = false;
-                    }
-                }
-
-                if (!bNeedCancel)
-                {
-                    ToolStripItemCollection TSMIC = collToolStripMenuItem.DropDownItems;
-                    ToolStripMenuItem TsM;
-                    foreach (ToolStripItem TsI in TSMIC)
-                    {
-                        try
-                        {
-                            TsM = (ToolStripMenuItem)TsI;
-                            TsM.Checked = false;
-                        }
-                        catch (Exception)
-                        {
-                            // Just a pass thru for MenuSeparators
-                        }
-                    }
-                    clickedItem.Checked = true;
-
-                    mDoc.SwitchToCollection(SelectedCollection.Path);
-                    mDoc.WriteXMLFile(FileToHandle.Collections);
-                    FillMyShows();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message + "\r\n\r\n" + ex.StackTrace, "Switch Show Collection",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
         private void BuildRightClickMenu(Point pt)
         {
             showRightClickMenu.Items.Clear();
@@ -1887,8 +1776,6 @@ namespace TVRename
                 ShowHideNotificationIcon();
                 FillWhenToWatchList();
                 ShowInTaskbar = TVSettings.Instance.ShowInTaskbar;
-                collToolStripMenuItem.Visible = (TVSettings.Instance.ShowCollections) ? true : false;
-                toolStripSeparator0.Visible = (TVSettings.Instance.ShowCollections) ? true : false;
                 FillEpGuideHtml();
                 mAutoFolderMonitor.SettingsChanged(TVSettings.Instance.MonitorFolders);
                 betaToolsToolStripMenuItem.Visible = TVSettings.Instance.IncludeBetaUpdates();
@@ -1903,7 +1790,8 @@ namespace TVRename
         {
             try
             {
-                mDoc.WriteXMLFile(FileToHandle.Collections | FileToHandle.Settings | FileToHandle.Shows | FileToHandle.TvDB);
+                mDoc.WriteXMLSettings();
+                TheTVDB.Instance.SaveCache();
                 if (!SaveLayoutXml())
                 {
                     Logger.Error("Failed to Save Layout Configuration Files");
@@ -1960,7 +1848,7 @@ namespace TVRename
                 if (n == 0 && lastDlRemaining > 0)
                 {
                     // we've just finished a bunch of background downloads
-                    mDoc.WriteXMLFile(FileToHandle.TvDB);
+                    TheTVDB.Instance.SaveCache();
                     RefreshWTW(false);
 
                     backgroundDownloadNowToolStripMenuItem.Enabled = true;
@@ -2302,7 +2190,7 @@ namespace TVRename
             if (res != DialogResult.Yes)
                 return;
 
-            if ((Directory.Exists(si.AutoAddFolderBase)) && TVSettings.Instance.DeleteShowFromDisk)
+            if (Directory.Exists(si.AutoAddFolderBase))
             {
                 DialogResult res3 = MessageBox.Show(
                     $"Remove folder \"{si.AutoAddFolderBase}\" from disk?",
@@ -3697,16 +3585,6 @@ namespace TVRename
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void aeCollToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AddEditCollection AEC = new AddEditCollection(mDoc);
-            if (AEC.ShowDialog() == DialogResult.OK)
-            {
-                RemoveCollectionsMenu();
-                BuildCollectionsMenu();
-            }
         }
     }
 }

@@ -219,42 +219,6 @@ namespace TVRename
             }
         }
 
-        public void RelaodCache(FileInfo loadFrom, FileInfo cache)
-        {
-            System.Diagnostics.Debug.Assert(cache != null);
-            cacheFile = cache;
-
-            LastError = "";
-            Connected = false;
-            extraEpisodes.Clear();
-            removeEpisodeIds.Clear();
-
-            LanguageList = new List<Language> { new Language(7, "en", "English", "English") };
-
-            //assume that the data is up to date (this will be overridden by the value in the XML if we have a prior install)
-            //If we have no prior install then the app has no shows and is by definition up-to-date
-            newSrvTime = DateTime.UtcNow.ToUnixTime();
-
-            srvTime = 0;
-
-            LoadOk = (loadFrom == null) || LoadCache(loadFrom);
-
-            forceReloadOn.Clear();
-        }
-
-        public void ClearCache()
-        {
-            if (!GetLock("ClearCache"))
-                return;
-
-            series.Clear();
-            extraEpisodes.Clear();
-            removeEpisodeIds.Clear();
-            Unlock("ClearCache");
-
-            newSrvTime = DateTime.UtcNow.ToUnixTime();
-        }
-
         public void UpdatesDoneOk()
         {
             // call when all downloading and updating is done.  updates local Srv_Time with the tentative
@@ -462,7 +426,7 @@ namespace TVRename
             }
         }
 
-         public void ForgetEverything()
+        public void ForgetEverything()
         {
             if (!GetLock("ForgetEverything"))
                 return;
