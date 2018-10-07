@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -503,49 +502,9 @@ namespace TVRename
                 return false;
             }
 
-            long theTime = srvTime;
+            long theTime = GetUpdateTime();
 
-            if (theTime == 0)
-            {
-                // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
-                // This will only happen the first time we do an update, so a false _all update isn't too bad.
-                foreach (KeyValuePair<int, SeriesInfo> kvp in series)
-                {
-                    SeriesInfo ser = kvp.Value;
-                    if ((theTime == 0) || ((ser.SrvLastUpdated != 0) && (ser.SrvLastUpdated < theTime)))
-                        theTime = ser.SrvLastUpdated;
-
-                    //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
-                    foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
-                    {
-                        Season seas = kvp2.Value;
-
-                        foreach (Episode e in seas.Episodes.Values)
-                        {
-                            if ((theTime == 0) || ((e.SrvLastUpdated != 0) && (e.SrvLastUpdated < theTime)))
-                                theTime = e.SrvLastUpdated;
-                        }
-                    }
-                }
-            }
-
-            // anything with a srv_lastupdated of 0 should be marked as dirty
-            // typically, this'll be placeholder series
-            foreach (KeyValuePair<int, SeriesInfo> kvp in series)
-            {
-                SeriesInfo ser = kvp.Value;
-                if ((ser.SrvLastUpdated == 0) || (ser.AiredSeasons.Count == 0))
-                    ser.Dirty = true;
-
-                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
-                {
-                    foreach (Episode ep in kvp2.Value.Episodes.Values)
-                    {
-                        if (ep.SrvLastUpdated == 0)
-                            ep.Dirty = true;
-                    }
-                }
-            }
+            MarkPlaceholdersDirty();
 
             if (theTime == 0)
             {
@@ -581,7 +540,7 @@ namespace TVRename
                 try
                 {
                     jsonUdpateResponse = HttpHelper.JsonHttpGetRequest(uri,
-                        new Dictionary<string, string> {{"fromTime", epochTime.ToString()}},
+                        new Dictionary<string, string> { { "fromTime", epochTime.ToString() } },
                         tvDbTokenProvider.GetToken(), TVSettings.Instance.PreferredLanguage);
                 }
                 catch (WebException ex)
@@ -601,7 +560,7 @@ namespace TVRename
                 {
                     JToken dataToken = jsonUdpateResponse["data"];
 
-                    numberOfResponses = !dataToken.HasValues ? 0 : ((JArray) dataToken).Count;
+                    numberOfResponses = !dataToken.HasValues ? 0 : ((JArray)dataToken).Count;
                 }
                 catch (InvalidCastException ex)
                 {
@@ -627,17 +586,7 @@ namespace TVRename
 
                 updatesResponses.Add(jsonUdpateResponse);
                 numberofCallsMade++;
-                long maxUpdateTime;
-                try
-                {
-                    IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long) a["lastUpdated"];
-                    maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e,jsonUdpateResponse.ToString() );
-                    maxUpdateTime = 0;
-                }
+                long maxUpdateTime = GetUpdateTime(jsonUdpateResponse);
 
                 if (maxUpdateTime > 0)
                 {
@@ -674,133 +623,24 @@ namespace TVRename
 
             Say("Processing Updates from TVDB");
 
-            Parallel.ForEach(updatesResponses, jsonResponse =>
-            {
-                // if updatetime > localtime for item, then remove it, so it will be downloaded later
-                try
-                {
-                    foreach (JObject seriesResponse in jsonResponse["data"])
-                    {
-                        int id = (int) seriesResponse["id"];
-                        long time = (long) seriesResponse["lastUpdated"];
-
-                        if (this.series.ContainsKey(id)) // this is a series we have
-                        {
-                            if (time > this.series[id].SrvLastUpdated) // newer version on the server
-                                this.series[id].Dirty = true; // mark as dirty, so it'll be fetched again later
-                            else
-                                Logger.Info(this.series[id].Name + " has a lastupdated of  " +
-                                            Helpers.FromUnixTime(this.series[id].SrvLastUpdated) + " server says " +
-                                            Helpers.FromUnixTime(time));
-
-                            //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
-                            List<JObject> episodeDefaultLangResponses=null;
-                            List<JObject> episodeResponses = GetEpisodes(id, TVSettings.Instance.PreferredLanguage);
-                            if (InForeignLanguage()) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguage);
-
-                            Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
-                                MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
-
-                            int numberOfNewEpisodes = 0;
-                            int numberOfUpdatedEpisodes = 0;
-
-                            ICollection<int> oldEpisodeIds = new List<int>();
-                            foreach (KeyValuePair<int, Season> kvp2 in GetSeries(id)?.AiredSeasons??new Dictionary<int, Season>())
-                            {
-                                foreach (Episode ep in kvp2.Value.Episodes.Values)
-                                {
-                                    oldEpisodeIds.Add(ep.EpisodeId);
-                                }
-                            }
-
-                            foreach (JObject response in episodeResponses)
-                            {
-                                try
-                                {
-                                    foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
-                                    {
-                                        JToken episodeToUse = (episodeData.Value.Item1??episodeData.Value.Item2);
-                                        long serverUpdateTime = (long)episodeToUse["lastUpdated"];
-                                        int serverEpisodeId = episodeData.Key;
-
-                                        bool found = false;
-                                        foreach (KeyValuePair<int, Season> kvp2 in this.series[id].AiredSeasons)
-                                        {
-                                            Season seas = kvp2.Value;
-
-                                            foreach (Episode ep in seas.Episodes.Values)
-                                            {
-                                                if (ep.EpisodeId == serverEpisodeId)
-                                                {
-                                                    oldEpisodeIds.Remove(serverEpisodeId);
-
-                                                    if (ep.SrvLastUpdated < serverUpdateTime)
-                                                    {
-                                                        ep.Dirty = true; // mark episode as dirty.
-                                                        numberOfUpdatedEpisodes++;
-                                                    }
-
-                                                    found = true;
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        if (!found)
-                                        {
-                                            // must be a new episode
-                                            LockExtraEpisodes();
-                                            extraEpisodes.Add(new ExtraEp(id, serverEpisodeId));
-                                            UnlockExtraEpisodes();
-                                            numberOfNewEpisodes++;
-                                        }
-                                    }
-                                }
-                                catch (InvalidCastException ex)
-                                {
-                                    Logger.Error("Did not recieve the expected format of episode json from {0}.", uri);
-                                    Logger.Error(ex);
-                                    Logger.Error(jsonResponse["data"].ToString());
-                                }
-                                catch (OverflowException ex)
-                                {
-                                    Logger.Error("Could not parse the episode json from {0}.", uri);
-                                    Logger.Error(ex);
-                                    Logger.Error(jsonResponse["data"].ToString());
-                                }
-                            }
-
-                            Logger.Info(this.series[id].Name + " had " + numberOfUpdatedEpisodes +
-                                        " episodes updated and " + numberOfNewEpisodes + " new episodes ");
-
-                            if (oldEpisodeIds.Count > 0)
-                                Logger.Warn(this.series[id].Name + " had " + oldEpisodeIds.Count +
-                                            " episodes deleted: " + string.Join(",", oldEpisodeIds));
-
-                            LockRemoveEpisodes();
-                            foreach (int episodeId in oldEpisodeIds)
-                                removeEpisodeIds.Add(new ExtraEp(id, episodeId));
-
-                            UnlockRemoveEpisodes();
-                        }
-                    }
-                }
-                catch (InvalidCastException ex)
-                {
-                    Logger.Error("Did not recieve the expected format of json from {0}.", uri);
-                    Logger.Error(ex);
-                    Logger.Error(jsonResponse["data"].ToString());
-                }
-                catch (OverflowException ex)
-                {
-                    Logger.Error("Could not parse the json from {0}.", uri);
-                    Logger.Error(ex);
-                    Logger.Error(jsonResponse["data"].ToString());
-                }
-            });
+            Parallel.ForEach(updatesResponses, jsonResponse => { ProcessUpdate(jsonResponse, uri); });
 
             Say("Upgrading dirty locks");
 
+            UpgradeDirtyLocks();
+
+            Say("");
+
+            return true;
+        }
+
+        private long GetUpdateTime()
+        {
+            return srvTime == 0 ? GetUpdateTimeFromShows(0) : srvTime;
+        }
+
+        private void UpgradeDirtyLocks()
+        {
             // if more than x% of a show's episodes are marked as dirty, just download the entire show again
             foreach (KeyValuePair<int, SeriesInfo> kvp in series)
             {
@@ -832,10 +672,195 @@ namespace TVRename
                         "Not planning to download all of {0} as {1}% of the episodes need to be updated and that's less than the 10% limit to upgrade.",
                         kvp.Value.Name, percentDirty);
             }
+        }
 
-            Say("");
+        private void ProcessUpdate(JObject jsonResponse, string uri)
+        {
+            // if updatetime > localtime for item, then remove it, so it will be downloaded later
+            try
+            {
+                foreach (JObject seriesResponse in jsonResponse["data"])
+                {
+                    int id = (int)seriesResponse["id"];
+                    long time = (long)seriesResponse["lastUpdated"];
 
-            return true;
+                    if (this.series.ContainsKey(id)) // this is a series we have
+                    {
+                        if (time > this.series[id].SrvLastUpdated) // newer version on the server
+                            this.series[id].Dirty = true; // mark as dirty, so it'll be fetched again later
+                        else
+                            Logger.Info(this.series[id].Name + " has a lastupdated of  " +
+                                        Helpers.FromUnixTime(this.series[id].SrvLastUpdated) + " server says " +
+                                        Helpers.FromUnixTime(time));
+
+                        //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
+                        List<JObject> episodeDefaultLangResponses = null;
+                        List<JObject> episodeResponses = GetEpisodes(id, TVSettings.Instance.PreferredLanguage);
+                        if (InForeignLanguage()) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguage);
+
+                        Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
+                            MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
+
+                        int numberOfNewEpisodes = 0;
+                        int numberOfUpdatedEpisodes = 0;
+
+                        ICollection<int> oldEpisodeIds = new List<int>();
+                        foreach (KeyValuePair<int, Season> kvp2 in GetSeries(id)?.AiredSeasons ?? new Dictionary<int, Season>())
+                        {
+                            foreach (Episode ep in kvp2.Value.Episodes.Values)
+                            {
+                                oldEpisodeIds.Add(ep.EpisodeId);
+                            }
+                        }
+
+                        foreach (JObject response in episodeResponses)
+                        {
+                            try
+                            {
+                                foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
+                                {
+                                    JToken episodeToUse = (episodeData.Value.Item1 ?? episodeData.Value.Item2);
+                                    long serverUpdateTime = (long)episodeToUse["lastUpdated"];
+                                    int serverEpisodeId = episodeData.Key;
+
+                                    bool found = false;
+                                    foreach (KeyValuePair<int, Season> kvp2 in this.series[id].AiredSeasons)
+                                    {
+                                        Season seas = kvp2.Value;
+
+                                        foreach (Episode ep in seas.Episodes.Values)
+                                        {
+                                            if (ep.EpisodeId == serverEpisodeId)
+                                            {
+                                                oldEpisodeIds.Remove(serverEpisodeId);
+
+                                                if (ep.SrvLastUpdated < serverUpdateTime)
+                                                {
+                                                    ep.Dirty = true; // mark episode as dirty.
+                                                    numberOfUpdatedEpisodes++;
+                                                }
+
+                                                found = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if (!found)
+                                    {
+                                        // must be a new episode
+                                        LockExtraEpisodes();
+                                        extraEpisodes.Add(new ExtraEp(id, serverEpisodeId));
+                                        UnlockExtraEpisodes();
+                                        numberOfNewEpisodes++;
+                                    }
+                                }
+                            }
+                            catch (InvalidCastException ex)
+                            {
+                                Logger.Error("Did not recieve the expected format of episode json from {0}.", uri);
+                                Logger.Error(ex);
+                                Logger.Error(jsonResponse["data"].ToString());
+                            }
+                            catch (OverflowException ex)
+                            {
+                                Logger.Error("Could not parse the episode json from {0}.", uri);
+                                Logger.Error(ex);
+                                Logger.Error(jsonResponse["data"].ToString());
+                            }
+                        }
+
+                        Logger.Info(this.series[id].Name + " had " + numberOfUpdatedEpisodes +
+                                    " episodes updated and " + numberOfNewEpisodes + " new episodes ");
+
+                        if (oldEpisodeIds.Count > 0)
+                            Logger.Warn(this.series[id].Name + " had " + oldEpisodeIds.Count +
+                                        " episodes deleted: " + string.Join(",", oldEpisodeIds));
+
+                        LockRemoveEpisodes();
+                        foreach (int episodeId in oldEpisodeIds)
+                            removeEpisodeIds.Add(new ExtraEp(id, episodeId));
+
+                        UnlockRemoveEpisodes();
+                    }
+                }
+            }
+            catch (InvalidCastException ex)
+            {
+                Logger.Error("Did not recieve the expected format of json from {0}.", uri);
+                Logger.Error(ex);
+                Logger.Error(jsonResponse["data"].ToString());
+            }
+            catch (OverflowException ex)
+            {
+                Logger.Error("Could not parse the json from {0}.", uri);
+                Logger.Error(ex);
+                Logger.Error(jsonResponse["data"].ToString());
+            }
+        }
+
+        private static long GetUpdateTime(JObject jsonUdpateResponse)
+        {
+            long maxUpdateTime;
+            try
+            {
+                IEnumerable<long> updateTimes = from a in jsonUdpateResponse["data"] select (long)a["lastUpdated"];
+                maxUpdateTime = updateTimes.DefaultIfEmpty(0).Max();
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e, jsonUdpateResponse.ToString());
+                maxUpdateTime = 0;
+            }
+
+            return maxUpdateTime;
+        }
+
+        private long GetUpdateTimeFromShows(long theTime)
+        {
+            // we can use the oldest thing we have locally.  It isn't safe to use the newest thing.
+            // This will only happen the first time we do an update, so a false _all update isn't too bad.
+            foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+            {
+                SeriesInfo ser = kvp.Value;
+                if ((theTime == 0) || ((ser.SrvLastUpdated != 0) && (ser.SrvLastUpdated < theTime)))
+                    theTime = ser.SrvLastUpdated;
+
+                //We can use AiredSeasons as it does not matter which order we do this in Aired or DVD
+                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                {
+                    Season seas = kvp2.Value;
+
+                    foreach (Episode e in seas.Episodes.Values)
+                    {
+                        if ((theTime == 0) || ((e.SrvLastUpdated != 0) && (e.SrvLastUpdated < theTime)))
+                            theTime = e.SrvLastUpdated;
+                    }
+                }
+            }
+
+            return theTime;
+        }
+
+        private void MarkPlaceholdersDirty()
+        {
+            // anything with a srv_lastupdated of 0 should be marked as dirty
+            // typically, this'll be placeholder series
+            foreach (KeyValuePair<int, SeriesInfo> kvp in series)
+            {
+                SeriesInfo ser = kvp.Value;
+                if ((ser.SrvLastUpdated == 0) || (ser.AiredSeasons.Count == 0))
+                    ser.Dirty = true;
+
+                foreach (KeyValuePair<int, Season> kvp2 in kvp.Value.AiredSeasons)
+                {
+                    foreach (Episode ep in kvp2.Value.Episodes.Values)
+                    {
+                        if (ep.SrvLastUpdated == 0)
+                            ep.Dirty = true;
+                    }
+                }
+            }
         }
 
         private List<JObject> GetEpisodes(int id,string lang)
@@ -1025,7 +1050,6 @@ namespace TVRename
                     series[codeHint].BannersLoaded = true;
                     break; // that's it.
                 }
-
                 else if (r.Name == "xml")
                     r.Read();
                 else
@@ -1922,4 +1946,3 @@ namespace TVRename
         }
     }
 }
-

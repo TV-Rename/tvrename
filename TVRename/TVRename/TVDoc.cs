@@ -502,7 +502,6 @@ namespace TVRename
             catch (Exception e)
             {
                 Logger.Fatal(e, "Unhandled Exception in ScanWorker");
-
             }
             finally
             {
@@ -1368,8 +1367,7 @@ namespace TVRename
                                 //Check that the file does not already exist
                                 //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
                                 if (FileHelper.FileExistsCaseSensitive(files,newFile))
-
-                                    {
+                                {
                                     Logger.Warn($"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
                                 }
                                 else
@@ -1382,6 +1380,7 @@ namespace TVRename
                                     //one for that purpse
 
                                     downloadIdentifiers.NotifyComplete(newFile);
+                                    localEps[epNum] = newFile;
                                 }
                             }
                         }
@@ -1390,7 +1389,8 @@ namespace TVRename
                         ) // == MISSING CHECK part 1/2 ==
                         {
                             // first pass of missing check is to tally up the episodes we do have
-                            localEps[epNum] = actualFile;
+                            if (localEps[epNum] is null) localEps[epNum] = actualFile;
+
                             if (epNum > maxEpNumFound)
                                 maxEpNumFound = epNum;
                         }

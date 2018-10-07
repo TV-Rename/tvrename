@@ -1,6 +1,6 @@
 namespace TVRename
 {
-    public interface DownloadInformation
+    public interface IDownloadInformation
     {
         string FileIdentifier { get; }
         string Destination { get; }

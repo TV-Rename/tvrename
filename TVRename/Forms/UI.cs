@@ -2406,7 +2406,7 @@ namespace TVRename
         private void filenameTemplateEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CustomEpisodeName cn = new CustomEpisodeName(TVSettings.Instance.NamingStyle.StyleString);
-            CustomNameDesigner cne = new CustomNameDesigner(CurrentlySelectedPel(), cn, mDoc);
+            CustomNameDesigner cne = new CustomNameDesigner(CurrentlySelectedPel(), cn);
             DialogResult dr = cne.ShowDialog();
             if (dr == DialogResult.OK)
             {
@@ -3585,6 +3585,12 @@ namespace TVRename
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void logToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LogViewer form = new LogViewer();
+            form.Show();
         }
     }
 }
