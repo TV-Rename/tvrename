@@ -58,13 +58,8 @@ namespace TVRename
 
         public override IgnoreItem Ignore => GenerateIgnore(TheFileNoExt);
         
-        protected override string SeriesName => Episode.Show.ShowName;
-        protected override string SeasonNumber => Episode.AppropriateSeasonNumber.ToString();
-        protected override string EpisodeNumber => Episode.NumsAsString();
-        protected override string AirDate => Episode.GetAirDateDT(true).PrettyPrint();
         protected override string DestinationFolder => folder;
         protected override string DestinationFile => Filename;
-        protected override string SourceDetails => string.Empty;
         public override string ScanListViewGroup => "lvgActionMissing";
 
         public override string TargetFolder => string.IsNullOrEmpty(TheFileNoExt) ? null : new FileInfo(TheFileNoExt).DirectoryName;

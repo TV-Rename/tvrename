@@ -15,12 +15,10 @@ namespace TVRename
     {
         private readonly IDownloadInformation Entry;
         public readonly string DesiredLocationNoExt;
+
         public override IgnoreItem Ignore => GenerateIgnore(DesiredLocationNoExt);
         public override string ScanListViewGroup => "lvgDownloading";
-        protected override string SeriesName => Episode.Show.ShowName;
-        protected override string SeasonNumber => Episode.AppropriateSeasonNumber.ToString();
-        protected override string EpisodeNumber => Episode.NumsAsString();
-        protected override string AirDate => Episode.GetAirDateDT(true).PrettyPrint();
+
         protected override string DestinationFolder => FileIdentifier;
         protected override string DestinationFile => Destination;
         protected override string SourceDetails => Remaining;

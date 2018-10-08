@@ -170,9 +170,6 @@ namespace TVRename
         protected override string SeriesName =>
             (Episode != null) ? Episode.Show.ShowName : ((SI != null) ? SI.ShowName : "");
 
-        protected override string SeasonNumber => Episode?.AppropriateSeasonNumber.ToString() ?? "";
-        protected override string EpisodeNumber => Episode?.NumsAsString() ?? "";
-        protected override string AirDate => Episode != null ? Episode.GetAirDateDT(true).PrettyPrint() : "";
         protected override string DestinationFolder => TargetFolder;
         protected override string DestinationFile => Destination.Name;
         protected override string SourceDetails => Path;

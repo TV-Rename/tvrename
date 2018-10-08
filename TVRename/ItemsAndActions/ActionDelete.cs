@@ -15,7 +15,6 @@ namespace TVRename
 
         protected override string DestinationFolder => TargetFolder;
         protected override string DestinationFile => ProgressText;
-        protected override string SourceDetails => string.Empty;
     }
     public class ActionDeleteFile : ActionDelete
     {

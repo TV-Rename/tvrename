@@ -54,13 +54,13 @@ namespace TVRename
             }
         }
 
-        protected abstract string SeriesName { get; }
-        protected abstract string SeasonNumber { get; }
-        protected abstract string EpisodeNumber { get; }
-        protected abstract string AirDate { get; }
+        protected virtual string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
+        protected virtual string SeasonNumber => Episode?.AppropriateSeasonNumber.ToString() ?? string.Empty;
+        protected virtual string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;
+        protected virtual string AirDate => Episode?.GetAirDateDT(true).PrettyPrint() ?? string.Empty;
         protected abstract string DestinationFolder { get; }
         protected abstract string DestinationFile { get; }
-        protected abstract string SourceDetails { get; }
+        protected virtual string SourceDetails => string.Empty;
         protected virtual bool InError => false;
     }
 
@@ -219,11 +219,6 @@ namespace TVRename
 
             DeleteOrRecycleFolder(di);
         }
-
-        protected override string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
-        protected override string SeasonNumber => Episode?.AppropriateSeasonNumber.ToString() ?? string.Empty;
-        protected override string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;
-        protected override string AirDate => Episode?.GetAirDateDT(true).PrettyPrint()??string.Empty;
     }
 
     public abstract class ActionWriteMetadata : ActionDownload
@@ -252,18 +247,8 @@ namespace TVRename
         public override int IconNumber => 7;
 
         protected override string SeriesName => Episode?.Show?.ShowName ?? SelectedShow.ShowName;
-
-        protected override string SeasonNumber => Episode?.AppropriateSeasonNumber.ToString() ?? string.Empty;
-
-        protected override string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;
-
-        protected override string AirDate => Episode?.GetAirDateDT(true).PrettyPrint() ?? string.Empty;
-
         protected override string DestinationFolder => Where.DirectoryName;
-
         protected override string DestinationFile => Where.Name;
-
-        protected override string SourceDetails => string.Empty;
     }
 
     public class ItemList : List<Item>
