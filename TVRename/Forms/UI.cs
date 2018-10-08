@@ -2578,17 +2578,24 @@ namespace TVRename
             {
                 Logger.Info("Parsing {0} for new shows", dirPath);
                 if (!Directory.Exists(dirPath)) continue;
+                try
+                { 
+                    foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
+                    {
+                        if (!File.Exists(filePath)) continue;
 
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
-                {
-                    if (!File.Exists(filePath)) continue;
+                        FileInfo fi = new FileInfo(filePath);
 
-                    FileInfo fi = new FileInfo(filePath);
+                        if (FileHelper.IgnoreFile(fi)) continue;
 
-                    if (FileHelper.IgnoreFile(fi)) continue;
-
-                    if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
+                        if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
+                    }
                 }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Logger.Warn(ex, $"Could not access files in {dirPath}");
+                }
+
             }
 
             List<ShowItem> addedShows = new List<ShowItem>();

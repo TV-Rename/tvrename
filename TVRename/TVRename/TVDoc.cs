@@ -952,49 +952,57 @@ namespace TVRename
             foreach (string dirPath in TVSettings.Instance.DownloadFolders)
             {
                 if (!Directory.Exists(dirPath)) continue;
-
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                try
                 {
-                    if (!File.Exists(filePath)) continue;
-
-                    FileInfo fi = new FileInfo(filePath);
-
-                    if (FileHelper.IgnoreFile(fi)) continue;
-
-                    List<ShowItem> matchingShows = new List<ShowItem>();
-
-                    foreach (ShowItem si in showList)
+                    foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
                     {
-                        if (si.GetSimplifiedPossibleShowNames()
-                            .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
-                            matchingShows.Add(si);
-                    }
+                        if (!File.Exists(filePath)) continue;
 
-                    if (matchingShows.Count > 0)
-                    {
-                        bool fileCanBeRemoved = true;
+                        FileInfo fi = new FileInfo(filePath);
 
-                        foreach (ShowItem si in matchingShows)
+                        if (FileHelper.IgnoreFile(fi)) continue;
+
+                        List<ShowItem> matchingShows = new List<ShowItem>();
+
+                        foreach (ShowItem si in showList)
                         {
-                            if (FileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
+                            if (si.GetSimplifiedPossibleShowNames()
+                                .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
+                                matchingShows.Add(si);
                         }
 
-                        if (fileCanBeRemoved)
+                        if (matchingShows.Count > 0)
                         {
-                            ShowItem si = matchingShows[0]; //Choose the first series
-                            FindSeasEp(fi, out int seasF, out int epF, out int _, si, out FilenameProcessorRE _);
-                            SeriesInfo s = si.TheSeries();
-                            Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                            ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-                            Logger.Info(
-                                $"Removing {fi.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
+                            bool fileCanBeRemoved = true;
 
-                            TheActionList.Add(new ActionDeleteFile(fi, pep, TVSettings.Instance.Tidyup));
+                            foreach (ShowItem si in matchingShows)
+                            {
+                                if (FileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
+                            }
+
+                            if (fileCanBeRemoved)
+                            {
+                                ShowItem si = matchingShows[0]; //Choose the first series
+                                FindSeasEp(fi, out int seasF, out int epF, out int _, si, out FilenameProcessorRE _);
+                                SeriesInfo s = si.TheSeries();
+                                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
+                                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                                Logger.Info(
+                                    $"Removing {fi.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
+
+                                TheActionList.Add(new ActionDeleteFile(fi, pep, TVSettings.Instance.Tidyup));
+                            }
                         }
                     }
                 }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Logger.Warn(ex, $"Could not access files in {dirPath}");
+                }
 
-                foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
+                try
+                {
+                    foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
                     System.IO.SearchOption.AllDirectories))
                 {
                     if (!Directory.Exists(subDirPath)) continue;
@@ -1036,6 +1044,11 @@ namespace TVRename
                             TheActionList.Add(new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup));
                         }
                     }
+                }
+                }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Logger.Warn(ex, $"Could not access subdirectories of {dirPath}");
                 }
             }
         }
@@ -1756,49 +1769,62 @@ namespace TVRename
             {
                 if (!Directory.Exists(dirPath)) continue;
 
-                string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
-                Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
+                try{ 
+                    string[] x = Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                    Logger.Info($"Processing {x.Length} files for shows that need to be scanned");
 
-                foreach (string filePath in x)
-                {
-                    Logger.Info($"Checking to see whether {filePath} is a file that for a show that need scanning");
-
-                    if (!File.Exists(filePath)) continue;
-
-                    FileInfo fi = new FileInfo(filePath);
-
-                    if (FileHelper.IgnoreFile(fi)) continue;
-
-                    foreach (ShowItem si in Library.Shows)
+                    foreach (string filePath in x)
                     {
-                        if (showsToScan.Contains(si)) continue;
+                        Logger.Info($"Checking to see whether {filePath} is a file that for a show that need scanning");
 
-                        if (si.GetSimplifiedPossibleShowNames()
-                            .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
-                            showsToScan.Add(si);
+                        if (!File.Exists(filePath)) continue;
+
+                        FileInfo fi = new FileInfo(filePath);
+
+                        if (FileHelper.IgnoreFile(fi)) continue;
+
+                        foreach (ShowItem si in Library.Shows)
+                        {
+                            if (showsToScan.Contains(si)) continue;
+
+                            if (si.GetSimplifiedPossibleShowNames()
+                                .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
+                                showsToScan.Add(si);
+                        }
                     }
                 }
-
-                string[] directories = Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories);
-                Logger.Info($"Processing {directories.Length} directories for shows that need to be scanned");
-
-                foreach (string subDirPath in directories)
+                catch (UnauthorizedAccessException ex)
                 {
-                    Logger.Info($"Checking to see whether {subDirPath} has any shows that need scanning");
+                    Logger.Warn(ex, $"Could not access files in {dirPath}");
+                }
 
-                    if (!Directory.Exists(subDirPath)) continue;
+                try { 
+                    string[] directories = Directory.GetDirectories(dirPath, "*", System.IO.SearchOption.AllDirectories);
+                    Logger.Info($"Processing {directories.Length} directories for shows that need to be scanned");
 
-                    DirectoryInfo di = new DirectoryInfo(subDirPath);
-
-                    foreach (ShowItem si in Library.Values)
+                    foreach (string subDirPath in directories)
                     {
-                        if (showsToScan.Contains(si)) continue;
+                        Logger.Info($"Checking to see whether {subDirPath} has any shows that need scanning");
 
-                        if (si.GetSimplifiedPossibleShowNames()
-                            .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
-                            showsToScan.Add(si);
+                        if (!Directory.Exists(subDirPath)) continue;
+
+                        DirectoryInfo di = new DirectoryInfo(subDirPath);
+
+                        foreach (ShowItem si in Library.Values)
+                        {
+                            if (showsToScan.Contains(si)) continue;
+
+                            if (si.GetSimplifiedPossibleShowNames()
+                                .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
+                                showsToScan.Add(si);
+                        }
                     }
                 }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Logger.Warn(ex, $"Could not access sub-directories in {dirPath}");
+                }
+
             }
 
             return showsToScan;
