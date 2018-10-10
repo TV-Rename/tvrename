@@ -988,14 +988,12 @@ namespace TVRename
                 return;
 
             DateTime dt = calCalendar.SelectionStart;
-            for (int i = 0; i < lvWhenToWatch.Items.Count; i++)
-                lvWhenToWatch.Items[i].Selected = false;
-
             bool first = true;
 
-            for (int i = 0; i < lvWhenToWatch.Items.Count; i++)
+            foreach (ListViewItem lvi in lvWhenToWatch.Items)
             {
-                ListViewItem lvi = lvWhenToWatch.Items[i];
+                lvi.Selected = false;
+
                 ProcessedEpisode ei = (ProcessedEpisode) lvi.Tag;
                 DateTime? dt2 = ei.GetAirDateDT(true);
                 if (dt2 != null)
