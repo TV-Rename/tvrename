@@ -2675,12 +2675,10 @@ namespace TVRename
                 LessBusy();
             }
 
-            mDoc.Library.AddRange(addedShows);
-
-            ShowAddedOrEdited(true);
-
             if (addedShows.Count <= 0) return;
 
+            mDoc.Library.AddRange(addedShows);
+            ShowAddedOrEdited(true);
             SelectShow(addedShows.Last());
             Logger.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
         }
