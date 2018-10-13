@@ -699,7 +699,7 @@ namespace TVRename
                         List<JObject> episodeDefaultLangResponses = null;
                         string requestedLanguageCode = series[id].useCustomLanguage ? series[id].targetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
                         List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
-                        if (IsnNotDefaultLanguage(requestedLanguageCode)) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
+                        if (IsNotDefaultLanguage(requestedLanguageCode)) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
 
                         Dictionary<int, Tuple<JToken, JToken>> episodesResponses =
                             MergeEpisodeResponses(episodeResponses, episodeDefaultLangResponses);
@@ -1234,7 +1234,7 @@ namespace TVRename
             {
                 jsonResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(),requestedLanguageCode);
 
-                if (IsnNotDefaultLanguage(requestedLanguageCode))
+                if (IsNotDefaultLanguage(requestedLanguageCode))
                     jsonDefaultLangResponse =
                         HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), DefaultLanguageCode);
             }
@@ -1250,7 +1250,7 @@ namespace TVRename
             SeriesInfo si;
             JObject seriesData = (JObject) jsonResponse["data"];
 
-            if (InForeignLanguage())
+            if (IsNotDefaultLanguage(requestedLanguageCode))
             {
                 JObject seriesDataDefaultLang = (JObject) jsonDefaultLangResponse["data"];
                 si = new SeriesInfo(seriesData, seriesDataDefaultLang, GetLanguageId());
@@ -1322,7 +1322,7 @@ namespace TVRename
                     }
                 }
 
-                if (IsnNotDefaultLanguage(requestedLanguageCode))
+                if (IsNotDefaultLanguage(requestedLanguageCode))
                 {
                     List<string> imageDefaultLangTypes = new List<string>();
 
@@ -1460,7 +1460,7 @@ namespace TVRename
             string requestLangCode = useCustomLangCode ? langCode : TVSettings.Instance.PreferredLanguageCode;
             List<JObject> episodePrefLangResponses = GetEpisodes(code, requestLangCode);
             List<JObject> episodeDefaultLangResponses = null;
-            if (IsnNotDefaultLanguage(requestLangCode)) episodeDefaultLangResponses = GetEpisodes(code, DefaultLanguageCode);
+            if (IsNotDefaultLanguage(requestLangCode)) episodeDefaultLangResponses = GetEpisodes(code, DefaultLanguageCode);
 
             Dictionary<int, Tuple<JToken, JToken>>  episodeResponses = MergeEpisodeResponses(episodePrefLangResponses, episodeDefaultLangResponses);
 
@@ -1540,7 +1540,7 @@ namespace TVRename
 
         private bool InForeignLanguage() => DefaultLanguageCode != TVSettings.Instance.PreferredLanguageCode;
 
-        private bool IsnNotDefaultLanguage(string languageCode) => DefaultLanguageCode != languageCode;
+        private bool IsNotDefaultLanguage(string languageCode) => DefaultLanguageCode != languageCode;
 
         private bool DownloadEpisodeNow(int seriesId, int episodeId, bool dvdOrder = false)
         {
@@ -1563,7 +1563,7 @@ namespace TVRename
             {
                 jsonEpisodeResponse = HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), requestLangCode);
 
-                if (IsnNotDefaultLanguage(requestLangCode))
+                if (IsNotDefaultLanguage(requestLangCode))
                     jsonEpisodeDefaultLangResponse =
                         HttpHelper.JsonHttpGetRequest(uri, null, tvDbTokenProvider.GetToken(), DefaultLanguageCode);
             }
@@ -1583,7 +1583,7 @@ namespace TVRename
                 Episode e;
                 JObject jsonResponseData = (JObject)jsonEpisodeResponse["data"];
 
-                if (IsnNotDefaultLanguage(requestLangCode))
+                if (IsNotDefaultLanguage(requestLangCode))
                 {
                     JObject seriesDataDefaultLang = (JObject) jsonEpisodeDefaultLangResponse["data"];
                     e = new Episode(seriesId, jsonResponseData, seriesDataDefaultLang);
