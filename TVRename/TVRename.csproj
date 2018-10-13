@@ -212,6 +212,7 @@
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
     <Compile Include="ItemsAndActions\ActionWdtvMeta.cs" />
     <Compile Include="Settings\CustomSeasonName.cs" />
+    <Compile Include="Settings\Languages.cs" />
     <Compile Include="Settings\ProcessedEpisode.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="Settings\ShowItem.cs" />

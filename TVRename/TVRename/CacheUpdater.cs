@@ -22,7 +22,7 @@ namespace TVRename
         private Semaphore workerSemaphore;
         private List<Thread> workers;
         private Thread mDownloaderThread;
-        private ICollection<int> downloadIds;
+        private ICollection<SeriesSpecifier> downloadIds;
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
@@ -33,7 +33,7 @@ namespace TVRename
             downloadOk = true;
         }
 
-        public void StartBgDownloadThread(bool stopOnError, ICollection<int> shows)
+        public void StartBgDownloadThread(bool stopOnError, ICollection<SeriesSpecifier> shows)
         {
             if (!DownloadDone)
                 return;
@@ -47,7 +47,7 @@ namespace TVRename
             mDownloaderThread.Start();
         }
 
-        public bool DoDownloadsFg(bool showProgress, bool showErrorMsgBox, ICollection<int> shows)
+        public bool DoDownloadsFg(bool showProgress, bool showErrorMsgBox, ICollection<SeriesSpecifier> shows)
         {
             if (TVSettings.Instance.OfflineMode)
                 return true; // don't do internet in offline mode!
@@ -114,13 +114,13 @@ namespace TVRename
             {
                 workerSemaphore.WaitOne(); // don't start until we're allowed to
 
-                int code = (int)(codeIn);
+                SeriesSpecifier series = (SeriesSpecifier)(codeIn);
 
                 bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
-                Threadslogger.Trace("  Downloading " + code);
-                bool r = TheTVDB.Instance.EnsureUpdated(code, bannersToo);
-                Threadslogger.Trace("  Finished " + code);
+                Threadslogger.Trace("  Downloading " + series.seriesId);
+                bool r = TheTVDB.Instance.EnsureUpdated(series.seriesId, bannersToo,series.useCustomLanguage,series.customLanguageCode);
+                Threadslogger.Trace("  Finished " + series.seriesId);
                 if (!r)
                 {
                     downloadOk = false;
@@ -183,7 +183,7 @@ namespace TVRename
 
                 workerSemaphore = new Semaphore(numWorkers, numWorkers); // allow up to numWorkers working at once
 
-                foreach (int code in downloadIds)
+                foreach (SeriesSpecifier code in downloadIds)
                 {
                     DownloadPct = 100 * (n + 1) / (totalItems + 1);
                     DownloadsRemaining = totalItems - n;

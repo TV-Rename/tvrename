@@ -15,6 +15,21 @@ namespace TVRename
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public IEnumerable<ShowItem> Shows => Values;
 
+        public ICollection<SeriesSpecifier> SeriesSpecifiers
+        {
+            get
+            {
+                List<SeriesSpecifier> value = new List<SeriesSpecifier>();
+                foreach (KeyValuePair<int, ShowItem> series in this)
+                {
+                    value.Add(new SeriesSpecifier(series.Key,series.Value.UseCustomLanguage,series.Value.CustomLanguageCode));
+                }
+
+                return value;
+            }
+
+        }
+
         private IEnumerable<string> GetSeasonWords()
         {
             //See https://github.com/TV-Rename/tvrename/issues/241 for background

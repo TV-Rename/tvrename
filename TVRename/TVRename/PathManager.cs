@@ -10,6 +10,7 @@ namespace TVRename
         private const string SETTINGS_FILE_NAME = "TVRenameSettings.xml";
         private const string UI_LAYOUT_FILE_NAME = "Layout.xml";
         private const string STATISTICS_FILE_NAME = "Statistics.xml";
+        private const string LANGUAGES_FILE_NAME = "Languages.xml";
 
         private static string UserDefinedBasePath;
 
@@ -111,5 +112,19 @@ namespace TVRename
             }
         }
 
+        public static FileInfo LanguagesFile
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(UserDefinedBasePath))
+                {
+                    return GetFileInfo(UserDefinedBasePath, LANGUAGES_FILE_NAME);
+                }
+                else
+                {
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), LANGUAGES_FILE_NAME);
+                }
+            }
+        }
     }
 }

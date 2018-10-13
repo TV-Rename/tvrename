@@ -97,6 +97,8 @@ namespace TVRename
             this.txtBaseFolder = new System.Windows.Forms.TextBox();
             this.bnBrowse = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
+            this.chkCustomLanguage = new System.Windows.Forms.CheckBox();
+            this.cbLanguage = new System.Windows.Forms.ComboBox();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -275,6 +277,8 @@ namespace TVRename
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.cbLanguage);
+            this.tabPage1.Controls.Add(this.chkCustomLanguage);
             this.tabPage1.Controls.Add(this.pnlCF);
             this.tabPage1.Controls.Add(this.label2);
             this.tabPage1.Controls.Add(this.label5);
@@ -693,7 +697,7 @@ namespace TVRename
             this.rdoFolderCustom.AutoSize = true;
             this.rdoFolderCustom.Location = new System.Drawing.Point(11, 94);
             this.rdoFolderCustom.Name = "rdoFolderCustom";
-            this.rdoFolderCustom.Size = new System.Drawing.Size(94, 17);
+            this.rdoFolderCustom.Size = new System.Drawing.Size(97, 17);
             this.rdoFolderCustom.TabIndex = 7;
             this.rdoFolderCustom.TabStop = true;
             this.rdoFolderCustom.Text = "Custom Pattern";
@@ -739,6 +743,26 @@ namespace TVRename
             this.label3.TabIndex = 0;
             this.label3.Text = "Base &Folder";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // chkCustomLanguage
+            // 
+            this.chkCustomLanguage.AutoSize = true;
+            this.chkCustomLanguage.Location = new System.Drawing.Point(9, 253);
+            this.chkCustomLanguage.Name = "chkCustomLanguage";
+            this.chkCustomLanguage.Size = new System.Drawing.Size(115, 17);
+            this.chkCustomLanguage.TabIndex = 8;
+            this.chkCustomLanguage.Text = "Custom Language:";
+            this.chkCustomLanguage.UseVisualStyleBackColor = true;
+            this.chkCustomLanguage.CheckedChanged += new System.EventHandler(this.chkCustomLanguage_CheckedChanged);
+            // 
+            // cbLanguage
+            // 
+            this.cbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbLanguage.FormattingEnabled = true;
+            this.cbLanguage.Location = new System.Drawing.Point(133, 249);
+            this.cbLanguage.Name = "cbLanguage";
+            this.cbLanguage.Size = new System.Drawing.Size(200, 21);
+            this.cbLanguage.TabIndex = 9;
             // 
             // AddEditShow
             // 
@@ -837,5 +861,7 @@ namespace TVRename
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox txtSeasonFormat;
         private System.Windows.Forms.Button bnTags;
+        private System.Windows.Forms.ComboBox cbLanguage;
+        private System.Windows.Forms.CheckBox chkCustomLanguage;
     }
 }

@@ -247,11 +247,11 @@ namespace TVRename
 
 
             TheTVDB.Instance.GetLock("Preferences-OK");
-            foreach (TheTVDB.Language l in TheTVDB.Instance.LanguageList)
+            foreach (Language l in TheTVDB.Instance.LanguageList)
             {
                 if (l.Name == cbLanguages.Text)
                 {
-                    s.PreferredLanguage = l.Abbreviation;
+                    s.PreferredLanguageCode = l.Abbreviation;
                     break;
                 }
             }
@@ -424,7 +424,7 @@ namespace TVRename
             chkAutoSearchForDownloadedFiles.Checked = s.AutoSearchForDownloadedFiles;
             cbSearchLocally.Checked = s.SearchLocally;
             cbLeaveOriginals.Checked = s.LeaveOriginals;
-            enterPreferredLanguage = s.PreferredLanguage;
+            enterPreferredLanguage = s.PreferredLanguageCode;
 
             cbEpThumbJpg.Checked = s.EpJPGs;
             cbSeriesJpg.Checked = s.SeriesJpg;
@@ -957,7 +957,6 @@ namespace TVRename
             FillLanguageList();
         }
 
-
         private void FillLanguageList()
         {
             TheTVDB.Instance.GetLock( "Preferences-FLL");
@@ -965,7 +964,7 @@ namespace TVRename
             cbLanguages.Items.Clear();
 
             string pref = "";
-            foreach (TheTVDB.Language l in TheTVDB.Instance.LanguageList)
+            foreach (Language l in TheTVDB.Instance.LanguageList)
             {
                 cbLanguages.Items.Add(l.Name);
 
@@ -978,33 +977,6 @@ namespace TVRename
 
             TheTVDB.Instance.Unlock("Preferences-FLL");
         }
-        /*
-        private void bnLangDown_Click(object sender, System.EventArgs e)
-        {
-            int n = this.lbLangs.SelectedIndex;
-            if (n == -1)
-                return;
-
-            if (n < (this.LangList.Count - 1))
-            {
-                this.LangList.Reverse(n, 2);
-                this.FillLanguageList();
-                this.lbLangs.SelectedIndex = n + 1;
-            }
-        }
-
-        private void bnLangUp_Click(object sender, System.EventArgs e)
-        {
-            int n = this.lbLangs.SelectedIndex;
-            if (n == -1)
-                return;
-            if (n > 0)
-            {
-                this.LangList.Reverse(n - 1, 2);
-                this.FillLanguageList();
-                this.lbLangs.SelectedIndex = n - 1;
-            }
-        }*/
 
         private void cbMissing_CheckedChanged(object sender, EventArgs e)
         {

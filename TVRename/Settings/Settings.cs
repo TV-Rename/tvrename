@@ -393,7 +393,7 @@ namespace TVRename
         public string SABHostPort = "";
         public string SABAPIKey = "";
         public bool CheckSABnzbd = false;
-        public string PreferredLanguage = "en";
+        public string PreferredLanguageCode = "en";
         public WTWDoubleClickAction WTWDoubleClick;
 
         public readonly TidySettings Tidyup = new TidySettings();
@@ -527,7 +527,7 @@ namespace TVRename
                 else if (reader.Name == "SABHostPort")
                     SABHostPort = reader.ReadElementContentAsString();
                 else if (reader.Name == "PreferredLanguage")
-                    PreferredLanguage = reader.ReadElementContentAsString();
+                    PreferredLanguageCode = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWDoubleClick")
                     WTWDoubleClick = (WTWDoubleClickAction)reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportMissingXML")
@@ -970,7 +970,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"SABAPIKey",SABAPIKey);
             XmlHelper.WriteElementToXml(writer,"CheckSABnzbd",CheckSABnzbd);
             XmlHelper.WriteElementToXml(writer,"SABHostPort",SABHostPort);
-            XmlHelper.WriteElementToXml(writer,"PreferredLanguage",PreferredLanguage);
+            XmlHelper.WriteElementToXml(writer,"PreferredLanguage",PreferredLanguageCode);
             XmlHelper.WriteElementToXml(writer,"WTWDoubleClick",(int) WTWDoubleClick);
             XmlHelper.WriteElementToXml(writer,"EpJPGs",EpJPGs);
             XmlHelper.WriteElementToXml(writer,"SeriesJpg",SeriesJpg);

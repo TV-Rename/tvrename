@@ -108,7 +108,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public bool DoDownloadsFG()
         {
-            ICollection<int> shows = Library.Keys;
+            ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
             bool returnValue = cacheManager.DoDownloadsFg((!Args.Hide), (!Args.Unattended) && (!Args.Hide), shows);
             Library.GenDict();
             return returnValue;
@@ -117,7 +117,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public void DoDownloadsBG()
         {
-            ICollection<int> shows = Library.Keys;
+            ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
             cacheManager.StartBgDownloadThread(false, shows);
         }
 
@@ -176,6 +176,7 @@ namespace TVRename
         {
             cacheManager.StopBgDownloadThread();
             Stats().Save();
+            TheTVDB.Instance.LanguageList.Save();
         }
 
         public static void SearchForEpisode(ProcessedEpisode ep)
@@ -290,6 +291,7 @@ namespace TVRename
 
             mDirty = false;
             Stats().Save();
+            TheTVDB.Instance.LanguageList.Save();
         }
 
         // ReSharper disable once InconsistentNaming
@@ -393,6 +395,15 @@ namespace TVRename
             catch (Exception)
             {
                 // not worried if stats loading fails
+            }
+
+            try
+            {
+                TheTVDB.Instance.LanguageList = Languages.Load();
+            }
+            catch (Exception)
+            {
+                // not worried if language loading fails as we'll repopulate
             }
 
             return true;
@@ -1837,7 +1848,7 @@ namespace TVRename
             {
                 foreach (ShowItem si in sis)
                 {
-                    TheTVDB.Instance.ForgetShow(si.TvdbCode, true);
+                    TheTVDB.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
                 }
             }
 
