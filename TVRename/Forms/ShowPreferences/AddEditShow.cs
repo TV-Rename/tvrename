@@ -196,7 +196,11 @@ namespace TVRename
 
             selectedShow.CustomShowName = txtCustomShowName.Text;
             selectedShow.UseCustomShowName = chkCustomShowName.Checked;
-            selectedShow.CustomLanguageCode = TheTVDB.Instance.LanguageList.GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()).Abbreviation;
+            if (selectedShow.UseCustomShowName)
+            {
+                selectedShow.CustomLanguageCode = TheTVDB.Instance.LanguageList
+                    .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()).Abbreviation;
+            }
             selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
@@ -260,10 +264,6 @@ namespace TVRename
 
         private void bnBrowse_Click(object sender, EventArgs e)
         {
-            //folderBrowser.Title = "Add Folder...";
-            //folderBrowser.ShowEditbox = true;
-            //folderBrowser.StartPosition = FormStartPosition.CenterParent;
-
             folderBrowser.ShowNewFolderButton = true;
 
             if (!string.IsNullOrEmpty(txtBaseFolder.Text))
