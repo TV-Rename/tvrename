@@ -123,7 +123,7 @@ namespace TVRename
 
             if ((cmp != null) && (cmp.ShowDialog() == DialogResult.Cancel))
                 actionProcessorThread.Abort();
-
+            
             actionProcessorThread.Join();
 
             theList.RemoveAll(x => (x is Action action) && action.Done && !action.Error);
