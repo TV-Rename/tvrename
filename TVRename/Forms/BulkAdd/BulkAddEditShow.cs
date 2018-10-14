@@ -33,7 +33,7 @@ namespace TVRename
                 codeFinderControl.SetHint(hint.TVDBCode.ToString());
             else
             {
-                string s = hint.Folder;
+                string s = hint.Folder.FullName;
                 int p = s.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
                 codeFinderControl.SetHint(s.Substring(p+1));
             }

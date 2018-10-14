@@ -131,6 +131,8 @@ namespace TVRename
 
         public SeriesInfo GetSeries(int id) => HasSeries(id) ? series[id] : null;
 
+        public SeriesInfo GetSeriesAndDownload(int id) => HasSeries(id) ? series[id] : DownloadSeriesNow(id,false,false,false,TVSettings.Instance.PreferredLanguageCode);
+
         public Dictionary<int, SeriesInfo> GetSeriesDict() => series;
 
         private Dictionary<int, SeriesInfo> GetSeriesDictMatching(string testShowName)
@@ -1797,7 +1799,7 @@ namespace TVRename
                 if (((HttpWebResponse) ex.Response).StatusCode == HttpStatusCode.NotFound)
                 {
                     Logger.Info(
-                        $"Could not find any earch results for {text} in {TVSettings.Instance.PreferredLanguageCode}");
+                        $"Could not find any search results for {text} in {TVSettings.Instance.PreferredLanguageCode}");
                 }
                 else
                 {

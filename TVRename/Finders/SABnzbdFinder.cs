@@ -2,7 +2,6 @@ using System;
 using System.Net;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
@@ -10,15 +9,9 @@ namespace TVRename
     {
         public SABnzbdFinder(TVDoc i) : base(i) { }
 
-        public override bool Active()
-        {
-            return TVSettings.Instance.CheckSABnzbd;
-        }
+        public override bool Active() => TVSettings.Instance.CheckSABnzbd;
 
-        public override FinderDisplayType DisplayType()
-        {
-            return FinderDisplayType.downloading;
-        }
+        public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
@@ -35,16 +28,7 @@ namespace TVRename
             string theUrl = "http://" + TVSettings.Instance.SABHostPort +
                             "/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey=" + TVSettings.Instance.SABAPIKey;
 
-            WebClient wc = new WebClient();
-            byte[] r = null;
-            try
-            {
-                r = wc.DownloadData(theUrl);
-            }
-            catch (WebException)
-            {
-                Logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theUrl);
-            }
+            byte[] r = DownloadPage(theUrl);
 
             if (r == null)
             {
@@ -57,7 +41,7 @@ namespace TVRename
                 SAB.Result res = SAB.Result.Deserialize(r);
                 if (res != null && res.status == "False")
                 {
-                    Logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
+                    Logger.Error("Error processing data from SABnzbd (Queue Check): {0}", res.error);
                     prog.Invoke(totPct);
                     return;
                 }
@@ -93,8 +77,7 @@ namespace TVRename
                 if (ActionCancel)
                     return;
 
-                prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
-
+                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
 
                 if (!(action1 is ItemMissing))
                     continue;
@@ -105,19 +88,14 @@ namespace TVRename
 
                 foreach (SAB.QueueSlotsSlot te in sq.slots)
                 {
-                    //foreach (queueSlotsSlot te in qs)
-                    {
-                        FileInfo file = new FileInfo(te.filename);
-                        //if (!TVSettings.Instance.UsefulExtension(file.Extension, false)) // not a usefile file extension
-                        //    continue;
+                    FileInfo file = new FileInfo(te.filename);
 
-                        if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
-                        if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
-                            (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum )) continue;
-                        toRemove.Add(action1);
-                        newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt,DownloadApp.SABnzbd));
-                        break;
-                    }
+                    if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
+                    if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
+                        (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum)) continue;
+                    toRemove.Add(action1);
+                    newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd));
+                    break;
                 }
             }
 
@@ -130,5 +108,20 @@ namespace TVRename
             prog.Invoke(totPct);
         }
 
+        private static byte[] DownloadPage(string theUrl)
+        {
+            WebClient wc = new WebClient();
+            byte[] r = null;
+            try
+            {
+                r = wc.DownloadData(theUrl);
+            }
+            catch (WebException)
+            {
+                Logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theUrl);
+            }
+
+            return r;
+        }
     }
 }
