@@ -37,20 +37,13 @@ namespace TVRename
             sampleSeason = si.GetFirstAvailableSeason();
             InitializeComponent();
 
-            cbTimeZone.BeginUpdate();
-            cbTimeZone.Items.Clear();
-
-            lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-("+ CustomSeasonName.NameFor(si.GetFirstAvailableSeason(), TVSettings.Instance.SeasonFolderFormat) + ")";
+            lblSeasonWordPreview.Text = TVSettings.Instance.SeasonFolderFormat + "-(" + CustomSeasonName.NameFor(si.GetFirstAvailableSeason(), TVSettings.Instance.SeasonFolderFormat) + ")";
             lblSeasonWordPreview.ForeColor = Color.DarkGray;
 
-            foreach (string s in TimeZone.ZoneNames())
-                cbTimeZone.Items.Add(s);
-
-            cbTimeZone.EndUpdate();
-            cbTimeZone.Text = si.ShowTimeZone;
+            SetupDropDowns(si);
 
             codeFinderForm =
-                new TheTvdbCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "") {Dock = DockStyle.Fill};
+                new TheTvdbCodeFinder(si.TvdbCode != -1 ? si.TvdbCode.ToString() : "") { Dock = DockStyle.Fill };
 
             pnlCF.SuspendLayout();
             pnlCF.Controls.Add(codeFinderForm);
@@ -61,6 +54,11 @@ namespace TVRename
             if (chkCustomShowName.Checked)
                 txtCustomShowName.Text = si.CustomShowName;
             chkCustomShowName_CheckedChanged(null, null);
+
+            chkCustomLanguage.Checked = si.UseCustomLanguage;
+            if (chkCustomLanguage.Checked)
+                cbLanguage.Text = TheTVDB.Instance.LanguageList.GetLanguageFromCode(si.CustomLanguageCode).Name;
+            chkCustomLanguage_CheckedChanged(null, null);
 
             cbSequentialMatching.Checked = si.UseSequentialMatch;
             chkShowNextAirdate.Checked = si.ShowNextAirdate;
@@ -111,7 +109,7 @@ namespace TVRename
             {
                 foreach (string s in kvp.Value)
                 {
-                    ListViewItem lvi = new ListViewItem {Text = kvp.Key.ToString()};
+                    ListViewItem lvi = new ListViewItem { Text = kvp.Key.ToString() };
                     lvi.SubItems.Add(s);
 
                     lvSeasonFolders.Items.Add(lvi);
@@ -140,6 +138,29 @@ namespace TVRename
             cbUseCustomSearch.Checked = si.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(si.CustomSearchUrl);
             txtSearchURL.Text = si.CustomSearchUrl ?? "";
             EnableDisableCustomSearch();
+        }
+
+        private void SetupDropDowns(ShowItem si)
+        {
+            cbTimeZone.BeginUpdate();
+            cbTimeZone.Items.Clear();
+            foreach (string s in TimeZone.ZoneNames())
+                cbTimeZone.Items.Add(s);
+            cbTimeZone.EndUpdate();
+            cbTimeZone.Text = si.ShowTimeZone;
+
+            string pref = "";
+            cbLanguage.BeginUpdate();
+            cbLanguage.Items.Clear();
+            foreach (Language l in TheTVDB.Instance.LanguageList)
+            {
+                cbLanguage.Items.Add(l.Name);
+
+                if (si.CustomLanguageCode == l.Abbreviation)
+                    pref = l.Name;
+            }
+            cbLanguage.EndUpdate();
+            cbLanguage.Text = pref;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)
@@ -175,6 +196,12 @@ namespace TVRename
 
             selectedShow.CustomShowName = txtCustomShowName.Text;
             selectedShow.UseCustomShowName = chkCustomShowName.Checked;
+            if (selectedShow.UseCustomShowName)
+            {
+                selectedShow.CustomLanguageCode = TheTVDB.Instance.LanguageList
+                    .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()).Abbreviation;
+            }
+            selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
             selectedShow.TvdbCode = code;
@@ -237,10 +264,6 @@ namespace TVRename
 
         private void bnBrowse_Click(object sender, EventArgs e)
         {
-            //folderBrowser.Title = "Add Folder...";
-            //folderBrowser.ShowEditbox = true;
-            //folderBrowser.StartPosition = FormStartPosition.CenterParent;
-
             folderBrowser.ShowNewFolderButton = true;
 
             if (!string.IsNullOrEmpty(txtBaseFolder.Text))
@@ -397,6 +420,11 @@ namespace TVRename
         private void lvSeasonFolders_SelectedIndexChanged(object sender, EventArgs e)
         {
             bnRemove.Enabled = lvSeasonFolders.SelectedItems.Count > 0;
+        }
+
+        private void chkCustomLanguage_CheckedChanged(object sender, EventArgs e)
+        {
+            cbLanguage.Enabled = chkCustomLanguage.Checked;
         }
     }
 }

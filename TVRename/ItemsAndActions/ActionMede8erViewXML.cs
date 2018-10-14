@@ -85,9 +85,6 @@ namespace TVRename
         protected override string SeasonNumber => snum > 0 ? snum.ToString() : "";
         protected override string EpisodeNumber => string.Empty;
         protected override string AirDate => string.Empty;
-        protected override string DestinationFolder => Where.DirectoryName;
-        protected override string DestinationFile => Where.Name;
-        protected override string SourceDetails => string.Empty;
 
         #endregion
     }

@@ -13,7 +13,7 @@ namespace TVRename
     public class ActionRSS : ActionDownload
     {
         // ReSharper disable once InconsistentNaming
-        public RSSItem RSS;
+        public readonly RSSItem RSS;
         private readonly string theFileNoExt;
 
         public ActionRSS(RSSItem rss, string toWhereNoExt, ProcessedEpisode pe)
@@ -102,23 +102,13 @@ namespace TVRename
 
         public override IgnoreItem Ignore => GenerateIgnore(theFileNoExt);
 
-        protected override string SeriesName => Episode.Show.ShowName;
-        protected override string SeasonNumber => Episode.AppropriateSeasonNumber.ToString();
-        protected override string EpisodeNumber => Episode.NumsAsString();
-        protected override string AirDate => Episode.GetAirDateDT(true).PrettyPrint();
         protected override string DestinationFolder => TargetFolder;
-        protected override string DestinationFile => theFileNoExt;
+        protected override string DestinationFile => TargetFilename;
         protected override string SourceDetails => RSS.Title;
 
-        public override string TargetFolder
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(theFileNoExt))
-                    return null;
-                return new FileInfo(theFileNoExt).DirectoryName;
-            }
-        }
+        public override string TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;
+
+        private string TargetFilename => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).Name;
 
         public override string ScanListViewGroup => "lvgActionDownloadRSS";
 

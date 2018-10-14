@@ -19,8 +19,9 @@ namespace TVRename
         public DateTime? AirsTime;
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
-        public Dictionary<string, string> Items; // e.g. Overview, Banner, Poster, etc.
-        private int languageId;
+        private Dictionary<string, string> Items; // e.g. Overview, Banner, Poster, etc.
+        public string targetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
+        private int languageId; //The actual language obtained
         public string Name;
         public bool BannersLoaded;
 
@@ -50,6 +51,8 @@ namespace TVRename
         public long SrvLastUpdated;
         public int TvdbCode;
         public string TempTimeZone;
+
+        public bool useCustomLanguage => targetLanguageCode != null;
 
         public int MinYear()
         {
@@ -95,6 +98,14 @@ namespace TVRename
             TvdbCode = id;
         }
 
+        public SeriesInfo(string name, int id, string langCode)
+        {
+            SetToDefauts();
+            targetLanguageCode = langCode;
+            Name = name;
+            TvdbCode = id;
+        }
+
         public SeriesInfo(XmlReader r)
         {
             SetToDefauts();
@@ -107,7 +118,8 @@ namespace TVRename
             languageId = langId;
             LoadJson(json);
 
-            if (string.IsNullOrEmpty(Name)            ){
+            if (string.IsNullOrEmpty(Name))
+            {
                Logger.Warn("Issue with series " + TvdbCode );
                Logger.Warn(json.ToString());
             }
@@ -799,6 +811,20 @@ namespace TVRename
         public void AddActor(Actor actor)
         {
             actors.Add(actor);
+        }
+    }
+
+    public class SeriesSpecifier
+    {
+        public int seriesId;
+        public bool useCustomLanguage;
+        public string customLanguageCode;
+
+        public SeriesSpecifier(int key, bool useCustomLanguage, string customLanguageCode)
+        {
+            this.seriesId = key;
+            this.useCustomLanguage = useCustomLanguage;
+            this.customLanguageCode = customLanguageCode;
         }
     }
 }

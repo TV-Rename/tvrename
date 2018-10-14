@@ -110,12 +110,10 @@ namespace TVRename
             (season != null) ? season.TheSeries.Name : show.ShowName;
         protected override string SeasonNumber => (Episode != null) ? Episode.AppropriateSeasonNumber.ToString() :
             (season != null) ? season.SeasonNumber.ToString() : string.Empty;
-        protected override string EpisodeNumber => (Episode != null) ? Episode.NumsAsString() : string.Empty;
         protected override string AirDate =>
             (updateTime.CompareTo(DateTime.MaxValue)) != 0 ? updateTime.ToShortDateString() : "";
         protected override string DestinationFolder => whereFile?.DirectoryName ?? whereDirectory?.FullName;
         protected override string DestinationFile => whereFile?.Name ?? whereDirectory?.Name;
-        protected override string SourceDetails => string.Empty;
         public override string TargetFolder => whereFile?.DirectoryName??whereDirectory?.Name;
         public override string ScanListViewGroup => "lvgUpdateFileDates";
         public override int IconNumber => 7;

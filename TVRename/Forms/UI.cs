@@ -988,14 +988,12 @@ namespace TVRename
                 return;
 
             DateTime dt = calCalendar.SelectionStart;
-            for (int i = 0; i < lvWhenToWatch.Items.Count; i++)
-                lvWhenToWatch.Items[i].Selected = false;
-
             bool first = true;
 
-            for (int i = 0; i < lvWhenToWatch.Items.Count; i++)
+            foreach (ListViewItem lvi in lvWhenToWatch.Items)
             {
-                ListViewItem lvi = lvWhenToWatch.Items[i];
+                lvi.Selected = false;
+
                 ProcessedEpisode ei = (ProcessedEpisode) lvi.Tag;
                 DateTime? dt2 = ei.GetAirDateDT(true);
                 if (dt2 != null)
@@ -2578,17 +2576,24 @@ namespace TVRename
             {
                 Logger.Info("Parsing {0} for new shows", dirPath);
                 if (!Directory.Exists(dirPath)) continue;
+                try
+                { 
+                    foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
+                    {
+                        if (!File.Exists(filePath)) continue;
 
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
-                {
-                    if (!File.Exists(filePath)) continue;
+                        FileInfo fi = new FileInfo(filePath);
 
-                    FileInfo fi = new FileInfo(filePath);
+                        if (FileHelper.IgnoreFile(fi)) continue;
 
-                    if (FileHelper.IgnoreFile(fi)) continue;
-
-                    if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
+                        if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
+                    }
                 }
+                catch (UnauthorizedAccessException ex)
+                {
+                    Logger.Warn(ex, $"Could not access files in {dirPath}");
+                }
+
             }
 
             List<ShowItem> addedShows = new List<ShowItem>();
@@ -2670,12 +2675,10 @@ namespace TVRename
                 LessBusy();
             }
 
-            mDoc.Library.AddRange(addedShows);
-
-            ShowAddedOrEdited(true);
-
             if (addedShows.Count <= 0) return;
 
+            mDoc.Library.AddRange(addedShows);
+            ShowAddedOrEdited(true);
             SelectShow(addedShows.Last());
             Logger.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
         }
