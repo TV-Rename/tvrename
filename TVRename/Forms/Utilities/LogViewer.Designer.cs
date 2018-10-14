@@ -46,6 +46,7 @@ namespace TVRename
             // 
             // btnFullLog
             // 
+            this.btnFullLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFullLog.Location = new System.Drawing.Point(695, 418);
             this.btnFullLog.Name = "btnFullLog";
             this.btnFullLog.Size = new System.Drawing.Size(93, 23);
