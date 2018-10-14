@@ -84,26 +84,11 @@ namespace TVRename
 
         public void StopBgDownloadThread()
         {
-            if (mDownloaderThread != null)
-            {
-                DownloadDone = true;
-                mDownloaderThread.Join();
+            if (mDownloaderThread == null) return;
 
-                /*if (Workers != null)
-                {
-                    foreach (Thread t in Workers)
-                        t.Interrupt();
-                }
-
-                WaitForAllThreadsAndTidyUp();
-                if (mDownloaderThread.IsAlive)
-                {
-                    mDownloaderThread.Interrupt();
-                    mDownloaderThread = null;
-                }
-                */
-                mDownloaderThread = null;
-            }
+            DownloadDone = true;
+            mDownloaderThread.Join();
+            mDownloaderThread = null;
         }
 
         private void GetThread(object codeIn)
