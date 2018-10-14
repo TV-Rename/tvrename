@@ -52,6 +52,17 @@ namespace TVRename
             "{EndYear}"
         };
 
+        public List<string> ExamplePresets(Season s)
+        {
+            List<string> possibleExamples = new List<string>();
+            foreach (string example in Presets)
+            {
+                possibleExamples.Add(NameFor(s,example));
+            }
+
+            return possibleExamples;
+        }
+
         public string NameFor(Season s) => NameFor(s, styleString);
 
         public static string NameFor(Season s, string styleString) => NameFor(s, styleString, false);

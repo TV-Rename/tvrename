@@ -84,7 +84,6 @@ namespace TVRename
                 {
                     foreach (DirectoryInfo subDir in subDirs)
                     {
-                        //TODO - this could make use of the presets to see whether they match
                         string regex = "^(?<folderName>" + sw + "\\s*)(?<number>\\d+)$";
                         Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase);
                         if (!m.Success) continue;

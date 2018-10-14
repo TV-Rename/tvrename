@@ -48,6 +48,18 @@ namespace TVRename
             return results.Where(t => !string.IsNullOrWhiteSpace(t)).Distinct();
         }
 
+        public IEnumerable<string> GetSeasonPatterns()
+        {
+            List<string> results = new List<string> {TVSettings.Instance.SeasonFolderFormat};
+
+            IEnumerable<string> seasonWordsFromShows =
+                from si in Values select si.AutoAddCustomFolderFormat;
+
+            results.AddRange(seasonWordsFromShows.Distinct().ToList());
+
+            return results;
+        }
+
         private IEnumerable<string> seasonWordsCache;
 
         internal IEnumerable<string> SeasonWords()
