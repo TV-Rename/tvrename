@@ -26,7 +26,6 @@ namespace TVRename
         public int SeasonId;
         public int SeriesId;
         private string thumbnailPath;
-
         private Season theSeason;
         private SeriesInfo theSeries;
 
@@ -48,10 +47,7 @@ namespace TVRename
             theSeries = o.theSeries;
         }
 
-        public Banner(SeriesInfo ser, Season seas)
-        {
-            SetDefaults(ser, seas);
-        }
+        public Banner(SeriesInfo ser, Season seas) => SetDefaults(ser, seas);
 
         public Banner(int seriesId, XmlReader r)
         {
@@ -171,22 +167,14 @@ namespace TVRename
 
         public bool IsSeasonPoster() => (bannerType == "season");
 
-        public bool IsSeasonBanner()
-        {
-            return ((bannerType == "seasonwide") );
-        }
+        public bool IsSeasonBanner() => (bannerType == "seasonwide" );
 
-        public bool IsFanart()
-        {
-            return ((bannerType == "fanart") );
-        }
+        public bool IsFanart() => (bannerType == "fanart");
 
         private void SetDefaults(SeriesInfo ser, Season seas)
         {
             theSeason = seas;
             theSeries = ser;
-
-
             BannerId = -1;
             BannerPath = "";
             bannerType = "";
@@ -198,7 +186,6 @@ namespace TVRename
             SeriesId = -1;
 
             thumbnailPath = "";
-
         }
                 
         public void SetSeriesSeason(SeriesInfo ser, Season seas)
@@ -237,4 +224,3 @@ namespace TVRename
         }
     }
 }
-

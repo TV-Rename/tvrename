@@ -27,7 +27,6 @@ namespace TVRename
 
                 return value;
             }
-
         }
 
         private IEnumerable<string> GetSeasonWords()

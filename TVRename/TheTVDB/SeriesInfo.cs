@@ -813,18 +813,4 @@ namespace TVRename
             actors.Add(actor);
         }
     }
-
-    public class SeriesSpecifier
-    {
-        public int seriesId;
-        public bool useCustomLanguage;
-        public string customLanguageCode;
-
-        public SeriesSpecifier(int key, bool useCustomLanguage, string customLanguageCode)
-        {
-            this.seriesId = key;
-            this.useCustomLanguage = useCustomLanguage;
-            this.customLanguageCode = customLanguageCode;
-        }
-    }
 }

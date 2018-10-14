@@ -150,7 +150,6 @@ namespace TVRename
                     TEMP_AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
                     upgradeFromOldAutoAddFunction = true;
                 }
-
                 else if (reader.Name == "PadSeasonToTwoDigits")
                 { 
                     TEMP_PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();

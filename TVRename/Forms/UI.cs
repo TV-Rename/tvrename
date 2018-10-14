@@ -1338,7 +1338,6 @@ namespace TVRename
 
             Season seas = mLastSeasonClicked;
             ProcessedEpisode ep = mLastEpClicked;
-            ToolStripMenuItem tsi;
             List<string> added = new List<string>();
 
             if (ep != null)
@@ -1350,7 +1349,7 @@ namespace TVRename
                     bool first = true;
                     foreach (string folder in afl[ep.AppropriateSeasonNumber])
                     {
-                        AddFolder(ref tsi, added, ref n, ref first, folder);
+                        AddFolder(added, ref n, ref first, folder);
                     }
                 }
             }
@@ -1364,7 +1363,7 @@ namespace TVRename
                     bool first = true;
                     foreach (string folder in folders[seas.SeasonNumber])
                     {
-                        AddFolder(ref tsi, added, ref n, ref first, folder);
+                        AddFolder(added, ref n, ref first, folder);
                     }
                 }
             }
@@ -1378,7 +1377,7 @@ namespace TVRename
                 {
                     foreach (string folder in kvp.Value)
                     {
-                        AddFolder(ref tsi, added, ref n, ref first, folder);
+                        AddFolder(added, ref n, ref first, folder);
                     }
                 }
             }
@@ -1391,12 +1390,12 @@ namespace TVRename
                 foreach (Item sli in lvr.FlatList)
                 {
                     string folder = sli.TargetFolder;
-                    AddFolder(ref tsi, added, ref n, ref first, folder);
+                    AddFolder(added, ref n, ref first, folder);
                 }
             }
         }
 
-        private void AddFolder(ref ToolStripMenuItem tsi, List<string> added, ref int n, ref bool first, string folder)
+        private void AddFolder(List<string> added, ref int n, ref bool first, string folder)
         {
             if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
             {
@@ -1407,7 +1406,7 @@ namespace TVRename
                     first = false;
                 }
 
-                tsi = new ToolStripMenuItem("Open: " + folder);
+                ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folder);
                 mFoldersToOpen.Add(folder);
                 tsi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
                 n++;
