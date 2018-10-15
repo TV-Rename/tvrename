@@ -20,7 +20,7 @@ namespace TVRename
             noEpisodes,
         }
 
-        public Dictionary<int,Episode> Episodes;
+        public System.Collections.Generic.Dictionary<int,Episode> Episodes;
         public int SeasonId;
         public int SeasonNumber;
         public SeriesInfo TheSeries;
@@ -43,7 +43,7 @@ namespace TVRename
             else
             {
                 bool leadingZero = TVSettings.Instance.LeadingZeroOnSeason;
-                if (leadingZero)
+                if (leadingZero == true)
                 {
                     return TVSettings.Instance.defaultSeasonWord + season.ToString("00");
                 }
@@ -97,10 +97,10 @@ namespace TVRename
 
             foreach (Episode e in Episodes.Values)
             {
-                DateTime? adt = e.GetAirDateDt();
-                if (!adt.HasValue) continue;
-                DateTime airDateTime = adt.Value;
-                if (airDateTime.Year < min) min = airDateTime.Year;
+                if (e.GetAirDateDt().HasValue)
+                {
+                    if (e.GetAirDateDt().Value.Year < min) min = e.GetAirDateDt().Value.Year;
+                }
             }
 
             return min;
@@ -112,27 +112,27 @@ namespace TVRename
 
             foreach (Episode e in Episodes.Values)
             {
-                DateTime? adt = e.GetAirDateDt();
-                if (!adt.HasValue) continue;
-                DateTime airDateTime = adt.Value;
-                if (airDateTime.Year > max) max = airDateTime.Year;
+                if (e.GetAirDateDt().HasValue)
+                {
+                    if (e.GetAirDateDt().Value.Year > max) max = e.GetAirDateDt().Value.Year;
+                }
             }
             return max;
         }
-
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
 
         private bool HasUnairedEpisodes(TimeZone tz)
         {
-            if (!HasEpisodes) return false;
-
-            foreach (Episode e in Episodes.Values)
+            if (HasEpisodes)
             {
-                DateTime? adt = e.GetAirDateDt(tz);
-                if (!adt.HasValue) continue;
-                DateTime airDateTime = adt.Value;
-                if (airDateTime > DateTime.Now)
-                    return true;
+                foreach (Episode e in Episodes.Values)
+                {
+                    if (e.GetAirDateDt(tz).HasValue)
+                    {
+                        if (e.GetAirDateDt(tz).Value > DateTime.Now)
+                            return true;
+                    }
+                }
             }
 
             return false;
@@ -140,15 +140,16 @@ namespace TVRename
 
         private bool HasAiredEpisodes(TimeZone tz)
         {
-            if (!HasEpisodes) return false;
-
-            foreach (Episode e in Episodes.Values)
+            if (HasEpisodes)
             {
-                DateTime? adt = e.GetAirDateDt(tz);
-                if (!adt.HasValue) continue;
-                DateTime airDateTime = adt.Value;
-                if (airDateTime < DateTime.Now)
-                    return true;
+                foreach (Episode e in Episodes.Values)
+                {
+                    if (e.GetAirDateDt(tz).HasValue)
+                    {
+                        if (e.GetAirDateDt(tz).Value < DateTime.Now)
+                            return true;
+                    }
+                }
             }
 
             return false;

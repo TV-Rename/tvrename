@@ -40,7 +40,7 @@ namespace TVRename
             {
                 AddNewRow();
                 grid1[i + 1, 0].Value = mSearchers.Name(i);
-                grid1[i + 1, 1].Value = mSearchers.Url(i);
+                grid1[i + 1, 1].Value = mSearchers.URL(i);
             }
         }
 

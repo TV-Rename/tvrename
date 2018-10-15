@@ -80,7 +80,7 @@ namespace TVRename
             }
 
             System.Diagnostics.Debug.Assert(sq != null); // shouldn't happen
-            if (sq.slots == null || sq.slots.Length == 0) // empty queue
+            if (sq?.slots == null || sq.slots.Length == 0) // empty queue
                 return;
 
             ItemList newList = new ItemList();

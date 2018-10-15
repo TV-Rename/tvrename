@@ -11,10 +11,8 @@ namespace TVRename
     {
         #region IComparer<Item> Members
 
-        public int Compare(Item x, Item y)
+        public virtual int Compare(Item x, Item y)
         {
-            if (x is null) return -1;
-            if (y is null) return 1;
             return (x.GetType() == y.GetType()) ? x.Compare(y) : (TypeNumber(x) - TypeNumber(y));
         }
 

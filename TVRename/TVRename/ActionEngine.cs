@@ -69,6 +69,7 @@ namespace TVRename
             catch (Exception e)
             {
                 logger.Fatal(e, "Unhandled Exception in Process Single Action");
+                return;
             }
         }
 
@@ -96,9 +97,10 @@ namespace TVRename
         {
             if (theList == null)
             {
-                logger.Info("Asked to do actions, but none provided....");
+                logger.Info($"Asked to do actions, but none provided....");
                 return;
             }
+                
 
             logger.Info("**********************");
             logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions().Count()} actions to be completed )");

@@ -276,7 +276,7 @@ namespace TVRename
                         {
                             View = theData.Data[r][c].Value ? isActorModel : isGuestModel
                         };
-                        grid1[r + 1, c + 1].AddController(new CellClickEvent(theData.Cols[c]));
+                        grid1[r + 1, c + 1].AddController(new CellClickEvent(theData.Cols[c], theData.Rows[r]));
                     }
                     else
                         grid1[r + 1, c + 1] = new Cell("");
@@ -344,11 +344,13 @@ namespace TVRename
 
         private class CellClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
+            private readonly string show;
             private readonly string who;
 
-            public CellClickEvent(string who)
+            public CellClickEvent(string who, string show)
             {
                 this.who = who;
+                this.show = show;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)

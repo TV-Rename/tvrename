@@ -124,7 +124,6 @@ namespace TVRename.Forms
             this.webReleaseNotes.Size = new System.Drawing.Size(382, 333);
             this.webReleaseNotes.TabIndex = 7;
             this.webReleaseNotes.Visible = false;
-            this.webReleaseNotes.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(this.NavigateTo);
             // 
             // UpdateNotification
             // 
@@ -165,5 +164,5 @@ namespace TVRename.Forms
         private System.Windows.Forms.TextBox tbReleaseNotes;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.WebBrowser webReleaseNotes;
-        }
+    }
 }

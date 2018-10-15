@@ -180,13 +180,27 @@ namespace TVRename
                         if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, null, null); // tidyup on main action, not this
+                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, null,null); // tidyup on main action, not this
 
                         // check this item isn't already in our to-do list
-                        if (ActionListContains(actionlist, newitem)) continue;
+                        bool doNotAdd = false;
+                        foreach (Item ai2 in actionlist)
+                        {
+                            if (!(ai2 is ActionCopyMoveRename))
+                                continue;
 
-                        if (!newitem.SameAs(action)) // don't re-add ourself
-                            extras.Add(newitem);
+                            if (((ActionCopyMoveRename)(ai2)).SameSource(newitem))
+                            {
+                                doNotAdd = true;
+                                break;
+                            }
+                        }
+
+                        if (!doNotAdd)
+                        {
+                            if (!newitem.SameAs(action)) // don't re-add ourself
+                                extras.Add(newitem);
+                        }
                     }
                 }
                 catch (System.IO.PathTooLongException e)
@@ -201,50 +215,30 @@ namespace TVRename
             foreach (Item action in extras)
             {
                 // check we don't already have this in our list and, if we don't add it!
-                bool have = AlreadyHaveAction(actionlist, action);
+                bool have = false;
+                foreach (Item action2 in actionlist)
+                {
+                    if (action2.SameAs(action))
+                    {
+                        have = true;
+                        break;
+                    }
+
+                    if ((action is Action a1) && (action2 is Action) )
+                    {
+                        Action a2 = (Action)action2;
+                        if (a2.Produces == a1.Produces)
+                        {
+                            have = true;
+                            break;
+                        }
+                    }
+                }
 
                 if (!have)
                     actionlist.Insert(0, action); // put before other actions, so tidyup is run last
             }
         }
-
-        private static bool AlreadyHaveAction(ItemList actionlist, Item action)
-        {
-            foreach (Item action2 in actionlist)
-            {
-                if (action2.SameAs(action))
-                {
-                    return true;
-                }
-
-                if ((action is Action a1) && (action2 is Action a2))
-                {
-                    if (a2.Produces == a1.Produces)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        private static bool ActionListContains(ItemList actionlist, ActionCopyMoveRename newitem)
-        {
-            foreach (Item ai2 in actionlist)
-            {
-                if (!(ai2 is ActionCopyMoveRename))
-                    continue;
-
-                if (((ActionCopyMoveRename)(ai2)).SameSource(newitem))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
         // consider each of the files, see if it is suitable for series "ser" and episode "epi"
         // if so, add a rcitem for copy to "fi"
 

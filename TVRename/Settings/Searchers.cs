@@ -16,14 +16,14 @@ namespace TVRename
 {
     public class Searchers
     {
-        private class Choice
+        public class Choice
         {
             public string Name;
-            public string Url2;
+            public string URL2;
         }
 
         public string CurrentSearch;
-        private readonly List<Choice> choices = new List<Choice>();
+        private readonly List<Choice> Choices = new List<Choice>();
 
         public Searchers()
         {
@@ -38,7 +38,7 @@ namespace TVRename
         
         public Searchers(XmlReader reader)
         {
-            choices = new List<Choice>();
+            Choices = new List<Choice>();
             CurrentSearch = "";
 
             reader.Read();
@@ -73,7 +73,7 @@ namespace TVRename
 
         public void SetToNumber(int n)
         {
-            CurrentSearch = choices[n].Name;
+            CurrentSearch = Choices[n].Name;
         }
 
         public int CurrentSearchNum()
@@ -81,24 +81,23 @@ namespace TVRename
             return NumForName(CurrentSearch);
         }
 
-        private int NumForName(string srch)
+        public int NumForName(string srch)
         {
-            for (int i = 0; i < choices.Count; i++)
+            for (int i = 0; i < Choices.Count; i++)
             {
-                if (choices[i].Name == srch)
+                if (Choices[i].Name == srch)
                     return i;
             }
             return 0;
         }
 
-        public string CurrentSearchUrl()
+        public string CurrentSearchURL()
         {
-            if (choices.Count == 0)
+            if (Choices.Count == 0)
                 return "";
-            return choices[CurrentSearchNum()].Url2;
+            return Choices[CurrentSearchNum()].URL2;
         }
-
-        public void WriteXml(XmlWriter writer)
+        public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
             XmlHelper.WriteElementToXml(writer,"Current",CurrentSearch);
@@ -106,44 +105,44 @@ namespace TVRename
             for (int i = 0; i < Count(); i++)
             {
                 writer.WriteStartElement("Choice");
-                XmlHelper.WriteAttributeToXml(writer,"Name",choices[i].Name);
-                XmlHelper.WriteAttributeToXml(writer,"URL2",choices[i].Url2);
+                XmlHelper.WriteAttributeToXml(writer,"Name",Choices[i].Name);
+                XmlHelper.WriteAttributeToXml(writer,"URL2",Choices[i].URL2);
                 writer.WriteEndElement();
             }
             writer.WriteEndElement(); // TheSearchers
         }
         public void Clear()
         {
-            choices.Clear();
+            Choices.Clear();
         }
 
         public void Add(string name, string url)
         {
 
-            choices.Add(new Choice { Name = name, Url2 = url });
+            Choices.Add(new Choice { Name = name, URL2 = url });
         }
 
         public int Count()
         {
-            return choices.Count;
+            return Choices.Count;
         }
 
         public string Name(int n)
         {
-            if (n >= choices.Count)
-                n = choices.Count - 1;
+            if (n >= Choices.Count)
+                n = Choices.Count - 1;
             else if (n < 0)
                 n = 0;
-            return choices[n].Name;
+            return Choices[n].Name;
         }
 
-        public string Url(int n)
+        public string URL(int n)
         {
-            if (n >= choices.Count)
-                n = choices.Count - 1;
+            if (n >= Choices.Count)
+                n = Choices.Count - 1;
             else if (n < 0)
                 n = 0;
-            return choices[n].Url2;
+            return Choices[n].URL2;
         }
     }
 }

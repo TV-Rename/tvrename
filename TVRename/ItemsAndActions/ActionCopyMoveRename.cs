@@ -237,8 +237,9 @@ namespace TVRename
             }
         }
 
-        protected override string DestinationFolder => To.DirectoryName;
-        protected override string DestinationFile => To.Name;
-        protected override string SourceDetails => From.FullName;
+        protected override string FileInfo1 => From.DirectoryName;
+        protected override string FileInfo2 => From.Name;
+        protected override string FileInfo3 => To.DirectoryName;
+        protected override string FileInfo4 => To.Name;
     }
 }

@@ -6,7 +6,7 @@ namespace TVRename.SAB
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlType(AnonymousType = true)]
-    public class QueueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged,IDownloadInformation
+    public class QueueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged,DownloadInformation
     {
         private string statusField;
         private string indexField;
@@ -237,11 +237,11 @@ namespace TVRename.SAB
             }
         }
 
-        string IDownloadInformation.FileIdentifier => filename;
+        string DownloadInformation.FileIdentifier => filename;
 
-        string IDownloadInformation.Destination => filename;
+        string DownloadInformation.Destination => filename;
 
-        string IDownloadInformation.RemainingText
+        string DownloadInformation.RemainingText
         {
             get
             {

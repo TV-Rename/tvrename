@@ -490,7 +490,7 @@ namespace TVRename
                     this.episodeAiredCount = episodeAiredCount;
                     this.episodeGotCount = episodeGotCount;
                     Season = season;
-                    Ignored = ignored;
+                    this.Ignored = ignored;
                 }
 
                 public SummaryOutput GetOuput()

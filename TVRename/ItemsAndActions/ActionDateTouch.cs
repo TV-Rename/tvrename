@@ -8,6 +8,7 @@
 namespace TVRename
 {
     using System;
+    using System.Windows.Forms;
     using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -106,18 +107,50 @@ namespace TVRename
 
         public override IgnoreItem Ignore => whereFile == null ? null : new IgnoreItem(whereFile.FullName);
 
-        protected override string SeriesName => (Episode != null) ? Episode.Show.ShowName :
-            (season != null) ? season.TheSeries.Name : show.ShowName;
-        protected override string SeasonNumber => (Episode != null) ? Episode.AppropriateSeasonNumber.ToString() :
-            (season != null) ? season.SeasonNumber.ToString() : string.Empty;
-        protected override string EpisodeNumber => (Episode != null) ? Episode.NumsAsString() : string.Empty;
-        protected override string AirDate =>
-            (updateTime.CompareTo(DateTime.MaxValue)) != 0 ? updateTime.ToShortDateString() : "";
-        protected override string DestinationFolder => whereFile?.DirectoryName ?? whereDirectory?.FullName;
-        protected override string DestinationFile => whereFile?.Name ?? whereDirectory?.Name;
-        protected override string SourceDetails => string.Empty;
+        public override ListViewItem ScanListViewItem
+        {
+            get
+            {
+                ListViewItem lvi = new ListViewItem();
+
+                if (Episode != null)
+                {
+                    lvi.Text = Episode.Show.ShowName;
+                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
+                    lvi.SubItems.Add(Episode.NumsAsString());
+
+                }
+                else if (season != null)
+                {
+                    lvi.Text = season.TheSeries.Name;
+                    lvi.SubItems.Add(season.SeasonNumber.ToString());
+                    lvi.SubItems.Add("");
+
+                }
+                else if (show != null)
+                {
+                    lvi.Text = show.ShowName;
+                    lvi.SubItems.Add("");
+                    lvi.SubItems.Add("");
+                }
+
+                DateTime dt = updateTime;
+
+                lvi.SubItems.Add((dt.CompareTo(DateTime.MaxValue)) != 0 ? dt.ToShortDateString() : "");
+
+                lvi.SubItems.Add(whereFile?.DirectoryName??whereDirectory?.FullName);
+                lvi.SubItems.Add(whereFile?.Name??whereDirectory?.Name);
+
+                lvi.Tag = this;
+
+                return lvi;
+            }
+        }
+
         public override string TargetFolder => whereFile?.DirectoryName??whereDirectory?.Name;
+
         public override string ScanListViewGroup => "lvgUpdateFileDates";
+
         public override int IconNumber => 7;
 
         #endregion
