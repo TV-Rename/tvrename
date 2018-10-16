@@ -107,6 +107,7 @@ namespace TVRename
                     }
                 }
             }
+
             return duplicateActionRss;
         }
     }

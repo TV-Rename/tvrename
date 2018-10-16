@@ -56,7 +56,7 @@ namespace TVRename
                  {
                      BackColor = Color.SteelBlue,
                      ForeColor = Color.White,
-                     TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
+                     TextAlignment = ContentAlignment.MiddleLeft
                  };
             grid1.Columns.Clear();
             grid1.Rows.Clear();
