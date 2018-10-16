@@ -961,7 +961,6 @@ namespace TVRename
             FillLanguageList();
         }
 
-
         private void FillLanguageList()
         {
             TheTVDB.Instance.GetLock( "Preferences-FLL");
@@ -982,33 +981,6 @@ namespace TVRename
 
             TheTVDB.Instance.Unlock("Preferences-FLL");
         }
-        /*
-        private void bnLangDown_Click(object sender, System.EventArgs e)
-        {
-            int n = this.lbLangs.SelectedIndex;
-            if (n == -1)
-                return;
-
-            if (n < (this.LangList.Count - 1))
-            {
-                this.LangList.Reverse(n, 2);
-                this.FillLanguageList();
-                this.lbLangs.SelectedIndex = n + 1;
-            }
-        }
-
-        private void bnLangUp_Click(object sender, System.EventArgs e)
-        {
-            int n = this.lbLangs.SelectedIndex;
-            if (n == -1)
-                return;
-            if (n > 0)
-            {
-                this.LangList.Reverse(n - 1, 2);
-                this.FillLanguageList();
-                this.lbLangs.SelectedIndex = n - 1;
-            }
-        }*/
 
         private void cbMissing_CheckedChanged(object sender, EventArgs e)
         {

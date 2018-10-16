@@ -301,7 +301,7 @@ namespace TVRename
             };
 
             filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
-                (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+                ((filterTextBox.ClientSize.Height - 16) / 2) + 1);
 
             filterButton.Click += filterButton_Click;
             filterTextBox.Controls.Add(filterButton);
@@ -370,7 +370,6 @@ namespace TVRename
 
             if (res == DialogResult.Yes)
             {
-                
                 TheTVDB.Instance.ForgetEverything();
                 FillMyShows();
                 FillEpGuideHtml();
@@ -768,7 +767,6 @@ namespace TVRename
             string infoPaneBody;
             string imagesPaneBody;
 
-
             if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
             {
                 Season s = ser.DvdSeasons[snum];
@@ -999,14 +997,12 @@ namespace TVRename
                 return;
 
             DateTime dt = calCalendar.SelectionStart;
-            for (int i = 0; i < lvWhenToWatch.Items.Count; i++)
-                lvWhenToWatch.Items[i].Selected = false;
-
             bool first = true;
 
-            for (int i = 0; i < lvWhenToWatch.Items.Count; i++)
+            foreach (ListViewItem lvi in lvWhenToWatch.Items)
             {
-                ListViewItem lvi = lvWhenToWatch.Items[i];
+                lvi.Selected = false;
+
                 ProcessedEpisode ei = (ProcessedEpisode) lvi.Tag;
                 DateTime? dt2 = ei.GetAirDateDT(true);
                 if (dt2 != null)
@@ -1353,7 +1349,6 @@ namespace TVRename
 
             Season seas = mLastSeasonClicked;
             ProcessedEpisode ep = mLastEpClicked;
-            ToolStripMenuItem tsi;
             List<string> added = new List<string>();
 
             if (ep != null)
@@ -1365,21 +1360,7 @@ namespace TVRename
                     bool first = true;
                     foreach (string folder in afl[ep.AppropriateSeasonNumber])
                     {
-                        if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder))
-                        {
-                            if (first)
-                            {
-                                showRightClickMenu.Items.Add(new ToolStripSeparator());
-                                first = false;
-                            }
-
-                            tsi = new ToolStripMenuItem("Open: " + folder);
-                            added.Add(folder);
-                            mFoldersToOpen.Add(folder);
-                            tsi.Tag = (int) RightClickCommands.kOpenFolderBase + n;
-                            n++;
-                            showRightClickMenu.Items.Add(tsi);
-                        }
+                        AddFolder(added, ref n, ref first, folder);
                     }
                 }
             }
@@ -1393,21 +1374,7 @@ namespace TVRename
                     bool first = true;
                     foreach (string folder in folders[seas.SeasonNumber])
                     {
-                        if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
-                        {
-                            added.Add(folder); // don't show the same folder more than once
-                            if (first)
-                            {
-                                showRightClickMenu.Items.Add(new ToolStripSeparator());
-                                first = false;
-                            }
-
-                            tsi = new ToolStripMenuItem("Open: " + folder);
-                            mFoldersToOpen.Add(folder);
-                            tsi.Tag = (int) RightClickCommands.kOpenFolderBase + n;
-                            n++;
-                            showRightClickMenu.Items.Add(tsi);
-                        }
+                        AddFolder(added, ref n, ref first, folder);
                     }
                 }
             }
@@ -1421,21 +1388,7 @@ namespace TVRename
                 {
                     foreach (string folder in kvp.Value)
                     {
-                        if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
-                        {
-                            added.Add(folder); // don't show the same folder more than once
-                            if (first)
-                            {
-                                showRightClickMenu.Items.Add(new ToolStripSeparator());
-                                first = false;
-                            }
-
-                            tsi = new ToolStripMenuItem("Open: " + folder);
-                            mFoldersToOpen.Add(folder);
-                            tsi.Tag = (int) RightClickCommands.kOpenFolderBase + n;
-                            n++;
-                            showRightClickMenu.Items.Add(tsi);
-                        }
+                        AddFolder(added, ref n, ref first, folder);
                     }
                 }
             }
@@ -1448,23 +1401,27 @@ namespace TVRename
                 foreach (Item sli in lvr.FlatList)
                 {
                     string folder = sli.TargetFolder;
-
-                    if (string.IsNullOrEmpty(folder) || !Directory.Exists(folder) || added.Contains(folder))
-                        continue;
-
-                    added.Add(folder); // don't show the same folder more than once
-                    if (first)
-                    {
-                        showRightClickMenu.Items.Add(new ToolStripSeparator());
-                        first = false;
-                    }
-
-                    tsi = new ToolStripMenuItem("Open: " + folder);
-                    mFoldersToOpen.Add(folder);
-                    tsi.Tag = (int) RightClickCommands.kOpenFolderBase + n;
-                    n++;
-                    showRightClickMenu.Items.Add(tsi);
+                    AddFolder(added, ref n, ref first, folder);
                 }
+            }
+        }
+
+        private void AddFolder(List<string> added, ref int n, ref bool first, string folder)
+        {
+            if (!string.IsNullOrEmpty(folder) && Directory.Exists(folder) && !added.Contains(folder))
+            {
+                added.Add(folder); // don't show the same folder more than once
+                if (first)
+                {
+                    showRightClickMenu.Items.Add(new ToolStripSeparator());
+                    first = false;
+                }
+
+                ToolStripMenuItem tsi = new ToolStripMenuItem("Open: " + folder);
+                mFoldersToOpen.Add(folder);
+                tsi.Tag = (int)RightClickCommands.kOpenFolderBase + n;
+                n++;
+                showRightClickMenu.Items.Add(tsi);
             }
         }
 
@@ -1908,7 +1865,6 @@ namespace TVRename
                 {
                     Logger.Error("Failed to Save Layout Configuration Files");
                 }
-
             }
             catch (Exception ex)
             {
@@ -2690,16 +2646,22 @@ namespace TVRename
             {
                 Logger.Info("Parsing {0} for new shows", dirPath);
                 if (!Directory.Exists(dirPath)) continue;
+                try
+                { 
+                    foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
+                    {
+                        if (!File.Exists(filePath)) continue;
 
-                foreach (string filePath in Directory.GetFiles(dirPath, "*", SearchOption.AllDirectories))
+                        FileInfo fi = new FileInfo(filePath);
+
+                        if (FileHelper.IgnoreFile(fi)) continue;
+
+                        if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
+                    }
+                }
+                catch (UnauthorizedAccessException ex)
                 {
-                    if (!File.Exists(filePath)) continue;
-
-                    FileInfo fi = new FileInfo(filePath);
-
-                    if (FileHelper.IgnoreFile(fi)) continue;
-
-                    if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
+                    Logger.Warn(ex, $"Could not access files in {dirPath}");
                 }
             }
 
@@ -2782,12 +2744,10 @@ namespace TVRename
                 LessBusy();
             }
 
-            mDoc.Library.AddRange(addedShows);
-
-            ShowAddedOrEdited(true);
-
             if (addedShows.Count <= 0) return;
 
+            mDoc.Library.AddRange(addedShows);
+            ShowAddedOrEdited(true);
             SelectShow(addedShows.Last());
             Logger.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
         }
@@ -3572,7 +3532,7 @@ namespace TVRename
             {
                 Control filterButton = filterTextBox.Controls["Clear"];
                 filterButton.Location = new Point(filterTextBox.ClientSize.Width - filterButton.Width,
-                    (filterTextBox.ClientSize.Height - 16) / 2 + 1);
+                    ((filterTextBox.ClientSize.Height - 16) / 2 ) + 1);
 
                 // Send EM_SETMARGINS to prevent text from disappearing underneath the button
                 NativeMethods.SendMessage(filterTextBox.Handle, 0xd3, (IntPtr) 2, (IntPtr) (filterButton.Width << 16));
@@ -3656,7 +3616,6 @@ namespace TVRename
 
                 results.Add(ser.GetNetwork(), si.ShowTimeZone, si.ShowName);
             }
-
             Logger.Info(results.PrintVersion());
         }
 
@@ -3696,7 +3655,6 @@ namespace TVRename
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
         }
 
         private void aeCollToolStripMenuItem_Click(object sender, EventArgs e)

@@ -987,7 +987,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"SABAPIKey",SABAPIKey);
             XmlHelper.WriteElementToXml(writer,"CheckSABnzbd",CheckSABnzbd);
             XmlHelper.WriteElementToXml(writer,"SABHostPort",SABHostPort);
-            XmlHelper.WriteElementToXml(writer,"PreferredLanguage", PreferredLanguageCode);
+            XmlHelper.WriteElementToXml(writer,"PreferredLanguage",PreferredLanguageCode);
             XmlHelper.WriteElementToXml(writer,"WTWDoubleClick",(int) WTWDoubleClick);
             XmlHelper.WriteElementToXml(writer,"EpJPGs",EpJPGs);
             XmlHelper.WriteElementToXml(writer,"SeriesJpg",SeriesJpg);

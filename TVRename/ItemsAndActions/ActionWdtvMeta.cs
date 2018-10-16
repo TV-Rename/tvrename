@@ -31,12 +31,22 @@ namespace TVRename
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
-            if (Where == null) return false;
+            if (Where == null)
+            {
+                ErrorText = "No file location specified - Development Error";
+                Error = true;
+                Done = true;
+                return false;
+
+            }
 
             if (Episode != null) return WriteEpisodeMetaDataFile();
             
             if (SelectedShow != null) return WriteSeriesXml();
 
+            ErrorText = "No details available to write - Development Error";
+            Error = true;
+            Done = true;
             return false;
         }
 
