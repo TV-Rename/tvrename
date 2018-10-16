@@ -147,6 +147,8 @@ namespace TVRename
             s.ShowInTaskbar = chkShowInTaskbar.Checked;
             s.RenameTxtToSub = cbTxtToSub.Checked;
             s.ShowEpisodePictures = cbShowEpisodePictures.Checked;
+            s.ShowCollections = cbShowCollections.Checked;
+            s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
             s.HideMyShowsSpoilers = chkHideMyShowsSpoilers.Checked;
             s.HideWtWSpoilers = chkHideWtWSpoilers.Checked;
             s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
@@ -381,6 +383,8 @@ namespace TVRename
             chkHideWtWSpoilers.Checked = s.HideWtWSpoilers;
             cbAutoCreateFolders.Checked = s.AutoCreateFolders; 
             cbAutoSelInMyShows.Checked = s.AutoSelectShowInMyShows;
+            cbShowCollections.Checked = s.ShowCollections;
+            cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
             txtSpecialsFolderName.Text = s.SpecialsFolderName;
             txtSeasonFormat.Text= s.SeasonFolderFormat ;
             cbForceLower.Checked = s.ForceLowercaseFilenames;

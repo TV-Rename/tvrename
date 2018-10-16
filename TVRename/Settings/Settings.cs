@@ -77,6 +77,7 @@ namespace TVRename
         public ShowStatusColoringTypeList()
         {
         }
+
         protected ShowStatusColoringTypeList(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
@@ -320,6 +321,8 @@ namespace TVRename
         public CustomEpisodeName NamingStyle = new CustomEpisodeName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
+        public bool ShowCollections = false;
+        public bool DeleteShowFromDisk = false;
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
@@ -434,6 +437,10 @@ namespace TVRename
                     BGDownload = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "OfflineMode")
                     OfflineMode = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ShowCollections")
+                    ShowCollections = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "DeleteShowFromDisk")
+                    DeleteShowFromDisk = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "Replacements" && !reader.IsEmptyElement)
                 {
                     Replacements.Clear();
@@ -598,7 +605,7 @@ namespace TVRename
                 else if (reader.Name == "RenameCheck")
                     RenameCheck = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "PreventMove")
-                    PreventMove  = reader.ReadElementContentAsBoolean();
+                    PreventMove = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckuTorrent")
                     CheckuTorrent = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "CheckqBitTorrent")
@@ -676,13 +683,13 @@ namespace TVRename
                 else if (reader.Name == "PercentDirtyUpgrade")
                     upgradeDirtyPercent = reader.ReadElementContentAsFloat();
                 else if (reader.Name == "BaseSeasonName")
-                    defaultSeasonWord = reader.ReadElementContentAsString( );
+                    defaultSeasonWord = reader.ReadElementContentAsString();
                 else if (reader.Name == "SearchSeasonNames")
                     searchSeasonWordsString = reader.ReadElementContentAsString();
                 else if (reader.Name == "PreferredRSSSearchTerms")
                     preferredRSSSearchTermsString = reader.ReadElementContentAsString();
                 else if (reader.Name == "KeepTogetherType")
-                    keepTogetherMode = (KeepTogetherModes) reader.ReadElementContentAsInt();
+                    keepTogetherMode = (KeepTogetherModes)reader.ReadElementContentAsInt();
                 else if (reader.Name == "KeepTogetherExtensions")
                     keepTogetherExtensionsString = reader.ReadElementContentAsString();
                 else if (reader.Name == "FNPRegexs" && !reader.IsEmptyElement)
@@ -822,6 +829,7 @@ namespace TVRename
                     }
                     reader.Read();
                 }
+
                 else
                     reader.ReadOuterXml();
             }
@@ -829,7 +837,14 @@ namespace TVRename
             if (SeasonFolderFormat == string.Empty)
             {
                 //this has not been set from the XML, so we should give it an appropriate default value
-                SeasonFolderFormat = defaultSeasonWord.Trim() +" " + (LeadingZeroOnSeason ? "{Season:2}": "{Season}");
+                if (defaultSeasonWord.Length > 1)
+                {
+                    SeasonFolderFormat = defaultSeasonWord.Trim() + " " + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
+                }
+                else
+                {
+                    SeasonFolderFormat = defaultSeasonWord.Trim() + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
+                }
             }
         }
 
@@ -878,6 +893,8 @@ namespace TVRename
             TheSearchers.WriteXml(writer);
             XmlHelper.WriteElementToXml(writer,"BGDownload",BGDownload);
             XmlHelper.WriteElementToXml(writer,"OfflineMode",OfflineMode);
+            XmlHelper.WriteElementToXml(writer,"ShowCollections", ShowCollections);
+            XmlHelper.WriteElementToXml(writer, "DeleteShowFromDisk", DeleteShowFromDisk);
             writer.WriteStartElement("Replacements");
             foreach (Replacement R in Replacements)
             {
@@ -1284,6 +1301,7 @@ namespace TVRename
                 case KeepTogetherModes.All: return true;
                 case KeepTogetherModes.Just: return keepTogetherExtensionsArray.Contains(fileExtension);
                 case KeepTogetherModes.AllBut: return !keepTogetherExtensionsArray.Contains(fileExtension);
+
             }
             return true;
         }
