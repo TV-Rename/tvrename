@@ -185,7 +185,13 @@ namespace TVRename
                 if (dr == DialogResult.No)
                     return false;
             }
-
+            if (chkCustomLanguage.Checked && string.IsNullOrWhiteSpace(cbLanguage.SelectedItem?.ToString()))
+            {
+                DialogResult dr = MessageBox.Show("Please enter language for the show or accept the default preferred language", "TVRename Add/Edit Show",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                
+                return false;
+            }
             return true;
         }
 
@@ -193,15 +199,14 @@ namespace TVRename
         {
             int code = codeFinderForm.SelectedCode();
 
-
             selectedShow.CustomShowName = txtCustomShowName.Text;
             selectedShow.UseCustomShowName = chkCustomShowName.Checked;
-            if (selectedShow.UseCustomShowName)
+            selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
+            if (selectedShow.UseCustomLanguage)
             {
                 selectedShow.CustomLanguageCode = TheTVDB.Instance.LanguageList
-                    .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()).Abbreviation;
+                    .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString())?.Abbreviation ??TVSettings.Instance.PreferredLanguageCode;
             }
-            selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
             selectedShow.TvdbCode = code;
