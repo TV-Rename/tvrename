@@ -10,10 +10,10 @@ namespace TVRename.Forms
         private List<PossibleDuplicateEpisode> dupEps;
         private readonly TVDoc mDoc;
         private PossibleDuplicateEpisode mlastSelected;
-        private readonly UI mainUI;
+        private readonly UI mainUi;
         private ListViewItem mlastClicked;
 
-        public enum RightClickCommands
+        private enum RightClickCommands
         {
             none = 0,
             kEpisodeGuideForShow = 1,
@@ -29,7 +29,7 @@ namespace TVRename.Forms
             InitializeComponent();
             dupEps = x;
             mDoc = doc;
-            mainUI = main;
+            mainUi = main;
             UpdateUI();
         }
 
@@ -165,27 +165,27 @@ namespace TVRename.Forms
                 {
                     case RightClickCommands.kEpisodeGuideForShow: // epguide
                         if (mlastSelected != null)
-                            mainUI.GotoEpguideFor(mlastSelected.Episode, true);
+                            mainUi.GotoEpguideFor(mlastSelected.Episode, true);
                         else
                         {
                             if (si != null)
-                                mainUI.GotoEpguideFor(si, true);
+                                mainUi.GotoEpguideFor(si, true);
                         }
                         Close();
                         break;
                     case RightClickCommands.kForceRefreshSeries:
                         if (si != null)
-                            mainUI.ForceRefresh(new List<ShowItem> {si});
+                            mainUi.ForceRefresh(new List<ShowItem> {si});
                         Close();
                         break;
                     case RightClickCommands.kEditShow:
                         if (si != null)
-                            mainUI.EditShow(si);
+                            mainUi.EditShow(si);
                         break;
 
                     case RightClickCommands.kEditSeason:
                         if (si != null)
-                            mainUI.EditSeason(si, mlastSelected.SeasonNumber);
+                            mainUi.EditSeason(si, mlastSelected.SeasonNumber);
                         break;
                     case RightClickCommands.kAddRule:
                         if (mlastSelected != null)
@@ -209,4 +209,3 @@ namespace TVRename.Forms
         }
     }
 }
-

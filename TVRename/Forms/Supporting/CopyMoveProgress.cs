@@ -45,8 +45,6 @@ namespace TVRename
             diskSpaceTimer.Start();
         }
 
-
-
         private void SetPercentages(double file, double group)
         {
             if (file > 100)

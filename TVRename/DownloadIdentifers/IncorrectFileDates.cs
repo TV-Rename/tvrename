@@ -41,7 +41,6 @@ namespace TVRename
                 if (newUpdateTime.Value.CompareTo(Helpers.WindowsStartDateTime) < 0)
                     newUpdateTime = Helpers.WindowsStartDateTime;
 
-
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!doneFilesAndFolders.Contains(di.FullName)))
                 {

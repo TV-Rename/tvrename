@@ -48,11 +48,19 @@ namespace TVRename
         public override int Compare(Item o)
         {
             if (!(o is ItemDownloading ut))
-                { return 0;}
+            {
+                return 0;
+            }
+
             if (Episode == null)
-                { return 1;}
+            {
+                return 1;
+            }
+
             if (ut.Episode == null)
-                { return -1;}
+            {
+                return -1;
+            }
 
             return string.Compare((DesiredLocationNoExt), ut.DesiredLocationNoExt, StringComparison.Ordinal);
         }

@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
-
 namespace TVRename
 {
     /// <summary>
@@ -89,7 +87,6 @@ namespace TVRename
 
                 lvi.SubItems.Add(pre1 + ((seas != -1) ? seas.ToString() : ""));
                 lvi.SubItems.Add(pre2 + ((ep != -1) ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
-
                 
                 lvi.Tag = pe;
 

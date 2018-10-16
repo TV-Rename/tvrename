@@ -41,7 +41,6 @@ namespace TVRename.Forms
                 bool filterByShowNetwork = filter.ShowNetwork != null;
                 cmbNetwork.SelectedItem = (filterByShowNetwork ? filter.ShowNetwork : "");
 
-
                 //Filter By Genre
                 foreach (string genre in filter.Genres)
                 {
@@ -103,4 +102,3 @@ namespace TVRename.Forms
         }
     }
 }
-

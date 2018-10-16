@@ -23,7 +23,6 @@ namespace TVRename.App
 
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
             if (clargs.Hide) SplashScreen.Visible  = false;
-                
         }
 
         /// <summary>
@@ -33,13 +32,15 @@ namespace TVRename.App
         protected override void OnCreateMainForm()
         {
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
+            PathManager.ShowCollection = "";
+
             if (clargs.Hide)
                 SplashScreen.SafeInvoke(
-                    () => ((TVRenameSplash)SplashScreen).Visible = false,true);
+                    () => ((TVRenameSplash)SplashScreen).Visible = false, true);
 
             // Update splash screen
             SplashScreen.SafeInvoke(
-                () => ((TVRenameSplash) SplashScreen).UpdateStatus("Initializing"), true);
+                () => ((TVRenameSplash)SplashScreen).UpdateStatus("Initializing"), true);
 
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
@@ -54,7 +55,6 @@ namespace TVRename.App
                 recoverText = "Recover manually requested.";
             }
 
-            PathManager.ShowCollection = "";
             SetupCustomSettings(clargs);
 
             TVDoc doc;
@@ -144,7 +144,6 @@ namespace TVRename.App
                 doc.SetDirty();
                 Logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
             }
-
         }
     }
 }
