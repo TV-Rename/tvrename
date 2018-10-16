@@ -196,12 +196,12 @@ namespace TVRename
 
             selectedShow.CustomShowName = txtCustomShowName.Text;
             selectedShow.UseCustomShowName = chkCustomShowName.Checked;
-            if (selectedShow.UseCustomShowName)
+            selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
+            if (selectedShow.UseCustomLanguage)
             {
                 selectedShow.CustomLanguageCode = TheTVDB.Instance.LanguageList
                     .GetLanguageFromLocalName(cbLanguage.SelectedItem?.ToString()).Abbreviation;
             }
-            selectedShow.UseCustomLanguage = chkCustomLanguage.Checked;
             selectedShow.ShowTimeZone = cbTimeZone.SelectedItem?.ToString() ?? TimeZone.DefaultTimeZone();
             selectedShow.ShowNextAirdate = chkShowNextAirdate.Checked;
             selectedShow.TvdbCode = code;
