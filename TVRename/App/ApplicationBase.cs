@@ -55,7 +55,6 @@ namespace TVRename.App
             }
 
             PathManager.ShowCollection = "";
-
             SetupCustomSettings(clargs);
 
             TVDoc doc;
@@ -126,7 +125,6 @@ namespace TVRename.App
                 }
             }
         }
-
 
         private static void ConvertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
         {

@@ -277,21 +277,21 @@ namespace TVRename
                 NewLineOnAttributes = true
             };
 
-            if ((Files & FileToHandle.Collections) > 0)
+            if ( Files.HasFlag(FileToHandle.Collections) ) 
             {
                 FileHelper.Rotate(PathManager.ShowCollectionFile.FullName);
                 Logger.Info("Saving Collections to {0}", PathManager.ShowCollectionFile.FullName);
                 XmlWriter writer = XmlWriter.Create(PathManager.ShowCollectionFile.FullName, settings);
                 WriteXMLCollections(writer);
             }
-            if ((Files & FileToHandle.Settings) > 0)
+            if ( Files.HasFlag(FileToHandle.Settings) )
             {
                 FileHelper.Rotate(PathManager.TVDocSettingsFile.FullName);
                 Logger.Info("Saving Settings to {0}", PathManager.TVDocSettingsFile.FullName);
                 XmlWriter writer = XmlWriter.Create(PathManager.TVDocSettingsFile.FullName, settings);
                 WriteXMLSettings(writer);
             }
-            if (((Files & FileToHandle.Shows) > 0) && (!string.IsNullOrEmpty(PathManager.ShowCollection)))
+            if ((Files.HasFlag(FileToHandle.Shows)) && (!string.IsNullOrEmpty(PathManager.ShowCollection)))
             {
                 FileHelper.Rotate(PathManager.TVDocShowsFile.FullName);
                 Logger.Info("Saving Shows to {0}", PathManager.TVDocShowsFile.FullName);
@@ -300,7 +300,7 @@ namespace TVRename
                 WriteXMLShows(writer);
             }
 
-            if ((Files & FileToHandle.TvDB) > 0)
+            if (Files.HasFlag(FileToHandle.TvDB))
             {
                 TheTVDB.Instance.SaveCache();
             }
@@ -402,19 +402,19 @@ namespace TVRename
                 IgnoreWhitespace = true
             };
 
-            if ((Files & FileToHandle.Collections) > 0)
+            if (Files.HasFlag(FileToHandle.Collections))
             {
                 bLoadOk = ReadXMLCollections(settings, ShowCollections, LoadErr);
             }
-            if ((Files & FileToHandle.TvDB) > 0)
+            if (Files.HasFlag(FileToHandle.TvDB))
             {
                 bLoadOk = ReadXMLTvDBCache(bInit, Args);
             }
-            if ((Files & FileToHandle.Settings) > 0)
+            if (Files.HasFlag(FileToHandle.Settings))
             {
                 bLoadOk = ReadXMLSettings(settings, LoadErr);
             }
-            if ((Files & FileToHandle.Shows) > 0)
+            if (Files.HasFlag(FileToHandle.Shows) )
             {
                 bLoadOk = ReadXMLShows(settings, Library, mStats, LoadErr);
             }
