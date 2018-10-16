@@ -82,7 +82,7 @@ namespace TVRename
             grid1[0, 0] = h;
             grid1[0, 0].View = titleModel;
 
-            h = new SourceGrid.Cells.ColumnHeader("URL") { AutomaticSortEnabled = false };
+            h = new ColumnHeader("URL") { AutomaticSortEnabled = false };
             grid1[0, 1] = h;
             grid1[0, 1].View = titleModel;
         }
