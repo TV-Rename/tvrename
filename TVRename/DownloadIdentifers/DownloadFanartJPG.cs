@@ -8,15 +8,9 @@ namespace TVRename
         private static List<string> DoneFanartJpg;
         private const string DEFAULT_FILE_NAME = "fanart.jpg";
 
-        public DownloadFanartJpg() 
-        {
-            Reset();
-        }
+        public DownloadFanartJpg() => Reset();
 
-        public override DownloadType GetDownloadType()
-        {
-            return DownloadType.downloadImage;
-        }
+        public override DownloadType GetDownloadType() => DownloadType.downloadImage;
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
@@ -36,7 +30,6 @@ namespace TVRename
                     DoneFanartJpg.Add(fi.FullName);
                 }
                 return theActionList;
-
             }
             return base.ProcessShow(si, forceRefresh);
         }
@@ -45,7 +38,5 @@ namespace TVRename
         {
             DoneFanartJpg = new List<string>(); 
         }
-
     }
-
 }

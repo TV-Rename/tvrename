@@ -101,7 +101,6 @@ namespace TVRename
                     if (testActionRssOne.RSS.Title.ContainsOneOf(preferredTerms) &&
                         !testActionRssTwo.RSS.Title.ContainsOneOf(preferredTerms))
                     {
-
                         duplicateActionRss.Add(testActionRssTwo);
                         Logger.Info(
                             $"Removing {testActionRssTwo.RSS.URL} as it is not as good a match as {testActionRssOne.RSS.URL}");
