@@ -23,7 +23,6 @@ namespace TVRename.App
 
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
             if (clargs.Hide) SplashScreen.Visible  = false;
-                
         }
 
         /// <summary>
@@ -35,11 +34,11 @@ namespace TVRename.App
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
             if (clargs.Hide)
                 SplashScreen.SafeInvoke(
-                    () => ((TVRenameSplash)SplashScreen).Visible = false,true);
+                    () => ((TVRenameSplash)SplashScreen).Visible = false, true);
 
             // Update splash screen
             SplashScreen.SafeInvoke(
-                () => ((TVRenameSplash) SplashScreen).UpdateStatus("Initializing"), true);
+                () => ((TVRenameSplash)SplashScreen).UpdateStatus("Initializing"), true);
 
             // Update RegVersion to bring the WebBrowser up to speed
             RegistryHelper.UpdateBrowserEmulationVersion();
@@ -54,22 +53,7 @@ namespace TVRename.App
                 recoverText = "Recover manually requested.";
             }
 
-            // Check arguments for custom settings path
-            if (!string.IsNullOrEmpty(clargs.UserFilePath))
-            {
-                try
-                {
-                    PathManager.SetUserDefinedBasePath(clargs.UserFilePath);
-                }
-                catch (Exception ex)
-                {
-                    if (!clargs.Unattended && !clargs.Hide) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
-
-                    Environment.Exit(1);
-                }
-            }
+            SetupCustomSettings(clargs);
 
             FileInfo tvdbFile = PathManager.TVDBFile;
             FileInfo settingsFile = PathManager.TVDocSettingsFile;
@@ -123,6 +107,26 @@ namespace TVRename.App
             MainForm = ui;
         }
 
+        private static void SetupCustomSettings(CommandLineArgs clargs)
+        {
+            // Check arguments for custom settings path
+            if (!string.IsNullOrEmpty(clargs.UserFilePath))
+            {
+                try
+                {
+                    PathManager.SetUserDefinedBasePath(clargs.UserFilePath);
+                }
+                catch (Exception ex)
+                {
+                    if (!clargs.Unattended && !clargs.Hide) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
+
+                    Environment.Exit(1);
+                }
+            }
+        }
+
         private static void ConvertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
         {
             //this is just to convert timezones in the TheTVDB into the TVDOC where they should be:
@@ -141,7 +145,6 @@ namespace TVRename.App
                 doc.SetDirty();
                 Logger.Info("Copied timezone:{0} onto series {1}", newTimeZone, si.ShowName);
             }
-
         }
     }
 }

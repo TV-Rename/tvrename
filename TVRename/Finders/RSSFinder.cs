@@ -60,8 +60,24 @@ namespace TVRename
                 }
             }
 
+            List<ActionRSS> duplicateActionRss = FindDuplicates(newItems);
+
+            foreach (ActionRSS x in duplicateActionRss)
+                newItems.Remove(x);
+
+            foreach (Item i in toRemove)
+                ActionList.Remove(i);
+
+            foreach (Item action in newItems)
+                ActionList.Add(action);
+
+            prog.Invoke(totPct);
+        }
+
+        private static List<ActionRSS> FindDuplicates(ItemList newItems)
+        {
             //We now want to rationlise the newItems - just in case we've added duplicates
-            List<ActionRSS>  duplicateActionRss = new List<ActionRSS>();
+            List<ActionRSS> duplicateActionRss = new List<ActionRSS>();
 
             foreach (Item x in newItems)
             {
@@ -93,16 +109,7 @@ namespace TVRename
                 }
             }
 
-            foreach (ActionRSS x in duplicateActionRss)
-                newItems.Remove(x);
-
-            foreach (Item i in toRemove)
-                ActionList.Remove(i);
-
-            foreach (Item action in newItems)
-                ActionList.Add(action);
-
-            prog.Invoke(totPct);
+            return duplicateActionRss;
         }
     }
     // ReSharper disable once InconsistentNaming

@@ -5,8 +5,14 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
-using System.Windows.Forms;
+
+using System;
 using System.Drawing;
+using System.Windows.Forms;
+using SourceGrid;
+using SourceGrid.Cells.Views;
+using ColumnHeader = SourceGrid.Cells.ColumnHeader;
+using ContentAlignment = DevAge.Drawing.ContentAlignment;
 
 namespace TVRename
 {
@@ -22,7 +28,7 @@ namespace TVRename
     public partial class AddEditSearchEngine : Form
     {
         private CustomNameTagsFloatingWindow cntfw;
-        private SourceGrid.Grid grid1;
+        private Grid grid1;
         
         private readonly ProcessedEpisode sampleEpisode;
         private readonly Searchers mSearchers;
@@ -46,12 +52,12 @@ namespace TVRename
 
         private void SetupGrid()
         {
-            SourceGrid.Cells.Views.Cell titleModel = new SourceGrid.Cells.Views.Cell
-                                                         {
-                                                             BackColor = Color.SteelBlue,
-                                                             ForeColor = Color.White,
-                                                             TextAlignment = DevAge.Drawing.ContentAlignment.MiddleLeft
-                                                         };
+            Cell titleModel = new Cell
+                 {
+                     BackColor = Color.SteelBlue,
+                     ForeColor = Color.White,
+                     TextAlignment = ContentAlignment.MiddleLeft
+                 };
             grid1.Columns.Clear();
             grid1.Rows.Clear();
 
@@ -67,25 +73,21 @@ namespace TVRename
             grid1.Columns[1].AutoSizeMode = SourceGrid.AutoSizeMode.EnableAutoSize | SourceGrid.AutoSizeMode.EnableStretch;
 
             grid1.AutoStretchColumnsToFitWidth = true;
-            //Grid1->AutoSizeCells();
             grid1.Columns.StretchToFit();
 
             //////////////////////////////////////////////////////////////////////
             // header row
 
-            SourceGrid.Cells.ColumnHeader h;
-            h = new SourceGrid.Cells.ColumnHeader("Name");
-            h.AutomaticSortEnabled = false;
+            ColumnHeader h = new ColumnHeader("Name") {AutomaticSortEnabled = false};
             grid1[0, 0] = h;
             grid1[0, 0].View = titleModel;
 
-            h = new SourceGrid.Cells.ColumnHeader("URL");
-            h.AutomaticSortEnabled = false;
+            h = new ColumnHeader("URL") {AutomaticSortEnabled = false};
             grid1[0, 1] = h;
             grid1[0, 1].View = titleModel;
         }
 
-        public void AddNewRow()
+        private void AddNewRow()
         {
             int r = grid1.RowsCount;
             grid1.RowsCount = r + 1;
@@ -94,17 +96,13 @@ namespace TVRename
             grid1[r, 1] = new SourceGrid.Cells.Cell("", typeof(string));
         }
 
-
-
-
-
-        private void bnAdd_Click(object sender, System.EventArgs e)
+        private void bnAdd_Click(object sender, EventArgs e)
         {
             AddNewRow();
-            grid1.Selection.Focus(new SourceGrid.Position(grid1.RowsCount - 1, 1), true);
+            grid1.Selection.Focus(new Position(grid1.RowsCount - 1, 1), true);
         }
 
-        private void bnDelete_Click(object sender, System.EventArgs e)
+        private void bnDelete_Click(object sender, EventArgs e)
         {
             // multiselection is off, so we can cheat...
             int[] rowsIndex = grid1.Selection.GetSelectionRegion().GetRowsIndex();
@@ -112,7 +110,7 @@ namespace TVRename
                 grid1.Rows.Remove(rowsIndex[0]);
         }
 
-        private void bnOK_Click(object sender, System.EventArgs e)
+        private void bnOK_Click(object sender, EventArgs e)
         {
             mSearchers.Clear();
             for (int i = 1; i < grid1.RowsCount; i++) // skip header row
@@ -124,7 +122,7 @@ namespace TVRename
             }
         }
 
-        private void bnTags_Click(object sender, System.EventArgs e)
+        private void bnTags_Click(object sender, EventArgs e)
         {
             cntfw = new CustomNameTagsFloatingWindow(sampleEpisode);
             cntfw.Show(this);
