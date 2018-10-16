@@ -56,22 +56,7 @@ namespace TVRename.App
 
             PathManager.ShowCollection = "";
 
-            // Check arguments for custom settings path
-            if (!string.IsNullOrEmpty(clargs.UserFilePath))
-            {
-                try
-                {
-                    PathManager.SetUserDefinedBasePath(clargs.UserFilePath);
-                }
-                catch (Exception ex)
-                {
-                    if (!clargs.Unattended && !clargs.Hide) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-                    Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
-
-                    Environment.Exit(1);
-                }
-            }
+            SetupCustomSettings(clargs);
 
             TVDoc doc;
 
@@ -121,6 +106,27 @@ namespace TVRename.App
 
             MainForm = ui;
         }
+
+        private static void SetupCustomSettings(CommandLineArgs clargs)
+        {
+            // Check arguments for custom settings path
+            if (!string.IsNullOrEmpty(clargs.UserFilePath))
+            {
+                try
+                {
+                    PathManager.SetUserDefinedBasePath(clargs.UserFilePath);
+                }
+                catch (Exception ex)
+                {
+                    if (!clargs.Unattended && !clargs.Hide) MessageBox.Show($"Error while setting the User-Defined File Path:{Environment.NewLine}{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    Logger.Error(ex, $"Error while setting the User-Defined File Path - EXITING: {clargs.UserFilePath}");
+
+                    Environment.Exit(1);
+                }
+            }
+        }
+
 
         private static void ConvertSeriesTimeZones(TVDoc doc, TheTVDB tvdb)
         {
