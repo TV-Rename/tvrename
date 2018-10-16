@@ -156,7 +156,6 @@ namespace TVRename.Forms
 
             if (e.ClickedItem.Tag != null)
             {
-
                 RightClickCommands n = (RightClickCommands) e.ClickedItem.Tag;
 
                 ShowItem si = mlastSelected?.ShowItem;
