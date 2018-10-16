@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
 namespace TVRename
 {
     class DownloadKodiImages : DownloadIdentifier

@@ -139,7 +139,6 @@ namespace TVRename
                 Done = true;
                 return false;
             }
-                
 
             Done = true;
             return true;

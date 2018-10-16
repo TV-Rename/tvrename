@@ -45,7 +45,6 @@ namespace TVRename
 
                     Done = true;
                     return true;
-                
             }
             catch (Exception e)
             {

@@ -1,6 +1,5 @@
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
 namespace TVRename
 {
     internal class DownloadEpisodeJpg : DownloadIdentifier

@@ -45,7 +45,6 @@ namespace TVRename
                 if ((File.GetAttributes(efi) & FileAttributes.Directory) != (FileAttributes.Directory))  // not a folder
                     continue;
 
-
                 FileSystemWatcher watcher = new FileSystemWatcher(efi);
                 watcher.Changed += watcher_Changed;
                 watcher.Created += watcher_Changed;

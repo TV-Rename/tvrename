@@ -37,7 +37,6 @@ namespace TVRename
                 Error = true;
                 Done = true;
                 return false;
-
             }
 
             if (Episode != null) return WriteEpisodeMetaDataFile();
