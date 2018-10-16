@@ -33,7 +33,7 @@ namespace TVRename
         kBTEOF
     }
 
-    public class TorrentEntry: DownloadInformation // represents a torrent downloading in uTorrent
+    public class TorrentEntry: IDownloadInformation // represents a torrent downloading in uTorrent
     {
         public string DownloadingTo;
         public int PercentDone;
@@ -46,11 +46,11 @@ namespace TVRename
             PercentDone = percent;
         }
 
-        string DownloadInformation.FileIdentifier => TorrentFile;
+        string IDownloadInformation.FileIdentifier => TorrentFile;
 
-        string DownloadInformation.Destination => DownloadingTo;
+        string IDownloadInformation.Destination => DownloadingTo;
 
-        string DownloadInformation.RemainingText  
+        string IDownloadInformation.RemainingText  
         {
             get
             {

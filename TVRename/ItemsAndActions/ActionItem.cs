@@ -19,7 +19,6 @@ namespace TVRename
 
     public abstract class Item // something shown in the list on the Scan tab (not always an Action)
     {
-        public abstract ListViewItem ScanListViewItem { get; } // to add to Scan ListView
         public abstract string TargetFolder { get; } // return a list of folders for right-click menu
         public abstract string ScanListViewGroup { get; } // which group name for the listview
         public abstract int IconNumber { get; } // which icon number to use in "ilIcons" (UI.cs). -1 for none
@@ -32,6 +31,37 @@ namespace TVRename
         {
             return string.IsNullOrEmpty(file) ? null : new IgnoreItem(file);
         }
+
+        public ListViewItem ScanListViewItem // to add to Scan ListView
+        {
+            get
+            {
+                ListViewItem lvi = new ListViewItem {Text = SeriesName};
+
+                lvi.SubItems.Add(SeasonNumber);
+                lvi.SubItems.Add(EpisodeNumber);
+                lvi.SubItems.Add(AirDate);
+                lvi.SubItems.Add(DestinationFolder);
+                lvi.SubItems.Add(DestinationFile);
+                lvi.SubItems.Add(SourceDetails);
+
+                if (InError)
+                    lvi.BackColor = Helpers.WarningColor();
+
+                lvi.Tag = this;
+
+                return lvi;
+            }
+        }
+
+        protected virtual string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
+        protected virtual string SeasonNumber => Episode?.AppropriateSeasonNumber.ToString() ?? string.Empty;
+        protected virtual string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;
+        protected virtual string AirDate => Episode?.GetAirDateDT(true).PrettyPrint() ?? string.Empty;
+        protected abstract string DestinationFolder { get; }
+        protected abstract string DestinationFile { get; }
+        protected virtual string SourceDetails => string.Empty;
+        protected virtual bool InError => false;
     }
 
     public abstract class Action : Item // Something we can do
@@ -189,42 +219,6 @@ namespace TVRename
 
             DeleteOrRecycleFolder(di);
         }
-
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem();
-
-                if (Episode == null)
-                {
-                    lvi.Text = "";
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                }
-                else
-                {
-                    lvi.Text = Episode.TheSeries.Name;
-                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(Episode.NumsAsString());
-                    lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                }
-
-                lvi.SubItems.Add(FileInfo1);
-                lvi.SubItems.Add(FileInfo2);
-                lvi.SubItems.Add(FileInfo3);
-                lvi.SubItems.Add(FileInfo4);
-
-                return lvi;
-            }
-        }
-
-        protected abstract string FileInfo1 { get; }
-        protected abstract string FileInfo2 { get; }
-        protected abstract string FileInfo3 { get; }
-        protected abstract string FileInfo4 { get; }
     }
 
     public abstract class ActionWriteMetadata : ActionDownload
@@ -252,38 +246,12 @@ namespace TVRename
 
         public override int IconNumber => 7;
 
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem();
-
-                if (Episode != null)
-                {
-                    lvi.Text = Episode.Show.ShowName;
-                    lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                    lvi.SubItems.Add(Episode.NumsAsString());
-                    lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                }
-                else
-                {
-                    lvi.Text = SelectedShow.ShowName;
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                    lvi.SubItems.Add("");
-                }
-
-                lvi.SubItems.Add(Where.DirectoryName);
-                lvi.SubItems.Add(Where.Name);
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
+        protected override string SeriesName => Episode?.Show?.ShowName ?? SelectedShow.ShowName;
+        protected override string DestinationFolder => Where.DirectoryName;
+        protected override string DestinationFile => Where.Name;
     }
 
-    public class ItemList : System.Collections.Generic.List<Item>
+    public class ItemList : List<Item>
     {
         public void Add(ItemList slil)
         {
@@ -299,7 +267,7 @@ namespace TVRename
 
     public class ActionQueue
     {
-        public readonly System.Collections.Generic.List<Action> Actions; // The contents of this queue
+        public readonly List<Action> Actions; // The contents of this queue
         public readonly int ParallelLimit; // Number of tasks in the queue than can be run at once
         public readonly string Name; // Name of this queue
         public int ActionPosition; // Position in the queue list of the next item to process
@@ -308,7 +276,7 @@ namespace TVRename
         {
             Name = name;
             ParallelLimit = parallelLimit;
-            Actions = new System.Collections.Generic.List<Action>();
+            Actions = new List<Action>();
             ActionPosition = 0;
         }
     }

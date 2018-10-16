@@ -3708,5 +3708,11 @@ namespace TVRename
                 BuildCollectionsMenu();
             }
         }
+
+        private void logToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LogViewer form = new LogViewer();
+            form.Show();
+        }
     }
 }

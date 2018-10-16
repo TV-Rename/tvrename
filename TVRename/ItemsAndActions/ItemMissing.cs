@@ -9,7 +9,6 @@ namespace TVRename
 {
     using System;
     using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
 
     public class ItemMissing : Item
     {
@@ -34,9 +33,8 @@ namespace TVRename
 
         public override int Compare(Item o)
         {
-            ItemMissing miss = o as ItemMissing;
             //return (o == null || miss == null) ? 0 : (this.TheFileNoExt + this.Episode.Name).CompareTo(miss.TheFileNoExt + miss.Episode.Name);
-            if (o == null || miss == null)
+            if (o == null || !(o is ItemMissing miss))
             {
                 return 0;
             }
@@ -60,32 +58,11 @@ namespace TVRename
 
         public override IgnoreItem Ignore => GenerateIgnore(TheFileNoExt);
         
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
-                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(Episode.NumsAsString());
-                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                lvi.SubItems.Add(folder);
-                lvi.SubItems.Add(Filename);
-                lvi.Tag = this;
-                return lvi;
-            }
-        }
-
+        protected override string DestinationFolder => folder;
+        protected override string DestinationFile => Filename;
         public override string ScanListViewGroup => "lvgActionMissing";
 
-        public override string TargetFolder
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(TheFileNoExt))
-                    return null;
-                return new FileInfo(TheFileNoExt).DirectoryName;
-            }
-        }
+        public override string TargetFolder => string.IsNullOrEmpty(TheFileNoExt) ? null : new FileInfo(TheFileNoExt).DirectoryName;
 
         public override int IconNumber => 1;
 

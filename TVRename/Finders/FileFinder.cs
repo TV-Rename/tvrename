@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -25,15 +26,13 @@ namespace TVRename
             foreach (string s in TVSettings.Instance.DownloadFolders)
                 fileCount += DirCache.CountFiles(s, true);
 
-            int c = 0;
-
             DirCache dirCache = new DirCache();
             foreach (string s in TVSettings.Instance.DownloadFolders)
             {
                 if (ActionCancel)
                     return;
 
-                dirCache.AddFolder(prog, c, fileCount, s, true);
+                dirCache.AddFolder(prog, 0, fileCount, s, true);
             }
 
             int currentItem = 0;
@@ -47,30 +46,34 @@ namespace TVRename
 
                 if (!(action1 is ItemMissing me)) continue;
 
-                int numberMatched = 0;
                 ItemList thisRound = new ItemList();
-                DirCacheEntry matchedFile=null;
+                List<DirCacheEntry> matchedFiles= new List<DirCacheEntry>();
 
                 foreach (DirCacheEntry dce in dirCache)
                 {
                     if (!ReviewFile(me, thisRound, dce)) continue;
 
-                    numberMatched++;
-                    matchedFile = dce;
+                    matchedFiles.Add(dce);
                 }
 
-                if (numberMatched == 1 )
+                if (matchedFiles.Count == 1 )
                 {
-                    if (!OtherActionsMatch(matchedFile, me, ActionList))
+                    if (!OtherActionsMatch(matchedFiles[0], me))
                     {
                         toRemove.Add(action1);
                         newList.AddRange(thisRound);
                     }
-                    else Logger.Warn($"Ignoring potential match for {action1.Episode.Show.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple actions for that file");
+                    else
+                    {
+                        Logger.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
+                    }
                 }
-                else if (numberMatched>1) 
-                { 
-                    Logger.Warn($"Ignoring potential match for {action1.Episode.Show.ShowName} S{action1.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+                else if (matchedFiles.Count > 1) 
+                {
+                    foreach (DirCacheEntry matchedFile in matchedFiles)
+                    {
+                        Logger.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{action1.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+                    }
                 }
             }
 
@@ -124,10 +127,10 @@ namespace TVRename
                 ActionList.Add(i);
         }
 
-        private bool OtherActionsMatch(DirCacheEntry matchedFile, ItemMissing me, ItemList actionList)
+        private bool OtherActionsMatch(DirCacheEntry matchedFile, Item me)
         //This is used to check whether the selected file may match any other files we are looking for
         {
-            foreach (Item testAction in actionList)
+            foreach (Item testAction in ActionList)
             {
                 if (!(testAction is ItemMissing testMissingAction)) continue;
                 if (testMissingAction.SameAs(me)) continue;
@@ -180,27 +183,13 @@ namespace TVRename
                         if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, null,null); // tidyup on main action, not this
+                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, null, null); // tidyup on main action, not this
 
                         // check this item isn't already in our to-do list
-                        bool doNotAdd = false;
-                        foreach (Item ai2 in actionlist)
-                        {
-                            if (!(ai2 is ActionCopyMoveRename))
-                                continue;
+                        if (ActionListContains(actionlist, newitem)) continue;
 
-                            if (((ActionCopyMoveRename)(ai2)).SameSource(newitem))
-                            {
-                                doNotAdd = true;
-                                break;
-                            }
-                        }
-
-                        if (!doNotAdd)
-                        {
-                            if (!newitem.SameAs(action)) // don't re-add ourself
-                                extras.Add(newitem);
-                        }
+                        if (!newitem.SameAs(action)) // don't re-add ourself
+                            extras.Add(newitem);
                     }
                 }
                 catch (System.IO.PathTooLongException e)
@@ -215,32 +204,49 @@ namespace TVRename
             foreach (Item action in extras)
             {
                 // check we don't already have this in our list and, if we don't add it!
-                bool have = false;
-                foreach (Item action2 in actionlist)
-                {
-                    if (action2.SameAs(action))
-                    {
-                        have = true;
-                        break;
-                    }
-
-                    if ((action is Action a1) && (action2 is Action) )
-                    {
-                        Action a2 = (Action)action2;
-                        if (a2.Produces == a1.Produces)
-                        {
-                            have = true;
-                            break;
-                        }
-                    }
-                }
+                bool have = AlreadyHaveAction(actionlist, action);
 
                 if (!have)
                     actionlist.Insert(0, action); // put before other actions, so tidyup is run last
             }
         }
-        // consider each of the files, see if it is suitable for series "ser" and episode "epi"
-        // if so, add a rcitem for copy to "fi"
+
+        private static bool AlreadyHaveAction(ItemList actionlist, Item action)
+        {
+            foreach (Item action2 in actionlist)
+            {
+                if (action2.SameAs(action))
+                {
+                    return true;
+                }
+
+                if ((action is Action a1) && (action2 is Action a2))
+                {
+                    if (a2.Produces == a1.Produces)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool ActionListContains(ItemList actionlist, ActionCopyMoveRename newitem)
+        {
+            foreach (Item ai2 in actionlist)
+            {
+                if (!(ai2 is ActionCopyMoveRename))
+                    continue;
+
+                if (((ActionCopyMoveRename)(ai2)).SameSource(newitem))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private bool ReviewFile(ItemMissing me, ItemList addTo, DirCacheEntry dce)
         {
@@ -260,11 +266,16 @@ namespace TVRename
 
                 if (matched)
                 {
-                    if ((TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.Show) && (seasF == season) &&
-                         (epF == epnum)) ||
-                        (me.Episode.Show.UseSequentialMatch &&
-                         TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) && (seasF == season) &&
-                         (epF == epnum)))
+                    bool regularMatch = TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.Show) &&
+                             seasF == season &&
+                             epF == epnum;
+
+                    bool sequentialMatch = me.Episode.Show.UseSequentialMatch &&
+                              TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) &&
+                              seasF == season &&
+                              epF == epnum;
+
+                    if (regularMatch || sequentialMatch)
                     {
                         if (maxEp != -1 && TVSettings.Instance.AutoMergeDownloadEpisodes)
                         {

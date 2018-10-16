@@ -299,7 +299,7 @@ namespace TVRename
         private void ForceRefresh(ShowItem si)
         {
             if (si != null)
-                TheTVDB.Instance.ForgetShow(si.TvdbCode, true);
+                TheTVDB.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
             mDoc.DoDownloadsFG();
         }
 
@@ -490,7 +490,7 @@ namespace TVRename
                     this.episodeAiredCount = episodeAiredCount;
                     this.episodeGotCount = episodeGotCount;
                     Season = season;
-                    this.Ignored = ignored;
+                    Ignored = ignored;
                 }
 
                 public SummaryOutput GetOuput()

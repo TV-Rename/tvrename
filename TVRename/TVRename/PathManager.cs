@@ -10,6 +10,7 @@ namespace TVRename
         private const string SETTINGS_FILE_NAME = "TVRenameSettings.xml";
         private const string UI_LAYOUT_FILE_NAME = "Layout.xml";
         private const string STATISTICS_FILE_NAME = "Statistics.xml";
+        private const string LANGUAGES_FILE_NAME = "Languages.xml";
         private const string SHOWS_FILE_NAME = "TVRenameShows.xml";
         private const string SHOWS_COLLECTION_FILE_NAME = "TVRenameColls.xml";
         private const string SHOWS_DEFAULT_COLLECTION = "2.1";
@@ -146,6 +147,21 @@ namespace TVRename
                 else
                 {
                     return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? "" : SHOWS_DEFAULT_COLLECTION)), SETTINGS_FILE_NAME);
+                }
+            }
+        }
+
+        public static FileInfo LanguagesFile
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(UserDefinedBasePath))
+                {
+                    return GetFileInfo(UserDefinedBasePath, LANGUAGES_FILE_NAME);
+                }
+                else
+                {
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? "" : SHOWS_DEFAULT_COLLECTION)), LANGUAGES_FILE_NAME);
                 }
             }
         }

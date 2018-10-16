@@ -12,10 +12,9 @@ namespace TVRename
         public override long SizeOfWork => 100;
         public override int IconNumber => 9;
         public override string ScanListViewGroup => "lvgActionDelete";
-        protected override string FileInfo1 => TargetFolder;
-        protected override string FileInfo2 => ProgressText;
-        protected override string FileInfo3 => string.Empty;
-        protected override string FileInfo4 => string.Empty;
+
+        protected override string DestinationFolder => TargetFolder;
+        protected override string DestinationFile => ProgressText;
     }
     public class ActionDeleteFile : ActionDelete
     {
@@ -28,7 +27,7 @@ namespace TVRename
             Episode = ep;
             toRemove = remove;
         }
-        
+
         public override string ProgressText => toRemove.Name;
         public override string Produces => toRemove.FullName;
         public override IgnoreItem Ignore => toRemove == null ? null : new IgnoreItem(toRemove.FullName);

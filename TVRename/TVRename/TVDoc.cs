@@ -133,7 +133,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public bool DoDownloadsFG()
         {
-            ICollection<int> shows = Library.Keys;
+            ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
             bool returnValue = cacheManager.DoDownloadsFg((!Args.Hide), (!Args.Unattended) && (!Args.Hide), shows);
             Library.GenDict();
             return returnValue;
@@ -142,7 +142,7 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public void DoDownloadsBG()
         {
-            ICollection<int> shows = Library.Keys;
+            ICollection<SeriesSpecifier> shows = Library.SeriesSpecifiers;
             cacheManager.StartBgDownloadThread(false, shows);
         }
 
@@ -343,7 +343,10 @@ namespace TVRename
                 }
             }
 
+            TheTVDB.Instance.LanguageList.Save();
+
             mDirty = false;
+
         }
 
         private void WriteXMLShows(XmlWriter writer)
@@ -561,6 +564,16 @@ namespace TVRename
                         bLoadOk = false;
                     }
                 }
+
+                try
+                {
+                    TheTVDB.Instance.LanguageList = Languages.Load();
+                }
+                catch (Exception)
+                {
+                    // not worried if language loading fails as we'll repopulate
+                }
+
             }
             return bLoadOk;
         }
@@ -1569,7 +1582,7 @@ namespace TVRename
             RemoveIgnored();
         }
 
-        private void RenameAndMissingCheck(ShowItem si, DirFilesCache dfc,bool fullscan)
+        private void RenameAndMissingCheck(ShowItem si, DirFilesCache dfc, bool fullscan)
         {
             Dictionary<int, List<string>> allFolders = si.AllFolderLocations();
             if (allFolders.Count == 0) // no folders defined for this show
@@ -1630,7 +1643,7 @@ namespace TVRename
                 }
 
                 // base folder:
-                if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AutoAddType!= ShowItem.AutomaticFolderType.none))
+                if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AutoAddType != ShowItem.AutomaticFolderType.none))
                 {
                     // main image for the folder itself
                     TheActionList.Add(downloadIdentifiers.ProcessShow(si));
@@ -1689,14 +1702,14 @@ namespace TVRename
                         ProcessedEpisode ep = eps[epIdx];
                         FileInfo actualFile = fi;
 
-                        if (renCheck && TVSettings.Instance.FileHasUsefulExtension( fi, true, out string otherExtension)) // == RENAMING CHECK ==
+                        if (renCheck && TVSettings.Instance.FileHasUsefulExtension(fi, true, out string otherExtension)) // == RENAMING CHECK ==
                         {
                             string newName = TVSettings.Instance.FilenameFriendly(
                                 TVSettings.Instance.NamingStyle.NameFor(ep, otherExtension, folder.Length));
 
                             if (TVSettings.Instance.RetainLanguageSpecificSubtitles &&
                                 fi.IsLanguageSpecificSubtitle(out string subtitleExtension) &&
-                                actualFile.Name!= newName)
+                                actualFile.Name != newName)
                             {
                                 newName = TVSettings.Instance.FilenameFriendly(
                                     TVSettings.Instance.NamingStyle.NameFor(ep, subtitleExtension,
@@ -1705,13 +1718,12 @@ namespace TVRename
 
                             FileInfo newFile = FileHelper.FileInFolder(folder, newName); // rename updates the filename
 
-                            if (newName != actualFile.Name) 
+                            if (newName != actualFile.Name)
                             {
                                 //Check that the file does not already exist
                                 //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
-                                if (FileHelper.FileExistsCaseSensitive(files,newFile))
-
-                                    {
+                                if (FileHelper.FileExistsCaseSensitive(files, newFile))
+                                {
                                     Logger.Warn($"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
                                 }
                                 else
@@ -1724,6 +1736,7 @@ namespace TVRename
                                     //one for that purpse
 
                                     downloadIdentifiers.NotifyComplete(newFile);
+                                    localEps[epNum] = newFile;
                                 }
                             }
                         }
@@ -1732,7 +1745,8 @@ namespace TVRename
                         ) // == MISSING CHECK part 1/2 ==
                         {
                             // first pass of missing check is to tally up the episodes we do have
-                            localEps[epNum] = actualFile;
+                            if (localEps[epNum] is null) localEps[epNum] = actualFile;
+
                             if (epNum > maxEpNumFound)
                                 maxEpNumFound = epNum;
                         }
@@ -2153,7 +2167,7 @@ namespace TVRename
             {
                 foreach (ShowItem si in sis)
                 {
-                    TheTVDB.Instance.ForgetShow(si.TvdbCode, true);
+                    TheTVDB.Instance.ForgetShow(si.TvdbCode, true, si.UseCustomLanguage, si.CustomLanguageCode);
                 }
             }
 

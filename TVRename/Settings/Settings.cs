@@ -396,7 +396,7 @@ namespace TVRename
         public string SABHostPort = "";
         public string SABAPIKey = "";
         public bool CheckSABnzbd = false;
-        public string PreferredLanguage = "en";
+        public string PreferredLanguageCode = "en";
         public WTWDoubleClickAction WTWDoubleClick;
 
         public readonly TidySettings Tidyup = new TidySettings();
@@ -534,7 +534,7 @@ namespace TVRename
                 else if (reader.Name == "SABHostPort")
                     SABHostPort = reader.ReadElementContentAsString();
                 else if (reader.Name == "PreferredLanguage")
-                    PreferredLanguage = reader.ReadElementContentAsString();
+                    PreferredLanguageCode = reader.ReadElementContentAsString();
                 else if (reader.Name == "WTWDoubleClick")
                     WTWDoubleClick = (WTWDoubleClickAction)reader.ReadElementContentAsInt();
                 else if (reader.Name == "ExportMissingXML")
@@ -890,7 +890,7 @@ namespace TVRename
         public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("Settings");
-            TheSearchers.WriteXML(writer);
+            TheSearchers.WriteXml(writer);
             XmlHelper.WriteElementToXml(writer,"BGDownload",BGDownload);
             XmlHelper.WriteElementToXml(writer,"OfflineMode",OfflineMode);
             XmlHelper.WriteElementToXml(writer,"ShowCollections", ShowCollections);
@@ -987,7 +987,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"SABAPIKey",SABAPIKey);
             XmlHelper.WriteElementToXml(writer,"CheckSABnzbd",CheckSABnzbd);
             XmlHelper.WriteElementToXml(writer,"SABHostPort",SABHostPort);
-            XmlHelper.WriteElementToXml(writer,"PreferredLanguage",PreferredLanguage);
+            XmlHelper.WriteElementToXml(writer,"PreferredLanguage", PreferredLanguageCode);
             XmlHelper.WriteElementToXml(writer,"WTWDoubleClick",(int) WTWDoubleClick);
             XmlHelper.WriteElementToXml(writer,"EpJPGs",EpJPGs);
             XmlHelper.WriteElementToXml(writer,"SeriesJpg",SeriesJpg);
@@ -1261,7 +1261,7 @@ namespace TVRename
 
             string url = (epi.Show.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(epi.Show.CustomSearchUrl))
                 ? epi.Show.CustomSearchUrl
-                : TheSearchers.CurrentSearchURL();
+                : TheSearchers.CurrentSearchUrl();
             return CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 

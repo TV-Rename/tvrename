@@ -1,4 +1,3 @@
-// public override IgnoreItem Ignore
 // Main website for TVRename is http://tvrename.com
 // 
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -9,13 +8,12 @@ namespace TVRename
 {
     using System;
     using Alphaleonis.Win32.Filesystem;
-    using System.Windows.Forms;
 
     // ReSharper disable once InconsistentNaming
     public class ActionRSS : ActionDownload
     {
         // ReSharper disable once InconsistentNaming
-        public RSSItem RSS;
+        public readonly RSSItem RSS;
         private readonly string theFileNoExt;
 
         public ActionRSS(RSSItem rss, string toWhereNoExt, ProcessedEpisode pe)
@@ -104,35 +102,15 @@ namespace TVRename
 
         public override IgnoreItem Ignore => GenerateIgnore(theFileNoExt);
 
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {Text = Episode.Show.ShowName};
+        protected override string DestinationFolder => TargetFolder;
+        protected override string DestinationFile => TargetFilename;
+        protected override string SourceDetails => RSS.Title;
 
-                lvi.SubItems.Add(Episode.AppropriateSeasonNumber.ToString());
-                lvi.SubItems.Add(Episode.NumsAsString());
-                lvi.SubItems.Add(Episode.GetAirDateDT(true).PrettyPrint());
-                lvi.SubItems.Add(theFileNoExt);
-                lvi.SubItems.Add(RSS.Title);
+        public override string TargetFolder => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).DirectoryName;
 
-                lvi.Tag = this;
+        private string TargetFilename => string.IsNullOrEmpty(theFileNoExt) ? null : new FileInfo(theFileNoExt).Name;
 
-                return lvi;
-            }
-        }
-
-        public override string TargetFolder
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(theFileNoExt))
-                    return null;
-                return new FileInfo(theFileNoExt).DirectoryName;
-            }
-        }
-
-public override string ScanListViewGroup => "lvgActionDownloadRSS";
+        public override string ScanListViewGroup => "lvgActionDownloadRSS";
 
         public override int IconNumber => 6;
 

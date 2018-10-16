@@ -69,7 +69,6 @@ namespace TVRename
             catch (Exception e)
             {
                 logger.Fatal(e, "Unhandled Exception in Process Single Action");
-                return;
             }
         }
 
@@ -97,10 +96,9 @@ namespace TVRename
         {
             if (theList == null)
             {
-                logger.Info($"Asked to do actions, but none provided....");
+                logger.Info("Asked to do actions, but none provided....");
                 return;
             }
-                
 
             logger.Info("**********************");
             logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions().Count()} actions to be completed )");
@@ -125,7 +123,7 @@ namespace TVRename
 
             if ((cmp != null) && (cmp.ShowDialog() == DialogResult.Cancel))
                 actionProcessorThread.Abort();
-
+            
             actionProcessorThread.Join();
 
             theList.RemoveAll(x => (x is Action action) && action.Done && !action.Error);

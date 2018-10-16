@@ -10,7 +10,7 @@ namespace TVRename
         bool Connect();
         void SaveCache();
 
-        bool EnsureUpdated(int code, bool bannersToo);
+        bool EnsureUpdated(int code, bool bannersToo, bool useCustomLangCode, string langCode);
         bool GetUpdates();
         void UpdatesDoneOk();
 
@@ -21,7 +21,8 @@ namespace TVRename
         void Tidy(ICollection<ShowItem> libraryValues);
 
         void ForgetEverything();
-        void ForgetShow(int id, bool makePlaceholder);
+        void ForgetShow(int id);
+        void ForgetShow(int id, bool makePlaceholder,bool useCustomLanguage,string langCode);
 
     }
 }

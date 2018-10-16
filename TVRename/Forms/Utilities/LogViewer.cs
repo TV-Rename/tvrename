@@ -2,6 +2,8 @@ using System;
 using System.Windows.Forms;
 using NLog;
 using NLog.Config;
+using NLog.Layouts;
+using NLog.Targets;
 using NLog.Windows.Forms;
 
 namespace TVRename
@@ -35,6 +37,12 @@ namespace TVRename
             LogManager.Configuration.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, target));
 
             LogManager.ReconfigExistingLoggers();
+        }
+
+        private void btnFullLog_Click(object sender, EventArgs e)
+        {
+            FileTarget target = (FileTarget)LogManager.Configuration.FindTargetByName("logfile");
+            System.Diagnostics.Process.Start(((SimpleLayout)target.FileName).FixedText);
         }
     }
 }

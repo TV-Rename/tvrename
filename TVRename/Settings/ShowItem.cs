@@ -26,7 +26,6 @@ namespace TVRename
         public AutomaticFolderType AutoAddType;
 
         public bool CountSpecials;
-        public string CustomShowName;
         public bool DvdOrder; // sort by DVD order, not the default sort we get
         public bool DoMissingCheck;
         public bool DoRename;
@@ -39,6 +38,9 @@ namespace TVRename
         public bool ShowNextAirdate;
         public int TvdbCode;
         public bool UseCustomShowName;
+        public string CustomShowName;
+        public bool UseCustomLanguage;
+        public string CustomLanguageCode;
         public bool UseSequentialMatch;
         public readonly List<string> AliasNames = new List<string>();
         public bool UseCustomSearchUrl;
@@ -118,6 +120,13 @@ namespace TVRename
                     CustomShowName = reader.ReadElementContentAsString();
                     UseCustomShowName = true;
                 }
+                if (reader.Name == "UseCustomLanguage")
+                    UseCustomLanguage = reader.ReadElementContentAsBoolean();
+
+                if (reader.Name == "CustomLanguageCode")
+                {
+                    CustomLanguageCode = reader.ReadElementContentAsString();
+                }
 
                 if (reader.Name == "UseCustomShowName")
                     UseCustomShowName = reader.ReadElementContentAsBoolean();
@@ -141,7 +150,6 @@ namespace TVRename
                     TEMP_AutoAdd_SeasonFolderName = reader.ReadElementContentAsString();
                     upgradeFromOldAutoAddFunction = true;
                 }
-
                 else if (reader.Name == "PadSeasonToTwoDigits")
                 { 
                     TEMP_PadSeasonToTwoDigits = reader.ReadElementContentAsBoolean();
@@ -428,12 +436,22 @@ namespace TVRename
 
         public string[] Genres => TheSeries()?.GetGenres();
 
+        public Language  PreferredLanguage
+        {
+            get
+            {
+                if (UseCustomLanguage) return TheTVDB.Instance.LanguageList.GetLanguageFromCode(CustomLanguageCode);
+                return TheTVDB.Instance.PreferredLanuage;
+            }
+        }
+
         private void SetDefaults()
         {
             ManualFolderLocations = new Dictionary<int, List<string>>();
             IgnoreSeasons = new List<int>();
             UseCustomShowName = false;
             CustomShowName = "";
+            UseCustomLanguage = false;
             UseSequentialMatch = false;
             SeasonRules = new Dictionary<int, List<ShowRule>>();
             SeasonEpisodes = new Dictionary<int, List<ProcessedEpisode>>();
@@ -522,6 +540,8 @@ namespace TVRename
 
             XmlHelper.WriteElementToXml(writer,"UseCustomShowName",UseCustomShowName);
             XmlHelper.WriteElementToXml(writer,"CustomShowName",CustomShowName);
+            XmlHelper.WriteElementToXml(writer, "UseCustomLanguage", UseCustomLanguage);
+            XmlHelper.WriteElementToXml(writer, "CustomLanguageCode", CustomLanguageCode);
             XmlHelper.WriteElementToXml(writer,"ShowNextAirdate",ShowNextAirdate);
             XmlHelper.WriteElementToXml(writer,"TVDBID",TvdbCode);
             XmlHelper.WriteElementToXml(writer, "FolderBase", AutoAddFolderBase);

@@ -7,7 +7,6 @@
 // 
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -316,9 +315,6 @@ namespace TVRename
                 if (ai.CodeKnown)
                     continue;
 
-                int p = ai.Folder.LastIndexOf(System.IO.Path.DirectorySeparatorChar);
-                FmpUpto = ai.Folder.Substring(p + 1); // +1 makes -1 "not found" result ok
-                
                 BulkAddManager.GuessShowItem(ai,mDoc.Library);
                 
                 // update our display
@@ -353,7 +349,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvFMNewShows.SelectedItems)
             {
                 FoundFolder ai = (FoundFolder)(lvi.Tag);
-                TVSettings.Instance.IgnoreFolders.Add(ai.Folder.ToLower());
+                TVSettings.Instance.IgnoreFolders.Add(ai.Folder.FullName.ToLower());
                 engine.AddItems.Remove(ai);
             }
             mDoc.SetDirty();
@@ -383,7 +379,7 @@ namespace TVRename
 
             if (lvFMNewShows.SelectedItems[0].Tag is FoundFolder ai)
             {
-                Helpers.SysOpen(ai.Folder);
+                Helpers.SysOpen(ai.Folder.FullName);
             }
         }
 
@@ -423,12 +419,12 @@ namespace TVRename
         private void UpdateResultEntry(FoundFolder ai, ListViewItem lvi)
         {
             lvi.SubItems.Clear();
-            lvi.Text = ai.Folder;
-            lvi.SubItems.Add(ai.CodeKnown ? TheTVDB.Instance.GetSeries(ai.TVDBCode).Name : "");
+            lvi.Text = ai.Folder.FullName;
+            lvi.SubItems.Add(ai.CodeKnown ? TheTVDB.Instance.GetSeries(ai.TVDBCode)?.Name : "");
             lvi.SubItems.Add(ai.HasSeasonFoldersGuess ? "Folder per season" : "Flat");
             lvi.SubItems.Add(ai.CodeKnown ? ai.TVDBCode.ToString() : "");
             lvi.Tag = ai;
-            lvi.ImageIndex=(ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.Folder))?1:0;
+            lvi.ImageIndex=(ai.CodeKnown&&!string.IsNullOrWhiteSpace(ai.Folder.FullName))?1:0;
         }
 
         private void UpdateListItem(FoundFolder ai, bool makevis)
