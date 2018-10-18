@@ -32,6 +32,8 @@ namespace TVRename.App
         protected override void OnCreateMainForm()
         {
             CommandLineArgs clargs = new CommandLineArgs(CommandLineArgs);
+            PathManager.ShowCollection = "";
+
             if (clargs.Hide)
                 SplashScreen.SafeInvoke(
                     () => ((TVRenameSplash)SplashScreen).Visible = false, true);
@@ -55,33 +57,15 @@ namespace TVRename.App
 
             SetupCustomSettings(clargs);
 
-            FileInfo tvdbFile = PathManager.TVDBFile;
-            FileInfo settingsFile = PathManager.TVDocSettingsFile;
             TVDoc doc;
 
             do // Loop until files correctly load
             {
-                if (recover) // Recovery required, prompt user
-                {
-                    RecoverXML recoveryForm = new RecoverXML(recoverText);
-
-                    if (recoveryForm.ShowDialog() == DialogResult.OK)
-                    {
-                        tvdbFile = recoveryForm.DbFile;
-                        settingsFile = recoveryForm.SettingsFile;
-                    }
-                    else
-                    {
-                        // TODO: Throw an error
-                        return;
-                    }
-                }
-
-                // Try loading TheTVDB cache file
-                TheTVDB.Instance.Setup(tvdbFile, PathManager.TVDBFile, clargs);
-
                 // Try loading settings file
-                doc = new TVDoc(settingsFile, clargs);
+                doc = new TVDoc(clargs);
+
+                FileInfo tvdbFile  = PathManager.TVDBFile;
+                FileInfo showsFile = PathManager.TVDocShowsFile;
 
                 if (recover) doc.SetDirty();
                 recover = !doc.LoadOk;
@@ -93,6 +77,21 @@ namespace TVRename.App
                 recoverText = string.Empty;
                 if (!doc.LoadOk && !string.IsNullOrEmpty(doc.LoadErr)) recoverText = doc.LoadErr;
                 if (!TheTVDB.Instance.LoadOk && !string.IsNullOrEmpty(TheTVDB.Instance.LoadErr)) recoverText += $"{Environment.NewLine}{TheTVDB.Instance.LoadErr}";
+                if (recover) // Recovery required, prompt user
+                {
+                    RecoverXML recoveryForm = new RecoverXML(recoverText);
+
+                    if (recoveryForm.ShowDialog() == DialogResult.OK)
+                    {
+                        tvdbFile = recoveryForm.DbFile;
+                        showsFile = recoveryForm.SettingsFile;
+                    }
+                    else
+                    {
+                        // TODO: Throw an error
+                        return;
+                    }
+                }
             } while (recover);
 
             ConvertSeriesTimeZones(doc, TheTVDB.Instance);
