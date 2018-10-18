@@ -126,7 +126,7 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (TVSettings.Instance.EpTBNs || TVSettings.Instance.KODIImages)
+            if (TVSettings.Instance.EpTBNs)
             {
                 ItemList theActionList = new ItemList();
                 if (dbep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)
