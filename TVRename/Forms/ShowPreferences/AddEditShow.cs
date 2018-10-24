@@ -187,7 +187,7 @@ namespace TVRename
             }
             if (chkCustomLanguage.Checked && string.IsNullOrWhiteSpace(cbLanguage.SelectedItem?.ToString()))
             {
-                DialogResult dr = MessageBox.Show("Please enter language for the show or accept the default preferred language", "TVRename Add/Edit Show",
+                MessageBox.Show("Please enter language for the show or accept the default preferred language", "TVRename Add/Edit Show",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 
                 return false;
