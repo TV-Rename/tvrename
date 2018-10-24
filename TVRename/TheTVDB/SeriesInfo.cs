@@ -479,7 +479,7 @@ namespace TVRename
         public string GetContentRating() => GetValueAcrossVersions("Rating","rating",""); 
         public string GetSiteRating() => GetValueAcrossVersions("SiteRating", "siteRating", "");
         public string GetSiteRatingVotes() => GetValueAcrossVersions("SiteRatingCount", "siteRatingCount", "");
-        public string GetImdb() => GetValueAcrossVersions("IMDB_ID", "imdb_id", "");
+        public string GetImdb() => GetValueAcrossVersions("IMDB_ID", "imdbId", "");
         public string GetYear() => GetValueAcrossVersions("Year", "year", "");
         public string GetFirstAired() => GetValueAcrossVersions("FirstAired", "firstAired", "");
         public string GetSeriesId() => GetValueAcrossVersions("SeriesID", "seriesId", "");
@@ -811,6 +811,11 @@ namespace TVRename
         public void AddActor(Actor actor)
         {
             actors.Add(actor);
+        }
+
+        public string GetImdbNumber()
+        {
+            return (GetImdb().StartsWith("tt")) ? GetImdb().Substring(2): GetImdb();
         }
     }
 }
