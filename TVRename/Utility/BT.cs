@@ -676,7 +676,6 @@ namespace TVRename
                 return null;
 
             foreach (DirCacheEntry dc in FileCache)
-                //for (int i = 0; i < FileCache.Cache.Count; i++)
             {
                 FileInfo fiTemp = dc.TheFile;
                 long flen = dc.Length;
