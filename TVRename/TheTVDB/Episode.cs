@@ -420,27 +420,13 @@ namespace TVRename
             set => mName = System.Web.HttpUtility.HtmlDecode(value);
         }
 
-        public int AiredSeasonNumber
-        {
-            get
-            {
-                if (TheAiredSeason != null)
-                    return TheAiredSeason.SeasonNumber;
+        public int AiredSeasonNumber => TheAiredSeason?.SeasonNumber ?? -1;
 
-                return -1;
-            }
-        }
+        public int DvdSeasonNumber => TheDvdSeason?.SeasonNumber ?? -1;
 
-        public int DvdSeasonNumber
-        {
-            get
-            {
-                if (TheDvdSeason != null)
-                    return TheDvdSeason.SeasonNumber;
+        public int AiredSeasonIndex => TheAiredSeason?.SeasonIndex ?? -1;
 
-                return -1;
-            }
-        }
+        public int DvdSeasonIndex => TheDvdSeason?.SeasonIndex ?? -1;
 
         public bool SameAs(Episode o)
         {

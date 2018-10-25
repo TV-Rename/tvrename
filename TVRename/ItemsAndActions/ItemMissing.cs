@@ -67,5 +67,10 @@ namespace TVRename
         public override int IconNumber => 1;
 
         #endregion
+
+        public void AddComment(string p0)
+        {
+            ErrorText += p0;
+        }
     }
 }

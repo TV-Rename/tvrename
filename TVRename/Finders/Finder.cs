@@ -19,7 +19,7 @@ namespace TVRename
         protected Finder(TVDoc doc) => Doc = doc;
 
         // ReSharper disable once InconsistentNaming
-        public enum FinderDisplayType { local, downloading, rss}
+        public enum FinderDisplayType { local, downloading, search}
 
         public abstract void Check(SetProgressDelegate prog, int startpct, int totPct);
         

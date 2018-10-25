@@ -133,7 +133,9 @@
     <Compile Include="Exporter\MissingCSV.cs" />
     <Compile Include="Exporter\ShowsHTML.cs" />
     <Compile Include="Exporter\UpcomingiCAL.cs" />
+    <Compile Include="Finders\DownloadFinder.cs" />
     <Compile Include="Finders\qBitTorrentFinder.cs" />
+    <Compile Include="Finders\JSONWebpageFinder.cs" />
     <Compile Include="Finders\TorrentFinder.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
@@ -206,11 +208,19 @@
     <Compile Include="Forms\Supporting\TVRenameSplash.Designer.cs">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemsAndActions\Action.cs" />
     <Compile Include="ItemsAndActions\ActionDelete.cs" />
+    <Compile Include="ItemsAndActions\ActionDownload.cs" />
+    <Compile Include="ItemsAndActions\ActionFileMetaData.cs" />
+    <Compile Include="ItemsAndActions\ActionFileOperation.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
+    <Compile Include="ItemsAndActions\ActionQueue.cs" />
+    <Compile Include="ItemsAndActions\ActionTDownload.cs" />
     <Compile Include="ItemsAndActions\ActionWdtvMeta.cs" />
+    <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
+    <Compile Include="ItemsAndActions\ItemList.cs" />
     <Compile Include="Settings\CustomSeasonName.cs" />
     <Compile Include="Settings\Languages.cs" />
     <Compile Include="Settings\ProcessedEpisode.cs" />
@@ -335,10 +345,9 @@
     <Compile Include="TheTVDB\SeriesInfo.cs" />
     <Compile Include="ItemsAndActions\ActionCopyMoveRename.cs" />
     <Compile Include="ItemsAndActions\ActionDownloadImage.cs" />
-    <Compile Include="ItemsAndActions\ActionItem.cs" />
+    <Compile Include="ItemsAndActions\Item.cs" />
     <Compile Include="ItemsAndActions\ItemMissing.cs" />
     <Compile Include="ItemsAndActions\ActionNFO.cs" />
-    <Compile Include="ItemsAndActions\ActionRSS.cs" />
     <Compile Include="ItemsAndActions\ActionItemSorter.cs" />
     <Compile Include="ItemsAndActions\ItemDownloading.cs" />
     <Compile Include="TVRename\FoundFolder.cs" />

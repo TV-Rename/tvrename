@@ -369,6 +369,7 @@ namespace TVRename
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool SearchRSS = false;
+        public bool SearchJSON = false;
         public bool ShowEpisodePictures = true;
         public bool HideWtWSpoilers = false;
         public bool HideMyShowsSpoilers = false;
@@ -378,6 +379,11 @@ namespace TVRename
         public string SeasonFolderFormat = string.Empty;
         public int StartupTab = 0;
         public Searchers TheSearchers = new Searchers();
+
+        public string SearchJSONURL = "https://eztv.ag/api/get-torrents?imdb_id=";
+        public string SearchJSONRootNode = "torrents";
+        public string SearchJSONFilenameToken = "filename";
+        public string SearchJSONURLToken = "torrent_url";
 
         public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
         public bool ForceBulkAddToUseSettingsOnly = false;
@@ -520,6 +526,14 @@ namespace TVRename
                     SpecialsFolderName = reader.ReadElementContentAsString();
                 else if (reader.Name == "SeasonFolderFormat")
                     SeasonFolderFormat = reader.ReadElementContentAsString();
+                else if (reader.Name == "SearchJSONURL")
+                    SearchJSONURL = reader.ReadElementContentAsString();
+                else if (reader.Name == "SearchJSONRootNode")
+                    SearchJSONRootNode = reader.ReadElementContentAsString();
+                else if (reader.Name == "SearchJSONFilenameToken")
+                    SearchJSONFilenameToken = reader.ReadElementContentAsString();
+                else if (reader.Name == "SearchJSONURLToken")
+                    SearchJSONURLToken = reader.ReadElementContentAsString();
                 else if (reader.Name == "SABAPIKey")
                     SABAPIKey = reader.ReadElementContentAsString();
                 else if (reader.Name == "CheckSABnzbd")
@@ -568,6 +582,8 @@ namespace TVRename
                     ResumeDatPath = reader.ReadElementContentAsString();
                 else if (reader.Name == "SearchRSS")
                     SearchRSS = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "SearchJSON")
+                    SearchJSON = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpImgs")
                     EpTBNs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "NFOs") //support legacy tag
@@ -936,6 +952,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"uTorrentPath",uTorrentPath);
             XmlHelper.WriteElementToXml(writer,"ResumeDatPath",ResumeDatPath);
             XmlHelper.WriteElementToXml(writer,"SearchRSS",SearchRSS);
+            XmlHelper.WriteElementToXml(writer, "SearchJSON", SearchJSON);
             XmlHelper.WriteElementToXml(writer,"EpImgs",EpTBNs);
             XmlHelper.WriteElementToXml(writer,"NFOShows",NFOShows);
             XmlHelper.WriteElementToXml(writer,"NFOEpisodes", NFOEpisodes);
@@ -994,6 +1011,10 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "BulkAddCompareNoVideoFolders", BulkAddCompareNoVideoFolders);
             XmlHelper.WriteElementToXml(writer, "AutoAddMovieTerms", AutoAddMovieTerms);
             XmlHelper.WriteElementToXml(writer, "AutoAddIgnoreSuffixes", AutoAddIgnoreSuffixes);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONURL", SearchJSONURL);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONRootNode", SearchJSONRootNode);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONFilenameToken", SearchJSONFilenameToken);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONURLToken", SearchJSONURLToken);
 
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in FNPRegexs)
@@ -1185,14 +1206,14 @@ namespace TVRename
         {
             foreach (string s in VideoExtensionsArray)
             {
-                if (sn.ToLower() == s.ToLower())
+                if (String.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase))
                     return true;
             }
             if (otherExtensionsToo)
             {
                 foreach (string s in OtherExtensionsArray)
                 {
-                    if (sn.ToLower() == s.ToLower())
+                    if (string.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase))
                         return true;
                 }
             }

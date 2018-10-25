@@ -47,20 +47,20 @@ namespace TVRename
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
-            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Remove", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup6 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup7 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup8 = new System.Windows.Forms.ListViewGroup("Media Center Metadata", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup9 = new System.Windows.Forms.ListViewGroup("Update File Metadata", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup10 = new System.Windows.Forms.ListViewGroup("Downloading", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup11 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup12 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup13 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
-            System.Windows.Forms.ListViewGroup listViewGroup14 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup15 = new System.Windows.Forms.ListViewGroup("Missing", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup16 = new System.Windows.Forms.ListViewGroup("Rename", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup17 = new System.Windows.Forms.ListViewGroup("Copy", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup18 = new System.Windows.Forms.ListViewGroup("Move", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup19 = new System.Windows.Forms.ListViewGroup("Remove", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup20 = new System.Windows.Forms.ListViewGroup("Download RSS", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup21 = new System.Windows.Forms.ListViewGroup("Download", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup22 = new System.Windows.Forms.ListViewGroup("Media Center Metadata", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup23 = new System.Windows.Forms.ListViewGroup("Update File Metadata", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup24 = new System.Windows.Forms.ListViewGroup("Downloading", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Recently Aired", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Next 7 Days", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Future Episodes", System.Windows.Forms.HorizontalAlignment.Left);
+            System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Later", System.Windows.Forms.HorizontalAlignment.Left);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -101,6 +101,8 @@ namespace TVRename
             this.buyMeADrinkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.checkForNewVersionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tbMyShows = new System.Windows.Forms.TabPage();
             this.btnFilter = new System.Windows.Forms.Button();
@@ -190,8 +192,7 @@ namespace TVRename
             this.tmrPeriodicScan = new System.Windows.Forms.Timer(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.btnUpdateAvailable = new System.Windows.Forms.Button();
-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.logToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.episodeFileQualitySummaryLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tbMyShows.SuspendLayout();
@@ -436,6 +437,7 @@ namespace TVRename
             // 
             this.betaToolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.timezoneInconsistencyLOGToolStripMenuItem,
+            this.episodeFileQualitySummaryLogToolStripMenuItem,
             this.toolStripSeparator4,
             this.torrentMatchToolStripMenuItem,
             this.uTorrentToolStripMenuItem});
@@ -446,26 +448,26 @@ namespace TVRename
             // timezoneInconsistencyLOGToolStripMenuItem
             // 
             this.timezoneInconsistencyLOGToolStripMenuItem.Name = "timezoneInconsistencyLOGToolStripMenuItem";
-            this.timezoneInconsistencyLOGToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.timezoneInconsistencyLOGToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
             this.timezoneInconsistencyLOGToolStripMenuItem.Text = "Timezone Inconsistency (LOG)";
             this.timezoneInconsistencyLOGToolStripMenuItem.Click += new System.EventHandler(this.timezoneInconsistencyLOGToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(232, 6);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(259, 6);
             // 
             // torrentMatchToolStripMenuItem
             // 
             this.torrentMatchToolStripMenuItem.Name = "torrentMatchToolStripMenuItem";
-            this.torrentMatchToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.torrentMatchToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
             this.torrentMatchToolStripMenuItem.Text = "&Torrent Match";
             this.torrentMatchToolStripMenuItem.Click += new System.EventHandler(this.torrentMatchToolStripMenuItem_Click);
             // 
             // uTorrentToolStripMenuItem
             // 
             this.uTorrentToolStripMenuItem.Name = "uTorrentToolStripMenuItem";
-            this.uTorrentToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.uTorrentToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
             this.uTorrentToolStripMenuItem.Text = "&uTorrent Save To";
             this.uTorrentToolStripMenuItem.Click += new System.EventHandler(this.uTorrentToolStripMenuItem_Click);
             // 
@@ -539,6 +541,18 @@ namespace TVRename
             this.checkForNewVersionToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.checkForNewVersionToolStripMenuItem.Text = "Check For New Version";
             this.checkForNewVersionToolStripMenuItem.Click += new System.EventHandler(this.checkForNewVersionToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(192, 6);
+            // 
+            // logToolStripMenuItem
+            // 
+            this.logToolStripMenuItem.Name = "logToolStripMenuItem";
+            this.logToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.logToolStripMenuItem.Text = "Log";
+            this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
             // 
             // tabControl1
             // 
@@ -1019,37 +1033,37 @@ namespace TVRename
             this.columnHeader55,
             this.columnHeader58});
             this.lvAction.FullRowSelect = true;
-            listViewGroup1.Header = "Missing";
-            listViewGroup1.Name = "lvgActionMissing";
-            listViewGroup2.Header = "Rename";
-            listViewGroup2.Name = "lvgActionRename";
-            listViewGroup3.Header = "Copy";
-            listViewGroup3.Name = "lvgActionCopy";
-            listViewGroup4.Header = "Move";
-            listViewGroup4.Name = "lvgActionMove";
-            listViewGroup5.Header = "Remove";
-            listViewGroup5.Name = "lvgActionDelete";
-            listViewGroup6.Header = "Download RSS";
-            listViewGroup6.Name = "lvgActionDownloadRSS";
-            listViewGroup7.Header = "Download";
-            listViewGroup7.Name = "lvgActionDownload";
-            listViewGroup8.Header = "Media Center Metadata";
-            listViewGroup8.Name = "lvgActionMeta";
-            listViewGroup9.Header = "Update File Metadata";
-            listViewGroup9.Name = "lvgUpdateFileDates";
-            listViewGroup10.Header = "Downloading";
-            listViewGroup10.Name = "lvgDownloading";
+            listViewGroup15.Header = "Missing";
+            listViewGroup15.Name = "lvgActionMissing";
+            listViewGroup16.Header = "Rename";
+            listViewGroup16.Name = "lvgActionRename";
+            listViewGroup17.Header = "Copy";
+            listViewGroup17.Name = "lvgActionCopy";
+            listViewGroup18.Header = "Move";
+            listViewGroup18.Name = "lvgActionMove";
+            listViewGroup19.Header = "Remove";
+            listViewGroup19.Name = "lvgActionDelete";
+            listViewGroup20.Header = "Download RSS";
+            listViewGroup20.Name = "lvgActionDownloadRSS";
+            listViewGroup21.Header = "Download";
+            listViewGroup21.Name = "lvgActionDownload";
+            listViewGroup22.Header = "Media Center Metadata";
+            listViewGroup22.Name = "lvgActionMeta";
+            listViewGroup23.Header = "Update File Metadata";
+            listViewGroup23.Name = "lvgUpdateFileDates";
+            listViewGroup24.Header = "Downloading";
+            listViewGroup24.Name = "lvgDownloading";
             this.lvAction.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup1,
-            listViewGroup2,
-            listViewGroup3,
-            listViewGroup4,
-            listViewGroup5,
-            listViewGroup6,
-            listViewGroup7,
-            listViewGroup8,
-            listViewGroup9,
-            listViewGroup10});
+            listViewGroup15,
+            listViewGroup16,
+            listViewGroup17,
+            listViewGroup18,
+            listViewGroup19,
+            listViewGroup20,
+            listViewGroup21,
+            listViewGroup22,
+            listViewGroup23,
+            listViewGroup24});
             this.lvAction.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvAction.HideSelection = false;
             this.lvAction.Location = new System.Drawing.Point(0, 35);
@@ -1255,21 +1269,21 @@ namespace TVRename
             this.columnHeader34,
             this.columnHeader35});
             this.lvWhenToWatch.FullRowSelect = true;
-            listViewGroup11.Header = "Recently Aired";
-            listViewGroup11.Name = "justPassed";
-            listViewGroup12.Header = "Next 7 Days";
-            listViewGroup12.Name = "next7days";
-            listViewGroup12.Tag = "1";
-            listViewGroup13.Header = "Future Episodes";
-            listViewGroup13.Name = "futureEps";
-            listViewGroup14.Header = "Later";
-            listViewGroup14.Name = "later";
-            listViewGroup14.Tag = "2";
+            listViewGroup1.Header = "Recently Aired";
+            listViewGroup1.Name = "justPassed";
+            listViewGroup2.Header = "Next 7 Days";
+            listViewGroup2.Name = "next7days";
+            listViewGroup2.Tag = "1";
+            listViewGroup3.Header = "Future Episodes";
+            listViewGroup3.Name = "futureEps";
+            listViewGroup4.Header = "Later";
+            listViewGroup4.Name = "later";
+            listViewGroup4.Tag = "2";
             this.lvWhenToWatch.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
-            listViewGroup11,
-            listViewGroup12,
-            listViewGroup13,
-            listViewGroup14});
+            listViewGroup1,
+            listViewGroup2,
+            listViewGroup3,
+            listViewGroup4});
             this.lvWhenToWatch.HideSelection = false;
             this.lvWhenToWatch.Location = new System.Drawing.Point(0, 35);
             this.lvWhenToWatch.Name = "lvWhenToWatch";
@@ -1505,17 +1519,12 @@ namespace TVRename
             this.btnUpdateAvailable.Visible = false;
             this.btnUpdateAvailable.Click += new System.EventHandler(this.btnUpdateAvailable_Click);
             // 
-            // toolStripSeparator8
+            // episodeFileQualitySummaryLogToolStripMenuItem
             // 
-            this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(192, 6);
-            // 
-            // logToolStripMenuItem
-            // 
-            this.logToolStripMenuItem.Name = "logToolStripMenuItem";
-            this.logToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
-            this.logToolStripMenuItem.Text = "Log";
-            this.logToolStripMenuItem.Click += new System.EventHandler(this.logToolStripMenuItem_Click);
+            this.episodeFileQualitySummaryLogToolStripMenuItem.Name = "episodeFileQualitySummaryLogToolStripMenuItem";
+            this.episodeFileQualitySummaryLogToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            this.episodeFileQualitySummaryLogToolStripMenuItem.Text = "Episode File Quality Summary (Log)";
+            this.episodeFileQualitySummaryLogToolStripMenuItem.Click += new System.EventHandler(this.episodeFileQualitySummaryLogToolStripMenuItem_Click);
             // 
             // UI
             // 
@@ -1697,5 +1706,6 @@ namespace TVRename
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripSeparator toolStripSeparator8;
         private ToolStripMenuItem logToolStripMenuItem;
+        private ToolStripMenuItem episodeFileQualitySummaryLogToolStripMenuItem;
     }
 }

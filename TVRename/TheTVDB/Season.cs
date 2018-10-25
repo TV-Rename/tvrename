@@ -20,17 +20,25 @@ namespace TVRename
             noEpisodes,
         }
 
-        public Dictionary<int,Episode> Episodes;
-        public int SeasonId;
-        public int SeasonNumber;
-        public SeriesInfo TheSeries;
+        public enum SeasonType
+        {
+            dvd,
+            aired
+        }
 
-        public Season(SeriesInfo theSeries, int number, int seasonid)
+        public readonly Dictionary<int,Episode> Episodes;
+        public readonly int SeasonId;
+        public readonly int SeasonNumber;
+        public readonly SeriesInfo TheSeries;
+        private readonly SeasonType type;
+
+        public Season(SeriesInfo theSeries, int number, int seasonid, SeasonType t)
         {
             TheSeries = theSeries;
             SeasonNumber = number;
             SeasonId = seasonid;
             Episodes = new Dictionary<int, Episode>();
+            type = t;
         }
 
         // ReSharper disable once InconsistentNaming
@@ -122,6 +130,8 @@ namespace TVRename
 
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
 
+        public int SeasonIndex => this.TheSeries.GetSeasonIndex(this.SeasonNumber,type);
+
         private bool HasUnairedEpisodes(TimeZone tz)
         {
             if (!HasEpisodes) return false;
@@ -175,18 +185,11 @@ namespace TVRename
             }
 
             return returnValue;
-
         }
 
-        public string GetBannerPath()
-        {
-            return TheSeries.GetSeasonBannerPath(SeasonNumber);
-        }
+        public string GetBannerPath() => TheSeries.GetSeasonBannerPath(SeasonNumber);
 
-        public string GetWideBannerPath()
-        {
-            return TheSeries.GetSeasonWideBannerPath(SeasonNumber);
-        }
+        public string GetWideBannerPath() => TheSeries.GetSeasonWideBannerPath(SeasonNumber);
 
         public void AddUpdateEpisode(Episode newEpisode)
         {

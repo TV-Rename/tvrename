@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
@@ -15,15 +23,12 @@ namespace TVRename
             int c = ActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct);
-            foreach (Item action1 in ActionList)
+            foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (ActionCancel)
                     return;
 
                 prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
-
-                if (!(action1 is ItemMissing action))
-                    continue;
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -38,7 +43,7 @@ namespace TVRename
 
                     if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {
-                        toRemove.Add(action1);
+                        toRemove.Add(action);
                         newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, tApp));
                         break;
                     }

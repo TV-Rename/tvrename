@@ -2341,6 +2341,8 @@ namespace TVRename
             List<ProcessedEpisode> pel = null;
             if (currentShow != null && currentShow.SeasonEpisodes.ContainsKey(snum))
                 pel = currentShow.SeasonEpisodes[snum];
+            else if (currentShow?.SeasonEpisodes.First() != null)
+                pel = currentShow?.SeasonEpisodes.First().Value;
             else
             {
                 foreach (ShowItem si in mDoc.Library.GetShowItems())
@@ -2736,10 +2738,9 @@ namespace TVRename
             if (item is Action act && act.Error)
             {
                 lvi.BackColor = Helpers.WarningColor();
-                lvi.SubItems.Add(act.ErrorText); // error text
             }
-            else
-                lvi.SubItems.Add("");
+
+            lvi.SubItems.Add(item.ErrorText); // error text
 
             if (!(item is Action))
                 lvi.Checked = false;
@@ -2819,7 +2820,7 @@ namespace TVRename
                 }
                 else if (action is ActionDownloadImage)
                     downloadCount++;
-                else if (action is ActionRSS)
+                else if (action is ActionTDownload)
                     rssCount++;
                 else if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     metaCount++;
@@ -3229,7 +3230,7 @@ namespace TVRename
             foreach (ListViewItem lvi in lvAction.Items)
             {
                 Item i = (Item) lvi.Tag;
-                if (i is ActionRSS)
+                if (i is ActionTDownload)
                     lvi.Checked = cs == CheckState.Checked;
             }
 
@@ -3549,6 +3550,11 @@ namespace TVRename
         {
             LogViewer form = new LogViewer();
             form.Show();
+        }
+
+        private void episodeFileQualitySummaryLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            mDoc.LogShowEpisodeSizes();
         }
     }
 }

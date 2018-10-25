@@ -272,7 +272,7 @@ namespace TVRename
 
                 if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
-                else if ((action is ActionDownloadImage) || (action is ActionRSS))
+                else if ((action is ActionDownloadImage) || (action is ActionTDownload))
                     queues[3].Actions.Add(action);
                 else if (action is ActionCopyMoveRename rename)
                     queues[rename.QuickOperation() ? 1 : 0].Actions.Add(rename);

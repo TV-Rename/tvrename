@@ -71,6 +71,7 @@ namespace TVRename
                 new uTorrentFinder(this),
                 new qBitTorrentFinder(this),
                 new SABnzbdFinder(this),
+                new JSONFinder(this),
                 new RSSFinder(this) //RSS Finder Should Be last as it is the finder if all others fail
             };
 
@@ -461,17 +462,6 @@ namespace TVRename
             }
         }
 
-        private static bool ListHasMissingItems(ItemList l)
-        {
-            foreach (Item i in l)
-            {
-                if (i is ItemMissing)
-                    return true;
-            }
-
-            return false;
-        }
-
         public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
             try
@@ -544,7 +534,7 @@ namespace TVRename
                 bool anyActiveFileFinders =
                     finders.Any(x => x.Active() && x.DisplayType() == Finder.FinderDisplayType.local);
                 bool anyActiveRssFinders =
-                    finders.Any(x => x.Active() && x.DisplayType() == Finder.FinderDisplayType.rss);
+                    finders.Any(x => x.Active() && x.DisplayType() == Finder.FinderDisplayType.search);
 
                 scanProgDlg = new ScanProgress(
                     TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck,
@@ -586,6 +576,49 @@ namespace TVRename
             }
 
             DoActions(theList);
+            AllowAutoScan();
+        }
+
+        protected internal void LogShowEpisodeSizes()
+        {
+            PreventAutoScan("Find Double Episodes");
+            StringBuilder output = new StringBuilder();
+
+            output.AppendLine("");
+            output.AppendLine("##################################################");
+            output.AppendLine("File Quailty FINDER - Start");
+            output.AppendLine("##################################################");
+            Logger.Info(output.ToString());
+
+            DirFilesCache dfc = new DirFilesCache();
+            foreach (ShowItem si in Library.Values)
+            {
+                if (si.ShowName != "The Armando Iannucci Shows") continue;
+
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+                    foreach (ProcessedEpisode pep in kvp.Value)
+                    {
+                        List<FileInfo> files = FindEpOnDisk(dfc, pep);
+                        foreach (FileInfo file in files)
+                        {
+                            int width = file.GetFrameWidth();
+                            int height = file.GetFrameHeight();
+                            int length = file.GetFilmLength();
+                            Logger.Info($"{width,-10}   {height,-10}   {length,-10}    {pep.Show.ShowName,-50}  {file.Name}");
+
+                            Logger.Info(file.GetFilmDetails);
+                        } 
+                    }
+                }
+            }
+
+            output.Clear();
+            output.AppendLine("##################################################");
+            output.AppendLine("File Quailty FINDER - End");
+            output.AppendLine("##################################################");
+
+            Logger.Info(output.ToString());
             AllowAutoScan();
         }
 
@@ -996,24 +1029,42 @@ namespace TVRename
 
                         if (matchingShows.Count > 0)
                         {
-                            bool fileCanBeRemoved = true;
+                            bool fileNeeded = matchingShows.Any(si => FileNeeded(fi, si, dfc));
 
-                            foreach (ShowItem si in matchingShows)
-                            {
-                                if (FileNeeded(fi, si, dfc)) fileCanBeRemoved = false;
-                            }
-
-                            if (fileCanBeRemoved)
+                            if (!fileNeeded)
                             {
                                 ShowItem si = matchingShows[0]; //Choose the first series
                                 FindSeasEp(fi, out int seasF, out int epF, out int _, si, out FilenameProcessorRE _);
                                 SeriesInfo s = si.TheSeries();
                                 Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
                                 ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-                                Logger.Info(
-                                    $"Removing {fi.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
 
-                                TheActionList.Add(new ActionDeleteFile(fi, pep, TVSettings.Instance.Tidyup));
+                                List<FileInfo> encumbants = TVDoc.FindEpOnDisk(dfc,pep,false);
+                                bool betterQualityThanSomeExisting =
+                                    encumbants.Any(existingFile => BetterQualityFile(existingFile, fi));
+                                //Check whether the new file is better than the encumbant
+                                if (betterQualityThanSomeExisting)
+                                {
+                                    IEnumerable<FileInfo> filesToReplace = encumbants.Where(existingFile =>
+                                        BetterQualityFile(existingFile, fi));
+
+                                    foreach (FileInfo replaceFile in filesToReplace)
+                                    {
+                                        TheActionList.Add(new ActionDeleteFile(replaceFile, pep,null));
+                                        TheActionList.Add(new ActionCopyMoveRename(TVSettings.Instance.LeaveOriginals
+                                            ? ActionCopyMoveRename.Op.copy
+                                            : ActionCopyMoveRename.Op.move,fi,replaceFile.WithExtension(fi.Extension),pep,null,null));
+                                        Logger.Info(
+                                            $"Using {fi.FullName} to reaplce {replaceFile.FullName} as it is better quality");
+                                    }
+                                }
+                                else
+                                {
+                                    Logger.Info(
+                                        $"Removing {fi.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
+
+                                    TheActionList.Add(new ActionDeleteFile(fi, pep, TVSettings.Instance.Tidyup));
+                                }
                             }
                         }
                     }
@@ -1027,53 +1078,85 @@ namespace TVRename
                 {
                     foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
                     System.IO.SearchOption.AllDirectories))
-                {
-                    if (!Directory.Exists(subDirPath)) continue;
-
-                    DirectoryInfo di = new DirectoryInfo(subDirPath);
-
-                    List<ShowItem> matchingShows = new List<ShowItem>();
-
-                    foreach (ShowItem si in showList)
                     {
-                        if (si.GetSimplifiedPossibleShowNames()
-                            .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
-                            matchingShows.Add(si);
-                    }
+                        if (!Directory.Exists(subDirPath)) continue;
 
-                    if (matchingShows.Count > 0)
-                    {
-                        bool dirCanBeRemoved = true;
+                        DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-                        foreach (ShowItem si in matchingShows)
+                        List<ShowItem> matchingShows = new List<ShowItem>();
+
+                        foreach (ShowItem si in showList)
                         {
-                            if (FileNeeded(di, si, dfc))
+                            if (si.GetSimplifiedPossibleShowNames()
+                                .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
+                                matchingShows.Add(si);
+                        }
+
+                        if (matchingShows.Count > 0)
+                        {
+                            bool dirCanBeRemoved = true;
+
+                            foreach (ShowItem si in matchingShows)
                             {
-                                Logger.Info($"Not removing {di.FullName} as it may be needed for {si.ShowName}");
-                                dirCanBeRemoved = false;
+                                if (FileNeeded(di, si, dfc))
+                                {
+                                    Logger.Info($"Not removing {di.FullName} as it may be needed for {si.ShowName}");
+                                    dirCanBeRemoved = false;
+                                }
+                            }
+
+                            if (dirCanBeRemoved)
+                            {
+                                ShowItem si = matchingShows[0]; //Choose the first series
+                                FindSeasEp(di, out int seasF, out int epF, si, out FilenameProcessorRE _);
+                                SeriesInfo s = si.TheSeries();
+                                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
+                                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                                Logger.Info(
+                                    $"Removing {di.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
+
+                                TheActionList.Add(new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup));
                             }
                         }
-
-                        if (dirCanBeRemoved)
-                        {
-                            ShowItem si = matchingShows[0]; //Choose the first series
-                            FindSeasEp(di, out int seasF, out int epF, si, out FilenameProcessorRE _);
-                            SeriesInfo s = si.TheSeries();
-                            Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                            ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-                            Logger.Info(
-                                $"Removing {di.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
-
-                            TheActionList.Add(new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup));
-                        }
                     }
-                }
                 }
                 catch (UnauthorizedAccessException ex)
                 {
                     Logger.Warn(ex, $"Could not access subdirectories of {dirPath}");
                 }
             }
+        }
+
+        private static bool BetterQualityFile(FileInfo encumbantFile, FileInfo newFile)
+        {
+            if (!newFile.IsMovieFile()) return false;
+            if (!encumbantFile.IsMovieFile()) return true;
+
+            List<string> preferredTerms = new List<string> {"PROPER", "REPACK", "RERIP"};
+            int encumbantLength = encumbantFile.GetFilmLength();
+            int newFileLength = newFile.GetFilmLength();
+            int encumbantFrameWidth = encumbantFile.GetFrameWidth();
+            int newFileFrameWidth = newFile.GetFrameWidth();
+
+            bool newFileContainsTerm =
+                preferredTerms.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+
+            bool encumbantFileIsMuchLonger = encumbantLength > newFileLength * 1.1;
+            bool newFileIsMuchLonger = encumbantLength < newFileLength * 0.9;
+
+            bool newFileIsBetterQuality = encumbantFrameWidth < newFileFrameWidth * 0.9;
+            bool encumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * 1.1;
+
+            if (encumbantFileIsMuchLonger) return false;  //exting file is longer
+            if (encumbantFileIsBetterQuality) return false;  //exting file is better quality
+
+            if (newFileIsBetterQuality) return true;
+            if (newFileIsMuchLonger) return true;
+
+            if (newFileContainsTerm) return true;
+
+            //Not really sure, so defer to the absolute frame width
+            return newFileFrameWidth > encumbantFrameWidth;
         }
 
         private static bool FileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
@@ -1413,9 +1496,9 @@ namespace TVRename
 
                                     //The following section informs the DownloadIdentifers that we already plan to
                                     //copy a file inthe appropriate place and they do not need to worry about downloading 
-                                    //one for that purpse
-
+                                    //one for that purpose
                                     downloadIdentifiers.NotifyComplete(newFile);
+
                                     localEps[epNum] = newFile;
                                 }
                             }
@@ -1530,77 +1613,61 @@ namespace TVRename
                 if (TVSettings.Instance.MissingCheck)
                 {
                     // have a look around for any missing episodes
-                    int activeLocalFinders = 0;
-                    int activeRssFinders = 0;
-                    int activeDownloadingFinders = 0;
+                    GetNumbersOfActiveFinders(out int activeLocalFinders, out int activeRssFinders, out int activeDownloadingFinders);
 
-                    foreach (Finder f in finders)
+                    foreach (Finder f in finders.Where(f=>f.Active()))
                     {
-                        if (!f.Active()) continue;
                         f.ActionList = TheActionList;
-
-                        switch (f.DisplayType())
-                        {
-                            case Finder.FinderDisplayType.local:
-                                activeLocalFinders++;
-                                break;
-                            case Finder.FinderDisplayType.downloading:
-                                activeDownloadingFinders++;
-                                break;
-                            case Finder.FinderDisplayType.rss:
-                                activeRssFinders++;
-                                break;
-                            default:
-                                throw new ArgumentException("Inappropriate displaytype identified " + f.DisplayType());
-                        }
                     }
 
                     int currentLocalFinderId = 0;
-                    int currentRssFinderId = 0;
+                    int currentSearchFinderId = 0;
                     int currentDownloadingFinderId = 0;
 
-                    foreach (Finder f in finders)
+                    foreach (Finder f in finders.Where(f => f.Active()))
                     {
                         if (actionCancel)
                         {
                             return;
                         }
 
-                        if (f.Active() && ListHasMissingItems(TheActionList))
+                        if (!TheActionList.MissingItems().Any())
                         {
-                            int startPos;
-                            int endPos;
-
-                            switch (f.DisplayType())
-                            {
-                                case Finder.FinderDisplayType.local:
-                                    currentLocalFinderId++;
-                                    startPos = 100 * (currentLocalFinderId - 1) / activeLocalFinders;
-                                    endPos = 100 * (currentLocalFinderId) / activeLocalFinders;
-                                    f.Check(scanProgDlg == null ? noProgress : scanProgDlg.LocalSearchProg,
-                                        startPos, endPos);
-
-                                    break;
-                                case Finder.FinderDisplayType.downloading:
-                                    currentDownloadingFinderId++;
-                                    startPos = 100 * (currentDownloadingFinderId - 1) / activeDownloadingFinders;
-                                    endPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
-                                    f.Check(scanProgDlg == null ? noProgress : scanProgDlg.DownloadingProg,
-                                        startPos, endPos);
-
-                                    break;
-                                case Finder.FinderDisplayType.rss:
-                                    currentRssFinderId++;
-                                    startPos = 100 * (currentRssFinderId - 1) / activeRssFinders;
-                                    endPos = 100 * (currentRssFinderId) / activeRssFinders;
-                                    f.Check(scanProgDlg == null ? noProgress : scanProgDlg.RSSProg, startPos,
-                                        endPos);
-
-                                    break;
-                            }
-
-                            RemoveIgnored();
+                            continue;
                         }
+
+                        int startPos;
+                        int endPos;
+
+                        switch (f.DisplayType())
+                        {
+                            case Finder.FinderDisplayType.local:
+                                currentLocalFinderId++;
+                                startPos = 100 * (currentLocalFinderId - 1) / activeLocalFinders;
+                                endPos = 100 * (currentLocalFinderId) / activeLocalFinders;
+                                f.Check(scanProgDlg == null ? noProgress : scanProgDlg.LocalSearchProg,
+                                    startPos, endPos);
+
+                                break;
+                            case Finder.FinderDisplayType.downloading:
+                                currentDownloadingFinderId++;
+                                startPos = 100 * (currentDownloadingFinderId - 1) / activeDownloadingFinders;
+                                endPos = 100 * (currentDownloadingFinderId) / activeDownloadingFinders;
+                                f.Check(scanProgDlg == null ? noProgress : scanProgDlg.DownloadingProg,
+                                    startPos, endPos);
+
+                                break;
+                            case Finder.FinderDisplayType.search:
+                                currentSearchFinderId++;
+                                startPos = 100 * (currentSearchFinderId - 1) / activeRssFinders;
+                                endPos = 100 * (currentSearchFinderId) / activeRssFinders;
+                                f.Check(scanProgDlg == null ? noProgress : scanProgDlg.RSSProg, startPos,
+                                    endPos);
+
+                                break;
+                        }
+
+                        RemoveIgnored();
                     }
                 }
 
@@ -1618,6 +1685,32 @@ namespace TVRename
             {
                 Logger.Fatal(e, "Unhandled Exception in ScanWorker");
                 scanProgDlg?.Done();
+            }
+        }
+
+        private void GetNumbersOfActiveFinders(out int activeLocalFinders, out int activeRssFinders, out int activeDownloadingFinders)
+        {
+            activeLocalFinders = 0;
+            activeRssFinders = 0;
+            activeDownloadingFinders = 0;
+            foreach (Finder f in finders)
+            {
+                if (!f.Active()) continue;
+
+                switch (f.DisplayType())
+                {
+                    case Finder.FinderDisplayType.local:
+                        activeLocalFinders++;
+                        break;
+                    case Finder.FinderDisplayType.downloading:
+                        activeDownloadingFinders++;
+                        break;
+                    case Finder.FinderDisplayType.search:
+                        activeRssFinders++;
+                        break;
+                    default:
+                        throw new ArgumentException("Inappropriate displaytype identified " + f.DisplayType());
+                }
             }
         }
 
@@ -1915,6 +2008,11 @@ namespace TVRename
             ShowItem si, List<FilenameProcessorRE> rexps)
         {
             return FindSeasEp(directory, filename, out seas, out ep, out maxEp, si, rexps, out FilenameProcessorRE _);
+        }
+
+        internal static bool FindSeasEp(string itemName, out int seas, out int ep, out int maxEp, ShowItem show)
+        {
+            return FindSeasEp(string.Empty,itemName, out seas,out ep,out maxEp,show, TVSettings.Instance.FNPRegexs,out FilenameProcessorRE _);
         }
 
         public static bool FindSeasEp(string directory, string filename, out int seas, out int ep, out int maxEp,

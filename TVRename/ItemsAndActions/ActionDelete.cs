@@ -82,7 +82,6 @@ namespace TVRename
             PercentDone = 0;
             Episode = ep;
             toRemove = remove;
-
         }
 
         public override string ProgressText => toRemove.Name;

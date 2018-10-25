@@ -50,7 +50,7 @@ namespace TVRename
             cntfw = null;
 
             if (goToScanOpts)
-                tabControl1.SelectedTab = tpScanOptions;
+                tpSearch.SelectedTab = tpScanOptions;
         }
 
         private void OKButton_Click(object sender, EventArgs e)
@@ -60,7 +60,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFolderDeleting;
+                tpSearch.SelectedTab = tbFolderDeleting;
                 txtEmptyIgnoreExtensions.Focus();
                 return;
             }
@@ -70,7 +70,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tpSearch.SelectedTab = tbFilesAndFolders;
                 txtVideoExtensions.Focus();
                 return;
             }
@@ -79,7 +79,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tpSubtitles;
+                tpSearch.SelectedTab = tpSubtitles;
                 txtSubtitleExtensions.Focus();
                 return;
             }
@@ -88,7 +88,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tpSearch.SelectedTab = tbFilesAndFolders;
                 txtOtherExtensions.Focus();
                 return;
             }
@@ -97,7 +97,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tpSearch.SelectedTab = tbFilesAndFolders;
                 txtKeepTogether.Focus();
                 return;
             }
@@ -189,6 +189,12 @@ namespace TVRename
             s.AutoMergeLibraryEpisodes = chkAutoMergeLibraryEpisodes.Checked;
             s.RetainLanguageSpecificSubtitles = chkRetainLanguageSpecificSubtitles.Checked;
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
+
+            s.SearchJSON = cbSearchJSON.Checked;
+            s.SearchJSONURL = tbJSONURL.Text;
+            s.SearchJSONRootNode = tbJSONRootNode.Text;
+            s.SearchJSONFilenameToken = tbJSONFilenameToken.Text;
+            s.SearchJSONURLToken = tbJSONURLToken.Text;
 
             s.MonitorFolders = cbMonitorFolder.Checked;
             s.runStartupCheck = chkScanOnStartup.Checked;
@@ -396,6 +402,12 @@ namespace TVRename
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();
             tbPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
+
+            cbSearchJSON.Checked = s.SearchJSON;
+            tbJSONURL.Text = s.SearchJSONURL;
+            tbJSONRootNode.Text = s.SearchJSONRootNode;
+            tbJSONFilenameToken.Text = s.SearchJSONFilenameToken;
+            tbJSONURLToken.Text = s.SearchJSONURLToken;
 
             cbSearchRSS.Checked = s.SearchRSS;
             cbEpTBNs.Checked = s.EpTBNs;
@@ -1218,6 +1230,16 @@ namespace TVRename
             cntfw = new CustomNameTagsFloatingWindow(sampleSeason);
             cntfw.Show(this);
             Focus();
+        }
+
+        private void cbSearchRSS_CheckedChanged(object sender, EventArgs e)
+        {
+            gbRSS.Enabled = cbSearchRSS.Checked;
+        }
+
+        private void cbSearchJSON_CheckedChanged(object sender, EventArgs e)
+        {
+            gbJSON.Enabled = cbSearchJSON.Checked;
         }
     }
 }

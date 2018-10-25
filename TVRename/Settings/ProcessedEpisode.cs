@@ -71,6 +71,7 @@ namespace TVRename
         }
 
         public int AppropriateSeasonNumber => Show.DvdOrder ? DvdSeasonNumber : AiredSeasonNumber;
+        public int AppropriateSeasonIndex => Show.DvdOrder ? DvdSeasonIndex : AiredSeasonIndex;
 
         public Season AppropriateSeason => Show.DvdOrder ? TheDvdSeason : TheAiredSeason;
 

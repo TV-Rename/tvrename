@@ -61,7 +61,7 @@ namespace TVRename
                     else
                     {
                         // old-style URL, replace "!" with "{ShowName}+{Season}+{Episode}"
-                        url = url.Replace("!", "{ShowName}+{Season}+{Episode}");
+                        url = url.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
                     }
                     Add(reader.GetAttribute("Name"), url);
                     reader.ReadElementContentAsString();
