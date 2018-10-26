@@ -147,6 +147,7 @@ namespace TVRename
             s.ShowInTaskbar = chkShowInTaskbar.Checked;
             s.RenameTxtToSub = cbTxtToSub.Checked;
             s.ShowEpisodePictures = cbShowEpisodePictures.Checked;
+            s.ReplaceWithBetterQuality = cbHigherQuality.Checked;
             s.HideMyShowsSpoilers = chkHideMyShowsSpoilers.Checked;
             s.HideWtWSpoilers = chkHideWtWSpoilers.Checked;
             s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
@@ -221,6 +222,7 @@ namespace TVRename
             s.BulkAddIgnoreRecycleBin = cbIgnoreRecycleBin.Checked;
             s.AutoAddIgnoreSuffixes = tbIgnoreSuffixes.Text;
             s.AutoAddMovieTerms = tbMovieTerms.Text;
+            s.PriorityReplaceTerms = tbPriorityOverrideTerms.Text;
 
             if (rbFolderFanArt.Checked)
                 s.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
@@ -283,11 +285,25 @@ namespace TVRename
             {
                 s.upgradeDirtyPercent = 20;
             }
+
             if (s.upgradeDirtyPercent < 1)
                 s.upgradeDirtyPercent = 1;
             else if (s.upgradeDirtyPercent > 100)
                 s.upgradeDirtyPercent = 100;
 
+            try
+            {
+                s.replaceMargin = float.Parse(tbPercentBetter.Text);
+            }
+            catch
+            {
+                s.replaceMargin = 10;
+            }
+
+            if (s.replaceMargin < 1)
+                s.replaceMargin = 1;
+            else if (s.replaceMargin > 100)
+                s.replaceMargin = 100;
 
             try
             {
@@ -399,9 +415,11 @@ namespace TVRename
             tbqBitTorrentPort.Text = s.qBitTorrentPort;
             cbCheckqBitTorrent.Checked= s.CheckqBitTorrent ;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
+            cbHigherQuality.Checked= s.ReplaceWithBetterQuality ;
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();
             tbPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
+            tbPercentBetter.Text = s.replaceMargin.ToString(CultureInfo.InvariantCulture);
 
             cbSearchJSON.Checked = s.SearchJSON;
             tbJSONURL.Text = s.SearchJSONURL;
@@ -461,6 +479,8 @@ namespace TVRename
             cbIgnoreNoVideoFolders.Checked = s.BulkAddCompareNoVideoFolders;
             tbMovieTerms.Text = s.AutoAddMovieTerms;
             tbIgnoreSuffixes.Text = s.AutoAddIgnoreSuffixes;
+
+            tbPriorityOverrideTerms.Text = s.PriorityReplaceTerms;
 
             switch (s.WTWDoubleClick)
             {

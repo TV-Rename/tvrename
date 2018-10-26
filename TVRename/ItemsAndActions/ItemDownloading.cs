@@ -13,7 +13,7 @@ namespace TVRename
 {
     public class ItemDownloading : Item
     {
-        private readonly IDownloadInformation Entry;
+        private readonly IDownloadInformation entry;
         public readonly string DesiredLocationNoExt;
 
         public override IgnoreItem Ignore => GenerateIgnore(DesiredLocationNoExt);
@@ -22,27 +22,27 @@ namespace TVRename
         protected override string DestinationFolder => FileIdentifier;
         protected override string DestinationFile => Destination;
         protected override string SourceDetails => Remaining;
-        private string FileIdentifier => Entry.FileIdentifier;
-        private string Destination => Entry.Destination;
-        private string Remaining => Entry.RemainingText;
+        private string FileIdentifier => entry.FileIdentifier;
+        private string Destination => entry.Destination;
+        private string Remaining => entry.RemainingText;
         public override int IconNumber { get; }
         public override string TargetFolder => string.IsNullOrEmpty(Destination) ? null : new FileInfo(Destination).DirectoryName;
 
-        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, Finder.DownloadApp tApp)
+        public ItemDownloading(IDownloadInformation dl, ProcessedEpisode pe, string desiredLocationNoExt, DownloadingFinder.DownloadApp tApp)
         {
             Episode = pe;
             DesiredLocationNoExt = desiredLocationNoExt;
-            Entry = dl;
-            IconNumber = (tApp == Finder.DownloadApp.uTorrent) ? 2 :
-                         (tApp == Finder.DownloadApp.SABnzbd)  ? 8 :
-                         (tApp == Finder.DownloadApp.qBitTorrent) ? 10 : 0;
+            entry = dl;
+            IconNumber = (tApp == DownloadingFinder.DownloadApp.uTorrent) ? 2 :
+                         (tApp == DownloadingFinder.DownloadApp.SABnzbd)  ? 8 :
+                         (tApp == DownloadingFinder.DownloadApp.qBitTorrent) ? 10 : 0;
         }
 
         #region Item Members
 
         public override bool SameAs(Item o)
         {
-            return (o is ItemDownloading torrenting) && Entry == torrenting.Entry;
+            return (o is ItemDownloading torrenting) && entry == torrenting.entry;
         }
 
         public override int Compare(Item o)

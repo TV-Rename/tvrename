@@ -1018,54 +1018,77 @@ namespace TVRename
 
                         if (FileHelper.IgnoreFile(fi)) continue;
 
-                        List<ShowItem> matchingShows = new List<ShowItem>();
-
-                        foreach (ShowItem si in showList)
-                        {
-                            if (si.GetSimplifiedPossibleShowNames()
+                        List<ShowItem> matchingShows = showList.Where(si => si.GetSimplifiedPossibleShowNames()
                                 .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
-                                matchingShows.Add(si);
-                        }
+                            .ToList();
 
-                        if (matchingShows.Count > 0)
+                        if (matchingShows.Count <= 0) continue;
+
+                        bool fileCanBeDeleted = true;
+                        ProcessedEpisode firstMatchingPep = null;
+
+                        foreach (ShowItem si in matchingShows)
                         {
-                            bool fileNeeded = matchingShows.Any(si => FileNeeded(fi, si, dfc));
+                            FindSeasEp(fi, out int seasF, out int epF, out int _, si, out FilenameProcessorRE _);
+                            SeriesInfo s = si.TheSeries();
+                            Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
+                            ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                            firstMatchingPep = pep;
+                            List<FileInfo> encumbants = TVDoc.FindEpOnDisk(dfc, pep, false);
 
-                            if (!fileNeeded)
+                            if (encumbants.Count == 0)
                             {
-                                ShowItem si = matchingShows[0]; //Choose the first series
-                                FindSeasEp(fi, out int seasF, out int epF, out int _, si, out FilenameProcessorRE _);
-                                SeriesInfo s = si.TheSeries();
-                                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                                //File is needed as there are no 
+                                fileCanBeDeleted = false;
+                            }
 
-                                List<FileInfo> encumbants = TVDoc.FindEpOnDisk(dfc,pep,false);
-                                bool betterQualityThanSomeExisting =
-                                    encumbants.Any(existingFile => BetterQualityFile(existingFile, fi));
-                                //Check whether the new file is better than the encumbant
-                                if (betterQualityThanSomeExisting)
+                            foreach (FileInfo existingFile in encumbants)
+                            {
+                                FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, fi);
+                                if (result == FileHelper.VideoComparison.SecondFileBetter)
                                 {
-                                    IEnumerable<FileInfo> filesToReplace = encumbants.Where(existingFile =>
-                                        BetterQualityFile(existingFile, fi));
+                                    fileCanBeDeleted = false;
 
-                                    foreach (FileInfo replaceFile in filesToReplace)
+                                    if (TVSettings.Instance.ReplaceWithBetterQuality)
                                     {
-                                        TheActionList.Add(new ActionDeleteFile(replaceFile, pep,null));
-                                        TheActionList.Add(new ActionCopyMoveRename(TVSettings.Instance.LeaveOriginals
-                                            ? ActionCopyMoveRename.Op.copy
-                                            : ActionCopyMoveRename.Op.move,fi,replaceFile.WithExtension(fi.Extension),pep,null,null));
+                                        if (existingFile.Extension != fi.Extension)
+                                        {
+                                            TheActionList.Add(new ActionDeleteFile(existingFile, pep, null));
+                                            TheActionList.Add(new ActionCopyMoveRename( fi,existingFile.WithExtension(fi.Extension),pep));
+                                        }
+                                        else
+                                        {
+                                            TheActionList.Add(new ActionCopyMoveRename(fi,existingFile,pep));
+                                        }
+
+                                        
+
                                         Logger.Info(
-                                            $"Using {fi.FullName} to reaplce {replaceFile.FullName} as it is better quality");
+                                            $"Using {fi.FullName} to replace {existingFile.FullName} as it is better quality");
+                                    }
+                                    else
+                                    {
+                                        Logger.Warn(
+                                            $"Keeping {fi.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality file sis turned off)");
                                     }
                                 }
-                                else
+                                else if (result == FileHelper.VideoComparison.CantTell ||
+                                         result == FileHelper.VideoComparison.Similar)
                                 {
+                                    fileCanBeDeleted = false;
                                     Logger.Info(
-                                        $"Removing {fi.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
-
-                                    TheActionList.Add(new ActionDeleteFile(fi, pep, TVSettings.Instance.Tidyup));
+                                        $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
                                 }
+                                //the other cases of the files being the same or the existing file being better are not enough to save the file
                             }
+                        }
+
+                        if (fileCanBeDeleted)
+                        {
+                            Logger.Info(
+                                $"Removing {fi.FullName} as it matches {string.Join(", ",matchingShows.Select(s => s.ShowName))} and no episodes are needed");
+
+                            TheActionList.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
                         }
                     }
                 }
@@ -1125,38 +1148,6 @@ namespace TVRename
                     Logger.Warn(ex, $"Could not access subdirectories of {dirPath}");
                 }
             }
-        }
-
-        private static bool BetterQualityFile(FileInfo encumbantFile, FileInfo newFile)
-        {
-            if (!newFile.IsMovieFile()) return false;
-            if (!encumbantFile.IsMovieFile()) return true;
-
-            List<string> preferredTerms = new List<string> {"PROPER", "REPACK", "RERIP"};
-            int encumbantLength = encumbantFile.GetFilmLength();
-            int newFileLength = newFile.GetFilmLength();
-            int encumbantFrameWidth = encumbantFile.GetFrameWidth();
-            int newFileFrameWidth = newFile.GetFrameWidth();
-
-            bool newFileContainsTerm =
-                preferredTerms.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
-
-            bool encumbantFileIsMuchLonger = encumbantLength > newFileLength * 1.1;
-            bool newFileIsMuchLonger = encumbantLength < newFileLength * 0.9;
-
-            bool newFileIsBetterQuality = encumbantFrameWidth < newFileFrameWidth * 0.9;
-            bool encumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * 1.1;
-
-            if (encumbantFileIsMuchLonger) return false;  //exting file is longer
-            if (encumbantFileIsBetterQuality) return false;  //exting file is better quality
-
-            if (newFileIsBetterQuality) return true;
-            if (newFileIsMuchLonger) return true;
-
-            if (newFileContainsTerm) return true;
-
-            //Not really sure, so defer to the absolute frame width
-            return newFileFrameWidth > encumbantFrameWidth;
         }
 
         private static bool FileNeeded(FileInfo fi, ShowItem si, DirFilesCache dfc)
@@ -1613,7 +1604,7 @@ namespace TVRename
                 if (TVSettings.Instance.MissingCheck)
                 {
                     // have a look around for any missing episodes
-                    GetNumbersOfActiveFinders(out int activeLocalFinders, out int activeRssFinders, out int activeDownloadingFinders);
+                    (int activeLocalFinders, int activeRssFinders, int activeDownloadingFinders) = GetNumbersOfActiveFinders();
 
                     foreach (Finder f in finders.Where(f=>f.Active()))
                     {
@@ -1688,11 +1679,11 @@ namespace TVRename
             }
         }
 
-        private void GetNumbersOfActiveFinders(out int activeLocalFinders, out int activeRssFinders, out int activeDownloadingFinders)
+        private ( int activeLocalFinders,  int activeRssFinders,  int activeDownloadingFinders) GetNumbersOfActiveFinders()
         {
-            activeLocalFinders = 0;
-            activeRssFinders = 0;
-            activeDownloadingFinders = 0;
+            int activeLocalFinders = 0;
+            int activeRssFinders = 0;
+            int activeDownloadingFinders = 0;
             foreach (Finder f in finders)
             {
                 if (!f.Active()) continue;
@@ -1712,6 +1703,8 @@ namespace TVRename
                         throw new ArgumentException("Inappropriate displaytype identified " + f.DisplayType());
                 }
             }
+
+            return (activeLocalFinders, activeRssFinders, activeDownloadingFinders);
         }
 
         public static bool MatchesSequentialNumber(string filename, ref int seas, ref int ep, ProcessedEpisode pe)

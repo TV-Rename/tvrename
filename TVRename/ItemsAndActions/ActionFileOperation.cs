@@ -38,7 +38,7 @@ namespace TVRename
         protected void DeleteOrRecycleFolder(DirectoryInfo di)
         {
             if (di == null) return;
-            if (Tidyup.DeleteEmptyIsRecycle)
+            if (Tidyup ==null ||Tidyup.DeleteEmptyIsRecycle)
             {
                 Logger.Info($"Recycling {di.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,

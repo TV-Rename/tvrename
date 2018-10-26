@@ -210,6 +210,8 @@
     </Compile>
     <Compile Include="ItemsAndActions\Action.cs" />
     <Compile Include="ItemsAndActions\ActionDelete.cs" />
+    <Compile Include="ItemsAndActions\ActionDeleteDirectory.cs" />
+    <Compile Include="ItemsAndActions\ActionDeleteFile.cs" />
     <Compile Include="ItemsAndActions\ActionDownload.cs" />
     <Compile Include="ItemsAndActions\ActionFileMetaData.cs" />
     <Compile Include="ItemsAndActions\ActionFileOperation.cs" />

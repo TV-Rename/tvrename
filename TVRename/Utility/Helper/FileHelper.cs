@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,6 +19,56 @@ namespace TVRename
                 string returnValue = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
                 return (int.TryParse(returnValue, out int value)) ?value:-1 ;
             }
+        }
+
+        public enum VideoComparison
+        {
+            FirstFileBetter,
+            SecondFileBetter,
+            Similar,
+            CantTell,
+            Same
+        }
+
+        public static VideoComparison BetterQualityFile(FileInfo encumbantFile, FileInfo newFile)
+        {
+            if (!newFile.IsMovieFile()) return VideoComparison.FirstFileBetter;
+            if (!encumbantFile.IsMovieFile()) return VideoComparison.SecondFileBetter;
+
+            int encumbantLength = encumbantFile.GetFilmLength();
+            int newFileLength = newFile.GetFilmLength();
+            int encumbantFrameWidth = encumbantFile.GetFrameWidth();
+            int newFileFrameWidth = newFile.GetFrameWidth();
+
+            bool newFileContainsTerm =
+                TVSettings.Instance.PriorityReplaceTermsArray.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+
+            if (encumbantLength == -1) return VideoComparison.CantTell;
+            if (newFileLength == -1) return VideoComparison.CantTell;
+            if (encumbantFrameWidth == -1) return VideoComparison.CantTell;
+            if (newFileFrameWidth == -1) return VideoComparison.CantTell;
+
+            float percentMargin = TVSettings.Instance.replaceMargin;
+            float marginMultiplier = (percentMargin + 100) / 100;
+
+            bool encumbantFileIsMuchLonger = encumbantLength > newFileLength * marginMultiplier;
+            bool newFileIsMuchLonger = encumbantLength * marginMultiplier < newFileLength;
+
+            bool newFileIsBetterQuality = encumbantFrameWidth * marginMultiplier < newFileFrameWidth;
+            bool encumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * marginMultiplier;
+
+            if (encumbantFileIsMuchLonger) return VideoComparison.FirstFileBetter;  //exting file is longer
+            if (encumbantFileIsBetterQuality) return VideoComparison.FirstFileBetter;  //exting file is better quality
+
+            if (newFileIsBetterQuality) return VideoComparison.SecondFileBetter;
+            if (newFileIsMuchLonger) return VideoComparison.SecondFileBetter;
+
+            if (newFileContainsTerm) return VideoComparison.SecondFileBetter;
+
+            if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
+                newFile.Length == encumbantFile.Length) return VideoComparison.Same;
+
+            return VideoComparison.Similar;
         }
 
         public static int GetFrameHeight(this FileInfo movieFile)

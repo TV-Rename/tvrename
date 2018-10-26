@@ -323,15 +323,20 @@ namespace TVRename
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
+        public float replaceMargin = 10;
+        public bool ReplaceWithBetterQuality = true;
         public  KeepTogetherModes  keepTogetherMode = KeepTogetherModes.All;
 
         public bool BulkAddIgnoreRecycleBin = false;
         public bool BulkAddCompareNoVideoFolders = false;
-        public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
-        public string AutoAddIgnoreSuffixes = "1080p;720p";
 
+        public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
         public string[] AutoAddMovieTermsArray => AutoAddMovieTerms.Split(';');
 
+        public string PriorityReplaceTerms = "PROPER;REPACK;RERIP";
+        public string[] PriorityReplaceTermsArray => PriorityReplaceTerms.Split(';');
+
+        public string AutoAddIgnoreSuffixes = "1080p;720p";
         public string[] AutoAddIgnoreSuffixesArray => AutoAddIgnoreSuffixes.Split(';');
 
         public string[] keepTogetherExtensionsArray => keepTogetherExtensionsString.Split(';');
@@ -440,6 +445,8 @@ namespace TVRename
                     BGDownload = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "OfflineMode")
                     OfflineMode = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ReplaceWithBetterQuality")
+                    ReplaceWithBetterQuality = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "Replacements" && !reader.IsEmptyElement)
                 {
                     Replacements.Clear();
@@ -687,10 +694,14 @@ namespace TVRename
                     AutoAddMovieTerms = reader.ReadElementContentAsString();
                 else if (reader.Name == "AutoAddIgnoreSuffixes")
                     AutoAddIgnoreSuffixes = reader.ReadElementContentAsString();
+                else if (reader.Name == "PriorityReplaceTerms")
+                    PriorityReplaceTerms = reader.ReadElementContentAsString();
                 else if (reader.Name == "BetaMode")
                     mode = (BetaMode)reader.ReadElementContentAsInt();
                 else if (reader.Name == "PercentDirtyUpgrade")
                     upgradeDirtyPercent = reader.ReadElementContentAsFloat();
+                else if (reader.Name == "PercentBetter")
+                    replaceMargin = reader.ReadElementContentAsFloat();
                 else if (reader.Name == "BaseSeasonName")
                     defaultSeasonWord = reader.ReadElementContentAsString( );
                 else if (reader.Name == "SearchSeasonNames")
@@ -894,6 +905,7 @@ namespace TVRename
             TheSearchers.WriteXml(writer);
             XmlHelper.WriteElementToXml(writer,"BGDownload",BGDownload);
             XmlHelper.WriteElementToXml(writer,"OfflineMode",OfflineMode);
+            XmlHelper.WriteElementToXml(writer, "ReplaceWithBetterQuality", ReplaceWithBetterQuality);
             writer.WriteStartElement("Replacements");
             foreach (Replacement R in Replacements)
             {
@@ -1004,6 +1016,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"EmptyMaxSizeMB",Tidyup.EmptyMaxSizeMB);
             XmlHelper.WriteElementToXml(writer, "BetaMode", (int)mode);
             XmlHelper.WriteElementToXml(writer, "PercentDirtyUpgrade", upgradeDirtyPercent);
+            XmlHelper.WriteElementToXml(writer, "PercentBetter", replaceMargin);
             XmlHelper.WriteElementToXml(writer, "BaseSeasonName", defaultSeasonWord);
             XmlHelper.WriteElementToXml(writer, "SearchSeasonNames", searchSeasonWordsString);
             XmlHelper.WriteElementToXml(writer, "PreferredRSSSearchTerms", preferredRSSSearchTermsString);
@@ -1015,6 +1028,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "SearchJSONRootNode", SearchJSONRootNode);
             XmlHelper.WriteElementToXml(writer, "SearchJSONFilenameToken", SearchJSONFilenameToken);
             XmlHelper.WriteElementToXml(writer, "SearchJSONURLToken", SearchJSONURLToken);
+            XmlHelper.WriteElementToXml(writer, "PriorityReplaceTerms", PriorityReplaceTerms);
 
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in FNPRegexs)

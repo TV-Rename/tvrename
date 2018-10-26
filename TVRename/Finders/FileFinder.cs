@@ -76,13 +76,26 @@ namespace TVRename
                             $"Ignoring potential match with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
                     }
                 }
-                else if (matchedFiles.Count > 1) 
+                else if (matchedFiles.Count > 1)
                 {
-                    foreach (DirCacheEntry matchedFile in matchedFiles)
+                    List<DirCacheEntry> bestMatchedFiles = IdentifyBestMatches(matchedFiles);
+
+                    if (bestMatchedFiles.Count == 1)
                     {
-                        Logger.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
-                        me.AddComment(
-                            $"Ignoring potential match with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+                        //We have one file that is better, lets use it
+                        toRemove.Add(me);
+                        newList.AddRange(thisRound);
+                    }
+                    else
+                    {
+                        foreach (DirCacheEntry matchedFile in matchedFiles)
+                        {
+                            Logger.Warn(
+                                $"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+
+                            me.AddComment(
+                                $"Ignoring potential match with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+                        }
                     }
                 }
             }
@@ -135,6 +148,29 @@ namespace TVRename
 
             foreach (Item i in newList)
                 ActionList.Add(i);
+        }
+
+        private static List<DirCacheEntry> IdentifyBestMatches(List<DirCacheEntry> matchedFiles)
+        {
+            //See whether there are any of the matched files that stand out
+            List<DirCacheEntry> bestMatchedFiles = new List<DirCacheEntry>();
+            foreach (DirCacheEntry matchedFile in matchedFiles)
+            {
+                //test first file against all the others
+                bool betterThanAllTheRest = true;
+                foreach (DirCacheEntry compareAgainst in matchedFiles)
+                {
+                    if (matchedFile.TheFile.FullName == compareAgainst.TheFile.FullName) continue;
+                    if (FileHelper.BetterQualityFile(matchedFile.TheFile, compareAgainst.TheFile) !=
+                        FileHelper.VideoComparison.FirstFileBetter)
+                    {
+                        betterThanAllTheRest = false;
+                    }
+                }
+                if (betterThanAllTheRest) bestMatchedFiles.Add(matchedFile);
+            }
+
+            return bestMatchedFiles;
         }
 
         private bool OtherActionsMatch(DirCacheEntry matchedFile, Item me)

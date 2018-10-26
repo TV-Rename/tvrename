@@ -13,13 +13,11 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    class SABnzbdFinder :Finder
+    class SABnzbdFinder : DownloadingFinder
     {
         public SABnzbdFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.CheckSABnzbd;
-
-        public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {

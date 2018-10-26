@@ -2,14 +2,6 @@ namespace TVRename
 {
     public abstract class Finder
     {
-        public enum DownloadApp
-        {
-            // ReSharper disable once InconsistentNaming
-            SABnzbd,
-            uTorrent,
-            qBitTorrent
-        }
-
         protected bool ActionCancel;
         protected readonly TVDoc Doc;
         protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();

@@ -12,11 +12,19 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    internal abstract class TorrentFinder : Finder
+    public abstract class DownloadingFinder : Finder
     {
+        public enum DownloadApp
+        {
+            // ReSharper disable once InconsistentNaming
+            SABnzbd,
+            uTorrent,
+            qBitTorrent
+        }
+
         public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
-        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading, DownloadApp tApp)
+        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading, DownloadingFinder.DownloadApp tApp)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -59,7 +67,7 @@ namespace TVRename
             prog.Invoke(totPct);
         }
 
-        protected TorrentFinder(TVDoc doc) : base(doc)
+        protected DownloadingFinder(TVDoc doc) : base(doc)
         {
         }
     }

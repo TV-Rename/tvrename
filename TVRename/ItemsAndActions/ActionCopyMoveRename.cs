@@ -35,6 +35,12 @@ namespace TVRename
             UndoItemMissing = undoItem;
         }
 
+        public ActionCopyMoveRename(FileInfo fi, FileInfo existingFile, ProcessedEpisode pep): 
+            this(TVSettings.Instance.LeaveOriginals ? ActionCopyMoveRename.Op.copy : ActionCopyMoveRename.Op.move, fi,
+                existingFile,
+                pep, TVSettings.Instance.Tidyup, null)
+            {}
+
         #region Action Members
 
         public override string Name => IsMoveRename() ? "Move" : "Copy";
