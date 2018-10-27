@@ -326,12 +326,17 @@ namespace TVRename
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
-        public  KeepTogetherModes  keepTogetherMode = KeepTogetherModes.All;
+        public float replaceMargin = 10;
+        public bool ReplaceWithBetterQuality = true;
+        public KeepTogetherModes  keepTogetherMode = KeepTogetherModes.All;
 
         public bool BulkAddIgnoreRecycleBin = false;
         public bool BulkAddCompareNoVideoFolders = false;
         public string AutoAddMovieTerms = "dvdrip;camrip;screener;dvdscr;r5;bluray";
         public string AutoAddIgnoreSuffixes = "1080p;720p";
+
+        public string PriorityReplaceTerms = "PROPER;REPACK;RERIP";
+        public string[] PriorityReplaceTermsArray => PriorityReplaceTerms.Split(';');
 
         public string[] AutoAddMovieTermsArray => AutoAddMovieTerms.Split(';');
 
@@ -372,6 +377,7 @@ namespace TVRename
         public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool SearchRSS = false;
+        public bool SearchJSON = false;
         public bool ShowEpisodePictures = true;
         public bool HideWtWSpoilers = false;
         public bool HideMyShowsSpoilers = false;
@@ -381,6 +387,11 @@ namespace TVRename
         public string SeasonFolderFormat = string.Empty;
         public int StartupTab = 0;
         public Searchers TheSearchers = new Searchers();
+
+        public string SearchJSONURL = "https://eztv.ag/api/get-torrents?imdb_id=";
+        public string SearchJSONRootNode = "torrents";
+        public string SearchJSONFilenameToken = "filename";
+        public string SearchJSONURLToken = "torrent_url";
 
         public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
         public bool ForceBulkAddToUseSettingsOnly = false;
@@ -437,6 +448,8 @@ namespace TVRename
                     BGDownload = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "OfflineMode")
                     OfflineMode = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ReplaceWithBetterQuality")
+                    ReplaceWithBetterQuality = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ShowCollections")
                     ShowCollections = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "DeleteShowFromDisk")
@@ -527,6 +540,14 @@ namespace TVRename
                     SpecialsFolderName = reader.ReadElementContentAsString();
                 else if (reader.Name == "SeasonFolderFormat")
                     SeasonFolderFormat = reader.ReadElementContentAsString();
+                else if (reader.Name == "SearchJSONURL")
+                    SearchJSONURL = reader.ReadElementContentAsString();
+                else if (reader.Name == "SearchJSONRootNode")
+                    SearchJSONRootNode = reader.ReadElementContentAsString();
+                else if (reader.Name == "SearchJSONFilenameToken")
+                    SearchJSONFilenameToken = reader.ReadElementContentAsString();
+                else if (reader.Name == "SearchJSONURLToken")
+                    SearchJSONURLToken = reader.ReadElementContentAsString();
                 else if (reader.Name == "SABAPIKey")
                     SABAPIKey = reader.ReadElementContentAsString();
                 else if (reader.Name == "CheckSABnzbd")
@@ -575,6 +596,8 @@ namespace TVRename
                     ResumeDatPath = reader.ReadElementContentAsString();
                 else if (reader.Name == "SearchRSS")
                     SearchRSS = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "SearchJSON")
+                    SearchJSON = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpImgs")
                     EpTBNs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "NFOs") //support legacy tag
@@ -678,6 +701,8 @@ namespace TVRename
                     AutoAddMovieTerms = reader.ReadElementContentAsString();
                 else if (reader.Name == "AutoAddIgnoreSuffixes")
                     AutoAddIgnoreSuffixes = reader.ReadElementContentAsString();
+                else if (reader.Name == "PriorityReplaceTerms")
+                    PriorityReplaceTerms = reader.ReadElementContentAsString();
                 else if (reader.Name == "BetaMode")
                     mode = (BetaMode)reader.ReadElementContentAsInt();
                 else if (reader.Name == "PercentDirtyUpgrade")
@@ -895,11 +920,12 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"OfflineMode",OfflineMode);
             XmlHelper.WriteElementToXml(writer,"ShowCollections", ShowCollections);
             XmlHelper.WriteElementToXml(writer, "DeleteShowFromDisk", DeleteShowFromDisk);
+            XmlHelper.WriteElementToXml(writer, "ReplaceWithBetterQuality", ReplaceWithBetterQuality);
             writer.WriteStartElement("Replacements");
             foreach (Replacement R in Replacements)
             {
                 writer.WriteStartElement("Replace");
-                XmlHelper.WriteAttributeToXml(writer,"This",R.This);
+                XmlHelper.WriteAttributeToXml(writer, "This", R.This);
                 XmlHelper.WriteAttributeToXml(writer, "That", R.That);
                 XmlHelper.WriteAttributeToXml(writer, "CaseInsensitive", R.CaseInsensitive ? "Y" : "N");
                 writer.WriteEndElement(); //Replace
@@ -953,6 +979,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"uTorrentPath",uTorrentPath);
             XmlHelper.WriteElementToXml(writer,"ResumeDatPath",ResumeDatPath);
             XmlHelper.WriteElementToXml(writer,"SearchRSS",SearchRSS);
+            XmlHelper.WriteElementToXml(writer, "SearchJSON", SearchJSON);
             XmlHelper.WriteElementToXml(writer,"EpImgs",EpTBNs);
             XmlHelper.WriteElementToXml(writer,"NFOShows",NFOShows);
             XmlHelper.WriteElementToXml(writer,"NFOEpisodes", NFOEpisodes);
@@ -1011,6 +1038,11 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "BulkAddCompareNoVideoFolders", BulkAddCompareNoVideoFolders);
             XmlHelper.WriteElementToXml(writer, "AutoAddMovieTerms", AutoAddMovieTerms);
             XmlHelper.WriteElementToXml(writer, "AutoAddIgnoreSuffixes", AutoAddIgnoreSuffixes);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONURL", SearchJSONURL);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONRootNode", SearchJSONRootNode);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONFilenameToken", SearchJSONFilenameToken);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONURLToken", SearchJSONURLToken);
+            XmlHelper.WriteElementToXml(writer, "PriorityReplaceTerms", PriorityReplaceTerms);
 
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in FNPRegexs)
@@ -1202,14 +1234,14 @@ namespace TVRename
         {
             foreach (string s in VideoExtensionsArray)
             {
-                if (sn.ToLower() == s.ToLower())
+                if (String.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase))
                     return true;
             }
             if (otherExtensionsToo)
             {
                 foreach (string s in OtherExtensionsArray)
                 {
-                    if (sn.ToLower() == s.ToLower())
+                    if (String.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase))
                         return true;
                 }
             }

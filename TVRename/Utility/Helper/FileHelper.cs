@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using Alphaleonis.Win32.Filesystem;
 using Microsoft.WindowsAPICodePack.Shell;
@@ -9,6 +11,81 @@ namespace TVRename
 {
     public static class FileHelper
     {
+        public static int GetFrameWidth(this FileInfo movieFile)
+        {
+            using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
+            {
+                IShellProperty prop = shell.Properties.System.Video.FrameWidth;
+                string returnValue = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+                return (int.TryParse(returnValue, out int value)) ?value:-1 ;
+            }
+        }
+
+        public enum VideoComparison
+        {
+            FirstFileBetter,
+            SecondFileBetter,
+            Similar,
+            CantTell,
+            Same
+        }
+
+        public static VideoComparison BetterQualityFile(FileInfo encumbantFile, FileInfo newFile)
+        {
+            if (!newFile.IsMovieFile()) return VideoComparison.FirstFileBetter;
+            if (!encumbantFile.IsMovieFile()) return VideoComparison.SecondFileBetter;
+
+            int encumbantLength = encumbantFile.GetFilmLength();
+            int newFileLength = newFile.GetFilmLength();
+            int encumbantFrameWidth = encumbantFile.GetFrameWidth();
+            int newFileFrameWidth = newFile.GetFrameWidth();
+
+            bool newFileContainsTerm =
+                TVSettings.Instance.PriorityReplaceTermsArray.Any(term => newFile.Name.Contains(term, StringComparison.OrdinalIgnoreCase));
+
+            if (encumbantLength == -1) return VideoComparison.CantTell;
+            if (newFileLength == -1) return VideoComparison.CantTell;
+            if (encumbantFrameWidth == -1) return VideoComparison.CantTell;
+            if (newFileFrameWidth == -1) return VideoComparison.CantTell;
+
+            float percentMargin = TVSettings.Instance.replaceMargin;
+            float marginMultiplier = (percentMargin + 100) / 100;
+
+            bool encumbantFileIsMuchLonger = encumbantLength > newFileLength * marginMultiplier;
+            bool newFileIsMuchLonger = encumbantLength * marginMultiplier < newFileLength;
+
+            bool newFileIsBetterQuality = encumbantFrameWidth * marginMultiplier < newFileFrameWidth;
+            bool encumbantFileIsBetterQuality = encumbantFrameWidth > newFileFrameWidth * marginMultiplier;
+
+            if (encumbantFileIsMuchLonger) return VideoComparison.FirstFileBetter;  //exting file is longer
+            if (encumbantFileIsBetterQuality) return VideoComparison.FirstFileBetter;  //exting file is better quality
+
+            if (newFileIsBetterQuality) return VideoComparison.SecondFileBetter;
+            if (newFileIsMuchLonger) return VideoComparison.SecondFileBetter;
+
+            if (newFileContainsTerm) return VideoComparison.SecondFileBetter;
+
+            if (encumbantLength == newFileLength && encumbantFrameWidth == newFileFrameWidth &&
+                newFile.Length == encumbantFile.Length) return VideoComparison.Same;
+
+            return VideoComparison.Similar;
+        }
+
+        public static int GetFrameHeight(this FileInfo movieFile)
+        {
+            using (ShellObject shell = ShellObject.FromParsingName(movieFile.FullName))
+            {
+                IShellProperty prop = shell.Properties.System.Video.FrameHeight;
+                string returnValue = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
+                return (int.TryParse(returnValue, out int value)) ? value : -1;
+            }
+        }
+
+        public static bool IsMovieFile(this FileInfo file)
+        {
+            return TVSettings.Instance.FileHasUsefulExtension(file, false, out string _);
+        }
+        
         public static bool IsLanguageSpecificSubtitle(this FileInfo file, out string extension)
         {
             foreach (string subExtension in TVSettings.Instance.subtitleExtensionsArray)
@@ -27,6 +104,11 @@ namespace TVRename
             return false;
         }
 
+        public static FileInfo WithExtension(this FileInfo baseFile, string extension)
+        {
+            return new FileInfo(baseFile.RemoveExtension()+extension);
+        }
+
         public static int GetFilmLength(this FileInfo movieFile)
         {
             string duration;
@@ -37,6 +119,8 @@ namespace TVRename
                 // Duration will be formatted as 00:44:08
                 duration = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
             }
+
+            if (string.IsNullOrWhiteSpace(duration)) return -1;
 
             return (3600 * int.Parse(duration.Split(':')[0]))
                    + (60 * int.Parse(duration.Split(':')[1]))
@@ -71,17 +155,20 @@ namespace TVRename
             return root.Substring(0, root.Length - file.Extension.Length);
         }
 
-        public static void GetFilmDetails(this FileInfo movieFile)
+        public static string GetFilmDetails(this FileInfo movieFile)
         {
             using (ShellPropertyCollection properties = new ShellPropertyCollection(movieFile.FullName))
             {
+                StringBuilder sb = new StringBuilder();
                 foreach (IShellProperty prop in properties)
                 {
                     string value = (prop.ValueAsObject == null)
                         ? ""
                         : prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
-                    Console.WriteLine("{0} = {1}", prop.CanonicalName, value);
+                    sb.AppendLine($"{prop.CanonicalName} = {value}" );
                 }
+
+                return sb.ToString();
             }
         }
 

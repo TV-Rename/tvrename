@@ -50,7 +50,7 @@ namespace TVRename
             cntfw = null;
 
             if (goToScanOpts)
-                tabControl1.SelectedTab = tpScanOptions;
+                tpSearch.SelectedTab = tpScanOptions;
         }
 
         private void OKButton_Click(object sender, EventArgs e)
@@ -60,7 +60,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFolderDeleting;
+                tpSearch.SelectedTab = tbFolderDeleting;
                 txtEmptyIgnoreExtensions.Focus();
                 return;
             }
@@ -70,7 +70,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tpSearch.SelectedTab = tbFilesAndFolders;
                 txtVideoExtensions.Focus();
                 return;
             }
@@ -79,7 +79,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tpSubtitles;
+                tpSearch.SelectedTab = tpSubtitles;
                 txtSubtitleExtensions.Focus();
                 return;
             }
@@ -88,7 +88,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tpSearch.SelectedTab = tbFilesAndFolders;
                 txtOtherExtensions.Focus();
                 return;
             }
@@ -97,7 +97,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tpSearch.SelectedTab = tbFilesAndFolders;
                 txtKeepTogether.Focus();
                 return;
             }
@@ -149,6 +149,7 @@ namespace TVRename
             s.ShowEpisodePictures = cbShowEpisodePictures.Checked;
             s.ShowCollections = cbShowCollections.Checked;
             s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
+            s.ReplaceWithBetterQuality = cbHigherQuality.Checked;
             s.HideMyShowsSpoilers = chkHideMyShowsSpoilers.Checked;
             s.HideWtWSpoilers = chkHideWtWSpoilers.Checked;
             s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
@@ -192,6 +193,12 @@ namespace TVRename
             s.RetainLanguageSpecificSubtitles = chkRetainLanguageSpecificSubtitles.Checked;
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
 
+            s.SearchJSON = cbSearchJSON.Checked;
+            s.SearchJSONURL = tbJSONURL.Text;
+            s.SearchJSONRootNode = tbJSONRootNode.Text;
+            s.SearchJSONFilenameToken = tbJSONFilenameToken.Text;
+            s.SearchJSONURLToken = tbJSONURLToken.Text;
+
             s.MonitorFolders = cbMonitorFolder.Checked;
             s.runStartupCheck = chkScanOnStartup.Checked;
             s.runPeriodicCheck = chkScheduledScan.Checked;
@@ -217,6 +224,7 @@ namespace TVRename
             s.BulkAddIgnoreRecycleBin = cbIgnoreRecycleBin.Checked;
             s.AutoAddIgnoreSuffixes = tbIgnoreSuffixes.Text;
             s.AutoAddMovieTerms = tbMovieTerms.Text;
+            s.PriorityReplaceTerms = tbPriorityOverrideTerms.Text;
 
             if (rbFolderFanArt.Checked)
                 s.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
@@ -279,11 +287,25 @@ namespace TVRename
             {
                 s.upgradeDirtyPercent = 20;
             }
+
             if (s.upgradeDirtyPercent < 1)
                 s.upgradeDirtyPercent = 1;
             else if (s.upgradeDirtyPercent > 100)
                 s.upgradeDirtyPercent = 100;
 
+            try
+            {
+                s.replaceMargin = float.Parse(tbPercentBetter.Text);
+            }
+            catch
+            {
+                s.replaceMargin = 10;
+            }
+
+            if (s.replaceMargin < 1)
+                s.replaceMargin = 1;
+            else if (s.replaceMargin > 100)
+                s.replaceMargin = 100;
 
             try
             {
@@ -397,9 +419,17 @@ namespace TVRename
             tbqBitTorrentPort.Text = s.qBitTorrentPort;
             cbCheckqBitTorrent.Checked= s.CheckqBitTorrent ;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
+            cbHigherQuality.Checked= s.ReplaceWithBetterQuality ;
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();
             tbPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
+            tbPercentBetter.Text = s.replaceMargin.ToString(CultureInfo.InvariantCulture);
+
+            cbSearchJSON.Checked = s.SearchJSON;
+            tbJSONURL.Text = s.SearchJSONURL;
+            tbJSONRootNode.Text = s.SearchJSONRootNode;
+            tbJSONFilenameToken.Text = s.SearchJSONFilenameToken;
+            tbJSONURLToken.Text = s.SearchJSONURLToken;
 
             cbSearchRSS.Checked = s.SearchRSS;
             cbEpTBNs.Checked = s.EpTBNs;
@@ -453,6 +483,8 @@ namespace TVRename
             cbIgnoreNoVideoFolders.Checked = s.BulkAddCompareNoVideoFolders;
             tbMovieTerms.Text = s.AutoAddMovieTerms;
             tbIgnoreSuffixes.Text = s.AutoAddIgnoreSuffixes;
+
+            tbPriorityOverrideTerms.Text = s.PriorityReplaceTerms;
 
             switch (s.WTWDoubleClick)
             {
@@ -1222,6 +1254,16 @@ namespace TVRename
             cntfw = new CustomNameTagsFloatingWindow(sampleSeason);
             cntfw.Show(this);
             Focus();
+        }
+
+        private void cbSearchRSS_CheckedChanged(object sender, EventArgs e)
+        {
+            gbRSS.Enabled = cbSearchRSS.Checked;
+        }
+
+        private void cbSearchJSON_CheckedChanged(object sender, EventArgs e)
+        {
+            gbJSON.Enabled = cbSearchJSON.Checked;
         }
     }
 }

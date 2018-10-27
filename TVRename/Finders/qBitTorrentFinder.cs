@@ -7,7 +7,7 @@ using System.Net.Http;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    internal class qBitTorrentFinder : TorrentFinder
+    internal class qBitTorrentFinder : DownloadingFinder
     {
         public qBitTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckqBitTorrent;
@@ -15,7 +15,7 @@ namespace TVRename
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             List<TorrentEntry> downloading = GetqBitTorrentDownloads();
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.qBitTorrent);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadingFinder.DownloadApp.qBitTorrent);
         }
 
         private static List<TorrentEntry> GetqBitTorrentDownloads()

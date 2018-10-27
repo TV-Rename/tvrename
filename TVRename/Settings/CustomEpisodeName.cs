@@ -62,6 +62,8 @@ namespace TVRename
             "{ShowName}",
             "{Season}",
             "{Season:2}",
+            "{SeasonNumber}",
+            "{SeasonNumber:2}",
             "{Episode}",
             "{Episode2}",
             "{EpisodeName}",
@@ -117,6 +119,8 @@ namespace TVRename
             {
                 name = name.ReplaceInsensitive("{Season}", ep.DvdSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", ep.DvdSeasonNumber.ToString("00"));
+                name = name.ReplaceInsensitive("{SeasonNumber}", ep.DvdSeasonIndex.ToString());
+                name = name.ReplaceInsensitive("{SeasonNumber:2}", ep.DvdSeasonIndex.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode}", ep.DvdEpNum.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode2}", ep.DvdEpNum.ToString("00"));
                 name = Regex.Replace(name, "{AllEpisodes}", ep.DvdEpNum.ToString("00"));
@@ -125,6 +129,8 @@ namespace TVRename
             {
                 name = name.ReplaceInsensitive("{Season}", ep.AiredSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", ep.AiredSeasonNumber.ToString("00"));
+                name = name.ReplaceInsensitive("{SeasonNumber}", ep.AiredSeasonIndex.ToString());
+                name = name.ReplaceInsensitive("{SeasonNumber:2}", ep.AiredSeasonIndex.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode}", ep.AiredEpNum.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode2}", ep.AiredEpNum.ToString("00"));
                 name = Regex.Replace(name, "{AllEpisodes}", ep.AiredEpNum.ToString("00"));
@@ -188,6 +194,8 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
             name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
+            name = name.ReplaceInsensitive("{SeasonNumber}", pe.AppropriateSeasonIndex.ToString());
+            name = name.ReplaceInsensitive("{SeasonNumber:2}", pe.AppropriateSeasonIndex.ToString("00"));
             if (pe.AppropriateSeason.Episodes.Count >= 100)
             {
                 name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString("000"));

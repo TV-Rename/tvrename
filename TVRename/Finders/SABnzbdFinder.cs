@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Net;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -5,13 +13,11 @@ using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    class SABnzbdFinder :Finder
+    class SABnzbdFinder : DownloadingFinder
     {
         public SABnzbdFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.CheckSABnzbd;
-
-        public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
@@ -72,17 +78,12 @@ namespace TVRename
             int c = ActionList.Count + 2;
             int n = 1;
 
-            foreach (Item action1 in ActionList)
+            foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (ActionCancel)
                     return;
 
                 prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
-
-                if (!(action1 is ItemMissing))
-                    continue;
-
-                ItemMissing action = (ItemMissing)(action1);
 
                 string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
 
@@ -93,7 +94,7 @@ namespace TVRename
                     if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
                     if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
                         (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum)) continue;
-                    toRemove.Add(action1);
+                    toRemove.Add(action);
                     newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd));
                     break;
                 }

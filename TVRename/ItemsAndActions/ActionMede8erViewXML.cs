@@ -12,6 +12,7 @@ namespace TVRename
     using Alphaleonis.Win32.Filesystem;
     using System.Xml;
 
+    // ReSharper disable once InconsistentNaming
     public class ActionMede8erViewXML : ActionWriteMetadata
     {
         private readonly int snum;

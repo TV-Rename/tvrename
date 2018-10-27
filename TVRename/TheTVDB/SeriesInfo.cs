@@ -479,7 +479,7 @@ namespace TVRename
         public string GetContentRating() => GetValueAcrossVersions("Rating","rating",""); 
         public string GetSiteRating() => GetValueAcrossVersions("SiteRating", "siteRating", "");
         public string GetSiteRatingVotes() => GetValueAcrossVersions("SiteRatingCount", "siteRatingCount", "");
-        public string GetImdb() => GetValueAcrossVersions("IMDB_ID", "imdb_id", "");
+        public string GetImdb() => GetValueAcrossVersions("IMDB_ID", "imdbId", "");
         public string GetYear() => GetValueAcrossVersions("Year", "year", "");
         public string GetFirstAired() => GetValueAcrossVersions("FirstAired", "firstAired", "");
         public string GetSeriesId() => GetValueAcrossVersions("SeriesID", "seriesId", "");
@@ -565,7 +565,7 @@ namespace TVRename
             if (AiredSeasons.ContainsKey(num))
                 return AiredSeasons[num];
 
-            Season s = new Season(this, num, seasonId);
+            Season s = new Season(this, num, seasonId,Season.SeasonType.aired);
             AiredSeasons[num] = s;
 
             return s;
@@ -576,7 +576,7 @@ namespace TVRename
             if (DvdSeasons.ContainsKey(num))
                 return DvdSeasons[num];
 
-            Season s = new Season(this, num, seasonId);
+            Season s = new Season(this, num, seasonId,Season.SeasonType.dvd);
             DvdSeasons[num] = s;
 
             return s;
@@ -811,6 +811,26 @@ namespace TVRename
         public void AddActor(Actor actor)
         {
             actors.Add(actor);
+        }
+
+        public string GetImdbNumber()
+        {
+            return (GetImdb().StartsWith("tt")) ? GetImdb().Substring(2): GetImdb();
+        }
+
+        public int GetSeasonIndex(int seasonNumber, Season.SeasonType type)
+        {
+            Dictionary<int, Season> appropriateSeasons = type == Season.SeasonType.aired ? AiredSeasons : DvdSeasons;
+
+            List<int> seasonNumbers = new List<int>();
+            foreach (KeyValuePair<int, Season> sn in appropriateSeasons)
+            {
+                seasonNumbers.Add(sn.Value.SeasonNumber);
+            }
+
+            seasonNumbers.Sort();
+
+            return seasonNumbers.IndexOf(seasonNumber);
         }
     }
 }

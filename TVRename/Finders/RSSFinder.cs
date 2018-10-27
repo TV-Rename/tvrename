@@ -6,13 +6,13 @@ using System.Xml;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    internal class RSSFinder:Finder
+    internal class RSSFinder: DownloadFinder
     {
         public RSSFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchRSS;
 
-        public override FinderDisplayType DisplayType() => FinderDisplayType.rss;
+        public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
@@ -27,15 +27,12 @@ namespace TVRename
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
 
-            foreach (Item testItem in ActionList)
+            foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (ActionCancel)
                     return;
 
                 prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
-
-                if (!(testItem is ItemMissing action))
-                    continue;
 
                 ProcessedEpisode pe = action.Episode;
                 string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
@@ -54,15 +51,13 @@ namespace TVRename
                     if (rss.Season != pe.AppropriateSeasonNumber) continue;
                     if (rss.Episode != pe.AppropriateEpNum) continue;
 
-                    Logger.Info($"Adding {rss.URL} as it appears to be match for {testItem.Episode.Show.ShowName} S{testItem.Episode.AppropriateSeasonNumber}E{testItem.Episode.AppropriateEpNum}");
-                    newItems.Add(new ActionRSS(rss, action.TheFileNoExt, pe));
-                    toRemove.Add(testItem);
+                    Logger.Info($"Adding {rss.URL} as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
+                    newItems.Add(new ActionTDownload(rss, action.TheFileNoExt, pe));
+                    toRemove.Add(action);
                 }
             }
 
-            List<ActionRSS> duplicateActionRss = FindDuplicates(newItems);
-
-            foreach (ActionRSS x in duplicateActionRss)
+            foreach (ActionTDownload x in FindDuplicates(newItems))
                 newItems.Remove(x);
 
             foreach (Item i in toRemove)
@@ -74,42 +69,6 @@ namespace TVRename
             prog.Invoke(totPct);
         }
 
-        private static List<ActionRSS> FindDuplicates(ItemList newItems)
-        {
-            //We now want to rationlise the newItems - just in case we've added duplicates
-            List<ActionRSS> duplicateActionRss = new List<ActionRSS>();
-
-            foreach (Item x in newItems)
-            {
-                if (!(x is ActionRSS testActionRssOne))
-                    continue;
-                foreach (Item y in newItems)
-                {
-                    if (!(y is ActionRSS testActionRssTwo))
-                        continue;
-                    if (x.Equals(y)) continue;
-
-                    string[] preferredTerms = TVSettings.Instance.PreferredRSSSearchTerms();
-
-                    if (testActionRssOne.RSS.ShowName.ContainsOneOf(preferredTerms) &&
-                        !testActionRssTwo.RSS.ShowName.ContainsOneOf(preferredTerms))
-                    {
-                        duplicateActionRss.Add(testActionRssTwo);
-                        Logger.Info($"Removing {testActionRssTwo.RSS.URL} as it is not as good a match as {testActionRssOne.RSS.URL }");
-                    }
-
-                    if (testActionRssOne.RSS.Title.ContainsOneOf(preferredTerms) &&
-                        !testActionRssTwo.RSS.Title.ContainsOneOf(preferredTerms))
-                    {
-                        duplicateActionRss.Add(testActionRssTwo);
-                        Logger.Info(
-                            $"Removing {testActionRssTwo.RSS.URL} as it is not as good a match as {testActionRssOne.RSS.URL}");
-                    }
-                }
-            }
-
-            return duplicateActionRss;
-        }
     }
     // ReSharper disable once InconsistentNaming
     public class RSSItem
