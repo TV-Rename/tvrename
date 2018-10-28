@@ -68,8 +68,8 @@ namespace TVRename
 
             prog.Invoke(totPct);
         }
-
     }
+
     // ReSharper disable once InconsistentNaming
     public class RSSItem
     {

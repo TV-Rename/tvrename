@@ -24,7 +24,6 @@ namespace TVRename
         private readonly FileInfo leftFile;
         private readonly FileInfo rightFile;
 
-
         public ChooseFile(FileInfo left, FileInfo right)
         {
             InitializeComponent();
@@ -33,7 +32,7 @@ namespace TVRename
             txtNameLeft.Text = left.Name;
             int leftFrameWidth = left.GetFrameWidth();
             bool leftFrameUnknown = leftFrameWidth == -1;
-            txtDimensionsLeft.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown": leftFrameWidth + "x"+left.GetFrameHeight());
+            txtDimensionsLeft.Text = "Dimensions: " + (leftFrameUnknown ? "Unknown" : leftFrameWidth + "x" + left.GetFrameHeight());
             int leftFilmLength = left.GetFilmLength();
             txtLengthLeft.Text = "Length: " + ((leftFilmLength == -1) ? "Unknown" : leftFilmLength.Seconds().Humanize(2));
             txtSizeLeft.Text = left.Length.Bytes().Humanize("#.#");
@@ -49,9 +48,20 @@ namespace TVRename
             lblSizeRight.Text = right.Length.Bytes().Humanize("#.#");
             txtPathRight.Text = right.DirectoryName;
 
+            SetBoldFileSize(left, right);
+
+            SetBoldFilmLength(leftFilmLength, rightFilmLength);
+
+            if (rightFrameUnknown || leftFrameUnknown) return;
+
+            SetBoldFrameWidth(leftFrameWidth, rightFrameWidth);
+        }
+
+        private void SetBoldFileSize(FileInfo left, FileInfo right)
+        {
             if (left.Length > right.Length)
             {
-                txtSizeLeft.Font = new Font(txtSizeLeft.Font.Name, txtSizeLeft.Font.Size,FontStyle.Bold);
+                txtSizeLeft.Font = new Font(txtSizeLeft.Font.Name, txtSizeLeft.Font.Size, FontStyle.Bold);
                 lblSizeRight.Font = new Font(lblSizeRight.Font.Name, lblSizeRight.Font.Size, FontStyle.Regular);
             }
             else if (left.Length < right.Length)
@@ -64,7 +74,10 @@ namespace TVRename
                 txtSizeLeft.Font = new Font(txtSizeLeft.Font.Name, txtSizeLeft.Font.Size, FontStyle.Regular);
                 lblSizeRight.Font = new Font(lblSizeRight.Font.Name, lblSizeRight.Font.Size, FontStyle.Regular);
             }
+        }
 
+        private void SetBoldFilmLength(int leftFilmLength, int rightFilmLength)
+        {
             if (leftFilmLength > rightFilmLength)
             {
                 txtLengthLeft.Font = new Font(txtLengthLeft.Font.Name, txtLengthLeft.Font.Size, FontStyle.Bold);
@@ -80,9 +93,10 @@ namespace TVRename
                 txtLengthLeft.Font = new Font(txtLengthLeft.Font.Name, txtLengthLeft.Font.Size, FontStyle.Regular);
                 lblLengthRight.Font = new Font(lblLengthRight.Font.Name, lblLengthRight.Font.Size, FontStyle.Regular);
             }
+        }
 
-            if (rightFrameUnknown || leftFrameUnknown) return;
-
+        private void SetBoldFrameWidth(int leftFrameWidth, int rightFrameWidth)
+        {
             if (leftFrameWidth > rightFrameWidth)
             {
                 txtDimensionsLeft.Font = new Font(txtDimensionsLeft.Font.Name, txtDimensionsLeft.Font.Size, FontStyle.Bold);

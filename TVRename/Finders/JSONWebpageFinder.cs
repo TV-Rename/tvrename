@@ -42,7 +42,6 @@ namespace TVRename
                 string simpleSeriesName = Helpers.SimplifyName(action.Episode.TheSeries.Name);
 
                 string imdbId= action.Episode.TheSeries.GetImdbNumber();
-                
 
                 if (string.IsNullOrWhiteSpace(imdbId)) continue;
 
@@ -73,7 +72,6 @@ namespace TVRename
                         newItems.Add(new ActionTDownload(itemName, itemUrl, action.TheFileNoExt, pe));
                         toRemove.Add(action);
                     }
-
                 }
                 catch (NullReferenceException _)
                 {

@@ -17,7 +17,7 @@ namespace TVRename
             {
                 IShellProperty prop = shell.Properties.System.Video.FrameWidth;
                 string returnValue = prop.FormatForDisplay(PropertyDescriptionFormatOptions.None);
-                return (int.TryParse(returnValue, out int value)) ?value:-1 ;
+                return int.TryParse(returnValue, out int value) ? value : -1;
             }
         }
 
