@@ -77,26 +77,17 @@ namespace TVRename
         
         private static BrowserEmulationVersion GetBrowserEmulationVersion()
         {
-            BrowserEmulationVersion result;
-
-            result = BrowserEmulationVersion.Default;
-
             try
             {
-                RegistryKey key;
-
-                key = Registry.CurrentUser.OpenSubKey(BrowserEmulationKey, true);
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(BrowserEmulationKey, true);
                 if (key != null)
                 {
-                    string programName;
-                    object value;
-
-                    programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
-                    value = key.GetValue(programName, null);
+                    string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+                    object value = key.GetValue(programName, null);
 
                     if (value != null)
                     {
-                        result = (BrowserEmulationVersion)Convert.ToInt32(value);
+                        return (BrowserEmulationVersion)Convert.ToInt32(value);
                     }
                 }
             }
@@ -111,7 +102,7 @@ namespace TVRename
                 logger.Error(uae);
             }
 
-            return result;
+            return BrowserEmulationVersion.Default;
         }
 
         private static bool IsBrowserEmulationSet()
@@ -121,21 +112,13 @@ namespace TVRename
 
         private static bool SetBrowserEmulationVersion(BrowserEmulationVersion browserEmulationVersion)
         {
-            bool result;
-
-            result = false;
-
             try
             {
-                RegistryKey key;
-
-                key = Registry.CurrentUser.OpenSubKey(BrowserEmulationKey, true);
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(BrowserEmulationKey, true);
 
                 if (key != null)
                 {
-                    string programName;
-
-                    programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+                    string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
 
                     if (browserEmulationVersion != BrowserEmulationVersion.Default)
                     {
@@ -150,7 +133,7 @@ namespace TVRename
                         logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
                     }
 
-                    result = true;
+                    return true;
                 }
             }
             catch (SecurityException se)
@@ -164,15 +147,14 @@ namespace TVRename
                 logger.Error(uae);
             }
 
-            return result;
+            return false;
         }
 
         private static bool SetBrowserEmulationVersion()
         {
-            int ieVersion;
             BrowserEmulationVersion emulationCode;
 
-            ieVersion = GetInternetExplorerMajorVersion();
+            int ieVersion = GetInternetExplorerMajorVersion();
             logger.Warn("IE Version {0} is identified",ieVersion );
 
             if (ieVersion >= 11)
@@ -203,10 +185,11 @@ namespace TVRename
 
         public static void UpdateBrowserEmulationVersion()
         {
-            if (!IsBrowserEmulationSet())
+            if (IsBrowserEmulationSet()) return;
+            logger.Warn("Updating the registry to ensure that the latest browser version is used");
+            if (!SetBrowserEmulationVersion())
             {
-                logger.Warn("Updating the registry to ensure that the latest browser version is used");
-                SetBrowserEmulationVersion();
+                logger.Error("Failed to update the browser emulation version");
             }
         }
     }
