@@ -76,10 +76,7 @@ namespace TVRename
             CurrentSearch = choices[n].Name;
         }
 
-        public int CurrentSearchNum()
-        {
-            return NumForName(CurrentSearch);
-        }
+        public int CurrentSearchNum() => NumForName(CurrentSearch);
 
         private int NumForName(string srch)
         {
@@ -93,9 +90,7 @@ namespace TVRename
 
         public string CurrentSearchUrl()
         {
-            if (choices.Count == 0)
-                return "";
-            return choices[CurrentSearchNum()].Url2;
+            return choices.Count == 0 ? "" : choices[CurrentSearchNum()].Url2;
         }
 
         public void WriteXml(XmlWriter writer)
@@ -112,21 +107,14 @@ namespace TVRename
             }
             writer.WriteEndElement(); // TheSearchers
         }
-        public void Clear()
-        {
-            choices.Clear();
-        }
+        public void Clear() => choices.Clear();
 
         public void Add(string name, string url)
         {
-
             choices.Add(new Choice { Name = name, Url2 = url });
         }
 
-        public int Count()
-        {
-            return choices.Count;
-        }
+        public int Count() => choices.Count;
 
         public string Name(int n)
         {

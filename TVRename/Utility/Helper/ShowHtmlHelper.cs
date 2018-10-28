@@ -101,7 +101,7 @@ namespace TVRename
         private static string ParseAirsTime(SeriesInfo ser)
         {
             bool success = DateTime.TryParse(ser.GetAirsTime(), out DateTime airsTime);
-            return success ? airsTime.ToString("h tt"): string.Empty ;
+            return success ? airsTime.ToString("h tt"): string.Empty;
         }
 
         private static string GetBestFolderLocationToOpen(this ShowItem si)

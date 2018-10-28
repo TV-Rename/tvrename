@@ -47,7 +47,6 @@ namespace TVRename
                     doneFilesAndFolders.Add(di.FullName);
                     return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
                 }
-                
             }
             return null;
         }

@@ -89,7 +89,7 @@ namespace DaveChambers.FolderBrowserDialogEx
                 hwndOwner = owner.Handle
             };
 
-            if (0 != Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot))
+            if (Win32.SHGetSpecialFolderLocation(owner.Handle, (int)RootFolder, ref bi.pidlRoot)!=0)
                 bi.pidlRoot = IntPtr.Zero;
             bi.lpszTitle = "";
             bi.ulFlags = Win32.BIF_RETURNONLYFSDIRS;    // do NOT use BIF_NEWDIALOGSTYLE or BIF_STATUSTEXT

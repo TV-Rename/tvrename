@@ -49,7 +49,6 @@ namespace TVRename
                     writer.WriteEndElement();
                 }
             }
-
             catch (Exception e)
             {
                 Error = true;

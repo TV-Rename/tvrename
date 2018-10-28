@@ -76,7 +76,6 @@ namespace TVRename
             "{AllEpisodes}",
             "{Year}",
             "{SeasonYear}"
-
         };
 
         public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty,0);

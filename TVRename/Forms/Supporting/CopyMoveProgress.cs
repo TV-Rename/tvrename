@@ -176,7 +176,6 @@ namespace TVRename
                     int pct = (int)((1000 * di.TotalFreeSpace) / di.TotalSize);
                     diskValue = 1000 - pct;
                     diskText = di.TotalFreeSpace.GBMB(1) + " free";
-
                 }
             }
 
@@ -242,6 +241,5 @@ namespace TVRename
             label3.Enabled = en;
             txtFilename.Enabled = en;
         }
-
     }
 }

@@ -50,7 +50,6 @@ namespace TVRename
                 {
                     using (StreamReader sr = new StreamReader(PathManager.TVDocSettingsFile.FullName))
                         txt.AppendLine(sr.ReadToEnd());
-                    
                 }
                 catch
                 {
@@ -116,7 +115,6 @@ namespace TVRename
                     }
                     txt.AppendLine();
                 }
-
                 txt.AppendLine();
             }
 

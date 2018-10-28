@@ -123,7 +123,6 @@ namespace TVRename
                         }
                     }
                 }
-                
             }
 
             try

@@ -245,7 +245,7 @@ namespace TVRename.SAB
         {
             get
             {
-                string txt = status + ", " + (int)(0.5 + 100 - 100 * mbleft / mb) + "% Complete";
+                string txt = status + ", " + (int)(0.5 + 100 - (100 * mbleft / mb)) + "% Complete";
                 if (status == "Downloading")
                     { txt += ", " + timeleft + " left"; }
                 return txt;
@@ -254,13 +254,10 @@ namespace TVRename.SAB
     
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        protected void RaisePropertyChanged(string propertyName)
+        private void RaisePropertyChanged(string propertyName)
         {
             System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            if ((propertyChanged != null))
-            {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
+            propertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -1043,7 +1043,7 @@ namespace TVRename
             return dict;
         }
 
-        public static int PercentBitsOn(BTString s)
+        private static int PercentBitsOn(BTString s)
         {
             int totalBits = 0;
             int bitsOn = 0;

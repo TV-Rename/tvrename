@@ -64,7 +64,6 @@ namespace TVRename
                         }
                 }
             }
-
             catch (Exception e)
             {
                 Logger.Error(e, "Failed to produce records to put into Export file at: {0}", Location());

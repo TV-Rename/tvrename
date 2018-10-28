@@ -66,7 +66,6 @@ namespace TVRename.Forms
 
             webReleaseNotes.Visible = true;
             tbReleaseNotes.Visible = false;
-
         }
 
         private void bnReleaseNotes_Click(object sender, EventArgs e)

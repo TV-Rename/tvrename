@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Text;
 using System.Xml;
@@ -13,11 +21,8 @@ namespace TVRename
 
         public override bool Active() =>TVSettings.Instance.ExportMissingXML;
         protected override string Location() =>TVSettings.Instance.ExportMissingXMLTo;
+        public override bool ApplicableFor(TVSettings.ScanType st) => (st == TVSettings.ScanType.Full);
 
-        public override bool ApplicableFor(TVSettings.ScanType st)
-        {
-            return (st == TVSettings.ScanType.Full);
-        }
         public override void Run()
         {
             if (!Active()) return;
@@ -30,7 +35,6 @@ namespace TVRename
                     NewLineOnAttributes = true,
                     Encoding = Encoding.ASCII
                 };
-
             
                 using (XmlWriter writer = XmlWriter.Create(Location(), settings))
                 {
@@ -66,7 +70,6 @@ namespace TVRename
                     writer.WriteEndElement(); // tvrename
                     writer.WriteEndDocument();
                 }
-
             }
             catch (Exception e)
             {

@@ -92,11 +92,8 @@ namespace TVRename
                         default:
                             throw new ArgumentException("Inappropriate action for auto-scan " + TVSettings.Instance.MonitoredFoldersScanType);
                     }
-
                     mainForm.Invoke(mainForm.AfmDoAll);
-
                 }
-
             }
             else
             {

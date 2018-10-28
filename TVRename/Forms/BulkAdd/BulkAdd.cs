@@ -7,6 +7,7 @@
 // 
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
@@ -67,7 +68,10 @@ namespace TVRename
         {
             foreach (FoundFolder fme in engine.AddItems)
             {
-                if (fme.CodeKnown) {return false;}
+                if (fme.CodeKnown)
+                {
+                    return false;
+                }
             }
 
             return true;
