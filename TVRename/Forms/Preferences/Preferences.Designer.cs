@@ -227,7 +227,6 @@ namespace TVRename
             this.cbShowsHTML = new System.Windows.Forms.CheckBox();
             this.bnBrowseShowsHTML = new System.Windows.Forms.Button();
             this.tbFilesAndFolders = new System.Windows.Forms.TabPage();
-            this.cbLeadingZero = new System.Windows.Forms.CheckBox();
             this.cbIgnoreSamples = new System.Windows.Forms.CheckBox();
             this.cbForceLower = new System.Windows.Forms.CheckBox();
             this.cbKeepTogether = new System.Windows.Forms.CheckBox();
@@ -285,6 +284,7 @@ namespace TVRename
             this.tbPercentBetter = new System.Windows.Forms.TextBox();
             this.tbPriorityOverrideTerms = new System.Windows.Forms.TextBox();
             this.label52 = new System.Windows.Forms.Label();
+            this.cbLeadingZero = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -393,6 +393,7 @@ namespace TVRename
             // 
             // tpDisplay
             // 
+            this.tpDisplay.Controls.Add(this.cbLeadingZero);
             this.tpDisplay.Controls.Add(this.txtSeasonFolderName);
             this.tpDisplay.Controls.Add(this.label35);
             this.tpDisplay.Controls.Add(this.chkHideWtWSpoilers);
@@ -2349,7 +2350,6 @@ namespace TVRename
             this.tbFilesAndFolders.Controls.Add(this.cbKeepTogether);
             this.tbFilesAndFolders.Controls.Add(this.cbForceLower);
             this.tbFilesAndFolders.Controls.Add(this.cbIgnoreSamples);
-            this.tbFilesAndFolders.Controls.Add(this.cbLeadingZero);
             this.tbFilesAndFolders.Location = new System.Drawing.Point(4, 40);
             this.tbFilesAndFolders.Name = "tbFilesAndFolders";
             this.tbFilesAndFolders.Padding = new System.Windows.Forms.Padding(3);
@@ -2357,16 +2357,6 @@ namespace TVRename
             this.tbFilesAndFolders.TabIndex = 1;
             this.tbFilesAndFolders.Text = "Files and Folders";
             this.tbFilesAndFolders.UseVisualStyleBackColor = true;
-            // 
-            // cbLeadingZero
-            // 
-            this.cbLeadingZero.AutoSize = true;
-            this.cbLeadingZero.Location = new System.Drawing.Point(6, 234);
-            this.cbLeadingZero.Name = "cbLeadingZero";
-            this.cbLeadingZero.Size = new System.Drawing.Size(170, 17);
-            this.cbLeadingZero.TabIndex = 10;
-            this.cbLeadingZero.Text = "&Leading 0 on Season numbers";
-            this.cbLeadingZero.UseVisualStyleBackColor = true;
             // 
             // cbIgnoreSamples
             // 
@@ -2949,6 +2939,16 @@ namespace TVRename
             this.label52.TabIndex = 28;
             this.label52.Text = "Priority override terms:";
             // 
+            // cbLeadingZero
+            // 
+            this.cbLeadingZero.AutoSize = true;
+            this.cbLeadingZero.Location = new System.Drawing.Point(9, 238);
+            this.cbLeadingZero.Name = "cbLeadingZero";
+            this.cbLeadingZero.Size = new System.Drawing.Size(170, 17);
+            this.cbLeadingZero.TabIndex = 38;
+            this.cbLeadingZero.Text = "&Leading 0 on Season numbers";
+            this.cbLeadingZero.UseVisualStyleBackColor = true;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -3248,7 +3248,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbKeepTogether;
         private System.Windows.Forms.CheckBox cbForceLower;
         private System.Windows.Forms.CheckBox cbIgnoreSamples;
-        private System.Windows.Forms.CheckBox cbLeadingZero;
         private System.Windows.Forms.TabPage tbGeneral;
         private System.Windows.Forms.Label label37;
         private System.Windows.Forms.Label label38;
@@ -3273,5 +3272,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox tbPercentBetter;
         private System.Windows.Forms.TextBox tbPriorityOverrideTerms;
         private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.CheckBox cbLeadingZero;
     }
 }
