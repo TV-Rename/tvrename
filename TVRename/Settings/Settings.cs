@@ -19,176 +19,6 @@ using System.Xml;
 
 namespace TVRename
 {   
-    public class TidySettings
-    {
-        public bool DeleteEmpty = false; // Delete empty folders after move
-        public bool DeleteEmptyIsRecycle = true; // Recycle, rather than delete
-        public bool EmptyIgnoreWords = false;
-        public string EmptyIgnoreWordList = "sample";
-        public bool EmptyIgnoreExtensions = false;
-        public string EmptyIgnoreExtensionList = ".nzb;.nfo;.par2;.txt;.srt";
-        public bool EmptyMaxSizeCheck = true;
-        // ReSharper disable once InconsistentNaming
-        public int EmptyMaxSizeMB = 100;
-
-        public string[] EmptyIgnoreExtensionsArray => EmptyIgnoreExtensionList.Split(';');
-        public string[] EmptyIgnoreWordsArray => EmptyIgnoreWordList.Split(';');
-    }
-
-    public class Replacement
-    {
-        // used for invalid (and general) character (and string) replacements in filenames
-
-        public readonly bool CaseInsensitive;
-        public readonly string That;
-        public readonly string This;
-
-        public Replacement(string a, string b, bool insens)
-        {
-            if (b == null)
-                b = "";
-            This = a;
-            That = b;
-            CaseInsensitive = insens;
-        }
-    }
-
-    public class FilenameProcessorRE
-    {
-        // A regular expression to find the season and episode number in a filename
-
-        public readonly bool Enabled;
-        public readonly string Notes;
-        public readonly string RegExpression;
-        public readonly bool UseFullPath;
-
-        public FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
-        {
-            Enabled = enabled;
-            RegExpression = re;
-            UseFullPath = useFullPath;
-            Notes = notes;
-        }
-    }
-
-    [Serializable()]
-    public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, System.Drawing.Color>
-    {
-        public ShowStatusColoringTypeList()
-        {
-        }
-        protected ShowStatusColoringTypeList(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
-        public bool IsShowStatusDefined(string showStatus)
-        {
-            foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
-            {
-                if (!e.Key.IsMetaType && e.Key.IsShowLevel &&
-                    e.Key.Status.Equals(showStatus, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public System.Drawing.Color GetEntry(bool meta, bool showLevel, string status)
-        {
-            foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
-            {
-                if (e.Key.IsMetaType == meta && e.Key.IsShowLevel == showLevel &&
-                    e.Key.Status.Equals(status, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    return e.Value;
-                }
-            }
-            return System.Drawing.Color.Empty;
-        }
-    }
-
-    public class ShowStatusColoringType
-    {
-        public ShowStatusColoringType(bool isMetaType, bool isShowLevel, string status)
-        {
-            IsMetaType = isMetaType;
-            IsShowLevel = isShowLevel;
-            Status = status;
-        }
-
-        public readonly bool IsMetaType;
-        public readonly bool IsShowLevel;
-        public readonly string Status;
-
-        public string Text
-        {
-            get
-            {
-                if (IsShowLevel && IsMetaType)
-                {
-                    return $"Show Seasons Status: {StatusTextForDisplay}";
-                }
-                if (!IsShowLevel && IsMetaType)
-                {
-                    return $"Season Status: {StatusTextForDisplay}";
-                }
-                if (IsShowLevel && !IsMetaType)
-                {
-                    return $"Show Status: {StatusTextForDisplay}";
-                }
-                return "";
-            }
-        }
-
-        private string StatusTextForDisplay
-        {
-            get
-            {
-                if (!IsMetaType)
-                {
-                    return Status;
-                }
-                if (IsShowLevel)
-                {
-                    ShowItem.ShowAirStatus status =
-                        (ShowItem.ShowAirStatus) Enum.Parse(typeof (ShowItem.ShowAirStatus), Status,true);
-                    switch (status)
-                    {
-                        case ShowItem.ShowAirStatus.aired:
-                            return "All aired";
-                        case ShowItem.ShowAirStatus.noEpisodesOrSeasons:
-                            return "No Seasons or Episodes in Seasons";
-                        case ShowItem.ShowAirStatus.noneAired:
-                            return "None aired";
-                        case ShowItem.ShowAirStatus.partiallyAired:
-                            return "Partially aired";
-                        default:
-                            return Status;
-                    }
-                }
-                else
-                {
-                    Season.SeasonStatus status =
-                        (Season.SeasonStatus) Enum.Parse(typeof (Season.SeasonStatus), Status);
-                    switch (status)
-                    {
-                        case Season.SeasonStatus.aired:
-                            return "All aired";
-                        case Season.SeasonStatus.noEpisodes:
-                            return "No Episodes";
-                        case Season.SeasonStatus.noneAired:
-                            return "None aired";
-                        case Season.SeasonStatus.partiallyAired:
-                            return "Partially aired";
-                        default:
-                            return Status;
-                    }
-                }
-            }
-        }
-    }
-
     public sealed class TVSettings
     {
         //We are using the singleton design pattern
@@ -1321,6 +1151,176 @@ namespace TVRename
                 case KeepTogetherModes.AllBut: return !keepTogetherExtensionsArray.Contains(fileExtension);
             }
             return true;
+        }
+
+        public class TidySettings
+        {
+            public bool DeleteEmpty = false; // Delete empty folders after move
+            public bool DeleteEmptyIsRecycle = true; // Recycle, rather than delete
+            public bool EmptyIgnoreWords = false;
+            public string EmptyIgnoreWordList = "sample";
+            public bool EmptyIgnoreExtensions = false;
+            public string EmptyIgnoreExtensionList = ".nzb;.nfo;.par2;.txt;.srt";
+            public bool EmptyMaxSizeCheck = true;
+            // ReSharper disable once InconsistentNaming
+            public int EmptyMaxSizeMB = 100;
+
+            public string[] EmptyIgnoreExtensionsArray => EmptyIgnoreExtensionList.Split(';');
+            public string[] EmptyIgnoreWordsArray => EmptyIgnoreWordList.Split(';');
+        }
+
+        public class Replacement
+        {
+            // used for invalid (and general) character (and string) replacements in filenames
+
+            public readonly bool CaseInsensitive;
+            public readonly string That;
+            public readonly string This;
+
+            public Replacement(string a, string b, bool insens)
+            {
+                if (b == null)
+                    b = "";
+                This = a;
+                That = b;
+                CaseInsensitive = insens;
+            }
+        }
+
+        public class FilenameProcessorRE
+        {
+            // A regular expression to find the season and episode number in a filename
+
+            public readonly bool Enabled;
+            public readonly string Notes;
+            public readonly string RegExpression;
+            public readonly bool UseFullPath;
+
+            public FilenameProcessorRE(bool enabled, string re, bool useFullPath, string notes)
+            {
+                Enabled = enabled;
+                RegExpression = re;
+                UseFullPath = useFullPath;
+                Notes = notes;
+            }
+        }
+
+        [Serializable()]
+        public class ShowStatusColoringTypeList : Dictionary<ShowStatusColoringType, System.Drawing.Color>
+        {
+            public ShowStatusColoringTypeList()
+            {
+            }
+            protected ShowStatusColoringTypeList(SerializationInfo info, StreamingContext context) : base(info, context)
+            {
+            }
+
+            public bool IsShowStatusDefined(string showStatus)
+            {
+                foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+                {
+                    if (!e.Key.IsMetaType && e.Key.IsShowLevel &&
+                        e.Key.Status.Equals(showStatus, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            public System.Drawing.Color GetEntry(bool meta, bool showLevel, string status)
+            {
+                foreach (KeyValuePair<ShowStatusColoringType, System.Drawing.Color> e in this)
+                {
+                    if (e.Key.IsMetaType == meta && e.Key.IsShowLevel == showLevel &&
+                        e.Key.Status.Equals(status, StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        return e.Value;
+                    }
+                }
+                return System.Drawing.Color.Empty;
+            }
+        }
+
+        public class ShowStatusColoringType
+        {
+            public ShowStatusColoringType(bool isMetaType, bool isShowLevel, string status)
+            {
+                IsMetaType = isMetaType;
+                IsShowLevel = isShowLevel;
+                Status = status;
+            }
+
+            public readonly bool IsMetaType;
+            public readonly bool IsShowLevel;
+            public readonly string Status;
+
+            public string Text
+            {
+                get
+                {
+                    if (IsShowLevel && IsMetaType)
+                    {
+                        return $"Show Seasons Status: {StatusTextForDisplay}";
+                    }
+                    if (!IsShowLevel && IsMetaType)
+                    {
+                        return $"Season Status: {StatusTextForDisplay}";
+                    }
+                    if (IsShowLevel && !IsMetaType)
+                    {
+                        return $"Show Status: {StatusTextForDisplay}";
+                    }
+                    return "";
+                }
+            }
+
+            private string StatusTextForDisplay
+            {
+                get
+                {
+                    if (!IsMetaType)
+                    {
+                        return Status;
+                    }
+                    if (IsShowLevel)
+                    {
+                        ShowItem.ShowAirStatus status =
+                            (ShowItem.ShowAirStatus)Enum.Parse(typeof(ShowItem.ShowAirStatus), Status, true);
+                        switch (status)
+                        {
+                            case ShowItem.ShowAirStatus.aired:
+                                return "All aired";
+                            case ShowItem.ShowAirStatus.noEpisodesOrSeasons:
+                                return "No Seasons or Episodes in Seasons";
+                            case ShowItem.ShowAirStatus.noneAired:
+                                return "None aired";
+                            case ShowItem.ShowAirStatus.partiallyAired:
+                                return "Partially aired";
+                            default:
+                                return Status;
+                        }
+                    }
+                    else
+                    {
+                        Season.SeasonStatus status =
+                            (Season.SeasonStatus)Enum.Parse(typeof(Season.SeasonStatus), Status);
+                        switch (status)
+                        {
+                            case Season.SeasonStatus.aired:
+                                return "All aired";
+                            case Season.SeasonStatus.noEpisodes:
+                                return "No Episodes";
+                            case Season.SeasonStatus.noneAired:
+                                return "None aired";
+                            case Season.SeasonStatus.partiallyAired:
+                                return "Partially aired";
+                            default:
+                                return Status;
+                        }
+                    }
+                }
+            }
         }
     }
 }

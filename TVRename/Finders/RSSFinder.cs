@@ -93,10 +93,10 @@ namespace TVRename
     // ReSharper disable once InconsistentNaming
     public class RSSItemList : List<RSSItem>
     {
-        private List<FilenameProcessorRE> regxps; // only trustable while in DownloadRSS or its called functions
+        private List<TVSettings.FilenameProcessorRE> regxps; // only trustable while in DownloadRSS or its called functions
 
         // ReSharper disable once InconsistentNaming
-        public bool DownloadRSS(string url, List<FilenameProcessorRE> rexps)
+        public bool DownloadRSS(string url, List<TVSettings.FilenameProcessorRE> rexps)
         {
             regxps = rexps;
 

@@ -33,7 +33,6 @@ namespace TVRename
                     {
                         file.WriteLine(si.ShowName);
                     }
-
                 }
             }
             catch (Exception e)

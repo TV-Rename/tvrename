@@ -30,8 +30,4 @@ namespace TVRename
             SeasonFolderFormat = folderFormat;
         }
     }
-
-    public class FolderMonitorEntryList : System.Collections.Generic.List<FoundFolder>
-    {
-    }
 }

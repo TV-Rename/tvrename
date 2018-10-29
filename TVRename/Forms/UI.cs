@@ -2672,7 +2672,7 @@ namespace TVRename
 
         private static string RemoveSe(string hint)
         {
-            foreach (FilenameProcessorRE re in TVSettings.Instance.FNPRegexs)
+            foreach (TVSettings.FilenameProcessorRE re in TVSettings.Instance.FNPRegexs)
             {
                 if (!re.Enabled)
                     continue;

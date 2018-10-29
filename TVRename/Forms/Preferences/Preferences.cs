@@ -111,7 +111,7 @@ namespace TVRename
                 string to = (string) (ReplacementsGrid[i, 1].Value);
                 bool ins = (bool) (ReplacementsGrid[i, 2].Value);
                 if (!string.IsNullOrEmpty(from))
-                    s.Replacements.Add(new Replacement(from, to, ins));
+                    s.Replacements.Add(new TVSettings.Replacement(from, to, ins));
             }
 
             s.ExportWTWRSS = cbWTWRSS.Checked;
@@ -328,11 +328,11 @@ namespace TVRename
                     s.RSSURLs.Add(url);
             }
 
-            s.ShowStatusColors = new ShowStatusColoringTypeList();
+            s.ShowStatusColors = new TVSettings.ShowStatusColoringTypeList();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
                 if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
-                    item.Tag is ShowStatusColoringType type)
+                    item.Tag is TVSettings.ShowStatusColoringType type)
                 {
                     s.ShowStatusColors.Add(type,ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
@@ -349,7 +349,7 @@ namespace TVRename
 
             TVSettings s = TVSettings.Instance;
 
-            foreach (Replacement rep in s.Replacements)
+            foreach (TVSettings.Replacement rep in s.Replacements)
             {
                 AddNewReplacementRow(rep.This, rep.That, rep.CaseInsensitive);
             }
@@ -557,7 +557,7 @@ namespace TVRename
             if (s.ShowStatusColors != null)
             {
                 foreach (
-                    System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in
+                    System.Collections.Generic.KeyValuePair<TVSettings.ShowStatusColoringType, Color> showStatusColor in
                         s.ShowStatusColors)
                 {
                     ListViewItem item = new ListViewItem
@@ -580,7 +580,7 @@ namespace TVRename
             // Shows
             foreach (string status in Enum.GetNames(typeof(ShowItem.ShowAirStatus)))
             {
-                ShowStatusColoringType t = new ShowStatusColoringType(true, true, status);
+                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(true, true, status);
                 //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Show Seasons Status: " + status, new ShowStatusColoringType(true, true, status));
                 cboShowStatus.Items.Add(t);
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
@@ -593,13 +593,13 @@ namespace TVRename
             }
             foreach (string status in showStatusList)
             {
-                ShowStatusColoringType t = new ShowStatusColoringType(false, true, status);
+                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(false, true, status);
                 cboShowStatus.Items.Add(t);
             }
             // Seasons
             foreach (string status in Enum.GetNames(typeof(Season.SeasonStatus)))
             {
-                ShowStatusColoringType t = new ShowStatusColoringType(true, false, status);
+                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(true, false, status);
                 cboShowStatus.Items.Add(t);
             }
             cboShowStatus.DisplayMember = "Text";
@@ -1064,7 +1064,7 @@ namespace TVRename
             {
                 try
                 {
-                    ShowStatusColoringType ssct = cboShowStatus.SelectedItem as ShowStatusColoringType;
+                    TVSettings.ShowStatusColoringType ssct = cboShowStatus.SelectedItem as TVSettings.ShowStatusColoringType;
                     if (!ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty && ssct != null)
                     {
                         ListViewItem item = lvwDefinedColors.FindItemWithText(ssct.Text);

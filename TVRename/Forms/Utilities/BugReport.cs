@@ -61,7 +61,7 @@ namespace TVRename
             if (cbFOScan.Checked || cbFolderScan.Checked)
             {
                 txt.AppendLine("==== Filename processors ====");
-                foreach (FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
+                foreach (TVSettings.FilenameProcessorRE s in TVSettings.Instance.FNPRegexs)
                     txt.AppendLine((s.Enabled ? "Enabled" : "Disabled") + " \"" + s.RegExpression + "\" " + (s.UseFullPath ? "(FullPath)" : "") );
                 txt.AppendLine();
             }

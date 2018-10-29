@@ -24,7 +24,7 @@ namespace TVRename
         public readonly FileInfo To;
         public readonly ItemMissing UndoItemMissing;
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup,ItemMissing undoItem)
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TVSettings.TidySettings tidyup,ItemMissing undoItem)
         {
             Tidyup = tidyup;
             PercentDone = 0;
@@ -106,7 +106,6 @@ namespace TVRename
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-
             }
             catch (Exception e)
             {

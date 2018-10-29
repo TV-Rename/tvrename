@@ -29,9 +29,9 @@ namespace TVRename
     public partial class AddEditSeasEpFinders : Form
     {
         private readonly List<ShowItem> shows;
-        public List<FilenameProcessorRE> OutputRegularExpressions { get; }
+        public List<TVSettings.FilenameProcessorRE> OutputRegularExpressions { get; }
 
-        public AddEditSeasEpFinders(List<FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow,
+        public AddEditSeasEpFinders(List<TVSettings.FilenameProcessorRE> rex, List<ShowItem> sil, ShowItem initialShow,
             string initialFolder)
         {
             OutputRegularExpressions = rex;
@@ -135,7 +135,7 @@ namespace TVRename
                 Grid1[r, c].AddController(changed);
         }
 
-        private void FillGrid(List<FilenameProcessorRE> list)
+        private void FillGrid(List<TVSettings.FilenameProcessorRE> list)
         {
             while (Grid1.Rows.Count > 1) // leave header row
                 Grid1.Rows.Remove(1);
@@ -143,7 +143,7 @@ namespace TVRename
             Grid1.RowsCount = list.Count + 1;
 
             int i = 1;
-            foreach (FilenameProcessorRE re in list)
+            foreach (TVSettings.FilenameProcessorRE re in list)
             {
                 Grid1[i, 0] = new SourceGrid.Cells.CheckBox(null, re.Enabled);
                 Grid1[i, 1] = new SourceGrid.Cells.Cell(re.RegExpression, typeof(string));
@@ -161,7 +161,7 @@ namespace TVRename
             StartTimer();
         }
 
-        private FilenameProcessorRE RegExForRow(int i)
+        private TVSettings.FilenameProcessorRE RegExForRow(int i)
         {
             if ((i < 1) || (i >= Grid1.RowsCount)) // row 0 is header
                 return null;
@@ -171,7 +171,7 @@ namespace TVRename
             bool fullPath = (bool) (Grid1[i, 2].Value);
             string notes = (string) (Grid1[i, 3].Value) ?? "";
 
-            return string.IsNullOrEmpty(regex) ? null : new FilenameProcessorRE(en, regex, fullPath, notes);
+            return string.IsNullOrEmpty(regex) ? null : new TVSettings.FilenameProcessorRE(en, regex, fullPath, notes);
         }
 
         private void bnOK_Click(object sender, EventArgs e)
@@ -179,7 +179,7 @@ namespace TVRename
             OutputRegularExpressions.Clear();
             for (int i = 1; i < Grid1.RowsCount; i++) // skip header row
             {
-                FilenameProcessorRE re = RegExForRow(i);
+                TVSettings.FilenameProcessorRE re = RegExForRow(i);
                 if (re != null)
                     OutputRegularExpressions.Add(re);
             }
@@ -256,13 +256,13 @@ namespace TVRename
 
             lvPreview.Enabled = true;
 
-            List<FilenameProcessorRE> rel = new List<FilenameProcessorRE>();
+            List<TVSettings.FilenameProcessorRE> rel = new List<TVSettings.FilenameProcessorRE>();
 
             if (chkTestAll.Checked)
             {
                 for (int i = 1; i < Grid1.RowsCount; i++)
                 {
-                    FilenameProcessorRE re = RegExForRow(i);
+                    TVSettings.FilenameProcessorRE re = RegExForRow(i);
                     if (re != null)
                         rel.Add(re);
                 }
@@ -273,7 +273,7 @@ namespace TVRename
                 if (rowsIndex.Length == 0)
                     return;
 
-                FilenameProcessorRE re2 = RegExForRow(rowsIndex[0]);
+                TVSettings.FilenameProcessorRE re2 = RegExForRow(rowsIndex[0]);
                 if (re2 != null)
                     rel.Add(re2);
                 else
@@ -283,7 +283,7 @@ namespace TVRename
             UpdatePreview(rel);
         }
 
-        private void UpdatePreview(List<FilenameProcessorRE> rel)
+        private void UpdatePreview(List<TVSettings.FilenameProcessorRE> rel)
         {
             lvPreview.BeginUpdate();
             DirectoryInfo d = new DirectoryInfo(txtFolder.Text);
@@ -294,7 +294,7 @@ namespace TVRename
 
                 ShowItem si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
                 bool r = TVDoc.FindSeasEp(fi, out int seas, out int ep, out int maxEp, si, rel, false,
-                    out FilenameProcessorRE matchRex);
+                    out TVSettings.FilenameProcessorRE matchRex);
 
                 ListViewItem lvi = new ListViewItem { Text = fi.Name };
                 lvi.SubItems.Add((seas == -1) ? "-" : seas.ToString());

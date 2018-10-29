@@ -130,6 +130,7 @@
     <Compile Include="DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="DownloadIdentifers\IncorrectFileDates.cs" />
     <Compile Include="Exporter\ActionListXML.cs" />
+    <Compile Include="Exporter\CopyMoveXml.cs" />
     <Compile Include="Exporter\MissingCSV.cs" />
     <Compile Include="Exporter\ShowsHTML.cs" />
     <Compile Include="Exporter\UpcomingiCAL.cs" />
@@ -230,8 +231,10 @@
     <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
     <Compile Include="ItemsAndActions\ItemList.cs" />
     <Compile Include="Settings\CustomSeasonName.cs" />
+    <Compile Include="Settings\Language.cs" />
     <Compile Include="Settings\Languages.cs" />
     <Compile Include="Settings\ProcessedEpisode.cs" />
+    <Compile Include="Settings\SeasonFilter.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="Settings\ShowItem.cs" />
     <Compile Include="TheTVDB\Actor.cs" />
@@ -241,6 +244,7 @@
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BullkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
+    <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
     <Compile Include="Utility\Helper\FileHelper.cs" />
@@ -416,6 +420,7 @@
     <Compile Include="Utility\SAB\Result.cs" />
     <Compile Include="Utility\SetProgressDelegate.cs" />
     <Compile Include="Utility\Helper\StringExtensions.cs" />
+    <Compile Include="Utility\UpdateVersion.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
     <EmbeddedResource Include="Forms\Supporting\ChooseFile.resx">

@@ -77,22 +77,4 @@ namespace TVRename
         protected override string Location() => TVSettings.Instance.ExportRenamingXMLTo;
         protected override string MainXmlElementName() => "Renaming";
     }
-
-    internal class CopyMoveXml : ActionListXml
-    {
-        public CopyMoveXml(ItemList theActionList) : base(theActionList)
-        {
-        }
-
-        public override bool ApplicableFor(TVSettings.ScanType st) => true;
-
-        protected override bool IsOutput(Item a)
-        {
-            return (a is ActionCopyMoveRename cmr) && ((cmr.Operation != ActionCopyMoveRename.Op.rename));
-        }
-
-        public override bool Active() => TVSettings.Instance.ExportFOXML;
-        protected override string Location() => TVSettings.Instance.ExportFOXMLTo;
-        protected override string MainXmlElementName() => "FindingAndOrganising";
-    }
 }

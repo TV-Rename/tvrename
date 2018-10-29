@@ -1017,7 +1017,7 @@ namespace TVRename
         public BTFile ResumeDat; // resume file, if we're using it
         public string ResumeDatPath;
 
-        public List<FilenameProcessorRE> Rexps; // used by MatchMissing
+        public List<TVSettings.FilenameProcessorRE> Rexps; // used by MatchMissing
         public bool SearchSubFolders;
         public bool SetPrios;
         public bool TestMode;
@@ -1337,7 +1337,7 @@ namespace TVRename
                     // see if season and episode match
                     bool findFile = TVDoc.FindSeasEp("", simplifiedfname, out int seasF, out int epF, out int maxEp,
                         m.Show, Rexps,
-                        out FilenameProcessorRE rex);
+                        out TVSettings.FilenameProcessorRE rex);
 
                     bool matchSeasonEpisode = m.Show.DvdOrder
                         ? (seasF == m.AiredSeasonNumber) && (epF == m.AiredEpNum)
@@ -1444,7 +1444,7 @@ namespace TVRename
 
         public bool DoWork(List<string> Torrents, string searchFolder, ListView results, bool hashSearch,
             bool matchMissing, bool setPrios, bool testMode,
-            bool searchSubFolders, ItemList missingList, List<FilenameProcessorRE> rexps, CommandLineArgs args)
+            bool searchSubFolders, ItemList missingList, List<TVSettings.FilenameProcessorRE> rexps, CommandLineArgs args)
         {
             Rexps = rexps;
 

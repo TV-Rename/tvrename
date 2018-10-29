@@ -15,7 +15,7 @@ namespace TVRename
     {
         private readonly DirectoryInfo toRemove;
 
-        public ActionDeleteDirectory(DirectoryInfo remove, ProcessedEpisode ep, TidySettings tidyup)
+        public ActionDeleteDirectory(DirectoryInfo remove, ProcessedEpisode ep, TVSettings.TidySettings tidyup)
         {
             Tidyup = tidyup;
             PercentDone = 0;
