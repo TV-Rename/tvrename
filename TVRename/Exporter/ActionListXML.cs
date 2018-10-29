@@ -60,21 +60,4 @@ namespace TVRename
         protected abstract bool IsOutput(Item a);
         protected abstract string MainXmlElementName();
     }
-
-    internal class RenamingXml : ActionListXml
-    {
-        public RenamingXml(ItemList theActionList) : base(theActionList)
-        {
-        }
-
-        protected override bool IsOutput(Item a)
-        {
-            return (a is ActionCopyMoveRename cmr) && ((cmr.Operation == ActionCopyMoveRename.Op.rename));
-        }
-        public override bool ApplicableFor(TVSettings.ScanType st) => true;
-
-        public override bool Active() => TVSettings.Instance.ExportRenamingXML;
-        protected override string Location() => TVSettings.Instance.ExportRenamingXMLTo;
-        protected override string MainXmlElementName() => "Renaming";
-    }
 }

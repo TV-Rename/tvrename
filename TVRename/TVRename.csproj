@@ -132,6 +132,7 @@
     <Compile Include="Exporter\ActionListXML.cs" />
     <Compile Include="Exporter\CopyMoveXml.cs" />
     <Compile Include="Exporter\MissingCSV.cs" />
+    <Compile Include="Exporter\RenamingXml.cs" />
     <Compile Include="Exporter\ShowsHTML.cs" />
     <Compile Include="Exporter\UpcomingiCAL.cs" />
     <Compile Include="Finders\DownloadFinder.cs" />
