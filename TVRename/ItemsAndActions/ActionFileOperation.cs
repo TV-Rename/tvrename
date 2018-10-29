@@ -21,7 +21,7 @@ namespace TVRename
         protected void DeleteOrRecycleFile(FileInfo file)
         {
             if (file == null) return;
-            if (Tidyup.DeleteEmptyIsRecycle)
+            if (Tidyup is null ||  Tidyup.DeleteEmptyIsRecycle)
             {
                 Logger.Info($"Recycling {file.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName,
