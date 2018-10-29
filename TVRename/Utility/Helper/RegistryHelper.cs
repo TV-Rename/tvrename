@@ -114,7 +114,7 @@ namespace TVRename
         {
             try
             {
-                RegistryKey key = Registry.CurrentUser.OpenSubKey(BrowserEmulationKey, true);
+                RegistryKey key = Registry.CurrentUser.CreateSubKey(BrowserEmulationKey,true);
 
                 if (key != null)
                 {
