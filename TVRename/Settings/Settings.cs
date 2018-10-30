@@ -229,7 +229,9 @@ namespace TVRename
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
-        public bool RemoveDownloadDirectoriesFiles =false;
+        public bool RemoveDownloadDirectoriesFiles = false;
+        public bool DeleteShowFromDisk = false;
+
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
         public string SABHostPort = "";
         public string SABAPIKey = "";
@@ -490,6 +492,8 @@ namespace TVRename
                     periodCheckHours = reader.ReadElementContentAsInt();
                 else if (reader.Name == "RemoveDownloadDirectoriesFiles")
                     RemoveDownloadDirectoriesFiles = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "DeleteShowFromDisk")
+                    DeleteShowFromDisk = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "EpJPGs")
                     EpJPGs = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "SeriesJpg")
@@ -825,7 +829,8 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "StartupScan", runStartupCheck);
             XmlHelper.WriteElementToXml(writer, "PeriodicScan", runPeriodicCheck);
             XmlHelper.WriteElementToXml(writer, "PeriodicScanHours", periodCheckHours);
-            XmlHelper.WriteElementToXml(writer,"RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
+            XmlHelper.WriteElementToXml(writer, "RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
+            XmlHelper.WriteElementToXml(writer, "DeleteShowFromDisk", DeleteShowFromDisk);
             XmlHelper.WriteElementToXml(writer,"SABAPIKey",SABAPIKey);
             XmlHelper.WriteElementToXml(writer,"CheckSABnzbd",CheckSABnzbd);
             XmlHelper.WriteElementToXml(writer,"SABHostPort",SABHostPort);

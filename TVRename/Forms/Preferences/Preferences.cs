@@ -202,6 +202,7 @@ namespace TVRename
             s.runPeriodicCheck = chkScheduledScan.Checked;
             s.periodCheckHours = int.Parse(domainUpDown1.SelectedItem?.ToString()??"1");
             s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
+            s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
 
             s.EpJPGs = cbEpThumbJpg.Checked;
             s.SeriesJpg = cbSeriesJpg.Checked;
@@ -449,6 +450,8 @@ namespace TVRename
             chkScanOnStartup.Checked = s.RunOnStartUp();
             domainUpDown1.SelectedItem = s.periodCheckHours;
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
+            cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
+
             cbMissing.Checked = s.MissingCheck;
             cbxUpdateAirDate.Checked = s.CorrectFileDates;
             chkAutoSearchForDownloadedFiles.Checked = s.AutoSearchForDownloadedFiles;
