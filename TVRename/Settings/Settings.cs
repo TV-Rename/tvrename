@@ -229,7 +229,9 @@ namespace TVRename
         public int WTWRecentDays = 7;
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
-        public bool RemoveDownloadDirectoriesFiles =false;
+        public bool RemoveDownloadDirectoriesFiles = false;
+        public bool DeleteShowFromDisk = false;
+
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
         public string SABHostPort = "";
         public string SABAPIKey = "";

@@ -2146,7 +2146,7 @@ namespace TVRename
             if (res != DialogResult.Yes)
                 return;
 
-            if (Directory.Exists(si.AutoAddFolderBase))
+            if ((Directory.Exists(si.AutoAddFolderBase)) && TVSettings.Instance.DeleteShowFromDisk)
             {
                 DialogResult res3 = MessageBox.Show(
                     $"Remove folder \"{si.AutoAddFolderBase}\" from disk?",
