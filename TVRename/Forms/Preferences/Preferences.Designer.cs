@@ -174,6 +174,7 @@ namespace TVRename
             this.cbFantArtJpg = new System.Windows.Forms.CheckBox();
             this.cbFolderJpg = new System.Windows.Forms.CheckBox();
             this.tbFolderDeleting = new System.Windows.Forms.TabPage();
+            this.cbDeleteShowFromDisk = new System.Windows.Forms.CheckBox();
             this.cbCleanUpDownloadDir = new System.Windows.Forms.CheckBox();
             this.label32 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
@@ -285,7 +286,6 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tpSearch = new System.Windows.Forms.TabControl();
-            this.cbDeleteShowFromDisk = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -1743,6 +1743,16 @@ namespace TVRename
             this.tbFolderDeleting.Text = "Folder Deleting";
             this.tbFolderDeleting.UseVisualStyleBackColor = true;
             // 
+            // cbDeleteShowFromDisk
+            // 
+            this.cbDeleteShowFromDisk.AutoSize = true;
+            this.cbDeleteShowFromDisk.Location = new System.Drawing.Point(16, 267);
+            this.cbDeleteShowFromDisk.Name = "cbDeleteShowFromDisk";
+            this.cbDeleteShowFromDisk.Size = new System.Drawing.Size(269, 17);
+            this.cbDeleteShowFromDisk.TabIndex = 13;
+            this.cbDeleteShowFromDisk.Text = "Delete from disk when deleting show from database";
+            this.cbDeleteShowFromDisk.UseVisualStyleBackColor = true;
+            // 
             // cbCleanUpDownloadDir
             // 
             this.cbCleanUpDownloadDir.AutoSize = true;
@@ -2950,16 +2960,6 @@ namespace TVRename
             this.tpSearch.SelectedIndex = 0;
             this.tpSearch.Size = new System.Drawing.Size(537, 470);
             this.tpSearch.TabIndex = 0;
-            // 
-            // cbDeleteShowFromDisk
-            // 
-            this.cbDeleteShowFromDisk.AutoSize = true;
-            this.cbDeleteShowFromDisk.Location = new System.Drawing.Point(16, 267);
-            this.cbDeleteShowFromDisk.Name = "cbDeleteShowFromDisk";
-            this.cbDeleteShowFromDisk.Size = new System.Drawing.Size(269, 17);
-            this.cbDeleteShowFromDisk.TabIndex = 13;
-            this.cbDeleteShowFromDisk.Text = "Delete from disk when deleting show from database";
-            this.cbDeleteShowFromDisk.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
