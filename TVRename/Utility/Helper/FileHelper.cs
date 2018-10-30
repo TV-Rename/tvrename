@@ -106,7 +106,7 @@ namespace TVRename
 
         public static FileInfo WithExtension(this FileInfo baseFile, string extension)
         {
-            return new FileInfo(baseFile.RemoveExtension()+extension);
+            return new FileInfo(baseFile.RemoveExtension(true)+extension);
         }
 
         public static int GetFilmLength(this FileInfo movieFile)
