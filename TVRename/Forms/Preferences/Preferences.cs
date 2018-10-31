@@ -243,6 +243,8 @@ namespace TVRename
 
             s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
 
+            s.ShowCollections = cbShowCollections.Checked;
+
             if (cbKeepTogetherMode.Text == "All but these")
             {
                 s.keepTogetherMode = TVSettings.KeepTogetherModes.AllBut;
@@ -519,6 +521,8 @@ namespace TVRename
                     cbMode.Text = "Beta";
                     break;
             }
+
+            cbShowCollections.Checked = s.ShowCollections;
 
             EnableDisable(null, null);
             ScanOptEnableDisable();

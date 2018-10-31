@@ -152,6 +152,8 @@ namespace TVRename
         public bool OfflineMode = false;
 
         public BetaMode mode = BetaMode.ProductionOnly;
+        public bool ShowCollections = false;
+
         public float upgradeDirtyPercent = 20;
         public float replaceMargin = 10;
         public bool ReplaceWithBetterQuality = true;
@@ -532,6 +534,8 @@ namespace TVRename
                     PriorityReplaceTerms = reader.ReadElementContentAsString();
                 else if (reader.Name == "BetaMode")
                     mode = (BetaMode)reader.ReadElementContentAsInt();
+                else if (reader.Name == "ShowCollections")
+                    ShowCollections = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "PercentDirtyUpgrade")
                     upgradeDirtyPercent = reader.ReadElementContentAsFloat();
                 else if (reader.Name == "PercentBetter")
@@ -850,6 +854,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"EmptyMaxSizeCheck",Tidyup.EmptyMaxSizeCheck);
             XmlHelper.WriteElementToXml(writer,"EmptyMaxSizeMB",Tidyup.EmptyMaxSizeMB);
             XmlHelper.WriteElementToXml(writer, "BetaMode", (int)mode);
+            XmlHelper.WriteElementToXml(writer, "ShowCollections", ShowCollections);
             XmlHelper.WriteElementToXml(writer, "PercentDirtyUpgrade", upgradeDirtyPercent);
             XmlHelper.WriteElementToXml(writer, "PercentBetter", replaceMargin);
             XmlHelper.WriteElementToXml(writer, "BaseSeasonName", defaultSeasonWord);
