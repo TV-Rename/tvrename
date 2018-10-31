@@ -1748,9 +1748,9 @@ namespace TVRename
             this.cbDeleteShowFromDisk.AutoSize = true;
             this.cbDeleteShowFromDisk.Location = new System.Drawing.Point(16, 267);
             this.cbDeleteShowFromDisk.Name = "cbDeleteShowFromDisk";
-            this.cbDeleteShowFromDisk.Size = new System.Drawing.Size(269, 17);
+            this.cbDeleteShowFromDisk.Size = new System.Drawing.Size(300, 17);
             this.cbDeleteShowFromDisk.TabIndex = 13;
-            this.cbDeleteShowFromDisk.Text = "Delete from disk when deleting show from database";
+            this.cbDeleteShowFromDisk.Text = "Ask to delete from disk when deleting show from database";
             this.cbDeleteShowFromDisk.UseVisualStyleBackColor = true;
             // 
             // cbCleanUpDownloadDir
