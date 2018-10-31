@@ -230,7 +230,7 @@ namespace TVRename
         public string uTorrentPath = "";
         public bool MonitorFolders = false;
         public bool RemoveDownloadDirectoriesFiles = false;
-        public bool DeleteShowFromDisk = false;
+        public bool DeleteShowFromDisk = true;
 
         public ShowStatusColoringTypeList ShowStatusColors = new ShowStatusColoringTypeList();
         public string SABHostPort = "";
