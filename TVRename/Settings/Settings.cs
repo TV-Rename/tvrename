@@ -395,6 +395,23 @@ namespace TVRename
                     ExportMissingXML = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingXMLTo")
                     ExportMissingXMLTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportRecentXSPF")
+                    ExportRecentXSPF = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportRecentXSPFTo")
+                    ExportRecentXSPFTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportRecentM3U")
+                    ExportRecentM3U = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportRecentM3UTo")
+                    ExportRecentM3UTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportRecentASX")
+                    ExportRecentASX = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportRecentASXTo")
+                    ExportRecentASXTo = reader.ReadElementContentAsString();
+                else if (reader.Name == "ExportRecentWPL")
+                    ExportRecentWPL = reader.ReadElementContentAsBoolean();
+                else if (reader.Name == "ExportRecentWPLTo")
+                    ExportRecentWPLTo = reader.ReadElementContentAsString();
+
                 else if (reader.Name == "ExportMissingCSV")
                     ExportMissingCSV = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingCSVTo")
@@ -772,6 +789,16 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer,"ExportMissingCSVTo",ExportMissingCSVTo);
             XmlHelper.WriteElementToXml(writer,"ExportRenamingXML",ExportRenamingXML);
             XmlHelper.WriteElementToXml(writer,"ExportRenamingXMLTo",ExportRenamingXMLTo);
+
+            XmlHelper.WriteElementToXml(writer, "ExportRecentM3U", ExportRecentM3U);
+            XmlHelper.WriteElementToXml(writer, "ExportRecentM3UTo", ExportRecentM3UTo);
+            XmlHelper.WriteElementToXml(writer, "ExportRecentASX", ExportRecentASX);
+            XmlHelper.WriteElementToXml(writer, "ExportRecentASXTo", ExportRecentASXTo);
+            XmlHelper.WriteElementToXml(writer, "ExportRecentWPL", ExportRecentWPL);
+            XmlHelper.WriteElementToXml(writer, "ExportRecentWPLTo", ExportRecentWPLTo);
+            XmlHelper.WriteElementToXml(writer, "ExportRecentXSPF", ExportRecentXSPF);
+            XmlHelper.WriteElementToXml(writer, "ExportRecentXSPFTo", ExportRecentXSPF);
+
             XmlHelper.WriteElementToXml(writer,"ExportShowsTXT", ExportShowsTXT);
             XmlHelper.WriteElementToXml(writer, "ExportShowsTXTTo", ExportShowsTXTTo);
             XmlHelper.WriteElementToXml(writer, "ExportShowsHTML", ExportShowsHTML);

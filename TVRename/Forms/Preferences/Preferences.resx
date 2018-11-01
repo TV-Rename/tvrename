@@ -121,7 +121,7 @@
     <value>17, 17</value>
   </metadata>
   <data name="saveFile.Filter" xml:space="preserve">
-    <value>RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|CSV files (*.csv)|*.csv|TXT files (*.txt)|*.txt|HTML files (*.html)|*.html|iCal files (*.ics)|*.ics|XSPF files (*.xspf)|*.xspf|M3U/M3U8 files|*.m3u;.m3u8|ASX files (*.asx)|*.asx|WPL files (*.wpl)|*.wpl|All files (*.*)|*.*</value>
+    <value>RSS files (*.rss)|*.rss|XML files (*.xml)|*.xml|CSV files (*.csv)|*.csv|TXT files (*.txt)|*.txt|HTML files (*.html)|*.html|iCal files (*.ics)|*.ics|XSPF files (*.xspf)|*.xspf|M3U/M3U8 files|*.m3u;*.m3u8|ASX files (*.asx)|*.asx|WPL files (*.wpl)|*.wpl|All files (*.*)|*.*</value>
   </data>
   <metadata name="folderBrowser.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>205, 17</value>
