@@ -760,5 +760,44 @@ namespace TVRename
                     r2.ReadOuterXml();
             }
         }
+
+        public List<ProcessedEpisode> RecentEpisodes(int days)
+        {
+            List<ProcessedEpisode> episodes = new List<ProcessedEpisode>();
+
+            // for each show, see if any episodes were aired in "recent" days...
+            foreach (ShowItem si in GetRecentShows())
+            {
+                bool added = false;
+
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+                    if (added)
+                        break;
+
+                    if (si.IgnoreSeasons.Contains(kvp.Key))
+                        continue; // ignore this season
+
+                    List<ProcessedEpisode> eis = kvp.Value;
+
+                    foreach (ProcessedEpisode ei in eis)
+                    {
+                        DateTime? dt = ei.GetAirDateDT(true);
+                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                        {
+                            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
+                            if ((ts.TotalHours >= (-24 * days)) && (ts.TotalHours <= 0)) // fairly recent?
+                            {
+                                episodes.Add(ei);
+                                added = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return episodes;
+        }
     }
 }

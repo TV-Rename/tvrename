@@ -129,6 +129,14 @@ namespace TVRename
         public string ExportWTWXMLTo = "";
         public bool ExportWTWICAL = false;
         public string ExportWTWICALTo = "";
+        public bool ExportRecentXSPF = false;
+        public string ExportRecentXSPFTo = "";
+        public bool ExportRecentM3U = false;
+        public string ExportRecentM3UTo = "";
+        public bool ExportRecentASX = false;
+        public string ExportRecentASXTo = "";
+        public bool ExportRecentWPL = false;
+        public string ExportRecentWPLTo = "";
         public List<FilenameProcessorRE> FNPRegexs = DefaultFNPList();
         public bool FolderJpg = false;
         public FolderJpgIsType FolderJpgIs = FolderJpgIsType.Poster;

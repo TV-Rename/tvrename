@@ -45,37 +45,53 @@ namespace TVRename
 
                 if (string.IsNullOrWhiteSpace(imdbId)) continue;
 
-                try
+                WebClient client = new WebClient();
+                client.Headers.Add("user-agent",
+                    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
+                string response = client.DownloadString($"{TVSettings.Instance.SearchJSONURL}{imdbId}");
+
+                JObject jsonResponse = JObject.Parse(response);
+                if (jsonResponse.ContainsKey(TVSettings.Instance.SearchJSONRootNode))
                 {
-                    WebClient client = new WebClient();
-                    client.Headers.Add("user-agent",
-                        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36");
-                    string response = client.DownloadString($"{TVSettings.Instance.SearchJSONURL}{imdbId}");
-
-                    JObject jsonResponse = JObject.Parse(response);
-
                     foreach (JToken item in jsonResponse[TVSettings.Instance.SearchJSONRootNode])
                     {
-                        string itemName = (string)item[TVSettings.Instance.SearchJSONFilenameToken];
-                        string itemUrl = (string)item[TVSettings.Instance.SearchJSONURLToken];
+                        if (item != null && item is JObject episodeResponse)
+                        {
+                            if (episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONFilenameToken) &&
+                                episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONURLToken))
+                            {
 
-                        if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
-                            !FileHelper.SimplifyAndCheckFilename(itemName, simpleSeriesName, true, false)) continue;
+                                string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
+                                string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
 
-                        if (!TVDoc.FindSeasEp(itemName, out int seas, out int ep, out int _, action.Episode.Show))
-                            continue;
+                                if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
+                                    !FileHelper.SimplifyAndCheckFilename(itemName, simpleSeriesName, true, false))
+                                    continue;
 
-                        if (seas != pe.AppropriateSeasonNumber) continue;
-                        if (ep != pe.AppropriateEpNum) continue;
+                                if (!TVDoc.FindSeasEp(itemName, out int seas, out int ep, out int _,
+                                    action.Episode.Show))
+                                    continue;
 
-                        Logger.Info($"Adding {itemUrl} as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
-                        newItems.Add(new ActionTDownload(itemName, itemUrl, action.TheFileNoExt, pe));
-                        toRemove.Add(action);
+                                if (seas != pe.AppropriateSeasonNumber) continue;
+                                if (ep != pe.AppropriateEpNum) continue;
+
+                                Logger.Info(
+                                    $"Adding {itemUrl} as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
+
+                                newItems.Add(new ActionTDownload(itemName, itemUrl, action.TheFileNoExt, pe));
+                                toRemove.Add(action);
+                            }
+                            else
+                            {
+                                Logger.Info(
+                                    $"{TVSettings.Instance.SearchJSONFilenameToken} or {TVSettings.Instance.SearchJSONURLToken} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
+                            }
+                        }
                     }
                 }
-                catch (NullReferenceException _)
+                else
                 {
-                    //No entries for this show
+                    Logger.Info($"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
                 }
             }
 
