@@ -797,7 +797,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "ExportRecentWPL", ExportRecentWPL);
             XmlHelper.WriteElementToXml(writer, "ExportRecentWPLTo", ExportRecentWPLTo);
             XmlHelper.WriteElementToXml(writer, "ExportRecentXSPF", ExportRecentXSPF);
-            XmlHelper.WriteElementToXml(writer, "ExportRecentXSPFTo", ExportRecentXSPF);
+            XmlHelper.WriteElementToXml(writer, "ExportRecentXSPFTo", ExportRecentXSPFTo);
 
             XmlHelper.WriteElementToXml(writer,"ExportShowsTXT", ExportShowsTXT);
             XmlHelper.WriteElementToXml(writer, "ExportShowsTXTTo", ExportShowsTXTTo);

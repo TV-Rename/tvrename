@@ -7,12 +7,13 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    class RecentXSPFExporter : RecentExporter
+    internal class RecentXSPFExporter : RecentExporter
     {
         public RecentXSPFExporter(TVDoc doc) : base(doc)
         {
@@ -29,7 +30,8 @@ namespace TVRename
 
         protected override string GenerateRecord(ProcessedEpisode ep, FileInfo fileLocation, string name, string image, int length)
         {
-            return $"\t\t<track>\r\n\t\t\t<location>{fileLocation.URLPathFullName()}</location>\r\n\t\t\t<title>{name}</title>\r\n\t\t\t<image>{image}</image>\r\n\t\t</track>";
+            string file = System.Security.SecurityElement.Escape(fileLocation.URLPathFullName());
+            return $"\t\t<track>\r\n\t\t\t<location>{file}</location>\r\n\t\t\t<title>{System.Security.SecurityElement.Escape(name)}</title>\r\n\t\t\t<image>{XmlConvert.EncodeName(image)}</image>\r\n\t\t</track>";
         }
 
         protected override string GenerateFooter()
