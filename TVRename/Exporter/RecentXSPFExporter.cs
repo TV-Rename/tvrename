@@ -28,10 +28,10 @@ namespace TVRename
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<playlist xmlns=\"http://xspf.org/ns/0/\" version=\"1\">\r\n\t<title>Playlist</title>\r\n\t<trackList>";
         }
 
-        protected override string GenerateRecord(ProcessedEpisode ep, FileInfo fileLocation, string name, string image, int length)
+        protected override string GenerateRecord(ProcessedEpisode ep, FileInfo fileLocation, string name, int length)
         {
             string file = System.Security.SecurityElement.Escape(fileLocation.URLPathFullName());
-            return $"\t\t<track>\r\n\t\t\t<location>{file}</location>\r\n\t\t\t<title>{System.Security.SecurityElement.Escape(name)}</title>\r\n\t\t\t<image>{XmlConvert.EncodeName(image)}</image>\r\n\t\t</track>";
+            return $"\t\t<track>\r\n\t\t\t<location>{file}</location>\r\n\t\t\t<title>{System.Security.SecurityElement.Escape(name)}</title>\r\n\t\t</track>";
         }
 
         protected override string GenerateFooter()

@@ -25,7 +25,7 @@ namespace TVRename
             return "#EXTM3U";
         }
 
-        protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, string image, int length)
+        protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
         {
             return $"#EXTINF:{length},{file.Name}\r\n{file.URLPathFullName()}";
         }

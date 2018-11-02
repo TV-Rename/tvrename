@@ -25,9 +25,10 @@ namespace TVRename
             return "<ASX version=\"3\">";
         }
 
-        protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, string image, int length)
+        protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
         {
-            return $"<Entry>\r\n<ref href=\"{file.URLPathFullName()}\" />\r\n</Entry>";
+            string filen = System.Security.SecurityElement.Escape(file.URLPathFullName());
+            return $"<Entry>\r\n<ref href=\"{filen}\" />\r\n</Entry><title>{System.Security.SecurityElement.Escape(name)}</title>";
         }
 
         protected override string GenerateFooter()

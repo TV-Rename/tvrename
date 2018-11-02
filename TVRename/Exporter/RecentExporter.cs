@@ -48,10 +48,9 @@ namespace TVRename
                             if (!files.Any()) continue;
 
                             string name = TVSettings.Instance.NamingStyle.NameFor(episode);
-                            string image = "file://familyshare/tv/comedy/Barry/Season%2001/Folder.jpg";
                             int length = files.First().GetFilmLength();
 
-                            file.WriteLine(GenerateRecord(episode, files.First(), name,image,length));
+                            file.WriteLine(GenerateRecord(episode, files.First(), name,length));
                         }
                         file.WriteLine(GenerateFooter());
                     }
@@ -70,7 +69,7 @@ namespace TVRename
         }
 
         protected abstract string GenerateHeader();
-        protected abstract string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, string image, int length);
+        protected abstract string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length);
         protected abstract string GenerateFooter();
     }
 }
