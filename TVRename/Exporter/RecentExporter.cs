@@ -45,7 +45,10 @@ namespace TVRename
                         {
                             List<FileInfo> files =  TVDoc.FindEpOnDisk(dfc, episode, false);
 
-                            if (!files.Any()) continue;
+                            if (!files.Any())
+                            {
+                                continue;
+                            }
 
                             string name = TVSettings.Instance.NamingStyle.NameFor(episode);
                             int length = files.First().GetFilmLength();

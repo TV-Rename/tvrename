@@ -571,17 +571,10 @@ namespace TVRename
 
                     foreach (ProcessedEpisode ei in eis)
                     {
-                        DateTime? dt = ei.GetAirDateDT(true);
-                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                        {
-                            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
-                            if ((ts.TotalHours >= (-24 * dd)) && (ts.TotalHours <= 0)) // fairly recent?
-                            {
-                                shows.Add(si);
-                                added = true;
-                                break;
-                            }
-                        }
+                        if (!ei.WithinDays(dd)) continue;
+                        shows.Add(si);
+                        added = true;
+                        break;
                     }
                 }
             }
@@ -768,30 +761,16 @@ namespace TVRename
             // for each show, see if any episodes were aired in "recent" days...
             foreach (ShowItem si in GetRecentShows())
             {
-                bool added = false;
-
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                 {
-                    if (added)
-                        break;
-
                     if (si.IgnoreSeasons.Contains(kvp.Key))
                         continue; // ignore this season
 
-                    List<ProcessedEpisode> eis = kvp.Value;
-
-                    foreach (ProcessedEpisode ei in eis)
+                    foreach (ProcessedEpisode ei in kvp.Value)
                     {
-                        DateTime? dt = ei.GetAirDateDT(true);
-                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
+                        if (ei.WithinDays(days))
                         {
-                            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
-                            if ((ts.TotalHours >= (-24 * days)) && (ts.TotalHours <= 0)) // fairly recent?
-                            {
-                                episodes.Add(ei);
-                                added = true;
-                                break;
-                            }
+                            episodes.Add(ei);
                         }
                     }
                 }
