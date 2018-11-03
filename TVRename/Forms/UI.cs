@@ -159,6 +159,8 @@ namespace TVRename
             UpdateSplashPercent(splash, 60);
             UpdateSplashStatus(splash, "Write Upcoming");
             mDoc.WriteUpcoming();
+            UpdateSplashStatus(splash, "Write Recent");
+            mDoc.WriteRecent();
             UpdateSplashStatus(splash, "Setting Notifications");
             ShowHideNotificationIcon();
 
@@ -1034,6 +1036,7 @@ namespace TVRename
             mInternalChange--;
 
             mDoc.WriteUpcoming();
+            mDoc.WriteRecent();
         }
 
         private void refreshWTWTimer_Tick(object sender, EventArgs e)

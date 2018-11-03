@@ -5,7 +5,9 @@ namespace TVRename
 {
     public class ProcessedEpisode : Episode
     {
-        public int EpNum2; // if we are a concatenation of episodes, this is the last one in the series. Otherwise, same as EpNum
+        public int
+            EpNum2; // if we are a concatenation of episodes, this is the last one in the series. Otherwise, same as EpNum
+
         public bool Ignore;
         public bool NextToAir;
         public int OverallNumber;
@@ -13,15 +15,20 @@ namespace TVRename
         public readonly ProcessedEpisodeType Type;
         public readonly List<Episode> SourceEpisodes;
 
-        public enum ProcessedEpisodeType { single, split, merged}
+        public enum ProcessedEpisodeType
+        {
+            single,
+            split,
+            merged
+        }
 
         public ProcessedEpisode(SeriesInfo ser, Season airseas, Season dvdseas, ShowItem si)
-            : base(ser, airseas,dvdseas)
+            : base(ser, airseas, dvdseas)
         {
             NextToAir = false;
             OverallNumber = -1;
             Ignore = false;
-            EpNum2 = si.DvdOrder? DvdEpNum: AiredEpNum;
+            EpNum2 = si.DvdOrder ? DvdEpNum : AiredEpNum;
             Show = si;
             Type = ProcessedEpisodeType.single;
         }
@@ -47,6 +54,7 @@ namespace TVRename
             Show = si;
             Type = ProcessedEpisodeType.single;
         }
+
         public ProcessedEpisode(Episode e, ShowItem si, ProcessedEpisodeType t)
             : base(e)
         {
@@ -93,7 +101,8 @@ namespace TVRename
                 return AppropriateEpNum + "-" + EpNum2;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
+            "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static int EPNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.AiredEpNum;
@@ -102,7 +111,8 @@ namespace TVRename
             return ep1 - ep2;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
+            "CA1011:ConsiderPassingBaseTypesAsParameters")]
         public static int DVDOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.DvdEpNum;
@@ -115,6 +125,7 @@ namespace TVRename
         {
             if (!inLocalTime)
                 return GetAirDateDt();
+
             // do timezone adjustment
             return GetAirDateDt(Show.GetTimeZone());
         }
@@ -124,7 +135,8 @@ namespace TVRename
             DateTime? airsdt = GetAirDateDT(true);
             if (airsdt == null)
                 return "";
-            DateTime dt = (DateTime)airsdt;
+
+            DateTime dt = (DateTime) airsdt;
 
             TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
             if (ts.TotalHours < 0)
@@ -136,6 +148,7 @@ namespace TVRename
                 {
                     if (ts.Minutes >= 30)
                         h += 1;
+
                     return ts.Days + "d " + h + "h";
                 }
                 else
@@ -160,10 +173,20 @@ namespace TVRename
             DateTime? airsdt = GetAirDateDT(true);
             if (airsdt == null)
                 return false;
-            DateTime dt = (DateTime)airsdt;
+
+            DateTime dt = (DateTime) airsdt;
 
             TimeSpan ts = dt.Subtract(DateTime.Now); // how long...
             return ts.TotalHours < 0;
+        }
+
+        public bool WithinDays(int days)
+        {
+            DateTime? dt = GetAirDateDT(true);
+            if ((dt == null) || (dt.Value.CompareTo(DateTime.MaxValue) == 0)) return false;
+
+            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
+            return (ts.TotalHours >= (-24 * days)) && (ts.TotalHours <= 0);
         }
     }
 }

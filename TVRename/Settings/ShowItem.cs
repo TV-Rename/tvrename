@@ -658,12 +658,6 @@ namespace TVRename
 
             if (AutoAddNewSeasons() && (!string.IsNullOrEmpty(AutoAddFolderBase)))
             {
-                int highestThereIs = -1;
-                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in SeasonEpisodes)
-                {
-                    if (kvp.Key > highestThereIs)
-                        highestThereIs = kvp.Key;
-                }
                 foreach (int i in SeasonEpisodes.Keys)
                 {
                     if (IgnoreSeasons.Contains(i)) continue;

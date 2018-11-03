@@ -104,6 +104,12 @@ namespace TVRename
             return false;
         }
 
+        public static string URLPathFullName(this FileInfo baseFile)
+        {
+            //TODO
+            return baseFile.FullName;
+        }
+
         public static FileInfo WithExtension(this FileInfo baseFile, string extension)
         {
             return new FileInfo(baseFile.RemoveExtension(true)+extension);

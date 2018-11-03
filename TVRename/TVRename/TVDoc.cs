@@ -462,6 +462,23 @@ namespace TVRename
             }
         }
 
+        public void WriteRecent()
+        {
+            List<RecentExporter> reps = new List<RecentExporter> { new RecentASXExporter(this), new RecentM3UExporter(this), new RecentWPLExporter(this), new RecentXSPFExporter(this) };
+
+            foreach (RecentExporter ue in reps)
+            {
+                new Thread(() =>
+                {
+                    Thread.CurrentThread.IsBackground = true;
+                    if (ue.Active())
+                    {
+                        ue.Run();
+                    }
+                }).Start();
+            }
+        }
+
         public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
             try
@@ -492,7 +509,7 @@ namespace TVRename
 
                 SetupScanUi();
 
-                actionWork.Start(shows.ToList());
+                actionWork.Start(new ScanSettings(shows.ToList(),unattended,st));
 
                 AwaitCancellation(actionWork);
 
@@ -507,6 +524,20 @@ namespace TVRename
             finally
             {
                 AllowAutoScan();
+            }
+        }
+
+        private class ScanSettings
+        {
+            public readonly bool unattended;
+            public readonly TVSettings.ScanType st;
+            public readonly List<ShowItem> shows;
+
+            public ScanSettings(List<ShowItem> list, bool unattended, TVSettings.ScanType st)
+            {
+                this.shows = list;
+                this.unattended = unattended;
+                this.st = st;
             }
         }
 
@@ -1643,7 +1674,7 @@ namespace TVRename
         {
             try
             {
-                List<ShowItem> specific = (List<ShowItem>) (o);
+                List<ShowItem> specific = ((ScanSettings) (o)).shows;
 
                 while (!Args.Hide && ((scanProgDlg == null) || (!scanProgDlg.Ready)))
                     Thread.Sleep(10); // wait for thread to create the dialog
@@ -1656,7 +1687,7 @@ namespace TVRename
                         specific);
 
                 if (TVSettings.Instance.RemoveDownloadDirectoriesFiles)
-                    FindUnusedFilesInDLDirectory(specific,false);
+                    FindUnusedFilesInDLDirectory(specific, ((ScanSettings)(o)).unattended);
 
                 if (TVSettings.Instance.MissingCheck)
                 {
