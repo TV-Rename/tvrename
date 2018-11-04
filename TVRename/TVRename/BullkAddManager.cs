@@ -323,7 +323,7 @@ namespace TVRename
 
             AddItems = new FolderMonitorEntryList();
 
-            int c = TVSettings.Instance.LibraryFolders.Count;
+            int c = TVSettings.Instance.LibraryFolders.Count();
 
             int c2 = 0;
             foreach (string folder in TVSettings.Instance.LibraryFolders)

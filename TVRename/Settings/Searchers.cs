@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 
 // Things like bittorrent search engines, etc.  Manages a URL template that is fed through
 // CustomName.cs to generate a final URL.
@@ -22,61 +23,45 @@ namespace TVRename
             public string Url2;
         }
 
-        public string CurrentSearch;
+        private string currentSearch;
         private readonly List<Choice> choices = new List<Choice>();
 
         public Searchers()
         {
-            CurrentSearch = "";
+            currentSearch = "";
 
             Add("Google", "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}");
             Add("Pirate Bay", "https://thepiratebay.org/search/{ShowName} S{Season:2}E{Episode}");
             Add("binsearch", "https://www.binsearch.info/?q={ShowName}+S{Season:2}E{Episode}");
 
-            CurrentSearch = "Google";
+            currentSearch = "Google";
         }
         
-        public Searchers(XmlReader reader)
+        public Searchers(XElement settings)
         {
             choices = new List<Choice>();
-            CurrentSearch = "";
+            currentSearch = settings.ExtractString("Curent");
 
-            reader.Read();
-            if (reader.Name != "TheSearchers")
-                return; // bail out
-
-            reader.Read();
-            while (!reader.EOF)
+            foreach (XElement x in settings.Descendants("Choice"))
             {
-                if ((reader.Name == "TheSearchers") && !reader.IsStartElement())
-                    break; // all done
-
-                if (reader.Name == "Current")
-                    CurrentSearch = reader.ReadElementContentAsString();
-                else if (reader.Name == "Choice")
-                {
-                    string url = reader.GetAttribute("URL");
-                    if (url == null)
-                        url = reader.GetAttribute("URL2");
-                    else
-                    {
-                        // old-style URL, replace "!" with "{ShowName}+{Season}+{Episode}"
-                        url = url.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
-                    }
-                    Add(reader.GetAttribute("Name"), url);
-                    reader.ReadElementContentAsString();
-                }
+                string url = x.Attribute("URL")?.Value;
+                if (url == null)
+                    url = x.Attribute("URL2")?.Value;
                 else
-                    reader.ReadOuterXml();
+                {
+                    // old-style URL, replace "!" with "{ShowName}+{Season}+{Episode}"
+                    url = url.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
+                }
+                Add(x.Attribute("Name")?.Value,url);
             }
         }
 
         public void SetToNumber(int n)
         {
-            CurrentSearch = choices[n].Name;
+            currentSearch = choices[n].Name;
         }
 
-        public int CurrentSearchNum() => NumForName(CurrentSearch);
+        public int CurrentSearchNum() => NumForName(currentSearch);
 
         private int NumForName(string srch)
         {
@@ -96,7 +81,7 @@ namespace TVRename
         public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
-            XmlHelper.WriteElementToXml(writer,"Current",CurrentSearch);
+            XmlHelper.WriteElementToXml(writer,"Current",currentSearch);
 
             for (int i = 0; i < Count(); i++)
             {
