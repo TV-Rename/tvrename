@@ -85,7 +85,7 @@ namespace TVRename.Forms
             if (url.Contains(@"ieframe.dll"))
                 url = e.Url.Fragment.Substring(1);
 
-            if ((url.Substring(0, 7).CompareTo("http://") == 0) || (url.Substring(0, 8).CompareTo("https://") == 0))
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
             {
                 e.Cancel = true;
                 Helpers.SysOpen(e.Url.AbsoluteUri);

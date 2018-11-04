@@ -6,13 +6,17 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Collections.Generic;
+
 namespace TVRename
 {
-    internal abstract class Exporter
+    internal abstract class ShowsExporter : Exporter
     {
-        public abstract bool Active();
-        public abstract void Run();
-        protected abstract string Location();
-        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+        protected readonly List<ShowItem> Shows;
+
+        protected ShowsExporter(List<ShowItem> shows)
+        {
+            Shows = shows;
+        }
     }
 }

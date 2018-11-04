@@ -16,11 +16,6 @@ namespace TVRename
     {
         private readonly string styleString;
 
-        public CustomSeasonName(CustomSeasonName o)
-        {
-            styleString = o.styleString;
-        }
-
         public CustomSeasonName(string s)
         {
             styleString = s;
@@ -48,7 +43,7 @@ namespace TVRename
                                                             "{StartYear}-{EndYear}"
                                                         };
 
-        protected internal static readonly List<string> Tags = new List<string>
+        protected internal static readonly List<string> TAGS = new List<string>
         {
             "{ShowName}",
             "{Season}",
@@ -101,7 +96,7 @@ namespace TVRename
         {
             string name = styleString;
 
-            foreach (string tag in Tags)
+            foreach (string tag in TAGS)
             {
                 name = name.ReplaceInsensitive(tag, string.Empty);
             }

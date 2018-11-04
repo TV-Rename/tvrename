@@ -44,22 +44,22 @@ namespace TVRename
         // ReSharper disable once InconsistentNaming
         public static string UISeasonWord(int season)
         {
+            if ((TVSettings.Instance.defaultSeasonWord.Length > 1) && (TVSettings.Instance.LeadingZeroOnSeason))
+            {
+                return TVSettings.Instance.defaultSeasonWord + " " + season.ToString("00");
+            }
+
             if (TVSettings.Instance.defaultSeasonWord.Length > 1)
             {
                 return TVSettings.Instance.defaultSeasonWord + " " + season;
             }
-            else
+
+            if (TVSettings.Instance.LeadingZeroOnSeason)
             {
-                bool leadingZero = TVSettings.Instance.LeadingZeroOnSeason;
-                if (leadingZero)
-                {
-                    return TVSettings.Instance.defaultSeasonWord + season.ToString("00");
-                }
-                else
-                {
-                    return TVSettings.Instance.defaultSeasonWord + season.ToString();
-                }
+                return TVSettings.Instance.defaultSeasonWord + season.ToString("00");
             }
+
+            return TVSettings.Instance.defaultSeasonWord + season;
         }
 
         // ReSharper disable once InconsistentNaming
@@ -130,7 +130,7 @@ namespace TVRename
 
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
 
-        public int SeasonIndex => this.TheSeries.GetSeasonIndex(this.SeasonNumber,type);
+        public int SeasonIndex => TheSeries.GetSeasonIndex(SeasonNumber,type);
 
         private bool HasUnairedEpisodes(TimeZone tz)
         {

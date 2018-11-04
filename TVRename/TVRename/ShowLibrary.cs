@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace TVRename
 {
@@ -571,17 +572,10 @@ namespace TVRename
 
                     foreach (ProcessedEpisode ei in eis)
                     {
-                        DateTime? dt = ei.GetAirDateDT(true);
-                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                        {
-                            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
-                            if ((ts.TotalHours >= (-24 * dd)) && (ts.TotalHours <= 0)) // fairly recent?
-                            {
-                                shows.Add(si);
-                                added = true;
-                                break;
-                            }
-                        }
+                        if (!ei.WithinDays(dd)) continue;
+                        shows.Add(si);
+                        added = true;
+                        break;
                     }
                 }
             }
@@ -728,37 +722,50 @@ namespace TVRename
             return returnList;
         }
 
-        public void LoadFromXml(XmlReader r2)
+        public void LoadFromXml(XElement xmlSettings)
         {
-            r2.Read();
-            r2.Read();
-            while (!r2.EOF)
+            foreach (XElement showSettings in xmlSettings.Descendants("ShowItem"))
             {
-                if ((r2.Name == "MyShows") && (!r2.IsStartElement()))
-                    break;
+                ShowItem si = new ShowItem(showSettings);
 
-                if (r2.Name == "ShowItem")
+                if (si.UseCustomShowName) // see if custom show name is actually the real show name
                 {
-                    ShowItem si = new ShowItem(r2.ReadSubtree());
-
-                    if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                    SeriesInfo ser = si.TheSeries();
+                    if ((ser != null) && (si.CustomShowName == ser.Name))
                     {
-                        SeriesInfo ser = si.TheSeries();
-                        if ((ser != null) && (si.CustomShowName == ser.Name))
+                        // then, turn it off
+                        si.CustomShowName = "";
+                        si.UseCustomShowName = false;
+                    }
+                }
+
+                Add(si);
+            }
+        }
+
+        public List<ProcessedEpisode> RecentEpisodes(int days)
+        {
+            List<ProcessedEpisode> episodes = new List<ProcessedEpisode>();
+
+            // for each show, see if any episodes were aired in "recent" days...
+            foreach (ShowItem si in GetRecentShows())
+            {
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+                    if (si.IgnoreSeasons.Contains(kvp.Key))
+                        continue; // ignore this season
+
+                    foreach (ProcessedEpisode ei in kvp.Value)
+                    {
+                        if (ei.WithinDays(days))
                         {
-                            // then, turn it off
-                            si.CustomShowName = "";
-                            si.UseCustomShowName = false;
+                            episodes.Add(ei);
                         }
                     }
-
-                    Add(si);
-
-                    r2.Read();
                 }
-                else
-                    r2.ReadOuterXml();
             }
+
+            return episodes;
         }
     }
 }

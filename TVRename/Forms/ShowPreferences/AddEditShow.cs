@@ -129,7 +129,7 @@ namespace TVRename
 
             StringBuilder tl = new StringBuilder();
 
-            foreach (string s in CustomEpisodeName.Tags)
+            foreach (string s in CustomEpisodeName.TAGS)
             {
                 tl.AppendLine(s);
             }

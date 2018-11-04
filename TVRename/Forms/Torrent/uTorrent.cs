@@ -221,7 +221,7 @@ namespace TVRename
             RefreshResumeDat();
         }
 
-        private void WatcherError(object UnnamedParameter1, System.IO.ErrorEventArgs UnnamedParameter2)
+        private void WatcherError(object sender, System.IO.ErrorEventArgs e)
         {
             while (!watcher.EnableRaisingEvents)
             {

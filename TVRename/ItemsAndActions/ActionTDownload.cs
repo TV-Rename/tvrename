@@ -21,15 +21,15 @@ namespace TVRename
         public ActionTDownload(string name,string url, string toWhereNoExt, ProcessedEpisode pe)
         {
             Episode = pe;
-            this.SourceName = name;
+            SourceName = name;
             this.url = url;
             theFileNoExt = toWhereNoExt;
         }
 
         public ActionTDownload(RSSItem rss, string theFileNoExt, ProcessedEpisode pe)
         {
-            this.SourceName = rss.Title;
-            this.url = rss.URL;
+            SourceName = rss.Title;
+            url = rss.URL;
             this.theFileNoExt = theFileNoExt;
             this.pe = pe;
         }

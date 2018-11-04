@@ -22,6 +22,7 @@ using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 using System.Text;
+using System.Xml.Linq;
 using NodaTime.Extensions;
 
 namespace TVRename
@@ -275,16 +276,9 @@ namespace TVRename
 
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.LibraryFolders, writer, "MonitorFolders", "Folder");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoreFolders, writer, "IgnoreFolders", "Folder");
-                XmlHelper.WriteStringsToXml(TVSettings.Instance.DownloadFolders, writer, "FinderSearchFolders",
-                    "Folder");
-                XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints, writer, "IgnoredAutoAddHints",
-                    "Hint");
-
-                writer.WriteStartElement("IgnoreItems");
-                foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
-                    ii.Write(writer);
-
-                writer.WriteEndElement(); // IgnoreItems
+                XmlHelper.WriteStringsToXml(TVSettings.Instance.DownloadFolders, writer, "FinderSearchFolders","Folder");
+                XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints, writer, "IgnoredAutoAddHints","Hint");
+                XmlHelper.WriteStringsToXml(TVSettings.Instance.Ignore, writer, "IgnoreItems","Ignore");
 
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
@@ -315,72 +309,32 @@ namespace TVRename
                     return true; // that's ok
                 }
 
-                using (XmlReader reader = XmlReader.Create(from.FullName, settings))
+                XElement x = XElement.Load(from.FullName);
+
+                if (x.Name.LocalName != "TVRename")
                 {
-                    reader.Read();
-                    if (reader.Name != "xml")
-                    {
-                        LoadErr = from.Name + " : Not a valid XML file";
-                        return false;
-                    }
-
-                    reader.Read();
-
-                    if (reader.Name != "TVRename")
-                    {
-                        LoadErr = from.Name + " : Not a TVRename settings file";
-                        return false;
-                    }
-
-                    if (reader.GetAttribute("Version") != "2.1")
-                    {
-                        LoadErr = from.Name + " : Incompatible version";
-                        return false;
-                    }
-
-                    reader.Read(); // move forward one
-
-                    while (!reader.EOF)
-                    {
-                        if (reader.Name == "TVRename" && !reader.IsStartElement())
-                            break; // end of it all
-
-                        if (reader.Name == "Settings")
-                        {
-                            TVSettings.Instance.load(reader.ReadSubtree());
-                            reader.Read();
-                        }
-                        else if (reader.Name == "MyShows")
-                        {
-                            Library.LoadFromXml(reader.ReadSubtree());
-                            reader.Read();
-                        }
-                        else if (reader.Name == "MonitorFolders")
-                            TVSettings.Instance.LibraryFolders =
-                                XmlHelper.ReadStringsFromXml(reader, "MonitorFolders", "Folder");
-                        else if (reader.Name == "IgnoreFolders")
-                            TVSettings.Instance.IgnoreFolders =
-                                XmlHelper.ReadStringsFromXml(reader, "IgnoreFolders", "Folder");
-                        else if (reader.Name == "FinderSearchFolders")
-                            TVSettings.Instance.DownloadFolders =
-                                XmlHelper.ReadStringsFromXml(reader, "FinderSearchFolders", "Folder");
-                        else if (reader.Name == "IgnoredAutoAddHints")
-                            TVSettings.Instance.IgnoredAutoAddHints =
-                                XmlHelper.ReadStringsFromXml(reader, "IgnoredAutoAddHints", "Hint");
-                        else if (reader.Name == "IgnoreItems")
-                        {
-                            XmlReader r2 = reader.ReadSubtree();
-                            r2.Read();
-                            r2.Read();
-                            while (r2.Name == "Ignore")
-                                TVSettings.Instance.Ignore.Add(new IgnoreItem(r2));
-
-                            reader.Read();
-                        }
-                        else
-                            reader.ReadOuterXml();
-                    }
+                    LoadErr = from.Name + " : Not a TVRename settings file";
+                    return false;
                 }
+
+                if (x.Attribute("Version")?.Value != "2.1")
+                {
+                    LoadErr = from.Name + " : Incompatible version";
+                    return false;
+                }
+
+                TVSettings.Instance.load(x.Descendants("Settings").First());
+                Library.LoadFromXml(x.Descendants("MyShows").First());
+                TVSettings.Instance.LibraryFolders =
+                    x.Descendants("MonitorFolders").First().ReadStringsFromXml("Folder");
+                TVSettings.Instance.IgnoreFolders =
+                    x.Descendants("IgnoreFolders").First().ReadStringsFromXml("Folder");
+                TVSettings.Instance.DownloadFolders =
+                    x.Descendants("FinderSearchFolders").First().ReadStringsFromXml("Folder");
+                TVSettings.Instance.IgnoredAutoAddHints =
+                    x.Descendants("IgnoredAutoAddHints").First().ReadStringsFromXml("Hint");
+                TVSettings.Instance.Ignore =
+                    x.Descendants("IgnoreItems").First().ReadIiFromXml("Ignore");
             }
             catch (Exception e)
             {
@@ -462,6 +416,23 @@ namespace TVRename
             }
         }
 
+        public void WriteRecent()
+        {
+            List<RecentExporter> reps = new List<RecentExporter> { new RecentASXExporter(this), new RecentM3UExporter(this), new RecentWPLExporter(this), new RecentXSPFExporter(this) };
+
+            foreach (RecentExporter ue in reps)
+            {
+                new Thread(() =>
+                {
+                    Thread.CurrentThread.IsBackground = true;
+                    if (ue.Active())
+                    {
+                        ue.Run();
+                    }
+                }).Start();
+            }
+        }
+
         public void Scan(List<ShowItem> shows, bool unattended, TVSettings.ScanType st)
         {
             try
@@ -492,7 +463,7 @@ namespace TVRename
 
                 SetupScanUi();
 
-                actionWork.Start(shows.ToList());
+                actionWork.Start(new ScanSettings(shows.ToList(),unattended,st));
 
                 AwaitCancellation(actionWork);
 
@@ -507,6 +478,20 @@ namespace TVRename
             finally
             {
                 AllowAutoScan();
+            }
+        }
+
+        private class ScanSettings
+        {
+            public readonly bool Unattended;
+            public readonly TVSettings.ScanType Type;
+            public readonly List<ShowItem> Shows;
+
+            public ScanSettings(List<ShowItem> list, bool unattended, TVSettings.ScanType st)
+            {
+                Shows = list;
+                Unattended = unattended;
+                Type = st;
             }
         }
 
@@ -1037,7 +1022,7 @@ namespace TVRename
                             Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
                             firstMatchingPep = pep;
-                            List<FileInfo> encumbants = TVDoc.FindEpOnDisk(dfc, pep, false);
+                            List<FileInfo> encumbants = FindEpOnDisk(dfc, pep, false);
 
                             if (encumbants.Count == 0)
                             {
@@ -1643,7 +1628,7 @@ namespace TVRename
         {
             try
             {
-                List<ShowItem> specific = (List<ShowItem>) (o);
+                List<ShowItem> specific = ((ScanSettings) (o)).Shows;
 
                 while (!Args.Hide && ((scanProgDlg == null) || (!scanProgDlg.Ready)))
                     Thread.Sleep(10); // wait for thread to create the dialog
@@ -1656,7 +1641,7 @@ namespace TVRename
                         specific);
 
                 if (TVSettings.Instance.RemoveDownloadDirectoriesFiles)
-                    FindUnusedFilesInDLDirectory(specific,false);
+                    FindUnusedFilesInDLDirectory(specific, ((ScanSettings)(o)).Unattended);
 
                 if (TVSettings.Instance.MissingCheck)
                 {

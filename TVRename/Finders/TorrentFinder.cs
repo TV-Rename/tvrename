@@ -24,7 +24,7 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
-        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading, DownloadingFinder.DownloadApp tApp)
+        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading, DownloadApp tApp)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();

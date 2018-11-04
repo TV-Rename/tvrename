@@ -7,7 +7,6 @@
 // 
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using System.Threading;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;

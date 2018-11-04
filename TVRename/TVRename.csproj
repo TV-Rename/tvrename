@@ -121,23 +121,35 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
+    <Compile Include="Custom Controls\NativeMethods.cs" />
     <Compile Include="DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="DownloadIdentifers\IncorrectFileDates.cs" />
+    <Compile Include="Exporter\ActionListExporter.cs" />
     <Compile Include="Exporter\ActionListXML.cs" />
     <Compile Include="Exporter\CopyMoveXml.cs" />
     <Compile Include="Exporter\MissingCSV.cs" />
+    <Compile Include="Exporter\RecentASXExporter.cs" />
+    <Compile Include="Exporter\RecentExporter.cs" />
+    <Compile Include="Exporter\RecentM3UExporter.cs" />
+    <Compile Include="Exporter\RecentWPLExporter.cs" />
+    <Compile Include="Exporter\RecentXSPFExporter.cs" />
     <Compile Include="Exporter\RenamingXml.cs" />
+    <Compile Include="Exporter\ShowsExporter.cs" />
     <Compile Include="Exporter\ShowsHTML.cs" />
+    <Compile Include="Exporter\UpcomingExporter.cs" />
     <Compile Include="Exporter\UpcomingiCAL.cs" />
     <Compile Include="Finders\DownloadFinder.cs" />
     <Compile Include="Finders\qBitTorrentFinder.cs" />
     <Compile Include="Finders\JSONWebpageFinder.cs" />
+    <Compile Include="Finders\RSSItem.cs" />
+    <Compile Include="Finders\RSSItemList.cs" />
     <Compile Include="Finders\TorrentFinder.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
@@ -247,6 +259,8 @@
     <Compile Include="TVRename\CacheUpdater.cs" />
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
+    <Compile Include="Utility\DateSorterWTW.cs" />
+    <Compile Include="Utility\DaySorter.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
     <Compile Include="Utility\Helper\FileHelper.cs" />
     <Compile Include="Utility\FileSystemProperties.cs" />
@@ -254,6 +268,7 @@
     <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
     <Compile Include="Utility\DownloadInformation.cs" />
+    <Compile Include="Utility\NumberAsTextSorter.cs" />
     <Compile Include="Utility\SAB\NewDataSet.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
@@ -449,6 +464,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ShowPreferences\AutoAddShow.resx">
       <DependentUpon>AutoAddShow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Utilities\BugReport.resx">
       <DependentUpon>BugReport.cs</DependentUpon>
@@ -480,6 +496,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BulkAdd\BulkAdd.resx">
       <DependentUpon>BulkAdd.cs</DependentUpon>
@@ -495,6 +512,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\DupEpFinder.resx">
       <DependentUpon>DupEpFinder.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\ShowSummary.resx">
       <DependentUpon>ShowSummary.cs</DependentUpon>
@@ -588,7 +606,7 @@
     </Compile>
     <Compile Include="Settings\ShowRule.cs" />
     <Compile Include="Utility\SAB\Queue.cs" />
-    <Compile Include="Utility\Sorters.cs" />
+    <Compile Include="Utility\TextSorter.cs" />
     <Compile Include="Settings\Statistics.cs" />
     <Compile Include="Forms\Utilities\StatsWindow.cs">
       <SubType>Form</SubType>

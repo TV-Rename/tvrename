@@ -35,7 +35,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                LOGGER.Error(e);
             }
         }
 

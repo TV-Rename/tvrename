@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -102,6 +101,12 @@ namespace TVRename
 
             extension = string.Empty;
             return false;
+        }
+
+        public static string URLPathFullName(this FileInfo baseFile)
+        {
+            //TODO
+            return baseFile.FullName;
         }
 
         public static FileInfo WithExtension(this FileInfo baseFile, string extension)

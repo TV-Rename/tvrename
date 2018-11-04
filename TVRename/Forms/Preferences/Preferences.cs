@@ -50,7 +50,7 @@ namespace TVRename
             cntfw = null;
 
             if (goToScanOpts)
-                tpSearch.SelectedTab = tpScanOptions;
+                tcTabs.SelectedTab = tpScanOptions;
         }
 
         private void OKButton_Click(object sender, EventArgs e)
@@ -60,7 +60,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tpSearch.SelectedTab = tbFolderDeleting;
+                tcTabs.SelectedTab = tbFolderDeleting;
                 txtEmptyIgnoreExtensions.Focus();
                 return;
             }
@@ -70,7 +70,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tpSearch.SelectedTab = tbFilesAndFolders;
+                tcTabs.SelectedTab = tbFilesAndFolders;
                 txtVideoExtensions.Focus();
                 return;
             }
@@ -79,7 +79,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tpSearch.SelectedTab = tpSubtitles;
+                tcTabs.SelectedTab = tpSubtitles;
                 txtSubtitleExtensions.Focus();
                 return;
             }
@@ -88,7 +88,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tpSearch.SelectedTab = tbFilesAndFolders;
+                tcTabs.SelectedTab = tbFilesAndFolders;
                 txtOtherExtensions.Focus();
                 return;
             }
@@ -97,7 +97,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tpSearch.SelectedTab = tbFilesAndFolders;
+                tcTabs.SelectedTab = tbFilesAndFolders;
                 txtKeepTogether.Focus();
                 return;
             }
@@ -132,6 +132,15 @@ namespace TVRename
             s.ExportShowsTXTTo = txtShowsTXTTo.Text;
             s.ExportShowsHTML = cbShowsHTML.Checked;
             s.ExportShowsHTMLTo = txtShowsHTMLTo.Text;
+
+            s.ExportRecentM3U = cbM3U.Checked;
+            s.ExportRecentM3UTo = txtM3U.Text;
+            s.ExportRecentASX = cbASX.Checked;
+            s.ExportRecentASXTo = txtASX.Text;
+            s.ExportRecentXSPF = cbXSPF.Checked;
+            s.ExportRecentXSPFTo = txtXSPF.Text;
+            s.ExportRecentWPL = cbWPL.Checked;
+            s.ExportRecentWPLTo = txtWPL.Text;
 
             s.WTWRecentDays = Convert.ToInt32(txtWTWDays.Text);
             s.StartupTab = cbStartupTab.SelectedIndex;
@@ -242,8 +251,6 @@ namespace TVRename
                 s.MonitoredFoldersScanType = TVSettings.ScanType.Full;
 
             s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
-
-            s.ShowCollections = cbShowCollections.Checked;
 
             if (cbKeepTogetherMode.Text == "All but these")
             {
@@ -374,6 +381,15 @@ namespace TVRename
             txtMissingXML.Text = s.ExportMissingXMLTo;
             cbMissingCSV.Checked = s.ExportMissingCSV;
             txtMissingCSV.Text = s.ExportMissingCSVTo;
+
+            cbXSPF.Checked = s.ExportRecentXSPF;
+            txtXSPF.Text = s.ExportRecentXSPFTo;
+            cbM3U.Checked = s.ExportRecentM3U;
+            txtM3U.Text = s.ExportRecentM3UTo;
+            cbASX.Checked = s.ExportRecentASX;
+            txtASX.Text = s.ExportRecentASXTo;
+            cbWPL.Checked = s.ExportRecentWPL;
+            txtWPL.Text = s.ExportRecentWPLTo;
 
             cbShowsTXT.Checked = s.ExportShowsTXT ;
             txtShowsTXTTo.Text = s.ExportShowsTXTTo;
@@ -521,8 +537,6 @@ namespace TVRename
                     cbMode.Text = "Beta";
                     break;
             }
-
-            cbShowCollections.Checked = s.ShowCollections;
 
             EnableDisable(null, null);
             ScanOptEnableDisable();
@@ -704,6 +718,15 @@ namespace TVRename
 
             txtWTWICAL.Enabled = cbWTWICAL.Checked;
             bnBrowseWTWICAL.Enabled = cbWTWICAL.Checked;
+
+            txtM3U.Enabled = cbM3U.Checked;
+            bnBrowseM3U.Enabled = cbM3U.Checked;
+            txtXSPF.Enabled = cbXSPF.Checked;
+            bnBrowseXSPF.Enabled = cbXSPF.Checked;
+            txtASX.Enabled = cbASX.Checked;
+            bnBrowseASX.Enabled = cbASX.Checked;
+            txtWPL.Enabled = cbWPL.Checked;
+            bnBrowseWPL.Enabled = cbWPL.Checked;
 
             bool wtw;
             if ((cbWTWRSS.Checked) || (cbWTWXML.Checked) || (cbWTWICAL.Checked))
@@ -1267,6 +1290,51 @@ namespace TVRename
         private void cbSearchJSON_CheckedChanged(object sender, EventArgs e)
         {
             gbJSON.Enabled = cbSearchJSON.Checked;
+        }
+
+        private void tpSearch_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            //Follow this advice https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-display-side-aligned-tabs-with-tabcontrol
+
+            Graphics g = e.Graphics;
+
+            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor),
+                e.Bounds);
+
+             // Get the item from the collection.
+            TabPage tabPage = tcTabs.TabPages[e.Index];
+
+            // Get the real bounds for the tab rectangle.
+            Rectangle tabBounds = tcTabs.GetTabRect(e.Index);
+
+            // Draw string. Center the text.
+            StringFormat stringFlags = new StringFormat
+            {
+                Alignment = StringAlignment.Near,
+                LineAlignment = StringAlignment.Center
+            };
+
+            g.DrawString(tabPage.Text, tcTabs.Font, Brushes.Black, tabBounds, new StringFormat(stringFlags));
+        }
+
+        private void bnBrowseXSPF_Click(object sender, EventArgs e)
+        {
+            Browse(txtXSPF, "xspf", 7);
+        }
+
+        private void bnBrowseM3U_Click(object sender, EventArgs e)
+        {
+            Browse(txtM3U, "m3u8", 8);
+        }
+
+        private void bnBrowseASX_Click(object sender, EventArgs e)
+        {
+            Browse(txtASX, "asx", 9);
+        }
+
+        private void bnBrowseWPL_Click(object sender, EventArgs e)
+        {
+            Browse(txtWPL, "wpl", 10);
         }
     }
 }
