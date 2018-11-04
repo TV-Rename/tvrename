@@ -100,86 +100,52 @@ namespace TVRename
         {
             SetDefaults();
 
-            //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
-            bool upgradeFromOldAutoAddFunction = false;
-            bool TEMP_AutoAddNewSeasons = true;
-            bool TEMP_AutoAdd_FolderPerSeason = true;
-            bool TEMP_PadSeasonToTwoDigits = true;
-            string TEMP_AutoAdd_SeasonFolderName = string.Empty;
-
             CustomShowName = xmlSettings.ExtractString("ShowName");
-            UseCustomShowName = xmlSettings.ExtractBool("UseCustomShowName")??false;
-
-            UseCustomLanguage = xmlSettings.ExtractBool("UseCustomLanguage")??false;
+            UseCustomShowName = xmlSettings.ExtractBool("UseCustomShowName") ?? false;
+            UseCustomLanguage = xmlSettings.ExtractBool("UseCustomLanguage") ?? false;
             CustomLanguageCode = xmlSettings.ExtractString("CustomLanguageCode");
             CustomShowName = xmlSettings.ExtractString("CustomShowName");
-
-            TvdbCode = xmlSettings.ExtractInt("TVDBID")??-1;
-
-            upgradeFromOldAutoAddFunction = xmlSettings.Descendants("AutoAddNewSeasons").Any()
-                                            || xmlSettings.Descendants("FolderPerSeason").Any()
-                                            || xmlSettings.Descendants("SeasonFolderName").Any()
-                                            || xmlSettings.Descendants("PadSeasonToTwoDigits").Any();
-            TEMP_AutoAddNewSeasons = xmlSettings.ExtractBool("AutoAddNewSeasons") ?? false;
-            TEMP_AutoAdd_FolderPerSeason = xmlSettings.ExtractBool("FolderPerSeason") ?? false;
-            TEMP_AutoAdd_SeasonFolderName = xmlSettings.ExtractString("SeasonFolderName");
-            TEMP_PadSeasonToTwoDigits = xmlSettings.ExtractBool("PadSeasonToTwoDigits") ?? false;
+            TvdbCode = xmlSettings.ExtractInt("TVDBID") ?? -1;
             CountSpecials = xmlSettings.ExtractBool("CountSpecials") ?? false;
-            ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate")??true;
+            ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate") ?? true;
             AutoAddFolderBase = xmlSettings.ExtractString("FolderBase");
             DoRename = xmlSettings.ExtractBool("DoRename") ?? true;
             DoMissingCheck = xmlSettings.ExtractBool("DoMissingCheck") ?? true;
             DvdOrder = xmlSettings.ExtractBool("DVDOrder") ?? false;
             UseCustomSearchUrl = xmlSettings.ExtractBool("UseCustomSearchURL") ?? false;
             CustomSearchUrl = xmlSettings.ExtractString("CustomSearchURL");
-            ShowTimeZone = xmlSettings.ExtractString("TimeZone")?? TimeZone.DefaultTimeZone(); // default, is correct for most shows;
+            ShowTimeZone = xmlSettings.ExtractString("TimeZone") ?? TimeZone.DefaultTimeZone(); // default, is correct for most shows;
             ForceCheckFuture = xmlSettings.ExtractBool("ForceCheckFuture")
                                        ?? xmlSettings.ExtractBool("ForceCheckAll")
                                        ?? false;
-                    ForceCheckNoAirdate = xmlSettings.ExtractBool("ForceCheckNoAirdate")
-                                          ?? xmlSettings.ExtractBool("ForceCheckAll")
-                                          ?? false;
-                    AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? "Season {Season:2}";
-                    AutoAddType = xmlSettings.ExtractInt("AutoAddType")==null
-                        ? AutomaticFolderType.libraryDefault
-                        : (AutomaticFolderType)xmlSettings.ExtractInt("AutoAddType");
-                    BannersLastUpdatedOnDisk = xmlSettings.ExtractDateTime("BannersLastUpdatedOnDisk");
-                    UseSequentialMatch = xmlSettings.ExtractBool("UseSequentialMatch")??false;
+            ForceCheckNoAirdate = xmlSettings.ExtractBool("ForceCheckNoAirdate")
+                                  ?? xmlSettings.ExtractBool("ForceCheckAll")
+                                  ?? false;
+            AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? "Season {Season:2}";
+            AutoAddType = xmlSettings.ExtractInt("AutoAddType") == null
+                ? AutomaticFolderType.libraryDefault
+                : (AutomaticFolderType)xmlSettings.ExtractInt("AutoAddType");
+            BannersLastUpdatedOnDisk = xmlSettings.ExtractDateTime("BannersLastUpdatedOnDisk");
+            UseSequentialMatch = xmlSettings.ExtractBool("UseSequentialMatch") ?? false;
 
-            foreach (XElement ig in xmlSettings.Descendants("IgnoreSeasons").Descendants("Ignore"))
-            {
-                IgnoreSeasons.Add(XmlConvert.ToInt32(ig.Value));
-            }
-            foreach (XElement alias in xmlSettings.Descendants("AliasNames").Descendants("Alias"))
-            {
-                AliasNames.Add(alias.Value);
-            }
+            SetupIgnoreRules(xmlSettings);
+            SetupAliases(xmlSettings);
+            SetupSeasonRules(xmlSettings);
+            SetupSeasonFolders(xmlSettings);
+            UpGradeFromOldSeasonFormat(xmlSettings);
+        }
 
-            foreach (XElement rulesSet in xmlSettings.Descendants("Rules"))
-            {
-                int snum = int.Parse(rulesSet.Attribute("SeasonNumber")?.Value);
-                SeasonRules[snum] = new List<ShowRule>();
-
-                foreach (XElement ruleData in rulesSet.Descendants("Rule"))
-                {
-                    SeasonRules[snum].Add(new ShowRule(ruleData));
-                }
-            }
-
-            foreach (XElement seasonFolder in xmlSettings.Descendants("SeasonFolders"))
-            {
-                int snum = int.Parse(seasonFolder.Attribute("SeasonNumber")?.Value);
-                ManualFolderLocations[snum] = new List<string>();
-
-                foreach (XElement folderData in seasonFolder.Descendants("Folder"))
-                {
-                    string ff = folderData.Attribute("Location")?.Value;
-                    if (!string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff)
-                    {
-                        ManualFolderLocations[snum].Add(ff);
-                    }
-                }
-            }
+        private void UpGradeFromOldSeasonFormat(XElement xmlSettings)
+        {
+            //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
+            bool upgradeFromOldAutoAddFunction = xmlSettings.Descendants("AutoAddNewSeasons").Any()
+                                                 || xmlSettings.Descendants("FolderPerSeason").Any()
+                                                 || xmlSettings.Descendants("SeasonFolderName").Any()
+                                                 || xmlSettings.Descendants("PadSeasonToTwoDigits").Any();
+            bool TEMP_AutoAddNewSeasons = xmlSettings.ExtractBool("AutoAddNewSeasons") ?? true;
+            bool TEMP_AutoAdd_FolderPerSeason = xmlSettings.ExtractBool("FolderPerSeason") ?? true;
+            string TEMP_AutoAdd_SeasonFolderName = xmlSettings.ExtractString("SeasonFolderName");
+            bool TEMP_PadSeasonToTwoDigits = xmlSettings.ExtractBool("PadSeasonToTwoDigits") ?? true;
 
             if (upgradeFromOldAutoAddFunction)
             {
@@ -187,7 +153,7 @@ namespace TVRename
                 {
                     if (TEMP_AutoAdd_FolderPerSeason)
                     {
-                        AutoAddCustomFolderFormat = TEMP_AutoAdd_SeasonFolderName + ((TEMP_PadSeasonToTwoDigits||TVSettings.Instance.LeadingZeroOnSeason)?"{Season:2}":"{Season}");
+                        AutoAddCustomFolderFormat = TEMP_AutoAdd_SeasonFolderName + ((TEMP_PadSeasonToTwoDigits || TVSettings.Instance.LeadingZeroOnSeason) ? "{Season:2}" : "{Season}");
                         AutoAddType = (AutoAddCustomFolderFormat == TVSettings.Instance.SeasonFolderFormat)
                             ? AutomaticFolderType.libraryDefault
                             : AutomaticFolderType.custom;
@@ -202,6 +168,54 @@ namespace TVRename
                 {
                     AutoAddCustomFolderFormat = string.Empty;
                     AutoAddType = AutomaticFolderType.none;
+                }
+            }
+        }
+
+        private void SetupIgnoreRules(XElement xmlSettings)
+        {
+            foreach (XElement ig in xmlSettings.Descendants("IgnoreSeasons").Descendants("Ignore"))
+            {
+                IgnoreSeasons.Add(XmlConvert.ToInt32(ig.Value));
+            }
+        }
+
+        private void SetupAliases(XElement xmlSettings)
+        {
+            foreach (XElement alias in xmlSettings.Descendants("AliasNames").Descendants("Alias"))
+            {
+                AliasNames.Add(alias.Value);
+            }
+        }
+
+        private void SetupSeasonRules(XElement xmlSettings)
+        {
+            foreach (XElement rulesSet in xmlSettings.Descendants("Rules"))
+            {
+                int snum = int.Parse(rulesSet.Attribute("SeasonNumber")?.Value);
+                SeasonRules[snum] = new List<ShowRule>();
+
+                foreach (XElement ruleData in rulesSet.Descendants("Rule"))
+                {
+                    SeasonRules[snum].Add(new ShowRule(ruleData));
+                }
+            }
+        }
+
+        private void SetupSeasonFolders(XElement xmlSettings)
+        {
+            foreach (XElement seasonFolder in xmlSettings.Descendants("SeasonFolders"))
+            {
+                int snum = int.Parse(seasonFolder.Attribute("SeasonNumber")?.Value);
+                ManualFolderLocations[snum] = new List<string>();
+
+                foreach (XElement folderData in seasonFolder.Descendants("Folder"))
+                {
+                    string ff = folderData.Attribute("Location")?.Value;
+                    if (!string.IsNullOrWhiteSpace(ff) && AutoFolderNameForSeason(snum) != ff)
+                    {
+                        ManualFolderLocations[snum].Add(ff);
+                    }
                 }
             }
         }
