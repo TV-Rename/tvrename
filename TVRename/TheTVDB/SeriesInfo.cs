@@ -19,8 +19,8 @@ namespace TVRename
         public DateTime? AirsTime;
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
-        private Dictionary<string, string> Items; // e.g. Overview, Banner, Poster, etc.
-        public string targetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
+        private Dictionary<string, string> items; // e.g. Overview, Banner, Poster, etc.
+        public readonly string TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
         private int languageId; //The actual language obtained
         public string Name;
         public bool BannersLoaded;
@@ -52,7 +52,7 @@ namespace TVRename
         public int TvdbCode;
         public string TempTimeZone;
 
-        public bool useCustomLanguage => targetLanguageCode != null;
+        public bool UseCustomLanguage => TargetLanguageCode != null;
 
         public int MinYear()
         {
@@ -101,7 +101,7 @@ namespace TVRename
         public SeriesInfo(string name, int id, string langCode)
         {
             SetToDefauts();
-            targetLanguageCode = langCode;
+            TargetLanguageCode = langCode;
             Name = name;
             TvdbCode = id;
         }
@@ -145,12 +145,12 @@ namespace TVRename
 
         private string GetItem(string which) //MS making this private to avoid external classes having to worry about how the items colelction is keyed
         {
-            return Items.ContainsKey(which) ? Items[which] : "";
+            return items.ContainsKey(which) ? items[which] : "";
         }
 
         private void SetToDefauts()
         {
-            Items = new Dictionary<string, string>();
+            items = new Dictionary<string, string>();
             AiredSeasons = new Dictionary<int, Season>();
             DvdSeasons = new Dictionary<int, Season>();
             actors=new List<Actor>();
@@ -197,13 +197,13 @@ namespace TVRename
             if ((!string.IsNullOrEmpty(o.Name)) && betterLanguage)
                 Name = o.Name;
             // this.Items.Clear();
-            foreach (KeyValuePair<string, string> kvp in o.Items)
+            foreach (KeyValuePair<string, string> kvp in o.items)
             {
                 // on offer is non-empty text, in a better language
                 // or text for something we don't have
                 if ((!string.IsNullOrEmpty(kvp.Value) && betterLanguage) ||
-                     (!Items.ContainsKey(kvp.Key) || string.IsNullOrEmpty(Items[kvp.Key])))
-                    Items[kvp.Key] = kvp.Value;
+                     (!items.ContainsKey(kvp.Key) || string.IsNullOrEmpty(items[kvp.Key])))
+                    items[kvp.Key] = kvp.Value;
             }
             if (o.AirsTime != null)
                 AirsTime = o.AirsTime;
@@ -286,7 +286,7 @@ namespace TVRename
                     else if (r.Name == "Airs_Time")
                     {
                         string theTime = r.ReadElementContentAsString();
-                        Items["Airs_Time"] = theTime;
+                        items["Airs_Time"] = theTime;
                         AirsTime = ParseAirTime(theTime);
                     }
                     else if (r.Name == "FirstAired")
@@ -298,15 +298,15 @@ namespace TVRename
                             FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd",
                                 new System.Globalization.CultureInfo(""));
 
-                            Items["FirstAired"] = FirstAired.Value.ToString("yyyy-MM-dd");
-                            Items["Year"] = FirstAired.Value.ToString("yyyy");
+                            items["FirstAired"] = FirstAired.Value.ToString("yyyy-MM-dd");
+                            items["Year"] = FirstAired.Value.ToString("yyyy");
                         }
                         catch
                         {
                             Logger.Trace("Failed to parse date: {0} ", theDate);
                             FirstAired = null;
-                            Items["FirstAired"] = "";
-                            Items["Year"] = "";
+                            items["FirstAired"] = "";
+                            items["Year"] = "";
                         }
                     }
                     else if (r.Name == "Actors")
@@ -338,7 +338,7 @@ namespace TVRename
                     else
                     {
                         string name = r.Name;
-                        Items[name] = r.ReadElementContentAsString();
+                        items[name] = r.ReadElementContentAsString();
                     }
                     //   r->ReadOuterXml(); // skip
                 } // while
@@ -385,13 +385,13 @@ namespace TVRename
             //save them all into the Items array for safe keeping
             foreach (JProperty seriesItems in r.Children<JProperty>())
             {
-                if (seriesItems.Name == "aliases") Items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
-                else if (seriesItems.Name == "genre") Items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
+                if (seriesItems.Name == "aliases") items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
+                else if (seriesItems.Name == "genre") items[seriesItems.Name] = JsonHelper.Flatten(seriesItems.Value, "|");
                 else if (seriesItems.Name == "overview")
-                    Items[seriesItems.Name] = System.Web.HttpUtility.HtmlDecode((string)seriesItems.Value);
+                    items[seriesItems.Name] = System.Web.HttpUtility.HtmlDecode((string)seriesItems.Value);
                 else try
                     {
-                        if (seriesItems.Value != null) Items[seriesItems.Name] = (string)seriesItems.Value;
+                        if (seriesItems.Value != null) items[seriesItems.Name] = (string)seriesItems.Value;
                     }
                     catch (ArgumentException ae) {
                        Logger.Warn("Could not parse Json for " + seriesItems.Name + " :" + ae.Message);
@@ -414,21 +414,21 @@ namespace TVRename
             {
                 if (!string.IsNullOrEmpty(theDate)) {
                     FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
-                    Items["firstAired"] = FirstAired.Value.ToString("yyyy-MM-dd");
-                    Items["Year"] = FirstAired.Value.ToString("yyyy");
+                    items["firstAired"] = FirstAired.Value.ToString("yyyy-MM-dd");
+                    items["Year"] = FirstAired.Value.ToString("yyyy");
                 }
                 else
                 {
                     FirstAired = null;
-                    Items["firstAired"] = "";
-                    Items["Year"] = "";
+                    items["firstAired"] = "";
+                    items["Year"] = "";
                 }
             }
             catch
             {
                 FirstAired = null;
-                Items["firstAired"] = "";
-                Items["Year"] = "";
+                items["firstAired"] = "";
+                items["Year"] = "";
             }
 
             AirsTime = ParseAirTime((string) r["airsTime"]);
@@ -445,28 +445,28 @@ namespace TVRename
 
             if ((string.IsNullOrWhiteSpace(Name) && ((string)backupLanguageR["seriesName"] != null)) ){
                 Name = (string)backupLanguageR["seriesName"];
-                Items["seriesName"] = System.Web.HttpUtility.HtmlDecode(Name);
+                items["seriesName"] = System.Web.HttpUtility.HtmlDecode(Name);
             }
 
-            if ((string.IsNullOrWhiteSpace(Items["overview"]) && ((string)backupLanguageR["overview"] != null)) ){
-                Items["overview"] = System.Web.HttpUtility.HtmlDecode((string)backupLanguageR["overview"]);
+            if ((string.IsNullOrWhiteSpace(items["overview"]) && ((string)backupLanguageR["overview"] != null)) ){
+                items["overview"] = System.Web.HttpUtility.HtmlDecode((string)backupLanguageR["overview"]);
             }
 
             //Looking at the data then the aliases, banner and runtime are also different by language
 
-            if ((string.IsNullOrWhiteSpace(Items["aliases"])))
+            if ((string.IsNullOrWhiteSpace(items["aliases"])))
             {
-                Items["aliases"] = JsonHelper.Flatten(backupLanguageR["aliases"], "|");
+                items["aliases"] = JsonHelper.Flatten(backupLanguageR["aliases"], "|");
             }
 
-            if ((string.IsNullOrWhiteSpace(Items["runtime"])))
+            if ((string.IsNullOrWhiteSpace(items["runtime"])))
             {
-                Items["runtime"] = (string)backupLanguageR["runtime"];
+                items["runtime"] = (string)backupLanguageR["runtime"];
             }
 
-            if ((string.IsNullOrWhiteSpace(Items["banner"])))
+            if ((string.IsNullOrWhiteSpace(items["banner"])))
             {
-                Items["banner"] = (string)backupLanguageR["banner"];
+                items["banner"] = (string)backupLanguageR["banner"];
             }
         }
 
@@ -512,8 +512,8 @@ namespace TVRename
         string GetValueAcrossVersions(string oldTag, string newTag, string defaultValue)
         {
             //Need to cater for new and old style tags (TVDB interface v1 vs v2)
-            if (Items.ContainsKey(oldTag)) return Items[oldTag];
-            if (Items.ContainsKey(newTag)) return Items[newTag];
+            if (items.ContainsKey(oldTag)) return items[oldTag];
+            if (items.ContainsKey(newTag)) return items[newTag];
             return defaultValue;
         }
 
@@ -549,7 +549,7 @@ namespace TVRename
                                       "LanguageId","TimeZone","Actors"
                                   };
 
-            foreach (KeyValuePair<string, string> kvp in Items)
+            foreach (KeyValuePair<string, string> kvp in items)
             {
                 if (!skip.Contains(kvp.Key))
                 {
@@ -825,12 +825,14 @@ namespace TVRename
             List<int> seasonNumbers = new List<int>();
             foreach (KeyValuePair<int, Season> sn in appropriateSeasons)
             {
+                if (sn.Value.IsSpecial()) continue;
+
                 seasonNumbers.Add(sn.Value.SeasonNumber);
             }
 
             seasonNumbers.Sort();
 
-            return seasonNumbers.IndexOf(seasonNumber);
+            return seasonNumbers.IndexOf(seasonNumber) +1;
         }
     }
 }

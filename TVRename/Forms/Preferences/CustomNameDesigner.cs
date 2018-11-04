@@ -51,7 +51,7 @@ namespace TVRename
             else
                 pe = (ProcessedEpisode) (lvTest.SelectedItems[0].Tag);
 
-            foreach (string s in CustomEpisodeName.Tags)
+            foreach (string s in CustomEpisodeName.TAGS)
             {
                 string txt = s;
                 if (pe != null)
@@ -59,7 +59,7 @@ namespace TVRename
                 cbTags.Items.Add(txt);
             }
 
-            foreach (string s in CustomEpisodeName.Presets)
+            foreach (string s in CustomEpisodeName.PRESETS)
             {
                 cbPresets.Items.Add(pe != null ? CustomEpisodeName.NameForNoExt(pe, s) : s);
             }
@@ -100,7 +100,7 @@ namespace TVRename
             if (n == -1)
                 return;
 
-            txtTemplate.Text = CustomEpisodeName.Presets[n];
+            txtTemplate.Text = CustomEpisodeName.PRESETS[n];
             cbPresets.SelectedIndex = -1;
         }
 
@@ -118,7 +118,7 @@ namespace TVRename
 
             int p = txtTemplate.SelectionStart;
             string s = txtTemplate.Text;
-            txtTemplate.Text = s.Substring(0, p) + CustomEpisodeName.Tags[cbTags.SelectedIndex] + s.Substring(p);
+            txtTemplate.Text = s.Substring(0, p) + CustomEpisodeName.TAGS[cbTags.SelectedIndex] + s.Substring(p);
 
             cbTags.SelectedIndex = -1;
         }

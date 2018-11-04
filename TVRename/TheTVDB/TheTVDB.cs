@@ -162,7 +162,7 @@ namespace TVRename
             Logger.Trace("Lock Series for " + whoFor);
             bool ok = Monitor.TryEnter(series, 10000);
             System.Diagnostics.Debug.Assert(ok);
-            return ok;
+            return true;
         }
 
         public void Unlock(string whoFor)
@@ -456,7 +456,6 @@ namespace TVRename
 
             if (series.ContainsKey(id))
             {
-                string name = series[id].Name;
                 series.Remove(id);
             }
 
@@ -559,7 +558,7 @@ namespace TVRename
                     return false;
                 }
 
-                int numberOfResponses = 0;
+                int numberOfResponses;
                 try
                 {
                     JToken dataToken = jsonUdpateResponse["data"];
@@ -688,18 +687,18 @@ namespace TVRename
                     int id = (int)seriesResponse["id"];
                     long time = (long)seriesResponse["lastUpdated"];
 
-                    if (this.series.ContainsKey(id)) // this is a series we have
+                    if (series.ContainsKey(id)) // this is a series we have
                     {
-                        if (time > this.series[id].SrvLastUpdated) // newer version on the server
-                            this.series[id].Dirty = true; // mark as dirty, so it'll be fetched again later
+                        if (time > series[id].SrvLastUpdated) // newer version on the server
+                            series[id].Dirty = true; // mark as dirty, so it'll be fetched again later
                         else
-                            Logger.Info(this.series[id].Name + " has a lastupdated of  " +
-                                        Helpers.FromUnixTime(this.series[id].SrvLastUpdated) + " server says " +
+                            Logger.Info(series[id].Name + " has a lastupdated of  " +
+                                        Helpers.FromUnixTime(series[id].SrvLastUpdated) + " server says " +
                                         Helpers.FromUnixTime(time));
 
                         //now we wish to see if any episodes from the series have been updated. If so then mark them as dirty too
                         List<JObject> episodeDefaultLangResponses = null;
-                        string requestedLanguageCode = series[id].useCustomLanguage ? series[id].targetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
+                        string requestedLanguageCode = series[id].UseCustomLanguage ? series[id].TargetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
                         List<JObject> episodeResponses = GetEpisodes(id, requestedLanguageCode);
                         if (IsNotDefaultLanguage(requestedLanguageCode)) episodeDefaultLangResponses = GetEpisodes(id, DefaultLanguageCode);
 
@@ -729,7 +728,7 @@ namespace TVRename
                                     int serverEpisodeId = episodeData.Key;
 
                                     bool found = false;
-                                    foreach (KeyValuePair<int, Season> kvp2 in this.series[id].AiredSeasons)
+                                    foreach (KeyValuePair<int, Season> kvp2 in series[id].AiredSeasons)
                                     {
                                         Season seas = kvp2.Value;
 
@@ -775,11 +774,11 @@ namespace TVRename
                             }
                         }
 
-                        Logger.Info(this.series[id].Name + " had " + numberOfUpdatedEpisodes +
+                        Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
                                     " episodes updated and " + numberOfNewEpisodes + " new episodes ");
 
                         if (oldEpisodeIds.Count > 0)
-                            Logger.Warn(this.series[id].Name + " had " + oldEpisodeIds.Count +
+                            Logger.Warn(series[id].Name + " had " + oldEpisodeIds.Count +
                                         " episodes deleted: " + string.Join(",", oldEpisodeIds));
 
                         LockRemoveEpisodes();
@@ -1551,7 +1550,7 @@ namespace TVRename
             {
                 Episode ep = FindEpisodeById(episodeId);
                 string eptxt = EpisodeDescription(dvdOrder, episodeId, ep);
-                requestLangCode =  (series[seriesId].useCustomLanguage)? series[seriesId].targetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
+                requestLangCode =  (series[seriesId].UseCustomLanguage)? series[seriesId].TargetLanguageCode: TVSettings.Instance.PreferredLanguageCode;
                 Say(series[seriesId].Name + " (" + eptxt + ")");
             }
             else

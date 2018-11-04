@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System;
 using System.Net;
 using Newtonsoft.Json.Linq;
 
@@ -60,7 +59,6 @@ namespace TVRename
                             if (episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONFilenameToken) &&
                                 episodeResponse.ContainsKey(TVSettings.Instance.SearchJSONURLToken))
                             {
-
                                 string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
                                 string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
 
@@ -75,7 +73,7 @@ namespace TVRename
                                 if (seas != pe.AppropriateSeasonNumber) continue;
                                 if (ep != pe.AppropriateEpNum) continue;
 
-                                Logger.Info(
+                                LOGGER.Info(
                                     $"Adding {itemUrl} as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
                                 newItems.Add(new ActionTDownload(itemName, itemUrl, action.TheFileNoExt, pe));
@@ -83,7 +81,7 @@ namespace TVRename
                             }
                             else
                             {
-                                Logger.Info(
+                                LOGGER.Info(
                                     $"{TVSettings.Instance.SearchJSONFilenameToken} or {TVSettings.Instance.SearchJSONURLToken} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
                             }
                         }
@@ -91,7 +89,7 @@ namespace TVRename
                 }
                 else
                 {
-                    Logger.Info($"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
+                    LOGGER.Info($"{TVSettings.Instance.SearchJSONRootNode} not found in {TVSettings.Instance.SearchJSONURL}{imdbId} for {action.Episode.TheSeries.Name}");
                 }
             }
 

@@ -13,6 +13,6 @@ namespace TVRename
         public abstract bool Active();
         public abstract void Run();
         protected abstract string Location();
-        protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
     }
 }

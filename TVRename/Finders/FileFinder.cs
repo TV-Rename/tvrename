@@ -71,7 +71,7 @@ namespace TVRename
                     }
                     else
                     {
-                        Logger.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
+                        LOGGER.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
                         me.AddComment(
                             $"Ignoring potential match with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
                     }
@@ -90,7 +90,7 @@ namespace TVRename
                     {
                         foreach (DirCacheEntry matchedFile in matchedFiles)
                         {
-                            Logger.Warn(
+                            LOGGER.Warn(
                                 $"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
 
                             me.AddComment(
@@ -240,7 +240,7 @@ namespace TVRename
                 catch (System.IO.PathTooLongException e)
                 {
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
-                    Logger.Warn(e, "Path or filename too long. " + action.From.FullName);
+                    LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);
 
                     if ((!Doc.Args.Unattended) && (!Doc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
@@ -321,9 +321,9 @@ namespace TVRename
                             };
                             me.Episode.Show?.AddSeasonRule(seasF, sr);
 
-                            Logger.Info(
+                            LOGGER.Info(
                                 $"Looking at {me.Episode.Show.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.TheFile.FullName}");
-                            Logger.Info($"Added new rule automatically for {sr}");
+                            LOGGER.Info($"Added new rule automatically for {sr}");
 
                             //Regenerate the episodes with the new rule added
                             ShowLibrary.GenerateEpisodeDict(me.Episode.Show);
@@ -375,7 +375,7 @@ namespace TVRename
             catch (System.IO.PathTooLongException e)
             {
                 string t = "Path too long. " + dce.TheFile.FullName + ", " + e.Message;
-                Logger.Warn(e, "Path too long. " + dce.TheFile.FullName);
+                LOGGER.Warn(e, "Path too long. " + dce.TheFile.FullName);
 
                 t += ".  More information is available in the log file";
                 if ((!Doc.Args.Unattended) && (!Doc.Args.Hide))
@@ -388,7 +388,7 @@ namespace TVRename
                     t += "Show: " + me.Episode.TheSeries.Name + ", Season " + season + ", Ep " + epnum + ".  ";
                     t += "To: " + me.TheFileNoExt;
                 }
-                Logger.Warn(t);
+                LOGGER.Warn(t);
             }
             return false;
         }

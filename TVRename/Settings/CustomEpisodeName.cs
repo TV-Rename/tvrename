@@ -17,11 +17,6 @@ namespace TVRename
     {
         public string StyleString;
 
-        public CustomEpisodeName(CustomEpisodeName o)
-        {
-            StyleString = o.StyleString;
-        }
-
         public CustomEpisodeName(string s)
         {
             StyleString = s;
@@ -32,18 +27,18 @@ namespace TVRename
             StyleString = DefaultStyle();
         }
 
-        private static string DefaultStyle() => Presets[1];
+        private static string DefaultStyle() => PRESETS[1];
 
         public static string OldNStyle(int n)
         {
             // for now, this maps onto the presets
             if ((n >= 0) && (n < 9))
-                return Presets[n];
+                return PRESETS[n];
 
             return DefaultStyle();
         }
 
-        protected internal static readonly List<string> Presets = new List<string>
+        protected internal static readonly List<string> PRESETS = new List<string>
                                                         {
                                                             "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
                                                             "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
@@ -57,7 +52,7 @@ namespace TVRename
                                                             "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
                                                         };
 
-        protected internal static readonly List<string> Tags = new List<string>
+        protected internal static readonly List<string> TAGS = new List<string>
         {
             "{ShowName}",
             "{Season}",

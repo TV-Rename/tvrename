@@ -36,7 +36,7 @@ namespace TVRename
         }
 
         public ActionCopyMoveRename(FileInfo fi, FileInfo existingFile, ProcessedEpisode pep): 
-            this(TVSettings.Instance.LeaveOriginals ? ActionCopyMoveRename.Op.copy : ActionCopyMoveRename.Op.move, fi,
+            this(TVSettings.Instance.LeaveOriginals ? Op.copy : Op.move, fi,
                 existingFile,
                 pep, TVSettings.Instance.Tidyup, null)
             {}

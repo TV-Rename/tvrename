@@ -25,11 +25,11 @@ namespace TVRename
         {
             this.episodeTwo = episodeTwo;
             this.episodeOne = episodeOne;
-            this.SeasonNumber = season;
-            this.AirDatesMatch = airDatesMatch;
-            this.SimilarNames = similarNames;
-            this.OneFound = oneFound;
-            this.LargeFileSize = largeFileSize;
+            SeasonNumber = season;
+            AirDatesMatch = airDatesMatch;
+            SimilarNames = similarNames;
+            OneFound = oneFound;
+            LargeFileSize = largeFileSize;
         }
 
         public ListViewItem PresentationView

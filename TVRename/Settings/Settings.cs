@@ -411,7 +411,6 @@ namespace TVRename
                     ExportRecentWPL = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportRecentWPLTo")
                     ExportRecentWPLTo = reader.ReadElementContentAsString();
-
                 else if (reader.Name == "ExportMissingCSV")
                     ExportMissingCSV = reader.ReadElementContentAsBoolean();
                 else if (reader.Name == "ExportMissingCSVTo")

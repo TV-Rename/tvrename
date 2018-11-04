@@ -51,7 +51,7 @@ namespace TVRename
                     if (rss.Season != pe.AppropriateSeasonNumber) continue;
                     if (rss.Episode != pe.AppropriateEpNum) continue;
 
-                    Logger.Info($"Adding {rss.URL} as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
+                    LOGGER.Info($"Adding {rss.URL} as it appears to be match for {action.Episode.Show.ShowName} S{action.Episode.AppropriateSeasonNumber}E{action.Episode.AppropriateEpNum}");
                     newItems.Add(new ActionTDownload(rss, action.TheFileNoExt, pe));
                     toRemove.Add(action);
                 }

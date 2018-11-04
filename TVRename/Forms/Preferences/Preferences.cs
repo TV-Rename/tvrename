@@ -1298,7 +1298,7 @@ namespace TVRename
 
             Graphics g = e.Graphics;
 
-            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(this.BackColor),
+            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor),
                 e.Bounds);
 
              // Get the item from the collection.
