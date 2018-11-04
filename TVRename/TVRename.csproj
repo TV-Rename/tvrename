@@ -121,12 +121,14 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
+    <Compile Include="Custom Controls\NativeMethods.cs" />
     <Compile Include="DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="DownloadIdentifers\IncorrectFileDates.cs" />
     <Compile Include="Exporter\ActionListExporter.cs" />
@@ -257,6 +259,8 @@
     <Compile Include="TVRename\CacheUpdater.cs" />
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
+    <Compile Include="Utility\DateSorterWTW.cs" />
+    <Compile Include="Utility\DaySorter.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
     <Compile Include="Utility\Helper\FileHelper.cs" />
     <Compile Include="Utility\FileSystemProperties.cs" />
@@ -264,6 +268,7 @@
     <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
     <Compile Include="Utility\DownloadInformation.cs" />
+    <Compile Include="Utility\NumberAsTextSorter.cs" />
     <Compile Include="Utility\SAB\NewDataSet.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
@@ -601,7 +606,7 @@
     </Compile>
     <Compile Include="Settings\ShowRule.cs" />
     <Compile Include="Utility\SAB\Queue.cs" />
-    <Compile Include="Utility\Sorters.cs" />
+    <Compile Include="Utility\TextSorter.cs" />
     <Compile Include="Settings\Statistics.cs" />
     <Compile Include="Forms\Utilities\StatsWindow.cs">
       <SubType>Form</SubType>
