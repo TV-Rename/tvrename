@@ -122,7 +122,7 @@ namespace TVRename
                                             || xmlSettings.Descendants("PadSeasonToTwoDigits").Any();
             TEMP_AutoAddNewSeasons = xmlSettings.ExtractBool("AutoAddNewSeasons") ?? false;
             TEMP_AutoAdd_FolderPerSeason = xmlSettings.ExtractBool("FolderPerSeason") ?? false;
-            TEMP_AutoAdd_SeasonFolderName = xmlSettings.ExtractString("SeasonFolderName") ;
+            TEMP_AutoAdd_SeasonFolderName = xmlSettings.ExtractString("SeasonFolderName");
             TEMP_PadSeasonToTwoDigits = xmlSettings.ExtractBool("PadSeasonToTwoDigits") ?? false;
             CountSpecials = xmlSettings.ExtractBool("CountSpecials") ?? false;
             ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate")??true;

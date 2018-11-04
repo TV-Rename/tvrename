@@ -982,7 +982,7 @@ namespace TVRename
             PreferredLanguageCode = xmlSettings.ExtractString("PreferredLanguage","en");
             WTWDoubleClick = xmlSettings.ExtractInt("WTWDoubleClick") ==null
                 ? WTWDoubleClickAction.Scan
-                : (WTWDoubleClickAction) xmlSettings.ExtractInt("WTWDoubleClick") ;
+                : (WTWDoubleClickAction) xmlSettings.ExtractInt("WTWDoubleClick");
             ExportMissingXML = xmlSettings.ExtractBool("ExportMissingXML") ?? false;
             ExportMissingXMLTo = xmlSettings.ExtractString("ExportMissingXMLTo");
             ExportRecentXSPF = xmlSettings.ExtractBool("ExportRecentXSPF") ?? false;
@@ -1124,7 +1124,6 @@ namespace TVRename
             {
                 Filter.Genres.Add(rep.Value);
             }
-
 
             if (SeasonFolderFormat == string.Empty)
             {

@@ -335,7 +335,6 @@ namespace TVRename
                     x.Descendants("IgnoredAutoAddHints").First().ReadStringsFromXml("Hint");
                 TVSettings.Instance.Ignore =
                     x.Descendants("IgnoreItems").First().ReadIiFromXml("Ignore");
-
             }
             catch (Exception e)
             {
