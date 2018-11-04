@@ -15,7 +15,7 @@ namespace TVRename
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             List<TorrentEntry> downloading = GetqBitTorrentDownloads();
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadingFinder.DownloadApp.qBitTorrent);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.qBitTorrent);
         }
 
         private static List<TorrentEntry> GetqBitTorrentDownloads()
@@ -60,7 +60,7 @@ namespace TVRename
             }
             catch (WebException)
             {
-                Logger.Warn($"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                LOGGER.Warn($"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
 
             return ret;
@@ -72,7 +72,7 @@ namespace TVRename
             string port = TVSettings.Instance.qBitTorrentPort;
             if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
             {
-                Logger.Error(
+                LOGGER.Error(
                     $"Could not download {torrentUrl} via qBitTorrent as settings are not entered for host and port");
                 return;
             }
@@ -88,19 +88,19 @@ namespace TVRename
                     HttpResponseMessage response = client.PostAsync(url, content).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Logger.Warn(
+                        LOGGER.Warn(
                             $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}");
                     }
                     else
                     {
-                        Logger.Info(
+                        LOGGER.Info(
                             $"Started download of {torrentUrl} via qBitTorrent using {url}. Got following response {response.StatusCode}");
                     }
                 }
             }
             catch (WebException)
             {
-                Logger.Warn($"Could not connect to {url} to downlaod {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                LOGGER.Warn($"Could not connect to {url} to downlaod {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
         }
     }

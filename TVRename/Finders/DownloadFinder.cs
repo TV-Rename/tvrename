@@ -37,7 +37,7 @@ namespace TVRename
                         !testActionRssTwo.SourceName.ContainsOneOf(preferredTerms))
                     {
                         duplicateActionRss.Add(testActionRssTwo);
-                        Logger.Info(
+                        LOGGER.Info(
                             $"Removing {testActionRssTwo.Produces} as it is not as good a match as {testActionRssOne.Produces}");
                     }
                 }

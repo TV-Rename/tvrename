@@ -9,9 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Packaging;
 using System.Linq;
-using System.Text;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
 namespace TVRename
@@ -58,16 +56,16 @@ namespace TVRename
                         file.WriteLine(GenerateFooter());
                     }
 
-                    Logger.Info("Output File to: {0}", Location());
+                    LOGGER.Info("Output File to: {0}", Location());
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e, "Failed to Output File to: {0}", Location());
+                    LOGGER.Error(e, "Failed to Output File to: {0}", Location());
                 }
             }
             else
             {
-                Logger.Trace("Skipped (Disabled) Output File to: {0}", Location());
+                LOGGER.Trace("Skipped (Disabled) Output File to: {0}", Location());
             }
         }
 

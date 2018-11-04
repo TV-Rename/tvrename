@@ -103,9 +103,9 @@ namespace TVRename
 
                 bool bannersToo = TVSettings.Instance.NeedToDownloadBannerFile();
 
-                Threadslogger.Trace("  Downloading " + series.seriesId);
-                bool r = TheTVDB.Instance.EnsureUpdated(series.seriesId, bannersToo,series.useCustomLanguage,series.customLanguageCode);
-                Threadslogger.Trace("  Finished " + series.seriesId);
+                Threadslogger.Trace("  Downloading " + series.SeriesId);
+                bool r = TheTVDB.Instance.EnsureUpdated(series.SeriesId, bannersToo,series.UseCustomLanguage,series.CustomLanguageCode);
+                Threadslogger.Trace("  Finished " + series.SeriesId);
                 if (!r)
                 {
                     downloadOk = false;

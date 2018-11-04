@@ -24,7 +24,7 @@ namespace TVRename
         {
             InitializeComponent();
 
-            foreach (string s in CustomEpisodeName.Tags)
+            foreach (string s in CustomEpisodeName.TAGS)
             {
                 string txt = s;
                 if (pe != null)
@@ -38,7 +38,7 @@ namespace TVRename
         {
             InitializeComponent();
 
-            foreach (string s in CustomSeasonName.Tags)
+            foreach (string s in CustomSeasonName.TAGS)
             {
                 string txt = s;
                 if (pe != null)

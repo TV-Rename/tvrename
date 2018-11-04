@@ -7,7 +7,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename

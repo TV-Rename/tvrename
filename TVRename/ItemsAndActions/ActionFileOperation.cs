@@ -99,7 +99,7 @@ namespace TVRename
             foreach (FileInfo fi in files)
             {
                 bool okToDelete = Tidyup.EmptyIgnoreExtensions &&
-                                  Array.FindIndex(Tidyup.EmptyIgnoreExtensionsArray, x => x == fi.Extension) != -1;
+                                  Tidyup.EmptyIgnoreExtensionsArray.Contains(fi.Extension);
 
                 if (okToDelete)
                     continue; // onto the next file

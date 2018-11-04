@@ -96,7 +96,7 @@ namespace TVRename
             // Draw season
             for (int c = (chkHideSpecials.Checked?1:0); c < maxSeason + 1; c++)
             {
-                h = new ColumnHeader(c == 0 ? "Specials" : $"Season {c}")
+                h = new ColumnHeader(Season.UIFullSeasonWord(c))
                 {
                     AutomaticSortEnabled = false,
                     ResizeEnabled = false
@@ -493,15 +493,17 @@ namespace TVRename
                     Ignored = ignored;
                 }
 
+                public bool IsSpecial => SeasonNumber == 0;
+
                 public SummaryOutput GetOuput()
                 {
                     SummaryOutput output = new SummaryOutput
                     {
                         Ignored = Ignored,
-                        Special = (SeasonNumber == 0)
+                        Special = IsSpecial
                     };
 
-                    if (SeasonNumber == 0)
+                    if (IsSpecial)
                     {
                         output.Details = $"{episodeGotCount} / {episodeCount}";
                         if (Ignored)
@@ -560,7 +562,7 @@ namespace TVRename
                 foreach (ShowSummarySeasonData ssn in SeasonDataList)
                 {
                     if (ignoreIgnoredSeasons && ssn.Ignored) continue;
-                    if (ignoreSpecials && ssn.SeasonNumber == 0) continue;
+                    if (ignoreSpecials && ssn.IsSpecial) continue;
                     if (ssn.HasMissingEpisodes()) return true;
                 }
 
@@ -572,7 +574,7 @@ namespace TVRename
                 foreach (ShowSummarySeasonData ssn in SeasonDataList)
                 {
                     if (ignoreIgnoredSeasons && ssn.Ignored) continue;
-                    if (ignoreSpecials && ssn.SeasonNumber == 0) continue;
+                    if (ignoreSpecials && ssn.IsSpecial) continue;
                     if (ssn.HasAiredMssingEpisodes()) return true;
                 }
 

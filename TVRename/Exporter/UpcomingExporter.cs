@@ -44,7 +44,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Failed to produce records to put into Export file at: {0}", Location());
+                LOGGER.Error(e, "Failed to produce records to put into Export file at: {0}", Location());
             }
 
             return "";
@@ -66,17 +66,17 @@ namespace TVRename
                         file.Write(contents);
                     }
 
-                    Logger.Info("Output File to: {0}", Location());
-                    Logger.Trace("contents of File are: {0}", contents);
+                    LOGGER.Info("Output File to: {0}", Location());
+                    LOGGER.Trace("contents of File are: {0}", contents);
                 }
                 catch (Exception e)
                 {
-                    Logger.Error(e, "Failed to Output File to: {0}", Location());
+                    LOGGER.Error(e, "Failed to Output File to: {0}", Location());
                 }
             }
             else
             {
-                Logger.Trace("Skipped (Disabled) Output File to: {0}", Location());
+                LOGGER.Trace("Skipped (Disabled) Output File to: {0}", Location());
             }
         }
 

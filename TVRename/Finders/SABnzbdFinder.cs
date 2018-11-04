@@ -47,7 +47,7 @@ namespace TVRename
                 SAB.Result res = SAB.Result.Deserialize(r);
                 if (res != null && res.status == "False")
                 {
-                    Logger.Error("Error processing data from SABnzbd (Queue Check): {0}", res.error);
+                    LOGGER.Error("Error processing data from SABnzbd (Queue Check): {0}", res.error);
                     prog.Invoke(totPct);
                     return;
                 }
@@ -64,7 +64,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
+                LOGGER.Error(e, "Error processing data from SABnzbd (Queue Check)");
                 prog.Invoke(totPct);
                 return;
             }
@@ -119,7 +119,7 @@ namespace TVRename
             }
             catch (WebException)
             {
-                Logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theUrl);
+                LOGGER.Warn("Failed to obtain SABnzbd, please recheck settings: " + theUrl);
             }
 
             return r;

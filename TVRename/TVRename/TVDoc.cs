@@ -535,7 +535,7 @@ namespace TVRename
 
             public ScanSettings(List<ShowItem> list, bool unattended, TVSettings.ScanType st)
             {
-                this.shows = list;
+                shows = list;
                 this.unattended = unattended;
                 this.st = st;
             }
@@ -1068,7 +1068,7 @@ namespace TVRename
                             Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
                             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
                             firstMatchingPep = pep;
-                            List<FileInfo> encumbants = TVDoc.FindEpOnDisk(dfc, pep, false);
+                            List<FileInfo> encumbants = FindEpOnDisk(dfc, pep, false);
 
                             if (encumbants.Count == 0)
                             {
