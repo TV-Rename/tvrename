@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace TVRename
 {
@@ -142,6 +144,67 @@ namespace TVRename
                 }
                 writer.WriteEndElement();
             }
+        }
+
+        public static bool? ExtractBool(this XElement xmlSettings, string elementName)
+        {
+            if (xmlSettings.Descendants(elementName).Any())
+                return XmlConvert.ToBoolean((string)(xmlSettings?.Descendants(elementName).First()));
+
+            return null;
+        }
+        public static DateTime? ExtractDateTime(this XElement xmlSettings, string elementName)
+        {
+            if (xmlSettings.Descendants(elementName).Any())
+                return XmlConvert.ToDateTime((string)(xmlSettings?.Descendants(elementName).First()));
+
+            return null;
+        }
+        public static string ExtractString(this XElement xmlSettings, string elementName)
+        {
+            return ExtractString(xmlSettings, elementName, string.Empty);
+        }
+        public static string ExtractString(this XElement xmlSettings, string elementName,string defaultValue)
+        {
+            if (xmlSettings.Descendants(elementName).Any())
+                return (string)(xmlSettings?.Descendants(elementName).First());
+
+            return defaultValue;
+        }
+        public static int? ExtractInt(this XElement xmlSettings, string elementName)
+        {
+            if(xmlSettings.Descendants(elementName).Any())
+                return XmlConvert.ToInt32((string)(xmlSettings.Descendants(elementName).First()));
+
+            return null;
+        }
+        public static float? ExtractFloat(this XElement xmlSettings, string elementName)
+        {
+            if (xmlSettings.Descendants(elementName).Any())
+                return XmlConvert.ToSingle((string)(xmlSettings?.Descendants(elementName).First()));
+
+            return null;
+        }
+
+        internal static List<string> ReadStringsFromXml(this XElement rootElement, string token)
+        {
+            return rootElement.Descendants(token).Select(n=>n.Value).ToList();
+        }
+        internal static List<IgnoreItem> ReadIiFromXml(this XElement rootElement, string token)
+        {
+            return rootElement.Descendants(token).Select(n => new IgnoreItem(n.Value)).ToList();
+        }
+
+        internal static void WriteStringsToXml(IEnumerable<IgnoreItem> ignores, XmlWriter writer, string elementName, string stringName)
+        {
+            writer.WriteStartElement(elementName);
+            foreach (IgnoreItem ss in ignores)
+            {
+                writer.WriteStartElement(stringName);
+                writer.WriteValue(ss.FileAndPath);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
         }
     }
 }

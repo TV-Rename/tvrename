@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace TVRename
 {
@@ -721,36 +722,24 @@ namespace TVRename
             return returnList;
         }
 
-        public void LoadFromXml(XmlReader r2)
+        public void LoadFromXml(XElement xmlSettings)
         {
-            r2.Read();
-            r2.Read();
-            while (!r2.EOF)
+            foreach (XElement showSettings in xmlSettings.Descendants("ShowItem"))
             {
-                if ((r2.Name == "MyShows") && (!r2.IsStartElement()))
-                    break;
+                ShowItem si = new ShowItem(showSettings);
 
-                if (r2.Name == "ShowItem")
+                if (si.UseCustomShowName) // see if custom show name is actually the real show name
                 {
-                    ShowItem si = new ShowItem(r2.ReadSubtree());
-
-                    if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                    SeriesInfo ser = si.TheSeries();
+                    if ((ser != null) && (si.CustomShowName == ser.Name))
                     {
-                        SeriesInfo ser = si.TheSeries();
-                        if ((ser != null) && (si.CustomShowName == ser.Name))
-                        {
-                            // then, turn it off
-                            si.CustomShowName = "";
-                            si.UseCustomShowName = false;
-                        }
+                        // then, turn it off
+                        si.CustomShowName = "";
+                        si.UseCustomShowName = false;
                     }
-
-                    Add(si);
-
-                    r2.Read();
                 }
-                else
-                    r2.ReadOuterXml();
+
+                Add(si);
             }
         }
 

@@ -5,6 +5,7 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +13,15 @@ using System.Runtime.Serialization;
 using Alphaleonis.Win32.Filesystem;
 using System.Text.RegularExpressions;
 using System.Xml;
+using System.Xml.Linq;
+
 // ReSharper disable RedundantDefaultMemberInitializer
 // ReSharper disable InconsistentNaming
 
 // Settings for TVRename.  All of this stuff is through Options->Preferences in the app.
 
 namespace TVRename
-{   
+{
     public sealed class TVSettings
     {
         //We are using the singleton design pattern
@@ -40,6 +43,7 @@ namespace TVRename
                             instance = new TVSettings();
                     }
                 }
+
                 return instance;
             }
         }
@@ -53,6 +57,7 @@ namespace TVRename
             FanArt,
             SeasonPoster
         }
+
         #endregion
 
         #region WTWDoubleClickAction enum
@@ -100,7 +105,7 @@ namespace TVRename
         public bool BGDownload = false;
         public bool CheckuTorrent = false;
         public bool CheckqBitTorrent = false;
-        public string qBitTorrentHost ="localhost";
+        public string qBitTorrentHost = "localhost";
         public string qBitTorrentPort = "8080";
         public bool EpTBNs = false;
         public bool EpJPGs = false;
@@ -163,7 +168,7 @@ namespace TVRename
         public float upgradeDirtyPercent = 20;
         public float replaceMargin = 10;
         public bool ReplaceWithBetterQuality = true;
-        public  KeepTogetherModes  keepTogetherMode = KeepTogetherModes.All;
+        public KeepTogetherModes keepTogetherMode = KeepTogetherModes.All;
 
         public bool BulkAddIgnoreRecycleBin = false;
         public bool BulkAddCompareNoVideoFolders = false;
@@ -193,23 +198,23 @@ namespace TVRename
 
         internal bool IncludeBetaUpdates()
         {
-            return (mode== BetaMode.BetaToo );
+            return (mode == BetaMode.BetaToo);
         }
 
         public string OtherExtensionsString = "";
         public ShowFilter Filter = new ShowFilter();
         public SeasonFilter SeasonFilter = new SeasonFilter();
 
-        private string[] OtherExtensionsArray => OtherExtensionsString.Split(';');
+        private IEnumerable<string> OtherExtensionsArray => OtherExtensionsString.Split(';');
 
-        public int ParallelDownloads = 4;
-        public readonly List<string> RSSURLs = DefaultRSSURLList();
+        public int ParallelDownloads;
+        public List<string> RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
         public bool PreventMove = false;
         public bool RenameTxtToSub = false;
         public readonly List<Replacement> Replacements = DefaultListRE();
-        public string ResumeDatPath = "";
-        public int SampleFileMaxSizeMB = 50; // sample file must be smaller than this to be ignored
+        public string ResumeDatPath;
+        public int SampleFileMaxSizeMB; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool SearchRSS = false;
         public bool SearchJSON = false;
@@ -218,24 +223,24 @@ namespace TVRename
         public bool HideMyShowsSpoilers = false;
         public bool ShowInTaskbar = true;
         public bool AutoSearchForDownloadedFiles = false;
-        public string SpecialsFolderName = "Specials";
-        public string SeasonFolderFormat = string.Empty;
-        public int StartupTab = 0;
+        public string SpecialsFolderName;
+        public string SeasonFolderFormat;
+        public int StartupTab;
         public Searchers TheSearchers = new Searchers();
 
-        public string SearchJSONURL = "https://eztv.ag/api/get-torrents?imdb_id=";
-        public string SearchJSONRootNode = "torrents";
-        public string SearchJSONFilenameToken = "filename";
-        public string SearchJSONURLToken = "torrent_url";
+        public string SearchJSONURL;
+        public string SearchJSONRootNode;
+        public string SearchJSONFilenameToken;
+        public string SearchJSONURLToken;
 
         public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
         public bool ForceBulkAddToUseSettingsOnly = false;
         public bool RetainLanguageSpecificSubtitles = true;
         public bool AutoMergeDownloadEpisodes = false;
         public bool AutoMergeLibraryEpisodes = false;
-        public string VideoExtensionsString = "";
-        public int WTWRecentDays = 7;
-        public string uTorrentPath = "";
+        public string VideoExtensionsString;
+        public int WTWRecentDays;
+        public string uTorrentPath;
         public bool MonitorFolders = false;
         public bool RemoveDownloadDirectoriesFiles = false;
         public bool DeleteShowFromDisk = true;
@@ -249,7 +254,7 @@ namespace TVRename
 
         public readonly TidySettings Tidyup = new TidySettings();
         public bool runPeriodicCheck = false;
-        public int periodCheckHours =1;
+        public int periodCheckHours = 1;
         public bool runStartupCheck = false;
 
         private TVSettings()
@@ -257,472 +262,10 @@ namespace TVRename
             SetToDefaults();
         }
 
-        public void load(XmlReader reader)
-        {
-            SetToDefaults();
-            int ignoredInt;
-            reader.Read();
-            if (reader.Name != "Settings")
-                return; // bail out
-
-            reader.Read();
-            while (!reader.EOF)
-            {
-                if ((reader.Name == "Settings") && !reader.IsStartElement())
-                    break; // all done
-
-                if (reader.Name == "Searcher")
-                {
-                    string srch = reader.ReadElementContentAsString(); // and match it based on name...
-                    TheSearchers.CurrentSearch = srch;
-                }
-                else if (reader.Name == "TheSearchers")
-                {
-                    TheSearchers = new Searchers(reader.ReadSubtree());
-                    reader.Read();
-                }
-                else if (reader.Name == "BGDownload")
-                    BGDownload = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "OfflineMode")
-                    OfflineMode = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ReplaceWithBetterQuality")
-                    ReplaceWithBetterQuality = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "Replacements" && !reader.IsEmptyElement)
-                {
-                    Replacements.Clear();
-                    reader.Read();
-                    while (!reader.EOF)
-                    {
-                        if ((reader.Name == "Replacements") && (!reader.IsStartElement()))
-                            break;
-                        if (reader.Name == "Replace")
-                        {
-                            Replacements.Add(new Replacement(reader.GetAttribute("This"),
-                                                                  reader.GetAttribute("That"),
-                                                                  reader.GetAttribute("CaseInsensitive") == "Y"));
-                            reader.Read();
-                        }
-                        else
-                            reader.ReadOuterXml();
-                    }
-                    reader.Read();
-                }
-                else if (reader.Name == "ExportWTWRSS" && !reader.IsEmptyElement)
-                    ExportWTWRSS = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportWTWRSSTo")
-                    ExportWTWRSSTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportWTWXML")
-                    ExportWTWXML = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportWTWXMLTo")
-                    ExportWTWXMLTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportWTWICAL")
-                    ExportWTWICAL = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportWTWICALTo")
-                    ExportWTWICALTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "WTWRecentDays")
-                    WTWRecentDays = reader.ReadElementContentAsInt();
-                else if (reader.Name == "StartupTab")
-                {
-                    int n = reader.ReadElementContentAsInt();
-                    if (n == 6)
-                        StartupTab = 2; // WTW is moved
-                    else if ((n >= 1) && (n <= 3)) // any of the three scans
-                        StartupTab = 1;
-                    else
-                        StartupTab = 0; // otherwise, My Shows
-                }
-                else if (reader.Name == "StartupTab2")
-                    StartupTab = TabNumberFromName(reader.ReadElementContentAsString());
-                else if (reader.Name == "DefaultNamingStyle") // old naming style
-                    NamingStyle.StyleString = CustomEpisodeName.OldNStyle(reader.ReadElementContentAsInt());
-                else if (reader.Name == "NamingStyle")
-                    NamingStyle.StyleString = reader.ReadElementContentAsString();
-                else if (reader.Name == "NotificationAreaIcon")
-                    NotificationAreaIcon = reader.ReadElementContentAsBoolean();
-                else if ((reader.Name == "GoodExtensions") || (reader.Name == "VideoExtensions"))
-                    VideoExtensionsString = reader.ReadElementContentAsString();
-                else if (reader.Name == "OtherExtensions")
-                    OtherExtensionsString = reader.ReadElementContentAsString();
-                else if (reader.Name == "SubtitleExtensions")
-                    subtitleExtensionsString = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportRSSMaxDays")
-                    ExportRSSMaxDays = reader.ReadElementContentAsInt();
-                else if (reader.Name == "ExportRSSMaxShows")
-                    ExportRSSMaxShows = reader.ReadElementContentAsInt();
-                else if (reader.Name == "ExportRSSDaysPast")
-                    ExportRSSDaysPast = reader.ReadElementContentAsInt();
-                else if (reader.Name == "KeepTogether")
-                    KeepTogether = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "LeadingZeroOnSeason")
-                    LeadingZeroOnSeason = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ShowInTaskbar")
-                    ShowInTaskbar = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "RenameTxtToSub")
-                    RenameTxtToSub = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ShowEpisodePictures")
-                    ShowEpisodePictures = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "HideWtWSpoilers")
-                    HideWtWSpoilers = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "HideMyShowsSpoilers")
-                    HideMyShowsSpoilers = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "AutoCreateFolders")
-                    AutoCreateFolders = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "AutoSelectShowInMyShows")
-                    AutoSelectShowInMyShows = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SpecialsFolderName")
-                    SpecialsFolderName = reader.ReadElementContentAsString();
-                else if (reader.Name == "SeasonFolderFormat")
-                    SeasonFolderFormat = reader.ReadElementContentAsString();
-                else if (reader.Name == "SearchJSONURL")
-                    SearchJSONURL = reader.ReadElementContentAsString();
-                else if (reader.Name == "SearchJSONRootNode")
-                    SearchJSONRootNode = reader.ReadElementContentAsString();
-                else if (reader.Name == "SearchJSONFilenameToken")
-                    SearchJSONFilenameToken = reader.ReadElementContentAsString();
-                else if (reader.Name == "SearchJSONURLToken")
-                    SearchJSONURLToken = reader.ReadElementContentAsString();
-                else if (reader.Name == "SABAPIKey")
-                    SABAPIKey = reader.ReadElementContentAsString();
-                else if (reader.Name == "CheckSABnzbd")
-                    CheckSABnzbd = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SABHostPort")
-                    SABHostPort = reader.ReadElementContentAsString();
-                else if (reader.Name == "PreferredLanguage")
-                    PreferredLanguageCode = reader.ReadElementContentAsString();
-                else if (reader.Name == "WTWDoubleClick")
-                    WTWDoubleClick = (WTWDoubleClickAction)reader.ReadElementContentAsInt();
-                else if (reader.Name == "ExportMissingXML")
-                    ExportMissingXML = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportMissingXMLTo")
-                    ExportMissingXMLTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportRecentXSPF")
-                    ExportRecentXSPF = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportRecentXSPFTo")
-                    ExportRecentXSPFTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportRecentM3U")
-                    ExportRecentM3U = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportRecentM3UTo")
-                    ExportRecentM3UTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportRecentASX")
-                    ExportRecentASX = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportRecentASXTo")
-                    ExportRecentASXTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportRecentWPL")
-                    ExportRecentWPL = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportRecentWPLTo")
-                    ExportRecentWPLTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportMissingCSV")
-                    ExportMissingCSV = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportMissingCSVTo")
-                    ExportMissingCSVTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportRenamingXML")
-                    ExportRenamingXML = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportRenamingXMLTo")
-                    ExportRenamingXMLTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportFOXML")
-                    ExportFOXML = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportFOXMLTo")
-                    ExportFOXMLTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportShowsTXT")
-                    ExportShowsTXT = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportShowsTXTTo")
-                    ExportShowsTXTTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ExportShowsHTML")
-                    ExportShowsHTML = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ExportShowsHTMLTo")
-                    ExportShowsHTMLTo = reader.ReadElementContentAsString();
-                else if (reader.Name == "ForceLowercaseFilenames")
-                    ForceLowercaseFilenames = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "IgnoreSamples")
-                    IgnoreSamples = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SampleFileMaxSizeMB")
-                    SampleFileMaxSizeMB = reader.ReadElementContentAsInt();
-                else if (reader.Name == "ParallelDownloads")
-                    ParallelDownloads = reader.ReadElementContentAsInt();
-                else if (reader.Name == "uTorrentPath")
-                    uTorrentPath = reader.ReadElementContentAsString();
-                else if (reader.Name == "ResumeDatPath")
-                    ResumeDatPath = reader.ReadElementContentAsString();
-                else if (reader.Name == "SearchRSS")
-                    SearchRSS = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SearchJSON")
-                    SearchJSON = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "EpImgs")
-                    EpTBNs = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "NFOs") //support legacy tag
-                {
-                    NFOShows = reader.ReadElementContentAsBoolean();
-                    NFOEpisodes = NFOShows;
-                }
-                else if (reader.Name == "NFOShows")
-                    NFOShows = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "NFOEpisodes")
-                    NFOEpisodes = reader.ReadElementContentAsBoolean();
-                else if ((reader.Name == "XBMCImages") || (reader.Name == "KODIImages")) //Backward Compatibilty
-                    KODIImages = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "pyTivoMeta")
-                    pyTivoMeta = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "wdLiveTvMeta")
-                    wdLiveTvMeta = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "pyTivoMetaSubFolder")
-                    pyTivoMetaSubFolder = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "FolderJpg")
-                    FolderJpg = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "FolderJpgIs")
-                    FolderJpgIs = (FolderJpgIsType)reader.ReadElementContentAsInt();
-                else if (reader.Name == "MonitoredFoldersScanType")
-                    MonitoredFoldersScanType = (ScanType)reader.ReadElementContentAsInt();
-                else if ((reader.Name == "SelectedXBMCType") || (reader.Name == "SelectedKODIType"))
-                    ignoredInt = reader.ReadElementContentAsInt(); //Ignored as this settign was removed from 2.5 onwards
-                else if (reader.Name == "RenameCheck")
-                    RenameCheck = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "PreventMove")
-                    PreventMove  = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "CheckuTorrent")
-                    CheckuTorrent = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "CheckqBitTorrent")
-                    CheckqBitTorrent = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "qBitTorrentHost")
-                    qBitTorrentHost = reader.ReadElementContentAsString();
-                else if (reader.Name == "qBitTorrentPort")
-                    qBitTorrentPort = reader.ReadElementContentAsString();
-                else if (reader.Name == "MissingCheck")
-                    MissingCheck = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "UpdateFileDates")
-                    CorrectFileDates = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SearchLocally")
-                    SearchLocally = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "LeaveOriginals")
-                    LeaveOriginals = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "AutoSearchForDownloadedFiles")
-                    AutoSearchForDownloadedFiles = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "LookForDateInFilename")
-                    LookForDateInFilename = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "AutoMergeEpisodes")
-                    AutoMergeDownloadEpisodes = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "AutoMergeLibraryEpisodes")
-                    AutoMergeLibraryEpisodes = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "RetainLanguageSpecificSubtitles")
-                    RetainLanguageSpecificSubtitles = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ForceBulkAddToUseSettingsOnly")
-                    ForceBulkAddToUseSettingsOnly = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "MonitorFolders")
-                    MonitorFolders = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "StartupScan")
-                    runStartupCheck = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "PeriodicScan")
-                    runPeriodicCheck = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "PeriodicScanHours")
-                    periodCheckHours = reader.ReadElementContentAsInt();
-                else if (reader.Name == "RemoveDownloadDirectoriesFiles")
-                    RemoveDownloadDirectoriesFiles = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "DeleteShowFromDisk")
-                    DeleteShowFromDisk = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "EpJPGs")
-                    EpJPGs = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "SeriesJpg")
-                    SeriesJpg = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "Mede8erXML")
-                    Mede8erXML = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "ShrinkLargeMede8erImages")
-                    ShrinkLargeMede8erImages = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "FanArtJpg")
-                    FanArtJpg = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "DeleteEmpty")
-                    Tidyup.DeleteEmpty = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "DeleteEmptyIsRecycle")
-                    Tidyup.DeleteEmptyIsRecycle = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "EmptyIgnoreWords")
-                    Tidyup.EmptyIgnoreWords = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "EmptyIgnoreWordList")
-                    Tidyup.EmptyIgnoreWordList = reader.ReadElementContentAsString();
-                else if (reader.Name == "EmptyIgnoreExtensions")
-                    Tidyup.EmptyIgnoreExtensions = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "EmptyIgnoreExtensionList")
-                    Tidyup.EmptyIgnoreExtensionList = reader.ReadElementContentAsString();
-                else if (reader.Name == "EmptyMaxSizeCheck")
-                    Tidyup.EmptyMaxSizeCheck = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "EmptyMaxSizeMB")
-                    Tidyup.EmptyMaxSizeMB = reader.ReadElementContentAsInt();
-                else if (reader.Name == "BulkAddIgnoreRecycleBin")
-                    BulkAddIgnoreRecycleBin = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "BulkAddCompareNoVideoFolders")
-                    BulkAddCompareNoVideoFolders = reader.ReadElementContentAsBoolean();
-                else if (reader.Name == "AutoAddMovieTerms")
-                    AutoAddMovieTerms = reader.ReadElementContentAsString();
-                else if (reader.Name == "AutoAddIgnoreSuffixes")
-                    AutoAddIgnoreSuffixes = reader.ReadElementContentAsString();
-                else if (reader.Name == "PriorityReplaceTerms")
-                    PriorityReplaceTerms = reader.ReadElementContentAsString();
-                else if (reader.Name == "BetaMode")
-                    mode = (BetaMode)reader.ReadElementContentAsInt();
-                else if (reader.Name == "PercentDirtyUpgrade")
-                    upgradeDirtyPercent = reader.ReadElementContentAsFloat();
-                else if (reader.Name == "PercentBetter")
-                    replaceMargin = reader.ReadElementContentAsFloat();
-                else if (reader.Name == "BaseSeasonName")
-                    defaultSeasonWord = reader.ReadElementContentAsString( );
-                else if (reader.Name == "SearchSeasonNames")
-                    searchSeasonWordsString = reader.ReadElementContentAsString();
-                else if (reader.Name == "PreferredRSSSearchTerms")
-                    preferredRSSSearchTermsString = reader.ReadElementContentAsString();
-                else if (reader.Name == "KeepTogetherType")
-                    keepTogetherMode = (KeepTogetherModes) reader.ReadElementContentAsInt();
-                else if (reader.Name == "KeepTogetherExtensions")
-                    keepTogetherExtensionsString = reader.ReadElementContentAsString();
-                else if (reader.Name == "FNPRegexs" && !reader.IsEmptyElement)
-                {
-                    FNPRegexs.Clear();
-                    reader.Read();
-                    while (!reader.EOF)
-                    {
-                        if ((reader.Name == "FNPRegexs") && (!reader.IsStartElement()))
-                            break;
-                        if (reader.Name == "Regex")
-                        {
-                            string s = reader.GetAttribute("Enabled");
-                            bool en = s == null || bool.Parse(s);
-
-                            FNPRegexs.Add(new FilenameProcessorRE(en, reader.GetAttribute("RE"),
-                                                                       bool.Parse(reader.GetAttribute("UseFullPath")),
-                                                                       reader.GetAttribute("Notes")));
-                            reader.Read();
-                        }
-                        else
-                            reader.ReadOuterXml();
-                    }
-                    reader.Read();
-                }
-                else if (reader.Name == "RSSURLs" && !reader.IsEmptyElement)
-                {
-                    RSSURLs.Clear();
-                    reader.Read();
-                    while (!reader.EOF)
-                    {
-                        if ((reader.Name == "RSSURLs") && (!reader.IsStartElement()))
-                            break;
-                        if (reader.Name == "URL")
-                            RSSURLs.Add(reader.ReadElementContentAsString());
-                        else
-                            reader.ReadOuterXml();
-                    }
-                    reader.Read();
-                }
-                else if (reader.Name == "ShowStatusTVWColors" && !reader.IsEmptyElement)
-                {
-                    ShowStatusColors = new ShowStatusColoringTypeList();
-                    reader.Read();
-                    while (!reader.EOF)
-                    {
-                        if ((reader.Name == "ShowStatusTVWColors") && (!reader.IsStartElement()))
-                            break;
-                        if (reader.Name == "ShowStatusTVWColor")
-                        {
-                            ShowStatusColoringType type = null;
-                            try
-                            {
-                                string showStatus = reader.GetAttribute("ShowStatus");
-                                bool isMeta = bool.Parse(reader.GetAttribute("IsMeta"));
-                                bool isShowLevel = bool.Parse(reader.GetAttribute("IsShowLevel"));
-
-                                type = new ShowStatusColoringType(isMeta, isShowLevel, showStatus);
-                            }
-                            catch
-                            {
-                                // ignored
-                            }
-
-                            string color = reader.GetAttribute("Color");
-                            if (type != null && !string.IsNullOrEmpty(color))
-                            {
-                                try
-                                {
-                                    System.Drawing.Color c = System.Drawing.ColorTranslator.FromHtml(color);
-                                    ShowStatusColors.Add(type, c);
-                                }
-                                catch
-                                {
-                                    // ignored
-                                }
-                            }
-                            reader.Read();
-                        }
-                        else
-                            reader.ReadOuterXml();
-                    }
-                    reader.Read();
-                }
-                else if (reader.Name == "ShowFilters" && !reader.IsEmptyElement)
-                {
-                    Filter = new ShowFilter();
-                    reader.Read();
-                    while (!reader.EOF)
-                    {
-                        if ((reader.Name == "ShowFilters") && (!reader.IsStartElement()))
-                            break;
-                        if (reader.Name == "ShowNameFilter")
-                        {
-                            Filter.ShowName = reader.GetAttribute("ShowName");
-                            reader.Read();
-                        }
-                        else if (reader.Name == "ShowStatusFilter")
-                        {
-                            Filter.ShowStatus = reader.GetAttribute("ShowStatus");
-                            reader.Read();
-                        }
-                        else if (reader.Name == "ShowRatingFilter")
-                        {
-                            Filter.ShowRating = reader.GetAttribute("ShowRating");
-                            reader.Read();
-                        }
-                        else if (reader.Name == "ShowNetworkFilter")
-                        {
-                            Filter.ShowNetwork = reader.GetAttribute("ShowNetwork");
-                            reader.Read();
-                        }
-                        else if (reader.Name == "GenreFilter")
-                        {
-                            Filter.Genres.Add(reader.GetAttribute("Genre"));
-                            reader.Read();
-                        }
-                        else
-                            reader.ReadOuterXml();
-                    }
-                    reader.Read();
-                }
-                else if (reader.Name == "SeasonFilters" && !reader.IsEmptyElement)
-                {
-                    SeasonFilter = new SeasonFilter();
-                    reader.Read();
-                    while (!reader.EOF)
-                    {
-                        if ((reader.Name == "SeasonFilters") && (!reader.IsStartElement()))
-                            break;
-                        if (reader.Name == "SeasonIgnoredFilter")
-                        {
-                            SeasonFilter.HideIgnoredSeasons = reader.ReadElementContentAsBoolean();
-                        }
-                        else
-                            reader.ReadOuterXml();
-                    }
-                    reader.Read();
-                }
-                else
-                    reader.ReadOuterXml();
-            }
-
-            if (SeasonFolderFormat == string.Empty)
-            {
-                //this has not been set from the XML, so we should give it an appropriate default value
-                SeasonFolderFormat = defaultSeasonWord.Trim() +" " + (LeadingZeroOnSeason ? "{Season:2}": "{Season}");
-            }
-        }
-
         private void SetToDefaults()
         {
             // defaults that aren't handled with default initialisers
             Ignore = new List<IgnoreItem>();
-
             DownloadFolders = new List<string>();
             IgnoreFolders = new List<string>();
             LibraryFolders = new List<string>();
@@ -730,6 +273,7 @@ namespace TVRename
 
             VideoExtensionsString =
                 ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp";
+
             OtherExtensionsString = ".srt;.nfo;.txt;.tbn";
             keepTogetherExtensionsString = ".srt;.nfo;.txt;.tbn";
             subtitleExtensionsString = ".srt;.sub;.sbv;.idx";
@@ -753,42 +297,31 @@ namespace TVRename
 
             // ResumeDatPath
             FileInfo f2 =
-                new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"uTorrent\resume.dat"));
+                new FileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    @"uTorrent\resume.dat"));
+
             ResumeDatPath = f2.Exists ? f2.FullName : "";
         }
 
         public void WriteXML(XmlWriter writer)
         {
             writer.WriteStartElement("Settings");
-            TheSearchers.WriteXml(writer);
-            XmlHelper.WriteElementToXml(writer,"BGDownload",BGDownload);
-            XmlHelper.WriteElementToXml(writer,"OfflineMode",OfflineMode);
+            XmlHelper.WriteElementToXml(writer, "BGDownload", BGDownload);
+            XmlHelper.WriteElementToXml(writer, "OfflineMode", OfflineMode);
             XmlHelper.WriteElementToXml(writer, "ReplaceWithBetterQuality", ReplaceWithBetterQuality);
-            writer.WriteStartElement("Replacements");
-            foreach (Replacement R in Replacements)
-            {
-                writer.WriteStartElement("Replace");
-                XmlHelper.WriteAttributeToXml(writer,"This",R.This);
-                XmlHelper.WriteAttributeToXml(writer, "That", R.That);
-                XmlHelper.WriteAttributeToXml(writer, "CaseInsensitive", R.CaseInsensitive ? "Y" : "N");
-                writer.WriteEndElement(); //Replace
-            }
-            writer.WriteEndElement(); //Replacements
-            
-            XmlHelper.WriteElementToXml(writer,"ExportWTWRSS",ExportWTWRSS);
-            XmlHelper.WriteElementToXml(writer,"ExportWTWRSSTo",ExportWTWRSSTo);
+            XmlHelper.WriteElementToXml(writer, "ExportWTWRSS", ExportWTWRSS);
+            XmlHelper.WriteElementToXml(writer, "ExportWTWRSSTo", ExportWTWRSSTo);
             XmlHelper.WriteElementToXml(writer, "ExportWTWICAL", ExportWTWICAL);
             XmlHelper.WriteElementToXml(writer, "ExportWTWICALTo", ExportWTWICALTo);
-            XmlHelper.WriteElementToXml(writer,"ExportWTWXML",ExportWTWXML);
-            XmlHelper.WriteElementToXml(writer,"ExportWTWXMLTo",ExportWTWXMLTo);
-            XmlHelper.WriteElementToXml(writer,"WTWRecentDays",WTWRecentDays);
-            XmlHelper.WriteElementToXml(writer,"ExportMissingXML",ExportMissingXML);
-            XmlHelper.WriteElementToXml(writer,"ExportMissingXMLTo",ExportMissingXMLTo);
-            XmlHelper.WriteElementToXml(writer,"ExportMissingCSV",ExportMissingCSV);
-            XmlHelper.WriteElementToXml(writer,"ExportMissingCSVTo",ExportMissingCSVTo);
-            XmlHelper.WriteElementToXml(writer,"ExportRenamingXML",ExportRenamingXML);
-            XmlHelper.WriteElementToXml(writer,"ExportRenamingXMLTo",ExportRenamingXMLTo);
-
+            XmlHelper.WriteElementToXml(writer, "ExportWTWXML", ExportWTWXML);
+            XmlHelper.WriteElementToXml(writer, "ExportWTWXMLTo", ExportWTWXMLTo);
+            XmlHelper.WriteElementToXml(writer, "WTWRecentDays", WTWRecentDays);
+            XmlHelper.WriteElementToXml(writer, "ExportMissingXML", ExportMissingXML);
+            XmlHelper.WriteElementToXml(writer, "ExportMissingXMLTo", ExportMissingXMLTo);
+            XmlHelper.WriteElementToXml(writer, "ExportMissingCSV", ExportMissingCSV);
+            XmlHelper.WriteElementToXml(writer, "ExportMissingCSVTo", ExportMissingCSVTo);
+            XmlHelper.WriteElementToXml(writer, "ExportRenamingXML", ExportRenamingXML);
+            XmlHelper.WriteElementToXml(writer, "ExportRenamingXMLTo", ExportRenamingXMLTo);
             XmlHelper.WriteElementToXml(writer, "ExportRecentM3U", ExportRecentM3U);
             XmlHelper.WriteElementToXml(writer, "ExportRecentM3UTo", ExportRecentM3UTo);
             XmlHelper.WriteElementToXml(writer, "ExportRecentASX", ExportRecentASX);
@@ -797,93 +330,92 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "ExportRecentWPLTo", ExportRecentWPLTo);
             XmlHelper.WriteElementToXml(writer, "ExportRecentXSPF", ExportRecentXSPF);
             XmlHelper.WriteElementToXml(writer, "ExportRecentXSPFTo", ExportRecentXSPFTo);
-
-            XmlHelper.WriteElementToXml(writer,"ExportShowsTXT", ExportShowsTXT);
+            XmlHelper.WriteElementToXml(writer, "ExportShowsTXT", ExportShowsTXT);
             XmlHelper.WriteElementToXml(writer, "ExportShowsTXTTo", ExportShowsTXTTo);
             XmlHelper.WriteElementToXml(writer, "ExportShowsHTML", ExportShowsHTML);
             XmlHelper.WriteElementToXml(writer, "ExportShowsHTMLTo", ExportShowsHTMLTo);
-            XmlHelper.WriteElementToXml(writer,"ExportFOXML",ExportFOXML);
-            XmlHelper.WriteElementToXml(writer,"ExportFOXMLTo",ExportFOXMLTo);
-            XmlHelper.WriteElementToXml(writer,"StartupTab2",TabNameForNumber(StartupTab));
-            XmlHelper.WriteElementToXml(writer,"NamingStyle",NamingStyle.StyleString);
-            XmlHelper.WriteElementToXml(writer,"NotificationAreaIcon",NotificationAreaIcon);
-            XmlHelper.WriteElementToXml(writer,"VideoExtensions",VideoExtensionsString);
-            XmlHelper.WriteElementToXml(writer,"OtherExtensions",OtherExtensionsString);
-            XmlHelper.WriteElementToXml(writer,"SubtitleExtensions", subtitleExtensionsString);
-            XmlHelper.WriteElementToXml(writer,"ExportRSSMaxDays",ExportRSSMaxDays);
-            XmlHelper.WriteElementToXml(writer,"ExportRSSMaxShows",ExportRSSMaxShows);
-            XmlHelper.WriteElementToXml(writer,"ExportRSSDaysPast",ExportRSSDaysPast);
-            XmlHelper.WriteElementToXml(writer,"KeepTogether",KeepTogether);
-            XmlHelper.WriteElementToXml(writer,"KeepTogetherType", (int)keepTogetherMode);
-            XmlHelper.WriteElementToXml(writer,"KeepTogetherExtensions", keepTogetherExtensionsString);
-            XmlHelper.WriteElementToXml(writer,"LeadingZeroOnSeason",LeadingZeroOnSeason);
-            XmlHelper.WriteElementToXml(writer,"ShowInTaskbar",ShowInTaskbar);
-            XmlHelper.WriteElementToXml(writer,"IgnoreSamples",IgnoreSamples);
-            XmlHelper.WriteElementToXml(writer,"ForceLowercaseFilenames",ForceLowercaseFilenames);
-            XmlHelper.WriteElementToXml(writer,"RenameTxtToSub",RenameTxtToSub);
-            XmlHelper.WriteElementToXml(writer,"ParallelDownloads",ParallelDownloads);
-            XmlHelper.WriteElementToXml(writer,"AutoSelectShowInMyShows",AutoSelectShowInMyShows);
-            XmlHelper.WriteElementToXml(writer,"AutoCreateFolders", AutoCreateFolders );
-            XmlHelper.WriteElementToXml(writer,"ShowEpisodePictures",ShowEpisodePictures);
+            XmlHelper.WriteElementToXml(writer, "ExportFOXML", ExportFOXML);
+            XmlHelper.WriteElementToXml(writer, "ExportFOXMLTo", ExportFOXMLTo);
+            XmlHelper.WriteElementToXml(writer, "StartupTab2", TabNameForNumber(StartupTab));
+            XmlHelper.WriteElementToXml(writer, "NamingStyle", NamingStyle.StyleString);
+            XmlHelper.WriteElementToXml(writer, "NotificationAreaIcon", NotificationAreaIcon);
+            XmlHelper.WriteElementToXml(writer, "VideoExtensions", VideoExtensionsString);
+            XmlHelper.WriteElementToXml(writer, "OtherExtensions", OtherExtensionsString);
+            XmlHelper.WriteElementToXml(writer, "SubtitleExtensions", subtitleExtensionsString);
+            XmlHelper.WriteElementToXml(writer, "ExportRSSMaxDays", ExportRSSMaxDays);
+            XmlHelper.WriteElementToXml(writer, "ExportRSSMaxShows", ExportRSSMaxShows);
+            XmlHelper.WriteElementToXml(writer, "ExportRSSDaysPast", ExportRSSDaysPast);
+            XmlHelper.WriteElementToXml(writer, "KeepTogether", KeepTogether);
+            XmlHelper.WriteElementToXml(writer, "KeepTogetherType", (int) keepTogetherMode);
+            XmlHelper.WriteElementToXml(writer, "KeepTogetherExtensions", keepTogetherExtensionsString);
+            XmlHelper.WriteElementToXml(writer, "LeadingZeroOnSeason", LeadingZeroOnSeason);
+            XmlHelper.WriteElementToXml(writer, "ShowInTaskbar", ShowInTaskbar);
+            XmlHelper.WriteElementToXml(writer, "IgnoreSamples", IgnoreSamples);
+            XmlHelper.WriteElementToXml(writer, "ForceLowercaseFilenames", ForceLowercaseFilenames);
+            XmlHelper.WriteElementToXml(writer, "RenameTxtToSub", RenameTxtToSub);
+            XmlHelper.WriteElementToXml(writer, "ParallelDownloads", ParallelDownloads);
+            XmlHelper.WriteElementToXml(writer, "AutoSelectShowInMyShows", AutoSelectShowInMyShows);
+            XmlHelper.WriteElementToXml(writer, "AutoCreateFolders", AutoCreateFolders);
+            XmlHelper.WriteElementToXml(writer, "ShowEpisodePictures", ShowEpisodePictures);
             XmlHelper.WriteElementToXml(writer, "HideWtWSpoilers", HideWtWSpoilers);
             XmlHelper.WriteElementToXml(writer, "HideMyShowsSpoilers", HideMyShowsSpoilers);
-            XmlHelper.WriteElementToXml(writer,"SpecialsFolderName",SpecialsFolderName);
+            XmlHelper.WriteElementToXml(writer, "SpecialsFolderName", SpecialsFolderName);
             XmlHelper.WriteElementToXml(writer, "SeasonFolderFormat", SeasonFolderFormat);
-            XmlHelper.WriteElementToXml(writer,"uTorrentPath",uTorrentPath);
-            XmlHelper.WriteElementToXml(writer,"ResumeDatPath",ResumeDatPath);
-            XmlHelper.WriteElementToXml(writer,"SearchRSS",SearchRSS);
+            XmlHelper.WriteElementToXml(writer, "uTorrentPath", uTorrentPath);
+            XmlHelper.WriteElementToXml(writer, "ResumeDatPath", ResumeDatPath);
+            XmlHelper.WriteElementToXml(writer, "SearchRSS", SearchRSS);
             XmlHelper.WriteElementToXml(writer, "SearchJSON", SearchJSON);
-            XmlHelper.WriteElementToXml(writer,"EpImgs",EpTBNs);
-            XmlHelper.WriteElementToXml(writer,"NFOShows",NFOShows);
-            XmlHelper.WriteElementToXml(writer,"NFOEpisodes", NFOEpisodes);
-            XmlHelper.WriteElementToXml(writer,"KODIImages",KODIImages);
-            XmlHelper.WriteElementToXml(writer,"pyTivoMeta",pyTivoMeta);
-            XmlHelper.WriteElementToXml(writer,"pyTivoMetaSubFolder",pyTivoMetaSubFolder);
-            XmlHelper.WriteElementToXml(writer,"wdLiveTvMeta", wdLiveTvMeta);
-            XmlHelper.WriteElementToXml(writer,"FolderJpg",FolderJpg);
-            XmlHelper.WriteElementToXml(writer,"FolderJpgIs",(int) FolderJpgIs);
-            XmlHelper.WriteElementToXml(writer,"MonitoredFoldersScanType",(int)MonitoredFoldersScanType);
-            XmlHelper.WriteElementToXml(writer,"CheckuTorrent",CheckuTorrent);
+            XmlHelper.WriteElementToXml(writer, "EpImgs", EpTBNs);
+            XmlHelper.WriteElementToXml(writer, "NFOShows", NFOShows);
+            XmlHelper.WriteElementToXml(writer, "NFOEpisodes", NFOEpisodes);
+            XmlHelper.WriteElementToXml(writer, "KODIImages", KODIImages);
+            XmlHelper.WriteElementToXml(writer, "pyTivoMeta", pyTivoMeta);
+            XmlHelper.WriteElementToXml(writer, "pyTivoMetaSubFolder", pyTivoMetaSubFolder);
+            XmlHelper.WriteElementToXml(writer, "wdLiveTvMeta", wdLiveTvMeta);
+            XmlHelper.WriteElementToXml(writer, "FolderJpg", FolderJpg);
+            XmlHelper.WriteElementToXml(writer, "FolderJpgIs", (int) FolderJpgIs);
+            XmlHelper.WriteElementToXml(writer, "MonitoredFoldersScanType", (int) MonitoredFoldersScanType);
+            XmlHelper.WriteElementToXml(writer, "CheckuTorrent", CheckuTorrent);
             XmlHelper.WriteElementToXml(writer, "CheckqBitTorrent", CheckqBitTorrent);
             XmlHelper.WriteElementToXml(writer, "qBitTorrentHost", qBitTorrentHost);
             XmlHelper.WriteElementToXml(writer, "qBitTorrentPort", qBitTorrentPort);
-            XmlHelper.WriteElementToXml(writer,"RenameCheck",RenameCheck);
+            XmlHelper.WriteElementToXml(writer, "RenameCheck", RenameCheck);
             XmlHelper.WriteElementToXml(writer, "PreventMove", PreventMove);
-            XmlHelper.WriteElementToXml(writer,"MissingCheck",MissingCheck);
+            XmlHelper.WriteElementToXml(writer, "MissingCheck", MissingCheck);
             XmlHelper.WriteElementToXml(writer, "AutoSearchForDownloadedFiles", AutoSearchForDownloadedFiles);
             XmlHelper.WriteElementToXml(writer, "UpdateFileDates", CorrectFileDates);
-            XmlHelper.WriteElementToXml(writer,"SearchLocally",SearchLocally);
-            XmlHelper.WriteElementToXml(writer,"LeaveOriginals",LeaveOriginals);
+            XmlHelper.WriteElementToXml(writer, "SearchLocally", SearchLocally);
+            XmlHelper.WriteElementToXml(writer, "LeaveOriginals", LeaveOriginals);
             XmlHelper.WriteElementToXml(writer, "RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles);
             XmlHelper.WriteElementToXml(writer, "ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly);
-            XmlHelper.WriteElementToXml(writer,"LookForDateInFilename",LookForDateInFilename);
+            XmlHelper.WriteElementToXml(writer, "LookForDateInFilename", LookForDateInFilename);
             XmlHelper.WriteElementToXml(writer, "AutoMergeEpisodes", AutoMergeDownloadEpisodes);
             XmlHelper.WriteElementToXml(writer, "AutoMergeLibraryEpisodes", AutoMergeLibraryEpisodes);
-            XmlHelper.WriteElementToXml(writer,"MonitorFolders",MonitorFolders);
+            XmlHelper.WriteElementToXml(writer, "MonitorFolders", MonitorFolders);
             XmlHelper.WriteElementToXml(writer, "StartupScan", runStartupCheck);
             XmlHelper.WriteElementToXml(writer, "PeriodicScan", runPeriodicCheck);
             XmlHelper.WriteElementToXml(writer, "PeriodicScanHours", periodCheckHours);
             XmlHelper.WriteElementToXml(writer, "RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
             XmlHelper.WriteElementToXml(writer, "DeleteShowFromDisk", DeleteShowFromDisk);
-            XmlHelper.WriteElementToXml(writer,"SABAPIKey",SABAPIKey);
-            XmlHelper.WriteElementToXml(writer,"CheckSABnzbd",CheckSABnzbd);
-            XmlHelper.WriteElementToXml(writer,"SABHostPort",SABHostPort);
-            XmlHelper.WriteElementToXml(writer,"PreferredLanguage",PreferredLanguageCode);
-            XmlHelper.WriteElementToXml(writer,"WTWDoubleClick",(int) WTWDoubleClick);
-            XmlHelper.WriteElementToXml(writer,"EpJPGs",EpJPGs);
-            XmlHelper.WriteElementToXml(writer,"SeriesJpg",SeriesJpg);
-            XmlHelper.WriteElementToXml(writer,"Mede8erXML",Mede8erXML);
-            XmlHelper.WriteElementToXml(writer,"ShrinkLargeMede8erImages",ShrinkLargeMede8erImages);
-            XmlHelper.WriteElementToXml(writer,"FanArtJpg",FanArtJpg);
-            XmlHelper.WriteElementToXml(writer,"DeleteEmpty",Tidyup.DeleteEmpty);
-            XmlHelper.WriteElementToXml(writer,"DeleteEmptyIsRecycle",Tidyup.DeleteEmptyIsRecycle);
-            XmlHelper.WriteElementToXml(writer,"EmptyIgnoreWords",Tidyup.EmptyIgnoreWords);
-            XmlHelper.WriteElementToXml(writer,"EmptyIgnoreWordList",Tidyup.EmptyIgnoreWordList);
-            XmlHelper.WriteElementToXml(writer,"EmptyIgnoreExtensions",Tidyup.EmptyIgnoreExtensions);
-            XmlHelper.WriteElementToXml(writer,"EmptyIgnoreExtensionList",Tidyup.EmptyIgnoreExtensionList);
-            XmlHelper.WriteElementToXml(writer,"EmptyMaxSizeCheck",Tidyup.EmptyMaxSizeCheck);
-            XmlHelper.WriteElementToXml(writer,"EmptyMaxSizeMB",Tidyup.EmptyMaxSizeMB);
-            XmlHelper.WriteElementToXml(writer, "BetaMode", (int)mode);
+            XmlHelper.WriteElementToXml(writer, "SABAPIKey", SABAPIKey);
+            XmlHelper.WriteElementToXml(writer, "CheckSABnzbd", CheckSABnzbd);
+            XmlHelper.WriteElementToXml(writer, "SABHostPort", SABHostPort);
+            XmlHelper.WriteElementToXml(writer, "PreferredLanguage", PreferredLanguageCode);
+            XmlHelper.WriteElementToXml(writer, "WTWDoubleClick", (int) WTWDoubleClick);
+            XmlHelper.WriteElementToXml(writer, "EpJPGs", EpJPGs);
+            XmlHelper.WriteElementToXml(writer, "SeriesJpg", SeriesJpg);
+            XmlHelper.WriteElementToXml(writer, "Mede8erXML", Mede8erXML);
+            XmlHelper.WriteElementToXml(writer, "ShrinkLargeMede8erImages", ShrinkLargeMede8erImages);
+            XmlHelper.WriteElementToXml(writer, "FanArtJpg", FanArtJpg);
+            XmlHelper.WriteElementToXml(writer, "DeleteEmpty", Tidyup.DeleteEmpty);
+            XmlHelper.WriteElementToXml(writer, "DeleteEmptyIsRecycle", Tidyup.DeleteEmptyIsRecycle);
+            XmlHelper.WriteElementToXml(writer, "EmptyIgnoreWords", Tidyup.EmptyIgnoreWords);
+            XmlHelper.WriteElementToXml(writer, "EmptyIgnoreWordList", Tidyup.EmptyIgnoreWordList);
+            XmlHelper.WriteElementToXml(writer, "EmptyIgnoreExtensions", Tidyup.EmptyIgnoreExtensions);
+            XmlHelper.WriteElementToXml(writer, "EmptyIgnoreExtensionList", Tidyup.EmptyIgnoreExtensionList);
+            XmlHelper.WriteElementToXml(writer, "EmptyMaxSizeCheck", Tidyup.EmptyMaxSizeCheck);
+            XmlHelper.WriteElementToXml(writer, "EmptyMaxSizeMB", Tidyup.EmptyMaxSizeMB);
+            XmlHelper.WriteElementToXml(writer, "BetaMode", (int) mode);
             XmlHelper.WriteElementToXml(writer, "PercentDirtyUpgrade", upgradeDirtyPercent);
             XmlHelper.WriteElementToXml(writer, "PercentBetter", replaceMargin);
             XmlHelper.WriteElementToXml(writer, "BaseSeasonName", defaultSeasonWord);
@@ -899,21 +431,33 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "SearchJSONURLToken", SearchJSONURLToken);
             XmlHelper.WriteElementToXml(writer, "PriorityReplaceTerms", PriorityReplaceTerms);
 
+            TheSearchers.WriteXml(writer);
+            writer.WriteStartElement("Replacements");
+            foreach (Replacement R in Replacements)
+            {
+                writer.WriteStartElement("Replace");
+                XmlHelper.WriteAttributeToXml(writer, "This", R.This);
+                XmlHelper.WriteAttributeToXml(writer, "That", R.That);
+                XmlHelper.WriteAttributeToXml(writer, "CaseInsensitive", R.CaseInsensitive ? "Y" : "N");
+                writer.WriteEndElement(); //Replace
+            }
+
+            writer.WriteEndElement(); //Replacements
+
             writer.WriteStartElement("FNPRegexs");
             foreach (FilenameProcessorRE re in FNPRegexs)
             {
                 writer.WriteStartElement("Regex");
-                XmlHelper.WriteAttributeToXml(writer,"Enabled",re.Enabled);
-                XmlHelper.WriteAttributeToXml(writer,"RE",re.RegExpression);
-                XmlHelper.WriteAttributeToXml(writer,"UseFullPath",re.UseFullPath);
-                XmlHelper.WriteAttributeToXml(writer,"Notes",re.Notes);
+                XmlHelper.WriteAttributeToXml(writer, "Enabled", re.Enabled);
+                XmlHelper.WriteAttributeToXml(writer, "RE", re.RegExpression);
+                XmlHelper.WriteAttributeToXml(writer, "UseFullPath", re.UseFullPath);
+                XmlHelper.WriteAttributeToXml(writer, "Notes", re.Notes);
                 writer.WriteEndElement(); // Regex
             }
+
             writer.WriteEndElement(); // FNPRegexs
 
-            writer.WriteStartElement("RSSURLs");
-            foreach (string s in RSSURLs) XmlHelper.WriteElementToXml(writer,"URL",s);
-            writer.WriteEndElement(); // RSSURLs
+            XmlHelper.WriteStringsToXml(RSSURLs,writer,"RSSURLs", "URL");
 
             if (ShowStatusColors != null)
             {
@@ -922,12 +466,13 @@ namespace TVRename
                 {
                     writer.WriteStartElement("ShowStatusTVWColor");
                     // TODO ... Write Meta Flags
-                    XmlHelper.WriteAttributeToXml(writer,"IsMeta",e.Key.IsMetaType);
-                    XmlHelper.WriteAttributeToXml(writer,"IsShowLevel",e.Key.IsShowLevel);
-                    XmlHelper.WriteAttributeToXml(writer,"ShowStatus",e.Key.Status);
-                    XmlHelper.WriteAttributeToXml(writer,"Color",Helpers.TranslateColorToHtml(e.Value));
+                    XmlHelper.WriteAttributeToXml(writer, "IsMeta", e.Key.IsMetaType);
+                    XmlHelper.WriteAttributeToXml(writer, "IsShowLevel", e.Key.IsShowLevel);
+                    XmlHelper.WriteAttributeToXml(writer, "ShowStatus", e.Key.Status);
+                    XmlHelper.WriteAttributeToXml(writer, "Color", Helpers.TranslateColorToHtml(e.Value));
                     writer.WriteEndElement(); //ShowStatusTVWColor
                 }
+
                 writer.WriteEndElement(); // ShowStatusTVWColors
             }
 
@@ -941,7 +486,7 @@ namespace TVRename
                 XmlHelper.WriteInfo(writer, "ShowRatingFilter", "ShowRating", Filter.ShowRating);
 
                 foreach (string genre in Filter.Genres) XmlHelper.WriteInfo(writer, "GenreFilter", "Genre", genre);
- 
+
                 writer.WriteEndElement(); //ShowFilters
             }
 
@@ -951,22 +496,20 @@ namespace TVRename
                 XmlHelper.WriteElementToXml(writer, "SeasonIgnoredFilter", SeasonFilter.HideIgnoredSeasons);
                 writer.WriteEndElement(); //SeasonFilters
             }
+
             writer.WriteEndElement(); // settings
         }
 
-        internal float PercentDirtyUpgrade()
-        {
-            return upgradeDirtyPercent;
-        }
+        internal float PercentDirtyUpgrade() => upgradeDirtyPercent;
 
         public FolderJpgIsType ItemForFolderJpg() => FolderJpgIs;
 
-        public string GetVideoExtensionsString() =>VideoExtensionsString;
+        public string GetVideoExtensionsString() => VideoExtensionsString;
         public string GetOtherExtensionsString() => OtherExtensionsString;
         public string GetKeepTogetherString() => keepTogetherExtensionsString;
-        
+
         public bool RunPeriodicCheck() => runPeriodicCheck;
-        public int PeriodicCheckPeriod() =>  periodCheckHours * 60* 60 * 1000;
+        public int PeriodicCheckPeriod() => periodCheckHours * 60 * 60 * 1000;
         public bool RunOnStartUp() => runStartupCheck;
 
         public string GetSeasonSearchTermsString() => searchSeasonWordsString;
@@ -983,6 +526,7 @@ namespace TVRename
                 if ((string.IsNullOrEmpty(s2)) || (!s2.StartsWith(".")))
                     return false;
             }
+
             return true;
         }
 
@@ -996,68 +540,69 @@ namespace TVRename
             // Default list of filename processors
 
             List<FilenameProcessorRE> l = new List<FilenameProcessorRE>
-                                              {
-                                                  new FilenameProcessorRE(true,
-                                                      "(^|[^a-z])s?(?<s>[0-9]+).?[ex](?<e>[0-9]{2,})(-?e[0-9]{2,})*-?[ex](?<f>[0-9]{2,})[^a-z]",
-                                                      false, "Multipart Rule : s04e01e02e03 S01E01-E02"),
-                                                  new FilenameProcessorRE(true,
-                                                                          "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]",
-                                                                          false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),
-                                                  new FilenameProcessorRE(false,
-                                                                          "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]",
-                                                                          false,
-                                                                          "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."),
-                                                  new FilenameProcessorRE(false,
-                                                                          "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]",
-                                                                          false, "S02--E03"),
-                                                  new FilenameProcessorRE(false,
-                                                                          "(^|[^a-z])s(?<s>[0-9]+) e(?<e>[0-9]{2,})[^a-z]",
-                                                                          false, "'S02.E04' and 'S02 E04'"),
-                                                  new FilenameProcessorRE(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false,
-                                                                          "filenames starting with '1.23' for season 1, episode 23"),
-                                                  new FilenameProcessorRE(false,
-                                                                          "(^|[^a-z])(?<s>[0-9])(?<e>[0-9]{2,})[^a-z]",
-                                                                          false, "Show - 323 - Foo"),
-                                                  new FilenameProcessorRE(true,
-                                                                          "(^|[^a-z])se(?<s>[0-9]+)([ex]|ep|xep)?(?<e>[0-9]+)[^a-z]",
-                                                                          false, "se3e23 se323 se1ep1 se01xep01..."),
-                                                  new FilenameProcessorRE(true,
-                                                                          "(^|[^a-z])(?<s>[0-9]+)-(?<e>[0-9]{2,})[^a-z]",
-                                                                          false, "3-23 EpName"),
-                                                  new FilenameProcessorRE(true,
-                                                                          "(^|[^a-z])s(?<s>[0-9]+) +- +e(?<e>[0-9]{2,})[^a-z]",
-                                                                          false, "ShowName - S01 - E01"),
-                                                  new FilenameProcessorRE(true,
-                                                                          "\\b(?<e>[0-9]{2,}) ?- ?.* ?- ?(?<s>[0-9]+)",
-                                                                          false,
-                                                                          "like '13 - Showname - 2 - Episode Title.avi'"),
-                                                  new FilenameProcessorRE(true,
-                                                                          "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)",
-                                                                          false, "episode 3 - season 4"),
-                                                  new FilenameProcessorRE(true,
-                                                                          "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-",
-                                                                          true, "Show Season 3\\E23 - Epname"),
-                                                  new FilenameProcessorRE(false,
-                                                                          "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})",
-                                                                          true, "Season 3\\Episode 23")
-                                              };
+            {
+                new FilenameProcessorRE(true,
+                    "(^|[^a-z])s?(?<s>[0-9]+).?[ex](?<e>[0-9]{2,})(-?e[0-9]{2,})*-?[ex](?<f>[0-9]{2,})[^a-z]",
+                    false, "Multipart Rule : s04e01e02e03 S01E01-E02"),
+                new FilenameProcessorRE(true,
+                    "(^|[^a-z])s?(?<s>[0-9]+)[ex](?<e>[0-9]{2,})(e[0-9]{2,})*[^a-z]",
+                    false, "3x23 s3x23 3e23 s3e23 s04e01e02e03"),
+                new FilenameProcessorRE(false,
+                    "(^|[^a-z])s?(?<s>[0-9]+)(?<e>[0-9]{2,})[^a-z]",
+                    false,
+                    "323 or s323 for season 3, episode 23. 2004 for season 20, episode 4."),
+                new FilenameProcessorRE(false,
+                    "(^|[^a-z])s(?<s>[0-9]+)--e(?<e>[0-9]{2,})[^a-z]",
+                    false, "S02--E03"),
+                new FilenameProcessorRE(false,
+                    "(^|[^a-z])s(?<s>[0-9]+) e(?<e>[0-9]{2,})[^a-z]",
+                    false, "'S02.E04' and 'S02 E04'"),
+                new FilenameProcessorRE(false, "^(?<s>[0-9]+) (?<e>[0-9]{2,})", false,
+                    "filenames starting with '1.23' for season 1, episode 23"),
+                new FilenameProcessorRE(false,
+                    "(^|[^a-z])(?<s>[0-9])(?<e>[0-9]{2,})[^a-z]",
+                    false, "Show - 323 - Foo"),
+                new FilenameProcessorRE(true,
+                    "(^|[^a-z])se(?<s>[0-9]+)([ex]|ep|xep)?(?<e>[0-9]+)[^a-z]",
+                    false, "se3e23 se323 se1ep1 se01xep01..."),
+                new FilenameProcessorRE(true,
+                    "(^|[^a-z])(?<s>[0-9]+)-(?<e>[0-9]{2,})[^a-z]",
+                    false, "3-23 EpName"),
+                new FilenameProcessorRE(true,
+                    "(^|[^a-z])s(?<s>[0-9]+) +- +e(?<e>[0-9]{2,})[^a-z]",
+                    false, "ShowName - S01 - E01"),
+                new FilenameProcessorRE(true,
+                    "\\b(?<e>[0-9]{2,}) ?- ?.* ?- ?(?<s>[0-9]+)",
+                    false,
+                    "like '13 - Showname - 2 - Episode Title.avi'"),
+                new FilenameProcessorRE(true,
+                    "\\b(episode|ep|e) ?(?<e>[0-9]{2,}) ?- ?(series|season) ?(?<s>[0-9]+)",
+                    false, "episode 3 - season 4"),
+                new FilenameProcessorRE(true,
+                    "season (?<s>[0-9]+)\\\\e?(?<e>[0-9]{1,3}) ?-",
+                    true, "Show Season 3\\E23 - Epname"),
+                new FilenameProcessorRE(false,
+                    "season (?<s>[0-9]+)\\\\episode (?<e>[0-9]{1,3})",
+                    true, "Season 3\\Episode 23")
+            };
+
             return l;
         }
 
         private static List<Replacement> DefaultListRE()
         {
             return new List<Replacement>
-                       {
-                           new Replacement("*", "#", false),
-                           new Replacement("?", "", false),
-                           new Replacement(">", "", false),
-                           new Replacement("<", "", false),
-                           new Replacement(":", "-", false),
-                           new Replacement("/", "-", false),
-                           new Replacement("\\", "-", false),
-                           new Replacement("|", "-", false),
-                           new Replacement("\"", "'", false)
-                       };
+            {
+                new Replacement("*", "#", false),
+                new Replacement("?", "", false),
+                new Replacement(">", "", false),
+                new Replacement("<", "", false),
+                new Replacement(":", "-", false),
+                new Replacement("/", "-", false),
+                new Replacement("\\", "-", false),
+                new Replacement("|", "-", false),
+                new Replacement("\"", "'", false)
+            };
         }
 
         private static List<string> DefaultRSSURLList()
@@ -1072,6 +617,7 @@ namespace TVRename
         {
             if ((n >= 0) && (n < TabNames().Length))
                 return TabNames()[n];
+
             return "";
         }
 
@@ -1080,25 +626,23 @@ namespace TVRename
             int r = 0;
             if (!string.IsNullOrEmpty(n))
                 r = Array.IndexOf(TabNames(), n);
+
             if (r < 0)
                 r = 0;
+
             return r;
         }
 
         public bool UsefulExtension(string sn, bool otherExtensionsToo)
         {
-            foreach (string s in VideoExtensionsArray)
+            if (VideoExtensionsArray.Any(s => string.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase)))
             {
-                if (String.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase))
-                    return true;
+                return true;
             }
+
             if (otherExtensionsToo)
             {
-                foreach (string s in OtherExtensionsArray)
-                {
-                    if (string.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase))
-                        return true;
-                }
+                return OtherExtensionsArray.Any(s => string.Equals(sn, s, StringComparison.CurrentCultureIgnoreCase));
             }
 
             return false;
@@ -1108,10 +652,11 @@ namespace TVRename
         {
             foreach (string s in VideoExtensionsArray)
             {
-                if (!file.Name.EndsWith(s,StringComparison.InvariantCultureIgnoreCase)) continue;
+                if (!file.Name.EndsWith(s, StringComparison.InvariantCultureIgnoreCase)) continue;
                 extension = s;
                 return true;
             }
+
             if (otherExtensionsToo)
             {
                 foreach (string s in OtherExtensionsArray)
@@ -1134,7 +679,7 @@ namespace TVRename
 
             if (keepTogetherMode == KeepTogetherModes.Just) return keepTogetherExtensionsArray.Contains(extension);
 
-            if (keepTogetherMode == KeepTogetherModes.AllBut ) return !keepTogetherExtensionsArray.Contains(extension);
+            if (keepTogetherMode == KeepTogetherModes.AllBut) return !keepTogetherExtensionsArray.Contains(extension);
 
             logger.Error("INVALID USE OF KEEP EXTENSION");
             return false;
@@ -1149,6 +694,7 @@ namespace TVRename
             string url = (epi.Show.UseCustomSearchUrl && !string.IsNullOrWhiteSpace(epi.Show.CustomSearchUrl))
                 ? epi.Show.CustomSearchUrl
                 : TheSearchers.CurrentSearchUrl();
+
             return CustomEpisodeName.NameForNoExt(epi, url, true);
         }
 
@@ -1163,19 +709,23 @@ namespace TVRename
                 else
                     fn = fn.Replace(rep.This, rep.That);
             }
+
             if (ForceLowercaseFilenames)
                 fn = fn.ToLower();
+
             return fn;
         }
 
-        public bool NeedToDownloadBannerFile(){
+        public bool NeedToDownloadBannerFile()
+        {
             // Return true iff we need to download season specific images
             // There are 4 possible reasons
             return (SeasonSpecificFolderJPG() || KODIImages || SeriesJpg || FanArtJpg);
         }
 
         // ReSharper disable once InconsistentNaming
-        public bool SeasonSpecificFolderJPG() {
+        public bool SeasonSpecificFolderJPG()
+        {
             return (FolderJpgIsType.SeasonPoster == FolderJpgIs);
         }
 
@@ -1189,6 +739,7 @@ namespace TVRename
                 case KeepTogetherModes.Just: return keepTogetherExtensionsArray.Contains(fileExtension);
                 case KeepTogetherModes.AllBut: return !keepTogetherExtensionsArray.Contains(fileExtension);
             }
+
             return true;
         }
 
@@ -1201,11 +752,24 @@ namespace TVRename
             public bool EmptyIgnoreExtensions = false;
             public string EmptyIgnoreExtensionList = ".nzb;.nfo;.par2;.txt;.srt";
             public bool EmptyMaxSizeCheck = true;
+
             // ReSharper disable once InconsistentNaming
             public int EmptyMaxSizeMB = 100;
 
-            public string[] EmptyIgnoreExtensionsArray => EmptyIgnoreExtensionList.Split(';');
-            public string[] EmptyIgnoreWordsArray => EmptyIgnoreWordList.Split(';');
+            public IEnumerable<string> EmptyIgnoreExtensionsArray => EmptyIgnoreExtensionList.Split(';');
+            public IEnumerable<string> EmptyIgnoreWordsArray => EmptyIgnoreWordList.Split(';');
+
+            public void load(XElement xmlSettings)
+            {
+                DeleteEmpty = xmlSettings.ExtractBool("DeleteEmpty")??false;
+                DeleteEmptyIsRecycle = xmlSettings.ExtractBool("DeleteEmptyIsRecycle")??true;
+                EmptyIgnoreWords = xmlSettings.ExtractBool("EmptyIgnoreWords") ?? false;
+                EmptyIgnoreWordList = xmlSettings.ExtractString("EmptyIgnoreWordList")??"sample";
+                EmptyIgnoreExtensions = xmlSettings.ExtractBool("EmptyIgnoreExtensions") ?? false;
+                EmptyIgnoreExtensionList = xmlSettings.ExtractString("EmptyIgnoreExtensionList")?? ".nzb;.nfo;.par2;.txt;.srt";
+                EmptyMaxSizeCheck = xmlSettings.ExtractBool("EmptyMaxSizeCheck") ?? true;
+                EmptyMaxSizeMB = xmlSettings.ExtractInt("EmptyMaxSizeMB") ?? 100;
+            }
         }
 
         public class Replacement
@@ -1220,6 +784,7 @@ namespace TVRename
             {
                 if (b == null)
                     b = "";
+
                 This = a;
                 That = b;
                 CaseInsensitive = insens;
@@ -1250,6 +815,7 @@ namespace TVRename
             public ShowStatusColoringTypeList()
             {
             }
+
             protected ShowStatusColoringTypeList(SerializationInfo info, StreamingContext context) : base(info, context)
             {
             }
@@ -1264,6 +830,7 @@ namespace TVRename
                         return true;
                     }
                 }
+
                 return false;
             }
 
@@ -1277,6 +844,7 @@ namespace TVRename
                         return e.Value;
                     }
                 }
+
                 return System.Drawing.Color.Empty;
             }
         }
@@ -1302,14 +870,17 @@ namespace TVRename
                     {
                         return $"Show Seasons Status: {StatusTextForDisplay}";
                     }
+
                     if (!IsShowLevel && IsMetaType)
                     {
                         return $"Season Status: {StatusTextForDisplay}";
                     }
+
                     if (IsShowLevel && !IsMetaType)
                     {
                         return $"Show Status: {StatusTextForDisplay}";
                     }
+
                     return "";
                 }
             }
@@ -1322,10 +893,12 @@ namespace TVRename
                     {
                         return Status;
                     }
+
                     if (IsShowLevel)
                     {
                         ShowItem.ShowAirStatus status =
-                            (ShowItem.ShowAirStatus)Enum.Parse(typeof(ShowItem.ShowAirStatus), Status, true);
+                            (ShowItem.ShowAirStatus) Enum.Parse(typeof(ShowItem.ShowAirStatus), Status, true);
+
                         switch (status)
                         {
                             case ShowItem.ShowAirStatus.aired:
@@ -1343,7 +916,8 @@ namespace TVRename
                     else
                     {
                         Season.SeasonStatus status =
-                            (Season.SeasonStatus)Enum.Parse(typeof(Season.SeasonStatus), Status);
+                            (Season.SeasonStatus) Enum.Parse(typeof(Season.SeasonStatus), Status);
+
                         switch (status)
                         {
                             case Season.SeasonStatus.aired:
@@ -1359,6 +933,202 @@ namespace TVRename
                         }
                     }
                 }
+            }
+        }
+
+        public void load(XElement xmlSettings)
+        {
+            SetToDefaults();
+            BGDownload = xmlSettings.ExtractBool("BGDownload") ?? false;
+            OfflineMode = xmlSettings.ExtractBool("OfflineMode")??false;
+            ReplaceWithBetterQuality = xmlSettings.ExtractBool("ReplaceWithBetterQuality")??true;
+            ExportWTWRSSTo = xmlSettings.ExtractString("ExportWTWRSSTo");
+            ExportWTWXML = xmlSettings.ExtractBool("ExportWTWXML")??false;
+            ExportWTWXMLTo = xmlSettings.ExtractString("ExportWTWXMLTo");
+            ExportWTWICAL = xmlSettings.ExtractBool("ExportWTWICAL")??false;
+            ExportWTWICALTo = xmlSettings.ExtractString("ExportWTWICALTo");
+            WTWRecentDays = xmlSettings.ExtractInt("WTWRecentDays")??7;
+            StartupTab = TabNumberFromName(xmlSettings.ExtractString("StartupTab2"));
+            NamingStyle.StyleString = xmlSettings.ExtractString("NamingStyle") ??
+                                      CustomEpisodeName.OldNStyle(
+                                          xmlSettings.ExtractInt("DefaultNamingStyle")??1); // old naming style
+            NotificationAreaIcon = xmlSettings.ExtractBool("NotificationAreaIcon") ?? false;
+            VideoExtensionsString = xmlSettings.ExtractString("VideoExtensions",
+                                    xmlSettings.ExtractString("GoodExtensions",
+                                        ".avi;.mpg;.mpeg;.mkv;.mp4;.wmv;.divx;.ogm;.qt;.rm;.m4v;.webm;.vob;.ovg;.ogg;.mov;.m4p;.3gp"));
+            OtherExtensionsString = xmlSettings.ExtractString("OtherExtensions", ".srt;.nfo;.txt;.tbn");
+            subtitleExtensionsString = xmlSettings.ExtractString("SubtitleExtensions", ".srt;.sub;.sbv;.idx");
+            ExportRSSMaxDays = xmlSettings.ExtractInt("ExportRSSMaxDays")??7;
+            ExportRSSMaxShows = xmlSettings.ExtractInt("ExportRSSMaxShows")??10;
+            ExportRSSDaysPast = xmlSettings.ExtractInt("ExportRSSDaysPast")??0;
+            KeepTogether = xmlSettings.ExtractBool("KeepTogether")??true;
+            LeadingZeroOnSeason = xmlSettings.ExtractBool("LeadingZeroOnSeason")??false;
+            ShowInTaskbar = xmlSettings.ExtractBool("ShowInTaskbar")??true;
+            RenameTxtToSub = xmlSettings.ExtractBool("RenameTxtToSub")??false;
+            ShowEpisodePictures = xmlSettings.ExtractBool("ShowEpisodePictures")??true;
+            HideWtWSpoilers = xmlSettings.ExtractBool("HideWtWSpoilers") ?? false;
+            HideMyShowsSpoilers = xmlSettings.ExtractBool("HideMyShowsSpoilers") ?? false;
+            AutoCreateFolders = xmlSettings.ExtractBool("AutoCreateFolders") ?? false;
+            AutoSelectShowInMyShows = xmlSettings.ExtractBool("AutoSelectShowInMyShows")??true;
+            SpecialsFolderName = xmlSettings.ExtractString("SpecialsFolderName", "Specials");
+            SeasonFolderFormat = xmlSettings.ExtractString("SeasonFolderFormat");
+            SearchJSONURL = xmlSettings.ExtractString("SearchJSONURL", "https://eztv.ag/api/get-torrents?imdb_id=");
+            SearchJSONRootNode = xmlSettings.ExtractString("SearchJSONRootNode", "torrents");
+            SearchJSONFilenameToken = xmlSettings.ExtractString("SearchJSONFilenameToken","filename");
+            SearchJSONURLToken = xmlSettings.ExtractString("SearchJSONURLToken", "torrent_url");
+            SABAPIKey = xmlSettings.ExtractString("SABAPIKey");
+            CheckSABnzbd = xmlSettings.ExtractBool("CheckSABnzbd")??false;
+            SABHostPort = xmlSettings.ExtractString("SABHostPort");
+            PreferredLanguageCode = xmlSettings.ExtractString("PreferredLanguage","en");
+            WTWDoubleClick = xmlSettings.ExtractInt("WTWDoubleClick") ==null
+                ? WTWDoubleClickAction.Scan
+                : (WTWDoubleClickAction) xmlSettings.ExtractInt("WTWDoubleClick");
+            ExportMissingXML = xmlSettings.ExtractBool("ExportMissingXML") ?? false;
+            ExportMissingXMLTo = xmlSettings.ExtractString("ExportMissingXMLTo");
+            ExportRecentXSPF = xmlSettings.ExtractBool("ExportRecentXSPF") ?? false;
+            ExportRecentXSPFTo = xmlSettings.ExtractString("ExportRecentXSPFTo");
+            ExportRecentM3U = xmlSettings.ExtractBool("ExportRecentM3U") ?? false;
+            ExportRecentM3UTo = xmlSettings.ExtractString("ExportRecentM3UTo");
+            ExportRecentASX = xmlSettings.ExtractBool("ExportRecentASX") ?? false;
+            ExportRecentASXTo = xmlSettings.ExtractString("ExportRecentASXTo");
+            ExportRecentWPL = xmlSettings.ExtractBool("ExportRecentWPL") ?? false;
+            ExportRecentWPLTo = xmlSettings.ExtractString("ExportRecentWPLTo");
+            ExportMissingCSV = xmlSettings.ExtractBool("ExportMissingCSV") ?? false;
+            ExportMissingCSVTo = xmlSettings.ExtractString("ExportMissingCSVTo");
+            ExportRenamingXML = xmlSettings.ExtractBool("ExportRenamingXML") ?? false;
+            ExportRenamingXMLTo = xmlSettings.ExtractString("ExportRenamingXMLTo");
+            ExportFOXML = xmlSettings.ExtractBool("ExportFOXML") ?? false;
+            ExportFOXMLTo = xmlSettings.ExtractString("ExportFOXMLTo");
+            ExportShowsTXT = xmlSettings.ExtractBool("ExportShowsTXT") ?? false;
+            ExportShowsTXTTo = xmlSettings.ExtractString("ExportShowsTXTTo");
+            ExportShowsHTML = xmlSettings.ExtractBool("ExportShowsHTML") ?? false;
+            ExportShowsHTMLTo = xmlSettings.ExtractString("ExportShowsHTMLTo");
+            ForceLowercaseFilenames = xmlSettings.ExtractBool("ForceLowercaseFilenames")??false;
+            IgnoreSamples = xmlSettings.ExtractBool("IgnoreSamples") ?? true;
+            SampleFileMaxSizeMB = xmlSettings.ExtractInt("SampleFileMaxSizeMB")??50;
+            ParallelDownloads = xmlSettings.ExtractInt("ParallelDownloads")??4;
+            uTorrentPath = xmlSettings.ExtractString("uTorrentPath");
+            ResumeDatPath = xmlSettings.ExtractString("ResumeDatPath");
+            SearchRSS = xmlSettings.ExtractBool("SearchRSS") ?? false;
+            SearchJSON = xmlSettings.ExtractBool("SearchJSON") ?? false;
+            EpTBNs = xmlSettings.ExtractBool("EpImgs")??false;
+            NFOShows = xmlSettings.ExtractBool("NFOShows") ?? xmlSettings.ExtractBool("NFOs") ?? false;
+            NFOEpisodes = xmlSettings.ExtractBool("NFOEpisodes") ?? xmlSettings.ExtractBool("NFOs") ?? false;
+            KODIImages = xmlSettings.ExtractBool("KODIImages") ??
+                            xmlSettings.ExtractBool("XBMCImages") ?? false; //Backward Compatibilty
+            pyTivoMeta = xmlSettings.ExtractBool("pyTivoMeta") ?? false;
+            wdLiveTvMeta = xmlSettings.ExtractBool("wdLiveTvMeta") ?? false;
+            pyTivoMetaSubFolder = xmlSettings.ExtractBool("pyTivoMetaSubFolder") ?? false;
+            FolderJpg = xmlSettings.ExtractBool("FolderJpg") ?? false;
+            FolderJpgIs = xmlSettings.ExtractInt("FolderJpgIs")==null
+                ? FolderJpgIsType.Poster
+                : (FolderJpgIsType) xmlSettings.ExtractInt("FolderJpgIs");
+            MonitoredFoldersScanType = xmlSettings.ExtractInt("MonitoredFoldersScanType")==null
+                ? ScanType.Full
+                : (ScanType) xmlSettings.ExtractInt("MonitoredFoldersScanType");
+            RenameCheck = xmlSettings.ExtractBool("RenameCheck") ?? true;
+            PreventMove = xmlSettings.ExtractBool("PreventMove") ?? false;
+            CheckuTorrent = xmlSettings.ExtractBool("CheckuTorrent") ?? false;
+            CheckqBitTorrent = xmlSettings.ExtractBool("CheckqBitTorrent") ?? false;
+            qBitTorrentHost = xmlSettings.ExtractString("qBitTorrentHost", "localhost");
+            qBitTorrentPort = xmlSettings.ExtractString("qBitTorrentPort", "8080");
+            MissingCheck = xmlSettings.ExtractBool("MissingCheck")??true;
+            CorrectFileDates = xmlSettings.ExtractBool("UpdateFileDates")??false;
+            SearchLocally = xmlSettings.ExtractBool("SearchLocally")??true;
+            LeaveOriginals = xmlSettings.ExtractBool("LeaveOriginals")??false;
+            AutoSearchForDownloadedFiles = xmlSettings.ExtractBool("AutoSearchForDownloadedFiles") ?? false;
+            LookForDateInFilename = xmlSettings.ExtractBool("LookForDateInFilename")??false;
+            AutoMergeDownloadEpisodes = xmlSettings.ExtractBool("AutoMergeEpisodes")??false;
+            AutoMergeLibraryEpisodes = xmlSettings.ExtractBool("AutoMergeLibraryEpisodes") ?? false;
+            RetainLanguageSpecificSubtitles = xmlSettings.ExtractBool("RetainLanguageSpecificSubtitles")??true;
+            ForceBulkAddToUseSettingsOnly = xmlSettings.ExtractBool("ForceBulkAddToUseSettingsOnly")??false;
+            MonitorFolders = xmlSettings.ExtractBool("MonitorFolders") ?? false;
+            runStartupCheck = xmlSettings.ExtractBool("StartupScan") ?? false;
+            runPeriodicCheck = xmlSettings.ExtractBool("PeriodicScan") ?? false;
+            periodCheckHours = xmlSettings.ExtractInt("PeriodicScanHours")??1;
+            RemoveDownloadDirectoriesFiles = xmlSettings.ExtractBool("RemoveDownloadDirectoriesFiles") ?? false;
+            DeleteShowFromDisk = xmlSettings.ExtractBool("DeleteShowFromDisk")??true;
+            EpJPGs = xmlSettings.ExtractBool("EpJPGs") ?? false;
+            SeriesJpg = xmlSettings.ExtractBool("SeriesJpg") ?? false;
+            Mede8erXML = xmlSettings.ExtractBool("Mede8erXML") ?? false;
+            ShrinkLargeMede8erImages = xmlSettings.ExtractBool("ShrinkLargeMede8erImages") ?? false;
+            FanArtJpg = xmlSettings.ExtractBool("FanArtJpg") ?? false;
+            BulkAddIgnoreRecycleBin = xmlSettings.ExtractBool("BulkAddIgnoreRecycleBin") ?? false;
+            BulkAddCompareNoVideoFolders = xmlSettings.ExtractBool("BulkAddCompareNoVideoFolders") ?? false;
+            AutoAddMovieTerms = xmlSettings.ExtractString("AutoAddMovieTerms", "dvdrip;camrip;screener;dvdscr;r5;bluray");
+            AutoAddIgnoreSuffixes = xmlSettings.ExtractString("AutoAddIgnoreSuffixes", "1080p;720p");
+            PriorityReplaceTerms = xmlSettings.ExtractString("PriorityReplaceTerms", "PROPER;REPACK;RERIP");
+            mode = xmlSettings.ExtractInt("BetaMode")==null
+                ? BetaMode.ProductionOnly
+                : (BetaMode) xmlSettings.ExtractInt("BetaMode");
+            upgradeDirtyPercent = xmlSettings.ExtractFloat("PercentDirtyUpgrade")??20;
+            replaceMargin = xmlSettings.ExtractFloat("PercentBetter")??10;
+            defaultSeasonWord = xmlSettings.ExtractString("BaseSeasonName", "Season");
+            searchSeasonWordsString = xmlSettings.ExtractString("SearchSeasonNames", "Season;Series;Saison;Temporada;Seizoen");
+            preferredRSSSearchTermsString = xmlSettings.ExtractString("PreferredRSSSearchTerms", "720p;1080p");
+            keepTogetherMode = xmlSettings.ExtractInt("KeepTogetherType") == null
+                ? KeepTogetherModes.All
+                : (KeepTogetherModes) xmlSettings.ExtractInt("KeepTogetherType");
+            keepTogetherExtensionsString = xmlSettings.ExtractString("KeepTogetherExtensions", ".srt;.nfo;.txt;.tbn");
+            ExportWTWRSS = xmlSettings.ExtractBool("ExportWTWRSS") ?? false;
+
+            Tidyup.load(xmlSettings);
+            RSSURLs = xmlSettings.Descendants("RSSURLs").First().ReadStringsFromXml("URL");
+            TheSearchers = new Searchers(xmlSettings.Descendants("TheSearchers").First());
+
+            Replacements.Clear();
+            foreach (XElement rep in xmlSettings.Descendants("Replacements").First().Descendants("Replace"))
+            {
+                Replacements.Add(new Replacement(rep.Attribute("This")?.Value, rep.Attribute("That")?.Value, rep.Attribute("CaseInsensitive")?.Value == "Y"));
+            }
+
+            FNPRegexs.Clear();
+            foreach (XElement rep in xmlSettings.Descendants("FNPRegexs").First().Descendants("Regex"))
+            {
+                FNPRegexs.Add(new FilenameProcessorRE(
+                    XmlConvert.ToBoolean(rep.Attribute("Enabled")?.Value??"false"),
+                    rep.Attribute("RE")?.Value,
+                    XmlConvert.ToBoolean(rep.Attribute("UseFullPath")?.Value ?? "false"),
+                    rep.Attribute("Notes")?.Value
+                    ));
+            }
+
+            ShowStatusColors = new ShowStatusColoringTypeList();
+            foreach (XElement rep in xmlSettings.Descendants("ShowStatusTVWColors").First().Descendants("ShowStatusTVWColor"))
+            {
+                string showStatus = rep.Attribute("ShowStatus")?.Value;
+                bool isMeta = bool.Parse(rep.Attribute("IsMeta")?.Value??"false");
+                bool isShowLevel = bool.Parse(rep.Attribute("IsShowLevel")?.Value??"true");
+                ShowStatusColoringType type = new ShowStatusColoringType(isMeta, isShowLevel, showStatus);
+                string color = rep.Attribute("Color")?.Value;
+                if (string.IsNullOrEmpty(color)) continue;
+                System.Drawing.Color c = System.Drawing.ColorTranslator.FromHtml(color);
+                ShowStatusColors.Add(type, c);
+            }
+
+            SeasonFilter = new SeasonFilter
+            {
+                HideIgnoredSeasons = XmlConvert.ToBoolean(xmlSettings.Descendants("SeasonFilters")
+                    .Descendants("SeasonIgnoredFilter").First().Value)
+            };
+
+            Filter = new ShowFilter
+            {
+                ShowName = xmlSettings.Descendants("ShowFilters").Descendants("ShowNameFilter").Attributes("ShowName").FirstOrDefault()?.Value,
+                ShowStatus = xmlSettings.Descendants("ShowFilters").Descendants("ShowStatusFilter").Attributes("ShowStatus").FirstOrDefault()?.Value,
+                ShowRating = xmlSettings.Descendants("ShowFilters").Descendants("ShowRatingFilter").Attributes("ShowRating").FirstOrDefault()?.Value,
+                ShowNetwork = xmlSettings.Descendants("ShowFilters").Descendants("ShowNetworkFilter").Attributes("ShowNetwork").FirstOrDefault()?.Value,
+            };
+
+            foreach (XAttribute rep in xmlSettings.Descendants("ShowFilters").Descendants("GenreFilter").Attributes("Genre"))
+            {
+                Filter.Genres.Add(rep.Value);
+            }
+
+            if (SeasonFolderFormat == string.Empty)
+            {
+                //this has not been set from the XML, so we should give it an appropriate default value
+                SeasonFolderFormat = defaultSeasonWord.Trim() + " " + (LeadingZeroOnSeason ? "{Season:2}" : "{Season}");
             }
         }
     }
