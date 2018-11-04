@@ -146,6 +146,8 @@
     <Compile Include="Finders\DownloadFinder.cs" />
     <Compile Include="Finders\qBitTorrentFinder.cs" />
     <Compile Include="Finders\JSONWebpageFinder.cs" />
+    <Compile Include="Finders\RSSItem.cs" />
+    <Compile Include="Finders\RSSItemList.cs" />
     <Compile Include="Finders\TorrentFinder.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
@@ -457,6 +459,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ShowPreferences\AutoAddShow.resx">
       <DependentUpon>AutoAddShow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Utilities\BugReport.resx">
       <DependentUpon>BugReport.cs</DependentUpon>
@@ -488,6 +491,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BulkAdd\BulkAdd.resx">
       <DependentUpon>BulkAdd.cs</DependentUpon>
@@ -503,6 +507,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\DupEpFinder.resx">
       <DependentUpon>DupEpFinder.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\ShowSummary.resx">
       <DependentUpon>ShowSummary.cs</DependentUpon>

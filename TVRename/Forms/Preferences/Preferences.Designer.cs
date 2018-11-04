@@ -535,7 +535,7 @@ namespace TVRename
             this.tpDisplay.Location = new System.Drawing.Point(139, 4);
             this.tpDisplay.Name = "tpDisplay";
             this.tpDisplay.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDisplay.Size = new System.Drawing.Size(689, 597);
+            this.tpDisplay.Size = new System.Drawing.Size(417, 571);
             this.tpDisplay.TabIndex = 13;
             this.tpDisplay.Text = "Display";
             this.tpDisplay.UseVisualStyleBackColor = true;
@@ -556,7 +556,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSeasonFolderName.Location = new System.Drawing.Point(113, 212);
             this.txtSeasonFolderName.Name = "txtSeasonFolderName";
-            this.txtSeasonFolderName.Size = new System.Drawing.Size(572, 20);
+            this.txtSeasonFolderName.Size = new System.Drawing.Size(298, 20);
             this.txtSeasonFolderName.TabIndex = 37;
             // 
             // label35
@@ -670,6 +670,7 @@ namespace TVRename
             this.chkShowInTaskbar.TabIndex = 31;
             this.chkShowInTaskbar.Text = "Show in &taskbar";
             this.chkShowInTaskbar.UseVisualStyleBackColor = true;
+            this.chkShowInTaskbar.CheckedChanged += new System.EventHandler(this.chkShowInTaskbar_CheckedChanged);
             // 
             // cbNotificationIcon
             // 
@@ -680,6 +681,7 @@ namespace TVRename
             this.cbNotificationIcon.TabIndex = 30;
             this.cbNotificationIcon.Text = "Show &notification area icon";
             this.cbNotificationIcon.UseVisualStyleBackColor = true;
+            this.cbNotificationIcon.CheckedChanged += new System.EventHandler(this.cbNotificationIcon_CheckedChanged);
             // 
             // tpSearch
             // 
@@ -688,7 +690,7 @@ namespace TVRename
             this.tpSearch.Location = new System.Drawing.Point(139, 4);
             this.tpSearch.Name = "tpSearch";
             this.tpSearch.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSearch.Size = new System.Drawing.Size(689, 597);
+            this.tpSearch.Size = new System.Drawing.Size(417, 571);
             this.tpSearch.TabIndex = 12;
             this.tpSearch.Text = "RSS/JSON Search";
             this.tpSearch.UseVisualStyleBackColor = true;
@@ -707,7 +709,7 @@ namespace TVRename
             this.gbJSON.Controls.Add(this.tbJSONURL);
             this.gbJSON.Location = new System.Drawing.Point(3, 205);
             this.gbJSON.Name = "gbJSON";
-            this.gbJSON.Size = new System.Drawing.Size(682, 127);
+            this.gbJSON.Size = new System.Drawing.Size(408, 127);
             this.gbJSON.TabIndex = 33;
             this.gbJSON.TabStop = false;
             this.gbJSON.Text = "JSON Search";
@@ -727,7 +729,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONFilenameToken.Location = new System.Drawing.Point(98, 65);
             this.tbJSONFilenameToken.Name = "tbJSONFilenameToken";
-            this.tbJSONFilenameToken.Size = new System.Drawing.Size(579, 20);
+            this.tbJSONFilenameToken.Size = new System.Drawing.Size(305, 20);
             this.tbJSONFilenameToken.TabIndex = 36;
             // 
             // label50
@@ -745,7 +747,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONURLToken.Location = new System.Drawing.Point(99, 91);
             this.tbJSONURLToken.Name = "tbJSONURLToken";
-            this.tbJSONURLToken.Size = new System.Drawing.Size(579, 20);
+            this.tbJSONURLToken.Size = new System.Drawing.Size(305, 20);
             this.tbJSONURLToken.TabIndex = 34;
             // 
             // label49
@@ -763,7 +765,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONRootNode.Location = new System.Drawing.Point(98, 39);
             this.tbJSONRootNode.Name = "tbJSONRootNode";
-            this.tbJSONRootNode.Size = new System.Drawing.Size(579, 20);
+            this.tbJSONRootNode.Size = new System.Drawing.Size(305, 20);
             this.tbJSONRootNode.TabIndex = 32;
             // 
             // label48
@@ -781,7 +783,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbJSONURL.Location = new System.Drawing.Point(97, 13);
             this.tbJSONURL.Name = "tbJSONURL";
-            this.tbJSONURL.Size = new System.Drawing.Size(579, 20);
+            this.tbJSONURL.Size = new System.Drawing.Size(305, 20);
             this.tbJSONURL.TabIndex = 30;
             // 
             // gbRSS
@@ -797,7 +799,7 @@ namespace TVRename
             this.gbRSS.Controls.Add(this.bnRSSAdd);
             this.gbRSS.Location = new System.Drawing.Point(4, 6);
             this.gbRSS.Name = "gbRSS";
-            this.gbRSS.Size = new System.Drawing.Size(682, 193);
+            this.gbRSS.Size = new System.Drawing.Size(407, 193);
             this.gbRSS.TabIndex = 32;
             this.gbRSS.TabStop = false;
             this.gbRSS.Text = "RSS Search";
@@ -817,7 +819,7 @@ namespace TVRename
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbPreferredRSSTerms.Location = new System.Drawing.Point(97, 13);
             this.tbPreferredRSSTerms.Name = "tbPreferredRSSTerms";
-            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(579, 20);
+            this.tbPreferredRSSTerms.Size = new System.Drawing.Size(304, 20);
             this.tbPreferredRSSTerms.TabIndex = 30;
             // 
             // RSSGrid
@@ -830,7 +832,7 @@ namespace TVRename
             this.RSSGrid.Name = "RSSGrid";
             this.RSSGrid.OptimizeMode = SourceGrid.CellOptimizeMode.ForRows;
             this.RSSGrid.SelectionMode = SourceGrid.GridSelectionMode.Cell;
-            this.RSSGrid.Size = new System.Drawing.Size(670, 91);
+            this.RSSGrid.Size = new System.Drawing.Size(395, 91);
             this.RSSGrid.TabIndex = 26;
             this.RSSGrid.TabStop = true;
             this.RSSGrid.ToolTipText = "";
@@ -852,6 +854,7 @@ namespace TVRename
             this.bnRSSRemove.TabIndex = 28;
             this.bnRSSRemove.Text = "&Remove";
             this.bnRSSRemove.UseVisualStyleBackColor = true;
+            this.bnRSSRemove.Click += new System.EventHandler(this.bnRSSRemove_Click);
             // 
             // bnRSSGo
             // 
@@ -861,6 +864,7 @@ namespace TVRename
             this.bnRSSGo.TabIndex = 29;
             this.bnRSSGo.Text = "&Open";
             this.bnRSSGo.UseVisualStyleBackColor = true;
+            this.bnRSSGo.Click += new System.EventHandler(this.bnRSSGo_Click);
             // 
             // bnRSSAdd
             // 
@@ -870,6 +874,7 @@ namespace TVRename
             this.bnRSSAdd.TabIndex = 27;
             this.bnRSSAdd.Text = "&Add";
             this.bnRSSAdd.UseVisualStyleBackColor = true;
+            this.bnRSSAdd.Click += new System.EventHandler(this.bnRSSAdd_Click);
             // 
             // tpSubtitles
             // 
@@ -1023,10 +1028,10 @@ namespace TVRename
             this.tpTreeColoring.Controls.Add(this.bnRemoveDefinedColor);
             this.tpTreeColoring.Controls.Add(this.btnAddShowStatusColoring);
             this.tpTreeColoring.Controls.Add(this.lvwDefinedColors);
-            this.tpTreeColoring.Location = new System.Drawing.Point(204, 4);
+            this.tpTreeColoring.Location = new System.Drawing.Point(139, 4);
             this.tpTreeColoring.Name = "tpTreeColoring";
             this.tpTreeColoring.Padding = new System.Windows.Forms.Padding(3);
-            this.tpTreeColoring.Size = new System.Drawing.Size(624, 597);
+            this.tpTreeColoring.Size = new System.Drawing.Size(417, 571);
             this.tpTreeColoring.TabIndex = 7;
             this.tpTreeColoring.Text = "Tree Colouring";
             this.tpTreeColoring.UseVisualStyleBackColor = true;
@@ -1138,10 +1143,10 @@ namespace TVRename
             this.tbuTorrentNZB.Controls.Add(this.qBitTorrent);
             this.tbuTorrentNZB.Controls.Add(this.groupBox1);
             this.tbuTorrentNZB.Controls.Add(this.groupBox6);
-            this.tbuTorrentNZB.Location = new System.Drawing.Point(204, 4);
+            this.tbuTorrentNZB.Location = new System.Drawing.Point(139, 4);
             this.tbuTorrentNZB.Name = "tbuTorrentNZB";
             this.tbuTorrentNZB.Padding = new System.Windows.Forms.Padding(3);
-            this.tbuTorrentNZB.Size = new System.Drawing.Size(624, 597);
+            this.tbuTorrentNZB.Size = new System.Drawing.Size(417, 571);
             this.tbuTorrentNZB.TabIndex = 4;
             this.tbuTorrentNZB.Text = "Torrents / NZB";
             this.tbuTorrentNZB.UseVisualStyleBackColor = true;
@@ -1341,7 +1346,7 @@ namespace TVRename
             this.tbSearchFolders.Controls.Add(this.label23);
             this.tbSearchFolders.Location = new System.Drawing.Point(139, 4);
             this.tbSearchFolders.Name = "tbSearchFolders";
-            this.tbSearchFolders.Size = new System.Drawing.Size(689, 597);
+            this.tbSearchFolders.Size = new System.Drawing.Size(417, 571);
             this.tbSearchFolders.TabIndex = 3;
             this.tbSearchFolders.Text = "Search Folders";
             this.tbSearchFolders.UseVisualStyleBackColor = true;
@@ -1420,7 +1425,7 @@ namespace TVRename
             // bnOpenSearchFolder
             // 
             this.bnOpenSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnOpenSearchFolder.Location = new System.Drawing.Point(168, 571);
+            this.bnOpenSearchFolder.Location = new System.Drawing.Point(163, 545);
             this.bnOpenSearchFolder.Name = "bnOpenSearchFolder";
             this.bnOpenSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnOpenSearchFolder.TabIndex = 4;
@@ -1431,7 +1436,7 @@ namespace TVRename
             // bnRemoveSearchFolder
             // 
             this.bnRemoveSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(87, 571);
+            this.bnRemoveSearchFolder.Location = new System.Drawing.Point(82, 545);
             this.bnRemoveSearchFolder.Name = "bnRemoveSearchFolder";
             this.bnRemoveSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnRemoveSearchFolder.TabIndex = 3;
@@ -1442,7 +1447,7 @@ namespace TVRename
             // bnAddSearchFolder
             // 
             this.bnAddSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bnAddSearchFolder.Location = new System.Drawing.Point(6, 571);
+            this.bnAddSearchFolder.Location = new System.Drawing.Point(3, 545);
             this.bnAddSearchFolder.Name = "bnAddSearchFolder";
             this.bnAddSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnAddSearchFolder.TabIndex = 2;
@@ -1460,7 +1465,7 @@ namespace TVRename
             this.lbSearchFolders.Location = new System.Drawing.Point(3, 153);
             this.lbSearchFolders.Name = "lbSearchFolders";
             this.lbSearchFolders.ScrollAlwaysVisible = true;
-            this.lbSearchFolders.Size = new System.Drawing.Size(685, 407);
+            this.lbSearchFolders.Size = new System.Drawing.Size(411, 381);
             this.lbSearchFolders.TabIndex = 1;
             this.lbSearchFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragDrop);
             this.lbSearchFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragOver);
@@ -1884,7 +1889,7 @@ namespace TVRename
             this.tpScanOptions.Location = new System.Drawing.Point(139, 4);
             this.tpScanOptions.Name = "tpScanOptions";
             this.tpScanOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tpScanOptions.Size = new System.Drawing.Size(689, 597);
+            this.tpScanOptions.Size = new System.Drawing.Size(417, 571);
             this.tpScanOptions.TabIndex = 6;
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
@@ -2973,7 +2978,7 @@ namespace TVRename
             this.tbGeneral.Location = new System.Drawing.Point(139, 4);
             this.tbGeneral.Name = "tbGeneral";
             this.tbGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tbGeneral.Size = new System.Drawing.Size(689, 597);
+            this.tbGeneral.Size = new System.Drawing.Size(417, 571);
             this.tbGeneral.TabIndex = 0;
             this.tbGeneral.Text = "General";
             this.tbGeneral.UseVisualStyleBackColor = true;
@@ -3137,7 +3142,7 @@ namespace TVRename
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnCancel;
-            this.ClientSize = new System.Drawing.Size(584, 629);
+            this.ClientSize = new System.Drawing.Size(584, 644);
             this.ControlBox = false;
             this.Controls.Add(this.tcTabs);
             this.Controls.Add(this.bnCancel);
