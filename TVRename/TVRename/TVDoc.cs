@@ -298,12 +298,6 @@ namespace TVRename
 
             try
             {
-                XmlReaderSettings settings = new XmlReaderSettings
-                {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true
-                };
-
                 if (!from.Exists)
                 {
                     return true; // that's ok

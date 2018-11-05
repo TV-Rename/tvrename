@@ -19,30 +19,6 @@ namespace TVRename
             }
             writer.WriteEndElement();
         }
-        
-        public static List<string> ReadStringsFromXml(XmlReader reader, string elementName, string stringName)
-        {
-            List<string> r = new List<string>();
-
-            if (reader.Name != elementName)
-                return r; // uhoh
-
-            if (!reader.IsEmptyElement)
-            {
-                reader.Read();
-                while (!reader.EOF)
-                {
-                    if ((reader.Name == elementName) && !reader.IsStartElement())
-                        break;
-                    if (reader.Name == stringName)
-                        r.Add(reader.ReadElementContentAsString());
-                    else
-                        reader.ReadOuterXml();
-                }
-            }
-            reader.Read();
-            return r;
-        }
 
         public static string ReadStringFixQuotesAndSpaces(XmlReader r)
         {
@@ -149,15 +125,18 @@ namespace TVRename
         public static bool? ExtractBool(this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
-                return XmlConvert.ToBoolean((string)(xmlSettings?.Descendants(elementName).First()));
+                return XmlConvert.ToBoolean((string)(xmlSettings.Descendants(elementName).First()));
 
             return null;
         }
         public static DateTime? ExtractDateTime(this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
-                return XmlConvert.ToDateTime((string)(xmlSettings?.Descendants(elementName).First()));
-
+            {
+                string textVersion=(string)(xmlSettings.Descendants(elementName).First());
+                if (string.IsNullOrWhiteSpace(textVersion)) return null;
+                return XmlConvert.ToDateTime(textVersion,XmlDateTimeSerializationMode.Utc);
+            }
             return null;
         }
         public static string ExtractString(this XElement xmlSettings, string elementName)
@@ -167,7 +146,7 @@ namespace TVRename
         public static string ExtractString(this XElement xmlSettings, string elementName,string defaultValue)
         {
             if (xmlSettings.Descendants(elementName).Any())
-                return (string)(xmlSettings?.Descendants(elementName).First());
+                return (string)(xmlSettings.Descendants(elementName).First());
 
             return defaultValue;
         }
@@ -181,7 +160,7 @@ namespace TVRename
         public static float? ExtractFloat(this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
-                return XmlConvert.ToSingle((string)(xmlSettings?.Descendants(elementName).First()));
+                return XmlConvert.ToSingle((string)(xmlSettings.Descendants(elementName).First()));
 
             return null;
         }
