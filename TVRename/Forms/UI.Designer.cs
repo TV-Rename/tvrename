@@ -984,9 +984,9 @@ namespace TVRename
             this.bnActionOptions.ImageList = this.imageList1;
             this.bnActionOptions.Location = new System.Drawing.Point(262, 6);
             this.bnActionOptions.Name = "bnActionOptions";
-            this.bnActionOptions.Size = new System.Drawing.Size(78, 25);
+            this.bnActionOptions.Size = new System.Drawing.Size(100, 25);
             this.bnActionOptions.TabIndex = 8;
-            this.bnActionOptions.Text = "O&ptions...";
+            this.bnActionOptions.Text = "&Preferences...";
             this.bnActionOptions.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.bnActionOptions.UseVisualStyleBackColor = true;
             this.bnActionOptions.Click += new System.EventHandler(this.bnActionOptions_Click);
