@@ -40,7 +40,7 @@ namespace TVRename
         public Searchers(XElement settings)
         {
             choices = new List<Choice>();
-            currentSearch = settings.ExtractString("Curent");
+            currentSearch = settings.ExtractString("Current");
 
             foreach (XElement x in settings.Descendants("Choice"))
             {

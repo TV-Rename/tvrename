@@ -1,9 +1,18 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using System.Xml;
+using System.Xml.Linq;
 using NLog;
 
 namespace TVRename
@@ -26,43 +35,19 @@ namespace TVRename
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
                 string response = client.DownloadString(url);
 
-                XmlReaderSettings settings = new XmlReaderSettings
+                XElement x = XElement.Load(new StringReader(response));
+
+                if (x.Name.LocalName != "rss")
                 {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true
-                };
-                using (XmlReader reader = XmlReader.Create(new StringReader(response), settings))
-                {
-                    reader.Read();
-                    if (reader.Name != "xml")
-                        return false;
-
-                    reader.Read();
-
-                    if (reader.Name != "rss")
-                        return false;
-
-                    reader.Read();
-
-                    while (!reader.EOF)
-                    {
-                        if ((reader.Name == "rss") && (!reader.IsStartElement()))
-                            break;
-
-                        if (reader.Name == "channel")
-                        {
-                            if (!ReadChannel(reader.ReadSubtree()))
-                                return false;
-                            reader.Read();
-                        }
-                        else
-                            reader.ReadOuterXml();
-                    }
+                    return false;
                 }
+
+                if (!ReadChannel(x.Descendants("channel").First()))
+                    return false;
             }
             catch (Exception  e)
             {
-                Logger.Error($"Cound not access {url}",e);
+                Logger.Error(e,$"Cound not access {url}");
                 return false;
             }
             finally
@@ -72,52 +57,20 @@ namespace TVRename
             return true;
         }
 
-        private bool ReadChannel(XmlReader r)
+        private bool ReadChannel(XElement x)
         {
-            r.Read();
-            r.Read();
-            while (!r.EOF)
-            {
-                if ((r.Name == "channel") && (!r.IsStartElement()))
-                    break;
-                if (r.Name == "item")
-                {
-                    if (!ReadItem(r.ReadSubtree()))
-                        return false;
-                    r.Read();
-                }
-                else
-                    r.ReadOuterXml();
-            }
-            return true;
+            return x.Descendants("item").All(ReadItem);
         }
 
-        private bool ReadItem(XmlReader r)
+        private bool ReadItem(XElement itemElement)
         {
-            string title = "";
-            string link = "";
-            string description = "";
+            string title = itemElement.ExtractString("title");
+            string link = itemElement.ExtractString("link");
+            string description = itemElement.ExtractString("description");
+            string enclosureLink = itemElement.Descendants("enclosure").Where(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent").First().Attribute("url").Value;
 
-            r.Read();
-            r.Read();
-            while (!r.EOF)
-            {
-                if ((r.Name == "item") && (!r.IsStartElement()))
-                    break;
-                if (r.Name == "title")
-                    title = r.ReadElementContentAsString();
-                else if (r.Name == "description")
-                    description = r.ReadElementContentAsString();
-                else if ((r.Name == "link") && (string.IsNullOrEmpty(link)))
-                    link = r.ReadElementContentAsString();
-                else if ((r.Name == "enclosure") && (r.GetAttribute("type") == "application/x-bittorrent"))
-                {
-                    link = r.GetAttribute("url");
-                    r.ReadOuterXml();
-                }
-                else
-                    r.ReadOuterXml();
-            }
+            link = (string.IsNullOrWhiteSpace(enclosureLink))?link:enclosureLink;
+
             if ((string.IsNullOrEmpty(title)) || (string.IsNullOrEmpty(link)))
                 return false;
 
