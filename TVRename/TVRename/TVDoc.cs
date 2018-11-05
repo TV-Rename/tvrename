@@ -325,8 +325,6 @@ namespace TVRename
 
                 TVSettings.Instance.load(x.Descendants("Settings").First());
                 Library.LoadFromXml(x.Descendants("MyShows").First());
-                TVSettings.Instance.LibraryFolders =
-                    x.Descendants("MonitorFolders").First().ReadStringsFromXml("Folder");
                 TVSettings.Instance.IgnoreFolders =
                     x.Descendants("IgnoreFolders").First().ReadStringsFromXml("Folder");
                 TVSettings.Instance.DownloadFolders =
@@ -335,6 +333,16 @@ namespace TVRename
                     x.Descendants("IgnoredAutoAddHints").First().ReadStringsFromXml("Hint");
                 TVSettings.Instance.Ignore =
                     x.Descendants("IgnoreItems").First().ReadIiFromXml("Ignore");
+
+                //MonitorFolders are a little more complex as there is a parameter named the same which we need to ignore
+                IEnumerable<XElement> mfs = x.Descendants("MonitorFolders");
+                foreach (XElement mf in mfs)
+                {
+                    if (mf.Descendants("Folder").Any())
+                    {
+                        TVSettings.Instance.LibraryFolders = mf.ReadStringsFromXml("Folder");
+                    }
+                }
             }
             catch (Exception e)
             {
