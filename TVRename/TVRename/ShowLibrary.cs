@@ -52,8 +52,7 @@ namespace TVRename
         {
             List<string> results = new List<string> {TVSettings.Instance.SeasonFolderFormat};
 
-            IEnumerable<string> seasonWordsFromShows =
-                from si in Values select si.AutoAddCustomFolderFormat;
+            IEnumerable<string> seasonWordsFromShows = Values.Select(si => si.AutoAddCustomFolderFormat);
 
             results.AddRange(seasonWordsFromShows.Distinct().ToList());
 
