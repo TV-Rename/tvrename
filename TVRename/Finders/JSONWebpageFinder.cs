@@ -8,6 +8,7 @@
 
 using System.Net;
 using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace TVRename
 {
@@ -17,6 +18,7 @@ namespace TVRename
         public JSONFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
@@ -62,6 +64,15 @@ namespace TVRename
                                 string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
                                 string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
 
+                                if (TVSettings.Instance.DetailedRSSJSONLogging)
+                                {
+                                    Logger.Info("Processing JSON Item");
+                                    Logger.Info(episodeResponse.ToString);
+                                    Logger.Info("Extracted");
+                                    Logger.Info($"Name:        {itemName}");
+                                    Logger.Info($"URL:         {itemUrl}");
+                                }
+
                                 if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
                                     !FileHelper.SimplifyAndCheckFilename(itemName, simpleSeriesName, true, false))
                                     continue;
@@ -69,6 +80,12 @@ namespace TVRename
                                 if (!TVDoc.FindSeasEp(itemName, out int seas, out int ep, out int _,
                                     action.Episode.Show))
                                     continue;
+
+                                if (TVSettings.Instance.DetailedRSSJSONLogging)
+                                {
+                                    Logger.Info($"Season:      {seas}");
+                                    Logger.Info($"Episode:     {ep}");
+                                }
 
                                 if (seas != pe.AppropriateSeasonNumber) continue;
                                 if (ep != pe.AppropriateEpNum) continue;

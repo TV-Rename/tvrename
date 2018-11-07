@@ -299,6 +299,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
+            this.cbDetailedRSSJSONLogging = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tpSearch.SuspendLayout();
@@ -685,6 +686,7 @@ namespace TVRename
             // 
             // tpSearch
             // 
+            this.tpSearch.Controls.Add(this.cbDetailedRSSJSONLogging);
             this.tpSearch.Controls.Add(this.gbJSON);
             this.tpSearch.Controls.Add(this.gbRSS);
             this.tpSearch.Location = new System.Drawing.Point(139, 4);
@@ -3136,6 +3138,17 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
+            // cbDetailedRSSJSONLogging
+            // 
+            this.cbDetailedRSSJSONLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbDetailedRSSJSONLogging.AutoSize = true;
+            this.cbDetailedRSSJSONLogging.Location = new System.Drawing.Point(6, 548);
+            this.cbDetailedRSSJSONLogging.Name = "cbDetailedRSSJSONLogging";
+            this.cbDetailedRSSJSONLogging.Size = new System.Drawing.Size(307, 17);
+            this.cbDetailedRSSJSONLogging.TabIndex = 34;
+            this.cbDetailedRSSJSONLogging.Text = "Detailed logging (useful when setting up RSS/JSON Feeds)";
+            this.cbDetailedRSSJSONLogging.UseVisualStyleBackColor = false;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -3162,6 +3175,7 @@ namespace TVRename
             this.tpDisplay.ResumeLayout(false);
             this.tpDisplay.PerformLayout();
             this.tpSearch.ResumeLayout(false);
+            this.tpSearch.PerformLayout();
             this.gbJSON.ResumeLayout(false);
             this.gbJSON.PerformLayout();
             this.gbRSS.ResumeLayout(false);
@@ -3476,5 +3490,6 @@ namespace TVRename
         private System.Windows.Forms.Button bnBrowseWPL;
         private System.Windows.Forms.TextBox txtWPL;
         private System.Windows.Forms.CheckBox cbWPL;
+        private System.Windows.Forms.CheckBox cbDetailedRSSJSONLogging;
     }
 }

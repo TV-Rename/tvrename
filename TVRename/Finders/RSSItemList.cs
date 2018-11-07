@@ -69,6 +69,17 @@ namespace TVRename
             string description = itemElement.ExtractString("description");
             string enclosureLink = itemElement.Descendants("enclosure").Where(enclosure => enclosure.Attribute("type")?.Value == "application/x-bittorrent").First().Attribute("url").Value;
 
+            if (TVSettings.Instance.DetailedRSSJSONLogging)
+            {
+                Logger.Info("Processing RSS Item");
+                Logger.Info(itemElement.ToString);
+                Logger.Info("Extracted");
+                Logger.Info($"Title:       {title}");
+                Logger.Info($"Link:        {link}");
+                Logger.Info($"Description: {description}");
+                Logger.Info($"encLink:     {enclosureLink}");
+            }
+
             link = (string.IsNullOrWhiteSpace(enclosureLink))?link:enclosureLink;
 
             if ((string.IsNullOrEmpty(title)) || (string.IsNullOrEmpty(link)))
@@ -77,6 +88,12 @@ namespace TVRename
             string showName = "";
 
             TVDoc.FindSeasEp("", title, out int season, out int episode, out int _, null, regxps);
+
+            if (TVSettings.Instance.DetailedRSSJSONLogging)
+            {
+                Logger.Info($"Season:      {season}");
+                Logger.Info($"Episode:     {episode}");
+            }
 
             try
             {
@@ -93,6 +110,13 @@ namespace TVRename
             catch
             {
                 // ignored
+            }
+
+            if (TVSettings.Instance.DetailedRSSJSONLogging)
+            {
+                Logger.Info($"Show Name:   {showName}");
+                Logger.Info($"Season:      {season}");
+                Logger.Info($"Episode:     {episode}");
             }
 
             if ((season != -1) && (episode != -1))
