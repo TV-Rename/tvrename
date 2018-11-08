@@ -25,9 +25,9 @@ namespace TVRename
     public partial class uTorrent : Form
     {
         private readonly SetProgressDelegate SetProg;
-
         private readonly TVDoc mDoc;
         private System.IO.FileSystemWatcher watcher;
+        private Dictionary<string, string> ResumeDats;
 
         public uTorrent(TVDoc doc, SetProgressDelegate progdel)
         {
@@ -90,11 +90,17 @@ namespace TVRename
             }
             return true;
         }
-
+        
         private void RefreshResumeDat()
         {
             if (!CheckResumeDatPath())
                 return;
+
+            if (Directory.Exists(Path.Combine(Path.GetDirectoryName(TVSettings.Instance.ResumeDatPath), "resume_dir")))
+            {
+                SetupResumeDats();
+                return;
+            }
 
             List<string> checkedItems = new List<string>();
             foreach (string torrent in lbUTTorrents.CheckedItems)
@@ -131,10 +137,60 @@ namespace TVRename
             }
         }
 
+        private void SetupResumeDats()
+        {
+            List<string> checkedItems = new List<string>();
+            foreach (string torrent in lbUTTorrents.CheckedItems)
+                checkedItems.Add(torrent);
+
+            lbUTTorrents.Items.Clear();
+
+            string resume_dir = Path.Combine(Path.GetDirectoryName(TVSettings.Instance.ResumeDatPath), "resume_dir");
+
+            ResumeDats = new Dictionary<string, string>();
+
+            string[] files = Directory.GetFiles(resume_dir, "*.dat");
+            foreach (string file in files)
+            {
+                BEncodeLoader bel = new BEncodeLoader();
+                BTFile resumeDat = bel.Load(file);
+                if (resumeDat == null)
+                    break;
+                BTDictionary dict = resumeDat.GetDict();
+                foreach (BTItem it in dict.Items)
+                {
+                    if (it.Type == BTChunk.kDictionaryItem)
+                    {
+                        BTDictionaryItem d2 = (BTDictionaryItem)(it);
+                        if ((d2.Key != ".fileguard") && (d2.Data.Type == BTChunk.kDictionary))
+                        {
+                            ResumeDats.Add(Path.GetFileNameWithoutExtension(file), d2.Key);
+                            lbUTTorrents.Items.Add(d2.Key);
+                        }
+                    }
+                }
+            }
+
+            foreach (string torrent in checkedItems)
+            {
+                for (int i = 0; i < lbUTTorrents.Items.Count; i++)
+                {
+                    if (lbUTTorrents.Items[i].ToString() == torrent)
+                        lbUTTorrents.SetItemChecked(i, true);
+                }
+            }
+        }
+
         private void bnUTGo_Click(object sender, EventArgs e)
         {
             if (!CheckResumeDatPath())
                 return;
+
+            if (Directory.Exists(Path.Combine(Path.GetDirectoryName(TVSettings.Instance.ResumeDatPath), "resume_dir")))
+            {
+                UpdateResumeDats();
+                return;
+            }
 
             string searchFolder = txtUTSearchFolder.Text;
             string resumeDatFile = TVSettings.Instance.ResumeDatPath;
@@ -145,16 +201,6 @@ namespace TVRename
 
             if (!testMode && !CheckUTorrentClosed())
                 return;
-            //
-            //				 int action = actNone;
-            //				 if (chkUTSearchSubfolders->Checked)
-            //					 action |=  actSearchSubfolders;
-            //
-            //
-            //
-            //				 if ( (action & (actRename | actCopy | actMatchMissing | actHashSearch)) == 0 )
-            //					 return;
-            //
 
             lvUTResults.Items.Clear();
 
@@ -163,7 +209,7 @@ namespace TVRename
             List<string> sl = new List<string>();
 
             foreach (string torrent in lbUTTorrents.CheckedItems)
-                sl.Add(torrent);
+                sl.Add(Path.Combine(Path.GetDirectoryName(resumeDatFile), torrent));
 
             btp.DoWork(sl, searchFolder, lvUTResults, cbUTUseHashing.Checked, cbUTMatchMissing.Checked, cbUTSetPrio.Checked, 
                        testMode, chkUTSearchSubfolders.Checked, mDoc.TheActionList, TVSettings.Instance.FNPRegexs,
@@ -172,6 +218,49 @@ namespace TVRename
             if (!testMode)
                 RestartUTorrent();
         }
+
+        private void UpdateResumeDats()
+        {
+        string searchFolder = txtUTSearchFolder.Text;
+        string resume_dir = Path.Combine(Path.GetDirectoryName(TVSettings.Instance.ResumeDatPath), "resume_dir");
+        bool testMode = chkUTTest.Checked;
+        
+        if (!Directory.Exists(resume_dir))
+        return;
+        	
+            	            if (!testMode && !CheckUTorrentClosed())
+                	                return;
+            	
+            	            lvUTResults.Items.Clear();
+            	
+            	            List<string> sl = new List<string>();
+            List<string> files = new List<string>();
+            	
+            	            foreach (string torrent in lbUTTorrents.CheckedItems)
+                	            {
+                	                sl.Add(Path.Combine(Path.GetDirectoryName(TVSettings.Instance.ResumeDatPath), torrent));
+                	                foreach (var pair in ResumeDats)
+                    	                {
+	                                        if (pair.Value == torrent)
+	                                        {
+	                                            files.Add(Path.Combine(resume_dir, pair.Key) + ".dat");
+	                                        }
+
+	                                        	                }
+                }
+            	
+            	            foreach (string resumeDatFile in files)
+                	            {
+                	                BTResume btp = new BTResume(SetProg, resumeDatFile);
+                	
+                	                btp.DoWork(sl, searchFolder, lvUTResults, cbUTUseHashing.Checked, cbUTMatchMissing.Checked, cbUTSetPrio.Checked,
+                    	                           testMode, chkUTSearchSubfolders.Checked, mDoc.TheActionList, TVSettings.Instance.FNPRegexs,
+                	                           mDoc.Args);
+                	            }
+            	
+            	            if (!testMode)
+                	                RestartUTorrent();
+            	        }
 
         private void cbUTUseHashing_CheckedChanged(object sender, EventArgs e)
         {
@@ -205,8 +294,12 @@ namespace TVRename
         {
             Close();
         }
+        private void txtResumeDatFolder_TextChanged(object sender, System.EventArgs e)
+            	        {
+            	            StartWatching();
+            	        }	
 
-        private void cbUTMatchMissing_CheckedChanged(object sender, EventArgs e)
+private void cbUTMatchMissing_CheckedChanged(object sender, EventArgs e)
         {
             EnableDisable();
         }

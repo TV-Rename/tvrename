@@ -1,4 +1,4 @@
-﻿//
+//
 // Main website for TVRename is http://tvrename.com
 //
 // Source code available at https://github.com/TV-Rename/tvrename
@@ -37,90 +37,90 @@ namespace TVRename
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = (new System.ComponentModel.ComponentResourceManager(typeof(uTorrent)));
-            this.bnUTBrowseSearchFolder = (new System.Windows.Forms.Button());
-            this.bnUTAll = (new System.Windows.Forms.Button());
-            this.bnUTRefresh = (new System.Windows.Forms.Button());
-            this.bnUTGo = (new System.Windows.Forms.Button());
-            this.bnUTNone = (new System.Windows.Forms.Button());
-            this.chkUTSearchSubfolders = (new System.Windows.Forms.CheckBox());
-            this.chkUTTest = (new System.Windows.Forms.CheckBox());
-            this.cbUTUseHashing = (new System.Windows.Forms.CheckBox());
-            this.cbUTMatchMissing = (new System.Windows.Forms.CheckBox());
-            this.cbUTSetPrio = (new System.Windows.Forms.CheckBox());
-            this.lbUTTorrents = (new System.Windows.Forms.CheckedListBox());
-            this.label11 = (new System.Windows.Forms.Label());
-            this.label13 = (new System.Windows.Forms.Label());
-            this.label15 = (new System.Windows.Forms.Label());
-            this.txtUTSearchFolder = (new System.Windows.Forms.TextBox());
-            this.columnHeader50 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader48 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader49 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader51 = (new System.Windows.Forms.ColumnHeader());
-            this.columnHeader52 = (new System.Windows.Forms.ColumnHeader());
-            this.lvUTResults = (new System.Windows.Forms.ListView());
-            this.bnClose = (new System.Windows.Forms.Button());
-            this.lbDPMatch = (new System.Windows.Forms.Label());
-            this.lbDPMissing = (new System.Windows.Forms.Label());
-            this.watcher = (new System.IO.FileSystemWatcher());
-            this.folderBrowser = (new System.Windows.Forms.FolderBrowserDialog());
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(uTorrent));
+            this.bnUTBrowseSearchFolder = new System.Windows.Forms.Button();
+            this.bnUTAll = new System.Windows.Forms.Button();
+            this.bnUTRefresh = new System.Windows.Forms.Button();
+            this.bnUTGo = new System.Windows.Forms.Button();
+            this.bnUTNone = new System.Windows.Forms.Button();
+            this.chkUTSearchSubfolders = new System.Windows.Forms.CheckBox();
+            this.chkUTTest = new System.Windows.Forms.CheckBox();
+            this.cbUTUseHashing = new System.Windows.Forms.CheckBox();
+            this.cbUTMatchMissing = new System.Windows.Forms.CheckBox();
+            this.cbUTSetPrio = new System.Windows.Forms.CheckBox();
+            this.lbUTTorrents = new System.Windows.Forms.CheckedListBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.txtUTSearchFolder = new System.Windows.Forms.TextBox();
+            this.columnHeader50 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader48 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader49 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader51 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader52 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lvUTResults = new System.Windows.Forms.ListView();
+            this.bnClose = new System.Windows.Forms.Button();
+            this.lbDPMatch = new System.Windows.Forms.Label();
+            this.lbDPMissing = new System.Windows.Forms.Label();
+            this.watcher = new System.IO.FileSystemWatcher();
+            this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
             ((System.ComponentModel.ISupportInitialize)(this.watcher)).BeginInit();
             this.SuspendLayout();
             // 
             // bnUTBrowseSearchFolder
             // 
-            this.bnUTBrowseSearchFolder.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.bnUTBrowseSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bnUTBrowseSearchFolder.Location = new System.Drawing.Point(735, 284);
             this.bnUTBrowseSearchFolder.Name = "bnUTBrowseSearchFolder";
             this.bnUTBrowseSearchFolder.Size = new System.Drawing.Size(75, 23);
             this.bnUTBrowseSearchFolder.TabIndex = 10;
             this.bnUTBrowseSearchFolder.Text = "B&rowse...";
             this.bnUTBrowseSearchFolder.UseVisualStyleBackColor = true;
-            this.bnUTBrowseSearchFolder.Click += new System.EventHandler(bnUTBrowseSearchFolder_Click);
+            this.bnUTBrowseSearchFolder.Click += new System.EventHandler(this.bnUTBrowseSearchFolder_Click);
             // 
             // bnUTAll
             // 
-            this.bnUTAll.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.bnUTAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bnUTAll.Location = new System.Drawing.Point(816, 32);
             this.bnUTAll.Name = "bnUTAll";
             this.bnUTAll.Size = new System.Drawing.Size(75, 23);
             this.bnUTAll.TabIndex = 6;
             this.bnUTAll.Text = "&All";
             this.bnUTAll.UseVisualStyleBackColor = true;
-            this.bnUTAll.Click += new System.EventHandler(bnUTAll_Click);
+            this.bnUTAll.Click += new System.EventHandler(this.bnUTAll_Click);
             // 
             // bnUTRefresh
             // 
-            this.bnUTRefresh.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.bnUTRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bnUTRefresh.Location = new System.Drawing.Point(816, 3);
             this.bnUTRefresh.Name = "bnUTRefresh";
             this.bnUTRefresh.Size = new System.Drawing.Size(75, 23);
             this.bnUTRefresh.TabIndex = 3;
             this.bnUTRefresh.Text = "Refres&h";
             this.bnUTRefresh.UseVisualStyleBackColor = true;
-            this.bnUTRefresh.Click += new System.EventHandler(bnUTRefresh_Click);
+            this.bnUTRefresh.Click += new System.EventHandler(this.bnUTRefresh_Click);
             // 
             // bnUTGo
             // 
-            this.bnUTGo.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.bnUTGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bnUTGo.Location = new System.Drawing.Point(123, 588);
             this.bnUTGo.Name = "bnUTGo";
             this.bnUTGo.Size = new System.Drawing.Size(75, 23);
             this.bnUTGo.TabIndex = 11;
             this.bnUTGo.Text = "&Go";
             this.bnUTGo.UseVisualStyleBackColor = true;
-            this.bnUTGo.Click += new System.EventHandler(bnUTGo_Click);
+            this.bnUTGo.Click += new System.EventHandler(this.bnUTGo_Click);
             // 
             // bnUTNone
             // 
-            this.bnUTNone.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.bnUTNone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.bnUTNone.Location = new System.Drawing.Point(816, 61);
             this.bnUTNone.Name = "bnUTNone";
             this.bnUTNone.Size = new System.Drawing.Size(75, 23);
             this.bnUTNone.TabIndex = 7;
             this.bnUTNone.Text = "&None";
             this.bnUTNone.UseVisualStyleBackColor = true;
-            this.bnUTNone.Click += new System.EventHandler(bnUTNone_Click);
+            this.bnUTNone.Click += new System.EventHandler(this.bnUTNone_Click);
             // 
             // chkUTSearchSubfolders
             // 
@@ -134,7 +134,7 @@ namespace TVRename
             // 
             // chkUTTest
             // 
-            this.chkUTTest.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left));
+            this.chkUTTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.chkUTTest.AutoSize = true;
             this.chkUTTest.Checked = true;
             this.chkUTTest.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -154,7 +154,7 @@ namespace TVRename
             this.cbUTUseHashing.TabIndex = 13;
             this.cbUTUseHashing.Text = "Match against files in search folder";
             this.cbUTUseHashing.UseVisualStyleBackColor = true;
-            this.cbUTUseHashing.CheckedChanged += new System.EventHandler(cbUTUseHashing_CheckedChanged);
+            this.cbUTUseHashing.CheckedChanged += new System.EventHandler(this.cbUTUseHashing_CheckedChanged);
             // 
             // cbUTMatchMissing
             // 
@@ -166,7 +166,7 @@ namespace TVRename
             this.cbUTMatchMissing.TabIndex = 15;
             this.cbUTMatchMissing.Text = "Match against missing episode list";
             this.cbUTMatchMissing.UseVisualStyleBackColor = true;
-            this.cbUTMatchMissing.CheckedChanged += new System.EventHandler(cbUTMatchMissing_CheckedChanged);
+            this.cbUTMatchMissing.CheckedChanged += new System.EventHandler(this.cbUTMatchMissing_CheckedChanged);
             // 
             // cbUTSetPrio
             // 
@@ -177,11 +177,12 @@ namespace TVRename
             this.cbUTSetPrio.TabIndex = 16;
             this.cbUTSetPrio.Text = "Set download priorities";
             this.cbUTSetPrio.UseVisualStyleBackColor = true;
-            this.cbUTSetPrio.CheckedChanged += new System.EventHandler(cbUTSetPrio_CheckedChanged);
+            this.cbUTSetPrio.CheckedChanged += new System.EventHandler(this.cbUTSetPrio_CheckedChanged);
             // 
             // lbUTTorrents
             // 
-            this.lbUTTorrents.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.lbUTTorrents.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbUTTorrents.CheckOnClick = true;
             this.lbUTTorrents.FormattingEnabled = true;
             this.lbUTTorrents.IntegralHeight = false;
@@ -189,6 +190,7 @@ namespace TVRename
             this.lbUTTorrents.Name = "lbUTTorrents";
             this.lbUTTorrents.ScrollAlwaysVisible = true;
             this.lbUTTorrents.Size = new System.Drawing.Size(687, 244);
+            this.lbUTTorrents.Sorted = true;
             this.lbUTTorrents.TabIndex = 5;
             // 
             // label11
@@ -220,7 +222,8 @@ namespace TVRename
             // 
             // txtUTSearchFolder
             // 
-            this.txtUTSearchFolder.Anchor = (System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
+            this.txtUTSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtUTSearchFolder.Location = new System.Drawing.Point(123, 286);
             this.txtUTSearchFolder.Name = "txtUTSearchFolder";
             this.txtUTSearchFolder.Size = new System.Drawing.Size(606, 20);
@@ -251,8 +254,15 @@ namespace TVRename
             // 
             // lvUTResults
             // 
-            this.lvUTResults.Anchor = (System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right));
-            this.lvUTResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[5] { this.columnHeader50, this.columnHeader48, this.columnHeader49, this.columnHeader51, this.columnHeader52 });
+            this.lvUTResults.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lvUTResults.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader50,
+            this.columnHeader48,
+            this.columnHeader49,
+            this.columnHeader51,
+            this.columnHeader52});
             this.lvUTResults.FullRowSelect = true;
             this.lvUTResults.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.lvUTResults.Location = new System.Drawing.Point(123, 410);
@@ -265,7 +275,7 @@ namespace TVRename
             // 
             // bnClose
             // 
-            this.bnClose.Anchor = (System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right));
+            this.bnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.bnClose.Location = new System.Drawing.Point(816, 588);
             this.bnClose.Name = "bnClose";
@@ -273,7 +283,7 @@ namespace TVRename
             this.bnClose.TabIndex = 20;
             this.bnClose.Text = "Close";
             this.bnClose.UseVisualStyleBackColor = true;
-            this.bnClose.Click += new System.EventHandler(bnClose_Click);
+            this.bnClose.Click += new System.EventHandler(this.bnClose_Click);
             // 
             // lbDPMatch
             // 
@@ -297,10 +307,11 @@ namespace TVRename
             // 
             this.watcher.EnableRaisingEvents = true;
             this.watcher.Filter = "resume.dat";
-            this.watcher.NotifyFilter = (System.IO.NotifyFilters)(((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.LastAccess) | System.IO.NotifyFilters.CreationTime));
+            this.watcher.NotifyFilter = ((System.IO.NotifyFilters)(((System.IO.NotifyFilters.LastWrite | System.IO.NotifyFilters.LastAccess) 
+            | System.IO.NotifyFilters.CreationTime)));
             this.watcher.SynchronizingObject = this;
-            this.watcher.Created += new System.IO.FileSystemEventHandler(watcher_Created);
-            this.watcher.Changed += new System.IO.FileSystemEventHandler(watcher_Changed);
+            this.watcher.Changed += new System.IO.FileSystemEventHandler(this.watcher_Changed);
+            this.watcher.Created += new System.IO.FileSystemEventHandler(this.watcher_Created);
             // 
             // folderBrowser
             // 
@@ -308,7 +319,7 @@ namespace TVRename
             // 
             // uTorrent
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6, 13);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.bnClose;
             this.ClientSize = new System.Drawing.Size(903, 623);
