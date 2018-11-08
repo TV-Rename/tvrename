@@ -8,7 +8,6 @@
 
 using System.Net;
 using Newtonsoft.Json.Linq;
-using NLog;
 
 namespace TVRename
 {
@@ -18,7 +17,6 @@ namespace TVRename
         public JSONFinder(TVDoc i) : base(i) { }
 
         public override bool Active() => TVSettings.Instance.SearchJSON;
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
@@ -68,11 +66,11 @@ namespace TVRename
 
                                     if (TVSettings.Instance.DetailedRSSJSONLogging)
                                     {
-                                        Logger.Info("Processing JSON Item");
-                                        Logger.Info(episodeResponse.ToString);
-                                        Logger.Info("Extracted");
-                                        Logger.Info($"Name:        {itemName}");
-                                        Logger.Info($"URL:         {itemUrl}");
+                                        LOGGER.Info("Processing JSON Item");
+                                        LOGGER.Info(episodeResponse.ToString);
+                                        LOGGER.Info("Extracted");
+                                        LOGGER.Info($"Name:        {itemName}");
+                                        LOGGER.Info($"URL:         {itemUrl}");
                                     }
 
                                     if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
@@ -85,8 +83,8 @@ namespace TVRename
 
                                     if (TVSettings.Instance.DetailedRSSJSONLogging)
                                     {
-                                        Logger.Info($"Season:      {seas}");
-                                        Logger.Info($"Episode:     {ep}");
+                                        LOGGER.Info($"Season:      {seas}");
+                                        LOGGER.Info($"Episode:     {ep}");
                                     }
 
                                     if (seas != pe.AppropriateSeasonNumber) continue;
@@ -115,7 +113,7 @@ namespace TVRename
             }
             catch (WebException ex)
             {
-                Logger.Info(ex,$"Failed to Access {TVSettings.Instance.SearchJSONURL}");
+                LOGGER.Info(ex,$"Failed to Access {TVSettings.Instance.SearchJSONURL}");
             }
 
             foreach (ActionTDownload x in FindDuplicates(newItems))
