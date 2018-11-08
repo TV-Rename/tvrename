@@ -163,6 +163,7 @@ namespace TVRename
         public CustomEpisodeName NamingStyle = new CustomEpisodeName();
         public bool NotificationAreaIcon = false;
         public bool OfflineMode = false;
+        public bool DetailedRSSJSONLogging = false;
 
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
@@ -207,14 +208,14 @@ namespace TVRename
 
         private IEnumerable<string> OtherExtensionsArray => OtherExtensionsString.Split(';');
 
-        public int ParallelDownloads;
+        public int ParallelDownloads =4;
         public List<string> RSSURLs = DefaultRSSURLList();
         public bool RenameCheck = true;
         public bool PreventMove = false;
         public bool RenameTxtToSub = false;
         public readonly List<Replacement> Replacements = DefaultListRE();
         public string ResumeDatPath;
-        public int SampleFileMaxSizeMB; // sample file must be smaller than this to be ignored
+        public int SampleFileMaxSizeMB=50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool SearchRSS = false;
         public bool SearchJSON = false;
@@ -223,15 +224,15 @@ namespace TVRename
         public bool HideMyShowsSpoilers = false;
         public bool ShowInTaskbar = true;
         public bool AutoSearchForDownloadedFiles = false;
-        public string SpecialsFolderName;
-        public string SeasonFolderFormat;
+        public string SpecialsFolderName = "Specials";
+        public string SeasonFolderFormat = "Season {Season:2}";
         public int StartupTab;
         public Searchers TheSearchers = new Searchers();
 
-        public string SearchJSONURL;
-        public string SearchJSONRootNode;
-        public string SearchJSONFilenameToken;
-        public string SearchJSONURLToken;
+        public string SearchJSONURL= "https://eztv.ag/api/get-torrents?imdb_id=";
+        public string SearchJSONRootNode = "torrents";
+        public string SearchJSONFilenameToken = "filename";
+        public string SearchJSONURLToken = "torrent_url";
 
         public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
         public bool ForceBulkAddToUseSettingsOnly = false;
@@ -239,7 +240,7 @@ namespace TVRename
         public bool AutoMergeDownloadEpisodes = false;
         public bool AutoMergeLibraryEpisodes = false;
         public string VideoExtensionsString;
-        public int WTWRecentDays;
+        public int WTWRecentDays =7;
         public string uTorrentPath;
         public bool MonitorFolders = false;
         public bool RemoveDownloadDirectoriesFiles = false;
@@ -250,7 +251,7 @@ namespace TVRename
         public string SABAPIKey = "";
         public bool CheckSABnzbd = false;
         public string PreferredLanguageCode = "en";
-        public WTWDoubleClickAction WTWDoubleClick;
+        public WTWDoubleClickAction WTWDoubleClick = WTWDoubleClickAction.Scan;
 
         public readonly TidySettings Tidyup = new TidySettings();
         public bool runPeriodicCheck = false;
@@ -308,6 +309,7 @@ namespace TVRename
             writer.WriteStartElement("Settings");
             XmlHelper.WriteElementToXml(writer, "BGDownload", BGDownload);
             XmlHelper.WriteElementToXml(writer, "OfflineMode", OfflineMode);
+            XmlHelper.WriteElementToXml(writer, "DetailedRSSJSONLogging", DetailedRSSJSONLogging);
             XmlHelper.WriteElementToXml(writer, "ReplaceWithBetterQuality", ReplaceWithBetterQuality);
             XmlHelper.WriteElementToXml(writer, "ExportWTWRSS", ExportWTWRSS);
             XmlHelper.WriteElementToXml(writer, "ExportWTWRSSTo", ExportWTWRSSTo);
@@ -941,6 +943,7 @@ namespace TVRename
             SetToDefaults();
             BGDownload = xmlSettings.ExtractBool("BGDownload") ?? false;
             OfflineMode = xmlSettings.ExtractBool("OfflineMode")??false;
+            DetailedRSSJSONLogging = xmlSettings.ExtractBool("DetailedRSSJSONLogging") ?? false;
             ReplaceWithBetterQuality = xmlSettings.ExtractBool("ReplaceWithBetterQuality")??true;
             ExportWTWRSSTo = xmlSettings.ExtractString("ExportWTWRSSTo");
             ExportWTWXML = xmlSettings.ExtractBool("ExportWTWXML")??false;
