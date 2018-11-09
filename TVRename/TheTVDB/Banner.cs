@@ -31,24 +31,6 @@ namespace TVRename
 
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public Banner(Banner o)
-        {
-            BannerId = o.BannerId;
-            BannerPath = o.BannerPath;
-            bannerType = o.bannerType;
-            LanguageId = o.LanguageId;
-            resolution = o.resolution;
-            Rating = o.Rating;
-            ratingCount = o.ratingCount;
-            SeasonId = o.SeasonId;
-            SeriesId = o.SeriesId;
-            thumbnailPath = o.thumbnailPath;
-            theSeason = o.theSeason;
-            theSeries = o.theSeries;
-        }
-
-        public Banner(SeriesInfo ser, Season seas) => SetDefaults(ser, seas);
-
         public Banner(int seriesId, XmlReader r)
         {
             // <Banner>
@@ -186,12 +168,6 @@ namespace TVRename
             SeriesId = -1;
 
             thumbnailPath = "";
-        }
-                
-        public void SetSeriesSeason(SeriesInfo ser, Season seas)
-        {
-            theSeason = seas;
-            theSeries = ser;
         }
 
         public void WriteXml(XmlWriter writer)

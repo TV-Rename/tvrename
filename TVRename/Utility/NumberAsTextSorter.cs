@@ -8,11 +8,6 @@ namespace TVRename
     {
         private readonly int col;
 
-        public NumberAsTextSorter()
-        {
-            col = 0;
-        }
-
         public NumberAsTextSorter(int column)
         {
             col = column;

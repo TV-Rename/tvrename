@@ -8,11 +8,6 @@ namespace TVRename
     {
         private readonly int col;
 
-        public DaySorter()
-        {
-            col = 0;
-        }
-
         public DaySorter(int column)
         {
             col = column;

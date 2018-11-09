@@ -16,16 +16,6 @@ namespace TVRename
     {
         private readonly string styleString;
 
-        public CustomSeasonName(string s)
-        {
-            styleString = s;
-        }
-
-        public CustomSeasonName()
-        {
-            styleString = DefaultStyle();
-        }
-
         private static string DefaultStyle() => Presets[1];
 
         private static readonly List<string> Presets = new List<string>

@@ -440,11 +440,6 @@ namespace TVRename
             return r;
         }
 
-        public string AsText()
-        {
-            return "File= " + string.Join(" ", Items.Select(x => x.AsText()));
-        }
-
         public void Tree(TreeNodeCollection tn)
         {
             TreeNode n = new TreeNode("BT File");
@@ -952,17 +947,6 @@ namespace TVRename
             return true;
         }
 
-        public string CacheStats()
-        {
-            string r = "Hash Cache: " + CacheItems + " items for " + HashCache.Count + " files.  " + CacheHits +
-                       " hits from " + CacheChecks + " lookups";
-
-            if (CacheChecks != 0)
-                r += " (" + (100 * CacheHits / CacheChecks) + "%)";
-
-            return r;
-        }
-
         public bool RenameFilesOnDiskToMatchTorrent(string torrentFile, string folder, TreeView tvTree,
             ItemList renameListOut,
             bool copyNotMove, string copyDest, CommandLineArgs args)
@@ -1007,7 +991,6 @@ namespace TVRename
 
         public bool Altered;
         public bool DoMatchMissing;
-        public bool HashSearch;
         public ItemList MissingList;
 
         public string NewLocation;
@@ -1018,9 +1001,7 @@ namespace TVRename
         public string ResumeDatPath;
 
         public List<TVSettings.FilenameProcessorRE> Rexps; // used by MatchMissing
-        public bool SearchSubFolders;
         public bool SetPrios;
-        public bool TestMode;
         public string Type;
 
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -1179,7 +1160,7 @@ namespace TVRename
             return pr.ToString();
         }
 
-        public void SetResumePrio(string torrentFile, int fileNum, byte newPrio)
+        private void SetResumePrio(string torrentFile, int fileNum, byte newPrio)
         {
             if (!SetPrios)
                 return;
@@ -1188,11 +1169,9 @@ namespace TVRename
                 fileNum = 0;
 
             BTDictionary dict = GetTorrentDict(torrentFile);
-            if (dict == null)
-                return;
 
-            BTItem p = dict.GetItem("prio");
-            if ((p == null) || (p.Type != BTChunk.kString))
+            BTItem p = dict?.GetItem("prio");
+            if (p == null || (p.Type != BTChunk.kString))
                 return;
 
             BTString prioString = (BTString) (p);
@@ -1203,14 +1182,6 @@ namespace TVRename
             PrioWasSet = true;
 
             prioString.Data[fileNum] = newPrio;
-
-            string ps;
-            if (newPrio == BTPrio.Skip)
-                ps = "Skip";
-            else if (newPrio == BTPrio.Normal)
-                ps = "Normal";
-            else
-                ps = newPrio.ToString();
         }
 
         public void AlterResume(string torrentFile, int fileNum, string toHere)
