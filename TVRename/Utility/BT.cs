@@ -16,7 +16,6 @@ using System.Windows.Forms;
 namespace TVRename
 {
     using System.IO;
-    using Directory = Alphaleonis.Win32.Filesystem.Directory;
     using File = Alphaleonis.Win32.Filesystem.File;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using Path = Alphaleonis.Win32.Filesystem.Path;
@@ -35,9 +34,9 @@ namespace TVRename
 
     public class TorrentEntry: IDownloadInformation // represents a torrent downloading in uTorrent
     {
-        public string DownloadingTo;
-        public int PercentDone;
-        public string TorrentFile;
+        public readonly string DownloadingTo;
+        public readonly int PercentDone;
+        public readonly string TorrentFile;
 
         public TorrentEntry(string torrentfile, string to, int percent)
         {
@@ -62,7 +61,7 @@ namespace TVRename
 
     public abstract class BTItem
     {
-        public BTChunk Type; // from enum
+        public readonly BTChunk Type; // from enum
 
         protected BTItem(BTChunk type)
         {
@@ -258,7 +257,7 @@ namespace TVRename
 
     public class BTDictionary : BTItem
     {
-        public List<BTDictionaryItem> Items;
+        public readonly List<BTDictionaryItem> Items;
 
         public BTDictionary()
             : base(BTChunk.kDictionary)
@@ -507,7 +506,7 @@ namespace TVRename
             return bts;
         }
 
-        public BTItem ReadInt(FileStream sr)
+        public static BTItem ReadInt(FileStream sr)
         {
             long r = 0;
             int c;
@@ -523,8 +522,7 @@ namespace TVRename
             if (neg)
                 r = -r;
 
-            BTInteger bti = new BTInteger();
-            bti.Value = r;
+            BTInteger bti = new BTInteger {Value = r};
             return bti;
         }
 
@@ -632,9 +630,6 @@ namespace TVRename
 
     public abstract class BTCore
     {
-        protected int CacheChecks;
-        protected int CacheHits;
-        protected int CacheItems;
         protected bool DoHashChecking;
         protected DirCache FileCache;
         protected string FileCacheIsFor;
@@ -647,7 +642,6 @@ namespace TVRename
             SetProg = setprog;
 
             HashCache = new Dictionary<string, List<HashCacheItem>>();
-            CacheChecks = CacheItems = CacheHits = 0;
             FileCache = null;
             FileCacheIsFor = null;
             FileCacheWithSubFolders = false;
@@ -722,7 +716,6 @@ namespace TVRename
 
         protected void CacheThis(string filename, long whereInFile, long piecesize, long fileSize, byte[] hash)
         {
-            CacheItems++;
             if (!HashCache.ContainsKey(filename))
                 HashCache[filename] = new List<HashCacheItem>();
 
@@ -731,14 +724,12 @@ namespace TVRename
 
         protected byte[] CheckCache(string filename, long whereInFile, long piecesize, long fileSize)
         {
-            CacheChecks++;
             if (HashCache.ContainsKey(filename))
             {
                 foreach (HashCacheItem h in HashCache[filename])
                 {
                     if ((h.whereInFile == whereInFile) && (h.pieceSize == piecesize) && (h.fileSize == fileSize))
                     {
-                        CacheHits++;
                         return h.theHash;
                     }
                 }
@@ -897,88 +888,6 @@ namespace TVRename
     }
 
     // btcore
-
-    public class BTFileRenamer : BTCore
-    {
-        // Hash and file caches
-
-        // settings for processing the torrent (and optionally resume) files
-        //    int Action;
-        //    String ^torrentFile;
-        //    String ^folder;
-        //TextBox ^status;
-
-        public bool CopyNotMove;
-        public string CopyToFolder;
-
-        public ItemList RenameListOut;
-
-        public BTFileRenamer(SetProgressDelegate setprog)
-            : base(setprog)
-        {
-        }
-
-        //    String ^secondFolder; // resume.dat location, or where to copy/move to
-
-        protected override bool NewTorrentEntry(string torrentFile, int numberInTorrent)
-        {
-            return true;
-        }
-
-        protected override bool FoundFileOnDiskForFileInTorrent(string torrentFile, FileInfo onDisk, int numberInTorrent,
-            string nameInTorrent)
-        {
-            RenameListOut.Add(new ActionCopyMoveRename(
-                CopyNotMove ? ActionCopyMoveRename.Op.copy : ActionCopyMoveRename.Op.rename, onDisk,
-                FileHelper.FileInFolder(CopyNotMove ? CopyToFolder : onDisk.Directory.Name, nameInTorrent),
-                null, null, null));
-
-            return true;
-        }
-
-        protected override bool DidNotFindFileOnDiskForFileInTorrent(string torrentFile, int numberInTorrent,
-            string nameInTorrent)
-        {
-            return true;
-        }
-
-        protected override bool FinishedTorrentEntry(string torrentFile, int numberInTorrent, string filename)
-        {
-            return true;
-        }
-
-        public bool RenameFilesOnDiskToMatchTorrent(string torrentFile, string folder, TreeView tvTree,
-            ItemList renameListOut,
-            bool copyNotMove, string copyDest, CommandLineArgs args)
-        {
-            if ((string.IsNullOrEmpty(folder) || !Directory.Exists(folder)))
-                return false;
-
-            if (string.IsNullOrEmpty(torrentFile))
-                return false;
-
-            if (renameListOut == null)
-                return false;
-
-            if (copyNotMove && (string.IsNullOrEmpty(copyDest) || !Directory.Exists(copyDest)))
-                return false;
-
-            CopyNotMove = copyNotMove;
-            CopyToFolder = copyDest;
-            DoHashChecking = true;
-            RenameListOut = renameListOut;
-
-            Prog(0);
-
-            BuildFileCache(folder, false); // don't do subfolders
-
-            RenameListOut.Clear();
-
-            bool r = ProcessTorrentFile(torrentFile, tvTree, args);
-
-            return r;
-        }
-    }
 
     // BTProcessor
 

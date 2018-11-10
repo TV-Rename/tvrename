@@ -15,8 +15,8 @@ using System.Windows.Forms;
 using Newtonsoft.Json.Linq;
 using System.Xml;
 using System.Linq;
-using System.IO;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
@@ -183,13 +183,10 @@ namespace TVRename
             if (!loadFrom.Exists)
                 return true; // that's ok
 
-            FileStream fs = null;
             try
             {
-                fs = loadFrom.Open(FileMode.Open);
-                bool r = ProcessXml(fs, null);
-                fs.Close();
-                fs = null;
+                XElement x = XElement.Load(loadFrom.FullName);
+                bool r = ProcessXml(x);
                 if (r)
                     UpdatesDoneOk();
 
@@ -199,8 +196,6 @@ namespace TVRename
             {
                 Logger.Warn(e, "Problem on Startup loading File");
                 LoadErr = loadFrom.Name + " : " + e.Message;
-
-                fs?.Close();
                 return false;
             }
         }
@@ -682,8 +677,9 @@ namespace TVRename
             // if updatetime > localtime for item, then remove it, so it will be downloaded later
             try
             {
-                foreach (JObject seriesResponse in jsonResponse["data"])
+                foreach (JToken jToken in jsonResponse["data"])
                 {
+                    JObject seriesResponse = (JObject) jToken;
                     int id = (int)seriesResponse["id"];
                     long time = (long)seriesResponse["lastUpdated"];
 
@@ -717,8 +713,6 @@ namespace TVRename
                             }
                         }
 
-                        foreach (JObject response in episodeResponses)
-                        {
                             try
                             {
                                 foreach (KeyValuePair<int, Tuple<JToken, JToken>> episodeData in episodesResponses)
@@ -772,7 +766,7 @@ namespace TVRename
                                 Logger.Error(ex);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }
-                        }
+                        
 
                         Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
                                     " episodes updated and " + numberOfNewEpisodes + " new episodes ");
@@ -918,7 +912,7 @@ namespace TVRename
             return TvDbTokenProvider.TVDB_API_URL + "/series/" + id + "/episodes";
         }
 
-        private void ProcessXmlBannerCache(XmlReader r)
+        private void ProcessXmlBannerCache(XElement r)
         {
             //this is a wrapper that provides the seriesId and the Banners List as provided from the website
             //
@@ -928,45 +922,13 @@ namespace TVRename
             //          <SeriesId>123</SeriesId>
             //          <Banners>
             //              <Banner>
-            int seriesId = -1;
 
-            while (!r.EOF)
+            foreach (XElement bannersXml in r.Descendants("BannersItem"))
             {
-                if ((r.Name == "BannersCache") && !r.IsStartElement())
-                    break; // that's it.
-
-                if (r.Name == "BannersItem")
-                    r.Read();
-                else if ((r.Name == "SeriesId") && r.IsStartElement())
-                    seriesId = r.ReadElementContentAsInt();
-                else if ((r.Name == "Banners") && r.IsStartElement())
+                int seriesId = bannersXml.ExtractInt("SeriesId")??-1;
+                foreach (XElement banner in bannersXml.Descendants("Banners").Descendants("Banner"))
                 {
-                    ProcessXmlBanner(r.ReadSubtree(), seriesId);
-                    r.Read();
-                    seriesId = -1;
-                }
-                else
-                    r.Read();
-            }
-        }
-
-        private void ProcessXmlBanner(XmlReader r, int codeHint)
-        {
-            r.Read();
-
-            while (!r.EOF)
-            {
-                if ((r.Name == "Banners") && r.IsStartElement())
-                {
-                    r.Read();
-                }
-                else if ((r.Name == "SeriesId"))
-                {
-                    break; //we should never have got here - this is the seriesId that should have been passed in via codehint
-                }
-                else if (r.Name == "Banner")
-                {
-                    Banner b = new Banner(codeHint, r.ReadSubtree());
+                    Banner b = new Banner(seriesId, banner);
 
                     if (!series.ContainsKey(b.SeriesId))
                         throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
@@ -974,18 +936,8 @@ namespace TVRename
                     SeriesInfo ser = series[b.SeriesId];
 
                     ser.AddOrUpdateBanner(b);
-
-                    r.Read();
                 }
-                else if ((r.Name == "Banners") && !r.IsStartElement())
-                {
-                    series[codeHint].BannersLoaded = true;
-                    break; // that's it.
-                }
-                else if (r.Name == "xml")
-                    r.Read();
-                else
-                    r.Read();
+                series[seriesId].BannersLoaded = true;
             }
         }
 
@@ -993,7 +945,7 @@ namespace TVRename
 
         private int GetDefaultLanguageId() => LanguageList.GetLanguageFromCode(DefaultLanguageCode).Id;
         
-        private bool ProcessXml(Stream str, int? codeHint)
+        private bool ProcessXml(XElement x)
         {
             // Will have one or more series, and episodes
             // all wrapped in <Data> </Data>
@@ -1020,91 +972,50 @@ namespace TVRename
 
             try
             {
-                XmlReaderSettings settings = new XmlReaderSettings
-                {
-                    IgnoreComments = true,
-                    IgnoreWhitespace = true
-                };
+                string time = x.Attribute("time")?.Value;
+                newSrvTime = (time == null) ? 0 : long.Parse(time);
 
-                using (XmlReader r = XmlReader.Create(str, settings))
+                foreach (XElement seriesXml in x.Descendants("Series"))
                 {
-                    r.Read();
+                    // The <series> returned by GetSeries have
+                    // less info than other results from
+                    // thetvdb.com, so we need to smartly merge
+                    // in a <Series> if we already have some/all
+                    // info on it (depending on which one came
+                    // first).
 
-                    while (!r.EOF)
+                    SeriesInfo si = new SeriesInfo(seriesXml);
+                    if (series.ContainsKey(si.TvdbCode))
+                        series[si.TvdbCode].Merge(si, GetLanguageId());
+                    else
+                        series[si.TvdbCode] = si;
+                }
+
+                foreach (XElement episodeXml in x.Descendants("Episode"))
+                {
+                    Episode e = new Episode(episodeXml);
+                    if (e.Ok())
                     {
-                        if ((r.Name == "Data") && !r.IsStartElement())
-                            break; // that's it.
-
-                        if (r.Name == "Series")
-                        {
-                            // The <series> returned by GetSeries have
-                            // less info than other results from
-                            // thetvdb.com, so we need to smartly merge
-                            // in a <Series> if we already have some/all
-                            // info on it (depending on which one came
-                            // first).
-
-                            SeriesInfo si = new SeriesInfo(r.ReadSubtree());
-                            if (series.ContainsKey(si.TvdbCode))
-                                series[si.TvdbCode].Merge(si, GetLanguageId());
-                            else
-                                series[si.TvdbCode] = si;
-
-                            r.Read();
-                        }
-                        else if (r.Name == "Episode")
-                        {
-                            Episode e = new Episode(r.ReadSubtree());
-                            if (e.Ok())
-                            {
-                                AddOrUpdateEpisode(e);
-                            }
-
-                            r.Read();
-                        }
-                        else if (r.Name == "xml")
-                            r.Read();
-                        else if (r.Name == "BannersCache")
-                        {
-                            //this wil not be found in a standard response from the TVDB website
-                            //will only be in the response when we are reading from the cache
-                            ProcessXmlBannerCache(r);
-                            r.Read();
-                        }
-                        else if (r.Name == "Data")
-                        {
-                            string time = r.GetAttribute("time");
-                            newSrvTime = (time == null) ? 0 : long.Parse(time);
-                            r.Read();
-                        }
-                        else
-                            r.ReadOuterXml();
+                        AddOrUpdateEpisode(e);
                     }
+                }
+
+                foreach (XElement banners in x.Descendants("BannersCache"))
+                {
+                    //this wil not be found in a standard response from the TVDB website
+                    //will only be in the response when we are reading from the cache
+                    ProcessXmlBannerCache(banners);
                 }
             }
             catch (XmlException e)
             {
-                str.Position = 0;
-                string myStr;
-                using (StreamReader sr = new StreamReader(str)) myStr = sr.ReadToEnd();
-
                 string message = "Error processing data from TheTVDB (top level).";
-                message += "\r\n" + myStr;
+                message += "\r\n" + x;
                 message += "\r\n" + e.Message;
-                string name = "";
-                if (codeHint.HasValue && series.ContainsKey(codeHint.Value))
-                {
-                    name += "Show \"" + series[codeHint.Value].Name + "\" ";
-                }
 
-                if (codeHint.HasValue)
-                {
-                    name += "ID #" + codeHint.Value + " ";
-                }
-
-                Logger.Error(name + message);
-                Logger.Error(str.ToString());
-                throw new TVDBException(name + message);
+                Logger.Error(message);
+                Logger.Error(x.ToString());
+                throw new TVDBException(message);
             }
             finally
             {
@@ -1325,8 +1236,9 @@ namespace TVRename
             {
                 try
                 {
-                    foreach (JObject bannerData in response["data"])
+                    foreach (JToken jToken in response["data"])
                     {
+                        JObject bannerData = (JObject) jToken;
                         Banner b = new Banner(si.TvdbCode, bannerData, GetDefaultLanguageId());
                         if (!series.ContainsKey(b.SeriesId))
                             throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
@@ -1429,21 +1341,23 @@ namespace TVRename
         {
             Dictionary<int, Tuple<JToken, JToken>> episodeIds = new Dictionary<int, Tuple<JToken, JToken>>();
 
-            if(episodeResponses!=null) foreach (JObject epResponse in episodeResponses)
-            {
-                foreach (JToken episodeData in epResponse["data"])
+            if(episodeResponses!=null)
+                foreach (JObject epResponse in episodeResponses)
                 {
-                    int x = (int)episodeData["id"];
-                    if (x > 0)
+                    foreach (JToken episodeData in epResponse["data"])
                     {
-                        if (episodeIds.ContainsKey(x))
+                        int x = (int)episodeData["id"];
+                        if (x > 0)
                         {
-                            Logger.Warn($"Duplicate episode {x} contained in episode data call");
+                            if (episodeIds.ContainsKey(x))
+                            {
+                                Logger.Warn($"Duplicate episode {x} contained in episode data call");
+                            }
+                            else episodeIds.Add(x, new Tuple<JToken, JToken>(episodeData, null));
                         }
-                        else episodeIds.Add(x, new Tuple<JToken, JToken>(episodeData, null));
                     }
                 }
-            }
+
             if (episodeDefaultLangResponses != null) foreach (JObject epResponse in episodeDefaultLangResponses)
             {
                 foreach (JToken episodeData in epResponse["data"])

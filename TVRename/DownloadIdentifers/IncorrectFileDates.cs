@@ -14,7 +14,7 @@ namespace TVRename
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
-            DateTime? newUpdateTime = si.TheSeries().LastAiredDate();
+            DateTime? newUpdateTime = si.TheSeries().LastAiredDate;
             if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
             {
                 //Any series before 1980 will get 1980 as the timestamp

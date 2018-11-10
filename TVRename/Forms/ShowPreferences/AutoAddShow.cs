@@ -44,7 +44,7 @@ namespace TVRename
             ShowItem.AutoAddFolderBase = cbDirectory.Text+lblDirectoryName.Text;
             ShowItem.AutoAddType = ShowItem.AutomaticFolderType.libraryDefault;
             //Set Default Timezone based on Network
-            ShowItem.ShowTimeZone = TimeZone.TimeZoneForNetwork(codeFinder.SelectedShow()?.GetNetwork());
+            ShowItem.ShowTimeZone = TimeZone.TimeZoneForNetwork(codeFinder.SelectedShow()?.Network);
             if (!originalHint.Contains(codeFinder.SelectedShow().Name, StringComparison.OrdinalIgnoreCase))
             {
                 ShowItem.AliasNames.Add(originalHint);

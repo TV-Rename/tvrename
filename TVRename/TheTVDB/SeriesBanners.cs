@@ -1,0 +1,243 @@
+using System.Collections.Generic;
+
+namespace TVRename
+{
+    class SeriesBanners
+    {
+        //All Banners
+        public Dictionary<int, Banner> AllBanners; // All Banners linked by bannerId.
+
+        //Collections of Posters and Banners per season
+        private Dictionary<int, Banner> seasonBanners; // e.g. Dictionary of the best posters per series.
+        private Dictionary<int, Banner> seasonLangBanners; // e.g. Dictionary of the best posters per series in the correct language.
+        private Dictionary<int, Banner> seasonWideBanners; // e.g. Dictionary of the best wide banners per series.
+        private Dictionary<int, Banner> seasonLangWideBanners; // e.g. Dictionary of the best wide banners per series in the correct language.
+
+        //best Banner, Poster and Fanart loaded from the images files (in any language)
+        private int bestSeriesPosterId;
+        private int bestSeriesBannerId;
+        private int bestSeriesFanartId;
+
+        //best Banner, Poster and Fanart loaded from the images files (in our language)
+        private int bestSeriesLangPosterId;
+        private int bestSeriesLangBannerId;
+        private int bestSeriesLangFanartId;
+
+        private readonly SeriesInfo series;
+
+        public SeriesBanners(SeriesInfo s)
+        {
+            series = s;
+        }
+
+        public void ResetBanners()
+        {
+            AllBanners = new Dictionary<int, Banner>();
+            seasonBanners = new Dictionary<int, Banner>();
+            seasonLangBanners = new Dictionary<int, Banner>();
+            seasonWideBanners = new Dictionary<int, Banner>();
+            seasonLangWideBanners = new Dictionary<int, Banner>();
+
+            bestSeriesPosterId = -1;
+            bestSeriesBannerId = -1;
+            bestSeriesFanartId = -1;
+            bestSeriesLangPosterId = -1;
+            bestSeriesLangBannerId = -1;
+            bestSeriesLangFanartId = -1;
+        }
+
+        public void MergeBanners(SeriesBanners o)
+        {
+            if ((o.seasonBanners != null) && (o.seasonBanners.Count != 0))
+                seasonBanners = o.seasonBanners;
+
+            if ((o.seasonLangBanners != null) && (o.seasonLangBanners.Count != 0))
+                seasonLangBanners = o.seasonLangBanners;
+
+            if ((o.seasonLangWideBanners != null) && (o.seasonLangWideBanners.Count != 0))
+                seasonLangWideBanners = o.seasonLangWideBanners;
+
+            if ((o.seasonWideBanners != null) && (o.seasonWideBanners.Count != 0))
+                seasonWideBanners = o.seasonWideBanners;
+
+            if ((o.AllBanners != null) && (o.AllBanners.Count != 0))
+                AllBanners = o.AllBanners;
+
+            if ((o.bestSeriesPosterId != -1)) bestSeriesPosterId = o.bestSeriesPosterId;
+            if ((o.bestSeriesBannerId != -1)) bestSeriesBannerId = o.bestSeriesBannerId;
+            if ((o.bestSeriesFanartId != -1)) bestSeriesFanartId = o.bestSeriesFanartId;
+            if ((o.bestSeriesLangPosterId != -1)) bestSeriesLangPosterId = o.bestSeriesLangPosterId;
+            if ((o.bestSeriesLangBannerId != -1)) bestSeriesLangBannerId = o.bestSeriesLangBannerId;
+            if ((o.bestSeriesLangFanartId != -1)) bestSeriesLangFanartId = o.bestSeriesLangFanartId;
+
+        }
+
+        public string GetSeasonBannerPath(int snum)
+        {
+            //We aim to return the season and language specific poster,
+            //if not then a season specific one is best
+            //if not then the poster is the fallback
+
+            System.Diagnostics.Debug.Assert(series.BannersLoaded);
+
+            if (seasonLangBanners.ContainsKey(snum))
+                return seasonLangBanners[snum].BannerPath;
+
+            if (seasonBanners.ContainsKey(snum))
+                return seasonBanners[snum].BannerPath;
+
+            //if there is a problem then return the non-season specific poster by default
+            return GetSeriesPosterPath();
+        }
+
+        public string GetSeriesWideBannerPath()
+        {
+            //ry the best one we've found with the correct language
+            if (bestSeriesLangBannerId != -1) return AllBanners[bestSeriesLangBannerId].BannerPath;
+
+            //if there are none with the right language then try one from another language
+            if (bestSeriesBannerId != -1) return AllBanners[bestSeriesBannerId].BannerPath;
+
+            //then choose the one the TVDB recommended _LOWERED IN PRIORITY AFTER LEVERAGE issue - https://github.com/TV-Rename/tvrename/issues/285
+            if (!string.IsNullOrEmpty(series.BannerString)) return series.BannerString;
+
+            //give up
+            return "";
+        }
+
+        public string GetSeriesPosterPath()
+        {
+            //then try the best one we've found with the correct language
+            if (bestSeriesLangPosterId != -1) return AllBanners[bestSeriesLangPosterId].BannerPath;
+
+            //if there are none with the righ tlanguage then try one from another language
+            if (bestSeriesPosterId != -1) return AllBanners[bestSeriesPosterId].BannerPath;
+
+            //give up
+            return "";
+        }
+
+        public string GetSeriesFanartPath()
+        {
+            //then try the best one we've found with the correct language
+            if (bestSeriesLangFanartId != -1) return AllBanners[bestSeriesLangFanartId].BannerPath;
+
+            //if there are none with the righ tlanguage then try one from another language
+            if (bestSeriesFanartId != -1) return AllBanners[bestSeriesFanartId].BannerPath;
+
+            //give up
+            return "";
+        }
+
+        public string GetSeasonWideBannerPath(int snum)
+        {
+            //We aim to return the season and language specific poster,
+            //if not then a season specific one is best
+            //if not then the poster is the fallback
+
+            System.Diagnostics.Debug.Assert(series.BannersLoaded);
+
+            if (seasonLangWideBanners.ContainsKey(snum))
+                return seasonLangWideBanners[snum].BannerPath;
+
+            if (seasonWideBanners.ContainsKey(snum))
+                return seasonWideBanners[snum].BannerPath;
+
+            //if there is a problem then return the non-season specific poster by default
+            return GetSeriesWideBannerPath();
+        }
+
+        public void AddOrUpdateBanner(Banner banner)
+        {
+            if (AllBanners.ContainsKey(banner.BannerId))
+            {
+                AllBanners[banner.BannerId] = banner;
+            }
+            else
+            {
+                AllBanners.Add(banner.BannerId, banner);
+            }
+
+            if (banner.IsSeasonPoster()) AddOrUpdateSeasonPoster(banner);
+            if (banner.IsSeasonBanner()) AddOrUpdateWideSeason(banner);
+
+            if (banner.IsSeriesPoster()) bestSeriesPosterId = GetBestBannerId(banner, bestSeriesPosterId);
+            if (banner.IsSeriesBanner()) bestSeriesBannerId = GetBestBannerId(banner, bestSeriesBannerId);
+            if (banner.IsFanart()) bestSeriesFanartId = GetBestBannerId(banner, bestSeriesFanartId);
+
+            if (banner.LanguageId == series.LanguageId)
+            {
+                if (banner.IsSeriesPoster()) bestSeriesLangPosterId = GetBestBannerId(banner, bestSeriesLangPosterId);
+                if (banner.IsSeriesBanner()) bestSeriesLangBannerId = GetBestBannerId(banner, bestSeriesLangBannerId);
+                if (banner.IsFanart()) bestSeriesLangFanartId = GetBestBannerId(banner, bestSeriesLangFanartId);
+            }
+        }
+
+        private int GetBestBannerId(Banner selectedBanner, int bestBannerId)
+        {
+            if (bestBannerId == -1) return selectedBanner.BannerId;
+
+            if (AllBanners[bestBannerId].Rating < selectedBanner.Rating)
+            {
+                //update banner - we have found a better one
+                return selectedBanner.BannerId;
+            }
+
+            return bestBannerId;
+        }
+
+        private void AddOrUpdateSeasonPoster(Banner banner)
+        {
+            AddUpdateIntoCollections(banner, seasonBanners, seasonLangBanners);
+        }
+
+        private void AddOrUpdateWideSeason(Banner banner)
+        {
+            AddUpdateIntoCollections(banner, seasonWideBanners, seasonLangWideBanners);
+        }
+
+        private void AddUpdateIntoCollections(Banner banner, IDictionary<int, Banner> coll, IDictionary<int, Banner> langColl)
+        {
+            //update language specific cache if appropriate
+            if (banner.LanguageId == series.LanguageId)
+            {
+                AddUpdateIntoCollection(banner, langColl);
+            }
+            //Now do the same for the all banners dictionary
+            AddUpdateIntoCollection(banner, coll);
+        }
+
+        private static void AddUpdateIntoCollection(Banner banner, IDictionary<int, Banner> coll)
+        {
+            int seasonOfNewBanner = banner.SeasonId;
+
+            if (coll.ContainsKey(seasonOfNewBanner))
+            {
+                //it already contains a season of the approprite type - see which is better
+                if (coll[seasonOfNewBanner].Rating < banner.Rating)
+                {
+                    //update banner - we have found a better one
+                    coll[seasonOfNewBanner] = banner;
+                }
+            }
+            else
+                coll.Add(seasonOfNewBanner, banner);
+        }
+
+
+        public string GetImage(TVSettings.FolderJpgIsType type)
+        {
+            switch (type)
+            {
+                case TVSettings.FolderJpgIsType.Banner:
+                    return GetSeriesWideBannerPath();
+                case TVSettings.FolderJpgIsType.FanArt:
+                    return GetSeriesFanartPath();
+                case TVSettings.FolderJpgIsType.SeasonPoster:
+                    return GetSeriesPosterPath();
+                default:
+                    return GetSeriesPosterPath();
+            }
+        }
+    }
+}

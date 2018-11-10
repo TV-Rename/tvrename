@@ -20,10 +20,9 @@ namespace TVRename
             writer.WriteEndElement();
         }
 
-        public static string ReadStringFixQuotesAndSpaces(XmlReader r)
+        public static string ReadStringFixQuotesAndSpaces(string s)
         {
-            string res = r.ReadElementContentAsString();
-            res = res.Replace("\\'", "'");
+            string res = s.Replace("\\'", "'");
             res = res.Replace("\\\"", "\"");
             res = res.Trim();
             return res;
@@ -75,6 +74,10 @@ namespace TVRename
             if (value != null)
                 writer.WriteValue(value);
             writer.WriteEndAttribute();
+        }
+        internal static void WriteElementToXml(XmlWriter writer, string attributeName, int? value)
+        {
+            if (value.HasValue) WriteElementToXml(writer,attributeName,value.Value);
         }
         public static void WriteAttributeToXml(XmlWriter writer, string attributeName, int value)
         {
@@ -152,8 +155,15 @@ namespace TVRename
         }
         public static int? ExtractInt(this XElement xmlSettings, string elementName)
         {
-            if(xmlSettings.Descendants(elementName).Any())
+            if(xmlSettings.Descendants(elementName).Any() && !string.IsNullOrWhiteSpace((string)(xmlSettings.Descendants(elementName).First())))
                 return XmlConvert.ToInt32((string)(xmlSettings.Descendants(elementName).First()));
+
+            return null;
+        }
+        public static long? ExtractLong(this XElement xmlSettings, string elementName)
+        {
+            if (xmlSettings.Descendants(elementName).Any())
+                return XmlConvert.ToInt64((string)(xmlSettings.Descendants(elementName).First()));
 
             return null;
         }

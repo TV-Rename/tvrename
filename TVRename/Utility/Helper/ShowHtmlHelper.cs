@@ -47,23 +47,22 @@ namespace TVRename
             SeriesInfo ser = si.TheSeries();
             string horizontalBanner = CreateHorizontalBannerHtml(ser);
             string poster = CreatePosterHtml(ser);
-            int minYear = si.TheSeries().MinYear();
-            int maxYear = si.TheSeries().MaxYear();
+            int minYear = si.TheSeries().MinYear;
+            int maxYear = si.TheSeries().MaxYear;
             string yearRange = (minYear == maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
             string episodeSummary = si.TheSeries().AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
-            string stars = StarRating(si.TheSeries().GetSiteRating());
-            string genreIcons = string.Join("&nbsp;", si.TheSeries().GetGenres().Select(GenreIconHtml));
-            bool ratingIsNumber = float.TryParse(si.TheSeries().GetSiteRating(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
-            string siteRating = ratingIsNumber && rating > 0 ? rating + "/10" : "";
-            string runTimeHtml = string.IsNullOrWhiteSpace(ser.GetRuntime()) ? string.Empty : $"<br/> {ser.GetRuntime()} min";
+            string stars = StarRating(si.TheSeries().SiteRating/2);
+            string genreIcons = string.Join("&nbsp;", si.TheSeries().Genres().Select(GenreIconHtml));
+            string siteRating = si.TheSeries().SiteRating > 0 ? si.TheSeries().SiteRating+ "/10" : "";
+            string runTimeHtml = string.IsNullOrWhiteSpace(ser.Runtime) ? string.Empty : $"<br/> {ser.Runtime} min";
             string actorLinks = string.Join(", ", si.TheSeries().GetActors().Select(ActorLinkHtml));
             string tvdbLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
             string airsTime = ParseAirsTime(ser);
-            string airsDay = ser.GetAirsDay();
+            string airsDay = ser.AirsDay;
             string dayTime = $"{airsDay} {airsTime}";
 
-            string tvLink = string.IsNullOrWhiteSpace(ser.GetSeriesId()) ? string.Empty : "http://www.tv.com/show/" + ser.GetSeriesId() + "/summary.html";
-            string imdbLink = string.IsNullOrWhiteSpace(ser.GetImdb()) ? string.Empty : "http://www.imdb.com/title/" + ser.GetImdb();
+            string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : "http://www.tv.com/show/" + ser.SeriesId+ "/summary.html";
+            string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : "http://www.imdb.com/title/" + ser.Imdb;
 
             string urlFilename = HttpUtility.UrlEncode(si.GetBestFolderLocationToOpen());
             string explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
@@ -78,9 +77,9 @@ namespace TVRename
                    <div class=""col-md-8 d-flex flex-column"">
                     <div class=""row"">
                      <div class=""col-md-8""><h1>{ser.Name}</h1></div>
-                     <div class=""col-md-4 text-right""><h6>{yearRange} ({si.TheSeries().GetStatus()})</h6><small class=""text-muted"">{episodeSummary} Episodes{runTimeHtml}</small></div>
+                     <div class=""col-md-4 text-right""><h6>{yearRange} ({si.TheSeries().Status})</h6><small class=""text-muted"">{episodeSummary} Episodes{runTimeHtml}</small></div>
                     </div>
-                    <div><p class=""lead"">{ser.GetOverview()}</p></div>
+                    <div><p class=""lead"">{ser.Overview}</p></div>
 			        <div><blockquote>{actorLinks}</blockquote></div> 
 		            <div>
                      {explorerButton}
@@ -89,9 +88,9 @@ namespace TVRename
 			         {CreateButton(tvLink, "TV.com", "View on TV.com")}
 			        </div>
 		            <div class=""row align-items-bottom flex-grow-1"">
-                     <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.GetSiteRatingVotes())}</div>
-                     <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().GetContentRating()}<br>{si.TheSeries().GetNetwork()}, {dayTime}</div>
-                     <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", si.TheSeries().GetGenres())}</div>
+                     <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}{AddRatingCount(ser.SiteRatingVotes)}</div>
+                     <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().ContentRating}<br>{si.TheSeries().Network}, {dayTime}</div>
+                     <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", si.TheSeries().Genres())}</div>
                     </div>
                    </div>
                   </div>
@@ -100,8 +99,7 @@ namespace TVRename
 
         private static string ParseAirsTime(SeriesInfo ser)
         {
-            bool success = DateTime.TryParse(ser.GetAirsTime(), out DateTime airsTime);
-            return success ? airsTime.ToString("h tt"): string.Empty;
+            return ser.AirsTime?.ToString("h tt")?? string.Empty;
         }
 
         private static string GetBestFolderLocationToOpen(this ShowItem si)
@@ -225,7 +223,7 @@ namespace TVRename
             string episodeUrl = TheTVDB.Instance.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);
             bool ratingIsNumber = float.TryParse(ep.EpisodeRating, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
             string siteRating = ratingIsNumber && rating > 0
-                ? rating + "/10" + AddRatingCount(ep.SiteRatingCount)
+                ? rating + "/10" + AddRatingCount(ep.SiteRatingCount.Value)
                 : "";
 
             string imdbLink = string.IsNullOrWhiteSpace(ep.ImdbCode) ? string.Empty : "http://www.imdb.com/title/" + ep.ImdbCode;
@@ -293,12 +291,9 @@ namespace TVRename
                 </div>");
         }
 
-        private static string AddRatingCount(string siteRatingCount)
+        private static string AddRatingCount(int siteRatingCount)
         {
-            if (!string.IsNullOrWhiteSpace(siteRatingCount) && int.Parse(siteRatingCount) > 0)
-                return $" (From {siteRatingCount} Vote{(int.Parse(siteRatingCount) == 1 ? "" : "s")})";
-
-            return string.Empty;
+            return siteRatingCount > 0 ? $" (From {siteRatingCount} Vote{(siteRatingCount == 1 ? "" : "s")})" : string.Empty;
         }
 
         private static string CreateButton(string link, string text, string tooltip)
@@ -423,7 +418,9 @@ namespace TVRename
         private static string ActorLinkHtml(Actor actor)
         {
             string asText = string.IsNullOrWhiteSpace(actor.ActorRole) ? string.Empty : (" as " + actor.ActorRole);
-            return $@"<a href=""http://www.imdb.com/find?s=nm&q={actor.ActorName}"">{actor.ActorName}</a>{asText}";
+            string tryText =
+                $@"<a href=""http://www.imdb.com/find?s=nm&q={actor.ActorName}"">{actor.ActorName}</a>{asText}";
+            return tryText;
         }
 
         internal static string StarRating(string rating)
@@ -440,7 +437,7 @@ namespace TVRename
             }
         }
 
-        private static string StarRating(float f)
+        internal static string StarRating(float f)
         {
             const string star = @"<i class=""fas fa-star""></i>";
             const string halfstar = @"<i class=""fas fa-star-half""></i>";

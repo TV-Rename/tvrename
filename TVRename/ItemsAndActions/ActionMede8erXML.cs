@@ -77,7 +77,7 @@ namespace TVRename
                 if (intSiteRating > 0) XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
 
                 //Get the Series OverView
-                string sov = Episode.Show.TheSeries().GetOverview();
+                string sov = Episode.Show.TheSeries().Overview;
                 if (!string.IsNullOrEmpty(sov))
                 {
                     XmlHelper.WriteElementToXml(writer, "plot", sov);
@@ -87,11 +87,11 @@ namespace TVRename
                 XmlHelper.WriteElementToXml(writer, "episodeplot", Episode.Overview);
                 if (Episode.Show != null)
                 {
-                    XmlHelper.WriteElementToXml(writer, "mpaa", Episode.Show.TheSeries().GetContentRating());
+                    XmlHelper.WriteElementToXml(writer, "mpaa", Episode.Show.TheSeries().ContentRating);
                 }
 
                 //Runtime...taken from overall Series, not episode specific due to thetvdb
-                string rt = Episode.Show.TheSeries().GetRuntime();
+                string rt = Episode.Show.TheSeries().Runtime;
                 if (!string.IsNullOrEmpty(rt))
                 {
                     XmlHelper.WriteElementToXml(writer, "runtime", rt + " min");
@@ -99,7 +99,7 @@ namespace TVRename
 
                 //Genres...taken from overall Series, not episode specific due to thetvdb
                 writer.WriteStartElement("genres");
-                string genre = string.Join(" / ", Episode.Show.TheSeries().GetGenres());
+                string genre = string.Join(" / ", Episode.Show.TheSeries().Genres());
                 if (!string.IsNullOrEmpty(genre))
                 {
                     XmlHelper.WriteElementToXml(writer, "genre", genre);
@@ -159,31 +159,31 @@ namespace TVRename
                 writer.WriteStartElement("movie");
                 XmlHelper.WriteElementToXml(writer, "title", SelectedShow.ShowName);
                 writer.WriteStartElement("genres");
-                string genre = string.Join(" / ", SelectedShow.TheSeries().GetGenres());
+                string genre = string.Join(" / ", SelectedShow.TheSeries().Genres());
                 if (!string.IsNullOrEmpty(genre))
                 {
                     XmlHelper.WriteElementToXml(writer, "genre", genre);
                 }
 
                 writer.WriteEndElement(); // genres
-                XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries().GetFirstAired());
-                XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries().GetYear());
+                XmlHelper.WriteElementToXml(writer, "premiered", SelectedShow.TheSeries().FirstAired);
+                XmlHelper.WriteElementToXml(writer, "year", SelectedShow.TheSeries().Year);
 
                 //Mede8er Ratings are on a 100 point scale; TVDB are on a 10 point scale
-                float siteRating = float.Parse(SelectedShow.TheSeries().GetSiteRating(), new CultureInfo("en-US")) * 10;
+                float siteRating = SelectedShow.TheSeries().SiteRating * 10;
                 int intSiteRating = (int) siteRating;
                 if (intSiteRating > 0) XmlHelper.WriteElementToXml(writer, "rating", intSiteRating);
-                XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries().GetStatus());
-                XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries().GetContentRating());
-                XmlHelper.WriteInfo(writer, "moviedb", "imdb", "id", SelectedShow.TheSeries().GetImdb());
+                XmlHelper.WriteElementToXml(writer, "status", SelectedShow.TheSeries().Status);
+                XmlHelper.WriteElementToXml(writer, "mpaa", SelectedShow.TheSeries().ContentRating);
+                XmlHelper.WriteInfo(writer, "moviedb", "imdb", "id", SelectedShow.TheSeries().Imdb);
                 XmlHelper.WriteElementToXml(writer, "tvdbid", SelectedShow.TheSeries().TvdbCode);
-                string rt = SelectedShow.TheSeries().GetRuntime();
+                string rt = SelectedShow.TheSeries().Runtime;
                 if (!string.IsNullOrEmpty(rt))
                 {
                     XmlHelper.WriteElementToXml(writer, "runtime", rt + " min");
                 }
 
-                XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries().GetOverview());
+                XmlHelper.WriteElementToXml(writer, "plot", SelectedShow.TheSeries().Overview);
                 writer.WriteStartElement("cast");
 
                 // actors...

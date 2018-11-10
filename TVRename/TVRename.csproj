@@ -251,6 +251,7 @@
     <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="Settings\ShowItem.cs" />
     <Compile Include="TheTVDB\Actor.cs" />
+    <Compile Include="TheTVDB\SeriesBanners.cs" />
     <Compile Include="TheTVDB\SeriesSpecifier.cs" />
     <Compile Include="TheTVDB\TVSource.cs" />
     <Compile Include="TheTVDB\TvDbTokenProvider.cs" />

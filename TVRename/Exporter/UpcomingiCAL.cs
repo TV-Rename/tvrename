@@ -32,7 +32,7 @@ namespace TVRename
                     if (!stTime.HasValue) continue;
 
                     DateTime startTime = stTime.Value;
-                    string s = ei.Show.TheSeries().GetRuntime();
+                    string s = ei.Show.TheSeries().Runtime;
                     DateTime endTime = stTime.Value.AddMinutes(int.Parse(s));
 
                     CalendarEvent e = new CalendarEvent
@@ -42,7 +42,7 @@ namespace TVRename
                         Description = ei.Overview,
                         Comments = new List<string>{ei.Overview},
                         Summary = niceName,
-                        Location=ei.TheSeries.GetNetwork(),
+                        Location=ei.TheSeries.Network,
                         Url = new Uri(TheTVDB.Instance.WebsiteUrl(ei.TheSeries.TvdbCode, ei.SeasonId, false)),
                         Uid = ei.EpisodeId.ToString()
                     };
