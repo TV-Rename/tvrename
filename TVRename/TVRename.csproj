@@ -353,17 +353,11 @@
     <Compile Include="Forms\Utilities\StatsWindow.Designer.cs">
       <DependentUpon>StatsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Torrent\TorrentMatch.Designer.cs">
-      <DependentUpon>TorrentMatch.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\UI.Designer.cs">
       <DependentUpon>UI.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Supporting\UpcomingPopup.Designer.cs">
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Torrent\uTorrent.Designer.cs">
-      <DependentUpon>uTorrent.cs</DependentUpon>
     </Compile>
     <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
     <Compile Include="TheTVDB\Banner.cs" />
@@ -567,20 +561,12 @@
       <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Torrent\TorrentMatch.resx">
-      <DependentUpon>TorrentMatch.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\UI.resx">
       <DependentUpon>UI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\UpcomingPopup.resx">
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Torrent\uTorrent.resx">
-      <DependentUpon>uTorrent.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -616,18 +602,12 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Utility\Timezone.cs" />
-    <Compile Include="Forms\Torrent\TorrentMatch.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="TVRename\TVDoc.cs" />
     <Compile Include="App\Program.cs" />
     <Compile Include="Forms\UI.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Supporting\UpcomingPopup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Torrent\uTorrent.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
@@ -666,6 +646,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Forms\Torrent\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

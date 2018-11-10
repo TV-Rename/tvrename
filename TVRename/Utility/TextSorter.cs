@@ -17,11 +17,6 @@ namespace TVRename
     {
         private readonly int col;
 
-        public TextSorter()
-        {
-            col = 0;
-        }
-
         public TextSorter(int column)
         {
             col = column;
