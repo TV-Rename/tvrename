@@ -69,7 +69,6 @@ namespace TVRename
             if ((o.bestSeriesLangPosterId != -1)) bestSeriesLangPosterId = o.bestSeriesLangPosterId;
             if ((o.bestSeriesLangBannerId != -1)) bestSeriesLangBannerId = o.bestSeriesLangBannerId;
             if ((o.bestSeriesLangFanartId != -1)) bestSeriesLangFanartId = o.bestSeriesLangFanartId;
-
         }
 
         public string GetSeasonBannerPath(int snum)
@@ -223,7 +222,6 @@ namespace TVRename
             else
                 coll.Add(seasonOfNewBanner, banner);
         }
-
 
         public string GetImage(TVSettings.FolderJpgIsType type)
         {

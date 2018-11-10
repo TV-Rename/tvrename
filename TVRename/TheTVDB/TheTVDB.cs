@@ -766,7 +766,6 @@ namespace TVRename
                                 Logger.Error(ex);
                                 Logger.Error(jsonResponse["data"].ToString());
                             }
-                        
 
                         Logger.Info(series[id].Name + " had " + numberOfUpdatedEpisodes +
                                     " episodes updated and " + numberOfNewEpisodes + " new episodes ");
