@@ -1002,7 +1002,6 @@ namespace TVRename
                                 firstMatchingPep = pep;
                                 encumbants = FindEpOnDisk(dfc, pep, false);
                             }
-
                             catch (SeriesInfo.EpisodeNotFoundException ee)
                             {
                                 Logger.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using {re}");
