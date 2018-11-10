@@ -781,10 +781,6 @@ namespace TVRename
             {
             }
 
-            public EpisodeNotFoundException(string message, Exception innerException) : base(message, innerException)
-            {
-            }
-
             protected EpisodeNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
             {
             }

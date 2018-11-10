@@ -84,7 +84,6 @@ namespace TVRename
         public AutoFolderMonitorDelegate AfmQuickScan;
         public AutoFolderMonitorDelegate AfmDoAll;
 
-        private readonly SetProgressDelegate setProgress;
         private MyListView lvAction;
         private List<string> mFoldersToOpen;
         private int mInternalChange;
@@ -135,8 +134,6 @@ namespace TVRename
                 // silently fail, doesn't matter too much
                 Logger.Info(e, "Error loading layout XML");
             }
-
-            setProgress += SetProgressActual;
 
             lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
 
@@ -215,17 +212,6 @@ namespace TVRename
             AfmQuickScan += QuickScan;
             AfmRecentScan += RecentScan;
             AfmDoAll += ProcessAll;
-        }
-
-        private void SetProgressActual(int p)
-        {
-            if (p < 0)
-                p = 0;
-            else if (p > 100)
-                p = 100;
-
-            pbProgressBarx.Value = p;
-            pbProgressBarx.Update();
         }
 
         private void ProcessArgs()
@@ -1012,12 +998,6 @@ namespace TVRename
             }
 
             lvWhenToWatch.Focus();
-        }
-
-        public void bnEpGuideRefresh_Click()
-        {
-            bnWhenToWatchCheck_Click(null, null); // close enough!
-            FillMyShows();
         }
 
         // ReSharper disable once InconsistentNaming
@@ -2345,7 +2325,7 @@ namespace TVRename
             if (currentShow != null && currentShow.SeasonEpisodes.ContainsKey(snum))
                 pel = currentShow.SeasonEpisodes[snum];
             else if (currentShow?.SeasonEpisodes.First() != null)
-                pel = currentShow?.SeasonEpisodes.First().Value;
+                pel = currentShow.SeasonEpisodes.First().Value;
             else
             {
                 foreach (ShowItem si in mDoc.Library.GetShowItems())
@@ -2433,13 +2413,6 @@ namespace TVRename
         {
             quickTimer.Stop();
             ProcessArgs();
-        }
-
-        private void uTorrentToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            uTorrent ut = new uTorrent(mDoc, setProgress);
-            ut.ShowDialog();
-            tabControl1.SelectedIndex = 1; // go to all-in-one tab
         }
 
         private void bnMyShowsCollapse_Click(object sender, EventArgs e)
@@ -2928,13 +2901,6 @@ namespace TVRename
             FolderMonitor fm = new FolderMonitor(mDoc, bam);
             fm.ShowDialog();
             FillMyShows();
-        }
-
-        private void torrentMatchToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            TorrentMatch tm = new TorrentMatch(mDoc, setProgress);
-            tm.ShowDialog();
-            FillActionList();
         }
 
         private void bnActionWhichSearch_Click(object sender, EventArgs e) => ChooseSiteMenu(0);

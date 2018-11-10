@@ -1042,12 +1042,20 @@ namespace TVRename
 
                                         if (TVSettings.Instance.ReplaceWithBetterQuality)
                                         {
-                                            UpgradeFile(fi, pep, existingFile);
+                                            if (matchingShows.Count > 1)
+                                            {
+                                                Logger.Warn(
+                                                    $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ",matchingShows.Select(item => item.ShowName))}) that match.");
+                                            }
+                                            else
+                                            {
+                                                UpgradeFile(fi, pep, existingFile);
+                                            }
                                         }
                                         else
                                         {
                                             Logger.Warn(
-                                                $"Keeping {fi.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality file sis turned off)");
+                                                $"Keeping {fi.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality files is turned off)");
                                         }
 
                                         break;
@@ -1061,28 +1069,37 @@ namespace TVRename
                                         }
                                         else
                                         {
-                                            ChooseFile question = new ChooseFile(existingFile, fi);
-                                            question.ShowDialog();
-
-                                            switch (question.Answer)
+                                            if (matchingShows.Count > 1)
                                             {
-                                                case ChooseFile.ChooseFileDialogResult.ignore:
-                                                    fileCanBeDeleted = false;
-                                                    Logger.Info(
-                                                        $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
+                                                Logger.Warn(
+                                                    $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
+                                                fileCanBeDeleted = false;
+                                            }
+                                            else
+                                            {
+                                                ChooseFile question = new ChooseFile(existingFile, fi);
+                                                question.ShowDialog();
 
-                                                    break;
-                                                case ChooseFile.ChooseFileDialogResult.left:
-                                                    Logger.Info(
-                                                        $"User has elected to remove {fi.FullName} as it is not as good quality than {existingFile.FullName}");
+                                                switch (question.Answer)
+                                                {
+                                                    case ChooseFile.ChooseFileDialogResult.ignore:
+                                                        fileCanBeDeleted = false;
+                                                        Logger.Info(
+                                                            $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
 
-                                                    break;
-                                                case ChooseFile.ChooseFileDialogResult.right:
-                                                    UpgradeFile(fi, pep, existingFile);
-                                                    fileCanBeDeleted = false;
-                                                    break;
-                                                default:
-                                                    throw new ArgumentOutOfRangeException();
+                                                        break;
+                                                    case ChooseFile.ChooseFileDialogResult.left:
+                                                        Logger.Info(
+                                                            $"User has elected to remove {fi.FullName} as it is not as good quality than {existingFile.FullName}");
+
+                                                        break;
+                                                    case ChooseFile.ChooseFileDialogResult.right:
+                                                        UpgradeFile(fi, pep, existingFile);
+                                                        fileCanBeDeleted = false;
+                                                        break;
+                                                    default:
+                                                        throw new ArgumentOutOfRangeException();
+                                                }
                                             }
                                         }
 
