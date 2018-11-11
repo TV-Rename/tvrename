@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using NLog;
 using TVRename.Forms;
 using TVRename.Ipc;
@@ -357,28 +358,25 @@ namespace TVRename
             }
         }
 
-        private bool LoadWidths(XmlReader xml)
+        private bool LoadWidths(XElement xml)
         {
-            string forwho = xml.GetAttribute("For");
+            string forwho = xml.Attribute("For").Value;
 
             ListView lv = ListViewByName(forwho);
             if (lv == null)
             {
-                xml.ReadOuterXml();
                 return true;
             }
 
-            xml.Read();
             int c = 0;
-            while (xml.Name == "Width")
+            foreach (XElement w in xml.Descendants("Width"))
             {
                 if (c >= lv.Columns.Count)
                     return false;
 
-                lv.Columns[c++].Width = xml.ReadElementContentAsInt();
+                lv.Columns[c++].Width = XmlConvert.ToInt32(w.Value);
             }
 
-            xml.Read();
             return true;
         }
 
@@ -388,82 +386,70 @@ namespace TVRename
                 return true;
 
             bool ok = true;
-            XmlReaderSettings settings = new XmlReaderSettings
-            {
-                IgnoreComments = true,
-                IgnoreWhitespace = true
-            };
 
             string fn = PathManager.UILayoutFile.FullName;
             if (!File.Exists(fn))
                 return true;
 
-            using (XmlReader reader = XmlReader.Create(fn, settings))
+            XElement x = XElement.Load(fn);
+
+            if (x.Name.LocalName != "TVRename")
             {
-                reader.Read();
-                if (reader.Name != "xml")
-                    return false;
-
-                reader.Read();
-                if (reader.Name != "TVRename")
-                    return false;
-
-                if (reader.GetAttribute("Version") != "2.1")
-                    return false;
-
-                reader.Read();
-                if (reader.Name != "Layout")
-                    return false;
-
-                reader.Read();
-                while (reader.Name != "Layout")
-                {
-                    if (reader.Name == "Window")
-                    {
-                        reader.Read();
-                        while (reader.Name != "Window")
-                        {
-                            if (reader.Name == "Size")
-                            {
-                                int x = int.Parse(reader.GetAttribute("Width") ?? throw new InvalidOperationException("No Width Specified") );
-                                int y = int.Parse(reader.GetAttribute("Height") ?? throw new InvalidOperationException("No Height Specified"));
-                                Size = new Size(x, y);
-                                reader.Read();
-                            }
-                            else if (reader.Name == "Location")
-                            {
-                                int x = int.Parse(reader.GetAttribute("X") ?? throw new InvalidOperationException("No X Specified"));
-                                int y = int.Parse(reader.GetAttribute("Y") ?? throw new InvalidOperationException("No Y Specified"));
-                                Location = new Point(x, y);
-                                reader.Read();
-                            }
-                            else if (reader.Name == "Maximized")
-                                WindowState = reader.ReadElementContentAsBoolean()
-                                    ? FormWindowState.Maximized
-                                    : FormWindowState.Normal;
-                            else
-                                reader.ReadOuterXml();
-                        }
-
-                        reader.Read();
-                    } // window
-                    else if (reader.Name == "ColumnWidths")
-                        ok = LoadWidths(reader) && ok;
-                    else if (reader.Name == "Splitter")
-                    {
-                        splitContainer1.SplitterDistance = int.Parse(reader.GetAttribute("Distance") ?? throw new InvalidOperationException("No Distance Specified"));
-                        splitContainer1.Panel2Collapsed = bool.Parse(reader.GetAttribute("HTMLCollapsed") ?? throw new InvalidOperationException("No HTMLCollapsed Specified"));
-                        if (splitContainer1.Panel2Collapsed)
-                            bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
-
-                        reader.Read();
-                    }
-                    else
-                        reader.ReadOuterXml();
-                } // while
+                return false;
             }
 
+            if (x.Attribute("Version")?.Value != "2.1")
+            {
+                return false;
+            }
+
+            if (!x.Descendants("Layout").Any())
+            {
+                return false;
+            }
+
+            SetWindowSize(x.Descendants("Layout").Descendants("Window").First());
+
+            foreach (XElement widthXmlElement in x.Descendants("Layout").Descendants("ColumnWidths"))
+            {
+                ok = LoadWidths(widthXmlElement) && ok;
+            }
+
+            SetSplitter(x.Descendants("Layout").Descendants("Splitter").First());
+
             return ok;
+        }
+
+        private void SetSplitter(XElement x)
+        {
+            splitContainer1.SplitterDistance = int.Parse(x.Attribute("Distance").Value);
+            splitContainer1.Panel2Collapsed = bool.Parse(x.Attribute("HTMLCollapsed").Value);
+            if (splitContainer1.Panel2Collapsed)
+                bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
+        }
+
+        private void SetWindowSize(XElement x)
+        {
+            SetSize(x.Descendants("Size").First());
+            SetLocation(x.Descendants("Location").First());
+
+            WindowState = (x.ExtractBool("Maximized") ?? false)
+                ? FormWindowState.Maximized
+                : FormWindowState.Normal;
+        }
+
+        private void SetLocation(XElement x)
+        {
+            int xloc = int.Parse(x.Attribute("X").Value);
+            int yloc = int.Parse(x.Attribute("Y").Value);
+            Location = new Point(xloc, yloc);
+        }
+
+        private void SetSize(XElement x)
+        {
+            int xsize = int.Parse(x.Attribute("Width").Value );
+            int ysize = int.Parse(x.Attribute("Height").Value);
+            Size = new Size(xsize, ysize);
         }
 
         private bool SaveLayoutXml()
@@ -2858,16 +2844,19 @@ namespace TVRename
         {
             foreach (Item item in new LVResults(lvAction, checkedNotSelected).FlatList)
             {
-                ActionCopyMoveRename i2 = (ActionCopyMoveRename) item;
-                ItemMissing m2 = i2.UndoItemMissing;
+                Action revertAction = (Action) item;
+                ItemMissing m2 = revertAction.UndoItemMissing;
 
                 if (m2 == null) continue;
 
                 mDoc.TheActionList.Add(m2);
-                mDoc.TheActionList.Remove(i2);
-
-                List<Item> toRemove = new List<Item>();
+                mDoc.TheActionList.Remove(revertAction);
+                
                 //We can remove any CopyMoveActions that are closely related too
+                if (!(revertAction is ActionCopyMoveRename)) continue;
+                ActionCopyMoveRename i2 = (ActionCopyMoveRename)item;
+                List<Item> toRemove = new List<Item>();
+
                 foreach (Item a in mDoc.TheActionList)
                 {
                     if (a is ItemMissing) continue;
@@ -2941,7 +2930,7 @@ namespace TVRename
                 }
             }
 
-            if (lvr.CopyMove.Count > 0)
+            if (lvr.CopyMove.Count > 0||lvr.RSS.Count>0)
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
                 AddRcMenuItem("Revert to Missing", RightClickCommands.kActionRevert);
@@ -3472,7 +3461,7 @@ namespace TVRename
 
                 //si.ShowTimeZone = TimeZone.TimeZoneForNetwork(ser.getNetwork());
 
-                results.Add(ser.GetNetwork(), si.ShowTimeZone, si.ShowName);
+                results.Add(ser.Network, si.ShowTimeZone, si.ShowName);
             }
             Logger.Info(results.PrintVersion());
         }

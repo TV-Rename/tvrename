@@ -97,7 +97,7 @@ namespace TVRename
             List<string> allValues = new List<string>();
             foreach (ShowItem si in Values)
             {
-                if (si.TheSeries()?.GetNetwork() != null) allValues.Add(si.TheSeries().GetNetwork());
+                if (si.TheSeries()?.Network != null) allValues.Add(si.TheSeries().Network);
             }
 
             List<string> distinctValues = allValues.Distinct().ToList();
@@ -110,7 +110,7 @@ namespace TVRename
             List<string> allValues = new List<string>();
             foreach (ShowItem si in Values)
             {
-                if (si.TheSeries()?.GetContentRating() != null) allValues.Add(si.TheSeries().GetContentRating());
+                if (si.TheSeries()?.ContentRating != null) allValues.Add(si.TheSeries().ContentRating);
             }
 
             List<string> distinctValues = allValues.Distinct().ToList();
@@ -118,9 +118,9 @@ namespace TVRename
             return distinctValues;
         }
 
-        public int GetMinYear() => this.Min(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
+        public int GetMinYear() => this.Min(si => Convert.ToInt32(si.Value.TheSeries().Year));
 
-        public int GetMaxYear() => this.Max(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
+        public int GetMaxYear() => this.Max(si => Convert.ToInt32(si.Value.TheSeries().Year));
 
         public List<ShowItem> GetShowItems()
         {
@@ -240,16 +240,14 @@ namespace TVRename
                 // merge specials in
                 foreach (Episode ep in seasonsToUse[0].Episodes.Values)
                 {
-                    string seasstr = ep.AirsBeforeSeason;
-                    string epstr = ep.AirsBeforeEpisode;
-                    if ((string.IsNullOrEmpty(seasstr)) || (string.IsNullOrEmpty(epstr)))
-                        continue;
+                    if (!ep.AirsAfterSeason.HasValue) continue;
+                    if (!ep.AirsBeforeEpisode.HasValue) continue;
 
-                    int sease = int.Parse(seasstr);
+                    int sease = ep.AirsBeforeSeason.Value;
                     if (sease != snum)
                         continue;
 
-                    int epnum = int.Parse(epstr);
+                    int epnum = ep.AirsBeforeEpisode.Value;
                     for (int i = 0; i < eis.Count; i++)
                     {
                         if ((eis[i].AppropriateSeasonNumber == sease) && (eis[i].AppropriateEpNum == epnum))

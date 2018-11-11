@@ -29,10 +29,10 @@ namespace TVRename
             bool isStatusOk = (ShowStatus == null) || show.ShowStatus.Equals(ShowStatus);
 
             //Filter on show network
-            bool isNetworkOk = (ShowNetwork == null) || (show.TheSeries() == null) || show.TheSeries().GetNetwork().Equals(ShowNetwork);
+            bool isNetworkOk = (ShowNetwork == null) || (show.TheSeries() == null) || show.TheSeries().Network.Equals(ShowNetwork);
 
             //Filter on show rating
-            bool isRatingOk = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().GetContentRating().Equals(ShowRating);
+            bool isRatingOk = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().ContentRating.Equals(ShowRating);
 
             //Filter on show genres
             bool areGenresIgnored = (Genres.Count == 0);

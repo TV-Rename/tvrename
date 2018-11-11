@@ -64,12 +64,12 @@ namespace TVRename
                     {
                         foreach (Episode ep in kvp.Value.Episodes.Values)
                         {
-                                foreach (string g in ep.GuestStars)
-                                {
-                                    string aa = g.Trim();
-                                    if (!string.IsNullOrEmpty(aa))
-                                        theData.Set(si.Name, aa, false);
-                                }
+                            foreach (string g in ep.GuestStars)
+                            {
+                                string aa = g.Trim();
+                                if (!string.IsNullOrEmpty(aa))
+                                    theData.Set(si.Name, aa, false);
+                            }
                         }
                     }
                 }

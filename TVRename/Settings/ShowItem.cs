@@ -261,7 +261,7 @@ namespace TVRename
         {
             get{
                 SeriesInfo ser = TheSeries();
-                if (ser != null ) return ser.GetStatus();
+                if (ser != null ) return ser.Status;
                 return "Unknown";
             }
         }
@@ -363,7 +363,7 @@ namespace TVRename
              }
         }
 
-        public string[] Genres => TheSeries()?.GetGenres();
+        public IEnumerable<string> Genres => TheSeries()?.Genres();
 
         public Language  PreferredLanguage
         {

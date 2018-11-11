@@ -93,7 +93,7 @@ namespace TVRename
                                     LOGGER.Info(
                                         $"Adding {itemUrl} as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
-                                    newItems.Add(new ActionTDownload(itemName, itemUrl, action.TheFileNoExt, pe));
+                                    newItems.Add(new ActionTDownload(itemName, itemUrl, action.TheFileNoExt, pe,action));
                                     toRemove.Add(action);
                                 }
                                 else
