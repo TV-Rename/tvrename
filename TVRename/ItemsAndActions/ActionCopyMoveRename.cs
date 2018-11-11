@@ -22,7 +22,6 @@ namespace TVRename
         public readonly FileInfo From;
         public Op Operation;
         public readonly FileInfo To;
-        public readonly ItemMissing UndoItemMissing;
 
         public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TVSettings.TidySettings tidyup,ItemMissing undoItem)
         {

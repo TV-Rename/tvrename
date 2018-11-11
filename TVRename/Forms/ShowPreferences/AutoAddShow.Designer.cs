@@ -148,7 +148,6 @@ namespace TVRename
             this.Text = "New Show Detected...";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
 
         #endregion
