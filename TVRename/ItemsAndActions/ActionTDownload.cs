@@ -18,20 +18,22 @@ namespace TVRename
         private readonly string url;
         private ProcessedEpisode pe;
 
-        public ActionTDownload(string name,string url, string toWhereNoExt, ProcessedEpisode pe)
+        public ActionTDownload(string name,string url, string toWhereNoExt, ProcessedEpisode pe,ItemMissing me)
         {
             Episode = pe;
             SourceName = name;
             this.url = url;
             theFileNoExt = toWhereNoExt;
+            UndoItemMissing = me;
         }
 
-        public ActionTDownload(RSSItem rss, string theFileNoExt, ProcessedEpisode pe)
+        public ActionTDownload(RSSItem rss, string theFileNoExt, ProcessedEpisode pe, ItemMissing me)
         {
             SourceName = rss.Title;
             url = rss.URL;
             this.theFileNoExt = theFileNoExt;
             this.pe = pe;
+            UndoItemMissing = me;
         }
 
         #region Action Members

@@ -2844,16 +2844,19 @@ namespace TVRename
         {
             foreach (Item item in new LVResults(lvAction, checkedNotSelected).FlatList)
             {
-                ActionCopyMoveRename i2 = (ActionCopyMoveRename) item;
-                ItemMissing m2 = i2.UndoItemMissing;
+                Action revertAction = (Action) item;
+                ItemMissing m2 = revertAction.UndoItemMissing;
 
                 if (m2 == null) continue;
 
                 mDoc.TheActionList.Add(m2);
-                mDoc.TheActionList.Remove(i2);
-
-                List<Item> toRemove = new List<Item>();
+                mDoc.TheActionList.Remove(revertAction);
+                
                 //We can remove any CopyMoveActions that are closely related too
+                if (!(revertAction is ActionCopyMoveRename)) continue;
+                ActionCopyMoveRename i2 = (ActionCopyMoveRename)item;
+                List<Item> toRemove = new List<Item>();
+
                 foreach (Item a in mDoc.TheActionList)
                 {
                     if (a is ItemMissing) continue;
@@ -2927,7 +2930,7 @@ namespace TVRename
                 }
             }
 
-            if (lvr.CopyMove.Count > 0)
+            if (lvr.CopyMove.Count > 0||lvr.RSS.Count>0)
             {
                 showRightClickMenu.Items.Add(new ToolStripSeparator());
                 AddRcMenuItem("Revert to Missing", RightClickCommands.kActionRevert);
