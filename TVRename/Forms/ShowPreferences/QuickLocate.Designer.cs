@@ -1,4 +1,4 @@
-﻿namespace TVRename.Forms.ShowPreferences
+namespace TVRename.Forms.ShowPreferences
 {
     partial class frmQuickLocate
     {
@@ -56,7 +56,6 @@
             this.cbDirectory.Size = new System.Drawing.Size(270, 21);
             this.cbDirectory.Sorted = true;
             this.cbDirectory.TabIndex = 5;
-            this.cbDirectory.SelectedIndexChanged += new System.EventHandler(this.cbDirectory_SelectedIndexChanged);
             // 
             // bnCancel
             // 

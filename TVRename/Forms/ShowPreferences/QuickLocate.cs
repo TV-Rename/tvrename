@@ -28,11 +28,6 @@ namespace TVRename.Forms.ShowPreferences
             txtShowFolder.Text = Path.DirectorySeparatorChar + TVSettings.Instance.FilenameFriendly(FileHelper.MakeValidPath(hint)) + Path.DirectorySeparatorChar;
         }
 
-        private void cbDirectory_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void buttonOK_Click(object sender, EventArgs e)
         {
               SetDirectory();
