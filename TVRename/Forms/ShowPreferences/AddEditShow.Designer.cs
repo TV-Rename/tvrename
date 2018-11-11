@@ -57,6 +57,8 @@ namespace TVRename
             this.chkCustomShowName = new System.Windows.Forms.CheckBox();
             this.Folders = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cbLanguage = new System.Windows.Forms.ComboBox();
+            this.chkCustomLanguage = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.cbIncludeNoAirdate = new System.Windows.Forms.CheckBox();
@@ -97,8 +99,7 @@ namespace TVRename
             this.txtBaseFolder = new System.Windows.Forms.TextBox();
             this.bnBrowse = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.chkCustomLanguage = new System.Windows.Forms.CheckBox();
-            this.cbLanguage = new System.Windows.Forms.ComboBox();
+            this.bnQuickLocate = new System.Windows.Forms.Button();
             this.Folders.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -294,6 +295,26 @@ namespace TVRename
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Basics";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cbLanguage
+            // 
+            this.cbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbLanguage.FormattingEnabled = true;
+            this.cbLanguage.Location = new System.Drawing.Point(133, 249);
+            this.cbLanguage.Name = "cbLanguage";
+            this.cbLanguage.Size = new System.Drawing.Size(200, 21);
+            this.cbLanguage.TabIndex = 9;
+            // 
+            // chkCustomLanguage
+            // 
+            this.chkCustomLanguage.AutoSize = true;
+            this.chkCustomLanguage.Location = new System.Drawing.Point(9, 253);
+            this.chkCustomLanguage.Name = "chkCustomLanguage";
+            this.chkCustomLanguage.Size = new System.Drawing.Size(115, 17);
+            this.chkCustomLanguage.TabIndex = 8;
+            this.chkCustomLanguage.Text = "Custom Language:";
+            this.chkCustomLanguage.UseVisualStyleBackColor = true;
+            this.chkCustomLanguage.CheckedChanged += new System.EventHandler(this.chkCustomLanguage_CheckedChanged);
             // 
             // label2
             // 
@@ -636,6 +657,7 @@ namespace TVRename
             // 
             this.gbAutoFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbAutoFolders.Controls.Add(this.bnQuickLocate);
             this.gbAutoFolders.Controls.Add(this.txtSeasonFormat);
             this.gbAutoFolders.Controls.Add(this.bnTags);
             this.gbAutoFolders.Controls.Add(this.lblSeasonWordPreview);
@@ -726,7 +748,7 @@ namespace TVRename
             // bnBrowse
             // 
             this.bnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bnBrowse.Location = new System.Drawing.Point(348, 28);
+            this.bnBrowse.Location = new System.Drawing.Point(348, 19);
             this.bnBrowse.Name = "bnBrowse";
             this.bnBrowse.Size = new System.Drawing.Size(75, 23);
             this.bnBrowse.TabIndex = 2;
@@ -744,25 +766,16 @@ namespace TVRename
             this.label3.Text = "Base &Folder";
             this.label3.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // chkCustomLanguage
+            // bnQuickLocate
             // 
-            this.chkCustomLanguage.AutoSize = true;
-            this.chkCustomLanguage.Location = new System.Drawing.Point(9, 253);
-            this.chkCustomLanguage.Name = "chkCustomLanguage";
-            this.chkCustomLanguage.Size = new System.Drawing.Size(115, 17);
-            this.chkCustomLanguage.TabIndex = 8;
-            this.chkCustomLanguage.Text = "Custom Language:";
-            this.chkCustomLanguage.UseVisualStyleBackColor = true;
-            this.chkCustomLanguage.CheckedChanged += new System.EventHandler(this.chkCustomLanguage_CheckedChanged);
-            // 
-            // cbLanguage
-            // 
-            this.cbLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLanguage.FormattingEnabled = true;
-            this.cbLanguage.Location = new System.Drawing.Point(133, 249);
-            this.cbLanguage.Name = "cbLanguage";
-            this.cbLanguage.Size = new System.Drawing.Size(200, 21);
-            this.cbLanguage.TabIndex = 9;
+            this.bnQuickLocate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bnQuickLocate.Location = new System.Drawing.Point(348, 48);
+            this.bnQuickLocate.Name = "bnQuickLocate";
+            this.bnQuickLocate.Size = new System.Drawing.Size(75, 23);
+            this.bnQuickLocate.TabIndex = 29;
+            this.bnQuickLocate.Text = "&Create...";
+            this.bnQuickLocate.UseVisualStyleBackColor = true;
+            this.bnQuickLocate.Click += new System.EventHandler(this.bnQuickLocate_Click);
             // 
             // AddEditShow
             // 
@@ -863,5 +876,6 @@ namespace TVRename
         private System.Windows.Forms.Button bnTags;
         private System.Windows.Forms.ComboBox cbLanguage;
         private System.Windows.Forms.CheckBox chkCustomLanguage;
+        private System.Windows.Forms.Button bnQuickLocate;
     }
 }

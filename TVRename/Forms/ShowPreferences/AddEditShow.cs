@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using TVRename.Forms.ShowPreferences;
 
 namespace TVRename
 {
@@ -430,6 +431,17 @@ namespace TVRename
         private void chkCustomLanguage_CheckedChanged(object sender, EventArgs e)
         {
             cbLanguage.Enabled = chkCustomLanguage.Checked;
+        }
+
+        private void bnQuickLocate_Click(object sender, EventArgs e)
+        {
+            string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text?? "New Folder";
+            frmQuickLocate f = new frmQuickLocate(showName);
+
+            if (f.ShowDialog() == DialogResult.OK)
+            {
+                txtBaseFolder.Text = f.DirectoryFullPath;
+            }
         }
     }
 }
