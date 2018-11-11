@@ -70,6 +70,7 @@ namespace TVRename
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
                 <div class=""text-center"">
 	             {horizontalBanner}
+                </div>
                   <div class=""row"">
                    <div class=""col-md-4"">
                     {poster}
@@ -123,7 +124,7 @@ namespace TVRename
         {
             if ((!string.IsNullOrEmpty(ser.GetSeriesWideBannerPath())) &&
                 (!string.IsNullOrEmpty(TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath()))))
-                return  $"<img class=\"rounded\" src=\"{TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath())}\"><br/>&nbsp;</div>";
+                return  $"<img class=\"rounded\" src=\"{TheTVDB.GetImageURL(ser.GetSeriesWideBannerPath())}\"><br/>&nbsp;";
 
             return string.Empty;
         }
