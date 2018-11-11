@@ -316,12 +316,6 @@ namespace TVRename
                     AddActor(a);
                 }
 
-                //We may have an old style (single field with pipe delimiters) or new style (structured) format
-                foreach (string aName in seriesXml.ExtractString("Actors").Split('|'))
-                {
-                    AddActor(new Actor(aName));
-                }
-
                 aliases = new List<string>();
                 foreach (XElement aliasXml in seriesXml.Descendants("Actors").Descendants("Actor"))
                 {

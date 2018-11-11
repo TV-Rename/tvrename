@@ -85,5 +85,10 @@ namespace TVRename
             DialogResult = DialogResult.Ignore;
             Close();
         }
+
+        private void AutoAddShow_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
