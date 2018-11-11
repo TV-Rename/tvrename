@@ -43,7 +43,7 @@ namespace TVRename
             // </Banner>
                 SetDefaults();
 
-                BannerId = r.ExtractInt("Id")??-1;
+                BannerId = r.ExtractInt("id")??-1;
                 SeriesId = r.ExtractInt("seriesid")?? seriesId; // thetvdb series id
                 SeasonId = r.ExtractInt("seasonid") ?? -1;
                 BannerPath = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("BannerPath"));

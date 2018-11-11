@@ -265,7 +265,7 @@ namespace TVRename
 
                     foreach (KeyValuePair<int, Banner> kvp3 in kvp.Value.AllBanners)
                     {
-                        Banner ban = kvp3.Value;
+                         Banner ban = kvp3.Value;
                         ban.WriteXml(writer);
                     }
 
