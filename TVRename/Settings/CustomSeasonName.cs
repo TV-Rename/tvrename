@@ -16,21 +16,6 @@ namespace TVRename
     {
         private readonly string styleString;
 
-        public CustomSeasonName(CustomSeasonName o)
-        {
-            styleString = o.styleString;
-        }
-
-        public CustomSeasonName(string s)
-        {
-            styleString = s;
-        }
-
-        public CustomSeasonName()
-        {
-            styleString = DefaultStyle();
-        }
-
         private static string DefaultStyle() => Presets[1];
 
         private static readonly List<string> Presets = new List<string>
@@ -40,17 +25,35 @@ namespace TVRename
                                                             "S{Season}",
                                                             "S{Season:2}",
                                                             "{ShowName} - Season {Season:2}",
+                                                            "Season {SeasonNumber:2}",
+                                                            "Season {SeasonNumber}",
+                                                            "S{SeasonNumber}",
+                                                            "S{SeasonNumber:2}",
+                                                            "{ShowName} - Season {SeasonNumber:2}",
                                                             "{StartYear}-{EndYear}"
                                                         };
 
-        protected internal static readonly List<string> Tags = new List<string>
+        protected internal static readonly List<string> TAGS = new List<string>
         {
             "{ShowName}",
             "{Season}",
             "{Season:2}",
+            "{SeasonNumber}",
+            "{SeasonNumber:2}",
             "{StartYear}",
             "{EndYear}"
         };
+
+        public List<string> ExamplePresets(Season s)
+        {
+            List<string> possibleExamples = new List<string>();
+            foreach (string example in Presets)
+            {
+                possibleExamples.Add(NameFor(s,example));
+            }
+
+            return possibleExamples;
+        }
 
         public string NameFor(Season s) => NameFor(s, styleString);
 
@@ -71,6 +74,8 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{Season}", s.SeasonNumber.ToString());
             name = name.ReplaceInsensitive("{Season:2}", s.SeasonNumber.ToString("00"));
+            name = name.ReplaceInsensitive("{SeasonNumber}", s.SeasonIndex.ToString());
+            name = name.ReplaceInsensitive("{SeasonNumber:2}", s.SeasonIndex.ToString("00"));
             name = name.ReplaceInsensitive("{StartYear}", s.MinYear().ToString());
             name = name.ReplaceInsensitive("{EndYear}", s.MaxYear().ToString());
 
@@ -81,7 +86,7 @@ namespace TVRename
         {
             string name = styleString;
 
-            foreach (string tag in Tags)
+            foreach (string tag in TAGS)
             {
                 name = name.ReplaceInsensitive(tag, string.Empty);
             }

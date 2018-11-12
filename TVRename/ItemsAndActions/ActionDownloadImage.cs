@@ -13,35 +13,34 @@ using System.Drawing.Imaging;
 namespace TVRename
 {
     using System;
-    using System.Windows.Forms;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
     using System.IO;
 
     public class ActionDownloadImage : ActionDownload
     {
-        private readonly string Path;
-        private readonly FileInfo Destination;
-        private readonly ShowItem SI;
-        private readonly bool ShrinkLargeMede8erImage;
+        private readonly string path;
+        private readonly FileInfo destination;
+        private readonly ShowItem si;
+        private readonly bool shrinkLargeMede8ErImage;
 
         public ActionDownloadImage(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path) : this(si, pe, dest, path, false) { }
 
         public ActionDownloadImage(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path, bool mede8erShrink)
         {
             Episode = pe;
-            SI = si;
-            Destination = dest;
-            Path = path;
-            ShrinkLargeMede8erImage = mede8erShrink;
+            this.si = si;
+            destination = dest;
+            this.path = path;
+            shrinkLargeMede8ErImage = mede8erShrink;
         }
 
         #region Action Members
 
         public override string Name => "Download";
 
-        public override string ProgressText => Destination.Name;
+        public override string ProgressText => destination.Name;
 
-        public override string Produces => Destination.FullName;
+        public override string Produces => destination.FullName;
 
         // 0 to 100
         public override long SizeOfWork => 1000000;
@@ -86,16 +85,16 @@ namespace TVRename
 
         public override bool Go(ref bool pause, TVRenameStats stats)
         {
-            byte[] theData = TheTVDB.Instance.GetTvdbDownload(Path);
+            byte[] theData = TheTVDB.Instance.GetTvdbDownload(path);
             if ((theData == null) || (theData.Length == 0))
             {
-                ErrorText = "Unable to download " + Path;
+                ErrorText = "Unable to download " + path;
                 Error = true;
                 Done = true;
                 return false;
             }
 
-            if (ShrinkLargeMede8erImage)
+            if (shrinkLargeMede8ErImage)
             {
                 // shrink images down to a maximum size of 156x232
                 Image im = new Bitmap(new MemoryStream(theData));
@@ -124,12 +123,11 @@ namespace TVRename
                         }
                     }
                 }
-                
             }
 
             try
             {
-                FileStream fs = new FileStream(Destination.FullName, FileMode.Create);
+                FileStream fs = new FileStream(destination.FullName, FileMode.Create);
                 fs.Write(theData, 0, theData.Length);
                 fs.Close();
             }
@@ -140,7 +138,6 @@ namespace TVRename
                 Done = true;
                 return false;
             }
-                
 
             Done = true;
             return true;
@@ -152,12 +149,12 @@ namespace TVRename
 
         public override bool SameAs(Item o)
         {
-            return (o is ActionDownloadImage image) && (image.Destination == Destination);
+            return (o is ActionDownloadImage image) && (image.destination == destination);
         }
 
         public override int Compare(Item o)
         {
-            return !(o is ActionDownloadImage dl) ? 0 : Destination.FullName.CompareTo(dl.Destination.FullName);
+            return !(o is ActionDownloadImage dl) ? 0 : destination.FullName.CompareTo(dl.destination.FullName);
         }
 
         #endregion
@@ -166,45 +163,17 @@ namespace TVRename
 
         public override int IconNumber => 5;
 
-        public override IgnoreItem Ignore => GenerateIgnore(Destination?.FullName);
-        
-        public override ListViewItem ScanListViewItem
-        {
-            get
-            {
-                ListViewItem lvi = new ListViewItem {
-                                                        Text = (Episode != null) ? Episode.Show.ShowName : ((SI != null) ? SI.ShowName : "")
-                                                    };
+        public override IgnoreItem Ignore => GenerateIgnore(destination?.FullName);
 
-                lvi.SubItems.Add(Episode?.AppropriateSeasonNumber.ToString() ?? "");
-                lvi.SubItems.Add(Episode?.NumsAsString() ?? "");
-                lvi.SubItems.Add(Episode != null ? Episode.GetAirDateDT(true).PrettyPrint() : "");
-                lvi.SubItems.Add(Destination.DirectoryName);
-                lvi.SubItems.Add(Path);
+        protected override string SeriesName =>
+            (Episode != null) ? Episode.Show.ShowName : ((si != null) ? si.ShowName : "");
 
-                if (string.IsNullOrEmpty(Path))
-                    lvi.BackColor = Helpers.WarningColor();
-
-                lvi.SubItems.Add(Destination.Name);
-
-                lvi.Tag = this;
-
-                return lvi;
-            }
-        }
-
+        protected override string DestinationFolder => TargetFolder;
+        protected override string DestinationFile => destination.Name;
+        protected override string SourceDetails => path;
+        protected override bool InError => string.IsNullOrEmpty(path);
         public override string ScanListViewGroup => "lvgActionDownload";
-
-        public override string TargetFolder
-        {
-            get
-            {
-                if (Destination == null)
-                    return null;
-                return Destination.DirectoryName;
-            }
-        }
-
+        public override string TargetFolder => destination == null ? null : destination.DirectoryName;
         #endregion
     }
 }

@@ -1,24 +1,23 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Net;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    class SABnzbdFinder :Finder
+    class SABnzbdFinder : DownloadingFinder
     {
         public SABnzbdFinder(TVDoc i) : base(i) { }
 
-        public override bool Active()
-        {
-            return TVSettings.Instance.CheckSABnzbd;
-        }
-
-        public override FinderDisplayType DisplayType()
-        {
-            return FinderDisplayType.downloading;
-        }
+        public override bool Active() => TVSettings.Instance.CheckSABnzbd;
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
@@ -35,16 +34,7 @@ namespace TVRename
             string theUrl = "http://" + TVSettings.Instance.SABHostPort +
                             "/sabnzbd/api?mode=queue&start=0&limit=8888&output=xml&apikey=" + TVSettings.Instance.SABAPIKey;
 
-            WebClient wc = new WebClient();
-            byte[] r = null;
-            try
-            {
-                r = wc.DownloadData(theUrl);
-            }
-            catch (WebException)
-            {
-                Logger.Warn("Failed to obtain SABnzbd, please recheck settings: " + theUrl);
-            }
+            byte[] r = DownloadPage(theUrl);
 
             if (r == null)
             {
@@ -57,7 +47,7 @@ namespace TVRename
                 SAB.Result res = SAB.Result.Deserialize(r);
                 if (res != null && res.status == "False")
                 {
-                    Logger.Error("Error processing data from SABnzbd (Queue Check): {0}",res.error );
+                    LOGGER.Error("Error processing data from SABnzbd (Queue Check): {0}", res.error);
                     prog.Invoke(totPct);
                     return;
                 }
@@ -74,13 +64,13 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Error processing data from SABnzbd (Queue Check)");
+                LOGGER.Error(e, "Error processing data from SABnzbd (Queue Check)");
                 prog.Invoke(totPct);
                 return;
             }
 
             System.Diagnostics.Debug.Assert(sq != null); // shouldn't happen
-            if (sq?.slots == null || sq.slots.Length == 0) // empty queue
+            if (sq.slots == null || sq.slots.Length == 0) // empty queue
                 return;
 
             ItemList newList = new ItemList();
@@ -88,36 +78,25 @@ namespace TVRename
             int c = ActionList.Count + 2;
             int n = 1;
 
-            foreach (Item action1 in ActionList)
+            foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (ActionCancel)
                     return;
 
-                prog.Invoke(startpct + (totPct - startpct) * (++n) / (c));
-
-
-                if (!(action1 is ItemMissing))
-                    continue;
-
-                ItemMissing action = (ItemMissing)(action1);
+                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
 
                 string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
 
                 foreach (SAB.QueueSlotsSlot te in sq.slots)
                 {
-                    //foreach (queueSlotsSlot te in qs)
-                    {
-                        FileInfo file = new FileInfo(te.filename);
-                        //if (!TVSettings.Instance.UsefulExtension(file.Extension, false)) // not a usefile file extension
-                        //    continue;
+                    FileInfo file = new FileInfo(te.filename);
 
-                        if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
-                        if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
-                            (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum )) continue;
-                        toRemove.Add(action1);
-                        newList.Add(new ItemSABnzbd(te, action.Episode, action.TheFileNoExt));
-                        break;
-                    }
+                    if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
+                    if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
+                        (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum)) continue;
+                    toRemove.Add(action);
+                    newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd));
+                    break;
                 }
             }
 
@@ -130,5 +109,20 @@ namespace TVRename
             prog.Invoke(totPct);
         }
 
+        private static byte[] DownloadPage(string theUrl)
+        {
+            WebClient wc = new WebClient();
+            byte[] r = null;
+            try
+            {
+                r = wc.DownloadData(theUrl);
+            }
+            catch (WebException)
+            {
+                LOGGER.Warn("Failed to obtain SABnzbd, please recheck settings: " + theUrl);
+            }
+
+            return r;
+        }
     }
 }

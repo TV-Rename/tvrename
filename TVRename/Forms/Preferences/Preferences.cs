@@ -50,7 +50,7 @@ namespace TVRename
             cntfw = null;
 
             if (goToScanOpts)
-                tabControl1.SelectedTab = tpScanOptions;
+                tcTabs.SelectedTab = tpScanOptions;
         }
 
         private void OKButton_Click(object sender, EventArgs e)
@@ -60,7 +60,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFolderDeleting;
+                tcTabs.SelectedTab = tbFolderDeleting;
                 txtEmptyIgnoreExtensions.Focus();
                 return;
             }
@@ -70,7 +70,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tcTabs.SelectedTab = tbFilesAndFolders;
                 txtVideoExtensions.Focus();
                 return;
             }
@@ -79,7 +79,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tpSubtitles;
+                tcTabs.SelectedTab = tpSubtitles;
                 txtSubtitleExtensions.Focus();
                 return;
             }
@@ -88,7 +88,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tcTabs.SelectedTab = tbFilesAndFolders;
                 txtOtherExtensions.Focus();
                 return;
             }
@@ -97,7 +97,7 @@ namespace TVRename
                 MessageBox.Show(
                     "Extensions list must be separated by semicolons, and each extension must start with a dot.",
                     "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tabControl1.SelectedTab = tbFilesAndFolders;
+                tcTabs.SelectedTab = tbFilesAndFolders;
                 txtKeepTogether.Focus();
                 return;
             }
@@ -111,9 +111,10 @@ namespace TVRename
                 string to = (string) (ReplacementsGrid[i, 1].Value);
                 bool ins = (bool) (ReplacementsGrid[i, 2].Value);
                 if (!string.IsNullOrEmpty(from))
-                    s.Replacements.Add(new Replacement(from, to, ins));
+                    s.Replacements.Add(new TVSettings.Replacement(from, to, ins));
             }
 
+            s.DetailedRSSJSONLogging = cbDetailedRSSJSONLogging.Checked;
             s.ExportWTWRSS = cbWTWRSS.Checked;
             s.ExportWTWRSSTo = txtWTWRSS.Text;
             s.ExportWTWXML = cbWTWXML.Checked;
@@ -133,6 +134,15 @@ namespace TVRename
             s.ExportShowsHTML = cbShowsHTML.Checked;
             s.ExportShowsHTMLTo = txtShowsHTMLTo.Text;
 
+            s.ExportRecentM3U = cbM3U.Checked;
+            s.ExportRecentM3UTo = txtM3U.Text;
+            s.ExportRecentASX = cbASX.Checked;
+            s.ExportRecentASXTo = txtASX.Text;
+            s.ExportRecentXSPF = cbXSPF.Checked;
+            s.ExportRecentXSPFTo = txtXSPF.Text;
+            s.ExportRecentWPL = cbWPL.Checked;
+            s.ExportRecentWPLTo = txtWPL.Text;
+
             s.WTWRecentDays = Convert.ToInt32(txtWTWDays.Text);
             s.StartupTab = cbStartupTab.SelectedIndex;
             s.NotificationAreaIcon = cbNotificationIcon.Checked;
@@ -147,6 +157,7 @@ namespace TVRename
             s.ShowInTaskbar = chkShowInTaskbar.Checked;
             s.RenameTxtToSub = cbTxtToSub.Checked;
             s.ShowEpisodePictures = cbShowEpisodePictures.Checked;
+            s.ReplaceWithBetterQuality = cbHigherQuality.Checked;
             s.HideMyShowsSpoilers = chkHideMyShowsSpoilers.Checked;
             s.HideWtWSpoilers = chkHideWtWSpoilers.Checked;
             s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
@@ -190,11 +201,18 @@ namespace TVRename
             s.RetainLanguageSpecificSubtitles = chkRetainLanguageSpecificSubtitles.Checked;
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
 
+            s.SearchJSON = cbSearchJSON.Checked;
+            s.SearchJSONURL = tbJSONURL.Text;
+            s.SearchJSONRootNode = tbJSONRootNode.Text;
+            s.SearchJSONFilenameToken = tbJSONFilenameToken.Text;
+            s.SearchJSONURLToken = tbJSONURLToken.Text;
+
             s.MonitorFolders = cbMonitorFolder.Checked;
             s.runStartupCheck = chkScanOnStartup.Checked;
             s.runPeriodicCheck = chkScheduledScan.Checked;
             s.periodCheckHours = int.Parse(domainUpDown1.SelectedItem?.ToString()??"1");
             s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
+            s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
 
             s.EpJPGs = cbEpThumbJpg.Checked;
             s.SeriesJpg = cbSeriesJpg.Checked;
@@ -215,6 +233,7 @@ namespace TVRename
             s.BulkAddIgnoreRecycleBin = cbIgnoreRecycleBin.Checked;
             s.AutoAddIgnoreSuffixes = tbIgnoreSuffixes.Text;
             s.AutoAddMovieTerms = tbMovieTerms.Text;
+            s.PriorityReplaceTerms = tbPriorityOverrideTerms.Text;
 
             if (rbFolderFanArt.Checked)
                 s.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
@@ -247,11 +266,11 @@ namespace TVRename
 
 
             TheTVDB.Instance.GetLock("Preferences-OK");
-            foreach (TheTVDB.Language l in TheTVDB.Instance.LanguageList)
+            foreach (Language l in TheTVDB.Instance.LanguageList)
             {
                 if (l.Name == cbLanguages.Text)
                 {
-                    s.PreferredLanguage = l.Abbreviation;
+                    s.PreferredLanguageCode = l.Abbreviation;
                     break;
                 }
             }
@@ -277,11 +296,25 @@ namespace TVRename
             {
                 s.upgradeDirtyPercent = 20;
             }
+
             if (s.upgradeDirtyPercent < 1)
                 s.upgradeDirtyPercent = 1;
             else if (s.upgradeDirtyPercent > 100)
                 s.upgradeDirtyPercent = 100;
 
+            try
+            {
+                s.replaceMargin = float.Parse(tbPercentBetter.Text);
+            }
+            catch
+            {
+                s.replaceMargin = 10;
+            }
+
+            if (s.replaceMargin < 1)
+                s.replaceMargin = 1;
+            else if (s.replaceMargin > 100)
+                s.replaceMargin = 100;
 
             try
             {
@@ -306,11 +339,11 @@ namespace TVRename
                     s.RSSURLs.Add(url);
             }
 
-            s.ShowStatusColors = new ShowStatusColoringTypeList();
+            s.ShowStatusColors = new TVSettings.ShowStatusColoringTypeList();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
                 if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
-                    item.Tag is ShowStatusColoringType type)
+                    item.Tag is TVSettings.ShowStatusColoringType type)
                 {
                     s.ShowStatusColors.Add(type,ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
@@ -327,13 +360,14 @@ namespace TVRename
 
             TVSettings s = TVSettings.Instance;
 
-            foreach (Replacement rep in s.Replacements)
+            foreach (TVSettings.Replacement rep in s.Replacements)
             {
                 AddNewReplacementRow(rep.This, rep.That, rep.CaseInsensitive);
             }
 
             txtMaxSampleSize.Text = s.SampleFileMaxSizeMB.ToString();
 
+            cbDetailedRSSJSONLogging.Checked= s.DetailedRSSJSONLogging;
             cbWTWRSS.Checked = s.ExportWTWRSS;
             txtWTWRSS.Text = s.ExportWTWRSSTo;
             cbWTWICAL.Checked = s.ExportWTWICAL;
@@ -349,6 +383,15 @@ namespace TVRename
             txtMissingXML.Text = s.ExportMissingXMLTo;
             cbMissingCSV.Checked = s.ExportMissingCSV;
             txtMissingCSV.Text = s.ExportMissingCSVTo;
+
+            cbXSPF.Checked = s.ExportRecentXSPF;
+            txtXSPF.Text = s.ExportRecentXSPFTo;
+            cbM3U.Checked = s.ExportRecentM3U;
+            txtM3U.Text = s.ExportRecentM3UTo;
+            cbASX.Checked = s.ExportRecentASX;
+            txtASX.Text = s.ExportRecentASXTo;
+            cbWPL.Checked = s.ExportRecentWPL;
+            txtWPL.Text = s.ExportRecentWPLTo;
 
             cbShowsTXT.Checked = s.ExportShowsTXT ;
             txtShowsTXTTo.Text = s.ExportShowsTXTTo;
@@ -393,9 +436,17 @@ namespace TVRename
             tbqBitTorrentPort.Text = s.qBitTorrentPort;
             cbCheckqBitTorrent.Checked= s.CheckqBitTorrent ;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
+            cbHigherQuality.Checked= s.ReplaceWithBetterQuality ;
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();
             tbPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
+            tbPercentBetter.Text = s.replaceMargin.ToString(CultureInfo.InvariantCulture);
+
+            cbSearchJSON.Checked = s.SearchJSON;
+            tbJSONURL.Text = s.SearchJSONURL;
+            tbJSONRootNode.Text = s.SearchJSONRootNode;
+            tbJSONFilenameToken.Text = s.SearchJSONFilenameToken;
+            tbJSONURLToken.Text = s.SearchJSONURLToken;
 
             cbSearchRSS.Checked = s.SearchRSS;
             cbEpTBNs.Checked = s.EpTBNs;
@@ -419,12 +470,14 @@ namespace TVRename
             chkScanOnStartup.Checked = s.RunOnStartUp();
             domainUpDown1.SelectedItem = s.periodCheckHours;
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
+            cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
+
             cbMissing.Checked = s.MissingCheck;
             cbxUpdateAirDate.Checked = s.CorrectFileDates;
             chkAutoSearchForDownloadedFiles.Checked = s.AutoSearchForDownloadedFiles;
             cbSearchLocally.Checked = s.SearchLocally;
             cbLeaveOriginals.Checked = s.LeaveOriginals;
-            enterPreferredLanguage = s.PreferredLanguage;
+            enterPreferredLanguage = s.PreferredLanguageCode;
 
             cbEpThumbJpg.Checked = s.EpJPGs;
             cbSeriesJpg.Checked = s.SeriesJpg;
@@ -449,6 +502,8 @@ namespace TVRename
             cbIgnoreNoVideoFolders.Checked = s.BulkAddCompareNoVideoFolders;
             tbMovieTerms.Text = s.AutoAddMovieTerms;
             tbIgnoreSuffixes.Text = s.AutoAddIgnoreSuffixes;
+
+            tbPriorityOverrideTerms.Text = s.PriorityReplaceTerms;
 
             switch (s.WTWDoubleClick)
             {
@@ -525,7 +580,7 @@ namespace TVRename
             if (s.ShowStatusColors != null)
             {
                 foreach (
-                    System.Collections.Generic.KeyValuePair<ShowStatusColoringType, Color> showStatusColor in
+                    System.Collections.Generic.KeyValuePair<TVSettings.ShowStatusColoringType, Color> showStatusColor in
                         s.ShowStatusColors)
                 {
                     ListViewItem item = new ListViewItem
@@ -548,7 +603,7 @@ namespace TVRename
             // Shows
             foreach (string status in Enum.GetNames(typeof(ShowItem.ShowAirStatus)))
             {
-                ShowStatusColoringType t = new ShowStatusColoringType(true, true, status);
+                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(true, true, status);
                 //System.Collections.Generic.KeyValuePair<string, object> item = new System.Collections.Generic.KeyValuePair<string, object>("Show Seasons Status: " + status, new ShowStatusColoringType(true, true, status));
                 cboShowStatus.Items.Add(t);
                 //this.cboShowStatus.Items.Add("Show Seasons Status: " + status);
@@ -561,13 +616,13 @@ namespace TVRename
             }
             foreach (string status in showStatusList)
             {
-                ShowStatusColoringType t = new ShowStatusColoringType(false, true, status);
+                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(false, true, status);
                 cboShowStatus.Items.Add(t);
             }
             // Seasons
             foreach (string status in Enum.GetNames(typeof(Season.SeasonStatus)))
             {
-                ShowStatusColoringType t = new ShowStatusColoringType(true, false, status);
+                TVSettings.ShowStatusColoringType t = new TVSettings.ShowStatusColoringType(true, false, status);
                 cboShowStatus.Items.Add(t);
             }
             cboShowStatus.DisplayMember = "Text";
@@ -665,6 +720,15 @@ namespace TVRename
 
             txtWTWICAL.Enabled = cbWTWICAL.Checked;
             bnBrowseWTWICAL.Enabled = cbWTWICAL.Checked;
+
+            txtM3U.Enabled = cbM3U.Checked;
+            bnBrowseM3U.Enabled = cbM3U.Checked;
+            txtXSPF.Enabled = cbXSPF.Checked;
+            bnBrowseXSPF.Enabled = cbXSPF.Checked;
+            txtASX.Enabled = cbASX.Checked;
+            bnBrowseASX.Enabled = cbASX.Checked;
+            txtWPL.Enabled = cbWPL.Checked;
+            bnBrowseWPL.Enabled = cbWPL.Checked;
 
             bool wtw;
             if ((cbWTWRSS.Checked) || (cbWTWXML.Checked) || (cbWTWICAL.Checked))
@@ -957,7 +1021,6 @@ namespace TVRename
             FillLanguageList();
         }
 
-
         private void FillLanguageList()
         {
             TheTVDB.Instance.GetLock( "Preferences-FLL");
@@ -965,7 +1028,7 @@ namespace TVRename
             cbLanguages.Items.Clear();
 
             string pref = "";
-            foreach (TheTVDB.Language l in TheTVDB.Instance.LanguageList)
+            foreach (Language l in TheTVDB.Instance.LanguageList)
             {
                 cbLanguages.Items.Add(l.Name);
 
@@ -978,33 +1041,6 @@ namespace TVRename
 
             TheTVDB.Instance.Unlock("Preferences-FLL");
         }
-        /*
-        private void bnLangDown_Click(object sender, System.EventArgs e)
-        {
-            int n = this.lbLangs.SelectedIndex;
-            if (n == -1)
-                return;
-
-            if (n < (this.LangList.Count - 1))
-            {
-                this.LangList.Reverse(n, 2);
-                this.FillLanguageList();
-                this.lbLangs.SelectedIndex = n + 1;
-            }
-        }
-
-        private void bnLangUp_Click(object sender, System.EventArgs e)
-        {
-            int n = this.lbLangs.SelectedIndex;
-            if (n == -1)
-                return;
-            if (n > 0)
-            {
-                this.LangList.Reverse(n - 1, 2);
-                this.FillLanguageList();
-                this.lbLangs.SelectedIndex = n - 1;
-            }
-        }*/
 
         private void cbMissing_CheckedChanged(object sender, EventArgs e)
         {
@@ -1060,7 +1096,7 @@ namespace TVRename
             {
                 try
                 {
-                    ShowStatusColoringType ssct = cboShowStatus.SelectedItem as ShowStatusColoringType;
+                    TVSettings.ShowStatusColoringType ssct = cboShowStatus.SelectedItem as TVSettings.ShowStatusColoringType;
                     if (!ColorTranslator.FromHtml(txtShowStatusColor.Text).IsEmpty && ssct != null)
                     {
                         ListViewItem item = lvwDefinedColors.FindItemWithText(ssct.Text);
@@ -1246,6 +1282,61 @@ namespace TVRename
             cntfw = new CustomNameTagsFloatingWindow(sampleSeason);
             cntfw.Show(this);
             Focus();
+        }
+
+        private void cbSearchRSS_CheckedChanged(object sender, EventArgs e)
+        {
+            gbRSS.Enabled = cbSearchRSS.Checked;
+        }
+
+        private void cbSearchJSON_CheckedChanged(object sender, EventArgs e)
+        {
+            gbJSON.Enabled = cbSearchJSON.Checked;
+        }
+
+        private void tpSearch_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            //Follow this advice https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/how-to-display-side-aligned-tabs-with-tabcontrol
+
+            Graphics g = e.Graphics;
+
+            g.FillRectangle(e.State == DrawItemState.Selected ? Brushes.White : new SolidBrush(BackColor),
+                e.Bounds);
+
+             // Get the item from the collection.
+            TabPage tabPage = tcTabs.TabPages[e.Index];
+
+            // Get the real bounds for the tab rectangle.
+            Rectangle tabBounds = tcTabs.GetTabRect(e.Index);
+
+            // Draw string. Center the text.
+            StringFormat stringFlags = new StringFormat
+            {
+                Alignment = StringAlignment.Near,
+                LineAlignment = StringAlignment.Center
+            };
+
+            g.DrawString(tabPage.Text, tcTabs.Font, Brushes.Black, tabBounds, new StringFormat(stringFlags));
+        }
+
+        private void bnBrowseXSPF_Click(object sender, EventArgs e)
+        {
+            Browse(txtXSPF, "xspf", 7);
+        }
+
+        private void bnBrowseM3U_Click(object sender, EventArgs e)
+        {
+            Browse(txtM3U, "m3u8", 8);
+        }
+
+        private void bnBrowseASX_Click(object sender, EventArgs e)
+        {
+            Browse(txtASX, "asx", 9);
+        }
+
+        private void bnBrowseWPL_Click(object sender, EventArgs e)
+        {
+            Browse(txtWPL, "wpl", 10);
         }
     }
 }

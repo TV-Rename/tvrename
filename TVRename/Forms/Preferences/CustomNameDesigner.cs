@@ -10,8 +10,6 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
-
 namespace TVRename
 {
     /// <summary>
@@ -25,21 +23,19 @@ namespace TVRename
     /// </summary>
     public partial class CustomNameDesigner : Form
     {
-        private readonly CustomEpisodeName CN;
-        private readonly List<ProcessedEpisode> Eps;
-        private TVDoc mDoc;
+        private readonly CustomEpisodeName cn;
+        private readonly List<ProcessedEpisode> eps;
 
-        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomEpisodeName cn, TVDoc doc)
+        public CustomNameDesigner(List<ProcessedEpisode> pel, CustomEpisodeName cn)
         {
-            Eps = pel;
-            CN = cn;
-            mDoc = doc;
+            eps = pel;
+            this.cn = cn;
 
             InitializeComponent();
 
-            if (Eps == null)
+            if (eps == null)
                 lvTest.Enabled = false;
-            txtTemplate.Text = CN.StyleString;
+            txtTemplate.Text = this.cn.StyleString;
 
             FillExamples();
             FillCombos();
@@ -49,13 +45,13 @@ namespace TVRename
         {
             cbTags.Items.Clear();
             cbPresets.Items.Clear();
-            ProcessedEpisode pe = null;
+            ProcessedEpisode pe;
             if (lvTest.SelectedItems.Count == 0)
-                pe = ((Eps != null) && (Eps.Count > 0)) ? Eps[0] : null;
+                pe = ((eps != null) && (eps.Count > 0)) ? eps[0] : null;
             else
                 pe = (ProcessedEpisode) (lvTest.SelectedItems[0].Tag);
 
-            foreach (string s in CustomEpisodeName.Tags)
+            foreach (string s in CustomEpisodeName.TAGS)
             {
                 string txt = s;
                 if (pe != null)
@@ -63,7 +59,7 @@ namespace TVRename
                 cbTags.Items.Add(txt);
             }
 
-            foreach (string s in CustomEpisodeName.Presets)
+            foreach (string s in CustomEpisodeName.PRESETS)
             {
                 cbPresets.Items.Add(pe != null ? CustomEpisodeName.NameForNoExt(pe, s) : s);
             }
@@ -71,14 +67,14 @@ namespace TVRename
 
         private void FillExamples()
         {
-            if (Eps == null)
+            if (eps == null)
                 return;
 
             lvTest.Items.Clear();
-            foreach (ProcessedEpisode pe in Eps)
+            foreach (ProcessedEpisode pe in eps)
             {
                 ListViewItem lvi = new ListViewItem();
-                string fn = TVSettings.Instance.FilenameFriendly(CN.NameFor(pe));
+                string fn = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
                 lvi.Text = fn;
 
                 bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.Show);
@@ -89,7 +85,6 @@ namespace TVRename
 
                 lvi.SubItems.Add(pre1 + ((seas != -1) ? seas.ToString() : ""));
                 lvi.SubItems.Add(pre2 + ((ep != -1) ? ep.ToString() : "") + (maxEp != -1 ? "-" + maxEp : ""));
-
                 
                 lvi.Tag = pe;
 
@@ -105,13 +100,13 @@ namespace TVRename
             if (n == -1)
                 return;
 
-            txtTemplate.Text = CustomEpisodeName.Presets[n];
+            txtTemplate.Text = CustomEpisodeName.PRESETS[n];
             cbPresets.SelectedIndex = -1;
         }
 
         private void txtTemplate_TextChanged(object sender, System.EventArgs e)
         {
-            CN.StyleString = txtTemplate.Text;
+            cn.StyleString = txtTemplate.Text;
             FillExamples();
         }
 
@@ -123,7 +118,7 @@ namespace TVRename
 
             int p = txtTemplate.SelectionStart;
             string s = txtTemplate.Text;
-            txtTemplate.Text = s.Substring(0, p) + CustomEpisodeName.Tags[cbTags.SelectedIndex] + s.Substring(p);
+            txtTemplate.Text = s.Substring(0, p) + CustomEpisodeName.TAGS[cbTags.SelectedIndex] + s.Substring(p);
 
             cbTags.SelectedIndex = -1;
         }

@@ -96,7 +96,7 @@ namespace TVRename
             // Draw season
             for (int c = (chkHideSpecials.Checked?1:0); c < maxSeason + 1; c++)
             {
-                h = new ColumnHeader(c == 0 ? "Specials" : $"Season {c}")
+                h = new ColumnHeader(Season.UIFullSeasonWord(c))
                 {
                     AutomaticSortEnabled = false,
                     ResizeEnabled = false
@@ -299,7 +299,7 @@ namespace TVRename
         private void ForceRefresh(ShowItem si)
         {
             if (si != null)
-                TheTVDB.Instance.ForgetShow(si.TvdbCode, true);
+                TheTVDB.Instance.ForgetShow(si.TvdbCode, true,si.UseCustomLanguage,si.CustomLanguageCode);
             mDoc.DoDownloadsFG();
         }
 
@@ -348,30 +348,37 @@ namespace TVRename
                 }
 
                 if (show != null && seas != null)
-                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com", RightClickCommands.kVisitTvdbSeason);
-
-                if ((seas != null) && (show != null) && (show.AllFolderLocations().ContainsKey(seas.SeasonNumber)))
                 {
-                    int n = gridSummary.mFoldersToOpen.Count;
-                    bool first = true;
-                    foreach (string folder in show.AllFolderLocations()[seas.SeasonNumber])
-                    {
-                        if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
-                        {
-                            added.Add(folder); // don't show the same folder more than once
-                            if (first)
-                            {
-                                GenerateSeparator(gridSummary.showRightClickMenu);
-                                first = false;
-                            }
+                    GenerateMenu(gridSummary.showRightClickMenu, "Visit thetvdb.com",
+                        RightClickCommands.kVisitTvdbSeason);
 
-                            GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder, (int)RightClickCommands.kOpenFolderBase + n);
-                            gridSummary.mFoldersToOpen.Add(folder);
-                            n++;
+                    Dictionary<int, List<string>> afl = show.AllFolderLocations();
+
+                    if (afl.ContainsKey(seas.SeasonNumber))
+                    {
+                        int n = gridSummary.mFoldersToOpen.Count;
+                        bool first = true;
+                        foreach (string folder in afl[seas.SeasonNumber])
+                        {
+                            if ((!string.IsNullOrEmpty(folder)) && Directory.Exists(folder) && !added.Contains(folder))
+                            {
+                                added.Add(folder); // don't show the same folder more than once
+                                if (first)
+                                {
+                                    GenerateSeparator(gridSummary.showRightClickMenu);
+                                    first = false;
+                                }
+
+                                GenerateMenu(gridSummary.showRightClickMenu, "Open: " + folder,
+                                    (int) RightClickCommands.kOpenFolderBase + n);
+
+                                gridSummary.mFoldersToOpen.Add(folder);
+                                n++;
+                            }
                         }
                     }
                 }
-                else if (show != null)
+                if (show != null)
                 {
                     int n = gridSummary.mFoldersToOpen.Count;
                     bool first = true;
@@ -483,18 +490,20 @@ namespace TVRename
                     this.episodeAiredCount = episodeAiredCount;
                     this.episodeGotCount = episodeGotCount;
                     Season = season;
-                    this.Ignored = ignored;
+                    Ignored = ignored;
                 }
+
+                public bool IsSpecial => SeasonNumber == 0;
 
                 public SummaryOutput GetOuput()
                 {
                     SummaryOutput output = new SummaryOutput
                     {
                         Ignored = Ignored,
-                        Special = (SeasonNumber == 0)
+                        Special = IsSpecial
                     };
 
-                    if (SeasonNumber == 0)
+                    if (IsSpecial)
                     {
                         output.Details = $"{episodeGotCount} / {episodeCount}";
                         if (Ignored)
@@ -553,7 +562,7 @@ namespace TVRename
                 foreach (ShowSummarySeasonData ssn in SeasonDataList)
                 {
                     if (ignoreIgnoredSeasons && ssn.Ignored) continue;
-                    if (ignoreSpecials && ssn.SeasonNumber == 0) continue;
+                    if (ignoreSpecials && ssn.IsSpecial) continue;
                     if (ssn.HasMissingEpisodes()) return true;
                 }
 
@@ -565,7 +574,7 @@ namespace TVRename
                 foreach (ShowSummarySeasonData ssn in SeasonDataList)
                 {
                     if (ignoreIgnoredSeasons && ssn.Ignored) continue;
-                    if (ignoreSpecials && ssn.SeasonNumber == 0) continue;
+                    if (ignoreSpecials && ssn.IsSpecial) continue;
                     if (ssn.HasAiredMssingEpisodes()) return true;
                 }
 

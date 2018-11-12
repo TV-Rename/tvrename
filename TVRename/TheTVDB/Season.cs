@@ -20,38 +20,46 @@ namespace TVRename
             noEpisodes,
         }
 
-        public System.Collections.Generic.Dictionary<int,Episode> Episodes;
-        public int SeasonId;
-        public int SeasonNumber;
-        public SeriesInfo TheSeries;
+        public enum SeasonType
+        {
+            dvd,
+            aired
+        }
 
-        public Season(SeriesInfo theSeries, int number, int seasonid)
+        public readonly Dictionary<int,Episode> Episodes;
+        public readonly int SeasonId;
+        public readonly int SeasonNumber;
+        public readonly SeriesInfo TheSeries;
+        private readonly SeasonType type;
+
+        public Season(SeriesInfo theSeries, int number, int seasonid, SeasonType t)
         {
             TheSeries = theSeries;
             SeasonNumber = number;
             SeasonId = seasonid;
             Episodes = new Dictionary<int, Episode>();
+            type = t;
         }
 
         // ReSharper disable once InconsistentNaming
         public static string UISeasonWord(int season)
         {
+            if ((TVSettings.Instance.defaultSeasonWord.Length > 1) && (TVSettings.Instance.LeadingZeroOnSeason))
+            {
+                return TVSettings.Instance.defaultSeasonWord + " " + season.ToString("00");
+            }
+
             if (TVSettings.Instance.defaultSeasonWord.Length > 1)
             {
                 return TVSettings.Instance.defaultSeasonWord + " " + season;
             }
-            else
+
+            if (TVSettings.Instance.LeadingZeroOnSeason)
             {
-                bool leadingZero = TVSettings.Instance.LeadingZeroOnSeason;
-                if (leadingZero == true)
-                {
-                    return TVSettings.Instance.defaultSeasonWord + season.ToString("00");
-                }
-                else
-                {
-                    return TVSettings.Instance.defaultSeasonWord + season.ToString();
-                }
+                return TVSettings.Instance.defaultSeasonWord + season.ToString("00");
             }
+
+            return TVSettings.Instance.defaultSeasonWord + season;
         }
 
         // ReSharper disable once InconsistentNaming
@@ -97,10 +105,10 @@ namespace TVRename
 
             foreach (Episode e in Episodes.Values)
             {
-                if (e.GetAirDateDt().HasValue)
-                {
-                    if (e.GetAirDateDt().Value.Year < min) min = e.GetAirDateDt().Value.Year;
-                }
+                DateTime? adt = e.GetAirDateDt();
+                if (!adt.HasValue) continue;
+                DateTime airDateTime = adt.Value;
+                if (airDateTime.Year < min) min = airDateTime.Year;
             }
 
             return min;
@@ -112,27 +120,29 @@ namespace TVRename
 
             foreach (Episode e in Episodes.Values)
             {
-                if (e.GetAirDateDt().HasValue)
-                {
-                    if (e.GetAirDateDt().Value.Year > max) max = e.GetAirDateDt().Value.Year;
-                }
+                DateTime? adt = e.GetAirDateDt();
+                if (!adt.HasValue) continue;
+                DateTime airDateTime = adt.Value;
+                if (airDateTime.Year > max) max = airDateTime.Year;
             }
             return max;
         }
+
         private bool HasEpisodes => Episodes != null && Episodes.Count > 0;
+
+        public int SeasonIndex => TheSeries.GetSeasonIndex(SeasonNumber,type);
 
         private bool HasUnairedEpisodes(TimeZone tz)
         {
-            if (HasEpisodes)
+            if (!HasEpisodes) return false;
+
+            foreach (Episode e in Episodes.Values)
             {
-                foreach (Episode e in Episodes.Values)
-                {
-                    if (e.GetAirDateDt(tz).HasValue)
-                    {
-                        if (e.GetAirDateDt(tz).Value > DateTime.Now)
-                            return true;
-                    }
-                }
+                DateTime? adt = e.GetAirDateDt(tz);
+                if (!adt.HasValue) continue;
+                DateTime airDateTime = adt.Value;
+                if (airDateTime > DateTime.Now)
+                    return true;
             }
 
             return false;
@@ -140,16 +150,15 @@ namespace TVRename
 
         private bool HasAiredEpisodes(TimeZone tz)
         {
-            if (HasEpisodes)
+            if (!HasEpisodes) return false;
+
+            foreach (Episode e in Episodes.Values)
             {
-                foreach (Episode e in Episodes.Values)
-                {
-                    if (e.GetAirDateDt(tz).HasValue)
-                    {
-                        if (e.GetAirDateDt(tz).Value < DateTime.Now)
-                            return true;
-                    }
-                }
+                DateTime? adt = e.GetAirDateDt(tz);
+                if (!adt.HasValue) continue;
+                DateTime airDateTime = adt.Value;
+                if (airDateTime < DateTime.Now)
+                    return true;
             }
 
             return false;
@@ -176,18 +185,11 @@ namespace TVRename
             }
 
             return returnValue;
-
         }
 
-        public string GetBannerPath()
-        {
-            return TheSeries.GetSeasonBannerPath(SeasonNumber);
-        }
+        public string GetBannerPath() => TheSeries.GetSeasonBannerPath(SeasonNumber);
 
-        public string GetWideBannerPath()
-        {
-            return TheSeries.GetSeasonWideBannerPath(SeasonNumber);
-        }
+        public string GetWideBannerPath() => TheSeries.GetSeasonWideBannerPath(SeasonNumber);
 
         public void AddUpdateEpisode(Episode newEpisode)
         {

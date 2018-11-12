@@ -39,7 +39,6 @@ namespace TVRename
                  RefreshToken();
             }
 
-
             return lastKnownToken;
         }
 

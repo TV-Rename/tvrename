@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Collections.Generic;
 using System.Xml;
@@ -60,10 +68,9 @@ namespace TVRename
             } // try
             catch (Exception e)
             {
-                Logger.Error(e);
+                LOGGER.Error(e);
                 return false;
             }
-
         }
     }
 }

@@ -5,12 +5,15 @@
 // 
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
+
+using Alphaleonis.Win32.Filesystem;
+
 namespace TVRename
 {
     // "FoundFolder" represents a folder found by doing a Check in the 'Bulk Add Shows' dialog
     public class FoundFolder
     {
-        public readonly string Folder;
+        public readonly DirectoryInfo Folder;
         // ReSharper disable once InconsistentNaming
         public int TVDBCode;
         public readonly bool HasSeasonFoldersGuess;
@@ -19,16 +22,12 @@ namespace TVRename
         public bool CodeKnown => !CodeUnknown;
         public bool CodeUnknown => TVDBCode == -1;
 
-        public FoundFolder(string folder, bool seasonFolders, string folderFormat)
+        public FoundFolder(DirectoryInfo directory, bool seasonFolders, string folderFormat)
         {
-            Folder = folder;
+            Folder = directory;
             TVDBCode = -1;
             HasSeasonFoldersGuess = seasonFolders;
             SeasonFolderFormat = folderFormat;
         }
-    }
-
-    public class FolderMonitorEntryList : System.Collections.Generic.List<FoundFolder>
-    {
     }
 }

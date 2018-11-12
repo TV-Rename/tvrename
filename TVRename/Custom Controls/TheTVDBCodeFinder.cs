@@ -48,7 +48,6 @@ namespace TVRename
             mInternal = false;
             Search();
             DoFind(true);
-            
         }
 
         public int SelectedCode()

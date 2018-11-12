@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    internal class qBitTorrentFinder : TorrentFinder
+    internal class qBitTorrentFinder : DownloadingFinder
     {
         public qBitTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckqBitTorrent;
@@ -16,7 +15,7 @@ namespace TVRename
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
             List<TorrentEntry> downloading = GetqBitTorrentDownloads();
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, TorrentApp.qBitTorrent);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.qBitTorrent);
         }
 
         private static List<TorrentEntry> GetqBitTorrentDownloads()
@@ -49,15 +48,19 @@ namespace TVRename
 
                     if (!stuff2.Children().Any())
                     {
-                        ret.Add(new TorrentEntry(torrent["name"].ToString(),
-                            settings["save_path"] + torrent["name"].ToString() +
-                            TVSettings.Instance.VideoExtensionsArray[0], 0));
+                        ret.Add(
+                            new TorrentEntry(
+                                torrent["name"].ToString()
+                                ,TVSettings.Instance.FilenameFriendly(settings["save_path"] + torrent["name"].ToString()) + TVSettings.Instance.VideoExtensionsArray[0]
+                                , 0
+                                )
+                            );
                     }
                 }
             }
             catch (WebException)
             {
-                Logger.Warn($"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                LOGGER.Warn($"Could not connect to {url}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
 
             return ret;
@@ -69,7 +72,7 @@ namespace TVRename
             string port = TVSettings.Instance.qBitTorrentPort;
             if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(port))
             {
-                Logger.Error(
+                LOGGER.Error(
                     $"Could not download {torrentUrl} via qBitTorrent as settings are not entered for host and port");
                 return;
             }
@@ -85,19 +88,19 @@ namespace TVRename
                     HttpResponseMessage response = client.PostAsync(url, content).Result;
                     if (!response.IsSuccessStatusCode)
                     {
-                        Logger.Warn(
+                        LOGGER.Warn(
                             $"Tried to download {torrentUrl} from qBitTorrent via {url}. Got following response {response.StatusCode}");
                     }
                     else
                     {
-                        Logger.Info(
+                        LOGGER.Info(
                             $"Started download of {torrentUrl} via qBitTorrent using {url}. Got following response {response.StatusCode}");
                     }
                 }
             }
             catch (WebException)
             {
-                Logger.Warn($"Could not connect to {url} to downlaod {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
+                LOGGER.Warn($"Could not connect to {url} to downlaod {torrentUrl}, Please check qBitTorrent Settings and ensure qBitTorrent is running with no password required for local connections");
             }
         }
     }

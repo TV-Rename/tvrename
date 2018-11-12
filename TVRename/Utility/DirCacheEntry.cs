@@ -8,14 +8,13 @@
 
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
 namespace TVRename
 {
     public class DirCacheEntry
     {
-        public long Length;
-        public string SimplifiedFullName;
-        public FileInfo TheFile;
+        public readonly long Length;
+        public readonly string SimplifiedFullName;
+        public readonly FileInfo TheFile;
 
         public DirCacheEntry(FileInfo f)
         {

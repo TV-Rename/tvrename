@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
@@ -26,17 +27,34 @@ namespace TVRename
         {
             string showName = GuessShowName(ai, library);
 
-            if (string.IsNullOrEmpty(showName))
+            int tvdbId = FindShowCode(ai);
+
+            if (string.IsNullOrEmpty(showName)  && tvdbId == -1)
                 return;
 
             TheTVDB.Instance.GetLock("GuessShowItem");
 
+            if (tvdbId != -1)
+            {
+                TheTVDB.Instance.Unlock("GuessShowItem");
+                SeriesInfo series = TheTVDB.Instance.GetSeriesAndDownload(tvdbId);
+                if (series != null)
+                {
+                    ai.TVDBCode = tvdbId;
+                    return;
+                }
+            }
+
             SeriesInfo ser = TheTVDB.Instance.GetSeries(showName);
             if (ser != null)
+            {
                 ai.TVDBCode = ser.TvdbCode;
+                TheTVDB.Instance.Unlock("GuessShowItem");
+                return;
+            }
 
             //Try removing any year
-            string showNameNoYear = Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
+            string showNameNoYear = showName == null ? string.Empty:Regex.Replace(showName, @"\(\d{4}\)", "").Trim();
             ser = TheTVDB.Instance.GetSeries(showNameNoYear);
             if (ser != null)
                 ai.TVDBCode = ser.TvdbCode;
@@ -44,11 +62,46 @@ namespace TVRename
             TheTVDB.Instance.Unlock("GuessShowItem");
         }
 
+        private static int FindShowCode(FoundFolder ai)
+        {
+            List<string> possibleFilenames = new List<string> {"series.xml", "tvshow.nfo"};
+            foreach (string fileName in possibleFilenames)
+            {
+                IEnumerable<FileInfo> files = ai.Folder.EnumerateFiles(fileName).ToList();
+                if (files.Any())
+                {
+                    foreach (FileInfo file in files)
+                    {
+                        int x = FindShowCode(file);
+                        if (x != -1) return x;
+                    }
+                }
+            }
+            //Can't find it
+            return -1;
+        }
+
+        private static int FindShowCode(FileInfo file)
+        {
+            using (XmlReader reader = XmlReader.Create(file.OpenText()))
+            {
+                while (reader.Read())
+                {
+                    if ((reader.Name == "tvdbid") && reader.IsStartElement())
+                    {
+                        int x = reader.ReadElementContentAsInt();
+                        if (x != -1) return x;
+                    }
+                }
+            }
+            return -1;
+        }
+
         private static string GuessShowName(FoundFolder ai, ShowLibrary library)
         {
             // see if we can guess a season number and show name, too
             // Assume is blah\blah\blah\show\season X
-            string showName = ai.Folder;
+            string showName = ai.Folder.FullName;
 
             foreach (string seasonWord in library.SeasonWords())
             {
@@ -84,21 +137,13 @@ namespace TVRename
                 {
                     foreach (DirectoryInfo subDir in subDirs)
                     {
-                        //TODO - this could make use of the presets to see whether they match
-
                         string regex = "^(?<folderName>" + sw + "\\s*)(?<number>\\d+)$";
                         Match m = Regex.Match(subDir.Name, regex, RegexOptions.IgnoreCase);
                         if (!m.Success) continue;
 
                         //We have a match!
-                        if (m.Groups["folderName"].Length > 1)
-                        {
-                            folderFormat = m.Groups["folderName"] + " " + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
-                        }
-                        else
-                        {
-                            folderFormat = m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
-                        }
+                        folderFormat = m.Groups["folderName"] + (m.Groups["number"].ToString().StartsWith("0") ? "{Season:2}" : "{Season}");
+
                         Logger.Info("Assuming {0} contains a show because pattern '{1}' is found in subdirectory {2}",
                             di.FullName, folderFormat, subDir.FullName);
 
@@ -180,7 +225,7 @@ namespace TVRename
 
                     // ....its good!
                     FoundFolder ai =
-                        new FoundFolder(di2.FullName, hasSeasonFolders, folderFormat);
+                        new FoundFolder(di2, hasSeasonFolders, folderFormat);
 
                     AddItems.Add(ai);
                     Logger.Info("Adding {0} as a new folder", theFolder);
@@ -245,7 +290,7 @@ namespace TVRename
                     mDoc.Library.Add(found);
                 }
 
-                found.AutoAddFolderBase = ai.Folder;
+                found.AutoAddFolderBase = ai.Folder.FullName;
 
                 if (ai.HasSeasonFoldersGuess)
                 {
@@ -278,7 +323,7 @@ namespace TVRename
 
             AddItems = new FolderMonitorEntryList();
 
-            int c = TVSettings.Instance.LibraryFolders.Count;
+            int c = TVSettings.Instance.LibraryFolders.Count();
 
             int c2 = 0;
             foreach (string folder in TVSettings.Instance.LibraryFolders)

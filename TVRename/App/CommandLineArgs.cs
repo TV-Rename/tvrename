@@ -88,9 +88,6 @@ namespace TVRename
             output.AppendLine("Further information is available at http://www.tvrename.com/cmd-line");
 
             return output.ToString();
-
-
         }
     }
 }
-

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace TVRename
 {
@@ -14,6 +15,20 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         public IEnumerable<ShowItem> Shows => Values;
+
+        public ICollection<SeriesSpecifier> SeriesSpecifiers
+        {
+            get
+            {
+                List<SeriesSpecifier> value = new List<SeriesSpecifier>();
+                foreach (KeyValuePair<int, ShowItem> series in this)
+                {
+                    value.Add(new SeriesSpecifier(series.Key,series.Value.UseCustomLanguage,series.Value.CustomLanguageCode));
+                }
+
+                return value;
+            }
+        }
 
         private IEnumerable<string> GetSeasonWords()
         {
@@ -31,6 +46,17 @@ namespace TVRename
             }
 
             return results.Where(t => !string.IsNullOrWhiteSpace(t)).Distinct();
+        }
+
+        public IEnumerable<string> GetSeasonPatterns()
+        {
+            List<string> results = new List<string> {TVSettings.Instance.SeasonFolderFormat};
+
+            IEnumerable<string> seasonWordsFromShows = Values.Select(si => si.AutoAddCustomFolderFormat);
+
+            results.AddRange(seasonWordsFromShows.Distinct().ToList());
+
+            return results;
         }
 
         private IEnumerable<string> seasonWordsCache;
@@ -71,7 +97,7 @@ namespace TVRename
             List<string> allValues = new List<string>();
             foreach (ShowItem si in Values)
             {
-                if (si.TheSeries()?.GetNetwork() != null) allValues.Add(si.TheSeries().GetNetwork());
+                if (si.TheSeries()?.Network != null) allValues.Add(si.TheSeries().Network);
             }
 
             List<string> distinctValues = allValues.Distinct().ToList();
@@ -84,7 +110,7 @@ namespace TVRename
             List<string> allValues = new List<string>();
             foreach (ShowItem si in Values)
             {
-                if (si.TheSeries()?.GetContentRating() != null) allValues.Add(si.TheSeries().GetContentRating());
+                if (si.TheSeries()?.ContentRating != null) allValues.Add(si.TheSeries().ContentRating);
             }
 
             List<string> distinctValues = allValues.Distinct().ToList();
@@ -92,9 +118,9 @@ namespace TVRename
             return distinctValues;
         }
 
-        public int GetMinYear() => this.Min(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
+        public int GetMinYear() => this.Min(si => Convert.ToInt32(si.Value.TheSeries().Year));
 
-        public int GetMaxYear() => this.Max(si => Convert.ToInt32(si.Value.TheSeries().GetYear()));
+        public int GetMaxYear() => this.Max(si => Convert.ToInt32(si.Value.TheSeries().Year));
 
         public List<ShowItem> GetShowItems()
         {
@@ -214,16 +240,14 @@ namespace TVRename
                 // merge specials in
                 foreach (Episode ep in seasonsToUse[0].Episodes.Values)
                 {
-                    string seasstr = ep.AirsBeforeSeason;
-                    string epstr = ep.AirsBeforeEpisode;
-                    if ((string.IsNullOrEmpty(seasstr)) || (string.IsNullOrEmpty(epstr)))
-                        continue;
+                    if (!ep.AirsAfterSeason.HasValue) continue;
+                    if (!ep.AirsBeforeEpisode.HasValue) continue;
 
-                    int sease = int.Parse(seasstr);
+                    int sease = ep.AirsBeforeSeason.Value;
                     if (sease != snum)
                         continue;
 
-                    int epnum = int.Parse(epstr);
+                    int epnum = ep.AirsBeforeEpisode.Value;
                     for (int i = 0; i < eis.Count; i++)
                     {
                         if ((eis[i].AppropriateSeasonNumber == sease) && (eis[i].AppropriateEpNum == epnum))
@@ -502,7 +526,7 @@ namespace TVRename
             return root.Trim().TrimEnd(wordsToTrim).Trim().TrimEnd(charsToTrim).Trim();
         }
 
-        public static void Renumber(List<ProcessedEpisode> eis)
+        private static void Renumber(List<ProcessedEpisode> eis)
         {
             if (eis.Count == 0)
                 return; // nothing to do
@@ -545,17 +569,10 @@ namespace TVRename
 
                     foreach (ProcessedEpisode ei in eis)
                     {
-                        DateTime? dt = ei.GetAirDateDT(true);
-                        if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
-                        {
-                            TimeSpan ts = dt.Value.Subtract(DateTime.Now);
-                            if ((ts.TotalHours >= (-24 * dd)) && (ts.TotalHours <= 0)) // fairly recent?
-                            {
-                                shows.Add(si);
-                                added = true;
-                                break;
-                            }
-                        }
+                        if (!ei.WithinDays(dd)) continue;
+                        shows.Add(si);
+                        added = true;
+                        break;
                     }
                 }
             }
@@ -592,13 +609,16 @@ namespace TVRename
                             if ((airdt == null) || (airdt == DateTime.MaxValue))
                                 continue;
 
-                            DateTime dt = (DateTime) airdt;
+                            DateTime dt = airdt.Value;
+
+                            TimeSpan timeUntil = dt.Subtract(DateTime.Now);
+                            if (timeUntil.TotalDays > nDaysFuture) continue; //episode is too far in the future
 
                             TimeSpan ts = dt.Subtract(notBefore);
-                            TimeSpan timeUntil = dt.Subtract(DateTime.Now);
-                            if (((howClose == TimeSpan.MaxValue) ||
-                                 (ts.CompareTo(howClose) <= 0) && (ts.TotalHours >= 0)) && (ts.TotalHours >= 0) &&
-                                (timeUntil.TotalDays <= nDaysFuture))
+                            if (ts.TotalSeconds<0) continue; //episode is too far in the past
+
+                            //if we have a closer match
+                            if (TimeSpan.Compare(ts,howClose)<0)
                             {
                                 howClose = ts;
                                 nextAfterThat = ei;
@@ -699,37 +719,50 @@ namespace TVRename
             return returnList;
         }
 
-        public void LoadFromXml(XmlReader r2)
+        public void LoadFromXml(XElement xmlSettings)
         {
-            r2.Read();
-            r2.Read();
-            while (!r2.EOF)
+            foreach (XElement showSettings in xmlSettings.Descendants("ShowItem"))
             {
-                if ((r2.Name == "MyShows") && (!r2.IsStartElement()))
-                    break;
+                ShowItem si = new ShowItem(showSettings);
 
-                if (r2.Name == "ShowItem")
+                if (si.UseCustomShowName) // see if custom show name is actually the real show name
                 {
-                    ShowItem si = new ShowItem(r2.ReadSubtree());
-
-                    if (si.UseCustomShowName) // see if custom show name is actually the real show name
+                    SeriesInfo ser = si.TheSeries();
+                    if ((ser != null) && (si.CustomShowName == ser.Name))
                     {
-                        SeriesInfo ser = si.TheSeries();
-                        if ((ser != null) && (si.CustomShowName == ser.Name))
+                        // then, turn it off
+                        si.CustomShowName = "";
+                        si.UseCustomShowName = false;
+                    }
+                }
+
+                Add(si);
+            }
+        }
+
+        public List<ProcessedEpisode> RecentEpisodes(int days)
+        {
+            List<ProcessedEpisode> episodes = new List<ProcessedEpisode>();
+
+            // for each show, see if any episodes were aired in "recent" days...
+            foreach (ShowItem si in GetRecentShows())
+            {
+                foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
+                {
+                    if (si.IgnoreSeasons.Contains(kvp.Key))
+                        continue; // ignore this season
+
+                    foreach (ProcessedEpisode ei in kvp.Value)
+                    {
+                        if (ei.WithinDays(days))
                         {
-                            // then, turn it off
-                            si.CustomShowName = "";
-                            si.UseCustomShowName = false;
+                            episodes.Add(ei);
                         }
                     }
-
-                    Add(si);
-
-                    r2.Read();
                 }
-                else
-                    r2.ReadOuterXml();
             }
+
+            return episodes;
         }
     }
 }

@@ -36,9 +36,10 @@ namespace TVRename
             InitializeComponent();
 
             mDoc = doc;
-
+            Cursor.Current = Cursors.WaitCursor;
             BuildData();
             DoSort();
+            Cursor.Current = Cursors.Default;
         }
 
         private void BuildData()
@@ -63,12 +64,12 @@ namespace TVRename
                     {
                         foreach (Episode ep in kvp.Value.Episodes.Values)
                         {
-                                foreach (string g in ep.GuestStars)
-                                {
-                                    string aa = g.Trim();
-                                    if (!string.IsNullOrEmpty(aa))
-                                        theData.Set(si.Name, aa, false);
-                                }
+                            foreach (string g in ep.GuestStars)
+                            {
+                                string aa = g.Trim();
+                                if (!string.IsNullOrEmpty(aa))
+                                    theData.Set(si.Name, aa, false);
+                            }
                         }
                     }
                 }
@@ -275,7 +276,7 @@ namespace TVRename
                         {
                             View = theData.Data[r][c].Value ? isActorModel : isGuestModel
                         };
-                        grid1[r + 1, c + 1].AddController(new CellClickEvent(theData.Cols[c], theData.Rows[r]));
+                        grid1[r + 1, c + 1].AddController(new CellClickEvent(theData.Cols[c]));
                     }
                     else
                         grid1[r + 1, c + 1] = new Cell("");
@@ -343,13 +344,11 @@ namespace TVRename
 
         private class CellClickEvent : SourceGrid.Cells.Controllers.ControllerBase
         {
-            private readonly string show;
             private readonly string who;
 
-            public CellClickEvent(string who, string show)
+            public CellClickEvent(string who)
             {
                 this.who = who;
-                this.show = show;
             }
 
             public override void OnClick(SourceGrid.CellContext sender, EventArgs e)

@@ -14,7 +14,7 @@ namespace TVRename
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
-            DateTime? newUpdateTime = si.TheSeries().LastAiredDate();
+            DateTime? newUpdateTime = si.TheSeries().LastAiredDate;
             if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
             {
                 //Any series before 1980 will get 1980 as the timestamp
@@ -41,14 +41,12 @@ namespace TVRename
                 if (newUpdateTime.Value.CompareTo(Helpers.WindowsStartDateTime) < 0)
                     newUpdateTime = Helpers.WindowsStartDateTime;
 
-
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!doneFilesAndFolders.Contains(di.FullName)))
                 {
                     doneFilesAndFolders.Add(di.FullName);
                     return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
                 }
-                
             }
             return null;
         }

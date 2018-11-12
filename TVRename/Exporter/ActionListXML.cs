@@ -54,45 +54,10 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                LOGGER.Error(e);
             }
         }
         protected abstract bool IsOutput(Item a);
         protected abstract string MainXmlElementName();
-    }
-
-    internal class RenamingXml : ActionListXml
-    {
-        public RenamingXml(ItemList theActionList) : base(theActionList)
-        {
-        }
-
-        protected override bool IsOutput(Item a)
-        {
-            return (a is ActionCopyMoveRename cmr) && ((cmr.Operation == ActionCopyMoveRename.Op.rename));
-        }
-        public override bool ApplicableFor(TVSettings.ScanType st) => true;
-
-        public override bool Active() => TVSettings.Instance.ExportRenamingXML;
-        protected override string Location() => TVSettings.Instance.ExportRenamingXMLTo;
-        protected override string MainXmlElementName() => "Renaming";
-    }
-
-    internal class CopyMoveXml : ActionListXml
-    {
-        public CopyMoveXml(ItemList theActionList) : base(theActionList)
-        {
-        }
-
-        public override bool ApplicableFor(TVSettings.ScanType st) => true;
-
-        protected override bool IsOutput(Item a)
-        {
-            return (a is ActionCopyMoveRename cmr) && ((cmr.Operation != ActionCopyMoveRename.Op.rename));
-        }
-
-        public override bool Active() => TVSettings.Instance.ExportFOXML;
-        protected override string Location() => TVSettings.Instance.ExportFOXMLTo;
-        protected override string MainXmlElementName() => "FindingAndOrganising";
     }
 }

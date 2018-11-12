@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
 
-
 namespace TVRename
 {
     class DownloadKodiImages : DownloadIdentifier
@@ -127,7 +126,7 @@ namespace TVRename
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (TVSettings.Instance.EpTBNs || TVSettings.Instance.KODIImages)
+            if (TVSettings.Instance.EpTBNs)
             {
                 ItemList theActionList = new ItemList();
                 if (dbep.Type == ProcessedEpisode.ProcessedEpisodeType.merged)

@@ -1,35 +1,42 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System.Collections.Generic;
 using System.Linq;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    public enum TorrentApp
+    public abstract class DownloadingFinder : Finder
     {
-        uTorrent,
-        qBitTorrent
-    }
+        public enum DownloadApp
+        {
+            // ReSharper disable once InconsistentNaming
+            SABnzbd,
+            uTorrent,
+            qBitTorrent
+        }
 
-    internal abstract class TorrentFinder : Finder
-    {
         public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
-        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading, TorrentApp tApp)
+        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading, DownloadApp tApp)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
             int c = ActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct);
-            foreach (Item action1 in ActionList)
+            foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (ActionCancel)
                     return;
 
                 prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
-
-                if (!(action1 is ItemMissing action))
-                    continue;
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -44,8 +51,13 @@ namespace TVRename
 
                     if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {
+<<<<<<< HEAD
                         toRemove.Add(action1);
                         newList.Add(new ItemTorrentDownload(te, action.Episode, action.TheFileNoExt, tApp));
+=======
+                        toRemove.Add(action);
+                        newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, tApp));
+>>>>>>> e1d0edf1b9da866771e48974e22cb04bcceb43b0
                         break;
                     }
                 }
@@ -60,7 +72,7 @@ namespace TVRename
             prog.Invoke(totPct);
         }
 
-        protected TorrentFinder(TVDoc doc) : base(doc)
+        protected DownloadingFinder(TVDoc doc) : base(doc)
         {
         }
     }

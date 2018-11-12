@@ -11,8 +11,10 @@ namespace TVRename
     {
         #region IComparer<Item> Members
 
-        public virtual int Compare(Item x, Item y)
+        public int Compare(Item x, Item y)
         {
+            if (x is null) return -1;
+            if (y is null) return 1;
             return (x.GetType() == y.GetType()) ? x.Compare(y) : (TypeNumber(x) - TypeNumber(y));
         }
 
@@ -24,13 +26,13 @@ namespace TVRename
                 return 1;
             if (a is ActionCopyMoveRename)
                 return 2;
-            if (a is ActionRSS)
+            if (a is ActionTDownload)
                 return 3;
             if (a is ActionDownloadImage)
                 return 4;
             if (a is ActionNfo)
                 return 5;
-            if (a is ItemuTorrenting || a is ItemSABnzbd)
+            if (a is ItemDownloading)
                 return 6;
             return 7;
         }

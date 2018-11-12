@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Security;
 using Alphaleonis.Win32.Filesystem;
@@ -10,10 +18,10 @@ namespace TVRename
         //From https://www.cyotek.com/blog/configuring-the-emulation-mode-of-an-internet-explorer-webbrowser-control THANKS
         //Needed to ensure webBrowser renders HTML 5 content
 
-        private const string InternetExplorerRootKey = @"Software\Microsoft\Internet Explorer";
-        private const string BrowserEmulationKey = InternetExplorerRootKey + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
+        private const string INTERNET_EXPLORER_ROOT_KEY = @"Software\Microsoft\Internet Explorer";
+        private const string BROWSER_EMULATION_KEY = INTERNET_EXPLORER_ROOT_KEY + @"\Main\FeatureControl\FEATURE_BROWSER_EMULATION";
 
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private enum BrowserEmulationVersion
         {
@@ -31,32 +39,22 @@ namespace TVRename
 
         private static int GetInternetExplorerMajorVersion()
         {
-            int result;
-
-            result = 0;
-
             try
             {
-                RegistryKey key;
-
-                key = Registry.LocalMachine.OpenSubKey(InternetExplorerRootKey);
+                RegistryKey key = Registry.LocalMachine.OpenSubKey(INTERNET_EXPLORER_ROOT_KEY);
 
                 if (key != null)
                 {
-                    object value;
-
-                    value = key.GetValue("svcVersion", null) ?? key.GetValue("Version", null);
+                    object value = key.GetValue("svcVersion", null) ?? key.GetValue("Version", null);
 
                     if (value != null)
                     {
-                        string version;
-                        int separator;
-
-                        version = value.ToString();
-                        separator = version.IndexOf('.');
+                        string version = value.ToString();
+                        int separator = version.IndexOf('.');
                         if (separator != -1)
                         {
-                            int.TryParse(version.Substring(0, separator), out result);
+                            int.TryParse(version.Substring(0, separator), out int result);
+                            return result;
                         }
                     }
                 }
@@ -64,54 +62,45 @@ namespace TVRename
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                logger.Error(se);
+                Logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                logger.Error(uae);
+                Logger.Error(uae);
             }
 
-            return result;
+            return 0;
         }
         
         private static BrowserEmulationVersion GetBrowserEmulationVersion()
         {
-            BrowserEmulationVersion result;
-
-            result = BrowserEmulationVersion.Default;
-
             try
             {
-                RegistryKey key;
-
-                key = Registry.CurrentUser.OpenSubKey(BrowserEmulationKey, true);
+                RegistryKey key = Registry.CurrentUser.OpenSubKey(BROWSER_EMULATION_KEY, true);
                 if (key != null)
                 {
-                    string programName;
-                    object value;
-
-                    programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
-                    value = key.GetValue(programName, null);
+                    string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+                    object value = key.GetValue(programName, null);
 
                     if (value != null)
                     {
-                        result = (BrowserEmulationVersion)Convert.ToInt32(value);
+                        return (BrowserEmulationVersion)Convert.ToInt32(value);
                     }
                 }
             }
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                logger.Error(se);
+                Logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                logger.Error(uae);
+                Logger.Error(uae);
             }
 
-            return result;
+            return BrowserEmulationVersion.Default;
         }
 
         private static bool IsBrowserEmulationSet()
@@ -119,94 +108,90 @@ namespace TVRename
             return GetBrowserEmulationVersion() != BrowserEmulationVersion.Default;
         }
 
+        private static bool UpgradeBrowserEmulationRequired()
+        {
+            return GetBrowserEmulationVersion() != GetInternetExplorerVersion();
+        }
+
         private static bool SetBrowserEmulationVersion(BrowserEmulationVersion browserEmulationVersion)
         {
-            bool result;
-
-            result = false;
-
             try
             {
-                RegistryKey key;
-
-                key = Registry.CurrentUser.OpenSubKey(BrowserEmulationKey, true);
+                RegistryKey key = Registry.CurrentUser.CreateSubKey(BROWSER_EMULATION_KEY,true);
 
                 if (key != null)
                 {
-                    string programName;
-
-                    programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
+                    string programName = Path.GetFileName(Environment.GetCommandLineArgs()[0]);
 
                     if (browserEmulationVersion != BrowserEmulationVersion.Default)
                     {
                         // if it's a valid value, update or create the value
                         key.SetValue(programName, (int)browserEmulationVersion, RegistryValueKind.DWord);
-                        logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
+                        Logger.Warn("SETTING REGISTRY:{0}-{1}-{2}-{3}",key.Name,programName, (int)browserEmulationVersion, RegistryValueKind.DWord.ToString());
                     }
                     else
                     {
                         // otherwise, remove the existing value
                         key.DeleteValue(programName, false);
-                        logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
+                        Logger.Warn("DELETING REGISTRY KEY:{0}-{1}", key.Name, programName);
                     }
 
-                    result = true;
+                    return true;
                 }
+
+                Logger.Error($"Could not access {BROWSER_EMULATION_KEY}");
             }
             catch (SecurityException se)
             {
                 // The user does not have the permissions required to read from the registry key.
-                logger.Error(se);
+                Logger.Error(se);
             }
             catch (UnauthorizedAccessException uae)
             {
                 // The user does not have the necessary registry rights.
-                logger.Error(uae);
+                Logger.Error(uae);
             }
 
-            return result;
+            return false;
         }
 
         private static bool SetBrowserEmulationVersion()
         {
-            int ieVersion;
-            BrowserEmulationVersion emulationCode;
+            return SetBrowserEmulationVersion(GetInternetExplorerVersion());
+        }
 
-            ieVersion = GetInternetExplorerMajorVersion();
-            logger.Warn("IE Version {0} is identified",ieVersion );
+        private static BrowserEmulationVersion GetInternetExplorerVersion()
+        {
+            int ieVersion = GetInternetExplorerMajorVersion();
+            Logger.Info("IE Version {0} is identified", ieVersion);
 
             if (ieVersion >= 11)
             {
-                emulationCode = BrowserEmulationVersion.Version11;
-            }
-            else
-            {
-                switch (ieVersion)
-                {
-                    case 10:
-                        emulationCode = BrowserEmulationVersion.Version10;
-                        break;
-                    case 9:
-                        emulationCode = BrowserEmulationVersion.Version9;
-                        break;
-                    case 8:
-                        emulationCode = BrowserEmulationVersion.Version8;
-                        break;
-                    default:
-                        emulationCode = BrowserEmulationVersion.Version7;
-                        break;
-                }
+                return BrowserEmulationVersion.Version11;
             }
 
-            return SetBrowserEmulationVersion(emulationCode);
+            switch (ieVersion)
+            {
+                case 10:
+                    return BrowserEmulationVersion.Version10;
+                case 9:
+                    return BrowserEmulationVersion.Version9;
+                case 8:
+                    return BrowserEmulationVersion.Version8;
+                default:
+                    return BrowserEmulationVersion.Version7;
+            }
         }
 
         public static void UpdateBrowserEmulationVersion()
         {
-            if (!IsBrowserEmulationSet())
+            if (!IsBrowserEmulationSet() || UpgradeBrowserEmulationRequired())
             {
-                logger.Warn("Updating the registry to ensure that the latest browser version is used");
-                SetBrowserEmulationVersion();
+                Logger.Warn("Updating the registry to ensure that the latest browser version is used");
+                if (!SetBrowserEmulationVersion())
+                {
+                    Logger.Error("Failed to update the browser emulation version");
+                }
             }
         }
     }

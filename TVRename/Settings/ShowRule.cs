@@ -6,6 +6,8 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System.Xml;
+using System.Xml.Linq;
+
 // Per-season sets of rules for manipulating episodes from thetvdb into multi-episode files,
 // removing, adding, swapping them around, etc.
 
@@ -35,35 +37,19 @@ namespace TVRename
             SetToDefaults();
         }
 
-        public ShowRule(XmlReader reader)
+        public ShowRule(XElement xmlSettings)
         {
             SetToDefaults();
-            reader.Read();
-            while (reader.Name != "Rule")
-                return;
-
-            reader.Read();
-            while (reader.Name != "Rule")
+            if (xmlSettings != null)
             {
-                if (reader.Name == "DoWhatNow")
-                    DoWhatNow = (RuleAction) reader.ReadElementContentAsInt();
-                else if (reader.Name == "First")
-                    First = reader.ReadElementContentAsInt();
-                else if (reader.Name == "Second")
-                    Second = reader.ReadElementContentAsInt();
-                else if (reader.Name == "Text")
-                    UserSuppliedText = reader.ReadElementContentAsString();
-                else
-                    reader.ReadOuterXml();
-            }
-        }
+                DoWhatNow = xmlSettings.ExtractInt("DoWhatNow") == null
+                    ? RuleAction.kIgnoreEp
+                    : (RuleAction) xmlSettings.ExtractInt("DoWhatNow");
 
-        public ShowRule(ShowRule o)
-        {
-            DoWhatNow = o.DoWhatNow;
-            First = o.First;
-            Second = o.Second;
-            UserSuppliedText = o.UserSuppliedText;
+                First = xmlSettings.ExtractInt("First") ?? -1;
+                Second = xmlSettings.ExtractInt("Second") ?? -1;
+                UserSuppliedText = xmlSettings.ExtractString("Text");
+            }
         }
 
         public override string ToString()

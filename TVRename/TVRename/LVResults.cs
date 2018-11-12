@@ -29,7 +29,7 @@ namespace TVRename
         public System.Collections.Generic.List<ItemMissing> Missing;
         public System.Collections.Generic.List<ActionNfo> NFO;
         public System.Collections.Generic.List<ActionPyTivoMeta> PyTivoMeta;
-        public System.Collections.Generic.List<ActionRSS> RSS;
+        public System.Collections.Generic.List<ActionTDownload> RSS;
         public System.Collections.Generic.List<ActionCopyMoveRename> Rename;
 
         public LVResults(ListView lv, bool isChecked) // if not checked, then selected items
@@ -45,7 +45,7 @@ namespace TVRename
         public void Go(ListView lv, WhichResults which)
         {
             Missing = new System.Collections.Generic.List<ItemMissing>();
-            RSS = new System.Collections.Generic.List<ActionRSS>();
+            RSS = new System.Collections.Generic.List<ActionTDownload>();
             CopyMove = new System.Collections.Generic.List<ActionCopyMoveRename>();
             Rename = new System.Collections.Generic.List<ActionCopyMoveRename>();
             Download = new System.Collections.Generic.List<ActionDownloadImage>();
@@ -97,7 +97,7 @@ namespace TVRename
                 }
                 else if (action is ActionDownloadImage item)
                     Download.Add(item);
-                else if (action is ActionRSS rss)
+                else if (action is ActionTDownload rss)
                     RSS.Add(rss);
                 else if (action is ItemMissing missing)
                     Missing.Add(missing);

@@ -65,7 +65,6 @@ namespace TVRename
                     XmlSerializer xs = new XmlSerializer(typeof (TVRenameStats));
                     sc = (TVRenameStats) xs.Deserialize(reader);
                     System.Diagnostics.Debug.Assert(sc != null);
-                    
                 }
             }
             catch (Exception e)

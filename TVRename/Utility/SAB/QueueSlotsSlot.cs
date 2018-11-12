@@ -6,7 +6,7 @@ namespace TVRename.SAB
     [System.SerializableAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [XmlType(AnonymousType = true)]
-    public class QueueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged
+    public class QueueSlotsSlot : object, System.ComponentModel.INotifyPropertyChanged,IDownloadInformation
     {
         private string statusField;
         private string indexField;
@@ -237,15 +237,27 @@ namespace TVRename.SAB
             }
         }
 
+        string IDownloadInformation.FileIdentifier => filename;
+
+        string IDownloadInformation.Destination => filename;
+
+        string IDownloadInformation.RemainingText
+        {
+            get
+            {
+                string txt = status + ", " + (int)(0.5 + 100 - (100 * mbleft / mb)) + "% Complete";
+                if (status == "Downloading")
+                    { txt += ", " + timeleft + " left"; }
+                return txt;
+            }
+        }
+    
         public event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
 
-        protected void RaisePropertyChanged(string propertyName)
+        private void RaisePropertyChanged(string propertyName)
         {
             System.ComponentModel.PropertyChangedEventHandler propertyChanged = PropertyChanged;
-            if ((propertyChanged != null))
-            {
-                propertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
-            }
+            propertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
     }
 }

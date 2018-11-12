@@ -45,8 +45,6 @@ namespace TVRename
             diskSpaceTimer.Start();
         }
 
-
-
         private void SetPercentages(double file, double group)
         {
             if (file > 100)
@@ -153,12 +151,9 @@ namespace TVRename
             int diskValue = 0;
             string diskText = "--- GB free";
 
-            ActionCopyMoveRename activeCMAction = null;
-
-            activeCMAction = GetActiveCmAction();
+            ActionCopyMoveRename activeCMAction = GetActiveCmAction();
 
             if (activeCMAction is null) return;
-
 
             string folder = activeCMAction.TargetFolder;
             DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
@@ -181,14 +176,13 @@ namespace TVRename
                     int pct = (int)((1000 * di.TotalFreeSpace) / di.TotalSize);
                     diskValue = 1000 - pct;
                     diskText = di.TotalFreeSpace.GBMB(1) + " free";
-
                 }
             }
 
-            DirectoryInfo toUNCRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
-            if (toUNCRoot != null)
+            DirectoryInfo toUncRoot = (!string.IsNullOrEmpty(folder) && folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
+            if (toUncRoot != null)
             {
-                FileSystemProperties driveStats = FileHelper.GetProperties(toUNCRoot.ToString());
+                FileSystemProperties driveStats = FileHelper.GetProperties(toUncRoot.ToString());
                 if (driveStats != null)
                 {
                     int pct = (int)((1000 * driveStats.AvailableBytes) / driveStats.TotalBytes);
@@ -247,6 +241,5 @@ namespace TVRename
             label3.Enabled = en;
             txtFilename.Enabled = en;
         }
-
     }
 }

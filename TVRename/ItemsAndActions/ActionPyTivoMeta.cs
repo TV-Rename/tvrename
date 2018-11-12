@@ -8,7 +8,6 @@
 namespace TVRename
 {
     using System;
-    using System.Windows.Forms;
     using System.IO;
     using Directory = Alphaleonis.Win32.Filesystem.Directory;
     using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
@@ -46,14 +45,14 @@ namespace TVRename
                     writer.WriteLine($"description : {Episode.Overview}");
                     if (Episode.FirstAired != null)
                         writer.WriteLine($"originalAirDate : {Episode.FirstAired.Value:yyyy-MM-dd}T00:00:00Z");
-                    writer.WriteLine($"callsign : {Episode.Show.TheSeries().GetNetwork()}");
+                    writer.WriteLine($"callsign : {Episode.Show.TheSeries().Network}");
 
                     WriteEntries(writer, "vDirector", Episode.EpisodeDirector);
                     WriteEntries(writer, "vWriter", Episode.Writer);
                     WriteEntries(writer, "vActor", string.Join("|", Episode.Show.TheSeries().GetActorNames()));
                     WriteEntries(writer, "vGuestStar",
                         Episode.EpisodeGuestStars); // not worring about actors being repeated
-                    WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.TheSeries().GetGenres()));
+                    WriteEntries(writer, "vProgramGenre", string.Join("|", Episode.Show.TheSeries().Genres()));
                 }
 
                 Done = true;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -18,8 +19,8 @@ namespace TVRename
 
         private readonly TVRenameStats mStats; //reference to the main TVRenameStats, so we can udpate the counts
 
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private static readonly NLog.Logger threadslogger = NLog.LogManager.GetLogger("threads");
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private static readonly NLog.Logger Threadslogger = NLog.LogManager.GetLogger("threads");
 
         /// <summary>
         /// Asks for execution to pause
@@ -59,7 +60,7 @@ namespace TVRename
                 Action action = info.TheAction;
                 if (action != null)
                 {
-                    logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
+                    Logger.Trace("Triggering Action: {0} - {1} - {2}", action.Name, action.Produces, action.ToString());
                     action.Go(ref actionPause, mStats);
                 }
 
@@ -67,8 +68,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal(e, "Unhandled Exception in Process Single Action");
-                return;
+                Logger.Fatal(e, "Unhandled Exception in Process Single Action");
             }
         }
 
@@ -91,13 +91,17 @@ namespace TVRename
         /// Processes a set of actions, running them in a multi-threaded way based on the application's settings.
         /// </summary>
         /// <param name="theList">An ItemList to be processed.</param>
-        /// <param name="showUI">Whether or not we should display a UI to inform the user about progress.</param>
-        public void DoActions(ItemList theList, bool showUI)
+        /// <param name="showUi">Whether or not we should display a UI to inform the user about progress.</param>
+        public void DoActions(ItemList theList, bool showUi)
         {
-            logger.Info("**********************");
-            logger.Info("Doing Selected Actions....");
             if (theList == null)
+            {
+                Logger.Info("Asked to do actions, but none provided....");
                 return;
+            }
+
+            Logger.Info("**********************");
+            Logger.Info($"Doing Selected Actions.... ({theList.Count} items detected, {theList.Actions().Count()} actions to be completed )");
 
             // Run tasks in parallel (as much as is sensible)
 
@@ -107,7 +111,7 @@ namespace TVRename
             // If not /hide, show CopyMoveProgress dialog
 
             CopyMoveProgress cmp = null;
-            if (showUI)
+            if (showUi)
                 cmp = new CopyMoveProgress(this, queues);
 
             actionProcessorThread = new Thread(ActionProcessor)
@@ -119,22 +123,18 @@ namespace TVRename
 
             if ((cmp != null) && (cmp.ShowDialog() == DialogResult.Cancel))
                 actionProcessorThread.Abort();
-
+            
             actionProcessorThread.Join();
 
             theList.RemoveAll(x => (x is Action action) && action.Done && !action.Error);
 
-            foreach (Item sli in theList)
+            foreach (Action slia in theList.Actions())
             {
-                if (sli is Action slia)
-                {
-                    logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name,
-                        slia.ToString(), slia.ErrorText);
-                }
+                Logger.Warn("Failed to complete the following action: {0}, doing {1}. Error was {2}", slia.Name, slia.ToString(), slia.ErrorText);
             }
 
-            logger.Info("Completed Selected Actions");
-            logger.Info("**************************");
+            Logger.Info("Completed Selected Actions");
+            Logger.Info("**************************");
         }
 
         private void ActionProcessor(object queuesIn)
@@ -158,7 +158,7 @@ namespace TVRename
                         new Semaphore(queues[i].ParallelLimit,
                             queues[i].ParallelLimit); // allow up to numWorkers working at once
 
-                    logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name,
+                    Logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name,
                         queues[i].ParallelLimit, i);
                 }
 
@@ -212,7 +212,7 @@ namespace TVRename
                             int nfr = actionSemaphores[which]
                                 .Release(1); // release our hold on the semaphore, so that worker can grab it
 
-                            threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
+                            Threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
                         }
 
                         while (actionStarting) // wait for thread to get the semaphore
@@ -238,7 +238,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal(e, "Unhandled Exception in ActionProcessor");
+                Logger.Fatal(e, "Unhandled Exception in ActionProcessor");
                 foreach (Thread t in actionWorkers)
                     t.Abort();
 
@@ -270,18 +270,19 @@ namespace TVRename
                 if (!(sli is Action action))
                     continue; // skip non-actions
 
-                if ((action is ActionWriteMetadata) || (action is ActionDateTouch)
-                ) // base interface that all metadata actions are derived from
+                if (action is ActionWriteMetadata) // base interface that all metadata actions are derived from
                     queues[2].Actions.Add(action);
-                else if ((action is ActionDownloadImage) || (action is ActionRSS))
+                else if ((action is ActionDownloadImage) || (action is ActionTDownload))
                     queues[3].Actions.Add(action);
-                else if (action is ActionCopyMoveRename)
-                    queues[(action as ActionCopyMoveRename).QuickOperation() ? 1 : 0].Actions.Add(action);
+                else if (action is ActionCopyMoveRename rename)
+                    queues[rename.QuickOperation() ? 1 : 0].Actions.Add(rename);
                 else if ((action is ActionDeleteFile) || (action is ActionDeleteDirectory))
                     queues[1].Actions.Add(action);
+                else if (action is ActionDateTouch)
+                    queues[0].Actions.Add(action); // add them after the slow move/reanems (ie last)
                 else
                 {
-                    logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
+                    Logger.Error("No action type found for {0}, Please follow up with a developer.", action.GetType());
                     queues[3].Actions.Add(action); // put it in this queue by default
 #if DEBUG
                     System.Diagnostics.Debug.Fail("Unknown action type for making processing queue");

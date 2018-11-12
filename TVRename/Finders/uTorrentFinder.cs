@@ -4,7 +4,7 @@ using Alphaleonis.Win32.Filesystem;
 namespace TVRename
 {
     // ReSharper disable once InconsistentNaming
-    internal class uTorrentFinder:TorrentFinder
+    internal class uTorrentFinder: DownloadingFinder
     {
         public uTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckuTorrent;
@@ -22,7 +22,7 @@ namespace TVRename
 
             List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded();
 
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, TorrentApp.uTorrent);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.uTorrent);
         }
 
         internal static void StartTorrentDownload(string torrentFileName, string directoryName = "")

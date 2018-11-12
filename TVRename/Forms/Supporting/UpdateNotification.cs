@@ -10,7 +10,6 @@ namespace TVRename.Forms
     {
         private readonly UpdateVersion newVersion;
 
-
         public UpdateNotification(UpdateVersion update)
         {
             newVersion = update;
@@ -26,42 +25,47 @@ namespace TVRename.Forms
         {
             const string GITHUB_CONVERSION_URL = "https://api.github.com/markdown";
 
-            //string responsebody;
-
-            HttpWebRequest req = WebRequest.Create(new Uri(GITHUB_CONVERSION_URL)) as HttpWebRequest;
-            req.Method = "POST";
-            req.ContentType = "application/json";
-            req.UserAgent= 
-                "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
-
-            JObject request = new JObject
+            if (WebRequest.Create(new Uri(GITHUB_CONVERSION_URL)) is HttpWebRequest req)
             {
-                {"text", newVersion.ReleaseNotesText},
-                {"mode", "gfm"},
-                {"context", "TV-Rename/tvrename"}
-            };
+                req.Method = "POST";
+                req.ContentType = "application/json";
+                req.UserAgent =
+                    "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36";
 
-            using (StreamWriter writer = new StreamWriter(req.GetRequestStream()))
-            {
-                writer.Write(request.ToString());
+                JObject request = new JObject
+                {
+                    {"text", newVersion.ReleaseNotesText},
+                    {"mode", "gfm"},
+                    {"context", "TV-Rename/tvrename"}
+                };
+
+                using (StreamWriter writer = new StreamWriter(req.GetRequestStream()))
+                {
+                    writer.Write(request.ToString());
+                }
+
+                string result = null;
+                using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
+                {
+                    if (resp != null)
+                    {
+                        StreamReader reader =
+                            new StreamReader(resp.GetResponseStream() ?? throw new InvalidOperationException());
+
+                        result = reader.ReadToEnd();
+                    }
+                }
+
+                string HTML_HEAD =
+                    "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
+
+                string HTML_FOOTER = "</body></html>";
+
+                webReleaseNotes.DocumentText = HTML_HEAD + result + HTML_FOOTER;
             }
-            
-            string result = null;
-            using (HttpWebResponse resp = req.GetResponse() as HttpWebResponse)
-            {
-                StreamReader reader =
-                    new StreamReader(resp.GetResponseStream());
-                result = reader.ReadToEnd();
-            }
-
-            string HTML_HEAD = "<html><head><style type=\"text/css\">* {font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\"; font-size:90%}</style></head><body>";
-            string HTML_FOOTER = "</body></html>";
-
-            webReleaseNotes.DocumentText= HTML_HEAD+result+HTML_FOOTER;
 
             webReleaseNotes.Visible = true;
             tbReleaseNotes.Visible = false;
-
         }
 
         private void bnReleaseNotes_Click(object sender, EventArgs e)
@@ -81,7 +85,7 @@ namespace TVRename.Forms
             if (url.Contains(@"ieframe.dll"))
                 url = e.Url.Fragment.Substring(1);
 
-            if ((url.Substring(0, 7).CompareTo("http://") == 0) || (url.Substring(0, 8).CompareTo("https://") == 0))
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
             {
                 e.Cancel = true;
                 Helpers.SysOpen(e.Url.AbsoluteUri);

@@ -16,17 +16,6 @@ namespace TVRename
         // Attach to console window – this may modify the standard handles
         public static bool AttachParentConsole() =>AttachConsole(ATTACH_PARENT_PROCESS);
 
-        public static void NewConsoleOutput(string text)
-        {
-            if (AllocConsole())
-            {
-                Console.Out.WriteLine(text);
-                Console.In.ReadLine();
-
-                FreeConsole();
-            }
-        }
-
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool AllocConsole();

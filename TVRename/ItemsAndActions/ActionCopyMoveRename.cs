@@ -22,9 +22,8 @@ namespace TVRename
         public readonly FileInfo From;
         public Op Operation;
         public readonly FileInfo To;
-        public readonly ItemMissing UndoItemMissing;
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TidySettings tidyup,ItemMissing undoItem)
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TVSettings.TidySettings tidyup,ItemMissing undoItem)
         {
             Tidyup = tidyup;
             PercentDone = 0;
@@ -34,6 +33,12 @@ namespace TVRename
             To = to;
             UndoItemMissing = undoItem;
         }
+
+        public ActionCopyMoveRename(FileInfo fi, FileInfo existingFile, ProcessedEpisode pep): 
+            this(TVSettings.Instance.LeaveOriginals ? Op.copy : Op.move, fi,
+                existingFile,
+                pep, TVSettings.Instance.Tidyup, null)
+            {}
 
         #region Action Members
 
@@ -100,7 +105,6 @@ namespace TVRename
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-
             }
             catch (Exception e)
             {
@@ -237,9 +241,8 @@ namespace TVRename
             }
         }
 
-        protected override string FileInfo1 => From.DirectoryName;
-        protected override string FileInfo2 => From.Name;
-        protected override string FileInfo3 => To.DirectoryName;
-        protected override string FileInfo4 => To.Name;
+        protected override string DestinationFolder => To.DirectoryName;
+        protected override string DestinationFile => To.Name;
+        protected override string SourceDetails => From.FullName;
     }
 }

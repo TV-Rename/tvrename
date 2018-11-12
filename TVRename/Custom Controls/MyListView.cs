@@ -7,7 +7,6 @@
 // 
 
 using System;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 // Starting from:
@@ -53,7 +52,7 @@ namespace TVRename
 
         protected override void OnItemCheck(ItemCheckEventArgs ice)
         {
-            if (!menuCheck && !keyCheck && (false == checkEnable))
+            if (!menuCheck && !keyCheck && !checkEnable)
             {
                 ice.NewValue = ice.CurrentValue;
                 return;
@@ -106,17 +105,5 @@ namespace TVRename
             int delta = -(currentPos - position);
             NativeMethods.SendMessage(Handle, LVM_SCROLL, IntPtr.Zero, (IntPtr)delta); // First param is horizontal scroll amount, second is vertical scroll amount
         }
-    }
-    internal static partial class NativeMethods
-    {
-        [DllImport("user32.dll")]
-        internal static extern int GetScrollPos(IntPtr hWnd, int nBar);
-
-        [DllImport("user32.dll")]
-        internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-        // MAH: Added in support of the Filter TextBox Button
-        [DllImport("user32.dll")]
-        internal static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wp, IntPtr lp);
     }
 }

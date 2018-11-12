@@ -23,7 +23,6 @@ namespace TVRename
 
             try
             {
-
                 using (System.IO.StreamWriter file = new System.IO.StreamWriter(Location()))
                 {
                     file.WriteLine("Show Name,Season,Episode,Episode Name,Air Date,Folder,Nice Name,thetvdb.com Code");
@@ -36,14 +35,12 @@ namespace TVRename
                             DateTime? dt = pe.GetAirDateDT(true);
                             file.WriteLine($"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.NumsAsString()},\"{pe.Name}\",{dt:G},\"{action.TargetFolder}\",\"{im.Filename }\",{pe.SeriesId}");
                         }
-
                     }
-
                 }
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                LOGGER.Error(e);
             }
         }
     }

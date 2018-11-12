@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +22,6 @@ namespace TVRename
 
         public bool Filter(ShowItem show)
         {
-
             //Filter on show name
             bool isNameOk = (ShowName == null) || show.ShowName.Contains(ShowName, StringComparison.OrdinalIgnoreCase);
 
@@ -22,10 +29,10 @@ namespace TVRename
             bool isStatusOk = (ShowStatus == null) || show.ShowStatus.Equals(ShowStatus);
 
             //Filter on show network
-            bool isNetworkOk = (ShowNetwork == null) || (show.TheSeries() == null) || show.TheSeries().GetNetwork().Equals(ShowNetwork);
+            bool isNetworkOk = (ShowNetwork == null) || (show.TheSeries() == null) || show.TheSeries().Network.Equals(ShowNetwork);
 
             //Filter on show rating
-            bool isRatingOk = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().GetContentRating().Equals(ShowRating);
+            bool isRatingOk = (ShowRating == null) || (show.TheSeries() == null) || show.TheSeries().ContentRating.Equals(ShowRating);
 
             //Filter on show genres
             bool areGenresIgnored = (Genres.Count == 0);
@@ -39,16 +46,6 @@ namespace TVRename
             if (show.Genres == null) return false;
 
             return show.Genres.Any(showGenre => Genres.Contains(showGenre));
-        }
-    }
-
-    public class SeasonFilter
-    {
-        public bool HideIgnoredSeasons { get; set; }
-
-        public bool Filter(ShowItem si, Season sea)
-        {
-            return !HideIgnoredSeasons || !si.IgnoreSeasons.Contains(sea.SeasonNumber);
         }
     }
 }

@@ -88,6 +88,9 @@
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.5.7\lib\net45\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="NLog.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Windows.Forms.4.2.3\lib\net35\NLog.Windows.Forms.dll</HintPath>
+    </Reference>
     <Reference Include="NodaTime, Version=2.0.2.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
       <HintPath>..\packages\NodaTime.2.0.2\lib\net45\NodaTime.dll</HintPath>
     </Reference>
@@ -118,19 +121,35 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App\ApplicationBase.cs" />
     <Compile Include="App\CommandLineArgs.cs" />
     <Compile Include="App\AutoFolderMonitor.cs" />
+    <Compile Include="Custom Controls\NativeMethods.cs" />
     <Compile Include="DownloadIdentifers\DownloadWdtvMetaData.cs" />
     <Compile Include="DownloadIdentifers\IncorrectFileDates.cs" />
+    <Compile Include="Exporter\ActionListExporter.cs" />
     <Compile Include="Exporter\ActionListXML.cs" />
+    <Compile Include="Exporter\CopyMoveXml.cs" />
     <Compile Include="Exporter\MissingCSV.cs" />
+    <Compile Include="Exporter\RecentASXExporter.cs" />
+    <Compile Include="Exporter\RecentExporter.cs" />
+    <Compile Include="Exporter\RecentM3UExporter.cs" />
+    <Compile Include="Exporter\RecentWPLExporter.cs" />
+    <Compile Include="Exporter\RecentXSPFExporter.cs" />
+    <Compile Include="Exporter\RenamingXml.cs" />
+    <Compile Include="Exporter\ShowsExporter.cs" />
     <Compile Include="Exporter\ShowsHTML.cs" />
+    <Compile Include="Exporter\UpcomingExporter.cs" />
     <Compile Include="Exporter\UpcomingiCAL.cs" />
+    <Compile Include="Finders\DownloadFinder.cs" />
     <Compile Include="Finders\qBitTorrentFinder.cs" />
+    <Compile Include="Finders\JSONWebpageFinder.cs" />
+    <Compile Include="Finders\RSSItem.cs" />
+    <Compile Include="Finders\RSSItemList.cs" />
     <Compile Include="Finders\TorrentFinder.cs" />
     <Compile Include="Forms\ShowPreferences\AutoAddShow.cs">
       <SubType>Form</SubType>
@@ -139,6 +158,18 @@
       <DependentUpon>AutoAddShow.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ShowPreferences\FolderBrowserDialogEx.cs" />
+    <Compile Include="Forms\ShowPreferences\QuickLocate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ShowPreferences\QuickLocate.Designer.cs">
+      <DependentUpon>QuickLocate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Supporting\ChooseFile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Supporting\ChooseFile.Designer.cs">
+      <DependentUpon>ChooseFile.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Tools\DupEpFinder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -150,6 +181,12 @@
     </Compile>
     <Compile Include="Forms\Supporting\UpdateNotification.Designer.cs">
       <DependentUpon>UpdateNotification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Utilities\LogViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Utilities\LogViewer.Designer.cs">
+      <DependentUpon>LogViewer.cs</DependentUpon>
     </Compile>
     <Compile Include="Ipc\IRemoteActions.cs" />
     <Compile Include="Ipc\RemoteClient.cs" />
@@ -197,28 +234,48 @@
     <Compile Include="Forms\Supporting\TVRenameSplash.Designer.cs">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </Compile>
+    <Compile Include="ItemsAndActions\Action.cs" />
     <Compile Include="ItemsAndActions\ActionDelete.cs" />
+    <Compile Include="ItemsAndActions\ActionDeleteDirectory.cs" />
+    <Compile Include="ItemsAndActions\ActionDeleteFile.cs" />
+    <Compile Include="ItemsAndActions\ActionDownload.cs" />
+    <Compile Include="ItemsAndActions\ActionFileMetaData.cs" />
+    <Compile Include="ItemsAndActions\ActionFileOperation.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erViewXML.cs" />
     <Compile Include="ItemsAndActions\ActionMede8erXML.cs" />
     <Compile Include="ItemsAndActions\ActionDateTouch.cs" />
+    <Compile Include="ItemsAndActions\ActionQueue.cs" />
+    <Compile Include="ItemsAndActions\ActionTDownload.cs" />
     <Compile Include="ItemsAndActions\ActionWdtvMeta.cs" />
+    <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
+    <Compile Include="ItemsAndActions\ItemList.cs" />
     <Compile Include="Settings\CustomSeasonName.cs" />
+    <Compile Include="Settings\Language.cs" />
+    <Compile Include="Settings\Languages.cs" />
     <Compile Include="Settings\ProcessedEpisode.cs" />
+    <Compile Include="Settings\SeasonFilter.cs" />
     <Compile Include="Settings\ShowFilter.cs" />
     <Compile Include="Settings\ShowItem.cs" />
     <Compile Include="TheTVDB\Actor.cs" />
+    <Compile Include="TheTVDB\SeriesBanners.cs" />
+    <Compile Include="TheTVDB\SeriesSpecifier.cs" />
     <Compile Include="TheTVDB\TVSource.cs" />
     <Compile Include="TheTVDB\TvDbTokenProvider.cs" />
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BullkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
+    <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
+    <Compile Include="Utility\DateSorterWTW.cs" />
+    <Compile Include="Utility\DaySorter.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
     <Compile Include="Utility\Helper\FileHelper.cs" />
     <Compile Include="Utility\FileSystemProperties.cs" />
     <Compile Include="Utility\Helper\HTTPHelper.cs" />
     <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
+    <Compile Include="Utility\DownloadInformation.cs" />
+    <Compile Include="Utility\NumberAsTextSorter.cs" />
     <Compile Include="Utility\SAB\NewDataSet.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
@@ -303,20 +360,13 @@
     <Compile Include="Forms\Utilities\StatsWindow.Designer.cs">
       <DependentUpon>StatsWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Torrent\TorrentMatch.Designer.cs">
-      <DependentUpon>TorrentMatch.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\UI.Designer.cs">
       <DependentUpon>UI.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Supporting\UpcomingPopup.Designer.cs">
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Torrent\uTorrent.Designer.cs">
-      <DependentUpon>uTorrent.cs</DependentUpon>
-    </Compile>
     <Compile Include="ItemsAndActions\ActionPyTivoMeta.cs" />
-    <Compile Include="ItemsAndActions\ItemSABnzbd.cs" />
     <Compile Include="TheTVDB\Banner.cs" />
     <Compile Include="TheTVDB\Episode.cs" />
     <Compile Include="TheTVDB\ExtraEp.cs" />
@@ -324,12 +374,15 @@
     <Compile Include="TheTVDB\SeriesInfo.cs" />
     <Compile Include="ItemsAndActions\ActionCopyMoveRename.cs" />
     <Compile Include="ItemsAndActions\ActionDownloadImage.cs" />
-    <Compile Include="ItemsAndActions\ActionItem.cs" />
+    <Compile Include="ItemsAndActions\Item.cs" />
     <Compile Include="ItemsAndActions\ItemMissing.cs" />
     <Compile Include="ItemsAndActions\ActionNFO.cs" />
-    <Compile Include="ItemsAndActions\ActionRSS.cs" />
     <Compile Include="ItemsAndActions\ActionItemSorter.cs" />
+<<<<<<< HEAD
     <Compile Include="ItemsAndActions\ItemTorrentDownload.cs" />
+=======
+    <Compile Include="ItemsAndActions\ItemDownloading.cs" />
+>>>>>>> e1d0edf1b9da866771e48974e22cb04bcceb43b0
     <Compile Include="TVRename\FoundFolder.cs" />
     <Compile Include="Forms\ShowPreferences\AddModifyRule.cs">
       <SubType>Form</SubType>
@@ -388,8 +441,15 @@
     <Compile Include="Utility\SAB\Result.cs" />
     <Compile Include="Utility\SetProgressDelegate.cs" />
     <Compile Include="Utility\Helper\StringExtensions.cs" />
+    <Compile Include="Utility\UpdateVersion.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
+    <EmbeddedResource Include="Forms\ShowPreferences\QuickLocate.resx">
+      <DependentUpon>QuickLocate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Supporting\ChooseFile.resx">
+      <DependentUpon>ChooseFile.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\ActorsGrid.resx">
       <DependentUpon>ActorsGrid.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -412,6 +472,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ShowPreferences\AutoAddShow.resx">
       <DependentUpon>AutoAddShow.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Utilities\BugReport.resx">
       <DependentUpon>BugReport.cs</DependentUpon>
@@ -443,6 +504,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\Filters.resx">
       <DependentUpon>Filters.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\BulkAdd\BulkAdd.resx">
       <DependentUpon>BulkAdd.cs</DependentUpon>
@@ -458,6 +520,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\DupEpFinder.resx">
       <DependentUpon>DupEpFinder.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Tools\ShowSummary.resx">
       <DependentUpon>ShowSummary.cs</DependentUpon>
@@ -484,6 +547,9 @@
     <EmbeddedResource Include="Forms\Supporting\TVRenameSplash.resx">
       <DependentUpon>TVRenameSplash.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Utilities\LogViewer.resx">
+      <DependentUpon>LogViewer.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -509,20 +575,12 @@
       <DependentUpon>TheTVDBCodeFinder.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Torrent\TorrentMatch.resx">
-      <DependentUpon>TorrentMatch.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\UI.resx">
       <DependentUpon>UI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Supporting\UpcomingPopup.resx">
       <DependentUpon>UpcomingPopup.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Torrent\uTorrent.resx">
-      <DependentUpon>uTorrent.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -548,7 +606,7 @@
     </Compile>
     <Compile Include="Settings\ShowRule.cs" />
     <Compile Include="Utility\SAB\Queue.cs" />
-    <Compile Include="Utility\Sorters.cs" />
+    <Compile Include="Utility\TextSorter.cs" />
     <Compile Include="Settings\Statistics.cs" />
     <Compile Include="Forms\Utilities\StatsWindow.cs">
       <SubType>Form</SubType>
@@ -558,18 +616,12 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Utility\Timezone.cs" />
-    <Compile Include="Forms\Torrent\TorrentMatch.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="TVRename\TVDoc.cs" />
     <Compile Include="App\Program.cs" />
     <Compile Include="Forms\UI.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Supporting\UpcomingPopup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Torrent\uTorrent.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
@@ -608,6 +660,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Forms\Torrent\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

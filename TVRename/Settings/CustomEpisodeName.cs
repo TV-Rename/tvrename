@@ -17,11 +17,6 @@ namespace TVRename
     {
         public string StyleString;
 
-        public CustomEpisodeName(CustomEpisodeName o)
-        {
-            StyleString = o.StyleString;
-        }
-
         public CustomEpisodeName(string s)
         {
             StyleString = s;
@@ -32,18 +27,18 @@ namespace TVRename
             StyleString = DefaultStyle();
         }
 
-        private static string DefaultStyle() => Presets[1];
+        private static string DefaultStyle() => PRESETS[1];
 
         public static string OldNStyle(int n)
         {
             // for now, this maps onto the presets
             if ((n >= 0) && (n < 9))
-                return Presets[n];
+                return PRESETS[n];
 
             return DefaultStyle();
         }
 
-        protected internal static readonly List<string> Presets = new List<string>
+        protected internal static readonly List<string> PRESETS = new List<string>
                                                         {
                                                             "{ShowName} - {Season}x{Episode}[-{Season}x{Episode2}] - {EpisodeName}",
                                                             "{ShowName} - S{Season:2}E{Episode}[-E{Episode2}] - {EpisodeName}",
@@ -57,11 +52,13 @@ namespace TVRename
                                                             "{ShowName} - S{Season:2}{AllEpisodes} - {EpisodeName}"
                                                         };
 
-        protected internal static readonly List<string> Tags = new List<string>
+        protected internal static readonly List<string> TAGS = new List<string>
         {
             "{ShowName}",
             "{Season}",
             "{Season:2}",
+            "{SeasonNumber}",
+            "{SeasonNumber:2}",
             "{Episode}",
             "{Episode2}",
             "{EpisodeName}",
@@ -74,7 +71,6 @@ namespace TVRename
             "{AllEpisodes}",
             "{Year}",
             "{SeasonYear}"
-
         };
 
         public string NameFor(ProcessedEpisode pe) => NameFor(pe,string.Empty,0);
@@ -117,6 +113,8 @@ namespace TVRename
             {
                 name = name.ReplaceInsensitive("{Season}", ep.DvdSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", ep.DvdSeasonNumber.ToString("00"));
+                name = name.ReplaceInsensitive("{SeasonNumber}", ep.DvdSeasonIndex.ToString());
+                name = name.ReplaceInsensitive("{SeasonNumber:2}", ep.DvdSeasonIndex.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode}", ep.DvdEpNum.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode2}", ep.DvdEpNum.ToString("00"));
                 name = Regex.Replace(name, "{AllEpisodes}", ep.DvdEpNum.ToString("00"));
@@ -125,6 +123,8 @@ namespace TVRename
             {
                 name = name.ReplaceInsensitive("{Season}", ep.AiredSeasonNumber.ToString());
                 name = name.ReplaceInsensitive("{Season:2}", ep.AiredSeasonNumber.ToString("00"));
+                name = name.ReplaceInsensitive("{SeasonNumber}", ep.AiredSeasonIndex.ToString());
+                name = name.ReplaceInsensitive("{SeasonNumber:2}", ep.AiredSeasonIndex.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode}", ep.AiredEpNum.ToString("00"));
                 name = name.ReplaceInsensitive("{Episode2}", ep.AiredEpNum.ToString("00"));
                 name = Regex.Replace(name, "{AllEpisodes}", ep.AiredEpNum.ToString("00"));
@@ -133,7 +133,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Number}", "");
             name = name.ReplaceInsensitive("{Number:2}", "");
             name = name.ReplaceInsensitive("{Number:3}", "");
-            name = name.ReplaceInsensitive("{Year}", show.TheSeries().MinYear().ToString());
+            name = name.ReplaceInsensitive("{Year}", show.TheSeries().MinYear.ToString());
             name = name.ReplaceInsensitive("{SeasonYear}", show.GetSeason(dvdOrder ? ep.DvdSeasonNumber : ep.AiredSeasonNumber).MinYear().ToString());
 
             name = ReplaceDates(urlEncode, name, ep.GetAirDateDt(tz));
@@ -188,13 +188,23 @@ namespace TVRename
             name = name.ReplaceInsensitive("{ShowName}", showname);
             name = name.ReplaceInsensitive("{Season}", pe.AppropriateSeasonNumber.ToString());
             name = name.ReplaceInsensitive("{Season:2}", pe.AppropriateSeasonNumber.ToString("00"));
-            name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString("00"));
-            name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString("00"));
+            name = name.ReplaceInsensitive("{SeasonNumber}", pe.AppropriateSeasonIndex.ToString());
+            name = name.ReplaceInsensitive("{SeasonNumber:2}", pe.AppropriateSeasonIndex.ToString("00"));
+            if (pe.AppropriateSeason.Episodes.Count >= 100)
+            {
+                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString("000"));
+                name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString("000"));
+            }
+            else
+            {
+                name = name.ReplaceInsensitive("{Episode}", pe.AppropriateEpNum.ToString("00"));
+                name = name.ReplaceInsensitive("{Episode2}", pe.EpNum2.ToString("00"));
+            }
             name = name.ReplaceInsensitive("{EpisodeName}", epname);
             name = name.ReplaceInsensitive("{Number}", pe.OverallNumber.ToString());
             name = name.ReplaceInsensitive("{Number:2}", pe.OverallNumber.ToString("00"));
             name = name.ReplaceInsensitive("{Number:3}", pe.OverallNumber.ToString("000"));
-            name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear().ToString());
+            name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear.ToString());
             name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateSeason.MinYear().ToString());
 
             name = ReplaceDates(urlEncode, name, pe.GetAirDateDT(false));

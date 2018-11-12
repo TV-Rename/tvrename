@@ -1,17 +1,17 @@
 namespace TVRename
 {
-    internal abstract class Finder
+    public abstract class Finder
     {
         protected bool ActionCancel;
         protected readonly TVDoc Doc;
-        protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         public ItemList ActionList { protected get; set; }
 
         protected Finder(TVDoc doc) => Doc = doc;
 
         // ReSharper disable once InconsistentNaming
-        public enum FinderDisplayType { local, downloading, rss};
+        public enum FinderDisplayType { local, downloading, search}
 
         public abstract void Check(SetProgressDelegate prog, int startpct, int totPct);
         

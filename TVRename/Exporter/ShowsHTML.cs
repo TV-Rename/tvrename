@@ -35,21 +35,20 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                Logger.Error(e);
+                LOGGER.Error(e);
             }
         }
 
         private static string CreateHtml(ShowItem si)
         {
             string posterUrl = TheTVDB.GetImageURL(si.TheSeries().GetImage(TVSettings.FolderJpgIsType.Poster));
-            int minYear = si.TheSeries().MinYear();
-            int maxYear = si.TheSeries().MaxYear();
+            int minYear = si.TheSeries().MinYear;
+            int maxYear = si.TheSeries().MaxYear;
             string yearRange = (minYear == maxYear) ? minYear.ToString() : minYear + "-" + maxYear;
             string episodeSummary = si.TheSeries().AiredSeasons.Sum(pair => pair.Value.Episodes.Count).ToString();
-            string stars = ShowHtmlHelper.StarRating(si.TheSeries().GetSiteRating());
-            string genreIcons = string.Join("&nbsp;", si.TheSeries().GetGenres().Select(ShowHtmlHelper.GenreIconHtml));
-            bool ratingIsNumber = float.TryParse(si.TheSeries().GetSiteRating(), NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
-            string siteRating = ratingIsNumber && rating > 0 ? rating + "/10" : "";
+            string stars = ShowHtmlHelper.StarRating(si.TheSeries().SiteRating/2);
+            string genreIcons = string.Join("&nbsp;", si.TheSeries().Genres().Select(ShowHtmlHelper.GenreIconHtml));
+            string siteRating = si.TheSeries().SiteRating > 0 ? si.TheSeries().SiteRating + "/10" : "";
 
             return $@"<div class=""card card-body"">
             <div class=""row"">
@@ -58,14 +57,14 @@ namespace TVRename
             <div class=""col-md-8 d-flex flex-column"">
                 <div class=""row"">
                     <div class=""col-md-8""><h1>{si.ShowName}</h1></div>
-                    <div class=""col-md-4 text-right""><h6>{yearRange} ({si.TheSeries().GetStatus()})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
+                    <div class=""col-md-4 text-right""><h6>{yearRange} ({si.TheSeries().Status})</h6><small class=""text-muted"">{episodeSummary} Episodes</small></div>
                 </div>
-            <div><blockquote>{si.TheSeries().GetOverview()}</blockquote></div>
+            <div><blockquote>{si.TheSeries().Overview}</blockquote></div>
             <div><blockquote>{string.Join(", ", si.TheSeries().GetActorNames())}</blockquote></div>
             <div class=""row align-items-bottom flex-grow-1"">
                 <div class=""col-md-4 align-self-end"">{stars}<br>{siteRating}</div>
-                <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().GetContentRating()}<br>{si.TheSeries().GetNetwork()}</div>
-                <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", si.TheSeries().GetGenres())}</div>
+                <div class=""col-md-4 align-self-end text-center"">{si.TheSeries().ContentRating}<br>{si.TheSeries().Network}</div>
+                <div class=""col-md-4 align-self-end text-right"">{genreIcons}<br>{string.Join(", ", si.TheSeries().Genres())}</div>
             </div>
             </div></div></div>";
         }

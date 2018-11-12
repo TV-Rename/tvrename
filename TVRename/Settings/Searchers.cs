@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using System.Xml;
+using System.Xml.Linq;
 
 // Things like bittorrent search engines, etc.  Manages a URL template that is fed through
 // CustomName.cs to generate a final URL.
@@ -16,133 +17,106 @@ namespace TVRename
 {
     public class Searchers
     {
-        public class Choice
+        private class Choice
         {
             public string Name;
-            public string URL2;
+            public string Url2;
         }
 
-        public string CurrentSearch;
-        private readonly List<Choice> Choices = new List<Choice>();
+        private string currentSearch;
+        private readonly List<Choice> choices = new List<Choice>();
 
         public Searchers()
         {
-            CurrentSearch = "";
+            currentSearch = "";
 
             Add("Google", "https://www.google.com/search?q={ShowName}+S{Season:2}E{Episode}");
             Add("Pirate Bay", "https://thepiratebay.org/search/{ShowName} S{Season:2}E{Episode}");
             Add("binsearch", "https://www.binsearch.info/?q={ShowName}+S{Season:2}E{Episode}");
 
-            CurrentSearch = "Google";
+            currentSearch = "Google";
         }
         
-        public Searchers(XmlReader reader)
+        public Searchers(XElement settings)
         {
-            Choices = new List<Choice>();
-            CurrentSearch = "";
+            choices = new List<Choice>();
+            currentSearch = settings.ExtractString("Current");
 
-            reader.Read();
-            if (reader.Name != "TheSearchers")
-                return; // bail out
-
-            reader.Read();
-            while (!reader.EOF)
+            foreach (XElement x in settings.Descendants("Choice"))
             {
-                if ((reader.Name == "TheSearchers") && !reader.IsStartElement())
-                    break; // all done
-
-                if (reader.Name == "Current")
-                    CurrentSearch = reader.ReadElementContentAsString();
-                else if (reader.Name == "Choice")
-                {
-                    string url = reader.GetAttribute("URL");
-                    if (url == null)
-                        url = reader.GetAttribute("URL2");
-                    else
-                    {
-                        // old-style URL, replace "!" with "{ShowName}+{Season}+{Episode}"
-                        url = url.Replace("!", "{ShowName}+{Season}+{Episode}");
-                    }
-                    Add(reader.GetAttribute("Name"), url);
-                    reader.ReadElementContentAsString();
-                }
+                string url = x.Attribute("URL")?.Value;
+                if (url == null)
+                    url = x.Attribute("URL2")?.Value;
                 else
-                    reader.ReadOuterXml();
+                {
+                    // old-style URL, replace "!" with "{ShowName}+{Season}+{Episode}"
+                    url = url.Replace("!", "{ShowName}+S{Season:2}E{Episode}");
+                }
+                Add(x.Attribute("Name")?.Value,url);
             }
         }
 
         public void SetToNumber(int n)
         {
-            CurrentSearch = Choices[n].Name;
+            currentSearch = choices[n].Name;
         }
 
-        public int CurrentSearchNum()
-        {
-            return NumForName(CurrentSearch);
-        }
+        public int CurrentSearchNum() => NumForName(currentSearch);
 
-        public int NumForName(string srch)
+        private int NumForName(string srch)
         {
-            for (int i = 0; i < Choices.Count; i++)
+            for (int i = 0; i < choices.Count; i++)
             {
-                if (Choices[i].Name == srch)
+                if (choices[i].Name == srch)
                     return i;
             }
             return 0;
         }
 
-        public string CurrentSearchURL()
+        public string CurrentSearchUrl()
         {
-            if (Choices.Count == 0)
-                return "";
-            return Choices[CurrentSearchNum()].URL2;
+            return choices.Count == 0 ? "" : choices[CurrentSearchNum()].Url2;
         }
-        public void WriteXML(XmlWriter writer)
+
+        public void WriteXml(XmlWriter writer)
         {
             writer.WriteStartElement("TheSearchers");
-            XmlHelper.WriteElementToXml(writer,"Current",CurrentSearch);
+            XmlHelper.WriteElementToXml(writer,"Current",currentSearch);
 
             for (int i = 0; i < Count(); i++)
             {
                 writer.WriteStartElement("Choice");
-                XmlHelper.WriteAttributeToXml(writer,"Name",Choices[i].Name);
-                XmlHelper.WriteAttributeToXml(writer,"URL2",Choices[i].URL2);
+                XmlHelper.WriteAttributeToXml(writer,"Name",choices[i].Name);
+                XmlHelper.WriteAttributeToXml(writer,"URL2",choices[i].Url2);
                 writer.WriteEndElement();
             }
             writer.WriteEndElement(); // TheSearchers
         }
-        public void Clear()
-        {
-            Choices.Clear();
-        }
+        public void Clear() => choices.Clear();
 
         public void Add(string name, string url)
         {
-
-            Choices.Add(new Choice { Name = name, URL2 = url });
+            choices.Add(new Choice { Name = name, Url2 = url });
         }
 
-        public int Count()
-        {
-            return Choices.Count;
-        }
+        public int Count() => choices.Count;
 
         public string Name(int n)
         {
-            if (n >= Choices.Count)
-                n = Choices.Count - 1;
+            if (n >= choices.Count)
+                n = choices.Count - 1;
             else if (n < 0)
                 n = 0;
-            return Choices[n].Name;
+            return choices[n].Name;
         }
 
-        public string URL(int n)
+        public string Url(int n)
         {
-            if (n >= Choices.Count)
-                n = Choices.Count - 1;
+            if (n >= choices.Count)
+                n = choices.Count - 1;
             else if (n < 0)
                 n = 0;
-            return Choices[n].URL2;
+            return choices[n].Url2;
         }
     }
 }

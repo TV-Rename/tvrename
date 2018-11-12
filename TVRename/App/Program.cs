@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -53,7 +61,6 @@ namespace TVRename.App
             if (!newInstance)
             {
                 // Already running
-
                 Logger.Warn("An instance is already running");
 
                 // Create an IPC channel to the existing instance
@@ -90,10 +97,8 @@ namespace TVRename.App
                 }
 
                 // TODO: Unify command line handling between here and in UI.cs (ProcessArgs). Just send in clargs via IPC?
-
                 
                 if (clargs.Scan) ipc.Scan();
-
                 if (clargs.QuickScan) ipc.QuickScan();
                 if (clargs.RecentScan) ipc.RecentScan();
 
@@ -138,6 +143,5 @@ namespace TVRename.App
         Logger.Fatal(e,"UNHANDLED ERROR");
         Environment.Exit(1);
         }
-}
-
+    }
 }
