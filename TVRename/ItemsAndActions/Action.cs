@@ -10,7 +10,7 @@ namespace TVRename
 {
     public abstract class Action : Item // Something we can do
     {
-        public ItemMissing UndoItemMissing;//Item to revert to
+        public ItemMissing UndoItemMissing; //Item to revert to if we have to cancel this action
 
         public abstract string Name { get; } // Name of this action, e.g. "Copy", "Move", "Download"
 

@@ -32,7 +32,7 @@ namespace TVRename
 
                 if (TVSettings.Instance.SeasonSpecificFolderJPG())
                 {
-                    //default to poster when we want season posters for the season specific folders;
+                    //default to poster when we want season posters for the season specific folders
                     downloadPath = si.TheSeries().GetSeriesPosterPath();
                 }
                 else
