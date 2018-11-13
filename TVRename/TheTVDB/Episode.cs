@@ -377,12 +377,12 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "dvdEpisodeNumber", DvdEpNum,true);
             XmlHelper.WriteElementToXml(writer, "dvdSeason", DvdSeasonNumber, true);
             XmlHelper.WriteElementToXml(writer, "lastupdated", SrvLastUpdated);
-            XmlHelper.WriteElementToXml(writer, "Overview", Overview.Trim());
+            XmlHelper.WriteElementToXml(writer, "Overview", Overview?.Trim());
             XmlHelper.WriteElementToXml(writer, "Rating", EpisodeRating);
-            XmlHelper.WriteElementToXml(writer, "GuestStars", EpisodeGuestStars);
-            XmlHelper.WriteElementToXml(writer, "EpisodeDirector", EpisodeDirector);
-            XmlHelper.WriteElementToXml(writer, "Writer", Writer);
-            XmlHelper.WriteElementToXml(writer, "EpisodeName", Name);
+            XmlHelper.WriteElementToXml(writer, "GuestStars", EpisodeGuestStars, true);
+            XmlHelper.WriteElementToXml(writer, "EpisodeDirector", EpisodeDirector, true);
+            XmlHelper.WriteElementToXml(writer, "Writer", Writer, true);
+            XmlHelper.WriteElementToXml(writer, "EpisodeName", Name, true);
 
             if (FirstAired != null)
             {
@@ -396,10 +396,10 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "AirsAfterSeason", AirsAfterSeason);
             XmlHelper.WriteElementToXml(writer, "SiteRatingCount", SiteRatingCount);
             XmlHelper.WriteElementToXml(writer, "AbsoluteNumber", AbsoluteNumber);
-            XmlHelper.WriteElementToXml(writer, "ProductionCode", ProductionCode);
+            XmlHelper.WriteElementToXml(writer, "ProductionCode", ProductionCode, true);
             XmlHelper.WriteElementToXml(writer, "ImdbCode", ImdbCode,true);
-            XmlHelper.WriteElementToXml(writer, "ShowUrl", ShowUrl);
-            XmlHelper.WriteElementToXml(writer, "Filename", Filename);
+            XmlHelper.WriteElementToXml(writer, "ShowUrl", ShowUrl,true);
+            XmlHelper.WriteElementToXml(writer, "Filename", Filename, true);
 
             writer.WriteEndElement(); //Episode
         }

@@ -468,7 +468,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "runtime", Runtime);
             XmlHelper.WriteElementToXml(writer, "seriesId", SeriesId);
             XmlHelper.WriteElementToXml(writer, "status", Status);
-            XmlHelper.WriteElementToXml(writer, "siteRating", SiteRating);
+            XmlHelper.WriteElementToXml(writer, "siteRating", SiteRating,"0.##");
             XmlHelper.WriteElementToXml(writer, "siteRatingCount", SiteRatingVotes);
 
             if (FirstAired != null)
