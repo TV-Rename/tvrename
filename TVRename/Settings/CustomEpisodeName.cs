@@ -155,7 +155,7 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{LongDate}", dt.ToString("D"));
                 string ymd = dt.ToString("yyyy/MM/dd");
                 if (urlEncode)
-                    ymd = System.Web.HttpUtility.UrlEncode(ymd);
+                    ymd = Uri.EscapeDataString(ymd);
                 name = name.ReplaceInsensitive("{YMDDate}", ymd);
             }
             else
@@ -164,7 +164,7 @@ namespace TVRename
                 name = name.ReplaceInsensitive("{LongDate}", "------");
                 string ymd = "----/--/--";
                 if (urlEncode)
-                    ymd = System.Web.HttpUtility.UrlEncode(ymd);
+                    ymd = Uri.EscapeDataString(ymd);
                 name = name.ReplaceInsensitive("{YMDDate}", ymd);
             }
 
@@ -181,8 +181,8 @@ namespace TVRename
             string epname = pe.Name;
             if (urlEncode)
             {
-                showname = System.Web.HttpUtility.UrlEncode(showname);
-                epname = System.Web.HttpUtility.UrlEncode(epname);
+                showname = Uri.EscapeDataString(showname);
+                epname = Uri.EscapeDataString(epname);
             }
 
             name = name.ReplaceInsensitive("{ShowName}", showname);

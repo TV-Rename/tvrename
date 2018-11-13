@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Collections.Generic;
 
 // This builds the foldernames to create/find, for any given season
@@ -68,7 +69,7 @@ namespace TVRename
             string showname = s.TheSeries.Name;
             if (urlEncode)
             {
-                showname = System.Web.HttpUtility.UrlEncode(showname);
+                showname = Uri.EscapeDataString(showname);
             }
 
             name = name.ReplaceInsensitive("{ShowName}", showname);
