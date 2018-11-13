@@ -117,8 +117,8 @@ namespace TVRename
             SetDefaults(null, null, null);
             EpisodeId = r.ExtractInt("id")??-1;
             SeriesId = r.ExtractInt("seriesid") ?? -1; // thetvdb series id
-            SeasonId = r.ExtractInt("seasonid") ?? -1;
-            AiredEpNum = r.ExtractInt("EpisodeNumber") ?? -1;
+            SeasonId = r.ExtractInt("airedSeasonID") ?? r.ExtractInt("seasonid") ?? -1;
+            AiredEpNum = r.ExtractInt("airedEpisodeNumber") ?? r.ExtractInt("EpisodeNumber") ?? -1;
             string den = r.ExtractString("dvdEpisodeNumber");
             int.TryParse(den, out DvdEpNum);
             string sn = r.ExtractString("SeasonNumber");
@@ -139,12 +139,12 @@ namespace TVRename
             ImdbCode = r.ExtractString("ImdbCode") ?? r.ExtractString("IMDB_ID") ?? r.ExtractString("imdbId");
             ProductionCode = r.ExtractString("ProductionCode") ?? r.ExtractString("productionCode");
 
-            DvdChapter = r.ExtractInt("DvdChapter") ?? r.ExtractInt("dvdChapter") ?? -1;
-            AirsBeforeSeason = r.ExtractInt("AirsBeforeSeason") ?? r.ExtractInt("airsBeforeSeason") ?? r.ExtractInt("airsbefore_season") ?? -1;
-            AirsBeforeEpisode = r.ExtractInt("AirsBeforeEpisode") ?? r.ExtractInt("airsBeforeEpisode") ?? r.ExtractInt("airsbefore_episode") ?? -1;
-            AirsAfterSeason = r.ExtractInt("AirsAfterSeason") ?? -1;
-            SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount") ?? -1;
-            AbsoluteNumber = r.ExtractInt("AbsoluteNumber") ?? -1;
+            DvdChapter = r.ExtractInt("DvdChapter") ?? r.ExtractInt("dvdChapter") ;
+            AirsBeforeSeason = r.ExtractInt("AirsBeforeSeason") ?? r.ExtractInt("airsBeforeSeason") ?? r.ExtractInt("airsbefore_season") ;
+            AirsBeforeEpisode = r.ExtractInt("AirsBeforeEpisode") ?? r.ExtractInt("airsBeforeEpisode") ?? r.ExtractInt("airsbefore_episode") ;
+            AirsAfterSeason = r.ExtractInt("AirsAfterSeason") ;
+            SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount") ;
+            AbsoluteNumber = r.ExtractInt("AbsoluteNumber") ;
 
             try
             {
@@ -371,13 +371,13 @@ namespace TVRename
 
             XmlHelper.WriteElementToXml(writer, "id", EpisodeId);
             XmlHelper.WriteElementToXml(writer, "seriesid", SeriesId);
-            XmlHelper.WriteElementToXml(writer, "seasonid", SeasonId);
-            XmlHelper.WriteElementToXml(writer, "EpisodeNumber", AiredEpNum);
+            XmlHelper.WriteElementToXml(writer, "airedSeasonID", SeasonId);
+            XmlHelper.WriteElementToXml(writer, "airedEpisodeNumber", AiredEpNum);
             XmlHelper.WriteElementToXml(writer, "SeasonNumber", AiredSeasonNumber);
-            XmlHelper.WriteElementToXml(writer, "dvdEpisodeNumber", DvdEpNum);
-            XmlHelper.WriteElementToXml(writer, "dvdSeason", DvdSeasonNumber);
+            XmlHelper.WriteElementToXml(writer, "dvdEpisodeNumber", DvdEpNum,true);
+            XmlHelper.WriteElementToXml(writer, "dvdSeason", DvdSeasonNumber, true);
             XmlHelper.WriteElementToXml(writer, "lastupdated", SrvLastUpdated);
-            XmlHelper.WriteElementToXml(writer, "Overview", Overview);
+            XmlHelper.WriteElementToXml(writer, "Overview", Overview.Trim());
             XmlHelper.WriteElementToXml(writer, "Rating", EpisodeRating);
             XmlHelper.WriteElementToXml(writer, "GuestStars", EpisodeGuestStars);
             XmlHelper.WriteElementToXml(writer, "EpisodeDirector", EpisodeDirector);
@@ -390,14 +390,14 @@ namespace TVRename
             }
 
             XmlHelper.WriteElementToXml(writer, "DvdChapter", DvdChapter);
-            XmlHelper.WriteElementToXml(writer, "DvdDiscId", DvdDiscId);
+            XmlHelper.WriteElementToXml(writer, "DvdDiscId", DvdDiscId,true);
             XmlHelper.WriteElementToXml(writer, "AirsBeforeSeason", AirsBeforeSeason);
             XmlHelper.WriteElementToXml(writer, "AirsBeforeEpisode", AirsBeforeEpisode);
             XmlHelper.WriteElementToXml(writer, "AirsAfterSeason", AirsAfterSeason);
             XmlHelper.WriteElementToXml(writer, "SiteRatingCount", SiteRatingCount);
             XmlHelper.WriteElementToXml(writer, "AbsoluteNumber", AbsoluteNumber);
             XmlHelper.WriteElementToXml(writer, "ProductionCode", ProductionCode);
-            XmlHelper.WriteElementToXml(writer, "ImdbCode", ImdbCode);
+            XmlHelper.WriteElementToXml(writer, "ImdbCode", ImdbCode,true);
             XmlHelper.WriteElementToXml(writer, "ShowUrl", ShowUrl);
             XmlHelper.WriteElementToXml(writer, "Filename", Filename);
 

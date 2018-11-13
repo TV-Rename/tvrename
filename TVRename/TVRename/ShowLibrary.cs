@@ -118,10 +118,6 @@ namespace TVRename
             return distinctValues;
         }
 
-        public int GetMinYear() => this.Min(si => Convert.ToInt32(si.Value.TheSeries().Year));
-
-        public int GetMaxYear() => this.Max(si => Convert.ToInt32(si.Value.TheSeries().Year));
-
         public List<ShowItem> GetShowItems()
         {
             List<ShowItem> returnList = Values.ToList();

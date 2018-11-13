@@ -42,8 +42,9 @@ namespace TVRename
             writer.WriteValue(value);
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string elementName, int value)
+        public static void WriteElementToXml(XmlWriter writer, string elementName, int value,bool ignoreZero=false)
         {
+            if (value == 0) return;
             writer.WriteStartElement(elementName);
             writer.WriteValue(value);
             writer.WriteEndElement();
