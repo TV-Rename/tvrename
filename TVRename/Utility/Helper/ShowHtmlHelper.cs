@@ -64,7 +64,7 @@ namespace TVRename
             string tvLink = string.IsNullOrWhiteSpace(ser.SeriesId) ? string.Empty : "http://www.tv.com/show/" + ser.SeriesId+ "/summary.html";
             string imdbLink = string.IsNullOrWhiteSpace(ser.Imdb) ? string.Empty : "http://www.imdb.com/title/" + ser.Imdb;
 
-            string urlFilename = HttpUtility.UrlEncode(si.GetBestFolderLocationToOpen());
+            string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen());
             string explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
 
             sb.AppendLine($@"<div class=""card card-body"" style=""background-color:{backgroundColour.HexColour()}"">
@@ -180,7 +180,7 @@ namespace TVRename
             SeriesInfo ser = s.TheSeries;
             string seasonLink = TheTVDB.Instance.WebsiteUrl(ser.TvdbCode, s.SeasonId, false);
             string showLink = TheTVDB.Instance.WebsiteUrl(si.TvdbCode, -1, true);
-            string urlFilename = HttpUtility.UrlEncode(si.GetBestFolderLocationToOpen(s));
+            string urlFilename = Uri.EscapeDataString(si.GetBestFolderLocationToOpen(s));
 
             string explorerButton = CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>", "Open Containing Folder");
             string tvdbButton = CreateButton(seasonLink, "TVDB.com", "View on TVDB");
@@ -190,7 +190,10 @@ namespace TVRename
 				<br/>
                 <div class=""row"">
                     <div class=""col-8""><h1><A HREF=""{showLink}"">{ser.Name}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1></div>
-                    <div class=""col-4"">{explorerButton}{tvdbButton}</div>
+                    <div class=""col-4"">
+                        {explorerButton}
+                        {tvdbButton}
+                    </div>
                 </div>
 				</div>");
         }
@@ -253,7 +256,7 @@ namespace TVRename
             {
                 foreach (FileInfo fi in fl)
                 {
-                    string urlFilename = HttpUtility.UrlEncode(fi.FullName);
+                    string urlFilename = Uri.EscapeDataString(fi.FullName);
                     viewButton += CreateButton($"{UI.WATCH_PROXY}{urlFilename}", "<i class=\"far fa-eye\"></i>","Watch Now");
                     explorerButton += CreateButton($"{UI.EXPLORE_PROXY}{urlFilename}", "<i class=\"far fa-folder-open\"></i>","Open Containing Folder");
                 }
@@ -281,7 +284,12 @@ namespace TVRename
                    </div>
                    <div><p class=""lead"">{ep.HiddenOverview()}</p></div>
                    <div>
-                    {searchButton}{viewButton}{explorerButton}{tvdbButton}{imdbButton}{tvButton}
+                    {searchButton}
+                    {viewButton}
+                    {explorerButton}
+                    {tvdbButton}
+                    {imdbButton}
+                    {tvButton}
                    </div>
 		           <div class=""row align-items-bottom flex-grow-1"">
                     <div class=""col-md-6 align-self-end"">{stars}<br>{siteRating}</div>

@@ -36,14 +36,22 @@ namespace TVRename
             writer.WriteValue(value??"");
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string elementName, double value)
+        public static void WriteElementToXml(XmlWriter writer, string elementName, double value,string format= null)
         {
             writer.WriteStartElement(elementName);
-            writer.WriteValue(value);
+            if (format is null)
+            {
+                writer.WriteValue(value);
+            }
+            else
+            {
+                writer.WriteValue(value.ToString(format));
+            }
             writer.WriteEndElement();
         }
-        public static void WriteElementToXml(XmlWriter writer, string elementName, int value)
+        public static void WriteElementToXml(XmlWriter writer, string elementName, int value,bool ignoreZero=false)
         {
+            if (ignoreZero && value == 0) return;
             writer.WriteStartElement(elementName);
             writer.WriteValue(value);
             writer.WriteEndElement();
