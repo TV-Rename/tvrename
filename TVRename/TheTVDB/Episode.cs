@@ -64,7 +64,7 @@ namespace TVRename
             EpisodeGuestStars = o.EpisodeGuestStars;
             EpisodeDirector = o.EpisodeDirector;
             Writer = o.Writer;
-            Name = o.Name;
+            mName = o.mName;
             TheAiredSeason = o.TheAiredSeason;
             TheDvdSeason = o.TheDvdSeason;
             TheSeries = o.TheSeries;
@@ -131,7 +131,7 @@ namespace TVRename
             EpisodeGuestStars = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("GuestStars"));
             EpisodeDirector = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeDirector"));
             Writer = XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("Writer"));
-            Name = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeName")));
+            mName = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeName")));
 
             DvdDiscId = r.ExtractString("DvdDiscId");
             Filename = r.ExtractString("Filename")?? r.ExtractString("filename");
@@ -230,7 +230,7 @@ namespace TVRename
                 SrvLastUpdated = (long) r["lastUpdated"];
                 Overview = System.Web.HttpUtility.HtmlDecode((string)r["overview"]);
                 EpisodeRating = (string) r["siteRating"];
-                Name = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
+                mName = System.Web.HttpUtility.HtmlDecode((string)r["episodeName"]);
 
                 AirsBeforeEpisode = (int?)r["airsBeforeEpisode"];
                 AirsBeforeSeason = (int?)r["airsBeforeSeason"];
@@ -346,7 +346,7 @@ namespace TVRename
             EpisodeGuestStars = "";
             EpisodeDirector = "";
             Writer = "";
-            Name = "";
+            mName = "";
             EpisodeId = -1;
             SeriesId = -1;
             ReadAiredSeasonNum = -1;
@@ -382,7 +382,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "GuestStars", EpisodeGuestStars, true);
             XmlHelper.WriteElementToXml(writer, "EpisodeDirector", EpisodeDirector, true);
             XmlHelper.WriteElementToXml(writer, "Writer", Writer, true);
-            XmlHelper.WriteElementToXml(writer, "EpisodeName", Name, true);
+            XmlHelper.WriteElementToXml(writer, "EpisodeName", mName, true);
 
             if (FirstAired != null)
             {
