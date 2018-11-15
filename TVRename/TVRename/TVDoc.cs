@@ -550,8 +550,6 @@ namespace TVRename
             DirFilesCache dfc = new DirFilesCache();
             foreach (ShowItem si in Library.Values)
             {
-                if (si.ShowName != "The Armando Iannucci Shows") continue;
-
                 foreach (KeyValuePair<int, List<ProcessedEpisode>> kvp in si.SeasonEpisodes)
                 {
                     foreach (ProcessedEpisode pep in kvp.Value)
@@ -944,7 +942,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        private void FindUnusedFilesInDLDirectory(ICollection<ShowItem> showList,bool unattended)
+        private void ReviewDownloadDirectory(ICollection<ShowItem> showList,bool unattended)
         {
             //for each directory in settings directory
             //for each file in directory
@@ -984,15 +982,15 @@ namespace TVRename
                             continue;
                         }
 
-                        bool fileCanBeDeleted = true;
+                        bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
                         ProcessedEpisode firstMatchingPep = null;
 
                         foreach (ShowItem si in matchingShows)
                         {
-                                FindSeasEp(fi, out int seasF, out int epF, out int _, si,
+                            FindSeasEp(fi, out int seasF, out int epF, out int _, si,
                                     out TVSettings.FilenameProcessorRE re);
 
-                                SeriesInfo s = si.TheSeries();
+                            SeriesInfo s = si.TheSeries();
                             List<FileInfo> encumbants =new List<FileInfo>();
                             ProcessedEpisode pep=null;
                             try
@@ -1002,9 +1000,9 @@ namespace TVRename
                                 firstMatchingPep = pep;
                                 encumbants = FindEpOnDisk(dfc, pep, false);
                             }
-                            catch (SeriesInfo.EpisodeNotFoundException ee)
+                            catch (SeriesInfo.EpisodeNotFoundException _)
                             {
-                                Logger.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using {re}");
+                                Logger.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re.Notes}'");
                                 fileCanBeDeleted = false;
                             }
 
@@ -1136,7 +1134,7 @@ namespace TVRename
 
                         if (matchingShows.Any())
                         {
-                            bool dirCanBeRemoved = true;
+                            bool dirCanBeRemoved = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
 
                             foreach (ShowItem si in matchingShows)
                             {
@@ -1641,8 +1639,8 @@ namespace TVRename
                     RenameAndMissingCheck(scanProgDlg == null ? noProgress : scanProgDlg.MediaLibProg,
                         specific);
 
-                if (TVSettings.Instance.RemoveDownloadDirectoriesFiles)
-                    FindUnusedFilesInDLDirectory(specific, ((ScanSettings)(o)).Unattended);
+                if (TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.ReplaceWithBetterQuality)
+                    ReviewDownloadDirectory(specific, ((ScanSettings)(o)).Unattended);
 
                 if (TVSettings.Instance.MissingCheck)
                 {

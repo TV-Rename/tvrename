@@ -51,8 +51,13 @@ namespace TVRename
 
                     if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {
+<<<<<<< HEAD
+                        toRemove.Add(action1);
+                        newList.Add(new ItemTorrentDownload(te, action.Episode, action.TheFileNoExt, tApp));
+=======
                         toRemove.Add(action);
                         newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, tApp));
+>>>>>>> e1d0edf1b9da866771e48974e22cb04bcceb43b0
                         break;
                     }
                 }

@@ -18,13 +18,13 @@ namespace TVRename
     public class SeriesInfo
     {
         public DateTime? AirsTime;
+        private string airsTimeString; //The raw value we obtain from TVDB
         public bool Dirty; // set to true if local info is known to be older than whats on the server
         public DateTime? FirstAired;
         public readonly string TargetLanguageCode; //The Language Code we'd like the Series in ; null if we want to use the system setting
         public int LanguageId; //The actual language obtained
         public string Name;
         public string Status="Unkonwn";
-        private string airsTimeString;
         public string AirsDay;
         public string Network;
         public string Overview;
@@ -33,8 +33,6 @@ namespace TVRename
         public float SiteRating;
         public int SiteRatingVotes;
         public string Imdb;
-        public string Year;
-        private string firstAiredString;
         public string SeriesId;
         public string BannerString;
         public bool BannersLoaded;
@@ -99,6 +97,8 @@ namespace TVRename
                 return returnValue;
             }
         }
+
+        public string Year => FirstAired != null ? FirstAired.Value.ToString("yyyy") : string.Empty;
 
         // note: "SeriesID" in a <Series> is the tv.com code,
         // "seriesid" in an <Episode> is the tvdb code!
@@ -270,11 +270,11 @@ namespace TVRename
                 LanguageId = seriesXml.ExtractInt("LanguageId") ?? seriesXml.ExtractInt("languageId") ?? throw new TheTVDB.TVDBException("Error Extracting Language for Series");
                 TempTimeZone = seriesXml.ExtractString("TimeZone");
 
-                string theTime = seriesXml.ExtractString("Airs_Time")?? seriesXml.ExtractString("airsTime");
-                AirsTime = ParseAirTime(theTime);
+                airsTimeString = seriesXml.ExtractString("Airs_Time")?? seriesXml.ExtractString("airsTime");
+                AirsTime = ParseAirTime(airsTimeString);
 
                 AirsDay = seriesXml.ExtractString("airsDayOfWeek") ?? seriesXml.ExtractString("Airs_DayOfWeek");
-                BannerString = seriesXml.ExtractString("BannerString") ?? seriesXml.ExtractString("bannerString");
+                BannerString = seriesXml.ExtractString("banner") ?? seriesXml.ExtractString("Banner");
                 Imdb = seriesXml.ExtractString("imdbId") ?? seriesXml.ExtractString("IMDB_ID");
                 Network = seriesXml.ExtractString("network") ?? seriesXml.ExtractString("Network");
                 Overview = seriesXml.ExtractString("overview") ?? seriesXml.ExtractString("Overview");
@@ -291,22 +291,17 @@ namespace TVRename
                 {
                     try
                     {
-                        FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd",
-                            new CultureInfo(""));
-
-                        Year = FirstAired.Value.ToString("yyyy");
+                        FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd",new CultureInfo(""));
                     }
                     catch
                     {
                         Logger.Trace("Failed to parse date: {0} ", theDate);
                         FirstAired = null;
-                        Year = "";
                     }
                 }
                 else
                 {
                     FirstAired = null;
-                    Year = "";
                 }
 
                 ClearActors();
@@ -317,7 +312,7 @@ namespace TVRename
                 }
 
                 aliases = new List<string>();
-                foreach (XElement aliasXml in seriesXml.Descendants("Actors").Descendants("Actor"))
+                foreach (XElement aliasXml in seriesXml.Descendants("Aliases").Descendants("Alias"))
                 {
                     aliases.Add(aliasXml.Value);
                 }
@@ -367,7 +362,8 @@ namespace TVRename
         private void LoadJson(JObject r)
         {
             AirsDay = (string)r["airsDayOfWeek"];
-            AirsTime = ParseAirTime((string)r["airsTime"]);
+            airsTimeString = (string) r["airsTime"];
+            AirsTime = ParseAirTime(airsTimeString);
             aliases = r["aliases"].Select(x => x.Value<string>()).ToList();
             BannerString = (string)r["banner"];
 
@@ -376,19 +372,16 @@ namespace TVRename
             {
                 if (!string.IsNullOrEmpty(theDate))
                 {
-                    FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new System.Globalization.CultureInfo(""));
-                    Year = FirstAired.Value.ToString("yyyy");
+                    FirstAired = DateTime.ParseExact(theDate, "yyyy-MM-dd", new CultureInfo(""));
                 }
                 else
                 {
                     FirstAired = null;
-                    Year = "";
                 }
             }
             catch
             {
                 FirstAired = null;
-                Year = "";
             }
 
             if (r.ContainsKey("genre"))
@@ -465,7 +458,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "lastupdated", SrvLastUpdated);
             XmlHelper.WriteElementToXml(writer, "LanguageId", LanguageId);
             XmlHelper.WriteElementToXml(writer, "airsDayOfWeek", AirsDay);
-            XmlHelper.WriteElementToXml(writer, "Airs_Time", AirsTime );
+            XmlHelper.WriteElementToXml(writer, "Airs_Time", airsTimeString );
             XmlHelper.WriteElementToXml(writer, "banner", BannerString);
             XmlHelper.WriteElementToXml(writer, "imdbId", Imdb);
             XmlHelper.WriteElementToXml(writer, "network", Network);
@@ -474,7 +467,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "runtime", Runtime);
             XmlHelper.WriteElementToXml(writer, "seriesId", SeriesId);
             XmlHelper.WriteElementToXml(writer, "status", Status);
-            XmlHelper.WriteElementToXml(writer, "siteRating", SiteRating);
+            XmlHelper.WriteElementToXml(writer, "siteRating", SiteRating,"0.##");
             XmlHelper.WriteElementToXml(writer, "siteRatingCount", SiteRatingVotes);
 
             if (FirstAired != null)

@@ -148,25 +148,24 @@ namespace TVRename
 
         private static string ReplaceDates(bool urlEncode, string name, DateTime? airdt)
         {
+            string ymd;
+
             if (airdt != null)
             {
                 DateTime dt = (DateTime)airdt;
                 name = name.ReplaceInsensitive("{ShortDate}", dt.ToString("d"));
                 name = name.ReplaceInsensitive("{LongDate}", dt.ToString("D"));
-                string ymd = dt.ToString("yyyy/MM/dd");
-                if (urlEncode)
-                    ymd = System.Web.HttpUtility.UrlEncode(ymd);
-                name = name.ReplaceInsensitive("{YMDDate}", ymd);
+                ymd = dt.ToString("yyyy/MM/dd");
             }
             else
             {
                 name = name.ReplaceInsensitive("{ShortDate}", "---");
                 name = name.ReplaceInsensitive("{LongDate}", "------");
-                string ymd = "----/--/--";
-                if (urlEncode)
-                    ymd = System.Web.HttpUtility.UrlEncode(ymd);
-                name = name.ReplaceInsensitive("{YMDDate}", ymd);
+                ymd = "----/--/--";
             }
+            if (urlEncode)
+                ymd = Uri.EscapeDataString(ymd);
+            name = name.ReplaceInsensitive("{YMDDate}", ymd);
 
             return name;
         }
@@ -181,8 +180,8 @@ namespace TVRename
             string epname = pe.Name;
             if (urlEncode)
             {
-                showname = System.Web.HttpUtility.UrlEncode(showname);
-                epname = System.Web.HttpUtility.UrlEncode(epname);
+                showname = Uri.EscapeDataString(showname);
+                epname = Uri.EscapeDataString(epname);
             }
 
             name = name.ReplaceInsensitive("{ShowName}", showname);

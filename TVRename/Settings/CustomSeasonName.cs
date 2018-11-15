@@ -6,17 +6,16 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System;
 using System.Collections.Generic;
 
 // This builds the foldernames to create/find, for any given season
 
 namespace TVRename
 {
-    public class CustomSeasonName
+    public static class CustomSeasonName
     {
-        private readonly string styleString;
-
-        private static string DefaultStyle() => Presets[1];
+        public static string DefaultStyle() => Presets[0];
 
         private static readonly List<string> Presets = new List<string>
                                                         {
@@ -33,7 +32,7 @@ namespace TVRename
                                                             "{StartYear}-{EndYear}"
                                                         };
 
-        protected internal static readonly List<string> TAGS = new List<string>
+        internal static readonly List<string> TAGS = new List<string>
         {
             "{ShowName}",
             "{Season}",
@@ -44,7 +43,7 @@ namespace TVRename
             "{EndYear}"
         };
 
-        public List<string> ExamplePresets(Season s)
+        public static List<string> ExamplePresets(Season s)
         {
             List<string> possibleExamples = new List<string>();
             foreach (string example in Presets)
@@ -54,8 +53,6 @@ namespace TVRename
 
             return possibleExamples;
         }
-
-        public string NameFor(Season s) => NameFor(s, styleString);
 
         public static string NameFor(Season s, string styleString) => NameFor(s, styleString, false);
 
@@ -68,7 +65,7 @@ namespace TVRename
             string showname = s.TheSeries.Name;
             if (urlEncode)
             {
-                showname = System.Web.HttpUtility.UrlEncode(showname);
+                showname = Uri.EscapeDataString(showname);
             }
 
             name = name.ReplaceInsensitive("{ShowName}", showname);
