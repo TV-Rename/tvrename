@@ -121,7 +121,7 @@ namespace TVRename
             ForceCheckNoAirdate = xmlSettings.ExtractBool("ForceCheckNoAirdate")
                                   ?? xmlSettings.ExtractBool("ForceCheckAll")
                                   ?? false;
-            AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? "Season {Season:2}";
+            AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? CustomSeasonName.DefaultStyle();
             AutoAddType = xmlSettings.ExtractInt("AutoAddType") == null
                 ? AutomaticFolderType.libraryDefault
                 : (AutomaticFolderType)xmlSettings.ExtractInt("AutoAddType");
@@ -387,7 +387,7 @@ namespace TVRename
             ShowNextAirdate = true;
             TvdbCode = -1;
             AutoAddFolderBase = "";
-            AutoAddCustomFolderFormat = "Season {Season:2}";
+            AutoAddCustomFolderFormat = CustomSeasonName.DefaultStyle();
             AutoAddType = ShowItem.AutomaticFolderType.libraryDefault;
             DoRename = true;
             DoMissingCheck = true;

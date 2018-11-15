@@ -225,7 +225,7 @@ namespace TVRename
         public bool ShowInTaskbar = true;
         public bool AutoSearchForDownloadedFiles = false;
         public string SpecialsFolderName = "Specials";
-        public string SeasonFolderFormat = "Season {Season:2}";
+        public string SeasonFolderFormat = CustomSeasonName.DefaultStyle();
         public int StartupTab;
         public Searchers TheSearchers = new Searchers();
 

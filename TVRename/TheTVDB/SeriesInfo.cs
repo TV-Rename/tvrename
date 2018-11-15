@@ -33,7 +33,6 @@ namespace TVRename
         public float SiteRating;
         public int SiteRatingVotes;
         public string Imdb;
-        private string firstAiredString;
         public string SeriesId;
         public string BannerString;
         public bool BannersLoaded;
