@@ -1002,7 +1002,7 @@ namespace TVRename
                             }
                             catch (SeriesInfo.EpisodeNotFoundException ee)
                             {
-                                Logger.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using {re}");
+                                Logger.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re.Notes}'");
                                 fileCanBeDeleted = false;
                             }
 
