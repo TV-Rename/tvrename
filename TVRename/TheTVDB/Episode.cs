@@ -192,9 +192,9 @@ namespace TVRename
             //backupLanguageR should be a series of name/value pairs (ie a JArray of JPropertes)
             //TVDB asserts that name and overview are the fields that are localised
 
-            if (string.IsNullOrWhiteSpace(Name) && (string) backupLanguageR["episodeName"] != null)
+            if (string.IsNullOrWhiteSpace(mName) && (string) backupLanguageR["episodeName"] != null)
             {
-                Name = System.Web.HttpUtility.HtmlDecode((string) backupLanguageR["episodeName"]);
+                mName = System.Web.HttpUtility.HtmlDecode((string) backupLanguageR["episodeName"]);
             }
 
             if (string.IsNullOrWhiteSpace(Overview) && (string) backupLanguageR["overview"] != null)
