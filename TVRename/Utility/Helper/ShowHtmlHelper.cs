@@ -190,7 +190,10 @@ namespace TVRename
 				<br/>
                 <div class=""row"">
                     <div class=""col-8""><h1><A HREF=""{showLink}"">{ser.Name}</A> - <A HREF=""{seasonLink}"">{SeasonName(si, s.SeasonNumber)}</a></h1></div>
-                    <div class=""col-4"">{explorerButton}{tvdbButton}</div>
+                    <div class=""col-4"">
+                        {explorerButton}
+                        {tvdbButton}
+                    </div>
                 </div>
 				</div>");
         }
@@ -281,7 +284,12 @@ namespace TVRename
                    </div>
                    <div><p class=""lead"">{ep.HiddenOverview()}</p></div>
                    <div>
-                    {searchButton}{viewButton}{explorerButton}{tvdbButton}{imdbButton}{tvButton}
+                    {searchButton}
+                    {viewButton}
+                    {explorerButton}
+                    {tvdbButton}
+                    {imdbButton}
+                    {tvButton}
                    </div>
 		           <div class=""row align-items-bottom flex-grow-1"">
                     <div class=""col-md-6 align-self-end"">{stars}<br>{siteRating}</div>
