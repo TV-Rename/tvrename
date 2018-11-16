@@ -1873,8 +1873,6 @@ namespace TVRename
         {
             if (tabControl1.SelectedTab == tbMyShows)
                 FillEpGuideHtml();
-
-            exportToolStripMenuItem.Enabled = false;
         }
 
         private void bugReportToolStripMenuItem_Click(object sender, EventArgs e)
@@ -3502,6 +3500,7 @@ namespace TVRename
 
         private void exportToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            mDoc.RunExporters();
         }
 
         private void logToolStripMenuItem_Click(object sender, EventArgs e)

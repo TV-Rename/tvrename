@@ -2145,5 +2145,14 @@ namespace TVRename
         }
 
         public bool AutoScanCanRun() => !currentlyBusy;
+
+        public void RunExporters()
+        {
+            // Can't do a OutputActionFiles() as we may not have just run a scan
+
+            ExportShowInfo();
+            WriteUpcoming();
+            WriteRecent();
+        }
     }
 }
