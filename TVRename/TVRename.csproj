@@ -378,11 +378,7 @@
     <Compile Include="ItemsAndActions\ItemMissing.cs" />
     <Compile Include="ItemsAndActions\ActionNFO.cs" />
     <Compile Include="ItemsAndActions\ActionItemSorter.cs" />
-<<<<<<< HEAD
-    <Compile Include="ItemsAndActions\ItemTorrentDownload.cs" />
-=======
     <Compile Include="ItemsAndActions\ItemDownloading.cs" />
->>>>>>> e1d0edf1b9da866771e48974e22cb04bcceb43b0
     <Compile Include="TVRename\FoundFolder.cs" />
     <Compile Include="Forms\ShowPreferences\AddModifyRule.cs">
       <SubType>Form</SubType>
