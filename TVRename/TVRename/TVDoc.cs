@@ -1101,8 +1101,16 @@ namespace TVRename
                         //File is needed as there are no files for that series/episode
                         fileCanBeDeleted = false;
                     }
-                    else foreach (FileInfo existingFile in encumbants)
+                    else {
+                        foreach (FileInfo existingFile in encumbants)
                         {
+                            if (existingFile.FullName == fi.FullName)
+                            {
+                                //the user has put the search folder and the download folder in the same place - DO NOT DELETE
+                                fileCanBeDeleted = false;
+                                continue;
+                            }
+
                             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, fi);
                             switch (result)
                             {
@@ -1182,6 +1190,7 @@ namespace TVRename
                                     throw new ArgumentOutOfRangeException();
                             }
                         }
+                    }
                 }
                 catch (SeriesInfo.EpisodeNotFoundException _)
                 {
