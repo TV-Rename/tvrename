@@ -49,6 +49,8 @@ namespace TVRename
         // ReSharper disable once RedundantDefaultMemberInitializer
         private bool currentlyBusy = false; // This is set to true when scanning and indicates to other objects not to commence a scan of their own
         private DateTime busySince;
+        private bool lastScanComplete;
+        private TVSettings.ScanType lastScanType;
 
         public TVDoc(FileInfo settingsFile, CommandLineArgs args)
         {
@@ -336,8 +338,9 @@ namespace TVRename
             return true;
         }
 
-        private void OutputActionFiles(TVSettings.ScanType st)
+        private void OutputActionFiles()
         {
+            if (!lastScanComplete) return;
             // ReSharper disable once InconsistentNaming
             List<ActionListExporter> ALExpoters = new List<ActionListExporter>
             {
@@ -349,7 +352,7 @@ namespace TVRename
 
             foreach (ActionListExporter ue in ALExpoters)
             {
-                if (ue.Active() && ue.ApplicableFor(st))
+                if (ue.Active() && ue.ApplicableFor(lastScanType))
                 {
                     ue.Run();
                 }
@@ -440,8 +443,9 @@ namespace TVRename
                 AwaitCancellation(actionWork);
 
                 downloadIdentifiers.Reset();
-
-                OutputActionFiles(st); //Save missing shows to XML (and others)
+                lastScanComplete = true;
+                lastScanType = st;
+                OutputActionFiles(); //Save missing shows to XML (and others)
             }
             catch (Exception e)
             {
@@ -942,7 +946,7 @@ namespace TVRename
         }
 
         // ReSharper disable once InconsistentNaming
-        private void ReviewDownloadDirectory(ICollection<ShowItem> showList,bool unattended)
+        private void ReviewDownloadDirectories(ICollection<ShowItem> showList,bool unattended)
         {
             //for each directory in settings directory
             //for each file in directory
@@ -963,215 +967,239 @@ namespace TVRename
                 if (!Directory.Exists(dirPath)) continue;
 
                 List<FileInfo> filesThatMayBeNeeded = new List<FileInfo>();
+                ReviewFilesInDownloadDirectory(showList, unattended, dfc, dirPath, filesThatMayBeNeeded);
+
+                ReviewDirsInDownloadDirectory(showList, dfc, dirPath, filesThatMayBeNeeded);
+            }
+        }
+
+        private void ReviewDirsInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded)
+        {
+            try
+            {
+                foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
+                System.IO.SearchOption.AllDirectories))
+                {
+                    if (!Directory.Exists(subDirPath)) continue;
+
+                    ReviewDirInDownloadDirectory(showList, dfc, filesThatMayBeNeeded, subDirPath);
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Logger.Warn(ex, $"Could not access subdirectories of {dirPath}");
+            }
+        }
+
+        private void ReviewDirInDownloadDirectory(ICollection<ShowItem> showList, DirFilesCache dfc, List<FileInfo> filesThatMayBeNeeded, string subDirPath)
+        {
+            //we are not checking for any file updates, so can return
+            if (!TVSettings.Instance.RemoveDownloadDirectoriesFiles) return;
+
+            if (!Directory.Exists(subDirPath)) return;
+
+            DirectoryInfo di = new DirectoryInfo(subDirPath);
+
+            List<ShowItem> matchingShows = new List<ShowItem>();
+
+            foreach (ShowItem si in showList)
+            {
+                if (si.GetSimplifiedPossibleShowNames()
+                    .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
+                    matchingShows.Add(si);
+            }
+
+            if (matchingShows.Any())
+            {
+                bool dirCanBeRemoved = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
+
+                foreach (ShowItem si in matchingShows)
+                {
+                    if (FileNeeded(di, si, dfc))
+                    {
+                        Logger.Info($"Not removing {di.FullName} as it may be needed for {si.ShowName}");
+                        dirCanBeRemoved = false;
+                    }
+                }
+
+                foreach (FileInfo neededFile in filesThatMayBeNeeded)
+                {
+                    if (di.FullName.Contains(neededFile.DirectoryName))
+                    {
+                        dirCanBeRemoved = false;
+                    }
+                }
+
+                if (dirCanBeRemoved)
+                {
+                    SetupDirectoryRemoval(di, matchingShows);
+                }
+            }
+        }
+
+        private void SetupDirectoryRemoval(DirectoryInfo di, List<ShowItem> matchingShows)
+        {
+            ShowItem si = matchingShows[0]; //Choose the first series
+            FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE _);
+            SeriesInfo s = si.TheSeries();
+            Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
+            ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+            Logger.Info(
+                $"Removing {di.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
+
+            TheActionList.Add(new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup));
+        }
+
+        private void ReviewFilesInDownloadDirectory(ICollection<ShowItem> showList, bool unattended, DirFilesCache dfc, string dirPath, List<FileInfo> filesThatMayBeNeeded)
+        {
+            try
+            {
+                foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                {
+                    if (!File.Exists(filePath)) continue;
+
+                    FileInfo fi = new FileInfo(filePath);
+
+                    if (FileHelper.IgnoreFile(fi)) continue;
+
+                    List<ShowItem> matchingShows = showList.Where(si => si.GetSimplifiedPossibleShowNames()
+                            .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
+                        .ToList();
+
+                    if (matchingShows.Any())
+                    {
+                        ReviewFileInDownloadDirectory(unattended, dfc, filesThatMayBeNeeded, fi, matchingShows);
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                Logger.Warn(ex, $"Could not access files in {dirPath}");
+            }
+        }
+
+        private void ReviewFileInDownloadDirectory(bool unattended, DirFilesCache dfc, List<FileInfo> filesThatMayBeNeeded, FileInfo fi, List<ShowItem> matchingShows)
+        {
+            bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
+            ProcessedEpisode firstMatchingPep = null;
+
+            foreach (ShowItem si in matchingShows)
+            {
+                FindSeasEp(fi, out int seasF, out int epF, out int _, si,
+                        out TVSettings.FilenameProcessorRE re);
+
+                SeriesInfo s = si.TheSeries();
                 try
                 {
-                    foreach (string filePath in Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories))
+                    Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
+                    ProcessedEpisode pep = new ProcessedEpisode(ep, si);
+                    firstMatchingPep = pep;
+                    List<FileInfo> encumbants = FindEpOnDisk(dfc, pep, false);
+
+                    if (encumbants.Count == 0)
                     {
-                        if (!File.Exists(filePath)) continue;
-
-                        FileInfo fi = new FileInfo(filePath);
-
-                        if (FileHelper.IgnoreFile(fi)) continue;
-
-                        List<ShowItem> matchingShows = showList.Where(si => si.GetSimplifiedPossibleShowNames()
-                                .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
-                            .ToList();
-
-                        if (matchingShows.Count <= 0)
+                        //File is needed as there are no files for that series/episode
+                        fileCanBeDeleted = false;
+                    }
+                    else foreach (FileInfo existingFile in encumbants)
                         {
-                            continue;
-                        }
-
-                        bool fileCanBeDeleted = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
-                        ProcessedEpisode firstMatchingPep = null;
-
-                        foreach (ShowItem si in matchingShows)
-                        {
-                            FindSeasEp(fi, out int seasF, out int epF, out int _, si,
-                                    out TVSettings.FilenameProcessorRE re);
-
-                            SeriesInfo s = si.TheSeries();
-                            List<FileInfo> encumbants =new List<FileInfo>();
-                            ProcessedEpisode pep=null;
-                            try
+                            FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, fi);
+                            switch (result)
                             {
-                                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                                pep = new ProcessedEpisode(ep, si);
-                                firstMatchingPep = pep;
-                                encumbants = FindEpOnDisk(dfc, pep, false);
-                            }
-                            catch (SeriesInfo.EpisodeNotFoundException _)
-                            {
-                                Logger.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re.Notes}'");
-                                fileCanBeDeleted = false;
-                            }
-
-                                if (encumbants.Count == 0)
-                                {
-                                    //File is needed as there are no files for that series/episode
+                                case FileHelper.VideoComparison.SecondFileBetter:
                                     fileCanBeDeleted = false;
-                                }
 
-                                foreach (FileInfo existingFile in encumbants)
-                                {
-                                    FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, fi);
-                                    switch (result)
+                                    if (TVSettings.Instance.ReplaceWithBetterQuality)
                                     {
-                                        case FileHelper.VideoComparison.SecondFileBetter:
-                                            fileCanBeDeleted = false;
-
-                                            if (TVSettings.Instance.ReplaceWithBetterQuality)
-                                            {
-                                                if (matchingShows.Count > 1)
-                                                {
-                                                    Logger.Warn(
-                                                        $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
-                                                }
-                                                else
-                                                {
-                                                    UpgradeFile(fi, pep, existingFile);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                Logger.Warn(
-                                                    $"Keeping {fi.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality files is turned off)");
-                                            }
-
-                                            break;
-                                        case FileHelper.VideoComparison.CantTell:
-                                        case FileHelper.VideoComparison.Similar:
-                                            if (unattended)
-                                            {
-                                                fileCanBeDeleted = false;
-                                                Logger.Info(
-                                                    $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
-                                            }
-                                            else
-                                            {
-                                                if (matchingShows.Count > 1)
-                                                {
-                                                    Logger.Warn(
-                                                        $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
-                                                    fileCanBeDeleted = false;
-                                                }
-                                                else
-                                                {
-                                                    ChooseFile question = new ChooseFile(existingFile, fi);
-                                                    question.ShowDialog();
-
-                                                    switch (question.Answer)
-                                                    {
-                                                        case ChooseFile.ChooseFileDialogResult.ignore:
-                                                            fileCanBeDeleted = false;
-                                                            Logger.Info(
-                                                                $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
-
-                                                            break;
-                                                        case ChooseFile.ChooseFileDialogResult.left:
-                                                            Logger.Info(
-                                                                $"User has elected to remove {fi.FullName} as it is not as good quality than {existingFile.FullName}");
-
-                                                            break;
-                                                        case ChooseFile.ChooseFileDialogResult.right:
-                                                            UpgradeFile(fi, pep, existingFile);
-                                                            fileCanBeDeleted = false;
-                                                            break;
-                                                        default:
-                                                            throw new ArgumentOutOfRangeException();
-                                                    }
-                                                }
-                                            }
-
-                                            break;
-                                        case FileHelper.VideoComparison.FirstFileBetter:
-                                            break;
-                                        case FileHelper.VideoComparison.Same:
-                                            break;
-                                        default:
-                                            throw new ArgumentOutOfRangeException();
+                                        if (matchingShows.Count > 1)
+                                        {
+                                            Logger.Warn(
+                                                $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
+                                        }
+                                        else
+                                        {
+                                            UpgradeFile(fi, pep, existingFile);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Logger.Warn(
+                                            $"Keeping {fi.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality files is turned off)");
                                     }
 
-                                    //the other cases of the files being the same or the existing file being better are not enough to save the file
-                                }
-                        }
+                                    break;
+                                case FileHelper.VideoComparison.CantTell:
+                                case FileHelper.VideoComparison.Similar:
+                                    if (unattended)
+                                    {
+                                        fileCanBeDeleted = false;
+                                        Logger.Info(
+                                            $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
+                                    }
+                                    else
+                                    {
+                                        if (matchingShows.Count > 1)
+                                        {
+                                            Logger.Warn(
+                                                $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
+                                            fileCanBeDeleted = false;
+                                        }
+                                        else
+                                        {
+                                            ChooseFile question = new ChooseFile(existingFile, fi);
+                                            question.ShowDialog();
 
-                        if (fileCanBeDeleted)
-                        {
-                            Logger.Info(
-                                $"Removing {fi.FullName} as it matches {string.Join(", ",matchingShows.Select(s => s.ShowName))} and no episodes are needed");
+                                            switch (question.Answer)
+                                            {
+                                                case ChooseFile.ChooseFileDialogResult.ignore:
+                                                    fileCanBeDeleted = false;
+                                                    Logger.Info(
+                                                        $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
 
-                            TheActionList.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
-                        }
-                        else
-                        {
-                            filesThatMayBeNeeded.Add(fi);
-                        }
-                    }
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    Logger.Warn(ex, $"Could not access files in {dirPath}");
-                }
+                                                    break;
+                                                case ChooseFile.ChooseFileDialogResult.left:
+                                                    Logger.Info(
+                                                        $"User has elected to remove {fi.FullName} as it is not as good quality than {existingFile.FullName}");
 
-                try
-                {
-                    foreach (string subDirPath in Directory.GetDirectories(dirPath, "*",
-                    System.IO.SearchOption.AllDirectories))
-                    {
-                        if (!Directory.Exists(subDirPath)) continue;
+                                                    break;
+                                                case ChooseFile.ChooseFileDialogResult.right:
+                                                    UpgradeFile(fi, pep, existingFile);
+                                                    fileCanBeDeleted = false;
+                                                    break;
+                                                default:
+                                                    throw new ArgumentOutOfRangeException();
+                                            }
+                                        }
+                                    }
 
-                        DirectoryInfo di = new DirectoryInfo(subDirPath);
-
-                        List<ShowItem> matchingShows = new List<ShowItem>();
-
-                        foreach (ShowItem si in showList)
-                        {
-                            if (si.GetSimplifiedPossibleShowNames()
-                                .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
-                                matchingShows.Add(si);
-                        }
-
-                        if (matchingShows.Any())
-                        {
-                            bool dirCanBeRemoved = TVSettings.Instance.RemoveDownloadDirectoriesFiles;
-
-                            foreach (ShowItem si in matchingShows)
-                            {
-                                if (FileNeeded(di, si, dfc))
-                                {
-                                    Logger.Info($"Not removing {di.FullName} as it may be needed for {si.ShowName}");
-                                    dirCanBeRemoved = false;
-                                }
-                            }
-
-                            foreach (FileInfo neededFile in filesThatMayBeNeeded)
-                            {
-                                if (di.FullName.Contains(neededFile.DirectoryName))
-                                {
-                                    dirCanBeRemoved = false;
-                                }
-                            }
-
-                            if (dirCanBeRemoved)
-                            {
-                                ShowItem si = matchingShows[0]; //Choose the first series
-                                FindSeasEp(di, out int seasF, out int epF, si, out TVSettings.FilenameProcessorRE _);
-                                SeriesInfo s = si.TheSeries();
-                                Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
-                                ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-                                Logger.Info(
-                                    $"Removing {di.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
-
-                                TheActionList.Add(new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup));
+                                    break;
+                                //the other cases of the files being the same or the existing file being better are not enough to save the file
+                                case FileHelper.VideoComparison.FirstFileBetter:
+                                    break;
+                                case FileHelper.VideoComparison.Same:
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException();
                             }
                         }
-                    }
                 }
-                catch (UnauthorizedAccessException ex)
+                catch (SeriesInfo.EpisodeNotFoundException _)
                 {
-                    Logger.Warn(ex, $"Could not access subdirectories of {dirPath}");
+                    Logger.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re.Notes}'");
+                    fileCanBeDeleted = false;
                 }
+            }
+
+            if (fileCanBeDeleted)
+            {
+                Logger.Info(
+                    $"Removing {fi.FullName} as it matches {string.Join(", ", matchingShows.Select(s => s.ShowName))} and no episodes are needed");
+
+                TheActionList.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
+            }
+            else
+            {
+                filesThatMayBeNeeded.Add(fi);
             }
         }
 
@@ -1620,7 +1648,7 @@ namespace TVRename
 
         private static void NoProgress(int pct)
         {
-            //Nothign to do - Method is called if we have no UI
+            //Nothing to do - Method is called if we have no UI
         }
 
         private void ScanWorker(object o)
@@ -1640,7 +1668,7 @@ namespace TVRename
                         specific);
 
                 if (TVSettings.Instance.RemoveDownloadDirectoriesFiles || TVSettings.Instance.ReplaceWithBetterQuality)
-                    ReviewDownloadDirectory(specific, ((ScanSettings)(o)).Unattended);
+                    ReviewDownloadDirectories(specific, ((ScanSettings)(o)).Unattended);
 
                 if (TVSettings.Instance.MissingCheck)
                 {
@@ -2148,8 +2176,7 @@ namespace TVRename
 
         public void RunExporters()
         {
-            // Can't do a OutputActionFiles() as we may not have just run a scan
-
+            OutputActionFiles();
             ExportShowInfo();
             WriteUpcoming();
             WriteRecent();
