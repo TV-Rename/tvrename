@@ -1376,17 +1376,17 @@ namespace TVRename
             // 
             // domainUpDown1
             // 
-            this.domainUpDown1.Items.Add("1");
-            this.domainUpDown1.Items.Add("2");
-            this.domainUpDown1.Items.Add("3");
-            this.domainUpDown1.Items.Add("4");
-            this.domainUpDown1.Items.Add("5");
-            this.domainUpDown1.Items.Add("6");
-            this.domainUpDown1.Items.Add("8");
-            this.domainUpDown1.Items.Add("12");
-            this.domainUpDown1.Items.Add("24");
-            this.domainUpDown1.Items.Add("48");
             this.domainUpDown1.Items.Add("96");
+            this.domainUpDown1.Items.Add("48");
+            this.domainUpDown1.Items.Add("24");
+            this.domainUpDown1.Items.Add("12");
+            this.domainUpDown1.Items.Add("8");
+            this.domainUpDown1.Items.Add("6");
+            this.domainUpDown1.Items.Add("5");
+            this.domainUpDown1.Items.Add("4");
+            this.domainUpDown1.Items.Add("3");
+            this.domainUpDown1.Items.Add("2");
+            this.domainUpDown1.Items.Add("1");
             this.domainUpDown1.Location = new System.Drawing.Point(134, 87);
             this.domainUpDown1.Name = "domainUpDown1";
             this.domainUpDown1.Size = new System.Drawing.Size(40, 20);
