@@ -233,6 +233,7 @@ namespace TVRename
         public string SearchJSONRootNode = "torrents";
         public string SearchJSONFilenameToken = "filename";
         public string SearchJSONURLToken = "torrent_url";
+        public string SearchJSONSizeBytesToken = "size_bytes";
 
         public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
         public bool ForceBulkAddToUseSettingsOnly = false;

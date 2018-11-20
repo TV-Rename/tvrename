@@ -63,6 +63,16 @@ namespace TVRename
                                 {
                                     string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
                                     string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
+                                    int itemSizeBytes = 0;
+                                    try
+                                    {
+                                        itemSizeBytes = (int)item[TVSettings.Instance.SearchJSONSizeBytesToken];
+                                    }
+                                    catch
+                                    {
+                                        //-1 as size is not available (empty string or other)
+                                        itemSizeBytes = -1;
+                                    }
 
                                     if (TVSettings.Instance.DetailedRSSJSONLogging)
                                     {
@@ -71,6 +81,7 @@ namespace TVRename
                                         LOGGER.Info("Extracted");
                                         LOGGER.Info($"Name:        {itemName}");
                                         LOGGER.Info($"URL:         {itemUrl}");
+                                        LOGGER.Info($"Size:        {itemSizeBytes}");
                                     }
 
                                     if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
@@ -93,7 +104,7 @@ namespace TVRename
                                     LOGGER.Info(
                                         $"Adding {itemUrl} as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
-                                    newItems.Add(new ActionTDownload(itemName, itemUrl, action.TheFileNoExt, pe,action));
+                                    newItems.Add(new ActionTDownload(itemName, itemSizeBytes, itemUrl, action.TheFileNoExt, pe,action));
                                     toRemove.Add(action);
                                 }
                                 else
