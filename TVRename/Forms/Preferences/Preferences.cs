@@ -468,7 +468,7 @@ namespace TVRename
             cbMonitorFolder.Checked = s.MonitorFolders;
             chkScheduledScan.Checked = s.RunPeriodicCheck();
             chkScanOnStartup.Checked = s.RunOnStartUp();
-            domainUpDown1.SelectedItem = s.periodCheckHours;
+            SetDropdownValue(domainUpDown1, s.periodCheckHours);
             cbCleanUpDownloadDir.Checked = s.RemoveDownloadDirectoriesFiles;
             cbDeleteShowFromDisk.Checked = s.DeleteShowFromDisk;
 
@@ -595,6 +595,17 @@ namespace TVRename
             }
 
             FillTreeViewColoringShowStatusTypeCombobox();
+        }
+
+        private void SetDropdownValue(DomainUpDown control, int sPeriodCheckHours)
+        {
+            foreach (object item in control.Items)
+            {
+                if (item.ToString() == sPeriodCheckHours.ToString())
+                {
+                    control.SelectedItem = item;
+                }
+            }
         }
 
         private void FillTreeViewColoringShowStatusTypeCombobox()

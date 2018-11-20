@@ -78,6 +78,7 @@ namespace TVRename
             this.chkShowInTaskbar = new System.Windows.Forms.CheckBox();
             this.cbNotificationIcon = new System.Windows.Forms.CheckBox();
             this.tpSearch = new System.Windows.Forms.TabPage();
+            this.cbDetailedRSSJSONLogging = new System.Windows.Forms.CheckBox();
             this.gbJSON = new System.Windows.Forms.GroupBox();
             this.label51 = new System.Windows.Forms.Label();
             this.tbJSONFilenameToken = new System.Windows.Forms.TextBox();
@@ -299,7 +300,6 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
-            this.cbDetailedRSSJSONLogging = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tpSearch.SuspendLayout();
@@ -696,6 +696,17 @@ namespace TVRename
             this.tpSearch.TabIndex = 12;
             this.tpSearch.Text = "RSS/JSON Search";
             this.tpSearch.UseVisualStyleBackColor = true;
+            // 
+            // cbDetailedRSSJSONLogging
+            // 
+            this.cbDetailedRSSJSONLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.cbDetailedRSSJSONLogging.AutoSize = true;
+            this.cbDetailedRSSJSONLogging.Location = new System.Drawing.Point(6, 548);
+            this.cbDetailedRSSJSONLogging.Name = "cbDetailedRSSJSONLogging";
+            this.cbDetailedRSSJSONLogging.Size = new System.Drawing.Size(307, 17);
+            this.cbDetailedRSSJSONLogging.TabIndex = 34;
+            this.cbDetailedRSSJSONLogging.Text = "Detailed logging (useful when setting up RSS/JSON Feeds)";
+            this.cbDetailedRSSJSONLogging.UseVisualStyleBackColor = false;
             // 
             // gbJSON
             // 
@@ -1364,17 +1375,17 @@ namespace TVRename
             // 
             // domainUpDown1
             // 
-            this.domainUpDown1.Items.Add("1");
-            this.domainUpDown1.Items.Add("2");
-            this.domainUpDown1.Items.Add("3");
-            this.domainUpDown1.Items.Add("4");
-            this.domainUpDown1.Items.Add("5");
-            this.domainUpDown1.Items.Add("6");
-            this.domainUpDown1.Items.Add("8");
-            this.domainUpDown1.Items.Add("12");
-            this.domainUpDown1.Items.Add("24");
-            this.domainUpDown1.Items.Add("48");
             this.domainUpDown1.Items.Add("96");
+            this.domainUpDown1.Items.Add("48");
+            this.domainUpDown1.Items.Add("24");
+            this.domainUpDown1.Items.Add("12");
+            this.domainUpDown1.Items.Add("8");
+            this.domainUpDown1.Items.Add("6");
+            this.domainUpDown1.Items.Add("5");
+            this.domainUpDown1.Items.Add("4");
+            this.domainUpDown1.Items.Add("3");
+            this.domainUpDown1.Items.Add("2");
+            this.domainUpDown1.Items.Add("1");
             this.domainUpDown1.Location = new System.Drawing.Point(134, 87);
             this.domainUpDown1.Name = "domainUpDown1";
             this.domainUpDown1.Size = new System.Drawing.Size(40, 20);
@@ -3137,17 +3148,6 @@ namespace TVRename
             this.tcTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
-            // 
-            // cbDetailedRSSJSONLogging
-            // 
-            this.cbDetailedRSSJSONLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbDetailedRSSJSONLogging.AutoSize = true;
-            this.cbDetailedRSSJSONLogging.Location = new System.Drawing.Point(6, 548);
-            this.cbDetailedRSSJSONLogging.Name = "cbDetailedRSSJSONLogging";
-            this.cbDetailedRSSJSONLogging.Size = new System.Drawing.Size(307, 17);
-            this.cbDetailedRSSJSONLogging.TabIndex = 34;
-            this.cbDetailedRSSJSONLogging.Text = "Detailed logging (useful when setting up RSS/JSON Feeds)";
-            this.cbDetailedRSSJSONLogging.UseVisualStyleBackColor = false;
             // 
             // Preferences
             // 
