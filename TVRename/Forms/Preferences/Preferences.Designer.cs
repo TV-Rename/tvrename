@@ -300,6 +300,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
+            this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tpSearch.SuspendLayout();
@@ -2975,6 +2976,7 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.cbShowCollections);
             this.tbGeneral.Controls.Add(this.label37);
             this.tbGeneral.Controls.Add(this.label38);
             this.tbGeneral.Controls.Add(this.tbPercentDirty);
@@ -3148,6 +3150,16 @@ namespace TVRename
             this.tcTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
+            // 
+            // cbShowCollections
+            // 
+            this.cbShowCollections.AutoSize = true;
+            this.cbShowCollections.Location = new System.Drawing.Point(14, 157);
+            this.cbShowCollections.Name = "cbShowCollections";
+            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
+            this.cbShowCollections.TabIndex = 24;
+            this.cbShowCollections.Text = "Multiple Show collections";
+            this.cbShowCollections.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -3491,5 +3503,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtWPL;
         private System.Windows.Forms.CheckBox cbWPL;
         private System.Windows.Forms.CheckBox cbDetailedRSSJSONLogging;
+        private System.Windows.Forms.CheckBox cbShowCollections;
     }
 }

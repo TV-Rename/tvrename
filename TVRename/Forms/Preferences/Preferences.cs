@@ -253,6 +253,8 @@ namespace TVRename
 
             s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
 
+            s.ShowCollections = cbShowCollections.Checked;
+
             if (cbKeepTogetherMode.Text == "All but these")
             {
                 s.keepTogetherMode = TVSettings.KeepTogetherModes.AllBut;
@@ -504,6 +506,8 @@ namespace TVRename
             tbIgnoreSuffixes.Text = s.AutoAddIgnoreSuffixes;
 
             tbPriorityOverrideTerms.Text = s.PriorityReplaceTerms;
+
+            cbShowCollections.Checked = s.ShowCollections;
 
             switch (s.WTWDoubleClick)
             {
