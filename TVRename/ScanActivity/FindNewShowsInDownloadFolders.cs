@@ -145,7 +145,6 @@ namespace TVRename
                     TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
                 }
                 else Logger.Info($"Cancelled Auto adding new show {hint}");
-
             }
 
             if (addedShows.Count <= 0) return;

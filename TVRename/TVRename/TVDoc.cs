@@ -562,29 +562,14 @@ namespace TVRename
                     Thread.Sleep(10); // wait for thread to create the dialog
 
                 TheActionList = new ItemList();
+                SetProgressDelegate noProgress = NoProgress;
 
                 if (!settings.Unattended && settings.Type != TVSettings.ScanType.SingleShow)
                 {
-                    ScanActivity x = new FindNewShowsInDownloadFolders(this);
-                    if (x.Active())
-                    {
-                        if (scanProgDlg == null)
-                            x.Check(NoProgress,0, 50, specific, settings);
-                        else
-                            x.Check(scanProgDlg.AddNewProg, 0, 50, specific, settings);
-                    }
-
-                    ScanActivity y = new FindNewShowsInLibrary(this);
-                    if (y.Active())
-                    {
-                        if (scanProgDlg == null)
-                            y.Check(NoProgress,50, 100, specific, settings);
-                        else
-                            y.Check(scanProgDlg.AddNewProg, 50, 100, specific, settings);
-                    }
+                    new FindNewShowsInDownloadFolders(this).CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.AddNewProg, 0, 50, specific, settings);
+                    new FindNewShowsInLibrary(this).CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.AddNewProg, 50, 100, specific, settings);
                 }
-                SetProgressDelegate noProgress = NoProgress;
-
+                
                 new CheckShows(this).CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.MediaLibProg, specific, settings);
                 new CleanDownloadDirectory(this).CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.DownloadFolderProg, specific, settings);
                 localFinders.CheckIfActive((scanProgDlg == null) ? noProgress : scanProgDlg.LocalSearchProg, specific, settings);
@@ -810,10 +795,5 @@ namespace TVRename
             WriteUpcoming();
             WriteRecent();
         }
-    }
-
-    // ReSharper disable once InconsistentNaming
-    internal class TVRenameOperationInteruptedException : Exception
-    {
     }
 }

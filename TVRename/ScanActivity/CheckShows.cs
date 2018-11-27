@@ -40,7 +40,6 @@ namespace TVRename
                 new CheckAllFoldersExist(mDoc).CheckIfActive(si, dfc, settings);
                 new MergeLibraryEpisodes(mDoc).CheckIfActive(si, dfc, settings);
                 new RenameAndMissingCheck(mDoc).CheckIfActive(si, dfc, settings);
-
             } // for each show
 
             mDoc.RemoveIgnored();

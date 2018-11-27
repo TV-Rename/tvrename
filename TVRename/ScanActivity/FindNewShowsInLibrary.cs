@@ -53,7 +53,6 @@ namespace TVRename
 
             mDoc.WriteUpcoming();
             mDoc.WriteRecent();
-
         }
 
         public override bool Active() => TVSettings.Instance.DoBulkAddInScan;

@@ -54,25 +54,4 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.MissingCheck && finders.Any(f => f.DisplayType() == CurrentType() && f.Active());
     }
-
-    class FindMissingEpisodesLocally : FindMissingEpisodes
-    {
-        public FindMissingEpisodesLocally(TVDoc doc) : base(doc) {}
-
-        protected override Finder.FinderDisplayType CurrentType() => Finder.FinderDisplayType.local;
-    }
-
-    class FindMissingEpisodesDownloading : FindMissingEpisodes
-    {
-        public FindMissingEpisodesDownloading(TVDoc doc) : base(doc) { }
-
-        protected override Finder.FinderDisplayType CurrentType() => Finder.FinderDisplayType.downloading;
-    }
-
-    class FindMissingEpisodesSearch : FindMissingEpisodes
-    {
-        public FindMissingEpisodesSearch(TVDoc doc) : base(doc) { }
-
-        protected override Finder.FinderDisplayType CurrentType() => Finder.FinderDisplayType.search;
-    }
 }

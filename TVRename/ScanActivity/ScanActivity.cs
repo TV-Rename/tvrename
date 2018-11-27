@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System;
 using System.Collections.Generic;
 
 namespace TVRename
@@ -23,7 +22,7 @@ namespace TVRename
 
         public abstract bool Active();
 
-        internal void Check(SetProgressDelegate prog, List<ShowItem> showList, TVDoc.ScanSettings settings) =>
+        private void Check(SetProgressDelegate prog, List<ShowItem> showList, TVDoc.ScanSettings settings) =>
             Check(prog, 0, 100, showList, settings);
 
         public void CheckIfActive(SetProgressDelegate prog, List<ShowItem> showList,TVDoc.ScanSettings settings)
@@ -31,6 +30,14 @@ namespace TVRename
             if (Active())
             {
                  Check(prog, showList, settings);
+            }
+        }
+
+        internal void CheckIfActive(SetProgressDelegate prog, int startpct, int totPct, List<ShowItem> showList, TVDoc.ScanSettings settings)
+        {
+            if (Active())
+            {
+                Check(prog,startpct,totPct, showList, settings);
             }
         }
     }

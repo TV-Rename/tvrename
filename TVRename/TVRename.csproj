@@ -253,6 +253,9 @@
     <Compile Include="ScanActivity\CheckAllFoldersExist.cs" />
     <Compile Include="ScanActivity\CheckShows.cs" />
     <Compile Include="ScanActivity\FindMissingEpisodes.cs" />
+    <Compile Include="ScanActivity\FindMissingEpisodesDownloading.cs" />
+    <Compile Include="ScanActivity\FindMissingEpisodesLocally.cs" />
+    <Compile Include="ScanActivity\FindMissingEpisodesSearch.cs" />
     <Compile Include="ScanActivity\FindNewShowsInDownloadFolders.cs" />
     <Compile Include="ScanActivity\FindNewShowsInLibrary.cs" />
     <Compile Include="ScanActivity\MergeLibraryEpisodes.cs" />
@@ -278,6 +281,7 @@
     <Compile Include="ScanActivity\CleanDownloadDirectory.cs" />
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
+    <Compile Include="TVRename\TVRenameOperationInteruptedException.cs" />
     <Compile Include="Utility\DateSorterWTW.cs" />
     <Compile Include="Utility\DaySorter.cs" />
     <Compile Include="Utility\Extensions\IEnumerableExtensions.cs" />
