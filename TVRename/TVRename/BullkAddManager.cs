@@ -317,7 +317,7 @@ namespace TVRename
             mDoc.ExportShowInfo();
         }
 
-        public void CheckFolders(CancellationToken token, SetProgressDelegate prog)
+        public void CheckFolders(CancellationToken token, SetProgressDelegate prog,bool detailedLogging)
         {
             // Check the  folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
@@ -335,7 +335,7 @@ namespace TVRename
                 prog.Invoke(100 * c2++ / c,folder);
                 DirectoryInfo di = new DirectoryInfo(folder);
 
-                CheckFolderForShows(di,token,true);
+                CheckFolderForShows(di,token, detailedLogging);
 
                 if (token.IsCancellationRequested)
                     break;

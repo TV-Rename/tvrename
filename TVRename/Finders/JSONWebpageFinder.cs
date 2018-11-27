@@ -6,6 +6,7 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
+using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json.Linq;
 
@@ -20,7 +21,8 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct)
+        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
+            TVDoc.ScanSettings settings)
         {
             int c = ActionList.Count + 2;
             int n = 1;
@@ -32,7 +34,7 @@ namespace TVRename
             {
                 foreach (ItemMissing action in ActionList.MissingItems())
                 {
-                    if (ActionCancel)
+                    if (settings.Token.IsCancellationRequested)
                         return;
 
                     prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)),action.Filename);

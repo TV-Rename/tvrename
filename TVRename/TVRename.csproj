@@ -250,6 +250,15 @@
     <Compile Include="ItemsAndActions\ActionWdtvMeta.cs" />
     <Compile Include="ItemsAndActions\ActionWriteMetadata.cs" />
     <Compile Include="ItemsAndActions\ItemList.cs" />
+    <Compile Include="ScanActivity\CheckAllFoldersExist.cs" />
+    <Compile Include="ScanActivity\CheckShows.cs" />
+    <Compile Include="ScanActivity\FindMissingEpisodes.cs" />
+    <Compile Include="ScanActivity\FindNewShowsInDownloadFolders.cs" />
+    <Compile Include="ScanActivity\FindNewShowsInLibrary.cs" />
+    <Compile Include="ScanActivity\MergeLibraryEpisodes.cs" />
+    <Compile Include="ScanActivity\RenameAndMissingCheck.cs" />
+    <Compile Include="ScanActivity\ScanShowActivity.cs" />
+    <Compile Include="ScanActivity\ScanActivity.cs" />
     <Compile Include="Settings\CustomSeasonName.cs" />
     <Compile Include="Settings\Language.cs" />
     <Compile Include="Settings\Languages.cs" />
@@ -265,8 +274,8 @@
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BullkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
-    <Compile Include="TVRename\Class1.cs" />
-    <Compile Include="TVRename\DownloadDirectoryReview.cs" />
+    <Compile Include="TVRename\Beta.cs" />
+    <Compile Include="ScanActivity\CleanDownloadDirectory.cs" />
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
     <Compile Include="Utility\DateSorterWTW.cs" />
