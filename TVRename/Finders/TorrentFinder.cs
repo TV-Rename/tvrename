@@ -30,13 +30,13 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             int c = ActionList.Count + 2;
             int n = 1;
-            prog.Invoke(startpct);
+            prog.Invoke(startpct,"Searhcing torrent queue...");
             foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (ActionCancel)
                     return;
 
-                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
+                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)),action.Filename);
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -49,7 +49,7 @@ namespace TVRename
 
                     if (!matched) continue;
 
-                    if (TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
+                    if (FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) && (seasF == action.Episode.AppropriateSeasonNumber) && (epF == action.Episode.AppropriateEpNum))
                     {
                         toRemove.Add(action);
                         newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, tApp));
@@ -64,7 +64,7 @@ namespace TVRename
             foreach (Item action in newList)
                 ActionList.Add(action);
 
-            prog.Invoke(totPct);
+            prog.Invoke(totPct, string.Empty);
         }
 
         protected DownloadingFinder(TVDoc doc) : base(doc)

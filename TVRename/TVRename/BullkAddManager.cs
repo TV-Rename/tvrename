@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using Alphaleonis.Win32.Filesystem;
 
@@ -164,7 +165,7 @@ namespace TVRename
             return false;
         }
 
-        public bool CheckFolderForShows(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs)
+        public bool CheckFolderForShows(DirectoryInfo di2, bool andGuess, out DirectoryInfo[] subDirs,bool  fullLogging )
         {
             // ..and not already a folder for one of our shows
             string theFolder = di2.FullName.ToLower();
@@ -174,7 +175,7 @@ namespace TVRename
                     theFolder.IsSubfolderOf(si.AutoAddFolderBase))
                 {
                     // we're looking at a folder that is a subfolder of an existing show
-                    Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
+                    if (fullLogging) Logger.Info("Rejecting {0} as it's already part of {1}.", theFolder, si.ShowName);
                     subDirs = null;
                     return true;
                 }
@@ -189,7 +190,7 @@ namespace TVRename
                             if (!string.Equals(theFolder, folder, StringComparison.CurrentCultureIgnoreCase))
                                 continue;
 
-                            Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,
+                            if (fullLogging) Logger.Info("Rejecting {0} as it's already part of {1}:{2}.", theFolder, si.ShowName,
                                 folder);
 
                             subDirs = null;
@@ -249,16 +250,22 @@ namespace TVRename
                 .Any(file => TVSettings.Instance.UsefulExtension(file.Extension, false));
         }
 
-        private void CheckFolderForShows(DirectoryInfo di, ref bool stop)
+        private void CheckFolderForShows(DirectoryInfo di, CancellationToken token,bool fullLogging)
         {
+            if (!di.Exists)
+                return;
+
+            if (token.IsCancellationRequested)
+                return;
+
             // is it on the ''Bulk Add Shows' ignore list?
             if (TVSettings.Instance.IgnoreFolders.Contains(di.FullName.ToLower()))
             {
-                Logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
+                if (fullLogging) Logger.Info("Rejecting {0} as it's on the ignore list.", di.FullName);
                 return;
             }
 
-            if (CheckFolderForShows(di, false, out DirectoryInfo[] subDirs))
+            if (CheckFolderForShows(di, false, out DirectoryInfo[] subDirs,fullLogging))
                 return; // done.
 
             if (subDirs == null) return; //indication we could not access the subdirectory
@@ -267,10 +274,7 @@ namespace TVRename
 
             foreach (DirectoryInfo di2 in subDirs)
             {
-                if (stop)
-                    return;
-
-                CheckFolderForShows(di2, ref stop); // not a season folder.. recurse!
+                CheckFolderForShows(di2, token,fullLogging); // not a season folder.. recurse!
             } // for each directory
         }
 
@@ -313,7 +317,7 @@ namespace TVRename
             mDoc.ExportShowInfo();
         }
 
-        public void CheckFolders(ref bool stop, ref int percentDone)
+        public void CheckFolders(CancellationToken token, SetProgressDelegate prog)
         {
             // Check the  folder list, and build up a new "AddItems" list.
             // guessing what the shows actually are isn't done here.  That is done by
@@ -323,21 +327,20 @@ namespace TVRename
 
             AddItems = new FolderMonitorEntryList();
 
-            int c = TVSettings.Instance.LibraryFolders.Count();
+            int c = TVSettings.Instance.LibraryFolders.Count;
 
             int c2 = 0;
             foreach (string folder in TVSettings.Instance.LibraryFolders)
             {
-                percentDone = 100 * c2++ / c;
+                prog.Invoke(100 * c2++ / c,folder);
                 DirectoryInfo di = new DirectoryInfo(folder);
-                if (!di.Exists)
-                    continue;
 
-                CheckFolderForShows(di, ref stop);
+                CheckFolderForShows(di,token,true);
 
-                if (stop)
+                if (token.IsCancellationRequested)
                     break;
             }
+            prog.Invoke(100 , string.Empty);
         }
     }
 }

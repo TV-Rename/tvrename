@@ -87,7 +87,7 @@ namespace TVRename
 
             string showName = "";
 
-            TVDoc.FindSeasEp("", title, out int season, out int episode, out int _, null, regxps);
+            FinderHelper.FindSeasEp("", title, out int season, out int episode, out int _, null, regxps);
 
             if (TVSettings.Instance.DetailedRSSJSONLogging)
             {

@@ -41,7 +41,7 @@ namespace TVRename
                         file.WriteLine(GenerateHeader());
                         foreach (ProcessedEpisode episode in lpe)
                         {
-                            List<FileInfo> files =  TVDoc.FindEpOnDisk(dfc, episode, false);
+                            List<FileInfo> files =  dfc.FindEpOnDisk(episode, false);
 
                             if (!files.Any())
                             {

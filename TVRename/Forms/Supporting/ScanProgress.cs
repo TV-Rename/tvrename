@@ -20,56 +20,76 @@ namespace TVRename
     /// </summary>
     public partial class ScanProgress : Form
     {
-        public bool Finished;
+        private bool finished;
         public bool Ready;
 
-        public int pctLocalSearch;
-        public int pctMediaLib;
-        public int pctRSS;
-        public int pctuTorrent;
+        private int pctAutoBulkAdd;
+        private int pctLocalSearch;
+        private int pctDownloadFolder;
+        private int pctMediaLib;
+        private int pctDownloading;
+        private int pctuTorrent;
+        private string msg;
 
-        public ScanProgress(bool mediaLib, bool searchLocal, bool downloading, bool rss)
+        public ScanProgress(bool autoBulkAdd,bool mediaLib,bool downloadFolder, bool searchLocal, bool downloading, bool rss)
         {
             Ready = false;
-            Finished = false;
+            finished = false;
             InitializeComponent();
 
+            lbBulkAutoAdd.Enabled = autoBulkAdd;
             lbMediaLibrary.Enabled = mediaLib;
+            lbDownloadFolder.Enabled = downloadFolder;
             lbSearchLocally.Enabled = searchLocal;
             lbCheckDownloading.Enabled = downloading;
             lbSearchRSS.Enabled = rss;
         }
 
-        public void UpdateProg()
+        private void UpdateProg()
         {
+            pbBulkAutoAdd.Value = ((pctAutoBulkAdd < 0) ? 0 : ((pctAutoBulkAdd > 100) ? 100 : pctAutoBulkAdd));
+            pbBulkAutoAdd.Update();
             pbMediaLib.Value = ((pctMediaLib < 0) ? 0 : ((pctMediaLib > 100) ? 100 : pctMediaLib));
             pbMediaLib.Update();
+            pbDownloadFolder.Value = ((pctDownloadFolder< 0) ? 0 : ((pctDownloadFolder > 100) ? 100 : pctDownloadFolder));
+            pbDownloadFolder.Update();
             pbLocalSearch.Value = ((pctLocalSearch < 0) ? 0 : ((pctLocalSearch > 100) ? 100 : pctLocalSearch));
             pbLocalSearch.Update();
-            pbRSS.Value = ((pctRSS < 0) ? 0 : ((pctRSS > 100) ? 100 : pctRSS));
+            pbRSS.Value = ((pctDownloading < 0) ? 0 : ((pctDownloading > 100) ? 100 : pctDownloading));
             pbRSS.Update();
             pbDownloading.Value = ((pctuTorrent < 0) ? 0 : ((pctuTorrent > 100) ? 100 : pctuTorrent));
             pbDownloading.Update();
+            lblMessage.Text = msg;
         }
 
-        public void MediaLibProg(int p)
+        public void MediaLibProg(int p, string message)
         {
             pctMediaLib = p;
+            msg = message;
         }
 
-        public void LocalSearchProg(int p)
+        public void DownloadFolderProg(int p, string message)
+        {
+            pctDownloadFolder = p;
+            msg = message;
+        }
+
+        public void LocalSearchProg(int p, string message)
         {
             pctLocalSearch = p;
+            msg = message;
         }
 
-        public void RSSProg(int p)
+        public void ToBeDownloadedProg(int p, string message)
         {
-            pctRSS = p;
+            pctDownloading = p;
+            msg = message;
         }
 
-        public void DownloadingProg(int p)
+        public void DownloadingProg(int p, string message)
         {
             pctuTorrent = p;
+            msg = message;
         }
 
         private void ScanProgress_Load(object sender, System.EventArgs e)
@@ -82,13 +102,19 @@ namespace TVRename
         {
             UpdateProg();
             timer1.Start();
-            if (Finished)
+            if (finished)
                 Close();
         }
 
         public void Done()
         {
-            Finished = true;
+            finished = true;
+        }
+
+        public void AddNewProg(int p, string message)
+        {
+            pctAutoBulkAdd = p;
+            msg = message;
         }
     }
 }
