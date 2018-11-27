@@ -293,7 +293,7 @@ namespace TVRename
                     continue; // move on
 
                 ShowItem si = cbShowList.SelectedIndex >= 0 ? shows[cbShowList.SelectedIndex] : null;
-                bool r = TVDoc.FindSeasEp(fi, out int seas, out int ep, out int maxEp, si, rel, false,
+                bool r = FinderHelper.FindSeasEp(fi, out int seas, out int ep, out int maxEp, si, rel, false,
                     out TVSettings.FilenameProcessorRE matchRex);
 
                 ListViewItem lvi = new ListViewItem { Text = fi.Name };

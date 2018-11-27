@@ -222,7 +222,7 @@ namespace TVRename
                     if (ei.FirstAired != null && ei.FirstAired < DateTime.Now)
                         epAiredCount++;
 
-                    List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc,ei,false);
+                    List<FileInfo> fl = dfc.FindEpOnDisk(ei,false);
                     if (fl != null)
                     {
                         if (fl.Count != 0)
@@ -408,9 +408,10 @@ namespace TVRename
                 {
                     // for each episode in season, find it on disk
                     bool first = true;
+                    DirFilesCache dfc = new DirFilesCache();
                     foreach (ProcessedEpisode epds in show.SeasonEpisodes[seas.SeasonNumber])
                     {
-                        List<FileInfo> fl = TVDoc.FindEpOnDisk(new DirFilesCache() , epds,false);
+                        List<FileInfo> fl = dfc.FindEpOnDisk(epds,false);
                         if ((fl != null) && (fl.Count > 0))
                         {
                             if (first)

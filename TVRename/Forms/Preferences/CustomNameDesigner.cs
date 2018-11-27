@@ -77,7 +77,7 @@ namespace TVRename
                 string fn = TVSettings.Instance.FilenameFriendly(cn.NameFor(pe));
                 lvi.Text = fn;
 
-                bool ok = TVDoc.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.Show);
+                bool ok = FinderHelper.FindSeasEp(new FileInfo(fn + ".avi"), out int seas, out int ep, out int maxEp, pe.Show);
                 bool ok1 = ok && (seas == pe.AppropriateSeasonNumber);
                 bool ok2 = ok && (ep == pe.AppropriateEpNum);
                 string pre1 = ok1 ? "" : "* ";

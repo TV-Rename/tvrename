@@ -25,7 +25,7 @@ namespace TVRename
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct)
         {
-            prog.Invoke(startpct);
+            prog.Invoke(startpct,"Starting searching through files");
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
@@ -50,7 +50,7 @@ namespace TVRename
                 if (ActionCancel)
                     return;
 
-                prog.Invoke(startpct + ((totPct-startpct) * (++currentItem) / (totalN + 1)));
+                prog.Invoke(startpct + ((totPct-startpct) * (++currentItem) / (totalN + 1)),me.Filename);
 
                 ItemList thisRound = new ItemList();
                 List<DirCacheEntry> matchedFiles= new List<DirCacheEntry>();
@@ -103,7 +103,7 @@ namespace TVRename
             if (TVSettings.Instance.KeepTogether)
                 KeepTogether(newList);
 
-            prog.Invoke(totPct);
+            prog.Invoke(totPct,string.Empty);
 
             if (!TVSettings.Instance.LeaveOriginals)
             {
@@ -292,7 +292,7 @@ namespace TVRename
 
             try
             {
-                if (FileHelper.IgnoreFile(dce.TheFile))return false;
+                if (dce.TheFile.IgnoreFile()) return false;
 
                 //do any of the possible names for the series match the filename?
                 matched = (me.Episode.Show.GetSimplifiedPossibleShowNames()
@@ -300,7 +300,7 @@ namespace TVRename
 
                 if (matched)
                 {
-                    bool regularMatch = TVDoc.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.Show) &&
+                    bool regularMatch = FinderHelper.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.Show) &&
                              seasF == season &&
                              epF == epnum;
 

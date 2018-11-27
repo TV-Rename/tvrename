@@ -180,8 +180,16 @@ namespace TVRename
         public static bool IsSubfolderOf(this string thisOne, string ofThat)
         {
             // need terminating slash, otherwise "c:\abc def" will match "c:\abc"
-            thisOne += System.IO.Path.DirectorySeparatorChar.ToString();
-            ofThat += System.IO.Path.DirectorySeparatorChar.ToString();
+            if (!thisOne.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+            {
+                thisOne += System.IO.Path.DirectorySeparatorChar.ToString();
+            }
+
+            if (!ofThat.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
+            {
+                ofThat += System.IO.Path.DirectorySeparatorChar.ToString();
+            }
+
             int l = ofThat.Length;
             return ((thisOne.Length >= l) && (thisOne.Substring(0, l).ToLower() == ofThat.ToLower()));
         }
@@ -296,7 +304,7 @@ namespace TVRename
             return directoryName;
         }
 
-        public static bool IgnoreFile(FileInfo fi)
+        public static bool IgnoreFile(this FileInfo fi)
         {
             if (!TVSettings.Instance.UsefulExtension(fi.Extension, false))
                 return true; // move on

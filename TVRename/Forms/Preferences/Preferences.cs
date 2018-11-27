@@ -213,6 +213,7 @@ namespace TVRename
             s.periodCheckHours = int.Parse(domainUpDown1.SelectedItem?.ToString()??"1");
             s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
             s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
+            s.DoBulkAddInScan = cbScanIncludesBulkAdd.Checked;
 
             s.EpJPGs = cbEpThumbJpg.Checked;
             s.SeriesJpg = cbSeriesJpg.Checked;
@@ -478,6 +479,7 @@ namespace TVRename
             cbSearchLocally.Checked = s.SearchLocally;
             cbLeaveOriginals.Checked = s.LeaveOriginals;
             enterPreferredLanguage = s.PreferredLanguageCode;
+            cbScanIncludesBulkAdd.Checked= s.DoBulkAddInScan ;
 
             cbEpThumbJpg.Checked = s.EpJPGs;
             cbSeriesJpg.Checked = s.SeriesJpg;

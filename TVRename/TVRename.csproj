@@ -146,6 +146,7 @@
     <Compile Include="Exporter\UpcomingExporter.cs" />
     <Compile Include="Exporter\UpcomingiCAL.cs" />
     <Compile Include="Finders\DownloadFinder.cs" />
+    <Compile Include="Finders\FinderHelper.cs" />
     <Compile Include="Finders\qBitTorrentFinder.cs" />
     <Compile Include="Finders\JSONWebpageFinder.cs" />
     <Compile Include="Finders\RSSItem.cs" />
@@ -264,10 +265,13 @@
     <Compile Include="TVRename\ActionEngine.cs" />
     <Compile Include="TVRename\BullkAddManager.cs" />
     <Compile Include="TVRename\CacheUpdater.cs" />
+    <Compile Include="TVRename\Class1.cs" />
+    <Compile Include="TVRename\DownloadDirectoryReview.cs" />
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
     <Compile Include="Utility\DateSorterWTW.cs" />
     <Compile Include="Utility\DaySorter.cs" />
+    <Compile Include="Utility\Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
     <Compile Include="Utility\Helper\FileHelper.cs" />
     <Compile Include="Utility\FileSystemProperties.cs" />

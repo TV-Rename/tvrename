@@ -647,7 +647,7 @@ namespace TVRename
             FileCacheWithSubFolders = false;
         }
 
-        protected void Prog(int percent) => SetProg?.Invoke(percent);
+        protected void Prog(int percent,string message) => SetProg?.Invoke(percent,message);
 
         protected abstract bool NewTorrentEntry(string torrentFile, int numberInTorrent);
 
@@ -824,7 +824,7 @@ namespace TVRename
                 // list of dictionaries
                 for (int i = 0; i < fileList.Items.Count; i++)
                 {
-                    Prog(100 * i / fileList.Items.Count);
+                    Prog(100 * i / fileList.Items.Count,i.ToString());
                     if (fileList.Items[i].Type != BTChunk.kDictionary)
                         return false;
 
@@ -881,7 +881,7 @@ namespace TVRename
                 tvTree.Update();
             }
 
-            Prog(0);
+            Prog(0,string.Empty);
 
             return true;
         }
@@ -1215,7 +1215,7 @@ namespace TVRename
                 if (FileHelper.SimplifyAndCheckFilename(simplifiedfname, m.TheSeries.Name, false, true))
                 {
                     // see if season and episode match
-                    bool findFile = TVDoc.FindSeasEp("", simplifiedfname, out int seasF, out int epF, out int maxEp,
+                    bool findFile = FinderHelper.FindSeasEp("", simplifiedfname, out int seasF, out int epF, out int maxEp,
                         m.Show, Rexps,
                         out TVSettings.FilenameProcessorRE rex);
 
@@ -1343,14 +1343,14 @@ namespace TVRename
             SetPrios = setPrios;
             Results = results;
 
-            Prog(0);
+            Prog(0,string.Empty);
 
             if (!LoadResumeDat())
                 return false;
 
             bool r = true;
 
-            Prog(0);
+            Prog(0, string.Empty);
 
             if (hashSearch)
                 BuildFileCache(searchFolder, searchSubFolders);
@@ -1365,7 +1365,7 @@ namespace TVRename
             if (Altered && !testMode)
                 WriteResumeDat();
 
-            Prog(0);
+            Prog(0,string.Empty);
 
             return r;
         }

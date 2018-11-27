@@ -52,7 +52,7 @@ namespace TVRename
 
                         if (airdt.HasValue && airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
                         {
-                            List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc, ei);
+                            List<FileInfo> fl = dfc.FindEpOnDisk(ei);
                             if ((fl != null) && (fl.Count > 0))
                                 writer.WriteValue("true");
                             else if (ei.Show.DoMissingCheck)
