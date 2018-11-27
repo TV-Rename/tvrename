@@ -23,7 +23,7 @@ namespace TVRename
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
-                prog.Invoke(totPct);
+                prog.Invoke(totPct,string.Empty);
                 return;
             }
 
@@ -38,7 +38,7 @@ namespace TVRename
 
             if (r == null)
             {
-                prog.Invoke(totPct);
+                prog.Invoke(totPct,string.Empty);
                 return;
             }
 
@@ -48,7 +48,7 @@ namespace TVRename
                 if (res != null && res.status == "False")
                 {
                     LOGGER.Error("Error processing data from SABnzbd (Queue Check): {0}", res.error);
-                    prog.Invoke(totPct);
+                    prog.Invoke(totPct, string.Empty);
                     return;
                 }
             }
@@ -65,7 +65,7 @@ namespace TVRename
             catch (Exception e)
             {
                 LOGGER.Error(e, "Error processing data from SABnzbd (Queue Check)");
-                prog.Invoke(totPct);
+                prog.Invoke(totPct, string.Empty);
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace TVRename
                 if (ActionCancel)
                     return;
 
-                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
+                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)),action.Filename);
 
                 string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
 
@@ -92,7 +92,7 @@ namespace TVRename
                     FileInfo file = new FileInfo(te.filename);
 
                     if (!FileHelper.SimplifyAndCheckFilename(file.FullName, showname, true, false)) continue;
-                    if (!TVDoc.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
+                    if (!FinderHelper.FindSeasEp(file, out int seasF, out int epF, out int _, action.Episode.Show) ||
                         (seasF != action.Episode.AppropriateSeasonNumber) || (epF != action.Episode.AppropriateEpNum)) continue;
                     toRemove.Add(action);
                     newList.Add(new ItemDownloading(te, action.Episode, action.TheFileNoExt, DownloadApp.SABnzbd));
@@ -106,7 +106,7 @@ namespace TVRename
             foreach (Item action in newList)
                 ActionList.Add(action);
 
-            prog.Invoke(totPct);
+            prog.Invoke(totPct, string.Empty);
         }
 
         private static byte[] DownloadPage(string theUrl)

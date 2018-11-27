@@ -168,7 +168,7 @@ namespace TVRename
         public BetaMode mode = BetaMode.ProductionOnly;
         public float upgradeDirtyPercent = 20;
         public float replaceMargin = 10;
-        public bool ReplaceWithBetterQuality = true;
+        public bool ReplaceWithBetterQuality = false;
         public KeepTogetherModes keepTogetherMode = KeepTogetherModes.All;
 
         public bool ShowCollections = false;
@@ -258,6 +258,7 @@ namespace TVRename
         public bool runPeriodicCheck = false;
         public int periodCheckHours = 1;
         public bool runStartupCheck = false;
+        public bool DoBulkAddInScan = false; 
 
         private TVSettings()
         {
@@ -399,6 +400,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "PeriodicScan", runPeriodicCheck);
             XmlHelper.WriteElementToXml(writer, "PeriodicScanHours", periodCheckHours);
             XmlHelper.WriteElementToXml(writer, "RemoveDownloadDirectoriesFiles", RemoveDownloadDirectoriesFiles);
+            XmlHelper.WriteElementToXml(writer, "DoBulkAddInScan", DoBulkAddInScan);
             XmlHelper.WriteElementToXml(writer, "DeleteShowFromDisk", DeleteShowFromDisk);
             XmlHelper.WriteElementToXml(writer, "SABAPIKey", SABAPIKey);
             XmlHelper.WriteElementToXml(writer, "CheckSABnzbd", CheckSABnzbd);
@@ -946,7 +948,7 @@ namespace TVRename
             BGDownload = xmlSettings.ExtractBool("BGDownload") ?? false;
             OfflineMode = xmlSettings.ExtractBool("OfflineMode")??false;
             DetailedRSSJSONLogging = xmlSettings.ExtractBool("DetailedRSSJSONLogging") ?? false;
-            ReplaceWithBetterQuality = xmlSettings.ExtractBool("ReplaceWithBetterQuality")??true;
+            ReplaceWithBetterQuality = xmlSettings.ExtractBool("ReplaceWithBetterQuality")??false;
             ExportWTWRSSTo = xmlSettings.ExtractString("ExportWTWRSSTo");
             ExportWTWXML = xmlSettings.ExtractBool("ExportWTWXML")??false;
             ExportWTWXMLTo = xmlSettings.ExtractString("ExportWTWXMLTo");
@@ -1052,6 +1054,7 @@ namespace TVRename
             runPeriodicCheck = xmlSettings.ExtractBool("PeriodicScan") ?? false;
             periodCheckHours = xmlSettings.ExtractInt("PeriodicScanHours")??1;
             RemoveDownloadDirectoriesFiles = xmlSettings.ExtractBool("RemoveDownloadDirectoriesFiles") ?? false;
+            DoBulkAddInScan = xmlSettings.ExtractBool("DoBulkAddInScan") ?? false;
             DeleteShowFromDisk = xmlSettings.ExtractBool("DeleteShowFromDisk")??true;
             EpJPGs = xmlSettings.ExtractBool("EpJPGs") ?? false;
             SeriesJpg = xmlSettings.ExtractBool("SeriesJpg") ?? false;

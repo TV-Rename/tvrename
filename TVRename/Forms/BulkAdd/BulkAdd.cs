@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Threading;
+using Alphaleonis.Win32.Filesystem;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using DaveChambers.FolderBrowserDialogEx;
 
@@ -27,8 +28,8 @@ namespace TVRename
     {
         private FolderMonitorProgress progressDialog;
         public int FmpPercent;
-        public bool FmpStopNow;
         public string FmpUpto;
+        public CancellationTokenSource TokenSource;
         private readonly TVDoc mDoc;
         private readonly BulkAddManager engine;
 
@@ -138,9 +139,12 @@ namespace TVRename
 
             if (searchFolderBrowser.ShowDialog(this) == DialogResult.OK)
             {
-                TVSettings.Instance.LibraryFolders.Add(searchFolderBrowser.SelectedPath.ToLower());
-                mDoc.SetDirty();
-                FillFolderStringLists();
+                if (Directory.Exists(searchFolderBrowser.SelectedPath))
+                {
+                    TVSettings.Instance.LibraryFolders.Add(searchFolderBrowser.SelectedPath);
+                    mDoc.SetDirty();
+                    FillFolderStringLists();
+                }
             }
         }
 
@@ -196,11 +200,13 @@ namespace TVRename
             tabControl1.SelectedTab = tbResults;
             tabControl1.Update();
 
-            FmpStopNow = false;
+            CancellationTokenSource cts = new CancellationTokenSource();
+            TokenSource = cts;
+
             FmpUpto = "Checking folders";
             FmpPercent = 0;
 
-            Thread fmpshower = new Thread(FmpShower) {Name = "'Bulk Add Shows' Progress (Folder Check)"};
+            Thread fmpshower = new Thread(FmpShower){Name = "'Bulk Add Shows' Progress (Folder Check)"};
             fmpshower.Start();
 
             while (progressDialog == null || !progressDialog.Ready)
@@ -208,11 +214,14 @@ namespace TVRename
                 Thread.Sleep(10);
             }
 
-            engine.CheckFolders(ref FmpStopNow, ref FmpPercent);
-            
-            FmpStopNow = true;
-
+            engine.CheckFolders(cts.Token, UpdateProgress);
+            cts.Cancel();
             FillNewShowList(false);
+        }
+
+        private void UpdateProgress(int percent, string message)
+        {
+            FmpPercent = percent;
         }
 
         private static void lstFMMonitorFolders_DragOver(object _, DragEventArgs e)
@@ -240,7 +249,7 @@ namespace TVRename
                     DirectoryInfo di = new DirectoryInfo(path);
                     if (di.Exists)
                     {
-                        engine.CheckFolderForShows(di, true, out DirectoryInfo[] _);
+                        engine.CheckFolderForShows(di, true, out DirectoryInfo[] _,true);
                         FillNewShowList(true);
                     }
                 }
@@ -293,7 +302,9 @@ namespace TVRename
             if (engine.AddItems.Count == 0)
                 return;
 
-            FmpStopNow = false;
+            CancellationTokenSource cts = new CancellationTokenSource();
+            TokenSource = cts;
+
             FmpUpto = "Identifying shows";
             FmpPercent = 0;
 
@@ -312,7 +323,7 @@ namespace TVRename
             {
                 FmpPercent = 100 * n++ / n2;
 
-               if (FmpStopNow)
+               if (cts.IsCancellationRequested)
                    break;
 
                 if (ai.CodeKnown)
@@ -325,7 +336,7 @@ namespace TVRename
                 lvFMNewShows.Update();
                 Update();
             }
-            FmpStopNow = true;
+            cts.Cancel();
         }
 
         private void bnRemoveNewFolder_Click(object _, System.EventArgs e)

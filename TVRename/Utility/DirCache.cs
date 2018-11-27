@@ -69,14 +69,13 @@ namespace TVRename
                 DirectoryInfo di = new DirectoryInfo(folder);
                 if (!di.Exists)
                     return count;
-
                 FileInfo[] f2 = di.GetFiles();
                 foreach (FileInfo ff in f2)
                 {
                     count++;
                     Add(new DirCacheEntry(ff));
                     if ((prog != null) && (totalFiles != 0))
-                        prog.Invoke(100 * (count) / totalFiles);
+                        prog.Invoke(100 * (count) / totalFiles, string.Empty);
                 }
 
                 if (subFolders)

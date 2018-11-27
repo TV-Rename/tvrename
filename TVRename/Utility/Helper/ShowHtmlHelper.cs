@@ -165,7 +165,7 @@ namespace TVRename
             sb.AppendSeason(s,si,col);
             foreach (ProcessedEpisode ep in GetBestEpisodes(si,s))
             {
-                List<FileInfo> fl = TVDoc.FindEpOnDisk(dfc, ep);
+                List<FileInfo> fl = dfc.FindEpOnDisk(ep);
                 sb.AppendEpisode(ep,fl,col);
             }
             sb.AppendLine(HTMLFooter());

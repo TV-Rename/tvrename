@@ -21,7 +21,7 @@ namespace TVRename
         {
             int c = ActionList.Count + 2;
             int n = 1;
-            prog.Invoke(startpct);
+            prog.Invoke(startpct,"Searching on RSS Feed...");
 
             // ReSharper disable once InconsistentNaming
             RssItemList RSSList = new RssItemList();
@@ -38,7 +38,7 @@ namespace TVRename
                 if (ActionCancel)
                     return;
 
-                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
+                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)),action.Filename);
 
                 ProcessedEpisode pe = action.Episode;
                 string simpleShowName = Helpers.SimplifyName(pe.Show.ShowName);
@@ -72,7 +72,7 @@ namespace TVRename
             foreach (Item action in newItems)
                 ActionList.Add(action);
 
-            prog.Invoke(totPct);
+            prog.Invoke(totPct,string.Empty);
         }
     }
 }

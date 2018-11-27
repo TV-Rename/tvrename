@@ -300,6 +300,7 @@ namespace TVRename
             this.label20 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
+            this.cbScanIncludesBulkAdd = new System.Windows.Forms.CheckBox();
             this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
@@ -1882,6 +1883,7 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.cbScanIncludesBulkAdd);
             this.tpScanOptions.Controls.Add(this.cbHigherQuality);
             this.tpScanOptions.Controls.Add(this.cbSearchJSON);
             this.tpScanOptions.Controls.Add(this.cbCheckqBitTorrent);
@@ -1911,7 +1913,7 @@ namespace TVRename
             // cbHigherQuality
             // 
             this.cbHigherQuality.AutoSize = true;
-            this.cbHigherQuality.Location = new System.Drawing.Point(9, 394);
+            this.cbHigherQuality.Location = new System.Drawing.Point(9, 393);
             this.cbHigherQuality.Name = "cbHigherQuality";
             this.cbHigherQuality.Size = new System.Drawing.Size(256, 17);
             this.cbHigherQuality.TabIndex = 18;
@@ -1942,7 +1944,7 @@ namespace TVRename
             // chkAutoMergeLibraryEpisodes
             // 
             this.chkAutoMergeLibraryEpisodes.AutoSize = true;
-            this.chkAutoMergeLibraryEpisodes.Location = new System.Drawing.Point(9, 371);
+            this.chkAutoMergeLibraryEpisodes.Location = new System.Drawing.Point(9, 370);
             this.chkAutoMergeLibraryEpisodes.Name = "chkAutoMergeLibraryEpisodes";
             this.chkAutoMergeLibraryEpisodes.Size = new System.Drawing.Size(306, 17);
             this.chkAutoMergeLibraryEpisodes.TabIndex = 15;
@@ -1952,7 +1954,7 @@ namespace TVRename
             // chkAutoMergeDownloadEpisodes
             // 
             this.chkAutoMergeDownloadEpisodes.AutoSize = true;
-            this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(9, 349);
+            this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(9, 348);
             this.chkAutoMergeDownloadEpisodes.Name = "chkAutoMergeDownloadEpisodes";
             this.chkAutoMergeDownloadEpisodes.Size = new System.Drawing.Size(337, 17);
             this.chkAutoMergeDownloadEpisodes.TabIndex = 13;
@@ -1972,7 +1974,7 @@ namespace TVRename
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(6, 310);
+            this.label40.Location = new System.Drawing.Point(6, 309);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(94, 13);
             this.label40.TabIndex = 11;
@@ -1981,7 +1983,7 @@ namespace TVRename
             // cbxUpdateAirDate
             // 
             this.cbxUpdateAirDate.AutoSize = true;
-            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 326);
+            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 325);
             this.cbxUpdateAirDate.Name = "cbxUpdateAirDate";
             this.cbxUpdateAirDate.Size = new System.Drawing.Size(197, 17);
             this.cbxUpdateAirDate.TabIndex = 10;
@@ -1991,7 +1993,7 @@ namespace TVRename
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(6, 263);
+            this.label33.Location = new System.Drawing.Point(6, 262);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(80, 13);
             this.label33.TabIndex = 9;
@@ -2000,7 +2002,7 @@ namespace TVRename
             // cbAutoCreateFolders
             // 
             this.cbAutoCreateFolders.AutoSize = true;
-            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 279);
+            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 278);
             this.cbAutoCreateFolders.Name = "cbAutoCreateFolders";
             this.cbAutoCreateFolders.Size = new System.Drawing.Size(192, 17);
             this.cbAutoCreateFolders.TabIndex = 8;
@@ -3151,6 +3153,16 @@ namespace TVRename
             this.tcTabs.TabIndex = 0;
             this.tcTabs.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tpSearch_DrawItem);
             // 
+            // cbScanIncludesBulkAdd
+            // 
+            this.cbScanIncludesBulkAdd.AutoSize = true;
+            this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(9, 416);
+            this.cbScanIncludesBulkAdd.Name = "cbScanIncludesBulkAdd";
+            this.cbScanIncludesBulkAdd.Size = new System.Drawing.Size(159, 17);
+            this.cbScanIncludesBulkAdd.TabIndex = 19;
+            this.cbScanIncludesBulkAdd.Text = "Do Bulk-Add as part of scan";
+            this.cbScanIncludesBulkAdd.UseVisualStyleBackColor = true;
+            //
             // cbShowCollections
             // 
             this.cbShowCollections.AutoSize = true;
@@ -3503,6 +3515,7 @@ namespace TVRename
         private System.Windows.Forms.TextBox txtWPL;
         private System.Windows.Forms.CheckBox cbWPL;
         private System.Windows.Forms.CheckBox cbDetailedRSSJSONLogging;
+        private System.Windows.Forms.CheckBox cbScanIncludesBulkAdd;
         private System.Windows.Forms.CheckBox cbShowCollections;
     }
 }

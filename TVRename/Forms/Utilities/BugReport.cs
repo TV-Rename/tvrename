@@ -77,7 +77,7 @@ namespace TVRename
 
                 foreach (DirCacheEntry fi in dirC)
                 {
-                    bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, null);
+                    bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, null);
                     bool useful = TVSettings.Instance.UsefulExtension(fi.TheFile.Extension, false);
                     txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" );
                 }
@@ -106,7 +106,7 @@ namespace TVRename
                                 files.AddFolder(null, 0, 0, folder, true);
                             foreach (DirCacheEntry fi in files)
                             {
-                                bool r = TVDoc.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);
+                                bool r = FinderHelper.FindSeasEp(fi.TheFile, out int seas, out int ep, out int maxEp, si);
                                 bool useful = TVSettings.Instance.UsefulExtension(fi.TheFile.Extension, false); 
                                 txt.AppendLine(fi.TheFile.FullName + " (" + (r ? "OK" : "No") + " " + seas + "," + ep + "," + maxEp + " " + (useful ? fi.TheFile.Extension : "-") + ")" );
                             }

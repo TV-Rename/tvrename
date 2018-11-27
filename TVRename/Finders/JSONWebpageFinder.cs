@@ -24,7 +24,7 @@ namespace TVRename
         {
             int c = ActionList.Count + 2;
             int n = 1;
-            prog.Invoke(startpct);
+            prog.Invoke(startpct, "Searching on JSON Page...");
 
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
@@ -35,7 +35,7 @@ namespace TVRename
                     if (ActionCancel)
                         return;
 
-                    prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)));
+                    prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)),action.Filename);
 
                     ProcessedEpisode pe = action.Episode;
                     string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
@@ -77,7 +77,7 @@ namespace TVRename
                                         !FileHelper.SimplifyAndCheckFilename(itemName, simpleSeriesName, true, false))
                                         continue;
 
-                                    if (!TVDoc.FindSeasEp(itemName, out int seas, out int ep, out int _,
+                                    if (!FinderHelper.FindSeasEp(itemName, out int seas, out int ep, out int _,
                                         action.Episode.Show))
                                         continue;
 
@@ -125,7 +125,7 @@ namespace TVRename
             foreach (Item action in newItems)
                 ActionList.Add(action);
 
-            prog.Invoke(totPct);
+            prog.Invoke(totPct,string.Empty);
         }
     }
 }
