@@ -51,16 +51,7 @@ namespace TVRename
                     {
                         if (!gitHubReleaseJson["assets"].HasValues) continue; //we have no files for this release, so ignore
 
-                        DateTime.TryParse(gitHubReleaseJson["published_at"].ToString(), out DateTime releaseDate);
-                        UpdateVersion testVersion = new UpdateVersion(gitHubReleaseJson["tag_name"].ToString(),
-                            UpdateVersion.VersionType.semantic)
-                        {
-                            DownloadUrl = gitHubReleaseJson["assets"][0]["browser_download_url"].ToString(),
-                            ReleaseNotesText = gitHubReleaseJson["body"].ToString(),
-                            ReleaseNotesUrl = gitHubReleaseJson["html_url"].ToString(),
-                            ReleaseDate = releaseDate,
-                            IsBeta = (gitHubReleaseJson["prerelease"].ToString() == "True")
-                        };
+                        UpdateVersion testVersion = ParseFromJson(gitHubReleaseJson);
 
                         //all versions want to be considered if you are in the beta stream
                         if (testVersion.NewerThan(latestBetaVersion)) latestBetaVersion = testVersion;
@@ -107,6 +98,21 @@ namespace TVRename
                 return latestBetaVersion;
 
             return null;
+        }
+
+        private static UpdateVersion ParseFromJson(JObject gitHubReleaseJson)
+        {
+            DateTime.TryParse(gitHubReleaseJson["published_at"].ToString(), out DateTime releaseDate);
+            UpdateVersion testVersion = new UpdateVersion(gitHubReleaseJson["tag_name"].ToString(),
+                UpdateVersion.VersionType.semantic)
+            {
+                DownloadUrl = gitHubReleaseJson["assets"][0]["browser_download_url"].ToString(),
+                ReleaseNotesText = gitHubReleaseJson["body"].ToString(),
+                ReleaseNotesUrl = gitHubReleaseJson["html_url"].ToString(),
+                ReleaseDate = releaseDate,
+                IsBeta = (gitHubReleaseJson["prerelease"].ToString() == "True")
+            };
+            return testVersion;
         }
 
         private static UpdateVersion ObtainCurrentVersion()

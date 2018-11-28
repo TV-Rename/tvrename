@@ -151,7 +151,7 @@ namespace TVRename
 
                 try
                 {
-                    for (; ; )
+                    while (true)
                     {
                         while (actionPause)
                             Thread.Sleep(100);
