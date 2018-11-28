@@ -23,9 +23,9 @@ namespace TVRename
         public Op Operation;
         public readonly FileInfo To;
 
-        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, TVSettings.TidySettings tidyup,ItemMissing undoItem)
+        public ActionCopyMoveRename(Op operation, FileInfo from, FileInfo to, ProcessedEpisode ep, bool doTidyup,ItemMissing undoItem)
         {
-            Tidyup = tidyup;
+            Tidyup = doTidyup? TVSettings.Instance.Tidyup:null;
             PercentDone = 0;
             Episode = ep;
             Operation = operation;
@@ -37,7 +37,7 @@ namespace TVRename
         public ActionCopyMoveRename(FileInfo fi, FileInfo existingFile, ProcessedEpisode pep): 
             this(TVSettings.Instance.LeaveOriginals ? Op.copy : Op.move, fi,
                 existingFile,
-                pep, TVSettings.Instance.Tidyup, null)
+                pep, true, null)
             {}
 
         #region Action Members

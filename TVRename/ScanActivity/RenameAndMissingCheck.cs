@@ -161,7 +161,7 @@ namespace TVRename
                                 else
                                 {
                                     mDoc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
-                                        newFile, ep, null, null));
+                                        newFile, ep, false, null));
 
                                     //The following section informs the DownloadIdentifers that we already plan to
                                     //copy a file inthe appropriate place and they do not need to worry about downloading 
