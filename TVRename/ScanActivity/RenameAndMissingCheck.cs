@@ -173,8 +173,8 @@ namespace TVRename
                             }
                         }
 
-                        if (missCheck && TVSettings.Instance.UsefulExtension(fi.Extension, false)
-                        ) // == MISSING CHECK part 1/2 ==
+                        if (missCheck && TVSettings.Instance.UsefulExtension(fi.Extension, false))
+                            // == MISSING CHECK part 1/2 ==
                         {
                             // first pass of missing check is to tally up the episodes we do have
                             if (localEps[epNum] is null) localEps[epNum] = actualFile;
