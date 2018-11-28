@@ -23,7 +23,8 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.local;
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct)
+        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
+            TVDoc.ScanSettings settings)
         {
             prog.Invoke(startpct,"Starting searching through files");
 
@@ -37,7 +38,7 @@ namespace TVRename
             DirCache dirCache = new DirCache();
             foreach (string s in TVSettings.Instance.DownloadFolders)
             {
-                if (ActionCancel)
+                if (settings.Token.IsCancellationRequested)
                     return;
 
                 dirCache.AddFolder(prog, 0, fileCount, s, true);
@@ -47,7 +48,7 @@ namespace TVRename
             int totalN = ActionList.Count;
             foreach (ItemMissing me in ActionList.MissingItems())
             {
-                if (ActionCancel)
+                if (settings.Token.IsCancellationRequested)
                     return;
 
                 prog.Invoke(startpct + ((totPct-startpct) * (++currentItem) / (totalN + 1)),me.Filename);
@@ -57,14 +58,14 @@ namespace TVRename
 
                 foreach (DirCacheEntry dce in dirCache)
                 {
-                    if (!ReviewFile(me, thisRound, dce)) continue;
+                    if (!ReviewFile(me, thisRound, dce,settings )) continue;
 
                     matchedFiles.Add(dce);
                 }
 
                 if (matchedFiles.Count == 1 )
                 {
-                    if (!OtherActionsMatch(matchedFiles[0], me))
+                    if (!OtherActionsMatch(matchedFiles[0], me,settings))
                     {
                         toRemove.Add(me);
                         newList.AddRange(thisRound);
@@ -173,14 +174,14 @@ namespace TVRename
             return bestMatchedFiles;
         }
 
-        private bool OtherActionsMatch(DirCacheEntry matchedFile, Item me)
+        private bool OtherActionsMatch(DirCacheEntry matchedFile, Item me,TVDoc.ScanSettings settings)
         //This is used to check whether the selected file may match any other files we are looking for
         {
             foreach (ItemMissing testMissingAction in ActionList.MissingItems())
             {
                 if (testMissingAction.SameAs(me)) continue;
 
-                if (ReviewFile(testMissingAction, new ItemList(), matchedFile))
+                if (ReviewFile(testMissingAction, new ItemList(), matchedFile,settings))
                 {
                     //We have 2 options that match  me and testAction - See whether one is subset of the other
                     if (me.Episode.Show.ShowName.Contains(testMissingAction.Episode.Show.ShowName)) continue; //'me' is a better match, so don't worry about the new one
@@ -242,7 +243,7 @@ namespace TVRename
                     string t = "Path or filename too long. " + action.From.FullName + ", " + e.Message;
                     LOGGER.Warn(e, "Path or filename too long. " + action.From.FullName);
 
-                    if ((!Doc.Args.Unattended) && (!Doc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    if ((!mDoc.Args.Unattended) && (!mDoc.Args.Hide)) MessageBox.Show(t, "Path or filename too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
             }
 
@@ -282,9 +283,9 @@ namespace TVRename
             return actionlist.CopyMoveItems().Any(cmAction => cmAction.SameSource(newitem));
         }
 
-        private bool ReviewFile(ItemMissing me, ItemList addTo, DirCacheEntry dce)
+        private bool ReviewFile(ItemMissing me, ItemList addTo, DirCacheEntry dce,TVDoc.ScanSettings settings)
         {
-            if (ActionCancel) return true;
+            if (settings.Token.IsCancellationRequested) return true;
             
             int season = me.Episode.AppropriateSeasonNumber;
             int epnum = me.Episode.AppropriateEpNum;
@@ -378,7 +379,7 @@ namespace TVRename
                 LOGGER.Warn(e, "Path too long. " + dce.TheFile.FullName);
 
                 t += ".  More information is available in the log file";
-                if ((!Doc.Args.Unattended) && (!Doc.Args.Hide))
+                if ((!mDoc.Args.Unattended) && (!mDoc.Args.Hide))
                     MessageBox.Show(t, "Path too long", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 t = "DirectoryName " + dce.TheFile.DirectoryName + ", File name: " + dce.TheFile.Name;

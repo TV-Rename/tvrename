@@ -5,7 +5,7 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    internal static class DownloadDirectoryReview
+    internal class CleanDownloadDirectory:ScanActivity
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -314,5 +314,16 @@ namespace TVRename
             return returnActions;
         }
 
+        public CleanDownloadDirectory(TVDoc doc) : base(doc)
+        {
+        }
+
+        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        {
+            mDoc.TheActionList.AddNullableRange(Go(prog,showList,settings.Unattended));
+        }
+
+        public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
+                                         TVSettings.Instance.ReplaceWithBetterQuality;
     }
 }

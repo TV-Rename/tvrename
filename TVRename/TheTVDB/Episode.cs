@@ -139,12 +139,12 @@ namespace TVRename
             ImdbCode = r.ExtractString("ImdbCode") ?? r.ExtractString("IMDB_ID") ?? r.ExtractString("imdbId");
             ProductionCode = r.ExtractString("ProductionCode") ?? r.ExtractString("productionCode");
 
-            DvdChapter = r.ExtractInt("DvdChapter") ?? r.ExtractInt("dvdChapter") ;
-            AirsBeforeSeason = r.ExtractInt("AirsBeforeSeason") ?? r.ExtractInt("airsBeforeSeason") ?? r.ExtractInt("airsbefore_season") ;
-            AirsBeforeEpisode = r.ExtractInt("AirsBeforeEpisode") ?? r.ExtractInt("airsBeforeEpisode") ?? r.ExtractInt("airsbefore_episode") ;
-            AirsAfterSeason = r.ExtractInt("AirsAfterSeason") ;
-            SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount") ;
-            AbsoluteNumber = r.ExtractInt("AbsoluteNumber") ;
+            DvdChapter = r.ExtractInt("DvdChapter") ?? r.ExtractInt("dvdChapter");
+            AirsBeforeSeason = r.ExtractInt("AirsBeforeSeason") ?? r.ExtractInt("airsBeforeSeason") ?? r.ExtractInt("airsbefore_season");
+            AirsBeforeEpisode = r.ExtractInt("AirsBeforeEpisode") ?? r.ExtractInt("airsBeforeEpisode") ?? r.ExtractInt("airsbefore_episode");
+            AirsAfterSeason = r.ExtractInt("AirsAfterSeason");
+            SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount");
+            AbsoluteNumber = r.ExtractInt("AbsoluteNumber");
 
             try
             {

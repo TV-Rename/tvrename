@@ -11,11 +11,12 @@ namespace TVRename
     {
         public qBitTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckqBitTorrent;
-        
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct)
+
+        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
+            TVDoc.ScanSettings settings)
         {
             List<TorrentEntry> downloading = GetqBitTorrentDownloads();
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.qBitTorrent);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.qBitTorrent,settings);
         }
 
         private static List<TorrentEntry> GetqBitTorrentDownloads()

@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,13 +14,13 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename
 {
-    static class Beta
+    internal static class Beta
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         internal static void LogShowEpisodeSizes(TVDoc doc)
         {
-            doc.PreventAutoScan("Find Double Episodes");
+            doc.PreventAutoScan("Show File Sizes");
             StringBuilder output = new StringBuilder();
 
             output.AppendLine("");
@@ -185,7 +193,5 @@ namespace TVRename
 
             return oneFound;
         }
-
-
     }
 }

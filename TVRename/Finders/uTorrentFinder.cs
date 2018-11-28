@@ -8,8 +8,9 @@ namespace TVRename
     {
         public uTorrentFinder(TVDoc i) : base(i) { }
         public override bool Active() => TVSettings.Instance.CheckuTorrent;
-        
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct)
+
+        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
+            TVDoc.ScanSettings settings)
         {
             // get list of files being downloaded by uTorrent
             string resDatFile = TVSettings.Instance.ResumeDatPath;
@@ -22,7 +23,7 @@ namespace TVRename
 
             List<TorrentEntry> downloading = btr.AllFilesBeingDownloaded();
 
-            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.uTorrent);
+            SearchForAppropriateDownloads(prog, startpct, totPct, downloading, DownloadApp.uTorrent,settings);
         }
 
         internal static void StartTorrentDownload(string torrentFileName, string directoryName = "")

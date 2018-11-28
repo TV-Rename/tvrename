@@ -214,7 +214,7 @@ namespace TVRename
                 Thread.Sleep(10);
             }
 
-            engine.CheckFolders(cts.Token, UpdateProgress);
+            engine.CheckFolders(cts.Token, UpdateProgress,true);
             cts.Cancel();
             FillNewShowList(false);
         }
