@@ -101,41 +101,40 @@ namespace TVRename
             SetDefaults();
 
             CustomShowName = xmlSettings.ExtractString("ShowName");
-            UseCustomShowName = xmlSettings.ExtractBool("UseCustomShowName") ?? false;
-            UseCustomLanguage = xmlSettings.ExtractBool("UseCustomLanguage") ?? false;
+            UseCustomShowName = xmlSettings.ExtractBool("UseCustomShowName",false);
+            UseCustomLanguage = xmlSettings.ExtractBool("UseCustomLanguage",false);
             CustomLanguageCode = xmlSettings.ExtractString("CustomLanguageCode");
             CustomShowName = xmlSettings.ExtractString("CustomShowName");
             TvdbCode = xmlSettings.ExtractInt("TVDBID") ?? -1;
-            CountSpecials = xmlSettings.ExtractBool("CountSpecials") ?? false;
-            ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate") ?? true;
+            CountSpecials = xmlSettings.ExtractBool("CountSpecials",false);
+            ShowNextAirdate = xmlSettings.ExtractBool("ShowNextAirdate",true);
             AutoAddFolderBase = xmlSettings.ExtractString("FolderBase");
-            DoRename = xmlSettings.ExtractBool("DoRename") ?? true;
-            DoMissingCheck = xmlSettings.ExtractBool("DoMissingCheck") ?? true;
-            DvdOrder = xmlSettings.ExtractBool("DVDOrder") ?? false;
-            UseCustomSearchUrl = xmlSettings.ExtractBool("UseCustomSearchURL") ?? false;
+            DoRename = xmlSettings.ExtractBool("DoRename",true);
+            DoMissingCheck = xmlSettings.ExtractBool("DoMissingCheck",true);
+            DvdOrder = xmlSettings.ExtractBool("DVDOrder",false);
+            UseCustomSearchUrl = xmlSettings.ExtractBool("UseCustomSearchURL",false);
             CustomSearchUrl = xmlSettings.ExtractString("CustomSearchURL");
             ShowTimeZone = xmlSettings.ExtractString("TimeZone") ?? TimeZone.DefaultTimeZone(); // default, is correct for most shows;
-            ForceCheckFuture = xmlSettings.ExtractBool("ForceCheckFuture")
-                                       ?? xmlSettings.ExtractBool("ForceCheckAll")
-                                       ?? false;
-            ForceCheckNoAirdate = xmlSettings.ExtractBool("ForceCheckNoAirdate")
-                                  ?? xmlSettings.ExtractBool("ForceCheckAll")
-                                  ?? false;
+            ForceCheckFuture = xmlSettings.ExtractBoolBackupDefault("ForceCheckFuture","ForceCheckAll",false);
+            ForceCheckNoAirdate = xmlSettings.ExtractBoolBackupDefault("ForceCheckNoAirdate","ForceCheckAll",false);
             AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? CustomSeasonName.DefaultStyle();
-            AutoAddType = xmlSettings.ExtractInt("AutoAddType") == null
-                ? AutomaticFolderType.libraryDefault
-                : (AutomaticFolderType)xmlSettings.ExtractInt("AutoAddType");
+            AutoAddType = GetAutoAddType(xmlSettings.ExtractInt("AutoAddType"));
             BannersLastUpdatedOnDisk = xmlSettings.ExtractDateTime("BannersLastUpdatedOnDisk");
-            UseSequentialMatch = xmlSettings.ExtractBool("UseSequentialMatch") ?? false;
+            UseSequentialMatch = xmlSettings.ExtractBool("UseSequentialMatch",false);
 
             SetupIgnoreRules(xmlSettings);
             SetupAliases(xmlSettings);
             SetupSeasonRules(xmlSettings);
             SetupSeasonFolders(xmlSettings);
-            UpGradeFromOldSeasonFormat(xmlSettings);
+            UpgradeFromOldSeasonFormat(xmlSettings);
         }
 
-        private void UpGradeFromOldSeasonFormat(XElement xmlSettings)
+        private static AutomaticFolderType GetAutoAddType(int? value)
+        {
+            return value == null? AutomaticFolderType.libraryDefault: (AutomaticFolderType)value;
+        }
+
+        private void UpgradeFromOldSeasonFormat(XElement xmlSettings)
         {
             //These variables have been discontinued (JULY 2018).  If we have any then we should migrate to the new values
             bool upgradeFromOldAutoAddFunction = xmlSettings.Descendants("AutoAddNewSeasons").Any()

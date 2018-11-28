@@ -62,6 +62,25 @@ namespace TVRename
                 // ignored
             }
 
+            DoCopyRename(stats);
+
+            // set NTFS permissions
+            try
+            {
+                if (security != null) To.SetAccessControl(security);
+            }
+            catch
+            {
+                // ignored
+            }
+
+            TidyUpIfNeeded();
+
+            return !Error;
+        }
+
+        private void DoCopyRename(TVRenameStats stats)
+        {
             try
             {
                 //we use a temp name just in case we are interruted or some other problem occurs
@@ -69,7 +88,7 @@ namespace TVRename
 
                 // If both full filenames are the same then we want to move it away and back
                 //This deals with an issue on some systems (XP?) that case insensitive moves did not occur
-                if (IsMoveRename() || FileHelper.Same(From, To)) 
+                if (IsMoveRename() || FileHelper.Same(From, To))
                 {
                     // This step could be slow, so report progress
                     CopyMoveResult moveResult = File.Move(From.FullName, tempName, MoveOptions.CopyAllowed | MoveOptions.ReplaceExisting, CopyProgressCallback, null);
@@ -91,20 +110,7 @@ namespace TVRename
 
                 Done = true;
 
-                switch (Operation)
-                {
-                    case Op.move:
-                        stats.FilesMoved++;
-                        break;
-                    case Op.rename:
-                        stats.FilesRenamed++;
-                        break;
-                    case Op.copy:
-                        stats.FilesCopied++;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+                UpdateStats(stats);
             }
             catch (Exception e)
             {
@@ -112,17 +118,28 @@ namespace TVRename
                 Error = true;
                 ErrorText = e.Message;
             }
+        }
 
-            // set NTFS permissions
-            try
+        private void UpdateStats(TVRenameStats stats)
+        {
+            switch (Operation)
             {
-                if (security != null) To.SetAccessControl(security);
+                case Op.move:
+                    stats.FilesMoved++;
+                    break;
+                case Op.rename:
+                    stats.FilesRenamed++;
+                    break;
+                case Op.copy:
+                    stats.FilesCopied++;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            catch
-            {
-                // ignored
-            }
+        }
 
+        private void TidyUpIfNeeded()
+        {
             try
             {
                 if (Operation == Op.move && Tidyup != null && Tidyup.DeleteEmpty)
@@ -137,8 +154,6 @@ namespace TVRename
                 Error = true;
                 ErrorText = e.Message;
             }
-
-            return !Error;
         }
 
         public override string Produces => To.FullName;

@@ -115,7 +115,7 @@ namespace TVRename
             // </Episode>
 
             SetDefaults(null, null, null);
-            EpisodeId = r.ExtractInt("id")??-1;
+            EpisodeId = r.ExtractInt("id") ?? -1;
             SeriesId = r.ExtractInt("seriesid") ?? -1; // thetvdb series id
             SeasonId = r.ExtractInt("airedSeasonID") ?? r.ExtractInt("seasonid") ?? -1;
             AiredEpNum = r.ExtractInt("airedEpisodeNumber") ?? r.ExtractInt("EpisodeNumber") ?? -1;
@@ -134,7 +134,7 @@ namespace TVRename
             mName = System.Web.HttpUtility.HtmlDecode(XmlHelper.ReadStringFixQuotesAndSpaces(r.ExtractString("EpisodeName")));
 
             DvdDiscId = r.ExtractString("DvdDiscId");
-            Filename = r.ExtractString("Filename")?? r.ExtractString("filename");
+            Filename = r.ExtractString("Filename") ?? r.ExtractString("filename");
             ShowUrl = r.ExtractString("ShowUrl") ?? r.ExtractString("showUrl");
             ImdbCode = r.ExtractString("ImdbCode") ?? r.ExtractString("IMDB_ID") ?? r.ExtractString("imdbId");
             ProductionCode = r.ExtractString("ProductionCode") ?? r.ExtractString("productionCode");
@@ -145,23 +145,22 @@ namespace TVRename
             AirsAfterSeason = r.ExtractInt("AirsAfterSeason");
             SiteRatingCount = r.ExtractInt("SiteRatingCount") ?? r.ExtractInt("siteRatingCount");
             AbsoluteNumber = r.ExtractInt("AbsoluteNumber");
+            FirstAired = ParseAired(r.ExtractString("FirstAired"));
+        }
 
+        private static DateTime? ParseAired(string contents)
+        {
             try
             {
-                string contents = r.ExtractString("FirstAired");
-                if (contents == "")
+                if (string.IsNullOrWhiteSpace(contents))
                 {
-                    FirstAired = null;
+                    return null;
                 }
-                else
-                {
-                    FirstAired = DateTime.ParseExact(contents, "yyyy-MM-dd",
-                        new System.Globalization.CultureInfo(""));
-                }
+                return DateTime.ParseExact(contents, "yyyy-MM-dd",new System.Globalization.CultureInfo(""));
             }
             catch
             {
-                FirstAired = null;
+                return null;
             }
         }
 

@@ -67,12 +67,7 @@ namespace TVRename
                     continue; // folder for the season is not defined, and we're not auto-adding it
 
                 List<ProcessedEpisode> eps = si.SeasonEpisodes[snum];
-                int maxEpisodeNumber = 0;
-                foreach (ProcessedEpisode episode in eps)
-                {
-                    if (episode.AppropriateEpNum > maxEpisodeNumber)
-                        maxEpisodeNumber = episode.AppropriateEpNum;
-                }
+                int maxEpisodeNumber = GetMaxEpisodeNumber(eps);
 
                 // base folder:
                 if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AutoAddType != ShowItem.AutomaticFolderType.none))
@@ -174,7 +169,7 @@ namespace TVRename
                         }
 
                         if (missCheck && TVSettings.Instance.UsefulExtension(fi.Extension, false))
-                            // == MISSING CHECK part 1/2 ==
+                        // == MISSING CHECK part 1/2 ==
                         {
                             // first pass of missing check is to tally up the episodes we do have
                             if (localEps[epNum] is null) localEps[epNum] = actualFile;
@@ -245,7 +240,7 @@ namespace TVRename
                                 FileInfo
                                     filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
 
-                                    mDoc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
+                                mDoc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
                             }
                         } // up to date check, for each episode in thetvdb
 
@@ -253,6 +248,18 @@ namespace TVRename
                     } // if doing missing check
                 } // for each folder for this season of this show
             } // for each season of this show
+        }
+
+        private static int GetMaxEpisodeNumber(List<ProcessedEpisode> eps)
+        {
+            int maxEpisodeNumber = 0;
+            foreach (ProcessedEpisode episode in eps)
+            {
+                if (episode.AppropriateEpNum > maxEpisodeNumber)
+                    maxEpisodeNumber = episode.AppropriateEpNum;
+            }
+
+            return maxEpisodeNumber;
         }
 
         protected override bool Active() => true;

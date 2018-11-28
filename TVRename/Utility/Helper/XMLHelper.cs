@@ -140,6 +140,21 @@ namespace TVRename
 
             return null;
         }
+
+        public static bool ExtractBool(this XElement xmlSettings, string elementName,bool defaultValue)
+        {
+            if (xmlSettings.Descendants(elementName).Any())
+                return XmlConvert.ToBoolean((string)(xmlSettings.Descendants(elementName).First()));
+
+            return defaultValue;
+        }
+        public static bool ExtractBoolBackupDefault(this XElement xmlSettings, string elementName, string backupElementName,bool defaultValue)
+        {
+            return xmlSettings.ExtractBool(elementName)
+                ?? xmlSettings.ExtractBool(backupElementName)
+                ?? defaultValue;
+        }
+
         public static DateTime? ExtractDateTime(this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
