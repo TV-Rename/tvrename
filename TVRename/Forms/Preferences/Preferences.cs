@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 
@@ -36,6 +37,10 @@ namespace TVRename
         private readonly Season sampleSeason;
 
         private readonly LoadLanguageDoneDel loadLanguageDone;
+   
+        private class FailedValidationException : Exception
+        {
+        }
 
         public Preferences(TVDoc doc, bool goToScanOpts, Season s)
         {
@@ -53,66 +58,41 @@ namespace TVRename
                 tcTabs.SelectedTab = tpScanOptions;
         }
 
+        private void ValidateExtensions(TextBox validateField, TabPage focusTabPage)
+        {
+            if (TVSettings.OKExtensionsString(validateField.Text)) return;
+
+            MessageBox.Show(
+                "Extensions list must be separated by semicolons, and each extension must start with a dot.",
+                "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            tcTabs.SelectedTab = focusTabPage;
+            validateField.Focus();
+            throw new FailedValidationException();
+        }
+
         private void OKButton_Click(object sender, EventArgs e)
         {
-            if (!TVSettings.OKExtensionsString(txtEmptyIgnoreExtensions.Text))
+            try
             {
-                MessageBox.Show(
-                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
-                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tcTabs.SelectedTab = tbFolderDeleting;
-                txtEmptyIgnoreExtensions.Focus();
+                ValidateForm();
+            }
+            catch (FailedValidationException)
+            {
                 return;
             }
 
-            if (!TVSettings.OKExtensionsString(txtVideoExtensions.Text))
-            {
-                MessageBox.Show(
-                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
-                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tcTabs.SelectedTab = tbFilesAndFolders;
-                txtVideoExtensions.Focus();
-                return;
-            }
-            if (!TVSettings.OKExtensionsString(txtSubtitleExtensions.Text))
-            {
-                MessageBox.Show(
-                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
-                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tcTabs.SelectedTab = tpSubtitles;
-                txtSubtitleExtensions.Focus();
-                return;
-            }
-            if (!TVSettings.OKExtensionsString(txtOtherExtensions.Text))
-            {
-                MessageBox.Show(
-                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
-                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tcTabs.SelectedTab = tbFilesAndFolders;
-                txtOtherExtensions.Focus();
-                return;
-            }
-            if (!TVSettings.OKExtensionsString(txtKeepTogether.Text))
-            {
-                MessageBox.Show(
-                    "Extensions list must be separated by semicolons, and each extension must start with a dot.",
-                    "Preferences", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tcTabs.SelectedTab = tbFilesAndFolders;
-                txtKeepTogether.Focus();
-                return;
-            }
+            UpdateSettings();
 
+            mDoc.SetDirty();
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void UpdateSettings()
+        {
             TVSettings s = TVSettings.Instance;
 
-            s.Replacements.Clear();
-            for (int i = 1; i < ReplacementsGrid.RowsCount; i++)
-            {
-                string from = (string) (ReplacementsGrid[i, 0].Value);
-                string to = (string) (ReplacementsGrid[i, 1].Value);
-                bool ins = (bool) (ReplacementsGrid[i, 2].Value);
-                if (!string.IsNullOrEmpty(from))
-                    s.Replacements.Add(new TVSettings.Replacement(from, to, ins));
-            }
+            UpdateReplacement(s);
 
             s.DetailedRSSJSONLogging = cbDetailedRSSJSONLogging.Checked;
             s.ExportWTWRSS = cbWTWRSS.Checked;
@@ -161,7 +141,7 @@ namespace TVRename
             s.HideMyShowsSpoilers = chkHideMyShowsSpoilers.Checked;
             s.HideWtWSpoilers = chkHideWtWSpoilers.Checked;
             s.AutoSelectShowInMyShows = cbAutoSelInMyShows.Checked;
-            s.AutoCreateFolders = cbAutoCreateFolders.Checked ;  
+            s.AutoCreateFolders = cbAutoCreateFolders.Checked;
             s.SpecialsFolderName = txtSpecialsFolderName.Text;
             s.SeasonFolderFormat = txtSeasonFormat.Text;
             s.searchSeasonWordsString = tbSeasonSearchTerms.Text;
@@ -175,8 +155,8 @@ namespace TVRename
             s.SABHostPort = txtSABHostPort.Text;
             s.SABAPIKey = txtSABAPIKey.Text;
             s.CheckSABnzbd = cbCheckSABnzbd.Checked;
-            s.qBitTorrentHost= tbqBitTorrentHost.Text;
-            s.qBitTorrentPort= tbqBitTorrentPort.Text;
+            s.qBitTorrentHost = tbqBitTorrentHost.Text;
+            s.qBitTorrentPort = tbqBitTorrentPort.Text;
             s.CheckqBitTorrent = cbCheckqBitTorrent.Checked;
             s.SearchRSS = cbSearchRSS.Checked;
             s.EpTBNs = cbEpTBNs.Checked;
@@ -210,7 +190,7 @@ namespace TVRename
             s.MonitorFolders = cbMonitorFolder.Checked;
             s.runStartupCheck = chkScanOnStartup.Checked;
             s.runPeriodicCheck = chkScheduledScan.Checked;
-            s.periodCheckHours = int.Parse(domainUpDown1.SelectedItem?.ToString()??"1");
+            s.periodCheckHours = int.Parse(domainUpDown1.SelectedItem?.ToString() ?? "1");
             s.RemoveDownloadDirectoriesFiles = cbCleanUpDownloadDir.Checked;
             s.DeleteShowFromDisk = cbDeleteShowFromDisk.Checked;
             s.DoBulkAddInScan = cbScanIncludesBulkAdd.Checked;
@@ -236,125 +216,161 @@ namespace TVRename
             s.AutoAddMovieTerms = tbMovieTerms.Text;
             s.PriorityReplaceTerms = tbPriorityOverrideTerms.Text;
 
-            if (rbFolderFanArt.Checked)
-                s.FolderJpgIs = TVSettings.FolderJpgIsType.FanArt;
-            else if (rbFolderBanner.Checked)
-                s.FolderJpgIs = TVSettings.FolderJpgIsType.Banner;
-            else if (rbFolderSeasonPoster.Checked)
-                s.FolderJpgIs = TVSettings.FolderJpgIsType.SeasonPoster;
-            else
-                s.FolderJpgIs = TVSettings.FolderJpgIsType.Poster;
-
-            if (rdoQuickScan.Checked)
-                s.MonitoredFoldersScanType = TVSettings.ScanType.Quick;
-            else if (rdoRecentScan.Checked)
-                s.MonitoredFoldersScanType = TVSettings.ScanType.Recent;
-            else
-                s.MonitoredFoldersScanType = TVSettings.ScanType.Full;
+            s.FolderJpgIs = FolderJpgMode();
+            s.MonitoredFoldersScanType = ScanTypeMode();
 
             s.mode = cbMode.Text == "Beta" ? TVSettings.BetaMode.BetaToo : TVSettings.BetaMode.ProductionOnly;
 
             s.ShowCollections = cbShowCollections.Checked;
 
-            if (cbKeepTogetherMode.Text == "All but these")
-            {
-                s.keepTogetherMode = TVSettings.KeepTogetherModes.AllBut;
-            } else if (cbKeepTogetherMode.Text == "Just")
+            s.keepTogetherMode = KeepTogetherMode();
 
-            {
-                s.keepTogetherMode = TVSettings.KeepTogetherModes.Just;
-            }
-            else
-                s.keepTogetherMode = TVSettings.KeepTogetherModes.All;
+            s.PreferredLanguageCode =
+                TheTVDB.Instance.LanguageList.First(l => l.Name == cbLanguages.Text)?.Abbreviation ??
+                s.PreferredLanguageCode;
 
-
-            TheTVDB.Instance.GetLock("Preferences-OK");
-            foreach (Language l in TheTVDB.Instance.LanguageList)
-            {
-                if (l.Name == cbLanguages.Text)
-                {
-                    s.PreferredLanguageCode = l.Abbreviation;
-                    break;
-                }
-            }
             s.WTWDoubleClick = rbWTWScan.Checked ? TVSettings.WTWDoubleClickAction.Scan : TVSettings.WTWDoubleClickAction.Search;
 
-            TheTVDB.Instance.SaveCache();
-            TheTVDB.Instance.Unlock("Preferences-OK");
+            s.SampleFileMaxSizeMB = IntFrom(txtMaxSampleSize.Text, 50);
+            s.upgradeDirtyPercent = PercentFrom(tbPercentDirty.Text, 20);
+            s.replaceMargin = PercentFrom(tbPercentBetter.Text, 10);
+            s.ParallelDownloads = IntFrom(txtMaxSampleSize.Text, 1,4,8);
 
+            UpdateRSSURLs(s);
+            
+            s.ShowStatusColors = GetShowStatusColouring();
+        }
+
+        private static int IntFrom(string text, int min, int def, int max)
+        {
+            int value;
             try
             {
-                s.SampleFileMaxSizeMB = int.Parse(txtMaxSampleSize.Text);
+                value = int.Parse(text);
             }
             catch
             {
-                s.SampleFileMaxSizeMB = 50;
+                return def;
             }
 
+            if (value < min) return min;
+
+            if (value > max) return max;
+
+            return value;
+        }
+
+        private static int IntFrom(string text, int def)
+        {
             try
             {
-                s.upgradeDirtyPercent = float.Parse(tbPercentDirty.Text);
+                return int.Parse(text);
             }
             catch
             {
-                s.upgradeDirtyPercent = 20;
+                return def;
             }
 
-            if (s.upgradeDirtyPercent < 1)
-                s.upgradeDirtyPercent = 1;
-            else if (s.upgradeDirtyPercent > 100)
-                s.upgradeDirtyPercent = 100;
+        }
 
-            try
+        private TVSettings.ScanType ScanTypeMode()
+        {
+            if (rdoQuickScan.Checked)
+                return TVSettings.ScanType.Quick;
+            if (rdoRecentScan.Checked)
+                return TVSettings.ScanType.Recent;
+            return TVSettings.ScanType.Full;
+        }
+
+        private TVSettings.FolderJpgIsType FolderJpgMode()
+        {
+            if (rbFolderFanArt.Checked)
+                return TVSettings.FolderJpgIsType.FanArt;
+            if (rbFolderBanner.Checked)
+                return TVSettings.FolderJpgIsType.Banner;
+            if (rbFolderSeasonPoster.Checked)
+                return TVSettings.FolderJpgIsType.SeasonPoster;
+            return TVSettings.FolderJpgIsType.Poster;
+        }
+
+        private TVSettings.KeepTogetherModes KeepTogetherMode()
+        {
+            switch (cbKeepTogetherMode.Text)
             {
-                s.replaceMargin = float.Parse(tbPercentBetter.Text);
+                case "All but these":
+                    return TVSettings.KeepTogetherModes.AllBut;
+                case "Just":
+                    return TVSettings.KeepTogetherModes.Just;
+                default:
+                    return TVSettings.KeepTogetherModes.All;
             }
-            catch
-            {
-                s.replaceMargin = 10;
-            }
+        }
 
-            if (s.replaceMargin < 1)
-                s.replaceMargin = 1;
-            else if (s.replaceMargin > 100)
-                s.replaceMargin = 100;
-
-            try
-            {
-                s.ParallelDownloads = int.Parse(txtParallelDownloads.Text);
-            }
-            catch
-            {
-                s.ParallelDownloads = 4;
-            }
-
-            if (s.ParallelDownloads < 1)
-                s.ParallelDownloads = 1;
-            else if (s.ParallelDownloads > 8)
-                s.ParallelDownloads = 8;
-
+        // ReSharper disable once InconsistentNaming
+        private void UpdateRSSURLs(TVSettings s)
+        {
             // RSS URLs
             s.RSSURLs.Clear();
             for (int i = 1; i < RSSGrid.RowsCount; i++)
             {
-                string url = (string) (RSSGrid[i, 0].Value);
+                string url = (string)(RSSGrid[i, 0].Value);
                 if (!string.IsNullOrEmpty(url))
                     s.RSSURLs.Add(url);
             }
+        }
 
-            s.ShowStatusColors = new TVSettings.ShowStatusColoringTypeList();
+        private TVSettings.ShowStatusColoringTypeList GetShowStatusColouring()
+        {
+            TVSettings.ShowStatusColoringTypeList returnValue = new TVSettings.ShowStatusColoringTypeList();
             foreach (ListViewItem item in lvwDefinedColors.Items)
             {
                 if (item.SubItems.Count > 1 && !string.IsNullOrEmpty(item.SubItems[1].Text) && item.Tag != null &&
                     item.Tag is TVSettings.ShowStatusColoringType type)
                 {
-                    s.ShowStatusColors.Add(type,ColorTranslator.FromHtml(item.SubItems[1].Text));
+                    returnValue.Add(type, ColorTranslator.FromHtml(item.SubItems[1].Text));
                 }
             }
 
-            mDoc.SetDirty();
-            DialogResult = DialogResult.OK;
-            Close();
+            return returnValue;
+        }
+
+        private void ValidateForm()
+        {
+            ValidateExtensions(txtEmptyIgnoreExtensions, tbFolderDeleting);
+            ValidateExtensions(txtVideoExtensions, tbFilesAndFolders);
+            ValidateExtensions(txtSubtitleExtensions, tpSubtitles);
+            ValidateExtensions(txtOtherExtensions, tbFilesAndFolders);
+            ValidateExtensions(txtKeepTogether, tbFilesAndFolders);
+        }
+
+        private static float PercentFrom(string text,float def)
+        {
+            float value;
+            try
+            {
+                value = float.Parse(text);
+            }
+            catch
+            {
+                return def;
+            }
+
+            if (value < 1) return 1;
+            if (value > 100) return 100;
+            return value;
+        }
+
+        private void UpdateReplacement(TVSettings s)
+        {
+            s.Replacements.Clear();
+            for (int i = 1; i < ReplacementsGrid.RowsCount; i++)
+            {
+                string from = (string)(ReplacementsGrid[i, 0].Value);
+                string to = (string)(ReplacementsGrid[i, 1].Value);
+                bool ins = (bool)(ReplacementsGrid[i, 2].Value);
+                if (!string.IsNullOrEmpty(from))
+                    s.Replacements.Add(new TVSettings.Replacement(from, to, ins));
+            }
         }
 
         private void Preferences_Load(object sender, EventArgs e)
@@ -363,14 +379,11 @@ namespace TVRename
 
             TVSettings s = TVSettings.Instance;
 
-            foreach (TVSettings.Replacement rep in s.Replacements)
-            {
-                AddNewReplacementRow(rep.This, rep.That, rep.CaseInsensitive);
-            }
+            PopulateReplacements(s);
 
             txtMaxSampleSize.Text = s.SampleFileMaxSizeMB.ToString();
 
-            cbDetailedRSSJSONLogging.Checked= s.DetailedRSSJSONLogging;
+            cbDetailedRSSJSONLogging.Checked = s.DetailedRSSJSONLogging;
             cbWTWRSS.Checked = s.ExportWTWRSS;
             txtWTWRSS.Text = s.ExportWTWRSSTo;
             cbWTWICAL.Checked = s.ExportWTWICAL;
@@ -396,7 +409,7 @@ namespace TVRename
             cbWPL.Checked = s.ExportRecentWPL;
             txtWPL.Text = s.ExportRecentWPLTo;
 
-            cbShowsTXT.Checked = s.ExportShowsTXT ;
+            cbShowsTXT.Checked = s.ExportShowsTXT;
             txtShowsTXTTo.Text = s.ExportShowsTXTTo;
             cbShowsHTML.Checked = s.ExportShowsHTML;
             txtShowsHTMLTo.Text = s.ExportShowsHTMLTo;
@@ -414,7 +427,7 @@ namespace TVRename
             txtSubtitleExtensions.Text = s.subtitleExtensionsString;
             txtKeepTogether.Text = s.GetKeepTogetherString();
             tbSeasonSearchTerms.Text = s.GetSeasonSearchTermsString();
-            tbPreferredRSSTerms .Text = s.GetPreferredRSSSearchTermsString();
+            tbPreferredRSSTerms.Text = s.GetPreferredRSSSearchTermsString();
 
             cbKeepTogether.Checked = s.KeepTogether;
             cbKeepTogether_CheckedChanged(null, null);
@@ -425,10 +438,10 @@ namespace TVRename
             cbShowEpisodePictures.Checked = s.ShowEpisodePictures;
             chkHideMyShowsSpoilers.Checked = s.HideMyShowsSpoilers;
             chkHideWtWSpoilers.Checked = s.HideWtWSpoilers;
-            cbAutoCreateFolders.Checked = s.AutoCreateFolders; 
+            cbAutoCreateFolders.Checked = s.AutoCreateFolders;
             cbAutoSelInMyShows.Checked = s.AutoSelectShowInMyShows;
             txtSpecialsFolderName.Text = s.SpecialsFolderName;
-            txtSeasonFormat.Text= s.SeasonFolderFormat ;
+            txtSeasonFormat.Text = s.SeasonFolderFormat;
             cbForceLower.Checked = s.ForceLowercaseFilenames;
             cbIgnoreSamples.Checked = s.IgnoreSamples;
             txtRSSuTorrentPath.Text = s.uTorrentPath;
@@ -437,9 +450,9 @@ namespace TVRename
             txtSABAPIKey.Text = s.SABAPIKey;
             tbqBitTorrentHost.Text = s.qBitTorrentHost;
             tbqBitTorrentPort.Text = s.qBitTorrentPort;
-            cbCheckqBitTorrent.Checked= s.CheckqBitTorrent ;
+            cbCheckqBitTorrent.Checked = s.CheckqBitTorrent;
             cbCheckSABnzbd.Checked = s.CheckSABnzbd;
-            cbHigherQuality.Checked= s.ReplaceWithBetterQuality ;
+            cbHigherQuality.Checked = s.ReplaceWithBetterQuality;
 
             txtParallelDownloads.Text = s.ParallelDownloads.ToString();
             tbPercentDirty.Text = s.upgradeDirtyPercent.ToString(CultureInfo.InvariantCulture);
@@ -453,7 +466,7 @@ namespace TVRename
 
             cbSearchRSS.Checked = s.SearchRSS;
             cbEpTBNs.Checked = s.EpTBNs;
-            cbWDLiveEpisodeFiles.Checked= s.wdLiveTvMeta ;
+            cbWDLiveEpisodeFiles.Checked = s.wdLiveTvMeta;
             cbNFOShows.Checked = s.NFOShows;
             cbNFOEpisodes.Checked = s.NFOEpisodes;
             cbKODIImages.Checked = s.KODIImages;
@@ -481,7 +494,7 @@ namespace TVRename
             cbSearchLocally.Checked = s.SearchLocally;
             cbLeaveOriginals.Checked = s.LeaveOriginals;
             enterPreferredLanguage = s.PreferredLanguageCode;
-            cbScanIncludesBulkAdd.Checked= s.DoBulkAddInScan ;
+            cbScanIncludesBulkAdd.Checked = s.DoBulkAddInScan;
 
             cbEpThumbJpg.Checked = s.EpJPGs;
             cbSeriesJpg.Checked = s.SeriesJpg;
@@ -501,7 +514,7 @@ namespace TVRename
             cbEmptyMaxSize.Checked = s.Tidyup.EmptyMaxSizeCheck;
             txtEmptyMaxSize.Text = s.Tidyup.EmptyMaxSizeMB.ToString();
             txtSeasonFolderName.Text = s.defaultSeasonWord;
-            
+
             cbIgnoreRecycleBin.Checked = s.BulkAddIgnoreRecycleBin;
             cbIgnoreNoVideoFolders.Checked = s.BulkAddCompareNoVideoFolders;
             tbMovieTerms.Text = s.AutoAddMovieTerms;
@@ -521,7 +534,7 @@ namespace TVRename
                     rbWTWScan.Checked = true;
                     break;
             }
-            switch(s.keepTogetherMode)
+            switch (s.keepTogetherMode)
             {
                 case TVSettings.KeepTogetherModes.All:
                 default:
@@ -583,24 +596,35 @@ namespace TVRename
                     break;
             }
 
-            if (s.ShowStatusColors != null)
-            {
-                foreach (
-                    System.Collections.Generic.KeyValuePair<TVSettings.ShowStatusColoringType, Color> showStatusColor in
-                        s.ShowStatusColors)
-                {
-                    ListViewItem item = new ListViewItem
-                    {
-                        Text = showStatusColor.Key.Text,
-                        Tag = showStatusColor.Key,
-                        ForeColor = showStatusColor.Value
-                    };
-                    item.SubItems.Add(Helpers.TranslateColorToHtml(showStatusColor.Value));
-                    lvwDefinedColors.Items.Add(item);
-                }
-            }
+            PopulateShowStatusColours(s);
 
             FillTreeViewColoringShowStatusTypeCombobox();
+        }
+
+        private void PopulateReplacements(TVSettings s)
+        {
+            foreach (TVSettings.Replacement rep in s.Replacements)
+            {
+                AddNewReplacementRow(rep.This, rep.That, rep.CaseInsensitive);
+            }
+        }
+
+        private void PopulateShowStatusColours(TVSettings s)
+        {
+            if (s.ShowStatusColors == null) return;
+            foreach (
+                System.Collections.Generic.KeyValuePair<TVSettings.ShowStatusColoringType, Color> showStatusColor in
+                s.ShowStatusColors)
+            {
+                ListViewItem item = new ListViewItem
+                {
+                    Text = showStatusColor.Key.Text,
+                    Tag = showStatusColor.Key,
+                    ForeColor = showStatusColor.Value
+                };
+                item.SubItems.Add(Helpers.TranslateColorToHtml(showStatusColor.Value));
+                lvwDefinedColors.Items.Add(item);
+            }
         }
 
         private void SetDropdownValue(DomainUpDown control, int sPeriodCheckHours)

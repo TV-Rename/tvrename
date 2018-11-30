@@ -26,14 +26,12 @@ namespace TVRename
         public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
             TVDoc.ScanSettings settings)
         {
-            prog.Invoke(startpct,"Starting searching through files");
+            prog.Invoke(startpct, "Starting searching through files");
 
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
 
-            int fileCount = 0;
-            foreach (string s in TVSettings.Instance.DownloadFolders)
-                fileCount += DirCache.CountFiles(s, true);
+            int fileCount = CountFilesInDownloadDirs();
 
             DirCache dirCache = new DirCache();
             foreach (string s in TVSettings.Instance.DownloadFolders)
@@ -51,97 +49,22 @@ namespace TVRename
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                prog.Invoke(startpct + ((totPct-startpct) * (++currentItem) / (totalN + 1)),me.Filename);
+                prog.Invoke(startpct + ((totPct - startpct) * (++currentItem) / (totalN + 1)), me.Filename);
 
                 ItemList thisRound = new ItemList();
-                List<DirCacheEntry> matchedFiles= new List<DirCacheEntry>();
+                List<DirCacheEntry> matchedFiles = FindMatchedFiles(settings, dirCache, me, thisRound);
 
-                foreach (DirCacheEntry dce in dirCache)
-                {
-                    if (!ReviewFile(me, thisRound, dce,settings )) continue;
-
-                    matchedFiles.Add(dce);
-                }
-
-                if (matchedFiles.Count == 1 )
-                {
-                    if (!OtherActionsMatch(matchedFiles[0], me,settings))
-                    {
-                        toRemove.Add(me);
-                        newList.AddRange(thisRound);
-                    }
-                    else
-                    {
-                        LOGGER.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
-                        me.AddComment(
-                            $"Ignoring potential match with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
-                    }
-                }
-                else if (matchedFiles.Count > 1)
-                {
-                    List<DirCacheEntry> bestMatchedFiles = IdentifyBestMatches(matchedFiles);
-
-                    if (bestMatchedFiles.Count == 1)
-                    {
-                        //We have one file that is better, lets use it
-                        toRemove.Add(me);
-                        newList.AddRange(thisRound);
-                    }
-                    else
-                    {
-                        foreach (DirCacheEntry matchedFile in matchedFiles)
-                        {
-                            LOGGER.Warn(
-                                $"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
-
-                            me.AddComment(
-                                $"Ignoring potential match with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
-                        }
-                    }
-                }
+                ProcessMissingItem(settings, newList, toRemove, me, thisRound, matchedFiles);
             }
 
             if (TVSettings.Instance.KeepTogether)
                 KeepTogether(newList);
 
-            prog.Invoke(totPct,string.Empty);
+            prog.Invoke(totPct, string.Empty);
 
             if (!TVSettings.Instance.LeaveOriginals)
             {
-                // go through and change last of each operation on a given source file to a 'Move'
-                // ideally do that move within same filesystem
-
-                // sort based on source file, and destination drive, putting last if destdrive == sourcedrive
-                newList.Sort(new ActionItemSorter());
-
-                // sort puts all the CopyMoveRenames together				
-                // then set the last of each source file to be a move
-                for (int i = 0; i < newList.Count; i++)
-                {
-                    ActionCopyMoveRename cmr1 = newList[i] as ActionCopyMoveRename;
-                    bool ok1 = cmr1 != null;
-
-                    if (!ok1)
-                        continue;
-
-                    bool last = i == (newList.Count - 1);
-                    ActionCopyMoveRename cmr2 = !last ? newList[i + 1] as ActionCopyMoveRename : null;
-                    bool ok2 = cmr2 != null;
-
-                    if (ok2)
-                    {
-                        ActionCopyMoveRename a1 = cmr1;
-                        ActionCopyMoveRename a2 = cmr2;
-                        if (!FileHelper.Same(a1.From, a2.From))
-                            a1.Operation = ActionCopyMoveRename.Op.move;
-                    }
-                    else
-                    {
-                        // last item, or last copymoverename item in the list
-                        ActionCopyMoveRename a1 = cmr1;
-                        a1.Operation = ActionCopyMoveRename.Op.move;
-                    }
-                }
+                ReorganiseToLeaveOriginals(newList);
             }
 
             foreach (Item i in toRemove)
@@ -149,6 +72,106 @@ namespace TVRename
 
             foreach (Item i in newList)
                 ActionList.Add(i);
+        }
+
+        private static void ReorganiseToLeaveOriginals(ItemList newList)
+        {
+            // go through and change last of each operation on a given source file to a 'Move'
+            // ideally do that move within same filesystem
+
+            // sort based on source file, and destination drive, putting last if destdrive == sourcedrive
+            newList.Sort(new ActionItemSorter());
+
+            // sort puts all the CopyMoveRenames together				
+            // then set the last of each source file to be a move
+            for (int i = 0; i < newList.Count; i++)
+            {
+                ActionCopyMoveRename cmr1 = newList[i] as ActionCopyMoveRename;
+                bool ok1 = cmr1 != null;
+
+                if (!ok1)
+                    continue;
+
+                bool last = i == (newList.Count - 1);
+                ActionCopyMoveRename cmr2 = !last ? newList[i + 1] as ActionCopyMoveRename : null;
+                bool ok2 = cmr2 != null;
+
+                if (ok2)
+                {
+                    ActionCopyMoveRename a1 = cmr1;
+                    ActionCopyMoveRename a2 = cmr2;
+                    if (!FileHelper.Same(a1.From, a2.From))
+                        a1.Operation = ActionCopyMoveRename.Op.move;
+                }
+                else
+                {
+                    // last item, or last copymoverename item in the list
+                    ActionCopyMoveRename a1 = cmr1;
+                    a1.Operation = ActionCopyMoveRename.Op.move;
+                }
+            }
+        }
+
+        private List<DirCacheEntry> FindMatchedFiles(TVDoc.ScanSettings settings, DirCache dirCache, ItemMissing me, ItemList thisRound)
+        {
+            List<DirCacheEntry> matchedFiles = new List<DirCacheEntry>();
+
+            foreach (DirCacheEntry dce in dirCache)
+            {
+                if (!ReviewFile(me, thisRound, dce, settings)) continue;
+
+                matchedFiles.Add(dce);
+            }
+
+            return matchedFiles;
+        }
+
+        private void ProcessMissingItem(TVDoc.ScanSettings settings, ItemList newList, ItemList toRemove, ItemMissing me, ItemList thisRound, List<DirCacheEntry> matchedFiles)
+        {
+            if (matchedFiles.Count == 1)
+            {
+                if (!OtherActionsMatch(matchedFiles[0], me, settings))
+                {
+                    toRemove.Add(me);
+                    newList.AddRange(thisRound);
+                }
+                else
+                {
+                    LOGGER.Warn($"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
+                    me.AddComment(
+                        $"Ignoring potential match with file {matchedFiles[0]?.TheFile.FullName} as there are multiple actions for that file");
+                }
+            }
+            else if (matchedFiles.Count > 1)
+            {
+                List<DirCacheEntry> bestMatchedFiles = IdentifyBestMatches(matchedFiles);
+
+                if (bestMatchedFiles.Count == 1)
+                {
+                    //We have one file that is better, lets use it
+                    toRemove.Add(me);
+                    newList.AddRange(thisRound);
+                }
+                else
+                {
+                    foreach (DirCacheEntry matchedFile in matchedFiles)
+                    {
+                        LOGGER.Warn(
+                            $"Ignoring potential match for {me.Episode.Show.ShowName} S{me.Episode.AppropriateSeasonNumber} E{me.Episode.AppropriateEpNum}: with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+
+                        me.AddComment(
+                            $"Ignoring potential match with file {matchedFile?.TheFile.FullName} as there are multiple files for that action");
+                    }
+                }
+            }
+        }
+
+        private static int CountFilesInDownloadDirs()
+        {
+            int fileCount = 0;
+            foreach (string s in TVSettings.Instance.DownloadFolders)
+                fileCount += DirCache.CountFiles(s, true);
+            return fileCount;
         }
 
         private static List<DirCacheEntry> IdentifyBestMatches(List<DirCacheEntry> matchedFiles)
@@ -229,7 +252,7 @@ namespace TVRename
                         if ((TVSettings.Instance.RenameTxtToSub) && (newName.EndsWith(".txt")))
                             newName = newName.Substring(0, newName.Length - 4) + ".sub";
 
-                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, null, null); // tidyup on main action, not this
+                        ActionCopyMoveRename newitem = new ActionCopyMoveRename(action.Operation, fi, FileHelper.FileInFolder(action.To.Directory, newName), action.Episode, false, null); // tidyup on main action, not this
 
                         // check this item isn't already in our to-do list
                         if (ActionListContains(actionlist, newitem)) continue;
@@ -299,79 +322,68 @@ namespace TVRename
                 matched = (me.Episode.Show.GetSimplifiedPossibleShowNames()
                     .Any(name => FileHelper.SimplifyAndCheckFilename(dce.SimplifiedFullName, name)));
 
-                if (matched)
+                if (!matched) return false;
+
+                bool regularMatch = FinderHelper.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.Show) &&
+                         seasF == season &&
+                         epF == epnum;
+
+                bool sequentialMatch = me.Episode.Show.UseSequentialMatch &&
+                          TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) &&
+                          seasF == season &&
+                          epF == epnum;
+
+                if (!regularMatch && !sequentialMatch) return false;
+
+                if (maxEp != -1 && TVSettings.Instance.AutoMergeDownloadEpisodes)
                 {
-                    bool regularMatch = FinderHelper.FindSeasEp(dce.TheFile, out int seasF, out int epF, out int maxEp, me.Episode.Show) &&
-                             seasF == season &&
-                             epF == epnum;
-
-                    bool sequentialMatch = me.Episode.Show.UseSequentialMatch &&
-                              TVDoc.MatchesSequentialNumber(dce.TheFile.Name, ref seasF, ref epF, me.Episode) &&
-                              seasF == season &&
-                              epF == epnum;
-
-                    if (regularMatch || sequentialMatch)
+                    ShowRule sr = new ShowRule
                     {
-                        if (maxEp != -1 && TVSettings.Instance.AutoMergeDownloadEpisodes)
-                        {
-                            ShowRule sr = new ShowRule
-                            {
-                                DoWhatNow = RuleAction.kMerge,
-                                First = epF,
-                                Second = maxEp
-                            };
-                            me.Episode.Show?.AddSeasonRule(seasF, sr);
+                        DoWhatNow = RuleAction.kMerge,
+                        First = epF,
+                        Second = maxEp
+                    };
+                    me.Episode.Show?.AddSeasonRule(seasF, sr);
 
-                            LOGGER.Info(
-                                $"Looking at {me.Episode.Show.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.TheFile.FullName}");
-                            LOGGER.Info($"Added new rule automatically for {sr}");
+                    LOGGER.Info(
+                        $"Looking at {me.Episode.Show.ShowName} and have identified that episode {epF} and {maxEp} of season {seasF} have been merged into one file {dce.TheFile.FullName}");
+                    LOGGER.Info($"Added new rule automatically for {sr}");
 
-                            //Regenerate the episodes with the new rule added
-                            ShowLibrary.GenerateEpisodeDict(me.Episode.Show);
+                    //Regenerate the episodes with the new rule added
+                    ShowLibrary.GenerateEpisodeDict(me.Episode.Show);
 
-                            //Get the newly created processed episode we are after
-                            // ReSharper disable once InconsistentNaming
-                            ProcessedEpisode newPE = me.Episode;
-                            foreach (ProcessedEpisode pe in me.Episode.Show.SeasonEpisodes[seasF])
-                            {
-                                if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
-                            }
-
-                            me = new ItemMissing(newPE, me.TargetFolder,
-                                TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(newPE)));
-                        }
-                        FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
-
-                        if (TVSettings.Instance.PreventMove)
-                        {
-                            //We do not want to move the file, just rename it
-                            fi = new FileInfo(dce.TheFile.DirectoryName + System.IO.Path.DirectorySeparatorChar + me.Filename +
-                                              dce.TheFile.Extension);
-                        }
-
-                        // don't remove the base search folders
-                        bool doTidyup = true;
-                        foreach (string folder in TVSettings.Instance.DownloadFolders)
-                        {
-                            if (folder.SameDirectoryLocation(fi.Directory.FullName))
-                            {
-                                doTidyup = false;
-                                break;
-                            }
-                        }
-
-                        if (dce.TheFile.FullName != fi.FullName)
-                            addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy,  dce.TheFile, fi, me.Episode,
-                                doTidyup ? TVSettings.Instance.Tidyup : null, me));
-
-                        DownloadIdentifiersController di = new DownloadIdentifiersController();
-
-                        // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
-                        addTo.Add(di.ProcessEpisode(me.Episode, fi));
-
-                        return true;
+                    //Get the newly created processed episode we are after
+                    // ReSharper disable once InconsistentNaming
+                    ProcessedEpisode newPE = me.Episode;
+                    foreach (ProcessedEpisode pe in me.Episode.Show.SeasonEpisodes[seasF])
+                    {
+                        if (pe.AppropriateEpNum == epF && pe.EpNum2 == maxEp) newPE = pe;
                     }
+
+                    me = new ItemMissing(newPE, me.TargetFolder,
+                        TVSettings.Instance.FilenameFriendly(TVSettings.Instance.NamingStyle.NameFor(newPE)));
                 }
+                FileInfo fi = new FileInfo(me.TheFileNoExt + dce.TheFile.Extension);
+
+                if (TVSettings.Instance.PreventMove)
+                {
+                    //We do not want to move the file, just rename it
+                    fi = new FileInfo(dce.TheFile.DirectoryName + System.IO.Path.DirectorySeparatorChar + me.Filename +
+                                      dce.TheFile.Extension);
+                }
+
+                // don't remove the base search folders
+                bool doTidyup = !TVSettings.Instance.DownloadFolders.Any(folder => folder.SameDirectoryLocation(fi.Directory.FullName));
+
+                if (dce.TheFile.FullName != fi.FullName)
+                    addTo.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.copy,  dce.TheFile, fi, me.Episode,doTidyup, me));
+
+                DownloadIdentifiersController di = new DownloadIdentifiersController();
+
+                // if we're copying/moving a file across, we might also want to make a thumbnail or NFO for it
+                addTo.Add(di.ProcessEpisode(me.Episode, fi));
+
+                return true;
             }
             catch (System.IO.PathTooLongException e)
             {
