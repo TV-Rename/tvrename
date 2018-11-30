@@ -1573,8 +1573,7 @@ namespace TVRename
                     TVSettings.Instance.LeaveOriginals
                         ? ActionCopyMoveRename.Op.copy
                         : ActionCopyMoveRename.Op.move, from, to
-                    , mi.Episode,
-                    TVSettings.Instance.Tidyup, mi));
+                    , mi.Episode,true, mi));
 
             // and remove old Missing item
             mDoc.TheActionList.Remove(mi);
@@ -3138,7 +3137,7 @@ namespace TVRename
                         TVSettings.Instance.LeaveOriginals
                             ? ActionCopyMoveRename.Op.copy
                             : ActionCopyMoveRename.Op.move, from, to
-                        , mi.Episode, TVSettings.Instance.Tidyup, mi));
+                        , mi.Episode, true, mi));
 
                 // and remove old Missing item
                 mDoc.TheActionList.Remove(mi);

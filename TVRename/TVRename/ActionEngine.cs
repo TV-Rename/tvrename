@@ -147,24 +147,11 @@ namespace TVRename
                 if (!(queuesIn is ActionQueue[] queues))
                     return;
 
-                int n = queues.Length;
-
-                actionWorkers = new List<Thread>();
-                actionSemaphores = new Semaphore[n];
-
-                for (int i = 0; i < n; i++)
-                {
-                    actionSemaphores[i] =
-                        new Semaphore(queues[i].ParallelLimit,
-                            queues[i].ParallelLimit); // allow up to numWorkers working at once
-
-                    Logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name,
-                        queues[i].ParallelLimit, i);
-                }
+                SetupQueues(queues);
 
                 try
                 {
-                    for (;;)
+                    while (true)
                     {
                         while (actionPause)
                             Thread.Sleep(100);
@@ -172,7 +159,7 @@ namespace TVRename
                         // look through the list of semaphores to see if there is one waiting for some work to do
                         bool allDone = true;
                         int which = -1;
-                        for (int i = 0; i < n; i++)
+                        for (int i = 0; i < queues.Length; i++)
                         {
                             // something to do in this queue, and semaphore is available
                             if (queues[i].ActionPosition < queues[i].Actions.Count)
@@ -200,30 +187,13 @@ namespace TVRename
 
                         if (!act.Done)
                         {
-                            Thread t = new Thread(ProcessSingleAction)
-                            {
-                                Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"
-                            };
-
-                            actionWorkers.Add(t);
-                            actionStarting = true; // set to false in thread after it has the semaphore
-                            t.Start(new ProcessActionInfo(which, act));
-
-                            int nfr = actionSemaphores[which]
-                                .Release(1); // release our hold on the semaphore, so that worker can grab it
-
-                            Threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
+                            StartThread(which, act);
                         }
 
                         while (actionStarting) // wait for thread to get the semaphore
                             Thread.Sleep(10); // allow the other thread a chance to run and grab
 
-                        // tidy up any finished workers
-                        for (int i = actionWorkers.Count - 1; i >= 0; i--)
-                        {
-                            if (!actionWorkers[i].IsAlive)
-                                actionWorkers.RemoveAt(i); // remove dead worker
-                        }
+                        TidyDeadWorkers();
                     }
 
                     WaitForAllActionThreadsAndTidyUp();
@@ -243,6 +213,51 @@ namespace TVRename
                     t.Abort();
 
                 WaitForAllActionThreadsAndTidyUp();
+            }
+        }
+
+        private void SetupQueues(ActionQueue[] queues)
+        {
+            int n = queues.Length;
+
+            actionWorkers = new List<Thread>();
+            actionSemaphores = new Semaphore[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                actionSemaphores[i] =
+                    new Semaphore(queues[i].ParallelLimit,
+                        queues[i].ParallelLimit); // allow up to numWorkers working at once
+
+                Logger.Info("Setting up '{0}' worker, with {1} threads in position {2}.", queues[i].Name,
+                    queues[i].ParallelLimit, i);
+            }
+        }
+
+        private void StartThread(int which, Action act)
+        {
+            Thread t = new Thread(ProcessSingleAction)
+            {
+                Name = "ProcessSingleAction(" + act.Name + ":" + act.ProgressText + ")"
+            };
+
+            actionWorkers.Add(t);
+            actionStarting = true; // set to false in thread after it has the semaphore
+            t.Start(new ProcessActionInfo(which, act));
+
+            int nfr = actionSemaphores[which]
+                .Release(1); // release our hold on the semaphore, so that worker can grab it
+
+            Threadslogger.Trace("ActionProcessor[" + which + "] pool has " + nfr + " free");
+        }
+
+        private void TidyDeadWorkers()
+        {
+            // tidy up any finished workers
+            for (int i = actionWorkers.Count - 1; i >= 0; i--)
+            {
+                if (!actionWorkers[i].IsAlive)
+                    actionWorkers.RemoveAt(i); // remove dead worker
             }
         }
 
