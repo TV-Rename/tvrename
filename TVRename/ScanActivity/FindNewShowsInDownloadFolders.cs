@@ -34,14 +34,14 @@ namespace TVRename
             //if so add series to list of series scanned
             if (!Active())
             {
-                Logger.Info("Not looking for new shows as 'Auto-Add' is turned off");
+                LOGGER.Info("Not looking for new shows as 'Auto-Add' is turned off");
                 return;
             }
 
             //Dont support unattended mode
             if (settings.Unattended)
             {
-                Logger.Info("Not looking for new shows as app is unattended");
+                LOGGER.Info("Not looking for new shows as app is unattended");
                 return;
             }
 
@@ -49,7 +49,7 @@ namespace TVRename
 
             foreach (string dirPath in TVSettings.Instance.DownloadFolders)
             {
-                Logger.Info("Parsing {0} for new shows", dirPath);
+                LOGGER.Info("Parsing {0} for new shows", dirPath);
                 if (!Directory.Exists(dirPath)) continue;
                 try
                 {
@@ -66,7 +66,7 @@ namespace TVRename
                 }
                 catch (UnauthorizedAccessException ex)
                 {
-                    Logger.Warn(ex, $"Could not access files in {dirPath}");
+                    LOGGER.Warn(ex, $"Could not access files in {dirPath}");
                 }
             }
 
@@ -78,21 +78,21 @@ namespace TVRename
                 //if hint doesn't match existing added shows
                 if (LookForSeries(hint, addedShows))
                 {
-                    Logger.Info($"Ignoring {hint} as it matches existing shows.");
+                    LOGGER.Info($"Ignoring {hint} as it matches existing shows.");
                     continue;
                 }
 
                 //If the hint contains certain terms then we'll ignore it
                 if (IgnoreHint(hint))
                 {
-                    Logger.Info($"Ignoring {hint} as it is in the ignore list (from Settings).");
+                    LOGGER.Info($"Ignoring {hint} as it is in the ignore list (from Settings).");
                     continue;
                 }
 
                 //If the hint contains certain terms then we'll ignore it
                 if (TVSettings.Instance.IgnoredAutoAddHints.Contains(hint))
                 {
-                    Logger.Info(
+                    LOGGER.Info(
                         $"Ignoring {hint} as it is in the list of ignored terms the user has selected to ignore from prior Auto Adds.");
 
                     continue;
@@ -102,11 +102,11 @@ namespace TVRename
                 string refinedHint = Regex.Replace(hint, @"\(\d{4}\)", "");
 
                 //Remove anything we can from hint to make it cleaner and hence more likely to match
-                refinedHint = Helpers.RemoveSeriesEpisodeIndicators(refinedHint, mDoc.Library.SeasonWords());
+                refinedHint = Helpers.RemoveSeriesEpisodeIndicators(refinedHint, MDoc.Library.SeasonWords());
 
                 if (string.IsNullOrWhiteSpace(refinedHint))
                 {
-                    Logger.Info($"Ignoring {hint} as it refines to nothing.");
+                    LOGGER.Info($"Ignoring {hint} as it refines to nothing.");
                     continue;
                 }
 
@@ -120,8 +120,8 @@ namespace TVRename
                     return;
                 }
 
-                Logger.Info("****************");
-                Logger.Info("Auto Adding New Show");
+                LOGGER.Info("****************");
+                LOGGER.Info("Auto Adding New Show");
 
                 TheTVDB.Instance.GetLock("AutoAddShow");
                 //popup dialog
@@ -136,22 +136,22 @@ namespace TVRename
                 }
                 else if (dr == DialogResult.Abort)
                 {
-                    Logger.Info("Skippng Auto Add Process");
+                    LOGGER.Info("Skippng Auto Add Process");
                     break;
                 }
                 else if (dr == DialogResult.Ignore)
                 {
-                    Logger.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
+                    LOGGER.Info($"Permenantly Ignoring 'Auto Add' for: {hint}");
                     TVSettings.Instance.IgnoredAutoAddHints.Add(hint);
                 }
-                else Logger.Info($"Cancelled Auto adding new show {hint}");
+                else LOGGER.Info($"Cancelled Auto adding new show {hint}");
             }
 
             if (addedShows.Count <= 0) return;
 
-            mDoc.Library.AddRange(addedShows);
-            mDoc.ShowAddedOrEdited(true);
-            Logger.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
+            MDoc.Library.AddRange(addedShows);
+            MDoc.ShowAddedOrEdited(true);
+            LOGGER.Info("Added new shows called: {0}", string.Join(",", addedShows.Select(s => s.ShowName)));
         }
 
         public override bool Active() => TVSettings.Instance.AutoSearchForDownloadedFiles;
@@ -162,7 +162,7 @@ namespace TVRename
                 hint.Contains(term, StringComparison.OrdinalIgnoreCase));
         }
 
-        private bool LookForSeries(string name) => LookForSeries(name, mDoc.Library.Values);
+        private bool LookForSeries(string name) => LookForSeries(name, MDoc.Library.Values);
 
         private static bool LookForSeries(string test, IEnumerable<ShowItem> shows)
         {

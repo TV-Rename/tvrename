@@ -12,10 +12,10 @@ namespace TVRename
 {
     public abstract class ScanActivity
     {
-        protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        protected readonly TVDoc mDoc;
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+        protected readonly TVDoc MDoc;
 
-        protected ScanActivity(TVDoc doc) => mDoc = doc;
+        protected ScanActivity(TVDoc doc) => MDoc = doc;
 
         public abstract void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
             TVDoc.ScanSettings settings);

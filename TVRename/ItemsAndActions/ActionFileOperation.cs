@@ -16,21 +16,21 @@ namespace TVRename
     public abstract class ActionFileOperation : Action
     {
         protected TVSettings.TidySettings Tidyup;
-        protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
 
         protected void DeleteOrRecycleFile(FileInfo file)
         {
             if (file == null) return;
             if (Tidyup is null ||  Tidyup.DeleteEmptyIsRecycle)
             {
-                Logger.Info($"Recycling {file.FullName}");
+                LOGGER.Info($"Recycling {file.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(file.FullName,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                     Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
-                Logger.Info($"Deleting {file.FullName}");
+                LOGGER.Info($"Deleting {file.FullName}");
                 file.Delete(true);
             }
         }
@@ -40,14 +40,14 @@ namespace TVRename
             if (di == null) return;
             if (Tidyup ==null ||Tidyup.DeleteEmptyIsRecycle)
             {
-                Logger.Info($"Recycling {di.FullName}");
+                LOGGER.Info($"Recycling {di.FullName}");
                 Microsoft.VisualBasic.FileIO.FileSystem.DeleteDirectory(di.FullName,
                     Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs,
                     Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
             }
             else
             {
-                Logger.Info($"Deleting {di.FullName}");
+                LOGGER.Info($"Deleting {di.FullName}");
                 di.Delete(true, true);
             }
         }

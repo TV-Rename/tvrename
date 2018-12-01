@@ -24,7 +24,7 @@ namespace TVRename
             //it has all the required files for that show
             if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (allFolders.Any()))
             {
-                mDoc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
+                Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
             }
 
             //MS_TODO Put the bannerrefresh period into the settings file, we'll default to 3 months
@@ -34,11 +34,11 @@ namespace TVRename
 
             if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
             {
-                mDoc.TheActionList.Add(
+                Doc.TheActionList.Add(
                     downloadIdentifiers.ForceUpdateShow(DownloadIdentifier.DownloadType.downloadImage, si));
 
                 si.BannersLastUpdatedOnDisk = DateTime.Now;
-                mDoc.SetDirty();
+                Doc.SetDirty();
             }
 
             // process each folder for each season...
@@ -73,7 +73,7 @@ namespace TVRename
                 if (!string.IsNullOrEmpty(si.AutoAddFolderBase) && (si.AutoAddType != ShowItem.AutomaticFolderType.none))
                 {
                     // main image for the folder itself
-                    mDoc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
+                    Doc.TheActionList.Add(downloadIdentifiers.ProcessShow(si));
                 }
 
                 foreach (string folder in folders)
@@ -88,7 +88,7 @@ namespace TVRename
                     if (TVSettings.Instance.NeedToDownloadBannerFile() && timeForBannerUpdate)
                     {
                         //Image series checks here
-                        mDoc.TheActionList.Add(
+                        Doc.TheActionList.Add(
                             downloadIdentifiers.ForceUpdateSeason(DownloadIdentifier.DownloadType.downloadImage, si,
                                 folder, snum));
                     }
@@ -100,7 +100,7 @@ namespace TVRename
                     bool missCheck = TVSettings.Instance.MissingCheck && si.DoMissingCheck;
 
                     //Image series checks here
-                    mDoc.TheActionList.Add(downloadIdentifiers.ProcessSeason(si, folder, snum));
+                    Doc.TheActionList.Add(downloadIdentifiers.ProcessSeason(si, folder, snum));
 
                     FileInfo[] localEps = new FileInfo[maxEpisodeNumber + 1];
 
@@ -151,11 +151,11 @@ namespace TVRename
                                 //if (FileHelper.FileExistsCaseSensitive(newFile.FullName))
                                 if (FileHelper.FileExistsCaseSensitive(files, newFile))
                                 {
-                                    Logger.Warn($"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
+                                    LOGGER.Warn($"Identified that {actualFile.FullName} should be renamed to {newName}, but it already exists.");
                                 }
                                 else
                                 {
-                                    mDoc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
+                                    Doc.TheActionList.Add(new ActionCopyMoveRename(ActionCopyMoveRename.Op.rename, fi,
                                         newFile, ep, false, null));
 
                                     //The following section informs the DownloadIdentifers that we already plan to
@@ -227,20 +227,20 @@ namespace TVRename
                                     (si.ForceCheckNoAirdate && !dtOk))
                                 {
                                     // then add it as officially missing
-                                    mDoc.TheActionList.Add(new ItemMissing(dbep, folder,
+                                    Doc.TheActionList.Add(new ItemMissing(dbep, folder,
                                         TVSettings.Instance.FilenameFriendly(
                                             TVSettings.Instance.NamingStyle.NameFor(dbep, null, folder.Length))));
                                 }
                             }
                             else
                             {
-                                if (settings.Type == TVSettings.ScanType.Full) mDoc.CurrentStats.NS_NumberOfEpisodes++;
+                                if (settings.Type == TVSettings.ScanType.Full) Doc.CurrentStats.NS_NumberOfEpisodes++;
 
                                 // do NFO and thumbnail checks if required
                                 FileInfo
                                     filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
 
-                                mDoc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
+                                Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
                             }
                         } // up to date check, for each episode in thetvdb
 

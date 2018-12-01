@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Web;
 using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename

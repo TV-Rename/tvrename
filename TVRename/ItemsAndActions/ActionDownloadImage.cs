@@ -25,13 +25,13 @@ namespace TVRename
 
         public ActionDownloadImage(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path) : this(si, pe, dest, path, false) { }
 
-        public ActionDownloadImage(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path, bool mede8erShrink)
+        public ActionDownloadImage(ShowItem si, ProcessedEpisode pe, FileInfo dest, string path, bool shrink)
         {
             Episode = pe;
             this.si = si;
             destination = dest;
             this.path = path;
-            shrinkLargeMede8ErImage = mede8erShrink;
+            shrinkLargeMede8ErImage = shrink;
         }
 
         #region Action Members
@@ -154,7 +154,7 @@ namespace TVRename
 
         public override int Compare(Item o)
         {
-            return !(o is ActionDownloadImage dl) ? 0 : destination.FullName.CompareTo(dl.destination.FullName);
+            return !(o is ActionDownloadImage dl) ? 0 : string.Compare(destination.FullName, dl.destination.FullName, StringComparison.Ordinal);
         }
 
         #endregion

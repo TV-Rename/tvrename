@@ -12,7 +12,7 @@ namespace TVRename
     [XmlRoot("Languages", Namespace = "")]
     public class Languages : List<Language>
     {
-        [XmlIgnoreAttribute] private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        [XmlIgnoreAttribute] private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
         public static Languages Load()
         {
@@ -45,7 +45,7 @@ namespace TVRename
             }
             catch (Exception e)
             {
-                logger.Fatal(e);
+                Logger.Fatal(e);
                 return new Languages();
             }
 
@@ -84,6 +84,7 @@ namespace TVRename
             return null;
         }
 
+        // ReSharper disable once UnusedMember.Global
         public Language GetLanguageFromId(int languageId)
         {
             foreach (Language l in this)

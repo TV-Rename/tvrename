@@ -33,15 +33,15 @@ namespace TVRename
             Type = ProcessedEpisodeType.single;
         }
 
-        public ProcessedEpisode(ProcessedEpisode O)
-            : base(O)
+        public ProcessedEpisode(ProcessedEpisode o)
+            : base(o)
         {
-            NextToAir = O.NextToAir;
-            EpNum2 = O.EpNum2;
-            Ignore = O.Ignore;
-            Show = O.Show;
-            OverallNumber = O.OverallNumber;
-            Type = O.Type;
+            NextToAir = o.NextToAir;
+            EpNum2 = o.EpNum2;
+            Ignore = o.Ignore;
+            Show = o.Show;
+            OverallNumber = o.OverallNumber;
+            Type = o.Type;
         }
 
         public ProcessedEpisode(Episode e, ShowItem si)

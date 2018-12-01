@@ -8,9 +8,9 @@ namespace TVRename.Forms
 {
     public partial class UpdateNotification : Form
     {
-        private readonly UpdateVersion newVersion;
+        private readonly Release newVersion;
 
-        public UpdateNotification(UpdateVersion update)
+        public UpdateNotification(Release update)
         {
             newVersion = update;
             InitializeComponent();

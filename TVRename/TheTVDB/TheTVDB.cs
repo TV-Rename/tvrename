@@ -925,18 +925,27 @@ namespace TVRename
             foreach (XElement bannersXml in r.Descendants("BannersItem"))
             {
                 int seriesId = bannersXml.ExtractInt("SeriesId")??-1;
-                foreach (XElement banner in bannersXml.Descendants("Banners").Descendants("Banner"))
+
+                if (series.ContainsKey(seriesId))
                 {
-                    Banner b = new Banner(seriesId, banner);
+                    foreach (XElement banner in bannersXml.Descendants("Banners").Descendants("Banner"))
+                    {
+                        Banner b = new Banner(seriesId, banner);
 
-                    if (!series.ContainsKey(b.SeriesId))
-                        throw new TVDBException("Can't find the series to add the banner to (TheTVDB).");
+                        if (!series.ContainsKey(b.SeriesId))
+                            throw new TVDBException($"Can't find the series to add the banner {b.BannerId} to (TheTVDB). {seriesId},{b.SeriesId}");
 
-                    SeriesInfo ser = series[b.SeriesId];
+                        SeriesInfo ser = series[b.SeriesId];
 
-                    ser.AddOrUpdateBanner(b);
+                        ser.AddOrUpdateBanner(b);
+                    }
+
+                    series[seriesId].BannersLoaded = true;
                 }
-                series[seriesId].BannersLoaded = true;
+                else
+                {
+                    Logger.Error($"Banners were found for series {seriesId} - Ignoring them");
+                }
             }
         }
 

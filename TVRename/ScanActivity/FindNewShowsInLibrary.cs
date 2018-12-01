@@ -20,7 +20,7 @@ namespace TVRename
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
-            BulkAddManager bam = new BulkAddManager(mDoc);
+            BulkAddManager bam = new BulkAddManager(MDoc);
             bam.CheckFolders(settings.Token, prog,false);
             foreach (FoundFolder folder in bam.AddItems)
             {
@@ -30,7 +30,7 @@ namespace TVRename
                 if (folder.CodeKnown)
                     continue;
 
-                BulkAddManager.GuessShowItem(folder, mDoc.Library);
+                BulkAddManager.GuessShowItem(folder, MDoc.Library);
 
                 if (folder.CodeKnown)
                     continue;
@@ -45,14 +45,14 @@ namespace TVRename
             if (!bam.AddItems.Any(s => s.CodeKnown)) return;
 
             bam.AddAllToMyShows();
-            Logger.Info("Added new shows called: {0}", string.Join(",", bam.AddItems.Where(s => s.CodeKnown).Select(s => s.Folder)));
+            LOGGER.Info("Added new shows called: {0}", string.Join(",", bam.AddItems.Where(s => s.CodeKnown).Select(s => s.Folder)));
 
-            mDoc.SetDirty();
-            mDoc.DoDownloadsFG();
-            mDoc.DoWhenToWatch(true);
+            MDoc.SetDirty();
+            MDoc.DoDownloadsFG();
+            MDoc.DoWhenToWatch(true);
 
-            mDoc.WriteUpcoming();
-            mDoc.WriteRecent();
+            MDoc.WriteUpcoming();
+            MDoc.WriteRecent();
         }
 
         public override bool Active() => TVSettings.Instance.DoBulkAddInScan;
