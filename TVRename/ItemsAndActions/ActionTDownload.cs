@@ -16,7 +16,6 @@ namespace TVRename
         private readonly string theFileNoExt;
         public readonly string SourceName;
         private readonly string url;
-        private ProcessedEpisode pe;
 
         public ActionTDownload(string name,string url, string toWhereNoExt, ProcessedEpisode pe,ItemMissing me)
         {
@@ -32,7 +31,7 @@ namespace TVRename
             SourceName = rss.Title;
             url = rss.URL;
             this.theFileNoExt = theFileNoExt;
-            this.pe = pe;
+            Episode = pe;
             UndoItemMissing = me;
         }
 

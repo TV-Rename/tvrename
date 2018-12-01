@@ -592,7 +592,7 @@ namespace TVRename
             {
                 if (filter.Filter(si)
                     & (string.IsNullOrEmpty(filterTextBox.Text) || si.GetSimplifiedPossibleShowNames().Any(name =>
-                           name.Contains(filterTextBox.Text, StringComparison.OrdinalIgnoreCase))
+                           name.Contains(Helpers.SimplifyName(filterTextBox.Text), StringComparison.OrdinalIgnoreCase))
                     ))
                 {
                     TreeNode tvn = AddShowItemToTree(si);
@@ -1797,7 +1797,7 @@ namespace TVRename
         {
             UpdateTimer.Stop();
 
-            Task<UpdateVersion> tuv = VersionUpdater.CheckForUpdatesAsync();
+            Task<Release> tuv = VersionUpdater.CheckForUpdatesAsync();
             NotifyUpdates(await tuv, false);
         }
 
@@ -2063,6 +2063,7 @@ namespace TVRename
             Logger.Info("****************");
             Logger.Info("Adding New Show");
             MoreBusy();
+            mDoc.PreventAutoScan("Add Show");
             ShowItem si = new ShowItem();
             TheTVDB.Instance.GetLock("AddShow");
             AddEditShow aes = new AddEditShow(si);
@@ -2080,6 +2081,7 @@ namespace TVRename
             else Logger.Info("Cancelled adding new show");
 
             LessBusy();
+            mDoc.AllowAutoScan();
         }
 
         private void ShowAddedOrEdited(bool download)
@@ -2180,6 +2182,7 @@ namespace TVRename
         {
             MoreBusy();
             TheTVDB.Instance.GetLock("EditShow");
+            mDoc.PreventAutoScan("Edit Show");
 
             int oldCode = si.TvdbCode;
 
@@ -2197,6 +2200,7 @@ namespace TVRename
                 Logger.Info("Modified show called {0}", si.ShowName);
             }
 
+            mDoc.AllowAutoScan();
             LessBusy();
         }
 
@@ -3182,11 +3186,11 @@ namespace TVRename
 
         private async void checkForNewVersionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Task<UpdateVersion> uv = VersionUpdater.CheckForUpdatesAsync();
+            Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
             NotifyUpdates(await uv, true);
         }
 
-        private void NotifyUpdates(UpdateVersion update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
+        private void NotifyUpdates(Release update, bool showNoUpdateRequiredDialog, bool inSilentMode = false)
         {
             if (update is null)
             {
@@ -3203,6 +3207,10 @@ namespace TVRename
 
             if (inSilentMode) return;
 
+#if DEBUG
+            return;
+#endif
+
             UpdateNotification unForm = new UpdateNotification(update);
             unForm.ShowDialog();
             btnUpdateAvailable.Visible = true;
@@ -3218,7 +3226,7 @@ namespace TVRename
         private async void btnUpdateAvailable_Click(object sender, EventArgs e)
         {
             btnUpdateAvailable.Visible = false;
-            Task<UpdateVersion> uv = VersionUpdater.CheckForUpdatesAsync();
+            Task<Release> uv = VersionUpdater.CheckForUpdatesAsync();
             NotifyUpdates(await uv, true);
         }
 

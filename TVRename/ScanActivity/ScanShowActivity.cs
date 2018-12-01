@@ -10,10 +10,10 @@ namespace TVRename
 {
     public abstract class ScanShowActivity
     {
-        protected static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-        protected readonly TVDoc mDoc;
+        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+        protected readonly TVDoc Doc;
 
-        protected ScanShowActivity(TVDoc doc) => mDoc = doc;
+        protected ScanShowActivity(TVDoc doc) => Doc = doc;
 
         protected abstract void Check(ShowItem si, DirFilesCache dfc, TVDoc.ScanSettings settings);
 

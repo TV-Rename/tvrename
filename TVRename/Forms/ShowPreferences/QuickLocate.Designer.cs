@@ -1,6 +1,6 @@
 namespace TVRename.Forms.ShowPreferences
 {
-    partial class frmQuickLocate
+    partial class QuickLocateForm
     {
         /// <summary>
         /// Required designer variable.
@@ -103,7 +103,7 @@ namespace TVRename.Forms.ShowPreferences
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmQuickLocate";
+            this.Name = "QuickLocateForm";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;

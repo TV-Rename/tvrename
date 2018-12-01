@@ -23,16 +23,6 @@ namespace TVRename
     /// </summary>
     public partial class CopyMoveProgress : Form
     {
-        #region Delegates
-
-        public delegate void CopyDoneHandler();
-
-        public delegate void FilenameHandler(string newName);
-
-        public delegate void PercentHandler(int one, int two, int num);
-
-        #endregion
-
         private readonly ActionEngine mDoc;
         private readonly ActionQueue[] mToDo;
 
@@ -77,10 +67,11 @@ namespace TVRename
 
             lvProgress.BeginUpdate();
             int top = lvProgress.TopItem?.Index ?? 0;
-            ActionCopyMoveRename activeCMAction = null;
+            ActionCopyMoveRename activeCMAction = GetActiveCmAction();
             long workDone = 0;
             long totalWork = 0;
             lvProgress.Items.Clear();
+
             foreach (ActionQueue aq in mToDo)
             {
                 if (aq.Actions.Count == 0)
@@ -97,9 +88,6 @@ namespace TVRename
 
                     if (!action.Done)
                     {
-                        if ((action is ActionCopyMoveRename) && (action.PercentDone > 0))
-                            activeCMAction = action as ActionCopyMoveRename;
-
                         ListViewItem lvi = new ListViewItem(action.Name);
                         lvi.SubItems.Add(action.ProgressText);
 

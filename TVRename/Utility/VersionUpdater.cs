@@ -17,12 +17,12 @@ namespace TVRename
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static async Task<UpdateVersion> CheckForUpdatesAsync()
+        public static async Task<Release> CheckForUpdatesAsync()
         {
             // ReSharper disable once InconsistentNaming
             const string GITHUB_RELEASES_API_URL = "https://api.github.com/repos/TV-Rename/tvrename/releases";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            UpdateVersion currentVersion;
+            Release currentVersion;
 
             try
             {
@@ -34,8 +34,8 @@ namespace TVRename
                 return null;
             }
 
-            UpdateVersion latestVersion = null;
-            UpdateVersion latestBetaVersion = null;
+            Release latestVersion = null;
+            Release latestBetaVersion = null;
 
             try
             {
@@ -51,7 +51,7 @@ namespace TVRename
                     {
                         if (!gitHubReleaseJson["assets"].HasValues) continue; //we have no files for this release, so ignore
 
-                        UpdateVersion testVersion = ParseFromJson(gitHubReleaseJson);
+                        Release testVersion = ParseFromJson(gitHubReleaseJson);
 
                         //all versions want to be considered if you are in the beta stream
                         if (testVersion.NewerThan(latestBetaVersion)) latestBetaVersion = testVersion;
@@ -100,11 +100,11 @@ namespace TVRename
             return null;
         }
 
-        private static UpdateVersion ParseFromJson(JObject gitHubReleaseJson)
+        private static Release ParseFromJson(JObject gitHubReleaseJson)
         {
             DateTime.TryParse(gitHubReleaseJson["published_at"].ToString(), out DateTime releaseDate);
-            UpdateVersion testVersion = new UpdateVersion(gitHubReleaseJson["tag_name"].ToString(),
-                UpdateVersion.VersionType.semantic)
+            Release testVersion = new Release(gitHubReleaseJson["tag_name"].ToString(),
+                Release.VersionType.semantic)
             {
                 DownloadUrl = gitHubReleaseJson["assets"][0]["browser_download_url"].ToString(),
                 ReleaseNotesText = gitHubReleaseJson["body"].ToString(),
@@ -115,7 +115,7 @@ namespace TVRename
             return testVersion;
         }
 
-        private static UpdateVersion ObtainCurrentVersion()
+        private static Release ObtainCurrentVersion()
         {
             string currentVersionString = Helpers.DisplayVersion;
 
@@ -125,7 +125,7 @@ namespace TVRename
                 currentVersionString = currentVersionString.Substring(0,
                     currentVersionString.LastIndexOf(" ** Debug Build **", StringComparison.Ordinal));
 
-            return new UpdateVersion(currentVersionString, UpdateVersion.VersionType.friendly);
+            return new Release(currentVersionString, Release.VersionType.friendly);
         }
     }
 }

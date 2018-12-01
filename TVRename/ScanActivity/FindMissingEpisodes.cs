@@ -36,19 +36,19 @@ namespace TVRename
                     return;
                 }
 
-                if (!mDoc.TheActionList.MissingItems().Any())
+                if (!MDoc.TheActionList.MissingItems().Any())
                 {
                     continue;
                 }
 
-                f.ActionList = mDoc.TheActionList;
+                f.ActionList = MDoc.TheActionList;
 
                 currentMatchingFinderId++;
                 int startPos = 100 * (currentMatchingFinderId - 1) / totalMatchingFinders;
                 int endPos = 100 * (currentMatchingFinderId) / totalMatchingFinders;
                 f.Check(prog,startPos, endPos, showList, settings);
 
-                mDoc.RemoveIgnored();
+                MDoc.RemoveIgnored();
             }
         }
 

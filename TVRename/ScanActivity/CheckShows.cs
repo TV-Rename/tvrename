@@ -9,20 +9,20 @@ namespace TVRename
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
-            mDoc.TheActionList = new ItemList();
-            bool fullScan = (showList.Count == mDoc.Library.Shows.Count());
+            MDoc.TheActionList = new ItemList();
+            bool fullScan = (showList.Count == MDoc.Library.Shows.Count());
 
             if (TVSettings.Instance.RenameCheck)
-                mDoc.Stats().RenameChecksDone++;
+                MDoc.Stats().RenameChecksDone++;
 
             if (TVSettings.Instance.MissingCheck)
-                mDoc.Stats().MissingChecksDone++;
+                MDoc.Stats().MissingChecksDone++;
 
             if (fullScan)
             {
                 // only do episode count if we're doing all shows and seasons
-                mDoc.CurrentStats.NS_NumberOfEpisodes = 0;
-                showList = mDoc.Library.Values;
+                MDoc.CurrentStats.NS_NumberOfEpisodes = 0;
+                showList = MDoc.Library.Values;
             }
 
             DirFilesCache dfc = new DirFilesCache();
@@ -35,14 +35,14 @@ namespace TVRename
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                Logger.Info("Rename and missing check: " + si.ShowName);
+                LOGGER.Info("Rename and missing check: " + si.ShowName);
 
-                new CheckAllFoldersExist(mDoc).CheckIfActive(si, dfc, settings);
-                new MergeLibraryEpisodes(mDoc).CheckIfActive(si, dfc, settings);
-                new RenameAndMissingCheck(mDoc).CheckIfActive(si, dfc, settings);
+                new CheckAllFoldersExist(MDoc).CheckIfActive(si, dfc, settings);
+                new MergeLibraryEpisodes(MDoc).CheckIfActive(si, dfc, settings);
+                new RenameAndMissingCheck(MDoc).CheckIfActive(si, dfc, settings);
             } // for each show
 
-            mDoc.RemoveIgnored();
+            MDoc.RemoveIgnored();
             prog.Invoke(totPct, string.Empty);
         }
 

@@ -46,7 +46,7 @@ namespace TVRename
                     DeleteOrRecycleFolder(toRemove);
                     if (Tidyup != null && Tidyup.DeleteEmpty)
                     {
-                        Logger.Info($"Testing {toRemove.Parent.FullName } to see whether it should be tidied up");
+                        LOGGER.Info($"Testing {toRemove.Parent.FullName } to see whether it should be tidied up");
                         DoTidyup(toRemove.Parent);
                     }
                 }

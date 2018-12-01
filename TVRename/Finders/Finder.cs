@@ -2,8 +2,6 @@ namespace TVRename
 {
     public abstract class Finder :ScanActivity
     {
-        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
-
         public ItemList ActionList { protected get; set; }
 
         protected Finder(TVDoc doc) : base(doc){}
