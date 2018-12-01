@@ -2160,8 +2160,9 @@ namespace TVRename
         internal void EditSeason(ShowItem si, int seasnum)
         {
             MoreBusy();
-
+            mDoc.PreventAutoScan("Edit Season");
             TheTVDB.Instance.GetLock("EditSeason");
+
             SeriesInfo ser = TheTVDB.Instance.GetSeries(si.TvdbCode);
             List<ProcessedEpisode> pel = ShowLibrary.GenerateEpisodes(si, ser, seasnum, false);
 
@@ -2174,7 +2175,7 @@ namespace TVRename
                 Dictionary<int, Season> seasonsToUse = si.DvdOrder ? ser.DvdSeasons : ser.AiredSeasons;
                 SelectSeason(seasonsToUse[seasnum]);
             }
-
+            mDoc.AllowAutoScan();
             LessBusy();
         }
 
