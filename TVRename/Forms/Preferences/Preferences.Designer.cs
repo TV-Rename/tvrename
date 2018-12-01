@@ -301,6 +301,10 @@ namespace TVRename
             this.label2 = new System.Windows.Forms.Label();
             this.tcTabs = new System.Windows.Forms.TabControl();
             this.cbScanIncludesBulkAdd = new System.Windows.Forms.CheckBox();
+            this.cbSearchRSSManualScanOnly = new System.Windows.Forms.CheckBox();
+            this.cbSearchJSONManualScanOnly = new System.Windows.Forms.CheckBox();
+            this.label55 = new System.Windows.Forms.Label();
+            this.tbJSONFilesizeToken = new System.Windows.Forms.TextBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tpSearch.SuspendLayout();
@@ -713,6 +717,8 @@ namespace TVRename
             // 
             this.gbJSON.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbJSON.Controls.Add(this.label55);
+            this.gbJSON.Controls.Add(this.tbJSONFilesizeToken);
             this.gbJSON.Controls.Add(this.label51);
             this.gbJSON.Controls.Add(this.tbJSONFilenameToken);
             this.gbJSON.Controls.Add(this.label50);
@@ -723,7 +729,7 @@ namespace TVRename
             this.gbJSON.Controls.Add(this.tbJSONURL);
             this.gbJSON.Location = new System.Drawing.Point(3, 205);
             this.gbJSON.Name = "gbJSON";
-            this.gbJSON.Size = new System.Drawing.Size(408, 127);
+            this.gbJSON.Size = new System.Drawing.Size(408, 146);
             this.gbJSON.TabIndex = 33;
             this.gbJSON.TabStop = false;
             this.gbJSON.Text = "JSON Search";
@@ -731,7 +737,7 @@ namespace TVRename
             // label51
             // 
             this.label51.AutoSize = true;
-            this.label51.Location = new System.Drawing.Point(7, 68);
+            this.label51.Location = new System.Drawing.Point(6, 68);
             this.label51.Name = "label51";
             this.label51.Size = new System.Drawing.Size(86, 13);
             this.label51.TabIndex = 37;
@@ -749,7 +755,7 @@ namespace TVRename
             // label50
             // 
             this.label50.AutoSize = true;
-            this.label50.Location = new System.Drawing.Point(8, 94);
+            this.label50.Location = new System.Drawing.Point(6, 94);
             this.label50.Name = "label50";
             this.label50.Size = new System.Drawing.Size(66, 13);
             this.label50.TabIndex = 35;
@@ -759,7 +765,7 @@ namespace TVRename
             // 
             this.tbJSONURLToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbJSONURLToken.Location = new System.Drawing.Point(99, 91);
+            this.tbJSONURLToken.Location = new System.Drawing.Point(98, 91);
             this.tbJSONURLToken.Name = "tbJSONURLToken";
             this.tbJSONURLToken.Size = new System.Drawing.Size(305, 20);
             this.tbJSONURLToken.TabIndex = 34;
@@ -767,7 +773,7 @@ namespace TVRename
             // label49
             // 
             this.label49.AutoSize = true;
-            this.label49.Location = new System.Drawing.Point(7, 42);
+            this.label49.Location = new System.Drawing.Point(6, 42);
             this.label49.Name = "label49";
             this.label49.Size = new System.Drawing.Size(62, 13);
             this.label49.TabIndex = 33;
@@ -1882,6 +1888,8 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.cbSearchJSONManualScanOnly);
+            this.tpScanOptions.Controls.Add(this.cbSearchRSSManualScanOnly);
             this.tpScanOptions.Controls.Add(this.cbScanIncludesBulkAdd);
             this.tpScanOptions.Controls.Add(this.cbHigherQuality);
             this.tpScanOptions.Controls.Add(this.cbSearchJSON);
@@ -3161,6 +3169,44 @@ namespace TVRename
             this.cbScanIncludesBulkAdd.Text = "Do Bulk-Add as part of scan";
             this.cbScanIncludesBulkAdd.UseVisualStyleBackColor = true;
             // 
+            // cbSearchRSSManualScanOnly
+            // 
+            this.cbSearchRSSManualScanOnly.AutoSize = true;
+            this.cbSearchRSSManualScanOnly.Location = new System.Drawing.Point(204, 211);
+            this.cbSearchRSSManualScanOnly.Name = "cbSearchRSSManualScanOnly";
+            this.cbSearchRSSManualScanOnly.Size = new System.Drawing.Size(130, 17);
+            this.cbSearchRSSManualScanOnly.TabIndex = 20;
+            this.cbSearchRSSManualScanOnly.Text = "Only on manual scans";
+            this.cbSearchRSSManualScanOnly.UseVisualStyleBackColor = true;
+            // 
+            // cbSearchJSONManualScanOnly
+            // 
+            this.cbSearchJSONManualScanOnly.AutoSize = true;
+            this.cbSearchJSONManualScanOnly.Location = new System.Drawing.Point(204, 234);
+            this.cbSearchJSONManualScanOnly.Name = "cbSearchJSONManualScanOnly";
+            this.cbSearchJSONManualScanOnly.Size = new System.Drawing.Size(130, 17);
+            this.cbSearchJSONManualScanOnly.TabIndex = 21;
+            this.cbSearchJSONManualScanOnly.Text = "Only on manual scans";
+            this.cbSearchJSONManualScanOnly.UseVisualStyleBackColor = true;
+            // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(6, 120);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(64, 13);
+            this.label55.TabIndex = 39;
+            this.label55.Text = "Size Token:";
+            // 
+            // tbJSONFilesizeToken
+            // 
+            this.tbJSONFilesizeToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONFilesizeToken.Location = new System.Drawing.Point(97, 117);
+            this.tbJSONFilesizeToken.Name = "tbJSONFilesizeToken";
+            this.tbJSONFilesizeToken.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONFilesizeToken.TabIndex = 38;
+            // 
             // Preferences
             // 
             this.AcceptButton = this.OKButton;
@@ -3504,5 +3550,9 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbWPL;
         private System.Windows.Forms.CheckBox cbDetailedRSSJSONLogging;
         private System.Windows.Forms.CheckBox cbScanIncludesBulkAdd;
+        private System.Windows.Forms.Label label55;
+        private System.Windows.Forms.TextBox tbJSONFilesizeToken;
+        private System.Windows.Forms.CheckBox cbSearchJSONManualScanOnly;
+        private System.Windows.Forms.CheckBox cbSearchRSSManualScanOnly;
     }
 }

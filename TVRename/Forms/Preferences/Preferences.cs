@@ -182,11 +182,13 @@ namespace TVRename
             s.ForceBulkAddToUseSettingsOnly = chkForceBulkAddToUseSettingsOnly.Checked;
 
             s.SearchJSON = cbSearchJSON.Checked;
+            s.SearchJSONManualScanOnly = cbSearchJSONManualScanOnly.Checked;
             s.SearchJSONURL = tbJSONURL.Text;
             s.SearchJSONRootNode = tbJSONRootNode.Text;
             s.SearchJSONFilenameToken = tbJSONFilenameToken.Text;
             s.SearchJSONURLToken = tbJSONURLToken.Text;
-
+            s.SearchJSONFileSizeToken = tbJSONFilesizeToken.Text;
+            s.SearchRSSManualScanOnly = cbSearchRSSManualScanOnly.Checked;
             s.MonitorFolders = cbMonitorFolder.Checked;
             s.runStartupCheck = chkScanOnStartup.Checked;
             s.runPeriodicCheck = chkScheduledScan.Checked;
@@ -457,11 +459,14 @@ namespace TVRename
             tbPercentBetter.Text = s.replaceMargin.ToString(CultureInfo.InvariantCulture);
 
             cbSearchJSON.Checked = s.SearchJSON;
+            cbSearchJSONManualScanOnly.Checked= s.SearchJSONManualScanOnly;
             tbJSONURL.Text = s.SearchJSONURL;
             tbJSONRootNode.Text = s.SearchJSONRootNode;
             tbJSONFilenameToken.Text = s.SearchJSONFilenameToken;
             tbJSONURLToken.Text = s.SearchJSONURLToken;
+            tbJSONFilesizeToken.Text = s.SearchJSONFileSizeToken;
 
+            cbSearchRSSManualScanOnly.Checked = s.SearchRSSManualScanOnly;
             cbSearchRSS.Checked = s.SearchRSS;
             cbEpTBNs.Checked = s.EpTBNs;
             cbWDLiveEpisodeFiles.Checked = s.wdLiveTvMeta;

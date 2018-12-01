@@ -218,7 +218,9 @@ namespace TVRename
         public int SampleFileMaxSizeMB=50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
         public bool SearchRSS = false;
+        public bool SearchRSSManualScanOnly = true;
         public bool SearchJSON = false;
+        public bool SearchJSONManualScanOnly = true;
         public bool ShowEpisodePictures = true;
         public bool HideWtWSpoilers = false;
         public bool HideMyShowsSpoilers = false;
@@ -233,6 +235,7 @@ namespace TVRename
         public string SearchJSONRootNode = "torrents";
         public string SearchJSONFilenameToken = "filename";
         public string SearchJSONURLToken = "torrent_url";
+        public string SearchJSONFileSizeToken = "size_bytes";
 
         public string[] VideoExtensionsArray => VideoExtensionsString.Split(';');
         public bool ForceBulkAddToUseSettingsOnly = false;
@@ -368,6 +371,8 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "ResumeDatPath", ResumeDatPath);
             XmlHelper.WriteElementToXml(writer, "SearchRSS", SearchRSS);
             XmlHelper.WriteElementToXml(writer, "SearchJSON", SearchJSON);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONManualScanOnly", SearchJSONManualScanOnly);
+            XmlHelper.WriteElementToXml(writer, "SearchRSSManualScanOnly", SearchRSSManualScanOnly);
             XmlHelper.WriteElementToXml(writer, "EpImgs", EpTBNs);
             XmlHelper.WriteElementToXml(writer, "NFOShows", NFOShows);
             XmlHelper.WriteElementToXml(writer, "NFOEpisodes", NFOEpisodes);
@@ -433,6 +438,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "SearchJSONRootNode", SearchJSONRootNode);
             XmlHelper.WriteElementToXml(writer, "SearchJSONFilenameToken", SearchJSONFilenameToken);
             XmlHelper.WriteElementToXml(writer, "SearchJSONURLToken", SearchJSONURLToken);
+            XmlHelper.WriteElementToXml(writer, "SearchJSONFileSizeToken", SearchJSONFileSizeToken);
             XmlHelper.WriteElementToXml(writer, "PriorityReplaceTerms", PriorityReplaceTerms);
 
             TheSearchers.WriteXml(writer);
@@ -981,6 +987,7 @@ namespace TVRename
             SearchJSONRootNode = xmlSettings.ExtractString("SearchJSONRootNode", "torrents");
             SearchJSONFilenameToken = xmlSettings.ExtractString("SearchJSONFilenameToken","filename");
             SearchJSONURLToken = xmlSettings.ExtractString("SearchJSONURLToken", "torrent_url");
+            SearchJSONFileSizeToken = xmlSettings.ExtractString("SearchJSONFileSizeToken", "size_bytes");
             SABAPIKey = xmlSettings.ExtractString("SABAPIKey");
             CheckSABnzbd = xmlSettings.ExtractBool("CheckSABnzbd")??false;
             SABHostPort = xmlSettings.ExtractString("SABHostPort");
@@ -1016,6 +1023,8 @@ namespace TVRename
             ResumeDatPath = xmlSettings.ExtractString("ResumeDatPath");
             SearchRSS = xmlSettings.ExtractBool("SearchRSS") ?? false;
             SearchJSON = xmlSettings.ExtractBool("SearchJSON") ?? false;
+            SearchRSSManualScanOnly = xmlSettings.ExtractBool("SearchRSSManualScanOnly") ?? true;
+            SearchJSONManualScanOnly = xmlSettings.ExtractBool("SearchJSONManualScanOnly") ?? true;
             EpTBNs = xmlSettings.ExtractBool("EpImgs")??false;
             NFOShows = xmlSettings.ExtractBool("NFOShows") ?? xmlSettings.ExtractBool("NFOs") ?? false;
             NFOEpisodes = xmlSettings.ExtractBool("NFOEpisodes") ?? xmlSettings.ExtractBool("NFOs") ?? false;
