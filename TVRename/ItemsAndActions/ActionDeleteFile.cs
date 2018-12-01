@@ -37,7 +37,7 @@ namespace TVRename
                     DeleteOrRecycleFile(toRemove);
                     if (Tidyup != null && Tidyup.DeleteEmpty)
                     {
-                        Logger.Info($"Testing {toRemove.Directory.FullName } to see whether it should be tidied up");
+                        LOGGER.Info($"Testing {toRemove.Directory.FullName } to see whether it should be tidied up");
                         DoTidyup(toRemove.Directory);
                     }
                 }

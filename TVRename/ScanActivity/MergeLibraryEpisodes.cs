@@ -83,7 +83,7 @@ namespace TVRename
 
                         if (ep.Type != ProcessedEpisode.ProcessedEpisodeType.merged && maxEp != -1)
                         {
-                            Logger.Info(
+                            LOGGER.Info(
                                 $"Looking at {ep.Show.ShowName} and have identified that episode {epNum} and {maxEp} of season {seasNum} should be merged into one file {fi.FullName}");
 
                             ShowRule sr = new ShowRule
@@ -101,7 +101,7 @@ namespace TVRename
                 foreach (ShowRule sr in rulesToAdd)
                 {
                     si.AddSeasonRule(snum, sr);
-                    Logger.Info($"Added new rule automatically for {sr}");
+                    LOGGER.Info($"Added new rule automatically for {sr}");
 
                     //Regenerate the episodes with the new rule added
                     ShowLibrary.GenerateEpisodeDict(si);

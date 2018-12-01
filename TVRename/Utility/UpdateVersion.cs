@@ -10,7 +10,7 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-public class UpdateVersion : IComparable
+public class Release : IComparable
 {
     public string DownloadUrl { get; set; }
     public string ReleaseNotesText { get; set; }
@@ -24,7 +24,7 @@ public class UpdateVersion : IComparable
 
     public enum VersionType { semantic, friendly }
 
-    public UpdateVersion(string version, VersionType type)
+    public Release(string version, VersionType type)
     {
         if (string.IsNullOrWhiteSpace(version)) throw new ArgumentException("The provided version string is invalid.", nameof(version));
 
@@ -50,7 +50,7 @@ public class UpdateVersion : IComparable
     {
         //Returns 1 if this > object, 0 if this=object and -1 if this< object
         if (obj == null) return 1;
-        if (!(obj is UpdateVersion otherUpdateVersion)) throw new ArgumentException("Object is not a UpdateVersion");
+        if (!(obj is Release otherUpdateVersion)) throw new ArgumentException("Object is not a UpdateVersion");
 
         //Extract Version Numbers and then compare them
         if (VersionNumber.CompareTo(otherUpdateVersion.VersionNumber) != 0) return VersionNumber.CompareTo(otherUpdateVersion.VersionNumber);
@@ -68,7 +68,7 @@ public class UpdateVersion : IComparable
         return (string.Compare(Prerelease, otherUpdateVersion.Prerelease, StringComparison.OrdinalIgnoreCase));
     }
 
-    public bool NewerThan(UpdateVersion compare) => (CompareTo(compare) > 0);
+    public bool NewerThan(Release compare) => (CompareTo(compare) > 0);
 
     public override string ToString()
     {

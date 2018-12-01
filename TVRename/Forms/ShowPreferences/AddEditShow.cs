@@ -436,7 +436,7 @@ namespace TVRename
         private void bnQuickLocate_Click(object sender, EventArgs e)
         {
             string showName = codeFinderForm.SelectedShow()?.Name ?? txtCustomShowName.Text?? "New Folder";
-            frmQuickLocate f = new frmQuickLocate(showName);
+            QuickLocateForm f = new QuickLocateForm(showName);
 
             if (f.ShowDialog() == DialogResult.OK)
             {

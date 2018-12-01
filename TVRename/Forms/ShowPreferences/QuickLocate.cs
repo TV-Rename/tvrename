@@ -12,17 +12,20 @@ using Alphaleonis.Win32.Filesystem;
 
 namespace TVRename.Forms.ShowPreferences
 {
-    public partial class frmQuickLocate : Form
+    public partial class QuickLocateForm : Form
     {
         public string DirectoryFullPath;
 
-        public frmQuickLocate(string hint)
+        public QuickLocateForm(string hint)
         {
             InitializeComponent();
 
             cbDirectory.SuspendLayout();
             cbDirectory.Items.Clear();
-            cbDirectory.Items.AddRange(TVSettings.Instance.LibraryFolders.ToArray());
+            foreach (string folder in TVSettings.Instance.LibraryFolders)
+            {
+                cbDirectory.Items.Add(folder);
+            }
             cbDirectory.SelectedIndex = 0;
             cbDirectory.ResumeLayout();
 

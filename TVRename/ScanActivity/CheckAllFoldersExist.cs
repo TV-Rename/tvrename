@@ -75,12 +75,12 @@ namespace TVRename
 
                             FaResult whatToDo = FaResult.kfaNotSet;
 
-                            if (mDoc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create)
+                            if (Doc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.create)
                                 whatToDo = FaResult.kfaCreate;
-                            else if (mDoc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.ignore)
+                            else if (Doc.Args.MissingFolder == CommandLineArgs.MissingFolderBehavior.ignore)
                                 whatToDo = FaResult.kfaIgnoreOnce;
 
-                            if (mDoc.Args.Hide && (whatToDo == FaResult.kfaNotSet))
+                            if (Doc.Args.Hide && (whatToDo == FaResult.kfaNotSet))
                                 whatToDo = FaResult.kfaIgnoreOnce; // default in /hide mode is to ignore
 
                             if (TVSettings.Instance.AutoCreateFolders && firstAttempt)
@@ -106,13 +106,13 @@ namespace TVRename
                             {
                                 try
                                 {
-                                    Logger.Info("Creating directory as it is missing: {0}", folder);
+                                    LOGGER.Info("Creating directory as it is missing: {0}", folder);
                                     Directory.CreateDirectory(folder);
                                 }
                                 catch (Exception ioe)
                                 {
-                                    Logger.Info("Could not directory: {0}", folder);
-                                    Logger.Info(ioe);
+                                    LOGGER.Info("Could not directory: {0}", folder);
+                                    LOGGER.Info(ioe);
                                 }
 
                                 goAgain = true;
@@ -120,7 +120,7 @@ namespace TVRename
                             else if (whatToDo == FaResult.kfaIgnoreAlways)
                             {
                                 si.IgnoreSeasons.Add(snum);
-                                mDoc.SetDirty();
+                                Doc.SetDirty();
                                 break;
                             }
                             else if (whatToDo == FaResult.kfaIgnoreOnce)
@@ -138,7 +138,7 @@ namespace TVRename
                                         si.ManualFolderLocations[snum] = new List<string>();
 
                                     si.ManualFolderLocations[snum].Add(folder);
-                                    mDoc.SetDirty();
+                                    Doc.SetDirty();
                                 }
                             }
                         } while (goAgain);

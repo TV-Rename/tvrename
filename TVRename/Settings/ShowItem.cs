@@ -11,7 +11,6 @@ using System.Xml;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using TVRename;
 
 // These are what is used when processing folders for missing episodes, renaming, etc. of files.
 

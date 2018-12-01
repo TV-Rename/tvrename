@@ -106,7 +106,7 @@ namespace TVRename
 
                 // Copying the temp file into the correct name is very quick, so no progress reporting		
                 File.Move(tempName, To.FullName, MoveOptions.ReplaceExisting);
-                Logger.Info($"{Name} completed: {From.FullName} to {To.FullName } ");
+                LOGGER.Info($"{Name} completed: {From.FullName} to {To.FullName } ");
 
                 Done = true;
 
@@ -144,7 +144,7 @@ namespace TVRename
             {
                 if (Operation == Op.move && Tidyup != null && Tidyup.DeleteEmpty)
                 {
-                    Logger.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
+                    LOGGER.Info($"Testing {From.Directory.FullName} to see whether it should be tidied up");
                     DoTidyup(From.Directory);
                 }
             }
@@ -232,7 +232,7 @@ namespace TVRename
             to.LastWriteTimeUtc = from.LastWriteTimeUtc;
         }
 
-        private CopyMoveProgressResult CopyProgressCallback(long totalFileSize, long totalBytesTransferred, long StreamSize, long StreamBytesTransferred, int StreamNumber, CopyMoveProgressCallbackReason CallbackReason, object UserData)
+        private CopyMoveProgressResult CopyProgressCallback(long totalFileSize, long totalBytesTransferred, long streamSize, long streamBytesTransferred, int streamNumber, CopyMoveProgressCallbackReason callbackReason, object userData)
         {
             double pct = totalBytesTransferred * 100.0 / totalFileSize;
             PercentDone = pct > 100.0 ? 100.0 : pct;

@@ -22,7 +22,10 @@ namespace TVRename
 
             cbDirectory.SuspendLayout();
             cbDirectory.Items.Clear();
-            cbDirectory.Items.AddRange(TVSettings.Instance.LibraryFolders.ToArray());
+            foreach (string folder in TVSettings.Instance.LibraryFolders)
+            {
+                cbDirectory.Items.Add(folder);
+            }
             cbDirectory.SelectedIndex = 0;
             cbDirectory.ResumeLayout();
 

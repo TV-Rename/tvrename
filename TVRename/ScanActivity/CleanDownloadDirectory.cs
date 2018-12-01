@@ -7,8 +7,6 @@ namespace TVRename
 {
     internal class CleanDownloadDirectory:ScanActivity
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
         // ReSharper disable once InconsistentNaming
         internal static IEnumerable<Action> Go(SetProgressDelegate prog, ICollection<ShowItem> showList, bool unattended)
         {
@@ -55,7 +53,7 @@ namespace TVRename
             }
             catch (UnauthorizedAccessException ex)
             {
-                Logger.Warn(ex, $"Could not access subdirectories of {dirPath}");
+                LOGGER.Warn(ex, $"Could not access subdirectories of {dirPath}");
             }
 
             return null;
@@ -89,7 +87,7 @@ namespace TVRename
                 {
                     if (FinderHelper.FileNeeded(di, si, dfc))
                     {
-                        Logger.Info($"Not removing {di.FullName} as it may be needed for {si.ShowName}");
+                        LOGGER.Info($"Not removing {di.FullName} as it may be needed for {si.ShowName}");
                         dirCanBeRemoved = false;
                     }
                 }
@@ -118,7 +116,7 @@ namespace TVRename
             SeriesInfo s = si.TheSeries();
             Episode ep = s.GetEpisode(seasF, epF, si.DvdOrder);
             ProcessedEpisode pep = new ProcessedEpisode(ep, si);
-            Logger.Info(
+            LOGGER.Info(
                 $"Removing {di.FullName} as it matches {matchingShows[0].ShowName} and no episodes are needed");
 
             return new ActionDeleteDirectory(di, pep, TVSettings.Instance.Tidyup);
@@ -150,7 +148,7 @@ namespace TVRename
             }
             catch (UnauthorizedAccessException ex)
             {
-                Logger.Warn(ex, $"Could not access files in {dirPath}");
+                LOGGER.Warn(ex, $"Could not access files in {dirPath}");
             }
 
             return returnActions;
@@ -201,7 +199,7 @@ namespace TVRename
                                     {
                                         if (matchingShows.Count > 1)
                                         {
-                                            Logger.Warn(
+                                            LOGGER.Warn(
                                                 $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
                                         }
                                         else
@@ -211,7 +209,7 @@ namespace TVRename
                                     }
                                     else
                                     {
-                                        Logger.Warn(
+                                        LOGGER.Warn(
                                             $"Keeping {fi.FullName} as it is better quality than some of the current files for that show (Auto Replace with better quality files is turned off)");
                                     }
 
@@ -221,14 +219,14 @@ namespace TVRename
                                     if (unattended)
                                     {
                                         fileCanBeDeleted = false;
-                                        Logger.Info(
+                                        LOGGER.Info(
                                             $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
                                     }
                                     else
                                     {
                                         if (matchingShows.Count > 1)
                                         {
-                                            Logger.Warn(
+                                            LOGGER.Warn(
                                                 $"Keeping {fi.FullName}. Although it is better quality than {existingFile.FullName}, there are other shows ({string.Join(", ", matchingShows.Select(item => item.ShowName))}) that match.");
                                             fileCanBeDeleted = false;
                                         }
@@ -241,12 +239,12 @@ namespace TVRename
                                             {
                                                 case ChooseFile.ChooseFileDialogResult.ignore:
                                                     fileCanBeDeleted = false;
-                                                    Logger.Info(
+                                                    LOGGER.Info(
                                                         $"Keeping {fi.FullName} as it might be better quality than {existingFile.FullName}");
 
                                                     break;
                                                 case ChooseFile.ChooseFileDialogResult.left:
-                                                    Logger.Info(
+                                                    LOGGER.Info(
                                                         $"User has elected to remove {fi.FullName} as it is not as good quality than {existingFile.FullName}");
 
                                                     break;
@@ -274,14 +272,14 @@ namespace TVRename
                 }
                 catch (SeriesInfo.EpisodeNotFoundException _)
                 {
-                    Logger.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
+                    LOGGER.Info($"Can't find the right episode for {fi.FullName} coming out as S{seasF}E{epF} using rule '{re?.Notes}'");
                     fileCanBeDeleted = false;
                 }
             }
 
             if (fileCanBeDeleted)
             {
-                Logger.Info(
+                LOGGER.Info(
                     $"Removing {fi.FullName} as it matches {string.Join(", ", matchingShows.Select(s => s.ShowName))} and no episodes are needed");
 
                 returnActions.Add(new ActionDeleteFile(fi, firstMatchingPep, TVSettings.Instance.Tidyup));
@@ -308,7 +306,7 @@ namespace TVRename
                 returnActions.Add(new ActionCopyMoveRename(fi, existingFile, pep));
             }
 
-            Logger.Info(
+            LOGGER.Info(
                 $"Using {fi.FullName} to replace {existingFile.FullName} as it is better quality");
 
             return returnActions;
@@ -320,7 +318,7 @@ namespace TVRename
 
         public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
-            mDoc.TheActionList.AddNullableRange(Go(prog,showList,settings.Unattended));
+            MDoc.TheActionList.AddNullableRange(Go(prog,showList,settings.Unattended));
         }
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||
