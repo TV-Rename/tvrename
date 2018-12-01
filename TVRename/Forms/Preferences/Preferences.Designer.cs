@@ -305,6 +305,7 @@ namespace TVRename
             this.cbSearchJSONManualScanOnly = new System.Windows.Forms.CheckBox();
             this.label55 = new System.Windows.Forms.Label();
             this.tbJSONFilesizeToken = new System.Windows.Forms.TextBox();
+            this.cbIgnorePreviouslySeen = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tpSearch.SuspendLayout();
@@ -1888,6 +1889,7 @@ namespace TVRename
             // 
             // tpScanOptions
             // 
+            this.tpScanOptions.Controls.Add(this.cbIgnorePreviouslySeen);
             this.tpScanOptions.Controls.Add(this.cbSearchJSONManualScanOnly);
             this.tpScanOptions.Controls.Add(this.cbSearchRSSManualScanOnly);
             this.tpScanOptions.Controls.Add(this.cbScanIncludesBulkAdd);
@@ -1920,7 +1922,7 @@ namespace TVRename
             // cbHigherQuality
             // 
             this.cbHigherQuality.AutoSize = true;
-            this.cbHigherQuality.Location = new System.Drawing.Point(9, 393);
+            this.cbHigherQuality.Location = new System.Drawing.Point(9, 410);
             this.cbHigherQuality.Name = "cbHigherQuality";
             this.cbHigherQuality.Size = new System.Drawing.Size(256, 17);
             this.cbHigherQuality.TabIndex = 18;
@@ -1930,7 +1932,7 @@ namespace TVRename
             // cbSearchJSON
             // 
             this.cbSearchJSON.AutoSize = true;
-            this.cbSearchJSON.Location = new System.Drawing.Point(40, 234);
+            this.cbSearchJSON.Location = new System.Drawing.Point(40, 251);
             this.cbSearchJSON.Name = "cbSearchJSON";
             this.cbSearchJSON.Size = new System.Drawing.Size(164, 17);
             this.cbSearchJSON.TabIndex = 17;
@@ -1941,7 +1943,7 @@ namespace TVRename
             // cbCheckqBitTorrent
             // 
             this.cbCheckqBitTorrent.AutoSize = true;
-            this.cbCheckqBitTorrent.Location = new System.Drawing.Point(40, 190);
+            this.cbCheckqBitTorrent.Location = new System.Drawing.Point(40, 207);
             this.cbCheckqBitTorrent.Name = "cbCheckqBitTorrent";
             this.cbCheckqBitTorrent.Size = new System.Drawing.Size(145, 17);
             this.cbCheckqBitTorrent.TabIndex = 16;
@@ -1951,7 +1953,7 @@ namespace TVRename
             // chkAutoMergeLibraryEpisodes
             // 
             this.chkAutoMergeLibraryEpisodes.AutoSize = true;
-            this.chkAutoMergeLibraryEpisodes.Location = new System.Drawing.Point(9, 370);
+            this.chkAutoMergeLibraryEpisodes.Location = new System.Drawing.Point(9, 387);
             this.chkAutoMergeLibraryEpisodes.Name = "chkAutoMergeLibraryEpisodes";
             this.chkAutoMergeLibraryEpisodes.Size = new System.Drawing.Size(306, 17);
             this.chkAutoMergeLibraryEpisodes.TabIndex = 15;
@@ -1961,7 +1963,7 @@ namespace TVRename
             // chkAutoMergeDownloadEpisodes
             // 
             this.chkAutoMergeDownloadEpisodes.AutoSize = true;
-            this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(9, 348);
+            this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(9, 365);
             this.chkAutoMergeDownloadEpisodes.Name = "chkAutoMergeDownloadEpisodes";
             this.chkAutoMergeDownloadEpisodes.Size = new System.Drawing.Size(337, 17);
             this.chkAutoMergeDownloadEpisodes.TabIndex = 13;
@@ -1981,7 +1983,7 @@ namespace TVRename
             // label40
             // 
             this.label40.AutoSize = true;
-            this.label40.Location = new System.Drawing.Point(6, 309);
+            this.label40.Location = new System.Drawing.Point(6, 326);
             this.label40.Name = "label40";
             this.label40.Size = new System.Drawing.Size(94, 13);
             this.label40.TabIndex = 11;
@@ -1990,7 +1992,7 @@ namespace TVRename
             // cbxUpdateAirDate
             // 
             this.cbxUpdateAirDate.AutoSize = true;
-            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 325);
+            this.cbxUpdateAirDate.Location = new System.Drawing.Point(9, 342);
             this.cbxUpdateAirDate.Name = "cbxUpdateAirDate";
             this.cbxUpdateAirDate.Size = new System.Drawing.Size(197, 17);
             this.cbxUpdateAirDate.TabIndex = 10;
@@ -2000,7 +2002,7 @@ namespace TVRename
             // label33
             // 
             this.label33.AutoSize = true;
-            this.label33.Location = new System.Drawing.Point(6, 262);
+            this.label33.Location = new System.Drawing.Point(6, 279);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(80, 13);
             this.label33.TabIndex = 9;
@@ -2009,7 +2011,7 @@ namespace TVRename
             // cbAutoCreateFolders
             // 
             this.cbAutoCreateFolders.AutoSize = true;
-            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 278);
+            this.cbAutoCreateFolders.Location = new System.Drawing.Point(9, 295);
             this.cbAutoCreateFolders.Name = "cbAutoCreateFolders";
             this.cbAutoCreateFolders.Size = new System.Drawing.Size(192, 17);
             this.cbAutoCreateFolders.TabIndex = 8;
@@ -2028,7 +2030,7 @@ namespace TVRename
             // cbSearchRSS
             // 
             this.cbSearchRSS.AutoSize = true;
-            this.cbSearchRSS.Location = new System.Drawing.Point(40, 211);
+            this.cbSearchRSS.Location = new System.Drawing.Point(40, 228);
             this.cbSearchRSS.Name = "cbSearchRSS";
             this.cbSearchRSS.Size = new System.Drawing.Size(158, 17);
             this.cbSearchRSS.TabIndex = 7;
@@ -2064,7 +2066,7 @@ namespace TVRename
             // cbLeaveOriginals
             // 
             this.cbLeaveOriginals.AutoSize = true;
-            this.cbLeaveOriginals.Location = new System.Drawing.Point(60, 125);
+            this.cbLeaveOriginals.Location = new System.Drawing.Point(60, 142);
             this.cbLeaveOriginals.Name = "cbLeaveOriginals";
             this.cbLeaveOriginals.Size = new System.Drawing.Size(129, 17);
             this.cbLeaveOriginals.TabIndex = 4;
@@ -2074,7 +2076,7 @@ namespace TVRename
             // cbCheckSABnzbd
             // 
             this.cbCheckSABnzbd.AutoSize = true;
-            this.cbCheckSABnzbd.Location = new System.Drawing.Point(40, 171);
+            this.cbCheckSABnzbd.Location = new System.Drawing.Point(40, 188);
             this.cbCheckSABnzbd.Name = "cbCheckSABnzbd";
             this.cbCheckSABnzbd.Size = new System.Drawing.Size(137, 17);
             this.cbCheckSABnzbd.TabIndex = 6;
@@ -2085,7 +2087,7 @@ namespace TVRename
             // cbCheckuTorrent
             // 
             this.cbCheckuTorrent.AutoSize = true;
-            this.cbCheckuTorrent.Location = new System.Drawing.Point(40, 148);
+            this.cbCheckuTorrent.Location = new System.Drawing.Point(40, 165);
             this.cbCheckuTorrent.Name = "cbCheckuTorrent";
             this.cbCheckuTorrent.Size = new System.Drawing.Size(133, 17);
             this.cbCheckuTorrent.TabIndex = 5;
@@ -2098,7 +2100,7 @@ namespace TVRename
             this.cbSearchLocally.AutoSize = true;
             this.cbSearchLocally.Checked = true;
             this.cbSearchLocally.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbSearchLocally.Location = new System.Drawing.Point(40, 102);
+            this.cbSearchLocally.Location = new System.Drawing.Point(40, 119);
             this.cbSearchLocally.Name = "cbSearchLocally";
             this.cbSearchLocally.Size = new System.Drawing.Size(218, 17);
             this.cbSearchLocally.TabIndex = 3;
@@ -3162,7 +3164,7 @@ namespace TVRename
             // cbScanIncludesBulkAdd
             // 
             this.cbScanIncludesBulkAdd.AutoSize = true;
-            this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(9, 416);
+            this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(9, 433);
             this.cbScanIncludesBulkAdd.Name = "cbScanIncludesBulkAdd";
             this.cbScanIncludesBulkAdd.Size = new System.Drawing.Size(159, 17);
             this.cbScanIncludesBulkAdd.TabIndex = 19;
@@ -3172,7 +3174,7 @@ namespace TVRename
             // cbSearchRSSManualScanOnly
             // 
             this.cbSearchRSSManualScanOnly.AutoSize = true;
-            this.cbSearchRSSManualScanOnly.Location = new System.Drawing.Point(204, 211);
+            this.cbSearchRSSManualScanOnly.Location = new System.Drawing.Point(204, 228);
             this.cbSearchRSSManualScanOnly.Name = "cbSearchRSSManualScanOnly";
             this.cbSearchRSSManualScanOnly.Size = new System.Drawing.Size(130, 17);
             this.cbSearchRSSManualScanOnly.TabIndex = 20;
@@ -3182,7 +3184,7 @@ namespace TVRename
             // cbSearchJSONManualScanOnly
             // 
             this.cbSearchJSONManualScanOnly.AutoSize = true;
-            this.cbSearchJSONManualScanOnly.Location = new System.Drawing.Point(204, 234);
+            this.cbSearchJSONManualScanOnly.Location = new System.Drawing.Point(204, 251);
             this.cbSearchJSONManualScanOnly.Name = "cbSearchJSONManualScanOnly";
             this.cbSearchJSONManualScanOnly.Size = new System.Drawing.Size(130, 17);
             this.cbSearchJSONManualScanOnly.TabIndex = 21;
@@ -3206,6 +3208,16 @@ namespace TVRename
             this.tbJSONFilesizeToken.Name = "tbJSONFilesizeToken";
             this.tbJSONFilesizeToken.Size = new System.Drawing.Size(305, 20);
             this.tbJSONFilesizeToken.TabIndex = 38;
+            // 
+            // cbIgnorePreviouslySeen
+            // 
+            this.cbIgnorePreviouslySeen.AutoSize = true;
+            this.cbIgnorePreviouslySeen.Location = new System.Drawing.Point(40, 96);
+            this.cbIgnorePreviouslySeen.Name = "cbIgnorePreviouslySeen";
+            this.cbIgnorePreviouslySeen.Size = new System.Drawing.Size(181, 17);
+            this.cbIgnorePreviouslySeen.TabIndex = 22;
+            this.cbIgnorePreviouslySeen.Text = "Ignore Episodes Previously Seen";
+            this.cbIgnorePreviouslySeen.UseVisualStyleBackColor = true;
             // 
             // Preferences
             // 
@@ -3554,5 +3566,6 @@ namespace TVRename
         private System.Windows.Forms.TextBox tbJSONFilesizeToken;
         private System.Windows.Forms.CheckBox cbSearchJSONManualScanOnly;
         private System.Windows.Forms.CheckBox cbSearchRSSManualScanOnly;
+        private System.Windows.Forms.CheckBox cbIgnorePreviouslySeen;
     }
 }

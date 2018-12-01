@@ -172,6 +172,7 @@ namespace TVRename
             s.MissingCheck = cbMissing.Checked;
             s.CorrectFileDates = cbxUpdateAirDate.Checked;
             s.SearchLocally = cbSearchLocally.Checked;
+            s.IgnorePreviouslySeen = cbIgnorePreviouslySeen.Checked;
             s.AutoSearchForDownloadedFiles = chkAutoSearchForDownloadedFiles.Checked;
             s.LeaveOriginals = cbLeaveOriginals.Checked;
             s.CheckuTorrent = cbCheckuTorrent.Checked;
@@ -495,6 +496,7 @@ namespace TVRename
             cbxUpdateAirDate.Checked = s.CorrectFileDates;
             chkAutoSearchForDownloadedFiles.Checked = s.AutoSearchForDownloadedFiles;
             cbSearchLocally.Checked = s.SearchLocally;
+            cbIgnorePreviouslySeen.Checked = s.IgnorePreviouslySeen;
             cbLeaveOriginals.Checked = s.LeaveOriginals;
             enterPreferredLanguage = s.PreferredLanguageCode;
             cbScanIncludesBulkAdd.Checked = s.DoBulkAddInScan;

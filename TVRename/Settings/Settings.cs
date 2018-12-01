@@ -217,6 +217,7 @@ namespace TVRename
         public string ResumeDatPath;
         public int SampleFileMaxSizeMB=50; // sample file must be smaller than this to be ignored
         public bool SearchLocally = true;
+        public bool IgnorePreviouslySeen = false;
         public bool SearchRSS = false;
         public bool SearchRSSManualScanOnly = true;
         public bool SearchJSON = false;
@@ -260,7 +261,8 @@ namespace TVRename
         public bool runPeriodicCheck = false;
         public int periodCheckHours = 1;
         public bool runStartupCheck = false;
-        public bool DoBulkAddInScan = false; 
+        public bool DoBulkAddInScan = false;
+        public PreviouslySeenEpisodes PreviouslySeenEpisodes;
 
         private TVSettings()
         {
@@ -271,6 +273,7 @@ namespace TVRename
         {
             // defaults that aren't handled with default initialisers
             Ignore = new List<IgnoreItem>();
+            PreviouslySeenEpisodes = new PreviouslySeenEpisodes();
             DownloadFolders = new List<string>();
             IgnoreFolders = new List<string>();
             LibraryFolders = new List<string>();
@@ -393,6 +396,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "AutoSearchForDownloadedFiles", AutoSearchForDownloadedFiles);
             XmlHelper.WriteElementToXml(writer, "UpdateFileDates", CorrectFileDates);
             XmlHelper.WriteElementToXml(writer, "SearchLocally", SearchLocally);
+            XmlHelper.WriteElementToXml(writer, "IgnorePreviouslySeen", IgnorePreviouslySeen);
             XmlHelper.WriteElementToXml(writer, "LeaveOriginals", LeaveOriginals);
             XmlHelper.WriteElementToXml(writer, "RetainLanguageSpecificSubtitles", RetainLanguageSpecificSubtitles);
             XmlHelper.WriteElementToXml(writer, "ForceBulkAddToUseSettingsOnly", ForceBulkAddToUseSettingsOnly);
@@ -1049,6 +1053,7 @@ namespace TVRename
             MissingCheck = xmlSettings.ExtractBool("MissingCheck")??true;
             CorrectFileDates = xmlSettings.ExtractBool("UpdateFileDates")??false;
             SearchLocally = xmlSettings.ExtractBool("SearchLocally")??true;
+            IgnorePreviouslySeen = xmlSettings.ExtractBool("IgnorePreviouslySeen") ?? false;
             LeaveOriginals = xmlSettings.ExtractBool("LeaveOriginals")??false;
             AutoSearchForDownloadedFiles = xmlSettings.ExtractBool("AutoSearchForDownloadedFiles") ?? false;
             LookForDateInFilename = xmlSettings.ExtractBool("LookForDateInFilename")??false;
