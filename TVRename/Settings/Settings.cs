@@ -171,6 +171,7 @@ namespace TVRename
         public bool ReplaceWithBetterQuality = false;
         public KeepTogetherModes keepTogetherMode = KeepTogetherModes.All;
 
+        public bool ShowCollections = false;
         public bool BulkAddIgnoreRecycleBin = false;
         public bool BulkAddCompareNoVideoFolders = false;
 
@@ -429,6 +430,7 @@ namespace TVRename
             XmlHelper.WriteElementToXml(writer, "EmptyMaxSizeCheck", Tidyup.EmptyMaxSizeCheck);
             XmlHelper.WriteElementToXml(writer, "EmptyMaxSizeMB", Tidyup.EmptyMaxSizeMB);
             XmlHelper.WriteElementToXml(writer, "BetaMode", (int) mode);
+            XmlHelper.WriteElementToXml(writer, "ShowCollections", ShowCollections);
             XmlHelper.WriteElementToXml(writer, "PercentDirtyUpgrade", upgradeDirtyPercent);
             XmlHelper.WriteElementToXml(writer, "PercentBetter", replaceMargin);
             XmlHelper.WriteElementToXml(writer, "BaseSeasonName", defaultSeasonWord);
@@ -1081,6 +1083,9 @@ namespace TVRename
             mode = xmlSettings.ExtractInt("BetaMode")==null
                 ? BetaMode.ProductionOnly
                 : (BetaMode) xmlSettings.ExtractInt("BetaMode");
+
+            ShowCollections = xmlSettings.ExtractBool("ShowCollections") ?? false;
+
             upgradeDirtyPercent = xmlSettings.ExtractFloat("PercentDirtyUpgrade")??20;
             replaceMargin = xmlSettings.ExtractFloat("PercentBetter")??10;
             defaultSeasonWord = xmlSettings.ExtractString("BaseSeasonName", "Season");

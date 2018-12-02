@@ -306,6 +306,7 @@ namespace TVRename
             this.label55 = new System.Windows.Forms.Label();
             this.tbJSONFilesizeToken = new System.Windows.Forms.TextBox();
             this.cbIgnorePreviouslySeen = new System.Windows.Forms.CheckBox();
+            this.cbShowCollections = new System.Windows.Forms.CheckBox();
             this.cmDefaults.SuspendLayout();
             this.tpDisplay.SuspendLayout();
             this.tpSearch.SuspendLayout();
@@ -2987,6 +2988,7 @@ namespace TVRename
             // 
             // tbGeneral
             // 
+            this.tbGeneral.Controls.Add(this.cbShowCollections);
             this.tbGeneral.Controls.Add(this.label37);
             this.tbGeneral.Controls.Add(this.label38);
             this.tbGeneral.Controls.Add(this.tbPercentDirty);
@@ -3170,6 +3172,16 @@ namespace TVRename
             this.cbScanIncludesBulkAdd.TabIndex = 19;
             this.cbScanIncludesBulkAdd.Text = "Do Bulk-Add as part of scan";
             this.cbScanIncludesBulkAdd.UseVisualStyleBackColor = true;
+            //
+            // cbShowCollections
+            // 
+            this.cbShowCollections.AutoSize = true;
+            this.cbShowCollections.Location = new System.Drawing.Point(14, 157);
+            this.cbShowCollections.Name = "cbShowCollections";
+            this.cbShowCollections.Size = new System.Drawing.Size(145, 17);
+            this.cbShowCollections.TabIndex = 24;
+            this.cbShowCollections.Text = "Multiple Show collections";
+            this.cbShowCollections.UseVisualStyleBackColor = true;
             // 
             // cbSearchRSSManualScanOnly
             // 
@@ -3567,5 +3579,6 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbSearchJSONManualScanOnly;
         private System.Windows.Forms.CheckBox cbSearchRSSManualScanOnly;
         private System.Windows.Forms.CheckBox cbIgnorePreviouslySeen;
+        private System.Windows.Forms.CheckBox cbShowCollections;
     }
 }
