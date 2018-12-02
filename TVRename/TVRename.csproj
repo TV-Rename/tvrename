@@ -265,6 +265,7 @@
     <Compile Include="Settings\CustomSeasonName.cs" />
     <Compile Include="Settings\Language.cs" />
     <Compile Include="Settings\Languages.cs" />
+    <Compile Include="Settings\PreviouslySeenEpisodes.cs" />
     <Compile Include="Settings\ProcessedEpisode.cs" />
     <Compile Include="Settings\SeasonFilter.cs" />
     <Compile Include="Settings\ShowFilter.cs" />

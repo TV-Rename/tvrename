@@ -241,6 +241,9 @@ namespace TVRename
                                     filo = localEps[dbep.AppropriateEpNum]; // filename (or future filename) of the file
 
                                 Doc.TheActionList.Add(downloadIdentifiers.ProcessEpisode(dbep, filo));
+
+                                //Record this episode as seen
+                                TVSettings.Instance.PreviouslySeenEpisodes.EnsureAdded(dbep);
                             }
                         } // up to date check, for each episode in thetvdb
 

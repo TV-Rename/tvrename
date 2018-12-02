@@ -183,6 +183,7 @@ namespace TVRename
 
             return null;
         }
+
         public static long? ExtractLong(this XElement xmlSettings, string elementName)
         {
             if (xmlSettings.Descendants(elementName).Any())
@@ -214,6 +215,18 @@ namespace TVRename
             {
                 writer.WriteStartElement(stringName);
                 writer.WriteValue(ss.FileAndPath);
+                writer.WriteEndElement();
+            }
+            writer.WriteEndElement();
+        }
+
+        internal static void WriteStringsToXml(PreviouslySeenEpisodes previouslySeenEpisodes, XmlWriter writer, string elementName, string stringName)
+        {
+            writer.WriteStartElement(elementName);
+            foreach (int ep in previouslySeenEpisodes)
+            {
+                writer.WriteStartElement(stringName);
+                writer.WriteValue(ep);
                 writer.WriteEndElement();
             }
             writer.WriteEndElement();
