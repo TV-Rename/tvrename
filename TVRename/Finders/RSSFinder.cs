@@ -22,6 +22,12 @@ namespace TVRename
         public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
             TVDoc.ScanSettings settings)
         {
+            if (TVSettings.Instance.SearchRSSManualScanOnly && settings.Unattended)
+            {
+                LOGGER.Info("Searching RSS Feeds is cancelled as this is an unattended scan");
+                prog.Invoke(totPct, string.Empty);
+                return;
+            }
             int c = ActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct,"Searching on RSS Feed...");

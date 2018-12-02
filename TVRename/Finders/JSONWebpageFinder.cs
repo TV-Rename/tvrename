@@ -24,6 +24,12 @@ namespace TVRename
         public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
             TVDoc.ScanSettings settings)
         {
+            if (TVSettings.Instance.SearchJSONManualScanOnly && settings.Unattended)
+            {
+                LOGGER.Info("Searching JSON Wepages is cancelled as this is an unattended scan");
+                prog.Invoke(totPct, string.Empty);
+                return;
+            }
             int c = ActionList.Count + 2;
             int n = 1;
             prog.Invoke(startpct, "Searching on JSON Page...");
@@ -65,7 +71,16 @@ namespace TVRename
                                 {
                                     string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
                                     string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
-
+                                    int itemSizeBytes;
+                                    try
+                                    {
+                                        itemSizeBytes = (int)item[TVSettings.Instance.SearchJSONFileSizeToken];
+                                    }
+                                    catch
+                                    {
+                                        //-1 as size is not available (empty string or other)
+                                        itemSizeBytes = -1;
+                                    }
                                     if (TVSettings.Instance.DetailedRSSJSONLogging)
                                     {
                                         LOGGER.Info("Processing JSON Item");
@@ -73,6 +88,7 @@ namespace TVRename
                                         LOGGER.Info("Extracted");
                                         LOGGER.Info($"Name:        {itemName}");
                                         LOGGER.Info($"URL:         {itemUrl}");
+                                        LOGGER.Info($"Size:        {itemSizeBytes}");
                                     }
 
                                     if (!FileHelper.SimplifyAndCheckFilename(itemName, simpleShowName, true, false) &&
@@ -95,7 +111,7 @@ namespace TVRename
                                     LOGGER.Info(
                                         $"Adding {itemUrl} as it appears to be match for {pe.Show.ShowName} S{pe.AppropriateSeasonNumber}E{pe.AppropriateEpNum}");
 
-                                    newItems.Add(new ActionTDownload(itemName, itemUrl, action.TheFileNoExt, pe,action));
+                                    newItems.Add(new ActionTDownload(itemName,itemSizeBytes, itemUrl, action.TheFileNoExt, pe,action));
                                     toRemove.Add(action);
                                 }
                                 else

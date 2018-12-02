@@ -188,6 +188,7 @@ namespace TVRename
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.DownloadFolders, writer, "FinderSearchFolders","Folder");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.IgnoredAutoAddHints, writer, "IgnoredAutoAddHints","Hint");
                 XmlHelper.WriteStringsToXml(TVSettings.Instance.Ignore, writer, "IgnoreItems","Ignore");
+                XmlHelper.WriteStringsToXml(TVSettings.Instance.PreviouslySeenEpisodes, writer, "PreviouslySeenEpisodes", "Episode");
 
                 writer.WriteEndElement(); // tvrename
                 writer.WriteEndDocument();
@@ -236,6 +237,7 @@ namespace TVRename
                     x.Descendants("IgnoredAutoAddHints").First().ReadStringsFromXml("Hint");
                 TVSettings.Instance.Ignore =
                     x.Descendants("IgnoreItems").First().ReadIiFromXml("Ignore");
+                TVSettings.Instance.PreviouslySeenEpisodes = new PreviouslySeenEpisodes(x.Descendants("PreviouslySeenEpisodes").FirstOrDefault());
 
                 //MonitorFolders are a little more complex as there is a parameter named the same which we need to ignore
                 IEnumerable<XElement> mfs = x.Descendants("MonitorFolders");
@@ -492,11 +494,17 @@ namespace TVRename
             ItemList toRemove = new ItemList();
             foreach (Item item in TheActionList)
             {
-                foreach (IgnoreItem ii in TVSettings.Instance.Ignore)
+                if (TVSettings.Instance.Ignore.Any(ii => ii.SameFileAs(item.Ignore)))
                 {
-                    if (!ii.SameFileAs(item.Ignore)) continue;
                     toRemove.Add(item);
-                    break;
+                }
+
+                if (TVSettings.Instance.IgnorePreviouslySeen)
+                {
+                    if (TVSettings.Instance.PreviouslySeenEpisodes.Includes(item))
+                    {
+                        toRemove.Add(item);
+                    }
                 }
             }
 
