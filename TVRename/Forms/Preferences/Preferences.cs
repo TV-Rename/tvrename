@@ -6,11 +6,14 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using Alphaleonis.Win32.Filesystem;
+using DaveChambers.FolderBrowserDialogEx;
 using DirectoryInfo = Alphaleonis.Win32.Filesystem.DirectoryInfo;
 using ColumnHeader = SourceGrid.Cells.ColumnHeader;
 
@@ -50,6 +53,7 @@ namespace TVRename
 
             SetupRssGrid();
             SetupReplacementsGrid();
+            FillFolderStringLists();
 
             mDoc = doc;
             cntfw = null;
@@ -566,6 +570,7 @@ namespace TVRename
             ScanOptEnableDisable();
 
             FillSearchFolderList();
+            FillFolderStringLists();
 
             foreach (string row in s.RSSURLs)
                 AddNewRssRow(row);
@@ -847,14 +852,6 @@ namespace TVRename
             Helpers.SysOpen(TVSettings.Instance.DownloadFolders[n]);
         }
 
-        private void FillSearchFolderList()
-        {
-            lbSearchFolders.Items.Clear();
-            TVSettings.Instance.DownloadFolders.Sort();
-            foreach (string efi in TVSettings.Instance.DownloadFolders)
-                lbSearchFolders.Items.Add(efi);
-        }
-
         private void lbSearchFolders_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete)
@@ -868,7 +865,7 @@ namespace TVRename
 
         private void lbSearchFolders_DragDrop(object sender, DragEventArgs e)
         {
-            string[] files = (string[]) (e.Data.GetData(DataFormats.FileDrop));
+            string[] files = (string[])(e.Data.GetData(DataFormats.FileDrop));
             foreach (string path in files)
             {
                 try
@@ -1381,6 +1378,109 @@ namespace TVRename
         private void bnBrowseWPL_Click(object sender, EventArgs e)
         {
             Browse(txtWPL, "wpl", 10);
+        }
+
+        private void bnAddMonFolder_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialogEx searchFolderBrowser = new FolderBrowserDialogEx
+            {
+                SelectedPath = "",
+                Title = "Add New Monitor Folder...",
+                ShowEditbox = true,
+                StartPosition = FormStartPosition.CenterScreen
+            };
+
+            if (lstFMMonitorFolders.SelectedIndex != -1)
+            {
+                int n = lstFMMonitorFolders.SelectedIndex;
+                searchFolderBrowser.SelectedPath = TVSettings.Instance.LibraryFolders[n];
+            }
+
+            if (searchFolderBrowser.ShowDialog(this) == DialogResult.OK)
+            {
+                if (Directory.Exists(searchFolderBrowser.SelectedPath))
+                {
+                    TVSettings.Instance.LibraryFolders.Add(searchFolderBrowser.SelectedPath);
+                    mDoc.SetDirty();
+                    FillFolderStringLists();
+                }
+            }
+        }
+
+        private void FillFolderStringLists()
+        {
+            TVSettings.Instance.LibraryFolders.Sort();
+
+            lstFMMonitorFolders.BeginUpdate();
+            lstFMMonitorFolders.Items.Clear();
+
+            foreach (string folder in TVSettings.Instance.LibraryFolders)
+                lstFMMonitorFolders.Items.Add(folder);
+
+            lstFMMonitorFolders.EndUpdate();
+        }
+
+
+        private void FillSearchFolderList()
+        {
+            lbSearchFolders.Items.Clear();
+            TVSettings.Instance.DownloadFolders.Sort();
+            foreach (string efi in TVSettings.Instance.DownloadFolders)
+                lbSearchFolders.Items.Add(efi);
+        }
+
+        private void bnRemoveMonFolder_Click(object sender, EventArgs e)
+        {
+            for (int i = lstFMMonitorFolders.SelectedIndices.Count - 1; i >= 0; i--)
+            {
+                int n = lstFMMonitorFolders.SelectedIndices[i];
+                TVSettings.Instance.LibraryFolders.RemoveAt(n);
+            }
+            mDoc.SetDirty();
+            FillFolderStringLists();
+        }
+
+        private void bnOpenMonFolder_Click(object sender, EventArgs e)
+        {
+            if (lstFMMonitorFolders.SelectedIndex != -1)
+                Helpers.SysOpen(TVSettings.Instance.LibraryFolders[lstFMMonitorFolders.SelectedIndex]);
+        }
+
+        private void lstFMMonitorFolders_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete)
+                bnRemoveMonFolder_Click(null, null);
+        }
+
+        private void lstFMMonitorFolders_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effect = !e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.None : DragDropEffects.Copy;
+        }
+
+        private void lstFMMonitorFolders_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])(e.Data.GetData(DataFormats.FileDrop));
+            foreach (string path in files)
+            {
+                try
+                {
+                    DirectoryInfo di = new DirectoryInfo(path);
+                    if (di.Exists)
+                        TVSettings.Instance.LibraryFolders.Add(path.ToLower());
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+            mDoc.SetDirty();
+            FillSearchFolderList();
+        }
+
+        private void lstFMMonitorFolders_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bnRemoveMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
+            bnOpenMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
         }
     }
 }

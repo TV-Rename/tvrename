@@ -132,6 +132,23 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>108, 17</value>
   </metadata>
+  <data name="lstFMMonitorFolders.ToolTip" xml:space="preserve">
+    <value>Library Folders
+
+These are the root folder(s) of your collection
+of sorted TV Shows. This list is used by the 'Bulk Add'
+function to look for new shows that are not in
+your library. They should not overlap with the 'Search
+Folders' below.</value>
+  </data>
+  <data name="lbSearchFolders.ToolTip" xml:space="preserve">
+    <value>Search Folders
+
+The Search Folders are where new, unsorted
+files are to be found. The scan will look for 
+missing episodes in this location. It should not
+overlap with the 'Library Folders' above.</value>
+  </data>
   <metadata name="colorDialog.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>430, 17</value>
   </metadata>
