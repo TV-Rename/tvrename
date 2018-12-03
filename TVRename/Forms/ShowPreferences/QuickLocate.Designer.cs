@@ -87,7 +87,7 @@ namespace TVRename.Forms.ShowPreferences
             this.txtShowFolder.Size = new System.Drawing.Size(195, 20);
             this.txtShowFolder.TabIndex = 9;
             // 
-            // frmQuickLocate
+            // QuickLocateForm
             // 
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -107,6 +107,7 @@ namespace TVRename.Forms.ShowPreferences
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Quick Locate";
             this.TopMost = true;
             this.ResumeLayout(false);
