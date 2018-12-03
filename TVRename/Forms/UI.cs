@@ -525,12 +525,16 @@ namespace TVRename
                         "Your changes have not been saved.  Do you wish to save before quitting?", "Unsaved data",
                         MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
-                    if (res == DialogResult.Yes)
-                        mDoc.WriteXMLSettings();
-                    else if (res == DialogResult.Cancel)
-                        e.Cancel = true;
-                    else if (res == DialogResult.No)
+                    switch (res)
                     {
+                        case DialogResult.Yes:
+                            mDoc.WriteXMLSettings();
+                            break;
+                        case DialogResult.Cancel:
+                            e.Cancel = true;
+                            break;
+                        case DialogResult.No:
+                            break;
                     }
                 }
 
@@ -591,9 +595,7 @@ namespace TVRename
             foreach (ShowItem si in sil)
             {
                 if (filter.Filter(si)
-                    & (string.IsNullOrEmpty(filterTextBox.Text) || si.GetSimplifiedPossibleShowNames().Any(name =>
-                           name.Contains(Helpers.SimplifyName(filterTextBox.Text), StringComparison.OrdinalIgnoreCase))
-                    ))
+                    & (string.IsNullOrEmpty(filterTextBox.Text) || si.NameMatchFilters(filterTextBox.Text)))
                 {
                     TreeNode tvn = AddShowItemToTree(si);
                     if (expanded.Contains(si))

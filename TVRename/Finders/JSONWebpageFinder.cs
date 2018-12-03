@@ -71,10 +71,10 @@ namespace TVRename
                                 {
                                     string itemName = (string) item[TVSettings.Instance.SearchJSONFilenameToken];
                                     string itemUrl = (string) item[TVSettings.Instance.SearchJSONURLToken];
-                                    int itemSizeBytes;
+                                    long itemSizeBytes;
                                     try
                                     {
-                                        itemSizeBytes = (int)item[TVSettings.Instance.SearchJSONFileSizeToken];
+                                        itemSizeBytes = (long)item[TVSettings.Instance.SearchJSONFileSizeToken];
                                     }
                                     catch
                                     {

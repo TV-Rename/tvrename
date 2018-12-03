@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using Directory = Alphaleonis.Win32.Filesystem.Directory;
 using File = Alphaleonis.Win32.Filesystem.File;
 using FileInfo = Alphaleonis.Win32.Filesystem.FileInfo;
+using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 
 namespace TVRename
 {
@@ -61,7 +62,7 @@ namespace TVRename
 
                         if (fi.IgnoreFile()) continue;
 
-                        if (!LookForSeries(fi.Name)) possibleShowNames.Add(fi.RemoveExtension() + ".");
+                        if (!LookForSeries(fi)) possibleShowNames.Add(fi.RemoveExtension() + ".");
                     }
                 }
                 catch (UnauthorizedAccessException ex)
@@ -161,12 +162,16 @@ namespace TVRename
                 hint.Contains(term, StringComparison.OrdinalIgnoreCase));
         }
 
-        private bool LookForSeries(string name) => LookForSeries(name, MDoc.Library.Values);
+        private bool LookForSeries(FileSystemInfo name) => LookForSeries(name, MDoc.Library.Values);
+
+        private static bool LookForSeries(FileSystemInfo test, IEnumerable<ShowItem> shows)
+        {
+            return shows.Any(si => si.NameMatch(test));
+        }
 
         private static bool LookForSeries(string test, IEnumerable<ShowItem> shows)
         {
-            return shows.Any(si => si.GetSimplifiedPossibleShowNames()
-                .Any(name => FileHelper.SimplifyAndCheckFilename(test, name)));
+            return shows.Any(si => si.NameMatch(test));
         }
     }
 }

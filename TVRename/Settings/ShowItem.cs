@@ -235,7 +235,7 @@ namespace TVRename
             }
         }
 
-        public List<string> GetSimplifiedPossibleShowNames()
+        private IEnumerable<string> GetSimplifiedPossibleShowNames()
         {
             List<string> possibles = new List<string>();
 
@@ -250,9 +250,32 @@ namespace TVRename
             }
 
             //Also add the aliases provided
-            possibles.AddRange(from alias in AliasNames select Helpers.SimplifyName(alias));
+            possibles.AddNullableRange(AliasNames.Select(Helpers.SimplifyName));
+
+            //Also use the aliases from theTVDB
+            possibles.AddNullableRange(TheSeries()?.Aliases()?.Select(Helpers.SimplifyName));
 
             return possibles;
+        }
+
+        public bool NameMatch(FileSystemInfo file)
+        {
+            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.Name, name));
+        }
+
+        public bool NameMatch(DirCacheEntry file)
+        {
+            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(file.SimplifiedFullName, name));
+        }
+
+        public bool NameMatch(string text)
+        {
+            return GetSimplifiedPossibleShowNames().Any(name => FileHelper.SimplifyAndCheckFilename(text, name));
+        }
+
+        public bool NameMatchFilters(string text)
+        {
+                return GetSimplifiedPossibleShowNames().Any(name => name.Contains(Helpers.SimplifyName(text), StringComparison.OrdinalIgnoreCase));
         }
 
         public string ShowStatus

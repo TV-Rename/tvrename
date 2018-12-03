@@ -319,8 +319,7 @@ namespace TVRename
                 if (dce.TheFile.IgnoreFile()) return false;
 
                 //do any of the possible names for the series match the filename?
-                matched = (me.Episode.Show.GetSimplifiedPossibleShowNames()
-                    .Any(name => FileHelper.SimplifyAndCheckFilename(dce.SimplifiedFullName, name)));
+                matched = me.Episode.Show.NameMatch(dce);
 
                 if (!matched) return false;
 
