@@ -595,9 +595,7 @@ namespace TVRename
             foreach (ShowItem si in sil)
             {
                 if (filter.Filter(si)
-                    & (string.IsNullOrEmpty(filterTextBox.Text) || si.GetSimplifiedPossibleShowNames().Any(name =>
-                           name.Contains(Helpers.SimplifyName(filterTextBox.Text), StringComparison.OrdinalIgnoreCase))
-                    ))
+                    & (string.IsNullOrEmpty(filterTextBox.Text) || si.NameMatchFilters(filterTextBox.Text)))
                 {
                     TreeNode tvn = AddShowItemToTree(si);
                     if (expanded.Contains(si))

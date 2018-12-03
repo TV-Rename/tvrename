@@ -70,14 +70,7 @@ namespace TVRename
 
             DirectoryInfo di = new DirectoryInfo(subDirPath);
 
-            List<ShowItem> matchingShows = new List<ShowItem>();
-
-            foreach (ShowItem si in showList)
-            {
-                if (si.GetSimplifiedPossibleShowNames()
-                    .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
-                    matchingShows.Add(si);
-            }
+            List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(di)).ToList();
 
             if (matchingShows.Any())
             {
@@ -135,9 +128,7 @@ namespace TVRename
 
                     if (fi.IgnoreFile()) continue;
 
-                    List<ShowItem> matchingShows = showList.Where(si => si.GetSimplifiedPossibleShowNames()
-                            .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
-                        .ToList();
+                    List<ShowItem> matchingShows = showList.Where(si => si.NameMatch(fi)).ToList();
 
                     if (matchingShows.Any())
                     {

@@ -696,9 +696,10 @@ namespace TVRename
                         {
                             if (showsToScan.Contains(si)) continue;
 
-                            if (si.GetSimplifiedPossibleShowNames()
-                                .Any(name => FileHelper.SimplifyAndCheckFilename(fi.Name, name)))
+                            if (si.NameMatch(fi))
+                            {
                                 showsToScan.Add(si);
+                            }
                         }
                     }
                 }
@@ -723,9 +724,10 @@ namespace TVRename
                         {
                             if (showsToScan.Contains(si)) continue;
 
-                            if (si.GetSimplifiedPossibleShowNames()
-                                .Any(name => FileHelper.SimplifyAndCheckFilename(di.Name, name)))
+                            if (si.NameMatch(di))
+                            {
                                 showsToScan.Add(si);
+                            }
                         }
                     }
                 }
