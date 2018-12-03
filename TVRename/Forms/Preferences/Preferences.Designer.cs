@@ -56,6 +56,8 @@ namespace TVRename
             this.chkScheduledScan = new System.Windows.Forms.CheckBox();
             this.txtEmptyIgnoreExtensions = new System.Windows.Forms.TextBox();
             this.txtEmptyIgnoreWords = new System.Windows.Forms.TextBox();
+            this.lstFMMonitorFolders = new System.Windows.Forms.ListBox();
+            this.lbSearchFolders = new System.Windows.Forms.ListBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,6 +82,8 @@ namespace TVRename
             this.tpSearch = new System.Windows.Forms.TabPage();
             this.cbDetailedRSSJSONLogging = new System.Windows.Forms.CheckBox();
             this.gbJSON = new System.Windows.Forms.GroupBox();
+            this.label55 = new System.Windows.Forms.Label();
+            this.tbJSONFilesizeToken = new System.Windows.Forms.TextBox();
             this.label51 = new System.Windows.Forms.Label();
             this.tbJSONFilenameToken = new System.Windows.Forms.TextBox();
             this.label50 = new System.Windows.Forms.Label();
@@ -139,6 +143,10 @@ namespace TVRename
             this.label26 = new System.Windows.Forms.Label();
             this.txtRSSuTorrentPath = new System.Windows.Forms.TextBox();
             this.tbSearchFolders = new System.Windows.Forms.TabPage();
+            this.label56 = new System.Windows.Forms.Label();
+            this.bnOpenMonFolder = new System.Windows.Forms.Button();
+            this.bnAddMonFolder = new System.Windows.Forms.Button();
+            this.bnRemoveMonFolder = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.domainUpDown1 = new System.Windows.Forms.DomainUpDown();
             this.lblScanAction = new System.Windows.Forms.Label();
@@ -148,7 +156,6 @@ namespace TVRename
             this.bnOpenSearchFolder = new System.Windows.Forms.Button();
             this.bnRemoveSearchFolder = new System.Windows.Forms.Button();
             this.bnAddSearchFolder = new System.Windows.Forms.Button();
-            this.lbSearchFolders = new System.Windows.Forms.ListBox();
             this.label23 = new System.Windows.Forms.Label();
             this.tbMediaCenter = new System.Windows.Forms.TabPage();
             this.cbWDLiveEpisodeFiles = new System.Windows.Forms.CheckBox();
@@ -187,6 +194,10 @@ namespace TVRename
             this.cbEmptyIgnoreExtensions = new System.Windows.Forms.CheckBox();
             this.cbDeleteEmpty = new System.Windows.Forms.CheckBox();
             this.tpScanOptions = new System.Windows.Forms.TabPage();
+            this.cbIgnorePreviouslySeen = new System.Windows.Forms.CheckBox();
+            this.cbSearchJSONManualScanOnly = new System.Windows.Forms.CheckBox();
+            this.cbSearchRSSManualScanOnly = new System.Windows.Forms.CheckBox();
+            this.cbScanIncludesBulkAdd = new System.Windows.Forms.CheckBox();
             this.cbHigherQuality = new System.Windows.Forms.CheckBox();
             this.cbSearchJSON = new System.Windows.Forms.CheckBox();
             this.cbCheckqBitTorrent = new System.Windows.Forms.CheckBox();
@@ -436,9 +447,9 @@ namespace TVRename
             this.cbMonitorFolder.AutoSize = true;
             this.cbMonitorFolder.Location = new System.Drawing.Point(3, 111);
             this.cbMonitorFolder.Name = "cbMonitorFolder";
-            this.cbMonitorFolder.Size = new System.Drawing.Size(154, 17);
+            this.cbMonitorFolder.Size = new System.Drawing.Size(194, 17);
             this.cbMonitorFolder.TabIndex = 5;
-            this.cbMonitorFolder.Text = "&Monitor folders for changes";
+            this.cbMonitorFolder.Text = "&Monitor Search Folders for changes";
             this.toolTip1.SetToolTip(this.cbMonitorFolder, "If the contents of any of these folder change, then automatically do a \"Scan\" and" +
         " \"Do\".");
             this.cbMonitorFolder.UseVisualStyleBackColor = true;
@@ -484,6 +495,42 @@ namespace TVRename
             this.txtEmptyIgnoreWords.Size = new System.Drawing.Size(318, 20);
             this.txtEmptyIgnoreWords.TabIndex = 3;
             this.toolTip1.SetToolTip(this.txtEmptyIgnoreWords, "For example \"sample\"");
+            // 
+            // lstFMMonitorFolders
+            // 
+            this.lstFMMonitorFolders.AllowDrop = true;
+            this.lstFMMonitorFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstFMMonitorFolders.FormattingEnabled = true;
+            this.lstFMMonitorFolders.IntegralHeight = false;
+            this.lstFMMonitorFolders.Location = new System.Drawing.Point(3, 159);
+            this.lstFMMonitorFolders.Name = "lstFMMonitorFolders";
+            this.lstFMMonitorFolders.ScrollAlwaysVisible = true;
+            this.lstFMMonitorFolders.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.lstFMMonitorFolders.Size = new System.Drawing.Size(411, 155);
+            this.lstFMMonitorFolders.TabIndex = 27;
+            this.toolTip1.SetToolTip(this.lstFMMonitorFolders, resources.GetString("lstFMMonitorFolders.ToolTip"));
+            this.lstFMMonitorFolders.SelectedIndexChanged += new System.EventHandler(this.lstFMMonitorFolders_SelectedIndexChanged);
+            this.lstFMMonitorFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragDrop);
+            this.lstFMMonitorFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lstFMMonitorFolders_DragOver);
+            this.lstFMMonitorFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstFMMonitorFolders_KeyDown);
+            // 
+            // lbSearchFolders
+            // 
+            this.lbSearchFolders.AllowDrop = true;
+            this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lbSearchFolders.FormattingEnabled = true;
+            this.lbSearchFolders.Location = new System.Drawing.Point(3, 374);
+            this.lbSearchFolders.Name = "lbSearchFolders";
+            this.lbSearchFolders.ScrollAlwaysVisible = true;
+            this.lbSearchFolders.Size = new System.Drawing.Size(411, 160);
+            this.lbSearchFolders.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.lbSearchFolders, resources.GetString("lbSearchFolders.ToolTip"));
+            this.lbSearchFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragDrop);
+            this.lbSearchFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragOver);
+            this.lbSearchFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbSearchFolders_KeyDown);
             // 
             // cmDefaults
             // 
@@ -736,6 +783,24 @@ namespace TVRename
             this.gbJSON.TabStop = false;
             this.gbJSON.Text = "JSON Search";
             // 
+            // label55
+            // 
+            this.label55.AutoSize = true;
+            this.label55.Location = new System.Drawing.Point(6, 120);
+            this.label55.Name = "label55";
+            this.label55.Size = new System.Drawing.Size(64, 13);
+            this.label55.TabIndex = 39;
+            this.label55.Text = "Size Token:";
+            // 
+            // tbJSONFilesizeToken
+            // 
+            this.tbJSONFilesizeToken.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbJSONFilesizeToken.Location = new System.Drawing.Point(97, 117);
+            this.tbJSONFilesizeToken.Name = "tbJSONFilesizeToken";
+            this.tbJSONFilesizeToken.Size = new System.Drawing.Size(305, 20);
+            this.tbJSONFilesizeToken.TabIndex = 38;
+            // 
             // label51
             // 
             this.label51.AutoSize = true;
@@ -976,7 +1041,7 @@ namespace TVRename
             this.groupBox9.Size = new System.Drawing.Size(407, 111);
             this.groupBox9.TabIndex = 16;
             this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Bulk Add";
+            this.groupBox9.Text = "Bulk Add Shows from Library Folders";
             // 
             // tbSeasonSearchTerms
             // 
@@ -986,6 +1051,9 @@ namespace TVRename
             this.tbSeasonSearchTerms.Name = "tbSeasonSearchTerms";
             this.tbSeasonSearchTerms.Size = new System.Drawing.Size(291, 20);
             this.tbSeasonSearchTerms.TabIndex = 22;
+            this.toolTip1.SetToolTip(this.tbSeasonSearchTerms, "Which terms should the system look for in directory\r\nnames that indicate that the" +
+        " folder contains a season\'s\r\nworth of episodes for a show.\r\nThey should be separ" +
+        "ated by a semi-colon - ; ");
             // 
             // label36
             // 
@@ -1010,7 +1078,7 @@ namespace TVRename
             this.groupBox8.Size = new System.Drawing.Size(407, 107);
             this.groupBox8.TabIndex = 13;
             this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Auto Add";
+            this.groupBox8.Text = "Auto Add Shows from Search Folders";
             // 
             // chkAutoSearchForDownloadedFiles
             // 
@@ -1352,6 +1420,11 @@ namespace TVRename
             // 
             // tbSearchFolders
             // 
+            this.tbSearchFolders.Controls.Add(this.label56);
+            this.tbSearchFolders.Controls.Add(this.bnOpenMonFolder);
+            this.tbSearchFolders.Controls.Add(this.bnAddMonFolder);
+            this.tbSearchFolders.Controls.Add(this.bnRemoveMonFolder);
+            this.tbSearchFolders.Controls.Add(this.lstFMMonitorFolders);
             this.tbSearchFolders.Controls.Add(this.label1);
             this.tbSearchFolders.Controls.Add(this.domainUpDown1);
             this.tbSearchFolders.Controls.Add(this.chkScheduledScan);
@@ -1372,6 +1445,50 @@ namespace TVRename
             this.tbSearchFolders.TabIndex = 3;
             this.tbSearchFolders.Text = "Search Folders";
             this.tbSearchFolders.UseVisualStyleBackColor = true;
+            // 
+            // label56
+            // 
+            this.label56.AutoSize = true;
+            this.label56.Location = new System.Drawing.Point(3, 143);
+            this.label56.Name = "label56";
+            this.label56.Size = new System.Drawing.Size(75, 13);
+            this.label56.TabIndex = 31;
+            this.label56.Text = "&Library Folders";
+            // 
+            // bnOpenMonFolder
+            // 
+            this.bnOpenMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnOpenMonFolder.Enabled = false;
+            this.bnOpenMonFolder.Location = new System.Drawing.Point(163, 320);
+            this.bnOpenMonFolder.Name = "bnOpenMonFolder";
+            this.bnOpenMonFolder.Size = new System.Drawing.Size(75, 23);
+            this.bnOpenMonFolder.TabIndex = 30;
+            this.bnOpenMonFolder.Text = "&Open";
+            this.bnOpenMonFolder.UseVisualStyleBackColor = true;
+            this.bnOpenMonFolder.Click += new System.EventHandler(this.bnOpenMonFolder_Click);
+            // 
+            // bnAddMonFolder
+            // 
+            this.bnAddMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnAddMonFolder.Location = new System.Drawing.Point(1, 320);
+            this.bnAddMonFolder.Name = "bnAddMonFolder";
+            this.bnAddMonFolder.Size = new System.Drawing.Size(75, 23);
+            this.bnAddMonFolder.TabIndex = 28;
+            this.bnAddMonFolder.Text = "&Add";
+            this.bnAddMonFolder.UseVisualStyleBackColor = true;
+            this.bnAddMonFolder.Click += new System.EventHandler(this.bnAddMonFolder_Click);
+            // 
+            // bnRemoveMonFolder
+            // 
+            this.bnRemoveMonFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnRemoveMonFolder.Enabled = false;
+            this.bnRemoveMonFolder.Location = new System.Drawing.Point(82, 320);
+            this.bnRemoveMonFolder.Name = "bnRemoveMonFolder";
+            this.bnRemoveMonFolder.Size = new System.Drawing.Size(75, 23);
+            this.bnRemoveMonFolder.TabIndex = 29;
+            this.bnRemoveMonFolder.Text = "&Remove";
+            this.bnRemoveMonFolder.UseVisualStyleBackColor = true;
+            this.bnRemoveMonFolder.Click += new System.EventHandler(this.bnRemoveMonFolder_Click);
             // 
             // label1
             // 
@@ -1407,9 +1524,9 @@ namespace TVRename
             this.lblScanAction.AutoSize = true;
             this.lblScanAction.Location = new System.Drawing.Point(2, 12);
             this.lblScanAction.Name = "lblScanAction";
-            this.lblScanAction.Size = new System.Drawing.Size(59, 13);
+            this.lblScanAction.Size = new System.Drawing.Size(96, 13);
             this.lblScanAction.TabIndex = 22;
-            this.lblScanAction.Text = "&Scan Type";
+            this.lblScanAction.Text = "Default &Scan Type";
             // 
             // rdoQuickScan
             // 
@@ -1477,26 +1594,11 @@ namespace TVRename
             this.bnAddSearchFolder.UseVisualStyleBackColor = true;
             this.bnAddSearchFolder.Click += new System.EventHandler(this.bnAddSearchFolder_Click);
             // 
-            // lbSearchFolders
-            // 
-            this.lbSearchFolders.AllowDrop = true;
-            this.lbSearchFolders.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lbSearchFolders.FormattingEnabled = true;
-            this.lbSearchFolders.Location = new System.Drawing.Point(3, 153);
-            this.lbSearchFolders.Name = "lbSearchFolders";
-            this.lbSearchFolders.ScrollAlwaysVisible = true;
-            this.lbSearchFolders.Size = new System.Drawing.Size(411, 381);
-            this.lbSearchFolders.TabIndex = 1;
-            this.lbSearchFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragDrop);
-            this.lbSearchFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragOver);
-            this.lbSearchFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbSearchFolders_KeyDown);
-            // 
             // label23
             // 
+            this.label23.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label23.AutoSize = true;
-            this.label23.Location = new System.Drawing.Point(5, 131);
+            this.label23.Location = new System.Drawing.Point(2, 357);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(78, 13);
             this.label23.TabIndex = 0;
@@ -1883,9 +1985,9 @@ namespace TVRename
             this.cbDeleteEmpty.AutoSize = true;
             this.cbDeleteEmpty.Location = new System.Drawing.Point(16, 18);
             this.cbDeleteEmpty.Name = "cbDeleteEmpty";
-            this.cbDeleteEmpty.Size = new System.Drawing.Size(204, 17);
+            this.cbDeleteEmpty.Size = new System.Drawing.Size(307, 17);
             this.cbDeleteEmpty.TabIndex = 0;
-            this.cbDeleteEmpty.Text = "&Delete empty folders after moving files";
+            this.cbDeleteEmpty.Text = "&Delete empty folders after moving files (from Search Folders)";
             this.cbDeleteEmpty.UseVisualStyleBackColor = true;
             // 
             // tpScanOptions
@@ -1920,14 +2022,54 @@ namespace TVRename
             this.tpScanOptions.Text = "Scan Options";
             this.tpScanOptions.UseVisualStyleBackColor = true;
             // 
+            // cbIgnorePreviouslySeen
+            // 
+            this.cbIgnorePreviouslySeen.AutoSize = true;
+            this.cbIgnorePreviouslySeen.Location = new System.Drawing.Point(40, 96);
+            this.cbIgnorePreviouslySeen.Name = "cbIgnorePreviouslySeen";
+            this.cbIgnorePreviouslySeen.Size = new System.Drawing.Size(181, 17);
+            this.cbIgnorePreviouslySeen.TabIndex = 22;
+            this.cbIgnorePreviouslySeen.Text = "Ignore Episodes Previously Seen";
+            this.cbIgnorePreviouslySeen.UseVisualStyleBackColor = true;
+            // 
+            // cbSearchJSONManualScanOnly
+            // 
+            this.cbSearchJSONManualScanOnly.AutoSize = true;
+            this.cbSearchJSONManualScanOnly.Location = new System.Drawing.Point(204, 251);
+            this.cbSearchJSONManualScanOnly.Name = "cbSearchJSONManualScanOnly";
+            this.cbSearchJSONManualScanOnly.Size = new System.Drawing.Size(130, 17);
+            this.cbSearchJSONManualScanOnly.TabIndex = 21;
+            this.cbSearchJSONManualScanOnly.Text = "Only on manual scans";
+            this.cbSearchJSONManualScanOnly.UseVisualStyleBackColor = true;
+            // 
+            // cbSearchRSSManualScanOnly
+            // 
+            this.cbSearchRSSManualScanOnly.AutoSize = true;
+            this.cbSearchRSSManualScanOnly.Location = new System.Drawing.Point(204, 228);
+            this.cbSearchRSSManualScanOnly.Name = "cbSearchRSSManualScanOnly";
+            this.cbSearchRSSManualScanOnly.Size = new System.Drawing.Size(130, 17);
+            this.cbSearchRSSManualScanOnly.TabIndex = 20;
+            this.cbSearchRSSManualScanOnly.Text = "Only on manual scans";
+            this.cbSearchRSSManualScanOnly.UseVisualStyleBackColor = true;
+            // 
+            // cbScanIncludesBulkAdd
+            // 
+            this.cbScanIncludesBulkAdd.AutoSize = true;
+            this.cbScanIncludesBulkAdd.Location = new System.Drawing.Point(9, 433);
+            this.cbScanIncludesBulkAdd.Name = "cbScanIncludesBulkAdd";
+            this.cbScanIncludesBulkAdd.Size = new System.Drawing.Size(159, 17);
+            this.cbScanIncludesBulkAdd.TabIndex = 19;
+            this.cbScanIncludesBulkAdd.Text = "Do Bulk-Add as part of scan";
+            this.cbScanIncludesBulkAdd.UseVisualStyleBackColor = true;
+            // 
             // cbHigherQuality
             // 
             this.cbHigherQuality.AutoSize = true;
             this.cbHigherQuality.Location = new System.Drawing.Point(9, 410);
             this.cbHigherQuality.Name = "cbHigherQuality";
-            this.cbHigherQuality.Size = new System.Drawing.Size(256, 17);
+            this.cbHigherQuality.Size = new System.Drawing.Size(341, 17);
             this.cbHigherQuality.TabIndex = 18;
-            this.cbHigherQuality.Text = "Update episodes when higher-quality ones found";
+            this.cbHigherQuality.Text = "Update episodes when higher-quality ones found in Search Folders";
             this.cbHigherQuality.UseVisualStyleBackColor = true;
             // 
             // cbSearchJSON
@@ -1966,9 +2108,9 @@ namespace TVRename
             this.chkAutoMergeDownloadEpisodes.AutoSize = true;
             this.chkAutoMergeDownloadEpisodes.Location = new System.Drawing.Point(9, 365);
             this.chkAutoMergeDownloadEpisodes.Name = "chkAutoMergeDownloadEpisodes";
-            this.chkAutoMergeDownloadEpisodes.Size = new System.Drawing.Size(337, 17);
+            this.chkAutoMergeDownloadEpisodes.Size = new System.Drawing.Size(331, 17);
             this.chkAutoMergeDownloadEpisodes.TabIndex = 13;
-            this.chkAutoMergeDownloadEpisodes.Text = "Automatically create merge rules for merged downloaded episodes";
+            this.chkAutoMergeDownloadEpisodes.Text = "Automatically create merge rules based on files in Search Folders";
             this.chkAutoMergeDownloadEpisodes.UseVisualStyleBackColor = true;
             // 
             // chkPreventMove
@@ -3579,6 +3721,11 @@ namespace TVRename
         private System.Windows.Forms.CheckBox cbSearchJSONManualScanOnly;
         private System.Windows.Forms.CheckBox cbSearchRSSManualScanOnly;
         private System.Windows.Forms.CheckBox cbIgnorePreviouslySeen;
+        private System.Windows.Forms.Label label56;
+        private System.Windows.Forms.Button bnOpenMonFolder;
+        private System.Windows.Forms.Button bnAddMonFolder;
+        private System.Windows.Forms.Button bnRemoveMonFolder;
+        private System.Windows.Forms.ListBox lstFMMonitorFolders;
         private System.Windows.Forms.CheckBox cbShowCollections;
     }
 }
