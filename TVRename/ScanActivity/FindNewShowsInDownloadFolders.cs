@@ -74,7 +74,6 @@ namespace TVRename
 
             foreach (string hint in possibleShowNames)
             {
-                //MessageBox.Show($"Search for {hint}");
                 //if hint doesn't match existing added shows
                 if (LookForSeries(hint, addedShows))
                 {
