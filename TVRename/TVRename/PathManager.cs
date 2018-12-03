@@ -12,8 +12,20 @@ namespace TVRename
         private const string STATISTICS_FILE_NAME = "Statistics.xml";
         private const string LANGUAGES_FILE_NAME = "Languages.xml";
 
+        // =========================================================================================================================================
+        private const string SHOWS_FILE_NAME = "TVRenameShows.xml";
+        private const string SHOWS_COLLECTION_FILE_NAME = "TVRenameColls.xml";
+        private const string SHOWS_DEFAULT_COLLECTION = "2.1";
+
         private static string UserDefinedBasePath;
 
+        // =========================================================================================================================================
+        private static string SHOWS_COLLECTION = "";
+
+        public static FileInfo[] GetPossibleShowsHistory()
+        {
+            return new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocShowsFile.FullName)).GetFiles(SHOWS_FILE_NAME + "*");
+        }
         public static FileInfo[] GetPossibleSettingsHistory()
         {
             return new DirectoryInfo(System.IO.Path.GetDirectoryName(TVDocSettingsFile.FullName)).GetFiles(SETTINGS_FILE_NAME + "*");
@@ -49,6 +61,41 @@ namespace TVRename
             return new FileInfo(System.IO.Path.Combine(path, file));
         }
 
+        // =========================================================================================================================================
+        public static string ShowCollection
+        {
+            get
+            {
+                return SHOWS_COLLECTION;
+            }
+            set
+            {
+                if (value != SHOWS_DEFAULT_COLLECTION)
+                {
+                    SHOWS_COLLECTION = value;
+                }
+                else
+                {
+                    SHOWS_COLLECTION = "";
+                }
+            }
+        }
+
+        public static FileInfo ShowCollectionFile
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(UserDefinedBasePath))
+                {
+                    return GetFileInfo(UserDefinedBasePath, SHOWS_COLLECTION_FILE_NAME);
+                }
+                else
+                {
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename"), SHOWS_COLLECTION_FILE_NAME);
+                }
+            }
+        }
+
         public static FileInfo StatisticsFile
         {
             get
@@ -59,7 +106,7 @@ namespace TVRename
                 }
                 else
                 {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), STATISTICS_FILE_NAME);
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? SHOWS_COLLECTION : SHOWS_DEFAULT_COLLECTION)), STATISTICS_FILE_NAME);
                 }
             }
         }
@@ -75,7 +122,7 @@ namespace TVRename
                 }
                 else
                 {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), UI_LAYOUT_FILE_NAME);
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? "" : SHOWS_DEFAULT_COLLECTION)), UI_LAYOUT_FILE_NAME);
                 }
             }
         }
@@ -91,7 +138,7 @@ namespace TVRename
                 }
                 else
                 {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), TVDB_FILE_NAME);
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? SHOWS_COLLECTION : SHOWS_DEFAULT_COLLECTION)), TVDB_FILE_NAME);
                 }
             }
         }
@@ -107,7 +154,7 @@ namespace TVRename
                 }
                 else
                 {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), SETTINGS_FILE_NAME);
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? "" : SHOWS_DEFAULT_COLLECTION)), SETTINGS_FILE_NAME);
                 }
             }
         }
@@ -122,7 +169,23 @@ namespace TVRename
                 }
                 else
                 {
-                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", "2.1"), LANGUAGES_FILE_NAME);
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? "" : SHOWS_DEFAULT_COLLECTION)), LANGUAGES_FILE_NAME);
+                }
+            }
+        }
+
+        // =========================================================================================================================================
+        public static FileInfo TVDocShowsFile
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(UserDefinedBasePath))
+                {
+                    return GetFileInfo(UserDefinedBasePath, SHOWS_FILE_NAME);
+                }
+                else
+                {
+                    return GetFileInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TVRename", "TVRename", (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? SHOWS_COLLECTION : SHOWS_DEFAULT_COLLECTION)), (!string.IsNullOrEmpty(SHOWS_COLLECTION) ? SHOWS_FILE_NAME : SETTINGS_FILE_NAME));
                 }
             }
         }
