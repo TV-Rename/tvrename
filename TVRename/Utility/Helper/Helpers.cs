@@ -228,10 +228,8 @@ namespace TVRename
         public static string SimplifyName(string n)
         {
             n = n.ToLower();
-            n = n.Replace("the", "");
             n = n.Replace("'", "");
-            n = n.Replace("&", "");
-            n = n.Replace("and", "");
+            n = n.Replace("&", "and ");
             n = n.Replace("!", "");
             n = Regex.Replace(n, "[_\\W]+", " ");
             return n.Trim();
