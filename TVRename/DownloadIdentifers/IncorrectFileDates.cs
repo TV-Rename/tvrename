@@ -14,58 +14,47 @@ namespace TVRename
 
         public override ItemList ProcessShow(ShowItem si, bool forceRefresh)
         {
-            DateTime? newUpdateTime = si.TheSeries().LastAiredDate;
-            if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
-            {
-                //Any series before 1980 will get 1980 as the timestamp
-                if (newUpdateTime.Value.CompareTo(Helpers.WindowsStartDateTime) < 0)
-                    newUpdateTime = Helpers.WindowsStartDateTime;
+            DateTime? updateTime = si.TheSeries().LastAiredDate;
+            if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue) return null;
 
-                DirectoryInfo di = new DirectoryInfo(si.AutoAddFolderBase);
-                if ((di.LastWriteTimeUtc != newUpdateTime.Value)&&(!doneFilesAndFolders.Contains(di.FullName)))
-                {
-                    doneFilesAndFolders.Add(di.FullName);
-                    return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
-                }
+            DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
+
+            DirectoryInfo di = new DirectoryInfo(si.AutoAddFolderBase);
+            if ((di.LastWriteTimeUtc != newUpdateTime)&&(!doneFilesAndFolders.Contains(di.FullName)))
+            {
+                doneFilesAndFolders.Add(di.FullName);
+                return new ItemList() { new ActionDateTouch(di, si, newUpdateTime) };
             }
             return null;
         }
 
         public override ItemList ProcessSeason(ShowItem si, string folder, int snum, bool forceRefresh)
         {
-            DateTime? newUpdateTime = si.GetSeason(snum)?.LastAiredDate();
+            DateTime? updateTime = si.GetSeason(snum)?.LastAiredDate();
 
-            if (TVSettings.Instance.CorrectFileDates && newUpdateTime.HasValue)
+            if (!TVSettings.Instance.CorrectFileDates || !updateTime.HasValue) return null;
+
+            DateTime newUpdateTime = Helpers.GetMinWindowsTime(updateTime.Value);
+
+            DirectoryInfo di = new DirectoryInfo(folder);
+            if ((di.LastWriteTimeUtc != newUpdateTime) &&(!doneFilesAndFolders.Contains(di.FullName)))
             {
-                //Any series before 1980 will get 1980 as the timestamp
-                if (newUpdateTime.Value.CompareTo(Helpers.WindowsStartDateTime) < 0)
-                    newUpdateTime = Helpers.WindowsStartDateTime;
-
-                DirectoryInfo di = new DirectoryInfo(folder);
-                if ((di.LastWriteTimeUtc != newUpdateTime.Value) &&(!doneFilesAndFolders.Contains(di.FullName)))
-                {
-                    doneFilesAndFolders.Add(di.FullName);
-                    return new ItemList() { new ActionDateTouch(di, si, newUpdateTime.Value) };
-                }
+                doneFilesAndFolders.Add(di.FullName);
+                return new ItemList() { new ActionDateTouch(di, si, newUpdateTime) };
             }
             return null;
         }
 
         public override ItemList ProcessEpisode(ProcessedEpisode dbep, FileInfo filo, bool forceRefresh)
         {
-            if (TVSettings.Instance.CorrectFileDates && dbep.FirstAired.HasValue)
+            if (!TVSettings.Instance.CorrectFileDates || !dbep.FirstAired.HasValue) return null;
+
+            DateTime newUpdateTime = Helpers.GetMinWindowsTime(dbep.FirstAired.Value);
+
+            if ((filo.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(filo.FullName)))
             {
-                DateTime newUpdateTime = dbep.FirstAired.Value;
-
-                //Any series before 1980 will get 1980 as the timestamp
-                if (newUpdateTime.CompareTo(Helpers.WindowsStartDateTime) < 0)
-                    newUpdateTime = Helpers.WindowsStartDateTime;
-
-                if ((filo.LastWriteTimeUtc != newUpdateTime) && (!doneFilesAndFolders.Contains(filo.FullName)))
-                {
-                    doneFilesAndFolders.Add(filo.FullName);
-                    return  new ItemList() { new ActionDateTouch(filo,dbep, newUpdateTime) };
-                }
+                doneFilesAndFolders.Add(filo.FullName);
+                return  new ItemList() { new ActionDateTouch(filo,dbep, newUpdateTime) };
             }
             return null;
         }

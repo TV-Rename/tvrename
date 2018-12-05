@@ -67,7 +67,7 @@ namespace TVRename
 
             lvProgress.BeginUpdate();
             int top = lvProgress.TopItem?.Index ?? 0;
-            ActionCopyMoveRename activeCMAction = GetActiveCmAction();
+            ActionCopyMoveRename activeCmAction = GetActiveCmAction();
             long workDone = 0;
             long totalWork = 0;
             lvProgress.Items.Clear();
@@ -102,10 +102,10 @@ namespace TVRename
                 lvProgress.TopItem = lvProgress.Items[top];
             lvProgress.EndUpdate();
 
-            if (activeCMAction != null)
+            if (activeCmAction != null)
             {
-                txtFilename.Text = activeCMAction.ProgressText;
-                SetPercentages(activeCMAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
+                txtFilename.Text = activeCmAction.ProgressText;
+                SetPercentages(activeCmAction.PercentDone, totalWork == 0 ? 0.0 : (workDone * 100.0 / totalWork));
             }
 
             return allDone;
@@ -139,11 +139,11 @@ namespace TVRename
             int diskValue = 0;
             string diskText = "--- GB free";
 
-            ActionCopyMoveRename activeCMAction = GetActiveCmAction();
+            ActionCopyMoveRename activeCmAction = GetActiveCmAction();
 
-            if (activeCMAction is null) return;
+            if (activeCmAction is null) return;
 
-            string folder = activeCMAction.TargetFolder;
+            string folder = activeCmAction.TargetFolder;
             DirectoryInfo toRoot = (!string.IsNullOrEmpty(folder) && !folder.StartsWith("\\\\")) ? new DirectoryInfo(folder).Root : null;
 
             if (toRoot != null)

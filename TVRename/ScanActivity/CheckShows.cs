@@ -7,7 +7,7 @@ namespace TVRename
     {
         public CheckShows(TVDoc doc) : base(doc) {}
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             MDoc.TheActionList = new ItemList();
             bool fullScan = (showList.Count == MDoc.Library.Shows.Count());
@@ -27,11 +27,11 @@ namespace TVRename
 
             DirFilesCache dfc = new DirFilesCache();
 
-            int c = startpct;
-            prog.Invoke(c, "Checking shows");
+            int c = 0;
+            UpdateStatus(c,showList.Count, "Checking shows");
             foreach (ShowItem si in showList)
             {
-                prog.Invoke(startpct + ((totPct-startpct) * c++ / showList.Count), si.ShowName);
+                UpdateStatus(c++ ,showList.Count, si.ShowName);
                 if (settings.Token.IsCancellationRequested)
                     return;
 
@@ -43,7 +43,6 @@ namespace TVRename
             } // for each show
 
             MDoc.RemoveIgnored();
-            prog.Invoke(totPct, string.Empty);
         }
 
         public override bool Active() => TVSettings.Instance.RenameCheck || TVSettings.Instance.MissingCheck;

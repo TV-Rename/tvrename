@@ -8,7 +8,7 @@ namespace TVRename
     internal class CleanDownloadDirectory:ScanActivity
     {
         // ReSharper disable once InconsistentNaming
-        internal static IEnumerable<Action> Go(SetProgressDelegate prog, ICollection<ShowItem> showList, bool unattended)
+        private IEnumerable<Action> Go(ICollection<ShowItem> showList, bool unattended)
         {
             //for each directory in settings directory
             //for each file in directory
@@ -21,11 +21,10 @@ namespace TVRename
 
             int totalDownloadFolders = TVSettings.Instance.DownloadFolders.Count;
             int c = 1;
-            prog.Invoke(c, string.Empty);
 
             foreach (string dirPath in TVSettings.Instance.DownloadFolders)
             {
-                prog.Invoke(100 * c++ / totalDownloadFolders,dirPath);
+                UpdateStatus(c++ , totalDownloadFolders,dirPath);
 
                 if (!Directory.Exists(dirPath)) continue;
 
@@ -34,7 +33,6 @@ namespace TVRename
 
                 returnActions.AddNullableRange(ReviewDirsInDownloadDirectory(showList, dfc, dirPath, filesThatMayBeNeeded));
             }
-            prog.Invoke(100, string.Empty);
 
             return returnActions;
         }
@@ -307,9 +305,9 @@ namespace TVRename
         {
         }
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
-            MDoc.TheActionList.AddNullableRange(Go(prog,showList,settings.Unattended));
+            MDoc.TheActionList.AddNullableRange(Go(MDoc.Library.GetShowItems(),settings.Unattended));
         }
 
         public override bool Active() => TVSettings.Instance.RemoveDownloadDirectoriesFiles ||

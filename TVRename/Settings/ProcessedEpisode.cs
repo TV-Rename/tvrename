@@ -103,7 +103,7 @@ namespace TVRename
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters")]
-        public static int EPNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
+        public static int EpNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.AiredEpNum;
             int ep2 = e2.AiredEpNum;
@@ -113,6 +113,7 @@ namespace TVRename
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        // ReSharper disable once InconsistentNaming
         public static int DVDOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.DvdEpNum;

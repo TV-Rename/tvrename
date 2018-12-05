@@ -228,7 +228,7 @@ namespace TVRename
                 Renumber(eis);
             }
             else
-                eis.Sort(ProcessedEpisode.EPNumberSorter);
+                eis.Sort(ProcessedEpisode.EpNumberSorter);
 
             if (si.CountSpecials && seasonsToUse.ContainsKey(0))
             {
