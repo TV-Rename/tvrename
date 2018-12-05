@@ -229,7 +229,7 @@ namespace TVRename
         {
             n = n.ToLower();
             n = n.Replace("'", "");
-            n = n.Replace("&", "and ");
+            n = n.Replace("&", "and");
             n = n.Replace("!", "");
             n = Regex.Replace(n, "[_\\W]+", " ");
             return n.Trim();
