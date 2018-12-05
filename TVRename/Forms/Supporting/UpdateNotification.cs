@@ -1,3 +1,11 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System;
 using System.IO;
 using System.Net;
@@ -9,6 +17,7 @@ namespace TVRename.Forms
     public partial class UpdateNotification : Form
     {
         private readonly Release newVersion;
+        private const string GITHUB_CONVERSION_URL = "https://api.github.com/markdown";
 
         public UpdateNotification(Release update)
         {
@@ -23,8 +32,6 @@ namespace TVRename.Forms
 
         private void UpdateWithMarkdown()
         {
-            const string GITHUB_CONVERSION_URL = "https://api.github.com/markdown";
-
             if (WebRequest.Create(new Uri(GITHUB_CONVERSION_URL)) is HttpWebRequest req)
             {
                 req.Method = "POST";

@@ -43,7 +43,7 @@ namespace TVRename
 
                 lvi.SubItems.Add(episodeOne.AppropriateSeasonNumber.ToString());
                 lvi.SubItems.Add(episodeOne.NumsAsString() + " & " + episodeTwo.NumsAsString());
-                lvi.SubItems.Add(episodeOne.GetAirDateDT(true).PrettyPrint());
+                lvi.SubItems.Add(episodeOne.GetAirDateDt(true).PrettyPrint());
                 lvi.SubItems.Add(episodeOne.Name + " & " + episodeTwo.Name);
                 
                 List<string> names = new List<string> {episodeOne.Name, episodeTwo.Name};

@@ -285,7 +285,7 @@
     <Compile Include="TVRename\TVRenameOperationInteruptedException.cs" />
     <Compile Include="Utility\DateSorterWTW.cs" />
     <Compile Include="Utility\DaySorter.cs" />
-    <Compile Include="Utility\Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Utility\Extensions\EnumerableExtensions.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
     <Compile Include="Utility\Helper\FileHelper.cs" />
     <Compile Include="Utility\FileSystemProperties.cs" />

@@ -27,7 +27,7 @@ namespace TVRename
                 foreach (ProcessedEpisode ei in elist)
                 {
                     string niceName = TVSettings.Instance.NamingStyle.NameFor(ei);
-                    DateTime? stTime = ei.GetAirDateDT(true);
+                    DateTime? stTime = ei.GetAirDateDt(true);
 
                     if (!stTime.HasValue) continue;
 

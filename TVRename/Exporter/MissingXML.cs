@@ -59,7 +59,7 @@ namespace TVRename
                         XmlHelper.WriteElementToXml(writer, "description",missing.Episode.Overview);
 
                         writer.WriteStartElement("pubDate");
-                        DateTime? dt = missing.Episode.GetAirDateDT(true);
+                        DateTime? dt = missing.Episode.GetAirDateDt(true);
                         if (dt != null)
                             writer.WriteValue(dt.Value.ToString("F"));
                         writer.WriteEndElement();

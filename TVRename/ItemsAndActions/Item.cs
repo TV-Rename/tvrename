@@ -50,7 +50,7 @@ namespace TVRename
         protected virtual string SeriesName => Episode?.TheSeries?.Name ?? string.Empty;
         protected virtual string SeasonNumber => Episode?.AppropriateSeasonNumber.ToString() ?? string.Empty;
         protected virtual string EpisodeNumber => Episode?.NumsAsString() ?? string.Empty;
-        protected virtual string AirDate => Episode?.GetAirDateDT(true).PrettyPrint() ?? string.Empty;
+        protected virtual string AirDate => Episode?.GetAirDateDt(true).PrettyPrint() ?? string.Empty;
         protected abstract string DestinationFolder { get; }
         protected abstract string DestinationFile { get; }
         protected virtual string SourceDetails => string.Empty;

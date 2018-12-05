@@ -58,6 +58,7 @@ namespace TVRename
             this.txtEmptyIgnoreWords = new System.Windows.Forms.TextBox();
             this.lstFMMonitorFolders = new System.Windows.Forms.ListBox();
             this.lbSearchFolders = new System.Windows.Forms.ListBox();
+            this.tbSeasonSearchTerms = new System.Windows.Forms.TextBox();
             this.colorDialog = new System.Windows.Forms.ColorDialog();
             this.cmDefaults = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.KODIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -107,7 +108,6 @@ namespace TVRename
             this.chkRetainLanguageSpecificSubtitles = new System.Windows.Forms.CheckBox();
             this.tpBulkAdd = new System.Windows.Forms.TabPage();
             this.groupBox9 = new System.Windows.Forms.GroupBox();
-            this.tbSeasonSearchTerms = new System.Windows.Forms.TextBox();
             this.label36 = new System.Windows.Forms.Label();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.chkAutoSearchForDownloadedFiles = new System.Windows.Forms.CheckBox();
@@ -528,9 +528,22 @@ namespace TVRename
             this.lbSearchFolders.Size = new System.Drawing.Size(411, 160);
             this.lbSearchFolders.TabIndex = 1;
             this.toolTip1.SetToolTip(this.lbSearchFolders, resources.GetString("lbSearchFolders.ToolTip"));
+            this.lbSearchFolders.SelectedIndexChanged += new System.EventHandler(this.lbSearchFolders_SelectedIndexChanged);
             this.lbSearchFolders.DragDrop += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragDrop);
             this.lbSearchFolders.DragOver += new System.Windows.Forms.DragEventHandler(this.lbSearchFolders_DragOver);
             this.lbSearchFolders.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lbSearchFolders_KeyDown);
+            // 
+            // tbSeasonSearchTerms
+            // 
+            this.tbSeasonSearchTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSeasonSearchTerms.Location = new System.Drawing.Point(113, 85);
+            this.tbSeasonSearchTerms.Name = "tbSeasonSearchTerms";
+            this.tbSeasonSearchTerms.Size = new System.Drawing.Size(291, 20);
+            this.tbSeasonSearchTerms.TabIndex = 22;
+            this.toolTip1.SetToolTip(this.tbSeasonSearchTerms, "Which terms should the system look for in directory\r\nnames that indicate that the" +
+        " folder contains a season\'s\r\nworth of episodes for a show.\r\nThey should be separ" +
+        "ated by a semi-colon - ; ");
             // 
             // cmDefaults
             // 
@@ -1043,18 +1056,6 @@ namespace TVRename
             this.groupBox9.TabStop = false;
             this.groupBox9.Text = "Bulk Add Shows from Library Folders";
             // 
-            // tbSeasonSearchTerms
-            // 
-            this.tbSeasonSearchTerms.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbSeasonSearchTerms.Location = new System.Drawing.Point(113, 85);
-            this.tbSeasonSearchTerms.Name = "tbSeasonSearchTerms";
-            this.tbSeasonSearchTerms.Size = new System.Drawing.Size(291, 20);
-            this.tbSeasonSearchTerms.TabIndex = 22;
-            this.toolTip1.SetToolTip(this.tbSeasonSearchTerms, "Which terms should the system look for in directory\r\nnames that indicate that the" +
-        " folder contains a season\'s\r\nworth of episodes for a show.\r\nThey should be separ" +
-        "ated by a semi-colon - ; ");
-            // 
             // label36
             // 
             this.label36.AutoSize = true;
@@ -1564,6 +1565,7 @@ namespace TVRename
             // bnOpenSearchFolder
             // 
             this.bnOpenSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnOpenSearchFolder.Enabled = false;
             this.bnOpenSearchFolder.Location = new System.Drawing.Point(163, 545);
             this.bnOpenSearchFolder.Name = "bnOpenSearchFolder";
             this.bnOpenSearchFolder.Size = new System.Drawing.Size(75, 23);
@@ -1575,6 +1577,7 @@ namespace TVRename
             // bnRemoveSearchFolder
             // 
             this.bnRemoveSearchFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bnRemoveSearchFolder.Enabled = false;
             this.bnRemoveSearchFolder.Location = new System.Drawing.Point(82, 545);
             this.bnRemoveSearchFolder.Name = "bnRemoveSearchFolder";
             this.bnRemoveSearchFolder.Size = new System.Drawing.Size(75, 23);

@@ -6,9 +6,8 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 
-using System.Collections.Generic;
-using System.Linq;
 using Alphaleonis.Win32.Filesystem;
+using System.Collections.Generic;
 
 namespace TVRename
 {
@@ -24,20 +23,19 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.downloading;
 
-        protected void SearchForAppropriateDownloads(SetProgressDelegate prog, int startpct, int totPct, List<TorrentEntry> downloading, DownloadApp tApp,
-            TVDoc.ScanSettings settings)
+        protected void SearchForAppropriateDownloads(List<TorrentEntry> downloading, DownloadApp tApp,TVDoc.ScanSettings settings)
         {
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
             int c = ActionList.Count + 2;
             int n = 1;
-            prog.Invoke(startpct,"Searhcing torrent queue...");
+            UpdateStatus(n, c, "Searhcing torrent queue...");
             foreach (ItemMissing action in ActionList.MissingItems())
             {
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)),action.Filename);
+                UpdateStatus(n, c, action.Filename);
 
                 foreach (TorrentEntry te in downloading)
                 {
@@ -64,8 +62,6 @@ namespace TVRename
 
             foreach (Item action in newList)
                 ActionList.Add(action);
-
-            prog.Invoke(totPct, string.Empty);
         }
 
         protected DownloadingFinder(TVDoc doc) : base(doc)

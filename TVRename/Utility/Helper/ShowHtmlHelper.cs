@@ -226,7 +226,7 @@ namespace TVRename
             string episodeUrl = TheTVDB.Instance.WebsiteUrl(ep.SeriesId, ep.SeasonId, ep.EpisodeId);
             bool ratingIsNumber = float.TryParse(ep.EpisodeRating, NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CreateSpecificCulture("en-US"), out float rating);
             string siteRating = ratingIsNumber && rating > 0
-                ? rating + "/10" + AddRatingCount(ep.SiteRatingCount.Value)
+                ? rating + "/10" + AddRatingCount(ep.SiteRatingCount??0)
                 : "";
 
             string imdbLink = string.IsNullOrWhiteSpace(ep.ImdbCode) ? string.Empty : "http://www.imdb.com/title/" + ep.ImdbCode;
@@ -313,7 +313,7 @@ namespace TVRename
 
         private static string DateDetailsHtml(this ProcessedEpisode ei)
         {
-            DateTime? dt = ei.GetAirDateDT(true);
+            DateTime? dt = ei.GetAirDateDt(true);
             if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                 return $"<h6>{dt.Value.ToShortDateString()}</h6><small class=\"text-muted\">({ei.HowLong()})</small>";
 
@@ -431,7 +431,7 @@ namespace TVRename
             return tryText;
         }
 
-        internal static string StarRating(string rating)
+        private static string StarRating(string rating)
         {
             try
             {

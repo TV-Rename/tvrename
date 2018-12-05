@@ -206,7 +206,7 @@ namespace TVRename
             name = name.ReplaceInsensitive("{Year}", pe.TheSeries.MinYear.ToString());
             name = name.ReplaceInsensitive("{SeasonYear}", pe.AppropriateSeason.MinYear().ToString());
 
-            name = ReplaceDates(urlEncode, name, pe.GetAirDateDT(false));
+            name = ReplaceDates(urlEncode, name, pe.GetAirDateDt(false));
 
             string allEps = "";
             for (int i = pe.AppropriateEpNum; i <= pe.EpNum2; i++)

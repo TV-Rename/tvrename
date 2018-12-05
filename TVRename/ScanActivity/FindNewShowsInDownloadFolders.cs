@@ -19,14 +19,13 @@ using FileSystemInfo = Alphaleonis.Win32.Filesystem.FileSystemInfo;
 
 namespace TVRename
 {
-    class FindNewShowsInDownloadFolders : ScanActivity
+    internal class FindNewShowsInDownloadFolders : ScanActivity
     {
         public FindNewShowsInDownloadFolders(TVDoc doc) : base(doc)
         {
         }
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
-            TVDoc.ScanSettings settings)
+        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
             //for each directory in settings directory
             //for each file in directory

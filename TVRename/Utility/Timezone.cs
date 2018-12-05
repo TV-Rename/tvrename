@@ -81,11 +81,11 @@ namespace TVRename
 
         public static string TimeZoneForNetwork(string network)
         {
-            string[] UKTV = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };
-            string[] AusTV = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC1", "ABC (AU)" };
+            string[] uktv = { "Sky Atlantic (UK)", "BBC One", "Sky1", "BBC Two", "ITV", "Nick Jr.", "BBC Three", "Channel 4", "CBeebies", "Sky Box Office", "Watch", "ITV2", "National Geographic (UK)", "V", "ITV Encore", "ITV1", "BBC", "E4", "Channel 5 (UK)", "BBC Four", "ITVBe" };
+            string[] ausTv = { "ABC4Kids", "Stan", "Showcase (AU)", "PBS Kids Sprout", "SBS (AU)", "Nine Network", "ABC1", "ABC (AU)" };
             if (string.IsNullOrWhiteSpace(network)) return DefaultTimeZone();
-            if (UKTV.Contains(network)) return "GMT Standard Time";
-            if (AusTV.Contains(network)) return "AUS Eastern Standard Time";
+            if (uktv.Contains(network)) return "GMT Standard Time";
+            if (ausTv.Contains(network)) return "AUS Eastern Standard Time";
 
             return DefaultTimeZone();
         }
