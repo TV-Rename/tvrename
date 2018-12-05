@@ -53,7 +53,7 @@ namespace TVRename
 
         public static string RemoveSeriesEpisodeIndicators(string hint, IEnumerable<string> seasonWords)
         {
-            string hint2 = Helpers.RemoveDiacritics(hint);
+            string hint2 = RemoveDiacritics(hint);
             hint2 = RemoveSe(hint2);
             hint2 = hint2.ToLower();
             hint2 = hint2.Replace("'", "");
@@ -203,7 +203,7 @@ namespace TVRename
             return Epoch.AddSeconds(unixTime);
         }
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        public static readonly DateTime WindowsStartDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime WindowsStartDateTime = new DateTime(1980, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public static bool SysOpen(string what, string arguments = null)
         {
@@ -228,10 +228,8 @@ namespace TVRename
         public static string SimplifyName(string n)
         {
             n = n.ToLower();
-            n = n.Replace("the", "");
             n = n.Replace("'", "");
-            n = n.Replace("&", "");
-            n = n.Replace("and", "");
+            n = n.Replace("&", "and");
             n = n.Replace("!", "");
             n = Regex.Replace(n, "[_\\W]+", " ");
             return n.Trim();
@@ -324,9 +322,15 @@ namespace TVRename
             return (sb.ToString().Normalize(NormalizationForm.FormC));
         }
 
-        public static bool ContainsOneOf(this string source, string[] terms)
+        public static bool ContainsOneOf(this string source, IEnumerable<string> terms)
         {
             return terms.Any(source.Contains);
+        }
+
+        public static DateTime GetMinWindowsTime(DateTime dateTime)
+        {
+            //Any series before 1980 will get 1980 as the timestamp
+            return dateTime.CompareTo(WindowsStartDateTime) < 0 ? WindowsStartDateTime : dateTime;
         }
     }
 }

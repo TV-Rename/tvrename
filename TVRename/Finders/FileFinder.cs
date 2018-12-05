@@ -23,11 +23,8 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.local;
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
-            TVDoc.ScanSettings settings)
+        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
-            prog.Invoke(startpct, "Starting searching through files");
-
             ItemList newList = new ItemList();
             ItemList toRemove = new ItemList();
 
@@ -43,13 +40,16 @@ namespace TVRename
             }
 
             int currentItem = 0;
-            int totalN = ActionList.Count;
+            int totalN = ActionList.Count+1;
+            UpdateStatus(currentItem,totalN, "Starting searching through files");
+
+
             foreach (ItemMissing me in ActionList.MissingItems())
             {
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                prog.Invoke(startpct + ((totPct - startpct) * (++currentItem) / (totalN + 1)), me.Filename);
+                UpdateStatus(currentItem, totalN, me.Filename);
 
                 ItemList thisRound = new ItemList();
                 List<DirCacheEntry> matchedFiles = FindMatchedFiles(settings, dirCache, me, thisRound);
@@ -59,8 +59,6 @@ namespace TVRename
 
             if (TVSettings.Instance.KeepTogether)
                 KeepTogether(newList);
-
-            prog.Invoke(totPct, string.Empty);
 
             if (!TVSettings.Instance.LeaveOriginals)
             {

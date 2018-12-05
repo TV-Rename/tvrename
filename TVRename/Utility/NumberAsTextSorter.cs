@@ -17,35 +17,25 @@ namespace TVRename
 
         public int Compare(object x, object y)
         {
-            int one;
-            int two;
-            string s1 = ((x as ListViewItem).SubItems)[col].Text;
-            string s2 = ((y as ListViewItem).SubItems)[col].Text;
-            if (string.IsNullOrEmpty(s1))
-                s1 = "-1";
-            if (string.IsNullOrEmpty(s2))
-                s2 = "-1";
+            if (!(x is ListViewItem lvix)) throw new InvalidOperationException();
+            if (!(y is ListViewItem lviy)) throw new InvalidOperationException();
 
-            try
-            {
-                one = Convert.ToInt32(s1);
-            }
-            catch
-            {
-                one = 0;
-            }
-            try
-            {
-                two = Convert.ToInt32(s2);
-            }
-            catch
-            {
-                two = 0;
-            }
-
-            return one - two;
+            return ParseAsInt(lvix.SubItems[col].Text) - ParseAsInt(lviy.SubItems[col].Text);
         }
 
+        private static int ParseAsInt(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return -1;
+            try
+            {
+                return Convert.ToInt32(text);
+            }
+            catch
+            {
+                return 0;
+            }
+        }
         #endregion
     }
 }

@@ -12,13 +12,13 @@ using System.Windows.Forms;
 
 namespace TVRename
 {
-    class FindNewShowsInLibrary : ScanActivity
+    internal class FindNewShowsInLibrary : ScanActivity
     {
         public FindNewShowsInLibrary(TVDoc doc) : base(doc)
         {
         }
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
+        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             BulkAddManager bam = new BulkAddManager(MDoc);
             bam.CheckFolders(settings.Token, prog,false);

@@ -7,18 +7,36 @@
 // 
 
 using System.Collections.Generic;
+using NLog;
 
 namespace TVRename
 {
     public abstract class ScanActivity
     {
-        protected static readonly NLog.Logger LOGGER = NLog.LogManager.GetCurrentClassLogger();
+        protected static readonly Logger LOGGER = LogManager.GetCurrentClassLogger();
         protected readonly TVDoc MDoc;
+        private SetProgressDelegate progressDelegate;
+        private int startPosition;
+        private int endPosition;
 
         protected ScanActivity(TVDoc doc) => MDoc = doc;
 
-        public abstract void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
-            TVDoc.ScanSettings settings);
+        public void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
+            TVDoc.ScanSettings settings)
+        {
+            startPosition = startpct;
+            endPosition = totPct;
+            progressDelegate = prog;
+            Check(prog, showList,settings);
+            progressDelegate.Invoke(endPosition , string.Empty);
+        }
+
+        protected abstract void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings);
+
+        protected void UpdateStatus(int recordNumber,int totalRecords, string message)
+        {
+            progressDelegate.Invoke(startPosition + ((endPosition - startPosition) * recordNumber / (totalRecords+1)), message);
+        }
 
         public abstract bool Active();
 

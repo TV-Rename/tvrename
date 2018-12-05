@@ -48,7 +48,7 @@ namespace TVRename
                         XmlHelper.WriteElementToXml(writer,"EpisodeName",ei.Name);
   
                         writer.WriteStartElement("available");
-                        DateTime? airdt = ei.GetAirDateDT(true);
+                        DateTime? airdt = ei.GetAirDateDt(true);
 
                         if (airdt.HasValue && airdt.Value.CompareTo(DateTime.Now) < 0) // has aired
                         {
@@ -63,7 +63,7 @@ namespace TVRename
                         XmlHelper.WriteElementToXml( writer,"Overview",ei.Overview);
                         
                         writer.WriteStartElement("FirstAired");
-                        DateTime? dt = ei.GetAirDateDT(true);
+                        DateTime? dt = ei.GetAirDateDt(true);
                         if (dt != null)
                             writer.WriteValue(dt.Value.ToString("F"));
                         writer.WriteEndElement();

@@ -20,12 +20,10 @@ namespace TVRename
 
         public override bool Active() => TVSettings.Instance.CheckSABnzbd;
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
-            TVDoc.ScanSettings settings)
+        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
             if (string.IsNullOrEmpty(TVSettings.Instance.SABAPIKey) || string.IsNullOrEmpty(TVSettings.Instance.SABHostPort))
             {
-                prog.Invoke(totPct,string.Empty);
                 return;
             }
 
@@ -40,7 +38,6 @@ namespace TVRename
 
             if (r == null)
             {
-                prog.Invoke(totPct,string.Empty);
                 return;
             }
 
@@ -50,7 +47,6 @@ namespace TVRename
                 if (res != null && res.status == "False")
                 {
                     LOGGER.Error("Error processing data from SABnzbd (Queue Check): {0}", res.error);
-                    prog.Invoke(totPct, string.Empty);
                     return;
                 }
             }
@@ -67,7 +63,6 @@ namespace TVRename
             catch (Exception e)
             {
                 LOGGER.Error(e, "Error processing data from SABnzbd (Queue Check)");
-                prog.Invoke(totPct, string.Empty);
                 return;
             }
 
@@ -85,7 +80,7 @@ namespace TVRename
                 if (settings.Token.IsCancellationRequested)
                     return;
 
-                prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)),action.Filename);
+                UpdateStatus(n, c, action.Filename);
 
                 string showname = Helpers.SimplifyName(action.Episode.Show.ShowName);
 
@@ -107,8 +102,6 @@ namespace TVRename
 
             foreach (Item action in newList)
                 ActionList.Add(action);
-
-            prog.Invoke(totPct, string.Empty);
         }
 
         private static byte[] DownloadPage(string theUrl)

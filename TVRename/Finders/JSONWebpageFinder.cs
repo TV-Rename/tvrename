@@ -21,18 +21,16 @@ namespace TVRename
 
         public override FinderDisplayType DisplayType() => FinderDisplayType.search;
 
-        public override void Check(SetProgressDelegate prog, int startpct, int totPct, ICollection<ShowItem> showList,
-            TVDoc.ScanSettings settings)
+        protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList,TVDoc.ScanSettings settings)
         {
             if (TVSettings.Instance.SearchJSONManualScanOnly && settings.Unattended)
             {
                 LOGGER.Info("Searching JSON Wepages is cancelled as this is an unattended scan");
-                prog.Invoke(totPct, string.Empty);
                 return;
             }
-            int c = ActionList.Count + 2;
-            int n = 1;
-            prog.Invoke(startpct, "Searching on JSON Page...");
+            int c = ActionList.Count + 1;
+            int n = 0;
+            UpdateStatus(n,c, "Searching on JSON Page...");
 
             ItemList newItems = new ItemList();
             ItemList toRemove = new ItemList();
@@ -43,7 +41,7 @@ namespace TVRename
                     if (settings.Token.IsCancellationRequested)
                         return;
 
-                    prog.Invoke(startpct + ((totPct - startpct) * (++n) / (c)),action.Filename);
+                    UpdateStatus(n, c, action.Filename);
 
                     ProcessedEpisode pe = action.Episode;
                     string simpleShowName = Helpers.SimplifyName(action.Episode.Show.ShowName);
@@ -142,8 +140,6 @@ namespace TVRename
 
             foreach (Item action in newItems)
                 ActionList.Add(action);
-
-            prog.Invoke(totPct,string.Empty);
         }
     }
 }

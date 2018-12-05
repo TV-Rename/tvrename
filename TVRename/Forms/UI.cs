@@ -826,7 +826,7 @@ namespace TVRename
 
             foreach (ProcessedEpisode ei in recentEps)
             {
-                DateTime? dt = ei.GetAirDateDT(true);
+                DateTime? dt = ei.GetAirDateDt(true);
                 if (dt != null) bolded.Add(dt.Value);
 
                 ListViewItem lvi = new ListViewItem {Text = ""};
@@ -913,7 +913,7 @@ namespace TVRename
                 txtWhenToWatchSynopsis.Text = ei.Overview;
 
             mInternalChange++;
-            DateTime? dt = ei.GetAirDateDT(true);
+            DateTime? dt = ei.GetAirDateDt(true);
             if (dt != null)
             {
                 calCalendar.SelectionStart = (DateTime) dt;
@@ -967,7 +967,7 @@ namespace TVRename
                 lvi.Selected = false;
 
                 ProcessedEpisode ei = (ProcessedEpisode) lvi.Tag;
-                DateTime? dt2 = ei.GetAirDateDT(true);
+                DateTime? dt2 = ei.GetAirDateDt(true);
                 if (dt2 != null)
                 {
                     double h = dt2.Value.Subtract(dt).TotalHours;
@@ -1978,7 +1978,7 @@ namespace TVRename
             //       1 = this week
             //       2 = future / unknown
 
-            DateTime? airdt = pe.GetAirDateDT(true);
+            DateTime? airdt = pe.GetAirDateDt(true);
             if (airdt == null)
             {
                 // TODO: something!

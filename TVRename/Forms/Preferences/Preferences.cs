@@ -6,7 +6,6 @@
 // This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
 // 
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using System.Drawing;
@@ -1481,6 +1480,12 @@ namespace TVRename
         {
             bnRemoveMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
             bnOpenMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
+        }
+
+        private void lbSearchFolders_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bnRemoveSearchFolder.Enabled = (lbSearchFolders.SelectedIndices.Count > 0);
+            bnOpenSearchFolder.Enabled = (lbSearchFolders.SelectedIndices.Count > 0);
         }
     }
 }

@@ -103,7 +103,7 @@ namespace TVRename
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters")]
-        public static int EPNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
+        public static int EpNumberSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.AiredEpNum;
             int ep2 = e2.AiredEpNum;
@@ -113,6 +113,7 @@ namespace TVRename
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design",
             "CA1011:ConsiderPassingBaseTypesAsParameters")]
+        // ReSharper disable once InconsistentNaming
         public static int DVDOrderSorter(ProcessedEpisode e1, ProcessedEpisode e2)
         {
             int ep1 = e1.DvdEpNum;
@@ -121,7 +122,7 @@ namespace TVRename
             return ep1 - ep2;
         }
 
-        public DateTime? GetAirDateDT(bool inLocalTime)
+        public DateTime? GetAirDateDt(bool inLocalTime)
         {
             if (!inLocalTime)
                 return GetAirDateDt();
@@ -132,7 +133,7 @@ namespace TVRename
 
         public string HowLong()
         {
-            DateTime? airsdt = GetAirDateDT(true);
+            DateTime? airsdt = GetAirDateDt(true);
             if (airsdt == null)
                 return "";
 
@@ -158,19 +159,19 @@ namespace TVRename
 
         public string DayOfWeek()
         {
-            DateTime? dt = GetAirDateDT(true);
+            DateTime? dt = GetAirDateDt(true);
             return (dt != null) ? dt.Value.ToString("ddd") : "-";
         }
 
         public string TimeOfDay()
         {
-            DateTime? dt = GetAirDateDT(true);
+            DateTime? dt = GetAirDateDt(true);
             return (dt != null) ? dt.Value.ToString("t") : "-";
         }
 
         public bool HasAired()
         {
-            DateTime? airsdt = GetAirDateDT(true);
+            DateTime? airsdt = GetAirDateDt(true);
             if (airsdt == null)
                 return false;
 
@@ -182,7 +183,7 @@ namespace TVRename
 
         public bool WithinDays(int days)
         {
-            DateTime? dt = GetAirDateDT(true);
+            DateTime? dt = GetAirDateDt(true);
             if ((dt == null) || (dt.Value.CompareTo(DateTime.MaxValue) == 0)) return false;
 
             TimeSpan ts = dt.Value.Subtract(DateTime.Now);
