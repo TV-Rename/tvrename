@@ -53,7 +53,7 @@ namespace TVRename
                         XmlHelper.WriteElementToXml(writer,"description", ei.Show.ShowName + "<br/>" + niceName + "<br/>" + ei.Overview);
 
                         writer.WriteStartElement("pubDate");
-                        DateTime? dt = ei.GetAirDateDT(true);
+                        DateTime? dt = ei.GetAirDateDt(true);
                         if (dt != null)
                             writer.WriteValue(dt.Value.ToString("r"));
                         writer.WriteEndElement(); //pubDate

@@ -32,7 +32,7 @@ namespace TVRename
                         if (action is ItemMissing im)
                         {
                             ProcessedEpisode pe = im.Episode;
-                            DateTime? dt = pe.GetAirDateDT(true);
+                            DateTime? dt = pe.GetAirDateDt(true);
                             file.WriteLine($"\"{pe.TheSeries.Name}\",{pe.AppropriateSeasonNumber},{pe.NumsAsString()},\"{pe.Name}\",{dt:G},\"{action.TargetFolder}\",\"{im.Filename }\",{pe.SeriesId}");
                         }
                     }

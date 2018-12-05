@@ -599,7 +599,7 @@ namespace TVRename
                             if (found.Contains(ei))
                                 continue;
 
-                            DateTime? airdt = ei.GetAirDateDT(true);
+                            DateTime? airdt = ei.GetAirDateDt(true);
 
                             if ((airdt == null) || (airdt == DateTime.MaxValue))
                                 continue;
@@ -625,7 +625,7 @@ namespace TVRename
                 if (nextAfterThat == null)
                     return found;
 
-                DateTime? nextdt = nextAfterThat.GetAirDateDT(true);
+                DateTime? nextdt = nextAfterThat.GetAirDateDt(true);
                 if (nextdt.HasValue)
                 {
                     notBefore = nextdt.Value;
@@ -690,7 +690,7 @@ namespace TVRename
 
                     foreach (ProcessedEpisode ei in eis)
                     {
-                        DateTime? dt = ei.GetAirDateDT(true);
+                        DateTime? dt = ei.GetAirDateDt(true);
                         if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                         {
                             TimeSpan ts = dt.Value.Subtract(DateTime.Now);

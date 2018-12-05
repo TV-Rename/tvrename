@@ -313,7 +313,7 @@ namespace TVRename
 
         private static string DateDetailsHtml(this ProcessedEpisode ei)
         {
-            DateTime? dt = ei.GetAirDateDT(true);
+            DateTime? dt = ei.GetAirDateDt(true);
             if ((dt != null) && (dt.Value.CompareTo(DateTime.MaxValue) != 0))
                 return $"<h6>{dt.Value.ToShortDateString()}</h6><small class=\"text-muted\">({ei.HowLong()})</small>";
 

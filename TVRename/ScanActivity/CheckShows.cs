@@ -1,5 +1,12 @@
+// 
+// Main website for TVRename is http://tvrename.com
+// 
+// Source code available at https://github.com/TV-Rename/tvrename
+// 
+// This code is released under GPLv3 https://github.com/TV-Rename/tvrename/blob/master/LICENSE.md
+// 
+
 using System.Collections.Generic;
-using System.Linq;
 
 namespace TVRename
 {
@@ -10,7 +17,6 @@ namespace TVRename
         protected override void Check(SetProgressDelegate prog, ICollection<ShowItem> showList, TVDoc.ScanSettings settings)
         {
             MDoc.TheActionList = new ItemList();
-            bool fullScan = (showList.Count == MDoc.Library.Shows.Count());
 
             if (TVSettings.Instance.RenameCheck)
                 MDoc.Stats().RenameChecksDone++;
@@ -18,7 +24,7 @@ namespace TVRename
             if (TVSettings.Instance.MissingCheck)
                 MDoc.Stats().MissingChecksDone++;
 
-            if (fullScan)
+            if (settings.Type == TVSettings.ScanType.Full)
             {
                 // only do episode count if we're doing all shows and seasons
                 MDoc.CurrentStats.NS_NumberOfEpisodes = 0;

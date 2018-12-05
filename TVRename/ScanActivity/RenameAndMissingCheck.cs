@@ -192,7 +192,7 @@ namespace TVRename
                             if ((dbep.AppropriateEpNum > maxEpNumFound) || (localEps[dbep.AppropriateEpNum] == null)
                             ) // not here locally
                             {
-                                DateTime? dt = dbep.GetAirDateDT(true);
+                                DateTime? dt = dbep.GetAirDateDt(true);
                                 bool dtOk = dt != null;
 
                                 bool notFuture =

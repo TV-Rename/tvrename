@@ -648,7 +648,7 @@ namespace TVRename
                 bool foundOnDisk = ((fl != null) && (fl.Any()));
                 bool alreadyAired;
 
-                DateTime? airDate = pe.GetAirDateDT(true);
+                DateTime? airDate = pe.GetAirDateDt(true);
 
                 if (airDate.HasValue)
                     alreadyAired = airDate.Value.CompareTo(DateTime.Now) < 0;
