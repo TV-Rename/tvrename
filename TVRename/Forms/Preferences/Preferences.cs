@@ -1481,5 +1481,11 @@ namespace TVRename
             bnRemoveMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
             bnOpenMonFolder.Enabled = (lstFMMonitorFolders.SelectedIndices.Count > 0);
         }
+
+        private void lbSearchFolders_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            bnRemoveSearchFolder.Enabled = (lbSearchFolders.SelectedIndices.Count > 0);
+            bnOpenSearchFolder.Enabled = (lbSearchFolders.SelectedIndices.Count > 0);
+        }
     }
 }
