@@ -181,7 +181,7 @@ namespace TVRename
                             FileHelper.VideoComparison result = FileHelper.BetterQualityFile(existingFile, fi);
                             switch (result)
                             {
-                                case FileHelper.VideoComparison.SecondFileBetter:
+                                case FileHelper.VideoComparison.secondFileBetter:
                                     fileCanBeDeleted = false;
 
                                     if (TVSettings.Instance.ReplaceWithBetterQuality)
@@ -203,8 +203,8 @@ namespace TVRename
                                     }
 
                                     break;
-                                case FileHelper.VideoComparison.CantTell:
-                                case FileHelper.VideoComparison.Similar:
+                                case FileHelper.VideoComparison.cantTell:
+                                case FileHelper.VideoComparison.similar:
                                     if (unattended)
                                     {
                                         fileCanBeDeleted = false;
@@ -249,9 +249,9 @@ namespace TVRename
 
                                     break;
                                 //the other cases of the files being the same or the existing file being better are not enough to save the file
-                                case FileHelper.VideoComparison.FirstFileBetter:
+                                case FileHelper.VideoComparison.firstFileBetter:
                                     break;
-                                case FileHelper.VideoComparison.Same:
+                                case FileHelper.VideoComparison.same:
                                     break;
                                 default:
                                     throw new ArgumentOutOfRangeException();

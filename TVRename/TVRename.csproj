@@ -283,8 +283,8 @@
     <Compile Include="TVRename\FolderMonitorEntryList.cs" />
     <Compile Include="TVRename\ShowLibrary.cs" />
     <Compile Include="TVRename\TVRenameOperationInteruptedException.cs" />
-    <Compile Include="Utility\DateSorterWTW.cs" />
-    <Compile Include="Utility\DaySorter.cs" />
+    <Compile Include="Utility\Sorters\DateSorterWTW.cs" />
+    <Compile Include="Utility\Sorters\DaySorter.cs" />
     <Compile Include="Utility\Extensions\EnumerableExtensions.cs" />
     <Compile Include="Utility\Helper\ShowHtmlHelper.cs" />
     <Compile Include="Utility\Helper\FileHelper.cs" />
@@ -293,7 +293,7 @@
     <Compile Include="Utility\Helper\JSONHelper.cs" />
     <Compile Include="Utility\NativeMethods.cs" />
     <Compile Include="Utility\DownloadInformation.cs" />
-    <Compile Include="Utility\NumberAsTextSorter.cs" />
+    <Compile Include="Utility\Sorters\NumberAsTextSorter.cs" />
     <Compile Include="Utility\SAB\NewDataSet.cs" />
     <Compile Include="Utility\PossibleDuplicateEpisode.cs" />
     <Compile Include="Utility\DirFilesCache.cs" />
@@ -455,9 +455,11 @@
     <Compile Include="Utility\SAB\Result.cs" />
     <Compile Include="Utility\SetProgressDelegate.cs" />
     <Compile Include="Utility\Helper\StringExtensions.cs" />
+    <Compile Include="Utility\Helper\TimeZoneHelper.cs" />
     <Compile Include="Utility\UpdateVersion.cs" />
     <Compile Include="Utility\VersionUpdater.cs" />
     <Compile Include="Utility\Helper\XMLHelper.cs" />
+    <None Include="Resources\iconfinder_Info_Circle_Symbol_Information_Letter_1396823.ico" />
     <EmbeddedResource Include="Forms\ShowPreferences\QuickLocate.resx">
       <DependentUpon>QuickLocate.cs</DependentUpon>
     </EmbeddedResource>
@@ -620,7 +622,7 @@
     </Compile>
     <Compile Include="Settings\ShowRule.cs" />
     <Compile Include="Utility\SAB\Queue.cs" />
-    <Compile Include="Utility\TextSorter.cs" />
+    <Compile Include="Utility\Sorters\TextSorter.cs" />
     <Compile Include="Settings\Statistics.cs" />
     <Compile Include="Forms\Utilities\StatsWindow.cs">
       <SubType>Form</SubType>
@@ -629,7 +631,6 @@
     <Compile Include="Custom Controls\TheTVDBCodeFinder.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Utility\Timezone.cs" />
     <Compile Include="TVRename\TVDoc.cs" />
     <Compile Include="App\Program.cs" />
     <Compile Include="Forms\UI.cs">

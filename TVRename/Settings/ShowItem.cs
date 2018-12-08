@@ -48,9 +48,9 @@ namespace TVRename
         public string CustomSearchUrl;
 
         public string ShowTimeZone;
-        private TimeZone seriesTimeZone;
+        private TimeZoneInfo seriesTimeZone;
         private string lastFiguredTz;
-        
+
         public DateTime? BannersLastUpdatedOnDisk { get; set; }
 
         #region AutomaticFolderType enum
@@ -79,19 +79,18 @@ namespace TVRename
             string tzstr = ShowTimeZone;
 
             if (string.IsNullOrEmpty(tzstr))
-                tzstr = TimeZone.DefaultTimeZone();
+                tzstr = TimeZoneHelper.DefaultTimeZone();
 
-            seriesTimeZone = TimeZone.TimeZoneFor(tzstr);
-
+            seriesTimeZone = TimeZoneInfo.FindSystemTimeZoneById(tzstr);
             lastFiguredTz = tzstr;
         }
 
-        public TimeZone GetTimeZone()
+        public TimeZoneInfo GetTimeZone()
         {
-            // we cache the timezone info, as the fetching is a bit slow, and we do this a lot
-            if (lastFiguredTz != ShowTimeZone)
+            if (seriesTimeZone == null || lastFiguredTz != ShowTimeZone)
+            {
                 FigureOutTimeZone();
-
+            }
             return seriesTimeZone;
         }
 
@@ -113,7 +112,7 @@ namespace TVRename
             DvdOrder = xmlSettings.ExtractBool("DVDOrder",false);
             UseCustomSearchUrl = xmlSettings.ExtractBool("UseCustomSearchURL",false);
             CustomSearchUrl = xmlSettings.ExtractString("CustomSearchURL");
-            ShowTimeZone = xmlSettings.ExtractString("TimeZone") ?? TimeZone.DefaultTimeZone(); // default, is correct for most shows;
+            ShowTimeZone = xmlSettings.ExtractString("TimeZone") ?? TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows;
             ForceCheckFuture = xmlSettings.ExtractBoolBackupDefault("ForceCheckFuture","ForceCheckAll",false);
             ForceCheckNoAirdate = xmlSettings.ExtractBoolBackupDefault("ForceCheckNoAirdate","ForceCheckAll",false);
             AutoAddCustomFolderFormat = xmlSettings.ExtractString("CustomFolderFormat") ?? CustomSeasonName.DefaultStyle();
@@ -419,7 +418,7 @@ namespace TVRename
             ForceCheckNoAirdate = false;
             ForceCheckFuture = false;
             BannersLastUpdatedOnDisk = null; //assume that the baners are old and have expired
-            ShowTimeZone = TimeZone.DefaultTimeZone(); // default, is correct for most shows
+            ShowTimeZone = TimeZoneHelper.DefaultTimeZone(); // default, is correct for most shows
             lastFiguredTz = "";
         }
 

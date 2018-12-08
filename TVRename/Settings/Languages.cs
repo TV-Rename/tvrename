@@ -55,6 +55,12 @@ namespace TVRename
         private void SaveToFile(string toFile)
         {
             System.IO.DirectoryInfo di = new System.IO.FileInfo(toFile).Directory;
+            if (di == null)
+            {
+                Logger.Error($"Failed to save Languages XML to {toFile}");
+                return;
+            }
+
             if (!di.Exists)
                 di.Create();
 

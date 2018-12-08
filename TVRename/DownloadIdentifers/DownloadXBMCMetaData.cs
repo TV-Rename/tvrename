@@ -39,7 +39,7 @@ namespace TVRename
                 FileInfo tvshownfo = FileHelper.FileInFolder(si.AutoAddFolderBase, "tvshow.nfo");
 
                 bool needUpdate = !tvshownfo.Exists ||
-                                  (si.TheSeries().SrvLastUpdated > TimeZone.Epoch(tvshownfo.LastWriteTime)) ||
+                                  (si.TheSeries().SrvLastUpdated > TimeZoneHelper.Epoch(tvshownfo.LastWriteTime)) ||
                     // was it written before we fixed the bug in <episodeguideurl> ?
                                   (tvshownfo.LastWriteTime.ToUniversalTime().CompareTo(new DateTime(2009, 9, 13, 7, 30, 0, 0, DateTimeKind.Utc)) < 0);
 
@@ -62,7 +62,7 @@ namespace TVRename
             string fn = filo.RemoveExtension() + ".nfo";
             FileInfo nfo = FileHelper.FileInFolder(filo.Directory, fn);
 
-            if (nfo.Exists && (dbep.SrvLastUpdated <= TimeZone.Epoch(nfo.LastWriteTime)) && !forceRefresh)
+            if (nfo.Exists && (dbep.SrvLastUpdated <= TimeZoneHelper.Epoch(nfo.LastWriteTime)) && !forceRefresh)
                 return new ItemList();
 
             //If we do not already have plans to put the file into place

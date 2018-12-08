@@ -27,7 +27,7 @@ namespace TVRename
 
         protected override string GenerateRecord(ProcessedEpisode ep, FileInfo file, string name, int length)
         {
-            return $"#EXTINF:{length},{file.Name}\r\n{file.URLPathFullName()}";
+            return $"#EXTINF:{length},{file.Name}\r\n{file.UrlPathFullName()}";
         }
 
         protected override string GenerateFooter()

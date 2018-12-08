@@ -30,7 +30,6 @@ namespace TVRename
     // right click commands
     public enum RightClickCommands
     {
-        none = 0,
         kEpisodeGuideForShow = 1,
         kVisitTvdbEpisode,
         kVisitTvdbSeason,
@@ -136,12 +135,14 @@ namespace TVRename
 
             lvWhenToWatch.ListViewItemSorter = new DateSorterWTW();
 
-            if (mDoc.Args.Hide)
+            if (mDoc.Args.Hide || !showUi)
             {
                 WindowState = FormWindowState.Minimized;
                 Visible = false;
                 Hide();
             }
+
+            tmrPeriodicScan.Enabled = false;
 
             UpdateSplashStatus(splash, "Filling Shows");
             FillMyShows();
@@ -195,8 +196,8 @@ namespace TVRename
 
         private void ClearInfoWindows(string defaultText)
         {
-            SetHtmlBody(ShowHtmlHelper.CreateOldPage(defaultText), webImages);
-            SetHtmlBody(ShowHtmlHelper.CreateOldPage(defaultText), webInformation);
+            SetHtmlBody( webImages, ShowHtmlHelper.CreateOldPage(defaultText));
+            SetHtmlBody(webInformation, ShowHtmlHelper.CreateOldPage(defaultText));
         }
 
         private static int BgdlLongInterval() => 1000 * 60 * 60; // one hour
@@ -358,7 +359,7 @@ namespace TVRename
 
         private bool LoadWidths(XElement xml)
         {
-            string forwho = xml.Attribute("For").Value;
+            string forwho = xml.Attribute("For")?.Value;
 
             ListView lv = ListViewByName(forwho);
             if (lv == null)
@@ -420,8 +421,8 @@ namespace TVRename
 
         private void SetSplitter(XElement x)
         {
-            splitContainer1.SplitterDistance = int.Parse(x.Attribute("Distance").Value);
-            splitContainer1.Panel2Collapsed = bool.Parse(x.Attribute("HTMLCollapsed").Value);
+            splitContainer1.SplitterDistance = int.Parse(x.Attribute("Distance")?.Value??"100");
+            splitContainer1.Panel2Collapsed = bool.Parse(x.Attribute("HTMLCollapsed")?.Value ?? "false");
             if (splitContainer1.Panel2Collapsed)
                 bnHideHTMLPanel.ImageKey = "FillLeft.bmp";
         }
@@ -705,7 +706,7 @@ namespace TVRename
             FillEpGuideHtml(TreeNodeToShowItem(n), -1);
         }
 
-        private void FillEpGuideHtml(ShowItem si, int snum)
+        private async void FillEpGuideHtml(ShowItem si, int snum)
         {
             if (tabControl1.SelectedTab != tbMyShows)
                 return;
@@ -727,34 +728,35 @@ namespace TVRename
                 return;
             }
 
-            string infoPaneBody;
-            string imagesPaneBody;
-
             if (si.DvdOrder && snum >= 0 && ser.DvdSeasons.ContainsKey(snum))
             {
                 Season s = ser.DvdSeasons[snum];
-                infoPaneBody = si.GetSeasonHtmlOverview(s);
-                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s));
+                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, false));
+                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+
+                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, true));
             }
             else if (!si.DvdOrder && snum >= 0 && ser.AiredSeasons.ContainsKey(snum))
             {
                 Season s = ser.AiredSeasons[snum];
-                infoPaneBody = si.GetSeasonHtmlOverview(s);
-                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s));
+                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, false));
+                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetSeasonImagesHtmlOverview(s)));
+
+                SetHtmlBody(webInformation, await si.GetSeasonHtmlOverview(s, true));
             }
             else
             {
                 // no epnum specified, just show an overview
-                infoPaneBody = si.GetShowHtmlOverview();
-                imagesPaneBody = ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview());
+                SetHtmlBody(webInformation, await si.GetShowHtmlOverview(false));
+                SetHtmlBody(webImages, ShowHtmlHelper.CreateOldPage(si.GetShowImagesHtmlOverview()));
+
+                SetHtmlBody(webInformation, await si.GetShowHtmlOverview(true));
             }
 
             TheTVDB.Instance.Unlock("FillEpGuideHTML");
-            SetHtmlBody(imagesPaneBody, webImages);
-            SetHtmlBody(infoPaneBody, webInformation);
         }
 
-        private static void SetHtmlBody(string body, WebBrowser web)
+        private static void SetHtmlBody(WebBrowser web, string body)
         {
             try
             {
@@ -765,6 +767,7 @@ namespace TVRename
                 //Fail gracefully - no RHS episode guide is not too big of a problem.
                 Logger.Error(ex);
             }
+            Application.DoEvents();
         }
 
         private static void TvdbFor(ProcessedEpisode e)
@@ -1998,21 +2001,21 @@ namespace TVRename
             else
                 lvi.Group = lvWhenToWatch.Groups["futureEps"];
 
-            int n = 1;
+            int n = 0;
             lvi.Text = pe.Show.ShowName;
-            lvi.SubItems[n++].Text =
+            lvi.SubItems[++n].Text =
                 pe.AppropriateSeasonNumber != 0 ? pe.AppropriateSeasonNumber.ToString() : "Special";
 
             string estr = pe.AppropriateEpNum > 0 ? pe.AppropriateEpNum.ToString() : "";
             if (pe.AppropriateEpNum > 0 && pe.EpNum2 != pe.AppropriateEpNum && pe.EpNum2 > 0)
                 estr += "-" + pe.EpNum2;
 
-            lvi.SubItems[n++].Text = estr;
-            lvi.SubItems[n++].Text = dt.ToShortDateString();
-            lvi.SubItems[n++].Text = dt.ToString("t");
-            lvi.SubItems[n++].Text = dt.ToString("ddd");
-            lvi.SubItems[n++].Text = pe.HowLong();
-            lvi.SubItems[n++].Text = pe.Name;
+            lvi.SubItems[++n].Text = estr;
+            lvi.SubItems[++n].Text = dt.ToShortDateString();
+            lvi.SubItems[++n].Text = dt.ToString("t");
+            lvi.SubItems[++n].Text = dt.ToString("ddd");
+            lvi.SubItems[++n].Text = pe.HowLong();
+            lvi.SubItems[++n].Text = pe.Name;
 
             // icon..
 
@@ -3208,11 +3211,7 @@ namespace TVRename
 
             Logger.Warn(update.LogMessage());
 
-            if (inSilentMode) return;
-
-#if DEBUG
-            return;
-#endif
+            if (inSilentMode || Debugger.IsAttached) return;
 
             UpdateNotification unForm = new UpdateNotification(update);
             unForm.ShowDialog();
